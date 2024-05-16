@@ -133,7 +133,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       target: 'aj-referentiel-calculator:first-child .item.actual',
       title: "Les données renseignées",
       intro:
-        "Vous pouvez visualiser, pour chaque contentieux ou sous-contentieux :<ul><li>Les <b>entrées et sorties moyennes mensuelles</b> sur la période sélectionnée (calculées à partir des données d’activité) ;</li><li>Le <b>stock</b> à la fin de la période sélectionnée (tel qu’affiché dans les données d’activité) ;</li><li>Les <b>ETPT affectés à chaque contentieux</b> sur la période sélectionnée (calculés à partir des données individuelles d’affectation saisies dans le ventilateur) pour chacune des catégories d'agents (magistrats, fonctionnaires, équipe autour du magistrat = EAM).</li></ul>",
+        "Vous pouvez visualiser, pour chaque contentieux ou sous-contentieux :<ul><li>Les <b>entrées et sorties</b> moyennes mensuelles sur la période sélectionnée (calculées à partir des données d’activité) ;</li><li>Le <b>stock</b> à la fin de la période sélectionnée (tel qu’affiché dans les données d’activité) ;</li><li>Les <b>ETPT</b> affectés à chaque contentieux sur la période sélectionnée (calculés à partir des données individuelles d’affectation saisies dans le ventilateur) pour chacune des catégories d'agents (magistrats, fonctionnaires, équipe autour du magistrat = EAM).</li></ul>",
     },
     {
       target: 'aj-referentiel-calculator:first-child .item.activity',
@@ -145,34 +145,19 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       target: 'aj-referentiel-calculator:first-child .item.calculate',
       title: "Les données de l'activité calculée",
       intro:
-        "Les données de l'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page \"<b>Temps moyens</b>\".",
-      actions: {
-        onClickToIntro: {
-          label: "J'accède au Temps moyens",
-          enable: true,
-          call: () => {
-            this.router.navigate(['/temps-moyens'])
-          },
-        },
-      },
+        "Les données de l'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page \"<b>Temps moyens</b>\".<div class=\"intro-js-action\"><a href=\"/temps-moyens\">J'accède aux ventilateur</a></div>",
     },
     {
       target: '.ref-button',
       title: 'Enregistrez les temps moyens constatés',
       intro:
-        "Comme référentiel, si vous souhaitez comparer leur évolution dans la juridiction d'une période à l'autre.",
+        "comme référentiel, si vous souhaitez comparer leur évolution dans la juridiction d'une période à l'autre.",
     },
     {
       target: 'aj-options-backup-panel',
       title: 'Mes temps moyens de comparaison',
       intro:
-        "Si vous avez renseigné des temps moyens de référence, il vous suffit de <b>sélectionner un référentiel de votre choix dans le menu déroulant</b> « <b>Mes temps moyens de comparaison</b> » situé en haut de l’écran du calculateur.",
-    },
-    {
-      target: '.ref-button',
-      title: 'Créer un référentiel',
-      intro:
-        "Vous pouvez, si vous le souhaitez, enregistrer dans A-JUST le nombre de <b>référentiels de temps moyens par dossier</b> de votre choix.",
+        "Si vous avez renseigné des temps moyens de référence, il vous suffit de <b>sélectionner le référentiel de votre choix dans ce menu déroulant</b>.",
     },
   ]
 

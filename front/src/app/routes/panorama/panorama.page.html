@@ -26,38 +26,42 @@
     <div class="container-panorama" #container>
       <panorama-alert></panorama-alert>
       <ng-template [ngIf]="canViewVentilation">
-        <div class="effectif-title" id="effectif">Effectifs</div>
-        <div class="workforce-panel">
-          <workforce-composition
-            [backupId]="backupId"
-            [categoriesFiltered]="categoriesFiltered"
-            class="wordforce-composition"
-          ></workforce-composition>
-          <records-update
-            [listFormated]="listFormated"
-            [categoriesFiltered]="categoriesFiltered"
-            class="records-update"
-          ></records-update>
-        </div>
-        <div class="workforce-change">
-          <workforce-change
-            [listArrivals]="listArrivals"
-            [listDepartures]="listDepartures"
-            [listUnavailabilities]="listUnavailabilities"
-            [totalWorkforce]="totalWorkforce"
-          ></workforce-change>
+        <div class="effectifs-panels">
+          <div class="effectif-title" id="effectif">Effectifs</div>
+          <div class="workforce-panel">
+            <workforce-composition
+              [backupId]="backupId"
+              [categoriesFiltered]="categoriesFiltered"
+              class="wordforce-composition"
+            ></workforce-composition>
+            <records-update
+              [listFormated]="listFormated"
+              [categoriesFiltered]="categoriesFiltered"
+              class="records-update"
+            ></records-update>
+          </div>
+          <div class="workforce-change">
+            <workforce-change
+              [listArrivals]="listArrivals"
+              [listDepartures]="listDepartures"
+              [listUnavailabilities]="listUnavailabilities"
+              [totalWorkforce]="totalWorkforce"
+            ></workforce-change>
+          </div>
         </div>
       </ng-template>
       <ng-template [ngIf]="canViewActivities">
-        <div class="pano-title" id="activites" #titleActivities>
-          Les données d’activité
-        </div>
-        <div class="activities-panel">
-          <div class="left-panel">
-            <activities-last-disponibilities></activities-last-disponibilities>
-            <activities-to-complete></activities-to-complete>
+        <div class="activites-panels-helper">
+          <div class="pano-title" id="activites" #titleActivities>
+            Les données d’activité
           </div>
-          <activities-last-modifications></activities-last-modifications>
+          <div class="activities-panel">
+            <div class="left-panel">
+              <activities-last-disponibilities></activities-last-disponibilities>
+              <activities-to-complete></activities-to-complete>
+            </div>
+            <activities-last-modifications></activities-last-modifications>
+          </div>
         </div>
       </ng-template>
     </div>
