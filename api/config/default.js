@@ -181,6 +181,7 @@ module.exports = {
   ipFilter: {
     blacklist: [
       '107.150.63.5', // Appel important depuis les états unies qui serait peut être matomo mais j'ai un doute (FX)
+      //'::1',
     ],
   },
 }
