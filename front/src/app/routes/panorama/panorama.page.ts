@@ -155,7 +155,7 @@ export class PanoramaPage
         'Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace du TJ.',
     },
     {
-      target: '.panorama-container',
+      target: '.effectifs-panels',
       title: "Les données d'effectifs",
       intro:
         "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la juridiction et les éventuels changements dans les 15 derniers et 15 prochains jours.",
