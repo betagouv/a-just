@@ -1,3 +1,39 @@
+export function referentielCAMappingName(name) {
+  switch (name) {
+    case "Contentieux Social":
+      return "Social";
+    case "Contentieux de la famille":
+      return "Famille";
+    case "Contentieux de la protection":
+      return "Protection";
+    case "Contentieux civil":
+      return "Civil Ns";
+    case "Contentieux de la protection":
+      return "Civil Ns";
+    case "Contentieux commercial":
+      return "Commercial";
+    case "Attributions du PP":
+      return "PP";
+    case "Contentieux civil JLD":
+      return "Jld Civil";
+    case "Contentieux des mineurs":
+      return "Mineurs";
+    case "Instruction et entraide":
+      return "Instruction / Entraide";
+    case "Correctionnel":
+      return "Correctionnel";
+    case "Contentieux criminel":
+      return "Crim.";
+    case "Application des peines":
+      return "Application des peines";
+    case "Autres activités":
+      return "Autres";
+  }
+
+  return name;
+}
+
+
 export function referentielMappingName(name) {
   switch (name) {
     case "Autres activités":
@@ -55,6 +91,49 @@ export function referentielMappingColor(name) {
 
   return "";
 }
+
+
+/**
+ * Conversion d'un nom de référentiel en code couleur
+ * @param {*} name
+ * @returns
+ */
+export function referentielCAMappingColor(name) {
+  switch (name) {
+    case "Contentieux Social":
+      return '#424242'
+    case "Contentieux de la famille":
+      return '#37474f'
+    case "Contentieux de la protection":
+      return '#c62828'
+    case "Contentieux civil":
+      return '#0277bd'
+    case "Contentieux de la protection":
+      return '#00838f'
+    case "Contentieux commercial":
+      return '#1565c0'
+    case "Attributions du PP":
+      return '#6a1b9a'
+    case "Contentieux civil JLD":
+      return '#283593'
+    case "Contentieux des mineurs":
+      return '#d84315'
+    case "Instruction et entraide":
+      return '#4527a0'
+    case "Correctionnel":
+      return '#ef6c00'
+    case "Contentieux criminel":
+      return '#ff8f00'
+    case "Application des peines":
+      return '#4527a0'
+    case "Autres activités":
+      return '#fff'
+
+  }
+
+  return ''
+}
+
 
 export function getIdsIndispo(list) {
   const refIndispo = list.find((r) => r.label === "Indisponibilité");

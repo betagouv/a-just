@@ -34,7 +34,7 @@ module.exports = function () {
     })
 
     it('load referentiel', async () => {
-      const response = await axios.get(`${config.serverUrl}/referentiels/get-referentiels`, {
+      const response = await axios.post(`${config.serverUrl}/referentiels/get-referentiels`, {
         headers: {
           Authorization: userToken,
         },

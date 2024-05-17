@@ -7,6 +7,11 @@ export const DOCUMENTATION_URL = 'https://docs.a-just.beta.gouv.fr/documentation
  */
 export const CALCULATE_DOWNLOAD_URL = '/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx'
 /**
+ * Lien du template import
+ */
+export const IMPORT_ETP_TEMPLATE = '/assets/Fiche_agent_template.xlsx'
+
+/**
  * Lien pour créer une nouvelle fiche
  */
 export const DOCUMENTATION_CREATE_NEW_PERSON = 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-une-nouvelle-fiche'
@@ -26,3 +31,7 @@ export const DATA_GITBOOK = "https://docs.a-just.beta.gouv.fr/le-data-book/"
  * Lien pour le centre d aide gitbook
  */
 export const HELP_CENTER_GITBOOK = "https://docs.a-just.beta.gouv.fr/centre-daide/"
+/**
+ * URL de la nomenclature
+ */
+export const NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'

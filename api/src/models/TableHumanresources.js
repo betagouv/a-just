@@ -1,4 +1,5 @@
 import { posad } from '../constants/hr'
+import { juridictionLabelExceptions } from '../constants/juridiction-type'
 import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
@@ -44,6 +45,8 @@ export default (sequelizeInstance, Model) => {
 
     if (cacheJuridictionPeoples[backupId] && index !== -1) {
       cacheJuridictionPeoples[backupId][index] = human
+    } else if (cacheJuridictionPeoples[backupId]) {
+      cacheJuridictionPeoples[backupId].push(human)
     } else {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId) // save to cache
     }
@@ -164,7 +167,7 @@ export default (sequelizeInstance, Model) => {
 
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
-      const backupId = await Model.models.HRBackups.findOrCreateLabel(list[i].arrdt)
+      const backupId = await Model.models.HRBackups.findOrCreateLabel(Number(config.juridictionType) !== 1 ? list[i].arrdt : list[i].juridiction)
 
       list[i].hRegMatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
       let findHRToDB = await Model.findOne({
@@ -302,6 +305,13 @@ export default (sequelizeInstance, Model) => {
         if (dateUpdatedSplited.length === 3) {
           updatedAt = new Date(dateUpdatedSplited[2], +dateUpdatedSplited[1] - 1, dateUpdatedSplited[0])
         }
+
+        let juridiction = list[i].juridiction || ''
+        if (Number(config.juridictionType) !== 1)
+          if (juridictionLabelExceptions.map((x) => x['import'].includes(juridiction)))
+            juridiction = juridictionLabelExceptions.filter((el) => {
+              return el['import'] === juridiction
+            })[0]['ielst']
 
         // prepare person
         const options = {

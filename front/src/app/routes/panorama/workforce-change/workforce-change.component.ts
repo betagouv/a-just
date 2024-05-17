@@ -3,6 +3,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceSelectedInterface } from '../../workforce/workforce.page'
 import { today } from 'src/app/utils/dates'
 import { sortBy } from 'lodash'
+import { UserService } from 'src/app/services/user/user.service'
 
 interface categoryButtonsInterface {
   label: string
@@ -29,8 +30,7 @@ interface listToPrintInterface {
 })
 export class WorkforceChangeComponent
   extends MainClass
-  implements OnChanges, OnDestroy
-{
+  implements OnChanges, OnDestroy {
   @Input() listArrivals: HumanResourceSelectedInterface[] = []
   @Input() listDepartures: HumanResourceSelectedInterface[] = []
   @Input() listUnavailabilities: HumanResourceSelectedInterface[] = []
@@ -96,7 +96,7 @@ export class WorkforceChangeComponent
   /**
    * Constructor
    */
-  constructor() {
+  constructor(public userService: UserService) {
     super()
   }
 
@@ -222,5 +222,5 @@ export class WorkforceChangeComponent
   /**
    * Destruction du composant
    */
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 }

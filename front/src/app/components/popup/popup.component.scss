@@ -20,9 +20,18 @@
     width: 80%;
   }
 
+  &.medium .popup > div {
+    width: 60%;
+  }
+
   &.width-500 .popup > div {
     width: 90%;
     max-width: 500px;
+  }
+
+  &.width-600 .popup > div {
+    width: 90%;
+    max-width: 600px;
   }
 
   &.extra-large .popup > div {
@@ -46,6 +55,24 @@
     .popup .content {
       padding-top: 0;
       padding-bottom: 0;
+    }
+  }
+
+  &.no-padding-content {
+    .popup .content {
+      padding: 0;
+    }
+  }
+
+  &.no-title {
+    .popup .title {
+      display: none;
+    }
+  }
+
+  &.border-radius {
+    .popup > div {
+      border-radius: 8px;
     }
   }
 
@@ -86,7 +113,6 @@
     }
 
     .close {
-      color: fColor(darkModeTitle);
       i {
         color: fColor(darkModeTitle);
       }
@@ -123,6 +149,18 @@
       }
     }
   }
+
+  &.overflow-visible .popup {
+    .content {
+      overflow: visible !important;
+    }
+  }
+
+  &.margin-left .popup {
+    margin-left: 18%;
+    width: 100%;
+    transition: margin-left 1s;
+  }
 }
 
 .popup {
@@ -150,10 +188,11 @@
 
   .title {
     font-size: 20px;
-    color: fColor(primary);
+    color: fColor(cblack);
     font-weight: 500;
     display: flex;
     margin: 20px 32px;
+    font-weight: bold;
 
     .close {
       display: inline-flex;
@@ -161,12 +200,12 @@
       justify-content: center;
       text-decoration: none;
       cursor: pointer;
-      color: fColor(primary);
+      color: fColor(cblack);
       font-size: 14px;
 
       i {
-        font-size: 16px;
-        color: fColor(primary);
+        font-size: 24px;
+        color: fColor(cblack);
         margin-left: 8px;
         position: relative;
         top: 1px;
@@ -176,23 +215,18 @@
 
   .content {
     flex: 1;
+    //overflow: visible;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
     display: flex;
     flex-direction: column;
-    padding: 16px 72px 32px 72px;
+    padding: 16px 32px;
     min-width: 480px;
   }
 
   .actions {
     padding: 32px 32px 32px 72px;
     display: flex;
-    box-shadow: 0 -8px 16px -16px rgba(0, 0, 0, 0.32),
-      0 -8px 8px 0 rgba(0, 0, 0, 0.1);
-
-    &.noShadow {
-      box-shadow: initial !important;
-    }
 
     > button {
       margin-left: 8px;

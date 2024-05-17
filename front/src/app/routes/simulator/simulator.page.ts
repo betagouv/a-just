@@ -237,6 +237,7 @@ export class SimulatorPage
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
+    printSubTitle: true,
   }
 
   /**
@@ -586,7 +587,7 @@ export class SimulatorPage
   formatReferentiel() {
     this.formReferentiel = this.referentiel.map((r) => ({
       id: r.id,
-      value: this.referentielMappingName(r.label),
+      value: this.referentielMappingNameByInterface(r.label),
       childrens: r.childrens?.map((s) => ({
         id: s.id,
         value: s.label,
@@ -1531,79 +1532,94 @@ export class SimulatorPage
    * Export pdf de simulation
    */
   async print() {
-    let contentieuLabel = this.referentiel
-      .find((v) => v.id === this.contentieuId)
-      ?.label.replace(' ', '_')
-    const editableName = document.getElementById('editable-sim-name')
+    if (this.commentaire.length <= 20000) {
+      let contentieuLabel = this.referentiel
+        .find((v) => v.id === this.contentieuId)
+        ?.label.replace(' ', '_')
+      const editableName = document.getElementById('editable-sim-name')
 
-    const filename = `${editableName?.innerText === '' ? 'Simulation' : editableName?.innerText
-      }${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
-      }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-        .toJSON()
-        .slice(0, 10)}.pdf`
+      const filename = `${editableName?.innerText === '' ? 'Simulation' : editableName?.innerText
+        }${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
+        }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+          .toJSON()
+          .slice(0, 10)}.pdf`
 
-    const title = document.getElementById('print-title')
-    if (title) {
-      title.classList.remove('display-none')
-      title.style.display = 'flex'
-    }
+      const title = document.getElementById('print-title')
+      if (title) {
+        title.classList.remove('display-none')
+        title.style.display = 'flex'
+      }
 
-    const initButton = document.getElementById('main-init')
-    if (initButton)
-      //initButton.style.display = 'none'
-      initButton.classList.add('display-none')
+      const initButton = document.getElementById('main-init')
+      if (initButton)
+        //initButton.style.display = 'none'
+        initButton.classList.add('display-none')
 
-    const backButton = document.getElementById('main-back-menu')
-    if (backButton) backButton.classList.add('display-none')
+      const backButton = document.getElementById('main-back-menu')
+      if (backButton) backButton.classList.add('display-none')
 
-    const editButton = document.getElementById('editable-sim-name')
-    if (editButton && editButton.innerHTML === '')
-      editButton.style.display = 'none'
-    else if (title) title.classList.add('display-none')
+      const editButton = document.getElementById('editable-sim-name')
+      if (editButton && editButton.innerHTML === '')
+        editButton.style.display = 'none'
+      else if (title) title.classList.add('display-none')
 
-    const exportButton = document.getElementById('export-button')
-    if (exportButton) {
-      exportButton.classList.add('display-none')
-    }
+      const exportButton = document.getElementById('export-button')
+      if (exportButton) {
+        exportButton.classList.add('display-none')
+      }
 
-    const ajWrapper = document.getElementById('simu-wrapper')
-    if (ajWrapper) ajWrapper?.classList.add('full-screen')
+      const exportButton1 = document.getElementById('export-button-1')
+      if (exportButton1) {
+        exportButton1.classList.add('display-none')
+      }
 
-    const commentAreaCopy = document.getElementById('comment-area-copy')
-    if (commentAreaCopy) commentAreaCopy.style.display = 'block'
 
-    const commentArea = document.getElementById('comment-area')!
-    if (commentArea) commentArea.classList.add('display-none')
+      const ajWrapper = document.getElementById('simu-wrapper')
+      if (ajWrapper) ajWrapper?.classList.add('full-screen')
 
-    this.onPrint = true
+      const commentAreaCopy = document.getElementById('comment-area-copy')
+      if (commentAreaCopy) commentAreaCopy.style.display = 'block'
 
-    this.wrapper
-      ?.exportAsPdf(filename, true, false, null, false /*true*/)
-      .then(() => {
-        title?.classList.add('display-none')
+      const commentArea = document.getElementById('comment-area')!
+      if (commentArea) commentArea.classList.add('display-none')
 
-        this.onPrint = false
-        ajWrapper?.classList.remove('full-screen')
+      this.onPrint = true
 
-        if (exportButton) exportButton.classList.remove('display-none')
-        if (initButton) initButton.classList.remove('display-none')
-        if (backButton) backButton.classList.remove('display-none')
+      this.wrapper
+        ?.exportAsPdf(filename, true, false, null, false /*true*/)
+        .then(() => {
+          title?.classList.add('display-none')
 
-        if (commentArea) {
-          commentArea.style.display = 'block'
-          commentArea.classList.remove('display-none')
-          commentAreaCopy!.style.display = 'none'
-        }
+          this.onPrint = false
+          ajWrapper?.classList.remove('full-screen')
 
-        if (editButton) {
-          editButton!.style.display = 'block'
-          editButton!.classList.remove('display-none')
-        }
+          if (exportButton) exportButton.classList.remove('display-none')
+          if (exportButton1) exportButton1.classList.remove('display-none')
+          if (initButton) initButton.classList.remove('display-none')
+          if (backButton) backButton.classList.remove('display-none')
+
+          if (commentArea) {
+            commentArea.style.display = 'block'
+            commentArea.classList.remove('display-none')
+            commentAreaCopy!.style.display = 'none'
+          }
+
+          if (editButton) {
+            editButton!.style.display = 'block'
+            editButton!.classList.remove('display-none')
+          }
+        })
+
+      return new Promise((resolve, reject) => {
+        setTimeout(() => resolve('Export done'), 200)
       })
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => resolve('Export done'), 200)
-    })
+    }
+    else {
+      alert('Le commentaire que vous avez saisi comprend ' + this.commentaire.length + ' charactères. Il dépasse la limite de 20000 charactères autorisés.')
+      return new Promise((resolve, reject) => {
+        setTimeout(() => reject('Comment too long'), 100)
+      })
+    }
   }
 
   /**
@@ -1997,6 +2013,24 @@ export class SimulatorPage
       this.chooseScreen = true
       this.resetParams()
     }
+  }
+
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+  /**
+* Mapping des noms de contentieux selon l'interface
+* @param label 
+* @returns 
+*/
+  referentielMappingNameByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
   }
 }
 

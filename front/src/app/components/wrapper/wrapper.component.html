@@ -32,7 +32,7 @@
 
     <div class="menu-scrollable">
       <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-        <ng-container *ngIf="item.label === 'Extracteur'; else other">
+        <ng-container *ngIf="item.label === 'Extracteurs'; else other">
           <div class="menu-item tools" (click)="openTools = !openTools">
             <a>Outils</a>
             <mat-icon class="arrow-list">{{
@@ -69,7 +69,7 @@
         <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">
           Aide
         </a>
-        <a [routerLink]="['/contact']" [queryParams]="{ backUrl: true }">
+        <a class="contact-us" href="/contact?backUrl=true">
           <p class="unselectable">Nous contacter</p>
         </a>
       </div>
@@ -80,30 +80,62 @@
     </div>
   </div>
 
-  <div class="contener" #contener title="">
-    <div class="header" id="top">
-      <div *ngIf="backUrl" class="back-url">
-        <a [routerLink]="backUrl" [fragment]="backAnchor">
-          <button class="primary small">
-            <mat-icon>chevron_left</mat-icon>Retour
-          </button>
-        </a>
-      </div>
-      <div>
-        <div class="title-with-doc">
-          <h3 [innerHTML]="title"></h3>
-          <aj-help-button *ngIf="documentation" (click)="onTogglePanelHelper()" class="documentation"></aj-help-button>
+  <div class="contener" #contener title="" id="wrapper-contener">
+    <div class="header">
+      <div class="top-header"  id="top">
+        <div class="top-header-back-title">
+          <aj-back-button
+            *ngIf="backUrl"
+            [routerLink]="backUrl"
+            [fragment]="backAnchor"
+            class="back-url"
+            [ngClass]="{ 'is-dark-screen': isDarkScreen }"
+          />
+          <ng-template [ngIf]="actionsLeftTemplate">
+            <ng-container
+              *ngTemplateOutlet="actionsLeftTemplate"
+            ></ng-container>
+          </ng-template>
+          <div>
+            <div class="title-with-doc">
+              <h3 [innerHTML]="title"></h3>
+              <aj-help-button *ngIf="documentation" (click)="onTogglePanelHelper()" class="documentation"></aj-help-button>
+            </div>
+            <p class="subtitle">
+              <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
+            </p>
+          </div>
+          <!-- <ng-template [ngIf]="dateSelector">
+            <aj-date-select
+              title={{dateSelector.title}}
+              dateType={{dateSelector.dateType}}
+              value={{dateSelector.value}}
+              (valueChange)=changeMonth($event)
+              class="date-selector"
+            >
+            </aj-date-select>
+          </ng-template> -->
+          <ng-template [ngIf]="titleTemplate">
+            <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+          </ng-template>
         </div>
-        <p class="subtitle">
-          <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
-        </p>
+        <ng-template [ngIf]="dateSelector">
+          <aj-date-select title="{{ dateSelector.title }}" dateType="{{ dateSelector.dateType }}"
+            value="{{ dateSelector.value }}" (valueChange)="changeMonth($event)" class="date-selector">
+          </aj-date-select>
+        </ng-template>
+        <ng-template [ngIf]="titleTemplate">
+          <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+        </ng-template>
+        <div *ngIf="!alignLeft" class="space"></div>
+        <div class="actions">
+          <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+        </div>
       </div>
-      <ng-template [ngIf]="titleTemplate">
-        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
-      </ng-template>
-      <div *ngIf="!alignLeft" class="space"></div>
-      <div class="actions">
-        <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+      <div class="bottom-header">
+        <ng-template [ngIf]="actionTemplateBottom" class="actions">
+          <ng-container *ngTemplateOutlet="actionTemplateBottom"></ng-container>
+        </ng-template>
       </div>
       <div class="progress-bar" *ngIf="isLoading">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -116,13 +148,14 @@
 </div>
 
 <div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">
-  <div class="panel-header">
-    <div class="over-title">
+  <div class="panel-header"
+    [ngStyle]="{'background-color' : documentationToShow?.bgColor ? documentationToShow?.bgColor  : '#33569e' }">
+    <div class="over-title" [ngClass]="{'over-title-small': !documentationToShow?.printSubTitle }">
       <div class="panel-header-closing-row">
         <h6>{{ documentationToShow?.title }}</h6>
-        <i class="ri-close-line" (click)="panelHelper = false"></i>
+        <i class="ri-close-line" [ngStyle]="{'color': documentationToShow?.closeColor ? documentationToShow?.closeColor : 'white'}" (click)="panelHelper = false"></i>
       </div>
-      <p>
+      <p *ngIf="documentationToShow?.printSubTitle">
         <i class="ri-lightbulb-flash-line"></i>
         <span>{{
           documentationToShow?.subTitle || 'Comment ça marche ?'
@@ -131,10 +164,12 @@
     </div>
   </div>
 
-  <iframe [src]="documentationToShow?.path || '' | sanitizeResourceUrl"></iframe>
+  <iframe [src]="documentationToShow?.path || '' | sanitizeResourceUrl"
+    [ngStyle]="{'margin' : documentationToShow?.printSubTitle ? '-148px 8px 8px 8px' : '-90px 8px 8px 8px' }"></iframe>
 </div>
 
 <ng-template #defaultActionTemplate></ng-template>
+
 <ng-template #defaultSubtitleTemplate>{{ subtitle }}
   <label *ngIf="subtitleName !== ''" class="subtitle-name">{{
     subtitleName

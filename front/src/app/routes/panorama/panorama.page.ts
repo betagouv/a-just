@@ -22,6 +22,8 @@ import {
   HumanResourceSelectedInterface,
 } from '../workforce/workforce.page'
 import { sumBy } from 'lodash'
+import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { Router } from '@angular/router'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -32,7 +34,8 @@ import { sumBy } from 'lodash'
 })
 export class PanoramaPage
   extends MainClass
-  implements OnInit, OnDestroy, AfterViewInit {
+  implements OnInit, OnDestroy, AfterViewInit
+{
   /**
    * Dom du contenu scrollable
    */
@@ -141,13 +144,78 @@ export class PanoramaPage
    * Juridiction id
    */
   backupId: number | null = null
+  /**
+   * Intro JS Steps
+   */
+  introSteps: IntroJSStep[] = [
+    {
+      target: '#wrapper-contener',
+      title: 'Panorama',
+      intro:
+        'Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace du TJ.',
+    },
+    {
+      target: '.effectifs-panels',
+      title: "Les données d'effectifs",
+      intro:
+        "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la juridiction et les éventuels changements dans les 15 derniers et 15 prochains jours.",
+    },
+    {
+      target: '.wordforce-composition',
+      title: 'La composition des effectifs',
+      intro:
+        'À la date du jour. Vous pouvez aussi renseigner la CLE pour la comparer à votre situation actuelle.',
+    },
+    {
+      target: '.records-update',
+      title: 'Pourcentage et date de mise à jour',
+      intro:
+        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la juridiction.',
+    },
+    {
+      target: 'workforce-change',
+      title: 'Changements récents',
+      intro:
+        "Cet espace rassemble les <b>arrivées, départs ou indisponibilités</b> enregistrés dans le ventilateur pour les 15 derniers et 15 prochains jours. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d’indisponibilité ou d'arrivée et la modifier si vous découvrez qu’elle a évolué.",
+    },
+    {
+      target: '#activites',
+      title: "Données d'activité",
+      intro: "Voici une vue d'ensemble de vos données présentes dans A-JUST.",
+    },
+    {
+      target: 'activities-last-disponibilities',
+      title: 'Dernières données disponibles',
+      intro:
+        'Visualisez en un coup d’œil quelles données sont présentes dans A-JUST ce jour. Si nécessaire, ajustez les entrées, sorties et stocks sur l’un ou l’autre des contentieux pour fiabiliser, avec vos données locales, les restitutions qui seront élaborées par l’outil.',
+    },
+    {
+      target: 'activities-to-complete',
+      title: 'Données à compléter',
+      intro:
+        'Retrouvez ici la liste des contentieux pour lesquels aucune donnée, pré-alimentée ou AJUSTée, n’est disponible pour les 12 derniers, les 3 derniers ou pour le seul dernier mois de données, afin que vous puissiez aisément les compléter selon vos besoins.',
+    },
+    {
+      target: 'activities-last-modifications',
+      title: 'Dernières modifications',
+      intro:
+        "Effectuées sur vos données d’activité par les différents agents de la juridiction utilisateurs d'A-JUST.",
+    },
+    {
+      target: '.contact-us',
+      title: 'Je passe à la suite :',
+      intro:
+        'Nous vous conseillons de commencer par renseigner la situation de vos agents. Rendez-vous sur le ventilateur !<div class="intro-js-action"><a href="/ventilations">J\'accède au ventilateur</a></div>',
+    },
+  ]
 
   /**
    * Constructor
    */
   constructor(
     private userService: UserService,
-    public humanResourceService: HumanResourceService
+    public humanResourceService: HumanResourceService,
+    private router: Router
   ) {
     super()
   }
@@ -163,6 +231,11 @@ export class PanoramaPage
         this.canViewContractuel = userCanViewContractuel(u)
         this.canViewVentilation = this.userService.canViewVentilation()
         this.canViewActivities = this.userService.canViewActivities()
+
+        // @ts-ignore
+        this.introSteps[this.introSteps.length - 1]['actions'][
+          'onClickToIntro'
+        ].enable = this.canViewVentilation
       })
     )
 
@@ -347,7 +420,7 @@ export class PanoramaPage
    */
   getInterfaceType() {
     return this.userService.interfaceType === 1
-      ? 'cours d\'appel'
+      ? "cours d'appel"
       : 'tribunal judiciaire'
   }
   /**

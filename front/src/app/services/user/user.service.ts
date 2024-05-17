@@ -16,6 +16,7 @@ import {
 } from 'src/app/constants/user-access'
 import { NEED_BOOKING_PAGE } from 'src/app/constants/pages'
 import { Router } from '@angular/router'
+import { referentielCAMappingColor, referentielCAMappingName, referentielMappingColor, referentielMappingColorActivity, referentielMappingColorCAActivity, referentielMappingName } from 'src/app/utils/referentiel'
 
 /**
  * Service de sauvegarde de l'utilisateur actuel
@@ -63,13 +64,99 @@ export class UserService {
   }
 
   /**
-   * Get process variables
+   * Get env variable of the interface type
    * @returns
    */
-  getInterfaceType() {
+  async getInterfaceType() {
     return this.serverService.get('users/interface-type').then((data) => {
-      this.interfaceType = [0, 1].includes(+data.data) ? +data.data : null
+      this.interfaceType = [0, 1].includes(data.data) ? data.data : null
+      return this.interfaceType !== null ? true : false
     })
+  }
+
+  /**
+   * Mapping de la couleur du référentiel selon l'interface
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    if (this.interfaceType === 1)
+      return this.referentielCAMappingColor(label, opacity)
+    else return this.referentielMappingColor(label, opacity)
+  }
+
+  /**
+   * Mapping de la couleur des activités selon l'interface
+   * @param label 
+   * @returns 
+   */
+  referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
+    if (this.interfaceType === 1)
+      return this.referentielMappingColorCAActivity(label, opacity)
+    else {
+      return this.referentielMappingColorActivity(label, opacity)
+    }
+  }
+
+  /**
+* Mapping des noms de contentieux selon l'interface
+* @param label 
+* @returns 
+*/
+  referentielMappingNameByInterface(label: string) {
+    if (this.interfaceType === 1)
+      return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
+  }
+
+  /**
+   * Methode de reprise des noms de référentiel TJ
+   */
+  public referentielMappingName(name: string): string {
+    return referentielMappingName(name)
+  }
+
+  /**
+ * Methode de reprise des noms de référentiel CA
+ */
+  public referentielCAMappingName(name: string): string {
+    return referentielCAMappingName(name)
+  }
+
+  /**
+   * Methode de reprise des couleur des référentiel
+   * @param name
+   * @returns
+   */
+  public referentielMappingColor(name: string, opacity: number = 1): string {
+    return referentielMappingColor(name, opacity)
+  }
+
+  /**
+ * Methode de reprise des couleur des référentiel
+ * @param name
+ * @returns
+ */
+  public referentielCAMappingColor(name: string, opacity: number = 1): string {
+    return referentielCAMappingColor(name, opacity)
+  }
+
+  /**
+   * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+   * @param name
+   * @returns
+   */
+  public referentielMappingColorActivity(name: string, opacity: number = 1): string {
+    return referentielMappingColorActivity(name, opacity)
+  }
+
+  /**
+  * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+  * @param name
+  * @returns
+  */
+  public referentielMappingColorCAActivity(name: string, opacity: number = 1): string {
+    return referentielMappingColorCAActivity(name, opacity)
   }
 
   /**
@@ -280,7 +367,7 @@ export class UserService {
       user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1
     ) {
       menu.push({
-        label: 'Extracteur',
+        label: 'Extracteurs',
         path: 'dashboard',
       })
     }

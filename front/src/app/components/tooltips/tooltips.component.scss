@@ -11,17 +11,40 @@
     }
 
     .triangle {
-      right: 35px;
+      //right: 35px;
       left: inherit;
     }
   }
 
+  &.top .tooltip-text {
+    bottom: calc(85% + 4px);
+    .triangle {
+      transform: rotate(0.5turn);
+      position: absolute;
+      bottom: -4px;
+    }
+  }
+
+  &.bottom .tooltip-text {
+    top: calc(85% + 4px);
+    .triangle {
+      position: absolute;
+      top: -4px;
+    }
+  }
+
   &.medium .tooltip-text {
-    width: 400px;
+    min-width: 400px;
   }
 
   &.large .tooltip-text {
     width: 700px;
+  }
+
+  &.no-bg .tooltip-text {
+    > div {
+      background-color: transparent !important;
+    }
   }
 
   &.black {
@@ -55,11 +78,12 @@
   }
 
   .tooltip-text {
+    // display: flex;
+    // flex-direction: column;
     position: absolute;
     z-index: 1;
     visibility: hidden;
-    top: calc(85% + 4px);
-    left: 50%;
+    left: 70%;
     cursor: auto;
 
     > div {
@@ -73,13 +97,13 @@
     }
 
     .triangle {
+      position: absolute;
       width: 0;
       height: 0;
       border-width: 0 3px 4px 3px;
       border-color: transparent transparent fColor(tooltipBgTitleColor)
         transparent;
       border-style: solid;
-      position: absolute;
       top: -4px;
       left: calc(50% - 2px);
     }
@@ -110,9 +134,15 @@
       }
     }
 
+    .radius {
+      border-radius: 8px;
+    }
+
     .content {
       padding: 16px;
       color: fColor(tooltipContentColor);
+      max-height: 130px;
+      margin-bottom: 4px;
     }
 
     .footer {

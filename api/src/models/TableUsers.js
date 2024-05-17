@@ -2,7 +2,7 @@ import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
 import { snakeToCamelObject } from '../utils/utils'
 import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
-import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED } from '../constants/email'
+import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA } from '../constants/email'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
 import { getNbDay, humanDate } from '../utils/date'
@@ -127,6 +127,26 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
+   * Retourne les informations d'un utilisateur via l'email
+   * @param {*} userId
+   * @returns
+   */
+  Model.userPreviewWithEmail = async (userEmail) => {
+    const user = await Model.findOne({
+      attributes: ['id', 'email', 'first_name', 'last_name', 'role'],
+      where: { email: userEmail },
+      raw: true,
+    })
+
+    if (user) {
+      user.access = await Model.models.UsersAccess.getUserAccess(user.id)
+      return snakeToCamelObject(user)
+    }
+
+    return null
+  }
+
+  /**
    * Crée un compte utilisateur
    * @param {*} param0
    */
@@ -134,7 +154,10 @@ export default (sequelizeInstance, Model) => {
     const user = await Model.findOne({ where: { email } })
 
     if (!user) {
-      password = cryptPassword(password, email)
+      if (password) {
+        password = cryptPassword(password, email)
+      }
+
       return await Model.create({
         email,
         password,
@@ -215,7 +238,8 @@ export default (sequelizeInstance, Model) => {
             {
               email: user.email,
             },
-            TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
+            Number(config.juridictionType) === 1 ? TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA : TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED
+            ,
             {
               user: `${user.first_name} ${user.last_name}`,
               juridictionsList: ventilationsList.map((v) => v.label).join(', '),

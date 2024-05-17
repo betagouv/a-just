@@ -3,7 +3,6 @@
 :host {
   height: 100%;
 
-
   &.help-center {
     #content {
       background-color: blue;
@@ -21,6 +20,9 @@
   }
 
   &.no-padding-top {
+    .top-header {
+      padding-top: 0px !important;
+    }
     div {
       .contener {
         #content {
@@ -29,7 +31,6 @@
       }
     }
   }
-
 
   &.white-bg-help {
     .contener {
@@ -81,7 +82,7 @@
     cursor: pointer;
   }
 
-  >div {
+  > div {
     display: flex;
     height: 100%;
   }
@@ -167,6 +168,11 @@
   &.title-margin-right-null {
     .header {
       padding-right: 0;
+      .top-header {
+        .title-with-doc {
+          margin-right: 34px;
+        }
+      }
     }
   }
 
@@ -204,13 +210,14 @@
       z-index: 200;
 
       .menu-item {
-
-
-
         &.disconnect,
         a,
         p {
           color: white;
+        }
+
+        .contact-us p {
+          color: white !important;
         }
 
         &.selected {
@@ -230,6 +237,14 @@
       h3 {
         color: fColor(darkModeTitle);
       }
+
+      .top-header {
+        background-color: fColor(darkModeBgHeader);
+
+        h3 {
+          color: fColor(darkModeTitle);
+        }
+      }
     }
 
     .contener {
@@ -245,6 +260,10 @@
 
   &.no-header .contener .header {
     display: none;
+  }
+
+  &.large-actions .actions {
+    flex: 100;
   }
 }
 
@@ -263,7 +282,7 @@
     margin-bottom: 8px;
     margin-top: 8px;
 
-    >div {
+    > div {
       width: 45%;
       height: 80px;
       background-repeat: no-repeat;
@@ -347,7 +366,6 @@
     }
 
     &.selected {
-
       a,
       p {
         color: fColor(cbluedark);
@@ -414,42 +432,57 @@
 .header {
   //height: 87px;
   //min-height: 87px;
-  padding: 16px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
   border-bottom: 1px solid fColor(bgColor);
-  position: relative;
 
-  .back-url {
-    margin-right: 16px;
-  }
-
-  h3 {
-    color: fColor(cblack);
-    font-size: 22px;
-    margin-right: 8px;
-  }
-
-  .subtitle {
-    font-size: 12px;
-    margin-top: -4px;
-  }
-
-  .title-with-doc {
-    margin-right: 104px;
+  .top-header {
+    padding: 16px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    background-color: white;
+    position: relative;
+
+    .top-header-back-title {
+      display: flex;
+      align-items: center;
+    }
+
+    .back-url {
+      margin-right: 16px;
+    }
 
     h3 {
-      font-size: 20px;
-      font-weight: bold;
+      color: fColor(cblack);
+      font-size: 22px;
+      margin-right: 8px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      margin-top: -4px;
+    }
+
+    .title-with-doc {
+      margin-right: 104px;
+      display: flex;
+      align-items: center;
+
+      h3 {
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+
+    .documentation {
+      margin-right: 8px;
     }
   }
 
-  .documentation {
-    margin-right: 8px;
+  .bottom-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
   }
 }
 
@@ -491,22 +524,25 @@
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 110;
+  z-index: 1000;
   background-color: white;
   display: flex;
   flex-direction: column;
   align-items: stretch;
 
-  >div.panel-header {
-    background-color: fColor(bgHelper);
-    padding: 14px 0 84px 0;
+  > div.panel-header {
+    padding: 14px 0 90px 0;
 
     .over-title {
-      background-color: fColor(bgHelper);
-      height: 85px;
+      background-color: inherit;
       position: relative;
       z-index: 30;
       padding: 0 14px;
+      height: 85px;
+    }
+
+    .over-title-small {
+      height: 42px !important;
     }
 
     .panel-header-closing-row {
@@ -515,7 +551,6 @@
       align-items: center;
 
       i {
-        color: white;
         cursor: pointer;
         font-size: 32px;
       }
@@ -535,14 +570,17 @@
     }
   }
 
-  >iframe {
+  > div.panel-header:has(.over-title-small) {
+    padding: 0 !important;
+  }
+
+  > iframe {
     border-radius: 4px;
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    margin: -148px 8px 8px 8px;
+    //margin: -148px 8px 8px 8px;
     border: none;
     height: calc(100% + 80px);
   }
-
 }

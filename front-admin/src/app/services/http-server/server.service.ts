@@ -4,7 +4,6 @@ import { HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { HttpService } from './http.service';
 import { BehaviorSubject } from 'rxjs';
-import { AppService } from '../app/app.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +12,7 @@ export class ServerService {
   userToken: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   serverUrl: string = environment.serverUrl;
 
-  constructor(private _http: HttpService, private appService: AppService) {}
+  constructor(private _http: HttpService/*, private appService: AppService*/) {}
 
   getUrl(url: string): string {
     return this.serverUrl + url;
@@ -35,7 +34,7 @@ export class ServerService {
   }
 
   handleError(error: any) {
-    this.appService.setIsLoading(false);
+    //this.appService.setIsLoading(false);
     console.log('handleError', error);
     if (error.status) {
       console.log('error.status', error.status);
@@ -98,11 +97,11 @@ export class ServerService {
   /* HTTPs request */
   get(url: string, options = {}): Promise<any> {
     console.log('HTTP GET ' + this.getUrl(url));
-    this.appService.setIsLoading(true);
+    //this.appService.setIsLoading(true);
     return this._http
       .get(this.getUrl(url), { ...this.getOptions(), ...options })
       .then((r) => {
-        this.appService.setIsLoading(false);
+        //this.appService.setIsLoading(false);
         return r;
       })
       .catch(this.handleError);
@@ -116,7 +115,7 @@ export class ServerService {
         ...options,
       })
       .then((r) => {
-        this.appService.setIsLoading(false);
+        //this.appService.setIsLoading(false);
         return r;
       });
   }
@@ -129,7 +128,7 @@ export class ServerService {
         ...options,
       })
       .then((r) => {
-        this.appService.setIsLoading(false);
+        //this.appService.setIsLoading(false);
         return r;
       })
       .catch(this.handleError);
@@ -143,7 +142,7 @@ export class ServerService {
         ...options,
       })
       .then((r) => {
-        this.appService.setIsLoading(false);
+        //this.appService.setIsLoading(false);
         return r;
       });
   }
@@ -153,7 +152,7 @@ export class ServerService {
     return this._http
       .put(this.getUrl(url), params, { ...this.getOptions(), ...options })
       .then((r) => {
-        this.appService.setIsLoading(false);
+        //this.appService.setIsLoading(false);
         return r;
       })
       .catch(this.handleError);
@@ -164,7 +163,7 @@ export class ServerService {
     return this._http
       .delete(this.getUrl(url), { ...this.getOptions(), ...options })
       .then((r) => {
-        this.appService.setIsLoading(false);
+        //this.appService.setIsLoading(false);
         return r;
       })
       .catch(this.handleError);

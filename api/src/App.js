@@ -13,7 +13,10 @@ import koaLogger from 'koa-logger-winston'
 import { tracingMiddleWare, requestHandler } from './utils/sentry'
 import helmet from 'koa-helmet'
 import { CSP_URL_IGNORE_RULES } from './constants/csp'
+import session from 'koa-session'
 const RateLimit = require('koa2-ratelimit').RateLimit
+import ip from 'koa-ip'
+import { styleSha1Generate } from './utils/csp'
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -74,17 +77,20 @@ export default class App extends AppBase {
     this.routeParam.replicaModels = this.replicaModels
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
+    // (session) - required for cookie signature generation
+    this.koaApp.keys = ['newest secresfsdt key', 'oldsdfsdfsder secdsfsdfsdfret key']
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
       max: config.maxQueryLimit, // limit each IP to 100 requests per interval
     })
 
+    this.koaApp.use(session(config.session, this.koaApp))
+
     super.addMiddlewares([
       //sslify(),
       limiter,
       // we add the relevant middlewares to our API
-      cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       koaBody({
         multipart: true,
         formLimit: '512mb',
@@ -105,6 +111,12 @@ export default class App extends AppBase {
       givePassword,
       requestHandler,
       tracingMiddleWare,
+      ip({
+        ...config.ipFilter,
+        handler: async (ctx) => {
+          ctx.status = 403
+        },
+      }),
       helmet({
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
@@ -118,12 +130,11 @@ export default class App extends AppBase {
               'https://stats.beta.gouv.fr',
               'https://forms-eu1.hsforms.com',
               'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
-              'stonly.com',
-              '*.stonly.com',
               'https://stats.beta-gouv.cloud-ed.fr',
               'https://*.hotjar.com',
               'https://*.hotjar.io',
               'wss://*.hotjar.com',
+              '*.justice.gouv.fr',
             ],
             'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com'],
             'img-src': [
@@ -143,26 +154,21 @@ export default class App extends AppBase {
               'https://*.hsforms.net',
               '*.beta.gouv.fr',
               '*.a-just.incubateur.net',
-              'stonly.com',
-              '*.stonly.com',
               '*.calendly.com',
               '*.google-analytics.com',
               '*.hotjar.com',
               "'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
               "'sha256-92TNq2Axm9gJIJETcB7r4qpDc3JjxqUYF1fKonG4mvg='",
               "'sha256-WXdHEUxHRTHqWKtUCBtUckcV5wN4y9jQwkZrGjfqr40='",
+              "'sha256-9jsqNCkYsDU3te2WUjv9qXV1DKXI1vT9hz3g7nNens8='",
+              "'sha256-Z/I+tLSqFCDH08E3fvI/F+QNinxE6TM+KmCxNmRcAAw='",
+              "'sha256-tBBLGYs6fvYemOy9hpbgu6tIIJNpdIZpuGpDXkhGTVw='",
+              "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
+              //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
-            'style-src': ["'self'", "'unsafe-inline'", 'cdnjs.cloudflare.com'],
-            'frame-src': [
-              'https://docs.a-just.beta.gouv.fr',
-              'https://meta.a-just.beta.gouv.fr',
-              'https://forms-eu1.hsforms.com/',
-              'https://calendly.com',
-              'stonly.com',
-              '*.stonly.com',
-              '*.hubspot.com',
-            ],
+            'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
             'base-uri': ["'self'"],
@@ -189,14 +195,26 @@ export default class App extends AppBase {
         //xXssProtection: 1, don't work
       }),
       async (ctx, next) => {
+        console.log('Client IP', ctx.request.ip)
         ctx.set('x-xss-protection', '1')
 
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
           ctx.set('content-security-policy', '')
         }
+
         await next()
       },
     ])
+
+    if (config.corsUrl) {
+      super.addMiddlewares([
+        cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
+      ])
+    } else {
+      super.addMiddlewares([
+        cors({ credentials: true }), // add cors headers to the requests
+      ])
+    }
 
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/') // adds a folder to scan for route files
     super.mountFolder(join(__dirname, 'routes-api'), '/api/') // adds a folder to scan for route files

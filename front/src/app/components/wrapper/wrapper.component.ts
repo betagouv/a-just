@@ -15,6 +15,7 @@ import jsPDF from 'jspdf'
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_URL,
+  NOMENCLATURE_DOWNLOAD_URL,
 } from 'src/app/constants/documentation'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
@@ -28,6 +29,8 @@ import { environment } from 'src/environments/environment'
 import { ActionsInterface } from '../popup/popup.component'
 import { Title } from '@angular/platform-browser'
 import { downloadFile } from 'src/app/utils/system'
+import { DateSelectorinterface } from 'src/app/interfaces/date'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
 
 declare const Quill: any
 
@@ -76,13 +79,25 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   @HostBinding('class.print') duringPrint: boolean = false
   /**
+   * Class css dit sur c'est le mode dark
+   */
+  @Input() @HostBinding('class.dark-screen') isDarkScreen = false
+  /**
    * Paramétrage d'un ng-template pour les boutons
    */
   @Input() actionTemplate: TemplateRef<any> | undefined
   /**
+   * Paramétrage d'un ng-template pour les boutons (partie bottom du header)
+   */
+  @Input() actionTemplateBottom: TemplateRef<any> | undefined
+  /**
    * Parmétrage d'un ng-template pour le titre et remplace le titre normal
    */
   @Input() titleTemplate: TemplateRef<any> | undefined
+  /**
+   * Parmétrage au niveau des boutons d'actions en haut à gauche
+   */
+  @Input() actionsLeftTemplate: TemplateRef<any> | undefined  
   /**
    * Titre de page
    */
@@ -119,6 +134,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Affiche une bulle d'aide avec une doc derriere
    */
   @Input() documentation: DocumentationInterface | undefined | null
+  /**
+   * Affichage d'un calendreier pour choisir un mois de données à affihcer sur l'écran des données d'activités
+   */
+  @Input() dateSelector: DateSelectorinterface | undefined
   /**
    * Output pour recharger la page
    */
@@ -160,10 +179,6 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   CALCULATE_DOWNLOAD_URL = CALCULATE_DOWNLOAD_URL
   /**
-   * URL de la nomenclature
-   */
-  NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
-  /**
    * Menu de gauche
    */
   menu: { label: string; path: string }[] = []
@@ -194,13 +209,15 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param userService
    * @param humanResourceService
    * @param appService
+   * @param activitiesService
    */
   constructor(
     private router: Router,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
     private appService: AppService,
-    private titlePlatform: Title
+    private titlePlatform: Title,
+    private activitiesService: ActivitiesService,
   ) {
     super()
 
@@ -465,9 +482,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Methode à disposition pour forcer l'ouverture du paneau, pratique pour un appel exterieur du composant
    * @param documentation
    */
-  onForcePanelHelperToShow(documentation: DocumentationInterface) {
-    this.documentationToShow = documentation
-    this.panelHelper = true
+  onForcePanelHelperToShow(documentation: DocumentationInterface | null, opened: boolean = true) {
+    if (documentation)
+      this.documentationToShow = documentation
+    this.panelHelper = opened
   }
 
   /**
@@ -485,7 +503,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   downloadAsset(type: string, download = false) {
     let url = null
-    if (type === 'nomenclature') url = this.NOMENCLATURE_DOWNLOAD_URL
+    if (type === 'nomenclature') url = NOMENCLATURE_DOWNLOAD_URL
     else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL
 
     if (url) {
@@ -496,4 +514,12 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       }
     }
   }
+
+    /**
+   * Changement de la date via le selecteur
+   * @param date
+   */
+    changeMonth(date: Date) {
+      this.activitiesService.activityMonth.next(date)
+    }
 }

@@ -12,7 +12,9 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
 import { MainClass } from 'src/app/libs/main-class'
+import { importedVentillation } from 'src/app/routes/human-resource/add-ventilation/add-ventilation.component'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { UserService } from 'src/app/services/user/user.service'
 import { copyArray } from 'src/app/utils/array'
 import { fixDecimal } from 'src/app/utils/numbers'
 //import { filterReferentiels } from 'src/app/utils/referentiel'
@@ -62,9 +64,17 @@ export class PanelActivitiesComponent
    */
   @Input() showPlaceHolder: boolean = false
   /**
+ * Show to place holder whihout information
+ */
+  @Input() indexSituation: number | null = null
+  /**
  * Categorie courante
  */
   @Input() category: HRCategoryInterface | null = null
+  /**
+ * Permet de savoir si le panel est en cours d'édition
+ */
+  @Input() isEdited: boolean = false
   /**
    * Informe le parent d'une modification
    */
@@ -103,14 +113,27 @@ export class PanelActivitiesComponent
    * Constructeur
    * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor(private humanResourceService: HumanResourceService,
+    public userService: UserService) {
     super()
+
+    this.watch(
+      this.humanResourceService.importedSituation.subscribe(
+        (referentiel) => {
+          this.activities = []
+          if (referentiel?.index === this.indexSituation && referentiel?.index !== null) {
+            referentiel?.ventillation.map((elem: importedVentillation) => {
+              this.onChangePercentWithoutTotalComputation(elem.referentiel, elem.percent || 0, elem.parentReferentiel)
+            })
+          }
+        })
+    )
   }
 
   /**
    * Détection d'un changement et génération des données du rendu
    */
-  ngOnChanges() {
+  ngOnChanges(change: any) {
     if (this.etp < 0) {
       this.etp = 0
     }
@@ -210,8 +233,7 @@ export class PanelActivitiesComponent
     percent: number,
     parentReferentiel: ContentieuReferentielInterface | null = null
   ) {
-    console.log('percent', percent)
-
+    console.log("REF", referentiel.id)
     // memorise list
     const activity = this.activities.find(
       (a) => a.contentieux.id === referentiel.id
@@ -270,6 +292,42 @@ export class PanelActivitiesComponent
     this.onTotalAffected()
   }
 
+
+  /**
+ * Changement du pourcentage d'une activitié sans recalcul du total
+ * @param referentiel
+ * @param percent
+ * @param parentReferentiel
+ */
+  onChangePercentWithoutTotalComputation(
+    referentiel: ContentieuReferentielInterface,
+    percent: number,
+    parentReferentiel: ContentieuReferentielInterface | null = null
+  ) {
+    // memorise list
+    const activity = this.activities.find(
+      (a) => a.contentieux.id === referentiel.id
+    )
+    if (activity) {
+      activity.percent = percent
+    } else {
+      this.activities.push({
+        id: -1,
+        contentieux: {
+          id: referentiel.id,
+          label: '',
+          averageProcessingTime: 0,
+          averageProcessingTimeFonc: 0,
+        },
+        referentielId: referentiel.id,
+        percent,
+      })
+    }
+
+    this.onLoadReferentiel()
+    this.referentielChange.emit(this.referentiel)
+    this.onTotalAffected()
+  }
   /**
    * Accélaration du rendu de la liste
    * @param index
@@ -288,7 +346,6 @@ export class PanelActivitiesComponent
   countNbSubItem(referentiel: ContentieuReferentielInterface) {
     return (referentiel.childrens || []).filter((r) => r.percent).length
   }
-
   /**
    * Change l'état de mouseHovering lorsque la souris hover un sous référentiel du contentieux 'Autres Activités'
    */
@@ -312,5 +369,22 @@ export class PanelActivitiesComponent
     if (this.category?.label === "Autour du magistrat")
       return DDG_REFERENTIELS_EAM.includes(label.toUpperCase())
     return false
+  }
+
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+  /**
+   * Check quel contentieux est survolé
+   * @param label 
+   * @returns 
+   */
+  checkHoveredRef(label: string) {
+    const labelMapping = this.getInterfaceType() === true ? this.referentielCAMappingName(label) : this.referentielMappingName(label)
+    return this.hoveredReferentielLabel === labelMapping
   }
 }

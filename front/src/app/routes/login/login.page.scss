@@ -14,7 +14,7 @@
   }
 
   .logo {
-    height: 178px;
+    height: 7em;
 
     >img {
       height: 90px;
@@ -23,7 +23,7 @@
   }
 
   form {
-    padding: 16px 26px 30px 26px;
+    padding: 1.5em;
     border: solid 1px #ddd;
   }
 
@@ -48,7 +48,6 @@
   }
 
   a {
-    font-size: 14px;
     color: fColor(primary);
   }
 
@@ -74,7 +73,7 @@
 
 .signup {
   margin-bottom: 24px;
-  padding: 16px 24px;
+  padding: 1.5em;
   background-color: fColor(bgProgressBar);
 
   p:last-child {
@@ -93,7 +92,8 @@
 
   button {
     width: 100%;
-    font-weight: bold;
+    font-size: 1.125em;
+    font-weight: 500;
     height: 48px;
     line-height: 42px;
 
@@ -102,5 +102,59 @@
       position: relative;
       top: 0px;
     }
+  }
+}
+
+.sso-bt {
+  display: flex;
+  width: 100%;
+  margin-top: 1em;
+  font-size: 1.125em;
+
+  &.disabled {
+    opacity: 0.75;
+    border-color: fColor(cblack);
+    color: fColor(cblack);
+  }
+  
+  img {
+    align-self: stretch;
+    margin-right: 16px;
+  }
+}
+
+.or {
+  margin: 1em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &::before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: fColor(lightBorder);
+  }
+
+  p {
+    display: inline-block;
+    margin: 0;
+    padding: 8px;
+    background-color: white;
+    z-index: 1;
+  }
+}
+
+.popin-code {
+  p {
+    margin-bottom: 16px;
+  }
+
+  input {
+    margin-bottom: 0;
   }
 }

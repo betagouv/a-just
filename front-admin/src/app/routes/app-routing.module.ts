@@ -26,6 +26,12 @@ const routes: Routes = [
     canActivate: [AdminAuthGuard],
   },
   {
+    path: 'referentiel',
+    loadChildren: () =>
+      import('./referentiel/referentiel.module').then((mod) => mod.ReferentielModule),
+    canActivate: [AdminAuthGuard],
+  },
+  {
     path: 'imports',
     loadChildren: () =>
       import('./imports/imports.module').then((mod) => mod.ImportsModule),

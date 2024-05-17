@@ -1,43 +1,27 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { Subscription, from } from 'rxjs'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { DATA_GITBOOK } from 'src/app/constants/documentation'
+import { ActivityInterface } from 'src/app/interfaces/activity'
 import {
-  ActivityInterface,
-  NodeActivityUpdatedInterface,
-} from 'src/app/interfaces/activity'
-import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
+  ContentieuReferentielActivitiesInterface,
+  ContentieuReferentielInterface,
+} from 'src/app/interfaces/contentieu-referentiel'
+import { DateSelectorinterface } from 'src/app/interfaces/date'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
-import { UserService } from 'src/app/services/user/user.service'
 import { autoFocus } from 'src/app/utils/dom-js'
-//import { filterReferentiels } from 'src/app/utils/referentiel'
-
-/**
- * Interface d'un référentiel spécifique à la page
- */
-interface ContentieuReferentielActivitiesInterface
-  extends ContentieuReferentielInterface {
-  /**
-   * Contentieux niveau 4
-   */
-  childrens?:
-    | ContentieuReferentielActivitiesInterface[]
-    | ContentieuReferentielInterface[]
-  /**
-   * Log de mise à jour de donnée d'activité
-   */
-  activityUpdated: NodeActivityUpdatedInterface | null
-  /**
-   * Auto focus value
-   */
-  autoFocusInput?: string
-}
+import { downloadFile } from 'src/app/utils/system'
+import { activityPercentColor } from 'src/app/utils/activity'
+import { referentielMappingName } from 'src/app/utils/referentiel'
+import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
+import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { sleep } from 'src/app/utils'
+import { UserService } from 'src/app/services/user/user.service'
 
 /**
  * Composant page activité
@@ -88,11 +72,28 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   documentation: DocumentationInterface = {
     title: "Données d'activité A-JUST :",
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+    printSubTitle: true,
+  }
+  /**
+   * Selection d'un mois de donnée à afficher
+   */
+  dateSelector: DateSelectorinterface = {
+    title: 'Voir les données de',
+    dateType: 'month',
+    value: null,
   }
   /**
    * Lien du guide de la donnée
    */
   gitBook = DATA_GITBOOK
+  /**
+   * Lien vers la nomenclature a-just
+   */
+  nomenclature = '/assets/nomenclature-A-Just.html'
+  /**
+   * Lien vers le data book
+   */
+  dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/'
   /**
    * Support GitBook
    */
@@ -109,6 +110,102 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * timeoutOnFocus
    */
   timeoutOnFocus: any = {}
+  /**
+   * Contentieux to update
+   */
+  contentieuxToUpdate: ContentieuReferentielActivitiesInterface | null = null
+  /**
+   * Taux de completion total des données
+   */
+  totalCompletion: number = 0
+  /**
+   * Id du sous-contentieux selectionné
+   */
+  selectedReferentielId: number = 0
+
+  /**
+   * Intro JS Steps
+   */
+  introSteps: IntroJSStep[] = [
+    {
+      target: '#wrapper-contener',
+      title: "Qu'est-ce que c'est ?",
+      intro:
+        "Sur cet écran, retrouvez vos <b>données d'activité</b> : <b>entrées, sorties et stock</b> par contentieux et sous-contentieux. Ces données sont importées depuis vos logiciels métier chaque mois, et réactualisées automatiquement pour les mois précédents de l’année en cours et de l’année précédente.",
+    },
+    {
+      target: '.date-selector',
+      title: 'Le calendrier',
+      intro:
+        "Vous permet de visualiser les <b>données d'activité par mois</b> depuis 2021.<br/><b>Le taux de complétude global</b> vous indique <b>le pourcentage de données d'activité disponibles</b> sur l'ensemble des contentieux du mois sélectionné.",
+    },
+    {
+      target: '.content-list .item-grouped:first-child .column-item:nth-child(3n)',
+      title: 'Les entrées',
+      intro:
+        'Désignent l’ensemble des nouveaux dossiers enregistrés dans le mois.',
+    },
+    {
+      target: '.content-list .item-grouped:first-child .column-item:nth-child(4n)',
+      title: 'Les sorties',
+      intro:
+        'Comptabilisent les dossiers qui ont été <b>enregistrés comme clôturés</b> dans les outils métiers durant le mois (ceux pour lesquels une <b>décision dessaisissante</b> a été rendue).',
+    },
+    {
+      target: '.content-list .item-grouped:first-child .column-item:nth-child(5n)',
+      title: 'Les stocks',
+      intro:
+        'Constituent <b>l’ensemble des dossiers en cours</b> (enregistrés comme des entrées mais pas encore enregistrés comme des sorties) à la fin du mois considéré.',
+    },
+    {
+      target: '.content-list .item-grouped:first-child .completion',
+      title: 'Le taux de complétude par contentieux',
+      intro:
+        'Vous indique le <b>pourcentage de données renseignées et/ou complétées</b> par contentieux.',
+    },
+    {
+      target: '.content-list .item-grouped:first-child',
+      title: 'Vérifier, compléter ou A-JUSTer : que faire ?',
+      intro:
+        'Pour chaque sous-contentieux, vous pouvez :<ul><li><b>Vérifier</b> les données d\'activité « logiciel », extraites à la fin de chaque mois par A-JUST des logiciels métiers utilisés par la juridiction. Cette mention apparaît pour tous les sous-contentieux dont nous savons que nos remontées peuvent varier en comparaison avec vos données locales.</li><li><b>Compléter</b> manuellement si nécessaire les entrées, sorties et/ou stocks qui ne sont pas pré-alimentés pour disposer de donner exhaustives.</li><li><b>A-JUSTer</b> la donnée logiciel si elle ne vous semble pas correcte. Une fois sur la page de complétion, vous pourrez saisir une nouvelle donnée, choisir de "confirmer" la donnée existante si elle vous parait correcte ou la laisser comme telle par défaut.</li>',
+      beforeLoad: async (intro: any) => {
+        const subTools = document.querySelector('.item-grouped .group')
+        if (subTools && subTools.getBoundingClientRect().height === 0) {
+          const itemToClick = document.querySelector('.item.selectable')
+          if (itemToClick) {
+            // @ts-ignore
+            itemToClick.click()
+            await sleep(200)
+          }
+        }
+      }
+    },
+    {
+      target: '.actions .right-panel',
+      title: 'Les ressources (outils)',
+      intro:
+        "Pour vous aider, retrouver :<ul><li>le <b>data-book</b> regroupe toutes les réponses aux questions que vous vous posez sur les <b>données d'activité</b> ;</li><li>la <b>nomenclature</b> permet par les <b>codes NAC</b> de connaître la nature des affaires prises en compte dans un sous-contentieux civil : c'est la <b>colonne vertébrale d'A-JUST</b> !",
+    },
+    {
+      target: '.menu-item.tools',
+      //target: '.menu .sub-tools > p:nth-child(4n)',
+      title: "L'extracteur de données d'activité",
+      intro: "Afin de conserver et réutiliser en dehors de l'outil vos données d'activité, vous pouvez les télécharger dans un fichier Excel."
+      /*intro:
+        "Choisissez la <b>période</b> et obtenez toutes les données d'activité dans un <b>fichier Excel</b>.",
+        beforeLoad: async (intro: any) => {
+          const subTools = document.querySelector('.menu .sub-tools')
+          if(!subTools) {
+            const itemToClick = document.querySelector('.menu-item.tools')
+            if(itemToClick) {
+              // @ts-ignore
+              itemToClick.click()
+              await sleep(200)
+            }
+          }
+        }*/
+    },
+  ]
 
   /**
    * Constructeur
@@ -121,7 +218,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private activitiesService: ActivitiesService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public userService: UserService,
   ) {
     super()
 
@@ -129,13 +227,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       this.humanResourceService.backupId.subscribe((backupId) => {
         if (backupId) {
           this.activitiesService.getLastMonthActivities().then((lastMonth) => {
+
             lastMonth = new Date(lastMonth)
+            this.dateSelector.value = lastMonth
 
             const { month } = this.route.snapshot.queryParams
             if (
               month &&
               this.getMonth(month).getTime() <
-                this.getMonth(lastMonth).getTime()
+              this.getMonth(lastMonth).getTime()
             ) {
               lastMonth = this.getMonth(month)
             }
@@ -210,17 +310,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     ])
     referentiel.in =
       inValue === referentiel.originalIn &&
-      referentiel.childrens.every((c) => c.in === null)
+        referentiel.childrens.every((c) => c.in === null)
         ? null
         : inValue
     referentiel.out =
       outValue === referentiel.originalOut &&
-      referentiel.childrens.every((c) => c.out === null)
+        referentiel.childrens.every((c) => c.out === null)
         ? null
         : outValue
     referentiel.stock =
       outValue === referentiel.originalStock &&
-      referentiel.childrens.every((c) => c.stock === null)
+        referentiel.childrens.every((c) => c.stock === null)
         ? null
         : stockValue
 
@@ -263,18 +363,29 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     }
   }
 
-  /**
-   * Changement de la date via le selecteur
-   * @param date
-   */
-  changeMonth(date: Date) {
-    this.activitiesService.activityMonth.next(date)
+  compareDateActivityUpdated({ firstAct, secondAct }: { firstAct: { user: UserInterface | null; date: Date }, secondAct: { user: UserInterface | null; date: Date } }) {
+    const firstDate = new Date(firstAct.date);
+    const secondDate = new Date(secondAct.date);
+
+    if (secondDate.getTime() > firstDate.getTime())
+      return secondAct;
+    return firstAct
   }
 
   /**
    * Chargement de la liste des activités d'un mois sélectionné
    */
   onLoadMonthActivities() {
+    if (
+      this.humanResourceService.contentieuxReferentiel.getValue().length === 0
+    ) {
+      // wait datas
+      setTimeout(() => {
+        this.onLoadMonthActivities()
+      }, 300)
+      return
+    }
+
     this.activitiesService
       .loadMonthActivities(this.activityMonth)
       .then((monthValues) => {
@@ -288,19 +399,16 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         } else {
           this.canEditActivities = true
         }
-        console.log(monthValues.list)
 
         const referentiels = [
           ...this.humanResourceService.contentieuxReferentiel.getValue(),
         ]
-
         const oldReferentielSetted = [...this.referentiel]
         let autoFocusId = null
         // todo set in, out, stock for each
-      
+
         /*const backupLabel = localStorage.getItem('backupLabel')
         backupLabel && filterReferentiels(referentiels, backupLabel)*/
-        
 
         this.referentiel = referentiels
           .filter(
@@ -313,6 +421,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               ...ref,
               activityUpdated: null,
             }
+
+            newRef.label = referentielMappingName(ref.label)
 
             const getActivity = activities.find(
               (a) => a.contentieux.id === newRef.id
@@ -329,27 +439,72 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
               : null
 
             newRef.childrens = (newRef.childrens || []).map((c) => {
+              if (!c.activityUpdated) {
+                c.activityUpdated = {
+                  entrees: null,
+                  sorties: null,
+                  stock: null,
+                };
+              }
+
+
               const getChildrenActivity = activities.find(
                 (a) => a.contentieux.id === c.id
               )
+
               c.in = getChildrenActivity ? getChildrenActivity.entrees : null
               c.originalIn = getChildrenActivity
                 ? getChildrenActivity.originalEntrees
                 : null
+              //c.activityUpdated.entrees = (c.in !== null && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.entrees : null
+
               c.out = getChildrenActivity ? getChildrenActivity.sorties : null
               c.originalOut = getChildrenActivity
                 ? getChildrenActivity.originalSorties
                 : null
+              //c.activityUpdated.sorties = (c.out !== null && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.sorties : null
+
               c.stock = getChildrenActivity ? getChildrenActivity.stock : null
               c.originalStock = getChildrenActivity
                 ? getChildrenActivity.originalStock
                 : null
+              //c.activityUpdated.stock = (c.stock != null && getChildrenActivity && getChildrenActivity.updatedBy) ? getChildrenActivity.updatedBy.stock : null
 
               return {
                 ...c,
                 activityUpdated:
                   (getChildrenActivity && getChildrenActivity.updatedBy) ||
                   null,
+              }
+            })
+            if (!newRef.activityUpdated) {
+              newRef.activityUpdated = {
+                entrees: null,
+                sorties: null,
+                stock: null,
+              };
+            }
+
+            newRef.childrens.map(child => {
+              if (child.activityUpdated && newRef.activityUpdated) {
+                if (child.activityUpdated.entrees) {
+                  if (newRef.activityUpdated.entrees)
+                    newRef.activityUpdated.entrees = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.entrees, secondAct: child.activityUpdated.entrees })
+                  else
+                    newRef.activityUpdated.entrees = child.activityUpdated.entrees
+                }
+                if (child.activityUpdated.sorties) {
+                  if (newRef.activityUpdated.sorties)
+                    newRef.activityUpdated.sorties = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.sorties, secondAct: child.activityUpdated.sorties })
+                  else
+                    newRef.activityUpdated.sorties = child.activityUpdated.sorties
+                }
+                if (child.activityUpdated.stock) {
+                  if (newRef.activityUpdated.stock)
+                    newRef.activityUpdated.stock = this.compareDateActivityUpdated({ firstAct: newRef.activityUpdated.stock, secondAct: child.activityUpdated.stock })
+                  else
+                    newRef.activityUpdated.stock = child.activityUpdated.stock
+                }
               }
             })
 
@@ -402,14 +557,53 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
                 }
               }
             }
-
             return {
               ...newRef,
-              activityUpdated: (getActivity && getActivity.updatedBy) || null,
+              //activityUpdated: (getActivity && getActivity.updatedBy) || null,
               showActivityGroup,
             }
           })
 
+        // Calcul du taux de completion
+        let totalNotEmpty = 0;
+        let totalContentieuxLevelFour = 0;
+        for (const elem of this.referentiel) {
+          let childNotEmpty = 0;
+          let childToCount = 0;
+
+          if (elem.childrens) {
+            for (const child of elem.childrens) {
+              if (child.compter) {
+                totalContentieuxLevelFour += 3
+                childToCount += 3;
+                if (child.in !== null || child.originalIn !== null) {
+                  totalNotEmpty += 1
+                  childNotEmpty += 1
+                }
+                if (child.out !== null || child.originalOut !== null) {
+                  totalNotEmpty += 1
+                  childNotEmpty += 1
+                }
+                if (child.stock !== null || child.originalStock !== null) {
+                  totalNotEmpty += 1
+                  childNotEmpty += 1
+                }
+              }
+            }
+            elem.completion = Math.round((childNotEmpty * 100) / childToCount) || 0;
+            for (const child of elem.childrens) {
+              let nbToComplete = 0
+              if (child.valueQualityIn === "to_complete" && child.originalIn === null && child.in === null)
+                nbToComplete += 1
+              if (child.valueQualityOut === "to_complete" && child.originalOut === null && child.out === null)
+                nbToComplete += 1
+              if (child.valueQualityStock === "to_complete" && child.originalStock === null && child.stock === null)
+                nbToComplete += 1
+              child.possibleGainCompletion = (Math.round(((childNotEmpty + nbToComplete) * 100) / childToCount) - elem.completion) || 0;
+            }
+          }
+        }
+        this.totalCompletion = Math.round(parseFloat(((totalNotEmpty * 100) / totalContentieuxLevelFour).toFixed(2))) || 0;
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`)
         }
@@ -418,168 +612,35 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Retour des titres des infos bulles
-   * @param type
    * @param contentieux
-   * @param value
    * @returns
    */
   getTooltipTitle(
-    type: 'entrees' | 'sorties' | 'stock',
-    contentieux: ContentieuReferentielActivitiesInterface,
-    value: number | null
+    { user, date }: { user?: UserInterface, date?: Date } = {}
   ) {
-    const activityUpdated = contentieux.activityUpdated
-    const modifyBy =
-      activityUpdated && activityUpdated[type] ? activityUpdated[type] : null
-    let string = `<div class="flex-center"><i class="margin-right-8 color-white ${
-      value !== null
-        ? modifyBy
-          ? 'ri-lightbulb-flash-fill'
-          : 'ri-lightbulb-flash-line'
-        : ''
-    }"></i><p class="color-white">`
-
-    switch (type) {
-      case 'entrees':
-        string += 'Entrées A-JUSTées'
-        break
-      case 'sorties':
-        string += 'Sorties A-JUSTées'
-        break
-      case 'stock':
-        string += 'Stock A-JUSTé'
-
-        if (value !== null) {
-          const isMainActivity =
-            this.referentielService.mainActivitiesId.indexOf(contentieux.id) !==
-            -1
-          const activityUpdated = contentieux.activityUpdated
-          const modifyBy =
-            activityUpdated && activityUpdated[type]
-              ? activityUpdated[type]
-              : null
-          if (isMainActivity || !modifyBy) {
-            string += ' - Calculé'
-          }
-        }
-        break
-    }
-    string += '</p></div>'
-
-    if (value !== null && modifyBy) {
-      const date = new Date(modifyBy.date)
-      string += `<p class="color-white font-size-12">Modifié par <b>${
-        modifyBy.user?.firstName
-      } ${
-        modifyBy.user?.lastName
-      }</b> le ${date.getDate()} ${this.getShortMonthString(
-        date
-      )} ${date.getFullYear()}</p>`
-    }
-
-    return string
+    if (user && date)
+      return `<i class="ri-lightbulb-flash-line"></i> A-JUSTé <br/> par ${user.firstName} ${user.lastName} le ${this.getDate(date) || 'dd'} ${this.getMonthString(date)} ${this.getFullYear(date) || 'YYYY'}`
+    else
+      return `<i class="ri-lightbulb-flash-line"></i> Stock calculé `
   }
 
   /**
    * Retour du contenu des tooltips
-   * @param type
    * @param contentieux
-   * @param value
-   * @param level
    * @returns
    */
-  getTooltipBody(
-    type: 'entrees' | 'sorties' | 'stock',
-    contentieux: ContentieuReferentielActivitiesInterface,
-    value: number | null,
-    level: number
-  ) {
-    const activityUpdated = contentieux.activityUpdated
-    const modifyBy =
-      value !== null && activityUpdated && activityUpdated[type]
-        ? activityUpdated[type]
-        : null
-
-    switch (type) {
-      case 'entrees':
-      case 'sorties':
-        if (level === 3) {
-          if (value !== null) {
-            return `Dès lors que des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } sont saisies dans l'un des sous-contentieux de cette colonne, le total des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } de ce contentieux s'A-JUSTe automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
-          } else {
-            return `Dès lors que des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } seront saisies dans l'un des sous-contentieux de cette colonne, le total des ${
-              type === 'entrees' ? 'entrées' : 'sorties'
-            } de ce contentieux s'A-JUSTera automatiquement en additionnant les données A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres.`
-          }
-        } else {
-          if (modifyBy) {
-            return `Dès lors que cette donnée ${
-              type === 'entrees' ? "d'entrées" : 'de sorties'
-            } mensuelles est modifié manuellement, votre stock est recalculé en prenant en compte cette valeur dans "Stock A-JUSTé".`
-          } else {
-            return `Dès lors que cette donnée ${
-              type === 'entrees' ? "d'entrées" : 'de sorties'
-            } mensuelles sera modifiée manuellement, votre stock sera recalculé en prenant en compte cette valeur dans "Stock A-JUSTé"`
-          }
-        }
-      case 'stock': {
-        if (level === 3) {
-          if (value !== null) {
-            return "Dès lors que des données de stock ont été saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTe automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
-          } else {
-            return "Dès lors que des données de stock seront saisies manuellement ou calculées dans l'un des sous-contentieux de cette colonne, le total du stock de ce contentieux s'A-JUSTera automatiquement en additionnant les données de stock A-JUSTées pour les sous-contentieux où il y en a, et les données logiciel pour les autres."
-          }
-        } else {
-          if (modifyBy) {
-            return `Cette donnée a été saisie manuellement et sera prise en compte pour le calcul du stock des mois prochains.<br/>Si vous modifiez les entrées et/ou les sorties ou données de stock des mois antérieurs, cette valeur ne sera pas modifiée.`
-          } else if (value !== null) {
-            return `Cette valeur de stock a été recalculée automatiquement, car vous avez saisi des données d'entrées, sorties ou stock pour l'un des mois précédents, ou parce que vous avez A-JUSTé les entrées ou sorties du mois en cours. <br/>Les stocks des prochains mois seront également recalculés à partir de cette valeur.<br/>Vous pouvez modifier manuellement cette donnée. Le cas échéant, les stocks des prochains mois seront recalculés à partir de la valeur que vous aurez saisie.<br/>Dès lors que vous A-JUSTez manuellement un stock, il ne sera plus recalculé, même si vous modifiez les entrées ou sorties du mois en cours ou des mois antérieurs.`
-          } else {
-            return `Cette valeur de stock sera recalculée automatiquement, dès lors que vous aurez saisi des données d'entrées, sorties ou stock pour l'un des mois précédents, ou si vous avez A-JUSTé les entrées ou sorties du mois en cours. Si vous modifiez manuellement cette donnée, les stocks des prochains mois seront recalculés à partir de la valeur que vous aurez saisie.<br/>Dès lors que vous A-JUSTez manuellement un stock, il ne sera plus recalculé, même si vous modifiez les entrées ou sorties des mois antérieurs.`
-          }
-        }
-      }
-    }
+  getTooltipBody() {
+    return "Cette valeur de stock a été recalculée automatiquement, car vous avez saisi des données d'entrées, sorties ou stock pour l'un des mois précédents, ou parce que vous avez A-JUSTé les entrées ou sorties du mois en cours."
   }
 
   /**
    * Retourne le pied des tooltips
-   * @param type
    * @param contentieux
-   * @param value
-   * @param level
    * @returns
    */
   getTooltipFooter(
-    type: string,
     contentieux: ContentieuReferentielActivitiesInterface,
-    value: number | null,
-    level: number
   ) {
-    if (type === 'stock' && level === 4) {
-      if (value !== null) {
-        const activityUpdated = contentieux.activityUpdated
-        const modifyBy =
-          activityUpdated && activityUpdated[type]
-            ? activityUpdated[type]
-            : null
-
-        if (modifyBy) {
-          return ''
-        }
-
-        return `Calcul :<br/>Stock A-JUSTé M = stock* mois M-1 + entrées* mois M - sorties* mois M<br/>* le stock A-JUSTé se recalcule dès lors qu'au moins l'une de ces 3 valeurs a été A-JUSTée`
-      }
-
-      return 'Calcul :<br/>Stock mois M = Stock mois M-1 + Entrées mois M - Sorties mois M'
-    }
-
     return ''
   }
 
@@ -587,20 +648,165 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Force l'ouverture du paneau d'aide
    * @param type
    */
-  onShowPanel(type: string) {
-    switch (type) {
-      case 'logiciel':
-        this.wrapper?.onForcePanelHelperToShow({
-          title: "Données d'activité logiciel",
-          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/donnees-dactivite-logiciel',
-        })
-        break
-      case 'saisie':
-        this.wrapper?.onForcePanelHelperToShow({
-          title: "Données d'activité A-JUSTées",
-          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/donnees-dactivite-a-justees',
-        })
-        break
+  onShowPanel({ label, url }: { label: string, url: string }) {
+    this.wrapper?.onForcePanelHelperToShow({
+      title: '',
+      path: url,
+      subTitle: '',
+      printSubTitle: false,
+      bgColor: this.userService.referentielMappingColorActivityByInterface(label),
+      closeColor: 'black',
+    })
+  }
+
+  /**
+   * On close contentieux updated
+   */
+  onCloseEditedPopin({ reload = false, month = null }: { reload: boolean, month?: Date | null }) {
+    this.contentieuxToUpdate = null
+    if (month) {
+      this.activityMonth = new Date(month)
+      this.dateSelector.value = new Date(month)
     }
+    if (reload) {
+      this.onLoadMonthActivities()
+    }
+  }
+
+
+  downloadAsset(type: string, download = false) {
+    let url = null
+
+    if (type === 'nomenclature')
+      url = this.nomenclature
+    else if (type === 'dataBook')
+      url = this.dataBook
+
+    if (url) {
+      if (download) {
+        downloadFile(url)
+      } else {
+        window.open(url)
+      }
+    }
+  }
+
+  getAcivityPercentColor(value: number) {
+    return activityPercentColor(value)
+  }
+
+  getCompletionStatus(item: ContentieuReferentielInterface) {
+    const quality = { in: { quality: item.valueQualityIn, value: item.in, original: item.originalIn }, out: { quality: item.valueQualityOut, value: item.out, original: item.originalOut }, stock: { quality: item.valueQualityStock, value: item.stock, original: item.originalStock } }
+
+    if (item) {
+      if (Object.values(quality).some(value => value.quality === 'facultatif'))
+        return 'Compléter'
+      else if (Object.values(quality).some(value => value.quality === 'to_complete')) {
+        const obj: any = Object.values(quality).filter(value => value.quality === 'to_complete')
+        for (let elem of obj) {
+          if (elem.value === null && elem.original === null)
+            return 'A compléter'
+        }
+      }
+      else if (Object.values(quality).some(value => value.quality === 'to_verify')) {
+        const obj: any = Object.values(quality).filter(value => value.quality === 'to_verify')
+        for (let elem of obj) {
+          if (elem.value === null)
+            return 'A vérifier'
+        }
+      }
+    }
+    return 'A-JUSTer'
+  }
+
+  setItemBgColor(label: string, elementId: number, remove: boolean = false) {
+    const element = document.querySelector(`#item-${elementId}`) as HTMLElement
+    const tmpColor = this.userService.referentielMappingColorActivityByInterface(label).replace(/[^\d,]/g, '').split(',')
+    tmpColor.pop()
+    tmpColor.push('0.4')
+    const bgColor = `rgba(${tmpColor.join(',')})`
+
+    if (element) {
+      if (remove)
+        element.style.backgroundColor = 'transparent';
+      else
+        element.style.backgroundColor = bgColor;
+    }
+  }
+
+  checkIfBlue({ cont, node, isForBulbOrBottom }: { cont: ContentieuReferentielInterface, node: string, isForBulbOrBottom: boolean }) {
+    switch (node) {
+      case 'entrees':
+        if (this.isValueUpdated({ cont, node }))
+          return true
+        break;
+      case 'sorties':
+        if (this.isValueUpdated({ cont, node }))
+          return true
+        break;
+      case 'stock':
+        if (this.isValueUpdated({ cont, node })) {
+          if (isForBulbOrBottom && (this.isStockCalculated(cont)))
+            return false
+          else if (cont.stock !== cont.originalStock)
+            return true
+          return true
+        }
+        break;
+    }
+    return false
+  }
+
+  isValueUpdated({ cont, node }: { cont: ContentieuReferentielInterface, node: string }) {
+    switch (node) {
+      case 'entrees':
+        /*if (this.isValueToVerifySetted({ value: cont.in ?? cont.in ?? null, contentieux: cont, node: node }))
+          return false
+        else */if (cont.in !== null)
+          return true
+        break;
+      case 'sorties':
+        /*if (this.isValueToVerifySetted({ value: cont.out ?? cont.out ?? null, contentieux: cont, node: node }))
+          return false
+        else */if (cont.out !== null)
+          return true
+        break;
+      case 'stock':
+        /*if (this.isValueToVerifySetted({ value: cont.stock ?? cont.stock ?? null, contentieux: cont, node: node }))
+          return false
+        else */if (cont.stock !== null)
+          return true
+        break;
+    }
+    return false
+  }
+
+  isValueToVerifySetted({ value, contentieux, node }: { value: number | null, contentieux: ContentieuReferentielInterface, node: string }) {
+    if (value !== null) {
+      switch (node) {
+        case 'entrees':
+          if (value === contentieux.originalIn && contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        case 'sorties':
+          if (value === contentieux.originalOut && contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        case "stock":
+          if (value === contentieux.originalStock && contentieux.valueQualityStock === VALUE_QUALITY_TO_VERIFY)
+            return true
+          break;
+        default:
+          return false
+      }
+    }
+    return false
+  }
+
+  isStockCalculated(cont: ContentieuReferentielInterface) {
+    if ((cont.stock !== null && (!cont.activityUpdated || cont.activityUpdated && !cont.activityUpdated.stock || cont.activityUpdated && cont.activityUpdated.stock && cont.activityUpdated.stock.value === null)) || cont.stock === null) {
+      return true
+    }
+    return false
   }
 }

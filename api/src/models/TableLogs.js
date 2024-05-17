@@ -11,12 +11,12 @@ export default (sequelizeInstance, Model) => {
    * @param {*} userId
    * @param {*} datas
    */
-  Model.addLog = async (codeId, userId, datas = {}) => {
+  Model.addLog = async (codeId, userId, datas = {}, options = { formatValue: true }) => {
     console.log(codeId, userId, datas)
     await Model.create({
       code_id: codeId,
       user_id: userId,
-      datas: JSON.stringify(datas),
+      datas: options.formatValue ? JSON.stringify(datas) : datas,
     })
   }
 
@@ -24,10 +24,11 @@ export default (sequelizeInstance, Model) => {
    * Liste des tous les events et qui l'a fait
    * @returns
    */
-  Model.getLogs = async () => {
+  Model.getLogs = async (where = {}) => {
     const list = await Model.findAll({
       order: [['created_at', 'DESC']],
       raw: true,
+      where,
       include: [
         {
           model: Model.models.Users,

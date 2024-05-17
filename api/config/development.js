@@ -4,6 +4,10 @@ module.exports = {
   logsPassword: 'FXM',
   nbMaxDayCanBeInactive: null,
   sentEmail: false,
-  corsUrl: '*',
   maxQueryLimit: 10000000,
+  login: {
+    shareAuthCode: true,
+    enable2Auth: true,
+    max2AuthByMonth: 1,
+  },
 }

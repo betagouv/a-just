@@ -483,7 +483,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
               }))
               this.formReferentiel = i.referentiel.map((r) => ({
                 id: r.id,
-                value: this.referentielMappingName(r.label),
+                value: this.referentielMappingNameByInterface(r.label),
               }))
               if (this.firstETPTargetValue.length === 0) {
                 this.firstETPTargetValue = i.referentiel.map(() => null)
@@ -970,5 +970,23 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     itemObject: listFormatedInterface
   ) {
     return itemObject.allHr.find((h) => h.id === hr.id)
+  }
+
+  /**
+  * Récuperer le type de l'app
+  */
+  getInterfaceType() {
+    return this.userService.interfaceType === 1
+  }
+
+  /**
+* Mapping des noms de contentieux selon l'interface
+* @param label 
+* @returns 
+*/
+  referentielMappingNameByInterface(label: string) {
+    if (this.getInterfaceType() === true)
+      return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
   }
 }

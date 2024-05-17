@@ -6,6 +6,7 @@ import { UserInterface } from 'src/app/interfaces/user-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { UserService } from 'src/app/services/user/user.service'
 
 interface ActivityByHuman {
   contentieux: ContentieuReferentielInterface;
@@ -13,7 +14,7 @@ interface ActivityByHuman {
   user: UserInterface;
   history: {
     id: number;
-    updatedAt: Date;  
+    updatedAt: Date;
   }
 }
 
@@ -32,19 +33,20 @@ export class ActivitiesLastModificationsComponent extends MainClass implements O
    * Constructor
    */
   constructor(private humanResourceService: HumanResourceService,
-    private activitiesService: ActivitiesService) {
+    private activitiesService: ActivitiesService,
+    public userService: UserService) {
     super()
   }
 
-   /**
-   * Initialisation des datas au chargement de la page
-   */
-   ngOnInit() {
+  /**
+  * Initialisation des datas au chargement de la page
+  */
+  ngOnInit() {
     this.watch(
       this.humanResourceService.hrBackup.subscribe(
         (hrBackup: BackupInterface | null) => {
           if (hrBackup) {
-              this.activitiesService.getLastUpdatedActivities().then((l) => {
+            this.activitiesService.getLastUpdatedActivities().then((l) => {
               this.list = l
             })
           } else {

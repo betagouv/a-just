@@ -1,9 +1,10 @@
-<div *ngIf="header" class="header-panel">
+<div *ngIf="header" class="header-panel" [ngClass]="{ 'ca': getInterfaceType() }">
   <div class="sub-item" *ngFor="let ref of referentiel">
     <div class="text">
       <div class="label">
         <p>
-          <b>{{ referentielMappingName(ref.label) }}</b>
+          <b>{{ userService.referentielMappingNameByInterface(ref.label)
+            }}</b>
         </p>
       </div>
       <div class="etp">
@@ -11,16 +12,16 @@
       </div>
       <div class="flex-1"></div>
     </div>
-    <div class="color" [ngStyle]="{ 'background-color': referentielMappingColor(ref.label) }"></div>
+    <div class="color" [ngStyle]="{ 'background-color': userService.referentielMappingColorByInterface(ref.label) }">
+    </div>
   </div>
 </div>
-
-<div class="activities-panel">
+<div class="activities-panel" [ngClass]="{ 'ca': getInterfaceType() }">
   <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index">
     <progression-bar *ngIf="showPlaceHolder" [color]="PLACEHOLDER_COLOR" class="no-opacity-to-background">
     </progression-bar>
     <progression-bar *ngIf="!showPlaceHolder" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percent"
-      [selected]="canSelectedTopReferentiel" [color]="referentielMappingColor(ref.label)"
+      [selected]="canSelectedTopReferentiel" [color]="userService.referentielMappingColorByInterface(ref.label)"
       (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
       (percentChange)="onChangePercent(referentiel[index], $event)" class="dark-mode">
     </progression-bar>
@@ -28,17 +29,17 @@
 </div>
 
 <div *ngIf="!forceToShowContentieuxDetail && refIndexSelected !== -1" class="sub-panel-activites" [ngStyle]="{
-    'border-top-color': referentielMappingColor(
+    'border-top-color': userService.referentielMappingColorByInterface(
       referentiel[refIndexSelected].label
     )
   }">
   <div class="sub-item">
     <progression-bar [percent]="referentiel[refIndexSelected].percent"
       [lockedMessage]="selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1 ? 'Pour les “'+referentiel[refIndexSelected].label+'”, il est impératif de renseigner la ou les sous-rubriques . Le total se calcule automatiquement.' : null"
-      [color]=" referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected"
-      (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)" class="dark-mode">
+      [color]=" userService.referentielMappingColorByInterface(referentiel[refIndexSelected].label)"
+      [selected]="selected" (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)" class="dark-mode">
     </progression-bar>
-    <p>{{ referentielMappingName(referentiel[refIndexSelected].label) }}</p>
+    <p>{{ userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label) }}</p>
   </div>
   <div class="sub-item sub-item-or" *ngIf="(referentiel[refIndexSelected].childrens || []).length">
     <p>Dont</p>
@@ -47,18 +48,18 @@
     <ng-template ngFor let-ref [ngForOf]="referentiel[refIndexSelected].childrens || []">
       <div *ngIf="ref.label === 'Fonctionnaires affectés au CPH'" class="sub-item"></div>
       <!-- Add element to put the next to an other line -->
-      <div class="sub-item" (mouseover)="setMouseHovering(referentielMappingName(ref.label))"
+      <div class="sub-item" (mouseover)="setMouseHovering(userService.referentielMappingNameByInterface(ref.label))"
         (mouseout)="setMouseHovering()">
         <progression-bar [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percent"
-          [color]="referentielMappingColor(referentiel[refIndexSelected].label)" [selected]="selected" (percentChange)="
+          [color]="userService.referentielMappingColorByInterface(referentiel[refIndexSelected].label)"
+          [selected]="selected" (percentChange)="
           onChangePercent(ref, $event, referentiel[refIndexSelected])
         " class="dark-mode">
         </progression-bar>
-        <p>{{ referentielMappingName(ref.label) }}</p>
-        <div class='tooltip'
-          *ngIf="this.mouseHovering === true && this.hoveredReferentielLabel === referentielMappingName(ref.label)">
+        <p>{{ userService.referentielMappingNameByInterface(ref.label) }}</p>
+        <div class='tooltip' *ngIf="this.mouseHovering === true && checkHoveredRef(ref.label) ">
           <span><i class="arrow-top"></i></span>
-          <div class="title">{{ referentielMappingName(ref.label) }}</div>
+          <div class="title">{{ userService.referentielMappingNameByInterface(ref.label) }}</div>
           <div class="texte">{{ this.hoveredReferentielDetail }}</div>
         </div>
       </div>
@@ -68,7 +69,7 @@
       left: (refIndexSelected * 100) / referentiel.length + '%',
       width: 100 / referentiel.length + '%'
     }">
-    <div class="arrow" [style.--border-color]="referentielMappingColor(
+    <div class="arrow" [style.--border-color]="userService.referentielMappingColorByInterface(
           referentiel[refIndexSelected].label
         )"></div>
   </div>
@@ -78,16 +79,17 @@
   <ng-template ngFor let-mainReferentiel [ngForOf]="referentiel">
     <ng-template [ngIf]="mainReferentiel.percent">
       <div class="sub-panel-activites" [ngStyle]="{
-  'border-top-color': referentielMappingColor(
+  'border-top-color': userService.referentielMappingColorByInterface(
     mainReferentiel.label
   )
 }">
         <div class="sub-item">
-          <progression-bar [ddg]="isDdgContentieux(referentielMappingName(mainReferentiel.label))"
-            [percent]="mainReferentiel.percent" [color]="referentielMappingColor(mainReferentiel.label)"
-            class="dark-mode">
+          <progression-bar
+            [ddg]="isDdgContentieux( userService.referentielMappingNameByInterface(mainReferentiel.label))"
+            [percent]="mainReferentiel.percent"
+            [color]="userService.referentielMappingColorByInterface(mainReferentiel.label)" class="dark-mode">
           </progression-bar>
-          <p>{{ referentielMappingName(mainReferentiel.label) }}</p>
+          <p>{{ userService.referentielMappingNameByInterface(mainReferentiel.label) }}</p>
         </div>
         <div class="sub-item sub-item-or" *ngIf="countNbSubItem(mainReferentiel)">
           <p>Dont</p>
@@ -98,9 +100,10 @@
             <!-- Add element to put the next to an other line -->
             <div class="sub-item" *ngIf="ref.percent">
               <progression-bar [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percent"
-                [color]="referentielMappingColor(mainReferentiel.label)" class="dark-mode">
+                [color]="userService.referentielMappingColorByInterface(mainReferentiel.label)" class="dark-mode">
               </progression-bar>
-              <p>{{ referentielMappingName(ref.label) }}</p>
+              <p>{{ userService.referentielMappingNameByInterface(ref.label) }}
+              </p>
             </div>
           </ng-template>
         </div>

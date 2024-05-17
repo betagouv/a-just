@@ -51,13 +51,13 @@ export interface NodeActivityUpdatedInterface {
   /**
    * Utilisateur plus sa date de mise à jour
    */
-  entrees: { user: UserInterface | null; date: Date }
+  entrees: { user: UserInterface | null; date: Date ; value?: number } | null
   /**
    * Utilisateur plus sa date de mise à jour
    */
-  sorties: { user: UserInterface | null; date: Date }
+  sorties: { user: UserInterface | null; date: Date ; value?: number } | null
   /**
    * Utilisateur plus sa date de mise à jour
    */
-  stock: { user: UserInterface | null; date: Date }
+  stock: { user: UserInterface | null; date: Date ; value?: number } | null
 }

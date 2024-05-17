@@ -7,6 +7,10 @@ export interface DocumentationInterface {
    */
   title: string;
   /**
+   * Affichage du sous-titre ou non
+   */
+  printSubTitle: boolean,
+  /**
    * Sous titre dans les paneaux
    */
   subTitle?: string;
@@ -14,4 +18,12 @@ export interface DocumentationInterface {
    * Lien de la doc à mettre en iframe
    */
   path: string;
+  /**
+   * Couler du background 
+   */
+  bgColor?: string;
+  /**
+   * Couleur de la croix de fermeture
+   */
+  closeColor?: string;
 }

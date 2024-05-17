@@ -37,6 +37,11 @@ export class ContentieuxOptionsService extends MainClass {
     BackupInterface[]
   >([])
   /**
+   * Nombre de référentiel chargé
+   */
+  nbOfBackups: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
+    null)
+  /**
    * Date de dernière modification d'un contentieux
    */
   contentieuxLastUpdate: BehaviorSubject<any> = new BehaviorSubject<any>({})
@@ -102,8 +107,10 @@ export class ContentieuxOptionsService extends MainClass {
   loadBackupsAndId() {
     const juridictionId = this.humanResourceService.backupId.getValue()
     if (juridictionId !== null) {
+      console.log(juridictionId)
       this.optionsIsModify.next(false)
       this.getAllContentieuxOptions(juridictionId).then((result) => {
+        this.nbOfBackups.next(result.backups.length)
         this.backups.next(result.backups)
         this.backupId.next(result.backupId)
       })
@@ -245,8 +252,13 @@ export class ContentieuxOptionsService extends MainClass {
    * API création d'une base vide
    * @returns
    */
-  createEmpy() {
-    let backupName = prompt('Sous quel nom ?')
+  createEmpy(first = false) {
+    let backupName = null
+
+    if (first)
+      backupName = 'Mon premier référentiel'
+    else
+      backupName = prompt('Sous quel nom ?')
 
     if (backupName) {
       return this.serverService
@@ -256,6 +268,7 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
+          console.log('created')
           this.backupId.next(r.data)
           this.loadBackupsAndId()
         })

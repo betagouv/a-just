@@ -14,6 +14,7 @@ import { WorkforceChangeComponent } from './workforce-change/workforce-change.co
 import { RecordsUpdateComponent } from './records-updates/records-update.component'
 import {NgxPaginationModule} from 'ngx-pagination';
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
+import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
     MaterialModule,
     NgxPaginationModule,
     WrapperModule,
+    IntroJSModule,
   ],
 })
 export class PanoramaModule {}
