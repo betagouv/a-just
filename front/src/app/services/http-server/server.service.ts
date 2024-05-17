@@ -51,7 +51,7 @@ export class ServerService {
     }
     const headers = new HttpHeaders(json)
 
-    return { headers: headers }
+    return { headers: headers, withCredentials: true }
   }
 
   /**

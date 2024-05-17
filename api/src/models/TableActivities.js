@@ -1,8 +1,9 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
-import { Op } from 'sequelize'
-import { calculMainValuesFromChilds, preformatActivitiesArray } from '../utils/activities'
+import Sequelize, { Op } from 'sequelize'
+import { calculMainValuesFromChilds, preformatActivitiesArray, isValueToVerifySetted } from '../utils/activities'
 import { month } from '../utils/date'
 import { maxBy } from 'lodash'
+import { VALUE_QUALITY_TO_VERIFY } from '../constants/activities'
 
 /**
  * Scripts intermediaires entre la table d'activités (entrees, sorties, stock)
@@ -304,6 +305,27 @@ export default (sequelizeInstance, Model) => {
   Model.updateBy = async (contentieuxId, date, values, hrBackupId, userId, nodeUpdated) => {
     date = new Date(date)
 
+    console.log(values)
+
+    let original = null
+    let verify = null
+    let referentiel = null
+
+    switch (nodeUpdated) {
+      case 'entrees':
+        original = "original_entrees"
+        verify = 'value_quality_in'
+        break;
+      case 'sorties':
+        original = "original_sorties"
+        verify = 'value_quality_out'
+        break;
+      case 'stock':
+        original = "original_stock"
+        verify = 'value_quality_stock'
+        break;
+    }
+
     let findActivity = await Model.findOne({
       where: {
         periode: {
@@ -315,8 +337,23 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (findActivity) {
-      await findActivity.update(values)
+      referentiel = await Model.models.ContentieuxReferentiels.getOneReferentiel( findActivity.dataValues.contentieux_id)
+      //if(/*findActivity.dataValues[original] === values[nodeUpdated] && */(/*referentiel.dataValues[verify] !== VALUE_QUALITY_TO_VERIFY ||*/ /*(referentiel.dataValues[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) || */(values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null)) {
+
+      //En cas d'effacement d'une donnée ajusté.
+      if (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null) {
+        await findActivity.update({ [nodeUpdated]: null });
+      }
+      else {
+        await findActivity.update({ [nodeUpdated]: values[nodeUpdated] })
+      }
     } else {
+      console.log('create', {
+        ...values,
+        hr_backup_id: hrBackupId,
+        contentieux_id: contentieuxId,
+        periode: date,
+      })
       findActivity = await Model.create({
         ...values,
         hr_backup_id: hrBackupId,
@@ -326,7 +363,11 @@ export default (sequelizeInstance, Model) => {
     }
 
     if (userId !== null) {
-      await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
+      // Ne pas ajouter à l'historique des activité mis a jours, les données 'A_verifier' qui ont été confirmer 
+      if(referentiel /*&& findActivity.dataValues[original] === values[nodeUpdated]*/ /*&& ( referentiel[verify] !== VALUE_QUALITY_TO_VERIFY || (referentiel[verify] === VALUE_QUALITY_TO_VERIFY && findActivity.dataValues[nodeUpdated] === values[nodeUpdated])) ||*/ && (values[nodeUpdated] === null && findActivity.dataValues[nodeUpdated] !== null))
+        await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, null)
+      else
+        await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
     }
 
     const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
@@ -392,8 +433,16 @@ export default (sequelizeInstance, Model) => {
           // if exist stock and is updated by user do not get previous stock
           const getUserUpdateStock = await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(findAllChild[i].id, 'stock')
 
-          // do not updated if updated by user
-          if (!getUserUpdateStock || getUserUpdateStock.value === null) {
+          const contentieuxRef = await Model.models.ContentieuxReferentiels.getOneReferentiel(findAllChild[i].contentieux_id)
+          // do not update if updated by user 
+          // or if 'entrees' and/or 'sorties' have updates and 
+          // their values are equal to originals and their data qualities are 'to_verify'
+          if (
+              (!getUserUpdateStock || getUserUpdateStock.value === null) /*&&
+               !isValueToVerifySetted( findAllChild[i].entrees ? findAllChild[i].entrees : null, findAllChild[i], "entrees", contentieuxRef.dataValues) && 
+               !isValueToVerifySetted( findAllChild[i].sorties ? findAllChild[i].sorties : null, findAllChild[i], "sorties", contentieuxRef.dataValues) &&
+               contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY*/
+            ) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(findAllChild[i].contentieux_id, date, hrBackupId)
 
             if (previousStockValue !== null) {
@@ -420,7 +469,10 @@ export default (sequelizeInstance, Model) => {
               }
             }
 
-            if (currentStock === findAllChild[i].original_stock) {
+            if (currentStock === findAllChild[i].original_stock && contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY && (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null)) {
+              currentStock = currentStock
+            }
+            else if (currentStock === findAllChild[i].original_stock) {
               currentStock = null
             }
 
@@ -445,8 +497,15 @@ export default (sequelizeInstance, Model) => {
             contentieux_id: ref.id,
           },
         })
+
+        let contentieuxRefChildren  = []
+        for (let elem of findAllChild) {
+          let ref = await Model.models.ContentieuxReferentiels.getOneReferentiel(elem.contentieux_id)
+          contentieuxRefChildren.push(ref.dataValues)
+        }
+
         if (findMain) {
-          await findMain.update(calculMainValuesFromChilds(findAllChild))
+            await findMain.update(calculMainValuesFromChilds(findAllChild))
         } else {
           await Model.create({
             periode: date,
@@ -785,6 +844,32 @@ export default (sequelizeInstance, Model) => {
 
         return !childrens.every((c) => c.lastDateWhithoutData === null)
       })
+  }
+
+  /**
+   * Obtenir un contentieux pour un mois donnée
+   * @param {*} HRBackupId
+   * @param {*} contentieuxId
+   * @param {*} date
+   * @returns
+   */
+  Model.getOneByMonth = async (HRBackupId, contentieuxId, date) => {
+
+    console.log('GetOneByMonth')
+    const year = new Date(date).getFullYear().toString()
+    const month = (new Date(date).getMonth() + 1).toString()
+    const periode = year + '-' + month
+    return await Model.findOne({
+      attributes: ['periode', 'entrees', 'sorties', 'stock', 'original_entrees', 'original_sorties', 'original_stock'],
+      where: {
+        hr_backup_id: HRBackupId,
+        contentieux_id: contentieuxId,
+        periode: {
+          [Op.gte]: new Date(year, month - 1, 1), // Date de début du month
+          [Op.lt]: new Date(year, month, 1)
+        }
+      },
+    })
   }
 
   return Model

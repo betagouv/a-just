@@ -105,6 +105,7 @@ export class PopupComponent {
      */
     selectedOptions = 0
 
+
     /**
      * Constructeur
      */

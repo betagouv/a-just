@@ -1,5 +1,5 @@
 <aj-wrapper title="Temps moyens" class="content-margin-null" [subtitle]="subTitleDate" [subtitleName]="subTitleName"
-  [actionTemplate]="actions" [isLoading]="isLoading">
+  [actionTemplate]="actions" [isLoading]="isLoading" [actionsLeftTemplate]="actionsLeft">
   <div class="container">
     <div class="header-list">
       <div class="label empty"></div>
@@ -13,7 +13,8 @@
           [class.selectable]="(ref.childrens || []).length" style="position: relative">
           <div class="label head">
             <div class="color-border"
-              [style.backgroundColor]="ref.showOptionGroup ? null : referentielMappingColor(ref.label)"></div>
+              [style.backgroundColor]="ref.showOptionGroup ? null : userService.referentielMappingColorByInterface(ref.label)">
+            </div>
             <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showOptionGroup ? 'expand_less' : 'expand_more' }}
             </mat-icon>
             <p>{{ref.label}}</p>
@@ -40,7 +41,9 @@
                 (click)="$event.stopPropagation();" min="0" />
             </div>
           </div>
-          <div [style.backgroundColor]="!ref.showOptionGroup ? null : referentielMappingColor(ref.label)" style="
+          <div
+            [style.backgroundColor]="!ref.showOptionGroup ? null : userService.referentielMappingColorByInterface(ref.label)"
+            style="
               position: absolute;
               left: 15px;
               top: 35px;
@@ -51,7 +54,7 @@
         </div>
         <div class="group" [class.enable]="ref.showOptionGroup">
           <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])"
-            [style.borderColor]="referentielMappingColor(ref.label)">
+            [style.borderColor]="userService.referentielMappingColorByInterface(ref.label)">
             <div class="label head">
               <p>{{itemGroup.label}}</p>
             </div>
@@ -92,9 +95,12 @@
       <aj-options-backup-panel></aj-options-backup-panel>
     </div>
   </div>
-
-
 </aj-wrapper>
+
+<ng-template #actionsLeft>
+  <aj-back-button *ngIf="optionsIsModify" (click)="onBackBackup()" class="top-left-action"
+    text="Annuler les modifications" />
+</ng-template>
 
 <ng-template #actions>
   <div class="flex-1"></div>

@@ -336,15 +336,15 @@
         }
 
         input {
-            margin-right: 16px;
-            max-width: 140px;
+            //margin-right: 16px;
+            max-width: 160px;
         }
 
     }
 
     .item-grouped {
 
-        padding-right: 14px;
+        padding-right: 29px; //padding-right: 14px;
 
         .group {
             height: 0;
@@ -377,5 +377,9 @@
                 }
             }
         }
+    }
+
+    .top-left-action {
+        margin-right: 16px;
     }
 }

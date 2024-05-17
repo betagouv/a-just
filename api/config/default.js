@@ -20,7 +20,7 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: process.env.FRONT_URL || 'http://localhost:4200',
+  corsUrl: process.env.FRONT_URL || null,
   /**
    * Port utilisé pour démarrer le serveur
    */
@@ -153,5 +153,35 @@ module.exports = {
     publicKey: process.env.SSO_PUBLIC_KEY,
     ssoExternalPublicKey: process.env.SSO_EXTERNAL_PUBLIC_KEY,
     ssoExternalPrivateKey: process.env.SSO_EXTERNAL_PRIVATE_KEY,
+  },
+  login: {
+    shareAuthCode: false,
+    enable2Auth: false,
+    max2AuthByMonth: 1,
+  },
+  /**
+   * SESSION CONFIG
+   */
+  session: {
+    key: 'koa.sess' /** (string) cookie key (default is koa.sess) */,
+    /** (number || 'session') maxAge in ms (default is 1 days) */
+    /** 'session' will result in a cookie that expires when session/browser is closed */
+    /** Warning: If a session cookie is stolen, this cookie will never expire */
+    maxAge: 86400000,
+    autoCommit: true /** (boolean) automatically commit headers (default true) */,
+    overwrite: true /** (boolean) can overwrite or not (default true) */,
+    httpOnly: true /** (boolean) httpOnly or not (default true) */,
+    signed: true /** (boolean) signed or not (default true) */,
+    rolling: false,
+    renew: false /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/,
+    secure: false /** (boolean) secure cookie*/,
+    sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
+  },
+  // IP to block
+  ipFilter: {
+    blacklist: [
+      '107.150.63.5', // Appel important depuis les états unies qui serait peut être matomo mais j'ai un doute (FX)
+      //'::1',
+    ],
   },
 }

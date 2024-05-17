@@ -29,6 +29,26 @@ export default (sequelizeInstance) => {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      value_quality_in: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      value_quality_out: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      value_quality_stock: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
+      help_url: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      compter: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

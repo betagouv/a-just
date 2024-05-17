@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
+import { Router } from '@angular/router'
 import { orderBy } from 'lodash'
-import { Moment } from 'moment'
+import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
@@ -82,6 +83,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   documentation: DocumentationInterface = {
     title: 'Calculateur',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
+    printSubTitle: true,
   }
   /**
    * Mémorisation de la dernière categorie
@@ -111,6 +113,53 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
+  /**
+   * Intro JS Steps
+   */
+  introSteps: IntroJSStep[] = [
+    {
+      target: '#wrapper-contener',
+      title: 'A quoi sert le calculateur ?',
+      intro:
+        "Le calculateur vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
+    },
+    {
+      target: '.sub-main-header',
+      title: 'Choisir la période',
+      intro:
+        "sur laquelle effectuer les calculs. Certaines des données étant des <b>moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.",
+    },
+    {
+      target: 'aj-referentiel-calculator:first-child .item.actual',
+      title: "Les données renseignées",
+      intro:
+        "Vous pouvez visualiser, pour chaque contentieux ou sous-contentieux :<ul><li>Les <b>entrées et sorties</b> moyennes mensuelles sur la période sélectionnée (calculées à partir des données d’activité) ;</li><li>Le <b>stock</b> à la fin de la période sélectionnée (tel qu’affiché dans les données d’activité) ;</li><li>Les <b>ETPT</b> affectés à chaque contentieux sur la période sélectionnée (calculés à partir des données individuelles d’affectation saisies dans le ventilateur) pour chacune des catégories d'agents (magistrats, fonctionnaires, équipe autour du magistrat = EAM).</li></ul>",
+    },
+    {
+      target: 'aj-referentiel-calculator:first-child .item.activity',
+      title: "Les données de l'activité constatée",
+      intro:
+        "Cette section permet de <b>visualiser deux indicateurs simples</li>, calculés à partir des « <b>Données renseignées</b> » :<ul><li>le <b>taux de couverture</b></li><li>et le <b>DTES</b> (Délai Théorique d’Écoulement du Stock).</li></ul><br/>Vous pourrez aussi visualiser le <b>temps de traitement moyen par dossier observé</b> sur la période antérieure qui constitue une clé de projection pour les simulations.",
+    },
+    {
+      target: 'aj-referentiel-calculator:first-child .item.calculate',
+      title: "Les données de l'activité calculée",
+      intro:
+        "Les données de l'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page \"<b>Temps moyens</b>\".<div class=\"intro-js-action\"><a href=\"/temps-moyens\">J'accède aux temps moyens</a></div>",
+    },
+    {
+      target: '.ref-button',
+      title: 'Enregistrez les temps moyens constatés',
+      intro:
+        "comme référentiel, si vous souhaitez comparer leur évolution dans la juridiction d'une période à l'autre.",
+    },
+    {
+      target: 'aj-options-backup-panel',
+      title: 'Mes temps moyens de comparaison',
+      intro:
+        "Si vous avez renseigné des temps moyens de référence, il vous suffit de <b>sélectionner le référentiel de votre choix dans ce menu déroulant</b>.",
+    },
+  ]
 
   /**
    * Constructeur
@@ -127,7 +176,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {
     super()
   }
@@ -384,18 +434,21 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Données renseignées',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/visualiser-son-activite-grace-aux-donnees-renseignees',
+          printSubTitle: true,
         })
         break
       case 'activité constatée':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Activité constatée',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/indicateurs-issus-de-lactivite-constatee',
+          printSubTitle: true,
         })
         break
       case 'activité calculée':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Activité calculée',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/comparer-son-activite-grace-a-lactivite-calculee',
+          printSubTitle: true,
         })
         break
     }
@@ -425,7 +478,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param view 
    * @returns 
    */
-  dateClass: MatCalendarCellClassFunction<Moment> = (cellDate, view) => {
+  dateClass: MatCalendarCellClassFunction<any> = (cellDate, view) => {
     /*if (view === 'month') {
       return 'material-date-calendar-no-datas';
     }*/

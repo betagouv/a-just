@@ -1,6 +1,5 @@
 <aj-wrapper #wrapper class="no-padding" id="simu-wrapper" title="Simulateur" [actionTemplate]="actions"
-  [alignLeft]="true" [documentation]="documentation" (pageSelected)="reloadPage()">
-
+  [alignLeft]="true" [documentation]="documentation" (pageSelected)="reloadPage()" [actionsLeftTemplate]="actionsLeft">
   <div class="progress-bar" *ngIf="isLoading">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
@@ -8,38 +7,47 @@
   <!-- ECRAN DE CHOIX SIMULATEUR -->
   <div class="intro-simulateur" [ngClass]="{'display-none': !chooseScreen}">
     <div class="first-pan">
-      <p class="intro-title"> <img src="/assets/icons/calculatrice-black.svg" />
-        Le simulateur</p>
+      <p class="intro-title">
+        <img src="/assets/icons/calculatrice-black.svg" /> Le simulateur
+      </p>
       <div class="intro-desc">
-        Visualisez l&apos;impact d&apos;une modification, subie ou choisie, sur une période donnée.
-        Jouez des scénarios pour anticiper un changement (de volume d&apos;ETPT ou d&apos;affaires nouvelles,
-        d’organisation...) ou rechercher la manière d’atteindre au mieux vos objectifs (réduction de stock, de délai,
-        taux
-        de couverture...). <br />
+        Visualisez l&apos;impact d&apos;une modification, subie ou choisie, sur
+        une période donnée. Jouez des scénarios pour anticiper un changement (de
+        volume d&apos;ETPT ou d&apos;affaires nouvelles, d’organisation...) ou
+        rechercher la manière d’atteindre au mieux vos objectifs (réduction de
+        stock, de délai, taux de couverture...). <br />
         <b>Deux options s&apos;offrent à vous :</b>
       </div>
     </div>
     <div class="second-pan">
       <div class="blue-pan">
-        <p class="intro-blue-title"> Utiliser les données enregistrées dans l’outil <span>RECOMMANDÉ</span></p>
+        <p class="intro-blue-title">
+          Utiliser les données enregistrées dans l’outil <span>RECOMMANDÉ</span>
+        </p>
         <div class="intro-blue-desc">
-          Choisissez un contentieux et/ou un sous-contentieux référencé dans A-JUST : les situations de début et de fin
-          de période de simulation (entrées moyennes mensuelles, sorties possibles, stock, DTES, taux de couverture,
-          temps moyen par dossier) sont calculées automatiquement à partir des données d'ETPT et d'activité enregistrées
-          à ce jour dans l'outil.
-          <br /> <br />Vous n'avez plus qu'à choisir les scénarios que vous voulez jouer !
-          <div class="button-sim" (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator()">Continuer</div>
+          Choisissez un contentieux et/ou un sous-contentieux référencé dans
+          A-JUST : les situations de début et de fin de période de simulation
+          (entrées moyennes mensuelles, sorties possibles, stock, DTES, taux de
+          couverture, temps moyen par dossier) sont calculées automatiquement à
+          partir des données d'ETPT et d'activité enregistrées à ce jour dans
+          l'outil.
+          <br />
+          <br />Vous n'avez plus qu'à choisir les scénarios que vous voulez
+          jouer !
+          <div class="button-sim" (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator()">
+            Continuer
+          </div>
         </div>
       </div>
 
       <p class="intro-second-title" (click)="whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator()">
-        <u>Effectuer une simulation sans
-          données pré-alimentées par A-JUST</u>
+        <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
       </p>
-      <p class="intro-second-desc">Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de temps moyen par
-        dossier) pour effectuer
-        des projections sur l&apos;activité (y compris non juridictionnelle) de votre choix.</p>
-
+      <p class="intro-second-desc">
+        Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de
+        temps moyen par dossier) pour effectuer des projections sur
+        l&apos;activité (y compris non juridictionnelle) de votre choix.
+      </p>
     </div>
   </div>
 
@@ -114,7 +122,6 @@
   <!-- SIMULATOR STD - Action Simuler et ajustement -->
   <div class="actual-situation color-white" *ngIf="dateStop!==null  && projectedSituationData !== null" [@fadeInOut]
     [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
-
     <div class="line-title">
       <p>
         Modifier<br />
@@ -123,7 +130,7 @@
     </div>
 
     <!-- AJ POPUP PARAM LOCK-->
-    <aj-popup style="z-index:200;" *ngIf="toSimulate===true &&  whiteSimulator === false" [closeIcon]="true"
+    <aj-popup style="z-index: 200" *ngIf="toSimulate===true &&  whiteSimulator === false" [closeIcon]="true"
       (onClose)="toSimulate = false" [removeShadow]="'noShadow'">
       <div id="circle">
         <img src="/assets/icons/calculatrice.svg" />
@@ -317,7 +324,6 @@
     </div>
   </div>
 
-
   <!-- SIMULATEUR BLANC - SITUATION DEBUT + PROJETE-->
   <aj-editable-situation *ngIf="dateStop!==null" [@fadeInOut]
     [ngClass]="{'hide': whiteSimulator === false, 'display-none': chooseScreen}" [category]="categorySelected"
@@ -327,7 +333,7 @@
   <div class="actual-situation actual-situation-white color-white white-actual-situation-height"
     [ngClass]="{'display-none': chooseScreen}" *ngIf="dateStop!==null  && whiteSimulator && displayWhiteElements"
     [@fadeInOut]>
-    <div style="display: flex; height: 70px;">
+    <div style="display: flex; height: 70px">
       <div class="line-title white-title">
         <p>
           Modifier<br />
@@ -335,7 +341,7 @@
         </p>
       </div>
       <!-- POPUP PARAM LOCK-->
-      <aj-popup style="z-index:200;" *ngIf="toSimulate===true && whiteSimulator ===true " [closeIcon]="true"
+      <aj-popup style="z-index: 200" *ngIf="toSimulate===true && whiteSimulator ===true " [closeIcon]="true"
         (onClose)="toSimulate = false" [removeShadow]="'noShadow'">
         <div id="circle">
           <img src="/assets/icons/calculatrice.svg" />
@@ -524,10 +530,8 @@
           <div class="triangle"></div>
         </div>
       </div>
-      <div class="line-item" [style]="!whiteSimulator?'flex: 0.855 !important;': 'flex: 1.5 !important;'">
-      </div>
+      <div class="line-item" [style]="!whiteSimulator?'flex: 0.855 !important;': 'flex: 1.5 !important;'"></div>
     </div>
-
 
     <div class="white-date-selector white-action-container" *ngIf="displayWhiteElements">
       <div class="init-button"
@@ -537,7 +541,8 @@
       <div class="simulate-button {{simulateButton}}">
         <p class="title"
           (click)="simulate([totalInWhite, totalOutWhite, lastStockWhite, categorySelected === 'MAGISTRAT' ?etpMagWhite:etpFonWhite, realCoverageWhite, realDTESInMonthsWhite, magRealTimePerCaseWhite])">
-          Simuler</p>
+          Simuler
+        </p>
       </div>
     </div>
   </div>
@@ -545,19 +550,20 @@
   <!-- ALL SIMULATORS - TITRE Résultat de simulation + HEADER situation simulée -->
   <div class="simulation-bottom" *ngIf="toDisplaySimulation && hasNoNullValue(firstSituationData) && !chooseScreen">
     <div class="header-simulation">
-      <p class="simulation-title">Résultat de la simulation
+      <p class="simulation-title">
+        Résultat de la simulation
 
-        <span *ngIf="paramsToLock.param1.label!==''">à
-          {{getLockedResultedParams(0)}}
-          constant{{getLockedResultedParams(0)!=='entrées
-          mensuelles'&& getLockedResultedParams(0)!=='sorties mensuelles'?'':'es'}}</span>
+        <span *ngIf="paramsToLock.param1.label!==''">à {{getLockedResultedParams(0)}}
+          constant{{getLockedResultedParams(0)!=='entrées mensuelles'&&
+          getLockedResultedParams(0)!=='sorties mensuelles'?'':'es'}}</span>
 
-        <span *ngIf=" paramsToLock.param2.label!==''"> et à
-          {{getLockedResultedParams(1)}}
-          constant{{getLockedResultedParams(1)!=='entrées
-          mensuelles'&& getLockedResultedParams(1)!=='sorties mensuelles'?'':'es'}}</span> :
+        <span *ngIf=" paramsToLock.param2.label!==''">
+          et à {{getLockedResultedParams(1)}}
+          constant{{getLockedResultedParams(1)!=='entrées mensuelles'&&
+          getLockedResultedParams(1)!=='sorties mensuelles'?'':'es'}}</span>
+        :
       </p>
-      <div id=" export-button" class="export-button" [class.enable]="toDisplaySimulation" (click)="print()">
+      <div id="export-button-1" class="export-button" [class.enable]="toDisplaySimulation" (click)="print()">
         <mat-icon class="shape">save</mat-icon>
         <p class="title">Exporter en PDF</p>
       </div>
@@ -729,7 +735,7 @@
             *ngIf="!(paramsToAjust.param1.label==='etpCont'  || paramsToAjust.param2.label==='etpCont') && getFieldValue('etpCont',projectedSituationData)!==getFieldValue('etpCont',firstSituationData) && whiteSimulator===false"
             [@fadeInOut]>
             {{ratioStr(getFieldValue('etpCont',projectedSituationData),getFieldValue('etpCont',firstSituationData))}}
-            <div class=" triangle simulated blue"></div>
+            <div class="triangle simulated blue"></div>
           </div>
         </div>
 
@@ -803,15 +809,13 @@
       </div>
     </div>
 
-    <aj-dtes-chart *ngIf="whiteSimulator===false"></aj-dtes-chart>
-    <aj-etp-chart *ngIf="whiteSimulator===false" [categorySelected]="categorySelected||'MAGISTRAT'"
-      [canViewMagistrat]="canViewMagistrat" [canViewGreffier]="canViewGreffier"
-      [canViewContractuel]="canViewContractuel"></aj-etp-chart>
-    <aj-in-out-chart *ngIf="whiteSimulator===false"></aj-in-out-chart>
+    <aj-dtes-chart></aj-dtes-chart>
+    <aj-etp-chart [categorySelected]="categorySelected||'MAGISTRAT'" [canViewMagistrat]="canViewMagistrat"
+      [canViewGreffier]="canViewGreffier" [canViewContractuel]="canViewContractuel"></aj-etp-chart>
+    <aj-in-out-chart></aj-in-out-chart>
     <!--
 
     <aj-in-out-chart></aj-in-out-chart> -->
-
 
     <!-- WIDGETS -->
     <div class="widgets">
@@ -840,7 +844,7 @@
       <div class="space"></div>
     </div>
     <div class="button-row">
-      <div id=" export-button" class="export-button bottom" [class.enable]="toDisplaySimulation" (click)="print()">
+      <div id="export-button" class="export-button bottom" [class.enable]="toDisplaySimulation" (click)="print()">
         <mat-icon class="shape">save</mat-icon>
         <p class="title">Exporter cette simulation en PDF</p>
       </div>
@@ -852,12 +856,17 @@
     [actions]="popupActionToUse" (selectedAction)="onPopupDetailAction($event)" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
-        Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez conserver cette projection, exportez-la
-        en PDF afin de l'enregistrer sur votre ordinateur.
+        Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez
+        conserver cette projection, exportez-la en PDF afin de l'enregistrer sur
+        votre ordinateur.
       </p>
     </div>
   </aj-popup>
 </aj-wrapper>
+
+<ng-template #actionsLeft>
+  <aj-back-button (click)="onReturn()" *ngIf="!chooseScreen" class="back-button-menu" />
+</ng-template>
 
 <ng-template #actions>
   <p contenteditable id="editable-sim-name" class="editable-sim-name" *ngIf="!chooseScreen"
@@ -866,10 +875,6 @@
   <div id="print-title" class="display-none">
     <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust" width="80px" height="66px" />
     <p class="title">{{printTitle}}</p>
-  </div>
-
-  <div id="main-back-menu" class="back-button-menu" (click)="onReturn()" *ngIf="!chooseScreen">
-    <p class="title">Retour</p>
   </div>
 
   <div id="main-init" class="reset-button {{disabled}}"

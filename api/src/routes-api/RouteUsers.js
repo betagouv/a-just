@@ -4,9 +4,9 @@ import { accessList } from '../constants/access'
 import { validateEmail } from '../utils/utils'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
-import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_USER_ONBOARDING } from '../constants/email'
+import { TEMPLATE_FORGOT_PASSWORD_ID, TEMPLATE_FORGOT_PASSWORD_ID_CA, TEMPLATE_NEW_USER_SIGNIN, TEMPLATE_NEW_USER_SIGNIN_CA, TEMPLATE_USER_ONBOARDING } from '../constants/email'
 import config from 'config'
-import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_SIGN_IN } from '../constants/log-codes'
+import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN } from '../constants/log-codes'
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 
@@ -41,7 +41,7 @@ export default class RouteUsers extends Route {
   @Route.Get()
   async interfaceType(ctx) {
     if (ctx.state && ctx.state.user) {
-      this.sendOk(ctx, process.env.TYPE_ID)
+      this.sendOk(ctx, Number(process.env.TYPE_ID))
     } else {
       this.sendOk(ctx, null)
     }
@@ -59,7 +59,7 @@ export default class RouteUsers extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
       email: Types.string().required(),
-      password: Types.string().required(),
+      password: Types.string(),
       firstName: Types.string(),
       lastName: Types.string(),
       tj: Types.string(),
@@ -78,7 +78,8 @@ export default class RouteUsers extends Route {
         {
           email: config.supportEmail,
         },
-        TEMPLATE_NEW_USER_SIGNIN,
+        Number(config.juridictionType) === 1 ? TEMPLATE_NEW_USER_SIGNIN_CA : TEMPLATE_NEW_USER_SIGNIN
+        ,
         {
           email,
           serverUrl: config.frontUrl,
@@ -241,11 +242,12 @@ export default class RouteUsers extends Route {
         const key = crypt.generateRandomNumber(6)
         await user.update({ new_password_token: key })
 
+        console.log('Template ID reset password', Number(config.juridictionType) === 1 ? TEMPLATE_FORGOT_PASSWORD_ID_CA : TEMPLATE_FORGOT_PASSWORD_ID)
         await sentEmail(
           {
             email,
           },
-          TEMPLATE_FORGOT_PASSWORD_ID,
+          Number(config.juridictionType) === 1 ? TEMPLATE_FORGOT_PASSWORD_ID_CA : TEMPLATE_FORGOT_PASSWORD_ID,
           {
             code: key,
             serverUrl: `${config.frontUrl}/nouveau-mot-de-passe?p=${key}`,
@@ -289,6 +291,7 @@ export default class RouteUsers extends Route {
     if (user) {
       try {
         if (await this.model.updatePassword(user.dataValues.id, password, email)) {
+          await this.models.Logs.addLog(USER_USER_PASSWORD_CHANGED, user.dataValues.id)
           this.sendOk(ctx, {
             status: true,
             msg: 'Votre mot de passe est maintenant changé. Vous pouvez dès maintenant vous connecter.',
@@ -311,13 +314,13 @@ export default class RouteUsers extends Route {
   })
   async getUserDatas(ctx) {
     const backups = await this.models.HRBackups.list(ctx.state.user.id)
-    for (let i = 0; i < backups.length; i++ ) {
+    for (let i = 0; i < backups.length; i++) {
       const isJirs = backups[i].jirs
       const force = true
       backups[i].referentiels = await this.models.ContentieuxReferentiels.getReferentiels(isJirs, force)
     }
 
-    const isJirs = backups.filter(backup => backup.jirs).length > 0 ? true : false
+    const isJirs = backups.filter((backup) => backup.jirs).length > 0 ? true : false
     const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
     const fonctions = await this.models.HRFonctions.getAll()
     const referentiel = await this.models.ContentieuxReferentiels.getReferentiels(isJirs)

@@ -4,7 +4,7 @@
             <ng-container *ngTemplateOutlet="titleTemplate || defaultTitleTemplate"></ng-container>
             <div class="flex-1"></div>
             <div *ngIf="closeIcon" class="close" (click)="onClose.emit()">
-                Fermer <i class="material-icons pointer">close</i>
+                <i class="material-icons pointer">close</i>
             </div>
         </div>
         <div class="content">

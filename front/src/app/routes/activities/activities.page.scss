@@ -1,27 +1,45 @@
 @import '../../styles/utils.scss';
 
+@property --percent {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+@property --temp {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+@property --v1 {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+
 .container {
   display: flex;
   flex-direction: column;
   height: 100%;
-
+  background-color: fColor(activityBgColor);
 
   .content-list {
     flex: 1;
     overflow: auto;
-
-    > div:last-child {
-      margin-bottom: 32px;
-    }
-
+    width: 100%;
+    
     .column-item {
+      // &:last-child {
+      //   width: 16em;//200px;
+      //   border: 1px solid blue;
+      // }
+      
       > div {
-        width: 92px;
+        width: 5.75em;
         display: flex;
         align-items: center;
+        padding: 0.625em 0.875em;
 
         &:first-child {
-          background-color: fColor(bgSelect);
           align-self: stretch;
         }
 
@@ -38,135 +56,246 @@
             right: 3px;
             top: 13px;
 
-            &.blue {
+            &.data-changed {
               color: fColor(darkModeTitle);
             }
           }
 
           > input {
-            padding-right: 18px;
+            padding-right: 180px;
           }
         }
 
-        input.blue {
-          color: fColor(darkModeTitle);
-          border-color: fColor(darkModeTitle);
+        > p {
+          text-align: right;
+          width: 100%;
+        };
+
+        p.data-changed {
+          height: 100%;
+          border-radius: 0;
+          color: fColor(textBlueTag);
         }
+
+        p.blue-bottom {
+          border-bottom: 3px solid fColor(textBlueTag);
+          border-radius: 0;
+        }
+
+        p.grey-text {
+          color: fColor(dataGreyTxt);
+        }
+
+        p.blue-txt {
+          color: fColor(dataBlueTxt);
+        }
+      }
+
+      >div:has(p.to-complete) {
+        background-color: fColor(dataToCompleteBg);
+        border: 1px solid fColor(textBlueTag) !important;
+        border-radius: 4px;
+      }
+      >div:has(p.to-verify) {
+        background-color: fColor(dataNotSettedBg);
+        border: 1px solid fColor(dataNotSettedBorder);
+        border-radius: 4px;
       }
     }
   }
+
+  .grey-txt {
+    > p , mat-icon {
+      color: fColor(dataGreyTxt);
+    }
+  }
+  .yellow-txt {
+    > p , mat-icon {
+      color: fColor(dataYellowTxt);
+    }
+  }
+  .blue-txt {
+    > p , mat-icon {
+      color: fColor(dataBlueTxt);
+    }
+  }
+
+  .pastille {
+    background-color: fColor(pastilleDataToCompleteBg);
+    border-radius: 12px;
+    padding: 2px 8px;
+    color: fColor(pastilleDataToCompleteTxt);
+  }
 }
 
-.rightHeader {
-  padding: 8px 12px;
-  background-color: fColor(activityGuideBg);
-  border-left: 4px solid fColor(activityGuideBorder);
+.top-right-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 
-  h2 {
-    font-size: 18px;
+  .left-panel {
+    display: block;
+    border-radius: 8px;
+    background-color: #f6f6f6;
+    border: 1px solid #eeeeee;
+    padding: 4px 8px;
+    position: relative;
+    width: 60%;
+
+    p {
+      transition: --percent 1s;
+      --temp: var(--percent);
+      --v1: max(var(--temp) - 0.5, 0);
+      counter-reset: v1 var(--v1);
+      //margin-bottom: 0.5em;
+      font-size: 0.875em;
+      font-weight: 400;
+      flex: 1;
+      height: 100%;
+    }
+
+    p::after {
+      content: counter(v1) "%";
+      font-weight: 800;
+    }
+
+    .completion-bar {
+      width: 100%;
+      position: relative;
+    }
   }
+  
+  .right-panel {
+    width: auto;
+    padding: 4px 8px;
 
-  p {
-    color: fColor(activityGuideSubTitle);
-    font-size: 12px;
-  }
+    h2 {
+      font-size: 1em;
+      margin: 0;
+      padding: 0;
+      line-height: normal;
+      font-weight: bold;
+      color: fColor(cblack);
+    }
 
-  a {
-    margin-left: 8px;
-  }
+    p {
+      color: fColor(primary);
+      border-bottom: 2px solid fColor(primary);
+      font-size: 0.875em;
+    }
 
-  .support-email {
-    color: fColor(primary);
-    font-size: 14px;
-  }
+    .elements {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      color: fColor(cbluedark);
+    }
 
-  .flex-beteween {
-    margin: 2px 0 4px 0;
+    .element {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      position: relative;
+      .mat-icon {
+        padding: 4px;
+        font-size: 0.875em;
+      }
+    }
+
+    .element :hover {
+      cursor: pointer;
+    }
   }
 }
 
 .header-list,
 .content-list {
   .label {
-    width: 300px;
+    width: 17.5em;
 
     &.month {
       display: flex;
     }
   }
+}
 
-  .column-item {
-    flex: 1;
+.tooltip {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  background-color: fColor(bgHelper);
+  border-radius: 100px;
+
+  > i {
+    position: absolute;
+    right: 50%;
+    top: 50%;
+    transform: translate(50%, -50%);
+
+    &.blue {
+      color: fColor(tooltipIconColor);
+    }
   }
 }
 
-.header-list {
-  padding: 25px 0 7px 0;
+.item, .header-list, .group-item  {
   display: flex;
+  height: 56px;
   align-items: center;
+  justify-content: flex-start;
+  padding: 0 5px;
+  gap: 1em;
+}
+
+.header-list {
   background-color: white;
-
-  .label.month aj-date-select {
-    margin-left: 29px;
-  }
-
-  .margin-left {
-    width: 16px;
-  }
-
-  .margin-right {
-    width: 16px;
-  }
+  border-bottom: 2px solid fColor(cblack);
+  height: 3em;
 
   .activities.is-not-ios {
     margin-right: 16px;
   }
 
   .column-item {
-    > p {
-      text-align: center;
+    display: flex;
+    width: 5.75em;
+    justify-content: right;
+    padding: 0.625em 0.875em;
+    p {
+      color: fColor(cgray);
+      font-size: 0.875em;
     }
+  }
 
-    > div {
-      margin-top: 9px;
-      display: flex;
-
-      > div {
-        flex: 1;
-        display: flex;
-
-        &:first-child {
-          justify-content: flex-end;
-
-          p {
-            margin-right: 1px;
-          }
-        }
-
-        &:last-child {
-          p {
-            margin-left: 1px;
-            margin-right: auto;
-          }
-        }
-
-        > p {
-          padding: 2px 8px;
-          border-radius: 12px;
-          background-color: fColor(cgrayDefault);
-          font-size: 12px;
-          color: fColor(cblackdark);
-          display: inline-block;
-        }
-      }
+  .label {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    min-width: 17.5em;
+    p {
+      flex: 1;
+      text-align: left;
     }
   }
 }
 
-.item {
-  display: flex;
-  height: 67px;
 
+
+.header-list :nth-child(2) {
+  width: 5.75em;
+  height: 100%;
+}
+
+.header-list div:last-child, .column-item:last-child {
+  width: 16em;
+  justify-content: flex-start;
+  padding-left: 0;
+}
+
+.item {
+  height: 3.5em;
   &.selectable {
     cursor: pointer;
 
@@ -179,37 +308,80 @@
     display: flex;
     align-items: center;
     padding: 0 15px;
-
-    .color-border {
-      width: 3px;
-      height: 4px;
-      border-radius: 3px;
-    }
+    width: 17.5em;
+    height: 100%;
 
     p {
       flex: 1;
       margin-left: 8px;
+      font-size: 0.875em;
+      font-weight: bold;
     }
   }
 
   .column-item {
+    > div {
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      height: 100%;
+    }
+  }
+  
+  .completion {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5em 0em;
+
+    p {
+      color: fColor(dataCompletionTextColor);
+    }
+
+    p:first-child {
+      font-size: 12px;
+    }
+
+
+    p:first-child {
+      color: fColor(dataCompletionTextColor);
+      transition: --percent 1s;
+      --temp: var(--percent);
+      --v1: max(var(--temp), 0);
+      counter-reset: v1 var(--v1);
+    }
+
+    p:first-child::before {
+      content: counter(v1)"%";
+    }
+
+
+    p:nth-child(3) {
+      font-size: 10px;
+      margin: 3px 9px 0 0;
+    }
+    
+    .completion-bar {
+      width: 100%;
+    }
+  }
+
+
+  input {
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
   }
 }
 
+
 .item-grouped {
-  margin: 8px 16px 0 16px;
+  margin-bottom: 1px;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
   &.maximize {
     .item {
       position: relative;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
-        0 1px 2px 0 rgba(0, 0, 0, 0.06);
     }
 
     .group {
@@ -222,37 +394,96 @@
     height: 0;
     overflow: hidden;
     display: flex;
+    width: 100%;
 
     > div:last-child {
       flex: 1;
     }
 
-    .color-border {
-      padding: 12px;
-      margin-right: 19px;
-
-      > div {
-        width: 3px;
-        border-radius: 3px;
-        height: 100%;
+    .grey {
+      background-color: fColor(dataGreyBg) !important;
+    }
+    
+    .group-item{
+      .column-item:nth-child(2) {
+        >div {
+          justify-content: center;
+          text-align: center;
+        }
       }
     }
 
     .group-item {
-      display: flex;
-      align-items: center;
-      height: 67px;
+      &:hover {
+        cursor: pointer;
+      } 
 
       .label {
-        width: 254px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        width: 17.5em;
+        height: 100%;
+
+        p {
+          flex: 1;
+          margin-left: 33px;
+          font-size: 14px;
+        }
+      }
+
+      .state-optional {
+        background-color: fColor(dataNotSettedIsSetBg);
+        padding: 0 6px;
+        border-radius: 4px;
+        justify-content: center;
+        p {
+          font-size: 12px !important;
+          font-weight: bold;
+          color:  fColor(dataGreyTxt);
+        }
       }
 
       .column-item {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-self: stretch;
+        > div {
+          display: flex;
+          justify-content: right;
+          align-items: center;
+          height: 100%;
+        }
       }
+
+      .completion {
+        // display: flex;
+        // flex-direction: column;
+        // align-items: flex-start;
+        // width: 200px;
+        // padding: 7px 9px ;
+    
+        // p {
+        //   color: fColor(dataCompletionTextColor)
+        // }
+    
+        // p:first-child {
+        //   font-size: 12px;
+        // }
+    
+        // p:nth-child(3) {
+        //   font-size: 10px;
+        //   margin: 3px 9px 0 0;
+        // }
+        
+        // .completion-bar {
+        //   width: 100%;
+        // }
+      }
+
+      .complete-btn {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 14px;
+      } 
     }
   }
 }
@@ -263,7 +494,6 @@
   span {
     padding: 2px 8px;
     border-radius: 12px;
-    background-color: fColor(cgrayDefault);
     height: 24px;
     line-height: 24px;
     position: relative;

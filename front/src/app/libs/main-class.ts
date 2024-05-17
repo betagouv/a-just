@@ -1,7 +1,11 @@
 import { Subscription } from 'rxjs'
 import {
-  referentielMappingColor,
   referentielMappingName,
+  referentielCAMappingName,
+  referentielMappingColor,
+  referentielCAMappingColor,
+  referentielMappingColorActivity,
+  referentielMappingColorCAActivity,
 } from '../utils/referentiel'
 import { categoryMappingName, categoryMappingColor } from '../utils/category'
 
@@ -20,7 +24,7 @@ import {
   getCategoryColor,
   MAGISTRATS,
 } from '../constants/category'
-import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
+import { ETP_NEED_TO_BE_UPDATED, VALUE_QUALITY_GOOD, VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_COMPLETE, VALUE_QUALITY_TO_VERIFY } from '../constants/referentiel'
 import { PLACEHOLDER_COLOR } from '../constants/colors'
 
 /**
@@ -45,6 +49,10 @@ export class MainClass {
   FONCTIONNAIRES = FONCTIONNAIRES
   ETP_NEED_TO_BE_UPDATED = ETP_NEED_TO_BE_UPDATED
   PLACEHOLDER_COLOR = PLACEHOLDER_COLOR
+  VALUE_QUALITY_OPTION = VALUE_QUALITY_OPTION;
+  VALUE_QUALITY_GOOD = VALUE_QUALITY_GOOD;
+  VALUE_QUALITY_TO_COMPLETE = VALUE_QUALITY_TO_COMPLETE;
+  VALUE_QUALITY_TO_VERIFY = VALUE_QUALITY_TO_VERIFY;
 
   /**
    * Methode d'arrondi
@@ -90,15 +98,22 @@ export class MainClass {
     this.watcherList.map((w) => {
       try {
         w.unsubscribe()
-      } catch (err) {}
+      } catch (err) { }
     })
   }
 
   /**
-   * Methode de reprise des noms de référentiel
+   * Methode de reprise des noms de référentiel TJ
    */
   public referentielMappingName(name: string): string {
     return referentielMappingName(name)
+  }
+
+  /**
+ * Methode de reprise des noms de référentiel CA
+ */
+  public referentielCAMappingName(name: string): string {
+    return referentielCAMappingName(name)
   }
 
   /**
@@ -108,6 +123,33 @@ export class MainClass {
    */
   public referentielMappingColor(name: string, opacity: number = 1): string {
     return referentielMappingColor(name, opacity)
+  }
+
+  /**
+ * Methode de reprise des couleur des référentiel
+ * @param name
+ * @returns
+ */
+  public referentielCAMappingColor(name: string, opacity: number = 1): string {
+    return referentielCAMappingColor(name, opacity)
+  }
+
+  /**
+   * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+   * @param name
+   * @returns
+   */
+  public referentielMappingColorActivity(name: string, opacity: number = 1): string {
+    return referentielMappingColorActivity(name, opacity)
+  }
+
+  /**
+  * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+  * @param name
+  * @returns
+  */
+  public referentielMappingColorCAActivity(name: string, opacity: number = 1): string {
+    return referentielMappingColorCAActivity(name, opacity)
   }
 
   /**
@@ -141,7 +183,7 @@ export class MainClass {
    * Méthode d'exclusion si c'est un IOS
    * @returns
    */
-  public isNotOS() {
+  public isNotIOS() {
     return !this.isOS()
   }
 
@@ -261,8 +303,8 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getMonth(date: Date | null | undefined = new Date()): Date {
-    return month(date)
+  public getMonth(date: Date | null | undefined = new Date(), monthAdd: number = 0): Date {
+    return month(date, monthAdd)
   }
 
   /**

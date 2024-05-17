@@ -14,6 +14,7 @@
     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
     "build:package": "cp package.json ./api/dist/.",
-    "start:production": "cd api && npm run start:production"
+    "start:production": "cd api && npm run start:production",
+    "deploy:production": "docker-compose -f docker-compose.yml -f docker-compose.production.yml build && rm -rf images-docker && mkdir images-docker && docker save -o ./images-docker/api_production api_production:latest"
   }
 }

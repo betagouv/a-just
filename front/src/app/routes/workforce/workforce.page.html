@@ -2,7 +2,7 @@
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
   [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
   [isLoading]="isLoading" [ngClass]="{removeMenuZindex: showFilterPanel !== -1}">
-  <div class="container">
+  <div class="container step-3">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
       </aj-date-select>
@@ -113,7 +113,7 @@
               [class.selected]="filterSelected && filterSelected.id === ref.id">
               <div class="text">
                 <div class="label">
-                  <p><b>{{ referentielMappingName(ref.label) }}</b></p>
+                  <p><b>{{ userService.referentielMappingNameByInterface(ref.label) }}</b></p>
                 </div>
                 <div class="etp">
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
@@ -123,7 +123,8 @@
                     class="{{ filterSelected && filterSelected.id === ref.id ? 'ri-sort-desc selected' : 'ri-sort-desc' }}"></i>
                 </div>
               </div>
-              <div class="color" [ngStyle]="{'background-color': referentielMappingColor(ref.label)}"></div>
+              <div class="color"
+                [ngStyle]="{'background-color': userService.referentielMappingColorByInterface(ref.label)}"></div>
             </div>
           </div>
           <div class="actions"></div>
@@ -191,3 +192,5 @@
     </div>
   </div>
 </ng-template>
+
+<aj-intro-js *ngIf="listFormated && listFormated.length" [steps]="introSteps" typeId="workforce"></aj-intro-js>

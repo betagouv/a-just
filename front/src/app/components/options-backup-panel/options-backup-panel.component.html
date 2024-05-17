@@ -3,10 +3,6 @@
 </aj-select>
 
 <ng-template [ngIf]="readOnly === false">
-  <button *ngIf="selectedIds.length" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
-    mat-stroked-button class="left-margin blue-button" (click)="onBackBackup()">
-    Retour
-  </button>
   <div class="flex-1"></div>
 
   <button id="trigger-drop-down" class="left-margin blue-button options" [matMenuTriggerFor]="menu" #t="matMenuTrigger"

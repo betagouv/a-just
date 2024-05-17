@@ -148,11 +148,11 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
-* Ajout d'un IELST CA
-* @param {*} codeId
-* @param {*} userId
-* @param {*} datas
-*/
+   * Ajout d'une ligne un events
+   * @param {*} codeId
+   * @param {*} userId
+   * @param {*} datas
+   */
   Model.addIELST = async (i_elst, label, latitude, longitude, population) => {
     await Model.create({
       i_elst: Number(i_elst),
@@ -160,7 +160,7 @@ export default (sequelizeInstance, Model) => {
       latitude: parseFloat(latitude),
       longitude: parseFloat(longitude),
       population: Number(population),
-      type: "TGI"
+      type: 'TGI',
     })
   }
   return Model

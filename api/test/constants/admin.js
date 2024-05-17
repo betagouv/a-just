@@ -1,2 +1,2 @@
-export const USER_ADMIN_EMAIl = 'redwane.zafari@a-just.fr'
-export const USER_ADMIN_PASSWORD = '123456'
+export const USER_ADMIN_EMAIL = process.env.USER_ADMIN_EMAIL
+export const USER_ADMIN_PASSWORD = process.env.USER_ADMIN_PASSWORD

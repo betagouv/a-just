@@ -77,6 +77,12 @@ button {
       border: 1px solid fColor(cbluedark);
       background-color: white;
     }
+
+    &.gray {
+      color: fColor(grayRow);
+      border: 1px solid fColor(grayRow);
+      background-color: white;
+    }
   }
 
   &.strict-border {
