@@ -137,7 +137,8 @@ describe('Panorama page', () => {
         .should('eq', '/ventilations')
       cy.get('.radio-border-left').first()
         .find('aj-radio-button')
-        .should('have.class', 'selected')
+        .should('have.class', 'fqzdqz')
+        //.should('have.class', 'selected')
     })
 
 })
