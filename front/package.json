@@ -9,7 +9,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "compodoc": "npx compodoc -p tsconfig.doc.json -s -w --port 8181",
-    "analyse:build": "npm run build:stats && npx webpack-bundle-analyzer dist/stats.json"
+    "analyse:build": "npm run build:stats && npx webpack-bundle-analyzer dist/stats.json",
+    "e2e": "cypress open"
   },
   "private": true,
   "dependencies": {
@@ -66,6 +67,7 @@
     "@types/jasmine": "~4.3.0",
     "@types/lodash": "^4.14.191",
     "@types/uuid": "^9.0.7",
+    "cypress": "^13.9.0",
     "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
