@@ -166,6 +166,7 @@ export default class App extends AppBase {
               "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
+            'default-src': ["'none'"],
             'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
             'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
