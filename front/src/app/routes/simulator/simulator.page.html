@@ -130,8 +130,8 @@
     </div>
 
     <!-- AJ POPUP PARAM LOCK-->
-    <aj-popup style="z-index: 200" *ngIf="toSimulate===true &&  whiteSimulator === false" [closeIcon]="true"
-      (onClose)="toSimulate = false" [removeShadow]="'noShadow'">
+    <aj-popup *ngIf="toSimulate===true &&  whiteSimulator === false" [closeIcon]="true" (onClose)="toSimulate = false"
+      [removeShadow]="'noShadow'">
       <div id="circle">
         <img src="/assets/icons/calculatrice.svg" />
       </div>
@@ -333,7 +333,7 @@
   <div class="actual-situation actual-situation-white color-white white-actual-situation-height"
     [ngClass]="{'display-none': chooseScreen}" *ngIf="dateStop!==null  && whiteSimulator && displayWhiteElements"
     [@fadeInOut]>
-    <div style="display: flex; height: 70px">
+    <div class="container">
       <div class="line-title white-title">
         <p>
           Modifier<br />
@@ -341,7 +341,7 @@
         </p>
       </div>
       <!-- POPUP PARAM LOCK-->
-      <aj-popup style="z-index: 200" *ngIf="toSimulate===true && whiteSimulator ===true " [closeIcon]="true"
+      <aj-popup class="popup" *ngIf="toSimulate===true && whiteSimulator ===true " [closeIcon]="true"
         (onClose)="toSimulate = false" [removeShadow]="'noShadow'">
         <div id="circle">
           <img src="/assets/icons/calculatrice.svg" />
