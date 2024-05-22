@@ -1,3 +1,6 @@
 node_modules
-front/node_modules
-front-admin/node_modules
+front
+front-admin
+samples
+assets
+format-datas
