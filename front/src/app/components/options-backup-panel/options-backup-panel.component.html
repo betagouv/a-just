@@ -17,8 +17,8 @@
       <div class="form">
         <form #formAllActivities>
           <div>
-            <label class="custom-file-upload" style="pointer-events: none;">Importer
-              <input id="filePicker" name="file" type="file" accept=".xlsx" style="pointer-events: none;"
+            <label class="custom-file-upload pointer-events-none">Importer
+              <input id="filePicker" name="file" type="file" accept=".xlsx" class="pointer-events-none"
                 (change)="onSendAllActivity(formAllActivities);formAllActivities.reset()"
                 (click)="$event.stopPropagation();" />
             </label>
