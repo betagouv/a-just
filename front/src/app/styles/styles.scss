@@ -45,6 +45,14 @@ body {
 	cursor: pointer;
 }
 
+.position-relative {
+	position: relative;
+}
+
+.pointer-events-none {
+	pointer-events: none;
+}
+
 .hide {
 	display: none;
 }

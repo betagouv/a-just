@@ -1,8 +1,0 @@
-process_config:
-  enabled: "true"
-  process_collection:
-    enabled: "true"
-network_config:
-  enabled: "true"
-logs_enabled: "true"
-site: "datadoghq.eu"

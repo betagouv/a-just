@@ -1568,6 +1568,12 @@ export class SimulatorPage
         exportButton.classList.add('display-none')
       }
 
+      const exportButton1 = document.getElementById('export-button-1')
+      if (exportButton1) {
+        exportButton1.classList.add('display-none')
+      }
+
+
       const ajWrapper = document.getElementById('simu-wrapper')
       if (ajWrapper) ajWrapper?.classList.add('full-screen')
 
@@ -1588,6 +1594,7 @@ export class SimulatorPage
           ajWrapper?.classList.remove('full-screen')
 
           if (exportButton) exportButton.classList.remove('display-none')
+          if (exportButton1) exportButton1.classList.remove('display-none')
           if (initButton) initButton.classList.remove('display-none')
           if (backButton) backButton.classList.remove('display-none')
 
