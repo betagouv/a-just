@@ -908,8 +908,21 @@
     display: flex;
     padding: 0px 24px;
 
+    aj-popup {
+      z-index: 200;
+    }
+
     &.actual-situation-white {
       display: block !important;
+
+      .container {
+        display: flex;
+        height: 70px;
+
+        .popup {
+          z-index: 200;
+        }
+      }
     }
 
     &.color-white {
