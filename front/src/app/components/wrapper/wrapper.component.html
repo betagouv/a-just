@@ -69,7 +69,7 @@
         <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">
           Aide
         </a>
-        <a class="contact-us" [routerLink]="['/contact']" [queryParams]="{ backUrl: true }">
+        <a class="contact-us" href="/contact?backUrl=true">
           <p class="unselectable">Nous contacter</p>
         </a>
       </div>
@@ -83,14 +83,19 @@
   <div class="contener" #contener title="" id="wrapper-contener">
     <div class="header">
       <div class="top-header"  id="top">
-        <div class="left-panel">
-          <div *ngIf="backUrl" class="back-url">
-            <a [routerLink]="backUrl" [fragment]="backAnchor">
-              <button class="primary small">
-                <mat-icon>chevron_left</mat-icon>Retour
-              </button>
-            </a>
-          </div>
+        <div class="top-header-back-title">
+          <aj-back-button
+            *ngIf="backUrl"
+            [routerLink]="backUrl"
+            [fragment]="backAnchor"
+            class="back-url"
+            [ngClass]="{ 'is-dark-screen': isDarkScreen }"
+          />
+          <ng-template [ngIf]="actionsLeftTemplate">
+            <ng-container
+              *ngTemplateOutlet="actionsLeftTemplate"
+            ></ng-container>
+          </ng-template>
           <div>
             <div class="title-with-doc">
               <h3 [innerHTML]="title"></h3>
