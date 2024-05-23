@@ -242,8 +242,6 @@
   let-type="type" let-updated='updated'>
   <div class="item-template">
     <div class="item-template-original" [ngClass]="{
-        'to-confirm':
-          valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
         'grey-bg':
           valueQuality === VALUE_QUALITY_TO_COMPLETE && hasValue(items, type),   
         'is-not-setted':
@@ -256,7 +254,7 @@
       </div>
       <span *ngIf="valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)">
         <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">Confirmer</p>
-      </span> 
+      </span>
     </div>
     <div class="item-template-new-total" [ngClass]="{
       }" *ngIf="items.childrens">
@@ -290,6 +288,7 @@
       </ng-container>
       <input #inputElement type="number" [ngModel]="newValue" [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
+          'to-confirm': valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
           'blue-bottom': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: true}) ,
           'blue-txt': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: false}),
           'is-not-setted-to-verify':

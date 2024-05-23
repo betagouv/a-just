@@ -86,7 +86,7 @@ export class SignupPage {
    * @param title
    */
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private router: Router,
     private title: Title,
     private serverService: ServerService,
@@ -105,15 +105,15 @@ export class SignupPage {
         this.form.get('email')?.enable()
       }
 
-      if(p.firstName) {
+      if (p.firstName) {
         this.form.get('firstName')?.setValue(p.firstName)
       }
 
-      if(p.lastName) {
+      if (p.lastName) {
         this.form.get('lastName')?.setValue(p.lastName)
       }
 
-      if(p.provider) {
+      if (p.provider) {
         this.provider = p.provider
         this.signUpStep = 2
       }

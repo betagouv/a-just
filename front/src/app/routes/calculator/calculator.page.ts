@@ -145,7 +145,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       target: 'aj-referentiel-calculator:first-child .item.calculate',
       title: "Les données de l'activité calculée",
       intro:
-        "Les données de l'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page \"<b>Temps moyens</b>\".<div class=\"intro-js-action\"><a href=\"/temps-moyens\">J'accède aux ventilateur</a></div>",
+        "Les données de l'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page \"<b>Temps moyens</b>\".<div class=\"intro-js-action\"><a href=\"/temps-moyens\">J'accède aux temps moyens</a></div>",
     },
     {
       target: '.ref-button',

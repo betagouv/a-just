@@ -11,7 +11,7 @@ module.exports = {
   forceSSL: true,
   formatLogs: true,
   login: {
-    shareAuthCode: true,
+    shareAuthCode: false,
     enable2Auth: true,
     max2AuthByMonth: 1,
   },

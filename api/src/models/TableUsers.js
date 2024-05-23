@@ -5,10 +5,11 @@ import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
 import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA } from '../constants/email'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
-import { getNbDay, humanDate } from '../utils/date'
+import { getNbDay, humanDate, today } from '../utils/date'
 import { comparePasswords, cryptPassword } from '../utils/password/password'
 import { differenceInMinutes } from 'date-fns'
 import { Op } from 'sequelize'
+import { groupBy } from 'lodash'
 
 /**
  * Table des utilisateurs
@@ -226,6 +227,9 @@ export default (sequelizeInstance, Model) => {
 
     if (user) {
       await Model.models.UsersAccess.updateAccess(userId, access)
+      await Model.updateById(user.id, {
+        updated_at: new Date(),
+      })
       const oldVentilations = (await Model.models.UserVentilations.getUserVentilations(userId)).map((v) => v.id).sort()
       const ventilationsList = await Model.models.UserVentilations.updateVentilations(userId, ventilations)
 
@@ -238,8 +242,7 @@ export default (sequelizeInstance, Model) => {
             {
               email: user.email,
             },
-            Number(config.juridictionType) === 1 ? TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA : TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED
-            ,
+            Number(config.juridictionType) === 1 ? TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA : TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
             {
               user: `${user.first_name} ${user.last_name}`,
               juridictionsList: ventilationsList.map((v) => v.label).join(', '),
@@ -320,6 +323,34 @@ export default (sequelizeInstance, Model) => {
         options
       )
     }
+  }
+
+  Model.checkAccountToRemove = async () => {
+    const now = today()
+    now.setMonth(now.getMonth() - 3)
+    const users = await Model.findAll({
+      attributes: ['id', 'first_name', 'last_name', 'created_at', 'updated_at', 'deleted_at'],
+      where: {
+        created_at: {
+          [Op.lte]: now,
+        },
+        deleted_at: {
+          [Op.eq]: null,
+        },
+      },
+      include: [
+        {
+          model: Model.models.UserVentilations,
+          paranoid: false,
+        },
+      ],
+      paranoid: false,
+      raw: true,
+    })
+
+    const usersGrouped = groupBy(users, 'id')
+
+    console.log(usersGrouped)
   }
 
   return Model
