@@ -265,7 +265,7 @@ export class ExcelService extends MainClass {
         result: "0"
       }
       report.worksheets[2].getCell('ED' + (+index + 3)).value = {
-        formula: '=IF(H' + indexCell + '="","",IF(EC' + indexCell + '+EB' + indexCell + '+CS' + indexCell + '+EE' + indexCell + '=M' + indexCell + ',"OK","ERREUR"))',
+        formula: '=IF(H' + indexCell + '="","",IF(EC' + indexCell + '+EB' + indexCell + '+CS' + indexCell + '+EE' + indexCell + '=M' + indexCell + ',"OK","OK (contient des indisponibilités)"))',
         result: "0"
       }
       report.worksheets[2].getCell('EE' + (+index + 3)).value = {
@@ -287,7 +287,6 @@ export class ExcelService extends MainClass {
         showErrorMessage: true,
         showInputMessage: true,
       }
-
 
       const fonctionCellToCheck = (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) || ""
       if (fonctionCellToCheck.includes("PLACÉ")) {
