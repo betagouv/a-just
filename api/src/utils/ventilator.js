@@ -7,15 +7,26 @@ import { fixDecimal } from './number'
 export const preformatHumanResources = (list, dateSelected, referentielList, fonctionsIds) => {
   return orderBy(
     list.map((h) => {
-      const indisponibilities = findAllIndisponibilities(h, dateSelected)
+      const indisponibilities = dateSelected ? findAllIndisponibilities(h, dateSelected) : []
       let hasIndisponibility = fixDecimal(sumBy(indisponibilities, 'percent') / 100)
       if (hasIndisponibility > 1) {
         hasIndisponibility = 1
       }
-      const { currentSituation } = findSituation(h, dateSelected)
-      let etp = (currentSituation && currentSituation.etp) || 0
-      if (etp < 0) {
-        etp = 0
+
+      let currentSituation
+      let etp = 0
+      if (dateSelected) {
+        const s = findSituation(h, dateSelected)
+        currentSituation = s.currentSituation
+        etp = (currentSituation && currentSituation.etp) || 0
+        if (etp < 0) {
+          etp = 0
+        }
+      } else {
+        const situations = h.situations || []
+        if (situations.length) {
+          currentSituation = situations[0]
+        }
       }
 
       return {
