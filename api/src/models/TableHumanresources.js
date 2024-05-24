@@ -307,11 +307,11 @@ export default (sequelizeInstance, Model) => {
         }
 
         let juridiction = list[i].juridiction || ''
-        if (Number(config.juridictionType) !== 1)
+        /*if (Number(config.juridictionType) !== 1)
           if (juridictionLabelExceptions.map((x) => x['import'].includes(juridiction)))
             juridiction = juridictionLabelExceptions.filter((el) => {
               return el['import'] === juridiction
-            })[0]['ielst']
+            })[0]['ielst']*/
 
         // prepare person
         const options = {
