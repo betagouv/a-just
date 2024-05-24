@@ -15,7 +15,7 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < list.length; i++) {
       list[i].users = await Model.models.UserVentilations.getUserVentilationsWithLabel(list[i].label)
       const getBackupId = await Model.models.HRBackups.findByLabel(list[i].label)
-      const agents = getBackupId ? preformatHumanResources(await Model.models.HumanResources.getCache(getBackupId), new Date()) : []
+      const agents = getBackupId ? await Model.models.HumanResources.getCache(getBackupId) : []
       const group = groupBy(
         agents.filter((a) => a.category),
         'category.label'
