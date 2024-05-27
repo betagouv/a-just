@@ -1,4 +1,4 @@
-import saml2 from ' '
+import saml2 from 'saml2-js'
 import config from 'config'
 
 var sp_options = {
