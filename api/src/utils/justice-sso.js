@@ -1,4 +1,4 @@
-import saml2 from 'saml2-js'
+import saml2 from ' '
 import config from 'config'
 
 var sp_options = {
@@ -9,7 +9,7 @@ var sp_options = {
   force_authn: true,
   auth_context: { comparison: 'exact', class_refs: ['urn:oasis:names:tc:SAML:1.0:am:password'] },
   nameid_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
-  sign_get_request: false,
+  sign_get_request: true,
   allow_unencrypted_assertion: true,
 }
 
