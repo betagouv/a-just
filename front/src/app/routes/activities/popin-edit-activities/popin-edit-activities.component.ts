@@ -648,6 +648,7 @@ export class PopinEditActivitiesComponent
                 originalOut: element ? element.originalSorties : null,
                 stock: element ? element.stock : null,
                 originalStock: element ? element.originalStock : null,
+                activityUpdated: element ? element.updatedBy : null
               }
             }
 
