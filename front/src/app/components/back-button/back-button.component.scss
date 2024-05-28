@@ -1,12 +1,14 @@
+@import "../../styles/utils.scss";
+
 :host {
   &.is-dark-screen {
     a {
-      background-color: #8585f6;
+      background-color: fColor(darkModeTitle);
     }
 
     a,
     i {
-      color: white;
+      color: fColor(primary);
     }
   }
 

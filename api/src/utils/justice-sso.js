@@ -3,13 +3,13 @@ import config from 'config'
 
 var sp_options = {
   entity_id: `${config.serverUrl}/saml/metadata.xml`,
-  private_key: config.sso.privateKey,
-  certificate: config.sso.publicKey,
+  private_key: config.sso.privateKey, //     private_key: fs.readFileSync("key-file.pem").toString(),
+  certificate: config.sso.publicKey, //     certificate: fs.readFileSync("cert-file.crt").toString(),
   assert_endpoint: `${config.serverUrl}/saml/assert-return`,
   force_authn: true,
   auth_context: { comparison: 'exact', class_refs: ['urn:oasis:names:tc:SAML:1.0:am:password'] },
   nameid_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
-  sign_get_request: false,
+  sign_get_request: true,
   allow_unencrypted_assertion: true,
 }
 
@@ -20,7 +20,7 @@ export const sp = new saml2.ServiceProvider(sp_options)
 var idp_options = {
   sso_login_url: `${config.sso.url}/saml/singleSignOn`,
   sso_logout_url: `${config.sso.url}/logout`,
-  certificates: [(config.sso.ssoExternalPublicKey || '').replace(/ /g, ''), (config.sso.ssoExternalPrivateKey || '').replace(/ /g, '')],
+  certificates: [(config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, ''), (config.sso.ssoExternalPublicKey || '').replace(/ /g, '').replace(/\\n/g, '')],
 }
 export const idp = new saml2.IdentityProvider(idp_options)
 

@@ -9,8 +9,8 @@
     </div>
     <div class="content-list" *ngIf="categorySelected">
       <div *ngFor="let ref of referentiel" class="item-grouped">
-        <div class="item" (click)="ref.showOptionGroup = !ref.showOptionGroup"
-          [class.selectable]="(ref.childrens || []).length" style="position: relative">
+        <div class="item position-relative" (click)="ref.showOptionGroup = !ref.showOptionGroup"
+          [class.selectable]="(ref.childrens || []).length">
           <div class="label head">
             <div class="color-border"
               [style.backgroundColor]="ref.showOptionGroup ? null : userService.referentielMappingColorByInterface(ref.label)">
@@ -43,14 +43,7 @@
           </div>
           <div
             [style.backgroundColor]="!ref.showOptionGroup ? null : userService.referentielMappingColorByInterface(ref.label)"
-            style="
-              position: absolute;
-              left: 15px;
-              top: 35px;
-              border-radius: 3px;
-              height: 100%;
-              width: 3px;
-            "></div>
+            class="div-custom-style"></div>
         </div>
         <div class="group" [class.enable]="ref.showOptionGroup">
           <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])"
