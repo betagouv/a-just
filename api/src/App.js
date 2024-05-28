@@ -16,7 +16,7 @@ import { CSP_URL_IGNORE_RULES } from './constants/csp'
 import session from 'koa-session'
 const RateLimit = require('koa2-ratelimit').RateLimit
 import ip from 'koa-ip'
-import { scriptSha1Generate, styleSha1Generate } from './utils/csp'
+import { styleSha1Generate } from './utils/csp'
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -166,6 +166,7 @@ export default class App extends AppBase {
               "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
+            'default-src': ["'none'"],
             'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
             'frame-src': ['https://docs.a-just.beta.gouv.fr', 'https://meta.a-just.beta.gouv.fr', 'https://forms-eu1.hsforms.com/', 'https://calendly.com'],
@@ -195,6 +196,7 @@ export default class App extends AppBase {
         //xXssProtection: 1, don't work
       }),
       async (ctx, next) => {
+        console.log('Client IP', ctx.request.ip)
         ctx.set('x-xss-protection', '1')
 
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
