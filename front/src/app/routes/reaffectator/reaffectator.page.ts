@@ -17,6 +17,7 @@ import { UserService } from 'src/app/services/user/user.service'
 import { getCategoryTitle, getCategoryTitlePlurial } from 'src/app/utils/category'
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { Router } from '@angular/router'
+import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 
 /**
  * Interface d'une fiche surchargé avec des rendus visuels
@@ -280,6 +281,15 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
   forceDeactivate: boolean = false
 
   nextState: string | null = null
+
+  introSteps: IntroJSStep[] = [
+    {
+      target: '#wrapper-contener',
+      title: "Découvrir la fonctionnalité",
+      intro:
+        "<p>Explorez notre vidéo explicative du \"<b>simulateur des affectations</b>\", orientée autour de deux cas d'usage : <b>réagir à une diminution des ETPT disponibles</b> et <b>prioriser un contentieux pour en améliorer les délais de traitement</b>.</p><iframe src='https://app.videas.fr/f5ad94fc-317c-40c1-8347-1c557dde863d/' style=\"width:100%;margin-top:16px;height:370px;\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>",
+    },
+  ]
 
   /**
    * Constructeur

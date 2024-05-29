@@ -334,9 +334,7 @@ export default (sequelizeInstance, Model) => {
         created_at: {
           [Op.lte]: now,
         },
-        deleted_at: {
-          [Op.eq]: null,
-        },
+        deleted_at: null,
       },
       include: [
         {
@@ -350,7 +348,7 @@ export default (sequelizeInstance, Model) => {
 
     const usersGrouped = groupBy(users, 'id')
 
-    console.log(usersGrouped)
+    //console.log(usersGrouped)
   }
 
   return Model
