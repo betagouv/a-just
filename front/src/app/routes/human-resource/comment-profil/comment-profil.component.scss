@@ -9,6 +9,25 @@
   background-color: #fff;
 }
 
+.footer-panel {
+  border-top: solid 1px fColor(lightBorder);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 24px;
+
+  .save {
+    color: white;
+    background-color: fColor(primary);
+    height: 32px;
+    padding: 4px 12px;
+    font-size: 14px;
+    line-height: 24px;
+    cursor: pointer;
+  }
+}
+
 .header-panel {
   display: flex;
   height: 56px;
@@ -22,6 +41,7 @@
   i {
     color: fColor(bgSelectSelected);
     margin-right: 9px;
+    font-size: 24px;
   }
 
   div {
@@ -31,11 +51,42 @@
       color: fColor(cblack);
       font-size: 16px;
       font-weight: bold;
+      bottom: 1px;
+      position: relative;
     }
 
     .com-at {
       color: fColor(titleSelect);
       font-size: 12px;
     }
+  }
+}
+
+.properties {
+  height: 40px;
+  background-color: white;
+  display: flex;
+  border-bottom: solid 1px fColor(lightBorder);
+  align-items: center;
+  padding: 0 16px;
+
+  .number-circle {
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    padding: 3px 4.5px;
+    background-color: #ededed;
+    text-align: center;
+    font-size: 12px;
+    color: #929292;
+    margin-right: 8px;
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #3a3a3a;
+    bottom: 2px;
+    position: relative;
   }
 }

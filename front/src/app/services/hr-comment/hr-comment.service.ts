@@ -38,11 +38,12 @@ export class HRCommentService {
    * @param comment 
    * @returns 
    */
-  updateHRComment(id: number, comment: string) {
+  updateHRComment(id: number, comment: string,userId:number) {
     return this.serverService
       .post('hr-comment/update-hr-comment', {
         hrId: id,
         comment,
+        userId
       })
       .then((r) => {
         const updateAt = new Date(r.data);
