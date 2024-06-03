@@ -12,7 +12,6 @@ import { AddVentilationComponent } from './add-ventilation/add-ventilation.compo
 import { CoverProfilDetailsComponent } from './cover-profil-details/cover-profil-details.component'
 import { BigEtpPreviewComponent } from './big-etp-preview/big-etp-preview.component'
 import { IndispoProfilComponent } from './indispo-profil/indispo-profil.component'
-import { CommentProfilComponent } from './comment-profil/comment-profil.component'
 import { PopupModule } from 'src/app/components/popup/popup.module'
 import { EtpPreviewModule } from 'src/app/components/etp-preview/etp-preview.module'
 import { PanelActivitiesModule } from 'src/app/components/panel-activities/panel-activities.module'
@@ -21,6 +20,7 @@ import { TextEditorModule } from 'src/app/components/text-editor/text-editor.mod
 import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
 import { HelpButtonModule } from 'src/app/components/help-button/help-button.module'
 import { BackButtonModule } from 'src/app/components/back-button/back-button.module'
+import { CommentProfilModule } from './comment-profil/comment-profil.module'
 
 @NgModule({
   declarations: [
@@ -31,9 +31,9 @@ import { BackButtonModule } from 'src/app/components/back-button/back-button.mod
     CoverProfilDetailsComponent,
     BigEtpPreviewComponent,
     IndispoProfilComponent,
-    CommentProfilComponent,
   ],
   imports: [
+    CommentProfilModule,
     HumanResourcePageModule,
     RouterModule,
     ComponentsModule,
@@ -51,4 +51,4 @@ import { BackButtonModule } from 'src/app/components/back-button/back-button.mod
     BackButtonModule
   ],
 })
-export class HumanResourceModule {}
+export class HumanResourceModule { }

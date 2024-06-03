@@ -38,9 +38,21 @@ export class TextEditorComponent extends MainClass {
    */
   @Input() value: string = ''
   /**
+ * Emit focus on
+ */
+  @Input() hideToolbar = false
+  /**
    * Emit value
    */
   @Output() valueChange = new EventEmitter()
+  /**
+ * Emit focus on
+ */
+  @Output() focusOn = new EventEmitter()
+  /**
+* Emit focus out
+*/
+  @Output() focusOut = new EventEmitter()
   /**
    * Quill editor
    */
@@ -86,7 +98,9 @@ export class TextEditorComponent extends MainClass {
     })
 
     if (this.value) {
-      this.quillEditor.setText(this.value, 'api')
+      //this.quillEditor.setText(this.value, 'api')
+      this.quillEditor.root.innerHTML = this.value
+
     }
 
     this.quillEditor.on(
@@ -105,5 +119,35 @@ export class TextEditorComponent extends MainClass {
         }
       }
     )
+
+    this.quillEditor.on('selection-change', (range: any, oldRange: any, source: any) => {
+      console.log(source)
+      if (range) {
+        if (range.length == 0) {
+          console.log('User cursor is on', range.index);
+          this.onFocus();
+          this.focusOn.next(true)
+        }
+      } else {
+        console.log('Cursor not in the editor');
+        this.onBlur();
+        this.focusOn.next(false)
+        console.log(this.quillEditor)
+      }
+    });
+
+    if (this.hideToolbar === true) {
+      document.documentElement.style.cssText = "--display-toolbar: hidden"
+      this.quillEditor.theme.modules.toolbar.container.style.visibility = "hidden"
+    }
   }
+
+  override onFocus() {
+    this.quillEditor.theme.modules.toolbar.container.style.visibility = "visible";
+  }
+
+  onBlur() {
+    this.quillEditor.theme.modules.toolbar.container.style.visibility = "hidden";
+  }
+
 }
