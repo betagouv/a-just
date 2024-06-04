@@ -163,6 +163,7 @@ export class TextEditorComponent extends MainClass {
         }
       } else {
         this.focusField.next(false)
+        this.onBlur()
       }
     });
 
