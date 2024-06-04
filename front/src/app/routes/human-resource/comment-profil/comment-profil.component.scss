@@ -1,92 +1,122 @@
 @import '../../../styles/utils.scss';
 
 :host {
-  display: block;
-  width: 200px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  border: solid 1px fColor(lightBorder);
-  background-color: #fff;
-}
-
-.footer-panel {
-  border-top: solid 1px fColor(lightBorder);
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 24px;
-
-  .save {
-    color: white;
-    background-color: fColor(primary);
-    height: 32px;
-    padding: 4px 12px;
-    font-size: 14px;
-    line-height: 24px;
-    cursor: pointer;
-  }
-}
-
-.header-panel {
-  display: flex;
-  height: 56px;
-  align-items: center;
-  background-color: fColor(bgSelect);
-  border-bottom: solid 1px fColor(lightBorder);
-  padding: 0 16px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-
-  i {
-    color: fColor(bgSelectSelected);
-    margin-right: 9px;
-    font-size: 24px;
-  }
-
-  div {
-    margin-right: 8px;
-
-    .com {
-      color: fColor(cblack);
-      font-size: 16px;
-      font-weight: bold;
-      bottom: 1px;
-      position: relative;
-    }
-
-    .com-at {
-      color: fColor(titleSelect);
-      font-size: 12px;
-    }
-  }
-}
-
-.properties {
-  height: 40px;
-  background-color: white;
-  display: flex;
-  border-bottom: solid 1px fColor(lightBorder);
-  align-items: center;
-  padding: 0 16px;
-
-  .number-circle {
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    padding: 3px 4.5px;
-    background-color: #ededed;
-    text-align: center;
-    font-size: 12px;
-    color: #929292;
-    margin-right: 8px;
-  }
-
-  label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #3a3a3a;
-    bottom: 2px;
+  >div {
+    overflow-y: hidden;
     position: relative;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: solid 1px fColor(lightBorder);
+    background-color: #fff;
+
+    &.drop-down-display {
+      padding-bottom: 16px;
+    }
+
+    &.close {
+      max-height: 301px;
+    }
+
+    .footer-panel {
+      border-top: solid 1px fColor(lightBorder);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 24px;
+      opacity: 1;
+
+      &.disabled {
+        opacity: 0.6;
+      }
+
+      .save {
+        color: white;
+        background-color: fColor(primary);
+        height: 32px;
+        padding: 4px 12px;
+        font-size: 14px;
+        line-height: 24px;
+        cursor: pointer;
+      }
+    }
+
+    .header-panel {
+      display: flex;
+      height: 56px;
+      align-items: center;
+      background-color: fColor(bgSelect);
+      border-bottom: solid 1px fColor(lightBorder);
+      padding: 0 16px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+
+      i {
+        color: fColor(bgSelectSelected);
+        margin-right: 9px;
+        font-size: 24px;
+      }
+
+      div {
+        margin-right: 8px;
+
+        .com {
+          color: fColor(cblack);
+          font-size: 16px;
+          font-weight: bold;
+          bottom: 1px;
+          position: relative;
+        }
+
+        .com-at {
+          color: fColor(titleSelect);
+          font-size: 12px;
+        }
+      }
+    }
+
+    .properties {
+      height: 40px;
+      background-color: white;
+      display: flex;
+      border-bottom: solid 1px fColor(lightBorder);
+      align-items: center;
+      padding: 0 16px;
+
+      .number-circle {
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        padding: 3px 4.5px;
+        background-color: #ededed;
+        text-align: center;
+        font-size: 12px;
+        color: #929292;
+        margin-right: 8px;
+      }
+
+      label {
+        font-size: 14px;
+        font-weight: bold;
+        color: #3a3a3a;
+        bottom: 2px;
+        position: relative;
+      }
+    }
+
+    .fixed-button {
+      cursor: pointer;
+      height: 24px;
+      font-size: 14px;
+      border: solid 1px #ddd;
+      background-color: #f6f6f6;
+      bottom: 0px;
+      position: absolute;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }

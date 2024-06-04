@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core'
+import { ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
@@ -21,7 +21,7 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
   /**
    * Commentaire de la fiche
    */
-  comment: string = ''
+  comment: string | undefined = ''
   /**
    * Liste de commentaire d'une fiche
    */
@@ -47,13 +47,27 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
    */
   currentComment = ''
   /**
+   * Reset editor status
+   */
+  resetEditor = false
+  /**
+   * focus
+   */
+  isEditing: boolean = false
+  /**
+   * Show all comments
+   */
+  showAll = false
+  /**
    * Constructeur
    * @param hRCommentService
    */
   constructor(
+    private changeDetectorRef: ChangeDetectorRef,
     private hRCommentService: HRCommentService,
     private userService: UserService) {
     super()
+
 
     this.userService.me().then((data) => {
       console.log(data)
@@ -62,7 +76,8 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
         firstName: data.firstName,
         lastName: data.lastName,
         initials: data.firstName.charAt(0) + data.lastName.charAt(0),
-        userId: data.id
+        userId: data.id,
+        commentId: data.commentId
       }
     })
   }
@@ -80,21 +95,13 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
   onLoadComment() {
     if (this.currentHR) {
       this.hRCommentService.getHRComment(this.currentHR.id).then((result) => {
-        if (result.length > 0) {
-          /**
-          this.comment = (result && result.comment) || ''
-          this.currentComment = this.comment
-          this.commentUpdatedAt =
-            result && result.updatedAt ? new Date(result.updatedAt) : null
-             */
-          this.comments = result
-          console.log(this.comments)
-        }
-        else {
-          this.comment = ''
-          this.currentComment = this.comment
-          this.commentUpdatedAt = null
-        }
+        this.comments = result.sort((a: any, b: any) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+        this.comment = ''
+        this.currentComment = this.comment
+        this.commentUpdatedAt = null
+        if (!this.comments.length)
+          this.showAll = true
+        this.changeDetectorRef.detectChanges()
       })
     }
   }
@@ -104,23 +111,48 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
    * @param comment 
    */
   updateComment(comment: string) {
-    if (this.timeoutUpdateComment) {
-      clearTimeout(this.timeoutUpdateComment)
-      this.timeoutUpdateComment = null
-    }
     this.currentComment = comment
+    this.changeDetectorRef.detectChanges()
   }
 
+  /**
+   * Sauvegarde un nouveau commentaire
+   */
   save() {
     this.timeoutUpdateComment = setTimeout(() => {
       if (this.currentHR) {
-
         this.hRCommentService
-          .updateHRComment(this.currentHR.id, this.currentComment, this.currentUser.userId)
-          .then((result) => {
-            this.commentUpdatedAt = result ? new Date(result) : null
+          .updateHRComment(this.currentHR.id, this.currentComment, this.currentUser.userId, this.currentUser.commentId)
+          .then(() => {
+            this.comment = ''
+            this.currentComment = ''
+            this.commentUpdatedAt = null
+            this.resetEditor = true
+            this.isEditing = false
+            this.changeDetectorRef.detectChanges()
+            this.onLoadComment()
           })
       }
     }, 100)
+  }
+
+  /**
+   * Recharge l'ensemble des commentaires d'une fiche
+   * @param event 
+   */
+  reloadCheck(event: any) {
+    if (event === true) this.onLoadComment()
+  }
+
+  /**
+   * Prend le focus sur le champs de saisi d'un nouveau commentaire
+   * @param event 
+   */
+  getFocusOn(event: any) {
+    if (event === true)
+      this.isEditing = event
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges()
+    }, 50)
   }
 }

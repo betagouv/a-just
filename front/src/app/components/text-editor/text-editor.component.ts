@@ -38,21 +38,33 @@ export class TextEditorComponent extends MainClass {
    */
   @Input() value: string = ''
   /**
+   * Focus asked from outside
+   */
+  @Input() askToModify: boolean = false
+  /**
  * Emit focus on
  */
   @Input() hideToolbar = false
+  /** 
+   * Reset signal 
+  */
+  @Input() resetEditor = false
+  /**
+  * Valeur de réinitialisation
+  */
+  @Input() previousValue: string | null = null
   /**
    * Emit value
    */
+  @Output() resetField = new EventEmitter()
+  /**
+   * Changement de valeur
+   */
   @Output() valueChange = new EventEmitter()
   /**
- * Emit focus on
- */
-  @Output() focusOn = new EventEmitter()
-  /**
-* Emit focus out
-*/
-  @Output() focusOut = new EventEmitter()
+   * Emit focus on
+   */
+  @Output() focusField = new EventEmitter()
   /**
    * Quill editor
    */
@@ -61,7 +73,6 @@ export class TextEditorComponent extends MainClass {
    * Ignore update
    */
   ignoreUpdate: boolean = false
-
   /**
    * Constructeur
    */
@@ -78,9 +89,33 @@ export class TextEditorComponent extends MainClass {
    * @param change
    */
   ngOnChanges(change: SimpleChanges) {
-    if (change['value'] && this.quillEditor) {
-      this.ignoreUpdate = true
-      this.quillEditor.root.innerHTML = this.value
+    if (this.quillEditor) {
+      if (change['askToModify']) {
+        if (this.askToModify) {
+          this.quillEditor.focus()
+          setTimeout(() => {
+            if (this.quillEditor.getSelection())
+              this.quillEditor.setSelection(this.quillEditor.getSelection().index + 10, 0)
+          }, 0)
+          this.askToModify = false
+          this.onFocus()
+          this.focusField.emit(false)
+        }
+      }
+      if (change['previousValue'] && this.previousValue !== null) {
+        this.quillEditor.root.innerHTML = this.previousValue
+        this.quillEditor.blur()
+        this.resetField.emit(false)
+      }
+      if (change['resetEditor']) {
+        this.quillEditor.setText('')
+        this.resetEditor = false
+        this.resetField.emit(false)
+      }
+      if (change['value']) {
+        this.ignoreUpdate = true
+        this.quillEditor.root.innerHTML = this.value
+      }
     }
   }
 
@@ -91,7 +126,7 @@ export class TextEditorComponent extends MainClass {
     const dom = this.contener?.nativeElement
     this.quillEditor = new Quill(dom, {
       modules: {
-        toolbar: ['bold', 'italic', 'underline', 'strike'],
+        toolbar: ['bold', 'italic', 'underline', 'strike', 'link'],
       },
       placeholder: this.placeholder,
       theme: 'snow',
@@ -121,18 +156,13 @@ export class TextEditorComponent extends MainClass {
     )
 
     this.quillEditor.on('selection-change', (range: any, oldRange: any, source: any) => {
-      console.log(source)
       if (range) {
         if (range.length == 0) {
-          console.log('User cursor is on', range.index);
+          this.focusField.next(true)
           this.onFocus();
-          this.focusOn.next(true)
         }
       } else {
-        console.log('Cursor not in the editor');
-        this.onBlur();
-        this.focusOn.next(false)
-        console.log(this.quillEditor)
+        this.focusField.next(false)
       }
     });
 
@@ -143,11 +173,15 @@ export class TextEditorComponent extends MainClass {
   }
 
   override onFocus() {
-    this.quillEditor.theme.modules.toolbar.container.style.visibility = "visible";
+    if (this.quillEditor) {
+      this.quillEditor.theme.modules.toolbar.container.style.visibility = "visible";
+    }
   }
 
   onBlur() {
-    this.quillEditor.theme.modules.toolbar.container.style.visibility = "hidden";
+    if (this.quillEditor) {
+      this.quillEditor.theme.modules.toolbar.container.style.visibility = "hidden";
+    }
   }
 
 }
