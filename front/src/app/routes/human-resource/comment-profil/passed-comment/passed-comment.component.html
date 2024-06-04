@@ -1,15 +1,26 @@
 <div>
   <div class="properties">
     <div class="number-circle">{{currentUser.initials}}</div>
-    <label>{{currentUser.firstName + ' ' + currentUser.lastName}}</label>
-    <p *ngIf="commentUpdatedAt" class="com-at">Enregistré {{ formatDate(commentUpdatedAt) }}</p>
+    <label *ngIf="currentUser.firstName!==null && currentUser.lastName!==null">{{currentUser.firstName + ' ' +
+      currentUser.lastName}}</label>
+    <p *ngIf="commentCreatedAt" class="com-at">{{ compareCommentsDates()? 'Créé ':''}}{{
+      compareCommentsDates()? formatDate(commentCreatedAt):capitalize(formatDate(commentCreatedAt)) }}</p>
+  </div>
+  <p *ngIf="commentUpdatedAt && compareCommentsDates()" class="com-mod">
+    (Modifié {{formatDate(commentUpdatedAt)}})</p>
+  <div class="panel-content" [ngClass]="{'editing': isEditing}"> <aj-text-editor #editor [value]="commentContent || ''"
+      class="no-main-style" (valueChange)="updateComment($event)" placeholder="Écrivez un commentaire"
+      [hideToolbar]="true" (focusField)="getFocusOn($event)" [previousValue]="valueToReset" [askToModify]="isEditing"
+      (resetField)="reset()"></aj-text-editor>
+    <div class="footer-panel" *ngIf="isEditing">
+      <div class="unsave" [ngClass]="{'active': commentContent!==currentText}" (click)="setOldValue()">Annuler les
+        modifications</div>
+      <div class="save" (click)="save()">Enregistrer</div>
+    </div>
   </div>
 
-  <div class="panel-content">
-    <aj-text-editor #editor [value]="commentContent || ''" class="no-main-style" (valueChange)="updateComment($event)"
-      placeholder="Écrivez un commentaire" [hideToolbar]="true" [focusOn]="onFocus($event)"></aj-text-editor>
-  </div>
-  <div class="footer-panel" *ngIf="commentContent.length">
-    <div class="save" (click)="save()">Enregistrer</div>
+  <div class="actions" *ngIf="!isEditing">
+    <label class="modify" (click)="getFocusOn(true)">Modifier</label><span class="dot">•</span><label class="delete"
+      (click)="removeComment()">Supprimer</label>
   </div>
 </div>
