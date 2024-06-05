@@ -88,3 +88,5 @@ Les admin doivent ajouter le role "USER" dans "ma fiche" / "Habilitations"
 
 // Attention, la ligne ne fonctionnera pas du premier coup. Vérifier le nom des images dockers lors du premier test.
 npm run deploy:production
+
+# test
