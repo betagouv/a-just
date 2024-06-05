@@ -209,7 +209,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       target: '#wrapper-contener',
       title: "Découvrir la fonctionnalité",
       intro:
-        "<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l'écran des données d’activité.</p><iframe src='https://app.videas.fr/57d76050-fb40-4cf4-bb75-5bb5ec636019/' style=\"width:100%;margin-top:16px;height:370px;\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>",
+        "<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l'écran des données d’activité.</p><iframe src='https://app.videas.fr/57d76050-fb40-4cf4-bb75-5bb5ec636019/' class=\"intro-js-video\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>",
     },
   ]
 
