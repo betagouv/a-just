@@ -92,9 +92,9 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (com) {
-      com = await com.update({ comment, user_id: userId })
+      com = await com.update({ comment, user_id: userId === -1 ? null : userId })
     } else {
-      com = await Model.create({ comment, human_id: hrId, user_id: userId })
+      com = await Model.create({ comment, human_id: hrId, user_id: userId === -1 ? null : userId })
     }
 
     // update date of backup
