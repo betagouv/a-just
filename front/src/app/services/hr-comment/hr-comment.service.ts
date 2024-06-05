@@ -63,7 +63,7 @@ export class HRCommentService {
         commentId,
         hrId: id,
         comment,
-        userId
+        userId: userId || -1
       })
       .then((r) => {
         console.log('BACK', r)
