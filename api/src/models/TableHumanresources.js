@@ -1,6 +1,7 @@
+import { Op } from 'sequelize'
 import { posad } from '../constants/hr'
-import { juridictionLabelExceptions } from '../constants/juridiction-type'
 import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
+import { today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 
@@ -577,6 +578,30 @@ export default (sequelizeInstance, Model) => {
       return camelCaseReturn
     } else {
       return false
+    }
+  }
+
+  Model.checkAgentToAnonymise = async () => {
+    const now = today()
+    now.setFullYear(now.getFullYear() - 5)
+    const agents = await Model.findAll({
+      attributes: ['id', 'first_name', 'last_name', 'date_sortie'],
+      where: {
+        date_sortie: {
+          [Op.lte]: now,
+        },
+        first_name: {
+          [Op.ne]: 'anonyme',
+        },
+      },
+      paranoid: false,
+    })
+
+    for(let i = 0; i < agents.length; i++) {
+      await agents[i].update({
+        first_name: 'anonyme',
+        last_name: 'anonyme',
+      })
     }
   }
 
