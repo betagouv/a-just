@@ -329,7 +329,7 @@ export default (sequelizeInstance, Model) => {
     const now = today()
     now.setMonth(now.getMonth() - 3)
     const users = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'created_at', 'updated_at', 'deleted_at'],
+      attributes: ['id', 'first_name', 'last_name', 'created_at', 'updated_at', 'deleted_at', 'email'],
       where: {
         deleted_at: {
           [Op.lte]: now,
@@ -345,6 +345,7 @@ export default (sequelizeInstance, Model) => {
       await users[i].update({
         first_name: 'anonyme',
         last_name: 'anonyme',
+        email: 'anonyme',
       })
     }
   }

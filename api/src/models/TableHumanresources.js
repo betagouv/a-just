@@ -585,7 +585,7 @@ export default (sequelizeInstance, Model) => {
     const now = today()
     now.setFullYear(now.getFullYear() - 5)
     const agents = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'date_sortie'],
+      attributes: ['id', 'first_name', 'last_name', 'date_sortie', 'matricule', 'registration_number'],
       where: {
         date_sortie: {
           [Op.lte]: now,
@@ -601,6 +601,8 @@ export default (sequelizeInstance, Model) => {
       await agents[i].update({
         first_name: 'anonyme',
         last_name: 'anonyme',
+        matricule: 'anonyme',
+        registration_number: 'anonyme',
       })
     }
   }
