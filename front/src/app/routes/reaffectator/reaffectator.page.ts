@@ -287,7 +287,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
       target: '#wrapper-contener',
       title: "Découvrir la fonctionnalité",
       intro:
-        "<p>Explorez notre vidéo explicative du \"<b>simulateur des affectations</b>\", orientée autour de deux cas d'usage : <b>réagir à une diminution des ETPT disponibles</b> et <b>prioriser un contentieux pour en améliorer les délais de traitement</b>.</p><iframe src='https://app.videas.fr/f5ad94fc-317c-40c1-8347-1c557dde863d/' style=\"width:100%;margin-top:16px;height:370px;\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>",
+        "<p>Explorez notre vidéo explicative du \"<b>simulateur des affectations</b>\", orientée autour de deux cas d'usage : <b>réagir à une diminution des ETPT disponibles</b> et <b>prioriser un contentieux pour en améliorer les délais de traitement</b>.</p><iframe src='https://app.videas.fr/f5ad94fc-317c-40c1-8347-1c557dde863d/' class=\"intro-js-video\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>",
     },
   ]
 
