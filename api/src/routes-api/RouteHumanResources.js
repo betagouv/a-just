@@ -230,20 +230,13 @@ export default class RouteHumanResources extends Route {
 
     date = today(date)
 
-    console.time('step1')
     let hr = await this.model.getCache(backupId)
-    console.timeEnd('step1')
-    console.time('step2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
 
-    console.timeEnd('step2')
-    console.time('step3')
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck)
-    console.timeEnd('step3')
-
+    
     const allCategories = await this.models.HRCategories.getAll()
 
-    console.log('contentieuxIds', contentieuxIds, categoriesIds.length, allCategories.length)
     if (categoriesIds && categoriesIds.length === 3 && (!contentieuxIds || contentieuxIds.length === 0)) {
       // memorize first execution by user
       this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
