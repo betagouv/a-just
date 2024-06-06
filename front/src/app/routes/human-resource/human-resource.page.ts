@@ -697,13 +697,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
           // control date start
           if (this.currentHR && this.currentHR.dateStart) {
-            const hrDateStart = new Date(this.currentHR.dateStart)
+            const hrDateStart = today(this.currentHR.dateStart)
 
             if (
               this.updateIndisponiblity &&
               this.updateIndisponiblity.dateStart
             ) {
-              const indispDateStart = new Date(
+              const indispDateStart = today(
                 this.updateIndisponiblity.dateStart
               )
               if (hrDateStart.getTime() > indispDateStart.getTime()) {
