@@ -16,7 +16,7 @@
     <div class="number-circle">{{currentUser.initials}}</div>
     <label>{{currentUser.firstName + ' ' + currentUser.lastName}}</label>
   </div>
-  <div class="panel-content">
+  <div id="panel-content" class="panel-content">
     <div class="placeholder" *ngIf="!isEditing">
       <mat-icon>drive_file_rename_outline</mat-icon>Pour écrire un nouveau
       commentaire, cliquez ici
