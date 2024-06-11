@@ -125,6 +125,7 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
           this.commentContent = this.currentText
           this.valueToReset = this.currentText
           this.isEditing = false
+          this.hRCommentService.mainEditing.next(false)
           this.changeDetectorRef.detectChanges()
         })
     }
@@ -169,6 +170,7 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
     this.currentText = this.commentContent
     this.valueToReset = this.commentContent
     this.isEditing = false
+    this.hRCommentService.mainEditing.next(false)
     this.changeDetectorRef.detectChanges()
   }
 
@@ -188,8 +190,11 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    * @param event 
    */
   getFocusOn(event: any) {
-    if (event === true)
+    console.log(event, 'focus')
+    if (event === true && !this.hRCommentService.mainEditing.getValue()) {
       this.isEditing = event
+      this.hRCommentService.mainEditing.next(true)
+    }
     setTimeout(() => {
       this.changeDetectorRef.detectChanges()
     }, 50)

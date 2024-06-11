@@ -45,7 +45,7 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
   /**
    * Dernier commentaire en date
    */
-  currentComment = ''
+  currentComment: string = ''
   /**
    * Reset editor status
    */
@@ -122,7 +122,7 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
     this.timeoutUpdateComment = setTimeout(() => {
       if (this.currentHR) {
         this.hRCommentService
-          .updateHRComment(this.currentHR.id, this.currentComment, this.currentUser.userId, this.currentUser.commentId)
+          .updateHRComment(this.currentHR.id, this.currentComment || '', this.currentUser.userId, this.currentUser.commentId)
           .then(() => {
             this.comment = ''
             this.currentComment = ''
@@ -154,5 +154,15 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
     setTimeout(() => {
       this.changeDetectorRef.detectChanges()
     }, 50)
+  }
+
+  back() {
+    this.comment = ''
+    this.currentComment = ''
+    this.commentUpdatedAt = null
+    this.resetEditor = true
+    this.isEditing = false
+    this.changeDetectorRef.detectChanges()
+    console.log(this.currentComment)
   }
 }
