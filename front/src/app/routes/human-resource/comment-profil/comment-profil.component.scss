@@ -158,6 +158,11 @@
   .panel-content {
     position: relative;
     align-items: center;
+    display: block;
+
+    &.hide {
+      display: none;
+    }
 
     .placeholder {
       position: absolute;

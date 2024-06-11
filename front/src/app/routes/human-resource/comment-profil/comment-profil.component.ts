@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core'
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
@@ -13,7 +13,7 @@ import { UserService } from 'src/app/services/user/user.service'
   templateUrl: './comment-profil.component.html',
   styleUrls: ['./comment-profil.component.scss'],
 })
-export class CommentProfilComponent extends MainClass implements OnChanges {
+export class CommentProfilComponent extends MainClass implements OnChanges, OnInit {
   /**
    * Fiche courante
    */
@@ -70,7 +70,6 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
 
 
     this.userService.me().then((data) => {
-      console.log(data)
       this.currentUser =
       {
         firstName: data.firstName,
@@ -82,6 +81,20 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
     })
   }
 
+  /**
+   * 
+   */
+  ngOnInit() {
+    this.watch(
+      this.hRCommentService.forceOpenAll.subscribe((value) => {
+        this.showAll = value
+        const elem = document.getElementById('panel-content')
+        if (value)
+          elem?.classList.add('hide')
+        else elem?.classList.remove('hide')
+      })
+    )
+  }
   /**
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
@@ -129,6 +142,7 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
             this.commentUpdatedAt = null
             this.resetEditor = true
             this.isEditing = false
+            this.hRCommentService.mainEditing.next(false)
             this.changeDetectorRef.detectChanges()
             this.onLoadComment()
           })
@@ -149,8 +163,10 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
    * @param event 
    */
   getFocusOn(event: any) {
-    if (event === true)
+    if (event === true) {
       this.isEditing = event
+      this.hRCommentService.mainEditing.next(true)
+    }
     setTimeout(() => {
       this.changeDetectorRef.detectChanges()
     }, 50)
@@ -162,7 +178,7 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
     this.commentUpdatedAt = null
     this.resetEditor = true
     this.isEditing = false
+    this.hRCommentService.mainEditing.next(false)
     this.changeDetectorRef.detectChanges()
-    console.log(this.currentComment)
   }
 }

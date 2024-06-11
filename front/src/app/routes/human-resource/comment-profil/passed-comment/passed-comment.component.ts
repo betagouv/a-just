@@ -135,9 +135,10 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    * Suppression d'un commentaire
    */
   removeComment() {
-    if (this.currentHR) {
+    if (this.currentHR && this.hRCommentService.mainEditing.getValue() === false) {
       this.hRCommentService
         .deleteHRComment(this.currentUser.commentId, this.currentHR.id).then(() => {
+          this.hRCommentService.mainEditing.next(false)
           this.deletedComment.emit(true)
         })
     }

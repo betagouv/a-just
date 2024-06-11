@@ -21,6 +21,7 @@ import { AddVentilationComponent } from './add-ventilation/add-ventilation.compo
 import { AppService } from 'src/app/services/app/app.service'
 import { sum } from 'lodash'
 import { DOCUMENTATION_VENTILATEUR_PERSON } from 'src/app/constants/documentation'
+import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
 
 /**
  * Interface d'une situation
@@ -153,7 +154,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private router: Router,
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
-    public appService: AppService
+    public appService: AppService,
+    private hrCommentService: HRCommentService
   ) {
     super()
 
@@ -936,6 +938,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Demande d'extraction de la page au format pdf
    */
   onExport() {
+    this.hrCommentService.forceOpenAll.next(true)
+    const parent = document.getElementById('first-panel')
+    const child = document.getElementById('comment-profil')
+    const parent2 = document.getElementById('wrapper-printed')
+    parent?.removeChild(child as Node)
+    parent2?.appendChild(child as Node)
+
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
@@ -945,8 +954,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         } en date du ${new Date().toJSON().slice(0, 10)}.pdf`
       )
       .then(() => {
+        this.hrCommentService.forceOpenAll.next(false)
         this.duringPrint = false
+        parent2?.removeChild(child as Node)
+        parent?.appendChild(child as Node)
       })
+
   }
 
   /**

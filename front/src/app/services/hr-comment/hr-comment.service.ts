@@ -15,6 +15,10 @@ export class HRCommentService {
    */
   mainEditing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   /**
+   * A comment is editing
+   */
+  forceOpenAll: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  /**
    * Constructeur
    * @param serverService 
    * @param humanResourceService 
