@@ -9,6 +9,7 @@ const agentCron = async (env) => {
   })
 
   syncAllDaysAt6.start()
+  await env.models.HumanResources.checkAgentToAnonymise()
 }
 
 export default agentCron
