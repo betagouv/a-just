@@ -187,7 +187,7 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
   }
 
   /**
-   * 
+   * Récupere le focus sur l'ensemble des commentaires
    * @param event 
    */
   getFocusOn(event: any) {

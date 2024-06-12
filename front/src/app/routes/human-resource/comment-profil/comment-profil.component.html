@@ -8,7 +8,8 @@
 
     </div>
     <div class="sep"></div>
-    <div class="displayer" (click)="showAll=!showAll;$event.stopPropagation()" *ngIf="this.comments.length">
+    <div class="displayer" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop()"
+      *ngIf="this.comments.length">
       {{ showAll ? 'Réduire':'Tout déplier'}}
     </div>
   </div>
@@ -35,7 +36,8 @@
   <passed-comment *ngFor="let com of comments" [comment]="com" [currentHR]="currentHR"
     (deletedComment)="reloadCheck($event)"></passed-comment>
 
-  <div class="fixed-button" (click)="showAll=!showAll;$event.stopPropagation()" *ngIf="this.comments.length">
+  <div class="fixed-button" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop()"
+    *ngIf="this.comments.length">
     <mat-icon class="arrow-list">{{
       showAll ? 'expand_less' : 'expand_more'
       }}</mat-icon>{{ showAll ? 'Réduire':'Tout déplier'}}

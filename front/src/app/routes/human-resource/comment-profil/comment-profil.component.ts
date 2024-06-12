@@ -82,7 +82,7 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
   }
 
   /**
-   * 
+   * On init fonction
    */
   ngOnInit() {
     this.watch(
@@ -172,6 +172,9 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
     }, 50)
   }
 
+  /**
+   * Bouton annuler action
+   */
   back() {
     this.comment = ''
     this.currentComment = ''
@@ -180,5 +183,12 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
     this.isEditing = false
     this.hRCommentService.mainEditing.next(false)
     this.changeDetectorRef.detectChanges()
+  }
+
+  /**
+   * Scroll to top
+   */
+  scrollToTop() {
+    window.scrollTo(0, 0)
   }
 }
