@@ -9,6 +9,7 @@ const userCron = async (env) => {
   })
 
   syncAllDaysAt6.start()
+  await env.models.Users.checkAccountToAnonymise()
 }
 
 export default userCron
