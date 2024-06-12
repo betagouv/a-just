@@ -1,6 +1,10 @@
 @import '../../../styles/utils.scss';
 
 :host {
+  .hide {
+    display: none;
+  }
+
   >div {
     overflow-y: hidden;
     position: relative;
