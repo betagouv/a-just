@@ -26,6 +26,11 @@
       flex: 1;
       align-self: stretch;
 
+      &.ca {
+        width: 174px;
+        flex: none;
+      }
+
       >.category-name {
         display: flex;
         align-items: center;
