@@ -22,6 +22,8 @@ import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sleep } from 'src/app/utils'
 import { UserService } from 'src/app/services/user/user.service'
+import { ACTIVITIES_SHOW_LEVEL_4 } from 'src/app/constants/log-codes'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
 
 /**
  * Composant page activité
@@ -219,6 +221,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @param humanResourceService
    * @param referentielService
    * @param userService
+   * @param kpiService
    */
   constructor(
     private activitiesService: ActivitiesService,
@@ -226,6 +229,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
     public userService: UserService,
+    private kpiService: KPIService,
   ) {
     super()
 
@@ -814,5 +818,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       return true
     }
     return false
+  }
+
+  onShowLevel4(cont: ContentieuReferentielActivitiesInterface) {
+    if (cont.showActivityGroup) {
+      this.kpiService.register(ACTIVITIES_SHOW_LEVEL_4, cont.id + "")
+    }
   }
 }

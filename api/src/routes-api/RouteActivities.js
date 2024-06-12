@@ -1,5 +1,7 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
+import { today } from '../utils/date'
+import { ACTIVITIES_CHANGE_DATE, ACTIVITIES_PAGE_LOAD } from '../constants/log-codes'
 
 /**
  * Route contenant les lectures et modifications des activités
@@ -67,6 +69,11 @@ export default class RouteActivities extends Route {
     const { date, hrBackupId } = this.body(ctx)
 
     if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
+
+      const dateLastMonth = await this.model.getLastMonth(hrBackupId)
+      this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
+
+
       const list = await this.model.getByMonth(date, hrBackupId)
       this.sendOk(ctx, {
         list,
