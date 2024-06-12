@@ -15,6 +15,9 @@
   <aj-list-selection class="bg-white" #filterSelection icon="filter-2-line" title="Fonctions" [multiple]="true"
     [list]="filterList" [values]="filterValues!" (valuesChanged)="filterValues=$event;updateParams()"
     (onOpen)="sortSelection.close(); orderSelection.close()"></aj-list-selection>
+  <aj-list-selection class="bg-white" #filterSelection icon="filter-2-line" title="Indisponibilités" [multiple]="true"
+    [list]="allIndisponibilityReferentiel" [values]="filterValues!" (valuesChanged)="filterValues=$event;updateParams()"
+    (onOpen)="sortSelection.close(); orderSelection.close()"></aj-list-selection>
 
   <p class="filter-group">Trier par :</p>
   <aj-list-selection #sortSelection title="Critère" [list]="sortList" [value]="sortValue"

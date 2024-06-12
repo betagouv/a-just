@@ -18,6 +18,7 @@ import { ReferentielService } from 'src/app/services/referentiel/referentiel.ser
 import { HumanResourceSelectedInterface } from '../workforce.page'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { dataInterface } from 'src/app/components/select/select.component'
+import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 
 /**
  * Interface d'un filtre
@@ -52,6 +53,10 @@ export interface FilterPanelInterface {
    * Filtre des valeurs
    */
   filterValues: (string | number)[] | null
+  /**
+   * Filtre des indispo
+   */
+  filterIndispoValues: (string | number)[] | null
   /**
    * Filtre des noms
    */
@@ -226,6 +231,10 @@ export class FilterPanelComponent
    * Valeur par défaut d'ordre
    */
   defaultOrderValue: string | number | null = this.orderList[0].id
+  /**
+   * Référentiel des indispo
+   */
+  allIndisponibilityReferentiel: ItemInterface[] = []
 
   /**
    * Détection d'un click sur le composant
@@ -244,9 +253,21 @@ export class FilterPanelComponent
   constructor(
     private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private humanResourceService: HumanResourceService
   ) {
     super()
+  }
+
+  /**
+   * Au chargement récupération des contentieux
+   */
+  ngOnInit() {
+    this.watch(
+      this.humanResourceService.contentieuxReferentiel.subscribe((list) => {
+        this.allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => ({ id: r.id, label: r.label.replace(/\//g, ' / ') }))
+      })
+    )
   }
 
   /**
@@ -376,6 +397,7 @@ export class FilterPanelComponent
       order: this.orderValue,
       orderIcon: orderItem && orderItem.icon ? orderItem.icon : null,
       filterValues: this.filterValues,
+      filterIndispoValues: [],
       display: this.displayValue,
       filterFunction: (list: HumanResourceSelectedInterface[]) => {
         if (
