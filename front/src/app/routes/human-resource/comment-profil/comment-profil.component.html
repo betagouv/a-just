@@ -1,7 +1,7 @@
 <div id="comment-area" [ngClass]="{'close': !showAll, 'drop-down-display': this.comments.length}"
   (click)="showAll=true">
   <div class="header-panel" (click)="$event.stopPropagation()">
-    <i class="ri-message-3-line"></i>
+    <i id="logo-1" class="ri-message-3-line"></i>
     <div>
       <p class="com">Commentaires</p>
       <p *ngIf="commentUpdatedAt" class="com-at">Enregistré {{ formatDate(commentUpdatedAt) }}</p>
@@ -36,7 +36,7 @@
   <passed-comment *ngFor="let com of comments" [comment]="com" [currentHR]="currentHR"
     (deletedComment)="reloadCheck($event)"></passed-comment>
 
-  <div class="fixed-button" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop()"
+  <div id="logo-2" class="fixed-button" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop()"
     *ngIf="this.comments.length">
     <mat-icon class="arrow-list">{{
       showAll ? 'expand_less' : 'expand_more'

@@ -89,9 +89,22 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
       this.hRCommentService.forceOpenAll.subscribe((value) => {
         this.showAll = value
         const elem = document.getElementById('panel-content')
-        if (value)
+        const icon = document.getElementById('logo-1')
+        const reduire = document.getElementById('logo-2')
+        const indispo = document.getElementById('logo-3')
+
+        if (value) {
           elem?.classList.add('hide')
-        else elem?.classList.remove('hide')
+          icon?.classList.add('hide')
+          reduire?.classList.add('hide')
+          indispo?.classList.add('hide')
+        }
+        else {
+          elem?.classList.remove('hide')
+          icon?.classList.remove('hide')
+          reduire?.classList.remove('hide')
+          indispo?.classList.remove('hide')
+        }
       })
     )
   }
