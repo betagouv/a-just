@@ -46,7 +46,7 @@ export function referentielCAMappingName(name: string): string {
       return "Famille";
     case "Contentieux de la protection":
       return "CTX JCP";
-    case "Contentieux civil":
+    case "Contentieux civil non spécialisé":
       return "Civil Ns";
     case "Contentieux commercial":
       return "Comm.";
@@ -128,7 +128,7 @@ export function referentielCAMappingColor(
       return `rgba(1, 118, 190, ${opacity})`
     case "Contentieux de la protection":
       return `rgba(22, 100, 192, ${opacity})`
-    case "Contentieux civil":
+    case "Contentieux civil non spécialisé":
       return `rgba(40, 53, 146, ${opacity})`
     case "Contentieux de la protection":
       return `rgba(22, 100, 192,${opacity}`
@@ -212,7 +212,7 @@ export function referentielMappingColorCAActivity(
       return `rgba(55, 71, 79, ${opacity})`
     case "Contentieux de la protection":
       return `rgba(198, 40, 40, ${opacity})`
-    case "Contentieux civil":
+    case "Contentieux civil non spécialisé":
       return `rgba(2, 119, 189, ${opacity})`
     case "Contentieux de la protection":
       return `rgba(0, 131, 143, ${opacity}`

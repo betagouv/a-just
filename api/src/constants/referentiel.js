@@ -18,27 +18,27 @@ export function referentielCAMappingIndex(name, rank) {
   switch (name) {
     case "Contentieux Social":
       return 1;
-    case "Contentieux de la famille":
-      return 2;
-    case "Contentieux de la protection":
-      return 3;
-    case "Contentieux civil":
-      return 4;
     case "Contentieux commercial":
+      return 2;
+    case "Contentieux de la famille":
+      return 3;
+    case "Contentieux de la protection":
+      return 4;
+    case "Contentieux civil non spécialisé":
       return 5;
-    case "Attributions du PP":
-      return 6;
     case "Contentieux civil JLD":
-      return 7;
+      return 6;
     case "Contentieux des mineurs":
+      return 7;
+    case "Correctionnel":
       return 8;
     case "Instruction et entraide":
       return 9;
-    case "Correctionnel":
+    case "Application des peines":
       return 10;
     case "Contentieux criminel":
       return 11;
-    case "Application des peines":
+    case "Attributions du PP":
       return 12;
     case "Autres activités":
       return 13;
@@ -199,34 +199,31 @@ export function referentielMappingColor(name) {
 export function referentielCAMappingColor(name) {
   switch (name) {
     case "Contentieux Social":
-      return '#424242'
-    case "Contentieux de la famille":
-      return '#37474f'
-    case "Contentieux de la protection":
-      return '#c62828'
-    case "Contentieux civil":
-      return '#0277bd'
-    case "Contentieux de la protection":
-      return '#00838f'
+      return '#03838f'
     case "Contentieux commercial":
-      return '#1565c0'
-    case "Attributions du PP":
-      return '#6a1b9a'
+      return '#26bece'
+    case "Contentieux de la famille":
+      return '#0176be'
+    case "Contentieux de la protection":
+      return '#1664c0'
+    case "Contentieux civil non spécialisé":
+      return '#283592'
     case "Contentieux civil JLD":
-      return '#283593'
+      return '#4526a0'
     case "Contentieux des mineurs":
-      return '#d84315'
-    case "Instruction et entraide":
-      return '#4527a0'
-    case "Correctionnel":
-      return '#ef6c00'
+      return "#691a9a";
+    case "Correctionnel": //CHAC
+      return "#c52928"
+    case "Instruction et entraide": //CHINS
+      return "#d74215"
+    case "Application des peines": //CHAP
+      return "#ef6c00"
     case "Contentieux criminel":
-      return '#ff8f00'
-    case "Application des peines":
-      return '#4527a0'
+      return "#ef6c00";
+    case "Attributions du PP":
+      return '#fbca0c'
     case "Autres activités":
-      return '#fff'
-
+      return '#424242'
   }
 
   return ''
