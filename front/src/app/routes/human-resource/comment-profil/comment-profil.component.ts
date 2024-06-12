@@ -155,4 +155,11 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
       this.changeDetectorRef.detectChanges()
     }, 50)
   }
+
+  /**
+  * Scroll to top
+  */
+  scrollToTop() {
+    window.scrollTo(0, 0)
+  }
 }

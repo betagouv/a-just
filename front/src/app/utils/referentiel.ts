@@ -45,13 +45,11 @@ export function referentielCAMappingName(name: string): string {
     case "Contentieux de la famille":
       return "Famille";
     case "Contentieux de la protection":
-      return "Protection";
+      return "CTX JCP";
     case "Contentieux civil":
       return "Civil Ns";
-    case "Contentieux de la protection":
-      return "Civil Ns";
     case "Contentieux commercial":
-      return "Commercial";
+      return "Comm.";
     case "Attributions du PP":
       return "PP";
     case "Contentieux civil JLD":
@@ -59,13 +57,13 @@ export function referentielCAMappingName(name: string): string {
     case "Contentieux des mineurs":
       return "Mineurs";
     case "Instruction et entraide":
-      return "Instruction / Entraide";
+      return "CHINS";
     case "Correctionnel":
-      return "Correctionnel";
+      return "CHAC";
     case "Contentieux criminel":
       return "Crim.";
     case "Application des peines":
-      return "Application des peines";
+      return "CHAP";
     case "Autres activités":
       return "Autres";
   }
