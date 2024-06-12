@@ -22,6 +22,10 @@
     padding-left: 24px;
     width: 386px;
 
+    &.ca {
+      width: auto;
+    }
+
     >.label-container {
       flex: 1;
       align-self: stretch;

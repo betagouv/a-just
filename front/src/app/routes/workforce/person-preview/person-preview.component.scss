@@ -44,6 +44,10 @@
 .profil {
   width: 370px;
 
+  &.ca {
+    width: auto;
+  }
+
   &.item {
     display: flex;
 
@@ -54,6 +58,11 @@
       flex-direction: column;
       //justify-content: space-between;
       text-decoration: none;
+
+      &.ca {
+        width: 182px;
+        flex: none;
+      }
 
       .name {
         margin-bottom: 8px;
@@ -97,7 +106,7 @@
       .tags {
         margin-bottom: 8px;
 
-        > p {
+        >p {
           display: inline-block;
           height: 24px;
           padding: 2px 8px;
