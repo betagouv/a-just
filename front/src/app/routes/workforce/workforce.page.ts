@@ -220,7 +220,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Affichage du panneau de selection de filtre
    */
-  showFilterPanel: number = -1
+  showFilterPanel: boolean = false
   /**
    * Paramètres de filtre selectionnés
    */
@@ -1036,5 +1036,56 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       sortFunction: null,
       sortName: null,
     }
+  }
+
+  /**
+   * Retour une string qui affiche les options de filtre / trie
+   */
+  getOptionAffichageString() {
+    const list = []
+
+    if (this.selectedReferentielIds.length !== this.formReferentiel.length) {
+      list.push(this.getOptionAffichageReferentielString())
+    }
+
+    if (this.filterParams && this.filterParams.orderIcon && this.filterParams.sortName) {
+      list.push(this.filterParams.sortName)
+    }
+
+    if (this.filterParams && this.filterParams.filterNames) {
+      list.push(this.filterParams.filterNames)
+    }
+
+    return list.length === 0 ? null : list.join(', ')
+  }
+
+  /**
+   * Retour une string qui affiche les options de filtre / trie
+   */
+  getOptionAffichageReferentielString() {
+    if (this.selectedReferentielIds.length !== this.formReferentiel.length) {
+      const labels = this.selectedReferentielIds.map(id => {
+        const ref = this.formReferentiel.find(formRef => formRef.id === id)
+        return ref?.value
+      })
+
+      let text = labels.slice(0, 3).join(', ')
+
+      if (labels.length > 3) {
+        text += ' et ' + (labels.length - 3) + ' de plus'
+      }
+
+      return text
+    }
+
+    return null
+  }
+
+  /**
+   * Supprimer le filtre des contentieux
+   */
+  clearFilterReferentiel() {
+    this.selectedReferentielIds = this.formReferentiel.map(r => r.id)
+    this.onSelectedReferentielIdsChanged(this.selectedReferentielIds)
   }
 }

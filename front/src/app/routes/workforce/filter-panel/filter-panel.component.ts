@@ -17,6 +17,7 @@ import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.serv
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { HumanResourceSelectedInterface } from '../workforce.page'
 import { WorkforceService } from 'src/app/services/workforce/workforce.service'
+import { dataInterface } from 'src/app/components/select/select.component'
 
 /**
  * Interface d'un filtre
@@ -80,6 +81,10 @@ export class FilterPanelComponent
    * Event au père lors de la demande de fermeture
    */
   @Output() close: EventEmitter<any> = new EventEmitter()
+  /**
+   * Event qui informate quand la liste des referentiels changes
+   */
+  @Output() updateReferentielIds: EventEmitter<any> = new EventEmitter()
   /**
    * Liste complète des tris possibles
    */
@@ -182,6 +187,14 @@ export class FilterPanelComponent
    */
   @Input() categories: number[] = []
   /**
+   * Liste des contentieux selectionnées
+   */
+  @Input() referentielIds: (string | number)[] | null = null
+  /**
+   * Referentiels
+   */
+  @Input() referentiels: dataInterface[] = []
+  /**
    * Dom de la popin
    */
   @ViewChild('popin') popin: ElementRef<HTMLElement> | null = null
@@ -197,6 +210,10 @@ export class FilterPanelComponent
    * List des filtres possibles
    */
   filterList: ItemInterface[] = []
+  /**
+   * List des filtres de contentieux possibles
+   */
+  contentieuxFilterList: ItemInterface[] = []
   /**
    * Valeur par défaut de filtre
    */
@@ -227,8 +244,7 @@ export class FilterPanelComponent
   constructor(
     private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef,
-    private referentielService: ReferentielService,
-    private workforceService: WorkforceService
+    private referentielService: ReferentielService
   ) {
     super()
   }
@@ -257,6 +273,10 @@ export class FilterPanelComponent
         .filter((f) => !this.categories.includes(f.categoryId))
         .map((v) => +v.id)
       this.filterValues = listUsedFunctions.map((f) => f.id)
+    }
+
+    if (changes['referentiels']) {
+      this.formatReferentielList()
     }
   }
 
@@ -340,7 +360,7 @@ export class FilterPanelComponent
       }, '')
 
       if (this.filterValues.length > nbStringToAdd) {
-        filterNames += ' ...'
+        filterNames += ' et ' + (this.filterValues.length - nbStringToAdd) + ' de plus'
       }
     }
 
@@ -374,5 +394,11 @@ export class FilterPanelComponent
       },
       filterNames,
     })
+
+    this.updateReferentielIds.emit(this.referentielIds)
+  }
+
+  formatReferentielList() {
+    this.contentieuxFilterList = this.referentiels.map(r => ({ id: r.id, label: r.value }))
   }
 }
