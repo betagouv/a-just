@@ -24,6 +24,7 @@ import { sleep } from 'src/app/utils'
 import { UserService } from 'src/app/services/user/user.service'
 import { ACTIVITIES_SHOW_LEVEL_4 } from 'src/app/constants/log-codes'
 import { KPIService } from 'src/app/services/kpi/kpi.service'
+import { MIN_DATE_SELECT } from 'src/app/constants/activities'
 
 /**
  * Composant page activité
@@ -83,6 +84,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     title: 'Voir les données de',
     dateType: 'month',
     value: null,
+    minDate: new Date(MIN_DATE_SELECT)
   }
   /**
    * Lien du guide de la donnée
