@@ -51,7 +51,7 @@ export class DateSelectComponent extends MainClass implements OnChanges {
   /**
    * Date minimal
    */
-  @Input() min: Date | null = null
+  @Input() min: Date | null | undefined = null
   /**
    * Date maximal
    */
