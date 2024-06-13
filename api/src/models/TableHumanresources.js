@@ -605,6 +605,9 @@ export default (sequelizeInstance, Model) => {
         registration_number: 'anonyme',
       })
     }
+
+    // update cache
+    Model.onPreload()    
   }
 
   return Model
