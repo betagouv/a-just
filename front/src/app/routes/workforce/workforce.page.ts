@@ -25,7 +25,6 @@ import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.serv
 import { fixDecimal } from 'src/app/utils/numbers'
 import { debounceTime } from 'rxjs'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
-import { sleep } from 'src/app/utils'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -360,6 +359,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
           this.selectedReferentielIds =
             this.humanResourceService.selectedReferentielIds
+
           this.onFilterList()
         }
       )
@@ -699,6 +699,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (this.filterParams.order && this.filterParams.order === 'desc') {
           listFiltered = listFiltered.reverse()
         }
+
+        if (this.getOptionAffichageIndispoString()) {
+          listFiltered = listFiltered.filter(h => h.indisponibilities && h.indisponibilities.length && h.indisponibilities.some(i => (this.filterParams?.filterIndispoValues || []).includes(i.contentieux.id)))
+        }
       }
 
       list.hrFiltered = listFiltered
@@ -922,22 +926,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
-  async getCurrentFilteredLabels(
-    fonctionsIds: number[],
-    focusFct: HRFonctionInterface[]
-  ) {
-    const fonctions = await this.hrFonctionService.getAll()
-    const fctCodes = fonctions
-      .filter((x) => fonctionsIds.includes(x.id))
-      .filter((f) => !focusFct.map((x) => x.id).includes(f.id))
-
-    if (fctCodes.length === 0) return null
-    else
-      return fctCodes
-        .map((x) => x.code)
-        .join(' ')
-        .slice(0, 10)
-  }
   async switchSubFilter(
     category: HRCategorySelectedInterface,
     poste: HRCategorypositionInterface
@@ -969,8 +957,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           )
         }
 
-        const labels = await this.getCurrentFilteredLabels(myArray, focusFct)
-
         this.filterParams = await {
           display: 'prénom/nom',
           filterFunction: (list: HumanResourceSelectedInterface[]) => {
@@ -984,7 +970,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           },
           filterNames: null,
           filterValues: myArray,
-          filterIndispoValues: [],
+          filterIndispoValues: this.filterParams?.filterIndispoValues || null,
           order: 'asc',
           orderIcon: 'sort-desc',
           sort: 'function',
@@ -1017,29 +1003,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     category.style['background-color'] = color
   }
 
-  async onUpdateFilterId(event: any) {
-    this.filterParams = await {
-      display: 'prénom/nom',
-      filterFunction: (list: HumanResourceSelectedInterface[]) => {
-        return list.filter(
-          (h) =>
-            h.fonction &&
-            this.filterParams &&
-            this.filterParams.filterValues &&
-            this.filterParams.filterValues.indexOf(h.fonction.id) !== -1
-        )
-      },
-      filterNames: null,
-      filterValues: event,
-      filterIndispoValues: [],
-      order: 'asc',
-      orderIcon: 'sort-desc',
-      sort: 'function',
-      sortFunction: null,
-      sortName: null,
-    }
-  }
-
   /**
    * Retour une string qui affiche les options de filtre / trie
    */
@@ -1056,6 +1019,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     if (this.filterParams && this.filterParams.filterNames) {
       list.push(this.filterParams.filterNames)
+    }
+
+    const indispString = this.getOptionAffichageIndispoString()
+    if (indispString) {
+      list.push(indispString)
     }
 
     return list.length === 0 ? null : list.join(', ')
@@ -1081,6 +1049,37 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     return null
+  }
+
+  /**
+   * Retour une string qui affiche les options de filtre / trie des indispo
+   */
+  getOptionAffichageIndispoString() {
+    const allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => ({ id: r.id, label: r.label.replace(/\//g, ' / ') }))
+    const filtre = this.filterParams?.filterIndispoValues || []
+    if (allIndisponibilityReferentiel.length !== filtre.length) {
+      const labels = filtre.map(id => {
+        const ref = allIndisponibilityReferentiel.find(f => f.id === id)
+        return ref?.label
+      })
+
+      let text = labels.slice(0, 3).join(', ')
+
+      if (labels.length > 3) {
+        text += ' et ' + (labels.length - 3) + ' de plus'
+      }
+
+      return text
+    }
+
+    return null
+  }
+
+  clearFilterIndispo() {
+    if (this.filterParams) {
+      this.filterParams.filterIndispoValues = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => r.id)
+      this.orderListWithFiltersParams()
+    }
   }
 
   /**

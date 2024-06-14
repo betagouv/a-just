@@ -16,7 +16,6 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { HumanResourceSelectedInterface } from '../workforce.page'
-import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 
@@ -176,6 +175,10 @@ export class FilterPanelComponent
    */
   @Input() filterValues: (string | number)[] | null = null
   /**
+   * Valeur de filtre des indispo
+   */
+  @Input() filterIndispoValues: (string | number)[] | null = null
+  /**
    * Valeur de tri déjà selectionnée
    */
   @Input() sortValue: string | number | null = null
@@ -264,8 +267,12 @@ export class FilterPanelComponent
    */
   ngOnInit() {
     this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((list) => {
+      this.humanResourceService.contentieuxReferentiel.subscribe(() => {
         this.allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => ({ id: r.id, label: r.label.replace(/\//g, ' / ') }))
+
+        if (this.filterIndispoValues === null) {
+          this.filterIndispoValues = this.allIndisponibilityReferentiel.map(i => i.id)
+        }
       })
     )
   }
@@ -397,7 +404,7 @@ export class FilterPanelComponent
       order: this.orderValue,
       orderIcon: orderItem && orderItem.icon ? orderItem.icon : null,
       filterValues: this.filterValues,
-      filterIndispoValues: [],
+      filterIndispoValues: this.filterIndispoValues,
       display: this.displayValue,
       filterFunction: (list: HumanResourceSelectedInterface[]) => {
         if (
