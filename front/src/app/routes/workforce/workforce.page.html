@@ -13,6 +13,7 @@
           [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
           [categories]="humanResourceService.categoriesFilterListIds"
           [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = false"
+          [filterIndispoValues]="(filterParams && filterParams.filterIndispoValues) || null"
           [referentielIds]="selectedReferentielIds" [referentiels]="formReferentiel"
           (updateReferentielIds)="onSelectedReferentielIdsChanged($event)">
         </filter-panel>
@@ -71,6 +72,10 @@
         <div class="tag" *ngIf="filterParams && filterParams.filterNames" (click)="clearFilterFilter()">
           <i class="ri-filter-3-line"></i>
           <p>{{filterParams.filterNames}}</p>
+          <i class="ri-close-line"></i>
+        </div>
+        <div class="tag" *ngIf="getOptionAffichageIndispoString()" (click)="clearFilterIndispo()">
+          <p>{{getOptionAffichageIndispoString()}}</p>
           <i class="ri-close-line"></i>
         </div>
         <div class="tag" *ngIf="filterParams && filterParams.sortName" (click)="clearFilterSort()">
