@@ -137,6 +137,8 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
    * @param comment 
    */
   updateComment(comment: string) {
+    const elem = document.getElementById("new-comment-editor")
+    if (elem && elem?.offsetHeight > 80) this.showAll = true
     this.currentComment = comment
     this.changeDetectorRef.detectChanges()
   }
@@ -197,9 +199,9 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
     this.hRCommentService.mainEditing.next(false)
     this.changeDetectorRef.detectChanges()
   }
- /**
-   * Scroll to top
-   */
+  /**
+    * Scroll to top
+    */
   scrollToTop() {
     const header = document.getElementById('top-scroll-anchor')
     header?.scrollIntoView({ behavior: 'smooth' });
