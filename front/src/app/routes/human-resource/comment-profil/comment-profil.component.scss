@@ -2,7 +2,7 @@
 
 :host {
   .hide {
-    display: none;
+    display: none !important;
   }
 
   >div {
