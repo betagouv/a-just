@@ -945,6 +945,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     parent?.removeChild(child as Node)
     parent2?.appendChild(child as Node)
 
+    const reduire1 = document.getElementById('logo-2')
+    const reduire2 = document.getElementById('logo-4')
+
+    reduire1?.classList.add('hide')
+    reduire2?.classList.add('hide')
+
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
@@ -954,6 +960,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         } en date du ${new Date().toJSON().slice(0, 10)}.pdf`
       )
       .then(() => {
+        reduire1?.classList.remove('hide')
+        reduire2?.classList.remove('hide')
         this.hrCommentService.forceOpenAll.next(false)
         this.duringPrint = false
         parent2?.removeChild(child as Node)

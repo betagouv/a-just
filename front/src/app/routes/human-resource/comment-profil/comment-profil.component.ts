@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core'
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
@@ -197,11 +197,11 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
     this.hRCommentService.mainEditing.next(false)
     this.changeDetectorRef.detectChanges()
   }
-
-  /**
+ /**
    * Scroll to top
    */
   scrollToTop() {
-    window.scrollTo(0, 0)
+    const header = document.getElementById('top-scroll-anchor')
+    header?.scrollIntoView({ behavior: 'smooth' });
   }
 }

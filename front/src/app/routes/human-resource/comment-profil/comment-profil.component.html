@@ -1,6 +1,6 @@
 <div id="comment-area" [ngClass]="{'close': !showAll, 'drop-down-display': this.comments.length}"
   (click)="showAll=true">
-  <div class="header-panel" (click)="$event.stopPropagation()">
+  <div class="header-panel" (click)="$event.stopPropagation()" #target>
     <i id="logo-1" class="ri-message-3-line"></i>
     <div>
       <p class="com">Commentaires</p>
@@ -8,7 +8,7 @@
 
     </div>
     <div class="sep"></div>
-    <div class="displayer" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop()"
+    <div id="logo-4" class="displayer" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop()"
       *ngIf="this.comments.length">
       {{ showAll ? 'Réduire':'Tout déplier'}}
     </div>
@@ -36,7 +36,7 @@
   <passed-comment *ngFor="let com of comments" [comment]="com" [currentHR]="currentHR"
     (deletedComment)="reloadCheck($event)"></passed-comment>
 
-  <div id="logo-2" class="fixed-button" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop()"
+  <div id="logo-2" class="fixed-button" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop();"
     *ngIf="this.comments.length">
     <mat-icon class="arrow-list">{{
       showAll ? 'expand_less' : 'expand_more'
