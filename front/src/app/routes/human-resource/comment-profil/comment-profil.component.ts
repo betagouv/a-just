@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core'
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
@@ -108,11 +108,13 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
       })
     )
   }
+
   /**
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges() {
-    this.onLoadComment()
+    if (this.currentComment === '')
+      this.onLoadComment()
   }
 
   /**
