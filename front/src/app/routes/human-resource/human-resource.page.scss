@@ -20,7 +20,6 @@
 
 .panel-hsitory-group {
   margin: 16px auto;
-  max-width: 894px;
   background-color: white;
   border-radius: 8px;
   padding-bottom: 8px;
@@ -78,10 +77,10 @@ add-ventilation {
   align-items: center;
   justify-content: center;
   position: absolute;
-    bottom: 0;
-    z-index: 102;
-    left: 0;
-    right: 0;
+  bottom: 0;
+  z-index: 102;
+  left: 0;
+  right: 0;
 
   button:first-child {
     margin-right: 16px;
@@ -104,12 +103,12 @@ add-ventilation {
   align-items: stretch;
   margin: 8px 0;
 
-  > indispo-profil {
+  >indispo-profil {
     width: 438px;
     margin-right: 8px;
   }
 
-  > comment-profil {
+  >comment-profil {
     flex: 1;
   }
 }
