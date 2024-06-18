@@ -18,6 +18,8 @@ import { getCategoryTitle, getCategoryTitlePlurial } from 'src/app/utils/categor
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { Router } from '@angular/router'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
+import { DATE_REAFECTATOR } from 'src/app/constants/log-codes'
 
 /**
  * Interface d'une fiche surchargé avec des rendus visuels
@@ -303,7 +305,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     private workforceService: WorkforceService,
     private rs: ReaffectatorService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private kpiService: KPIService
   ) {
     super()
     this.reaffectatorService = this.rs
@@ -682,6 +685,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
     this.onFilterList()
+    this.kpiService.register(DATE_REAFECTATOR, date)
+
   }
 
   /**

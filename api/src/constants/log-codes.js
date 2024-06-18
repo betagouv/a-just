@@ -29,6 +29,12 @@ export const EXECUTE_WHITE_SIMULATOR = 312
 export const EXECUTE_LAUNCH_WHITE_SIMULATOR = 313
 export const EXECUTE_SIMULATOR_PARAM = 315
 
+export const START_DATE_SIMULATOR = 350
+export const END_DATE_SIMULATOR = 351
+export const DATE_REAFECTATOR = 352
+export const DATE_WHITE_SIMULATOR = 353
+
+
 export const HELP_START = 400
 export const HELP_STOP = 401
 
