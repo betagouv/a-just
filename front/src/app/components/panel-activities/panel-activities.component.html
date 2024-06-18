@@ -39,7 +39,7 @@
       [color]=" userService.referentielMappingColorByInterface(referentiel[refIndexSelected].label)"
       [selected]="selected" (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)" class="dark-mode">
     </progression-bar>
-    <p>{{ userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label) }}</p>
+    <p>{{ referentiel[refIndexSelected].label }}</p>
   </div>
   <div class="sub-item sub-item-or" *ngIf="(referentiel[refIndexSelected].childrens || []).length">
     <p>Dont</p>

@@ -186,7 +186,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   ngOnInit() {
     window.addEventListener('click', this.onclick.bind(this))
     window.addEventListener('click', this.onclick2.bind(this))
-
     this.watch(
       this.hrFonctionService.getAll().then(() => this.loadCategories())
     )
