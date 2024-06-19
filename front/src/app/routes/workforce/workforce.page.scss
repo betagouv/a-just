@@ -17,9 +17,18 @@
     padding-left: 24px;
     width: 386px;
 
+    &.ca {
+      width: auto;
+    }
+
     >.label-container {
       flex: 1;
       align-self: stretch;
+
+      &.ca {
+        width: 174px;
+        flex: none;
+      }
 
       >.category-name {
         display: flex;

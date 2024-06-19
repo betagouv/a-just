@@ -18,7 +18,6 @@
           (updateReferentielIds)="onSelectedReferentielIdsChanged($event)">
         </filter-panel>
       </div>
-
       <div class="flex-1"></div>
       <div *ngFor="let category of categoriesFilterList" class="checkbox-button"
         [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
@@ -87,9 +86,9 @@
     </div>
     <div class="content-list" id="container-list">
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
-        <div class="header-list">
-          <div class="profil">
-            <div class="label-container">
+        <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
+          <div class="profil" [ngClass]="{'ca': userService.interfaceType === 1}">
+            <div class="label-container" [ngClass]="{'ca': userService.interfaceType === 1}">
               <div class="category-name">
                 <mat-icon class="" [style.color]="list.textColor">person_outline</mat-icon>
                 <div class="label" [style.color]="list.textColor">

@@ -74,6 +74,10 @@ export class UserService {
     })
   }
 
+  isCa() {
+    return this.interfaceType === 1
+  }
+
   /**
    * Mapping de la couleur du référentiel selon l'interface
    * @param label 

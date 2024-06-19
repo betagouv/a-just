@@ -22,9 +22,9 @@
       <mat-icon>drive_file_rename_outline</mat-icon>Pour écrire un nouveau
       commentaire, cliquez ici
     </div>
-    <aj-text-editor id="new-comment-editor" #editor [value]="comment || ''" class="no-main-style" (valueChange)="updateComment($event)"
-      placeholder="" [hideToolbar]="true" (focusField)="getFocusOn($event)" [resetEditor]="resetEditor"
-      (resetField)="resetEditor = false" (click)="$event.stopPropagation()">
+    <aj-text-editor id="new-comment-editor" #editor [value]="comment || ''" class="no-main-style"
+      (valueChange)="updateComment($event)" placeholder="" [hideToolbar]="true" (focusField)="getFocusOn($event)"
+      [resetEditor]="resetEditor" (resetField)="resetEditor = false" (click)="$event.stopPropagation()">
     </aj-text-editor>
   </div>
   <div class="footer-panel" *ngIf="isEditing">

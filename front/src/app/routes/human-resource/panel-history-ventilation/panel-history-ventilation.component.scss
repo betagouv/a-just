@@ -14,7 +14,7 @@
   border-top-right-radius: 8px;
   margin-bottom: 1px;
 
-  > .tags {
+  >.tags {
     flex: 1;
     display: flex;
     align-items: center;
@@ -30,14 +30,15 @@
       background-color: fColor(cgrayDefault);
       color: fColor(cgray);
 
-      &.fonction, &.time-worked {
+      &.fonction,
+      &.time-worked {
         color: fColor(cbluedark);
         background-color: fColor(cbluemiddle);
       }
     }
   }
 
-  > .etpt {
+  >.etpt {
     padding: 0 40px 0 26px;
     background-color: fColor(cgreenlight);
     display: flex;
@@ -66,7 +67,7 @@
 }
 
 .activities-panel {
-  padding: 0 18px 0 18px;
+  padding: 0 12px 0 12px;
 }
 
 .actions-panel {
