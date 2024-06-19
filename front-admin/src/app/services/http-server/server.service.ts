@@ -12,7 +12,7 @@ export class ServerService {
   userToken: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   serverUrl: string = environment.serverUrl;
 
-  constructor(private _http: HttpService/*, private appService: AppService*/) {}
+  constructor(private _http: HttpService/*, private appService: AppService*/) { }
 
   getUrl(url: string): string {
     return this.serverUrl + url;
@@ -30,7 +30,7 @@ export class ServerService {
     }
     const headers = new HttpHeaders(json);
 
-    return { headers: headers };
+    return { headers: headers, withCredentials: true };
   }
 
   handleError(error: any) {
@@ -78,7 +78,7 @@ export class ServerService {
         if (localStorage && localStorage.getItem('token')) {
           this.setToken(localStorage.getItem('token'));
         }
-      } catch (err) {}
+      } catch (err) { }
     }
 
     return this.userToken.getValue();

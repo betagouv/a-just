@@ -21,6 +21,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.TEXT,
         allowNull: true,
       },
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -52,7 +56,7 @@ export default (sequelizeInstance) => {
 
   Model.associate = function (models) {
     Model.hasOne(models.HumanResources, { foreignKey: 'id', sourceKey: 'human_id' })
-
+    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })
     return models
   }
 

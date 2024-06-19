@@ -44,15 +44,15 @@ export default class App {
     await onGetIelstListApi().then(async (response) => {
       if (response) {
         // CIVIL
-        /*await this.getGroupByJuridiction(tmpFolder, inputFolder);
-        await this.formatAndGroupJuridiction(
-          tmpFolder,
-          outputFolder,
-          outputAllFolder,
-          categoriesOfRules,
-          referentiel,
-          response
-        );*/
+        // await this.getGroupByJuridiction(tmpFolder, inputFolder);
+        // await this.formatAndGroupJuridiction(
+        //   tmpFolder,
+        //   outputFolder,
+        //   outputAllFolder,
+        //   categoriesOfRules,
+        //   referentiel,
+        //   response
+        // );
 
         // WIP datas pénal
         await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
@@ -170,6 +170,7 @@ export default class App {
       const file = files[i];
 
       const regex = new RegExp("_RGC-(.*?)_", "g");
+      //const regex = new RegExp("_MINTI_(.*?).xml");
       let testRegex;
       let getTypeOfJuridiction;
       if ((testRegex = regex.exec(file)) !== null) {
@@ -477,7 +478,14 @@ export default class App {
 
             // save values
             const totalKeyNode = (newRules.TOTAL || "").toLowerCase();
-            const sumByValues = sumBy(lines, totalKeyNode);
+            //const sumByValues = sumBy(lines, totalKeyNode);
+            let sumByValues = 0
+            for (let line of lines) {
+              if (typeof line[totalKeyNode] === Number)
+                sumByValues += line[totalKeyNode]
+              else (typeof line[totalKeyNode] === String)
+                sumByValues += Number(line[totalKeyNode])
+            }
             /*console.log(
               node,
               sumByValues,
