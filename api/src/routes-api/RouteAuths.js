@@ -72,6 +72,7 @@ export default class RouteAuths extends Route {
           email,
           remember,
           code,
+          catchLogs: true,
         }
         await sentEmail(
           {
@@ -123,21 +124,25 @@ export default class RouteAuths extends Route {
     const userInDb = await this.model.userPreviewWithEmail(ctx.session.loginControl.email)
 
     if (ctx.session.loginControl.code !== code) {
-      await this.models.Logs.addLog(USER_USER_LOGIN_CODE_INVALID, userInDb.id, {
-        userId: userInDb.id,
-      })
+      if(ctx.session.loginControl.catchLogs) {
+        await this.models.Logs.addLog(USER_USER_LOGIN_CODE_INVALID, userInDb.id, {
+          userId: userInDb.id,
+        })
+      }
       ctx.throw(401, 'Code invalide !')
     }
 
     const remember = ctx.session.loginControl.remember
     if (userInDb) {
       await ctx.loginUser(userInDb, remember === 1 ? 90 : 7)
-      await this.models.Logs.addLog(USER_USER_LOGIN, userInDb.id, {
-        userId: userInDb.id,
-      })
-      await this.models.Logs.addLog(USER_AUTH_BY_2FA, userInDb.id, {
-        userId: userInDb.id,
-      })
+      if(ctx.session.loginControl.catchLogs) {
+        await this.models.Logs.addLog(USER_USER_LOGIN, userInDb.id, {
+          userId: userInDb.id,
+        })
+        await this.models.Logs.addLog(USER_AUTH_BY_2FA, userInDb.id, {
+          userId: userInDb.id,
+        })
+      }
       await super.addUserInfoInBody(ctx, userInDb.id)
       this.sendCreated(ctx)
     }
@@ -174,12 +179,51 @@ export default class RouteAuths extends Route {
       if (nbAuthBy2FAOffMonth === 0) {
         ctx.throw(401, 'Vous devez changer de mot de passe tout les 6 mois!')
       } else {
-        await ctx.loginUser(tryUserCon, 7)
-        await this.models.Logs.addLog(USER_USER_LOGIN, tryUserCon.id, {
-          userId: tryUserCon.id,
-        })
-        await super.addUserInfoInBody(ctx)
-        this.sendCreated(ctx)
+        let required2Auth = config.login.enable2Auth
+        if (required2Auth) {
+          const now = new Date()
+          now.setMonth(now.getMonth() - 1)
+          const nbAuthBy2FAOffMonth = (
+            await this.models.Logs.getLogs({
+              code_id: USER_AUTH_BY_2FA,
+              user_id: tryUserCon.id,
+              created_at: { [Op.gte]: now },
+            })
+          ).length
+
+          if (nbAuthBy2FAOffMonth >= config.login.max2AuthByMonth) {
+            required2Auth = false
+          }
+        }
+
+        if (required2Auth) {
+          const code = crypt.generateRandomNumber(4)
+          ctx.session.loginControl = {
+            email,
+            code,
+            catchLogs: false,
+          }
+          await sentEmail(
+            {
+              email,
+            },
+            Number(config.juridictionType) === 1 ? TEMPLATE_2_AUTH_USER_LOGIN_CA : TEMPLATE_2_AUTH_USER_LOGIN,
+            {
+              email,
+              code,
+            }
+          )
+          this.sendOk(ctx, {
+            status: LOGIN_STATUS_GET_CODE,
+            datas: {
+              code: config.login.shareAuthCode ? code : null,
+            },
+          })
+        } else {
+          await ctx.loginUser(tryUserCon, 7)
+          await super.addUserInfoInBody(ctx, tryUserCon.id)
+          this.sendCreated(ctx)
+        }
       }
     }
   }

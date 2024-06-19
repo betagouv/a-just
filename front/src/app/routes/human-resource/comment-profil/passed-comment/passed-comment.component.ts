@@ -125,6 +125,7 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
           this.commentContent = this.currentText
           this.valueToReset = this.currentText
           this.isEditing = false
+          this.hRCommentService.mainEditing.next(false)
           this.changeDetectorRef.detectChanges()
         })
     }
@@ -134,9 +135,10 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    * Suppression d'un commentaire
    */
   removeComment() {
-    if (this.currentHR) {
+    if (this.currentHR && this.hRCommentService.mainEditing.getValue() === false) {
       this.hRCommentService
         .deleteHRComment(this.currentUser.commentId, this.currentHR.id).then(() => {
+          this.hRCommentService.mainEditing.next(false)
           this.deletedComment.emit(true)
         })
     }
@@ -169,6 +171,7 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
     this.currentText = this.commentContent
     this.valueToReset = this.commentContent
     this.isEditing = false
+    this.hRCommentService.mainEditing.next(false)
     this.changeDetectorRef.detectChanges()
   }
 
@@ -184,12 +187,15 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
   }
 
   /**
-   * 
+   * Récupere le focus sur l'ensemble des commentaires
    * @param event 
    */
   getFocusOn(event: any) {
-    if (event === true)
+    console.log(event, 'focus')
+    if (event === true && !this.hRCommentService.mainEditing.getValue()) {
       this.isEditing = event
+      this.hRCommentService.mainEditing.next(true)
+    }
     setTimeout(() => {
       this.changeDetectorRef.detectChanges()
     }, 50)

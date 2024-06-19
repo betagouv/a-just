@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Input } from '@angular/core'
-import { HELP_START, HELP_STOP } from 'src/app/constants/log-codes'
+import { HELP_AUTOSTART, HELP_AUTOSTART_AND_STOP, HELP_START, HELP_STOP } from 'src/app/constants/log-codes'
 import { KPIService } from 'src/app/services/kpi/kpi.service'
 import { today } from 'src/app/utils/dates'
 
@@ -45,7 +45,7 @@ export class IntroJSComponent implements AfterViewInit {
    */
   hasCompleteForm: boolean = false
 
-  constructor(private kpiService: KPIService) {}
+  constructor(private kpiService: KPIService) { }
 
   ngAfterViewInit(): void {
     if (this.steps) {
@@ -67,6 +67,8 @@ export class IntroJSComponent implements AfterViewInit {
   startPlayer(log = true) {
     if (log) {
       this.kpiService.register(HELP_START, '')
+    } else {
+      this.kpiService.register(HELP_AUTOSTART, '')
     }
 
     setTimeout(() => {
@@ -141,7 +143,9 @@ export class IntroJSComponent implements AfterViewInit {
       })
       intro.onexit(() => {
         if (log) {
-          this.kpiService.register(HELP_STOP, intro.currentStep() + 1)
+          this.kpiService.register(HELP_STOP, (this.typeId ? this.typeId + '_' : '') + (intro.currentStep() + 1))
+        } else {
+          this.kpiService.register(HELP_AUTOSTART_AND_STOP, (this.typeId ? this.typeId + '_' : '') + (intro.currentStep() + 1))
         }
 
         if (this.typeId) {

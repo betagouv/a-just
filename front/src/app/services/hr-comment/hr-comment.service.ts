@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Service de gestion des commentaires d'un magistrat, greffier....
@@ -9,6 +10,14 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
   providedIn: 'root',
 })
 export class HRCommentService {
+  /**
+   * A comment is editing
+   */
+  mainEditing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  /**
+   * A comment is editing
+   */
+  forceOpenAll: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   /**
    * Constructeur
    * @param serverService 
@@ -63,7 +72,7 @@ export class HRCommentService {
         commentId,
         hrId: id,
         comment,
-        userId
+        userId: userId || -1
       })
       .then((r) => {
         console.log('BACK', r)

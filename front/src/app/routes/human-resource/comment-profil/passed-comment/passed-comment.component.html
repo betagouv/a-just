@@ -8,13 +8,14 @@
   </div>
   <p *ngIf="commentUpdatedAt && compareCommentsDates()" class="com-mod">
     (Modifié {{formatDate(commentUpdatedAt)}})</p>
-  <div class="panel-content" [ngClass]="{'editing': isEditing}"> <aj-text-editor #editor [value]="commentContent || ''"
-      class="no-main-style" (valueChange)="updateComment($event)" placeholder="Écrivez un commentaire"
-      [hideToolbar]="true" (focusField)="getFocusOn($event)" [previousValue]="valueToReset" [askToModify]="isEditing"
+
+  <div class="panel-content" [ngClass]="{'editing': isEditing}"> <aj-text-editor #editor
+      [ngClass]="{'editing': isEditing}" [value]="commentContent || ''" class="no-main-style"
+      (valueChange)="updateComment($event)" placeholder="Écrivez un commentaire" [hideToolbar]="true"
+      (focusField)="getFocusOn($event)" [previousValue]="valueToReset" [askToModify]="isEditing"
       (resetField)="reset()"></aj-text-editor>
     <div class="footer-panel" *ngIf="isEditing">
-      <div class="unsave" [ngClass]="{'active': commentContent!==currentText}" (click)="setOldValue()">Annuler les
-        modifications</div>
+      <div class="unsave" (click)="setOldValue()">Annuler</div>
       <div class="save" (click)="save()">Enregistrer</div>
     </div>
   </div>

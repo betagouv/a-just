@@ -11,7 +11,7 @@ export class AuthService {
   constructor(
     private serverService: ServerService,
     private userService: UserService
-  ) {}
+  ) { }
 
   async userConnected() {
     const jwToken = this.serverService.getToken();
@@ -83,11 +83,22 @@ export class AuthService {
     });
   }
 
+  /**
+   * API Control auth 2FA
+   * @param params 
+   * @returns 
+   */
+  completeLogin(params = {}, options = {}): Promise<any> {
+    return this.serverService.post('auths/complete-login', params, options).then((data) => {
+      this.serverService.setToken(data.token);
+      return data;
+    });
+  }
+
   loginAdmin(params = {}): Promise<any> {
     return this.serverService.post('auths/login-admin', params).then((data) => {
-      console.log('[auth.service][line 89] data login:', data)
       this.serverService.setToken(data.token);
-      return true;
+      return data;
     });
   }
 

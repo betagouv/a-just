@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core'
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
@@ -13,7 +13,7 @@ import { UserService } from 'src/app/services/user/user.service'
   templateUrl: './comment-profil.component.html',
   styleUrls: ['./comment-profil.component.scss'],
 })
-export class CommentProfilComponent extends MainClass implements OnChanges {
+export class CommentProfilComponent extends MainClass implements OnChanges, OnInit {
   /**
    * Fiche courante
    */
@@ -45,7 +45,7 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
   /**
    * Dernier commentaire en date
    */
-  currentComment = ''
+  currentComment: string = ''
   /**
    * Reset editor status
    */
@@ -70,7 +70,6 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
 
 
     this.userService.me().then((data) => {
-      console.log(data)
       this.currentUser =
       {
         firstName: data.firstName,
@@ -83,10 +82,39 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
   }
 
   /**
+   * On init fonction
+   */
+  ngOnInit() {
+    this.watch(
+      this.hRCommentService.forceOpenAll.subscribe((value) => {
+        this.showAll = value
+        const elem = document.getElementById('panel-content')
+        const icon = document.getElementById('logo-1')
+        const reduire = document.getElementById('logo-2')
+        const indispo = document.getElementById('logo-3')
+
+        if (value) {
+          elem?.classList.add('hide')
+          icon?.classList.add('hide')
+          reduire?.classList.add('hide')
+          indispo?.classList.add('hide')
+        }
+        else {
+          elem?.classList.remove('hide')
+          icon?.classList.remove('hide')
+          reduire?.classList.remove('hide')
+          indispo?.classList.remove('hide')
+        }
+      })
+    )
+  }
+
+  /**
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges() {
-    this.onLoadComment()
+    if (this.currentComment === '')
+      this.onLoadComment()
   }
 
   /**
@@ -111,6 +139,8 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
    * @param comment 
    */
   updateComment(comment: string) {
+    const elem = document.getElementById("new-comment-editor")
+    if (elem && elem?.offsetHeight > 80) this.showAll = true
     this.currentComment = comment
     this.changeDetectorRef.detectChanges()
   }
@@ -122,13 +152,14 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
     this.timeoutUpdateComment = setTimeout(() => {
       if (this.currentHR) {
         this.hRCommentService
-          .updateHRComment(this.currentHR.id, this.currentComment, this.currentUser.userId, this.currentUser.commentId)
+          .updateHRComment(this.currentHR.id, this.currentComment || '', this.currentUser.userId, this.currentUser.commentId)
           .then(() => {
             this.comment = ''
             this.currentComment = ''
             this.commentUpdatedAt = null
             this.resetEditor = true
             this.isEditing = false
+            this.hRCommentService.mainEditing.next(false)
             this.changeDetectorRef.detectChanges()
             this.onLoadComment()
           })
@@ -149,17 +180,32 @@ export class CommentProfilComponent extends MainClass implements OnChanges {
    * @param event 
    */
   getFocusOn(event: any) {
-    if (event === true)
+    if (event === true) {
       this.isEditing = event
+      this.hRCommentService.mainEditing.next(true)
+    }
     setTimeout(() => {
       this.changeDetectorRef.detectChanges()
     }, 50)
   }
 
   /**
-  * Scroll to top
-  */
+   * Bouton annuler action
+   */
+  back() {
+    this.comment = ''
+    this.currentComment = ''
+    this.commentUpdatedAt = null
+    this.resetEditor = true
+    this.isEditing = false
+    this.hRCommentService.mainEditing.next(false)
+    this.changeDetectorRef.detectChanges()
+  }
+  /**
+    * Scroll to top
+    */
   scrollToTop() {
-    window.scrollTo(0, 0)
+    const header = document.getElementById('top-scroll-anchor')
+    header?.scrollIntoView({ behavior: 'smooth' });
   }
 }

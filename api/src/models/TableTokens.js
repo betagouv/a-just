@@ -42,8 +42,10 @@ export default (sequelizeInstance, Model) => {
    */
   Model.consumeOne = async function ({ token }) {
     const ref = await Model.findOne({ where: { token } })
-    ref.nb_consumable -= 1
-    return ref.save()
+    if(ref) {
+      ref.nb_consumable -= 1
+      return ref.save()
+    }
   }
 
   /**

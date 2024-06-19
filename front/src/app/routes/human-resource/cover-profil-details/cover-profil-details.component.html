@@ -34,31 +34,33 @@
       <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
         class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
     </div>
-    <div class="matricule">
-      <p id="matricule" contenteditable #matriculeDom data-placeholder="Matricule"
-        (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
-        (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null">{{ currentHR?.matricule
-        }}</p>
-      <mat-icon class="iconPenSmall no-print cursor-pointer"
-        (click)="onFocus(matriculeDom)">drive_file_rename_outline</mat-icon>
-    </div>
-    <div class="flex-1"></div>
-    <div class="tags">
-      <p *ngIf="fonction" class="fonction"
-        [style.background-color]="category ? getCategoryColor(category && category.label) : null"
-        [style.color]="category ? 'white' : null">
-        {{ fonction.code }}
+    <div class="last-row">
+      <div class="matricule">
+        <p id="matricule" contenteditable #matriculeDom data-placeholder="Matricule" (keydown)="keyPress($event);"
+          (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
+          (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null">{{ currentHR?.matricule
+          }}</p>
+        <mat-icon class="iconPenSmall no-print cursor-pointer"
+          (click)="onFocus(matriculeDom)">drive_file_rename_outline</mat-icon>
+      </div>
+      <div class="tags">
+        <p *ngIf="fonction" class="fonction"
+          [style.background-color]="category ? getCategoryColor(category && category.label) : null"
+          [style.color]="category ? 'white' : null">
+          {{ fonction.code }}
+        </p>
+        <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+      </div>
+      <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
+        {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
+        getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt)
+        + ' ' + getFullYear(currentHR.updatedAt) : '' }}
       </p>
-      <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
     </div>
   </div>
 
   <div class="right-second-row">
-    <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
-      {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
-      getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt)
-      + ' ' + getFullYear(currentHR.updatedAt) : '' }}
-    </p>
+
     <div class="flex-1"></div>
     <div class="dates">
       <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart"

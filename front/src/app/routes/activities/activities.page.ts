@@ -22,6 +22,9 @@ import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sleep } from 'src/app/utils'
 import { UserService } from 'src/app/services/user/user.service'
+import { ACTIVITIES_SHOW_LEVEL_4 } from 'src/app/constants/log-codes'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
+import { MIN_DATE_SELECT } from 'src/app/constants/activities'
 
 /**
  * Composant page activité
@@ -81,6 +84,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     title: 'Voir les données de',
     dateType: 'month',
     value: null,
+    minDate: new Date(MIN_DATE_SELECT)
   }
   /**
    * Lien du guide de la donnée
@@ -209,7 +213,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       target: '#wrapper-contener',
       title: "Découvrir la fonctionnalité",
       intro:
-        "<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l'écran des données d’activité.</p><iframe src='https://app.videas.fr/57d76050-fb40-4cf4-bb75-5bb5ec636019/' style=\"width:100%;margin-top:16px;height:370px;\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>",
+        "<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l'écran des données d’activité.</p><video controls autoplay class=\"intro-js-video\"><source src=\"/assets/videos/video-activites.mp4\" type=\"video/mp4\" /></video>",
     },
   ]
 
@@ -219,6 +223,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @param humanResourceService
    * @param referentielService
    * @param userService
+   * @param kpiService
    */
   constructor(
     private activitiesService: ActivitiesService,
@@ -226,6 +231,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
     public userService: UserService,
+    private kpiService: KPIService,
   ) {
     super()
 
@@ -814,5 +820,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       return true
     }
     return false
+  }
+
+  onShowLevel4(cont: ContentieuReferentielActivitiesInterface) {
+    if (cont.showActivityGroup) {
+      this.kpiService.register(ACTIVITIES_SHOW_LEVEL_4, cont.id + "")
+    }
   }
 }

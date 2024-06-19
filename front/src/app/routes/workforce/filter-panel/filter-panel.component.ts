@@ -16,7 +16,8 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { HumanResourceSelectedInterface } from '../workforce.page'
-import { WorkforceService } from 'src/app/services/workforce/workforce.service'
+import { dataInterface } from 'src/app/components/select/select.component'
+import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 
 /**
  * Interface d'un filtre
@@ -52,6 +53,10 @@ export interface FilterPanelInterface {
    */
   filterValues: (string | number)[] | null
   /**
+   * Filtre des indispo
+   */
+  filterIndispoValues: (string | number)[] | null
+  /**
    * Filtre des noms
    */
   filterNames: string | null
@@ -80,6 +85,10 @@ export class FilterPanelComponent
    * Event au père lors de la demande de fermeture
    */
   @Output() close: EventEmitter<any> = new EventEmitter()
+  /**
+   * Event qui informate quand la liste des referentiels changes
+   */
+  @Output() updateReferentielIds: EventEmitter<any> = new EventEmitter()
   /**
    * Liste complète des tris possibles
    */
@@ -166,6 +175,10 @@ export class FilterPanelComponent
    */
   @Input() filterValues: (string | number)[] | null = null
   /**
+   * Valeur de filtre des indispo
+   */
+  @Input() filterIndispoValues: (string | number)[] | null = null
+  /**
    * Valeur de tri déjà selectionnée
    */
   @Input() sortValue: string | number | null = null
@@ -181,6 +194,14 @@ export class FilterPanelComponent
    * Categories déjà selectionnée
    */
   @Input() categories: number[] = []
+  /**
+   * Liste des contentieux selectionnées
+   */
+  @Input() referentielIds: (string | number)[] | null = null
+  /**
+   * Referentiels
+   */
+  @Input() referentiels: dataInterface[] = []
   /**
    * Dom de la popin
    */
@@ -198,6 +219,10 @@ export class FilterPanelComponent
    */
   filterList: ItemInterface[] = []
   /**
+   * List des filtres de contentieux possibles
+   */
+  contentieuxFilterList: ItemInterface[] = []
+  /**
    * Valeur par défaut de filtre
    */
   defaultFilterValues: (string | number)[] | null = null
@@ -209,6 +234,10 @@ export class FilterPanelComponent
    * Valeur par défaut d'ordre
    */
   defaultOrderValue: string | number | null = this.orderList[0].id
+  /**
+   * Référentiel des indispo
+   */
+  allIndisponibilityReferentiel: ItemInterface[] = []
 
   /**
    * Détection d'un click sur le composant
@@ -228,9 +257,24 @@ export class FilterPanelComponent
     private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef,
     private referentielService: ReferentielService,
-    private workforceService: WorkforceService
+    private humanResourceService: HumanResourceService
   ) {
     super()
+  }
+
+  /**
+   * Au chargement récupération des contentieux
+   */
+  ngOnInit() {
+    this.watch(
+      this.humanResourceService.contentieuxReferentiel.subscribe(() => {
+        this.allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => ({ id: r.id, label: r.label.replace(/\//g, ' / ') }))
+
+        if (this.filterIndispoValues === null) {
+          this.filterIndispoValues = this.allIndisponibilityReferentiel.map(i => i.id)
+        }
+      })
+    )
   }
 
   /**
@@ -257,6 +301,10 @@ export class FilterPanelComponent
         .filter((f) => !this.categories.includes(f.categoryId))
         .map((v) => +v.id)
       this.filterValues = listUsedFunctions.map((f) => f.id)
+    }
+
+    if (changes['referentiels']) {
+      this.formatReferentielList()
     }
   }
 
@@ -340,7 +388,7 @@ export class FilterPanelComponent
       }, '')
 
       if (this.filterValues.length > nbStringToAdd) {
-        filterNames += ' ...'
+        filterNames += ' et ' + (this.filterValues.length - nbStringToAdd) + ' de plus'
       }
     }
 
@@ -356,6 +404,7 @@ export class FilterPanelComponent
       order: this.orderValue,
       orderIcon: orderItem && orderItem.icon ? orderItem.icon : null,
       filterValues: this.filterValues,
+      filterIndispoValues: this.filterIndispoValues,
       display: this.displayValue,
       filterFunction: (list: HumanResourceSelectedInterface[]) => {
         if (
@@ -374,5 +423,11 @@ export class FilterPanelComponent
       },
       filterNames,
     })
+
+    this.updateReferentielIds.emit(this.referentielIds)
+  }
+
+  formatReferentielList() {
+    this.contentieuxFilterList = this.referentiels.map(r => ({ id: r.id, label: r.value }))
   }
 }

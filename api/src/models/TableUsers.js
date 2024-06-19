@@ -325,30 +325,29 @@ export default (sequelizeInstance, Model) => {
     }
   }
 
-  Model.checkAccountToRemove = async () => {
+  Model.checkAccountToAnonymise = async () => {
     const now = today()
     now.setMonth(now.getMonth() - 3)
     const users = await Model.findAll({
-      attributes: ['id', 'first_name', 'last_name', 'created_at', 'updated_at', 'deleted_at'],
+      attributes: ['id', 'first_name', 'last_name', 'created_at', 'updated_at', 'deleted_at', 'email'],
       where: {
-        created_at: {
+        deleted_at: {
           [Op.lte]: now,
         },
-        deleted_at: null,
-      },
-      include: [
-        {
-          model: Model.models.UserVentilations,
-          paranoid: false,
+        first_name: {
+          [Op.ne]: 'anonyme',
         },
-      ],
+      },
       paranoid: false,
-      raw: true,
     })
 
-    const usersGrouped = groupBy(users, 'id')
-
-    //console.log(usersGrouped)
+    for(let i = 0; i < users.length; i++) {
+      await users[i].update({
+        first_name: 'anonyme',
+        last_name: 'anonyme',
+        email: 'anonyme',
+      })
+    }
   }
 
   return Model
