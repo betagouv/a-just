@@ -37,6 +37,8 @@ export const DATE_WHITE_SIMULATOR = 353
 
 export const HELP_START = 400
 export const HELP_STOP = 401
+export const HELP_AUTOSTART = 402
+export const HELP_AUTOSTART_AND_STOP = 403
 
 export const ACTIVITIES_PAGE_LOAD = 500
 export const ACTIVITIES_CHANGE_DATE = 501

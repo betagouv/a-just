@@ -35,12 +35,15 @@
 
     a {
       color: fColor(titleSelect);
-      padding: 0 16px;
+      padding-right: 16px;
+      margin-right: 16px;
+      margin-bottom: 8px;
       border-right: 1px solid fColor(lightBorder);
       text-decoration: none;
       font-size: 12px;
       height: 16px;
       line-height: 16px;
+      white-space: nowrap;
 
       &:last-child {
         border-right: none;

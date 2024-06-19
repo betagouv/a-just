@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core'
+import { ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { MainClass } from 'src/app/libs/main-class'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
@@ -89,17 +89,32 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
       this.hRCommentService.forceOpenAll.subscribe((value) => {
         this.showAll = value
         const elem = document.getElementById('panel-content')
-        if (value)
+        const icon = document.getElementById('logo-1')
+        const reduire = document.getElementById('logo-2')
+        const indispo = document.getElementById('logo-3')
+
+        if (value) {
           elem?.classList.add('hide')
-        else elem?.classList.remove('hide')
+          icon?.classList.add('hide')
+          reduire?.classList.add('hide')
+          indispo?.classList.add('hide')
+        }
+        else {
+          elem?.classList.remove('hide')
+          icon?.classList.remove('hide')
+          reduire?.classList.remove('hide')
+          indispo?.classList.remove('hide')
+        }
       })
     )
   }
+
   /**
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges() {
-    this.onLoadComment()
+    if (this.currentComment === '')
+      this.onLoadComment()
   }
 
   /**
@@ -124,6 +139,8 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
    * @param comment 
    */
   updateComment(comment: string) {
+    const elem = document.getElementById("new-comment-editor")
+    if (elem && elem?.offsetHeight > 80) this.showAll = true
     this.currentComment = comment
     this.changeDetectorRef.detectChanges()
   }
@@ -184,11 +201,11 @@ export class CommentProfilComponent extends MainClass implements OnChanges, OnIn
     this.hRCommentService.mainEditing.next(false)
     this.changeDetectorRef.detectChanges()
   }
-
   /**
-   * Scroll to top
-   */
+    * Scroll to top
+    */
   scrollToTop() {
-    window.scrollTo(0, 0)
+    const header = document.getElementById('top-scroll-anchor')
+    header?.scrollIntoView({ behavior: 'smooth' });
   }
 }

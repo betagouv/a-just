@@ -6,6 +6,11 @@
   overflow: auto;
 }
 
+.anchor {
+  position: absolute;
+  top: -200px;
+}
+
 .new-action {
   margin: 32px auto;
   display: grid;
@@ -78,10 +83,10 @@ add-ventilation {
   align-items: center;
   justify-content: center;
   position: absolute;
-    bottom: 0;
-    z-index: 102;
-    left: 0;
-    right: 0;
+  bottom: 0;
+  z-index: 102;
+  left: 0;
+  right: 0;
 
   button:first-child {
     margin-right: 16px;
@@ -101,15 +106,16 @@ add-ventilation {
 
 .first-panel {
   display: flex;
+  position: relative;
   align-items: stretch;
   margin: 8px 0;
 
-  > indispo-profil {
+  >indispo-profil {
     width: 438px;
     margin-right: 8px;
   }
 
-  > comment-profil {
+  >comment-profil {
     flex: 1;
   }
 }
