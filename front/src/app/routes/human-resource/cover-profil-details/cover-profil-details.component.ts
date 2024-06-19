@@ -192,4 +192,20 @@ export class CoverProfilDetailsComponent
       this.ficheIsUpdated.emit(newHR)
     }
   }
+
+
+  /**
+   * Bloque le champ de texte à 10 characters maximum
+   * @param event
+   * @returns
+   */
+  keyPress(event: any) {
+    if (event.which === 8 || event.which === 46) {
+      return true
+    } else if (event.srcElement.innerHTML.length > 10) {
+      return false
+    }
+    return true
+  }
+
 }

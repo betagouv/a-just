@@ -1,6 +1,7 @@
+import { Op } from 'sequelize'
 import { posad } from '../constants/hr'
-import { juridictionLabelExceptions } from '../constants/juridiction-type'
 import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
+import { today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 
@@ -76,16 +77,11 @@ export default (sequelizeInstance, Model) => {
       where: {
         backup_id: backupId,
       },
-      include: [
-        {
-          attributes: ['id', 'comment'],
-          model: Model.models.HRComments,
-        },
-      ],
       raw: true,
     })
 
     for (let i = 0; i < list.length; i++) {
+      const comment = await Model.models.HRComments.getLastComment(list[i].id)
       list[i] = {
         id: list[i].id,
         firstName: list[i].first_name,
@@ -97,7 +93,7 @@ export default (sequelizeInstance, Model) => {
         updatedAt: list[i].updated_at,
         backupId: list[i].backup_id,
         juridiction: list[i].juridiction,
-        comment: list[i]['HRComment.comment'],
+        comment: comment && comment.comment,
         situations: await Model.models.HRSituations.getListByHumanId(list[i].id, list[i].date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(list[i].id),
       }
@@ -117,16 +113,11 @@ export default (sequelizeInstance, Model) => {
       where: {
         id: hrId,
       },
-      include: [
-        {
-          attributes: ['id', 'comment'],
-          model: Model.models.HRComments,
-        },
-      ],
       raw: true,
     })
 
     if (details) {
+      const comment = await Model.models.HRComments.getLastComment(details.id)
       return {
         id: details.id,
         firstName: details.first_name,
@@ -137,7 +128,7 @@ export default (sequelizeInstance, Model) => {
         coverUrl: details.cover_url,
         updatedAt: details.updated_at,
         backupId: details.backup_id,
-        comment: details['HRComment.comment'],
+        comment: comment && comment.comment,
         situations: await Model.models.HRSituations.getListByHumanId(details.id, details.date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(details.id),
       }
@@ -189,9 +180,9 @@ export default (sequelizeInstance, Model) => {
 
         let statut = list[i].statut
         switch (statut) {
-        case 'Fonctionnaire':
-          statut = 'Greffe'
-          break
+          case 'Fonctionnaire':
+            statut = 'Greffe'
+            break
         }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
@@ -209,46 +200,46 @@ export default (sequelizeInstance, Model) => {
 
             // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
             switch (list[i].grade) {
-            case 'CONT A VIF JP':
-              code = 'CONT A JP'
-              break
-            case 'CONT B VIF JP':
-              code = 'CONT B JP'
-              break
-            case 'CONT C VIF JP':
-              code = 'CONT C JP'
-              break
-            default:
-              code = list[i].grade
-              break
+              case 'CONT A VIF JP':
+                code = 'CONT A JP'
+                break
+              case 'CONT B VIF JP':
+                code = 'CONT B JP'
+                break
+              case 'CONT C VIF JP':
+                code = 'CONT C JP'
+                break
+              default:
+                code = list[i].grade
+                break
             }
           } else situation.category_id = findCategory.id
         }
 
         switch (code) {
-        case 'MHFJS':
-          code = 'MHFJ'
-          break
-        case 'ATT A':
-          code = 'CHCAB'
-          break
-        case 'JA JP':
-          code = 'JA'
-          break
-        case 'CONT B IFPA':
-          code = 'CONT B'
-          break
+          case 'MHFJS':
+            code = 'MHFJ'
+            break
+          case 'ATT A':
+            code = 'CHCAB'
+            break
+          case 'JA JP':
+            code = 'JA'
+            break
+          case 'CONT B IFPA':
+            code = 'CONT B'
+            break
         }
 
         if (list[i].categorie == 'CB') {
           switch (list[i].grade) {
-          case 'CONT A':
-          case 'CONT B':
-          case 'CONT C':
-          case 'CONT CB':
-          case 'CONT CJ':
-            code = list[i].grade
-            break
+            case 'CONT A':
+            case 'CONT B':
+            case 'CONT C':
+            case 'CONT CB':
+            case 'CONT CJ':
+              code = list[i].grade
+              break
           }
         }
 
@@ -307,7 +298,6 @@ export default (sequelizeInstance, Model) => {
         }
 
         let juridiction = list[i].juridiction || ''
-        console.log('TEST', juridiction, Number(config.juridictionType))
         /*if (Number(config.juridictionType) !== 1)
           if (juridictionLabelExceptions.map((x) => x['import'].includes(juridiction)))
             juridiction = juridictionLabelExceptions.filter((el) => {
@@ -439,16 +429,11 @@ export default (sequelizeInstance, Model) => {
       where: {
         id: hrId,
       },
-      include: [
-        {
-          attributes: ['id', 'comment'],
-          model: Model.models.HRComments,
-        },
-      ],
       raw: true,
     })
 
     if (hr) {
+      const comment = await Model.models.HRComments.getLastComment(hr.id)
       hr = {
         id: hr.id,
         firstName: hr.first_name,
@@ -459,7 +444,7 @@ export default (sequelizeInstance, Model) => {
         dateEnd: hr.date_sortie,
         coverUrl: hr.cover_url,
         updatedAt: hr.updated_at,
-        comment: hr['HRComment.comment'],
+        comment: comment && comment.comment,
         backupId: hr.backup_id,
         situations: await Model.models.HRSituations.getListByHumanId(hr.id, hr.date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(hr.id),
@@ -578,6 +563,35 @@ export default (sequelizeInstance, Model) => {
     } else {
       return false
     }
+  }
+
+  Model.checkAgentToAnonymise = async () => {
+    const now = today()
+    now.setFullYear(now.getFullYear() - 5)
+    const agents = await Model.findAll({
+      attributes: ['id', 'first_name', 'last_name', 'date_sortie', 'matricule', 'registration_number'],
+      where: {
+        date_sortie: {
+          [Op.lte]: now,
+        },
+        first_name: {
+          [Op.ne]: 'anonyme',
+        },
+      },
+      paranoid: false,
+    })
+
+    for (let i = 0; i < agents.length; i++) {
+      await agents[i].update({
+        first_name: 'anonyme',
+        last_name: 'anonyme',
+        matricule: 'anonyme',
+        registration_number: 'anonyme',
+      })
+    }
+
+    // update cache
+    Model.onPreload()
   }
 
   return Model

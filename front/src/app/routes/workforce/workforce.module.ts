@@ -18,6 +18,7 @@ import { DateSelectModule } from 'src/app/components/date-select/date-select.mod
 import { InputButtonModule } from 'src/app/components/input-button/input-button.module'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
+import { EmptyInputModule } from 'src/app/components/empty-input/empty-input.module'
 
 @NgModule({
   declarations: [WorkforcePage, FilterPanelComponent, PersonPreviewComponent],
@@ -38,7 +39,8 @@ import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
     DateSelectModule,
     InputButtonModule,
     MatCheckboxModule,
-    IntroJSModule
+    IntroJSModule,
+    EmptyInputModule
   ],
 })
 export class WorkforceModule { }

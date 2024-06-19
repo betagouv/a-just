@@ -1,22 +1,23 @@
 <aj-wrapper title="Visualisation instantanée des effectifs"
   [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
   [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
-  [isLoading]="isLoading" [ngClass]="{removeMenuZindex: showFilterPanel !== -1}">
+  [isLoading]="isLoading">
   <div class="container step-3">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
       </aj-date-select>
-      <aj-select class="large" title="Choix des contentieux (option)" [value]="selectedReferentielIds"
-        [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)" [defaultAllValue]="'Tous'">
-      </aj-select>
-
-      <!--
-      <filter-panel class="button-filter" [button]="true" (update)="updateFilterParams($event)"
-        [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
-        [categories]="humanResourceService.categoriesFilterListIds"
-        [filterValues]="(filterParams && filterParams.filterValues) || null">
-      </filter-panel>
-      -->
+      <div class="position-relative"><aj-empty-input title="Options d'affichage"
+          [value]="getOptionAffichageString() ? 'Personnalisé' : 'Aucune'" (click)="showFilterPanel = !showFilterPanel"
+          class="cursor-pointer" icon="filter-2-line"></aj-empty-input>
+        <filter-panel *ngIf="showFilterPanel" (update)="updateFilterParams($event)"
+          [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
+          [categories]="humanResourceService.categoriesFilterListIds"
+          [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = false"
+          [filterIndispoValues]="(filterParams && filterParams.filterIndispoValues) || null"
+          [referentielIds]="selectedReferentielIds" [referentiels]="formReferentiel"
+          (updateReferentielIds)="onSelectedReferentielIdsChanged($event)">
+        </filter-panel>
+      </div>
       <div class="flex-1"></div>
       <div *ngFor="let category of categoriesFilterList" class="checkbox-button"
         [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
@@ -61,6 +62,28 @@
         </div>
       </div>
     </div>
+    <div *ngIf="getOptionAffichageString()" class="sub-title">
+      <div class="filters">
+        <div class="tag" *ngIf="getOptionAffichageReferentielString()" (click)="clearFilterReferentiel()">
+          <p>{{getOptionAffichageReferentielString()}}</p>
+          <i class="ri-close-line"></i>
+        </div>
+        <div class="tag" *ngIf="filterParams && filterParams.filterNames" (click)="clearFilterFilter()">
+          <i class="ri-filter-3-line"></i>
+          <p>{{filterParams.filterNames}}</p>
+          <i class="ri-close-line"></i>
+        </div>
+        <div class="tag" *ngIf="getOptionAffichageIndispoString()" (click)="clearFilterIndispo()">
+          <p>{{getOptionAffichageIndispoString()}}</p>
+          <i class="ri-close-line"></i>
+        </div>
+        <div class="tag" *ngIf="filterParams && filterParams.sortName" (click)="clearFilterSort()">
+          <i *ngIf="filterParams.orderIcon" class="ri-{{filterParams.orderIcon}}"></i>
+          <p>{{filterParams.sortName}}</p>
+          <i class="ri-close-line"></i>
+        </div>
+      </div>
+    </div>
     <div class="content-list" id="container-list">
       <ng-template ngFor let-list let-i="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
         <div class="header-list" [ngClass]="{disableSticky: showFilterPanel !== -1 && i > showFilterPanel}">
@@ -70,26 +93,6 @@
                 <mat-icon class="" [style.color]="list.textColor">person_outline</mat-icon>
                 <div class="label" [style.color]="list.textColor">
                   {{ list.label }}
-                </div>
-                <div class="filter-button">
-                  <mat-icon (click)="showFilterPanel = i">more_vert</mat-icon>
-                  <filter-panel *ngIf="showFilterPanel === i" (update)="updateFilterParams($event)"
-                    [orderValue]="filterParams && filterParams.order" [sortValue]="filterParams && filterParams.sort"
-                    [categories]="humanResourceService.categoriesFilterListIds"
-                    [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = -1">
-                  </filter-panel>
-                </div>
-              </div>
-              <div class="filters">
-                <div class="tag" *ngIf="filterParams && filterParams.sortName" (click)="clearFilterSort()">
-                  <i *ngIf="filterParams.orderIcon" class="ri-{{filterParams.orderIcon}}"></i>
-                  <p>{{filterParams.sortName}}</p>
-                  <i class="ri-close-line"></i>
-                </div>
-                <div class="tag" *ngIf="filterParams && filterParams.filterNames" (click)="clearFilterFilter()">
-                  <i class="ri-filter-3-line"></i>
-                  <p>{{filterParams.filterNames}}</p>
-                  <i class="ri-close-line"></i>
                 </div>
               </div>
             </div>

@@ -24,13 +24,13 @@
       <p *ngIf="!isEdit">Renseigner une nouvelle situation</p>
       <pre></pre>
       <div class="drop-down-container" *ngIf="isEdit || saveActions">
-        <!-- <label id="drop-down" class="drop-down" (click)="toggleDropDown=!toggleDropDown"
+        <label id="drop-down" class="drop-down" (click)="toggleDropDown=!toggleDropDown"
           (blur)="toggleDropDown=!toggleDropDown">
           Feuille de temps
           <mat-icon _ngcontent-ng-c640964094="" role="img"
             class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true"
             data-mat-icon-type="font">{{toggleDropDown=== false ?"expand_more":"expand_less"}}</mat-icon>
-        </label> -->
+        </label>
         <div class="drop-down-content" [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
 
           <a (click)="downloadEtpTemplate()" class="download">

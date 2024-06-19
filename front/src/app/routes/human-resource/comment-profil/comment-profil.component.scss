@@ -1,6 +1,10 @@
 @import '../../../styles/utils.scss';
 
 :host {
+  .hide {
+    display: none !important;
+  }
+
   >div {
     overflow-y: hidden;
     position: relative;
@@ -15,7 +19,8 @@
     }
 
     &.close {
-      max-height: 301px;
+      max-height: 251px;
+      //max-height: 271px;
     }
 
     .footer-panel {
@@ -27,9 +32,7 @@
       padding: 0 24px;
       opacity: 1;
 
-      &.disabled {
-        opacity: 0.6;
-      }
+
 
       .save {
         color: white;
@@ -39,6 +42,23 @@
         font-size: 14px;
         line-height: 24px;
         cursor: pointer;
+
+        &.disabled {
+          pointer-events: none;
+          opacity: 0.6;
+        }
+      }
+
+      .back {
+        border: solid 1px fColor(primary);
+        color: fColor(primary);
+        background-color: white;
+        height: 32px;
+        padding: 4px 12px;
+        font-size: 14px;
+        line-height: 24px;
+        cursor: pointer;
+        margin-right: 16px;
       }
     }
 
@@ -58,8 +78,25 @@
         font-size: 24px;
       }
 
+      .displayer {
+        cursor: pointer;
+        font-size: 14px;
+        height: 32px;
+        padding: 4px 12px;
+        font-size: 14px;
+        line-height: 24px;
+
+        color: #929292;
+        border: 1px solid #929292;
+      }
+
+      .sep {
+        flex: 1;
+      }
+
       div {
         margin-right: 8px;
+        display: flex;
 
         .com {
           color: fColor(cblack);
@@ -68,6 +105,8 @@
           bottom: 1px;
           position: relative;
         }
+
+
 
         .com-at {
           color: fColor(titleSelect);
@@ -117,6 +156,40 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+  }
+
+  .panel-content {
+    position: relative;
+    align-items: center;
+    display: block;
+
+    &.hide {
+      display: none;
+    }
+
+    .placeholder {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #3a3a3a;
+      top: 0;
+      bottom: 0;
+      margin: auto 0;
+
+      .mat-icon {
+        position: relative;
+
+        margin-top: 10px;
+        margin-left: 16px;
+        color: fColor(titleSelect);
+        font-size: 18px;
+
+        &.editing {
+          display: none !important;
+        }
+      }
     }
   }
 }

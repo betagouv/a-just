@@ -37,7 +37,39 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    return comments //|| { comment: '', updatedAt: null }
+    return comments
+  }
+
+  /**
+   * Récupère le dernier commentaire en date
+   * @param {*} id 
+   * @returns 
+   */
+  Model.getLastComment = async (hrId) => {
+    let com = await Model.findOne({
+      attributes: ['id', 'comment', 'user_id', 'created_at', 'updated_at'],
+      where: {
+        human_id: hrId,
+      },
+      order: [['createdAt', 'DESC']],
+      raw: true,
+    })
+
+    if (com) {
+      com = {
+        commentId: com.id,
+        comment: com.comment,
+        user_id: com.user_id,
+        createdAt: com.created_at,
+        updatedAt: com.updated_at,
+        editorId: com['User.id'],
+        editorFirstName: com['User.first_name'],
+        editorLastName: com['User.last_name'],
+        editorInitials: (com['User.first_name'] || '').charAt(0) + (com['User.last_name'] || '').charAt(0),
+      }
+    }
+
+    return com
   }
 
   /**
@@ -92,9 +124,9 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (com) {
-      com = await com.update({ comment, user_id: userId })
+      com = await com.update({ comment, user_id: userId === -1 ? null : userId })
     } else {
-      com = await Model.create({ comment, human_id: hrId, user_id: userId })
+      com = await Model.create({ comment, human_id: hrId, user_id: userId === -1 ? null : userId })
     }
 
     // update date of backup

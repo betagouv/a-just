@@ -173,12 +173,18 @@ export class TextEditorComponent extends MainClass {
     }
   }
 
+  /**
+   * Event onfocus raised
+   */
   override onFocus() {
     if (this.quillEditor) {
       this.quillEditor.theme.modules.toolbar.container.style.visibility = "visible";
     }
   }
 
+  /**
+   * Event blur raised
+   */
   onBlur() {
     if (this.quillEditor) {
       this.quillEditor.theme.modules.toolbar.container.style.visibility = "hidden";
