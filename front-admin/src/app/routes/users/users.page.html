@@ -52,7 +52,7 @@
           <p><b>Liste des accès</b></p>
 
           <p *ngFor="let ac of access">
-            <input type="checkbox" #acDom ngModel)]="ac.selected" />
+            <input type="checkbox" #acDom [(ngModel)]="ac.selected" />
             <label (click)="acDom.click()">{{ ac.label }}</label>
           </p>
         </div>
