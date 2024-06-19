@@ -66,4 +66,8 @@ export const CODES = {
   [EXECUTE_LAUNCH_WHITE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation à blanc',
   [EXECUTE_LAUNCH_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation',
   [EXECUTE_SIMULATOR_PARAM]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation avec des parametres',
+  [START_DATE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de début dans le simulateur normal',
+  [END_DATE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de fin dans le simulateur normal',
+  [DATE_REAFECTATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date dans le réaffectateur',
+  [DATE_WHITE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de fin dans le simulateur à blanc',
 }
