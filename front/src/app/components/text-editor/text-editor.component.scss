@@ -1,6 +1,16 @@
 @import '../../styles/utils.scss';
 
+:host ::ng-deep .ql-editing {
+  position: absolute;
+  left: 16px !important;
+}
+
+:host ::ng-deep .ql-toolbar {
+  visibility: --display-toolbar;
+}
+
 :host {
+  --display-toolbar: visible;
   position: relative;
   display: block;
   border-radius: 8px;
