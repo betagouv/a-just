@@ -143,9 +143,9 @@ export class IntroJSComponent implements AfterViewInit {
       })
       intro.onexit(() => {
         if (log) {
-          this.kpiService.register(HELP_STOP, (this.typeId ? this.typeId + '_' : '') + intro.currentStep() + 1)
+          this.kpiService.register(HELP_STOP, (this.typeId ? this.typeId + '_' : '') + (intro.currentStep() + 1))
         } else {
-          this.kpiService.register(HELP_AUTOSTART_AND_STOP, (this.typeId ? this.typeId + '_' : '') + intro.currentStep() + 1)
+          this.kpiService.register(HELP_AUTOSTART_AND_STOP, (this.typeId ? this.typeId + '_' : '') + (intro.currentStep() + 1))
         }
 
         if (this.typeId) {
