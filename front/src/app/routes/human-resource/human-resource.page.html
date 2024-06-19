@@ -41,7 +41,8 @@
       </div>
     </ng-template>
 
-    <add-ventilation *ngIf="onEditIndex !== null" #addDomVentilation [human]="currentHR"
+    <add-ventilation [ngClass]="{'existing-agent':histories.length !== 0}" *ngIf="onEditIndex !== null" #addDomVentilation
+      [human]="currentHR"
       [activities]="onEditIndex !== -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])"
       [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [indexSituation]="onEditIndex"
       [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null"
