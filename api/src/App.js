@@ -121,7 +121,7 @@ export default class App extends AppBase {
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
           directives: {
-            'media-src': ["'self"],
+            'media-src': ["'self'"],
             'connect-src': [
               'https://api.gitbook.com',
               'https://www.google-analytics.com/j/collect',
