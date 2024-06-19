@@ -1,0 +1,7 @@
+version: 2
+
+iac:
+  # Exclude files and paths by globbing
+  ignored_paths:
+    - 'front/cypress/fixtures/user.json'
+    - 'front/src/environments/environment.prod.ts'
