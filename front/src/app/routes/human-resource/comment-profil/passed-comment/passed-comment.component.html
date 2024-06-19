@@ -5,9 +5,9 @@
       currentUser.lastName}}</label>
     <p *ngIf="commentCreatedAt" class="com-at">{{ compareCommentsDates()? 'Créé ':''}}{{
       compareCommentsDates()? formatDate(commentCreatedAt):capitalize(formatDate(commentCreatedAt)) }}</p>
-    <p *ngIf="commentUpdatedAt && compareCommentsDates()" class="com-mod">
-      (Modifié {{formatDate(commentUpdatedAt)}})</p>
   </div>
+  <p *ngIf="commentUpdatedAt && compareCommentsDates()" class="com-mod">
+    (Modifié {{formatDate(commentUpdatedAt)}})</p>
 
   <div class="panel-content" [ngClass]="{'editing': isEditing}"> <aj-text-editor #editor
       [ngClass]="{'editing': isEditing}" [value]="commentContent || ''" class="no-main-style"

@@ -11,6 +11,7 @@
       (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
 
     <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
+      <div id="top-scroll-anchor" class="anchor"></div>
       <indispo-profil
         [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
         (onOpenHelpPanel)="openHelpPanel($event)" (addIndispiniblity)="onAddIndispiniblity($event)"></indispo-profil>
