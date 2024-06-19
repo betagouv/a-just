@@ -271,7 +271,7 @@ export class FilterPanelComponent
         this.allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => ({ id: r.id, label: r.label.replace(/\//g, ' / ') }))
 
         if (this.filterIndispoValues === null) {
-          this.filterIndispoValues = this.allIndisponibilityReferentiel.map(i => i.id)
+          this.filterIndispoValues = []
         }
       })
     )

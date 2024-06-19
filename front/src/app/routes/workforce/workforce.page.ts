@@ -1057,7 +1057,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   getOptionAffichageIndispoString() {
     const allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => ({ id: r.id, label: r.label.replace(/\//g, ' / ') }))
     const filtre = this.filterParams?.filterIndispoValues || []
-    if (allIndisponibilityReferentiel.length !== filtre.length) {
+    if (filtre.length) {
       const labels = filtre.map(id => {
         const ref = allIndisponibilityReferentiel.find(f => f.id === id)
         return ref?.label
@@ -1077,7 +1077,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   clearFilterIndispo() {
     if (this.filterParams) {
-      this.filterParams.filterIndispoValues = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => r.id)
+      this.filterParams.filterIndispoValues = []
       this.orderListWithFiltersParams()
     }
   }
