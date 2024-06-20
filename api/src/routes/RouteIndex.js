@@ -1,4 +1,4 @@
-import { createReadStream, existsSync } from 'fs'
+import { createReadStream, statSync } from 'fs'
 import mime from 'mime'
 import Route from './Route'
 import config from 'config'
@@ -25,27 +25,19 @@ export default class RouteIndex extends Route {
         .end()
     }
 
-    let file = `${__dirname}/../front${decodeURIComponent(ctx.request.url)}`
+    let file = `${__dirname}/../../dist/front${decodeURIComponent(ctx.request.url)}`
     const fileSplited = file.split('?')
     file = fileSplited.length > 1 ? fileSplited.slice(0, -1).join('?') : file
-    let isExist = false
+    const stats = statSync(file)
 
-    try {
-      if (ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
-        console.log('load page', file)
+    if (ctx.request.url && ctx.request.url !== '/' && stats.isFile()) {
+      console.log('load page', file)
 
-        const src = createReadStream(file)
-        ctx.type = mime.getType(file)
-        ctx.body = src
-      } else {
-        const indexFile = `${__dirname}/../front/index.html`
-        const src = createReadStream(indexFile)
-        ctx.type = mime.getType(indexFile)
-        ctx.body = src
-      }
-    } catch (err) {
-      console.log('err', err)
-      const indexFile = `${__dirname}/../front/index.html`
+      const src = createReadStream(file)
+      ctx.type = mime.getType(file)
+      ctx.body = src
+    } else {
+      const indexFile = `${__dirname}/../../dist/front/index.html`
       const src = createReadStream(indexFile)
       ctx.type = mime.getType(indexFile)
       ctx.body = src
