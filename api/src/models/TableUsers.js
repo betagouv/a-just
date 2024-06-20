@@ -327,7 +327,7 @@ export default (sequelizeInstance, Model) => {
 
   Model.checkAccountToAnonymise = async () => {
     const now = today()
-    now.setMonth(now.getMonth() - 3)
+    now.setFullYear(now.getFullYear() - 5)
     const users = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'created_at', 'updated_at', 'deleted_at', 'email'],
       where: {
