@@ -29,20 +29,22 @@ export default class RouteIndex extends Route {
     const fileSplited = file.split('?')
     file = fileSplited.length > 1 ? fileSplited.slice(0, -1).join('?') : file
     let isExist = false
-    
+
     try {
-      isExist = existsSync(file)
-    } catch(err) {
+      if (ctx.request.url && ctx.request.url !== '/' && existsSync(file)) {
+        console.log('load page', file)
+
+        const src = createReadStream(file)
+        ctx.type = mime.getType(file)
+        ctx.body = src
+      } else {
+        const indexFile = `${__dirname}/../front/index.html`
+        const src = createReadStream(indexFile)
+        ctx.type = mime.getType(indexFile)
+        ctx.body = src
+      }
+    } catch (err) {
       console.log('err', err)
-    }
-
-    if (ctx.request.url && ctx.request.url !== '/' && isExist) {
-      console.log('load page', file)
-
-      const src = createReadStream(file)
-      ctx.type = mime.getType(file)
-      ctx.body = src
-    } else {
       const indexFile = `${__dirname}/../front/index.html`
       const src = createReadStream(indexFile)
       ctx.type = mime.getType(indexFile)
