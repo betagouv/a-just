@@ -10,7 +10,10 @@ export const CALCULATE_DOWNLOAD_URL = '/assets/Calculatrice_de_ventilation_du_te
  * Lien du template import
  */
 export const IMPORT_ETP_TEMPLATE = '/assets/Fiche_agent_template.xlsx'
-
+/**
+ * Lien du template import
+ */
+export const IMPORT_ETP_TEMPLATE_CA = '/assets/Fiche_agent_template_CA.xlsx'
 /**
  * Lien pour créer une nouvelle fiche
  */
