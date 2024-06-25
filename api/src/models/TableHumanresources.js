@@ -218,7 +218,8 @@ export default (sequelizeInstance, Model) => {
 
         switch (code) {
           case 'MHFJS':
-            code = 'MHFJ'
+            if (Number(process.env.TYPE_ID) === 0)
+              code = 'MHFJ'
             break
           case 'ATT A':
             code = 'CHCAB'
@@ -230,6 +231,16 @@ export default (sequelizeInstance, Model) => {
             code = 'CONT B'
             break
         }
+
+        if (Number(process.env.TYPE_ID) === 1) {
+          switch (code) {
+            case 'MHFJ':
+              code = 'MHFJS'
+              break
+          }
+        }
+
+
 
         if (list[i].categorie == 'CB') {
           switch (list[i].grade) {
@@ -265,6 +276,7 @@ export default (sequelizeInstance, Model) => {
         if (findFonction) {
           situation.fonction_id = findFonction.id
         } else if (statut === 'Magistrat' || notImported.includes(code)) {
+          console.log("code no imported=>", code, statut)
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by fonction ')
           continue
@@ -275,6 +287,8 @@ export default (sequelizeInstance, Model) => {
           situation.etp = etp
         } else {
           if (code === 'MHFJ' && list[i]['posad'] === 'RET') {
+            //situation.etp = null
+          } else if (code === 'MHFJS' && list[i]['posad'] === 'RET' && Number(process.env.TYPE_ID) === 1) {
             //situation.etp = null
           } else if (filterNoEtpt.includes(code)) {
             //situation.etp = null
@@ -343,11 +357,12 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    console.log(importSituation)
 
     // remove cache
     cacheJuridictionPeoples = {}
     Model.onPreload()
+    console.log('IMPORT!:', importSituation)
+
   }
 
   /**
