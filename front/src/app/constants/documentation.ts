@@ -35,6 +35,10 @@ export const DATA_GITBOOK = "https://docs.a-just.beta.gouv.fr/le-data-book/"
  */
 export const HELP_CENTER_GITBOOK = "https://docs.a-just.beta.gouv.fr/centre-daide/"
 /**
- * URL de la nomenclature
+ * URL de la nomenclature TJ
  */
 export const NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
+/**
+ * URL de la nomenclature CA
+ */
+export const NOMENCLATURE_DOWNLOAD_URL_CA = '/assets/nomenclature-A-Just-CA.html'

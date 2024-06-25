@@ -664,6 +664,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       const first_sheet_name = workbook.SheetNames[0];
       const second_sheet_name = workbook.SheetNames[1];
 
+      if (second_sheet_name === "Fonction" && this.userService.isCa()) {
+        alert('Le fichier que vous essayez d\'importer est un fichier pour A-JUST TJ !');
+        event.target.value = '';
+        return
+      } else if (second_sheet_name === "Fonction_CA" && !this.userService.isCa()) {
+        alert('Le fichier que vous essayez d\'importer est un fichier pour A-JUST CA !');
+        event.target.value = '';
+        return
+      }
+
       if (!(second_sheet_name === "Fonction" || second_sheet_name === "Fonction_CA")) {
         alert('Le fichier que vous essayez d\'importer n\'est pas au bon format, veuillez réessayer !');
         event.target.value = '';
