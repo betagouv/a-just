@@ -34,8 +34,7 @@ import { Router } from '@angular/router'
 })
 export class PanoramaPage
   extends MainClass
-  implements OnInit, OnDestroy, AfterViewInit
-{
+  implements OnInit, OnDestroy, AfterViewInit {
   /**
    * Dom du contenu scrollable
    */
@@ -213,7 +212,7 @@ export class PanoramaPage
    * Constructor
    */
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     public humanResourceService: HumanResourceService,
     private router: Router
   ) {
@@ -420,7 +419,7 @@ export class PanoramaPage
    */
   getInterfaceType() {
     return this.userService.interfaceType === 1
-      ? "cours d'appel"
+      ? "cour d'appel"
       : 'tribunal judiciaire'
   }
   /**
