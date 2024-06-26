@@ -265,6 +265,7 @@ export default (sequelizeInstance, Model) => {
         if (findFonction) {
           situation.fonction_id = findFonction.id
         } else if (statut === 'Magistrat' || notImported.includes(code)) {
+          console.log("code no imported=>", code, statut)
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by fonction ')
           continue
@@ -343,11 +344,12 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    console.log(importSituation)
 
     // remove cache
     cacheJuridictionPeoples = {}
     Model.onPreload()
+    console.log('IMPORT!:', importSituation)
+
   }
 
   /**

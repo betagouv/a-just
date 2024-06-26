@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core'
 import { sumBy } from 'lodash'
-import { DDG_REFERENTIELS_EAM, DDG_REFERENTIELS_GREFFE, DDG_REFERENTIELS_MAG, REFERENTIELS_CANT_UPDATED, getReferentielDetail } from 'src/app/constants/referentiel'
+import { DDG_REFERENTIELS_EAM, DDG_REFERENTIELS_GREFFE, DDG_REFERENTIELS_MAG, REFERENTIELS_CANT_UPDATED, getReferentielCADetail, getReferentielDetail } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
@@ -351,9 +351,10 @@ export class PanelActivitiesComponent
    */
   setMouseHovering(label?: string) {
     if (label) {
-      this.hoveredReferentielDetail = getReferentielDetail(label)
+      this.hoveredReferentielDetail = this.userService.isCa() ? getReferentielCADetail(label) : getReferentielDetail(label)
       if (this.hoveredReferentielDetail)
         this.hoveredReferentielLabel = label
+      else this.hoveredReferentielLabel = null
     }
     this.mouseHovering = !this.mouseHovering
   }

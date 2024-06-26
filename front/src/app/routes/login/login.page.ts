@@ -59,7 +59,7 @@ export class LoginPage implements OnInit {
    */
   constructor(
     private authService: AuthService,
-    private userService: UserService,
+    public userService: UserService,
     private router: Router,
     private title: Title,
     private ssoService: SSOService
