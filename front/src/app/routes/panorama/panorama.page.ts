@@ -211,7 +211,7 @@ export class PanoramaPage
    * Constructor
    */
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     public humanResourceService: HumanResourceService,
   ) {
     super()
@@ -417,7 +417,7 @@ export class PanoramaPage
    */
   getInterfaceType() {
     return this.userService.interfaceType === 1
-      ? "cours d'appel"
+      ? "cour d'appel"
       : 'tribunal judiciaire'
   }
 

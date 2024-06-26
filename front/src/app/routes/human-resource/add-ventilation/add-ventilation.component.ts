@@ -8,7 +8,7 @@ import {
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
-import { DOCUMENTATION_VENTILATEUR_PERSON, IMPORT_ETP_TEMPLATE } from 'src/app/constants/documentation'
+import { DOCUMENTATION_VENTILATEUR_PERSON, IMPORT_ETP_TEMPLATE, IMPORT_ETP_TEMPLATE_CA } from 'src/app/constants/documentation'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -25,6 +25,7 @@ import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { CALCULATE_DOWNLOAD_URL } from 'src/app/constants/documentation'
 import * as xlsx from 'xlsx';
+import { UserService } from 'src/app/services/user/user.service'
 
 export interface importedVentillation {
   referentiel: ContentieuReferentielInterface,
@@ -175,7 +176,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private humanResourceService: HumanResourceService,
     private appService: AppService,
     private calculatriceService: CalculatriceService,
-    private serverService: ServerService
+    private serverService: ServerService,
+    private userService: UserService
   ) {
     super()
   }
@@ -618,7 +620,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       .then((r) => {
         return r.data
       })
-    window.open(IMPORT_ETP_TEMPLATE)
+    window.open(this.userService.isCa() ? IMPORT_ETP_TEMPLATE_CA : IMPORT_ETP_TEMPLATE)
   }
 
   /**
@@ -662,7 +664,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       const first_sheet_name = workbook.SheetNames[0];
       const second_sheet_name = workbook.SheetNames[1];
 
-      if (second_sheet_name !== "Fonction") {
+      if (second_sheet_name === "Fonction" && this.userService.isCa()) {
+        alert('Le fichier que vous essayez d\'importer est un fichier pour A-JUST TJ !');
+        event.target.value = '';
+        return
+      } else if (second_sheet_name === "Fonction_CA" && !this.userService.isCa()) {
+        alert('Le fichier que vous essayez d\'importer est un fichier pour A-JUST CA !');
+        event.target.value = '';
+        return
+      }
+
+      if (!(second_sheet_name === "Fonction" || second_sheet_name === "Fonction_CA")) {
         alert('Le fichier que vous essayez d\'importer n\'est pas au bon format, veuillez réessayer !');
         event.target.value = '';
         return
