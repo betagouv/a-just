@@ -1,5 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { DATE_WHITE_SIMULATOR, END_DATE_SIMULATOR, START_DATE_SIMULATOR } from 'src/app/constants/log-codes';
 import { MainClass } from 'src/app/libs/main-class';
+import { KPIService } from 'src/app/services/kpi/kpi.service';
 import { SimulatorService } from 'src/app/services/simulator/simulator.service';
 import { monthDiffList, nbOfDays } from 'src/app/utils/dates';
 
@@ -50,7 +52,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
   /**
    * Constructeur
    */
-  constructor(private simulatorService: SimulatorService) {
+  constructor(private simulatorService: SimulatorService, private kpiService: KPIService) {
     super()
 
     this.watch(
@@ -97,6 +99,8 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
         this.dateStart = new Date(event)
         this.simulatorService.dateStart.next(this.dateStart)
         this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
+        this.kpiService.register(START_DATE_SIMULATOR, this.dateStart + '')
+
         if (
           this.dateStart.getDate() !== this.today.getDate() ||
           this.dateStart.getMonth() !== this.today.getMonth() ||
@@ -112,9 +116,9 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
       } else if (type === 'dateStop') {
         this.disabled = 'disabled-date'
         this.simulatorService.disabled.next(this.disabled)
-
-
         this.dateStop = new Date(event)
+        this.kpiService.register(END_DATE_SIMULATOR, this.dateStop + '')
+
         if (
           this.dateStart.getDate() !== this.today.getDate() ||
           this.dateStart.getMonth() !== this.today.getMonth() ||
@@ -139,6 +143,7 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
         this.dateStop = new Date(event)
         this.simulatorService.dateStop.next(this.dateStop)
         this.simulatorService.whiteSimulatorNbOfDays.next(nbOfDays(this.dateStart, this.dateStop))
+        this.kpiService.register(DATE_WHITE_SIMULATOR, this.dateStop + '')
       }
 
     }

@@ -15,6 +15,7 @@ import { SelectModule } from 'src/app/components/select/select.module'
 import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
 import { InputButtonModule } from 'src/app/components/input-button/input-button.module'
 import { MatIconModule } from '@angular/material/icon'
+import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
 
 @NgModule({
   declarations: [ReaffectatorPage],
@@ -33,7 +34,8 @@ import { MatIconModule } from '@angular/material/icon'
     SelectModule,
     DateSelectModule,
     InputButtonModule,
-    MatIconModule
+    MatIconModule,
+    IntroJSModule,
   ],
 })
 export class ReaffectatorModule {}

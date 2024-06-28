@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, OnInit } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -24,7 +24,7 @@ import { referentielCAMappingColor, referentielCAMappingName, referentielMapping
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
+export class UserService implements OnInit {
   /**
    * Format de l'utilisateur connecté
    */
@@ -49,6 +49,10 @@ export class UserService {
     private referentielService: ReferentielService
   ) { }
 
+  ngOnInit(): void {
+    this.getInterfaceType()
+  }
+
   /**
    * Sauvegarde d'une utilisateur
    * @param user
@@ -70,8 +74,13 @@ export class UserService {
   async getInterfaceType() {
     return this.serverService.get('users/interface-type').then((data) => {
       this.interfaceType = [0, 1].includes(data.data) ? data.data : null
+      console.log(this.interfaceType, data)
       return this.interfaceType !== null ? true : false
     })
+  }
+
+  isCa() {
+    return this.interfaceType === 1
   }
 
   /**

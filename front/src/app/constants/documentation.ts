@@ -10,7 +10,10 @@ export const CALCULATE_DOWNLOAD_URL = '/assets/Calculatrice_de_ventilation_du_te
  * Lien du template import
  */
 export const IMPORT_ETP_TEMPLATE = '/assets/Fiche_agent_template.xlsx'
-
+/**
+ * Lien du template import
+ */
+export const IMPORT_ETP_TEMPLATE_CA = '/assets/Fiche_agent_template_CA.xlsx'
 /**
  * Lien pour créer une nouvelle fiche
  */
@@ -32,6 +35,10 @@ export const DATA_GITBOOK = "https://docs.a-just.beta.gouv.fr/le-data-book/"
  */
 export const HELP_CENTER_GITBOOK = "https://docs.a-just.beta.gouv.fr/centre-daide/"
 /**
- * URL de la nomenclature
+ * URL de la nomenclature TJ
  */
 export const NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
+/**
+ * URL de la nomenclature CA
+ */
+export const NOMENCLATURE_DOWNLOAD_URL_CA = '/assets/nomenclature-A-Just-CA.html'

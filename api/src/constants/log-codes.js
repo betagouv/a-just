@@ -29,8 +29,21 @@ export const EXECUTE_WHITE_SIMULATOR = 312
 export const EXECUTE_LAUNCH_WHITE_SIMULATOR = 313
 export const EXECUTE_SIMULATOR_PARAM = 315
 
+export const START_DATE_SIMULATOR = 350
+export const END_DATE_SIMULATOR = 351
+export const DATE_REAFECTATOR = 352
+export const DATE_WHITE_SIMULATOR = 353
+
+
 export const HELP_START = 400
 export const HELP_STOP = 401
+export const HELP_AUTOSTART = 402
+export const HELP_AUTOSTART_AND_STOP = 403
+
+export const ACTIVITIES_PAGE_LOAD = 500
+export const ACTIVITIES_CHANGE_DATE = 501
+export const ACTIVITIES_SHOW_LEVEL_4 = 502
+
 
 export const CODES = {
   [USER_USER_SIGN_IN]: '[UTILISATEUR] Inscription utilisateur ${email}',
@@ -55,4 +68,8 @@ export const CODES = {
   [EXECUTE_LAUNCH_WHITE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation à blanc',
   [EXECUTE_LAUNCH_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation',
   [EXECUTE_SIMULATOR_PARAM]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation avec des parametres',
+  [START_DATE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de début dans le simulateur normal',
+  [END_DATE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de fin dans le simulateur normal',
+  [DATE_REAFECTATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date dans le réaffectateur',
+  [DATE_WHITE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de fin dans le simulateur à blanc',
 }

@@ -86,6 +86,11 @@
   display: grid;
   grid-template-columns: repeat(11, 1fr);
 
+  .sub-item {
+    justify-content: center;
+    display: flex;
+  }
+
   &.ca {
     grid-template-columns: repeat(13, 1fr) !important;
   }

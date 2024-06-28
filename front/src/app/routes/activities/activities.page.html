@@ -34,7 +34,7 @@
       <ng-template [ngIf]="canEditActivities">
         <div *ngFor="let ref of referentiel" class="item-grouped" [class.maximize]="ref.showActivityGroup">
           <div class="item" [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(ref.label)"
-            (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null"
+            (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null; onShowLevel4(ref)"
             [class.selectable]="(ref.childrens || []).length">
             <div class="label">
               <div class="color-border"

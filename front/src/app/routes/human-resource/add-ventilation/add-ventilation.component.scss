@@ -2,8 +2,38 @@
 
 :host {
   display: block;
-  max-width: 894px;
-  width: 95%;
+
+
+  &.existing-agent {
+    max-width: 894px;
+    width: 95%;
+
+    form {
+      .new-ventilation {
+        border: solid 1px fColor(cgrayDefault);
+        background-color: #f6f6f6;
+        border-radius: 8px;
+
+        >.administration {
+          margin: 8px 15px 8px 15px !important;
+        }
+
+        >.activities {
+          margin: 8px 15px 8px 15px !important;
+        }
+
+        .bottom-container {
+          >.date-start {
+            margin: 8px 4px 8px 15px !important;
+          }
+
+          >.indisponibilities {
+            margin: 8px 15px 8px 4px !important;
+          }
+        }
+      }
+    }
+  }
 
   aj-date-select {
     width: 145px;
@@ -115,12 +145,10 @@ input[type="file"] {
 
 
 .new-ventilation {
-  border: solid 1px fColor(cgrayDefault);
-  background-color: #f6f6f6;
-  border-radius: 8px;
+
 
   >.header {
-    padding: 0 40px;
+    padding: 0 15px;
     height: 68px;
     display: flex;
     align-items: center;
@@ -158,7 +186,8 @@ input[type="file"] {
   }
 
   >.administration {
-    margin: 8px 40px 8px 40px;
+    //margin: 8px 15px 8px 15px;
+    margin-bottom: 8px;
     border-radius: 8px;
     border: solid 1px #ddd;
     background-color: #fff;
@@ -208,7 +237,8 @@ input[type="file"] {
   }
 
   >.activities {
-    margin: 8px 40px 8px 40px;
+    //margin: 8px 15px 8px 15px;
+    margin-bottom: 8px;
     border-radius: 8px;
     border: solid 1px #ddd;
     background-color: #fff;
@@ -259,7 +289,8 @@ input[type="file"] {
     >.date-start {
       flex: 1;
       height: fit-content;
-      margin: 8px 8px 8px 40px;
+      margin: 8px 8px 8px 0;
+      //margin-bottom: 8px;
       padding: 0px 0 16px 0;
       border-radius: 8px;
       border: solid 1px #ddd;
@@ -290,7 +321,7 @@ input[type="file"] {
     }
 
     >.indisponibilities {
-      margin: 8px 40px 8px 8px;
+      margin: 8px 0 8px 8px;
       padding: 0px 0px 16px 0px;
       border-radius: 8px;
       border: solid 1px #ddd;

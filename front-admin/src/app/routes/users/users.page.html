@@ -24,37 +24,24 @@
       <td>
         <button
           *ngIf="!(element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN)"
-          mat-button
-          color="primary"
-          (click)="onEdit(element)"
-        >
+          mat-button color="primary" (click)="onEdit(element)">
           Modifier les accès
         </button>
         <button
           *ngIf="element && userConnected && element.id !== userConnected.id && !(element.role && element.role === USER_ROLE_SUPER_ADMIN)"
-          mat-button
-          color="warn"
-          (click)="onDelete(element)"
-        >
+          mat-button color="warn" (click)="onDelete(element)">
           Supprimer
         </button>
-        <p
-          *ngIf="element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN"
-          class="super-administrateur"
-        >
+        <p *ngIf="element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN"
+          class="super-administrateur">
           <i>Super administrateur</i>
         </p>
       </td>
     </tr>
   </table>
 
-  <aj-popup
-    *ngIf="userEdit"
-    class="large"
-    title="Modification des accès"
-    [actions]="popupAction"
-    (selectedAction)="onPopupDetailAction($event)"
-  >
+  <aj-popup *ngIf="userEdit" class="large" title="Modification des accès" [actions]="popupAction"
+    (selectedAction)="onPopupDetailAction($event)">
     <div class="content-popup">
       <div>
         <p>Email: {{ userEdit.email }}</p>
@@ -81,13 +68,8 @@
     </div>
   </aj-popup>
 
-  <aj-popup
-    *ngIf="userDelete"
-    class="small"
-    title="Suppression d'un utilisateur"
-    [actions]="popupDeleteAction"
-    (selectedAction)="onPopupDeleteAction($event)"
-  >
+  <aj-popup *ngIf="userDelete" class="small" title="Suppression d'un utilisateur" [actions]="popupDeleteAction"
+    (selectedAction)="onPopupDeleteAction($event)">
     <div>
       <p>
         Êtes vous sûr de vouloir supprimer {{ userDelete.firstName }} {{

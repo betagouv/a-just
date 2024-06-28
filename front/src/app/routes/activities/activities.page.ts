@@ -22,6 +22,9 @@ import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sleep } from 'src/app/utils'
 import { UserService } from 'src/app/services/user/user.service'
+import { ACTIVITIES_SHOW_LEVEL_4 } from 'src/app/constants/log-codes'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
+import { MIN_DATE_SELECT } from 'src/app/constants/activities'
 
 /**
  * Composant page activité
@@ -81,6 +84,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     title: 'Voir les données de',
     dateType: 'month',
     value: null,
+    minDate: new Date(MIN_DATE_SELECT)
   }
   /**
    * Lien du guide de la donnée
@@ -167,7 +171,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       target: '.content-list .item-grouped:first-child',
       title: 'Vérifier, compléter ou A-JUSTer : que faire ?',
       intro:
-        'Pour chaque sous-contentieux, vous pouvez :<ul><li><b>Vérifier</b> les données d\'activité « logiciel », extraites à la fin de chaque mois par A-JUST des logiciels métiers utilisés par la juridiction. Cette mention apparaît pour tous les sous-contentieux dont nous savons que nos remontées peuvent varier en comparaison avec vos données locales.</li><li><b>Compléter</b> manuellement si nécessaire les entrées, sorties et/ou stocks qui ne sont pas pré-alimentés pour disposer de donner exhaustives.</li><li><b>A-JUSTer</b> la donnée logiciel si elle ne vous semble pas correcte. Une fois sur la page de complétion, vous pourrez saisir une nouvelle donnée, choisir de "confirmer" la donnée existante si elle vous parait correcte ou la laisser comme telle par défaut.</li>',
+        'Pour chaque sous-contentieux, vous pouvez :<ul><li><b>Vérifier</b> les données d\'activité « logiciel », extraites à la fin de chaque mois par A-JUST des logiciels métiers utilisés par la ' + (this.isTJ() ? 'juridiction' : 'cours d\'appel') + '. Cette mention apparaît pour tous les sous-contentieux dont nous savons que nos remontées peuvent varier en comparaison avec vos données locales.</li><li><b>Compléter</b> manuellement si nécessaire les entrées, sorties et/ou stocks qui ne sont pas pré-alimentés pour disposer de donner exhaustives.</li><li><b>A-JUSTer</b> la donnée logiciel si elle ne vous semble pas correcte. Une fois sur la page de complétion, vous pourrez saisir une nouvelle donnée, choisir de "confirmer" la donnée existante si elle vous parait correcte ou la laisser comme telle par défaut.</li>',
       beforeLoad: async (intro: any) => {
         const subTools = document.querySelector('.item-grouped .group')
         if (subTools && subTools.getBoundingClientRect().height === 0) {
@@ -205,6 +209,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           }
         }*/
     },
+    {
+      target: '#wrapper-contener',
+      title: "Découvrir la fonctionnalité",
+      intro:
+        "<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l'écran des données d’activité.</p><video controls autoplay class=\"intro-js-video\"><source src=\"/assets/videos/video-activites.mp4\" type=\"video/mp4\" /></video>",
+    },
   ]
 
   /**
@@ -213,6 +223,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * @param humanResourceService
    * @param referentielService
    * @param userService
+   * @param kpiService
    */
   constructor(
     private activitiesService: ActivitiesService,
@@ -220,6 +231,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     private referentielService: ReferentielService,
     private route: ActivatedRoute,
     public userService: UserService,
+    private kpiService: KPIService,
   ) {
     super()
 
@@ -261,6 +273,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    */
   ngOnDestroy() {
     this.watcherDestroy()
+  }
+
+  /**
+   * Detect is TJ
+   * @returns 
+   */
+  isTJ() {
+    return this.userService.interfaceType !== 1
   }
 
   /**
@@ -808,5 +828,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       return true
     }
     return false
+  }
+
+  onShowLevel4(cont: ContentieuReferentielActivitiesInterface) {
+    if (cont.showActivityGroup) {
+      this.kpiService.register(ACTIVITIES_SHOW_LEVEL_4, cont.id + "")
+    }
   }
 }

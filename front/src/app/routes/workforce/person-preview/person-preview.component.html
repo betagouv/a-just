@@ -1,6 +1,6 @@
 <ng-template [ngIf]="showComponent">
-  <div class="profil item">
-    <a [routerLink]="['/resource-humaine', hr.id]" class="text">
+  <div class="profil item" [ngClass]="{ ca: userService.isCa() }">
+    <a [routerLink]="['/resource-humaine', hr.id]" class="text" [ngClass]="{ ca: userService.isCa() }">
       <div class="name">
         <p>
           {{

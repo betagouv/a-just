@@ -16,6 +16,7 @@ import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_URL,
   NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
 } from 'src/app/constants/documentation'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
@@ -97,7 +98,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * Parmétrage au niveau des boutons d'actions en haut à gauche
    */
-  @Input() actionsLeftTemplate: TemplateRef<any> | undefined  
+  @Input() actionsLeftTemplate: TemplateRef<any> | undefined
   /**
    * Titre de page
    */
@@ -503,7 +504,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   downloadAsset(type: string, download = false) {
     let url = null
-    if (type === 'nomenclature') url = NOMENCLATURE_DOWNLOAD_URL
+    if (type === 'nomenclature') url = this.userService.isCa() ? NOMENCLATURE_DOWNLOAD_URL_CA : NOMENCLATURE_DOWNLOAD_URL
     else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL
 
     if (url) {
@@ -515,11 +516,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     }
   }
 
-    /**
-   * Changement de la date via le selecteur
-   * @param date
-   */
-    changeMonth(date: Date) {
-      this.activitiesService.activityMonth.next(date)
-    }
+  /**
+ * Changement de la date via le selecteur
+ * @param date
+ */
+  changeMonth(date: Date) {
+    this.activitiesService.activityMonth.next(date)
+  }
 }
