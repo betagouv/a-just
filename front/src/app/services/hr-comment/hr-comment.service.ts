@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
+import { BehaviorSubject } from 'rxjs';
 
 /**
  * Service de gestion des commentaires d'un magistrat, greffier....
@@ -10,6 +11,14 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
 })
 export class HRCommentService {
   /**
+   * A comment is editing
+   */
+  mainEditing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  /**
+   * A comment is editing
+   */
+  forceOpenAll: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  /**
    * Constructeur
    * @param serverService 
    * @param humanResourceService 
@@ -17,7 +26,7 @@ export class HRCommentService {
   constructor(
     private serverService: ServerService,
     private humanResourceService: HumanResourceService
-  ) {}
+  ) { }
 
   /**
    * API appel au serveur pour récuperer le commentaire d'une fiche
@@ -33,20 +42,53 @@ export class HRCommentService {
   }
 
   /**
+ * API appel au serveur pour récuperer le commentaire d'une fiche
+ * @param id 
+ * @returns 
+ */
+  getHRCommentByCommentId(id: number, hrId: number) {
+    return this.serverService
+      .post('hr-comment/get-hr-comment-by-id', {
+        id: id,
+        hrId: hrId
+      })
+      .then((r) => r.data);
+  }
+  /**
    * API mise à jour du commentaire d'une fiche
    * @param id 
    * @param comment 
    * @returns 
    */
-  updateHRComment(id: number, comment: string) {
+  updateHRComment(id: number, comment: string, userId: number, commentId: number = -1) {
+    console.log({
+      commentId,
+      hrId: id,
+      comment,
+      userId
+    })
     return this.serverService
       .post('hr-comment/update-hr-comment', {
+        commentId,
         hrId: id,
         comment,
+        userId: userId || -1
       })
       .then((r) => {
+        console.log('BACK', r)
         const updateAt = new Date(r.data);
         return updateAt;
       });
+  }
+
+  /**
+   * API suppression d'un commentaire
+   */
+  deleteHRComment(commentId: number, hrId: number) {
+    return this.serverService
+      .post('hr-comment/delete-hr-comment', {
+        commentId,
+        hrId
+      })
   }
 }

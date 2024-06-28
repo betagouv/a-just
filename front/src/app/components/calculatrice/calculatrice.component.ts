@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
 import { CalculatriceInterface } from 'src/app/interfaces/calculatrice'
 import { CalculatriceService } from 'src/app/services/calculatrice/calculatrice.service'
 
@@ -8,7 +8,7 @@ const calculatriceTabs = ['Vacations', 'Volumes']
   templateUrl: './calculatrice.component.html',
   styleUrls: ['./calculatrice.component.scss'],
 })
-export class CalculatriceComponent implements OnInit {
+export class CalculatriceComponent implements OnInit, OnDestroy {
   /**
    * Option radio button
    */
@@ -36,6 +36,19 @@ export class CalculatriceComponent implements OnInit {
     this.model = this.calculatriceService.dataCalculatrice.value
   }
 
+  /**
+   * Destruction du composant
+   */
+  ngOnDestroy(): void {
+    this.model = {
+      vacation: { value: null, option: 'jour', unit: null },
+      volume: { value: null, option: 'jour' },
+      selectedTab: 'vacation',
+    }
+    setTimeout(() => {
+      this.calculatriceService.dataCalculatrice.next(this.model)
+    }, 100)
+  }
   /**
    * Ouvre l'onglet cliqué
    * @param tabName

@@ -12,7 +12,7 @@ export async function getHumanRessourceList (preformatedAllHumanResource, conten
       isOk = false
     }
 
-    if (hr.dateEnd && today(hr.dateEnd).getTime() <= date.getTime()) {
+    if (hr.dateEnd && today(hr.dateEnd).getTime() < date.getTime()) {
       isOk = false
     }
 

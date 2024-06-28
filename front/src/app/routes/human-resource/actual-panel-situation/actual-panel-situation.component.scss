@@ -15,18 +15,18 @@
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 
-  > p {
+  >p {
     color: fColor(cblack);
     font-size: 16px;
     font-weight: bold;
   }
 
-  > div {
+  >div {
     display: flex;
     align-items: center;
     margin-top: 8px;
 
-    > .tags {
+    >.tags {
       display: inline-flex;
       justify-content: flex-end;
 
@@ -78,5 +78,5 @@
 }
 
 panel-activities {
-  margin: 7px 44px 16px 44px;
+  margin: 7px 16px 16px 16px;
 }

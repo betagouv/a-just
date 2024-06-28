@@ -3,6 +3,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceSelectedInterface } from '../workforce.page'
 import { FilterPanelInterface } from '../filter-panel/filter-panel.component'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { UserService } from 'src/app/services/user/user.service'
 
 /**
  * Paneau d'une fiche magistrat / fonctionnaire / contractuel
@@ -14,8 +15,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 })
 export class PersonPreviewComponent
   extends MainClass
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   /**
    * Fiche
    */
@@ -53,7 +53,7 @@ export class PersonPreviewComponent
   /**
    * Constructeur
    */
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor(private humanResourceService: HumanResourceService, public userService: UserService) {
     super()
   }
 

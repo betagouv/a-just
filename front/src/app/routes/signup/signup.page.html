@@ -6,7 +6,7 @@
   </div>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <h3>Embarquement A-JUST</h3>
-    <ng-template [ngIf]="ssoIsActivate && signUpStep === 1">
+    <ng-template [ngIf]="ssoIsActivate && signUpStep === 1 && !userService.isCa()">
       <button class="outline white strict-border sso-bt" (click)="onUseSSO()" type="button"
         [ngClass]="{disabled: !canUseSSO}">
         <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />

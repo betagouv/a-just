@@ -1,41 +1,195 @@
 @import '../../../styles/utils.scss';
 
 :host {
-  display: block;
-  width: 200px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  border: solid 1px fColor(lightBorder);
-  background-color: #fff;
-}
-
-.header-panel {
-  display: flex;
-  height: 56px;
-  align-items: center;
-  background-color: fColor(bgSelect);
-  border-bottom: solid 1px fColor(lightBorder);
-  padding: 0 16px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-
-  i {
-    color: fColor(bgSelectSelected);
-    margin-right: 9px;
+  .hide {
+    display: none !important;
   }
 
-  div {
-    margin-right: 8px;
+  >div {
+    overflow-y: hidden;
+    position: relative;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: solid 1px fColor(lightBorder);
+    background-color: #fff;
 
-    .com {
-      color: fColor(cblack);
-      font-size: 16px;
-      font-weight: bold;
+    &.drop-down-display {
+      padding-bottom: 16px;
     }
 
-    .com-at {
-      color: fColor(titleSelect);
-      font-size: 12px;
+    &.close {
+      max-height: 251px;
+      //max-height: 271px;
+    }
+
+    .footer-panel {
+      border-top: solid 1px fColor(lightBorder);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 24px;
+      opacity: 1;
+
+
+
+      .save {
+        color: white;
+        background-color: fColor(primary);
+        height: 32px;
+        padding: 4px 12px;
+        font-size: 14px;
+        line-height: 24px;
+        cursor: pointer;
+
+        &.disabled {
+          pointer-events: none;
+          opacity: 0.6;
+        }
+      }
+
+      .back {
+        border: solid 1px fColor(primary);
+        color: fColor(primary);
+        background-color: white;
+        height: 32px;
+        padding: 4px 12px;
+        font-size: 14px;
+        line-height: 24px;
+        cursor: pointer;
+        margin-right: 16px;
+      }
+    }
+
+    .header-panel {
+      display: flex;
+      height: 56px;
+      align-items: center;
+      background-color: fColor(bgSelect);
+      border-bottom: solid 1px fColor(lightBorder);
+      padding: 0 16px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+
+      i {
+        color: fColor(bgSelectSelected);
+        margin-right: 9px;
+        font-size: 24px;
+      }
+
+      .displayer {
+        cursor: pointer;
+        font-size: 14px;
+        height: 32px;
+        padding: 4px 12px;
+        font-size: 14px;
+        line-height: 24px;
+
+        color: #929292;
+        border: 1px solid #929292;
+      }
+
+      .sep {
+        flex: 1;
+      }
+
+      div {
+        margin-right: 8px;
+        display: flex;
+
+        .com {
+          color: fColor(cblack);
+          font-size: 16px;
+          font-weight: bold;
+          bottom: 1px;
+          position: relative;
+        }
+
+
+
+        .com-at {
+          color: fColor(titleSelect);
+          font-size: 12px;
+        }
+      }
+    }
+
+    .properties {
+      height: 40px;
+      background-color: white;
+      display: flex;
+      border-bottom: solid 1px fColor(lightBorder);
+      align-items: center;
+      padding: 0 16px;
+
+      .number-circle {
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        padding: 3px 4.5px;
+        background-color: #ededed;
+        text-align: center;
+        font-size: 12px;
+        color: #929292;
+        margin-right: 8px;
+      }
+
+      label {
+        font-size: 14px;
+        font-weight: bold;
+        color: #3a3a3a;
+        bottom: 2px;
+        position: relative;
+      }
+    }
+
+    .fixed-button {
+      cursor: pointer;
+      height: 24px;
+      font-size: 14px;
+      border: solid 1px #ddd;
+      background-color: #f6f6f6;
+      bottom: 0px;
+      position: absolute;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .panel-content {
+    position: relative;
+    align-items: center;
+    display: block;
+
+    &.hide {
+      display: none;
+    }
+
+    .placeholder {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #3a3a3a;
+      top: 0;
+      bottom: 0;
+      margin: auto 0;
+
+      .mat-icon {
+        position: relative;
+
+        margin-top: 10px;
+        margin-left: 16px;
+        color: fColor(titleSelect);
+        font-size: 18px;
+
+        &.editing {
+          display: none !important;
+        }
+      }
     }
   }
 }

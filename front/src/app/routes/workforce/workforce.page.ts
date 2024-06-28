@@ -25,7 +25,6 @@ import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.serv
 import { fixDecimal } from 'src/app/utils/numbers'
 import { debounceTime } from 'rxjs'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
-import { sleep } from 'src/app/utils'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -220,7 +219,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Affichage du panneau de selection de filtre
    */
-  showFilterPanel: number = -1
+  showFilterPanel: boolean = false
   /**
    * Paramètres de filtre selectionnés
    */
@@ -248,7 +247,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Intro JS Steps
    */
-  introSteps: IntroJSStep[] = [
+  introSteps: IntroJSStep[] = this.isTJ() ? [
     {
       target: '#wrapper-contener',
       title: 'A quoi sert le ventilateur ?',
@@ -317,6 +316,49 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       intro:
         "Choisissez la <b>période</b> et la <b>catégorie d'agents souhaitées</b> et obtenez toutes ces informations dans un <b>fichier Excel</b> que vous pourrez utiliser pour simplifier l'exercice annuel des déclaratifs d'ETPT",
     },
+  ] : [
+    {
+      target: '#wrapper-contener',
+      title: 'A quoi sert le ventilateur ?',
+      intro:
+        "En renseignant la situation de chacun des agents de votre cours d'appel dans une fiche individuelle, cette fonctionnalité vous permet de <b>visualiser en un coup d'œil et à la date de votre choix pour l'ensemble des agents de la CA leur ETPT réel et l'affectation de chacun</b> sur les différents contentieux.",
+    },
+    {
+      target: '.header-list',
+      title: 'Liste des contentieux',
+      intro:
+        "Retrouvez ici la <b>liste des contentieux</b> traités par la cours d'appel et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le <b>volume global d'ETPT</b> affecté par votre juridiction au <b>traitement de chaque type d'activité</b> par <b>catégorie d'agent</b>.",
+    },
+    {
+      target: '.header-list .filter-button',
+      title: 'Filtrer et trier',
+      intro:
+        "Vous avez la possibilité de <b>filtrer</b> cette liste d'agents par fonction, la <b>trier</b> par <b>nom</b>, <b>fonction</b>, <b>date de mise à jour ou taux d'affectation</b> et de <b>modifier l'affichage</b> des agents d'abord par nom ou par prénom.",
+    },
+    {
+      target: 'person-preview',
+      title: 'Ajuster une fiche en cliquant directement sur celle-ci',
+      intro:
+        "Vous pourrez ainsi modifier les <b>nom</b>, <b>prénom</b>, <b>matricule</b> et <b>date d'arrivée</b> ou de départ de la juridiction d'un agent, en saisissant les nouvelles valeurs directement dans les champs concernés. Vous aurez également la possibilité d'ajouter un commentaire et des indisponibilités.<br/><br/>Dans ces fiches agents, vous pourrez <b>renseigner ou modifier la répartition en pourcentage du temps de travail</b> de chaque agent sur les différents contentieux ou sous-contentieux qu'il traite.<br/><br/>Dès lors, plus besoin de faire de calculs d'ETPT en proportion du temps de travail ou de la <b>date d’arrivée</b> dans la juridiction : A-JUST s’en chargera pour vous !",
+    },
+    {
+      target: '.search-zone',
+      title: 'Rechercher un agent :',
+      intro:
+        "Le <b>champ dédié en haut à droite</b> de l'écran vous permet de <b>trouver rapidement la fiche d'un agent</b> (même s'il a quitté votre juridiction). Pour cela, il vous suffit de saisir son nom ou son prénom et de cliquer sur la fiche proposée.",
+    },
+    {
+      target: '.add-collaborator',
+      title: 'Ajouter un nouvel agent :',
+      intro:
+        "Vous pouvez ajouter un agent s'il n'est pas dans les effectifs présents dans A-JUST. <br/><br/>Renseignez les informations demandées, une date d'arrivée et de départ lors que celle-ci est connue. Vous pouvez effectuer une première ventilation ; pensez à <b>vérifier que votre taux d'affectation est de 100%</b> à l’aide de la barre de remplissage située sous les contentieux.",
+    },
+    {
+      target: '.menu-item.tools',
+      //target: '.menu .sub-tools > p:nth-child(2n)',
+      title: 'Découvrez nos outils :',
+      intro: 'La <b>calculatrice</b> vous permet d\'obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.<br/>Téléchargeable dans chaque fiche agent.'
+    },
   ]
 
   /**
@@ -360,6 +402,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
           this.selectedReferentielIds =
             this.humanResourceService.selectedReferentielIds
+
           this.onFilterList()
         }
       )
@@ -456,6 +499,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   ngOnDestroy() {
     this.watcherDestroy()
+  }
+
+  /**
+   * Detect is TJ
+   * @returns 
+   */
+  isTJ() {
+    return this.userService.interfaceType !== 1
   }
 
   /**
@@ -699,6 +750,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (this.filterParams.order && this.filterParams.order === 'desc') {
           listFiltered = listFiltered.reverse()
         }
+
+        if (this.getOptionAffichageIndispoString()) {
+          listFiltered = listFiltered.filter(h => h.indisponibilities && h.indisponibilities.length && h.indisponibilities.some(i => (this.filterParams?.filterIndispoValues || []).includes(i.contentieux.id)))
+        }
       }
 
       list.hrFiltered = listFiltered
@@ -922,22 +977,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
-  async getCurrentFilteredLabels(
-    fonctionsIds: number[],
-    focusFct: HRFonctionInterface[]
-  ) {
-    const fonctions = await this.hrFonctionService.getAll()
-    const fctCodes = fonctions
-      .filter((x) => fonctionsIds.includes(x.id))
-      .filter((f) => !focusFct.map((x) => x.id).includes(f.id))
-
-    if (fctCodes.length === 0) return null
-    else
-      return fctCodes
-        .map((x) => x.code)
-        .join(' ')
-        .slice(0, 10)
-  }
   async switchSubFilter(
     category: HRCategorySelectedInterface,
     poste: HRCategorypositionInterface
@@ -969,8 +1008,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           )
         }
 
-        const labels = await this.getCurrentFilteredLabels(myArray, focusFct)
-
         this.filterParams = await {
           display: 'prénom/nom',
           filterFunction: (list: HumanResourceSelectedInterface[]) => {
@@ -984,6 +1021,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           },
           filterNames: null,
           filterValues: myArray,
+          filterIndispoValues: this.filterParams?.filterIndispoValues || null,
           order: 'asc',
           orderIcon: 'sort-desc',
           sort: 'function',
@@ -1016,25 +1054,90 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     category.style['background-color'] = color
   }
 
-  async onUpdateFilterId(event: any) {
-    this.filterParams = await {
-      display: 'prénom/nom',
-      filterFunction: (list: HumanResourceSelectedInterface[]) => {
-        return list.filter(
-          (h) =>
-            h.fonction &&
-            this.filterParams &&
-            this.filterParams.filterValues &&
-            this.filterParams.filterValues.indexOf(h.fonction.id) !== -1
-        )
-      },
-      filterNames: null,
-      filterValues: event,
-      order: 'asc',
-      orderIcon: 'sort-desc',
-      sort: 'function',
-      sortFunction: null,
-      sortName: null,
+  /**
+   * Retour une string qui affiche les options de filtre / trie
+   */
+  getOptionAffichageString() {
+    const list = []
+
+    if (this.selectedReferentielIds.length !== this.formReferentiel.length) {
+      list.push(this.getOptionAffichageReferentielString())
     }
+
+    if (this.filterParams && this.filterParams.orderIcon && this.filterParams.sortName) {
+      list.push(this.filterParams.sortName)
+    }
+
+    if (this.filterParams && this.filterParams.filterNames) {
+      list.push(this.filterParams.filterNames)
+    }
+
+    const indispString = this.getOptionAffichageIndispoString()
+    if (indispString) {
+      list.push(indispString)
+    }
+
+    return list.length === 0 ? null : list.join(', ')
+  }
+
+  /**
+   * Retour une string qui affiche les options de filtre / trie
+   */
+  getOptionAffichageReferentielString() {
+    if (this.selectedReferentielIds.length !== this.formReferentiel.length) {
+      const labels = this.selectedReferentielIds.map(id => {
+        const ref = this.formReferentiel.find(formRef => formRef.id === id)
+        return ref?.value
+      })
+
+      let text = labels.slice(0, 3).join(', ')
+
+      if (labels.length > 3) {
+        text += ' et ' + (labels.length - 3) + ' de plus'
+      }
+
+      return text
+    }
+
+    return null
+  }
+
+  /**
+   * Retour une string qui affiche les options de filtre / trie des indispo
+   */
+  getOptionAffichageIndispoString() {
+    const allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1).map(r => ({ id: r.id, label: r.label.replace(/\//g, ' / ') }))
+    const filtre = this.filterParams?.filterIndispoValues || []
+    if (filtre.length) {
+      const labels = filtre.map(id => {
+        const ref = allIndisponibilityReferentiel.find(f => f.id === id)
+        return ref?.label
+      })
+
+      let text = labels.slice(0, 3).join(', ')
+
+      if (labels.length > 3) {
+        text += ' et ' + (labels.length - 3) + ' de plus'
+      }
+
+      return text
+    }
+
+    return null
+  }
+
+  clearFilterIndispo() {
+    if (this.filterParams) {
+      this.filterParams.filterIndispoValues = []
+      this.orderListWithFiltersParams()
+    }
+  }
+
+  /**
+   * Supprimer le filtre des contentieux
+   */
+  clearFilterReferentiel() {
+    this.selectedReferentielIds = this.formReferentiel.map(r => r.id)
+    this.onSelectedReferentielIdsChanged(this.selectedReferentielIds)
   }
 }

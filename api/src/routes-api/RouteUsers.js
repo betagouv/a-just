@@ -40,11 +40,7 @@ export default class RouteUsers extends Route {
    */
   @Route.Get()
   async interfaceType(ctx) {
-    if (ctx.state && ctx.state.user) {
-      this.sendOk(ctx, Number(process.env.TYPE_ID))
-    } else {
-      this.sendOk(ctx, null)
-    }
+    this.sendOk(ctx, Number(process.env.TYPE_ID))
   }
 
   /**

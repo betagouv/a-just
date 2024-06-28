@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { maxBy, minBy, orderBy } from 'lodash'
+import { maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { debounceTime } from 'rxjs'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
@@ -21,6 +21,7 @@ import { AddVentilationComponent } from './add-ventilation/add-ventilation.compo
 import { AppService } from 'src/app/services/app/app.service'
 import { sum } from 'lodash'
 import { DOCUMENTATION_VENTILATEUR_PERSON } from 'src/app/constants/documentation'
+import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
 
 /**
  * Interface d'une situation
@@ -153,7 +154,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private router: Router,
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
-    public appService: AppService
+    public appService: AppService,
+    private hrCommentService: HRCommentService
   ) {
     super()
 
@@ -697,13 +699,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
           // control date start
           if (this.currentHR && this.currentHR.dateStart) {
-            const hrDateStart = new Date(this.currentHR.dateStart)
+            const hrDateStart = today(this.currentHR.dateStart)
 
             if (
               this.updateIndisponiblity &&
               this.updateIndisponiblity.dateStart
             ) {
-              const indispDateStart = new Date(
+              const indispDateStart = today(
                 this.updateIndisponiblity.dateStart
               )
               if (hrDateStart.getTime() > indispDateStart.getTime()) {
@@ -785,7 +787,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
           // Verification that unavailability is not added while the agent has no ventilations provided.
           const totalActivities = this.currentHR?.situations.map((elem: any) => elem.activities.length)
-          if (!sum(totalActivities)) {
+          if ((this.addDomVentilation && sumBy(this.addDomVentilation.updatedReferentiels, 'percent') !== 100) || (!this.addDomVentilation && !sum(totalActivities))) {
             this.appService.alert.next({
               title: 'Attention',
               text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
@@ -936,6 +938,19 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Demande d'extraction de la page au format pdf
    */
   onExport() {
+    this.hrCommentService.forceOpenAll.next(true)
+    const parent = document.getElementById('first-panel')
+    const child = document.getElementById('comment-profil')
+    const parent2 = document.getElementById('wrapper-printed')
+    parent?.removeChild(child as Node)
+    parent2?.appendChild(child as Node)
+
+    const reduire1 = document.getElementById('logo-2')
+    const reduire2 = document.getElementById('logo-4')
+
+    reduire1?.classList.add('hide')
+    reduire2?.classList.add('hide')
+
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
@@ -945,8 +960,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         } en date du ${new Date().toJSON().slice(0, 10)}.pdf`
       )
       .then(() => {
+        reduire1?.classList.remove('hide')
+        reduire2?.classList.remove('hide')
+        this.hrCommentService.forceOpenAll.next(false)
         this.duringPrint = false
+        parent2?.removeChild(child as Node)
+        parent?.appendChild(child as Node)
       })
+
   }
 
   /**

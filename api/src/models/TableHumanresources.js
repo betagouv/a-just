@@ -1,6 +1,7 @@
+import { Op } from 'sequelize'
 import { posad } from '../constants/hr'
-import { juridictionLabelExceptions } from '../constants/juridiction-type'
 import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
+import { today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 
@@ -76,16 +77,11 @@ export default (sequelizeInstance, Model) => {
       where: {
         backup_id: backupId,
       },
-      include: [
-        {
-          attributes: ['id', 'comment'],
-          model: Model.models.HRComments,
-        },
-      ],
       raw: true,
     })
 
     for (let i = 0; i < list.length; i++) {
+      const comment = await Model.models.HRComments.getLastComment(list[i].id)
       list[i] = {
         id: list[i].id,
         firstName: list[i].first_name,
@@ -97,7 +93,7 @@ export default (sequelizeInstance, Model) => {
         updatedAt: list[i].updated_at,
         backupId: list[i].backup_id,
         juridiction: list[i].juridiction,
-        comment: list[i]['HRComment.comment'],
+        comment: comment && comment.comment,
         situations: await Model.models.HRSituations.getListByHumanId(list[i].id, list[i].date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(list[i].id),
       }
@@ -117,16 +113,11 @@ export default (sequelizeInstance, Model) => {
       where: {
         id: hrId,
       },
-      include: [
-        {
-          attributes: ['id', 'comment'],
-          model: Model.models.HRComments,
-        },
-      ],
       raw: true,
     })
 
     if (details) {
+      const comment = await Model.models.HRComments.getLastComment(details.id)
       return {
         id: details.id,
         firstName: details.first_name,
@@ -137,7 +128,7 @@ export default (sequelizeInstance, Model) => {
         coverUrl: details.cover_url,
         updatedAt: details.updated_at,
         backupId: details.backup_id,
-        comment: details['HRComment.comment'],
+        comment: comment && comment.comment,
         situations: await Model.models.HRSituations.getListByHumanId(details.id, details.date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(details.id),
       }
@@ -274,6 +265,7 @@ export default (sequelizeInstance, Model) => {
         if (findFonction) {
           situation.fonction_id = findFonction.id
         } else if (statut === 'Magistrat' || notImported.includes(code)) {
+          console.log("code no imported=>", code, statut)
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by fonction ')
           continue
@@ -307,7 +299,6 @@ export default (sequelizeInstance, Model) => {
         }
 
         let juridiction = list[i].juridiction || ''
-        console.log('TEST', juridiction, Number(config.juridictionType))
         /*if (Number(config.juridictionType) !== 1)
           if (juridictionLabelExceptions.map((x) => x['import'].includes(juridiction)))
             juridiction = juridictionLabelExceptions.filter((el) => {
@@ -353,11 +344,12 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    console.log(importSituation)
 
     // remove cache
     cacheJuridictionPeoples = {}
     Model.onPreload()
+    console.log('IMPORT!:', importSituation)
+
   }
 
   /**
@@ -439,16 +431,11 @@ export default (sequelizeInstance, Model) => {
       where: {
         id: hrId,
       },
-      include: [
-        {
-          attributes: ['id', 'comment'],
-          model: Model.models.HRComments,
-        },
-      ],
       raw: true,
     })
 
     if (hr) {
+      const comment = await Model.models.HRComments.getLastComment(hr.id)
       hr = {
         id: hr.id,
         firstName: hr.first_name,
@@ -459,7 +446,7 @@ export default (sequelizeInstance, Model) => {
         dateEnd: hr.date_sortie,
         coverUrl: hr.cover_url,
         updatedAt: hr.updated_at,
-        comment: hr['HRComment.comment'],
+        comment: comment && comment.comment,
         backupId: hr.backup_id,
         situations: await Model.models.HRSituations.getListByHumanId(hr.id, hr.date_entree),
         indisponibilities: await Model.models.HRIndisponibilities.getAllByHR(hr.id),
@@ -578,6 +565,35 @@ export default (sequelizeInstance, Model) => {
     } else {
       return false
     }
+  }
+
+  Model.checkAgentToAnonymise = async () => {
+    const now = today()
+    now.setFullYear(now.getFullYear() - 5)
+    const agents = await Model.findAll({
+      attributes: ['id', 'first_name', 'last_name', 'date_sortie', 'matricule', 'registration_number'],
+      where: {
+        date_sortie: {
+          [Op.lte]: now,
+        },
+        first_name: {
+          [Op.ne]: 'anonyme',
+        },
+      },
+      paranoid: false,
+    })
+
+    for (let i = 0; i < agents.length; i++) {
+      await agents[i].update({
+        first_name: 'anonyme',
+        last_name: 'anonyme',
+        matricule: 'anonyme',
+        registration_number: 'anonyme',
+      })
+    }
+
+    // update cache
+    Model.onPreload()
   }
 
   return Model

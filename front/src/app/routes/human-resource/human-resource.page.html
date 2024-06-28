@@ -10,11 +10,12 @@
       [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
       (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
 
-    <div class="first-panel" *ngIf="histories.length !== 0">
+    <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
+      <div id="top-scroll-anchor" class="anchor"></div>
       <indispo-profil
         [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
         (onOpenHelpPanel)="openHelpPanel($event)" (addIndispiniblity)="onAddIndispiniblity($event)"></indispo-profil>
-      <comment-profil [currentHR]="currentHR"></comment-profil>
+      <comment-profil id="comment-profil" [currentHR]="currentHR"></comment-profil>
     </div>
 
     <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
@@ -40,7 +41,8 @@
       </div>
     </ng-template>
 
-    <add-ventilation *ngIf="onEditIndex !== null" #addDomVentilation [human]="currentHR"
+    <add-ventilation [ngClass]="{'existing-agent':histories.length !== 0}" *ngIf="onEditIndex !== null" #addDomVentilation
+      [human]="currentHR"
       [activities]="onEditIndex !== -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])"
       [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [indexSituation]="onEditIndex"
       [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null"
@@ -98,6 +100,7 @@
       </button>
     </div>
   </div>
+  <div id="wrapper-printed"></div>
 </aj-wrapper>
 
 <aj-popup *ngIf="updateIndisponiblity" [actions]="[
@@ -132,5 +135,4 @@
     </div>
   </div>
 </aj-popup>
-
 <div class="black-screen" *ngIf="histories.length && onEditIndex !== null"></div>
