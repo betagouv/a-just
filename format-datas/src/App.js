@@ -169,8 +169,7 @@ export default class App {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
-      const regex = new RegExp("_RGC-(.*?)_", "g");
-      //const regex = new RegExp("_MINTI_(.*?).xml");
+      const regex = new RegExp("(_RGC-(.*?)_)|(_MINTI_(.*?).xml)", "g");
       let testRegex;
       let getTypeOfJuridiction;
       if ((testRegex = regex.exec(file)) !== null) {
