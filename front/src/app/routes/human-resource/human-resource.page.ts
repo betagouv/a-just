@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { maxBy, minBy, orderBy } from 'lodash'
+import { maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { debounceTime } from 'rxjs'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
@@ -787,7 +787,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
           // Verification that unavailability is not added while the agent has no ventilations provided.
           const totalActivities = this.currentHR?.situations.map((elem: any) => elem.activities.length)
-          if (!sum(totalActivities)) {
+          if ((this.addDomVentilation && sumBy(this.addDomVentilation.updatedReferentiels, 'percent') !== 100) || (!this.addDomVentilation && !sum(totalActivities))) {
             this.appService.alert.next({
               title: 'Attention',
               text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,

@@ -23,7 +23,6 @@ import {
 } from '../workforce/workforce.page'
 import { sumBy } from 'lodash'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
-import { Router } from '@angular/router'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -151,13 +150,13 @@ export class PanoramaPage
       target: '#wrapper-contener',
       title: 'Panorama',
       intro:
-        'Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace du TJ.',
+        'Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace ' + (this.isTJ() ? 'du TJ' : 'de la CA') + '.',
     },
     {
       target: '.effectifs-panels',
       title: "Les données d'effectifs",
       intro:
-        "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la juridiction et les éventuels changements dans les 15 derniers et 15 prochains jours.",
+        "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la " + (this.isTJ() ? 'juridiction' : 'cours d\'appel') + " et les éventuels changements dans les 15 derniers et 15 prochains jours.",
     },
     {
       target: '.wordforce-composition',
@@ -169,7 +168,7 @@ export class PanoramaPage
       target: '.records-update',
       title: 'Pourcentage et date de mise à jour',
       intro:
-        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la juridiction.',
+        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la ' + (this.isTJ() ? 'juridiction' : 'cours d\'appel') + '.',
     },
     {
       target: 'workforce-change',
@@ -198,7 +197,7 @@ export class PanoramaPage
       target: 'activities-last-modifications',
       title: 'Dernières modifications',
       intro:
-        "Effectuées sur vos données d’activité par les différents agents de la juridiction utilisateurs d'A-JUST.",
+        "Effectuées sur vos données d’activité par les différents agents de la " + (this.isTJ() ? 'juridiction' : 'cours d\'appel') + " utilisateurs d'A-JUST.",
     },
     {
       target: '.contact-us',
@@ -214,7 +213,6 @@ export class PanoramaPage
   constructor(
     public userService: UserService,
     public humanResourceService: HumanResourceService,
-    private router: Router
   ) {
     super()
   }
@@ -422,6 +420,11 @@ export class PanoramaPage
       ? "cour d'appel"
       : 'tribunal judiciaire'
   }
+
+  isTJ() {
+    return this.userService.interfaceType !== 1
+  }
+
   /**
    * Destruction du composant
    */
