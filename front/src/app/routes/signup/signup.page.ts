@@ -63,7 +63,7 @@ export class SignupPage {
     'Secrétaire général(e)',
     'Chef(fe) de cabinet',
     'Chargé(e) de mission',
-    this.userService.isCa() ? 'Première présidente' : 'Secrétaire administratif - présidence',
+    this.userService.isCa() ? 'Première présidence' : 'Secrétaire administratif - présidence',
     'Secrétaire administratif - DG',
     'Directeur/trice de greffe adjoint(e)',
     'Directeur/trice des services de greffe judiciaires',
