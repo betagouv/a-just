@@ -237,7 +237,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     printSubTitle: true,
   }
   /**
-   * En cours de chargement
+   * En cour de chargement
    */
   isLoading: boolean = false
   /**
@@ -321,13 +321,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       target: '#wrapper-contener',
       title: 'A quoi sert le ventilateur ?',
       intro:
-        "En renseignant la situation de chacun des agents de votre cours d'appel dans une fiche individuelle, cette fonctionnalité vous permet de <b>visualiser en un coup d'œil et à la date de votre choix pour l'ensemble des agents de la CA leur ETPT réel et l'affectation de chacun</b> sur les différents contentieux.",
+        "En renseignant la situation de chacun des agents de votre cour d'appel dans une fiche individuelle, cette fonctionnalité vous permet de <b>visualiser en un coup d'œil et à la date de votre choix pour l'ensemble des agents de la CA leur ETPT réel et l'affectation de chacun</b> sur les différents contentieux.",
     },
     {
       target: '.header-list',
       title: 'Liste des contentieux',
       intro:
-        "Retrouvez ici la <b>liste des contentieux</b> traités par la cours d'appel et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le <b>volume global d'ETPT</b> affecté par votre juridiction au <b>traitement de chaque type d'activité</b> par <b>catégorie d'agent</b>.",
+        "Retrouvez ici la <b>liste des contentieux</b> traités par la cour d'appel et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le <b>volume global d'ETPT</b> affecté par votre juridiction au <b>traitement de chaque type d'activité</b> par <b>catégorie d'agent</b>.",
     },
     {
       target: '.header-list .filter-button',

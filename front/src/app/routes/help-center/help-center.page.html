@@ -46,13 +46,14 @@
                         alt="a-just" />
                     <p class="title">{{userGuide.title}}</p>
                 </div>
-                <div class="clickable-link" (click)="goToLink(dataBook.url)"> <img src="{{dataBook.image}}"
-                        alt="a-just" />
+                <div *ngIf="this.userService.isCa()===false" class="clickable-link" (click)="goToLink(dataBook.url)">
+                    <img src="{{dataBook.image}}" alt="a-just" />
                     <p class="title">{{dataBook.title}}</p>
                 </div>
                 <div class="blue" (click)="popinCall=true; $event.stopPropagation()"
                     [ngClass]="{'validated':callValidated}"> <img src="/assets/images/call-center.png" alt="a-just" />
-                    <p class="title">{{callValidated===false? 'Être recontacté':'Votre demande de contact est bien prise en compte !'}}</p>
+                    <p class="title">{{callValidated===false? 'Être recontacté':'Votre demande de contact est bien prise
+                        en compte !'}}</p>
                     <div *ngIf="popinCall===true" class="popin-call">
                         <div class="header">
                             <h3 class="title">Être recontacté ?</h3> <i
@@ -97,9 +98,9 @@
             </div>
         </div>
 
-        <p class="sub-title">Webinaires</p>
+        <p class="sub-title" *ngIf="this.userService.isCa()===false">Webinaires</p>
 
-        <div class="content-area">
+        <div class="content-area" *ngIf="this.userService.isCa()===false">
             <ng-container *ngFor="let webinaire of webinaires">
                 <div class="webinaire">
                     <img class="cover" src="{{webinaire.img}}" />
@@ -123,11 +124,9 @@
     </ng-container>
     <div *ngIf="openSuggestionPanel" class="open-panel animate__animated">
         <div class="suggestion-header">
-            
-            <div class="back-title"> 
-                <aj-back-button
-            (click)="openSuggestionPanel=!openSuggestionPanel"
-        />
+
+            <div class="back-title">
+                <aj-back-button (click)="openSuggestionPanel=!openSuggestionPanel" />
                 <p>Aide</p>
             </div>
             <div class="panel-header">
