@@ -174,7 +174,7 @@ module.exports = {
     signed: true /** (boolean) signed or not (default true) */,
     rolling: false,
     renew: false /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/,
-    secure: true /** (boolean) secure cookie*/,
+    secure: false /** (boolean) secure cookie*/,
     sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
   },
   // IP to block
