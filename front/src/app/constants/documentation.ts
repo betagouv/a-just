@@ -3,6 +3,10 @@
  */
 export const DOCUMENTATION_URL = 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/'
 /**
+ * Lien de la documentation
+ */
+export const DOCUMENTATION_URL_CA = 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/'
+/**
  * Lien de la calculate
  */
 export const CALCULATE_DOWNLOAD_URL = '/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx'

@@ -91,7 +91,7 @@ export class PanoramaPage
    */
   canViewActivities: boolean = false
   /**
-   * En cours de chargement
+   * En cour de chargement
    */
   isLoading: boolean = false
   /**
@@ -156,7 +156,7 @@ export class PanoramaPage
       target: '.effectifs-panels',
       title: "Les données d'effectifs",
       intro:
-        "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la " + (this.isTJ() ? 'juridiction' : 'cours d\'appel') + " et les éventuels changements dans les 15 derniers et 15 prochains jours.",
+        "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la " + (this.isTJ() ? 'juridiction' : 'cour d\'appel') + " et les éventuels changements dans les 15 derniers et 15 prochains jours.",
     },
     {
       target: '.wordforce-composition',
@@ -168,14 +168,17 @@ export class PanoramaPage
       target: '.records-update',
       title: 'Pourcentage et date de mise à jour',
       intro:
-        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la ' + (this.isTJ() ? 'juridiction' : 'cours d\'appel') + '.',
+        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la ' + (this.isTJ() ? 'juridiction' : 'cour d\'appel') + '.',
     },
     {
       target: 'workforce-change',
       title: 'Changements récents',
       intro:
         "Cet espace rassemble les <b>arrivées, départs ou indisponibilités</b> enregistrés dans le ventilateur pour les 15 derniers et 15 prochains jours. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d’indisponibilité ou d'arrivée et la modifier si vous découvrez qu’elle a évolué.",
-    },
+    }
+  ]
+
+  stepsOnlyForTJ: IntroJSStep[] = [
     {
       target: '#activites',
       title: "Données d'activité",
@@ -197,15 +200,16 @@ export class PanoramaPage
       target: 'activities-last-modifications',
       title: 'Dernières modifications',
       intro:
-        "Effectuées sur vos données d’activité par les différents agents de la " + (this.isTJ() ? 'juridiction' : 'cours d\'appel') + " utilisateurs d'A-JUST.",
-    },
-    {
-      target: '.contact-us',
-      title: 'Je passe à la suite :',
-      intro:
-        'Nous vous conseillons de commencer par renseigner la situation de vos agents. Rendez-vous sur le ventilateur !<div class="intro-js-action"><a href="/ventilations">J\'accède au ventilateur</a></div>',
+        "Effectuées sur vos données d’activité par les différents agents de la " + (this.isTJ() ? 'juridiction' : 'cour d\'appel') + " utilisateurs d'A-JUST.",
     },
   ]
+
+  lastStep: IntroJSStep = {
+    target: '.contact-us',
+    title: 'Je passe à la suite :',
+    intro:
+      'Nous vous conseillons de commencer par renseigner la situation de vos agents. Rendez-vous sur le ventilateur !<div class="intro-js-action"><a href="/ventilations">J\'accède au ventilateur</a></div>',
+  }
 
   /**
    * Constructor
@@ -228,6 +232,9 @@ export class PanoramaPage
         this.canViewContractuel = userCanViewContractuel(u)
         this.canViewVentilation = this.userService.canViewVentilation()
         this.canViewActivities = this.userService.canViewActivities()
+
+        if (this.userService.isCa()) this.introSteps = [...this.introSteps, this.lastStep]
+        else this.introSteps = [...this.introSteps, ...this.stepsOnlyForTJ, this.lastStep]
 
         // @ts-ignore
         this.introSteps[this.introSteps.length - 1]['actions'][
