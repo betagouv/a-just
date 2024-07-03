@@ -695,7 +695,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Filtre liste RH
    */
-  onFilterList() {
+  onFilterList(memorizeScroolPosition = false) {
     if (
       !this.categoriesFilterList.length ||
       !this.referentiel.length ||
@@ -704,12 +704,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
+    let scrollPosition: number | null = null
+
     this.humanResourceService.categoriesFilterListIds =
       this.categoriesFilterList.filter((c) => c.selected).map((c) => c.id) // copy to memoryse selection
     let selectedReferentielIds: number[] | null = null
     if (this.formReferentiel.length !== this.selectedReferentielIds.length) {
       selectedReferentielIds = this.selectedReferentielIds
     }
+    if (memorizeScroolPosition) {
+      const domContent = document.getElementById('container-list')
+      if (domContent) {
+        scrollPosition = domContent?.scrollTop
+      }
+    }
+
     this.isLoading = true
     this.humanResourceService
       .onFilterList(
@@ -725,6 +734,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.orderListWithFiltersParams()
         this.isLoading = false
         console.log('this.listFormated', this.listFormated)
+
+        const domContent = document.getElementById('container-list')
+        if (domContent) {
+          if (scrollPosition !== null) {
+            domContent.scrollTop = scrollPosition
+          } else {
+            domContent.scrollTop = 0
+          }
+        }
       })
 
     if (this.route.snapshot.fragment) {
@@ -854,7 +872,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       return cat
     })
 
-    this.onFilterList()
+    this.onFilterList(true)
   }
 
   /**
