@@ -48,6 +48,10 @@ export class ListSelectionComponent implements OnChanges {
    */
   @Input() multiple: boolean = false
   /**
+   * Default all label
+   */
+  @Input() labelPreviewText: string = 'Toutes'
+  /**
    * Valeur de l'ID selectionnée changée
    */
   @Output() valueChanged: EventEmitter<string | number | null> =
@@ -120,7 +124,7 @@ export class ListSelectionComponent implements OnChanges {
     }
 
     if (this.values && this.values.length === this.list.length)
-      this.labelPreview = 'Toutes'
+      this.labelPreview = this.labelPreviewText
     else
       this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
   }
@@ -203,7 +207,6 @@ export class ListSelectionComponent implements OnChanges {
     }
 
     this.valuesChanged.next(this.values)
-    console.log(this.values)
 
     this.itemsSelected = this.list.reduce(
       (acc: ItemInterface[], cur: ItemInterface) => {
@@ -215,7 +218,7 @@ export class ListSelectionComponent implements OnChanges {
       []
     )
     if (this.values.length === this.list.length)
-      this.labelPreview = 'Toutes'
+      this.labelPreview = this.labelPreviewText
     else
       this.labelPreview = this.itemsSelected.map(i => i.label).join(', ')
   }

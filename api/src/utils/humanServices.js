@@ -4,7 +4,14 @@ import { today } from './date'
 /**
  * Retourne une liste de human ressource
  */
-export async function getHumanRessourceList (preformatedAllHumanResource, contentieuxIds = undefined, categoriesIds, date, endPeriodToCheck = undefined) {
+export async function getHumanRessourceList (
+  preformatedAllHumanResource,
+  contentieuxIds = undefined,
+  categoriesIds,
+  date,
+  endPeriodToCheck = undefined,
+  acceptAgentWithoutVentilation = false
+) {
   const list = preformatedAllHumanResource.filter((hr) => {
     let isOk = true
 
@@ -28,12 +35,15 @@ export async function getHumanRessourceList (preformatedAllHumanResource, conten
 
     return isOk
   })
-  console.time('step4')
 
   if (!contentieuxIds) return list
 
   return list.filter((h) => {
     const idsOfactivities = h.currentActivities.map((a) => (a.contentieux && a.contentieux.id) || 0)
+    if (acceptAgentWithoutVentilation && idsOfactivities.length === 0) {
+      return true
+    }
+
     for (let i = 0; i < idsOfactivities.length; i++) {
       if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
         return true
