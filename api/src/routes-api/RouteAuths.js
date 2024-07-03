@@ -25,7 +25,7 @@ export default class RouteAuths extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super({ ...params, model: 'Users' })
   }
 
@@ -41,7 +41,7 @@ export default class RouteAuths extends Route {
       remember: Types.number(),
     }),
   })
-  async login (ctx) {
+  async login(ctx) {
     const { password, remember } = this.body(ctx)
     let { email } = this.body(ctx)
     email = (email || '').toLowerCase()
@@ -114,7 +114,7 @@ export default class RouteAuths extends Route {
       code: Types.string().required(),
     }),
   })
-  async completeLogin (ctx) {
+  async completeLogin(ctx) {
     const { code } = this.body(ctx)
 
     if (!ctx.session || !ctx.session.loginControl) {
@@ -124,7 +124,7 @@ export default class RouteAuths extends Route {
     const userInDb = await this.model.userPreviewWithEmail(ctx.session.loginControl.email)
 
     if (ctx.session.loginControl.code !== code) {
-      if(ctx.session.loginControl.catchLogs) {
+      if (ctx.session.loginControl.catchLogs) {
         await this.models.Logs.addLog(USER_USER_LOGIN_CODE_INVALID, userInDb.id, {
           userId: userInDb.id,
         })
@@ -135,7 +135,7 @@ export default class RouteAuths extends Route {
     const remember = ctx.session.loginControl.remember
     if (userInDb) {
       await ctx.loginUser(userInDb, remember === 1 ? 90 : 7)
-      if(ctx.session.loginControl.catchLogs) {
+      if (ctx.session.loginControl.catchLogs) {
         await this.models.Logs.addLog(USER_USER_LOGIN, userInDb.id, {
           userId: userInDb.id,
         })
@@ -159,7 +159,7 @@ export default class RouteAuths extends Route {
       password: Types.string().required(),
     }),
   })
-  async loginAdmin (ctx) {
+  async loginAdmin(ctx) {
     const { password, email } = this.body(ctx)
 
     const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
@@ -177,7 +177,7 @@ export default class RouteAuths extends Route {
       ).length
 
       if (nbAuthBy2FAOffMonth === 0) {
-        ctx.throw(401, 'Vous devez changer de mot de passe tout les 6 mois!')
+        ctx.throw(401, 'Vous devez changer de mot de passe tous les 6 mois !')
       } else {
         let required2Auth = config.login.enable2Auth
         if (required2Auth) {
@@ -232,7 +232,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est connecté
    */
   @Route.Get({})
-  async autoLogin (ctx) {
+  async autoLogin(ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
       await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, {
@@ -260,7 +260,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est l'administrateur connecté
    */
   @Route.Get({})
-  async autoLoginAdmin (ctx) {
+  async autoLoginAdmin(ctx) {
     if (this.userId(ctx) && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1) {
       await super.addUserInfoInBody(ctx)
       this.sendOk(ctx)
@@ -273,7 +273,7 @@ export default class RouteAuths extends Route {
    * Suppression du token de l'utilisateur connecté
    */
   @Route.Get({})
-  async logout (ctx) {
+  async logout(ctx) {
     await ctx.logoutUser()
   }
 }

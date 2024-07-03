@@ -56,10 +56,10 @@
             " class="ri-file-download-line"></i>
         </p>
         <p (click)="downloadAsset('calculatrice')">La calculatrice</p>
-        <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
+        <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')" *ngIf="this.userService.isCa()===false">
           L'extracteur de données d'effectifs
         </p>
-        <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
+        <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')" *ngIf="this.userService.isCa()===false">
           L'extracteur de données d'activité
         </p>
       </div>

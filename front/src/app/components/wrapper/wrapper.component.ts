@@ -214,7 +214,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   constructor(
     private router: Router,
-    private userService: UserService,
+    public userService: UserService,
     private humanResourceService: HumanResourceService,
     private appService: AppService,
     private titlePlatform: Title,
