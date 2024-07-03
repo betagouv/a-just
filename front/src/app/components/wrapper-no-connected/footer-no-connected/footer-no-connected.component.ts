@@ -2,6 +2,7 @@ import {
   Component,
 } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class';
+import { UserService } from 'src/app/services/user/user.service';
 
 /**
  * Footer à afficher quand on est pas connecté
@@ -16,7 +17,7 @@ export class FooterNoConnectedComponent extends MainClass {
   /**
    * Constructeur
    */
-  constructor() {
+  constructor(public userService: UserService) {
     super()
   }
 }
