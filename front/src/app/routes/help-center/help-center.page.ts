@@ -251,13 +251,23 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   }
 
   isValid(space: string) {
-    switch (space) {
-      case "Guide d'utilisateur A-JUST":
-        return true
-      case 'Le data-book':
-        return true
-      default:
-        return false
+    if (this.userService.isCa()) {
+      switch (space) {
+        case "Guide d'utilisateur A-JUST CA":
+          return true
+        default:
+          return false
+      }
+    }
+    else {
+      switch (space) {
+        case "Guide d'utilisateur A-JUST":
+          return true
+        case 'Le data-book':
+          return true
+        default:
+          return false
+      }
     }
   }
 
