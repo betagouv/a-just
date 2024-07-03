@@ -72,8 +72,8 @@
             </div>
         </div>
 
-        <p class="sub-title">Suggestions d'usage</p>
-        <div class="suggestion">
+        <p class="sub-title" *ngIf="this.userService.isCa()===false">Suggestions d'usage</p>
+        <div class="suggestion" *ngIf="this.userService.isCa()===false">
             <div (click)="openToIframe=documentation[0]; reloadContent()">
                 <label><span class="blue">Tout
                         savoir</span><br />
