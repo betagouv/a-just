@@ -357,7 +357,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       target: '.menu-item.tools',
       //target: '.menu .sub-tools > p:nth-child(2n)',
       title: 'Découvrez nos outils :',
-      intro: 'Téléchargeable dans chaque fiche agent, la <b>calculatrice</b> vous permet d\'obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.<br/>Téléchargeable dans chaque fiche agent.'
+      intro: 'Téléchargeable dans chaque fiche agent, la <b>calculatrice</b> vous permet d\'obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.'
     },
   ]
 
