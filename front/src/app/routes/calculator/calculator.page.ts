@@ -151,7 +151,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       target: '.ref-button',
       title: 'Enregistrez les temps moyens constatés',
       intro:
-        "comme référentiel, si vous souhaitez comparer leur évolution dans la juridiction d'une période à l'autre.",
+        `comme référentiel, si vous souhaitez comparer leur évolution dans la ${this.userService.isCa() ? 'cour d\'appel' : 'juridiction'} d'une période à l'autre.`,
     },
     {
       target: 'aj-options-backup-panel',
@@ -335,7 +335,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   formatDatas(list: CalculatorInterface[]) {
     /*const backupLabel = localStorage.getItem('backupLabel')
     backupLabel && filterReferentielCalculator(list, backupLabel)*/
-    
+
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()
   }
