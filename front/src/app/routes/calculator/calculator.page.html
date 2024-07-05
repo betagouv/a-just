@@ -1,11 +1,30 @@
-<aj-wrapper #wrapper title="Calculateur" [documentation]="documentation" [actionTemplate]="actions"
+<aj-wrapper #wrapper title="Cockpit" [documentation]="documentation" [actionTemplate]="actions"
   class="content-margin-null action-fit-width" [isLoading]="isLoading">
   <div class="container" *ngIf="categorySelected">
     <div class="sub-main-header">
-      <aj-date-select title="Pour la période du" [value]="dateStart"
+      <div class="categories-switch">
+        <div class="magistrats" *ngIf="canViewMagistrat"
+          [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
+          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
+          <p>Siège</p>
+        </div>
+        <div class="fonctionnaires" *ngIf="canViewGreffier"
+          [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
+          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
+          <p>Greffe</p>
+        </div>
+      </div>
+
+      <aj-select class="large" title="Choix des fonctions (option)" [defaultAllValue]="'Toutes'"
+        [value]="selectedFonctionsIds" [datas]="fonctions" (valueChange)="onChangeFonctionsSelected($event)">
+      </aj-select>
+
+      <aj-date-select-double title="Pour la période du" [value]="dateStart"
         (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start bg-white" [max]="dateStop"
         [dateClass]="dateClass">
-      </aj-date-select>
+      </aj-date-select-double>
+
+
       <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
         class="date-stop bg-white" [dateClass]="dateClass">
       </aj-date-select>
@@ -184,29 +203,10 @@
 </aj-wrapper>
 
 <ng-template #actions>
-  <div class="categories-switch">
-    <div class="magistrats" *ngIf="canViewMagistrat"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
-      (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
-      <input type="radio" [checked]="categorySelected === MAGISTRATS" />
-      <p>Siège</p>
-    </div>
-    <div class="fonctionnaires" *ngIf="canViewGreffier"
-      [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
-      (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
-      <input type="radio" [checked]="categorySelected === FONCTIONNAIRES" />
-      <p>Greffe</p>
-    </div>
-  </div>
-
-  <aj-select class="large" title="Choix des fonctions (option)" [defaultAllValue]="'Toutes'"
-    [value]="selectedFonctionsIds" [datas]="fonctions" (valueChange)="onChangeFonctionsSelected($event)">
-  </aj-select>
-
   <div class="flex-1"></div>
 
-  <button class="primary light" (click)="onExport()">
-    <mat-icon>save</mat-icon>
+  <button class="primary medium light" (click)="onExport()">
+    <i class="ri-file-pdf-fill"></i>
     Exporter en PDF
   </button>
 </ng-template>

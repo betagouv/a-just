@@ -1,0 +1,83 @@
+@import "../../styles/utils.scss";
+
+:host {
+  display: block;
+  border-radius: 8px;
+  background-color: fColor(bgSelect);
+  border: 1px solid fColor(borderSelect);
+  padding: 4px 8px;
+  position: relative;
+  cursor: pointer;
+  margin: auto 0;
+
+  &.extend {
+    div {
+      p {
+        width: 130px;
+      }
+    }
+  }
+
+  &.bg-white {
+    background-color: white;
+  }
+
+  &.dark-mode {
+    background-color: fColor(darkModeBgMenu);
+    border: 1px solid fColor(darkModeTitle);
+
+    p,
+    mat-icon {
+      color: white;
+    }
+
+    p.title-select {
+      color: fColor(headerColor);
+    }
+  }
+
+  &.read-only {
+    cursor: inherit;
+    opacity: 0.7;
+  }
+
+  p.title-select {
+    color: fColor(titleSelect);
+    white-space: nowrap;
+    margin-right: 28px;
+    font-size: 14px;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+
+    p {
+      white-space: nowrap;
+      flex: 1;
+      font-weight: bold;
+      height: 24px;
+      width: 100px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-left: 8px;
+    }
+  }
+
+  input {
+    width: 0;
+    height: 0;
+    display: block;
+    position: relative;
+    left: -5px;
+    padding: 0;
+    border: 0;
+  }
+
+}

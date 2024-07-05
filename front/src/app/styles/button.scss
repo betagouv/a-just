@@ -17,6 +17,16 @@ button {
     font-size: 16px;
   }
 
+  &.medium {
+    height: 40px;
+    line-height: 30px;
+    border-radius: 4px;
+
+    i {
+      margin-right: 8px;
+    }
+  }
+
   &.small {
     height: 32px;
     line-height: 30px;

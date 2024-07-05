@@ -12,6 +12,7 @@ import { SelectModule } from 'src/app/components/select/select.module'
 import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
 import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
+import { DateSelectDoubleModule } from 'src/app/components/date-select-double/date-select-double.module'
 
 @NgModule({
   declarations: [CalculatorPage, ReferentielCalculatorComponent],
@@ -28,6 +29,7 @@ import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
     DateSelectModule,
     WrapperModule,
     IntroJSModule,
+    DateSelectDoubleModule,
   ],
 })
-export class CalculatorModule {}
+export class CalculatorModule { }
