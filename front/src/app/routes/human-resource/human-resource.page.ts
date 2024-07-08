@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { maxBy, minBy, orderBy } from 'lodash'
+import { maxBy, minBy, orderBy, sumBy } from 'lodash'
 import { debounceTime } from 'rxjs'
 import { ActionsInterface } from 'src/app/components/popup/popup.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
@@ -22,6 +22,7 @@ import { AppService } from 'src/app/services/app/app.service'
 import { sum } from 'lodash'
 import { DOCUMENTATION_VENTILATEUR_PERSON } from 'src/app/constants/documentation'
 import { HRCommentService } from 'src/app/services/hr-comment/hr-comment.service'
+import { UserService } from 'src/app/services/user/user.service'
 
 /**
  * Interface d'une situation
@@ -155,7 +156,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
     public appService: AppService,
-    private hrCommentService: HRCommentService
+    private hrCommentService: HRCommentService,
+    private userService: UserService
   ) {
     super()
 
@@ -787,7 +789,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
           // Verification that unavailability is not added while the agent has no ventilations provided.
           const totalActivities = this.currentHR?.situations.map((elem: any) => elem.activities.length)
-          if (!sum(totalActivities)) {
+          if ((this.addDomVentilation && sumBy(this.addDomVentilation.updatedReferentiels, 'percent') !== 100) || (!this.addDomVentilation && !sum(totalActivities))) {
             this.appService.alert.next({
               title: 'Attention',
               text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
@@ -987,7 +989,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       case 'indispo':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Ajouter des indisponibilités',
-          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
+          path: this.userService.isCa() ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/renseigner-les-indisponibilites' : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
           subTitle: "Qu'est-ce que c'est ?",
           printSubTitle: true,
         })
@@ -995,7 +997,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       case 'nouvelle-situation':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Enregistrer une nouvelle situation',
-          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation',
+          path: this.userService.isCa() ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation' : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation',
           subTitle: "Qu'est-ce que c'est ?",
           printSubTitle: true,
         })
@@ -1003,7 +1005,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       case 'fix-fiche':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Corriger une fiche préexistante',
-          path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante',
+          path: this.userService.isCa() ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante' : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante',
           subTitle: "Qu'est-ce que c'est ?",
           printSubTitle: true,
         })

@@ -233,7 +233,7 @@ export default class RouteHumanResources extends Route {
     let hr = await this.model.getCache(backupId)
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
 
-    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck)
+    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck, true)
     
     const allCategories = await this.models.HRCategories.getAll()
 
@@ -242,7 +242,6 @@ export default class RouteHumanResources extends Route {
       this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
     }
 
-    console.time('step4')
     let listFiltered = [...list]
 
     const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
@@ -269,7 +268,6 @@ export default class RouteHumanResources extends Route {
           }
         }
 
-        console.log('@@@@@', label)
         return {
           textColor: getCategoryColor(label),
           bgColor: getBgCategoryColor(label),
@@ -280,15 +278,12 @@ export default class RouteHumanResources extends Route {
           categoryId: category.id,
         }
       })
-    console.timeEnd('step4')
 
     // if filter by user access to categories
-    console.time('step5')
     if (categories.length !== allCategories.length) {
       const ids = categories.map((c) => c.id)
       hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
     }
-    console.timeEnd('step5')
 
     this.sendOk(ctx, {
       list: listFormated,
