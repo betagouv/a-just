@@ -233,11 +233,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: 'Le ventilateur :',
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest',
+    path: this.userService.isCa() ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/quest-ce-que-cest' : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest',
     printSubTitle: true,
   }
   /**
-   * En cours de chargement
+   * En cour de chargement
    */
   isLoading: boolean = false
   /**
@@ -321,13 +321,13 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       target: '#wrapper-contener',
       title: 'A quoi sert le ventilateur ?',
       intro:
-        "En renseignant la situation de chacun des agents de votre cours d'appel dans une fiche individuelle, cette fonctionnalité vous permet de <b>visualiser en un coup d'œil et à la date de votre choix pour l'ensemble des agents de la CA leur ETPT réel et l'affectation de chacun</b> sur les différents contentieux.",
+        "En renseignant la situation de chacun des agents de votre cour d'appel dans une fiche individuelle, cette fonctionnalité vous permet de <b>visualiser en un coup d'œil et à la date de votre choix pour l'ensemble des agents de la CA leur ETPT réel et l'affectation de chacun</b> sur les différents contentieux.",
     },
     {
       target: '.header-list',
       title: 'Liste des contentieux',
       intro:
-        "Retrouvez ici la <b>liste des contentieux</b> traités par la cours d'appel et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le <b>volume global d'ETPT</b> affecté par votre juridiction au <b>traitement de chaque type d'activité</b> par <b>catégorie d'agent</b>.",
+        "Retrouvez ici la <b>liste des contentieux</b> traités par la cour d'appel et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le <b>volume global d'ETPT</b> affecté par votre juridiction au <b>traitement de chaque type d'activité</b> par <b>catégorie d'agent</b>.",
     },
     {
       target: '.header-list .filter-button',
@@ -695,7 +695,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Filtre liste RH
    */
-  onFilterList() {
+  onFilterList(memorizeScroolPosition = false) {
     if (
       !this.categoriesFilterList.length ||
       !this.referentiel.length ||
@@ -704,12 +704,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       return
     }
 
+    let scrollPosition: number | null = null
+
     this.humanResourceService.categoriesFilterListIds =
       this.categoriesFilterList.filter((c) => c.selected).map((c) => c.id) // copy to memoryse selection
     let selectedReferentielIds: number[] | null = null
     if (this.formReferentiel.length !== this.selectedReferentielIds.length) {
       selectedReferentielIds = this.selectedReferentielIds
     }
+    if (memorizeScroolPosition) {
+      const domContent = document.getElementById('container-list')
+      if (domContent) {
+        scrollPosition = domContent?.scrollTop
+      }
+    }
+
     this.isLoading = true
     this.humanResourceService
       .onFilterList(
@@ -725,6 +734,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.orderListWithFiltersParams()
         this.isLoading = false
         console.log('this.listFormated', this.listFormated)
+
+        const domContent = document.getElementById('container-list')
+        if (domContent) {
+          if (scrollPosition !== null) {
+            domContent.scrollTop = scrollPosition
+          } else {
+            domContent.scrollTop = 0
+          }
+        }
       })
 
     if (this.route.snapshot.fragment) {
@@ -854,7 +872,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       return cat
     })
 
-    this.onFilterList()
+    this.onFilterList(true)
   }
 
   /**

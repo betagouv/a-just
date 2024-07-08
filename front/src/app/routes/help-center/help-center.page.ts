@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api'
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component'
-import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL, HELP_CENTER_GITBOOK } from 'src/app/constants/documentation'
+import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL, DOCUMENTATION_URL_CA, HELP_CENTER_GITBOOK, NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA } from 'src/app/constants/documentation'
 import { AppService } from 'src/app/services/app/app.service'
 import { ServerService } from 'src/app/services/http-server/server.service'
 import { UserService } from 'src/app/services/user/user.service'
@@ -55,7 +55,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     description:
       'Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!',
     image: '/assets/images/avatar.svg',
-    url: DOCUMENTATION_URL,
+    url: this.userService.isCa() ? DOCUMENTATION_URL_CA : DOCUMENTATION_URL,
   }
   /** Carte data book */
   dataBook = {
@@ -73,7 +73,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     description:
       'Vous permet de visualiser globalement et en détail le contenu de chaque contentieux et sous-contentieux. Au civil, vous y retrouverez la liste des NAC prises en compte dans chaque rubrique.',
     image: '/assets/images/system.svg',
-    url: this.NOMENCLATURE_DOWNLOAD_URL,
+    url: this.userService.isCa() ? NOMENCLATURE_DOWNLOAD_URL_CA : NOMENCLATURE_DOWNLOAD_URL,
     localUrl: false,
     download: true,
   }
@@ -165,7 +165,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
    * @param title
    */
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private serverService: ServerService,
     private appService: AppService
   ) {
@@ -177,6 +177,15 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    if (this.userService.isCa())
+      this.docTools = [this.nomenclature,
+      {
+        tag: 'Les outils A-JUST',
+        title: 'La calculatrice de ventilation des ETPT',
+        description: '',
+        image: '/assets/images/coding.svg',
+        url: CALCULATE_DOWNLOAD_URL,
+      },]
     this.loadWebinaires()
   }
   ngAfterViewInit(): void {
@@ -242,13 +251,23 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   }
 
   isValid(space: string) {
-    switch (space) {
-      case "Guide d'utilisateur A-JUST":
-        return true
-      case 'Le data-book':
-        return true
-      default:
-        return false
+    if (this.userService.isCa()) {
+      switch (space) {
+        case "Guide d'utilisateur A-JUST CA":
+          return true
+        default:
+          return false
+      }
+    }
+    else {
+      switch (space) {
+        case "Guide d'utilisateur A-JUST":
+          return true
+        case 'Le data-book':
+          return true
+        default:
+          return false
+      }
     }
   }
 

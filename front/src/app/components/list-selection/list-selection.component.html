@@ -37,7 +37,7 @@
             <mat-checkbox [checked]="values.length === list.length">
             </mat-checkbox>
             <div>
-                <p>Toutes</p>
+                <p>{{labelPreviewText}}</p>
             </div>
         </div>
         <div *ngFor="let item of list" [ngClass]="{selected: values.indexOf(item.id) !== -1}"

@@ -109,6 +109,21 @@ export default (sequelizeInstance, Model) => {
               case 'JIRS':
                 elem.childrens = elem.childrens.filter((elem) => elem.label !== 'JIRS')
                 break
+              case 'Assises JIRS':
+                elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Assises JIRS')
+                break
+              case 'Contentieux JIRS':
+                elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux JIRS')
+                break
+              case 'Contentieux de la détention JIRS':
+                elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux de la détention JIRS')
+                break
+              case 'Contentieux du contrôle judiciaire JIRS':
+                elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux du contrôle judiciaire JIRS')
+                break
+              case 'Contentieux de fond JIRS':
+                elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux de fond JIRS')
+                break
             }
           })
         })
