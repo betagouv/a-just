@@ -4,7 +4,7 @@
     <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" (keydown)="preventSubmit($event)">
     <h3>Embarquement A-JUST</h3>
     <ng-template [ngIf]="ssoIsActivate && signUpStep === 1 && !userService.isCa()">
       <button class="outline white strict-border sso-bt" id="signupSSO" (click)="onUseSSO()" type="button"
@@ -31,17 +31,17 @@
         <div class="grid-double">
           <div>
             <label>Prénom</label>
-            <input class="ethics-ui" id="firstNameSignup" placeholder="Prénom" formControlName="firstName" type="text" />
+            <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text" (keyup.enter)="focusNext($event)" />
           </div>
           <div>
             <label>NOM</label>
-            <input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text" />
+            <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text" (keyup.enter)="focusNext($event)" />
           </div>
         </div>
         <label>Courriel professionnel :</label>
         <label class="sub-label">Adresse nominative uniquement, ne pas utiliser de boîte générique ou
           structurelle</label>
-        <input class="ethics-ui" placeholder="" formControlName="email" type="email" />
+        <input #input class="ethics-ui" placeholder="" formControlName="email" type="email" (keyup.enter)="focusNext($event)" />
 
         <ng-template [ngIf]="!paramsUrl?.provider">
           <div class="password-line">
@@ -51,8 +51,8 @@
                 Afficher</span>
             </div>
           </div>
-          <input class="ethics-ui no-margin" placeholder="" formControlName="password"
-            type="{{!form.controls['checkboxPassword'].value?'password':'text'}}" (keyup)="checkStrength($event)" />
+          <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"
+            type="{{!form.controls['checkboxPassword'].value?'password':'text'}}" (keyup)="checkStrength($event)" (keyup.enter)="focusNext($event)" />
           <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>
           <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(0)}"><span
               [ngStyle]="{ 'background-color': getParamColor(0)}">i</span>
@@ -68,11 +68,11 @@
             &nbsp; 1 majuscule</label>
 
           <label>Confirmation de votre mot de passe :</label>
-          <input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password" />
+          <input #input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password" (keyup.enter)="focusNext($event)"/>
         </ng-template>
 
         <div class="checkbox-container checkbox-row">
-          <input class="large" type="checkbox" formControlName="checkbox" #checkbox />
+          <input #checkbox class="large" type="checkbox" formControlName="checkbox"  (keyup.enter)="focusNext($event)"/>
           <p (click)="checkbox.click()">
             Je certifie avoir lu et accepté les
             <a [routerLink]="['/conditions-generales-d-utilisation', 'signUp']">Conditions générales d'utilisation</a>.
