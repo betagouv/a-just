@@ -1,7 +1,7 @@
 <div class="group-first-row">
   <div class="first-row" [style.background-color]="category ? getBgCategoryColor(category && category.label) : null"
     [style.border-bottom-color]="category ? getCategoryColor(category && category.label) : null">
-    <div>
+    <div id="backButton">
       <aj-back-button [routerLink]="backUrl" [fragment]="backAnchor" />
     </div>
 
