@@ -154,7 +154,7 @@
     <div class="bottom-container">
       <div class="date-start" [ngStyle]="{'flex' : displayImportLabels===true?'1.2': '1'}">
         <div class="header">
-          <p *ngIf="isEdit">Modification de la situation :</p>
+          <p *ngIf="isEdit">Modification de la situation </p>
           <p *ngIf="!isEdit">Situation à prendre en compte :</p>
           <div class="flex-1"></div>
           <label class="import-confirmation" *ngIf="displayImportLabels" [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
@@ -170,7 +170,7 @@
 
       <div class="indisponibilities">
         <div class="indispo-header">
-          <p>Indisponibilités :</p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
+          <p>Indisponibilités </p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
             text="Qu'est-ce que c'est ?"></aj-help-button>
           <label>(facultatif)</label>
           <div class="flex-1"></div>
