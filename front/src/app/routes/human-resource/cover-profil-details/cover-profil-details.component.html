@@ -20,16 +20,18 @@
 <div class="second-row">
   <div class="left-second-row">
     <div class="user-name">
-      <p id="firstName" contenteditable #firstNameDom data-placeholder="Prénom"
+      <p id="firstName" contenteditable #firstNameDom #input data-placeholder="Prénom"
         (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
         (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null"
         (keydown)="preventSubmit($event)"
+        (keyup.enter)="focusNext($event)"
       >
         {{ currentHR?.firstName }}
-      </p>&nbsp;<p id="lastName" contenteditable data-placeholder="Nom"
+      </p>&nbsp;<p id="lastName" contenteditable #input data-placeholder="Nom"
         (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
         (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null"
         (keydown)="preventSubmit($event)"
+        (keyup.enter)="focusNext($event)"
       >
         {{ currentHR?.lastName }}
       </p>
@@ -42,10 +44,11 @@
     </div>
     <div class="last-row">
       <div class="matricule">
-        <p id="matricule" contenteditable #matriculeDom data-placeholder="Matricule" (keydown)="keyPress($event);"
+        <p id="matricule" contenteditable #matriculeDom #input data-placeholder="Matricule" (keydown)="keyPress($event);"
           (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
           (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null"
           (keydown)="preventSubmit($event)"
+          (keyup.enter)="focusNext($event)"
         >
           {{ currentHR?.matricule}}
         </p>
