@@ -207,5 +207,14 @@ export class CoverProfilDetailsComponent
     }
     return true
   }
-
+    
+  /**
+   * Empêche la soumission du formulaire lorsque l'utilisateur presse la touche "Entrée"
+   * @param event
+   */
+  preventSubmit(event: any) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  }
 }
