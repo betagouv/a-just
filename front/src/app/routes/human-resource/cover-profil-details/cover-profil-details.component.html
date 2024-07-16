@@ -20,13 +20,48 @@
 <div class="second-row">
   <div class="left-second-row">
     <div class="user-name">
-      <p id="firstName" contenteditable #firstNameDom #input data-placeholder="Prénom"
+      <div class="input-wrapper">
+        <span class="input-span-firstName"></span>
+        <input 
+          id="firstName"
+          #firstNameDom
+          #input
+          [placeholder]="'Prénom'"
+          [ngModel]="currentHR?.firstName" 
+          (ngModelChange)="completeFormWithDomObject('firstName', $event)"
+          (keydown)="preventSubmit($event)"
+          (keyup.enter)="focusNext($event)"
+        />
+      </div>
+      <div class="input-wrapper">
+        <span class="input-span-lastName"></span>
+        <input
+          id="lastName"
+          #input
+          [placeholder]="'Nom'"
+          [ngModel]="currentHR?.lastName" 
+          (ngModelChange)="completeFormWithDomObject('lastName', $event)"
+          (keydown)="preventSubmit($event)"
+          (keyup.enter)="focusNext($event)"
+        />
+      </div>
+      <!-- <input
+        id="lastName"
+        #input
+        [placeholder]="'Nom'"
+        [ngModel]="currentHR?.lastName" 
+        (ngModelChange)="completeFormWithDomObject('lastName', $event)"
+        (keydown)="preventSubmit($event)"
+        (keyup.enter)="focusNext($event)"
+      /> -->
+      <!-- <p 
+        id="firstName" contenteditable #firstNameDom #input data-placeholder="Prénom"
         (keyup)="onEditIndex !== null ? completeFormWithDomObject('firstName', $event) : null"
         (blur)="onEditIndex === null ? completeFormWithDomObject('firstName', $event) : null"
         (keydown)="preventSubmit($event)"
         (keyup.enter)="focusNext($event)"
-      >
-        {{ currentHR?.firstName }}
+     >
+      {{ currentHR?.firstName }}
       </p>&nbsp;<p id="lastName" contenteditable #input data-placeholder="Nom"
         (keyup)="onEditIndex !== null ? completeFormWithDomObject('lastName', $event) : null"
         (blur)="onEditIndex === null ? completeFormWithDomObject('lastName', $event) : null"
@@ -34,8 +69,7 @@
         (keyup.enter)="focusNext($event)"
       >
         {{ currentHR?.lastName }}
-      </p>
-
+      </p> -->
       <mat-icon class="iconPen no-print cursor-pointer"
         (click)="onFocus(firstNameDom)">drive_file_rename_outline</mat-icon>
 
@@ -44,14 +78,17 @@
     </div>
     <div class="last-row">
       <div class="matricule">
-        <p id="matricule" contenteditable #matriculeDom #input data-placeholder="Matricule" (keydown)="keyPress($event);"
-          (keyup)="onEditIndex !== null ? completeFormWithDomObject('matricule', $event) : null"
-          (blur)="onEditIndex === null ? completeFormWithDomObject('matricule', $event) : null"
+        <input
+          id="matricule"
+          #matriculeDom 
+          #input
+          [placeholder]="'Matricule'"
+          [ngModel]="currentHR?.matricule" 
+          (ngModelChange)="completeFormWithDomObject('matricule', $event)"
+          (keydown)="keyPress($event);"
           (keydown)="preventSubmit($event)"
           (keyup.enter)="focusNext($event)"
-        >
-          {{ currentHR?.matricule}}
-        </p>
+        />
         <mat-icon class="iconPenSmall no-print cursor-pointer"
           (click)="onFocus(matriculeDom)">drive_file_rename_outline</mat-icon>
       </div>

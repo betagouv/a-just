@@ -158,8 +158,15 @@ export class CoverProfilDetailsComponent
     node: 'firstName' | 'lastName' | 'matricule',
     object: any
   ) {
+    const value = object || ' '
+    const spanInputElem = document.querySelector(`.input-span-${node}`) as HTMLElement
+
+    if (spanInputElem)
+        spanInputElem.innerText = value
+
     if (this.basicHrInfo) {
-      this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
+      this.basicHrInfo.get(node)?.setValue(object)
+      //this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
     }
   }
 
