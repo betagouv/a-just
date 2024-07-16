@@ -2,9 +2,10 @@ import { Component } from '@angular/core'
 import { Title } from '@angular/platform-browser'
 import { JuridictionInterface } from 'src/app/interfaces/juridiction'
 import { JuridictionsService } from 'src/app/services/juridictions/juridictions.service'
+import { UserService } from 'src/app/services/user/user.service'
 import { environment } from 'src/environments/environment'
 
-declare let iframe : any
+declare let iframe: any
 declare const mapboxgl: any
 
 /**
@@ -20,9 +21,9 @@ export class StatsPage {
    * Mapbox styling
    */
   style = environment.mapboxStyle
-    /**
-   * Center of mapbox
-   */
+  /**
+ * Center of mapbox
+ */
   center: [number, number] = [2.213749, 46.227638]
   /**
    * Zoom of mapbox
@@ -37,8 +38,8 @@ export class StatsPage {
    * Constructeur
    * @param title 
    */
-  constructor(private title: Title, private juridictionsService: JuridictionsService) {
-    this.title.setTitle('Stats | A-Just')
+  constructor(private title: Title, private juridictionsService: JuridictionsService, private userService: UserService) {
+    this.title.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + 'Stats')
   }
 
   ngAfterViewInit() {
@@ -73,9 +74,9 @@ export class StatsPage {
             }],
           },
         })
-  
-        let size = (j.population || 1) / 33333
-        if(size < 10) {
+
+        let size = (j.population || 1) / 33333
+        if (size < 10) {
           size = 10
         }
         map.addLayer({
@@ -89,7 +90,7 @@ export class StatsPage {
             'circle-stroke-width': 0,
           },
         })
-      
+
         const m = new mapboxgl.Marker()
           .setLngLat([j.longitude || 0, j.latitude || 0])
           .addTo(map)
@@ -101,12 +102,12 @@ export class StatsPage {
 
 
 
-  callJavascript(obj : any) {
+  callJavascript(obj: any) {
     //iframe = obj.currentTarget.contentWindow.document
-   // obj.currentTarget.style.height = obj.currentTarget.contentWindow.document.documentElement.scrollHeight + 'px';
-   let iframe = document.getElementById('child-iframe');
-   if (iframe) {
-     iframe.style.height = iframe.parentElement?.scrollHeight + 'px';
-   }
+    // obj.currentTarget.style.height = obj.currentTarget.contentWindow.document.documentElement.scrollHeight + 'px';
+    let iframe = document.getElementById('child-iframe');
+    if (iframe) {
+      iframe.style.height = iframe.parentElement?.scrollHeight + 'px';
+    }
   }
 }

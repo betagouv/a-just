@@ -93,7 +93,7 @@ export class SignupPage {
     private route: ActivatedRoute,
     private ssoService: SSOService
   ) {
-    this.title.setTitle('Embarquement | A-Just')
+    this.title.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + 'Embarquement')
     this.loadTj()
 
     this.route.queryParams.subscribe((p: any) => {
