@@ -246,8 +246,7 @@ export class PanelActivitiesComponent
         contentieux: {
           id: referentiel.id,
           label: '',
-          averageProcessingTime: 0,
-          averageProcessingTimeFonc: 0,
+          averageProcessingTime: 0
         },
         referentielId: referentiel.id,
         percent,
@@ -273,7 +272,6 @@ export class PanelActivitiesComponent
             id: parentReferentiel.id,
             label: '',
             averageProcessingTime: 0,
-            averageProcessingTimeFonc: 0,
           },
           referentielId: parentReferentiel.id,
           percent,
@@ -317,7 +315,6 @@ export class PanelActivitiesComponent
           id: referentiel.id,
           label: '',
           averageProcessingTime: 0,
-          averageProcessingTimeFonc: 0,
         },
         referentielId: referentiel.id,
         percent,

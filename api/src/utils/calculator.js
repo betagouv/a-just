@@ -334,7 +334,7 @@ const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, 
   const findIndexOption = optionsBackups.findIndex((o) => o.contentieux.id === referentielId)
   if (findIndexOption !== -1) {
     magCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime
-    fonCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTimeFonc // TODO pour JImmy a changer ici
+    fonCalculateTimePerCase = optionsBackups[findIndexOption].averageProcessingTime // A MODIFIER CAR LA BDD A CHANGER ET LE FONCTIONNEMENT DU CALCULATEUR EGALEMENT
   }
 
   if (magCalculateTimePerCase) {

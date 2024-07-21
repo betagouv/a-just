@@ -13,10 +13,6 @@ export interface ContentieuxOptionsInterface {
    */
   averageProcessingTime: number | null
   /**
-   * Temps moyens saisi des greffiers
-   */
-  averageProcessingTimeFonc: number | null
-  /**
    * Contentieux qui est relié
    */
   contentieux: ContentieuReferentielInterface

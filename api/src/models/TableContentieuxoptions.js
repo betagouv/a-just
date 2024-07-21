@@ -11,7 +11,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async (backupId, juridictionId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'average_processing_time', 'average_processing_time_fonc'],
+      attributes: ['id', 'average_processing_time'],
       where: {
         backup_id: backupId,
       },
@@ -41,7 +41,6 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         averageProcessingTime: list[i].average_processing_time,
-        averageProcessingTimeFonc: list[i].average_processing_time_fonc,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
@@ -59,7 +58,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAllById = async (backupId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'average_processing_time', 'average_processing_time_fonc'],
+      attributes: ['id', 'average_processing_time'],
       where: {
         backup_id: backupId,
       },
@@ -76,7 +75,6 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         averageProcessingTime: list[i].average_processing_time,
-        averageProcessingTimeFonc: list[i].average_processing_time_fonc,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
