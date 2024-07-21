@@ -142,7 +142,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
             v.isModifiedFonc = false
 
             v.averageProcessingTime = v.defaultValue
-            v.averageProcessingTimeFonc = v.defaultValueFonc
+            //v.averageProcessingTimeFonc = v.defaultValueFonc
 
             if (v.childrens !== undefined) {
               v.childrens.map((child) => {
@@ -151,7 +151,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
                   child.isModifiedFonc = false
 
                   child.averageProcessingTime = child.defaultValue
-                  child.averageProcessingTimeFonc = child.defaultValueFonc
+                  //child.averageProcessingTimeFonc = child.defaultValueFonc
                 }
               })
             }
@@ -284,11 +284,10 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         ref.averageProcessingTime =
           (getOption && getOption.averageProcessingTime) || null
 
-        ref.averageProcessingTimeFonc =
-          (getOption && getOption.averageProcessingTimeFonc) || null
+        //ref.averageProcessingTimeFonc =(getOption && getOption.averageProcessingTimeFonc) || null
 
         ref.defaultValue = ref.averageProcessingTime
-        ref.defaultValueFonc = ref.averageProcessingTimeFonc
+        //ref.defaultValueFonc = ref.averageProcessingTimeFonc
 
         ref.isModified = false
         ref.isModifiedFonc = false
@@ -301,12 +300,9 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
             (getOptionActivity && getOptionActivity.averageProcessingTime) ||
             null
 
-          c.averageProcessingTimeFonc =
-            (getOptionActivity &&
-              getOptionActivity.averageProcessingTimeFonc) ||
-            null
+          //c.averageProcessingTimeFonc =(getOptionActivity &&getOptionActivity.averageProcessingTimeFonc) ||null
           c.defaultValue = c.averageProcessingTime
-          c.defaultValueFonc = c.averageProcessingTimeFonc
+          //c.defaultValueFonc = c.averageProcessingTimeFonc
           c.isModified = false
           c.isModifiedFonc = false
 
@@ -337,14 +333,14 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     if (
       value !== null &&
       fixDecimal(
-        this.getInputValue(referentiel[this.getCategoryStr()], unit),
+        this.getInputValue(referentiel.averageProcessingTime, unit), //to change averageProcessingTime
         100
       ) !== value
     ) {
-      referentiel[this.getCategoryStr()] = this.getInputValue(value, unit)
+      referentiel.averageProcessingTime = this.getInputValue(value, unit) //to change averageProcessingTime
       this.contentieuxOptionsService.updateOptions({
         ...referentiel,
-        averageProcessingTimeFonc: referentiel.averageProcessingTimeFonc,
+        //averageProcessingTimeFonc: referentiel.averageProcessingTimeFonc,
         averageProcessingTime: referentiel.averageProcessingTime,
       })
 
@@ -414,7 +410,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
     if (
       event.target.value !== '' &&
       fixDecimal(
-        this.getInputValue(referentiel[this.getCategoryStr()], unit),
+        this.getInputValue(referentiel.averageProcessingTime, unit), //to change averageProcessingTime
         100
       ) !== parseFloat(event.target.value)
     ) {
@@ -431,7 +427,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
   getCategoryStr() {
     if (this.categorySelected === 'MAGISTRATS') return 'averageProcessingTime'
     else if (this.categorySelected === 'FONCTIONNAIRES')
-      return 'averageProcessingTimeFonc'
+      return 'averageProcessingTime'
     else return 'averageProcessingTime'
   }
 
@@ -518,6 +514,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         'nbPerMonth',
         'averageProcessingTime'
       ),
+      /**
       nbPerDayFonc: this.getInputValue(
         ref.averageProcessingTimeFonc,
         'nbPerDay',
@@ -528,6 +525,7 @@ export class AverageEtpPage extends MainClass implements OnDestroy {
         'nbPerMonth',
         'averageProcessingTimeFonc'
       )
+       */
     }
   }
 

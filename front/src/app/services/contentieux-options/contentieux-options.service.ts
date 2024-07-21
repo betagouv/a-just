@@ -153,15 +153,13 @@ export class ContentieuxOptionsService extends MainClass {
       (a) => a.contentieux.id === referentiel.id
     )
     if (
-      referentiel.averageProcessingTime ||
-      referentiel.averageProcessingTimeFonc
+      referentiel.averageProcessingTime //||referentiel.averageProcessingTimeFonc
     ) {
       if (findIndexOptions === -1) {
         // add
         options.push({
           averageProcessingTime: referentiel.averageProcessingTime || null,
-          averageProcessingTimeFonc:
-            referentiel.averageProcessingTimeFonc || null,
+          //averageProcessingTimeFonc: referentiel.averageProcessingTimeFonc || null,
           contentieux: referentiel,
         })
       } else {
@@ -169,8 +167,7 @@ export class ContentieuxOptionsService extends MainClass {
         options[findIndexOptions] = {
           ...options[findIndexOptions],
           averageProcessingTime: referentiel.averageProcessingTime || null,
-          averageProcessingTimeFonc:
-            referentiel.averageProcessingTimeFonc || null,
+          //averageProcessingTimeFonc:referentiel.averageProcessingTimeFonc || null,
         }
       }
     } else if (findIndexOptions !== -1) {
@@ -359,25 +356,26 @@ export class ContentieuxOptionsService extends MainClass {
       })
       .then((data: any) => data)
 
-    const FoncRefList = await readXlsxFile(file, { sheet: 3 })
-      .then((rows: any) => {
-        rows.splice(0, 2)
-        const optionsFonc = rows
-          .filter((y: any) => {
-            if (y[2] !== null) return true
-            else return false
-          })
-          .map((x: any) => {
-            return {
-              averageProcessingTimeFonc: this.castToDecimalTime(String(x[2])),
-              contentieux: { id: x[0], label: x[1] },
-            }
-          })
-        return optionsFonc
-      })
-      .then((data: any) => data)
-
-    const res = groupBy([...MagRefList, ...FoncRefList], 'contentieux.id')
+    /**
+  const FoncRefList = await readXlsxFile(file, { sheet: 3 })
+    .then((rows: any) => {
+      rows.splice(0, 2)
+      const optionsFonc = rows
+        .filter((y: any) => {
+          if (y[2] !== null) return true
+          else return false
+        })
+        .map((x: any) => {
+          return {
+            averageProcessingTimeFonc: this.castToDecimalTime(String(x[2])),
+            contentieux: { id: x[0], label: x[1] },
+          }
+        })
+      return optionsFonc
+    })
+    .then((data: any) => data)
+*/
+    const res = groupBy([...MagRefList], 'contentieux.id') //...FoncRefList
     const resultat = await Object.keys(res).map((key) => {
       if (res[key].length > 1)
         return { ...res[key][0], ...res[key][1] } as ContentieuxOptionsInterface
@@ -440,26 +438,23 @@ export class ContentieuxOptionsService extends MainClass {
     const flatList = new Array()
     list.getValue().map((x: any) => {
       const magAvg = decimalToStringDate(x.averageProcessingTime, ':')
-      const foncAvg = decimalToStringDate(x.averageProcessingTimeFonc, ':')
+      //const foncAvg = decimalToStringDate(x.averageProcessingTimeFonc, ':')
 
       if (x.childrens) {
         flatList.push({
           ...this.getFileValues(x),
           ...x,
           averageProcessingTime: magAvg === '0' ? '' : magAvg,
-          averageProcessingTimeFonc: foncAvg === '0' ? '' : foncAvg,
+          // averageProcessingTimeFonc: foncAvg === '0' ? '' : foncAvg,
         })
         x.childrens.map((y: any) => {
           const magAvgChild = decimalToStringDate(y.averageProcessingTime, ':')
-          const foncAvgChild = decimalToStringDate(
-            y.averageProcessingTimeFonc,
-            ':'
-          )
+          //const foncAvgChild = decimalToStringDate(y.averageProcessingTimeFonc,':')
           flatList.push({
             ...this.getFileValues(y),
             ...y,
             averageProcessingTime: magAvgChild === '0' ? '' : magAvgChild,
-            averageProcessingTimeFonc: foncAvgChild === '0' ? '' : foncAvgChild,
+            //averageProcessingTimeFonc: foncAvgChild === '0' ? '' : foncAvgChild,
           })
         })
       } else
@@ -467,7 +462,7 @@ export class ContentieuxOptionsService extends MainClass {
           ...this.getFileValues(x),
           ...x,
           averageProcessingTime: magAvg === '0' ? '' : magAvg,
-          averageProcessingTimeFonc: foncAvg === '0' ? '' : foncAvg,
+          //averageProcessingTimeFonc: foncAvg === '0' ? '' : foncAvg,
         })
     })
     return flatList
@@ -498,6 +493,7 @@ export class ContentieuxOptionsService extends MainClass {
         'nbPerMonth',
         'averageProcessingTime'
       ),
+      /**
       nbPerDayFonc: this.getInputValue(
         ref.averageProcessingTimeFonc,
         'nbPerDay',
@@ -508,6 +504,7 @@ export class ContentieuxOptionsService extends MainClass {
         'nbPerMonth',
         'averageProcessingTimeFonc'
       ),
+       */
     }
   }
 

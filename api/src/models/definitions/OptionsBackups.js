@@ -30,6 +30,10 @@ export default sequelizeInstance => {
       deleted_at: {
         type: Sequelize.DATE,
       },
+      type: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
     },
     {
       timestamps: true,
@@ -40,7 +44,7 @@ export default sequelizeInstance => {
   )
 
   Model.associate = function (models) {
-    Model.hasMany(models.OptionsBackupJuridictions, { foreignKey: 'option_backup_id', sourceKey: 'id' }) 
+    Model.hasMany(models.OptionsBackupJuridictions, { foreignKey: 'option_backup_id', sourceKey: 'id' })
 
     return models
   }

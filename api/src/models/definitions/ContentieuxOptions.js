@@ -21,10 +21,6 @@ export default (sequelizeInstance) => {
         type: Sequelize.DOUBLE(11),
         allowNull: true,
       },
-      average_processing_time_fonc: {
-        type: Sequelize.DOUBLE(11),
-        allowNull: true,
-      },
       backup_id: {
         type: Sequelize.INTEGER,
         allowNull: true,

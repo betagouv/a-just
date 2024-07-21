@@ -11,7 +11,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getBackup = async (userId, juridictionId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date']],
+      attributes: ['id', 'label', ['created_at', 'date'], 'type'],
       include: [
         {
           model: Model.models.OptionsBackupJuridictions,
@@ -38,6 +38,7 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         label: list[i].label,
         date: list[i].date,
+        type: list[i].type,
       }
     }
 
@@ -141,7 +142,6 @@ export default (sequelizeInstance, Model) => {
       const options = {
         contentieux_id: op.contentieux.id,
         average_processing_time: op.averageProcessingTime,
-        average_processing_time_fonc: op.averageProcessingTimeFonc,
         backup_id: newBackupId,
       }
 

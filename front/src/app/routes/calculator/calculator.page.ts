@@ -335,7 +335,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   formatDatas(list: CalculatorInterface[]) {
     /*const backupLabel = localStorage.getItem('backupLabel')
     backupLabel && filterReferentielCalculator(list, backupLabel)*/
-    
+
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
     this.filtredDatas()
   }
@@ -499,7 +499,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
               label: y.contentieux.label
             },
             averageProcessingTime: y.magRealTimePerCase,
-            averageProcessingTimeFonc: y.fonRealTimePerCase,
+            //averageProcessingTimeFonc: y.fonRealTimePerCase,
           })
         })
 
@@ -509,7 +509,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           label: x.contentieux.label
         },
         averageProcessingTime: x.magRealTimePerCase,
-        averageProcessingTimeFonc: x.fonRealTimePerCase,
+        //averageProcessingTimeFonc: x.fonRealTimePerCase,
       })
 
     })
