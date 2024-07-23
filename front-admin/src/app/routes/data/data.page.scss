@@ -7,8 +7,26 @@
     margin-bottom: 15px;  
   }
 
+  .form {
+    margin: 16px 0;
+
+    form div {
+      margin-bottom: 16px;
+
+      label {
+        display: block;
+        margin-bottom: 4px;
+      }
+    }
+  }
+
   form {
-    margin-bottom: 20px;
+    margin: 16px 0;
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+    }
 
     .select-juridictions {
       display: flex;
@@ -36,6 +54,13 @@
           margin-right: 8px;
         }
       }
+    }
+  }
+
+  table {
+    border-spacing: 10px;
+    th, td {
+      padding: 15px;
     }
   }
 }
