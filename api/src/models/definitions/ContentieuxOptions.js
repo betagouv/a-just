@@ -38,6 +38,10 @@ export default (sequelizeInstance) => {
       deleted_at: {
         type: Sequelize.DATE,
       },
+      average_processing_time_fonc: {
+        type: Sequelize.DOUBLE(11),
+        allowNull: true,
+      },
     },
     {
       timestamps: true,

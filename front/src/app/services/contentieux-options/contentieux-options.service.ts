@@ -147,6 +147,7 @@ export class ContentieuxOptionsService extends MainClass {
    * @param referentiel
    */
   updateOptions(referentiel: ContentieuReferentielInterface) {
+    console.log('UPDATE')
     const options = this.contentieuxOptions.getValue()
 
     const findIndexOptions = options.findIndex(
@@ -197,6 +198,22 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   /**
+ * API suppréssion d'une sauvegarde d'options
+ * @returns
+ */
+  async removeBackupByIds(ids: (number | undefined)[]) {
+    ids?.map((id) => {
+      return this.serverService
+        .delete(`contentieux-options/remove-backup/${id}`)
+        .then(() => {
+          this.backupId.next(null)
+          this.loadBackupsAndId()
+        })
+    })
+    return Promise.resolve()
+  }
+
+  /**
    * Recopie d'options dans un nouveau jeux de données
    * @returns
    */
@@ -223,19 +240,49 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   /**
+    * Recopie d'options dans un nouveau jeux de données
+    * @returns
+    */
+  duplicateBackupById(backupId: number, type: string) {
+    const backup = this.backups
+      .getValue()
+      .find((b) => b.id === backupId)
+
+    const backupName = prompt('Sous quel nom ?', `${backup?.label} - copie`)
+
+    if (backupName) {
+      return this.serverService
+        .post(`contentieux-options/duplicate-backup`, {
+          backupId: this.backupId.getValue(),
+          backupName,
+          type,
+          backupStatus: 'Local',
+          juridictionId: this.humanResourceService.backupId.getValue(),
+        })
+        .then((r) => {
+          this.backupId.next(r.data)
+          this.loadBackupsAndId()
+        })
+    }
+
+    return Promise.resolve()
+  }
+
+  /**
    * Sauvegarde d'un jeux de données dans la même ou une autre base
    * @param isCopy
    * @returns
    */
-  onSaveDatas(isCopy: boolean) {
+  async onSaveDatas(isCopy: boolean, type = 'SIEGE') {
     let backupName = null
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
     }
-    return this.serverService
+    return await this.serverService
       .post(`contentieux-options/save-backup`, {
         list: this.contentieuxOptions.getValue(),
         backupId: this.backupId.getValue(),
+        type,
         backupName: backupName ? backupName : null,
         juridictionId: this.humanResourceService.backupId.getValue(),
       })
@@ -249,19 +296,23 @@ export class ContentieuxOptionsService extends MainClass {
    * API création d'une base vide
    * @returns
    */
-  createEmpy(first = false) {
+  async createEmpy(first = false, name = '', status = 'Local', type = 'SIEGE') {
     let backupName = null
 
     if (first)
       backupName = 'Mon premier référentiel'
+    else if (name !== '')
+      backupName = name
     else
       backupName = prompt('Sous quel nom ?')
 
     if (backupName) {
-      return this.serverService
+      return await this.serverService
         .post(`contentieux-options/save-backup`, {
           list: [],
           backupName: backupName,
+          backupStatus: status,
+          type,
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
@@ -305,6 +356,35 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   /**
+ * API rénommage d'un jeu de données
+ * @returns
+ */
+  renameBackupById(backupId: number) {
+    const getBackup = this.backups
+      .getValue()
+      .find((b) => b.id === backupId)
+    let backupName = prompt('Sous quel nom ?', getBackup ? getBackup.label : '')
+
+    if (backupName) {
+      return this.serverService
+        .post(`contentieux-options/rename-backup`, {
+          backupId: backupId,
+          backupName: backupName,
+          juridictionId: this.humanResourceService.backupId.getValue(),
+        })
+        .then(() => {
+          const list = this.backups.getValue()
+          const index = list.findIndex((b) => b.id === backupId)
+          if (index !== -1) {
+            list[index].label = '' + backupName
+            this.backups.next(list)
+          }
+        })
+    }
+
+    return Promise.resolve()
+  }
+  /**
    * Récupération de la dernière mise à jour des options d'une juridiction
    * @returns
    */
@@ -337,6 +417,7 @@ export class ContentieuxOptionsService extends MainClass {
       alert('Vous devez saisir une fichier !')
       return
     }
+
 
     const MagRefList = await readXlsxFile(file, { sheet: 2 })
       .then((rows: any) => {
@@ -385,7 +466,7 @@ export class ContentieuxOptionsService extends MainClass {
     this.contentieuxOptions.next(resultat)
     this.optionsIsModify.next(true)
 
-    await this.onSaveDatas(true)
+    //await this.onSaveDatas(true)
   }
 
   castToDecimalTime(value: string) {

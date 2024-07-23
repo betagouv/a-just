@@ -77,6 +77,14 @@ const routes: Routes = [
     canActivate: [AuthGuard, AppTypeGuard],
   },
   {
+    path: 'referentiel-de-temps',
+    loadChildren: () =>
+      import('./average-etp/average-etp-displayer/average-etp-displayer.module').then(
+        (mod) => mod.AverageEtpDisplayerModule
+      ),
+    canActivate: [AuthGuard, AppTypeGuard],
+  },
+  {
     path: 'signup',
     redirectTo: '/inscription',
     pathMatch: 'full',

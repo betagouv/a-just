@@ -32,6 +32,14 @@ export default sequelizeInstance => {
       },
       type: {
         type: Sequelize.STRING(255),
+        allowNull: false,
+      },
+      status: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
+      },
+      user_id: {
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
     },
@@ -45,6 +53,7 @@ export default sequelizeInstance => {
 
   Model.associate = function (models) {
     Model.hasMany(models.OptionsBackupJuridictions, { foreignKey: 'option_backup_id', sourceKey: 'id' })
+    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })
 
     return models
   }
