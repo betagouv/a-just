@@ -11,7 +11,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async (backupId, juridictionId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'average_processing_time'],
+      attributes: ['id', 'average_processing_time', 'average_processing_time_fonc'],
       where: {
         backup_id: backupId,
       },
@@ -37,6 +37,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+
     for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
@@ -58,7 +59,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAllById = async (backupId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'average_processing_time'],
+      attributes: ['id', 'average_processing_time', 'average_processing_time_fonc'],
       where: {
         backup_id: backupId,
       },

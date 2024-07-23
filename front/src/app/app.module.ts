@@ -8,7 +8,8 @@ import { AlertComponent } from './components/alert/alert.component'
 import { PopupModule } from './components/popup/popup.module'
 import { PipesModule } from './pipes/pipes.module'
 import { ReaffectatorModule } from './routes/reaffectator/reaffectator.module'
-import { SimulatorModule } from './routes/simulator/simulator.module'
+import { SimulatorModule } from './routes/simulator/simulator.module';
+import { AverageEtpDisplayerModule } from './routes/average-etp/average-etp-displayer/average-etp-displayer.module'
 
 /**
  * Module principal du projet
@@ -28,4 +29,4 @@ import { SimulatorModule } from './routes/simulator/simulator.module'
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

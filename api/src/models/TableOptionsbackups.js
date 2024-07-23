@@ -11,8 +11,12 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getBackup = async (userId, juridictionId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date'], 'type'],
+      attributes: ['id', 'label', ['created_at', 'date'], 'type', 'status', 'user_id'],
       include: [
+        {
+          attributes: ['id', 'first_name', 'last_name'],
+          model: Model.models.Users,
+        },
         {
           model: Model.models.OptionsBackupJuridictions,
           required: true,
@@ -33,12 +37,21 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+
     for (let i = 0; i < list.length; i++) {
+      const lastUpdate = await Model.models.HistoriesContentieuxUpdate.getLastUpdate(list[i].id)
+      let user = null
+      if (list[i]['User.first_name'] && list[i]['User.last_name'])
+        user = list[i]['User.first_name'] + ' ' + list[i]['User.last_name']
       list[i] = {
         id: list[i].id,
         label: list[i].label,
         date: list[i].date,
         type: list[i].type,
+        status: list[i].status,
+        update: lastUpdate,
+        userId: list[i].user_id,
+        userName: user
       }
     }
 
@@ -76,7 +89,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridictionId
    * @returns
    */
-  Model.duplicateBackup = async (backupId, backupName, juridictionId) => {
+  Model.duplicateBackup = async (userId, backupId, backupName, juridictionId, status, type) => {
     const backup = await Model.findOne({
       where: {
         id: backupId,
@@ -86,7 +99,7 @@ export default (sequelizeInstance, Model) => {
 
     if (backup) {
       delete backup.id
-      const backupCreated = await Model.create({ ...backup, label: backupName })
+      const backupCreated = await Model.create({ label: backupName, status, type, created_at: new Date(), user_id: userId })
       const newBackupId = backupCreated.dataValues.id
 
       const hrList = await Model.models.ContentieuxOptions.findAll({
@@ -122,13 +135,16 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridictionId
    * @returns
    */
-  Model.saveBackup = async (list, backupId, backupName, juridictionId) => {
+  Model.saveBackup = async (userId, list, backupId, backupName, juridictionId, backupStatus = 'Local', type) => {
     let newBackupId = backupId
     let reelIds = []
     // if backup name create a copy
     if (backupName) {
       const newBackup = await Model.create({
         label: backupName,
+        type,
+        status: backupStatus,
+        user_id: userId
       })
       newBackupId = newBackup.dataValues.id
       await Model.models.OptionsBackupJuridictions.create({

@@ -9,6 +9,7 @@ import { BackupInterface } from 'src/app/interfaces/backup'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { dataInterface } from '../select/select.component'
+import { Router } from '@angular/router'
 
 /**
  * Composant de la liste des sauvegardes des options (temps moyens / dossier)
@@ -21,8 +22,7 @@ import { dataInterface } from '../select/select.component'
 })
 export class OptionsBackupPanelComponent
   extends MainClass
-  implements OnDestroy, OnChanges
-{
+  implements OnDestroy, OnChanges {
   /**
    * Autoriser à changer ou non la sauvergarde actuelle
    */
@@ -52,7 +52,7 @@ export class OptionsBackupPanelComponent
    * Constructeur qui écoute tous les changements
    * @param contentieuxOptionsService 
    */
-  constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
+  constructor(private contentieuxOptionsService: ContentieuxOptionsService, private router: Router) {
     super()
 
     this.watch(
@@ -77,6 +77,7 @@ export class OptionsBackupPanelComponent
    * A la destruction supprimer les watcher
    */
   ngOnDestroy() {
+    this.contentieuxOptionsService.optionsIsModify.next(false)
     this.watcherDestroy()
   }
 
@@ -151,10 +152,12 @@ export class OptionsBackupPanelComponent
    */
   onSaveHR(isCopy: boolean = false) {
     this.contentieuxOptionsService.onSaveDatas(isCopy)
+    if (isCopy)
+      this.router.navigate(['/temps-moyens'])
   }
 
-  async onSendAllActivity(elem:any){
-    await this.contentieuxOptionsService.onSendAllActivity(elem)
+  async onSendAllActivity(elem: any) {
+    //await this.contentieuxOptionsService.onSendAllActivity(elem)
   }
   /**
    * Demande de création d'une sauvegarde vide
@@ -180,14 +183,14 @@ export class OptionsBackupPanelComponent
   /**
    * Télécharger le referentiel au format excel
    */
-  downloadTemplate(){
+  downloadTemplate() {
     this.contentieuxOptionsService.downloadTemplate()
   }
 
   /**
    * Ouvre le selecteur de fichier
    */
-  openFilePicker(){
+  openFilePicker() {
     document.getElementById('filePicker')!.click();
     document.getElementById('trigger-drop-down')!.click();
   }

@@ -15,19 +15,11 @@ module.exports = {
 
 
       if (backup) {
-        await models.OptionsBackups.update(
-          { type: "SIEGE" },
-          {
-            where: {
-              id: allReferentiels[i].option_backup_id,
-            }
-          }
-        )
-
         delete backup.id
-        const backupCreated = await models.OptionsBackups.create({ ...backup, label: backup.label + ' - GREFFE', type: "GREFFE" }) // ajouter attribue GREFFE
+        const backupCreated = await models.OptionsBackups.create({ ...backup, label: backup.label + ' - GREFFE', type: "GREFFE", status: 'Local' }) // ajouter attribue GREFFE
         const newBackupId = backupCreated.dataValues.id
 
+        console.log('&=>', newBackupId)
         const hrList = await models.ContentieuxOptions.findAll({
           where: {
             backup_id: allReferentiels[i].option_backup_id,
@@ -56,6 +48,8 @@ module.exports = {
             }
           )
         }
+
+
         if (nbOfGreffeValues == 0)
           await models.OptionsBackups.destroy({
             where: {
@@ -68,6 +62,16 @@ module.exports = {
             option_backup_id: newBackupId,
             juridiction_id: allReferentiels[i].juridiction_id,
           })
+
+
+        await models.OptionsBackups.update(
+          { type: "SIEGE", status: 'Local' },
+          {
+            where: {
+              id: allReferentiels[i].option_backup_id,
+            }
+          }
+        )
       }
     }
   },

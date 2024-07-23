@@ -135,8 +135,8 @@ export function month(
   lastDay?: string
 ) {
   date = date ? new Date(date) : new Date()
-  
-  if(lastDay) {
+
+  if (lastDay) {
     date = endOfMonth(date)
   } else {
     date = startOfMonth(date)
@@ -236,6 +236,27 @@ export function findRealValue(date: Date) {
 }
 
 /**
+ * Conversion d'une date en date string complête sauf si aujourd'hui
+ * @param date 
+ * @returns 
+ */
+export function findRealValueCustom(date: Date) {
+  const today = new Date()
+  if (
+    today.getDate() === date.getDate() &&
+    today.getMonth() === date.getMonth() &&
+    today.getFullYear() === date.getFullYear()
+  ) {
+    return 'Aujourd\'hui'
+  }
+  else if (date && typeof date.getMonth === 'function') {
+    return `${(date.getDate() + '').padStart(2, '0')} ${getMonthString(
+      date
+    )} ${date.getFullYear()}`
+  } else return ''
+}
+
+/**
  * Génération d'un tableau qui liste chaque mois entre deux dates sous forme de tableau
  * @param dateFrom 
  * @param dateTo 
@@ -246,8 +267,8 @@ export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
     return [
       ...Array(
         dateTo.getMonth() -
-          dateFrom.getMonth() +
-          12 * (dateTo.getFullYear() - dateFrom.getFullYear())
+        dateFrom.getMonth() +
+        12 * (dateTo.getFullYear() - dateFrom.getFullYear())
       ).keys(),
     ]
   else return []
@@ -258,7 +279,7 @@ export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
  * @param str 
  * @returns 
  */
-export function stringToDecimalDate (str: string, sep ='h') {
+export function stringToDecimalDate(str: string, sep = 'h') {
   if (str !== null || str !== '') {
     const strArray = str.split(sep)
     return (parseInt(strArray[0]) * 60 + parseInt(strArray[1])) / 60
@@ -272,7 +293,7 @@ export function stringToDecimalDate (str: string, sep ='h') {
  * @param decimal 
  * @returns 
  */
-export function decimalToStringDate(decimal: number | null | undefined, sep='h') {
+export function decimalToStringDate(decimal: number | null | undefined, sep = 'h') {
   if (decimal != null) {
     const strArray = String(decimal).split('.')
     const dMin = decimal - parseInt(strArray[0])
@@ -298,10 +319,9 @@ export function getRangeOfMonths(startDate: Date, endDate: Date) {
   while (dateCounter < endDate) {
     //if (getShortMonthString(dateCounter) === 'Janv.')
     dates.push(
-      `${
-        getShortMonthString(dateCounter) +
-        ' ' +
-        dateCounter.getFullYear().toString().slice(-2)
+      `${getShortMonthString(dateCounter) +
+      ' ' +
+      dateCounter.getFullYear().toString().slice(-2)
       }`
     )
     //else dates.push(`${getShortMonthString(dateCounter)}`)
@@ -335,10 +355,9 @@ export function getRangeOfMonthsAsObject(
   while (dateCounter <= endDate) {
     if (getShortMonthString(dateCounter) === 'Janv.')
       dates.push(
-        `${
-          getShortMonthString(dateCounter) +
-          ' ' +
-          dateCounter.getFullYear().toString().slice(-2)
+        `${getShortMonthString(dateCounter) +
+        ' ' +
+        dateCounter.getFullYear().toString().slice(-2)
         }`
       )
     else dates.push(`${getShortMonthString(dateCounter)}`)
@@ -411,13 +430,13 @@ export function nbHourInMonth(date: Date = new Date()) {
  * @param date 
  * @returns 
  */
-export function generalizeTimeZone(date: Date | undefined|null) {
-  if (date === undefined || date ===null) return undefined
-  else {return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())}
+export function generalizeTimeZone(date: Date | undefined | null) {
+  if (date === undefined || date === null) return undefined
+  else { return date.setMinutes(date.getMinutes() - date.getTimezoneOffset()) }
 }
 
-export function setTimeToMidDay(date: Date | undefined|null) {
-  if (date === undefined || date ===null) return undefined
+export function setTimeToMidDay(date: Date | undefined | null) {
+  if (date === undefined || date === null) return undefined
   date.setHours(12)
   date.setMinutes(0)
   date.setSeconds(0)

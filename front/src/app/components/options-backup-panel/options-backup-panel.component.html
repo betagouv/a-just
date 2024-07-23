@@ -3,8 +3,8 @@
 </aj-select>
 
 <ng-template [ngIf]="readOnly === false">
-  <div class="flex-1"></div>
 
+  <!--
   <button id="trigger-drop-down" class="left-margin blue-button options" [matMenuTriggerFor]="menu" #t="matMenuTrigger"
     aria-label="Example icon-button with a menu">
     Options
@@ -47,13 +47,23 @@
       <span>Créer une sauvegarde vierge</span>
     </button>
   </mat-menu>
+-->
 
-  <button [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }" mat-stroked-button
-    class="left-margin blue-button empty" (click)="onSaveHR(true)">
+  <button (click)="onBackBackup()" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
+    class="left-margin blue-button empty">
+    Annuler
+  </button>
+
+  <div class="flex-1"></div>
+  <button class="left-margin white-button empty" (click)="downloadTemplate();$event.stopPropagation();">
+    Exporter sous Excel
+  </button>
+  <button [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }" class="left-margin blue-button empty"
+    (click)="onSaveHR(true)">
     Enregistrer sous
   </button>
   <button *ngIf="selectedIds.length" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
-    mat-stroked-button class="left-margin blue-button" (click)="onSaveHR(false)">
+    class="left-margin blue-button" (click)="onSaveHR(false)">
     Enregister
   </button>
 </ng-template>

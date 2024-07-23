@@ -1,7 +1,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.addColumn('OptionsBackups', 'type', {
-      type: Sequelize.STRING(255),
+    await queryInterface.addColumn('OptionsBackups', 'user_id', {
+      type: Sequelize.INTEGER,
       allowNull: true,
     })
   },
