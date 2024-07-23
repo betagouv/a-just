@@ -24,4 +24,12 @@ export class ImportService {
   importAllActivities(params: any) {
     return this.serverService.post('imports/import-all-activities', params);
   }
+
+  checkDataBeforeImportAll(params: any) {
+    return this.serverService.post('imports/check-data-before-import-all', params)
+  }
+
+  checkDataBeforeImportOne(params: any) {
+    return this.serverService.post('imports/check-data-before-import-one', params)
+  }
 }

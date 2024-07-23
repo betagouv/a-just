@@ -3,10 +3,14 @@ import { JuridictionInterface } from 'src/app/interfaces/juridiction';
 import { ExtractsDataService } from 'src/app/services/extracts-data/extracts-data.service';
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
-import { orderBy } from 'lodash'
+import { ImportService } from 'src/app/services/import/import.service';
+import { orderBy, sortBy, groupBy } from 'lodash'
 import { getShortMonthString } from 'src/app/utils/dates';
+import { exportFileToString } from 'src/app/utils/file';
+import { BackupInterface } from 'src/app/interfaces/backup';
 import * as FileSaver from 'file-saver'
 import * as xlsx from 'xlsx'
+import { ActivityIssueInterface } from 'src/app/interfaces/activity';
 
 /**
  * Excel file details
@@ -105,10 +109,10 @@ const compareHeadersSum = [
 ]
 
 @Component({
-  templateUrl: './data-analyse.page.html',
-  styleUrls: ['./data-analyse.page.scss'],
+  templateUrl: './data.page.html',
+  styleUrls: ['./data.page.scss'],
 })
-export class DataAnalysePage {
+export class DataPage {
   juridictionList: JuridictionInterface[] = [];
   juridictionName: string = ''
   extractBackupId: number | null = null
@@ -119,8 +123,14 @@ export class DataAnalysePage {
   compareDateStop: Date | null = null
   data : any = undefined
   sumTab : any = undefined
+  HRBackupList: BackupInterface[] = [];
+  printDataImportIssues : boolean = false
+  dataIssues : ActivityIssueInterface[] = []
+  sendAll : boolean = false
+
 
   constructor(
+    private importService: ImportService,
     private extractDataService: ExtractsDataService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
@@ -136,6 +146,7 @@ export class DataAnalysePage {
     });
     this.extractDataService.getJuridictionAjusted({dateStart: new Date(2023, 5), dateStop: new Date()})
     this.referentielService.getReferentiels()
+    this.humanResourceService.getBackupList().then((r) => (this.HRBackupList = r));
   }
 
   /**
@@ -467,5 +478,103 @@ export class DataAnalysePage {
         return alert('Aucune donnée pour cette juridiction sur la période sélectionée')
       }
     })
+  }
+
+  
+  async onSendAllActivity(form: any, force: boolean = false) {
+    const file = form.file.files[0];
+    this.sendAll = true
+
+    if (!file) {
+      alert('Vous devez saisir une fichier !');
+      return;
+    }
+
+    const fileToString = await exportFileToString(file)
+
+    if (!force) {
+      this.importService
+        .checkDataBeforeImportAll({ file: fileToString })
+        .then((response : any) => {
+          const tmp = response.data.to_warn
+          let to_warn = []
+          to_warn = sortBy(tmp, 'hr_backup_label')
+
+          if (to_warn.length === 0) {
+            if(confirm("Aucun Problème détecté ! Importer ?")) {
+              this.importService
+                .importAllActivities({ file: fileToString })
+                .then(() => {
+                  alert('OK !');
+                  form.reset();
+                  this.onCancelDataImport()
+                });
+            }
+          } else {
+            alert('Problèmes détectés !')
+            this.dataIssues = to_warn
+            this.printDataImportIssues = true
+          }
+        })
+        .catch(err => console.log('Error:', err))
+    } else {
+      this.importService
+        .importAllActivities({ file: fileToString })
+        .then(() => {
+          alert('OK !');
+          form.reset();
+          this.onCancelDataImport()
+        });
+    }
+  }
+
+  async onSendActivity(form: any, force: boolean = false) {
+    const backupId = form.backupId.value;
+    const file = form.file.files[0];
+
+    if (!file) {
+      alert('Vous devez saisir une fichier !');
+      return;
+    }
+
+    const fileToString = await exportFileToString(file)
+  
+    if (!force) {
+      this.importService
+      .checkDataBeforeImportOne({ file: fileToString, backupId })
+      .then((response : any) => {
+        const to_warn = response.data.to_warn
+
+        if (to_warn.length === 0) {
+          if(confirm("Aucun Problème détecté ! Importer ?")) {
+            this.importService
+              .importActivities({ file: fileToString, backupId })
+              .then(() => {
+                alert('OK !');
+                form.reset();
+                this.onCancelDataImport()
+              });
+          }
+        } else {
+          alert('Problèmes détectés !')
+          this.dataIssues = to_warn
+          this.printDataImportIssues = true
+        }
+      })
+    } else {
+      this.importService
+        .importActivities({ file: fileToString, backupId })
+        .then(() => {
+          alert('OK !');
+          form.reset();
+          this.onCancelDataImport()
+        });
+    }
+  }
+
+  onCancelDataImport() {
+    this.dataIssues = []
+    this.printDataImportIssues = false
+    this.sendAll = false
   }
 }
