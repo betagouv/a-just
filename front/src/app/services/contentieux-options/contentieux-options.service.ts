@@ -112,7 +112,7 @@ export class ContentieuxOptionsService extends MainClass {
       this.getAllContentieuxOptions(juridictionId).then((result) => {
         this.nbOfBackups.next(result.backups.length)
         this.backups.next(result.backups)
-        this.backupId.next(result.backupId)
+        //this.backupId.next(result.backupId)
       })
     }
   }

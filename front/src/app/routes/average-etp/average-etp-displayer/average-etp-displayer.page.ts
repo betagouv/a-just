@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core'
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import * as FileSaver from 'file-saver'
-import { extend } from 'lodash'
+import { extend, isNumber } from 'lodash'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -25,7 +25,7 @@ const EXCEL_EXTENSION = '.xlsx'
   templateUrl: './average-etp-displayer.page.html',
   styleUrls: ['./average-etp-displayer.page.scss']
 })
-export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit {
+export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit, AfterViewInit {
   /**
    * Référentiel complet
    */
@@ -126,11 +126,9 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         this.backups = b
-        //if (this.contentieuxOptionsService.nbOfBackups.getValue() === 0) {
-        //this.contentieuxOptionsService.createEmpy(true)
-        //this.contentieuxOptionsService.setInitValue()
-        //}
-        //this.formatDatas()
+        let id = this.contentieuxOptionsService.backupId.getValue()
+        //if (isNumber(id))
+        //this.backup = this.backups.find((value) => value.id === id)
       })
     )
 
@@ -139,6 +137,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
         (b) => {
           this.selectedIds = [b]
           this.backup = this.backups.find((x) => x.id === b)
+          this.subTitleType = this.backup?.type || ''
         }
       )
     )
@@ -171,6 +170,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe((backupId) => {
+        console.log('SUB SCRIB ', backupId)
         if (backupId !== null) {
           this.onLoad(backupId)
           this.contentieuxOptionsService.getLastUpdate()
@@ -208,6 +208,17 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
         (b) => (this.optionsIsModify = b)
       )
     )
+
+    this.watch(
+      this.humanResourceService.contentieuxReferentiel.subscribe((b) => {
+        let id = this.contentieuxOptionsService.backupId.getValue()
+        if (id) {
+          this.onLoad(id)
+          this.backup = this.backups.find((value) => value.id === id)
+          this.subTitleType = this.backup?.type || ''
+        }
+      }))
+
   }
 
   ngOnInit() {
@@ -215,15 +226,21 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
       this.route.params.subscribe((params) => {
         if (params['id']) {
           const id = +this.route.snapshot.params['id']
-          console.log('ID PARAM : ', id)
+          this.contentieuxOptionsService.backupId.next(id)
           this.backup = this.backups.find((value) => value.id === id)
           this.subTitleType = this.backup?.type || ''
+
+          console.log('ID PARAM : ', id)
           console.log(this.backup)
         }
       })
     )
   }
 
+  ngAfterViewInit() {
+
+
+  }
 
   /**
    * Destruction des observables
@@ -237,12 +254,11 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * @param backupId
    */
   onLoad(backupId: number) {
-    if (this.categorySelected === null) {
-      return
-    }
-
+    console.log('LOADING', backupId)
     this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
+      console.log('LOADING 2', backupId)
+
       this.contentieuxOptionsService.contentieuxOptions.next(options)
 
       const referentiels = [
