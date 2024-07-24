@@ -499,24 +499,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
               label: y.contentieux.label
             },
             averageProcessingTime: y.magRealTimePerCase,
-            //averageProcessingTimeFonc: y.fonRealTimePerCase,
           })
         })
-
       refToSave.push({
         contentieux: {
           id: x.contentieux.id,
           label: x.contentieux.label
         },
         averageProcessingTime: x.magRealTimePerCase,
-        //averageProcessingTimeFonc: x.fonRealTimePerCase,
       })
 
     })
 
     this.contentieuxOptionsService.contentieuxOptions.next(refToSave)
     this.contentieuxOptionsService.optionsIsModify.next(true)
-
     this.contentieuxOptionsService.onSaveDatas(true)
 
   }
