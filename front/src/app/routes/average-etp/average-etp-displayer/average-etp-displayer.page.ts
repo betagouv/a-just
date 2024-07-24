@@ -25,7 +25,7 @@ const EXCEL_EXTENSION = '.xlsx'
   templateUrl: './average-etp-displayer.page.html',
   styleUrls: ['./average-etp-displayer.page.scss']
 })
-export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit, AfterViewInit {
+export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit {
   /**
    * Référentiel complet
    */
@@ -113,6 +113,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
 
+        // FILTRER BACKUPS AVEC LES DROITS
         if (this.canViewMagistrat) {
           this.categorySelected = 'MAGISTRATS'
         } else if (this.canViewGreffier) {
@@ -127,39 +128,26 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
       this.contentieuxOptionsService.backups.subscribe((b) => {
         this.backups = b
         let id = this.contentieuxOptionsService.backupId.getValue()
-        //if (isNumber(id))
-        //this.backup = this.backups.find((value) => value.id === id)
+        if (isNumber(id)) {
+          this.backup = this.backups.find((value) => value.id === id)
+          this.subTitleType = this.backup?.type || ''
+        }
       })
     )
 
-    this.watch(
-      this.contentieuxOptionsService.backupId.subscribe(
-        (b) => {
-          this.selectedIds = [b]
-          this.backup = this.backups.find((x) => x.id === b)
-          this.subTitleType = this.backup?.type || ''
-        }
-      )
-    )
+
 
     this.watch(
       this.contentieuxOptionsService.initValue.subscribe((b) => {
         if (b === true) {
           this.referentiel.map((v) => {
             v.isModified = false
-            v.isModifiedFonc = false
-
             v.averageProcessingTime = v.defaultValue
-            //v.averageProcessingTimeFonc = v.defaultValueFonc
-
             if (v.childrens !== undefined) {
               v.childrens.map((child) => {
                 if (child.isModified === true) {
                   child.isModified = false
-                  child.isModifiedFonc = false
-
                   child.averageProcessingTime = child.defaultValue
-                  //child.averageProcessingTimeFonc = child.defaultValueFonc
                 }
               })
             }
@@ -170,13 +158,11 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe((backupId) => {
-        console.log('SUB SCRIB ', backupId)
         if (backupId !== null) {
           this.onLoad(backupId)
           this.contentieuxOptionsService.getLastUpdate()
           this.referentiel.map((v) => {
             v.isModified = false
-            v.isModifiedFonc = false
           })
         }
       })
@@ -229,17 +215,11 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
           this.contentieuxOptionsService.backupId.next(id)
           this.backup = this.backups.find((value) => value.id === id)
           this.subTitleType = this.backup?.type || ''
-
           console.log('ID PARAM : ', id)
           console.log(this.backup)
         }
       })
     )
-  }
-
-  ngAfterViewInit() {
-
-
   }
 
   /**
@@ -254,13 +234,9 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * @param backupId
    */
   onLoad(backupId: number) {
-    console.log('LOADING', backupId)
     this.isLoading = true
     this.contentieuxOptionsService.loadDetails(backupId).then((options) => {
-      console.log('LOADING 2', backupId)
-
       this.contentieuxOptionsService.contentieuxOptions.next(options)
-
       const referentiels = [
         ...this.humanResourceService.contentieuxReferentiel.getValue(),
       ].filter(
@@ -278,13 +254,8 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
         ref.averageProcessingTime =
           (getOption && getOption.averageProcessingTime) || null
 
-        //ref.averageProcessingTimeFonc =(getOption && getOption.averageProcessingTimeFonc) || null
-
         ref.defaultValue = ref.averageProcessingTime
-        //ref.defaultValueFonc = ref.averageProcessingTimeFonc
-
         ref.isModified = false
-        ref.isModifiedFonc = false
 
         ref.childrens = (ref.childrens || []).map((c) => {
           const getOptionActivity = options.find(
@@ -294,11 +265,8 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
             (getOptionActivity && getOptionActivity.averageProcessingTime) ||
             null
 
-          //c.averageProcessingTimeFonc =(getOptionActivity &&getOptionActivity.averageProcessingTimeFonc) ||null
           c.defaultValue = c.averageProcessingTime
-          //c.defaultValueFonc = c.averageProcessingTimeFonc
           c.isModified = false
-          c.isModifiedFonc = false
 
           return c
         })
@@ -328,19 +296,16 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     if (
       value !== null &&
       fixDecimal(
-        this.getInputValue(referentiel.averageProcessingTime, unit), //to change averageProcessingTime
+        this.getInputValue(referentiel.averageProcessingTime, unit),
         100
       ) !== value
     ) {
-      referentiel.averageProcessingTime = this.getInputValue(value, unit) //to change averageProcessingTime
+      referentiel.averageProcessingTime = this.getInputValue(value, unit)
       this.contentieuxOptionsService.updateOptions({
         ...referentiel,
-        //averageProcessingTimeFonc: referentiel.averageProcessingTimeFonc,
         averageProcessingTime: referentiel.averageProcessingTime,
       })
-
-      if (this.categorySelected === 'MAGISTRATS') referentiel.isModified = true
-      else referentiel.isModifiedFonc = true
+      referentiel.isModified = true
     }
   }
 
@@ -367,26 +332,27 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * @returns
    */
   getInputValue(avgProcessTime: any, unit: string, category?: string | null) {
-    switch (category || this.getCategoryStr()) {
-      case 'averageProcessingTime':
-        if (unit === 'hour') {
-          return avgProcessTime
-        } else if (unit === 'nbPerDay') {
-          return 8 / avgProcessTime
-        } else if (unit === 'nbPerMonth') {
-          return (8 / avgProcessTime) * (208 / 12)
-        }
-        break
-      case 'averageProcessingTimeFonc':
-        if (unit === 'hour') {
-          return avgProcessTime
-        } else if (unit === 'nbPerDay') {
-          return 7 / avgProcessTime
-        } else if (unit === 'nbPerMonth') {
-          return (7 / avgProcessTime) * (229.57 / 12)
-        }
-        break
-    }
+    if (this.backup && this.backup.type)
+      switch (this.backup.type) {
+        case 'SIEGE':
+          if (unit === 'hour') {
+            return avgProcessTime
+          } else if (unit === 'nbPerDay') {
+            return 8 / avgProcessTime
+          } else if (unit === 'nbPerMonth') {
+            return (8 / avgProcessTime) * (208 / 12)
+          }
+          break
+        case 'GREFFE':
+          if (unit === 'hour') {
+            return avgProcessTime
+          } else if (unit === 'nbPerDay') {
+            return 7 / avgProcessTime
+          } else if (unit === 'nbPerMonth') {
+            return (7 / avgProcessTime) * (229.57 / 12)
+          }
+          break
+      }
     return '0'
   }
 
@@ -401,40 +367,17 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     event: any,
     unit: string
   ) {
-    console.log('evt blur')
     event.target.blur()
     if (
       event.target.value !== '' &&
       fixDecimal(
-        this.getInputValue(referentiel.averageProcessingTime, unit), //to change averageProcessingTime
+        this.getInputValue(referentiel.averageProcessingTime, unit),
         100
       ) !== parseFloat(event.target.value)
     ) {
-      console.log('on blur')
       this.onUpdateOptions(referentiel, event.target.value, unit)
-      if (this.categorySelected === 'MAGISTRATS') referentiel.isModified = true
-      else referentiel.isModifiedFonc = true
+      referentiel.isModified = true
     }
-  }
-
-  /**
-   * Liste des catégories
-   * @returns
-   */
-  getCategoryStr() {
-    if (this.categorySelected === 'MAGISTRATS') return 'averageProcessingTime'
-    else if (this.categorySelected === 'FONCTIONNAIRES')
-      return 'averageProcessingTime'
-    else return 'averageProcessingTime'
-  }
-
-  /**
-   * Noeu de catégorie
-   * @returns
-   */
-  getCategoryModifStr() {
-    if (this.categorySelected === 'MAGISTRATS') return 'isModified'
-    else return 'isModifiedFonc'
   }
 
   /**
@@ -442,14 +385,8 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    */
   extractionExcel() {
     const tmpList = this.generateFlateList()
-    this.refNameSelected = this.formDatas.find(x => x.id === this.contentieuxOptionsService.backupId.getValue())?.value || ''
-
-    const viewModel = {
-      referentiels: tmpList,
-      name: this.refNameSelected + ' - MAGISTRATS',
-      referentielsFonc: tmpList,
-      nameFonc: this.refNameSelected + ' - FONCTIONNAIRES',
-    }
+    this.refNameSelected = this.backup?.label || ''
+    const viewModel = { referentiels: tmpList }
 
     fetch('/assets/template2.xlsx')
       // 2. Get template as ArrayBuffer.
@@ -469,6 +406,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
       })
       .catch((err) => console.log('Error writing excel export', err))
   }
+
   /**
    * Fonction qui génère automatiquement le nom du fichier téléchargé
    * @returns String - Nom du fichier téléchargé
@@ -477,52 +415,44 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     return `Extraction_Référentiel de temps moyen - ` + (label || '')
   }
 
+  /**
+   * Génère un objet contenant l'ensemble des valeurs d'un référentiel
+   * @returns 
+   */
   generateFlateList() {
     const flatList = new Array()
     this.referentiel.map((x) => {
+      flatList.push({
+        ...this.getFileValues(x),
+        ...x,
+      })
       if (x.childrens) {
-        flatList.push({
-          ...this.getFileValues(x),
-          ...x,
-        })
         x.childrens.map((y) => {
           flatList.push({
             ...this.getFileValues(y),
             ...y,
           })
         })
-      } else flatList.push({
-        ...this.getFileValues(x),
-        ...x,
-      })
+      }
     })
     return flatList
   }
 
+  /**
+   * Calcul les valeurs par jour et pas moi via la valeur de référence en heure
+   * @param ref 
+   * @returns 
+   */
   getFileValues(ref: any) {
     return {
       id: Number(ref.id), nbPerDay: this.getInputValue(
         ref.averageProcessingTime,
         'nbPerDay',
-        'averageProcessingTime'
       ),
       nbPerMonth: this.getInputValue(
         ref.averageProcessingTime,
         'nbPerMonth',
-        'averageProcessingTime'
-      ),
-      /**
-      nbPerDayFonc: this.getInputValue(
-        ref.averageProcessingTimeFonc,
-        'nbPerDay',
-        'averageProcessingTimeFonc'
-      ),
-      nbPerMonthFonc: this.getInputValue(
-        ref.averageProcessingTimeFonc,
-        'nbPerMonth',
-        'averageProcessingTimeFonc'
       )
-       */
     }
   }
 

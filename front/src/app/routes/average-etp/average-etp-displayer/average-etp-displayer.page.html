@@ -21,20 +21,19 @@
           <div class="column-item">
             <div class="label col">
               <app-time-selector [value]="getInputValue(ref.averageProcessingTime,'hour')"
-                (valueChange)="onUpdateOptions(ref, $event,'hour')" [outsideChange]="ref[getCategoryModifStr()]"
+                (valueChange)="onUpdateOptions(ref, $event,'hour')" [outsideChange]="ref.isModified"
                 [defaultValue]="ref.defaultValue" [defaultValueFonc]="ref.defaultValueFonc"
                 [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
             </div>
             <div class="label col">
-              <input #jour type="number" placeholder="Nb de dossiers"
-                [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
+              <input #jour type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: ref.isModified === true}"
                 [ngModel]="fixDecimal(getInputValue(ref.averageProcessingTime,'nbPerDay'),100)"
                 (blur)="getField(ref,$event,'nbPerDay')" (keydown.enter)="getField(ref,$event,'nbPerDay')"
                 (click)="$event.stopPropagation();" min="0" />
             </div>
             <div class="label col no-margin">
               <input #semaine type="number" placeholder="Nb de dossiers"
-                [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
+                [ngClass]="{ modified: ref.isModified === true}"
                 [ngModel]="fixDecimal(getInputValue(ref.averageProcessingTime,'nbPerMonth'))"
                 (blur)="getField(ref,$event,'nbPerMonth')" (keydown.enter)="getField(ref,$event,'nbPerMonth')"
                 (click)="$event.stopPropagation();" min="0" />
@@ -50,21 +49,18 @@
             <div class="column-item">
               <div class="label col">
                 <app-time-selector [value]="getInputValue(itemGroup.averageProcessingTime,'hour')"
-                  (valueChange)="onUpdateOptions(itemGroup, $event,'hour')"
-                  [outsideChange]="itemGroup[getCategoryModifStr()]" [defaultValue]="itemGroup.defaultValue"
-                  [defaultValueFonc]="itemGroup.defaultValueFonc" [category]="categorySelected"
-                  (click)="$event.stopPropagation();"></app-time-selector>
+                  (valueChange)="onUpdateOptions(itemGroup, $event,'hour')" [outsideChange]="itemGroup.isModified"
+                  [defaultValue]="itemGroup.defaultValue" [defaultValueFonc]="itemGroup.defaultValueFonc"
+                  [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
               </div>
               <div class="label col">
-                <input type="number" placeholder="Nb de dossiers"
-                  [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
+                <input type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: itemGroup.isModified === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup.averageProcessingTime,'nbPerDay'))"
                   (blur)="getField(itemGroup,$event,'nbPerDay')" (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
                   (click)="$event.stopPropagation();" min="0" />
               </div>
               <div class="label col no-margin">
-                <input type="number" placeholder="Nb de dossiers"
-                  [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
+                <input type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: itemGroup.isModified === true}"
                   [ngModel]="fixDecimal(getInputValue(itemGroup.averageProcessingTime,'nbPerMonth'))"
                   (blur)="getField(itemGroup,$event,'nbPerMonth')"
                   (keydown.enter)="getField(itemGroup,$event,'nbPerMonth')" (click)="$event.stopPropagation();"
