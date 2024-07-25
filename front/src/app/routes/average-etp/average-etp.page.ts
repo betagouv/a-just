@@ -76,7 +76,9 @@ export class AverageEtpPage extends MainClass {
    */
   constructor(private userService: UserService,
     private contentieuxOptionsService: ContentieuxOptionsService,
-    private router: Router
+    private router: Router,
+    private humanResourceService: HumanResourceService,
+    private referentielService: ReferentielService
   ) {
     super()
 
@@ -214,8 +216,11 @@ export class AverageEtpPage extends MainClass {
         const backupId = this.contentieuxOptionsService.backupId.getValue()
         if (backupId)
           this.goTo(backupId)
-
         form.reset();
       }
+  }
+
+  downloadAsset() {
+    this.contentieuxOptionsService.downloadTemplate(true)
   }
 }

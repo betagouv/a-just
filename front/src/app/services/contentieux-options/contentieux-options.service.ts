@@ -12,6 +12,7 @@ import { dataInterface } from 'src/app/components/select/select.component'
 import { Renderer } from 'xlsx-renderer'
 import * as FileSaver from 'file-saver'
 import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
+import { ReferentielService } from '../referentiel/referentiel.service'
 
 /**
  * Excel file extension
@@ -85,7 +86,8 @@ export class ContentieuxOptionsService extends MainClass {
    */
   constructor(
     private serverService: ServerService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
+    private referentielService: ReferentielService
   ) {
     super()
   }
@@ -456,4 +458,125 @@ export class ContentieuxOptionsService extends MainClass {
       return parseFloat(arrayValue[0]) + parseFloat(arrayValue[1]) / 60
     else return Number(value)
   }
+
+  /**
+   * Fonction qui génère automatiquement le nom du fichier téléchargé
+   * @returns String - Nom du fichier téléchargé
+   */
+  getFileName(label: string | null) {
+    return `Extraction_Référentiel de temps moyen - ` + (label || '')
+  }
+
+
+  /**
+    * Télécharger le referentiel au format excel
+    */
+  downloadTemplate(empty = false) {
+    let ref = this.humanResourceService.contentieuxReferentielOnly.getValue().filter((x) => x.label !== 'Autres activités')
+    console.log(ref)
+
+    const tmpList = this.generateFlateList(empty ? ref : this.referentiel, empty)
+    this.refNameSelected =
+      this.formDatas.getValue().find((x) => x.id === this.backupId.getValue())
+        ?.value || ''
+
+    const viewModel = { referentiels: tmpList }
+
+    fetch('/assets/template0.xlsx')
+      // 2. Get template as ArrayBuffer.
+      .then((response) => response.arrayBuffer())
+      // 3. Fill the template with data (generate a report).
+      .then((buffer) => {
+        return new Renderer().renderFromArrayBuffer(buffer, viewModel)
+      })
+      // 4. Get a report as buffer.
+      .then(async (report) => {
+        return report.xlsx.writeBuffer()
+      })
+      // 5. Use `saveAs` to download on browser site.
+      .then((buffer) => {
+        const filename = empty ? 'Modèle - référentiel de temps moyens ' : this.getFileName(this.refNameSelected)
+        return FileSaver.saveAs(new Blob([buffer]), (filename) + EXCEL_EXTENSION)
+      })
+      .catch((err) => console.log('Error writing excel export', err))
+  }
+
+  /**
+   * Génère une liste de contentieux/sous contentieux à plat
+   * @returns
+   */
+  generateFlateList(list: any, empty = false) {
+    const flatList = new Array()
+    list = empty ? list : list.getValue()
+    console.log(list)
+    list.map((x: any) => {
+      const magAvg = decimalToStringDate(x.averageProcessingTime, ':')
+      flatList.push({
+        ...this.getFileValues(x),
+        ...x,
+        averageProcessingTime: magAvg === '0' || empty ? '' : magAvg,
+      })
+      if (x.childrens) {
+        x.childrens.map((y: any) => {
+          const magAvgChild = decimalToStringDate(y.averageProcessingTime, ':')
+          flatList.push({
+            ...this.getFileValues(y),
+            ...y,
+            averageProcessingTime: magAvgChild === '0' || empty ? '' : magAvgChild,
+          })
+        })
+      }
+    })
+    return flatList
+  }
+
+
+  /**
+   * Calcul les valeurs par jour et pas moi via la valeur de référence en heure
+   * @param ref 
+   * @returns 
+   */
+  getFileValues(ref: any) {
+    return {
+      id: Number(ref.id), nbPerDay: this.getInputValue(
+        ref.averageProcessingTime,
+        'nbPerDay',
+      ),
+      nbPerMonth: this.getInputValue(
+        ref.averageProcessingTime,
+        'nbPerMonth',
+      )
+    }
+  }
+
+  /**
+   * Retourne le temps de traitement d'un point de vue humain
+   * @param avgProcessTime
+   * @param unit
+   * @returns
+   */
+  getInputValue(avgProcessTime: any, unit: string, category?: string | null) {
+    switch (category || 'averageProcessingTime') {
+      case 'averageProcessingTime':
+        if (unit === 'hour') {
+          return decimalToStringDate(avgProcessTime)
+        } else if (unit === 'nbPerDay') {
+          return 8 / avgProcessTime
+        } else if (unit === 'nbPerMonth') {
+          return (8 / avgProcessTime) * (208 / 12)
+        }
+        break
+      case 'averageProcessingTimeFonc':
+        if (unit === 'hour') {
+          return decimalToStringDate(avgProcessTime)
+        } else if (unit === 'nbPerDay') {
+          return 7 / avgProcessTime
+        } else if (unit === 'nbPerMonth') {
+          return (7 / avgProcessTime) * (229.57 / 12)
+        }
+        break
+    }
+    return '0'
+  }
+
 }
