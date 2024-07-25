@@ -184,7 +184,7 @@ export class OptionsBackupPanelComponent
    * Télécharger le referentiel au format excel
    */
   downloadTemplate() {
-    //this.contentieuxOptionsService.downloadTemplate()
+    this.contentieuxOptionsService.downloadTemplate()
   }
 
   /**

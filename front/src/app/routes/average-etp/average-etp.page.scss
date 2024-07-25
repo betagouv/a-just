@@ -145,7 +145,7 @@
 
   .line-item {
     cursor: pointer;
-    height: 50px;
+    min-height: 50px;
     padding-left: 16px;
     border: solid 1px #ddd;
     border-top: none;

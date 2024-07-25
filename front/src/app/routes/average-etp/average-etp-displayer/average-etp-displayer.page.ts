@@ -399,18 +399,10 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
       })
       // 5. Use `saveAs` to download on browser site.
       .then((buffer) => {
-        const filename = this.getFileName(this.refNameSelected)
+        const filename = this.contentieuxOptionsService.getFileName(this.refNameSelected)
         return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
       })
       .catch((err) => console.log('Error writing excel export', err))
-  }
-
-  /**
-   * Fonction qui génère automatiquement le nom du fichier téléchargé
-   * @returns String - Nom du fichier téléchargé
-   */
-  getFileName(label: string | null) {
-    return `Extraction_Référentiel de temps moyen - ` + (label || '')
   }
 
   /**
