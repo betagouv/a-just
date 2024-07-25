@@ -29,10 +29,11 @@
     </div>
     <div class="container radio">
       Appliqué au
-      <button id="type" #type class="radio-button" name="SIEGE">
-        <label class="left" (click)="type.value = 'SIEGE';type.name = 'SIEGE'" [ngStyle]="{'background-color': type.name === 'SIEGE' ? '#e3e3fd' : '#fff',
+      <button id="type" #type class="radio-button" name="{{this.canViewMagistrat?'SIEGE':'GREFFE'}}">
+        <label *ngIf="this.canViewMagistrat" class="left" (click)="type.value = 'SIEGE';type.name = 'SIEGE'" [ngStyle]="{'background-color': type.name === 'SIEGE' ? '#e3e3fd' : '#fff',
         'border':type.name === 'SIEGE' ? 'solid 1px #6a6af4' : 'solid 1px #e5e5e5'}">Siège</label>
-        <label class="right" (click)="type.value = 'Greffe';type.name = 'GREFFE'" [ngStyle]="{'background-color': type.name !== 'SIEGE' ? '#e3e3fd' : '#fff',
+        <label *ngIf="this.canViewGreffier" class="right" (click)="type.value = 'Greffe';type.name = 'GREFFE'"
+          [ngStyle]="{'background-color': type.name !== 'SIEGE' ? '#e3e3fd' : '#fff',
         'border':type.name !== 'SIEGE' ? 'solid 1px #6a6af4' : 'solid 1px #e5e5e5'}">Greffe</label>
       </button>
     </div>

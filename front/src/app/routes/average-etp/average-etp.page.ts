@@ -92,6 +92,13 @@ export class AverageEtpPage extends MainClass {
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         this.backups = b
+        this.backups = this.backups.filter((x) => {
+          if (x.type === 'GREFFE' && this.canViewGreffier)
+            return true
+          if (x.type === 'SIEGE' && this.canViewMagistrat)
+            return true
+          else return false
+        })
         this.backups.map(() => this.checkList.push(false))
       })
     )
@@ -195,7 +202,6 @@ export class AverageEtpPage extends MainClass {
     let name = (document.getElementById('name') as HTMLTextAreaElement)?.value || ''
     let type = (document.getElementById('type') as HTMLButtonElement)?.name
     const file = form['file'].files[0]
-    console.log(file)
     if (name.length === 0)
       alert('Vous devez saisir un nom !')
     else if (!file) {

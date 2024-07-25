@@ -191,7 +191,6 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    * @param event 
    */
   getFocusOn(event: any) {
-    console.log(event, 'focus')
     if (event === true && !this.hRCommentService.mainEditing.getValue()) {
       this.isEditing = event
       this.hRCommentService.mainEditing.next(true)
