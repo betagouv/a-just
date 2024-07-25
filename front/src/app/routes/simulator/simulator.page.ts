@@ -1933,7 +1933,6 @@ export class SimulatorPage
           break
         case 'export':
           {
-            console.log('Exporting...')
             this.printPopup = false
             this.forceDeactivate = true
             this.onResetUserAction()

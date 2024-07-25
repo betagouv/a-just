@@ -215,8 +215,6 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
           this.contentieuxOptionsService.backupId.next(id)
           this.backup = this.backups.find((value) => value.id === id)
           this.subTitleType = this.backup?.type || ''
-          console.log('ID PARAM : ', id)
-          console.log(this.backup)
         }
       })
     )
@@ -247,32 +245,32 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
 
       /*const backupLabel = localStorage.getItem('backupLabel')
       backupLabel && filterReferentiels(referentiels, backupLabel)*/
+      if (this.backup)
+        // todo set in, out, stock for each
+        this.referentiel = referentiels.map((ref) => {
+          const getOption = options.find((a) => a.contentieux.id === ref.id)
+          ref.averageProcessingTime =
+            (getOption && getOption.averageProcessingTime) || null
 
-      // todo set in, out, stock for each
-      this.referentiel = referentiels.map((ref) => {
-        const getOption = options.find((a) => a.contentieux.id === ref.id)
-        ref.averageProcessingTime =
-          (getOption && getOption.averageProcessingTime) || null
+          ref.defaultValue = ref.averageProcessingTime
+          ref.isModified = false
 
-        ref.defaultValue = ref.averageProcessingTime
-        ref.isModified = false
+          ref.childrens = (ref.childrens || []).map((c) => {
+            const getOptionActivity = options.find(
+              (a) => a.contentieux.id === c.id
+            )
+            c.averageProcessingTime =
+              (getOptionActivity && getOptionActivity.averageProcessingTime) ||
+              null
 
-        ref.childrens = (ref.childrens || []).map((c) => {
-          const getOptionActivity = options.find(
-            (a) => a.contentieux.id === c.id
-          )
-          c.averageProcessingTime =
-            (getOptionActivity && getOptionActivity.averageProcessingTime) ||
-            null
+            c.defaultValue = c.averageProcessingTime
+            c.isModified = false
 
-          c.defaultValue = c.averageProcessingTime
-          c.isModified = false
+            return c
+          })
 
-          return c
+          return ref
         })
-
-        return ref
-      })
 
 
       this.contentieuxOptionsService.referentiel.next(this.referentiel)

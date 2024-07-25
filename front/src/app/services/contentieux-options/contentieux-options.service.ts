@@ -107,7 +107,6 @@ export class ContentieuxOptionsService extends MainClass {
   loadBackupsAndId() {
     const juridictionId = this.humanResourceService.backupId.getValue()
     if (juridictionId !== null) {
-      console.log(juridictionId)
       this.optionsIsModify.next(false)
       this.getAllContentieuxOptions(juridictionId).then((result) => {
         this.nbOfBackups.next(result.backups.length)
