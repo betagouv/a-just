@@ -1,24 +1,67 @@
 @import '../../styles/utils.scss';
 
+:host {
 
-:host{
-.ref-button{
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 55px;
-  mat-icon{
-    position: inherit;
-  }
-  div{
+  .filters-item {
+    height: 32px;
+    border: solid 1px #ddd;
+    background-color: #f6f6f6;
+    padding: 0 18px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-      p{line-height: 18px;}
+    align-items: center;
+
+    .fonction-values {
+      font-size: 12px;
+      line-height: 19px;
+      display: inline;
+      height: 24px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background-color: #dee5fd;
+      color: #6e445a;
+    }
+  }
+
+  .dates-selector {
+    display: flex;
+    position: relative;
+
+    mat-icon {
+      position: absolute;
+      left: 131px;
+      top: 11px;
+      font-size: 11px;
+      color: #929292;
+
+    }
+  }
+
+
+  .grey {
+    color: #929292 !important;
+  }
+
+  button {
+    &.export {
+      height: 40px;
+      border-radius: 4px;
+      border: solid 1px #f6f6f6;
+      background-color: #000091;
+      line-height: 40px !important;
+
+      mat-icon {
+        margin-right: 11px;
+        font-size: 23px;
+      }
+
+      label {
+        bottom: 2px;
+        position: relative;
+      }
+    }
   }
 }
-}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -35,70 +78,28 @@
   z-index: 1;
 }
 
-.title-header-calculator {
-  display: flex;
-  padding: 24px 0 16px 0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  z-index: 1;
-
-  .item {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-
-    &.activity p {
-      color: fColor(cyellowdark);
-      background-color: fColor(cyellowlight);
-    }
-
-    &.calculate p {
-      color: fColor(cbluedark);
-      background-color: fColor(cbluemiddle);
-    }
-
-    p {
-      border-radius: 16px;
-      padding: 4px 12px;
-      background-color: fColor(cgrayDefault);
-      color: fColor(cblackdark);
-      font-weight: bold;
-      font-size: 14px;
-      position: relative;
-
-      i {
-        font-size: 16px;
-        position: relative;
-        top: 3px;
-        margin-left: 4px;
-        cursor: pointer;
-      }
-    }
-  }
-}
-
 .contentieux-header-calculator {
   display: flex;
-  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+
+  min-height: 80px;
 
   .width-contentieux {
     display: flex;
     align-items: flex-end;
 
     p {
-      margin-left: 12px;
-      margin-bottom: 30px;
+      margin-left: 16px;
+      margin-bottom: 40px;
     }
   }
 
   p {
+    line-height: 1.33;
+    text-align: center;
+    color: #161616;
+
     font-size: 12px;
-    font-weight: bold;
-    color: fColor(cblackdark);
-    margin-top: 4px;
-    letter-spacing: -0.19px;
+    margin-top: 12px;
   }
 
   .item {
@@ -106,15 +107,20 @@
     display: flex;
     align-items: stretch;
 
-    &.activity, &.calculate {
-      border-left: 1px solid fColor(bgTag);
+    &.activity {
+
+      //border-left: 1px solid fColor(bgTag);
+      &.tmd {
+        flex: 0.5;
+      }
     }
 
-    &.activity, &.datas {
-      border-right: 1px solid fColor(bgTag);
+    &.activity,
+    &.datas {
+      //border-right: 1px solid fColor(bgTag);
     }
 
-    > div {
+    >div {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -122,8 +128,8 @@
       cursor: pointer;
 
       &.selected {
-        background-color: fColor(bgHeaderSelected);
 
+        //background-color: fColor(bgHeaderSelected);
         i {
           color: fColor(sortIconHeaderSelected);
         }
@@ -148,14 +154,14 @@
 
 aj-select,
 aj-options-backup-panel {
-  margin-left: 16px;
+  margin-left: 8px;
 }
 
 aj-date-select {
   &.date-start {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    margin-left: 16px;
+    margin-left: 8px;
   }
 
   &.date-stop {
@@ -172,28 +178,34 @@ aj-referentiel-calculator:nth-child(even) {
 .sub-main-header {
   display: flex;
   align-items: center;
-  height: 71px;
+  height: 48px;
   box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
     0 20px 25px -5px rgba(0, 0, 0, 0.1);
   background-color: fColor(bgSelect);
   width: calc(100% - 2px);
+  padding: 0px 16px;
 
-  > aj-options-backup-panel {
+  >aj-options-backup-panel {
     margin-right: 24px;
   }
 }
 
-.categories-switch {
+.categories-switch,
+.switch-tab {
   display: flex;
   align-items: stretch;
-  height: 55px;
+  height: 32px;
+  background-color: white;
+  border-radius: 4px;
 
-  > div {
+  >div {
     display: flex;
     align-items: center;
     padding: 0 16px;
     cursor: pointer;
     border: solid 1px fColor(cgraylightv3);
+
+
 
     &.alone {
       border-radius: 4px;
@@ -202,33 +214,91 @@ aj-referentiel-calculator:nth-child(even) {
     p {
       font-size: 16px;
       line-height: 1.5;
-      margin-left: 8px;
-      color: fColor(colorTag);
+      //margin-left: 8px;
+      color: #3a3a3a;
     }
   }
 
-  > .magistrats {
+  >.magistrats,
+  .brut {
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
+    padding: 0 8px;
 
     &.selected {
       border: solid 1px fColor(cbluedark);
       background-color: fColor(cbluemiddle);
+
+      p {
+        color: fColor(cbluedark);
+      }
     }
   }
 
-  > .fonctionnaires {
+  >.fonctionnaires {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
+    padding: 0 8px;
 
     &.selected {
       border: solid 1px fColor(cpink);
       background-color: fColor(cpinkmiddle);
+
+      p {
+        color: fColor(cpink);
+      }
+    }
+  }
+
+  >.brut {
+    i {
+      font-size: 24px;
+      margin-right: 8px;
+      color: #666666;
+
+    }
+
+    &.selected {
+      border: solid 1px #6a6af4;
+      background-color: fColor(cbluemiddle);
+
+      i {
+        color: #6a6af4;
+      }
+
+      p {
+        color: #6a6af4;
+      }
+    }
+  }
+
+  >.analytique {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+
+    i {
+      font-size: 24px;
+      margin-right: 8px;
+      color: #666666;
+
+    }
+
+    &.selected {
+      border: solid 1px #6a6af4;
+      background-color: fColor(cbluemiddle);
+
+      i {
+        color: #6a6af4;
+      }
+
+      p {
+        color: #6a6af4;
+      }
     }
   }
 }
 
 // class size
 .width-contentieux {
-  width: 143px;
+  width: 152px;
 }

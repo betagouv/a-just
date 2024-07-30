@@ -160,6 +160,14 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         "Si vous avez renseigné des temps moyens de référence, il vous suffit de <b>sélectionner le référentiel de votre choix dans ce menu déroulant</b>.",
     },
   ]
+  /**
+   * Labels of fct selected
+   */
+  fonctionRealValue = ''
+  /**
+   * Onglet selectionné
+   */
+  tabSelected = 0
 
   /**
    * Constructeur
@@ -266,7 +274,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Demande au serveur quelle est la dernière date des datas
-   */
+ */
   onCheckLastMonth() {
     if (
       this.calculatorService.dateStart.getValue() === null &&
@@ -422,6 +430,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.selectedFonctionsIds = fonctionsId.map((f) => +f)
     this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
     this.onLoad()
+    this.getFctRealValue()
   }
 
   /**
@@ -515,5 +524,29 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.contentieuxOptionsService.optionsIsModify.next(true)
     this.contentieuxOptionsService.onSaveDatas(true)
 
+  }
+
+  /**
+   * Génère la valeur du filtre de fonction
+   */
+  getFctRealValue() {
+    let tmpStr = ''
+    let counter = 0
+    this.selectedFonctionsIds.map((id) => {
+      const find = this.fonctions.find((d) => d.id === id)
+      if (find) {
+        if (counter < 3)
+          tmpStr = tmpStr.length ? [tmpStr, find.value].join(', ') : find.value
+        counter++
+      }
+    })
+    if (counter > 4) tmpStr = tmpStr + ' et ' + (counter - 3) + ' autres de plus'
+    else if (counter === 4)
+      tmpStr = tmpStr + ' et ' + (counter - 3) + ' autre de plus'
+
+    if (this.selectedFonctionsIds.length === this.fonctions.length)
+      tmpStr = ''
+
+    this.fonctionRealValue = tmpStr
   }
 }
