@@ -191,6 +191,8 @@ export function referentielMappingColorActivity(
       return `rgba(254, 234, 212, ${opacity})`
     case 'JLD civil':
       return `rgba(218, 212, 237, ${opacity})`
+    case 'other':
+      return '#d8dadc'
   }
 
   return ''

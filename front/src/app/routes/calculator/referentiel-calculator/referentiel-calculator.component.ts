@@ -64,7 +64,7 @@ export class ReferentielCalculatorComponent extends MainClass {
    * Constructor
    */
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private referentielService: ReferentielService,
     private calculatorService: CalculatorService,
     private activitiesService: ActivitiesService,

@@ -4,6 +4,7 @@ import {
   OnChanges,
   Output,
   EventEmitter,
+  TemplateRef,
 } from '@angular/core'
 import { MainClass } from 'src/app/libs/main-class'
 
@@ -103,6 +104,10 @@ export class SelectComponent
    */
   @Input() defaultAllValue: string | null = null
   /**
+* Parmétrage au niveau des boutons d'actions en haut à gauche
+*/
+  @Input() subTitleTemplate: TemplateRef<any> | undefined
+  /**
    * Remonte au parent la ou les valeurs selectionnée
    */
   @Output() valueChange: EventEmitter<number[] | string[]> = new EventEmitter()
@@ -128,7 +133,7 @@ export class SelectComponent
   ngOnChanges() {
     this.findRealValue()
   }
-  
+
   /**
    * Création et recherche du champ visible par humain soit le realValue
    */
@@ -211,19 +216,20 @@ export class SelectComponent
     this.findRealValue()
   }
 
-    /**
-   * Verification de l'emplacement du menu déroulent lorsqu'il est ouvert
-   */
-    openDropDown(matSelect:any){
-      matSelect.open()
-      setTimeout(()=>{
-        var dropDowns = document.querySelectorAll('[id^="cdk-overlay"]')
-        dropDowns.forEach(el=>{
+  /**
+ * Verification de l'emplacement du menu déroulent lorsqu'il est ouvert
+ */
+  openDropDown(matSelect: any) {
+    matSelect.open()
+    setTimeout(() => {
+      var dropDowns = document.querySelectorAll('[id^="cdk-overlay"]')
+      dropDowns.forEach(el => {
         var rect = el.getBoundingClientRect();
-        if(rect.left+rect.width>window.innerWidth) {
-         (el as HTMLElement).style.left = "auto";
-         (el as HTMLElement).style.right = "0px";
+        if (rect.left + rect.width > window.innerWidth) {
+          (el as HTMLElement).style.left = "auto";
+          (el as HTMLElement).style.right = "0px";
         }
-      })},1)
-      }
+      })
+    }, 1)
+  }
 }

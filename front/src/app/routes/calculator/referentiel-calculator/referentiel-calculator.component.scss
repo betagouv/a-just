@@ -3,80 +3,126 @@
 :host {
   display: block;
 
-  &.show-children > .main-referentiel {
-    border-top: solid 1px fColor(bgRowBorderSelected);
+  .left-border {
+    border-left: solid 1px #f6f6f6 !important;
+  }
 
-    > .contentieux {
+  &.show-children>.main-referentiel {
+
+
+    >.contentieux {
+
       mat-icon,
       p {
-        color: fColor(borderProgressBar);
+        color: #3a3a3a;
       }
-    }
-
-    > .actual {
-      background-color: fColor(bgRowSelected);
-    }
-
-    > .item.activity {
-      background-color: fColor(bgRowSelected);
-    }
-
-    > .item.calculate {
-      background-color: fColor(bgRowSelected);
     }
   }
 
   &.is-child {
-    > .main-referentiel {
-      > .contentieux p {
+
+    >.main-referentiel {
+      min-height: 56px;
+      height: fit-content;
+      position: relative;
+      border-top: solid 1px #f6f6f6;
+
+
+      >.contentieux p {
         text-align: right;
+        padding-right: 16px;
       }
 
-      .item {
-        &.activity,
-        &.calculate {
-          > div {
-            box-shadow: none;
-            border: solid 1px fColor(cgraylightv3);
-          }
-        }
-      }
     }
   }
 
-  > .main-referentiel {
+  >.main-referentiel {
     display: flex;
-    min-height: 64px;
+    height: 56px;
+    border-top: solid 1px #f6f6f6;
 
-    > .contentieux {
+    >.actual {
+      border-left: solid 1px #f6f6f6;
+    }
+
+    >.item.activity {
+      border-left: solid 1px #f6f6f6;
+
+    }
+
+    >.item.calculate {
+      border-left: solid 1px #f6f6f6;
+
+    }
+
+    >.contentieux {
       display: flex;
       align-items: center;
       cursor: pointer;
 
+      mat-icon {
+        margin-left: 8px;
+        color: #3a3a3a;
+      }
+
       p {
+        bottom: 1px;
+        position: relative;
+        font-size: 14px;
         font-weight: bold;
+        color: #3a3a3a;
+        padding-right: 16px;
+
         text-align: left;
         margin: 4px 0 4px 8px;
         flex: 1;
       }
     }
 
-    > .item {
+    >.item {
       flex: 1;
       display: flex;
       align-items: stretch;
 
+      &.tmd {
+        flex: 0.5;
+
+        div {
+          &.selected {
+            background-color: initial;
+          }
+        }
+
+        div>div {
+          align-items: flex-end !important;
+          padding: 0 24px;
+
+          div>p {
+            padding-right: 0 !important;
+
+          }
+        }
+
+        div>div>div>p {
+          font-weight: bold !important;
+          font-size: 12px !important;
+          color: #f99090 !important;
+          padding-right: 24px;
+
+        }
+      }
+
       &.actual {
         cursor: pointer;
-        > div {
+
+        >div {
           align-self: stretch;
-          margin: 0 2px;
           width: calc(100% - 4px);
         }
 
         .ref-nr {
-          margin: 4px 0;
-          height: calc(100% - 8px);
+          margin: 0 2px;
+          height: 40px;
         }
       }
 
@@ -84,12 +130,13 @@
       &.calculate {
         padding: 4px 2px;
 
-        > div {
-          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        >div {
           border-radius: 4px;
           align-items: stretch;
 
-          > div {
+
+
+          >div {
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -101,17 +148,27 @@
               border-bottom-right-radius: 4px;
             }
 
-            > div {
+            >div {
               align-self: stretch;
-              padding: 2px;
               display: flex;
               flex-direction: column;
               align-items: center;
 
-              > p {
+              &.dtes {
+                align-items: flex-end !important;
+                padding: 0 24px;
+              }
+
+              >div {
+                justify-content: flex-end !important;
+                padding-right: 24px;
+              }
+
+              >p {
                 color: fColor(cblack);
-                font-weight: bold;
+                font-weight: 500;
                 font-size: 14px;
+                text-align: end;
 
                 &.unity {
                   color: fColor(grayRow);
@@ -122,20 +179,20 @@
             }
 
             .ref-nr {
-              height: 52px;
+              height: 40px;
             }
           }
         }
       }
 
-      > div {
+      >div {
         flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
 
         &.selected {
-          background-color: fColor(bgHeaderSelected);
+          //background-color: fColor(bgHeaderSelected);
         }
 
         p {
@@ -145,12 +202,10 @@
     }
   }
 
-  > .childrens {
-    background-color: fColor(bgProgressBar);
+  >.childrens {
+    background-color: white;
 
-    > aj-referentiel-calculator {
-      border-bottom: 1px solid fColor(cgrayDefault);
-
+    >aj-referentiel-calculator {
       &:last-child {
         border-bottom: none;
       }
@@ -190,7 +245,7 @@ p {
 
 // class size
 .width-contentieux {
-  width: 143px;
+  width: 152px;
 }
 
 aj-speedometer {
