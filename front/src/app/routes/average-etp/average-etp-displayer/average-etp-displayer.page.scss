@@ -149,7 +149,7 @@ aj-back-button {
                     //width: 254px;
 
                     &.head {
-                        width: 264px;
+                        width: 300px;
 
                         //border-right: solid 1px white;
                         p {
@@ -218,7 +218,7 @@ aj-back-button {
             }
 
             p {
-                font-size: 16px;
+                font-size: 14px;
                 line-height: 1.5;
                 margin-left: 8px;
                 color: fColor(colorTag);
@@ -298,7 +298,6 @@ aj-back-button {
             display: flex;
 
             &.empty {
-                margin-left: 15px;
                 width: 300px;
                 height: 80px;
                 font-size: 12px;
@@ -312,6 +311,7 @@ aj-back-button {
                 vertical-align: initial;
                 top: 1.25px;
                 position: relative;
+                font-size: 24px;
             }
         }
     }
@@ -353,10 +353,12 @@ aj-back-button {
             &.head {
                 padding-left: 15px;
                 width: 300px;
-                margin: 25px 0px 25px 15px;
+                margin: 25px 0px 25px 0px;
 
                 p {
-                    margin-left: 40px;
+                    font-size: 14px;
+                    margin-left: 24px;
+                    font-weight: bold;
                 }
             }
 
@@ -419,7 +421,7 @@ aj-back-button {
                 .label {
                     //width: 296px;
                     //padding-left: 8px;
-                    margin-left: 51px;
+                    padding-left: 51px;
                 }
 
                 .column-item {
