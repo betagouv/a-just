@@ -22,7 +22,6 @@ import {
   userCanViewGreffier,
   userCanViewMagistrat,
 } from 'src/app/utils/user'
-//import { filterReferentielCalculator } from 'src/app/utils/referentiel'
 
 /**
  * Page du calculateur
@@ -167,7 +166,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   /**
    * Onglet selectionné
    */
-  tabSelected = 0
+  tabSelected = 1
 
   /**
    * Constructeur
