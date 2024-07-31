@@ -12,9 +12,10 @@ import { SelectModule } from 'src/app/components/select/select.module'
 import { DateSelectModule } from 'src/app/components/date-select/date-select.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
 import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
+import { ViewAnalyticsComponent } from './view-analytics/view-analytics.component'
 
 @NgModule({
-  declarations: [CalculatorPage, ReferentielCalculatorComponent],
+  declarations: [CalculatorPage, ReferentielCalculatorComponent, ViewAnalyticsComponent],
   imports: [
     CalculatorPageModule,
     RouterModule,
@@ -30,4 +31,4 @@ import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
     IntroJSModule,
   ],
 })
-export class CalculatorModule {}
+export class CalculatorModule { }
