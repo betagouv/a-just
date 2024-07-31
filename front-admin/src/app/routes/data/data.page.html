@@ -94,7 +94,9 @@
           <th>TJ</th>
           <th>Contentieux</th>
           <th>Last</th>
+          <th>Periode</th>
           <th>New</th>
+          <th>Periode</th>
           <th>Type</th>
         </tr>
       </thead>
@@ -102,8 +104,10 @@
         <tr *ngFor="let elem of dataIssues">
           <td>{{ elem.hr_backup_label }}</td>
           <td>{{ elem.contentieux_label }}</td>
-          <td>{{ elem.last }}</td>
-          <td>{{ elem.new }}</td>
+          <td>{{ elem.last ?? 'null' }}</td>
+          <td>{{ elem.lastPeriode }}</td>
+          <td>{{ elem.new ?? 'null'}}</td>
+          <td>{{ elem.newPeriode }}</td>
           <td>{{ elem.type }}</td>
         </tr>
       </tbody>

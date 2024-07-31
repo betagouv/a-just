@@ -5,7 +5,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service';
 import { ImportService } from 'src/app/services/import/import.service';
 import { orderBy, sortBy, groupBy } from 'lodash'
-import { getShortMonthString } from 'src/app/utils/dates';
+import { getMonthAndYear, getShortMonthString } from 'src/app/utils/dates';
 import { exportFileToString } from 'src/app/utils/file';
 import { BackupInterface } from 'src/app/interfaces/backup';
 import * as FileSaver from 'file-saver'
@@ -277,42 +277,42 @@ export class DataPage {
    * @param monthTabName
    * @returns
    */
-    generateFormatedDataMonthForCompare(act: any, monthTabName: string, total = false) {
-      const sortCodeArray = act.contentieux.code_import
-        .split('.').filter((y: String) => y !== '').map((x: string) => x === '0' ? 0.1 : Number(x))
+  generateFormatedDataMonthForCompare(act: any, monthTabName: string, total = false) {
+    const sortCodeArray = act.contentieux.code_import
+      .split('.').filter((y: String) => y !== '').map((x: string) => x === '0' ? 0.1 : Number(x))
   
-        
-      const ref = this.humanResourceService.contentieuxReferentielOnly.value.map(x => x.id).includes(act.idReferentiel) === true ? true : false
-      const obj = {
-        [' ']: ref === true ? 'Total ' + act.contentieux.label : act.contentieux.label,
-        ['codeUnit']: sortCodeArray[0] || 0,
-        ['codeCent']: sortCodeArray[1] * 10 || -1,
-        Période: monthTabName,
-        [total === true ? 'Total A-JUST - Entrées' : 'A-JUST - Entrées']: act.originalEntrees,
-        [total === true ? 'Total A-JUSTÉ - Entrées' : 'A-JUSTÉ - Entrées']: act.entrees,
-        [total === true ? 'Total Pharos - Entrées' : 'Pharos - Entrées']: '',
-        [total === true ? 'Total TJ - Entrées' : 'TJ - Entrées']: '',
-        ['Ecart A-JUST / Pharos - Entrées']: '',
-        ['Ecart A-JUST / TJ - Entrées']: '',
+      
+    const ref = this.humanResourceService.contentieuxReferentielOnly.value.map(x => x.id).includes(act.idReferentiel) === true ? true : false
+    const obj = {
+      [' ']: ref === true ? 'Total ' + act.contentieux.label : act.contentieux.label,
+      ['codeUnit']: sortCodeArray[0] || 0,
+      ['codeCent']: sortCodeArray[1] * 10 || -1,
+      Période: monthTabName,
+      [total === true ? 'Total A-JUST - Entrées' : 'A-JUST - Entrées']: act.originalEntrees,
+      [total === true ? 'Total A-JUSTÉ - Entrées' : 'A-JUSTÉ - Entrées']: act.entrees,
+      [total === true ? 'Total Pharos - Entrées' : 'Pharos - Entrées']: '',
+      [total === true ? 'Total TJ - Entrées' : 'TJ - Entrées']: '',
+      ['Ecart A-JUST / Pharos - Entrées']: '',
+      ['Ecart A-JUST / TJ - Entrées']: '',
 
-        
-        [total === true ? 'Total A-JUST - Sorties' : 'A-JUST - Sorties']: act.originalSorties,
-        [total === true ? 'Total A-JUSTÉ - Sorties' : 'A-JUSTÉ - Sorties']: act.sorties,
-        [total === true ? 'Total Pharos - Sorties' : 'Pharos - Sorties']: '',
-        [total === true ? 'Total TJ - Sorties' : 'TJ - Sorties']: '',
-        ['Ecart A-JUST / Pharos - Sorties']: '',
-        ['Ecart A-JUST / TJ - Sorties']: '',
+      
+      [total === true ? 'Total A-JUST - Sorties' : 'A-JUST - Sorties']: act.originalSorties,
+      [total === true ? 'Total A-JUSTÉ - Sorties' : 'A-JUSTÉ - Sorties']: act.sorties,
+      [total === true ? 'Total Pharos - Sorties' : 'Pharos - Sorties']: '',
+      [total === true ? 'Total TJ - Sorties' : 'TJ - Sorties']: '',
+      ['Ecart A-JUST / Pharos - Sorties']: '',
+      ['Ecart A-JUST / TJ - Sorties']: '',
 
-        [total === true ? 'Total A-JUST - Stocks' : 'A-JUST - Stocks']: act.originalStock,
-        [total === true ? 'Total A-JUSTÉ - Stocks' : 'A-JUSTÉ - Stocks']: act.stock,
-        [total === true ? 'Total Pharos - Stocks' : 'Pharos - Stocks']: '',
-        [total === true ? 'Total TJ - Stocks' : 'TJ - Stocks']: '',
-        ['Ecart A-JUST / Pharos - Stocks']: '',
-        ['Ecart A-JUST / TJ - Stocks']: '',
-        ['Observations']: ''
-      }
-      return obj
+      [total === true ? 'Total A-JUST - Stocks' : 'A-JUST - Stocks']: act.originalStock,
+      [total === true ? 'Total A-JUSTÉ - Stocks' : 'A-JUSTÉ - Stocks']: act.stock,
+      [total === true ? 'Total Pharos - Stocks' : 'Pharos - Stocks']: '',
+      [total === true ? 'Total TJ - Stocks' : 'TJ - Stocks']: '',
+      ['Ecart A-JUST / Pharos - Stocks']: '',
+      ['Ecart A-JUST / TJ - Stocks']: '',
+      ['Observations']: ''
     }
+    return obj
+  }
 
 
   onExtractData(form: any) {
@@ -511,6 +511,15 @@ export class DataPage {
                 });
             }
           } else {
+            const tmp = to_warn.map((elem : any) => {
+              return (
+              {
+                ...elem,
+                lastPeriode: getMonthAndYear(elem.lastPeriode),
+                newPeriode: getMonthAndYear(elem.newPeriode),
+              })
+            })
+            to_warn = tmp
             alert('Problèmes détectés !')
             this.dataIssues = to_warn
             this.printDataImportIssues = true
@@ -543,7 +552,8 @@ export class DataPage {
       this.importService
       .checkDataBeforeImportOne({ file: fileToString, backupId })
       .then((response : any) => {
-        const to_warn = response.data.to_warn
+        let to_warn = response.data.to_warn
+        console.log('to_warn:', to_warn)
 
         if (to_warn.length === 0) {
           if(confirm("Aucun Problème détecté ! Importer ?")) {
@@ -556,6 +566,15 @@ export class DataPage {
               });
           }
         } else {
+          const tmp = to_warn.map((elem : any) => {
+            return (
+            {
+              ...elem,
+              lastPeriode: getMonthAndYear(elem.lastPeriode),
+              newPeriode: getMonthAndYear(elem.newPeriode),
+            })
+          })
+          to_warn = tmp
           alert('Problèmes détectés !')
           this.dataIssues = to_warn
           this.printDataImportIssues = true
