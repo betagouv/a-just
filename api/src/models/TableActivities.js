@@ -1020,7 +1020,9 @@ export default (sequelizeInstance, Model) => {
               ...gap,
               hr_backup_label: await Model.models.HRBackups.findById(to_create[i].hr_backup_id).then(res => {return res.label}),
               contentieux_label: await Model.models.ContentieuxReferentiels.getOneReferentiel(to_create[i].contentieux_id).then(res => { return res.label }),
-              type: types[type]
+              type: types[type],
+              lastPeriode: periode,
+              newPeriode: new Date(year, to_create[i].periode.slice(-2) - 1),
             })
           }
         }
@@ -1148,7 +1150,9 @@ export default (sequelizeInstance, Model) => {
                 ...gap,
                 hr_backup_label: await Model.models.HRBackups.findById(to_create[i].hr_backup_id).then(res => {return res.label}),
                 contentieux_label: await Model.models.ContentieuxReferentiels.getOneReferentiel(to_create[i].contentieux_id).then(res => { return res.label }),
-                type: types[type]
+                type: types[type],
+                lastPeriode: periode,
+                newPeriode: new Date(year, to_create[i].periode.slice(-2) - 1),
               })
             }
           }
