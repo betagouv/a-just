@@ -1,1 +1,16 @@
 <p>Salut</p>
+
+<aj-graphs-verticals-lines referentielName="Siège Pénal" [values]="[20, 40]"
+    [maxValue]="30"></aj-graphs-verticals-lines>
+<aj-graphs-verticals-lines referentielName="Contentieux JAF" [values]="[40]"></aj-graphs-verticals-lines>
+<aj-graphs-verticals-lines referentielName="Contentieux de la Protection"
+    [values]="[40, 70]"></aj-graphs-verticals-lines>
+
+<aj-graphs-numbers referentielName="Siège Pénal" title="30,99" subTitle="mois"
+    class="no-border-bottom"></aj-graphs-numbers>
+<aj-graphs-numbers referentielName="Siège Pénal" title="30,99" subTitle="mois" [isWhite]="true"
+    class="no-border-top"></aj-graphs-numbers>
+<aj-graphs-numbers referentielName="Contentieux de la Protection" title="30,99"></aj-graphs-numbers>
+
+<aj-graphs-progress referentielName="Siège Pénal" [percent]="50"></aj-graphs-progress>
+<aj-graphs-progress referentielName="Contentieux de la Protection" [percent]="100"></aj-graphs-progress>
