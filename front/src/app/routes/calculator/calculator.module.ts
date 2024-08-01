@@ -13,9 +13,12 @@ import { DateSelectModule } from 'src/app/components/date-select/date-select.mod
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
 import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
 import { ViewAnalyticsComponent } from './view-analytics/view-analytics.component'
+import { GraphsVerticalsLinesComponent } from './view-analytics/graphs-verticals-lines/graphs-verticals-lines.component'
+import { GraphsNumbersComponent } from './view-analytics/graphs-numbers/graphs-numbers.component'
+import { GraphsProgressComponent } from './view-analytics/graphs-progress/graphs-progress.component'
 
 @NgModule({
-  declarations: [CalculatorPage, ReferentielCalculatorComponent, ViewAnalyticsComponent],
+  declarations: [CalculatorPage, ReferentielCalculatorComponent, ViewAnalyticsComponent, GraphsVerticalsLinesComponent, GraphsNumbersComponent, GraphsProgressComponent],
   imports: [
     CalculatorPageModule,
     RouterModule,
