@@ -13,6 +13,10 @@
     border-bottom-right-radius: 4px;
     padding: 6px 8px;
 
+    &.text-center {
+        align-items: center;
+    }
+
     &.no-border-bottom {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;

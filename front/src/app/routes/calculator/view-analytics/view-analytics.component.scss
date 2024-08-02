@@ -1,3 +1,99 @@
 @import '../../../styles/utils.scss';
 
-:host {}
+:host {
+    display: block;
+    height: calc(100% - 48px);
+
+    button {
+        height: 24px;
+        padding: 2px 9px 2px 8px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        background-color: #fff;
+        color: #929292;
+        font-size: 12px;
+        line-height: 1;
+    }
+
+    aj-graphs-verticals-lines {
+        margin-bottom: 10px;
+    }
+
+    aj-graphs-numbers.no-border-bottom {
+        margin-bottom: 2px;
+    }
+
+
+    .header-refs {
+        display: flex;
+        height: 40px;
+        align-items: center;
+        padding-right: 16px;
+        border-top: solid 1px #ddd;
+        border-bottom: solid 1px #ddd;
+        background-color: #f6f6f6;
+
+        >div:first-child {
+            width: 162px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        >div:last-child {
+            padding-left: 11px;
+            display: flex;
+            flex: 1;
+            align-items: center;
+            gap: 5px;
+
+            >div {
+                flex: 1;
+                text-align: center;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: bold;
+                height: 20px;
+            }
+        }
+    }
+
+    .scroll-container {
+        overflow: auto;
+        height: calc(100% - 40px);
+
+        >div {
+            display: flex;
+            border-bottom: solid 1px #ddd;
+        }
+    }
+
+    .container-colum {
+        border-right: solid 1px #ddd;
+        width: 162px;
+        background-color: #f6f6f6;
+        padding: 16px;
+
+        >p.title-section {
+            font-size: 14px;
+            font-weight: bold;
+            color: #3a3a3a;
+        }
+    }
+
+    .container-elements {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        gap: 5px;
+        padding-left: 11px;
+        padding-right: 16px;
+
+        >div {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 16px 0;
+        }
+    }
+}

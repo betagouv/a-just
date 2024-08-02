@@ -1,16 +1,114 @@
-<p>Salut</p>
+<div class="header-refs">
+    <div>
+        <button>Voir tous les détails</button>
+    </div>
+    <div>
+        <div *ngFor="let ref of referentiel" class="flex-1" [style.color]="referentielMappingColor(ref.label)"
+            [style.background-color]="referentielMappingColor(ref.label, 0.2)">
+            {{referentielMappingName(ref.label)}}
+        </div>
+    </div>
+</div>
 
-<aj-graphs-verticals-lines referentielName="Siège Pénal" [values]="[20, 40]"
-    [maxValue]="30"></aj-graphs-verticals-lines>
-<aj-graphs-verticals-lines referentielName="Contentieux JAF" [values]="[40]"></aj-graphs-verticals-lines>
-<aj-graphs-verticals-lines referentielName="Contentieux de la Protection"
-    [values]="[40, 70]"></aj-graphs-verticals-lines>
+<div class="scroll-container">
+    <div>
+        <div class="container-colum">
+            <p class="title-section">DTES</p>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[20, 40]"
+                    [maxValue]="30"></aj-graphs-verticals-lines>
+                <aj-graphs-numbers [referentielName]="ref.label" title="30,99" subTitle="mois"
+                    class="no-border-bottom"></aj-graphs-numbers>
+                <aj-graphs-numbers [referentielName]="ref.label" title="30,99" subTitle="mois" [isWhite]="true"
+                    class="no-border-top"></aj-graphs-numbers>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container-colum">
+            <p class="title-section">Taux de couverture</p>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel" class="flex-1">
+                <aj-graphs-progress [referentielName]="ref.label" [percent]="50"></aj-graphs-progress>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container-colum">
+            <p class="title-section">Stock</p>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[20, 40]"
+                    [maxValue]="30"></aj-graphs-verticals-lines>
+                <aj-graphs-numbers [referentielName]="ref.label" title="30,99" class="text-center"
+                    [isWhite]="true"></aj-graphs-numbers>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container-colum">
+            <p class="title-section">Entrées</p>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[20, 40]"
+                    [maxValue]="30"></aj-graphs-verticals-lines>
+                <aj-graphs-numbers [referentielName]="ref.label" title="30,99" class="text-center"
+                    [isWhite]="true"></aj-graphs-numbers>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container-colum">
+            <p class="title-section">Sorties</p>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[20, 40]"
+                    [maxValue]="30"></aj-graphs-verticals-lines>
+                <aj-graphs-numbers [referentielName]="ref.label" title="30,99" class="text-center"
+                    [isWhite]="true"></aj-graphs-numbers>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container-colum">
+            <p class="title-section">ETPT Siège</p>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[20, 40]"
+                    [maxValue]="30"></aj-graphs-verticals-lines>
+                <aj-graphs-numbers [referentielName]="ref.label" title="30,99" class="text-center"
+                    [isWhite]="true"></aj-graphs-numbers>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container-colum">
+            <p class="title-section">ETPT EAM</p>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[20, 40]"
+                    [maxValue]="30"></aj-graphs-verticals-lines>
+                <aj-graphs-numbers [referentielName]="ref.label" title="30,99" class="text-center"
+                    [isWhite]="true"></aj-graphs-numbers>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container-colum">
+            <p class="title-section">Temps moyen siège</p>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel" class="flex-1">
 
-<aj-graphs-numbers referentielName="Siège Pénal" title="30,99" subTitle="mois"
-    class="no-border-bottom"></aj-graphs-numbers>
-<aj-graphs-numbers referentielName="Siège Pénal" title="30,99" subTitle="mois" [isWhite]="true"
-    class="no-border-top"></aj-graphs-numbers>
-<aj-graphs-numbers referentielName="Contentieux de la Protection" title="30,99"></aj-graphs-numbers>
-
-<aj-graphs-progress referentielName="Siège Pénal" [percent]="50"></aj-graphs-progress>
-<aj-graphs-progress referentielName="Contentieux de la Protection" [percent]="100"></aj-graphs-progress>
+            </div>
+        </div>
+    </div>
+</div>

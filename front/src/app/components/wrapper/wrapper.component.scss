@@ -112,6 +112,12 @@
     }
   }
 
+  &.no-scroll {
+    .content {
+      overflow: inherit !important;
+    }
+  }
+
   &.full-screen {
     height: inherit;
   }
