@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
-import { UserService } from 'src/app/services/user/user.service'
+import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 
 /**
  * Composant de la page en vue analytique
@@ -11,15 +13,32 @@ import { UserService } from 'src/app/services/user/user.service'
   templateUrl: './view-analytics.component.html',
   styleUrls: ['./view-analytics.component.scss'],
 })
-export class ViewAnalyticsComponent extends MainClass {
+export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Référentiel
+   */
+  referentiel: ContentieuReferentielInterface[] = []
 
   /**
    * Constructor
    */
   constructor(
-    public userService: UserService,
+    private humanResourceService: HumanResourceService,
+    private referentielService: ReferentielService
   ) {
     super()
+  }
+
+  ngOnInit() {
+    this.watch(
+      this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
+        this.referentiel = c.filter(
+          (r) =>
+            this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
+            this.referentielService.idsSoutien.indexOf(r.id) === -1
+        )
+      })
+    )
   }
 
   /**
