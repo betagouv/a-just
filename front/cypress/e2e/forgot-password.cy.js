@@ -23,12 +23,12 @@ describe('Forgot Password Page', () => {
             .get("input[type=submit]").click()
 
         // Verifying popup contains email
-        // cy.get('aj-popup')
-        //     .should('contain.text', user.email)
+        cy.get('aj-popup')
+            .should('contain.text', user.email)
 
-        // Closing popup and verifying redirection to login page
-        // cy.get('.close').click()
-        //     .location('pathname')
-        //     .should('eq', '/connexion')
+        //Closing popup and verifying redirection to login page
+        cy.get('.close').click()
+            .location('pathname')
+            .should('eq', '/connexion')
     })
 })

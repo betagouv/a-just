@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, ViewChildren, QueryList, ElementRef } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -17,6 +17,8 @@ const MIN_PASSWORD_LENGTH = 8
   styleUrls: ['./signup.page.scss'],
 })
 export class SignupPage {
+  @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
+
   /**
    * Formulaire d'inscription
    */
@@ -339,5 +341,28 @@ export class SignupPage {
     //} else {
     window.location.href = this.ssoService.getSSOLogin()
     //}
+  }
+
+  /**
+   * Permet à l'utilisateur de passer d'un input à un autre avec la touche "Entrée"
+   * @param event 
+   */
+  focusNext(event: any) {
+    event.preventDefault()
+    const inputsArray = this.inputs.toArray();
+    const currentIndex = inputsArray.findIndex(input => input.nativeElement === event.target);
+    if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
+      inputsArray[currentIndex + 1].nativeElement.focus();
+    }
+  }
+
+  /**
+   * Empêche la soumission du formulaire lorsque l'utilisateur presse la touche "Entrée"
+   * @param event
+   */
+  preventSubmit(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
   }
 }

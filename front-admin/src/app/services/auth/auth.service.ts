@@ -71,7 +71,6 @@ export class AuthService {
     return this.serverService
       .getWithoutError('auths/auto-login-admin')
       .then((data) => {
-        console.log('[auth.service][line 76] data autologin:', data)
         return data;
       });
   }
