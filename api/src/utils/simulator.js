@@ -471,8 +471,8 @@ export async function getCSActivities(referentielId, allActivities) {
 
     const startDateCs = month(lastActivities.length ? lastActivities[lastActivities.length - 1].periode : new Date())
     const endDateCs = month(lastActivities.length ? lastActivities[0].periode : new Date(), 0, 'lastday')
-    endDateCs.setDate(endDateCs.getDate() + 1) // start to the first day of the next month
-    endDateCs.setMinutes(endDateCs.getMinutes() + 1) // to fix JS bug
+    //endDateCs.setDate(endDateCs.getDate() + 1) // start to the first day of the next month
+    //endDateCs.setMinutes(endDateCs.getMinutes() + 1) // to fix JS bug
 
     return {
       lastActivities,
