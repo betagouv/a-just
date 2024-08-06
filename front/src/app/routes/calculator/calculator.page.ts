@@ -380,7 +380,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.dateStart = new Date(event)
       this.calculatorService.dateStart.next(this.dateStart)
     } else if (type === 'dateStop') {
-      this.dateStop = new Date(event)
+      this.dateStop = month(new Date(event), undefined, 'lastDay')
       this.calculatorService.dateStop.next(this.dateStop)
     }
 
