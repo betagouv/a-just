@@ -87,11 +87,13 @@
       }
   
       &:hover {
-        border: 1px solid #6a6af4 !important;
-        background-color: #ededed;
+        // border: 1px solid #6a6af4 !important;
+        // background-color: #ededed;
       }
   
       &:focus {
+        border: 1px solid #6a6af4 !important;
+        background-color: #ededed;
         color: fColor(cblack);
       }
     };

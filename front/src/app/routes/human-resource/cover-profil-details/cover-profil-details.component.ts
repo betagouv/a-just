@@ -20,6 +20,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { etpLabel } from 'src/app/utils/referentiel'
+import { DateSelectComponent } from 'src/app/components/date-select/date-select.component'
 
 /**
  * Panneau de présentation d'une fiche
@@ -35,6 +36,7 @@ export class CoverProfilDetailsComponent
   implements OnChanges {
 
   @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
+  @ViewChildren(DateSelectComponent) calendar! : QueryList<DateSelectComponent>
 
   /**
    * Fiche courante
@@ -228,12 +230,16 @@ export class CoverProfilDetailsComponent
   focusNext(event: any) {
     event.preventDefault()
     const inputsArray = this.inputs.toArray();
-    const currentIndex = inputsArray.findIndex(input => input.nativeElement === event.target);
-    if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
-      inputsArray[currentIndex + 1].nativeElement.focus();
+    if (event.target.id !== 'lastName') {
+      const currentIndex = inputsArray.findIndex(input => input.nativeElement === event.target);
+      if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
+        inputsArray[currentIndex + 1].nativeElement.focus();
+      }
+    } else {
+      inputsArray.map(elem => elem.nativeElement.blur() )
+      this.calendar.first.onClick()
     }
   }
-    
     
   /**
    * Empêche la soumission du formulaire lorsque l'utilisateur presse la touche "Entrée"
