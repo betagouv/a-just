@@ -111,13 +111,6 @@ export class ReferentielCalculatorComponent extends MainClass {
   }
 
   /**
-   * Arrondi valeur numérique
-   */
-  floor(value: number) {
-    return Math.floor(value)
-  }
-
-  /**
    * Id contentieux soutien
    */
   isSoutien(id: number) {

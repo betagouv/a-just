@@ -95,6 +95,10 @@ export interface CalculatorInterface {
 	 */
 	realDTESInMonths: number | null;
 	/**
+	 * DTES au début
+	 */
+	realDTESInMonthsStart: number | null;
+	/**
 	 * Contentieux rataché
 	 */
 	contentieux: ContentieuReferentielInterface;

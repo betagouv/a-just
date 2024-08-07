@@ -145,7 +145,7 @@
         </aj-referentiel-calculator>
       </div>
     </ng-template>
-    <aj-view-analytics *ngIf="tabSelected === 1"></aj-view-analytics>
+    <aj-view-analytics *ngIf="tabSelected === 1" [datasFilted]="datasFilted" [categorySelected]="categorySelected"></aj-view-analytics>
   </div>
 </aj-wrapper>
 
