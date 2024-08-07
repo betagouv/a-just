@@ -125,7 +125,7 @@ export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateSt
  * @returns
  */
 const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups) => {
-  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf } = getLastTwelveMonths(dateStart, dateStop, activities, referentielId, hr, categories)
+  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf } = getLastTwelveMonths(dateStart, dateStop, activities, referentielId, hr, categories)
 
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
@@ -167,7 +167,10 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
     etpFon,
     fonRealTimePerCase,
     etpCont,
-    etpAffected
+    etpAffected,
+    totalInBf,
+    totalOutBf,
+    lastStockBf
   }
 }
 
@@ -204,6 +207,8 @@ const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr,
   // Date début de période selecitonnée dans le calculateur (fin du mois)
   const endBf = month(new Date(dateStart), 0, 'lastday')
   let lastStockBf = null
+  let totalInBf = null
+  let totalOutBf = null
 
   // Date 12 mois avant la date de début selectionnée dans le calculateur (début du mois)
   const startBf = month(new Date(endBf), -11)
@@ -221,10 +226,12 @@ const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr,
     const lastActivities = activitesStart[activitesStart.length - 1]
     if (lastActivities.stock !== null && isSameMonthAndYear(lastActivities.periode, endBf)) {
       lastStockBf = lastActivities.stock
+      totalInBf = lastActivities.entrees
+      totalOutBf = lastActivities.sorties
     }
   }
 
-  return { meanOutCs, etpMagCs, etpFonCs, startCs, endCs, startBf, endBf, meanOutBf, lastStockBf }
+  return { meanOutCs, etpMagCs, etpFonCs, startCs, endCs, startBf, endBf, meanOutBf, lastStockBf, totalInBf, totalOutBf }
 }
 /**
  * Calcul d'un taux de ventilation d'un contentieux pour tous les utilisateurs
