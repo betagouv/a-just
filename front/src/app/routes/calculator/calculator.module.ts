@@ -16,6 +16,7 @@ import { ViewAnalyticsComponent } from './view-analytics/view-analytics.componen
 import { GraphsVerticalsLinesComponent } from './view-analytics/graphs-verticals-lines/graphs-verticals-lines.component'
 import { GraphsNumbersComponent } from './view-analytics/graphs-numbers/graphs-numbers.component'
 import { GraphsProgressComponent } from './view-analytics/graphs-progress/graphs-progress.component'
+import { PopupModule } from 'src/app/components/popup/popup.module'
 
 @NgModule({
   declarations: [CalculatorPage, ReferentielCalculatorComponent, ViewAnalyticsComponent, GraphsVerticalsLinesComponent, GraphsNumbersComponent, GraphsProgressComponent],
@@ -32,6 +33,7 @@ import { GraphsProgressComponent } from './view-analytics/graphs-progress/graphs
     DateSelectModule,
     WrapperModule,
     IntroJSModule,
+    PopupModule
   ],
 })
 export class CalculatorModule { }

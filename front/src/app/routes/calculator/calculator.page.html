@@ -30,7 +30,6 @@
           [icon]="'chevron_right'">
         </aj-date-select>
         <mat-icon>arrow_forward</mat-icon>
-
       </div>
       <div class="flex-1"></div>
 
@@ -145,18 +144,39 @@
         </aj-referentiel-calculator>
       </div>
     </ng-template>
-    <aj-view-analytics *ngIf="tabSelected === 1" [datasFilted]="datasFilted" [categorySelected]="categorySelected"></aj-view-analytics>
+    <aj-view-analytics *ngIf="tabSelected === 1" [datasFilted]="datasFilted"
+      [categorySelected]="categorySelected"></aj-view-analytics>
   </div>
+
+  <div class="black-opacity" *ngIf="showPicker===true" (click)="showPicker=!showPicker;"></div>
 </aj-wrapper>
 
 <ng-template #actions>
   <div class="flex-1"></div>
+  <button *ngIf="tabSelected === 1" class="compare" (click)="showPicker=!showPicker;$event.stopPropagation();">
+    <i class="ri-a-b"></i>
+    <label>Comparer</label>
+    <div><i [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
 
+    <!-- DROP DOWN REFERENTIEL DE TEMPS -->
+    <div *ngIf="showPicker===true" class="drop-down" (click)="$event.stopPropagation();">
+      <label class="header">la période
+        {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à
+      </label>
+      <div *ngFor="let ref of referentiels" class="item" (click)="radioSelect(ref)">
+        <i [class]="ref.selected===false ?'':'filled'" (click)="radioSelect(ref);$event.stopPropagation();"
+          class="radio"></i><span>{{ref.label}}</span>
+        <div class="flex-1"></div>
+        <i class="ri-more-line"></i>
+      </div>
+      <label class="footer">+ Personnaliser</label>
+    </div>
+
+  </button>
   <button class="primary light export" (click)="onExport()">
     <label><i class="ri-file-pdf-fill"></i>
       Exporter en PDF</label>
   </button>
-
 </ng-template>
 
 <ng-template #subTitleTemplate><label class="grey">(option)</label></ng-template>
