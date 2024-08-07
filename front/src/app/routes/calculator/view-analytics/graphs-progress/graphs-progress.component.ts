@@ -19,7 +19,7 @@ export class GraphsProgressComponent extends MainClass implements OnChanges {
   /**
    * Percent progress
    */
-  @Input() percent: number = 0
+  @Input() percent: number | null = null
   /**
    * Style background
    */
