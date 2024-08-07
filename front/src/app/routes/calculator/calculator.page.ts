@@ -167,7 +167,18 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Onglet selectionné
    */
   tabSelected = 1
-
+  /**
+   * Affichage du menu déroulant de référentiel de temps
+   */
+  showPicker = false
+  /**
+   * liste des référentiels
+   */
+  referentiels: any[] = [
+    { label: 'trimestre précédent', selected: false },
+    { label: 'semestre précédent', selected: false },
+    { label: 'année précédente', selected: false }
+  ]
   /**
    * Constructeur
    * @param humanResourceService
@@ -547,5 +558,16 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       tmpStr = ''
 
     this.fonctionRealValue = tmpStr
+  }
+
+  getRealValue(date: Date | null) {
+    if (date !== null)
+      return `${this.getShortMonthString(date)} ${date.getFullYear()}`
+    else return ''
+  }
+
+  radioSelect(ref: any) {
+    this.referentiels.map(x => { x.selected = false })
+    ref.selected = true
   }
 }
