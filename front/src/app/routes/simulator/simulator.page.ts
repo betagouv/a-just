@@ -31,6 +31,7 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ServerService } from 'src/app/services/http-server/server.service'
+import { HubspotChatService } from 'src/app/services/hubspot-chat/hubspot-chat.service'
 
 /**
  * Variable ETP magistrat field name
@@ -384,7 +385,8 @@ export class SimulatorPage
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
     private route: ActivatedRoute,
-    private serverService: ServerService
+    private serverService: ServerService,
+    private hubspotChatService: HubspotChatService,
   ) {
     super()
 
@@ -487,6 +489,7 @@ export class SimulatorPage
    * Initialisation du composant
    */
   ngOnInit(): void {
+    this.hubspotChatService.loadHubSpotChat();
     this.resetParams()
     this.onResetUserAction()
     this.dateStop = null
