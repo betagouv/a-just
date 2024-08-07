@@ -158,6 +158,7 @@ export default class App extends AppBase {
               '*.calendly.com',
               '*.google-analytics.com',
               '*.hotjar.com',
+              'https://js.hs-scripts.com/*.js',
               "'sha256-jq7VWlK1R1baYNg3rH3wI3uXJc6evRSm19ho/ViohcE='",
               "'sha256-92TNq2Axm9gJIJETcB7r4qpDc3JjxqUYF1fKonG4mvg='",
               "'sha256-WXdHEUxHRTHqWKtUCBtUckcV5wN4y9jQwkZrGjfqr40='",
