@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { Title } from '@angular/platform-browser'
 import { Router } from '@angular/router'
@@ -21,6 +21,8 @@ import { environment } from 'src/environments/environment'
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+  @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
+
   /**
    * SSO is activate to this env
    */
@@ -64,7 +66,7 @@ export class LoginPage implements OnInit {
     private title: Title,
     private ssoService: SSOService
   ) {
-    this.title.setTitle('Se connecter | A-Just')
+    this.title.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + 'Se connecter')
   }
 
   /**
@@ -153,6 +155,29 @@ export class LoginPage implements OnInit {
       default:
         this.needToGetCode = null
         break
+    }
+  }
+
+  /**
+ * Permet à l'utilisateur de passer d'un input à un autre avec la touche "Entrée"
+ * @param event 
+ */
+  focusNext(event: any) {
+    event.preventDefault()
+    const inputsArray = this.inputs.toArray();
+    const currentIndex = inputsArray.findIndex(input => input.nativeElement === event.target);
+    if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
+      inputsArray[currentIndex + 1].nativeElement.focus();
+    }
+  }
+  
+  /**
+   * Empêche la soumission du formulaire lorsque l'utilisateur presse la touche "Entrée"
+   * @param event
+   */
+  preventSubmit(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
     }
   }
 }

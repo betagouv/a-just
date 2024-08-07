@@ -56,9 +56,9 @@ const routes: Routes = [
     canActivate: [AdminAuthGuard],
   },
   {
-    path: 'data-analyse',
+    path: 'data',
     loadChildren: () =>
-      import('./data-analyse/data-analyse.module').then((mod) => mod.DataAnalyseModule),
+      import('./data/data.module').then((mod) => mod.DataModule),
     canActivate: [AdminAuthGuard],
   }
 ];

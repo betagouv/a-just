@@ -64,40 +64,7 @@ export class ImportsPage {
       form.reset();
       this.onLoad();
     });
-  }
-
-  async onSendActivity(form: any) {
-    const backupId = form.backupId.value;
-    const file = form.file.files[0];
-
-    if (!file) {
-      alert('Vous devez saisir une fichier !');
-      return;
-    }
-
-    this.importService
-      .importActivities({ file: await exportFileToString(file), backupId })
-      .then(() => {
-        alert('OK !');
-        form.reset();
-      });
-  }
-
-  async onSendAllActivity(form: any) {
-    const file = form.file.files[0];
-
-    if (!file) {
-      alert('Vous devez saisir une fichier !');
-      return;
-    }
-
-    this.importService
-      .importAllActivities({ file: await exportFileToString(file) })
-      .then(() => {
-        alert('OK !');
-        form.reset();
-      });
-  }
+  }  
 }
 
 

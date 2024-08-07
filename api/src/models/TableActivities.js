@@ -1,6 +1,6 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { Op } from 'sequelize'
-import { calculMainValuesFromChilds, preformatActivitiesArray } from '../utils/activities'
+import { calculMainValuesFromChilds, compareGapBetweenData, preformatActivitiesArray } from '../utils/activities'
 import { month } from '../utils/date'
 import { maxBy } from 'lodash'
 import { VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_VERIFY } from '../constants/activities'
@@ -894,6 +894,273 @@ export default (sequelizeInstance, Model) => {
       },
     })
   }
+
+  /**
+   * Vérifie les nouvelles données prêtes à être importés pour toutes les juridictions
+   * @param {*} csv
+   */
+  Model.checkDataBeforeImportAll = async (csv) => {
+    const contentieuxIds = {}
+    const to_create = []
+    const to_update = []
+    const to_warn = []
+    const tmpJuridictions = {}
+    const types = {in: 'entrees', out: 'sorties', stock: 'stocks'}
+
+    console.time('step2')
+
+    for (let i = 0; i < csv.length; i++) {
+      const code = csv[i].code_import
+      let HRBackupId = tmpJuridictions[csv[i].juridiction]
+      if (!HRBackupId) {
+        HRBackupId = await Model.models.HRBackups.findByLabel(csv[i].juridiction)
+        tmpJuridictions[csv[i].juridiction] = HRBackupId
+      }
+      if (HRBackupId === null) {
+        continue
+      }
+
+      if (!contentieuxIds[code]) {
+        const contentieux = await Model.models.ContentieuxReferentiels.findOne({
+          attributes: ['id'],
+          where: {
+            code_import: code,
+          },
+          raw: true,
+          logging: false,
+        })
+
+        if (contentieux) {
+          contentieuxIds[code] = contentieux.id
+        }
+      }
+
+      if (contentieuxIds[code]) {
+        const year = csv[i].periode.slice(0, 4)
+        const month = +csv[i].periode.slice(-2) - 1
+        const periode = new Date(year, month)
+
+        const findExist = await Model.findOne({
+          attributes: ['id', 'entrees', 'original_entrees', 'sorties', 'original_sorties', 'stock', 'original_stock'],
+          where: {
+            hr_backup_id: HRBackupId,
+            contentieux_id: contentieuxIds[code],
+            periode: {
+              [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
+            },
+          },
+          raw: true,
+          logging: false,
+        })
+
+        // clean null values
+        csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : +csv[i].entrees
+        csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : +csv[i].sorties
+        csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : +csv[i].stock
+
+        // if existe add to to_update array
+        if (
+          findExist &&
+          (csv[i].entrees !== findExist.original_entrees || csv[i].sorties !== findExist.original_sorties || csv[i].stock !== findExist.original_stock)
+        ) {
+          to_update.push({
+            data_id: findExist.id,
+            original_entrees: csv[i].entrees,
+            original_sorties: csv[i].sorties,
+            original_stock: csv[i].stock,
+          })
+        } else if (!findExist) {
+          // else add to to_create array
+          to_create.push({
+            hr_backup_id: HRBackupId,
+            periode: csv[i].periode,
+            contentieux_id: contentieuxIds[code],
+            original_entrees: csv[i].entrees,
+            original_sorties: csv[i].sorties,
+            original_stock: csv[i].stock,
+          })
+        }
+      }
+    }
+
+    // Catch all value in to_create array and compare them to last values in DB
+    for (let i = 0; i < to_create.length; i++) {
+      const year = to_create[i].periode.slice(0, 4)
+      const month = +(to_create[i].periode.slice(-2) - 1 - 1)
+      const periode = new Date(year, month)
+      
+      await Model.findOne({
+        attributes: ['id', 'entrees', 'original_entrees', 'sorties', 'original_sorties', 'stock', 'original_stock'],
+        where: {
+          hr_backup_id:  to_create[i].hr_backup_id,
+          contentieux_id: to_create[i].contentieux_id,
+          periode: {
+            [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
+          },
+        },
+        raw: true,
+        logging: false,
+      }).then(async (result) => {
+        const percentageThreshold = 25
+        const absoluteThreshold = 50
+        const newData = { 
+          in: to_create[i].original_entrees,
+          out: to_create[i].original_sorties,
+          stock: to_create[i].original_stock,
+        }
+        const lastData = { 
+          in: result ? result.original_entrees : null,
+          out: result ? result.original_sorties : null,
+          stock: result ? result.original_stock : null,
+        }
+        for(let type in types) {
+          const gap = compareGapBetweenData(newData[type], lastData[type], percentageThreshold, absoluteThreshold)
+          if (gap) {
+            to_warn.push({ 
+              ...gap,
+              hr_backup_label: await Model.models.HRBackups.findById(to_create[i].hr_backup_id).then(res => {return res.label}),
+              contentieux_label: await Model.models.ContentieuxReferentiels.getOneReferentiel(to_create[i].contentieux_id).then(res => { return res.label }),
+              type: types[type],
+              lastPeriode: periode,
+              newPeriode: new Date(year, to_create[i].periode.slice(-2) - 1),
+            })
+          }
+        }
+      })
+    }
+    console.timeEnd('step2')
+    return { to_warn }
+  }
+
+    /**
+   * Vérifie les nouvelles données prêtes à être importés pour une seule juridiction
+   * @param {*} csv
+   * @param {*} HRBackupId
+   */
+    Model.checkDataBeforeImportOne = async (csv, HRBackupId) => {
+      const contentieuxIds = {}
+      const to_create = []
+      const to_update = []
+      const to_warn = []
+      const tmpJuridictions = {}
+      const types = {in: 'entrees', out: 'sorties', stock: 'stocks'}
+  
+      console.time('step2')
+  
+      for (let i = 0; i < csv.length; i++) {
+        const code = csv[i].code_import
+
+
+        if (!contentieuxIds[code]) {
+          const contentieux = await Model.models.ContentieuxReferentiels.findOne({
+            attributes: ['id'],
+            where: {
+              code_import: code,
+            },
+            raw: true,
+          })
+  
+          if (contentieux) {
+            contentieuxIds[code] = contentieux.id
+          }
+        }
+  
+        if (contentieuxIds[code]) {
+          const year = csv[i].periode.slice(0, 4)
+          const month = +csv[i].periode.slice(-2) - 1
+          const periode = new Date(year, month)
+  
+          const findExist = await Model.findOne({
+            attributes: ['id', 'entrees', 'original_entrees', 'sorties', 'original_sorties', 'stock', 'original_stock'],
+            where: {
+              hr_backup_id: HRBackupId,
+              contentieux_id: contentieuxIds[code],
+              periode: {
+                [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
+              },
+            },
+            raw: true,
+            logging: false,
+          })
+  
+          // clean null values
+          csv[i].entrees = csv[i].entrees === 'null' || csv[i].entrees === '' ? null : +csv[i].entrees
+          csv[i].sorties = csv[i].sorties === 'null' || csv[i].sorties === '' ? null : +csv[i].sorties
+          csv[i].stock = csv[i].stock === 'null' || csv[i].stock === '' ? null : +csv[i].stock
+  
+          // if existe add to to_update array
+          if (
+            findExist &&
+            (csv[i].entrees !== findExist.original_entrees || csv[i].sorties !== findExist.original_sorties || csv[i].stock !== findExist.original_stock)
+          ) {
+            to_update.push({
+              data_id: findExist.id,
+              original_entrees: csv[i].entrees,
+              original_sorties: csv[i].sorties,
+              original_stock: csv[i].stock,
+            })
+          } else if (!findExist) {
+            // else add to to_create array
+            to_create.push({
+              hr_backup_id: HRBackupId,
+              periode: csv[i].periode,
+              contentieux_id: contentieuxIds[code],
+              original_entrees: csv[i].entrees,
+              original_sorties: csv[i].sorties,
+              original_stock: csv[i].stock,
+            })
+          }
+        }
+      }
+  
+      // Catch all value in to_create array and compare them to last values in DB
+      for (let i = 0; i < to_create.length; i++) {
+        const year = to_create[i].periode.slice(0, 4)
+        const month = +(to_create[i].periode.slice(-2) - 1 - 1)
+        const periode = new Date(year, month)
+        
+        await Model.findOne({
+          attributes: ['id', 'entrees', 'original_entrees', 'sorties', 'original_sorties', 'stock', 'original_stock'],
+          where: {
+            hr_backup_id:  to_create[i].hr_backup_id,
+            contentieux_id: to_create[i].contentieux_id,
+            periode: {
+              [Op.between]: [startOfMonth(periode), endOfMonth(periode)],
+            },
+          },
+          raw: true,
+          logging: false,
+        }).then(async (result) => {
+          const percentageThreshold = 25
+          const absoluteThreshold = 50
+          const newData = { 
+            in: to_create[i].original_entrees,
+            out: to_create[i].original_sorties,
+            stock: to_create[i].original_stock,
+          }
+          const lastData = { 
+            in: result ? result.original_entrees : null,
+            out: result ? result.original_sorties : null,
+            stock: result ? result.original_stock : null,
+          }
+          for(let type in types) {
+            const gap = compareGapBetweenData(newData[type], lastData[type], percentageThreshold, absoluteThreshold)
+            if (gap) {
+              to_warn.push({ 
+                ...gap,
+                hr_backup_label: await Model.models.HRBackups.findById(to_create[i].hr_backup_id).then(res => {return res.label}),
+                contentieux_label: await Model.models.ContentieuxReferentiels.getOneReferentiel(to_create[i].contentieux_id).then(res => { return res.label }),
+                type: types[type],
+                lastPeriode: periode,
+                newPeriode: new Date(year, to_create[i].periode.slice(-2) - 1),
+              })
+            }
+          }
+        })
+      }
+      console.timeEnd('step2')
+      return { to_warn }
+    }
 
   return Model
 }

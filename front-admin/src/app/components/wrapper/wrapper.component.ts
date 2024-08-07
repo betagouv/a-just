@@ -33,8 +33,8 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
     label: 'Yaml tools',
     path: 'yaml-tools',
   }, {
-    label: 'Analyse de données',
-    path: 'data-analyse',
+    label: 'Data',
+    path: 'data',
   }];
 
   constructor(private authService: AuthService, private router: Router) {
