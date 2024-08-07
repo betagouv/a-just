@@ -62,14 +62,14 @@
       }">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <aj-graphs-progress [referentielName]="ref.label"
-                    [percent]="(datasFilted[index].realCoverage || 0) * 100"></aj-graphs-progress>
+                    [percent]="datasFilted[index].realCoverage === null ? null : (datasFilted[index].realCoverage || 0) * 100"></aj-graphs-progress>
                 <div *ngIf="showDetailCover" class="height-8"></div>
                 <aj-graphs-numbers *ngIf="showDetailCover" [referentielName]="ref.label"
-                    [title]="floor(datasFilted[index].realCoverage || 0) * 100 + ' %'"
+                    [title]="datasFilted[index].realCoverageBf === null ? '- %' : floor(datasFilted[index].realCoverageBf || 0) * 100 + ' %'"
                     class="no-border-bottom"></aj-graphs-numbers>
                 <aj-graphs-numbers *ngIf="showDetailCover" [referentielName]="ref.label"
-                    [title]="floor(datasFilted[index].realCoverage || 0) * 100 + ' %'" [isWhite]="true"
-                    class="no-border-top"></aj-graphs-numbers>
+                    [title]="datasFilted[index].realCoverageAf === null ? '- %' : floor(datasFilted[index].realCoverageAf || 0) * 100 + ' %'"
+                    [isWhite]="true" class="no-border-top"></aj-graphs-numbers>
             </div>
         </div>
     </div>
@@ -96,16 +96,23 @@
         </div>
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].lastStock || 0]"
-                    [maxValue]="stockMax"></aj-graphs-verticals-lines>
-                <ng-template [ngIf]="!showDetailStock"><aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + (datasFilted[index].lastStock || 0)" class="text-center"
-                        [isWhite]="true"></aj-graphs-numbers></ng-template>
+                <ng-template [ngIf]="!showDetailStock">
+
+                    <aj-graphs-verticals-lines [referentielName]="ref.label"
+                        [values]="[datasFilted[index].lastStock || 0]"
+                        [maxValue]="stockMax"></aj-graphs-verticals-lines>
+                    <aj-graphs-numbers [referentielName]="ref.label" [title]="'' + (datasFilted[index].lastStock || 0)"
+                        class="text-center" [isWhite]="true"></aj-graphs-numbers></ng-template>
                 <ng-template [ngIf]="showDetailStock">
-                    <aj-graphs-numbers [referentielName]="ref.label" [title]="'' + (datasFilted[index].lastStock || 0)"
+                    <aj-graphs-verticals-lines [referentielName]="ref.label"
+                        [values]="[datasFilted[index].lastStockBf || 0, datasFilted[index].lastStockAf || 0]"
+                        [maxValue]="stockMax"></aj-graphs-verticals-lines>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + (datasFilted[index].lastStockBf || 0)"
                         class="text-center no-border-bottom"></aj-graphs-numbers>
-                    <aj-graphs-numbers [referentielName]="ref.label" [title]="'' + (datasFilted[index].lastStock || 0)"
-                        class="text-center no-border-top" [isWhite]="true"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + (datasFilted[index].lastStockAf || 0)" class="text-center no-border-top"
+                        [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
             </div>
         </div>
@@ -142,6 +149,7 @@
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].totalIn || 0]"
+                    [line]="showDetailEntrees ? [datasFilted[index].totalInBf || 0, datasFilted[index].totalInAf || 0] : null"
                     [maxValue]="entreesMax"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailEntrees">
                     <aj-graphs-numbers [referentielName]="ref.label"
@@ -153,10 +161,10 @@
                         [title]="'' + floor(datasFilted[index].totalIn || 0)" class="text-center no-border-bottom"
                         [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalIn || 0)"
+                        [title]="'' + floor(datasFilted[index].totalInBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalIn || 0)"
+                        [title]="'' + floor(datasFilted[index].totalInAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -194,6 +202,7 @@
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].totalOut || 0]"
+                    [line]="showDetailSorties ? [datasFilted[index].totalOutBf || 0, datasFilted[index].totalOutAf || 0] : null"
                     [maxValue]="sortiesMax"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailSorties">
                     <aj-graphs-numbers [referentielName]="ref.label"
@@ -205,10 +214,10 @@
                         [title]="'' + floor(datasFilted[index].totalOut || 0)" class="text-center no-border-bottom"
                         [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalOut || 0)"
+                        [title]="'' + floor(datasFilted[index].totalOutBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalOut || 0)"
+                        [title]="'' + floor(datasFilted[index].totalOutAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -246,6 +255,7 @@
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpMag || 0]"
+                    [line]="showDetailETPTSiege ? [datasFilted[index].etpMagBf || 0, datasFilted[index].etpMagAf || 0] : null"
                     [maxValue]="siegeMax"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTSiege">
                     <aj-graphs-numbers [referentielName]="ref.label"
@@ -257,10 +267,10 @@
                         [title]="'' + floor(datasFilted[index].etpMag || 0)" class="text-center no-border-bottom"
                         [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpMag || 0)"
+                        [title]="'' + floor(datasFilted[index].etpMagBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpMag || 0)"
+                        [title]="'' + floor(datasFilted[index].etpMagAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -298,6 +308,7 @@
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpFon || 0]"
+                    [line]="showDetailETPTGreffe ? [datasFilted[index].etpFonBf || 0, datasFilted[index].etpFonAf || 0] : null"
                     [maxValue]="greffeMax"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTGreffe">
                     <aj-graphs-numbers [referentielName]="ref.label"
@@ -309,10 +320,10 @@
                         [title]="'' + floor(datasFilted[index].etpFon || 0)" class="text-center no-border-bottom"
                         [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpFon || 0)"
+                        [title]="'' + floor(datasFilted[index].etpFonBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpFon || 0)"
+                        [title]="'' + floor(datasFilted[index].etpFonAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -350,6 +361,7 @@
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpCont || 0]"
+                    [line]="showDetailETPTEam ? [datasFilted[index].etpContBf || 0, datasFilted[index].etpContAf || 0] : null"
                     [maxValue]="eamMax"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTEam">
                     <aj-graphs-numbers [referentielName]="ref.label"
@@ -361,10 +373,10 @@
                         [title]="'' + floor(datasFilted[index].etpCont || 0)" class="text-center no-border-bottom"
                         [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpCont || 0)"
+                        [title]="'' + floor(datasFilted[index].etpContBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpCont || 0)"
+                        [title]="'' + floor(datasFilted[index].etpContAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -378,6 +390,7 @@
             <div class="middle-empty-block">
                 <p>Fin de période</p>
             </div>
+            <div class="height-80"></div>
         </div>
         <div class="container-element-text">
             <p class="description-container">(calculé sur les 12 mois
@@ -404,6 +417,7 @@
             <div class="middle-empty-block">
                 <p>Fin de période</p>
             </div>
+            <div class="height-80"></div>
         </div>
         <div class="container-element-text">
             <p class="description-container">(calculé sur les 12 mois
