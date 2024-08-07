@@ -1,11 +1,11 @@
 <div class="header-refs">
     <div>
-        <button>Voir tous les détails</button>
+        <button (click)="openAll()">Voir tous les détails</button>
     </div>
     <div>
         <div *ngFor="let ref of referentiel" class="flex-1" [style.color]="referentielMappingColor(ref.label)"
             [style.background-color]="referentielMappingColor(ref.label, 0.2)">
-            {{referentielMappingName(ref.label)}}
+            {{ referentielMappingName(ref.label) }}
         </div>
     </div>
 </div>
@@ -17,16 +17,24 @@
             <p class="description-section">de la période</p>
             <p class="info-section">(calculé sur les 12 mois précédents)</p>
             <div class="flex-1"></div>
-            <div class="first-empty-block"><p>Début de période</p></div>
-            <div class="end-empty-block"><p>Fin de période</p></div>
+            <div class="first-empty-block">
+                <p>Début de période</p>
+            </div>
+            <div class="end-empty-block">
+                <p>Fin de période</p>
+            </div>
         </div>
         <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].realDTESInMonthsStart || 0, datasFilted[index].realDTESInMonths || 0]"
-                    [maxValue]="dtesMax"></aj-graphs-verticals-lines>
-                <aj-graphs-numbers [referentielName]="ref.label" [title]="''+(datasFilted[index].realDTESInMonthsStart || 0)" subTitle="mois"
+            <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[
+            datasFilted[index].realDTESInMonthsStart || 0,
+            datasFilted[index].realDTESInMonths || 0
+          ]" [maxValue]="dtesMax"></aj-graphs-verticals-lines>
+                <aj-graphs-numbers [referentielName]="ref.label"
+                    [title]="'' + (datasFilted[index].realDTESInMonthsStart || 0)" subTitle="mois"
                     class="no-border-bottom"></aj-graphs-numbers>
-                <aj-graphs-numbers [referentielName]="ref.label" [title]="''+(datasFilted[index].realDTESInMonths || 0)" subTitle="mois" [isWhite]="true"
+                <aj-graphs-numbers [referentielName]="ref.label"
+                    [title]="'' + (datasFilted[index].realDTESInMonths || 0)" subTitle="mois" [isWhite]="true"
                     class="no-border-top"></aj-graphs-numbers>
             </div>
         </div>
@@ -35,10 +43,33 @@
         <div class="container-colum">
             <p class="title-section">Taux de couverture</p>
             <p class="details-section">moyens sur la période</p>
+            <button class="details" (click)="showDetailCover = !showDetailCover">
+                <i [class]="
+            showDetailCover ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
+          "></i>{{ showDetailCover ? 'Masquer les détails' : 'Voir les détails'
+                }}
+            </button>
+            <div *ngIf="showDetailCover" class="first-empty-block">
+                <p>Début de période</p>
+            </div>
+            <div *ngIf="showDetailCover" class="end-empty-block">
+                <p>Fin de période</p>
+            </div>
         </div>
-        <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                <aj-graphs-progress [referentielName]="ref.label" [percent]="(datasFilted[index].realCoverage || 0) * 100"></aj-graphs-progress>
+        <div class="container-elements container-to-top" [ngClass]="{
+        'container-to-top': !showDetailCover,
+        'container-to-bottom': showDetailCover
+      }">
+            <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                <aj-graphs-progress [referentielName]="ref.label"
+                    [percent]="(datasFilted[index].realCoverage || 0) * 100"></aj-graphs-progress>
+                <div *ngIf="showDetailCover" class="height-8"></div>
+                <aj-graphs-numbers *ngIf="showDetailCover" [referentielName]="ref.label"
+                    [title]="floor(datasFilted[index].realCoverage || 0) * 100 + ' %'"
+                    class="no-border-bottom"></aj-graphs-numbers>
+                <aj-graphs-numbers *ngIf="showDetailCover" [referentielName]="ref.label"
+                    [title]="floor(datasFilted[index].realCoverage || 0) * 100 + ' %'" [isWhite]="true"
+                    class="no-border-top"></aj-graphs-numbers>
             </div>
         </div>
     </div>
@@ -47,14 +78,35 @@
             <p class="title-section">Stock</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <div class="middle-empty-block"><p>Fin de période</p></div>
+            <button class="details" (click)="showDetailStock = !showDetailStock">
+                <i [class]="
+            showDetailStock ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
+          "></i>{{ showDetailStock ? 'Masquer les détails' : 'Voir les détails'
+                }}
+            </button>
+            <div *ngIf="!showDetailStock" class="middle-empty-block">
+                <p>Fin de période</p>
+            </div>
+            <div *ngIf="showDetailStock" class="first-empty-block">
+                <p>Début de période</p>
+            </div>
+            <div *ngIf="showDetailStock" class="end-empty-block">
+                <p>Fin de période</p>
+            </div>
         </div>
         <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].lastStock || 0]"
+            <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].lastStock || 0]"
                     [maxValue]="stockMax"></aj-graphs-verticals-lines>
-                <aj-graphs-numbers [referentielName]="ref.label" [title]="''+(datasFilted[index].lastStock || 0)" class="text-center"
-                    [isWhite]="true"></aj-graphs-numbers>
+                <ng-template [ngIf]="!showDetailStock"><aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + (datasFilted[index].lastStock || 0)" class="text-center"
+                        [isWhite]="true"></aj-graphs-numbers></ng-template>
+                <ng-template [ngIf]="showDetailStock">
+                    <aj-graphs-numbers [referentielName]="ref.label" [title]="'' + (datasFilted[index].lastStock || 0)"
+                        class="text-center no-border-bottom"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label" [title]="'' + (datasFilted[index].lastStock || 0)"
+                        class="text-center no-border-top" [isWhite]="true"></aj-graphs-numbers>
+                </ng-template>
             </div>
         </div>
     </div>
@@ -63,14 +115,50 @@
             <p class="title-section">Entrées</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <div class="middle-empty-block"><p>Moyenne<br/>sur la période</p></div>
+            <button class="details" (click)="showDetailEntrees = !showDetailEntrees">
+                <i [class]="
+            showDetailEntrees ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
+          "></i>{{ showDetailEntrees ? 'Masquer les détails' :
+                'Voir les détails' }}
+            </button>
+            <ng-template [ngIf]="!showDetailEntrees">
+                <div class="middle-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+            </ng-template>
+            <ng-template [ngIf]="showDetailEntrees">
+                <div class="first-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+                <div class="middle-empty-block">
+                    <p>Début de période</p>
+                </div>
+                <div class="end-empty-block">
+                    <p>Fin de
+                        période</p>
+                </div>
+            </ng-template>
         </div>
         <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].totalIn || 0]"
+            <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].totalIn || 0]"
                     [maxValue]="entreesMax"></aj-graphs-verticals-lines>
-                <aj-graphs-numbers [referentielName]="ref.label" [title]="''+floor(datasFilted[index].totalIn || 0)" class="text-center"
-                    [isWhite]="true"></aj-graphs-numbers>
+                <ng-template [ngIf]="!showDetailEntrees">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].totalIn || 0)" class="text-center"
+                        [isWhite]="true"></aj-graphs-numbers>
+                </ng-template>
+                <ng-template [ngIf]="showDetailEntrees">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].totalIn || 0)" class="text-center no-border-bottom"
+                        [isWhite]="true"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].totalIn || 0)"
+                        class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].totalIn || 0)"
+                        class="text-center no-border-top"></aj-graphs-numbers>
+                </ng-template>
             </div>
         </div>
     </div>
@@ -79,14 +167,50 @@
             <p class="title-section">Sorties</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <div class="middle-empty-block"><p>Moyenne<br/>sur la période</p></div>
+            <button class="details" (click)="showDetailSorties = !showDetailSorties">
+                <i [class]="
+            showDetailSorties ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
+          "></i>{{ showDetailSorties ? 'Masquer les détails' :
+                'Voir les détails' }}
+            </button>
+            <ng-template [ngIf]="!showDetailSorties">
+                <div class="middle-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+            </ng-template>
+            <ng-template [ngIf]="showDetailSorties">
+                <div class="first-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+                <div class="middle-empty-block">
+                    <p>Début de période</p>
+                </div>
+                <div class="end-empty-block">
+                    <p>Fin de
+                        période</p>
+                </div>
+            </ng-template>
         </div>
         <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].totalOut || 0]"
+            <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].totalOut || 0]"
                     [maxValue]="sortiesMax"></aj-graphs-verticals-lines>
-                <aj-graphs-numbers [referentielName]="ref.label" [title]="''+floor(datasFilted[index].totalOut || 0)" class="text-center"
-                    [isWhite]="true"></aj-graphs-numbers>
+                <ng-template [ngIf]="!showDetailSorties">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].totalOut || 0)" class="text-center"
+                        [isWhite]="true"></aj-graphs-numbers>
+                </ng-template>
+                <ng-template [ngIf]="showDetailSorties">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].totalOut || 0)" class="text-center no-border-bottom"
+                        [isWhite]="true"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].totalOut || 0)"
+                        class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].totalOut || 0)"
+                        class="text-center no-border-top"></aj-graphs-numbers>
+                </ng-template>
             </div>
         </div>
     </div>
@@ -95,14 +219,50 @@
             <p class="title-section">ETPT Siège</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <div class="middle-empty-block"><p>Moyenne<br/>sur la période</p></div>
+            <button class="details" (click)="showDetailETPTSiege = !showDetailETPTSiege">
+                <i [class]="
+            showDetailETPTSiege ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
+          "></i>{{ showDetailETPTSiege ? 'Masquer les détails' :
+                'Voir les détails' }}
+            </button>
+            <ng-template [ngIf]="!showDetailETPTSiege">
+                <div class="middle-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+            </ng-template>
+            <ng-template [ngIf]="showDetailETPTSiege">
+                <div class="first-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+                <div class="middle-empty-block">
+                    <p>Début de période</p>
+                </div>
+                <div class="end-empty-block">
+                    <p>Fin de
+                        période</p>
+                </div>
+            </ng-template>
         </div>
         <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpMag || 0]"
+            <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpMag || 0]"
                     [maxValue]="siegeMax"></aj-graphs-verticals-lines>
-                <aj-graphs-numbers [referentielName]="ref.label" [title]="''+(datasFilted[index].etpMag || 0)" class="text-center"
-                    [isWhite]="true"></aj-graphs-numbers>
+                <ng-template [ngIf]="!showDetailETPTSiege">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpMag || 0)" class="text-center"
+                        [isWhite]="true"></aj-graphs-numbers>
+                </ng-template>
+                <ng-template [ngIf]="showDetailETPTSiege">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpMag || 0)" class="text-center no-border-bottom"
+                        [isWhite]="true"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpMag || 0)"
+                        class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpMag || 0)"
+                        class="text-center no-border-top"></aj-graphs-numbers>
+                </ng-template>
             </div>
         </div>
     </div>
@@ -111,14 +271,50 @@
             <p class="title-section">ETPT Greffe</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <div class="middle-empty-block"><p>Moyenne<br/>sur la période</p></div>
+            <button class="details" (click)="showDetailETPTGreffe = !showDetailETPTGreffe">
+                <i [class]="
+            showDetailETPTGreffe ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
+          "></i>{{ showDetailETPTGreffe ? 'Masquer les détails' :
+                'Voir les détails' }}
+            </button>
+            <ng-template [ngIf]="!showDetailETPTGreffe">
+                <div class="middle-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+            </ng-template>
+            <ng-template [ngIf]="showDetailETPTGreffe">
+                <div class="first-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+                <div class="middle-empty-block">
+                    <p>Début de période</p>
+                </div>
+                <div class="end-empty-block">
+                    <p>Fin de
+                        période</p>
+                </div>
+            </ng-template>
         </div>
         <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpFon || 0]"
+            <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpFon || 0]"
                     [maxValue]="greffeMax"></aj-graphs-verticals-lines>
-                <aj-graphs-numbers [referentielName]="ref.label" [title]="''+(datasFilted[index].etpFon || 0)" class="text-center"
-                    [isWhite]="true"></aj-graphs-numbers>
+                <ng-template [ngIf]="!showDetailETPTGreffe">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpFon || 0)" class="text-center"
+                        [isWhite]="true"></aj-graphs-numbers>
+                </ng-template>
+                <ng-template [ngIf]="showDetailETPTGreffe">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpFon || 0)" class="text-center no-border-bottom"
+                        [isWhite]="true"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpFon || 0)"
+                        class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpFon || 0)"
+                        class="text-center no-border-top"></aj-graphs-numbers>
+                </ng-template>
             </div>
         </div>
     </div>
@@ -127,14 +323,50 @@
             <p class="title-section">ETPT EAM</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <div class="middle-empty-block"><p>Moyenne<br/>sur la période</p></div>
+            <button class="details" (click)="showDetailETPTEam = !showDetailETPTEam">
+                <i [class]="
+            showDetailETPTEam ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
+          "></i>{{ showDetailETPTEam ? 'Masquer les détails' :
+                'Voir les détails' }}
+            </button>
+            <ng-template [ngIf]="!showDetailETPTEam">
+                <div class="middle-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+            </ng-template>
+            <ng-template [ngIf]="showDetailETPTEam">
+                <div class="first-empty-block">
+                    <p>Moyenne<br />sur la période</p>
+                </div>
+                <div class="middle-empty-block">
+                    <p>Début de période</p>
+                </div>
+                <div class="end-empty-block">
+                    <p>Fin de
+                        période</p>
+                </div>
+            </ng-template>
         </div>
         <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpCont || 0]"
+            <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpCont || 0]"
                     [maxValue]="eamMax"></aj-graphs-verticals-lines>
-                <aj-graphs-numbers [referentielName]="ref.label" [title]="''+(datasFilted[index].etpCont || 0)" class="text-center"
-                    [isWhite]="true"></aj-graphs-numbers>
+                <ng-template [ngIf]="!showDetailETPTEam">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpCont || 0)" class="text-center"
+                        [isWhite]="true"></aj-graphs-numbers>
+                </ng-template>
+                <ng-template [ngIf]="showDetailETPTEam">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpCont || 0)" class="text-center no-border-bottom"
+                        [isWhite]="true"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpCont || 0)"
+                        class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="'' + floor(datasFilted[index].etpCont || 0)"
+                        class="text-center no-border-top"></aj-graphs-numbers>
+                </ng-template>
             </div>
         </div>
     </div>
@@ -143,13 +375,23 @@
             <p class="title-section">Temps moyen siège</p>
             <p class="details-section">par dossier observé</p>
             <div class="flex-1"></div>
-            <div class="middle-empty-block"><p>Fin de période</p></div>
+            <div class="middle-empty-block">
+                <p>Fin de période</p>
+            </div>
         </div>
         <div class="container-element-text">
-            <p class="description-container">(calculé sur les 12 mois précédents)</p>
-             <div class="container-elements">
-                <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                    <div class="gray-block"><p><b>{{getHours(datasFilted[index].magRealTimePerCase || 0)}}h</b>{{getMinutes(datasFilted[index].magRealTimePerCase || 0)}}</p></div>
+            <p class="description-container">(calculé sur les 12 mois
+                précédents)</p>
+            <div class="container-elements">
+                <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                    <div class="gray-block">
+                        <p>
+                            <b>{{ getHours(datasFilted[index].magRealTimePerCase
+                                || 0) }}h</b>{{
+                            getMinutes(datasFilted[index].magRealTimePerCase ||
+                            0) }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -159,13 +401,23 @@
             <p class="title-section">Temps moyen Greffe</p>
             <p class="details-section">par dossier observé</p>
             <div class="flex-1"></div>
-            <div class="middle-empty-block"><p>Fin de période</p></div>
+            <div class="middle-empty-block">
+                <p>Fin de période</p>
+            </div>
         </div>
         <div class="container-element-text">
-            <p class="description-container">(calculé sur les 12 mois précédents)</p>
-             <div class="container-elements">
-                <div *ngFor="let ref of referentiel; let index=index" class="flex-1">
-                    <div class="gray-block"><p><b>{{getHours(datasFilted[index].fonRealTimePerCase || 0)}}h</b>{{getMinutes(datasFilted[index].fonRealTimePerCase || 0)}}</p></div>
+            <p class="description-container">(calculé sur les 12 mois
+                précédents)</p>
+            <div class="container-elements">
+                <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                    <div class="gray-block">
+                        <p>
+                            <b>{{ getHours(datasFilted[index].fonRealTimePerCase
+                                || 0) }}h</b>{{
+                            getMinutes(datasFilted[index].fonRealTimePerCase ||
+                            0) }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
