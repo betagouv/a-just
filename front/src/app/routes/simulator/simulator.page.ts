@@ -232,11 +232,19 @@ export class SimulatorPage
   valuesToReinit: any = null
 
   /**
+   * URL des différentes documentations selon le simulateur sélectionnée
+   */
+  documentationUrl = {
+    normal: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
+    whiteSimulator: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
+  }
+
+  /**
    * Documentation widget
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
+    path: this.documentationUrl.normal,
     printSubTitle: true,
   }
 
@@ -2031,6 +2039,14 @@ export class SimulatorPage
     if (this.getInterfaceType() === true)
       return this.referentielCAMappingName(label)
     else return this.referentielMappingName(label)
+  }
+
+  /**
+   * Changmenet de l'url de la documentation selon le simulateur sélectionnée
+   * @param docUrl 
+   */
+  setDocUrl(docUrl: string) {
+    this.documentation.path = docUrl
   }
 }
 
