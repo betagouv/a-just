@@ -84,18 +84,23 @@ export class GraphsVerticalsLinesComponent extends MainClass implements OnChange
   }
 
   draw() {
-    if (this.line && this.line.length === 2) {
-      const canvas = this.domCanvas?.nativeElement
-      if (canvas) {
-        canvas.width = this.width
-        canvas.height = this.height
-        const ctx = canvas.getContext('2d')
-        ctx.clearRect(0, 0, this.width * 200, this.height * 200)
-        ctx.beginPath()
+    const canvas = this.domCanvas?.nativeElement
+    if (canvas) {
+      canvas.width = this.width
+      canvas.height = this.height
+      const ctx = canvas.getContext('2d')
+      ctx.clearRect(0, 0, this.width * 200, this.height * 200)
+      ctx.beginPath()
+
+      if (this.line && this.line.length === 2) {
         ctx.strokeStyle = this.referentielMappingColor(this.referentielName)
         ctx.setLineDash([2])
         ctx.lineWidth = 1
         ctx.moveTo(0, this.height * (1 - (this.line[0] / this.maxValue)))
+        ctx.lineTo(
+          this.width * 0.5,
+          this.height * (1 - (this.values[0] / this.maxValue))
+        )
         ctx.lineTo(
           this.width,
           this.height * (1 - (this.line[1] / this.maxValue))
@@ -105,6 +110,8 @@ export class GraphsVerticalsLinesComponent extends MainClass implements OnChange
         // Create path
         let region = new Path2D();
         region.moveTo(0, this.height * (1 - (this.line[0] / this.maxValue)));
+        region.lineTo(this.width * 0.5,
+          this.height * (1 - (this.values[0] / this.maxValue)));
         region.lineTo(this.width,
           this.height * (1 - (this.line[1] / this.maxValue)));
         region.lineTo(this.width, this.height);

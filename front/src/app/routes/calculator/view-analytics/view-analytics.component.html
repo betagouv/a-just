@@ -97,7 +97,6 @@
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <ng-template [ngIf]="!showDetailStock">
-
                     <aj-graphs-verticals-lines [referentielName]="ref.label"
                         [values]="[datasFilted[index].lastStock || 0]"
                         [maxValue]="stockMax"></aj-graphs-verticals-lines>
@@ -259,18 +258,18 @@
                     [maxValue]="siegeMax"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTSiege">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpMag || 0)" class="text-center"
+                        [title]="'' + fixDecimal(datasFilted[index].etpMag || 0)" class="text-center"
                         [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTSiege">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpMag || 0)" class="text-center no-border-bottom"
+                        [title]="'' + fixDecimal(datasFilted[index].etpMag || 0)" class="text-center no-border-bottom"
                         [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpMagBf || 0)"
+                        [title]="'' + fixDecimal(datasFilted[index].etpMagBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpMagAf || 0)"
+                        [title]="'' + fixDecimal(datasFilted[index].etpMagAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -312,18 +311,18 @@
                     [maxValue]="greffeMax"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTGreffe">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpFon || 0)" class="text-center"
+                        [title]="'' + fixDecimal(datasFilted[index].etpFon || 0)" class="text-center"
                         [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTGreffe">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpFon || 0)" class="text-center no-border-bottom"
+                        [title]="'' + fixDecimal(datasFilted[index].etpFon || 0)" class="text-center no-border-bottom"
                         [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpFonBf || 0)"
+                        [title]="'' + fixDecimal(datasFilted[index].etpFonBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpFonAf || 0)"
+                        [title]="'' + fixDecimal(datasFilted[index].etpFonAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -365,18 +364,18 @@
                     [maxValue]="eamMax"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTEam">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpCont || 0)" class="text-center"
+                        [title]="'' + fixDecimal(datasFilted[index].etpCont || 0)" class="text-center"
                         [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTEam">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpCont || 0)" class="text-center no-border-bottom"
+                        [title]="'' + fixDecimal(datasFilted[index].etpCont || 0)" class="text-center no-border-bottom"
                         [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpContBf || 0)"
+                        [title]="'' + fixDecimal(datasFilted[index].etpContBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].etpContAf || 0)"
+                        [title]="'' + fixDecimal(datasFilted[index].etpContAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
