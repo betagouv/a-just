@@ -13,6 +13,18 @@
         color: #929292;
         font-size: 12px;
         line-height: 1;
+
+        &.details {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            text-align: left;
+            padding-left: 14px;
+
+            i {
+                position: relative;
+                left: -6px;
+            }
+        }
     }
 
     aj-graphs-verticals-lines {
@@ -34,7 +46,7 @@
         background-color: #f6f6f6;
 
         >div:first-child {
-            width: 163px;
+            width: 179px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -83,7 +95,7 @@
 
     .container-colum {
         border-right: solid 1px #ddd;
-        width: 163px;
+        width: 179px;
         background-color: #f6f6f6;
         padding: 16px;
         display: flex;
@@ -149,6 +161,14 @@
         gap: 5px;
         padding-left: 11px;
         padding-right: 16px;
+
+        &.container-to-top {
+            align-items: flex-start;
+        }
+
+        &.container-to-bottom {
+            align-items: flex-end;
+        }
 
         >div {
             display: flex;

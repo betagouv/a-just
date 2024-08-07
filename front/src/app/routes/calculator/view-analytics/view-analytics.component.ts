@@ -56,6 +56,34 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
    * Définie le max ETPT EAM
    */
   eamMax: number = 0
+  /**
+   * Show detail of coverture
+   */
+  showDetailCover: boolean = false
+  /**
+   * Show detail of stock
+   */
+  showDetailStock: boolean = false
+  /**
+   * Show detail of entrees
+   */
+  showDetailEntrees: boolean = false
+  /**
+   * Show detail of sorties
+   */
+  showDetailSorties: boolean = false
+  /**
+   * Show detail of ETPT Siège
+   */
+  showDetailETPTSiege: boolean = false
+  /**
+   * Show detail of ETPT Greffe
+   */
+  showDetailETPTGreffe: boolean = false
+  /**
+   * Show detail of ETPT EAM
+   */
+  showDetailETPTEam: boolean = false
 
   /**
    * Constructor
@@ -110,5 +138,15 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
 
   getMinutes(value: number) {
     return (Math.floor((value - Math.floor(value)) * 60)+'').padStart(2, '0')
+  }
+
+  openAll() {
+    this.showDetailCover = true;
+    this.showDetailStock = true;
+    this.showDetailEntrees = true;
+    this.showDetailSorties = true;
+    this.showDetailETPTSiege = true;
+    this.showDetailETPTGreffe = true;
+    this.showDetailETPTEam = true;
   }
 }
