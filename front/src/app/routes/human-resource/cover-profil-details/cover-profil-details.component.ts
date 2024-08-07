@@ -4,6 +4,9 @@ import {
   Input,
   OnChanges,
   Output,
+  ViewChildren,
+  QueryList,
+  ElementRef 
 } from '@angular/core'
 import { FormGroup } from '@angular/forms'
 import { Location } from '@angular/common'
@@ -17,6 +20,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { etpLabel } from 'src/app/utils/referentiel'
+import { DateSelectComponent } from 'src/app/components/date-select/date-select.component'
 
 /**
  * Panneau de présentation d'une fiche
@@ -30,6 +34,10 @@ import { etpLabel } from 'src/app/utils/referentiel'
 export class CoverProfilDetailsComponent
   extends MainClass
   implements OnChanges {
+
+  @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
+  @ViewChildren(DateSelectComponent) calendar! : QueryList<DateSelectComponent>
+
   /**
    * Fiche courante
    */
@@ -152,8 +160,15 @@ export class CoverProfilDetailsComponent
     node: 'firstName' | 'lastName' | 'matricule',
     object: any
   ) {
+    const value = object || ' '
+    const spanInputElem = document.querySelector(`.input-span-${node}`) as HTMLElement
+
+    if (spanInputElem)
+        spanInputElem.innerText = value
+
     if (this.basicHrInfo) {
-      this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
+      this.basicHrInfo.get(node)?.setValue(object)
+      //this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
     }
   }
 
@@ -208,4 +223,31 @@ export class CoverProfilDetailsComponent
     return true
   }
 
+    /**
+   * Permet à l'utilisateur de passer d'un input à un autre avec la touche "Entrée"
+   * @param event 
+   */
+  focusNext(event: any) {
+    event.preventDefault()
+    const inputsArray = this.inputs.toArray();
+    if (event.target.id !== 'lastName') {
+      const currentIndex = inputsArray.findIndex(input => input.nativeElement === event.target);
+      if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
+        inputsArray[currentIndex + 1].nativeElement.focus();
+      }
+    } else {
+      inputsArray.map(elem => elem.nativeElement.blur() )
+      this.calendar.first.onClick()
+    }
+  }
+    
+  /**
+   * Empêche la soumission du formulaire lorsque l'utilisateur presse la touche "Entrée"
+   * @param event
+   */
+  preventSubmit(event: any) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  }
 }

@@ -247,7 +247,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * On Changes titles
    */
   ngOnChanges() {
-    this.titlePlatform.setTitle(this.title + ' | A-Just')
+
+    this.titlePlatform.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + this.title)
   }
 
   /**

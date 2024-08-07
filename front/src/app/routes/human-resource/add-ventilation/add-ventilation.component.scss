@@ -19,7 +19,7 @@
         }
 
         >.activities {
-          margin: 8px 15px 8px 15px !important;
+          margin: 8px 15px 0px 15px !important;
         }
 
         .bottom-container {
@@ -287,6 +287,7 @@ input[type="file"] {
     display: flex;
 
     >.date-start {
+      min-width: 400px;
       flex: 1;
       height: fit-content;
       margin: 8px 8px 8px 0;
@@ -322,7 +323,7 @@ input[type="file"] {
 
     >.indisponibilities {
       margin: 8px 0 8px 8px;
-      padding: 0px 0px 16px 0px;
+      //padding: 0px 0px 16px 0px;
       border-radius: 8px;
       border: solid 1px #ddd;
       background-color: #fff;

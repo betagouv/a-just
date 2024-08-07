@@ -47,7 +47,7 @@
     </div>
 
 
-    <div class="administration">
+    <div class="administration" id="admin">
       <div class="top">
 
         <p>Situation administrative</p>
@@ -60,7 +60,7 @@
               class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true"
               data-mat-icon-type="font">{{toggleDropDown=== false ?"expand_more":"expand_less"}}</mat-icon>
           </label>
-          <div class="drop-down-content" [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
+          <div class="drop-down-content" id="timesheet" [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
 
             <a (click)="downloadEtpTemplate()" class="download">
               <img src="/assets/icons/download-line.svg" />
@@ -152,10 +152,10 @@
       </panel-activities>
     </div>
     <div class="bottom-container">
-      <div class="date-start" [ngStyle]="{'flex' : displayImportLabels===true?'1.2': '1'}">
+      <div class="date-start">
         <div class="header">
-          <p *ngIf="isEdit">Modification de la situation :</p>
-          <p *ngIf="!isEdit">Situation à prendre en compte :</p>
+          <p *ngIf="isEdit">Modification de la situation </p>
+          <p *ngIf="!isEdit">Situation à prendre en compte </p>
           <div class="flex-1"></div>
           <label class="import-confirmation" *ngIf="displayImportLabels" [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
             'background-color' : form.get('activitiesStartDate')?.value === null ?'#feebd0':'#b8fec9'}"><i
@@ -170,7 +170,7 @@
 
       <div class="indisponibilities">
         <div class="indispo-header">
-          <p>Indisponibilités :</p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
+          <p>Indisponibilités </p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
             text="Qu'est-ce que c'est ?"></aj-help-button>
           <label>(facultatif)</label>
           <div class="flex-1"></div>
