@@ -125,7 +125,7 @@ export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateSt
  * @returns
  */
 const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups) => {
-  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf } = getLastTwelveMonths(dateStart, dateStop, activities, referentielId, hr, categories)
+  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(dateStart, dateStop, activities, referentielId, hr, categories)
 
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
@@ -140,15 +140,37 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
     }
   }
 
+  // Taux de couverture moyen, debut (Bf), fin (Af)
   const realCoverage = fixDecimal(totalOut / totalIn, 100)
+  const realCoverageBf = fixDecimal(totalOutBf / totalInBf, 100)
+  const realCoverageAf = fixDecimal(totalOutAf / totalInAf, 100)
 
+  // ETP 12 derniers mois fin
   const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / meanOutCs, 100) : null
+  // ETP 12 derniers mois début
   const realDTESInMonthsStart = lastStockBf !== null ? fixDecimal(lastStockBf / meanOutBf, 100) : null
 
+  // ETP moyen sur la période
   const etpAffected = getHRPositions(hr, categories, referentielId, dateStart, dateStop)
   const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 100) : 0
   const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 100) : 0
   const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 100) : 0
+
+  // ETP début
+  let oneDayAfterStart = new Date(dateStart)
+  oneDayAfterStart.setDate(oneDayAfterStart.getDate() + 2)
+  const etpAffectedBf = getHRPositions(hr, categories, referentielId, dateStart, oneDayAfterStart)
+  const etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 100) : 0
+  const etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 100) : 0
+  const etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 100) : 0
+
+  // ETP fin
+  let oneDayBeforeEnd = new Date(dateStop)
+  oneDayAfterStart.setDate(oneDayAfterStart.getDate() - 2)
+  const etpAffectedAf = getHRPositions(hr, categories, referentielId, oneDayBeforeEnd, dateStop)
+  const etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 100) : 0
+  const etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 100) : 0
+  const etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 100) : 0
 
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
   const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (meanOutCs / etpMagCs), 100)
@@ -156,21 +178,18 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
 
   return {
     ...calculateActivities(referentielId, totalIn, lastStock, etpMag, etpFon, optionsBackups),
-    totalIn,
-    totalOut,
-    lastStock,
-    realCoverage,
-    realDTESInMonths,
-    realDTESInMonthsStart,
-    etpMag,
-    magRealTimePerCase,
-    etpFon,
-    fonRealTimePerCase,
-    etpCont,
-    etpAffected,
-    totalInBf,
-    totalOutBf,
-    lastStockBf
+    // entrée sorties et taux de couverture moyen sur la période avec stock de fin
+    totalIn, totalOut, lastStock, realCoverage,
+    // DTES début (Start) et DTES fin
+    realDTESInMonthsStart, realDTESInMonths,
+    // TMD magistrat et fonctionnaire
+    magRealTimePerCase, fonRealTimePerCase,
+    // ETP moyen sur la période
+    etpMag, etpFon, etpCont, etpAffected,
+    // Valeurs de début de période (Bf = Before)
+    totalInBf, totalOutBf, lastStockBf, realCoverageBf, etpAffectedBf, etpMagBf, etpFonBf, etpContBf,
+    // Valeurs de fin de période (Af = After)
+    lastStockAf, totalInAf, totalOutAf, realCoverageAf, etpAffectedAf, etpMagAf, etpFonAf, etpContAf,
   }
 }
 
@@ -189,10 +208,22 @@ const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr,
 
   // Date: fin de période selecitonnée dans calculateur (fin du mois)
   const endCs = month(new Date(dateStop), 0, 'lastday')
+  let lastStockCs = null
+  let totalInCs = null
+  let totalOutCs = null
 
   // Clone de l'objet activities et filtre par date
   let activitesEnd = cloneDeep(activities)
   activitesEnd = activitesEnd.filter((a) => month(a.periode).getTime() >= month(startCs).getTime() && month(a.periode).getTime() <= month(endCs).getTime())
+
+  if (activitesEnd.length) {
+    const lastActivities = activitesEnd[activitesEnd.length - 1]
+    if (lastActivities.stock !== null && isSameMonthAndYear(lastActivities.periode, endCs)) {
+      lastStockCs = lastActivities.stock
+      totalInCs = lastActivities.entrees
+      totalOutCs = lastActivities.sorties
+    }
+  }
 
   // Calcul des sorties moyennes 12 derniers mois à compter de la date de fin selectionnée dans le calculateur
   const meanOutCs = (activitesEnd || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesEnd, 'sorties') / 12 : null
@@ -231,7 +262,7 @@ const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr,
     }
   }
 
-  return { meanOutCs, etpMagCs, etpFonCs, startCs, endCs, startBf, endBf, meanOutBf, lastStockBf, totalInBf, totalOutBf }
+  return { meanOutCs, etpMagCs, etpFonCs, startCs, endCs, startBf, endBf, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf: lastStockCs, totalInAf: totalInCs, totalOutAf: totalOutCs }
 }
 /**
  * Calcul d'un taux de ventilation d'un contentieux pour tous les utilisateurs
