@@ -489,7 +489,7 @@ export class SimulatorPage
    * Initialisation du composant
    */
   ngOnInit(): void {
-    this.hubspotChatService.loadHubSpotChat();
+    //this.hubspotChatService.loadHubSpotChat();
     this.resetParams()
     this.onResetUserAction()
     this.dateStop = null
