@@ -11,8 +11,6 @@ export class HubspotChatService {
   constructor() {}
 
   loadHubSpotChat() {
-    console.log('\n\n\n\n\nLOAD HUBSPOT')
-    console.log('HUBSPOT: isScriptLoaded -> ', this.isScriptLoaded)
     if (!this.isScriptLoaded) {
       const script = document.createElement('script');
       script.type = "text/javascript"
@@ -23,7 +21,6 @@ export class HubspotChatService {
 
       document.body.appendChild(script);
       this.isScriptLoaded = true;
-      console.log('isScriptLoaded:', this.isScriptLoaded, '\n\n\n');
       
     }
   }
