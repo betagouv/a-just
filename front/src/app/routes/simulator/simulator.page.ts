@@ -235,7 +235,7 @@ export class SimulatorPage
    * URL des différentes documentations selon le simulateur sélectionnée
    */
   documentationUrl = {
-    normal: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
+    main: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
     whiteSimulator: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
   }
 
@@ -244,7 +244,7 @@ export class SimulatorPage
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
-    path: this.documentationUrl.normal,
+    path: this.documentationUrl.main,
     printSubTitle: true,
   }
 
@@ -758,6 +758,7 @@ export class SimulatorPage
     this.startRealValue = ''
     this.stopRealValue = ''
     this.mooveClass = ''
+    this.documentation.path = this.documentationUrl.main,
 
     this.toDisplaySimulation = false
     //this.simulatorService.situationSimulated.next(null)
