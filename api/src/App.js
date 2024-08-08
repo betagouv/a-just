@@ -204,7 +204,7 @@ export default class App extends AppBase {
               "feedback-eu1.hubapi.com",
             ],
             'default-src': ["'none'"],
-            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com', '*.hubspotusercontent40.net', '*.hubspotusercontent-na1.net', 'cdn2.hubspot.net'],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com', '*.hubspotusercontent40.net', 'cdn2.hubspot.net', "'sha256-PDv7PK7p4vec7tI/1XbvDMwahytuLYN1Ul7CMcw1gHY='"],
             'worker-src': ['blob:'],
             'frame-src': [
               'https://app.videas.fr/',
