@@ -53,6 +53,14 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   dateStop: Date | null = null
   /**
+ * Date de début du calcul
+ */
+  optionDateStart: Date | null = null
+  /**
+   * Date de fin du calcul
+   */
+  optionDateStop: Date | null = null
+  /**
    * Tri ou non
    */
   sortBy: string = ''
@@ -171,6 +179,14 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Affichage du menu déroulant de référentiel de temps
    */
   showPicker = false
+  /**
+   * Edition d'un referentiel de comparaison
+   */
+  onEdit = true
+  /**
+   * Choix du mode de comparaison 1=> date à date 2=> référentiel
+   */
+  compareOption = 0
   /**
    * liste des référentiels
    */

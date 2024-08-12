@@ -29,6 +29,36 @@
     max-width: 500px;
   }
 
+  &.width-575 .popup>div {
+    width: 90%;
+    max-width: 575px;
+
+    .content {
+      padding: 0 20px;
+    }
+
+    .title {
+      //color: fColor(popupWhiteTitle);
+      margin-bottom: 0px;
+    }
+
+    .close {
+      i {
+        //color: fColor(darkModeTitle);
+        font-size: 14px;
+      }
+
+      label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #000091;
+
+        display: block;
+      }
+
+    }
+  }
+
   &.width-600 .popup>div {
     width: 90%;
     max-width: 600px;
@@ -223,6 +253,10 @@
         margin-left: 8px;
         position: relative;
         top: 1px;
+      }
+
+      label {
+        display: none;
       }
     }
   }
