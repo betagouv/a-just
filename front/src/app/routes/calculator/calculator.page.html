@@ -158,7 +158,7 @@
     </div>
 
     <p class="title">Comparer les données</p>
-    <p class="title">de {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à :</p>
+    <p class="title">de {{getRealValue(optionDateStart)}} - {{getRealValue(optionDateStop)}} à :</p>
 
     <div class="picker">
       <div class="first-section" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1">
@@ -170,12 +170,12 @@
             <label>Choisir la période :</label>
             <div class="dates-selector popup" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1">
               <aj-date-select title="Pour la période du" [value]="optionDateStart"
-                (valueChange)="updateReferentielSelected('dateStart', $event)"
+                (valueChange)="updateReferentielSelected('optionDateStart', $event)"
                 class="date-start bg-white no-label left no-icon" [max]="optionDateStop" [dateClass]="dateClass"
                 [dateType]="'month'" [icon]="'none'">
               </aj-date-select>
               <aj-date-select title="À" [value]="optionDateStop"
-                (valueChange)="updateReferentielSelected('dateStop', $event)"
+                (valueChange)="updateReferentielSelected('optionDateStop', $event)"
                 class="date-stop bg-white no-label no-icon right" [dateClass]="dateClass" [dateType]="'month'"
                 [min]="optionDateStart" [icon]="'none'">
               </aj-date-select>
