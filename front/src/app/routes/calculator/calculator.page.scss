@@ -299,7 +299,10 @@
   .dates-selector {
     display: flex;
     position: relative;
-    border: 1px solid #dddddd;
+
+    &.popup {
+      border: 1px solid #dddddd;
+    }
 
     &.selected {
       border: 1px solid #000091;
@@ -531,6 +534,7 @@ aj-referentiel-calculator:nth-child(even) {
   height: 32px;
   background-color: white;
   border-radius: 4px;
+  margin-left: 8px;
 
   >div {
     display: flex;
