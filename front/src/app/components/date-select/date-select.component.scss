@@ -10,6 +10,32 @@
   cursor: pointer;
   margin: auto 0;
 
+  &.no-icon {
+    padding: 0px 0px !important;
+    width: 100px !important;
+    border-radius: 0px !important;
+    border: none !important;
+
+    &.left {
+      //border: none !important;
+
+      div {
+        p {
+          border-right: none;
+          border-left: none !important;
+        }
+      }
+    }
+
+    div {
+      p {
+        padding-right: 0px !important;
+        border-right: none !important;
+      }
+    }
+
+  }
+
   &.no-label {
     border-left: none;
     height: 32px;
@@ -40,6 +66,11 @@
         margin-right: 0px;
         color: #929292;
       }
+    }
+
+    &.right {
+      text-align: right;
+      padding-right: 16px !important;
     }
 
     &.left {
