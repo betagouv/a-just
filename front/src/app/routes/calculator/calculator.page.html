@@ -168,7 +168,7 @@
         <div class="content">
           <div class="action">
             <label>Choisir la période :</label>
-            <div class="dates-selector" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1">
+            <div class="dates-selector popup" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1">
               <aj-date-select title="Pour la période du" [value]="optionDateStart"
                 (valueChange)="updateReferentielSelected('dateStart', $event)"
                 class="date-start bg-white no-label left no-icon" [max]="optionDateStop" [dateClass]="dateClass"
