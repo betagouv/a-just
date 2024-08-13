@@ -13,12 +13,12 @@
       <label (click)="onRemove()">Supprimer</label>
     </div>
     <div class="import-action" (click)="onCreation=true;onUpload=true">Importer un référentiel</div>
-    <div class="create-action" (click)="onCreation=true">Créer un référentiel</div>
+    <div class="create-action" (click)="onCreation=true;onUpload=false">Créer un référentiel</div>
   </div>
 
   <!-- POPUP CREATION -->
-  <aj-popup *ngIf="onCreation===true" [closeIcon]="true" (onClose)="onCreation = false" [removeShadow]="'noShadow'"
-    class="border-radius fix-width-400">
+  <aj-popup *ngIf="onCreation===true" [closeIcon]="true" (onClose)="onCreation = false;nameLength = 0"
+    [removeShadow]="'noShadow'" class="border-radius fix-width-400">
     <div id="circle">
       <i class="ri-ball-pen-line"></i>
     </div>

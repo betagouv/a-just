@@ -252,7 +252,7 @@ export class ContentieuxOptionsService extends MainClass {
     if (backupName) {
       return this.serverService
         .post(`contentieux-options/duplicate-backup`, {
-          backupId: this.backupId.getValue(),
+          backupId: backupId,
           backupName,
           type,
           backupStatus: 'Local',
