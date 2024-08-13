@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import { Router } from '@angular/router'
+import * as _ from 'lodash'
 import { orderBy } from 'lodash'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
+import { BackupInterface } from 'src/app/interfaces/backup'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
@@ -196,6 +198,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     { label: 'année précédente', selected: false }
   ]
   /**
+ * Liste des sauvegardes
+ */
+  backups: BackupInterface[] = []
+  /**
    * Constructeur
    * @param humanResourceService
    * @param calculatorService
@@ -289,6 +295,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.onCheckLastMonth()
       })
     )
+
+    // Chargement des référentiels
+    this.watch(
+      this.contentieuxOptionsService.backups.subscribe((b) => {
+        this.backups = b
+      }))
   }
 
   /**
@@ -311,11 +323,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           date = new Date()
         }
 
-        console.log(date)
         date = new Date(date ? date : '')
         const max = month(date, 0, 'lastday')
         this.maxDateSelectionDate = max
-        console.log(max)
 
         this.calculatorService.dateStart.next(month(max, -2))
         this.calculatorService.dateStop.next(max)
@@ -577,13 +587,27 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   getRealValue(date: Date | null) {
-    if (date !== null)
+    if (date !== null) {
+      date = new Date(date)
       return `${this.getShortMonthString(date)} ${date.getFullYear()}`
+    }
     else return ''
   }
 
   radioSelect(ref: any) {
     this.referentiels.map(x => { x.selected = false })
     ref.selected = true
+  }
+
+  trunc(str: string) {
+    return _.truncate(str, { 'length': 40, 'separator': '...' })
+  }
+
+  selectBackup(backup: BackupInterface) {
+    this.backups.map(x => { x.selected = false })
+    backup.selected = true
+  }
+  unselectBackup() {
+    this.backups.map(x => { x.selected = false })
   }
 }

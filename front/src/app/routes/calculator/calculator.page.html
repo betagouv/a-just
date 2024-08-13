@@ -158,10 +158,10 @@
     </div>
 
     <p class="title">Comparer les données</p>
-    <p class="title">de {{getRealValue(optionDateStart)}} - {{getRealValue(optionDateStop)}} à :</p>
+    <p class="title">de {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à :</p>
 
     <div class="picker">
-      <div class="first-section" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1">
+      <div class="first-section" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1;unselectBackup()">
 
         <div class="header"> une autre période de ma juridiction</div>
 
@@ -195,7 +195,14 @@
             <div class="flex-1"></div>
             <label class="creation">Date de création</label>
           </div>
-          <div class="ref-list"></div>
+          <div class="ref-list">
+            <div class="line-item" *ngFor="let backup of backups; index as i;" (click)="selectBackup(backup)"
+              [ngClass]="{'selected': backup.selected===true}">
+              <p class="element-list"><label class="name">{{trunc(backup.label)}}</label>
+                <label>{{getRealValue(backup.date)}}</label>
+              </p>
+            </div>
+          </div>
           <div class="page-picker"></div>
 
         </div>

@@ -35,6 +35,10 @@ export interface BackupInterface {
 	 * Nom du créateur du referentiel
 	 */
 	userName?: string
+	/**
+	 * Selectionné à l'affichage ou non
+	 */
+	selected?: boolean
 }
 
 export interface UpdateInterface {
