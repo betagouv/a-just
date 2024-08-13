@@ -586,6 +586,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.fonctionRealValue = tmpStr
   }
 
+  /**
+   * Renvoi la valeur de la date Mois - Année
+   * @param date 
+   * @returns 
+   */
   getRealValue(date: Date | null) {
     if (date !== null) {
       date = new Date(date)
@@ -594,19 +599,37 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     else return ''
   }
 
+  /**
+   * Choix dans dropdown du référentiel de comparaison
+   * @param ref 
+   */
   radioSelect(ref: any) {
     this.referentiels.map(x => { x.selected = false })
     ref.selected = true
   }
 
+  /**
+   * Ellipsis version JS à 40 char
+   * @param str 
+   * @returns 
+   */
   trunc(str: string) {
     return _.truncate(str, { 'length': 40, 'separator': '...' })
   }
 
+  /**
+   * Selectionne le backup dans la liste déroulante de la popin
+   * @param backup 
+   */
   selectBackup(backup: BackupInterface) {
     this.backups.map(x => { x.selected = false })
     backup.selected = true
   }
+
+  /**
+ * Déselectionne le backup dans la liste déroulante de la popin
+ * @param backup 
+ */
   unselectBackup() {
     this.backups.map(x => { x.selected = false })
   }

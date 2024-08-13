@@ -106,10 +106,20 @@ export class AverageEtpPage extends MainClass {
     )
   }
 
+  /**
+   * Renvoi la date à un format d'affichage
+   * @param date 
+   * @returns 
+   */
   realValue(date: Date) {
     return findRealValueCustom(new Date(date))
   }
 
+  /**
+   * Duplique un référentiel par ID
+   * @param backupId 
+   * @param type 
+   */
   duplicate(backupId: number, type: string) {
     this.contentieuxOptionsService.duplicateBackupById(backupId, type)
   }
@@ -141,6 +151,10 @@ export class AverageEtpPage extends MainClass {
       this.onDelete = true
   }
 
+  /**
+   * Récupère les backup selectionnées
+   * @returns 
+   */
   getSelectedBackups() {
     return this.checkList.map((value, index) => {
       if (value === true) { return this.backups[index].id }
@@ -163,6 +177,11 @@ export class AverageEtpPage extends MainClass {
   }
 
 
+  /**
+   * Selectionne tous les référentiels
+   * @param value 
+   * @returns 
+   */
   checkAll(value?: boolean) {
     if (value !== undefined)
       this.checkList = this.backups.map(() => value)
@@ -172,14 +191,26 @@ export class AverageEtpPage extends MainClass {
     return false
   }
 
+  /**
+   * Compte la taille d'une string
+   * @param text 
+   */
   countLen(text: string) {
     this.nameLength = text.length
   }
 
+  /**
+   * Navigation vers un référentiel
+   * @param id 
+   */
   goTo(id: number) {
     this.router.navigate(['/referentiel-de-temps', id])
   }
 
+  /**
+   * Envoie du fichier d'import
+   * @param elem 
+   */
   async onSendAllActivity(elem: any) {
     try {
       await this.contentieuxOptionsService.onSendAllActivity(elem)
@@ -199,6 +230,9 @@ export class AverageEtpPage extends MainClass {
     document.getElementById('filePicker')!.click();
   }
 
+  /**
+   * Import d'un référentiel
+   */
   async import() {
     let form = (document.getElementById('form') as HTMLFormElement)
     let name = (document.getElementById('name') as HTMLTextAreaElement)?.value || ''
@@ -220,6 +254,9 @@ export class AverageEtpPage extends MainClass {
       }
   }
 
+  /**
+   * Téléchargement du template
+   */
   downloadAsset() {
     this.contentieuxOptionsService.downloadTemplate(true)
   }

@@ -243,10 +243,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
           this.referentielService.idsSoutien.indexOf(r.id) === -1
       )
 
-      /*const backupLabel = localStorage.getItem('backupLabel')
-      backupLabel && filterReferentiels(referentiels, backupLabel)*/
       if (this.backup)
-        // todo set in, out, stock for each
         this.referentiel = referentiels.map((ref) => {
           const getOption = options.find((a) => a.contentieux.id === ref.id)
           ref.averageProcessingTime =
