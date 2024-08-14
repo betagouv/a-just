@@ -156,4 +156,92 @@ export default class RouteCalculator extends Route {
 
     this.sendOk(ctx, { fonctions, list })
   }
+
+  /**
+   * Interface des retours de calcul de la page calculateur
+   * @param {*} backupId
+   * @param {*} dateStart
+   * @param {*} dateStop
+   * @param {*} contentieuxIds
+   * @param {*} optionBackupId
+   * @param {*} categorySelected
+   * @param {*} selectedFonctionsIds
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      dateStart: Types.date().required(),
+      dateStop: Types.date().required(),
+      contentieuxId: Types.number().required(),
+      type: Types.string().required(),
+    }),
+    accesses: [Access.canVewCalculator],
+  })
+  async rangeValues (ctx) {
+    let { backupId, dateStart, dateStop, contentieuxId, type } = this.body(ctx)
+    dateStart = month(dateStart)
+    dateStop = month(dateStop)
+
+    const list = []
+
+    do {
+      switch (type) {
+      case 'entrees':
+        {
+          const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
+          if (activites.length) {
+            const acti = activites[0]
+            if (acti.entrees !== null) {
+              list.push(acti.entrees)
+            } else if (acti.originalEntrees !== null) {
+              list.push(acti.originalEntrees)
+            } else {
+              list.push(null)
+            }
+          }
+        }
+        break
+      case 'sorties':
+        {
+          const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
+          if (activites.length) {
+            const acti = activites[0]
+            if (acti.sorties !== null) {
+              list.push(acti.sorties)
+            } else if (acti.ori !== null) {
+              list.push(acti.originalSorties)
+            } else {
+              list.push(null)
+            }
+          }
+        }
+        break
+      case 'stock':
+        {
+          const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
+          if (activites.length) {
+            const acti = activites[0]
+            if (acti.stock !== null) {
+              list.push(acti.stock)
+            } else if (acti.originalStock !== null) {
+              list.push(acti.originalStock)
+            } else {
+              list.push(null)
+            }
+          }
+        }
+        break
+      default:
+        {
+          console.log('type', type)
+        }
+        break
+      }
+      //console.log(dateStart)
+
+      dateStart.setMonth(dateStart.getMonth() + 1)
+    } while (dateStart.getTime() <= dateStop.getTime())
+
+    this.sendOk(ctx, list)
+  }
 }
