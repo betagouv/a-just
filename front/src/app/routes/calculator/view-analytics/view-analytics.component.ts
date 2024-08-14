@@ -130,6 +130,27 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     this.eamMax = (Math.max(...allEAM) || 0) * 1.1
   }
 
+  onUpdateMax({ type, max }: { type: string, max: number }) {
+    max = max * 1.1
+    switch (type) {
+      case 'stock': {
+        if (this.stockMax < max) {
+          this.stockMax = max;
+        } return
+      }
+      case 'entrees': {
+        if (this.entreesMax < max) {
+          this.entreesMax = max;
+        } return
+      }
+      case 'sorties': {
+        if (this.sortiesMax < max) {
+          this.sortiesMax = max;
+        } return
+      }
+    }
+  }
+
   getHours(value: number) {
     return Math.floor(value)
   }

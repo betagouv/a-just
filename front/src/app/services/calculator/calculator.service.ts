@@ -94,4 +94,22 @@ export class CalculatorService extends MainClass {
     this.dateStop.next(month(this.dateStop.getValue(), monthToAdd, 'lastDay'))
     console.log('step2', this.dateStop.getValue())
   }
+
+  /**
+   * Liste des données entre 2 dates
+   * @param contentieuxId 
+   * @param type 
+   * @returns 
+   */
+  rangeValues(contentieuxId: number, type: string) {
+    return this.serverService
+      .post(`calculator/range-values`, {
+        backupId: this.humanResourceService.backupId.getValue(),
+        dateStart: setTimeToMidDay(this.dateStart.getValue()),
+        dateStop: setTimeToMidDay(this.dateStop.getValue()),
+        contentieuxId,
+        type,
+      })
+      .then((data) => data.data || [])
+  }
 }

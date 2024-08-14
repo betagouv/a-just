@@ -26,10 +26,10 @@
         </div>
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id" [values]="[
             datasFilted[index].realDTESInMonthsStart || 0,
             datasFilted[index].realDTESInMonths || 0
-          ]" [maxValue]="dtesMax"></aj-graphs-verticals-lines>
+          ]" [maxValue]="dtesMax" type="dtes" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <aj-graphs-numbers [referentielName]="ref.label"
                     [title]="'' + (datasFilted[index].realDTESInMonthsStart || 0)" subTitle="mois"
                     class="no-border-bottom"></aj-graphs-numbers>
@@ -97,15 +97,16 @@
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <ng-template [ngIf]="!showDetailStock">
-                    <aj-graphs-verticals-lines [referentielName]="ref.label"
-                        [values]="[datasFilted[index].lastStock || 0]"
-                        [maxValue]="stockMax"></aj-graphs-verticals-lines>
+                    <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
+                        [values]="[datasFilted[index].lastStock || 0]" [maxValue]="stockMax" type="stocks"
+                        (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                     <aj-graphs-numbers [referentielName]="ref.label" [title]="'' + (datasFilted[index].lastStock || 0)"
                         class="text-center" [isWhite]="true"></aj-graphs-numbers></ng-template>
                 <ng-template [ngIf]="showDetailStock">
-                    <aj-graphs-verticals-lines [referentielName]="ref.label"
+                    <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
                         [values]="[datasFilted[index].lastStockBf || 0, datasFilted[index].lastStockAf || 0]"
-                        [maxValue]="stockMax"></aj-graphs-verticals-lines>
+                        [maxValue]="stockMax" type="stocks"
+                        (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="'' + (datasFilted[index].lastStockBf || 0)"
                         class="text-center no-border-bottom"></aj-graphs-numbers>
@@ -147,9 +148,9 @@
         </div>
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].totalIn || 0]"
-                    [line]="showDetailEntrees ? [datasFilted[index].totalInBf || 0, datasFilted[index].totalInAf || 0] : null"
-                    [maxValue]="entreesMax"></aj-graphs-verticals-lines>
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
+                    [values]="[datasFilted[index].totalIn || 0]" [showLines]="showDetailEntrees" [maxValue]="entreesMax"
+                    type="entrees" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailEntrees">
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="'' + floor(datasFilted[index].totalIn || 0)" class="text-center"
@@ -200,9 +201,10 @@
         </div>
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].totalOut || 0]"
-                    [line]="showDetailSorties ? [datasFilted[index].totalOutBf || 0, datasFilted[index].totalOutAf || 0] : null"
-                    [maxValue]="sortiesMax"></aj-graphs-verticals-lines>
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
+                    [values]="[datasFilted[index].totalOut || 0]" [showLines]="showDetailSorties"
+                    [maxValue]="sortiesMax" type="sorties"
+                    (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailSorties">
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="'' + floor(datasFilted[index].totalOut || 0)" class="text-center"
@@ -222,7 +224,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="categorySelected === MAGISTRATS">
+    <div>
         <div class="container-colum">
             <p class="title-section">ETPT Siège</p>
             <p class="details-section">sur la période</p>
@@ -253,9 +255,9 @@
         </div>
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpMag || 0]"
-                    [line]="showDetailETPTSiege ? [datasFilted[index].etpMagBf || 0, datasFilted[index].etpMagAf || 0] : null"
-                    [maxValue]="siegeMax"></aj-graphs-verticals-lines>
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
+                    [values]="[datasFilted[index].etpMag || 0]" [showLines]="showDetailETPTSiege" [maxValue]="siegeMax"
+                    type="ETPTSiege" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTSiege">
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="'' + fixDecimal(datasFilted[index].etpMag || 0)" class="text-center"
@@ -275,7 +277,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="categorySelected === FONCTIONNAIRES">
+    <div>
         <div class="container-colum">
             <p class="title-section">ETPT Greffe</p>
             <p class="details-section">sur la période</p>
@@ -306,9 +308,10 @@
         </div>
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpFon || 0]"
-                    [line]="showDetailETPTGreffe ? [datasFilted[index].etpFonBf || 0, datasFilted[index].etpFonAf || 0] : null"
-                    [maxValue]="greffeMax"></aj-graphs-verticals-lines>
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
+                    [values]="[datasFilted[index].etpFon || 0]" [showLines]="showDetailETPTGreffe"
+                    [maxValue]="greffeMax" type="ETPTGreffe"
+                    (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTGreffe">
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="'' + fixDecimal(datasFilted[index].etpFon || 0)" class="text-center"
@@ -359,9 +362,9 @@
         </div>
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                <aj-graphs-verticals-lines [referentielName]="ref.label" [values]="[datasFilted[index].etpCont || 0]"
-                    [line]="showDetailETPTEam ? [datasFilted[index].etpContBf || 0, datasFilted[index].etpContAf || 0] : null"
-                    [maxValue]="eamMax"></aj-graphs-verticals-lines>
+                <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
+                    [values]="[datasFilted[index].etpCont || 0]" [showLines]="showDetailETPTEam" [maxValue]="eamMax"
+                    type="ETPTEam" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTEam">
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="'' + fixDecimal(datasFilted[index].etpCont || 0)" class="text-center"

@@ -633,4 +633,71 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   unselectBackup() {
     this.backups.map(x => { x.selected = false })
   }
+
+  /**
+   * On lance une comparaison
+   */
+  onCompare() {
+    console.log('on comp', { compareOption: this.compareOption, optionDateStart: this.optionDateStart, optionDateStop: this.optionDateStop, backups: this.backups })
+    const backupSelected = this.backups.find(b => b.selected)
+    if (this.compareOption === 1) {
+      if (!this.optionDateStart) {
+        alert('Vous devez saisir une date de début !')
+        return
+      }
+
+      if (!this.optionDateStop) {
+        alert('Vous devez saisir une date de fin !')
+        return
+      }
+    } else {
+      if (!backupSelected) {
+        alert('Vous devez saisir un référentiel de comparaison !')
+        return
+      }
+    }
+
+    //this.onEdit = false
+    this.onLoadCompare(this.compareOption === 1 ? {
+      dateStart: this.optionDateStart,
+      dateStop: this.optionDateStop,
+    } : { referentielId: backupSelected?.id })
+  }
+
+  /**
+   * Comparaison des données back
+   */
+  onLoadCompare(compareWith: object) {
+    if (
+      this.categorySelected &&
+      this.isLoading === false
+    ) {
+      /*this.isLoading = true
+      this.calculatorService
+        .compareList(
+          this.categorySelected,
+          this.lastCategorySelected === this.categorySelected
+            ? this.selectedFonctionsIds
+            : null,
+          compareWith,
+        )
+        .then(({ list, fonctions }) => {
+          console.log(list)
+          /*if (this.lastCategorySelected !== this.categorySelected) {
+            this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
+              id: f.id,
+              value: f.code,
+            }))
+            this.selectedFonctionsIds = fonctions.map(
+              (f: HRFonctionInterface) => f.id
+            )
+            this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+          }
+          this.formatDatas(list)
+          this.isLoading = false
+          //this.lastCategorySelected = this.categorySelected
+        })
+        .catch(() => (this.isLoading = false))*/
+    }
+  }
 }

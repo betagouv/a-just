@@ -166,12 +166,10 @@
             <label>Choisir la période :</label>
             <div class="dates-selector popup" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1">
               <aj-date-select title="Pour la période du" [value]="optionDateStart"
-                (valueChange)="updateReferentielSelected('optionDateStart', $event)"
-                class="date-start bg-white no-label left no-icon" [max]="optionDateStop" [dateClass]="dateClass"
-                [dateType]="'month'" [icon]="'none'">
+                (valueChange)="optionDateStart = $event" class="date-start bg-white no-label left no-icon"
+                [max]="optionDateStop" [dateClass]="dateClass" [dateType]="'month'" [icon]="'none'">
               </aj-date-select>
-              <aj-date-select title="À" [value]="optionDateStop"
-                (valueChange)="updateReferentielSelected('optionDateStop', $event)"
+              <aj-date-select title="À" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
                 class="date-stop bg-white no-label no-icon right" [dateClass]="dateClass" [dateType]="'month'"
                 [min]="optionDateStart" [icon]="'none'">
               </aj-date-select>
@@ -207,7 +205,7 @@
 
     </div>
     <div class="actions">
-      <div class="save" (click)="onEdit = false">Comparer</div>
+      <div class="save" (click)="onCompare()">Comparer</div>
     </div>
   </aj-popup>
 </aj-wrapper>
