@@ -133,6 +133,7 @@ body:not(.iIOS) .window-scrool-width-margin {
 
 // global vars
 
-.global-tooltiptext *, .global-tooltiptext * * {
+.global-tooltiptext *,
+.global-tooltiptext * * {
 	color: white !important;
 }

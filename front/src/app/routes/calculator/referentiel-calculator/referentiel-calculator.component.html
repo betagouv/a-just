@@ -11,108 +11,100 @@
             }}</p>
     </div>
 
-    <div class="item activity">
-        <div *ngIf="!isSoutien(calculator.contentieux.id)">
-            <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }">
-                <div class="block dtes">
-                    <ng-template [ngIf]="calculator.realDTESInMonths !== null && checkPastDate()" [ngIfElse]="nr">
-                        <p>{{ calculator.realDTESInMonths | number: '0.2-2' || 0 }} mois</p>
-                    </ng-template>
-                </div>
-            </div>
-            <div [ngClass]="{ selected: sortBy === 'realCoverage' }">
-                <div class="block left-border">
-                    <ng-template [ngIf]=" checkPastDate()" [ngIfElse]="nr">
-                        <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
-                    </ng-template>
-                </div>
-            </div>
-
-
+    <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }" class="item dtes">
+        <div class="block" *ngIf="!isSoutien(calculator.contentieux.id)">
+            <ng-template [ngIf]="calculator.realDTESInMonths !== null && checkPastDate()" [ngIfElse]="nr">
+                <p>{{ calculator.realDTESInMonths | number: '0.2-2' || 0 }} mois</p>
+            </ng-template>
         </div>
     </div>
+    <div [ngClass]="{ selected: sortBy === 'realCoverage' }" class="item coverage">
+        <div class="block left-border" *ngIf="!isSoutien(calculator.contentieux.id)">
+            <ng-template [ngIf]=" checkPastDate()" [ngIfElse]="nr">
+                <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
+            </ng-template>
+        </div>
 
-    <div class="item actual">
-        <div [ngClass]="{ selected: sortBy === 'lastStock' }">
-            <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
-                <ng-template [ngIf]="calculator.lastStock !== null && checkPastDate()" [ngIfElse]="nr">
-                    <div>
-                        <p>{{ calculator.lastStock }}</p>
-                    </div>
-                </ng-template>
+
+    </div>
+
+    <div [ngClass]="{ selected: sortBy === 'lastStock' }" class="item stock">
+        <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
+            <ng-template [ngIf]="calculator.lastStock !== null && checkPastDate()" [ngIfElse]="nr">
+                <div>
+                    <p>{{ calculator.lastStock }}</p>
+                </div>
             </ng-template>
-        </div>
-        <div [ngClass]="{ selected: sortBy === 'totalIn' }" class="left-border">
-            <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
-                <ng-template [ngIf]="calculator.totalIn !== null && checkPastDate()" [ngIfElse]="nr">
-                    <div>
-                        <p #tooltip="matTooltip"
-                            [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc(calculator.totalIn)"
-                            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
-                            floor(calculator.totalIn) }}</p>
-                    </div>
-                </ng-template>
+        </ng-template>
+    </div>
+    <div [ngClass]="{ selected: sortBy === 'totalIn' }" class="left-border item">
+        <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
+            <ng-template [ngIf]="calculator.totalIn !== null && checkPastDate()" [ngIfElse]="nr">
+                <div>
+                    <p #tooltip="matTooltip"
+                        [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc(calculator.totalIn)"
+                        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
+                        floor(calculator.totalIn) }}</p>
+                </div>
             </ng-template>
-        </div>
-        <div [ngClass]="{ selected: sortBy === 'totalOut' }" class="left-border">
-            <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
-                <ng-template [ngIf]="calculator.totalOut !== null && checkPastDate()" [ngIfElse]="nr">
-                    <div>
-                        <p #tooltip="matTooltip"
-                            [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : '+ trunc(calculator.totalOut)"
-                            matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
-                            floor(calculator.totalOut) }}</p>
-                    </div>
-                </ng-template>
+        </ng-template>
+    </div>
+    <div [ngClass]="{ selected: sortBy === 'totalOut' }" class="left-border item">
+        <ng-template [ngIf]="!isSoutien(calculator.contentieux.id)">
+            <ng-template [ngIf]="calculator.totalOut !== null && checkPastDate()" [ngIfElse]="nr">
+                <div>
+                    <p #tooltip="matTooltip"
+                        [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : '+ trunc(calculator.totalOut)"
+                        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
+                        floor(calculator.totalOut) }}</p>
+                </div>
             </ng-template>
-        </div>
-        <div *ngIf="canViewMagistrat" [ngClass]="{
+        </ng-template>
+    </div>
+    <div *ngIf="canViewMagistrat" [ngClass]="{
         selected: sortBy === 'etpMag',
         'bg-magistrats': categorySelected === MAGISTRATS
-      }" class="left-border">
-            <div>
-                <p>{{ calculator.etpMag | number: '0.2-2' }}</p>
-            </div>
+      }" class="left-border item">
+        <div>
+            <p>{{ calculator.etpMag | number: '0.2-2' }}</p>
         </div>
-        <div *ngIf="canViewGreffier" [ngClass]="{
+    </div>
+    <div *ngIf="canViewGreffier" [ngClass]="{
         selected: sortBy === 'etpFon',
         'bg-fonctionnaires': categorySelected === FONCTIONNAIRES
-      }" class="left-border">
-            <div>
-                <p>{{ calculator.etpFon | number: '0.2-2' }}</p>
-            </div>
+      }" class="left-border item">
+        <div>
+            <p>{{ calculator.etpFon | number: '0.2-2' }}</p>
         </div>
-        <div *ngIf="canViewContractuel" [ngClass]="{ selected: sortBy === 'etpCont' }" class="left-border">
-            <div>
-                <p>{{ calculator.etpCont | number: '0.2-2' }}</p>
-            </div>
+    </div>
+    <div *ngIf="canViewContractuel" [ngClass]="{ selected: sortBy === 'etpCont' }" class="left-border item">
+        <div>
+            <p>{{ calculator.etpCont | number: '0.2-2' }}</p>
         </div>
     </div>
 
-    <div class="item activity tmd">
-        <div [ngClass]="{
+    <div [ngClass]="{
         selected: sortBy === 'magRealTimePerCase'
-      }">
-            <div class="block">
-                <ng-template [ngIf]="categorySelected === MAGISTRATS">
-                    <ng-template [ngIf]="calculator.magRealTimePerCase !== null && checkPastDate()" [ngIfElse]="nr">
-                        <p>
-                            {{
-                            this.decimalToStringDate(calculator.magRealTimePerCase) || 0
-                            }}
-                        </p>
-                    </ng-template>
+      }" class="item tmd">
+        <div class="block">
+            <ng-template [ngIf]="categorySelected === MAGISTRATS">
+                <ng-template [ngIf]="calculator.magRealTimePerCase !== null && checkPastDate()" [ngIfElse]="nr">
+                    <p>
+                        {{
+                        this.decimalToStringDate(calculator.magRealTimePerCase) || 0
+                        }}
+                    </p>
                 </ng-template>
-                <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
-                    <ng-template [ngIf]="calculator.fonRealTimePerCase !== null && checkPastDate()" [ngIfElse]="nr">
-                        <p>
-                            {{
-                            this.decimalToStringDate(calculator.fonRealTimePerCase) || 0
-                            }}
-                        </p>
-                    </ng-template>
+            </ng-template>
+            <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
+                <ng-template [ngIf]="calculator.fonRealTimePerCase !== null && checkPastDate()" [ngIfElse]="nr">
+                    <p>
+                        {{
+                        this.decimalToStringDate(calculator.fonRealTimePerCase) || 0
+                        }}
+                    </p>
                 </ng-template>
-            </div>
+            </ng-template>
         </div>
 
     </div>
