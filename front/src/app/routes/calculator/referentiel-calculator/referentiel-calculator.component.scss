@@ -84,8 +84,35 @@
       display: flex;
       align-items: stretch;
 
+
+      &.stock {
+        border-left: solid 1px #f6f6f6 !important;
+      }
+
+      &.coverage {
+        min-width: 130px;
+      }
+
+      &.dtes {
+        //align-items: flex-end !important;
+        //padding: 0 24px;
+        border-left: solid 1px #f6f6f6 !important;
+
+        min-width: 130px;
+
+        >div {
+          justify-content: flex-end !important;
+
+          p {
+            padding: 0 24px;
+          }
+        }
+      }
+
       &.tmd {
-        flex: 0.5;
+        min-width: 135px !important;
+        flex: none !important;
+        border-left: solid 1px #f6f6f6 !important;
 
         div {
           &.selected {
@@ -93,8 +120,16 @@
           }
         }
 
+        >div {
+          justify-content: flex-end !important;
+
+          p {
+            padding: 0 24px;
+          }
+        }
+
         div>div {
-          align-items: flex-end !important;
+          //align-items: flex-end !important;
           padding: 0 24px;
 
           div>p {
@@ -149,37 +184,28 @@
             }
 
             >div {
-              align-self: stretch;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
+              justify-content: flex-end !important;
+              padding-right: 24px;
+            }
 
-              &.dtes {
-                align-items: flex-end !important;
-                padding: 0 24px;
-              }
+            >p {
+              color: fColor(cblack);
+              font-weight: 500;
+              font-size: 14px;
+              text-align: end;
 
-              >div {
-                justify-content: flex-end !important;
-                padding-right: 24px;
-              }
-
-              >p {
-                color: fColor(cblack);
-                font-weight: 500;
-                font-size: 14px;
-                text-align: end;
-
-                &.unity {
-                  color: fColor(grayRow);
-                  font-size: 16px;
-                  font-weight: normal;
-                }
+              &.unity {
+                color: fColor(grayRow);
+                font-size: 16px;
+                font-weight: normal;
               }
             }
 
+
             .ref-nr {
               height: 40px;
+              align-items: center !important;
+
             }
           }
         }
@@ -245,7 +271,8 @@ p {
 
 // class size
 .width-contentieux {
-  width: 152px;
+  min-width: 160px;
+  flex: 3;
 }
 
 aj-speedometer {
