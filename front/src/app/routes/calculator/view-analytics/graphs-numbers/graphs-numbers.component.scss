@@ -2,9 +2,8 @@
 
 :host {
     display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-end;
-    justify-content: center;
+    flex-direction: row;
+    align-items: center;
     height: 40px;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
@@ -12,7 +11,7 @@
     border-bottom-right-radius: 4px;
     padding: 6px 8px;
 
-    &.text-center {
+    &.text-center .text {
         align-items: center;
     }
 
@@ -24,6 +23,53 @@
     &.no-border-top {
         border-top-left-radius: 0;
         border-top-right-radius: 0;
+    }
+
+    &.is-transparent {
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    .text {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-end;
+        justify-content: center;
+        flex: 1;
+    }
+
+    .zone-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.is-up {
+            i.up {
+                display: inline-block;
+                color: #00a95f;
+                background-color: #c3fad5;
+            }
+
+            i.down {
+                display: none;
+            }
+        }
+
+        i.down {
+            display: inline-block;
+        }
+
+        i {
+            display: none;
+            color: white;
+            background-color: #e1000f;
+            font-size: 8px;
+            width: 16px;
+            height: 16px;
+            border-radius: 16px;
+            text-align: center;
+            line-height: 16px;
+        }
     }
 
     p {
