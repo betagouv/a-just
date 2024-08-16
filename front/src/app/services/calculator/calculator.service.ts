@@ -71,15 +71,15 @@ export class CalculatorService extends MainClass {
    * @param selectedFonctionsIds 
    * @returns 
    */
-  filterList(categorySelected: string, selectedFonctionsIds: number[] | null) {
+  filterList(categorySelected: string, selectedFonctionsIds: number[] | null, dateStart: Date | null = this.dateStart.getValue(), dateStop: Date | null = this.dateStop.getValue()) {
     console.log('FILTER LIST')
-    console.log('BACK Start', this.dateStart.getValue())
-    console.log('BACK Stop', this.dateStop.getValue())
+    console.log('BACK Start', dateStart)
+    console.log('BACK Stop', dateStop)
     return this.serverService
       .post(`calculator/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
-        dateStart: setTimeToMidDay(this.dateStart.getValue()),
-        dateStop: setTimeToMidDay(this.dateStop.getValue()),
+        dateStart: setTimeToMidDay(dateStart),
+        dateStop: setTimeToMidDay(dateStop),
         contentieuxIds: this.referentielIds.getValue(),
         optionBackupId: this.contentieuxOptionsService.backupId.getValue(),
         categorySelected,
