@@ -17,9 +17,11 @@ import { GraphsVerticalsLinesComponent } from './view-analytics/graphs-verticals
 import { GraphsNumbersComponent } from './view-analytics/graphs-numbers/graphs-numbers.component'
 import { GraphsProgressComponent } from './view-analytics/graphs-progress/graphs-progress.component'
 import { PopupModule } from 'src/app/components/popup/popup.module'
+import { TemplateAnalyticsComponent } from './template-analytics/template-analytics.component'
+import { PipesModule } from 'src/app/pipes/pipes.module'
 
 @NgModule({
-  declarations: [CalculatorPage, ReferentielCalculatorComponent, ViewAnalyticsComponent, GraphsVerticalsLinesComponent, GraphsNumbersComponent, GraphsProgressComponent],
+  declarations: [CalculatorPage, ReferentielCalculatorComponent, ViewAnalyticsComponent, GraphsVerticalsLinesComponent, GraphsNumbersComponent, GraphsProgressComponent, TemplateAnalyticsComponent],
   imports: [
     CalculatorPageModule,
     RouterModule,
@@ -33,7 +35,8 @@ import { PopupModule } from 'src/app/components/popup/popup.module'
     DateSelectModule,
     WrapperModule,
     IntroJSModule,
-    PopupModule
+    PopupModule,
+    PipesModule
   ],
 })
 export class CalculatorModule { }

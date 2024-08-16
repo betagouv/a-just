@@ -24,6 +24,7 @@ import {
   userCanViewGreffier,
   userCanViewMagistrat,
 } from 'src/app/utils/user'
+import { AnalyticsLine } from './template-analytics/template-analytics.component'
 
 /**
  * Page du calculateur
@@ -202,6 +203,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
  */
   backups: BackupInterface[] = []
   /**
+   * Template to compare
+   */
+  compareTemplates: AnalyticsLine[] | null = null
+  /**
    * Constructeur
    * @param humanResourceService
    * @param calculatorService
@@ -216,8 +221,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
-    private userService: UserService,
-    private router: Router
+    private userService: UserService
   ) {
     super()
   }
@@ -667,11 +671,170 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   /**
    * Comparaison des données back
    */
-  onLoadCompare(compareWith: object) {
+  async onLoadCompare(compareWith: object) {
     if (
       this.categorySelected &&
       this.isLoading === false
     ) {
+      const list: AnalyticsLine[] = []
+      if (this.compareOption === 1) {
+        // TODO
+        list.push({
+          title: "DTES",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+        // TODO
+        list.push({
+          title: "Temps moyen",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+        // TODO
+        list.push({
+          title: "Taux de couverture",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+        // TODO
+        list.push({
+          title: "Stock",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+        // TODO
+        list.push({
+          title: "Entrées",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+        // TODO
+        list.push({
+          title: "Sorties",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+        // TODO
+        list.push({
+          title: "ETPT Siège",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+        // TODO
+        list.push({
+          title: "ETPT Greffe",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+        // TODO
+        list.push({
+          title: "ETPT EAM",
+          type: "verticals-lines",
+          lineMax: 0, // TODO
+          values: [],
+          variations: [{ label: "Variation", values: [] }]
+        })
+      } else {
+        const actualRangeString = `${this.getRealValue(this.dateStart)} - ${this.getRealValue(this.dateStop)}`
+        const refSelected = this.backups.find(b => b.selected)
+        if (!refSelected) {
+          this.compareTemplates = null
+          return
+        }
+        const refDetails = await this.contentieuxOptionsService.loadDetails(refSelected.id)
+
+        const value1TempsMoyen = (this.datasFilted || []).map(d => d.magRealTimePerCase)
+        const stringValue1TempsMoyen = (value1TempsMoyen || []).map(d => d === null ? '-' : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `)
+        const value2TempsMoyen = this.referentiel.map(ref => {
+          const findDetail = refDetails.find(r => r.contentieux.id === ref.id)
+
+          if (findDetail && findDetail.averageProcessingTime) {
+            return findDetail.averageProcessingTime
+          }
+
+          return null
+        })
+        const stringValue2TempsMoyen = (value2TempsMoyen || []).map(d => d === null ? '-' : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `)
+        const variationsTempsMoyen = [...value2TempsMoyen].map((d, index) => {
+          if (d === null || value1TempsMoyen[index] === null) {
+            return '-'
+          }
+
+          const percent = this.fixDecimal((1 - ((d || 0) / (value1TempsMoyen[index] || 0))) * 100, 10)
+          if (percent > 0) {
+            return '+' + percent
+          }
+
+          return percent
+        })
+        list.push({
+          title: "Temps moyen",
+          type: "verticals-lines",
+          description: "moyen de référence<br/>v/s<br/>temps moyen de la période",
+          lineMax: Math.max(...value1TempsMoyen.map(m => m || 0), ...value2TempsMoyen.map(m => m || 0)) * 1.1,
+          values: value1TempsMoyen.map((v, index) => [v || 0, value2TempsMoyen[index] || 0]),
+          variations: [{ label: "Variation", values: variationsTempsMoyen, subTitle: '%', showArrow: true }, { label: actualRangeString, values: stringValue1TempsMoyen, subTitle: 'heures' }, { label: refSelected.label, values: stringValue2TempsMoyen, subTitle: 'heures' }]
+        })
+
+        const value1DTES = (this.datasFilted || []).map(d => d.realDTESInMonths)
+        const value2DTES = [...value1DTES] // TODO calcul du DTES
+        const variationsDTES = [...value2DTES].map(d => d === null ? '-' : this.fixDecimal(d, 10)) // TODO calcul de la variation
+        list.push({
+          title: "DTES",
+          type: "verticals-lines",
+          description: "possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)",
+          lineMax: Math.max(...value1DTES.map(m => m || 0), ...value2DTES.map(m => m || 0)) * 1.1,
+          values: value1DTES.map((v, index) => [v || 0, value2DTES[index] || 0]),
+          variations: [{ label: "Variation", values: variationsDTES, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1DTES, subTitle: 'mois' }, { label: refSelected.label, values: value2DTES, subTitle: 'mois' }]
+        })
+
+        const value1TauxCouverture = (this.datasFilted || []).map(d => d.realCoverage)
+        const value2TauxCouverture = [...value1TauxCouverture] // TODO calcul du Taux de couverture
+        const variationsCouverture = [...value2TauxCouverture].map(d => d === null ? '-' : this.fixDecimal(d, 10)) // TODO calcul de la variation
+        list.push({
+          title: "Taux de couverture",
+          type: "progress",
+          description: "possible<br/>v/s<br/>taux de couverture de la période",
+          lineMax: 0,
+          values: value1TauxCouverture.map((v, index) => [Math.floor((v || 0) * 100), Math.floor((value2TauxCouverture[index] || 0) * 100)]),
+          variations: [{ label: "Variation", values: variationsCouverture, subTitle: '%', showArrow: true }, { label: actualRangeString, isOption: true, values: value1TauxCouverture.map(t => t === null ? '-' : Math.floor(t * 100) + ' %') }, { label: refSelected.label, isOption: true, values: value2TauxCouverture.map(t => t === null ? '-' : Math.floor(t * 100) + ' %') }]
+        })
+
+        const value1Sorties = (this.datasFilted || []).map(d => d.lastStock)
+        const value2Sorties = [...value1Sorties] // TODO calcul nouveau stock
+        const variationsSorties = [...value1Sorties].map(d => d === null ? '-' : this.fixDecimal(d, 10)) // TODO calcul de la variation
+        list.push({
+          title: "Sorties",
+          type: "verticals-lines",
+          description: "mensuelles possibles<br/>v/s<br/>sorties de la période",
+          lineMax: Math.max(...value1Sorties.map(m => m || 0), ...value2Sorties.map(m => m || 0)) * 1.1,
+          values: value1Sorties.map((v, index) => [v || 0, value2Sorties[index] || 0]),
+          variations: [{ label: "Variation", values: variationsSorties, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1Sorties }, { label: refSelected.label, values: value2Sorties }]
+        })
+      }
+
+      this.compareTemplates = list
+
+
+
+
+
       /*this.isLoading = true
       this.calculatorService
         .compareList(
@@ -699,5 +862,14 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         })
         .catch(() => (this.isLoading = false))*/
     }
+  }
+
+
+  getHours(value: number) {
+    return Math.floor(value)
+  }
+
+  getMinutes(value: number) {
+    return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0')
   }
 }
