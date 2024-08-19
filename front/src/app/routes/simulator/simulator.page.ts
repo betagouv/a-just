@@ -6,7 +6,7 @@ import {
   nbOfDays,
   stringToDecimalDate,
 } from 'src/app/utils/dates'
-import { Component, OnInit, HostListener, ViewChild } from '@angular/core'
+import { Component, OnInit, HostListener, ViewChild, OnDestroy } from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -77,7 +77,7 @@ const etpFonToDefine = '[un volume moyen de]'
 })
 export class SimulatorPage
   extends MainClass
-  implements OnInit, IDeactivateComponent {
+  implements OnInit, IDeactivateComponent, OnDestroy {
   /**
    * Wrapper de page contenant le simulateur
    */
@@ -484,6 +484,13 @@ export class SimulatorPage
   }
 
   /**
+   * Destruction du composant
+   */
+  ngOnDestroy(): void {
+    this.resetParams()
+  }
+
+  /**
    * Initialisation du composant
    */
   ngOnInit(): void {
@@ -746,6 +753,8 @@ export class SimulatorPage
     this.projectedSituationData = null
     this.dateStart = new Date()
     this.simulatorService.dateStart.next(this.dateStart)
+    this.simulatorService.dateStop.next(new Date())
+    this.simulatorService.situationProjected.next(null)
     this.dateStop = null
     this.startRealValue = ''
     this.stopRealValue = ''
