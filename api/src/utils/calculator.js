@@ -166,7 +166,7 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
 
   // ETP fin
   let oneDayBeforeEnd = new Date(dateStop)
-  oneDayAfterStart.setDate(oneDayAfterStart.getDate() - 2)
+  oneDayBeforeEnd.setDate(oneDayBeforeEnd.getDate() - 2)
   const etpAffectedAf = getHRPositions(hr, categories, referentielId, oneDayBeforeEnd, dateStop)
   const etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 100) : 0
   const etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 100) : 0
