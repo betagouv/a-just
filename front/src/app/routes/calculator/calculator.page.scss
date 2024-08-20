@@ -1,6 +1,14 @@
 @import '../../styles/utils.scss';
 
 :host {
+  .bg-magistrats {
+    background-color: fColor(cbluemiddle);
+  }
+  
+  .bg-fonctionnaires {
+    background-color: fColor(cpinkmiddle);
+  }
+  
 
   aj-popup {
     .actions {
@@ -83,12 +91,12 @@
         height: fit-content;
 
         .content {
-          padding: 16px;
+          padding: 16px 8px;
 
           .action {
             border-radius: 8px;
             background-color: #f6f6f6;
-            padding: 12px 16px;
+            padding: 12px 10px;
             display: block;
 
             label {
@@ -96,18 +104,9 @@
               font-weight: normal;
               color: #3a3a3a;
               margin-bottom: 8px;
+              margin-left: 14px;
             }
 
-            .dates-selector {
-              margin-top: 8px;
-
-              aj-date-select {
-
-                &.date-start {
-                  margin-left: 0px;
-                }
-              }
-            }
           }
         }
       }
@@ -321,14 +320,14 @@
   }
 
   .filters-item {
-    height: 32px;
-    border: solid 1px #ddd;
+    border-bottom: solid 1px #ddd;
     background-color: #f6f6f6;
     padding: 0 18px;
     display: flex;
     align-items: center;
 
     .fonction-values {
+      margin: 4px 0;
       font-size: 12px;
       line-height: 19px;
       display: inline;
@@ -343,28 +342,14 @@
   .dates-selector {
     display: flex;
     position: relative;
-
-    &.popup {
-      border: 1px solid #dddddd;
+    &.popup{
+    margin-top: 8px;
     }
-
     &.selected {
-      border: 1px solid #000091;
+      aj-date-select{border: 1px solid #000091;}
     }
 
-    mat-icon {
-      position: absolute;
-      left: 131px;
-      top: 11px;
-      font-size: 11px;
-      color: #929292;
 
-      &.no-icon {
-        left: 96px;
-        height: initial;
-        width: initial;
-      }
-    }
   }
 
 
@@ -376,7 +361,7 @@
     &.compare {
       height: 40px;
       border-radius: 4px;
-      border: solid 1px #dddddd;
+      outline: solid 1px #dddddd;
       background-color: white;
       color: #3a3a3a;
       line-height: 40px !important;
@@ -537,17 +522,9 @@ aj-options-backup-panel {
 }
 
 aj-date-select {
-  &.date-start {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    margin-left: 8px;
-  }
-
-  &.date-stop {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    border-left: none;
-  }
+  
+  margin-left: 8px;
+  &.popup{margin-left:1px}
 }
 
 aj-referentiel-calculator:nth-child(even) {
@@ -559,8 +536,9 @@ aj-referentiel-calculator:nth-child(even) {
   align-items: center;
   height: 48px;
   min-height: 48px;
-  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border-bottom: solid 1px #ddd;
+  border-top: solid 1px #ddd;
+
   background-color: fColor(bgSelect);
   width: calc(100% - 2px);
   padding: 0px 16px;
@@ -577,7 +555,6 @@ aj-referentiel-calculator:nth-child(even) {
   height: 32px;
   background-color: white;
   border-radius: 4px;
-  margin-left: 8px;
 
   >div {
     display: flex;

@@ -642,6 +642,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * On lance une comparaison
    */
   onCompare() {
+    console.log(this.backups)
     const backupSelected = this.backups.find(b => b.selected)
     if (this.compareOption === 1) {
       if (!this.optionDateStart) {
@@ -890,5 +891,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   getMinutes(value: number) {
     return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0')
+  }
+
+  /** Retourne la derniere date de maj si elle existe ou date de creation */
+  getLastDate(backup:BackupInterface){
+    if (backup.update!==null)
+    return backup.update.date
+    else return backup.date
   }
 }
