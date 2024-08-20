@@ -6,6 +6,7 @@ import routeCalcultator from './api/RouteCalculator.test'
 //import routeSimulator from './api/RouteSimulator.test'
 import routeVentilateur from './api/RouteVentilateur.test'
 import routePanorama from './api/RoutePanorama.test'
+import routeActivities from './api/RouteActivities.test'
 
 import axios from 'axios'
 import { assert } from 'chai'
@@ -75,13 +76,13 @@ describe('Test server is ready', () => {
     const accessIds = accessList.map((elem) => {
       return elem.id
     })
-    let response = await onUpdateAccountApi({
+    await onUpdateAccountApi({
       userToken: datas.adminToken,
       userId: datas.adminId,
       accessIds: accessIds,
       ventilations: [],
     })
-    response = await onGetUserDataApi({ userToken: datas.adminToken })
+    let response = await onGetUserDataApi({ userToken: datas.adminToken })
     datas.adminAccess = response.data.user.access
     assert.strictEqual(response.status, 200)
     assert.isNotEmpty(datas.adminAccess)
@@ -93,6 +94,7 @@ describe('Test server is ready', () => {
   //routeSimulator(datas)
   routeVentilateur(datas)
   routePanorama(datas)
+  routeActivities(datas)
 
   /*routeImport()
   routeHR()
