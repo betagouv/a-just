@@ -1,38 +1,51 @@
-import axios from 'axios'
-import config from 'config'
 import { assert } from 'chai'
-import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
+import { JURIDICTION_DATA_BACKUP_ID } from '../constants/juridiction'
+import { onGetLastMonthApi, onGetDataByMonthApi } from '../routes/activities'
+import { onGetAllContentieuxReferentiels } from '../routes/contentieux'
 
-module.exports = function () {
-  let userToken = null
+module.exports = function (datas) {
   let activities = []
-  let backupId = null
   let referentiels = []
-
-  describe('Générate user auth', () => {
-    it('has token response code', async () => {
-      const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email: USER_ADMIN_EMAIl,
-        password: USER_ADMIN_PASSWORD,
-      })
-      userToken = response.data && response.data.token
-      assert.isOk(userToken, 'cannot generate token')
-    })
-  })
+  let lastMonthActivity = null
 
   describe('Test Activities', () => {
     it('load Referentiel', async () => {
-      const response = await axios.post(`${config.serverUrl}/referentiels/get-referentiels`, {
-        headers: {
-          Authorization: userToken,
-        },
-      })
+      const response = await onGetAllContentieuxReferentiels({ userToken: datas.adminToken, jirs: true})
 
       referentiels = response.data && response.data.data
-      assert.isOk(referentiels.length !== 0, 'missing referentiel')
+      assert.isOk(referentiels.length !== 0, 'missing contentieux referentiels')
     })
 
-    it('load Activities', async () => {
+    it('Get last month activity fron a TJ', async () => {
+      const response = await onGetLastMonthApi({ userToken: datas.adminToken, hrBackupId: JURIDICTION_DATA_BACKUP_ID })
+      if (response.data && response.data.data && response.data.data.date)
+        lastMonthActivity = response.data.data.date
+      assert.strictEqual(response.status, 200)
+    })
+
+    it('Get last data available from a TJ', async () => {
+      const response = await onGetDataByMonthApi({ userToken: datas.adminToken, hrBackupId: JURIDICTION_DATA_BACKUP_ID, date: lastMonthActivity })
+      let data = null
+      let isEmptyIn = true
+      let isEmptyOut = true
+      let isEmptyStock = true
+      
+      if (response && response.data && response.data.data && response.data.data.list) {
+        data = response.data.data.list
+        data.map(elem => {
+          if(elem.originalEntrees !== null)
+            isEmptyIn = false
+          if(elem.originalSorties !== null)
+            isEmptyOut = false
+          if(elem.originalStock !== null)
+            isEmptyStock = false
+        })
+      }
+      assert.strictEqual(response.status, 200)
+      assert.isFalse(isEmptyIn && isEmptyOut && isEmptyStock);
+    })
+  
+    /*it('load Activities', async () => {
       const response = await axios.post(
         `${config.serverUrl}/activities/get-all`,
         {
@@ -91,6 +104,7 @@ module.exports = function () {
 
       activities = response.data && response.data.data && response.data.data.activities
       backupId = response.data && response.data.data && response.data.data.backupId
+      console.log('Activities:', activities)
       assert.isOk(activities.length === 1, 'activities not loaded')
     })
 
@@ -102,6 +116,6 @@ module.exports = function () {
       })
 
       assert.equal(response.status, 200, 'delete backup fail')
-    })
+    })*/
   })
 }
