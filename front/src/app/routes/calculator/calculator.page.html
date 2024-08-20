@@ -21,19 +21,16 @@
       </aj-select>
 
       <div class="dates-selector">
-        <aj-date-select title="Pour la période du" [value]="dateStart"
-          (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start bg-white no-label left"
+        <aj-date-select title="de" [value]="dateStart"
+          (valueChange)="updateReferentielSelected('dateStart', $event)" class="bg-white calculator"
           [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'" [icon]="'chevron_left'">
         </aj-date-select>
-        <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
-          class="date-stop bg-white no-label" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
+        <aj-date-select title="à" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
+          class="bg-white calculator" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
           [icon]="'chevron_right'">
         </aj-date-select>
-        <mat-icon>arrow_forward</mat-icon>
       </div>
       <div class="flex-1"></div>
-
-      <mat-date-range-picker #picker></mat-date-range-picker>
 
       <div class="switch-tab">
         <div class="brut" [ngClass]="{'selected': tabSelected === 0}" (click)="tabSelected=0;$event.stopPropagation()">
@@ -95,7 +92,9 @@
               <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
             </div>
             <div *ngIf="canViewMagistrat" class="tooltip medium item" (click)="onSortBy('etpMag')"
-              [ngClass]="{'selected': sortBy === 'etpMag'}">
+              [ngClass]="{'selected': sortBy === 'etpMag',
+                'bg-magistrats': categorySelected === MAGISTRATS
+              }" >
               <div class="flex-1"></div>
               <p>ETPT <br />Siège</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
@@ -104,7 +103,7 @@
               </aj-tooltips>
             </div>
             <div *ngIf="canViewGreffier" class="tooltip medium item" (click)="onSortBy('etpFon')"
-              [ngClass]="{'selected': sortBy === 'etpFon'}">
+              [ngClass]="{'selected': sortBy === 'etpFon', 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES}">
               <div class="flex-1"></div>
               <p>ETPT<br />Greffe</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
@@ -167,16 +166,15 @@
         <div class="content">
           <div class="action">
             <label>Choisir la période :</label>
-            <div class="dates-selector popup" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1">
-              <aj-date-select title="Pour la période du" [value]="optionDateStart"
-                (valueChange)="optionDateStart = $event" class="date-start bg-white no-label left no-icon"
+            <div class="dates-selector popup"  (click)="compareOption=1">
+              <aj-date-select [ngClass]="{'selected': compareOption===1}" title="de" [value]="optionDateStart"
+                (valueChange)="optionDateStart = $event" class="bg-white calculator popup"
                 [max]="optionDateStop" [dateClass]="dateClass" [dateType]="'month'" [icon]="'none'">
               </aj-date-select>
-              <aj-date-select title="À" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
-                class="date-stop bg-white no-label no-icon right" [dateClass]="dateClass" [dateType]="'month'"
+              <aj-date-select [ngClass]="{'selected': compareOption===1}" title="à" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
+                class="bg-white calculator popup" [dateClass]="dateClass" [dateType]="'month'"
                 [min]="optionDateStart" [icon]="'none'">
               </aj-date-select>
-              <mat-icon class="no-icon">arrow_forward</mat-icon>
             </div>
           </div>
         </div>
@@ -188,15 +186,15 @@
           <br />de temps moyens
         </div>
         <div class="content">
-          <div class="tab-header"><label class="name">Nom</label>
+         <!-- <div class="tab-header"><label class="name">Nom</label>
             <div class="flex-1"></div>
             <label class="creation">Date de création</label>
-          </div>
+          </div>-->
           <div class="ref-list">
             <div class="line-item" *ngFor="let backup of backups; index as i;" (click)="selectBackup(backup)"
               [ngClass]="{'selected': backup.selected===true}">
               <p class="element-list"><label class="name">{{trunc(backup.label)}}</label>
-                <label>{{getRealValue(backup.date)}}</label>
+                <label>{{getRealValue(getLastDate(backup))}}</label>
               </p>
             </div>
           </div>
