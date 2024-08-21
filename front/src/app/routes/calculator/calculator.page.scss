@@ -4,11 +4,10 @@
   .bg-magistrats {
     background-color: fColor(cbluemiddle);
   }
-  
+
   .bg-fonctionnaires {
     background-color: fColor(cpinkmiddle);
   }
-  
 
   aj-popup {
     .actions {
@@ -106,7 +105,6 @@
               margin-bottom: 8px;
               margin-left: 14px;
             }
-
           }
         }
       }
@@ -139,7 +137,6 @@
             overflow: auto;
 
             .line-item {
-
               border-top: solid 1px transparent;
               border-bottom: solid 1px #ddd;
               border-left: none !important;
@@ -154,7 +151,6 @@
                 .element-list {
                   color: #0063cb !important;
                 }
-
               }
             }
 
@@ -170,8 +166,6 @@
               position: relative;
 
               label {
-
-
                 &.name {
                   flex: 1;
                   position: relative;
@@ -200,10 +194,7 @@
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
         border-bottom: solid 1px #ddd !important;
-
       }
-
-
     }
 
     #circle {
@@ -351,16 +342,17 @@
   .dates-selector {
     display: flex;
     position: relative;
-    &.popup{
-    margin-top: 8px;
+
+    &.popup {
+      margin-top: 8px;
     }
+
     &.selected {
-      aj-date-select{border: 1px solid #000091;}
+      aj-date-select {
+        border: 1px solid #000091;
+      }
     }
-
-
   }
-
 
   .grey {
     color: #929292 !important;
@@ -495,9 +487,6 @@
       flex: none !important;
     }
 
-
-
-
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -532,9 +521,11 @@ aj-options-backup-panel {
 }
 
 aj-date-select {
-  
   margin-left: 8px;
-  &.popup{margin-left:1px}
+
+  &.popup {
+    margin-left: 1px;
+  }
 }
 
 aj-referentiel-calculator:nth-child(even) {
@@ -553,7 +544,7 @@ aj-referentiel-calculator:nth-child(even) {
   width: calc(100% - 2px);
   padding: 0px 16px;
 
-  >aj-options-backup-panel {
+  > aj-options-backup-panel {
     margin-right: 24px;
   }
 }
@@ -566,14 +557,12 @@ aj-referentiel-calculator:nth-child(even) {
   background-color: white;
   border-radius: 4px;
 
-  >div {
+  > div {
     display: flex;
     align-items: center;
     padding: 0 16px;
     cursor: pointer;
     border: solid 1px fColor(cgraylightv3);
-
-
 
     &.alone {
       border-radius: 4px;
@@ -587,7 +576,7 @@ aj-referentiel-calculator:nth-child(even) {
     }
   }
 
-  >.magistrats,
+  > .magistrats,
   .brut {
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
@@ -603,7 +592,7 @@ aj-referentiel-calculator:nth-child(even) {
     }
   }
 
-  >.fonctionnaires {
+  > .fonctionnaires {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
     padding: 0 8px;
@@ -618,12 +607,11 @@ aj-referentiel-calculator:nth-child(even) {
     }
   }
 
-  >.brut {
+  > .brut {
     i {
       font-size: 24px;
       margin-right: 8px;
       color: #666666;
-
     }
 
     &.selected {
@@ -640,7 +628,7 @@ aj-referentiel-calculator:nth-child(even) {
     }
   }
 
-  >.analytique {
+  > .analytique {
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
 
@@ -648,7 +636,6 @@ aj-referentiel-calculator:nth-child(even) {
       font-size: 24px;
       margin-right: 8px;
       color: #666666;
-
     }
 
     &.selected {
