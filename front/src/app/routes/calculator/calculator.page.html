@@ -45,8 +45,9 @@
         </div>
       </div>
     </div>
-    <div class="filters-item" *ngIf="fonctionRealValue.length>0"> <label class="fonction-values"> {{fonctionRealValue}}
-      </label></div>
+    <div class="filters-item" *ngIf="fonctionRealValue.length>0"> <label class="fonction-values"  [ngClass]="{'Greffe': categorySelected === FONCTIONNAIRES}"> {{fonctionRealValue}}
+      <i class="ri-close-line" (click)="selectAllFct()"></i> </label>          
+    </div>
 
     <ng-template [ngIf]="!compareTemplates">
       <ng-template [ngIf]="tabSelected === 0">
