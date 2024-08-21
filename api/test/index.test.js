@@ -59,11 +59,14 @@ describe('Test server is ready', () => {
     const email = USER_ADMIN_EMAIL
     const password = USER_ADMIN_PASSWORD
 
+    console.log('HERE TEST 00')
     // Connexion de l'admin
     const response = await onLoginAdminApi({
       email: email,
       password: password,
     })
+    console.log('HERE TEST 01')
+    console.log('RESPONSE:', response)
     // Récupération du token associé pour l'identifier
     datas.adminToken = response.status === 201 && response.data.token
     datas.adminId = response.status === 201 && response.data.user.id
