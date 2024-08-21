@@ -10,6 +10,7 @@ import { PipesModule } from './pipes/pipes.module'
 import { ReaffectatorModule } from './routes/reaffectator/reaffectator.module'
 import { SimulatorModule } from './routes/simulator/simulator.module';
 import { AverageEtpDisplayerModule } from './routes/average-etp/average-etp-displayer/average-etp-displayer.module'
+import { BigLoaderModule } from './components/big-loader/big-loader.module'
 
 /**
  * Module principal du projet
@@ -17,6 +18,7 @@ import { AverageEtpDisplayerModule } from './routes/average-etp/average-etp-disp
 @NgModule({
   declarations: [AppComponent, AlertComponent],
   imports: [
+    BigLoaderModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
