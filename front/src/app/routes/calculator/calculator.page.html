@@ -45,8 +45,9 @@
         </div>
       </div>
     </div>
-    <div class="filters-item" *ngIf="fonctionRealValue.length>0"> <label class="fonction-values"  [ngClass]="{'Greffe': categorySelected === FONCTIONNAIRES}"> {{fonctionRealValue}}
-      <i class="ri-close-line" (click)="selectAllFct()"></i> </label>          
+    <div class="filters-item" *ngIf="fonctionRealValue.length>0"> <label class="fonction-values"
+        [ngClass]="{'Greffe': categorySelected === FONCTIONNAIRES}"> {{fonctionRealValue}}
+        <i class="ri-close-line" (click)="selectAllFct()"></i> </label>
     </div>
 
     <ng-template [ngIf]="!compareTemplates">
@@ -224,14 +225,14 @@
       <label class="header">la période
         {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à
       </label>
-      {{this.backupSettingSaved | json}}
-      <div *ngFor="let ref of referentiels" class="item" (click)="radioSelect(ref)">
+      <div *ngFor="let ref of referentiels" class="item" (click)="radioSelect(ref);$event.stopPropagation();">
         <i [class]="ref.selected===false ?'':'filled'" (click)="radioSelect(ref);$event.stopPropagation();"
           class="radio"></i><span>{{ref.label}}</span>
         <div class="flex-1"></div>
-        <i class="ri-more-line"></i>
+        <i class="ri-delete-bin-line" *ngIf="!ref.isLocked" (click)="onRemoveSetting(ref.label)"></i>
       </div>
-      <label class="footer" (click)="onEdit=true">+ Personnaliser</label>
+      <label class="footer" (click)="onEdit = true; showPicker = false; $event.stopPropagation();">+
+        Personnaliser</label>
     </div>
   </button>
   <button class="primary light export" (click)="onExport()">

@@ -13,20 +13,22 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.addOrUpdate = async (id, backupId, label, type, datas) => {
-    const find = await Model.findOne({
-      where: {
-        backup_id: backupId,
-        id,
-      },
-    })
-
-    if (find) {
-      await find.update({
-        type,
-        label,
-        datas: JSON.stringify(datas),
+    if (id) {
+      const find = await Model.findOne({
+        where: {
+          backup_id: backupId,
+          id,
+        },
       })
-      return
+
+      if (find) {
+        await find.update({
+          type,
+          label,
+          datas: JSON.stringify(datas),
+        })
+        return
+      }
     }
 
     await Model.create({
@@ -50,7 +52,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     const findAll = await Model.findAll({
-      attributes: ['label', 'type', 'datas', ['created_at', 'createdAt'], ['updated_at', 'updatedAt']],
+      attributes: ['id', 'label', 'type', 'datas', ['created_at', 'createdAt'], ['updated_at', 'updatedAt']],
       where: {
         backup_id: backupId,
         ...whereOptions,
@@ -82,7 +84,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    if (!findOne || (await Model.models.HRBackups.haveAccess(findOne.backup_id, userId))) {
+    if (!findOne || !(await Model.models.HRBackups.haveAccess(findOne.backup_id, userId))) {
       throw "Vous n'avez pas accès à cette juridiction !"
     }
 
