@@ -6,6 +6,9 @@ import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 import { EXECUTE_CALCULATOR, EXECUTE_CALCULATOR_CHANGE_DATE } from '../constants/log-codes'
+import { preformatHumanResources } from '../utils/ventilator'
+import { getHumanRessourceList } from '../utils/humanServices'
+import { sumBy } from 'lodash'
 
 /**
  * Route des calculs de la page calcule
@@ -181,6 +184,7 @@ export default class RouteCalculator extends Route {
     let { backupId, dateStart, dateStop, contentieuxId, type } = this.body(ctx)
     dateStart = month(dateStart)
     dateStop = month(dateStop)
+    const hrList = await this.model.getCache(backupId)
 
     const list = []
 
@@ -229,6 +233,29 @@ export default class RouteCalculator extends Route {
               list.push(null)
             }
           }
+        }
+        break
+      case 'ETPTEam':
+      case 'ETPTGreffe':
+      case 'ETPTSiege':
+        {
+          const catId = type === 'ETPTSiege' ? 1 : type === 'ETPTGreffe' ? 2 : 3
+          const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart)
+          let hList = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], [catId], dateStart)
+          let totalAffected = 0
+          hList.map((agent) => {
+            const activities = (agent.currentActivities || []).filter((r) => r.contentieux && r.contentieux.id === contentieuxId)
+            const timeAffected = sumBy(activities, 'percent')
+            if (timeAffected) {
+              let realETP = (agent.etp || 0) - agent.hasIndisponibility
+              if (realETP < 0) {
+                realETP = 0
+              }
+              totalAffected += (timeAffected / 100) * realETP
+            }
+          })
+          console.log(dateStart, hList.length, totalAffected)
+          list.push(totalAffected)
         }
         break
       default:

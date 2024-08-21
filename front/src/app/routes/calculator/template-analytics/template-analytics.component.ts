@@ -16,6 +16,9 @@ export interface AnalyticsLine {
     values: (number | string | null)[];
     subTitle?: string;
     showArrow?: boolean;
+    type?: string;
+    dateStart?: Date;
+    dateStop?: Date;
   }[];
   optionsVisibles?: boolean;
 }

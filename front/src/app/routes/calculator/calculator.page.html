@@ -21,9 +21,9 @@
       </aj-select>
 
       <div class="dates-selector">
-        <aj-date-select title="de" [value]="dateStart"
-          (valueChange)="updateReferentielSelected('dateStart', $event)" class="bg-white calculator"
-          [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'" [icon]="'chevron_left'">
+        <aj-date-select title="de" [value]="dateStart" (valueChange)="updateReferentielSelected('dateStart', $event)"
+          class="bg-white calculator" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
+          [icon]="'chevron_left'">
         </aj-date-select>
         <aj-date-select title="à" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
           class="bg-white calculator" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
@@ -33,12 +33,13 @@
       <div class="flex-1"></div>
 
       <div class="switch-tab">
-        <div class="brut" [ngClass]="{'selected': tabSelected === 0}" (click)="tabSelected=0;$event.stopPropagation()">
+        <div class="brut" [ngClass]="{'selected': tabSelected === 0}"
+          (click)="tabSelected=0;compareTemplates=null;$event.stopPropagation()">
           <i class="ri-table-view"></i>
           <p>Données brutes</p>
         </div>
         <div class="fonctionnaires" *ngIf="canViewGreffier" [ngClass]="{'selected': tabSelected === 1}"
-          class="analytique" (click)="tabSelected=1;$event.stopPropagation()">
+          class="analytique" (click)="tabSelected=1;compareTemplates=null;$event.stopPropagation()">
           <i class="ri-bar-chart-box-line"></i>
           <p>Vue analytique</p>
         </div>
@@ -91,10 +92,9 @@
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalOut'}"></i>
               <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
             </div>
-            <div *ngIf="canViewMagistrat" class="tooltip medium item" (click)="onSortBy('etpMag')"
-              [ngClass]="{'selected': sortBy === 'etpMag',
+            <div *ngIf="canViewMagistrat" class="tooltip medium item" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag',
                 'bg-magistrats': categorySelected === MAGISTRATS
-              }" >
+              }">
               <div class="flex-1"></div>
               <p>ETPT <br />Siège</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
@@ -166,14 +166,14 @@
         <div class="content">
           <div class="action">
             <label>Choisir la période :</label>
-            <div class="dates-selector popup"  (click)="compareOption=1">
+            <div class="dates-selector popup" (click)="compareOption=1">
               <aj-date-select [ngClass]="{'selected': compareOption===1}" title="de" [value]="optionDateStart"
-                (valueChange)="optionDateStart = $event" class="bg-white calculator popup"
-                [max]="optionDateStop" [dateClass]="dateClass" [dateType]="'month'" [icon]="'none'">
+                (valueChange)="optionDateStart = $event" class="bg-white calculator popup" [max]="optionDateStop"
+                [dateClass]="dateClass" [dateType]="'month'" [icon]="'none'">
               </aj-date-select>
-              <aj-date-select [ngClass]="{'selected': compareOption===1}" title="à" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
-                class="bg-white calculator popup" [dateClass]="dateClass" [dateType]="'month'"
-                [min]="optionDateStart" [icon]="'none'">
+              <aj-date-select [ngClass]="{'selected': compareOption===1}" title="à" [value]="optionDateStop"
+                (valueChange)="optionDateStop = $event" class="bg-white calculator popup" [dateClass]="dateClass"
+                [dateType]="'month'" [min]="optionDateStart" [icon]="'none'">
               </aj-date-select>
             </div>
           </div>
@@ -186,7 +186,7 @@
           <br />de temps moyens
         </div>
         <div class="content">
-         <!-- <div class="tab-header"><label class="name">Nom</label>
+          <!-- <div class="tab-header"><label class="name">Nom</label>
             <div class="flex-1"></div>
             <label class="creation">Date de création</label>
           </div>-->
