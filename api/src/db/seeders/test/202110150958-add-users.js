@@ -1,3 +1,5 @@
+import { crypt } from '../../../utils'
+
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
     await models.Users.create(
@@ -31,7 +33,8 @@ module.exports = {
     })
 
     for (let i = 0; i < users.length; i++) {
-      await models.Users.updatePassword(users[i].dataValues.id, '123456')
+      const newPassword = crypt.encryptPassword('123456')
+      users[i].update({ password : newPassword })
     }
   },
   down: (/*queryInterface , Sequelize*/) => {},
