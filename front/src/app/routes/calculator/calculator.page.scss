@@ -271,6 +271,7 @@
       border-bottom: solid 1px #dddddd;
       justify-content: flex-start;
       background-color: white;
+      padding-right: 8px;
 
       .radio {
         margin-left: 8px;
@@ -281,7 +282,7 @@
         border: solid 1px #dddddd;
 
         &.filled {
-          background-color: #dddddd;
+          background-color: #000091;
         }
       }
 

@@ -45,10 +45,11 @@ export class BackupSettingsService extends MainClass {
    * @param id
    * @returns 
    */
-  addOrUpdate(type: string, datas: any, id: number | undefined) {
+  addOrUpdate(label: string, type: string, datas: any, id?: number) {
     return this.serverService
-      .post(`hr-backup-settings/list`, {
+      .post(`hr-backup-settings/add-or-update`, {
         backupId: this.humanResourceService.backupId.getValue(),
+        label,
         type,
         datas,
         id,
@@ -63,7 +64,7 @@ export class BackupSettingsService extends MainClass {
    */
   removeSetting(id: number) {
     return this.serverService
-      .delete(`remove-settings/${id}`)
+      .delete(`hr-backup-settings/remove-setting/${id}`)
       .then((data) => data.data || null)
   }
 }

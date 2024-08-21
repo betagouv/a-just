@@ -47,19 +47,20 @@ export default class RouteHrBackupSettings extends Route {
     bodyType: Types.object().keys({
       id: Types.number(),
       backupId: Types.number().required(),
+      label: Types.string().required(),
       type: Types.string().required(),
       datas: Types.any().required(),
     }),
     accesses: [Access.isLogin],
   })
   async addOrUpdate (ctx) {
-    const { backupId, id, type, datas } = this.body(ctx)
+    const { backupId, id, label, type, datas } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    await this.model.addOrUpdate(id, backupId, type, datas)
+    await this.model.addOrUpdate(id, backupId, label, type, datas)
 
     this.sendOk(ctx, 'Ok')
   }

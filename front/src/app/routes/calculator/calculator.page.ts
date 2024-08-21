@@ -187,7 +187,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   /**
    * Edition d'un referentiel de comparaison
    */
-  onEdit = true
+  onEdit = false
   /**
    * Choix du mode de comparaison 1=> date à date 2=> référentiel
    */
@@ -196,9 +196,24 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * liste des référentiels
    */
   referentiels: any[] = [
-    { label: 'trimestre précédent', selected: false },
-    { label: 'semestre précédent', selected: false },
-    { label: 'année précédente', selected: false }
+    {
+      label: 'trimestre précédent', selected: false, isLocked: true, datas: {
+        dateStop: month(),
+        dateStart: month(new Date(), -3)
+      }
+    },
+    {
+      label: 'semestre précédent', selected: false, isLocked: true, datas: {
+        dateStop: month(),
+        dateStart: month(new Date(), -6)
+      }
+    },
+    {
+      label: 'année précédente', selected: false, isLocked: true, datas: {
+        dateStop: month(),
+        dateStart: month(new Date(), -12)
+      }
+    }
   ]
   /**
  * Liste des sauvegardes
@@ -343,6 +358,15 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
         this.calculatorService.dateStart.next(month(max, -2))
         this.calculatorService.dateStop.next(max)
+
+
+        this.referentiels = this.referentiels.map((ref, index) => ({
+          ...ref,
+          datas: index < 3 ? {
+            dateStop: month(max),
+            dateStart: index === 0 ? month(max, -3) : (index === 1 ? month(max, -6) : month(max, -12)),
+          } : ref.datas
+        }))
       })
     }
   }
@@ -351,7 +375,36 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Charge la liste des contentieux de comparaison
    */
   onLoadComparaisons() {
-    this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then(l => this.backupSettingSaved = l)
+    this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then(l => {
+      const refs = this.referentiels
+      let indexRef = -1
+      do {
+        indexRef = refs.findIndex(r => !r.isLocked)
+        if (indexRef !== -1) {
+          refs.splice(indexRef, 1)
+        }
+      } while (indexRef !== -1)
+
+      l.map(l => {
+        refs.push({
+          label: l.label, selected: false, isLocked: false, datas: l.datas
+        })
+      })
+
+      this.referentiels = [...refs]
+      this.backupSettingSaved = l
+    })
+  }
+
+  /**
+   * Remove setting saved
+   * @param refSettingLabel 
+   */
+  onRemoveSetting(refSettingLabel: string) {
+    const backupSettingSaved = this.backupSettingSaved.find(b => b.label === refSettingLabel)
+    if (backupSettingSaved) {
+      this.backupSettingsService.removeSetting(backupSettingSaved.id).then(() => this.onLoadComparaisons())
+    }
   }
 
   /**
@@ -476,7 +529,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   changeCategorySelected(category: string) {
     this.categorySelected = category
     this.calculatorService.categorySelected.next(this.categorySelected)
-    this.fonctionRealValue=''
+    this.fonctionRealValue = ''
     this.onLoad()
   }
 
@@ -491,8 +544,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.getFctRealValue()
   }
 
-  selectAllFct(){
-    this.selectedFonctionsIds = this.fonctions.map(x=>x.id)
+  selectAllFct() {
+    this.selectedFonctionsIds = this.fonctions.map(x => x.id)
     this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
     this.onLoad()
     this.getFctRealValue()
@@ -634,6 +687,21 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   radioSelect(ref: any) {
     this.referentiels.map(x => { x.selected = false })
     ref.selected = true
+
+    if (ref.datas) {
+      console.log(ref)
+      if (ref.datas.dateStart) {
+        this.compareOption = 1
+        this.optionDateStart = new Date(ref.datas.dateStart)
+        this.optionDateStop = new Date(ref.datas.dateStop)
+      } else if (ref.datas.referentielId) {
+        this.compareOption = 2
+        this.backups = this.backups.map(b => ({ ...b, selected: ref.datas.referentielId == b.id }))
+      }
+      console.log('oui?')
+      this.showPicker = false;
+      this.onLoadCompare()
+    }
   }
 
   /**
@@ -666,8 +734,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * On lance une comparaison
    */
   onCompare() {
-    console.log(this.backups)
-    const backupSelected = this.backups.find(b => b.selected)
+    this.showPicker = false;
+
     if (this.compareOption === 1) {
       if (!this.optionDateStart) {
         alert('Vous devez saisir une date de début !')
@@ -678,14 +746,18 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         alert('Vous devez saisir une date de fin !')
         return
       }
+
+      this.backupSettingsService.addOrUpdate(`${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(this.optionDateStop)}`, BACKUP_SETTING_COMPARE, { dateStart: this.optionDateStart, dateStop: this.optionDateStop }).then(() => this.onLoadComparaisons())
     } else {
+      const backupSelected = this.backups.find(b => b.selected)
       if (!backupSelected) {
         alert('Vous devez saisir un référentiel de comparaison !')
         return
       }
+
+      this.backupSettingsService.addOrUpdate(backupSelected.label, BACKUP_SETTING_COMPARE, { referentielId: backupSelected.id }).then(() => this.onLoadComparaisons())
     }
 
-    //this.onEdit = false
     this.onLoadCompare()
   }
 
