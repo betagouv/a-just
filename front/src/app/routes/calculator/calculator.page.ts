@@ -459,6 +459,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   changeCategorySelected(category: string) {
     this.categorySelected = category
     this.calculatorService.categorySelected.next(this.categorySelected)
+    this.fonctionRealValue=''
     this.onLoad()
   }
 
@@ -473,6 +474,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.getFctRealValue()
   }
 
+  selectAllFct(){
+    this.selectedFonctionsIds = this.fonctions.map(x=>x.id)
+    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+    this.onLoad()
+    this.getFctRealValue()
+  }
   /**
    * Force l'ouverture d'un paneau d'aide
    * @param type
@@ -580,7 +587,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         counter++
       }
     })
-    if (counter > 4) tmpStr = tmpStr + ' et ' + (counter - 3) + ' autres de plus'
+    if (counter > 4) tmpStr = tmpStr + ' et ' + (counter - 3) + ' autres'
     else if (counter === 4)
       tmpStr = tmpStr + ' et ' + (counter - 3) + ' autre de plus'
 
