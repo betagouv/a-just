@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 
-const tableName = 'HistoriesContentieuxUpdate'
+const tableName = 'HRBackupsSettings'
 
 export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
@@ -17,9 +17,17 @@ export default (sequelizeInstance) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      user_id: {
-        type: Sequelize.INTEGER,
+      label: {
+        type: Sequelize.STRING(255),
         allowNull: false,
+      },
+      type: {
+        type: Sequelize.STRING(255),
+        allowNull: false,
+      },
+      datas: {
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -44,9 +52,6 @@ export default (sequelizeInstance) => {
   )
 
   Model.associate = function (models) {
-    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })
-    Model.hasOne(models.OptionsBackupJuridictions, { foreignKey: 'id', sourceKey: 'backup_id' })
-
     return models
   }
 

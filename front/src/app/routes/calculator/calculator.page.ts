@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
-import { Router } from '@angular/router'
 import * as _ from 'lodash'
 import { orderBy } from 'lodash'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
@@ -25,6 +24,9 @@ import {
   userCanViewMagistrat,
 } from 'src/app/utils/user'
 import { AnalyticsLine } from './template-analytics/template-analytics.component'
+import { BackupSettingsService } from 'src/app/services/backup-settings/backup-settings.service'
+import { BACKUP_SETTING_COMPARE } from 'src/app/constants/backup-settings'
+import { BackupSettingInterface } from 'src/app/interfaces/backup-setting'
 
 /**
  * Page du calculateur
@@ -207,6 +209,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   compareTemplates: AnalyticsLine[] | null = null
   /**
+   * Liste des comparaisons sauvegardés
+   */
+  backupSettingSaved: BackupSettingInterface[] = []
+
+  /**
    * Constructeur
    * @param humanResourceService
    * @param calculatorService
@@ -214,6 +221,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param contentieuxOptionsService
    * @param activitiesService
    * @param appService
+   * @param backupSettingsService
    */
   constructor(
     private humanResourceService: HumanResourceService,
@@ -221,7 +229,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
-    private userService: UserService
+    private userService: UserService,
+    private backupSettingsService: BackupSettingsService,
   ) {
     super()
   }
@@ -274,6 +283,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.watch(
       this.humanResourceService.backupId.subscribe(() => {
         this.onLoad()
+        this.onLoadComparaisons()
       })
     )
     this.watch(
@@ -335,6 +345,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.calculatorService.dateStop.next(max)
       })
     }
+  }
+
+  /**
+   * Charge la liste des contentieux de comparaison
+   */
+  onLoadComparaisons() {
+    this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then(l => this.backupSettingSaved = l)
   }
 
   /**
@@ -901,9 +918,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   /** Retourne la derniere date de maj si elle existe ou date de creation */
-  getLastDate(backup:BackupInterface){
-    if (backup.update!==null)
-    return backup.update.date
+  getLastDate(backup: BackupInterface) {
+    if (backup.update !== null)
+      return backup.update.date
     else return backup.date
   }
 }
