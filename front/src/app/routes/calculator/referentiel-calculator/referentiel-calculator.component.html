@@ -87,7 +87,7 @@
         selected: sortBy === 'magRealTimePerCase'
       }" class="item tmd">
         <div class="block">
-            <ng-template [ngIf]="categorySelected === MAGISTRATS">
+            <ng-template [ngIf]="categorySelected === MAGISTRATS && !isSoutien(calculator.contentieux.id)">
                 <ng-template [ngIf]="calculator.magRealTimePerCase !== null && checkPastDate()" [ngIfElse]="nr">
                     <p>
                         {{
@@ -96,7 +96,7 @@
                     </p>
                 </ng-template>
             </ng-template>
-            <ng-template [ngIf]="categorySelected === FONCTIONNAIRES">
+            <ng-template [ngIf]="categorySelected === FONCTIONNAIRES && !isSoutien(calculator.contentieux.id)">
                 <ng-template [ngIf]="calculator.fonRealTimePerCase !== null && checkPastDate()" [ngIfElse]="nr">
                     <p>
                         {{
