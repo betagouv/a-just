@@ -6,4 +6,7 @@
     "[javascript]": {
         "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
     },
+    "[scss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
 }
