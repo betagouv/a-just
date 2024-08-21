@@ -13,6 +13,23 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.addOrUpdate = async (id, backupId, label, type, datas) => {
+    if (label) {
+      const find = await Model.findOne({
+        where: {
+          backup_id: backupId,
+          label,
+          type,
+        },
+      })
+
+      if (find) {
+        await find.update({
+          updated_at: new Date(),
+        })
+        return
+      }
+    }
+
     if (id) {
       const find = await Model.findOne({
         where: {
