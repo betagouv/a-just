@@ -328,6 +328,7 @@
 
     i {
       position: relative;
+      cursor: pointer;
     }
     .fonction-values {
       margin: 4px 0;
@@ -444,6 +445,7 @@
   .content-list {
     flex: 1;
     overflow: auto;
+    padding-bottom: 80px;
   }
 }
 

@@ -82,7 +82,8 @@
 
     .container-element-text {
         flex: 1;
-
+        background-color: #f6f6f6;
+        
         .description-container {
             margin-left: 16px;
             margin-top: 16px;
@@ -191,7 +192,8 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-
+        background-color: #f6f6f6;
+        border:solid 1px #ddd;
         p {
             font-size: 12px;
             color: #3a3a3a;    
