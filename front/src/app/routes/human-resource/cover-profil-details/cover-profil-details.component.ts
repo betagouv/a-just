@@ -7,7 +7,8 @@ import {
   ViewChildren,
   QueryList,
   ElementRef,
-  Renderer2
+  Renderer2,
+  OnInit
 } from '@angular/core'
 import { FormGroup } from '@angular/forms'
 import { Location } from '@angular/common'
@@ -34,7 +35,7 @@ import { DateSelectComponent } from 'src/app/components/date-select/date-select.
 })
 export class CoverProfilDetailsComponent
   extends MainClass
-  implements OnChanges {
+  implements OnChanges, OnInit {
 
   @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
   @ViewChildren(DateSelectComponent) calendar! : QueryList<DateSelectComponent>
@@ -111,6 +112,17 @@ export class CoverProfilDetailsComponent
    */
   constructor(private humanResourceService: HumanResourceService, private renderer: Renderer2) {
     super()
+  }
+  
+  /**
+   * Déclenchemet à la création du composent
+   */
+  ngOnInit(): void {
+    const firstName = this.currentHR?.firstName || ''
+    const lastName = this.currentHR?.lastName || ''
+
+    this.inputsWidth['firstName'] = this.calculateTextWidth(firstName , 'firstName');
+    this.inputsWidth['lastName'] = this.calculateTextWidth(lastName, 'lastName');
   }
 
   /**
@@ -264,7 +276,7 @@ export class CoverProfilDetailsComponent
   adjustInputWidth(event: Event, type : 'lastName' | 'firstName') {
     const elem = event.target as HTMLInputElement;
     const text = elem.value
-    this.inputsWidth[type] = this.calculateTextWidth(text, type) + 20;
+    this.inputsWidth[type] = this.calculateTextWidth(text, type);
   }
 
   /**
@@ -295,6 +307,6 @@ export class CoverProfilDetailsComponent
     
     this.renderer.removeChild(document.body, span);
 
-    return width;
+    return width + 20;
   }
 }
