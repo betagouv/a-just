@@ -28,6 +28,7 @@ import { BackupSettingsService } from 'src/app/services/backup-settings/backup-s
 import { BACKUP_SETTING_COMPARE } from 'src/app/constants/backup-settings'
 import { BackupSettingInterface } from 'src/app/interfaces/backup-setting'
 import { Router } from '@angular/router'
+import { AppService } from 'src/app/services/app/app.service'
 
 /**
  * Page du calculateur
@@ -59,8 +60,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   dateStop: Date | null = null
   /**
- * Date de début du calcul
- */
+   * Date de début du calcul
+   */
   optionDateStart: Date | null = null
   /**
    * Date de fin du calcul
@@ -140,11 +141,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       target: '.sub-main-header',
       title: 'Choisir la période',
       intro:
-        "sur laquelle effectuer les calculs. Certaines des données étant des <b>moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.",
+        'sur laquelle effectuer les calculs. Certaines des données étant des <b>moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.',
     },
     {
       target: 'aj-referentiel-calculator:first-child .item.actual',
-      title: "Les données renseignées",
+      title: 'Les données renseignées',
       intro:
         "Vous pouvez visualiser, pour chaque contentieux ou sous-contentieux :<ul><li>Les <b>entrées et sorties</b> moyennes mensuelles sur la période sélectionnée (calculées à partir des données d’activité) ;</li><li>Le <b>stock</b> à la fin de la période sélectionnée (tel qu’affiché dans les données d’activité) ;</li><li>Les <b>ETPT</b> affectés à chaque contentieux sur la période sélectionnée (calculés à partir des données individuelles d’affectation saisies dans le ventilateur) pour chacune des catégories d'agents (magistrats, fonctionnaires, équipe autour du magistrat = EAM).</li></ul>",
     },
@@ -152,13 +153,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       target: 'aj-referentiel-calculator:first-child .item.activity',
       title: "Les données de l'activité constatée",
       intro:
-        "Cette section permet de <b>visualiser deux indicateurs simples</li>, calculés à partir des « <b>Données renseignées</b> » :<ul><li>le <b>taux de couverture</b></li><li>et le <b>DTES</b> (Délai Théorique d’Écoulement du Stock).</li></ul><br/>Vous pourrez aussi visualiser le <b>temps de traitement moyen par dossier observé</b> sur la période antérieure qui constitue une clé de projection pour les simulations.",
+        'Cette section permet de <b>visualiser deux indicateurs simples</li>, calculés à partir des « <b>Données renseignées</b> » :<ul><li>le <b>taux de couverture</b></li><li>et le <b>DTES</b> (Délai Théorique d’Écoulement du Stock).</li></ul><br/>Vous pourrez aussi visualiser le <b>temps de traitement moyen par dossier observé</b> sur la période antérieure qui constitue une clé de projection pour les simulations.',
     },
     {
       target: 'aj-referentiel-calculator:first-child .item.calculate',
       title: "Les données de l'activité calculée",
       intro:
-        "Les données de l'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page \"<b>Temps moyens</b>\".<div class=\"intro-js-action\"><a href=\"/temps-moyens\">J'accède aux temps moyens</a></div>",
+        'Les données de l\'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d\'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page "<b>Temps moyens</b>".<div class="intro-js-action"><a href="/temps-moyens">J\'accède aux temps moyens</a></div>',
     },
     {
       target: '.ref-button',
@@ -170,7 +171,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       target: 'aj-options-backup-panel',
       title: 'Mes temps moyens de comparaison',
       intro:
-        "Si vous avez renseigné des temps moyens de référence, il vous suffit de <b>sélectionner le référentiel de votre choix dans ce menu déroulant</b>.",
+        'Si vous avez renseigné des temps moyens de référence, il vous suffit de <b>sélectionner le référentiel de votre choix dans ce menu déroulant</b>.',
     },
   ]
   /**
@@ -198,27 +199,36 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    */
   referentiels: any[] = [
     {
-      label: 'trimestre précédent', selected: false, isLocked: true, datas: {
+      label: 'trimestre précédent',
+      selected: false,
+      isLocked: true,
+      datas: {
         dateStop: month(),
-        dateStart: month(new Date(), -3)
-      }
+        dateStart: month(new Date(), -3),
+      },
     },
     {
-      label: 'semestre précédent', selected: false, isLocked: true, datas: {
+      label: 'semestre précédent',
+      selected: false,
+      isLocked: true,
+      datas: {
         dateStop: month(),
-        dateStart: month(new Date(), -6)
-      }
+        dateStart: month(new Date(), -6),
+      },
     },
     {
-      label: 'année précédente', selected: false, isLocked: true, datas: {
+      label: 'année précédente',
+      selected: false,
+      isLocked: true,
+      datas: {
         dateStop: month(),
-        dateStart: month(new Date(), -12)
-      }
-    }
+        dateStart: month(new Date(), -12),
+      },
+    },
   ]
   /**
- * Liste des sauvegardes
- */
+   * Liste des sauvegardes
+   */
   backups: BackupInterface[] = []
   /**
    * Template to compare
@@ -238,6 +248,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param activitiesService
    * @param appService
    * @param backupSettingsService
+   * @param appService
    */
   constructor(
     private humanResourceService: HumanResourceService,
@@ -247,7 +258,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private activitiesService: ActivitiesService,
     private userService: UserService,
     private backupSettingsService: BackupSettingsService,
-    private router: Router
+    private router: Router,
+    private appService: AppService
   ) {
     super()
   }
@@ -313,8 +325,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
         this.referentiel = c.filter(
-          (r) =>
-            this.referentielService.idsIndispo.indexOf(r.id) === -1
+          (r) => this.referentielService.idsIndispo.indexOf(r.id) === -1
         )
 
         if (this.referentielIds.length === 0) {
@@ -331,7 +342,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         this.backups = b
-      }))
+      })
+    )
   }
 
   /**
@@ -343,7 +355,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Demande au serveur quelle est la dernière date des datas
- */
+   */
   onCheckLastMonth() {
     if (
       this.calculatorService.dateStart.getValue() === null &&
@@ -361,13 +373,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.calculatorService.dateStart.next(month(max, -2))
         this.calculatorService.dateStop.next(max)
 
-
         this.referentiels = this.referentiels.map((ref, index) => ({
           ...ref,
-          datas: index < 3 ? {
-            dateStop: month(max),
-            dateStart: index === 0 ? month(max, -3) : (index === 1 ? month(max, -6) : month(max, -12)),
-          } : ref.datas
+          datas:
+            index < 3
+              ? {
+                  dateStop: month(max),
+                  dateStart:
+                    index === 0
+                      ? month(max, -3)
+                      : index === 1
+                      ? month(max, -6)
+                      : month(max, -12),
+                }
+              : ref.datas,
         }))
       })
     }
@@ -377,19 +396,22 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Charge la liste des contentieux de comparaison
    */
   onLoadComparaisons() {
-    this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then(l => {
+    this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then((l) => {
       const refs = this.referentiels
       let indexRef = -1
       do {
-        indexRef = refs.findIndex(r => !r.isLocked)
+        indexRef = refs.findIndex((r) => !r.isLocked)
         if (indexRef !== -1) {
           refs.splice(indexRef, 1)
         }
       } while (indexRef !== -1)
 
-      l.map(l => {
+      l.map((l) => {
         refs.push({
-          label: l.label, selected: false, isLocked: false, datas: l.datas
+          label: l.label,
+          selected: false,
+          isLocked: false,
+          datas: l.datas,
         })
       })
 
@@ -400,12 +422,16 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Remove setting saved
-   * @param refSettingLabel 
+   * @param refSettingLabel
    */
   onRemoveSetting(refSettingLabel: string) {
-    const backupSettingSaved = this.backupSettingSaved.find(b => b.label === refSettingLabel)
+    const backupSettingSaved = this.backupSettingSaved.find(
+      (b) => b.label === refSettingLabel
+    )
     if (backupSettingSaved) {
-      this.backupSettingsService.removeSetting(backupSettingSaved.id).then(() => this.onLoadComparaisons())
+      this.backupSettingsService
+        .removeSetting(backupSettingSaved.id)
+        .then(() => this.onLoadComparaisons())
     }
   }
 
@@ -438,7 +464,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             this.selectedFonctionsIds = fonctions.map(
               (f: HRFonctionInterface) => f.id
             )
-            this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
+            this.calculatorService.selectedFonctionsIds.next(
+              this.selectedFonctionsIds
+            )
           }
           this.formatDatas(list)
           this.isLoading = false
@@ -547,7 +575,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   selectAllFct() {
-    this.selectedFonctionsIds = this.fonctions.map(x => x.id)
+    this.selectedFonctionsIds = this.fonctions.map((x) => x.id)
     this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
     this.onLoad()
     this.getFctRealValue()
@@ -589,7 +617,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
-        `Calculateur_par ${this.userService.user.getValue()!.firstName
+        `Calculateur_par ${
+          this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
           .slice(0, 10)}.pdf`,
@@ -602,29 +631,28 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /**
    * Custom renderer on dates calendar visible
-   * @param cellDate 
-   * @param view 
-   * @returns 
+   * @param cellDate
+   * @param view
+   * @returns
    */
   dateClass: MatCalendarCellClassFunction<any> = (cellDate, view) => {
     /*if (view === 'month') {
       return 'material-date-calendar-no-datas';
     }*/
 
-    return '';
-  };
-
+    return ''
+  }
 
   calculatorSaver() {
     let refToSave = new Array()
 
-    this.datas.map(x => {
+    this.datas.map((x) => {
       if (x.childrens.length > 0)
-        x.childrens.map(y => {
+        x.childrens.map((y) => {
           refToSave.push({
             contentieux: {
               id: y.contentieux.id,
-              label: y.contentieux.label
+              label: y.contentieux.label,
             },
             averageProcessingTime: y.magRealTimePerCase,
           })
@@ -632,17 +660,15 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       refToSave.push({
         contentieux: {
           id: x.contentieux.id,
-          label: x.contentieux.label
+          label: x.contentieux.label,
         },
         averageProcessingTime: x.magRealTimePerCase,
       })
-
     })
 
     this.contentieuxOptionsService.contentieuxOptions.next(refToSave)
     this.contentieuxOptionsService.optionsIsModify.next(true)
     this.contentieuxOptionsService.onSaveDatas(true)
-
   }
 
   /**
@@ -663,31 +689,31 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     else if (counter === 4)
       tmpStr = tmpStr + ' et ' + (counter - 3) + ' autre de plus'
 
-    if (this.selectedFonctionsIds.length === this.fonctions.length)
-      tmpStr = ''
+    if (this.selectedFonctionsIds.length === this.fonctions.length) tmpStr = ''
 
     this.fonctionRealValue = tmpStr
   }
 
   /**
    * Renvoi la valeur de la date Mois - Année
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   getRealValue(date: Date | null) {
     if (date !== null) {
       date = new Date(date)
       return `${this.getShortMonthString(date)} ${date.getFullYear()}`
-    }
-    else return ''
+    } else return ''
   }
 
   /**
    * Choix dans dropdown du référentiel de comparaison
-   * @param ref 
+   * @param ref
    */
   radioSelect(ref: any) {
-    this.referentiels.map(x => { x.selected = false })
+    this.referentiels.map((x) => {
+      x.selected = false
+    })
     ref.selected = true
 
     if (ref.datas) {
@@ -698,45 +724,52 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         this.optionDateStop = new Date(ref.datas.dateStop)
       } else if (ref.datas.referentielId) {
         this.compareOption = 2
-        this.backups = this.backups.map(b => ({ ...b, selected: ref.datas.referentielId == b.id }))
+        this.backups = this.backups.map((b) => ({
+          ...b,
+          selected: ref.datas.referentielId == b.id,
+        }))
       }
       console.log('oui?')
-      this.showPicker = false;
+      this.showPicker = false
       this.onLoadCompare()
     }
   }
 
   /**
    * Ellipsis version JS à 40 char
-   * @param str 
-   * @returns 
+   * @param str
+   * @returns
    */
-  trunc(str: string,len=40) {
-    return _.truncate(str, { 'length': len, 'separator': '...' })
+  trunc(str: string, len = 40) {
+    return _.truncate(str, { length: len, separator: '...' })
   }
 
   /**
    * Selectionne le backup dans la liste déroulante de la popin
-   * @param backup 
+   * @param backup
    */
   selectBackup(backup: BackupInterface) {
-    this.backups.map(x => { x.selected = false })
+    this.backups.map((x) => {
+      x.selected = false
+    })
     backup.selected = true
   }
 
   /**
- * Déselectionne le backup dans la liste déroulante de la popin
- * @param backup 
- */
+   * Déselectionne le backup dans la liste déroulante de la popin
+   * @param backup
+   */
   unselectBackup() {
-    this.backups.map(x => { x.selected = false })
+    this.backups.map((x) => {
+      x.selected = false
+    })
   }
 
   /**
    * On lance une comparaison
    */
   onCompare() {
-    this.showPicker = false;
+    this.showPicker = false
 
     if (this.compareOption === 1) {
       if (!this.optionDateStart) {
@@ -749,15 +782,27 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         return
       }
 
-      this.backupSettingsService.addOrUpdate(`${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(this.optionDateStop)}`, BACKUP_SETTING_COMPARE, { dateStart: this.optionDateStart, dateStop: this.optionDateStop }).then(() => this.onLoadComparaisons())
+      this.backupSettingsService
+        .addOrUpdate(
+          `${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(
+            this.optionDateStop
+          )}`,
+          BACKUP_SETTING_COMPARE,
+          { dateStart: this.optionDateStart, dateStop: this.optionDateStop }
+        )
+        .then(() => this.onLoadComparaisons())
     } else {
-      const backupSelected = this.backups.find(b => b.selected)
+      const backupSelected = this.backups.find((b) => b.selected)
       if (!backupSelected) {
         alert('Vous devez saisir un référentiel de comparaison !')
         return
       }
 
-      this.backupSettingsService.addOrUpdate(backupSelected.label, BACKUP_SETTING_COMPARE, { referentielId: backupSelected.id }).then(() => this.onLoadComparaisons())
+      this.backupSettingsService
+        .addOrUpdate(backupSelected.label, BACKUP_SETTING_COMPARE, {
+          referentielId: backupSelected.id,
+        })
+        .then(() => this.onLoadComparaisons())
     }
 
     this.onLoadCompare()
@@ -767,23 +812,34 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Comparaison des données back
    */
   async onLoadCompare() {
-    if (
-      this.categorySelected &&
-      this.isLoading === false
-    ) {
-      this.onEdit = false;
-      const actualRangeString = `${this.getRealValue(this.dateStart)} - ${this.getRealValue(this.dateStop)}`
+    if (this.categorySelected && this.isLoading === false) {
+      this.onEdit = false
+      const actualRangeString = `${this.getRealValue(
+        this.dateStart
+      )} - ${this.getRealValue(this.dateStop)}`
       const list: AnalyticsLine[] = []
-      const value1TempsMoyen = (this.datasFilted || []).map(d => d.magRealTimePerCase)
-      const stringValue1TempsMoyen = (value1TempsMoyen || []).map(d => d === null ? '-' : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `)
-      const value1DTES = (this.datasFilted || []).map(d => d.realDTESInMonths)
-      const value1TauxCouverture = (this.datasFilted || []).map(d => d.realCoverage)
-      const value1Sorties = (this.datasFilted || []).map(d => d.totalOut ? Math.floor(d.totalOut) : d.totalOut)
-      const value1Entrees = (this.datasFilted || []).map(d => d.totalIn ? Math.floor(d.totalIn) : d.totalIn)
-      const value1Stock = (this.datasFilted || []).map(d => d.lastStock)
-      const value1ETPTSiege = (this.datasFilted || []).map(d => d.etpMag)
-      const value1ETPTGreffe = (this.datasFilted || []).map(d => d.etpFon)
-      const value1ETPTEam = (this.datasFilted || []).map(d => d.etpCont)
+      const value1TempsMoyen = (this.datasFilted || []).map(
+        (d) => d.magRealTimePerCase
+      )
+      const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) =>
+        d === null
+          ? '-'
+          : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
+      )
+      const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
+      const value1TauxCouverture = (this.datasFilted || []).map(
+        (d) => d.realCoverage
+      )
+      const value1Sorties = (this.datasFilted || []).map((d) =>
+        d.totalOut ? Math.floor(d.totalOut) : d.totalOut
+      )
+      const value1Entrees = (this.datasFilted || []).map((d) =>
+        d.totalIn ? Math.floor(d.totalIn) : d.totalIn
+      )
+      const value1Stock = (this.datasFilted || []).map((d) => d.lastStock)
+      const value1ETPTSiege = (this.datasFilted || []).map((d) => d.etpMag)
+      const value1ETPTGreffe = (this.datasFilted || []).map((d) => d.etpFon)
+      const value1ETPTEam = (this.datasFilted || []).map((d) => d.etpCont)
       const getVariations = (tab2: any[], tab1: any[]) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null) {
@@ -794,7 +850,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             return 0
           }
 
-          const percent = this.fixDecimal((1 - ((d || 0) / (tab1[index] || 0))) * 100, 10)
+          const percent = this.fixDecimal(
+            (1 - (d || 0) / (tab1[index] || 0)) * 100,
+            10
+          )
           if (percent > 0) {
             return '+' + percent
           }
@@ -802,130 +861,334 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           return percent
         })
 
-
       if (this.compareOption === 1) {
-        this.isLoading = true
-        const resultCalcul = await this.calculatorService
-          .filterList(
-            this.categorySelected,
-            this.lastCategorySelected === this.categorySelected
-              ? this.selectedFonctionsIds
-              : null,
-            this.optionDateStart,
-            this.optionDateStop,
-          )
-        this.isLoading = false
-        const nextRangeString = `${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(this.optionDateStop)}`
+        this.appService.appLoading.next(true)
+        const resultCalcul = await this.calculatorService.filterList(
+          this.categorySelected,
+          this.lastCategorySelected === this.categorySelected
+            ? this.selectedFonctionsIds
+            : null,
+          this.optionDateStart,
+          this.optionDateStop
+        )
+        this.appService.appLoading.next(false)
+        const nextRangeString = `${this.getRealValue(
+          this.optionDateStart
+        )} - ${this.getRealValue(this.optionDateStop)}`
 
-        const value2DTES: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.realDTESInMonths)
+        const value2DTES: (number | null)[] = (resultCalcul.list || []).map(
+          (d: CalculatorInterface) => d.realDTESInMonths
+        )
         const variationsDTES = getVariations(value2DTES, value1DTES)
         list.push({
-          title: "DTES",
-          type: "verticals-lines",
-          description: "possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)",
-          lineMax: Math.max(...value1DTES.map(m => m || 0), ...value2DTES.map(m => m || 0)) * 1.1,
-          values: value1DTES.map((v, index) => [v || 0, value2DTES[index] || 0]),
-          variations: [{ label: "Variation", values: variationsDTES, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1DTES, subTitle: 'mois' }, { label: nextRangeString, values: value2DTES, subTitle: 'mois' }]
+          title: 'DTES',
+          type: 'verticals-lines',
+          description:
+            'possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)',
+          lineMax:
+            Math.max(
+              ...value1DTES.map((m) => m || 0),
+              ...value2DTES.map((m) => m || 0)
+            ) * 1.1,
+          values: value1DTES.map((v, index) => [
+            v || 0,
+            value2DTES[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsDTES,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
+            { label: nextRangeString, values: value2DTES, subTitle: 'mois' },
+          ],
         })
 
-        const value2TempsMoyen: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.magRealTimePerCase)
-        const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) => d === null ? '-' : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `)
-        const variationsTempsMoyen = getVariations(value2TempsMoyen, value1TempsMoyen)
+        const value2TempsMoyen: (number | null)[] = (
+          resultCalcul.list || []
+        ).map((d: CalculatorInterface) => d.magRealTimePerCase)
+        const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
+          d === null
+            ? '-'
+            : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
+        )
+        const variationsTempsMoyen = getVariations(
+          value2TempsMoyen,
+          value1TempsMoyen
+        )
         list.push({
-          title: "Temps moyen",
-          type: "verticals-lines",
-          description: "moyen de référence<br/>v/s<br/>temps moyen de la période",
-          lineMax: Math.max(...value1TempsMoyen.map(m => m || 0), ...value2TempsMoyen.map(m => m || 0)) * 1.1,
-          values: value1TempsMoyen.map((v, index) => [v || 0, value2TempsMoyen[index] || 0]),
-          variations: [{ label: "Variation", values: variationsTempsMoyen, subTitle: '%', showArrow: true }, { label: actualRangeString, values: stringValue1TempsMoyen, subTitle: 'heures' }, { label: nextRangeString, values: stringValue2TempsMoyen, subTitle: 'heures' }]
+          title: 'Temps moyen',
+          type: 'verticals-lines',
+          description:
+            'moyen de référence<br/>v/s<br/>temps moyen de la période',
+          lineMax:
+            Math.max(
+              ...value1TempsMoyen.map((m) => m || 0),
+              ...value2TempsMoyen.map((m) => m || 0)
+            ) * 1.1,
+          values: value1TempsMoyen.map((v, index) => [
+            v || 0,
+            value2TempsMoyen[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsTempsMoyen,
+              subTitle: '%',
+              showArrow: true,
+            },
+            {
+              label: actualRangeString,
+              values: stringValue1TempsMoyen,
+              subTitle: 'heures',
+            },
+            {
+              label: nextRangeString,
+              values: stringValue2TempsMoyen,
+              subTitle: 'heures',
+            },
+          ],
         })
 
-        const value2TauxCouverture: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.realCoverage)
-        const variationsCouverture = getVariations(value2TauxCouverture, value1TauxCouverture)
+        const value2TauxCouverture: (number | null)[] = (
+          resultCalcul.list || []
+        ).map((d: CalculatorInterface) => d.realCoverage)
+        const variationsCouverture = getVariations(
+          value2TauxCouverture,
+          value1TauxCouverture
+        )
         list.push({
-          title: "Taux de couverture",
-          type: "progress",
-          description: "possible<br/>v/s<br/>taux de couverture de la période",
+          title: 'Taux de couverture',
+          type: 'progress',
+          description: 'possible<br/>v/s<br/>taux de couverture de la période',
           lineMax: 0,
-          values: value1TauxCouverture.map((v, index) => [Math.floor((v || 0) * 100), Math.floor((value2TauxCouverture[index] || 0) * 100)]),
-          variations: [{ label: "Variation", values: variationsCouverture, subTitle: '%', showArrow: true }, { label: actualRangeString, isOption: true, values: value1TauxCouverture.map(t => t === null ? '-' : Math.floor(t * 100) + ' %') }, { label: nextRangeString, isOption: true, values: value2TauxCouverture.map(t => t === null ? '-' : Math.floor(t * 100) + ' %') }]
+          values: value1TauxCouverture.map((v, index) => [
+            Math.floor((v || 0) * 100),
+            Math.floor((value2TauxCouverture[index] || 0) * 100),
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsCouverture,
+              subTitle: '%',
+              showArrow: true,
+            },
+            {
+              label: actualRangeString,
+              isOption: true,
+              values: value1TauxCouverture.map((t) =>
+                t === null ? '-' : Math.floor(t * 100) + ' %'
+              ),
+            },
+            {
+              label: nextRangeString,
+              isOption: true,
+              values: value2TauxCouverture.map((t) =>
+                t === null ? '-' : Math.floor(t * 100) + ' %'
+              ),
+            },
+          ],
         })
 
-        const value2Stock: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.lastStock)
+        const value2Stock: (number | null)[] = (resultCalcul.list || []).map(
+          (d: CalculatorInterface) => d.lastStock
+        )
         const variationsStock = getVariations(value2Stock, value1Stock)
         list.push({
-          title: "Stock",
-          type: "verticals-lines",
-          description: "mensuelles possibles<br/>v/s<br/>stock en fin de période",
-          lineMax: Math.max(...value1Stock.map(m => m || 0), ...value2Stock.map(m => m || 0)) * 1.1,
-          values: value1Stock.map((v, index) => [v || 0, value2Stock[index] || 0]),
-          variations: [{ label: "Variation", values: variationsStock, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1Stock }, { label: nextRangeString, values: value2Stock }]
+          title: 'Stock',
+          type: 'verticals-lines',
+          description:
+            'mensuelles possibles<br/>v/s<br/>stock en fin de période',
+          lineMax:
+            Math.max(
+              ...value1Stock.map((m) => m || 0),
+              ...value2Stock.map((m) => m || 0)
+            ) * 1.1,
+          values: value1Stock.map((v, index) => [
+            v || 0,
+            value2Stock[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsStock,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1Stock },
+            { label: nextRangeString, values: value2Stock },
+          ],
         })
 
-        const value2Entrees: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.totalIn ? Math.floor(d.totalIn) : d.totalIn)
+        const value2Entrees: (number | null)[] = (resultCalcul.list || []).map(
+          (d: CalculatorInterface) =>
+            d.totalIn ? Math.floor(d.totalIn) : d.totalIn
+        )
         const variationsEntrees = getVariations(value2Entrees, value1Entrees)
         list.push({
-          title: "Entrée",
-          type: "verticals-lines",
-          description: "mensuelles possibles<br/>v/s<br/>entrée de la période",
-          lineMax: Math.max(...value1Entrees.map(m => m || 0), ...value2Entrees.map(m => m || 0)) * 1.1,
-          values: value1Entrees.map((v, index) => [v || 0, value2Entrees[index] || 0]),
-          variations: [{ label: "Variation", values: variationsEntrees, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1Entrees }, { label: nextRangeString, values: value2Entrees }]
+          title: 'Entrée',
+          type: 'verticals-lines',
+          description: 'mensuelles possibles<br/>v/s<br/>entrée de la période',
+          lineMax:
+            Math.max(
+              ...value1Entrees.map((m) => m || 0),
+              ...value2Entrees.map((m) => m || 0)
+            ) * 1.1,
+          values: value1Entrees.map((v, index) => [
+            v || 0,
+            value2Entrees[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsEntrees,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1Entrees },
+            { label: nextRangeString, values: value2Entrees },
+          ],
         })
 
-        const value2Sorties: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.totalOut ? Math.floor(d.totalOut) : d.totalOut)
+        const value2Sorties: (number | null)[] = (resultCalcul.list || []).map(
+          (d: CalculatorInterface) =>
+            d.totalOut ? Math.floor(d.totalOut) : d.totalOut
+        )
         const variationsSorties = getVariations(value2Sorties, value1Sorties)
         list.push({
-          title: "Sorties",
-          type: "verticals-lines",
-          description: "mensuelles possibles<br/>v/s<br/>sorties de la période",
-          lineMax: Math.max(...value1Sorties.map(m => m || 0), ...value2Sorties.map(m => m || 0)) * 1.1,
-          values: value1Sorties.map((v, index) => [v || 0, value2Sorties[index] || 0]),
-          variations: [{ label: "Variation", values: variationsSorties, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1Sorties }, { label: nextRangeString, values: value2Sorties }]
+          title: 'Sorties',
+          type: 'verticals-lines',
+          description: 'mensuelles possibles<br/>v/s<br/>sorties de la période',
+          lineMax:
+            Math.max(
+              ...value1Sorties.map((m) => m || 0),
+              ...value2Sorties.map((m) => m || 0)
+            ) * 1.1,
+          values: value1Sorties.map((v, index) => [
+            v || 0,
+            value2Sorties[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsSorties,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1Sorties },
+            { label: nextRangeString, values: value2Sorties },
+          ],
         })
 
-        const value2ETPTSiege: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpMag)
-        const variationsETPTSiege = getVariations(value2ETPTSiege, value1ETPTSiege)
+        const value2ETPTSiege: (number | null)[] = (
+          resultCalcul.list || []
+        ).map((d: CalculatorInterface) => d.etpMag)
+        const variationsETPTSiege = getVariations(
+          value2ETPTSiege,
+          value1ETPTSiege
+        )
         list.push({
-          title: "ETPT Siège",
-          type: "verticals-lines",
-          description: "mensuelles possibles<br/>v/s<br/>ETPTSiege en fin de période",
-          lineMax: Math.max(...value1ETPTSiege.map(m => m || 0), ...value2ETPTSiege.map(m => m || 0)) * 1.1,
-          values: value1ETPTSiege.map((v, index) => [v || 0, value2ETPTSiege[index] || 0]),
-          variations: [{ label: "Variation", values: variationsETPTSiege, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1ETPTSiege }, { label: nextRangeString, values: value2ETPTSiege }]
+          title: 'ETPT Siège',
+          type: 'verticals-lines',
+          description:
+            'mensuelles possibles<br/>v/s<br/>ETPTSiege en fin de période',
+          lineMax:
+            Math.max(
+              ...value1ETPTSiege.map((m) => m || 0),
+              ...value2ETPTSiege.map((m) => m || 0)
+            ) * 1.1,
+          values: value1ETPTSiege.map((v, index) => [
+            v || 0,
+            value2ETPTSiege[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsETPTSiege,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1ETPTSiege },
+            { label: nextRangeString, values: value2ETPTSiege },
+          ],
         })
 
-        const value2ETPTGreffe: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpFon)
-        const variationsETPTGreffe = getVariations(value2ETPTGreffe, value1ETPTGreffe)
+        const value2ETPTGreffe: (number | null)[] = (
+          resultCalcul.list || []
+        ).map((d: CalculatorInterface) => d.etpFon)
+        const variationsETPTGreffe = getVariations(
+          value2ETPTGreffe,
+          value1ETPTGreffe
+        )
         list.push({
-          title: "ETPT Greffe",
-          type: "verticals-lines",
-          description: "mensuelles possibles<br/>v/s<br/>ETPTGreffe en fin de période",
-          lineMax: Math.max(...value1ETPTGreffe.map(m => m || 0), ...value2ETPTGreffe.map(m => m || 0)) * 1.1,
-          values: value1ETPTGreffe.map((v, index) => [v || 0, value2ETPTGreffe[index] || 0]),
-          variations: [{ label: "Variation", values: variationsETPTGreffe, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1ETPTGreffe }, { label: nextRangeString, values: value2ETPTGreffe }]
+          title: 'ETPT Greffe',
+          type: 'verticals-lines',
+          description:
+            'mensuelles possibles<br/>v/s<br/>ETPTGreffe en fin de période',
+          lineMax:
+            Math.max(
+              ...value1ETPTGreffe.map((m) => m || 0),
+              ...value2ETPTGreffe.map((m) => m || 0)
+            ) * 1.1,
+          values: value1ETPTGreffe.map((v, index) => [
+            v || 0,
+            value2ETPTGreffe[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsETPTGreffe,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1ETPTGreffe },
+            { label: nextRangeString, values: value2ETPTGreffe },
+          ],
         })
 
-        const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpCont)
+        const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map(
+          (d: CalculatorInterface) => d.etpCont
+        )
         const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
         list.push({
-          title: "ETPT EAM",
-          type: "verticals-lines",
-          description: "mensuelles possibles<br/>v/s<br/>ETPTEam en fin de période",
-          lineMax: Math.max(...value1ETPTEam.map(m => m || 0), ...value2ETPTEam.map(m => m || 0)) * 1.1,
-          values: value1ETPTEam.map((v, index) => [v || 0, value2ETPTEam[index] || 0]),
-          variations: [{ label: "Variation", values: variationsETPTEam, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1ETPTEam }, { label: nextRangeString, values: value2ETPTEam }]
+          title: 'ETPT EAM',
+          type: 'verticals-lines',
+          description:
+            'mensuelles possibles<br/>v/s<br/>ETPTEam en fin de période',
+          lineMax:
+            Math.max(
+              ...value1ETPTEam.map((m) => m || 0),
+              ...value2ETPTEam.map((m) => m || 0)
+            ) * 1.1,
+          values: value1ETPTEam.map((v, index) => [
+            v || 0,
+            value2ETPTEam[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsETPTEam,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1ETPTEam },
+            { label: nextRangeString, values: value2ETPTEam },
+          ],
         })
       } else {
-        const refSelected = this.backups.find(b => b.selected)
+        const refSelected = this.backups.find((b) => b.selected)
         if (!refSelected) {
           this.compareTemplates = null
           return
         }
-        const refDetails = await this.contentieuxOptionsService.loadDetails(refSelected.id)
+        const refDetails = await this.contentieuxOptionsService.loadDetails(
+          refSelected.id
+        )
 
-        const value2TempsMoyen = this.referentiel.map(ref => {
-          const findDetail = refDetails.find(r => r.contentieux.id === ref.id)
+        const value2TempsMoyen = this.referentiel.map((ref) => {
+          const findDetail = refDetails.find((r) => r.contentieux.id === ref.id)
 
           if (findDetail && findDetail.averageProcessingTime) {
             return findDetail.averageProcessingTime
@@ -933,55 +1196,146 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
           return null
         })
-        const stringValue2TempsMoyen = (value2TempsMoyen || []).map(d => d === null ? '-' : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `)
-        const variationsTempsMoyen = getVariations(value2TempsMoyen, value1TempsMoyen)
+        const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
+          d === null
+            ? '-'
+            : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
+        )
+        const variationsTempsMoyen = getVariations(
+          value2TempsMoyen,
+          value1TempsMoyen
+        )
         list.push({
-          title: "Temps moyen",
-          type: "verticals-lines",
-          description: "moyen de référence<br/>v/s<br/>temps moyen de la période",
-          lineMax: Math.max(...value1TempsMoyen.map(m => m || 0), ...value2TempsMoyen.map(m => m || 0)) * 1.1,
-          values: value1TempsMoyen.map((v, index) => [v || 0, value2TempsMoyen[index] || 0]),
-          variations: [{ label: "Variation", values: variationsTempsMoyen, subTitle: '%', showArrow: true }, { label: actualRangeString, values: stringValue1TempsMoyen, subTitle: 'heures' }, { label: refSelected.label, values: stringValue2TempsMoyen, subTitle: 'heures' }]
+          title: 'Temps moyen',
+          type: 'verticals-lines',
+          description:
+            'moyen de référence<br/>v/s<br/>temps moyen de la période',
+          lineMax:
+            Math.max(
+              ...value1TempsMoyen.map((m) => m || 0),
+              ...value2TempsMoyen.map((m) => m || 0)
+            ) * 1.1,
+          values: value1TempsMoyen.map((v, index) => [
+            v || 0,
+            value2TempsMoyen[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsTempsMoyen,
+              subTitle: '%',
+              showArrow: true,
+            },
+            {
+              label: actualRangeString,
+              values: stringValue1TempsMoyen,
+              subTitle: 'heures',
+            },
+            {
+              label: refSelected.label,
+              values: stringValue2TempsMoyen,
+              subTitle: 'heures',
+            },
+          ],
         })
 
         const value2DTES = [...value1DTES] // TODO calcul du DTES
         const variationsDTES = getVariations(value2DTES, value1DTES)
         list.push({
-          title: "DTES",
-          type: "verticals-lines",
-          description: "possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)",
-          lineMax: Math.max(...value1DTES.map(m => m || 0), ...value2DTES.map(m => m || 0)) * 1.1,
-          values: value1DTES.map((v, index) => [v || 0, value2DTES[index] || 0]),
-          variations: [{ label: "Variation", values: variationsDTES, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1DTES, subTitle: 'mois' }, { label: refSelected.label, values: value2DTES, subTitle: 'mois' }]
+          title: 'DTES',
+          type: 'verticals-lines',
+          description:
+            'possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)',
+          lineMax:
+            Math.max(
+              ...value1DTES.map((m) => m || 0),
+              ...value2DTES.map((m) => m || 0)
+            ) * 1.1,
+          values: value1DTES.map((v, index) => [
+            v || 0,
+            value2DTES[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsDTES,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
+            { label: refSelected.label, values: value2DTES, subTitle: 'mois' },
+          ],
         })
 
         const value2TauxCouverture = [...value1TauxCouverture] // TODO calcul du Taux de couverture
-        const variationsCouverture = getVariations(value2TauxCouverture, value1TauxCouverture)
+        const variationsCouverture = getVariations(
+          value2TauxCouverture,
+          value1TauxCouverture
+        )
         list.push({
-          title: "Taux de couverture",
-          type: "progress",
-          description: "possible<br/>v/s<br/>taux de couverture de la période",
+          title: 'Taux de couverture',
+          type: 'progress',
+          description: 'possible<br/>v/s<br/>taux de couverture de la période',
           lineMax: 0,
-          values: value1TauxCouverture.map((v, index) => [Math.floor((v || 0) * 100), Math.floor((value2TauxCouverture[index] || 0) * 100)]),
-          variations: [{ label: "Variation", values: variationsCouverture, subTitle: '%', showArrow: true }, { label: actualRangeString, isOption: true, values: value1TauxCouverture.map(t => t === null ? '-' : Math.floor(t * 100) + ' %') }, { label: refSelected.label, isOption: true, values: value2TauxCouverture.map(t => t === null ? '-' : Math.floor(t * 100) + ' %') }]
+          values: value1TauxCouverture.map((v, index) => [
+            Math.floor((v || 0) * 100),
+            Math.floor((value2TauxCouverture[index] || 0) * 100),
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsCouverture,
+              subTitle: '%',
+              showArrow: true,
+            },
+            {
+              label: actualRangeString,
+              isOption: true,
+              values: value1TauxCouverture.map((t) =>
+                t === null ? '-' : Math.floor(t * 100) + ' %'
+              ),
+            },
+            {
+              label: refSelected.label,
+              isOption: true,
+              values: value2TauxCouverture.map((t) =>
+                t === null ? '-' : Math.floor(t * 100) + ' %'
+              ),
+            },
+          ],
         })
 
         const value2Sorties = [...value1Sorties] // TODO calcul nouveau stock
         const variationsSorties = getVariations(value2Sorties, value1Sorties)
         list.push({
-          title: "Sorties",
-          type: "verticals-lines",
-          description: "mensuelles possibles<br/>v/s<br/>sorties de la période",
-          lineMax: Math.max(...value1Sorties.map(m => m || 0), ...value2Sorties.map(m => m || 0)) * 1.1,
-          values: value1Sorties.map((v, index) => [v || 0, value2Sorties[index] || 0]),
-          variations: [{ label: "Variation", values: variationsSorties, subTitle: '%', showArrow: true }, { label: actualRangeString, values: value1Sorties }, { label: refSelected.label, values: value2Sorties }]
+          title: 'Sorties',
+          type: 'verticals-lines',
+          description: 'mensuelles possibles<br/>v/s<br/>sorties de la période',
+          lineMax:
+            Math.max(
+              ...value1Sorties.map((m) => m || 0),
+              ...value2Sorties.map((m) => m || 0)
+            ) * 1.1,
+          values: value1Sorties.map((v, index) => [
+            v || 0,
+            value2Sorties[index] || 0,
+          ]),
+          variations: [
+            {
+              label: 'Variation',
+              values: variationsSorties,
+              subTitle: '%',
+              showArrow: true,
+            },
+            { label: actualRangeString, values: value1Sorties },
+            { label: refSelected.label, values: value2Sorties },
+          ],
         })
       }
 
       this.compareTemplates = list
     }
   }
-
 
   getHours(value: number) {
     return Math.floor(value)
@@ -993,15 +1347,14 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
 
   /** Retourne la derniere date de maj si elle existe ou date de creation */
   getLastDate(backup: BackupInterface) {
-    if (backup.update !== null)
-      return backup.update.date
+    if (backup.update !== null) return backup.update.date
     else return backup.date
   }
 
   /**
    * Switch page
    */
-  goToCreateRef(){
+  goToCreateRef() {
     this.router.navigate(['/temps-moyens'])
   }
 }

@@ -31,6 +31,10 @@ export class AppComponent implements AfterViewInit {
    * Variable qui permet d'afficher une alert
    */
   alertMessage: AlertInterface | null = null
+  /**
+   * loading
+   */
+  appLoading = false
 
   /**
    * Constructeur de control SSL + Matomo
@@ -72,6 +76,8 @@ export class AppComponent implements AfterViewInit {
     this.appService.alert.subscribe((a) => {
       this.alertMessage = a
     })
+
+    this.appService.appLoading.subscribe((a) => (this.appLoading = a))
 
     if (environment.matomo !== null) {
       var _paq = (window._paq = window._paq || [])
