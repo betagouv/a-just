@@ -29,7 +29,13 @@
     max-width: 500px;
   }
 
+
   &.width-575 .popup>div {
+    width: 90%;
+    max-width: 575px;
+  }
+
+  &.width-575-custom .popup>div {
     width: 90%;
     max-width: 575px;
 

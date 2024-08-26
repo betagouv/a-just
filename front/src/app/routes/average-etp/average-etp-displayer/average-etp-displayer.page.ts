@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
 import * as FileSaver from 'file-saver'
-import { extend, isNumber } from 'lodash'
+import { isNumber } from 'lodash'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -14,6 +14,7 @@ import { findRealValue } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 import { Renderer } from 'xlsx-renderer'
+import { IDeactivateComponent } from '../../canDeactivate-guard-service'
 
 /**
  * Excel file extension
@@ -25,7 +26,7 @@ const EXCEL_EXTENSION = '.xlsx'
   templateUrl: './average-etp-displayer.page.html',
   styleUrls: ['./average-etp-displayer.page.scss']
 })
-export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit {
+export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit,IDeactivateComponent {
   /**
    * Référentiel complet
    */
@@ -90,7 +91,14 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * Mémorisation s'il y a eu une modificiation avant sauvegarde
    */
   optionsIsModify: boolean = false
-
+/**
+ * Ouverture popup sauvegarder avant de quitter
+ */
+savePopup:boolean = false
+/**
+ * Lien de retour selectionné
+ */
+nextState:string=''
 
   /**
    * Constructeur
@@ -105,9 +113,10 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     public userService: UserService,
+    private router: Router,
   ) {
     super()
-
+    
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -225,6 +234,22 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    */
   ngOnDestroy() {
     this.watcherDestroy()
+  }
+
+  /**
+   * Fonction bloquage data non sauvegardé
+   * @param nextState 
+   * @returns 
+   */
+  canDeactivate(nextState: string) {
+    if (this.contentieuxOptionsService.optionsIsModify.getValue()===true)
+    {
+      this.nextState=nextState
+      this.savePopup = true
+      return false
+    }
+    else 
+      return true
   }
 
   /**
@@ -449,6 +474,27 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
   onBackBackup() {
     this.contentieuxOptionsService.setInitValue()
   }
+
+  /**
+   * Popup de sauvegarde, action à effectuer
+   */
+  actionPopup(event:any){
+    if (event.id==='cancel')
+      this.savePopup=false
+    else if(event.id==='save'){
+      this.contentieuxOptionsService.optionsIsModify.next(false)
+      this.router.navigate([this.nextState])
+      this.saveHR()
+    }
+  }
+
+    /**
+   * Demande de sauvegarde des nouvelles données saisies
+   * @param isCopy 
+   */
+    saveHR() {
+      this.contentieuxOptionsService.onSaveDatas(false)
+    }
 }
 
 

@@ -436,4 +436,19 @@ aj-back-button {
     .top-left-action {
         margin-right: 16px;
     }
+
+
+    aj-popup {
+        p {
+            &.subtitle{
+                margin: 0 0 38px;
+                font-size: 16px;
+                color:#929292;
+            }
+            &.content{
+                font-size: 16px;
+                color: #3a3a3a;
+            }
+        }
+    }
 }

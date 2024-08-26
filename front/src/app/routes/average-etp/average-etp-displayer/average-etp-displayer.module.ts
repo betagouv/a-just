@@ -9,6 +9,7 @@ import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
 import { BackButtonModule } from 'src/app/components/back-button/back-button.module';
 import { AverageEtpDisplayerPage } from './average-etp-displayer.page'
 import { AverageEtpDisplayerPageModule } from './average-etp-displayer.routing'
+import { PopupModule } from 'src/app/components/popup/popup.module'
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { AverageEtpDisplayerPageModule } from './average-etp-displayer.routing'
     WrapperModule,
     BackButtonModule,
     AverageEtpDisplayerPageModule,
-    BackButtonModule
+    BackButtonModule,
+    PopupModule
   ],
 })
 export class AverageEtpDisplayerModule { }
