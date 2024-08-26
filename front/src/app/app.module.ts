@@ -25,6 +25,7 @@ import { AverageEtpDisplayerModule } from './routes/average-etp/average-etp-disp
     PopupModule,
     ReaffectatorModule,
     SimulatorModule,
+    AverageEtpDisplayerModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
