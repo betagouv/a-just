@@ -493,39 +493,43 @@ export class DataPage {
     const fileToString = await exportFileToString(file)
 
     if (!force) {
-      this.importService
-        .checkDataBeforeImportAll({ file: fileToString })
-        .then((response : any) => {
-          const tmp = response.data.to_warn
-          let to_warn = []
-          to_warn = sortBy(tmp, 'hr_backup_label')
+      if (!confirm("Vérifier avant import ?"))
+        this.onSendAllActivity(form, true)
+      else {
+        this.importService
+          .checkDataBeforeImportAll({ file: fileToString })
+          .then((response : any) => {
+            const tmp = response.data.to_warn
+            let to_warn = []
+            to_warn = sortBy(tmp, 'hr_backup_label')
 
-          if (to_warn.length === 0) {
-            if(confirm("Aucun Problème détecté ! Importer ?")) {
-              this.importService
-                .importAllActivities({ file: fileToString })
-                .then(() => {
-                  alert('OK !');
-                  form.reset();
-                  this.onCancelDataImport()
-                });
-            }
-          } else {
-            const tmp = to_warn.map((elem : any) => {
-              return (
-              {
-                ...elem,
-                lastPeriode: getMonthAndYear(elem.lastPeriode),
-                newPeriode: getMonthAndYear(elem.newPeriode),
+            if (to_warn.length === 0) {
+              if(confirm("Aucun Problème détecté ! Importer ?")) {
+                this.importService
+                  .importAllActivities({ file: fileToString })
+                  .then(() => {
+                    alert('OK !');
+                    form.reset();
+                    this.onCancelDataImport()
+                  });
+              }
+            } else {
+              const tmp = to_warn.map((elem : any) => {
+                return (
+                {
+                  ...elem,
+                  lastPeriode: getMonthAndYear(elem.lastPeriode),
+                  newPeriode: getMonthAndYear(elem.newPeriode),
+                })
               })
-            })
-            to_warn = tmp
-            alert('Problèmes détectés !')
-            this.dataIssues = to_warn
-            this.printDataImportIssues = true
-          }
-        })
-        .catch(err => console.log('Error:', err))
+              to_warn = tmp
+              alert('Problèmes détectés !')
+              this.dataIssues = to_warn
+              this.printDataImportIssues = true
+            }
+          })
+          .catch(err => console.log('Error:', err))
+      }
     } else {
       this.importService
         .importAllActivities({ file: fileToString })
