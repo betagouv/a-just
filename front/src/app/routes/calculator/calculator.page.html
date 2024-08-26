@@ -245,7 +245,8 @@
         <i [class]="ref.selected===false ?'':'filled'" (click)="radioSelect(ref);$event.stopPropagation();"
           class="radio"></i><span>{{trunc(ref.label,30)}}</span>
         <div class="flex-1"></div>
-        <i class="ri-delete-bin-line" *ngIf="!ref.isLocked" (click)="onRemoveSetting(ref.label)"></i>
+        <i class="ri-delete-bin-line" *ngIf="!ref.isLocked"
+          (click)="onRemoveSetting(ref.label);$event.stopPropagation();"></i>
       </div>
       <label class="footer" (click)="onEdit = true; showPicker = false; $event.stopPropagation();">+
         Personnaliser</label>

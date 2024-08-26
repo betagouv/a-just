@@ -159,13 +159,40 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0')
   }
 
+  /**
+   * Ouvre ou ferme les details de l'écran analyse
+   */
   openAll() {
-    this.showDetailCover = true;
-    this.showDetailStock = true;
-    this.showDetailEntrees = true;
-    this.showDetailSorties = true;
-    this.showDetailETPTSiege = true;
-    this.showDetailETPTGreffe = true;
-    this.showDetailETPTEam = true;
+    let checker = this.checkAllDataShow()
+    if (checker) {
+      this.showDetailCover = false;
+      this.showDetailStock = false;
+      this.showDetailEntrees = false;
+      this.showDetailSorties = false;
+      this.showDetailETPTSiege = false;
+      this.showDetailETPTGreffe = false;
+      this.showDetailETPTEam = false;
+    }
+    else {
+      this.showDetailCover = true;
+      this.showDetailStock = true;
+      this.showDetailEntrees = true;
+      this.showDetailSorties = true;
+      this.showDetailETPTSiege = true;
+      this.showDetailETPTGreffe = true;
+      this.showDetailETPTEam = true;
+    }
+  }
+
+  checkAllDataShow() {
+    let valueToCheck = [this.showDetailCover,
+    this.showDetailStock,
+    this.showDetailEntrees,
+    this.showDetailSorties,
+    this.showDetailETPTSiege,
+    this.showDetailETPTGreffe,
+    this.showDetailETPTEam]
+
+    return valueToCheck.every((v: boolean) => v === true);
   }
 }

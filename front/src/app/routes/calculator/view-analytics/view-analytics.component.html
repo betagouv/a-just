@@ -1,6 +1,7 @@
 <div class="header-refs">
     <div>
-        <button (click)="openAll()">Voir tous les détails</button>
+        <button (click)="openAll()">{{checkAllDataShow()?'Réduire tous les
+            détails':'Voir tous les détails'}}</button>
     </div>
     <div>
         <div *ngFor="let ref of referentiel" class="flex-1" [style.color]="referentielMappingColor(ref.label)"
@@ -403,8 +404,8 @@
                         <p>
                             <b>{{ getHours(datasFilted[index].magRealTimePerCase
                                 || 0) }}h{{
-                            getMinutes(datasFilted[index].magRealTimePerCase ||
-                            0) }}</b>
+                                getMinutes(datasFilted[index].magRealTimePerCase ||
+                                0) }}</b>
                         </p>
                     </div>
                 </div>
@@ -430,8 +431,8 @@
                         <p>
                             <b>{{ getHours(datasFilted[index].fonRealTimePerCase
                                 || 0) }}h{{
-                            getMinutes(datasFilted[index].fonRealTimePerCase ||
-                            0) }}</b>
+                                getMinutes(datasFilted[index].fonRealTimePerCase ||
+                                0) }}</b>
                         </p>
                     </div>
                 </div>
