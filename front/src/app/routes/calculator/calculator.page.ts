@@ -27,6 +27,7 @@ import { AnalyticsLine } from './template-analytics/template-analytics.component
 import { BackupSettingsService } from 'src/app/services/backup-settings/backup-settings.service'
 import { BACKUP_SETTING_COMPARE } from 'src/app/constants/backup-settings'
 import { BackupSettingInterface } from 'src/app/interfaces/backup-setting'
+import { Router } from '@angular/router'
 
 /**
  * Page du calculateur
@@ -246,6 +247,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private activitiesService: ActivitiesService,
     private userService: UserService,
     private backupSettingsService: BackupSettingsService,
+    private router: Router
   ) {
     super()
   }
@@ -709,8 +711,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * @param str 
    * @returns 
    */
-  trunc(str: string) {
-    return _.truncate(str, { 'length': 40, 'separator': '...' })
+  trunc(str: string,len=40) {
+    return _.truncate(str, { 'length': len, 'separator': '...' })
   }
 
   /**
@@ -994,5 +996,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     if (backup.update !== null)
       return backup.update.date
     else return backup.date
+  }
+
+  /**
+   * Switch page
+   */
+  goToCreateRef(){
+    this.router.navigate(['/temps-moyens'])
   }
 }

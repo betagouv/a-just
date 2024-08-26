@@ -188,18 +188,34 @@
           <br />de temps moyens
         </div>
         <div class="content">
-          <!-- <div class="tab-header"><label class="name">Nom</label>
-            <div class="flex-1"></div>
-            <label class="creation">Date de création</label>
-          </div>-->
-          <div class="ref-list">
-            <div class="line-item" *ngFor="let backup of backups; index as i;" (click)="selectBackup(backup)"
-              [ngClass]="{'selected': backup.selected===true}">
-              <p class="element-list"><label class="name">{{trunc(backup.label)}}</label>
-                <label>{{getRealValue(getLastDate(backup))}}</label>
-              </p>
+          <ng-template *ngIf="backups.length;then content else empty">
+          </ng-template>
+
+          <ng-template #content>
+            <div class="ref-list">
+              <button class="small full-width" [ngClass]="{'selected': compareOption===2}"
+                (click)="goToCreateRef()">Créer un référentiel</button>
+              <div class="line-item" *ngFor="let backup of backups; index as i;" (click)="selectBackup(backup)"
+                [ngClass]="{'selected': backup.selected===true}">
+                <p class="element-list"><label class="name">{{trunc(backup.label)}}</label>
+                  <label>{{getRealValue(getLastDate(backup))}}</label>
+                </p>
+              </div>
             </div>
-          </div>
+          </ng-template>
+
+
+          <ng-template #empty>
+            <div class="tab-header"><label class="name">Nom</label>
+              <div class="flex-1"></div>
+              <label class="creation">Date de création</label>
+            </div>
+            <div class="ref-list centered">
+              <button class="small" (click)="goToCreateRef()">Créer mon premier référentiel</button>
+            </div>
+          </ng-template>
+
+
           <div class="page-picker"></div>
 
         </div>
@@ -227,7 +243,7 @@
       </label>
       <div *ngFor="let ref of referentiels" class="item" (click)="radioSelect(ref);$event.stopPropagation();">
         <i [class]="ref.selected===false ?'':'filled'" (click)="radioSelect(ref);$event.stopPropagation();"
-          class="radio"></i><span>{{ref.label}}</span>
+          class="radio"></i><span>{{trunc(ref.label,30)}}</span>
         <div class="flex-1"></div>
         <i class="ri-delete-bin-line" *ngIf="!ref.isLocked" (click)="onRemoveSetting(ref.label)"></i>
       </div>
