@@ -58,7 +58,7 @@
         <input
           id="matricule"
           #matriculeDom 
-          [placeholder]="'Matricule'"
+          [placeholder]="'Matricule (facultatif)'"
           [ngModel]="currentHR?.matricule" 
           (ngModelChange)="completeFormWithDomObject('matricule', $event)"
           (keydown)="keyPress($event);"
