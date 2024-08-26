@@ -180,7 +180,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   /**
    * Onglet selectionné
    */
-  tabSelected = 1
+  tabSelected = 0
   /**
    * Affichage du menu déroulant de référentiel de temps
    */
