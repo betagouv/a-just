@@ -329,8 +329,7 @@ export default class App {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
     const groupedFiles = files.reduce((acc, file) => {
-      const ielst = file.match(/^export-activities-(\w+)-/);
-      
+      const ielst = file.match(/^export-activities-([^\-]+)-/);
       if (ielst) {
         const number = ielst[1]
 
@@ -348,7 +347,7 @@ export default class App {
       for (let i = 0; i < groupedFiles[tj].length; i++) {
         const fileName = groupedFiles[tj][i];
 
-        const tj_label = fileName.replace(/^export-activities-/, '').replace(/-\w+.csv/, '');
+        const tj_label = fileName.replace(/^export-activities-/, '').replace(/-\w+\.csv$/, '');
         const ielst = Object.keys(I_ELST_LIST).find(key => I_ELST_LIST[key] === tj_label);
         const type = fileName.includes('CPH') ? 'CPH' : (fileName.includes('MINTI') ? 'MINTI' : 'TGI_TI');
         const rulesToApply = categoriesOfRules[type]
@@ -609,7 +608,7 @@ export default class App {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
     const groupedFiles = files.reduce((acc, file) => {
-      const ielst = file.match(/^export-activities-(\w+)-/);
+      const ielst = file.match(/^export-activities-([^\-]+)-/);
       
       if (ielst) {
         const number = ielst[1]
@@ -626,7 +625,7 @@ export default class App {
       for (let i = 0; i < groupedFiles[tj].length; i++) {
         const fileName =  groupedFiles[tj][i];
         
-        const tj_label = fileName.replace(/^export-activities-/, '').replace(/-\w+.csv/, '');
+        const tj_label = fileName.replace(/^export-activities-/, '').replace(/-\w+\.csv$/, '');
         const ielst = Object.keys(I_ELST_LIST).find(key => I_ELST_LIST[key] === tj_label);
         const type = 'Penal';
         const rules = categoriesOfRules[type]
