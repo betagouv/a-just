@@ -74,21 +74,16 @@
       border: none;
       font-size: 20px;
       font-weight: bold;
-      white-space: nowrap;
+      white-space: wrap;
       outline: none;
       color: fColor(cblack);
       padding: 4px;
-      text-overflow: ellipsis;
       background: none;
       box-sizing: border-box;
+      //overflow: hidden;
 
       &::placeholder {
         color: #aeaeae;
-      }
-  
-      &:hover {
-        // border: 1px solid #6a6af4 !important;
-        // background-color: #ededed;
       }
   
       &:focus {
@@ -97,7 +92,6 @@
         color: fColor(cblack);
       }
     };
-
   }
 
   .user-name {
@@ -110,14 +104,27 @@
     .input-wrapper:first-child {
       margin-right: 6px;
     }
-    
-    // p {
-    //   //font-size: 20px;
-    //   font-weight: bold;
-    //   white-space: nowrap;
-    //   color: #aeaeae,//fColor(cblack);
-    // }
 
+    .input-wrapper {
+      position: relative;
+      box-sizing: border-box;
+      line-height: 1em;
+      padding: 4px;
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      min-width: 120px;
+    }
+  
+    input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      white-space: normal;
+    }
+    
     mat-icon {
       width: 12px;
       height: 12px;
@@ -132,21 +139,9 @@
     }
   }
 
-  .input-wrapper {
-    position: relative;
-    box-sizing: border-box;
-    line-height: 1em;
-    padding: 4px;
-    display: inline-block;
-    //max-width: 100%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    min-width: 120px;
-  }
-
-  [class^="input-span"] {
+  [id^="input-span"] {
     font-family: inherit;
-    white-space: pre;
+    white-space: normal;//nowrap;
     height: 1em;
     display: inline-block;
     font-size: inherit;
@@ -159,31 +154,10 @@
     vertical-align: top;
   }
 
-  .input-wrapper input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-
   .matricule {
     display: flex;
     align-items: center;
-    //width: 77px;
     margin-right: 14px;
-
-    // p {
-    //   font-size: 12px;
-    //   white-space: nowrap;
-    //   color: fColor(cgray);
-    // }
-
-    input {
-      font-size: 12px;
-      height: 2em !important;
-    }
 
     mat-icon {
       width: 7px;
@@ -191,6 +165,10 @@
       font-size: 7px;
       margin-left: 5px;
       margin-top: 1px;
+    }
+
+    input {
+      font-size: 12px !important;
     }
   }
 
