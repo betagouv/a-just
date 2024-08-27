@@ -16,5 +16,6 @@
     "build:package": "cp package.json ./api/dist/.",
     "start:production": "cd api && npm run start:production",
     "deploy:production": "docker-compose -f docker-compose.yml -f docker-compose.production.yml build && rm -rf images-docker && mkdir images-docker && docker save -o ./images-docker/api_production api_production:latest"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

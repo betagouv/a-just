@@ -1239,7 +1239,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           ],
         })
 
-        const value2DTES = [...value1DTES] // TODO calcul du DTES
+        const value2DTES = [...value1DTES] // TODO calcul du DTES stock / sorties
         const variationsDTES = getVariations(value2DTES, value1DTES)
         list.push({
           title: 'DTES',
@@ -1267,7 +1267,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           ],
         })
 
-        const value2TauxCouverture = [...value1TauxCouverture] // TODO calcul du Taux de couverture
+        const value2TauxCouverture = [...value1TauxCouverture] // TODO calcul du Taux de couverture sorties / entrees
         const variationsCouverture = getVariations(
           value2TauxCouverture,
           value1TauxCouverture
@@ -1305,7 +1305,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           ],
         })
 
-        const value2Sorties = [...value1Sorties] // TODO calcul nouveau stock
+        const value2Sorties = [
+          ...value1Sorties.map((v1) => {
+            console.log(v1)
+            return v1
+          }),
+        ] // TODO calcul nouveau stock etpt * nb dossier par mois
         const variationsSorties = getVariations(value2Sorties, value1Sorties)
         list.push({
           title: 'Sorties',
