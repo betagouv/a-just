@@ -67,11 +67,13 @@ export default (sequelizeInstance, Model) => {
     if (types) {
       whereOptions.type = types
     }
+    if (backupId) {
+      whereOptions.backup_id = backupId
+    }
 
     const findAll = await Model.findAll({
       attributes: ['id', 'label', 'type', 'datas', ['created_at', 'createdAt'], ['updated_at', 'updatedAt']],
       where: {
-        backup_id: backupId,
         ...whereOptions,
       },
       order: [['updatedAt', 'DESC']],
@@ -101,7 +103,7 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    if (!findOne || !(await Model.models.HRBackups.haveAccess(findOne.backup_id, userId))) {
+    if (!findOne || (userId && !(await Model.models.HRBackups.haveAccess(findOne.backup_id, userId)))) {
       throw "Vous n'avez pas accès à cette juridiction !"
     }
 
