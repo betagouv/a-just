@@ -2,6 +2,8 @@
  * Liste des options d'une juridiction
  */
 
+import { BACKUP_SETTING_COMPARE } from '../constants/backup-settings'
+
 export default (sequelizeInstance, Model) => {
   /**
    * Liste des sauvegardes
@@ -37,12 +39,10 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-
     for (let i = 0; i < list.length; i++) {
       const lastUpdate = await Model.models.HistoriesContentieuxUpdate.getLastUpdate(list[i].id)
       let user = null
-      if (list[i]['User.first_name'] && list[i]['User.last_name'])
-        user = list[i]['User.first_name'] + ' ' + list[i]['User.last_name']
+      if (list[i]['User.first_name'] && list[i]['User.last_name']) user = list[i]['User.first_name'] + ' ' + list[i]['User.last_name']
       list[i] = {
         id: list[i].id,
         label: list[i].label,
@@ -51,7 +51,7 @@ export default (sequelizeInstance, Model) => {
         status: list[i].status,
         update: lastUpdate,
         userId: list[i].user_id,
-        userName: user
+        userName: user,
       }
     }
 
@@ -80,6 +80,14 @@ export default (sequelizeInstance, Model) => {
         option_backup_id: backupId,
       },
     })
+
+    const settings = await Model.models.HRBackupsSettings.list(null, [BACKUP_SETTING_COMPARE])
+    for (let i = 0; i < settings.length; i++) {
+      const datas = settings[i].datas
+      if (datas.referentielId && datas.referentielId === backupId) {
+        await Model.models.HRBackupsSettings.removeSetting(settings[i].id)
+      }
+    }
   }
 
   /**
@@ -144,7 +152,7 @@ export default (sequelizeInstance, Model) => {
         label: backupName,
         type,
         status: backupStatus,
-        user_id: userId
+        user_id: userId,
       })
       newBackupId = newBackup.dataValues.id
       await Model.models.OptionsBackupJuridictions.create({
