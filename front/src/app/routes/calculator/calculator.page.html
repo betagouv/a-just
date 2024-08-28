@@ -200,7 +200,7 @@
           <br />de temps moyens {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}
         </div>
         <div class="content">
-          <ng-template *ngIf="backups.length;then content else empty">
+          <ng-template *ngIf="filteredBackups.length;then content else empty">
           </ng-template>
 
           <ng-template #content>
@@ -208,7 +208,7 @@
               <button class="small full-width"
                 [ngClass]="{'selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
                 (click)="goToCreateRef()">Créer un référentiel</button>
-              <div class="line-item" *ngFor="let backup of backups; index as i;" (click)="selectBackup(backup)"
+              <div class="line-item" *ngFor="let backup of filteredBackups; index as i;" (click)="selectBackup(backup)"
                 [ngClass]="{'selected': backup.selected===true, 'greffe':categorySelected === 'fonctionnaires' && backup.selected===true}">
                 <p class="element-list"><label class="name">{{trunc(backup.label)}}</label>
                   <label>{{getRealValue(getLastDate(backup))}}</label>
@@ -224,7 +224,7 @@
               <label class="creation">Date de création</label>
             </div>
             <div class="ref-list centered">
-              <button class="small" (click)="goToCreateRef()">Créer mon premier référentiel</button>
+              <button class="small" [ngClass]="{'greffe':categorySelected === 'fonctionnaires'}" (click)="goToCreateRef()">Créer mon premier référentiel</button>
             </div>
           </ng-template>
 
@@ -261,7 +261,8 @@
         <i class="ri-close-line" *ngIf="!ref.isLocked"
           (click)="onRemoveSetting(ref.label);$event.stopPropagation();"></i>
       </div>
-      <label class="footer" (click)="onEdit = true; showPicker = false; $event.stopPropagation();">+
+      <label class="footer"
+        (click)="onEdit = true; showPicker = false; filterBackupsByCategory(); $event.stopPropagation();">+
         Personnaliser</label>
     </div>
   </button>

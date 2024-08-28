@@ -349,9 +349,25 @@
         font-size: 14px;
         line-height: 1.71;
         text-align: center;
-        color: #000091;
         display: flex;
         align-items: center;
+
+        label {
+          background-color: #fff;
+          border: solid 1px #e5e5e5;
+
+          &.selected-mag {
+            background-color: #e3e3fd;
+            border: solid 1px #6a6af4;
+            color: #000091;
+          }
+
+          &.selected-greffe {
+            color: #a558a0;
+            border: solid 1px #a558a0 !important;
+            background-color: #fee7fc !important;
+          }
+        }
 
         .left {
           cursor: pointer;
@@ -363,8 +379,6 @@
           padding: 4px 2px 4px 1px;
           border-top-left-radius: 4px;
           border-bottom-left-radius: 4px;
-          border: solid 1px #6a6af4;
-          background-color: #e3e3fd;
         }
 
         .right {

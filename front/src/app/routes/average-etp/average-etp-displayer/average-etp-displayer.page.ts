@@ -167,7 +167,6 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe((backupId) => {
-        console.log(backupId)
         if (backupId !== null) {
           this.onLoad(backupId)
           this.contentieuxOptionsService.getLastUpdate()
@@ -224,7 +223,6 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
           const id = +this.route.snapshot.params['id']
           this.contentieuxOptionsService.backupId.next(id)
           this.backup = this.backups.find((value) => value.id === id)
-          console.log(this.backup)
           this.subTitleType = this.backup?.type || ''
         }
       })
@@ -313,7 +311,6 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     value: number,
     unit: string
   ) {
-    console.log('update from displayer')
     if (
       value !== null &&
       fixDecimal(
