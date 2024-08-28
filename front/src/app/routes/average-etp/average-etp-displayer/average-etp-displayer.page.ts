@@ -26,7 +26,7 @@ const EXCEL_EXTENSION = '.xlsx'
   templateUrl: './average-etp-displayer.page.html',
   styleUrls: ['./average-etp-displayer.page.scss']
 })
-export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit,IDeactivateComponent {
+export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit, IDeactivateComponent {
   /**
    * Référentiel complet
    */
@@ -91,14 +91,14 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * Mémorisation s'il y a eu une modificiation avant sauvegarde
    */
   optionsIsModify: boolean = false
-/**
- * Ouverture popup sauvegarder avant de quitter
- */
-savePopup:boolean = false
-/**
- * Lien de retour selectionné
- */
-nextState:string=''
+  /**
+   * Ouverture popup sauvegarder avant de quitter
+   */
+  savePopup: boolean = false
+  /**
+   * Lien de retour selectionné
+   */
+  nextState: string = ''
 
   /**
    * Constructeur
@@ -116,7 +116,7 @@ nextState:string=''
     private router: Router,
   ) {
     super()
-    
+
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -167,6 +167,7 @@ nextState:string=''
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe((backupId) => {
+        console.log(backupId)
         if (backupId !== null) {
           this.onLoad(backupId)
           this.contentieuxOptionsService.getLastUpdate()
@@ -223,6 +224,7 @@ nextState:string=''
           const id = +this.route.snapshot.params['id']
           this.contentieuxOptionsService.backupId.next(id)
           this.backup = this.backups.find((value) => value.id === id)
+          console.log(this.backup)
           this.subTitleType = this.backup?.type || ''
         }
       })
@@ -242,13 +244,12 @@ nextState:string=''
    * @returns 
    */
   canDeactivate(nextState: string) {
-    if (this.contentieuxOptionsService.optionsIsModify.getValue()===true)
-    {
-      this.nextState=nextState
+    if (this.contentieuxOptionsService.optionsIsModify.getValue() === true) {
+      this.nextState = nextState
       this.savePopup = true
       return false
     }
-    else 
+    else
       return true
   }
 
@@ -478,23 +479,23 @@ nextState:string=''
   /**
    * Popup de sauvegarde, action à effectuer
    */
-  actionPopup(event:any){
-    if (event.id==='cancel')
-      this.savePopup=false
-    else if(event.id==='save'){
+  actionPopup(event: any) {
+    if (event.id === 'cancel')
+      this.savePopup = false
+    else if (event.id === 'save') {
       this.contentieuxOptionsService.optionsIsModify.next(false)
       this.router.navigate([this.nextState])
       this.saveHR()
     }
   }
 
-    /**
-   * Demande de sauvegarde des nouvelles données saisies
-   * @param isCopy 
-   */
-    saveHR() {
-      this.contentieuxOptionsService.onSaveDatas(false)
-    }
+  /**
+ * Demande de sauvegarde des nouvelles données saisies
+ * @param isCopy 
+ */
+  saveHR() {
+    this.contentieuxOptionsService.onSaveDatas(false)
+  }
 }
 
 

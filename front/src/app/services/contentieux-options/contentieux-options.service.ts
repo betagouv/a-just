@@ -62,7 +62,10 @@ export class ContentieuxOptionsService extends MainClass {
    * Si c'est la première fois que l'on charge les données
    */
   initValue: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-
+  /**
+   * Si la creation est faite depuos le cockpit
+   */
+  openedFromCockpit: BehaviorSubject<any> = new BehaviorSubject<any>({ value: false, dateStart: null, dateStop: null })
   /**
    * Liste des sauvegardes formatés pour le menu roulant
    */
@@ -295,7 +298,7 @@ export class ContentieuxOptionsService extends MainClass {
    * API création d'une base vide
    * @returns
    */
-  async createEmpy(first = false, name = '', status = 'Local', type = 'SIEGE') {
+  createEmpy(first = false, name = '', status = 'Local', type = 'SIEGE') {
     let backupName = null
 
     if (first)
@@ -306,7 +309,7 @@ export class ContentieuxOptionsService extends MainClass {
       backupName = prompt('Sous quel nom ?')
 
     if (backupName) {
-      return await this.serverService
+      return this.serverService
         .post(`contentieux-options/save-backup`, {
           list: [],
           backupName: backupName,
@@ -315,9 +318,10 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
-          console.log('created')
+          console.log('created', r)
           this.backupId.next(r.data)
           this.loadBackupsAndId()
+          return r.data
         })
     }
 
