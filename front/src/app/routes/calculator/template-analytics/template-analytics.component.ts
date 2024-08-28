@@ -5,24 +5,29 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 
 export interface AnalyticsLine {
-  title: string;
-  description?: string;
-  type: string;
-  values: number[][];
-  lineMax: number;
+  title: string
+  description?: string
+  type: string
+  values?: number[][]
+  lineMax: number
   variations: {
-    label: string;
-    isOption?: boolean;
-    values: (number | string | null)[];
-    subTitle?: string;
-    showArrow?: boolean;
-    type?: string;
-    dateStart?: Date;
-    dateStop?: Date;
-  }[];
-  optionsVisibles?: boolean;
+    label: string
+    isOption?: boolean
+    values: (number | string | null)[]
+    subTitle?: string
+    showArrow?: boolean
+    type?: string
+    dateStart?: Date
+    dateStop?: Date
+    graph?: {
+      type: string
+      dateStart: Date
+      dateStop: Date
+      color: string
+    }
+  }[]
+  optionsVisibles?: boolean
 }
-
 
 /**
  * Composant de la page en vue analytique
@@ -33,7 +38,10 @@ export interface AnalyticsLine {
   templateUrl: './template-analytics.component.html',
   styleUrls: ['./template-analytics.component.scss'],
 })
-export class TemplateAnalyticsComponent extends MainClass implements OnInit, OnDestroy {
+export class TemplateAnalyticsComponent
+  extends MainClass
+  implements OnInit, OnDestroy
+{
   /**
    * Référentiel
    */
@@ -72,16 +80,26 @@ export class TemplateAnalyticsComponent extends MainClass implements OnInit, OnD
     this.watcherDestroy()
   }
 
-  ngOnChanges() {
-  }
+  ngOnChanges() {}
 
   getOptionsToShow(line: AnalyticsLine) {
     const options = line.variations || []
-    return line.optionsVisibles ? options.filter(o => o.isOption === true || o.isOption === undefined) : options.filter(o => o.isOption === false || o.isOption === undefined)
+    return line.optionsVisibles
+      ? options.filter((o) => o.isOption === true || o.isOption === undefined)
+      : options.filter((o) => o.isOption === false || o.isOption === undefined)
   }
 
   hasOption(line: AnalyticsLine) {
     const options = line.variations || []
-    return options.filter(o => o.isOption === true).length
+    return options.filter((o) => o.isOption === true).length
+  }
+
+  getGraphs(
+    line: AnalyticsLine
+  ): { type: string; dateStart: Date; dateStop: Date; color: string }[] {
+    // @ts-ignore
+    return this.getOptionsToShow(line)
+      .filter((o) => o.graph)
+      .map((o) => o.graph)
   }
 }

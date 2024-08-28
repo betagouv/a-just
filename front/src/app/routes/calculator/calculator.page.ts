@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import * as _ from 'lodash'
 import { orderBy } from 'lodash'
@@ -30,7 +36,11 @@ import { BackupSettingInterface } from 'src/app/interfaces/backup-setting'
 import { ActivatedRoute, Router } from '@angular/router'
 import { AppService } from 'src/app/services/app/app.service'
 import { Location } from '@angular/common'
-import { FONCTIONNAIRES, MAGISTRATS } from 'src/app/constants/category'
+import {
+  getCategoryColor,
+  FONCTIONNAIRES,
+  MAGISTRATS,
+} from 'src/app/constants/category'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
 
@@ -42,7 +52,10 @@ import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
 })
-export class CalculatorPage extends MainClass implements OnDestroy, OnInit, AfterViewInit {
+export class CalculatorPage
+  extends MainClass
+  implements OnDestroy, OnInit, AfterViewInit
+{
   /**
    * Dom du wrapper
    */
@@ -234,10 +247,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Liste des sauvegardes
    */
   backups: BackupInterface[] = []
-/**
+  /**
    * Liste des sauvegardes filtré par catégorie
    */
-  filteredBackups:BackupInterface[] = []
+  filteredBackups: BackupInterface[] = []
   /**
    * Template to compare
    */
@@ -360,7 +373,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     )
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.watch(
       this.route.params.subscribe((params) => {
         if (params['datestart'] && params['datestop']) {
@@ -368,10 +381,14 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           this.calculatorService.dateStart.next(this.dateStart)
           this.dateStop = new Date(this.route.snapshot.params['datestop'])
           this.calculatorService.dateStop.next(this.dateStop)
-          this.changeCategorySelected(this.route.snapshot.params['category']==='magistrats'?this.MAGISTRATS:this.FONCTIONNAIRES)
+          this.changeCategorySelected(
+            this.route.snapshot.params['category'] === 'magistrats'
+              ? this.MAGISTRATS
+              : this.FONCTIONNAIRES
+          )
           this.tabSelected = 1
           this.onEdit = true
-          this.location.replaceState("/calculateur");
+          this.location.replaceState('/calculateur')
           this.filterBackupsByCategory()
         }
       })
@@ -401,7 +418,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         const max = month(date, 0, 'lastday')
         this.maxDateSelectionDate = max
 
-        this.calculatorService.dateStart.next(month(max, -11))
+        const min = month(max, -11)
+        this.calculatorService.dateStart.next(min)
         this.calculatorService.dateStop.next(max)
 
         this.referentiels = this.referentiels.map((ref, index) => ({
@@ -409,13 +427,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           datas:
             index < 3
               ? {
-                  dateStop: month(max),
+                  dateStop: month(min, -1),
                   dateStart:
                     index === 0
-                      ? month(max, -3)
+                      ? month(min, -3)
                       : index === 1
-                      ? month(max, -6)
-                      : month(max, -12),
+                      ? month(min, -6)
+                      : month(min, -12),
                 }
               : ref.datas,
         }))
@@ -972,8 +990,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         list.push({
           title: 'Temps moyen',
           type: 'verticals-lines',
-          description:
-            'moyen de référence<br/>v/s<br/>temps moyen de la période',
+          description: 'de référence<br/>v/s<br/>temps moyen de la période',
           lineMax:
             Math.max(
               ...value1TempsMoyen.map((m) => m || 0),
@@ -1150,10 +1167,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               ...value1ETPTSiege.map((m) => m || 0),
               ...value2ETPTSiege.map((m) => m || 0)
             ) * 1.1,
-          values: value1ETPTSiege.map((v, index) => [
-            v || 0,
-            value2ETPTSiege[index] || 0,
-          ]),
           variations: [
             {
               label: 'Variation',
@@ -1161,8 +1174,26 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1ETPTSiege },
-            { label: nextRangeString, values: value2ETPTSiege },
+            {
+              label: actualRangeString,
+              values: value1ETPTSiege,
+              graph: {
+                type: 'ETPTSiege',
+                dateStart: new Date(this.dateStart || ''),
+                dateStop: new Date(this.dateStop || ''),
+                color: getCategoryColor('magistrat', 1),
+              },
+            },
+            {
+              label: nextRangeString,
+              values: value2ETPTSiege,
+              graph: {
+                type: 'ETPTSiege',
+                dateStart: new Date(this.optionDateStart || ''),
+                dateStop: new Date(this.optionDateStop || ''),
+                color: getCategoryColor('magistrat', 0.5),
+              },
+            },
           ],
         })
 
@@ -1183,10 +1214,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               ...value1ETPTGreffe.map((m) => m || 0),
               ...value2ETPTGreffe.map((m) => m || 0)
             ) * 1.1,
-          values: value1ETPTGreffe.map((v, index) => [
-            v || 0,
-            value2ETPTGreffe[index] || 0,
-          ]),
           variations: [
             {
               label: 'Variation',
@@ -1194,8 +1221,26 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1ETPTGreffe },
-            { label: nextRangeString, values: value2ETPTGreffe },
+            {
+              label: actualRangeString,
+              values: value1ETPTGreffe,
+              graph: {
+                type: 'ETPTGreffe',
+                dateStart: new Date(this.dateStart || ''),
+                dateStop: new Date(this.dateStop || ''),
+                color: getCategoryColor('greffe', 1),
+              },
+            },
+            {
+              label: nextRangeString,
+              values: value2ETPTGreffe,
+              graph: {
+                type: 'ETPTGreffe',
+                dateStart: new Date(this.optionDateStart || ''),
+                dateStop: new Date(this.optionDateStop || ''),
+                color: getCategoryColor('greffe', 0.5),
+              },
+            },
           ],
         })
 
@@ -1213,10 +1258,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               ...value1ETPTEam.map((m) => m || 0),
               ...value2ETPTEam.map((m) => m || 0)
             ) * 1.1,
-          values: value1ETPTEam.map((v, index) => [
-            v || 0,
-            value2ETPTEam[index] || 0,
-          ]),
           variations: [
             {
               label: 'Variation',
@@ -1224,8 +1265,26 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1ETPTEam },
-            { label: nextRangeString, values: value2ETPTEam },
+            {
+              label: actualRangeString,
+              values: value1ETPTEam,
+              graph: {
+                type: 'ETPTEam',
+                dateStart: new Date(this.dateStart || ''),
+                dateStop: new Date(this.dateStop || ''),
+                color: getCategoryColor('eam', 1),
+              },
+            },
+            {
+              label: nextRangeString,
+              values: value2ETPTEam,
+              graph: {
+                type: 'ETPTEam',
+                dateStart: new Date(this.optionDateStart || ''),
+                dateStop: new Date(this.optionDateStop || ''),
+                color: getCategoryColor('eam', 0.5),
+              },
+            },
           ],
         })
       } else {
@@ -1289,8 +1348,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         list.push({
           title: 'Temps moyen',
           type: 'verticals-lines',
-          description:
-            'moyen de référence<br/>v/s<br/>temps moyen de la période',
+          description: 'de la période<br/>v/s<br/>temps moyen de référence',
           lineMax:
             Math.max(
               ...value1TempsMoyen.map((m) => m || 0),
@@ -1466,17 +1524,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
   goToCreateRef() {
     this.router.navigate([
       '/temps-moyens',
-      { datestart: this.dateStart, datestop: this.dateStop, category:this.categorySelected },
+      {
+        datestart: this.dateStart,
+        datestop: this.dateStop,
+        category: this.categorySelected,
+      },
     ])
   }
 
   /**
    * Filte la liste des backups à l'affichage
    */
-  filterBackupsByCategory(){
-    if (this.categorySelected==='magistrats')
-      this.filteredBackups = this.backups.filter(r=>r.type==='SIEGE')
-    else 
-      this.filteredBackups = this.backups.filter(r=>r.type==='GREFFE')
+  filterBackupsByCategory() {
+    if (this.categorySelected === 'magistrats')
+      this.filteredBackups = this.backups.filter((r) => r.type === 'SIEGE')
+    else this.filteredBackups = this.backups.filter((r) => r.type === 'GREFFE')
   }
 }
