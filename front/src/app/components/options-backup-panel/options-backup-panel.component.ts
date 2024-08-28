@@ -154,6 +154,8 @@ export class OptionsBackupPanelComponent
     this.contentieuxOptionsService.onSaveDatas(isCopy)
     if (isCopy)
       this.router.navigate(['/temps-moyens'])
+    if (this.contentieuxOptionsService.openedFromCockpit.getValue().value === true)
+      setTimeout(() => { this.router.navigate(['/calculateur', { datestart: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStart, datestop: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStop }]) }, 100)
   }
 
   async onSendAllActivity(elem: any) {

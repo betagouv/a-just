@@ -1,21 +1,15 @@
-import { Component } from '@angular/core'
-import { Router } from '@angular/router'
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
 import { id } from 'date-fns/locale'
-import * as FileSaver from 'file-saver'
-import { extend } from 'lodash'
-import { dataInterface } from 'src/app/components/select/select.component'
 import { BackupInterface } from 'src/app/interfaces/backup'
-import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { findRealValue, findRealValueCustom } from 'src/app/utils/dates'
-import { fixDecimal } from 'src/app/utils/numbers'
+import { findRealValueCustom } from 'src/app/utils/dates'
+
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
-import { Renderer } from 'xlsx-renderer'
+import { Location } from '@angular/common';
 
 
 /**
@@ -25,7 +19,7 @@ import { Renderer } from 'xlsx-renderer'
   templateUrl: './average-etp.page.html',
   styleUrls: ['./average-etp.page.scss'],
 })
-export class AverageEtpPage extends MainClass {
+export class AverageEtpPage extends MainClass implements OnInit {
   /**
   * Lien de la doc
   */
@@ -71,14 +65,19 @@ export class AverageEtpPage extends MainClass {
    */
   nameLength: number = 0
   /**
+   * Ouverture provenant du cockpit
+   */
+  openedFromCockpit: boolean = false
+
+  /**
    * Constructor
    * @param userService 
    */
   constructor(private userService: UserService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private route: ActivatedRoute,
+    private location: Location
   ) {
     super()
 
@@ -106,6 +105,22 @@ export class AverageEtpPage extends MainClass {
     )
   }
 
+  /**
+   * Initialisation
+   */
+  ngOnInit() {
+    this.watch(
+      this.route.params.subscribe((params) => {
+        if (params['datestart'] && params['datestop']) {
+          this.openedFromCockpit = true
+          this.location.replaceState("/temps-moyens");
+          //console.log('DATESTART ', new Date(this.route.snapshot.params['datestart']))
+          //console.log('DATESTOP ', new Date(this.route.snapshot.params['datestop']))
+          this.onCreation = true
+        }
+      })
+    )
+  }
   /**
    * Renvoi la date à un format d'affichage
    * @param date 
@@ -170,9 +185,16 @@ export class AverageEtpPage extends MainClass {
       alert('Vous devez saisir un nom !')
     else
       if (name.length > 0 && type.length > 0) {
-        this.contentieuxOptionsService.createEmpy(false, name, 'Local', type)
-        this.onCreation = false;
-        this.nameLength = 0
+        this.contentieuxOptionsService.createEmpy(false, name, 'Local', type).then((data) => {
+          this.onCreation = false;
+          this.nameLength = 0
+          if (this.openedFromCockpit === true) {
+            this.contentieuxOptionsService.openedFromCockpit.next({ value: true, dateStart: new Date(this.route.snapshot.params['datestart']), dateStop: new Date(this.route.snapshot.params['datestop']) })
+            setTimeout(() => { this.goTo(data) }, 100)
+          }
+          //this.router.navigate(['/calculateur', { datestart: this.route.snapshot.params['datestart'], datestop: this.route.snapshot.params['datestop'] }])
+        })
+
       }
   }
 
@@ -260,4 +282,9 @@ export class AverageEtpPage extends MainClass {
   downloadAsset() {
     this.contentieuxOptionsService.downloadTemplate(true)
   }
+
+  sendDate() {
+    this.router.navigate(['/calculateur', { datestart: new Date(), datestop: new Date() }])
+  }
+
 }

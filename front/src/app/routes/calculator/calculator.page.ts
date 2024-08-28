@@ -27,8 +27,9 @@ import { AnalyticsLine } from './template-analytics/template-analytics.component
 import { BackupSettingsService } from 'src/app/services/backup-settings/backup-settings.service'
 import { BACKUP_SETTING_COMPARE } from 'src/app/constants/backup-settings'
 import { BackupSettingInterface } from 'src/app/interfaces/backup-setting'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { AppService } from 'src/app/services/app/app.service'
+import { Location } from '@angular/common';
 
 /**
  * Page du calculateur
@@ -259,7 +260,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private userService: UserService,
     private backupSettingsService: BackupSettingsService,
     private router: Router,
-    private appService: AppService
+    private appService: AppService,
+    private route: ActivatedRoute,
+    private location: Location,
   ) {
     super()
   }
@@ -268,6 +271,25 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Initialisation des datas au chargement de la page
    */
   ngOnInit() {
+    this.watch(
+      this.route.params.subscribe((params) => {
+        if (params['datestart'] && params['datestop']) {
+          console.log('DATESTART ', new Date(this.route.snapshot.params['datestart']))
+          this.dateStart = new Date(this.route.snapshot.params['datestart'])
+          this.calculatorService.dateStart.next(this.dateStart)
+          console.log('DATESTOP ', new Date(this.route.snapshot.params['datestop']))
+          this.dateStop = new Date(this.route.snapshot.params['datestop'])
+          this.calculatorService.dateStop.next(this.dateStop)
+          this.tabSelected = 1
+          this.onEdit = true
+          //this.route.snapshot.params['datestop'] = ''
+          //this.route.snapshot.params['datestart'] = ''
+
+        }
+      })
+    )
+
+
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -756,9 +778,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   /**
-   * Déselectionne le backup dans la liste déroulante de la popin
-   * @param backup
-   */
+  * Déselectionne le backup dans la liste déroulante de la popin
+  * @param backup 
+  */
   unselectBackup() {
     this.backups.map((x) => {
       x.selected = false
@@ -793,10 +815,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         .then(() => this.onLoadComparaisons())
     } else {
       const backupSelected = this.backups.find((b) => b.selected)
-      if (!backupSelected) {
+     if (!backupSelected) {
         alert('Vous devez saisir un référentiel de comparaison !')
         return
       }
+      if (backupSelected.type === 'GREFFE') this.categorySelected = this.FONCTIONNAIRES
+      else this.categorySelected = this.MAGISTRATS
 
       this.backupSettingsService
         .addOrUpdate(backupSelected.label, BACKUP_SETTING_COMPARE, {
@@ -806,6 +830,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     this.onLoadCompare()
+    this.location.replaceState("/calculateur");
   }
 
   /**
@@ -1360,6 +1385,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Switch page
    */
   goToCreateRef() {
-    this.router.navigate(['/temps-moyens'])
+    this.router.navigate(['/temps-moyens', { datestart: this.dateStart, datestop: this.dateStop }])
   }
 }
