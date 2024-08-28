@@ -10,6 +10,14 @@
   cursor: pointer;
   margin: auto 0;
 
+  &.greffe {
+    &.selected {
+      .title-select {
+        border-right: 1px solid #a558a0 !important;
+      }
+    }
+  }
+
   &.calculator {
     height: 32px;
     border-radius: 4px;
@@ -18,17 +26,21 @@
     display: flex;
     padding: 0px 8px;
     flex-direction: row;
-    &.popup{
+
+    &.popup {
       width: 114px;
     }
-    &.selected{
-      .title-select{
-        border-right: solid 1px #6a6af4;;
+
+    &.selected {
+      .title-select {
+        border-right: solid 1px #6a6af4;
+        ;
       }
     }
+
     div {
       display: inline;
-      
+
       mat-icon {
         display: none;
       }
@@ -39,10 +51,11 @@
         width: fit-content;
         line-height: 28px;
         min-width: 62px;
-        color:#3a3a3a;
+        color: #3a3a3a;
       }
     }
-    .title-select{
+
+    .title-select {
       border-right: solid 1px #ddd;
       line-height: 28px;
       padding: 0 10px 0 2px;
