@@ -38,6 +38,27 @@
       .selected {
         border: solid 1px #6a6af4 !important;
 
+        &.greffe {
+          border: solid 1px #a558a0 !important;
+
+          .header {
+            border-bottom: solid 1px #a558a0 !important;
+            background-color: #fee7fc;
+            color: #a558a0;
+          }
+
+          .content {
+            .action {
+              background-color: #fee7fc !important;
+
+              label {
+                color: #a558a0 !important;
+              }
+            }
+          }
+
+        }
+
         .header {
           border-bottom: solid 1px #6a6af4 !important;
           background-color: #e8edff;
@@ -158,6 +179,13 @@
                   border: none !important;
                   border-bottom: solid 1px #6a6af4 !important;
                   color: #0063cb !important;
+
+                  &.greffe {
+                    border: none;
+                    border-bottom: solid 1px #a558a0 !important;
+                    color: #a558a0 !important;
+
+                  }
                 }
               }
             }
@@ -177,6 +205,16 @@
                 .element-list {
                   color: #0063cb !important;
                 }
+
+                &.greffe {
+                  border-top: 1px solid #a558a0;
+                  border-bottom: 1px solid #a558a0;
+
+                  .element-list {
+                    color: #a558a0 !important;
+                  }
+                }
+
               }
             }
 
@@ -378,6 +416,12 @@
     &.selected {
       aj-date-select {
         border: 1px solid #000091;
+      }
+
+      &.greffe {
+        aj-date-select {
+          border: 1px solid #a558a0;
+        }
       }
     }
   }

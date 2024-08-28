@@ -157,11 +157,13 @@
       <i class="ri-a-b"></i>
     </div>
 
-    <p class="title">Comparer les données</p>
+    <p class="title">Comparer les données du {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}</p>
     <p class="title">de {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à :</p>
 
     <div class="picker">
-      <div class="first-section" [ngClass]="{'selected': compareOption===1}" (click)="compareOption=1;unselectBackup()">
+      <div class="first-section"
+        [ngClass]="{'selected': compareOption===1, 'greffe': compareOption===1 && categorySelected === 'fonctionnaires' }"
+        (click)="compareOption=1;unselectBackup()">
 
         <div class="header"> une autre période de ma juridiction</div>
 
@@ -169,13 +171,17 @@
           <div class="action">
             <label>Choisir la période :</label>
             <div class="dates-selector popup" (click)="compareOption=1">
-              <aj-date-select [ngClass]="{'selected': compareOption===1}" title="de" [value]="optionDateStart"
-                (valueChange)="optionDateStart = $event" class="bg-white calculator popup" [max]="optionDateStop"
-                [dateClass]="dateClass" [dateType]="'month'" [icon]="'none'">
+              <aj-date-select
+                [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires'}"
+                title="de" [value]="optionDateStart" (valueChange)="optionDateStart = $event"
+                class="bg-white calculator popup" [max]="optionDateStop" [dateClass]="dateClass" [dateType]="'month'"
+                [icon]="'none'">
               </aj-date-select>
-              <aj-date-select [ngClass]="{'selected': compareOption===1}" title="à" [value]="optionDateStop"
-                (valueChange)="optionDateStop = $event" class="bg-white calculator popup" [dateClass]="dateClass"
-                [dateType]="'month'" [min]="optionDateStart" [icon]="'none'">
+              <aj-date-select
+                [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires' }"
+                title="à" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
+                class="bg-white calculator popup" [dateClass]="dateClass" [dateType]="'month'" [min]="optionDateStart"
+                [icon]="'none'">
               </aj-date-select>
             </div>
           </div>
@@ -183,9 +189,11 @@
 
       </div>
       <div class="or"><label>OU</label></div>
-      <div class="second-section" [ngClass]="{'selected': compareOption===2}" (click)="compareOption=2">
+      <div class="second-section"
+        [ngClass]="{'selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
+        (click)="compareOption=2">
         <div class="header"> un référentiel
-          <br />de temps moyens
+          <br />de temps moyens {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}
         </div>
         <div class="content">
           <ng-template *ngIf="backups.length;then content else empty">
@@ -193,10 +201,11 @@
 
           <ng-template #content>
             <div class="ref-list">
-              <button class="small full-width" [ngClass]="{'selected': compareOption===2}"
+              <button class="small full-width"
+                [ngClass]="{'selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
                 (click)="goToCreateRef()">Créer un référentiel</button>
               <div class="line-item" *ngFor="let backup of backups; index as i;" (click)="selectBackup(backup)"
-                [ngClass]="{'selected': backup.selected===true}">
+                [ngClass]="{'selected': backup.selected===true, 'greffe':categorySelected === 'fonctionnaires' && backup.selected===true}">
                 <p class="element-list"><label class="name">{{trunc(backup.label)}}</label>
                   <label>{{getRealValue(getLastDate(backup))}}</label>
                 </p>
