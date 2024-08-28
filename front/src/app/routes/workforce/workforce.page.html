@@ -186,10 +186,48 @@
           filterParams.display === 'nom/prénom' ? person.firstName :
           person.lastName}}
         </p>
-        <i class="ri-user-shared-line"
+        <i class="ri-user-received-line"
+          *ngIf="person.dateStart && isArriving(person.dateStart)"
           [style.color]="person.categoryName ? getCategoryColor(person.categoryName) : null"
-          [style.background-color]="person.categoryName ? getBgCategoryColor(person.categoryName) : null"></i>
+          [style.background-color]="person.categoryName ? getBgCategoryColor(person.categoryName) : null">
+        </i>
+        <i class="ri-user-shared-line"
+          *ngIf="person.dateStart && !isArriving(person.dateStart)" 
+          [style.color]="person.categoryName ? getCategoryColor(person.categoryName) : null"
+          [style.background-color]="person.categoryName ? getBgCategoryColor(person.categoryName) : null">
+        </i>
+
+        <!-- <div 
+          *ngIf="person.dateStart && isArriving(person.dateStart)" 
+          class="agent-status" 
+          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
+        >
+          <i
+            class="ri-user-add-line"
+            [ngStyle]="{
+              color: person.categoryName ? getCategoryColor(person.categoryName) : null,
+            }"
+          >
+          </i>
+          <p>Arrivé Prévue</p>
+        </div>
+        <div 
+          *ngIf="person.dateStart && !isArriving(person.dateStart)" 
+          class="agent-status" 
+          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
+        >
+          <i
+            class="ri-user-unfollow-line"
+            [ngStyle]="{
+              color: person.categoryName ? getCategoryColor(person.categoryName) : null,
+            }"
+          >
+         </i>
+         <p>Parti</p>
+        </div> -->
       </a>
+      
+      <!-- //"ri-user-shared-line" -->
       <div *ngIf="allPersonsFiltered.length === 0">Nom non trouvé !</div>
     </div>
   </div>
