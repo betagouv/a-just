@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
 import * as _ from 'lodash'
 import { orderBy } from 'lodash'
@@ -30,7 +30,7 @@ import { BackupSettingInterface } from 'src/app/interfaces/backup-setting'
 import { ActivatedRoute, Router } from '@angular/router'
 import { AppService } from 'src/app/services/app/app.service'
 import { Location } from '@angular/common'
-import { MAGISTRATS } from 'src/app/constants/category'
+import { FONCTIONNAIRES, MAGISTRATS } from 'src/app/constants/category'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
 
@@ -42,7 +42,7 @@ import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
 })
-export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
+export class CalculatorPage extends MainClass implements OnDestroy, OnInit, AfterViewInit {
   /**
    * Dom du wrapper
    */
@@ -234,6 +234,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Liste des sauvegardes
    */
   backups: BackupInterface[] = []
+/**
+   * Liste des sauvegardes filtré par catégorie
+   */
+  filteredBackups:BackupInterface[] = []
   /**
    * Template to compare
    */
@@ -278,29 +282,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Initialisation des datas au chargement de la page
    */
   ngOnInit() {
-    this.watch(
-      this.route.params.subscribe((params) => {
-        if (params['datestart'] && params['datestop']) {
-          console.log(
-            'DATESTART ',
-            new Date(this.route.snapshot.params['datestart'])
-          )
-          this.dateStart = new Date(this.route.snapshot.params['datestart'])
-          this.calculatorService.dateStart.next(this.dateStart)
-          console.log(
-            'DATESTOP ',
-            new Date(this.route.snapshot.params['datestop'])
-          )
-          this.dateStop = new Date(this.route.snapshot.params['datestop'])
-          this.calculatorService.dateStop.next(this.dateStop)
-          this.tabSelected = 1
-          this.onEdit = true
-          //this.route.snapshot.params['datestop'] = ''
-          //this.route.snapshot.params['datestart'] = ''
-        }
-      })
-    )
-
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -379,6 +360,23 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     )
   }
 
+  ngAfterViewInit(){
+    this.watch(
+      this.route.params.subscribe((params) => {
+        if (params['datestart'] && params['datestop']) {
+          this.dateStart = new Date(this.route.snapshot.params['datestart'])
+          this.calculatorService.dateStart.next(this.dateStart)
+          this.dateStop = new Date(this.route.snapshot.params['datestop'])
+          this.calculatorService.dateStop.next(this.dateStop)
+          this.changeCategorySelected(this.route.snapshot.params['category']==='magistrats'?this.MAGISTRATS:this.FONCTIONNAIRES)
+          this.tabSelected = 1
+          this.onEdit = true
+          this.location.replaceState("/calculateur");
+          this.filterBackupsByCategory()
+        }
+      })
+    )
+  }
   /**
    * Suppresion des observables lors de la suppression de la page
    */
@@ -1468,7 +1466,17 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   goToCreateRef() {
     this.router.navigate([
       '/temps-moyens',
-      { datestart: this.dateStart, datestop: this.dateStop },
+      { datestart: this.dateStart, datestop: this.dateStop, category:this.categorySelected },
     ])
+  }
+
+  /**
+   * Filte la liste des backups à l'affichage
+   */
+  filterBackupsByCategory(){
+    if (this.categorySelected==='magistrats')
+      this.filteredBackups = this.backups.filter(r=>r.type==='SIEGE')
+    else 
+      this.filteredBackups = this.backups.filter(r=>r.type==='GREFFE')
   }
 }

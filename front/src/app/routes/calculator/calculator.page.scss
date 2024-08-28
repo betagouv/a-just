@@ -157,6 +157,11 @@
             height: 190px;
             overflow: auto;
 
+            .greffe {
+              border: solid 1px #a558a0 !important;
+              color: #a558a0;
+            }
+
             &.centered {
               display: flex;
               align-items: center;

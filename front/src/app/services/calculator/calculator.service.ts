@@ -72,9 +72,6 @@ export class CalculatorService extends MainClass {
    * @returns 
    */
   filterList(categorySelected: string, selectedFonctionsIds: number[] | null, dateStart: Date | null = this.dateStart.getValue(), dateStop: Date | null = this.dateStop.getValue()) {
-    console.log('FILTER LIST')
-    console.log('BACK Start', dateStart)
-    console.log('BACK Stop', dateStop)
     return this.serverService
       .post(`calculator/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),

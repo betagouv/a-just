@@ -65,7 +65,7 @@ export class ContentieuxOptionsService extends MainClass {
   /**
    * Si la creation est faite depuos le cockpit
    */
-  openedFromCockpit: BehaviorSubject<any> = new BehaviorSubject<any>({ value: false, dateStart: null, dateStop: null })
+  openedFromCockpit: BehaviorSubject<any> = new BehaviorSubject<any>({ value: false, dateStart: null, dateStop: null, category:null })
   /**
    * Liste des sauvegardes formatés pour le menu roulant
    */
@@ -151,7 +151,6 @@ export class ContentieuxOptionsService extends MainClass {
    * @param referentiel
    */
   updateOptions(referentiel: ContentieuReferentielInterface) {
-    console.log('UPDATE')
     const options = this.contentieuxOptions.getValue()
 
     const findIndexOptions = options.findIndex(
@@ -318,7 +317,6 @@ export class ContentieuxOptionsService extends MainClass {
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
-          console.log('created', r)
           this.backupId.next(r.data)
           this.loadBackupsAndId()
           return r.data
@@ -512,7 +510,6 @@ export class ContentieuxOptionsService extends MainClass {
   generateFlateList(list: any, empty = false) {
     const flatList = new Array()
     list = empty ? list : list.getValue()
-    console.log(list)
     list.map((x: any) => {
       const magAvg = decimalToStringDate(x.averageProcessingTime, ':')
       flatList.push({

@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core'
+import { AfterViewInit, Component } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { id } from 'date-fns/locale'
 import { BackupInterface } from 'src/app/interfaces/backup'
 import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { MainClass } from 'src/app/libs/main-class'
@@ -19,7 +18,7 @@ import { Location } from '@angular/common';
   templateUrl: './average-etp.page.html',
   styleUrls: ['./average-etp.page.scss'],
 })
-export class AverageEtpPage extends MainClass implements OnInit {
+export class AverageEtpPage extends MainClass implements AfterViewInit {
   /**
   * Lien de la doc
   */
@@ -105,18 +104,23 @@ export class AverageEtpPage extends MainClass implements OnInit {
     )
   }
 
-  /**
-   * Initialisation
-   */
-  ngOnInit() {
+  ngAfterViewInit(){
     this.watch(
       this.route.params.subscribe((params) => {
-        if (params['datestart'] && params['datestop']) {
+        if (params['datestart'] && params['datestop'] && params['category'] ) {
           this.openedFromCockpit = true
           this.location.replaceState("/temps-moyens");
-          //console.log('DATESTART ', new Date(this.route.snapshot.params['datestart']))
-          //console.log('DATESTOP ', new Date(this.route.snapshot.params['datestop']))
           this.onCreation = true
+
+          setTimeout(()=>{
+            let elem = document.getElementById('type') as HTMLButtonElement
+            if (elem) {
+              const label = this.route.snapshot.params['category'] === 'magistrats' ? 'SIEGE':'GREFFE'
+              elem.value = label
+              elem.name = label
+            }
+          },100)
+
         }
       })
     )
@@ -189,10 +193,9 @@ export class AverageEtpPage extends MainClass implements OnInit {
           this.onCreation = false;
           this.nameLength = 0
           if (this.openedFromCockpit === true) {
-            this.contentieuxOptionsService.openedFromCockpit.next({ value: true, dateStart: new Date(this.route.snapshot.params['datestart']), dateStop: new Date(this.route.snapshot.params['datestop']) })
+            this.contentieuxOptionsService.openedFromCockpit.next({ value: true, dateStart: new Date(this.route.snapshot.params['datestart']), dateStop: new Date(this.route.snapshot.params['datestop']), category: this.route.snapshot.params['category'] })
             setTimeout(() => { this.goTo(data) }, 100)
-          }
-          //this.router.navigate(['/calculateur', { datestart: this.route.snapshot.params['datestart'], datestop: this.route.snapshot.params['datestop'] }])
+          } else this.contentieuxOptionsService.openedFromCockpit.next({ value: false, dateStart: null, dateStop: null, category: null})
         })
 
       }
@@ -282,9 +285,4 @@ export class AverageEtpPage extends MainClass implements OnInit {
   downloadAsset() {
     this.contentieuxOptionsService.downloadTemplate(true)
   }
-
-  sendDate() {
-    this.router.navigate(['/calculateur', { datestart: new Date(), datestop: new Date() }])
-  }
-
 }
