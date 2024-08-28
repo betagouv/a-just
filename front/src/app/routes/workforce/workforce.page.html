@@ -186,30 +186,20 @@
           filterParams.display === 'nom/prénom' ? person.firstName :
           person.lastName}}
         </p>
-        <i class="ri-user-received-line"
-          *ngIf="person.dateStart && isArriving(person.dateStart)"
-          [style.color]="person.categoryName ? getCategoryColor(person.categoryName) : null"
-          [style.background-color]="person.categoryName ? getBgCategoryColor(person.categoryName) : null">
-        </i>
-        <i class="ri-user-shared-line"
-          *ngIf="person.dateStart && !isArriving(person.dateStart)" 
-          [style.color]="person.categoryName ? getCategoryColor(person.categoryName) : null"
-          [style.background-color]="person.categoryName ? getBgCategoryColor(person.categoryName) : null">
-        </i>
 
-        <!-- <div 
+        <div 
           *ngIf="person.dateStart && isArriving(person.dateStart)" 
           class="agent-status" 
           [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
         >
           <i
-            class="ri-user-add-line"
+            class="ri-user-received-line"
             [ngStyle]="{
               color: person.categoryName ? getCategoryColor(person.categoryName) : null,
             }"
           >
           </i>
-          <p>Arrivé Prévue</p>
+          <p>Arrivée prévue</p>
         </div>
         <div 
           *ngIf="person.dateStart && !isArriving(person.dateStart)" 
@@ -217,14 +207,14 @@
           [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
         >
           <i
-            class="ri-user-unfollow-line"
+            class="ri-user-shared-line"
             [ngStyle]="{
               color: person.categoryName ? getCategoryColor(person.categoryName) : null,
             }"
           >
          </i>
          <p>Parti</p>
-        </div> -->
+        </div>
       </a>
       
       <!-- //"ri-user-shared-line" -->
