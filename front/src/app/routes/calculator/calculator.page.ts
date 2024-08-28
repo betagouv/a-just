@@ -29,7 +29,9 @@ import { BACKUP_SETTING_COMPARE } from 'src/app/constants/backup-settings'
 import { BackupSettingInterface } from 'src/app/interfaces/backup-setting'
 import { ActivatedRoute, Router } from '@angular/router'
 import { AppService } from 'src/app/services/app/app.service'
-import { Location } from '@angular/common';
+import { Location } from '@angular/common'
+import { MAGISTRATS } from 'src/app/constants/category'
+import { fixDecimal } from 'src/app/utils/numbers'
 
 /**
  * Page du calculateur
@@ -262,7 +264,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     private router: Router,
     private appService: AppService,
     private route: ActivatedRoute,
-    private location: Location,
+    private location: Location
   ) {
     super()
   }
@@ -274,21 +276,25 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     this.watch(
       this.route.params.subscribe((params) => {
         if (params['datestart'] && params['datestop']) {
-          console.log('DATESTART ', new Date(this.route.snapshot.params['datestart']))
+          console.log(
+            'DATESTART ',
+            new Date(this.route.snapshot.params['datestart'])
+          )
           this.dateStart = new Date(this.route.snapshot.params['datestart'])
           this.calculatorService.dateStart.next(this.dateStart)
-          console.log('DATESTOP ', new Date(this.route.snapshot.params['datestop']))
+          console.log(
+            'DATESTOP ',
+            new Date(this.route.snapshot.params['datestop'])
+          )
           this.dateStop = new Date(this.route.snapshot.params['datestop'])
           this.calculatorService.dateStop.next(this.dateStop)
           this.tabSelected = 1
           this.onEdit = true
           //this.route.snapshot.params['datestop'] = ''
           //this.route.snapshot.params['datestart'] = ''
-
         }
       })
     )
-
 
     this.watch(
       this.userService.user.subscribe((u) => {
@@ -470,6 +476,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
       this.categorySelected
     ) {
       this.isLoading = true
+      this.appService.appLoading.next(true)
       this.calculatorService
         .filterList(
           this.categorySelected,
@@ -478,6 +485,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             : null
         )
         .then(({ list, fonctions }) => {
+          this.appService.appLoading.next(false)
           if (this.lastCategorySelected !== this.categorySelected) {
             this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
               id: f.id,
@@ -778,9 +786,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
   }
 
   /**
-  * Déselectionne le backup dans la liste déroulante de la popin
-  * @param backup 
-  */
+   * Déselectionne le backup dans la liste déroulante de la popin
+   * @param backup
+   */
   unselectBackup() {
     this.backups.map((x) => {
       x.selected = false
@@ -815,11 +823,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         .then(() => this.onLoadComparaisons())
     } else {
       const backupSelected = this.backups.find((b) => b.selected)
-     if (!backupSelected) {
+      if (!backupSelected) {
         alert('Vous devez saisir un référentiel de comparaison !')
         return
       }
-      if (backupSelected.type === 'GREFFE') this.categorySelected = this.FONCTIONNAIRES
+      if (backupSelected.type === 'GREFFE')
+        this.categorySelected = this.FONCTIONNAIRES
       else this.categorySelected = this.MAGISTRATS
 
       this.backupSettingsService
@@ -830,7 +839,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     }
 
     this.onLoadCompare()
-    this.location.replaceState("/calculateur");
+    this.location.replaceState('/calculateur')
   }
 
   /**
@@ -1230,6 +1239,35 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           value2TempsMoyen,
           value1TempsMoyen
         )
+
+        const nbDayByMonth =
+          this.categorySelected === MAGISTRATS
+            ? this.environment.nbDaysByMagistrat / 12
+            : this.environment.nbDaysByFonctionnaire / 12
+        const nbHoursPerDay =
+          this.categorySelected === MAGISTRATS
+            ? this.environment.nbHoursPerDayAndMagistrat
+            : this.environment.nbHoursPerDayAndFonctionnaire
+        const valETPT =
+          this.categorySelected === MAGISTRATS
+            ? [...value1ETPTSiege]
+            : [...value1ETPTGreffe]
+        const value2Sorties = [
+          ...value1Sorties.map((v1, index) => {
+            if (value2TempsMoyen[index] !== null && valETPT[index] !== null) {
+              // nouvelle sorties = etpt * nb dossier
+              // nb dossier = (nb hours * nb days) / temps moyen
+
+              return Math.floor(
+                ((valETPT[index] || 0) * nbHoursPerDay * nbDayByMonth) /
+                  (value2TempsMoyen[index] || 0)
+              )
+            }
+
+            return v1
+          }),
+        ]
+
         list.push({
           title: 'Temps moyen',
           type: 'verticals-lines',
@@ -1264,7 +1302,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           ],
         })
 
-        const value2DTES = [...value1DTES] // TODO calcul du DTES stock / sorties
+        const value2DTES = [
+          ...value1DTES.map((v1, index) => {
+            if (value2Sorties[index] !== null && value1Stock[index] !== null) {
+              // DTES = stock / sorties
+
+              return fixDecimal(
+                (value1Stock[index] || 0) / (value2Sorties[index] || 0),
+                10
+              )
+            }
+
+            return v1
+          }),
+        ]
         const variationsDTES = getVariations(value2DTES, value1DTES)
         list.push({
           title: 'DTES',
@@ -1292,7 +1343,24 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           ],
         })
 
-        const value2TauxCouverture = [...value1TauxCouverture] // TODO calcul du Taux de couverture sorties / entrees
+        const value2TauxCouverture = [
+          ...value1TauxCouverture.map((v1, index) => {
+            if (
+              value2Sorties[index] !== null &&
+              value1Entrees[index] !== null
+            ) {
+              // Taux de couverture = sorties / entrees
+
+              return fixDecimal(
+                (value2Sorties[index] || 0) / (value1Entrees[index] || 0),
+                10
+              )
+            }
+
+            return v1
+          }),
+        ]
+
         const variationsCouverture = getVariations(
           value2TauxCouverture,
           value1TauxCouverture
@@ -1329,13 +1397,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
             },
           ],
         })
-
-        const value2Sorties = [
-          ...value1Sorties.map((v1) => {
-            console.log(v1)
-            return v1
-          }),
-        ] // TODO calcul nouveau stock etpt * nb dossier par mois
         const variationsSorties = getVariations(value2Sorties, value1Sorties)
         list.push({
           title: 'Sorties',
@@ -1385,6 +1446,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Switch page
    */
   goToCreateRef() {
-    this.router.navigate(['/temps-moyens', { datestart: this.dateStart, datestop: this.dateStop }])
+    this.router.navigate([
+      '/temps-moyens',
+      { datestart: this.dateStart, datestop: this.dateStop },
+    ])
   }
 }
