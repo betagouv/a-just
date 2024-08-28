@@ -33,21 +33,25 @@
       <div class="flex-1"></div>
 
       <div class="switch-tab">
-        <div class="brut" [ngClass]="{'selected': tabSelected === 0}"
+        <div class="brut" [ngClass]="{'selected': tabSelected === 0 && !compareTemplates}"
           (click)="tabSelected=0;compareTemplates=null;$event.stopPropagation()">
           <i class="ri-table-view"></i>
           <p>Données brutes</p>
         </div>
-        <div class="fonctionnaires" *ngIf="canViewGreffier" [ngClass]="{'selected': tabSelected === 1}"
-          class="analytique" (click)="tabSelected=1;compareTemplates=null;$event.stopPropagation()">
+        <div class="fonctionnaires" *ngIf="canViewGreffier"
+          [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
+          (click)="tabSelected=1;compareTemplates=null;$event.stopPropagation()">
           <i class="ri-bar-chart-box-line"></i>
-          <p>Vue analytique</p>
+          <p>Graphiques</p>
         </div>
       </div>
     </div>
-    <div class="filters-item" *ngIf="fonctionRealValue.length>0"> <label class="fonction-values"
+    <div class="filters-item" *ngIf="fonctionRealValue.length>0 || compareTemplates"> <label
+        *ngIf="fonctionRealValue.length" class="fonction-values"
         [ngClass]="{'Greffe': categorySelected === FONCTIONNAIRES}"> {{fonctionRealValue}}
         <i class="ri-close-line" (click)="selectAllFct()"></i> </label>
+      <label *ngIf="compareTemplates" class="fonction-values"> Comparaison à {{compareAtString}}
+        <i class="ri-close-line" (click)="tabSelected=1;compareTemplates=null;"></i> </label>
     </div>
 
     <ng-template [ngIf]="!compareTemplates">
@@ -240,7 +244,7 @@
 
 <ng-template #actions>
   <div class="flex-1"></div>
-  <button *ngIf="tabSelected === 1" class="compare" (click)="showPicker=!showPicker;$event.stopPropagation();">
+  <button class="compare" (click)="showPicker=!showPicker;$event.stopPropagation();">
     <i class="ri-a-b"></i>
     <label>Comparer</label>
     <div><i [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
@@ -254,7 +258,7 @@
         <i [class]="ref.selected===false ?'':'filled'" (click)="radioSelect(ref);$event.stopPropagation();"
           class="radio"></i><span>{{trunc(ref.label,30)}}</span>
         <div class="flex-1"></div>
-        <i class="ri-delete-bin-line" *ngIf="!ref.isLocked"
+        <i class="ri-close-line" *ngIf="!ref.isLocked"
           (click)="onRemoveSetting(ref.label);$event.stopPropagation();"></i>
       </div>
       <label class="footer" (click)="onEdit = true; showPicker = false; $event.stopPropagation();">+

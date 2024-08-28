@@ -32,6 +32,7 @@ import { AppService } from 'src/app/services/app/app.service'
 import { Location } from '@angular/common'
 import { MAGISTRATS } from 'src/app/constants/category'
 import { fixDecimal } from 'src/app/utils/numbers'
+import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
 
 /**
  * Page du calculateur
@@ -241,6 +242,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
    * Liste des comparaisons sauvegardés
    */
   backupSettingSaved: BackupSettingInterface[] = []
+  /**
+   * Label du ref à comparer
+   */
+  compareAtString: string = ''
 
   /**
    * Constructeur
@@ -398,7 +403,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         const max = month(date, 0, 'lastday')
         this.maxDateSelectionDate = max
 
-        this.calculatorService.dateStart.next(month(max, -2))
+        this.calculatorService.dateStart.next(month(max, -11))
         this.calculatorService.dateStop.next(max)
 
         this.referentiels = this.referentiels.map((ref, index) => ({
@@ -434,14 +439,29 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         }
       } while (indexRef !== -1)
 
-      l.map((l) => {
+      let preselectedRefId = -1
+      if (this.compareOption === 2) {
+        const bup = this.backups.find((b) => b.selected)
+        if (bup) {
+          preselectedRefId = bup.id
+        }
+      }
+
+      l.slice(0, NB_MAX_CUSTOM_COMPARAISONS).map((l) => {
         refs.push({
           label: l.label,
-          selected: false,
+          selected:
+            l.datas && l.datas.referentielId === preselectedRefId
+              ? true
+              : false,
           isLocked: false,
           datas: l.datas,
         })
       })
+
+      for (let i = NB_MAX_CUSTOM_COMPARAISONS; i < l.length; i++) {
+        this.backupSettingsService.removeSetting(l[i].id)
+      }
 
       this.referentiels = [...refs]
       this.backupSettingSaved = l
@@ -747,7 +767,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
     ref.selected = true
 
     if (ref.datas) {
-      console.log(ref)
       if (ref.datas.dateStart) {
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
@@ -759,7 +778,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
           selected: ref.datas.referentielId == b.id,
         }))
       }
-      console.log('oui?')
       this.showPicker = false
       this.onLoadCompare()
     }
@@ -909,6 +927,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         const nextRangeString = `${this.getRealValue(
           this.optionDateStart
         )} - ${this.getRealValue(this.optionDateStop)}`
+        this.compareAtString = nextRangeString
 
         const value2DTES: (number | null)[] = (resultCalcul.list || []).map(
           (d: CalculatorInterface) => d.realDTESInMonths
@@ -1220,6 +1239,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit {
         const refDetails = await this.contentieuxOptionsService.loadDetails(
           refSelected.id
         )
+        this.compareAtString = refSelected.label
 
         const value2TempsMoyen = this.referentiel.map((ref) => {
           const findDetail = refDetails.find((r) => r.contentieux.id === ref.id)
