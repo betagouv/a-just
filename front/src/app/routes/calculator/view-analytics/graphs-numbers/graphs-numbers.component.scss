@@ -44,18 +44,18 @@
         justify-content: center;
 
         &.is-up {
-            i.up {
+            i.down {
                 display: inline-block;
                 color: #00a95f;
                 background-color: #c3fad5;
             }
 
-            i.down {
+            i.up {
                 display: none;
             }
         }
 
-        i.down {
+        i.up {
             display: inline-block;
         }
 
