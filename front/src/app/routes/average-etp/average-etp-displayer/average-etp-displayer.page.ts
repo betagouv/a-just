@@ -99,7 +99,10 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * Lien de retour selectionné
    */
   nextState: string = ''
-
+  /**
+   * Popup pour être redirigé vers la comparaison
+   */
+  onFollowCompare:boolean=false
   /**
    * Constructeur
    * @param contentieuxOptionsService
@@ -213,6 +216,17 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
           this.subTitleType = this.backup?.type || ''
         }
       }))
+
+
+      this.watch(
+        this.contentieuxOptionsService.onFollowComparaison.subscribe(
+          (b) => {
+            if (b===true)
+              this.onFollowCompare = true
+          }
+        )
+      )
+
 
   }
 
@@ -493,6 +507,35 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
   saveHR() {
     this.contentieuxOptionsService.onSaveDatas(false)
   }
+
+  /**
+   * Retour au calculateur
+   */
+  backToCockpit(){
+    setTimeout(() => { this.router.navigate(['/calculateur', { datestart: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStart, datestop: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStop, category: this.contentieuxOptionsService.openedFromCockpit.getValue().category }]) }, 100)
+  }
+
+    /**
+   * Popup de sauvegarde, action à effectuer
+   */
+    actionPopupFollow(event: any) {
+      if (event.id === 'cancel')
+        this.onCloseCompare()
+      if (event.id === 'follow')
+      {
+        this.contentieuxOptionsService.onFollowComparaison.next(false)
+        this.backToCockpit()
+      }
+    }
+
+    /**
+     * Refus de poursuivre vers la comparaison du calculateur
+     */
+    onCloseCompare(){
+      this.onFollowCompare = false
+      this.contentieuxOptionsService.onFollowComparaison.next(false)
+      this.contentieuxOptionsService.openedFromCockpit.next({ value: false, dateStart: null, dateStop: null, category: null})
+    }
 }
 
 

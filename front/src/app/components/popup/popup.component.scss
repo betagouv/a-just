@@ -29,6 +29,39 @@
     max-width: 500px;
   }
 
+  &.width-500-custom .popup>div {
+    width: 90%;
+    max-width: 500px;
+
+    .content {
+      padding: 0 20px;
+    }
+
+    .actions {
+      padding: 32px 54px 32px 0px;
+    }
+
+    .title {
+      //color: fColor(popupWhiteTitle);
+      margin-bottom: 0px;
+    }
+
+    .close {
+      i {
+        //color: fColor(darkModeTitle);
+        font-size: 14px;
+      }
+
+      label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #000091;
+
+        display: block;
+      }
+
+    }
+  }
 
   &.width-575 .popup>div {
     width: 90%;
