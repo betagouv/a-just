@@ -1167,6 +1167,10 @@ export class CalculatorPage
               ...value1ETPTSiege.map((m) => m || 0),
               ...value2ETPTSiege.map((m) => m || 0)
             ) * 1.1,
+          values: value1ETPTSiege.map((v, index) => [
+            v || 0,
+            value2ETPTSiege[index] || 0,
+          ]),
           variations: [
             {
               label: 'Variation',
@@ -1177,22 +1181,22 @@ export class CalculatorPage
             {
               label: actualRangeString,
               values: value1ETPTSiege,
-              graph: {
+              /*graph: {
                 type: 'ETPTSiege',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('magistrat', 1),
-              },
+              },*/
             },
             {
               label: nextRangeString,
               values: value2ETPTSiege,
-              graph: {
+              /*graph: {
                 type: 'ETPTSiege',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('magistrat', 0.5),
-              },
+              },*/
             },
           ],
         })
@@ -1214,6 +1218,10 @@ export class CalculatorPage
               ...value1ETPTGreffe.map((m) => m || 0),
               ...value2ETPTGreffe.map((m) => m || 0)
             ) * 1.1,
+          values: value1ETPTGreffe.map((v, index) => [
+            v || 0,
+            value2ETPTGreffe[index] || 0,
+          ]),
           variations: [
             {
               label: 'Variation',
@@ -1224,22 +1232,22 @@ export class CalculatorPage
             {
               label: actualRangeString,
               values: value1ETPTGreffe,
-              graph: {
+              /*graph: {
                 type: 'ETPTGreffe',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('greffe', 1),
-              },
+              },*/
             },
             {
               label: nextRangeString,
               values: value2ETPTGreffe,
-              graph: {
+              /*graph: {
                 type: 'ETPTGreffe',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('greffe', 0.5),
-              },
+              },*/
             },
           ],
         })
@@ -1258,6 +1266,10 @@ export class CalculatorPage
               ...value1ETPTEam.map((m) => m || 0),
               ...value2ETPTEam.map((m) => m || 0)
             ) * 1.1,
+          values: value1ETPTEam.map((v, index) => [
+            v || 0,
+            value2ETPTEam[index] || 0,
+          ]),
           variations: [
             {
               label: 'Variation',
@@ -1268,22 +1280,22 @@ export class CalculatorPage
             {
               label: actualRangeString,
               values: value1ETPTEam,
-              graph: {
+              /*graph: {
                 type: 'ETPTEam',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('eam', 1),
-              },
+              },*/
             },
             {
               label: nextRangeString,
               values: value2ETPTEam,
-              graph: {
+              /*graph: {
                 type: 'ETPTEam',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('eam', 0.5),
-              },
+              },*/
             },
           ],
         })
