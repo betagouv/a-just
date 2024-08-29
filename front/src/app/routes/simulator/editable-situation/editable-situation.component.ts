@@ -375,14 +375,6 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     let realTime = fixDecimal((basicEtptData[prefix1] * basicEtptData[prefix2] * etpToUse) / (startTotalOut * 12), 100)
     const tmd = Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
 
-    //this.formWhiteSim.get('magRealTimePerCase')?.setValue(decimalToStringDate(tmd))
-
-    /**this.formWhiteSim.controls['magRealTimePerCase'].setValue(
-      String(decimalToStringDate(tmd))
-    )
-    */
-    console.log(tmd, realTime, decimalToStringDate(tmd, ':'))
-
     this.simulatorService.situationActuelle.next({
       totalIn: startTotalIn,
       totalOut: startTotalOut,
@@ -426,7 +418,6 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     this.endSituationDisplay.realCoverage = fixDecimal(coverage) + '%'
     this.endSituationDisplay.realDTESInMonths =
       fixDecimal(endStock / startTotalOut) + ''//+ ' mois'
-    console.log('TMDDD', tmd, String(decimalToStringDate(tmd)))
     //this.endSituationDisplay.magRealTimePerCase = String(tmd) //decimalToStringDate(tmd, ':')
 
     this.simulatorService.situationProjected.next({

@@ -6,7 +6,13 @@ import {
   nbOfDays,
   stringToDecimalDate,
 } from 'src/app/utils/dates'
-import { Component, OnInit, HostListener, ViewChild, OnDestroy } from '@angular/core'
+import {
+  Component,
+  OnInit,
+  HostListener,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core'
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -78,7 +84,8 @@ const etpFonToDefine = '[un volume moyen de]'
 })
 export class SimulatorPage
   extends MainClass
-  implements OnInit, IDeactivateComponent, OnDestroy {
+  implements OnInit, IDeactivateComponent, OnDestroy
+{
   /**
    * Wrapper de page contenant le simulateur
    */
@@ -197,12 +204,12 @@ export class SimulatorPage
     isComingBack: boolean
     isClosingTab: boolean
   } = {
-      isLeaving: false, // L'utilisateur change d'onglet
-      isReseting: false, // L'utilisateur réinitialise la simulation
-      isResetingParams: false, // L'utilisateur réinitialise les paramètres ajusté
-      isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
-      isClosingTab: false, // L'utilisateur ferme la fenêtre
-    }
+    isLeaving: false, // L'utilisateur change d'onglet
+    isReseting: false, // L'utilisateur réinitialise la simulation
+    isResetingParams: false, // L'utilisateur réinitialise les paramètres ajusté
+    isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
+    isClosingTab: false, // L'utilisateur ferme la fenêtre
+  }
   /**
    * Liste des actions possibles
    */
@@ -213,12 +220,12 @@ export class SimulatorPage
     closeTab: string
     leave: string
   } = {
-      reinit: 'réinitialiser',
-      reinitAll: 'tout réinitialiser',
-      return: 'retour',
-      closeTab: 'close',
-      leave: 'sort',
-    }
+    reinit: 'réinitialiser',
+    reinitAll: 'tout réinitialiser',
+    return: 'retour',
+    closeTab: 'close',
+    leave: 'sort',
+  }
 
   /**
    * Nom de la prochaine route lors d'un changement de page
@@ -266,9 +273,9 @@ export class SimulatorPage
     | { id: string; content: string; fill?: undefined }
     | { id: string; content: string; fill: boolean }
   )[] = [
-      { id: '', content: '' },
-      { id: '', content: '', fill: true },
-    ]
+    { id: '', content: '' },
+    { id: '', content: '', fill: true },
+  ]
 
   printPopup: boolean = false
 
@@ -386,7 +393,7 @@ export class SimulatorPage
     private router: Router,
     private route: ActivatedRoute,
     private serverService: ServerService,
-    private hubspotChatService: HubspotChatService,
+    private hubspotChatService: HubspotChatService
   ) {
     super()
 
@@ -464,7 +471,6 @@ export class SimulatorPage
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
   }
 
-
   /**
    * Détection de la fermeture de la fenêtre
    */
@@ -476,7 +482,6 @@ export class SimulatorPage
     }
   }
 
-
   @HostListener('window:popstate', ['$event'])
   onPopState(event: Event) {
     if (!this.chooseScreen) {
@@ -486,8 +491,8 @@ export class SimulatorPage
   }
 
   /**
- * Destruction du composant
- */
+   * Destruction du composant
+   */
   ngOnDestroy(): void {
     this.resetParams()
   }
@@ -993,11 +998,11 @@ export class SimulatorPage
           ? this.buttonSelected.id === 'lastStock'
             ? 0
             : this.buttonSelected.id === 'realDTESInMonths'
-              ? 0
-              : -1
-          : parseFloat(volumeInput) >= 0
-            ? parseFloat(volumeInput)
+            ? 0
             : -1
+          : parseFloat(volumeInput) >= 0
+          ? parseFloat(volumeInput)
+          : -1
     else if (
       this.valueToAjust.value !== '' &&
       String(this.valueToAjust.value) !== 'NaN'
@@ -1116,7 +1121,7 @@ export class SimulatorPage
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param1.value) -
-        parseFloat(projectedValue as string)
+          parseFloat(projectedValue as string)
       )
     if (
       id === 'realCoverage' &&
@@ -1124,7 +1129,7 @@ export class SimulatorPage
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param2.value) -
-        parseFloat(projectedValue as string)
+          parseFloat(projectedValue as string)
       )
 
     return this.paramsToAjust.param1.label === id
@@ -1132,8 +1137,8 @@ export class SimulatorPage
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
       : this.percantageWithSign(this.paramsToAjust.param2.percentage)
-        ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
-        : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
+      ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
+      : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
   }
 
   /**
@@ -1157,7 +1162,7 @@ export class SimulatorPage
       Math.round(
         (((parseFloat(result) - parseFloat(initialValue)) * 100) /
           parseFloat(initialValue as string)) *
-        100
+          100
       ) / 100
     if (!isFinite(roundedValue)) return 'NA'
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
@@ -1441,9 +1446,9 @@ export class SimulatorPage
         const objSecond =
           find && find.secondLocked
             ? find.secondLocked.find(
-              (obj: any) =>
-                obj.locked === this.pickersParamsToLock[paramNumber]
-            )
+                (obj: any) =>
+                  obj.locked === this.pickersParamsToLock[paramNumber]
+              )
             : null
         if (objSecond) {
           this.toDisplay = objSecond.toDisplay
@@ -1550,11 +1555,13 @@ export class SimulatorPage
         ?.label.replace(' ', '_')
       const editableName = document.getElementById('editable-sim-name')
 
-      const filename = `${editableName?.innerText === '' ? 'Simulation' : editableName?.innerText
-        }${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
-        }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-          .toJSON()
-          .slice(0, 10)}.pdf`
+      const filename = `${
+        editableName?.innerText === '' ? 'Simulation' : editableName?.innerText
+      }${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${
+        this.userService.user.getValue()!.firstName
+      }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+        .toJSON()
+        .slice(0, 10)}.pdf`
 
       const title = document.getElementById('print-title')
       if (title) {
@@ -1584,7 +1591,6 @@ export class SimulatorPage
       if (exportButton1) {
         exportButton1.classList.add('display-none')
       }
-
 
       const ajWrapper = document.getElementById('simu-wrapper')
       if (ajWrapper) ajWrapper?.classList.add('full-screen')
@@ -1625,9 +1631,12 @@ export class SimulatorPage
       return new Promise((resolve, reject) => {
         setTimeout(() => resolve('Export done'), 200)
       })
-    }
-    else {
-      alert('Le commentaire que vous avez saisi comprend ' + this.commentaire.length + ' charactères. Il dépasse la limite de 20000 charactères autorisés.')
+    } else {
+      alert(
+        'Le commentaire que vous avez saisi comprend ' +
+          this.commentaire.length +
+          ' charactères. Il dépasse la limite de 20000 charactères autorisés.'
+      )
       return new Promise((resolve, reject) => {
         setTimeout(() => reject('Comment too long'), 100)
       })
@@ -1726,7 +1735,7 @@ export class SimulatorPage
     return (
       Math.trunc(
         Number(this.getFieldValue(param, data, initialValue, toCompute)) *
-        100000
+          100000
       ) / 100000
     )
   }
@@ -1747,11 +1756,11 @@ export class SimulatorPage
   getLockedResultedParams(index: number) {
     return index === 0
       ? this.simulatorService.getLabelTranslation(
-        this.paramsToLock.param1.label
-      )
+          this.paramsToLock.param1.label
+        )
       : this.simulatorService.getLabelTranslation(
-        this.paramsToLock.param2.label
-      )
+          this.paramsToLock.param2.label
+        )
   }
 
   /**
@@ -1945,7 +1954,6 @@ export class SimulatorPage
           break
         case 'export':
           {
-            console.log('Exporting...')
             this.printPopup = false
             this.forceDeactivate = true
             this.onResetUserAction()
@@ -1977,19 +1985,15 @@ export class SimulatorPage
       })
   }
 
-
   /**
    * Log du lancement d'une simulation à blanc
    */
   async logOpenSimulator() {
     history.pushState({}, 'simulateur', '/simulateur')
-    await this.serverService
-      .post('simulator/log-simulation')
-      .then((r) => {
-        return r.data
-      })
+    await this.serverService.post('simulator/log-simulation').then((r) => {
+      return r.data
+    })
   }
-
 
   /**
    * Log du lancement d'une simulation
@@ -2013,7 +2017,6 @@ export class SimulatorPage
       })
   }
 
-
   /**
    * Demande de rechargement de la page
    */
@@ -2028,21 +2031,20 @@ export class SimulatorPage
   }
 
   /**
-  * Récuperer le type de l'app
-  */
+   * Récuperer le type de l'app
+   */
   getInterfaceType() {
     return this.userService.interfaceType === 1
   }
 
   /**
-* Mapping des noms de contentieux selon l'interface
-* @param label 
-* @returns 
-*/
+   * Mapping des noms de contentieux selon l'interface
+   * @param label
+   * @returns
+   */
   referentielMappingNameByInterface(label: string) {
     if (this.getInterfaceType() === true)
       return this.referentielCAMappingName(label)
     else return this.referentielMappingName(label)
   }
 }
-

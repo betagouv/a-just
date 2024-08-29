@@ -1,0 +1,14 @@
+<div>
+    <div *ngIf="showArrow && title !== '-' && title !== '0'" class="zone-arrow" [class.is-up]="(''+title)[0] === '-'">
+        <i class="ri-arrow-up-line up"></i>
+        <i class="ri-arrow-down-line down"></i>
+    </div>
+</div>
+<div class="text">
+    <p *ngIf="subTitle" class="sub-title"
+        [style.color]="isWhite && !isTransparent ? 'white' : referentielMappingColor(referentielName)">
+        {{subTitle}}</p>
+    <p *ngIf="title" class="title"
+        [style.color]="isWhite && !isTransparent ? 'white' : referentielMappingColor(referentielName)">
+        {{title}}</p>
+</div>

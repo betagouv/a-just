@@ -407,4 +407,11 @@ export class MainClass {
       })
     }
   }
+
+  /**
+   * floor
+   */
+  public floor(value: number) {
+    return Math.floor(value)
+  }
 }

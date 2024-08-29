@@ -5,50 +5,96 @@
 }
 
 :host {
-  &.fit-content .popup > div {
+  &.fit-content .popup>div {
     width: inherit;
     height: inherit;
     min-width: inherit;
     min-height: inherit;
   }
 
-  &.small .popup > div {
+  &.small .popup>div {
     width: 45%;
   }
 
-  &.large .popup > div {
+  &.large .popup>div {
     width: 80%;
   }
 
-  &.medium .popup > div {
+  &.medium .popup>div {
     width: 60%;
   }
 
-  &.width-500 .popup > div {
+  &.width-500 .popup>div {
     width: 90%;
     max-width: 500px;
   }
 
-  &.width-600 .popup > div {
+
+  &.width-575 .popup>div {
+    width: 90%;
+    max-width: 575px;
+  }
+
+  &.width-575-custom .popup>div {
+    width: 90%;
+    max-width: 575px;
+
+    .content {
+      padding: 0 20px;
+    }
+
+    .title {
+      //color: fColor(popupWhiteTitle);
+      margin-bottom: 0px;
+    }
+
+    .close {
+      i {
+        //color: fColor(darkModeTitle);
+        font-size: 14px;
+      }
+
+      label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #000091;
+
+        display: block;
+      }
+
+    }
+  }
+
+  &.width-600 .popup>div {
     width: 90%;
     max-width: 600px;
   }
 
-  &.extra-large .popup > div {
+  &.extra-large .popup>div {
     width: 90%;
     height: 90% !important;
     max-height: 90% !important;
   }
 
-  &.fix-height .popup > div {
+  &.fix-height .popup>div {
     height: 535px !important;
     width: 700px;
     border-radius: 6px;
   }
 
-  &.fix-height .popup > div > .content {
+  &.fix-height .popup>div>.content {
     flex: unset;
     overflow-y: overlay !important;
+  }
+
+  &.fix-width-400 .popup>div {
+    width: 400px;
+    position: relative;
+  }
+
+  &.fix-width-400 .popup>div>.content {
+    width: 100%;
+    min-width: auto !important;
   }
 
   &.no-padding-content-x {
@@ -71,8 +117,12 @@
   }
 
   &.border-radius {
-    .popup > div {
+    .popup>div {
       border-radius: 8px;
+    }
+
+    i {
+      color: #000091 !important;
     }
   }
 
@@ -86,7 +136,7 @@
     align-items: flex-end;
     padding-bottom: 48px;
 
-    > div {
+    >div {
       width: 90%;
       height: inherit;
       min-height: inherit;
@@ -105,7 +155,7 @@
     }
   }
 
-  &.blackBackground .popup > div {
+  &.blackBackground .popup>div {
     background-color: fColor(popupDarkBgPopup);
 
     .title {
@@ -137,13 +187,13 @@
     .popup {
       background-color: rgba(255, 255, 255, 0.46);
 
-      > div {
+      >div {
         padding: 16px 0 16px 16px;
         border-radius: 6px;
         min-width: auto;
         min-height: auto;
 
-        > * {
+        >* {
           padding-right: 16px;
         }
       }
@@ -175,7 +225,7 @@
   background-color: rgba(fColor(cblack), 0.37);
   z-index: 200;
 
-  > div {
+  >div {
     background-color: white;
     width: fit-content;
     box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.19);
@@ -210,6 +260,10 @@
         position: relative;
         top: 1px;
       }
+
+      label {
+        display: none;
+      }
     }
   }
 
@@ -228,7 +282,7 @@
     padding: 32px 32px 32px 72px;
     display: flex;
 
-    > button {
+    >button {
       margin-left: 8px;
       border-radius: 0;
 
@@ -241,7 +295,7 @@
 
 @media screen and (max-width: 576px) {
   :host {
-    .popup > div {
+    .popup>div {
       width: 100%;
       height: 100%;
     }

@@ -8,7 +8,10 @@ import { MaterialModule } from 'src/app/libs/material.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { SelectModule } from 'src/app/components/select/select.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
-import { BackButtonModule } from 'src/app/components/back-button/back-button.module'
+import { BackButtonModule } from 'src/app/components/back-button/back-button.module';
+import { CheckboxModule } from 'src/app/components/checkbox/checkbox.module'
+import { PipesModule } from 'src/app/pipes/pipes.module'
+import { PopupModule } from 'src/app/components/popup/popup.module'
 
 @NgModule({
   declarations: [AverageEtpPage],
@@ -22,7 +25,10 @@ import { BackButtonModule } from 'src/app/components/back-button/back-button.mod
     MaterialModule,
     SelectModule,
     WrapperModule,
-    BackButtonModule
+    BackButtonModule,
+    CheckboxModule,
+    PipesModule,
+    PopupModule
   ],
 })
-export class AverageEtpModule {}
+export class AverageEtpModule { }

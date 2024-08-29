@@ -1,0 +1,52 @@
+<div class="header-refs">
+    <div>
+    </div>
+    <div>
+        <div *ngFor="let ref of referentiel" class="flex-1" [style.color]="referentielMappingColor(ref.label)"
+            [style.background-color]="referentielMappingColor(ref.label, 0.2)">
+            {{ referentielMappingName(ref.label) }}
+        </div>
+    </div>
+</div>
+
+<div class="scroll-container" *ngIf="lines && lines.length">
+    <div *ngFor="let line of lines">
+        <div class="container-colum">
+            <p *ngIf="line.title" class="title-section">{{line.title}}</p>
+            <p *ngIf="line.description" class="description-section" [innerHTML]="line.description | sanitizeHtml"></p>
+            <div class="flex-1"></div>
+            <button *ngIf="hasOption(line)" class="details" (click)="line.optionsVisibles = !line.optionsVisibles">
+                <i [class]="
+                !line.optionsVisibles === false ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
+          "></i>{{ !line.optionsVisibles === false ? 'Masquer les détails' :
+                'Voir les détails' }}
+            </button>
+            <div *ngFor="let variation of getOptionsToShow(line); let index=index"
+                [ngClass]="{'first-empty-block': index === 0 && getOptionsToShow(line).length !== 1, 'end-empty-block': index === getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1, 'middle-empty-block': getOptionsToShow(line).length === 1 || (index < getOptionsToShow(line).length - 1 && index >= 1)}">
+                <p>{{variation.label}}</p>
+            </div>
+        </div>
+        <div class="container-elements">
+            <div *ngFor="let ref of referentiel; let refIndex = index" class="flex-1">
+                <aj-graphs-verticals-lines *ngIf="line.type === 'verticals-lines'" [referentielName]="ref.label"
+                    [referentielId]="ref.id" [values]="line.values ? line.values[refIndex] : []"
+                    [maxValue]="line.lineMax || 0" [graphs]="getGraphs(line)"></aj-graphs-verticals-lines>
+                <ng-template [ngIf]="line.type === 'progress'">
+                    <div class="flex-1"></div>
+                    <aj-graphs-progress [referentielName]="ref.label"
+                        [percent]="line.values ? line.values[refIndex][0] : null"></aj-graphs-progress>
+                    <div class="flex-1"></div>
+                </ng-template>
+                <ng-template ngFor let-variant [ngForOf]="getOptionsToShow(line)" let-variantIndex="index">
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="variant.values[refIndex] === null ? '-' : variant.values[refIndex]+''"
+                        [subTitle]="variant.subTitle"
+                        [ngClass]="{'no-border-bottom': variantIndex < getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1, 'no-border-top': variantIndex > 0 && getOptionsToShow(line).length !== 1}"
+                        [isWhite]="variantIndex === getOptionsToShow(line).length - 1"
+                        [showArrow]="variant.showArrow === true"
+                        [isTransparent]="variant.showArrow === true"></aj-graphs-numbers>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
