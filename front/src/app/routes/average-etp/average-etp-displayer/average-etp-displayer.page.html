@@ -88,6 +88,28 @@
     <p class="content">Avant de changer de page souhaitez-vous les enregistrer ?</p>
   </aj-popup>
 
+
+  <!-- POPUP COMPARAISON -->
+  <aj-popup *ngIf="onFollowCompare===true" [closeIcon]="true" (onClose)="onCloseCompare();" [removeShadow]="'noShadow'"
+    class="border-radius width-500-custom comparaison" [actions]="[
+    { id: 'cancel', content: 'Rester sur la liste des référentiels', size: 'medium'},
+    { id: 'follow', content: 'Poursuivre', fill: true , size: 'medium'}
+    ]" (selectedAction)="actionPopupFollow($event)">
+    <div id="circle">
+      <i class="ri-a-b"></i>
+    </div>
+    <p>Votre référentiel est bien enregistré !</p>
+
+    <div class="content">
+      <p class="subtitle">Vous pouvez l’utiliser immédiatement ou le retrouver plus tard dans la liste de vos
+        référentiels de comparaison.
+      </p>
+      <p class="text">Souhaitez-vous poursuivre votre comparaison dans le cockpit ?</p>
+      <!-- POPIN FINALISER STYLE-->
+    </div>
+  </aj-popup>
+
+
 </aj-wrapper>
 
 <ng-template #actionsLeft>
