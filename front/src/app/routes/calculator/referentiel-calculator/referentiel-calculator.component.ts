@@ -64,7 +64,7 @@ export class ReferentielCalculatorComponent extends MainClass {
    * Constructor
    */
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private referentielService: ReferentielService,
     private calculatorService: CalculatorService,
     private activitiesService: ActivitiesService,
@@ -108,13 +108,6 @@ export class ReferentielCalculatorComponent extends MainClass {
       this.showChildren = !this.showChildren
       this.calculator.childIsVisible = this.showChildren
     }
-  }
-
-  /**
-   * Arrondi valeur numérique
-   */
-  floor(value: number) {
-    return Math.floor(value)
   }
 
   /**

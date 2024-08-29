@@ -602,7 +602,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} HrBackupId
    * @returns
    */
-  Model.getByMonth = async (date, HrBackupId, contentieuxId = null) => {
+  Model.getByMonth = async (date, HrBackupId, contentieuxId = null, details = true) => {
     const whereList = {}
     date = new Date(date)
 
@@ -650,11 +650,13 @@ export default (sequelizeInstance, Model) => {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
         },
-        updatedBy: {
-          entrees: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'entrees'),
-          sorties: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'sorties'),
-          stock: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'stock'),
-        },
+        updatedBy: details
+          ? {
+            entrees: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'entrees'),
+            sorties: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'sorties'),
+            stock: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'stock'),
+          }
+          : null,
       }
     }
 
@@ -786,9 +788,11 @@ export default (sequelizeInstance, Model) => {
     let list = ((await Model.models.ContentieuxReferentiels.getReferentiels()) || [])
       .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
       .map((c) => {
-        const childrens = (c.childrens || []) .filter(
-          (r) => !(r.valueQualityIn === VALUE_QUALITY_OPTION && r.valueQualityOut === VALUE_QUALITY_OPTION && r.valueQualityStock === VALUE_QUALITY_OPTION)
-        ).map((ch) => ({ ...ch, lastDateWhithoutData: null }))
+        const childrens = (c.childrens || [])
+          .filter(
+            (r) => !(r.valueQualityIn === VALUE_QUALITY_OPTION && r.valueQualityOut === VALUE_QUALITY_OPTION && r.valueQualityStock === VALUE_QUALITY_OPTION)
+          )
+          .map((ch) => ({ ...ch, lastDateWhithoutData: null }))
         allContentieux = [...allContentieux, ...(c.childrens || [])]
         return { ...c, childrens }
       })

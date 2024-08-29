@@ -5,7 +5,7 @@
       onDateChanged(null); $event.preventDefault(); $event.stopPropagation()
     " class="cursor-pointer">
     highlight_off</mat-icon>
-  <mat-icon *ngIf="!(value && clearable && !readOnly)" (click)="onClick()">{{
+  <mat-icon *ngIf="!(value && clearable && !readOnly) && icon!=='none'" (click)="onClick()">{{
     icon
     }}</mat-icon>
 </div>
