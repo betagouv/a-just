@@ -908,7 +908,11 @@ export class CalculatorPage
       const value1ETPTSiege = (this.datasFilted || []).map((d) => d.etpMag)
       const value1ETPTGreffe = (this.datasFilted || []).map((d) => d.etpFon)
       const value1ETPTEam = (this.datasFilted || []).map((d) => d.etpCont)
-      const getVariations = (tab2: any[], tab1: any[]) =>
+      const getVariations = (
+        tab2: any[],
+        tab1: any[],
+        isPercentComparaison = true
+      ) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null) {
             return '-'
@@ -918,10 +922,18 @@ export class CalculatorPage
             return 0
           }
 
-          const percent = this.fixDecimal(
-            (1 - (d || 0) / (tab1[index] || 0)) * 100,
-            10
-          )
+          let percent = 0
+
+          if (isPercentComparaison) {
+            percent = this.fixDecimal(
+              (1 - (d || 0) / (tab1[index] || 0)) * 100,
+              10
+            )
+          } else {
+            percent =
+              Math.floor((d || 0) * 100) - Math.floor((tab1[index] || 0) * 100)
+          }
+
           if (percent > 0) {
             return '+' + percent
           }
@@ -1025,7 +1037,8 @@ export class CalculatorPage
         ).map((d: CalculatorInterface) => d.realCoverage)
         const variationsCouverture = getVariations(
           value2TauxCouverture,
-          value1TauxCouverture
+          value1TauxCouverture,
+          false
         )
         list.push({
           title: 'Taux de couverture',
@@ -1451,7 +1464,8 @@ export class CalculatorPage
 
         const variationsCouverture = getVariations(
           value2TauxCouverture,
-          value1TauxCouverture
+          value1TauxCouverture,
+          false
         )
         list.push({
           title: 'Taux de couverture',
