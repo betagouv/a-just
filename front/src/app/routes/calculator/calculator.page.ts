@@ -1005,8 +1005,7 @@ export class CalculatorPage
         list.push({
           title: 'DTES',
           type: 'verticals-lines',
-          description:
-            'possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)',
+          description: 'de la période<br/>(calculé sur les 12 mois précédents)',
           lineMax:
             Math.max(
               ...value1DTES.map((m) => m || 0),
@@ -1043,7 +1042,7 @@ export class CalculatorPage
         list.push({
           title: 'Temps moyen',
           type: 'verticals-lines',
-          description: 'de référence<br/>v/s<br/>temps moyen de la période',
+          description: 'sur la période',
           lineMax:
             Math.max(
               ...value1TempsMoyen.map((m) => m || 0),
@@ -1084,7 +1083,7 @@ export class CalculatorPage
         list.push({
           title: 'Taux de couverture',
           type: 'progress',
-          description: 'possible<br/>v/s<br/>taux de couverture de la période',
+          description: 'moyen sur la période',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
             Math.floor((v || 0) * 100),
@@ -1121,8 +1120,7 @@ export class CalculatorPage
         list.push({
           title: 'Stock',
           type: 'verticals-lines',
-          description:
-            'mensuelles possibles<br/>v/s<br/>stock en fin de période',
+          description: 'sur la période',
           lineMax:
             Math.max(
               ...value1Stock.map((m) => m || 0),
@@ -1152,7 +1150,7 @@ export class CalculatorPage
         list.push({
           title: 'Entrée',
           type: 'verticals-lines',
-          description: 'mensuelles possibles<br/>v/s<br/>entrée de la période',
+          description: 'moyenne<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Entrees.map((m) => m || 0),
@@ -1182,7 +1180,7 @@ export class CalculatorPage
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
-          description: 'mensuelles possibles<br/>v/s<br/>sorties de la période',
+          description: 'moyenne<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Sorties.map((m) => m || 0),
@@ -1214,8 +1212,7 @@ export class CalculatorPage
         list.push({
           title: 'ETPT Siège',
           type: 'verticals-lines',
-          description:
-            'mensuelles possibles<br/>v/s<br/>ETPTSiege en fin de période',
+          description: '-',
           lineMax:
             Math.max(
               ...value1ETPTSiege.map((m) => m || 0),
@@ -1265,8 +1262,7 @@ export class CalculatorPage
         list.push({
           title: 'ETPT Greffe',
           type: 'verticals-lines',
-          description:
-            'mensuelles possibles<br/>v/s<br/>ETPTGreffe en fin de période',
+          description: '-',
           lineMax:
             Math.max(
               ...value1ETPTGreffe.map((m) => m || 0),
@@ -1313,8 +1309,7 @@ export class CalculatorPage
         list.push({
           title: 'ETPT EAM',
           type: 'verticals-lines',
-          description:
-            'mensuelles possibles<br/>v/s<br/>ETPTEam en fin de période',
+          description: '-',
           lineMax:
             Math.max(
               ...value1ETPTEam.map((m) => m || 0),
@@ -1463,7 +1458,7 @@ export class CalculatorPage
           title: 'DTES',
           type: 'verticals-lines',
           description:
-            'possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)',
+            'de la période<br/>v/s<br/>DTES possible<br/><br/>(calculé sur les 12 mois précédents)',
           lineMax:
             Math.max(
               ...value1DTES.map((m) => m || 0),
@@ -1511,7 +1506,7 @@ export class CalculatorPage
         list.push({
           title: 'Taux de couverture',
           type: 'progress',
-          description: 'possible<br/>v/s<br/>taux de couverture de la période',
+          description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
             Math.floor((v || 0) * 100),
@@ -1544,7 +1539,7 @@ export class CalculatorPage
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
-          description: 'mensuelles possibles<br/>v/s<br/>sorties de la période',
+          description: 'de la période<br/>v/s<br/>sorties mensuelles possibles',
           lineMax:
             Math.max(
               ...value1Sorties.map((m) => m || 0),
@@ -1627,69 +1622,6 @@ export class CalculatorPage
   }
 
   filterReferentiels(referentiels: any[]) {
-    /**const refs = this.referentiels
-      let indexRef = -1
-      do {
-        indexRef = refs.findIndex((r) => !r.isLocked)
-        if (indexRef !== -1) {
-          refs.splice(indexRef, 1)
-        }
-      } while (indexRef !== -1)
-
-      let preselectedRefId = -1
-      if (this.compareOption === 2) {
-        const bup = this.backups.find((b) => b.selected)
-        if (bup) {
-          preselectedRefId = bup.id
-        }
-      }
-
-      l.slice(0, NB_MAX_CUSTOM_COMPARAISONS).map((l) => {
-        refs.push({
-          label: l.label,
-          selected:
-            l.datas && l.datas.referentielId === preselectedRefId
-              ? true
-              : false,
-          isLocked: false,
-          datas: l.datas,
-        })
-      })
-
-      for (let i = NB_MAX_CUSTOM_COMPARAISONS; i < l.length; i++) {
-        this.backupSettingsService.removeSetting(l[i].id)
-      }
-
-      this.referentiels = [...refs]
-      this.backupSettingSaved = l */
-    /*any[] = [
-      {
-        label: 'trimestre précédent',
-        selected: false,
-        isLocked: true,
-        datas: {
-          dateStop: month(),
-          dateStart: month(new Date(), -3),
-        },
-      },
-      {
-        label: 'semestre précédent',
-        selected: false,
-        isLocked: true,
-        datas: {
-          dateStop: month(),
-          dateStart: month(new Date(), -6),
-        },
-      },
-      {
-        label: 'année précédente',
-        selected: false,
-        isLocked: true,
-        datas: {
-          dateStop: month(),
-          dateStart: month(new Date(), -12),
-        },
-      },*/
     return referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(
