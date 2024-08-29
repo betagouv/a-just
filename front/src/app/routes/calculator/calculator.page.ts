@@ -44,7 +44,13 @@ import {
 import { fixDecimal } from 'src/app/utils/numbers'
 import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
 import { KPIService } from 'src/app/services/kpi/kpi.service'
-import { CALCULATOR_OPEN_CHARTS_VIEW, CALCULATOR_OPEN_CONMPARAISON_RANGE, CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL, CALCULATOR_SELECT_GREFFE, EXECUTE_CALCULATOR_CHANGE_DATE } from 'src/app/constants/log-codes'
+import {
+  CALCULATOR_OPEN_CHARTS_VIEW,
+  CALCULATOR_OPEN_CONMPARAISON_RANGE,
+  CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
+  CALCULATOR_SELECT_GREFFE,
+  EXECUTE_CALCULATOR_CHANGE_DATE,
+} from 'src/app/constants/log-codes'
 
 /**
  * Page du calculateur
@@ -268,7 +274,7 @@ export class CalculatorPage
   /**
    * Premier chargement
    */
-  firstLoading=true
+  firstLoading = true
 
   /**
    * Constructeur
@@ -546,9 +552,10 @@ export class CalculatorPage
           this.lastCategorySelected = this.categorySelected
 
           if (this.firstLoading === false)
-            this.appService.notification('Les données du cockpit ont été mis à jour !')
+            this.appService.notification(
+              'Les données du cockpit ont été mis à jour !'
+            )
           this.firstLoading = false
-
         })
         .catch(() => {
           this.isLoading = false
@@ -600,11 +607,11 @@ export class CalculatorPage
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
       this.calculatorService.dateStart.next(this.dateStart)
-      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE,'')
+      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
     } else if (type === 'dateStop') {
       this.dateStop = month(new Date(event), undefined, 'lastDay')
       this.calculatorService.dateStop.next(this.dateStop)
-      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE,'')
+      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
     }
 
     this.filtredDatas()
@@ -805,14 +812,20 @@ export class CalculatorPage
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
         this.optionDateStop = new Date(ref.datas.dateStop)
-        this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE,ref.label+'')
+        this.kpiService.register(
+          CALCULATOR_OPEN_CONMPARAISON_RANGE,
+          ref.label + ''
+        )
       } else if (ref.datas.referentielId) {
         this.compareOption = 2
         this.backups = this.backups.map((b) => ({
           ...b,
           selected: ref.datas.referentielId == b.id,
         }))
-        this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL, ref.datas.referentielId+'')
+        this.kpiService.register(
+          CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
+          ref.datas.referentielId + ''
+        )
       }
       this.showPicker = false
       console.log(ref)
@@ -867,18 +880,17 @@ export class CalculatorPage
         return
       }
 
-      let rangeTitle = `${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(
-        this.optionDateStop
-      )}`
+      let rangeTitle = `${this.getRealValue(
+        this.optionDateStart
+      )} - ${this.getRealValue(this.optionDateStop)}`
       this.backupSettingsService
-        .addOrUpdate(
-          rangeTitle,
-          BACKUP_SETTING_COMPARE,
-          { dateStart: this.optionDateStart, dateStop: this.optionDateStop }
-        )
+        .addOrUpdate(rangeTitle, BACKUP_SETTING_COMPARE, {
+          dateStart: this.optionDateStart,
+          dateStop: this.optionDateStop,
+        })
         .then(() => this.onLoadComparaisons())
 
-      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE,rangeTitle)
+      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE, rangeTitle)
     } else {
       const backupSelected = this.backups.find((b) => b.selected)
       if (!backupSelected) {
@@ -895,8 +907,10 @@ export class CalculatorPage
         })
         .then(() => this.onLoadComparaisons())
 
-      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,backupSelected.id+'')
-
+      this.kpiService.register(
+        CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
+        backupSelected.id + ''
+      )
     }
 
     this.onLoadCompare()
@@ -1598,8 +1612,8 @@ export class CalculatorPage
   /**
    * Drop down deselection
    */
-  unselectTemplate(){
-    this.compareTemplates=null
+  unselectTemplate() {
+    this.compareTemplates = null
     this.referentiels.map((x) => {
       x.selected = false
     })
@@ -1608,8 +1622,96 @@ export class CalculatorPage
   /**
    * Envoie d'une log lors de l'ouverture de la vue graphique
    */
-  logChartView(){
-    this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW,'')
+  logChartView() {
+    this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW, '')
   }
 
+  filterReferentiels(referentiels: any[]) {
+    /**const refs = this.referentiels
+      let indexRef = -1
+      do {
+        indexRef = refs.findIndex((r) => !r.isLocked)
+        if (indexRef !== -1) {
+          refs.splice(indexRef, 1)
+        }
+      } while (indexRef !== -1)
+
+      let preselectedRefId = -1
+      if (this.compareOption === 2) {
+        const bup = this.backups.find((b) => b.selected)
+        if (bup) {
+          preselectedRefId = bup.id
+        }
+      }
+
+      l.slice(0, NB_MAX_CUSTOM_COMPARAISONS).map((l) => {
+        refs.push({
+          label: l.label,
+          selected:
+            l.datas && l.datas.referentielId === preselectedRefId
+              ? true
+              : false,
+          isLocked: false,
+          datas: l.datas,
+        })
+      })
+
+      for (let i = NB_MAX_CUSTOM_COMPARAISONS; i < l.length; i++) {
+        this.backupSettingsService.removeSetting(l[i].id)
+      }
+
+      this.referentiels = [...refs]
+      this.backupSettingSaved = l */
+    /*any[] = [
+      {
+        label: 'trimestre précédent',
+        selected: false,
+        isLocked: true,
+        datas: {
+          dateStop: month(),
+          dateStart: month(new Date(), -3),
+        },
+      },
+      {
+        label: 'semestre précédent',
+        selected: false,
+        isLocked: true,
+        datas: {
+          dateStop: month(),
+          dateStart: month(new Date(), -6),
+        },
+      },
+      {
+        label: 'année précédente',
+        selected: false,
+        isLocked: true,
+        datas: {
+          dateStop: month(),
+          dateStart: month(new Date(), -12),
+        },
+      },*/
+    return referentiels.reduce((previous, current) => {
+      if (current.datas && current.datas && current.datas.referentielId) {
+        const bup = this.backups.find(
+          (b) => b.id === current.datas.referentielId
+        )
+        if (bup && bup.type) {
+          if (
+            this.categorySelected === this.MAGISTRATS &&
+            bup.type !== 'SIEGE'
+          ) {
+            return previous
+          } else if (
+            this.categorySelected === this.FONCTIONNAIRES &&
+            bup.type !== 'GREFFE'
+          ) {
+            return previous
+          }
+        }
+      }
+
+      previous.push(current)
+      return previous
+    }, [])
+  }
 }

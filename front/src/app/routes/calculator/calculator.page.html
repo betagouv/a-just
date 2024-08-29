@@ -255,7 +255,8 @@
       <label class="header">la période
         {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à
       </label>
-      <div *ngFor="let ref of referentiels" class="item" (click)="radioSelect(ref);$event.stopPropagation();">
+      <div *ngFor="let ref of filterReferentiels(referentiels)" class="item"
+        (click)="radioSelect(ref);$event.stopPropagation();">
         <i [class]="ref.selected===false ?'':'filled'" (click)="radioSelect(ref);$event.stopPropagation();"
           class="radio"></i><span>{{trunc(ref.label,30)}}</span>
         <div class="flex-1"></div>
