@@ -67,6 +67,10 @@ export class ContentieuxOptionsService extends MainClass {
    */
   openedFromCockpit: BehaviorSubject<any> = new BehaviorSubject<any>({ value: false, dateStart: null, dateStop: null, category:null })
   /**
+   * Ouverture de la popup pour retourner au calculateur
+   */
+  onFollowComparaison:BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  /**
    * Liste des sauvegardes formatés pour le menu roulant
    */
   formDatas: BehaviorSubject<dataInterface[]> = new BehaviorSubject<
