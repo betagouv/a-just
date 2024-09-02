@@ -293,7 +293,7 @@ export class CalculatorPage
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
-    private userService: UserService,
+    public userService: UserService,
     private backupSettingsService: BackupSettingsService,
     private router: Router,
     private appService: AppService,

@@ -38,8 +38,7 @@
           <i class="ri-table-view"></i>
           <p>Données brutes</p>
         </div>
-        <div class="fonctionnaires" *ngIf="canViewGreffier"
-          [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
+        <div class="fonctionnaires" [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
           (click)="tabSelected=1;unselectTemplate();logChartView();$event.stopPropagation()">
           <i class="ri-bar-chart-box-line"></i>
           <p>Graphiques</p>
@@ -161,7 +160,8 @@
       <i class="ri-a-b"></i>
     </div>
 
-    <p class="title">Comparer les données du {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}</p>
+    <p class="title">Comparer les données du <label [ngClass]="{'greffe': categorySelected === 'fonctionnaires'}">{{
+        categorySelected === 'magistrats' ? 'SIÈGE':'GREFFE' }}</label></p>
     <p class="title">de {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à :</p>
 
     <div class="picker">
@@ -192,12 +192,13 @@
         </div>
 
       </div>
-      <div class="or"><label>OU</label></div>
-      <div class="second-section"
+      <div class="or" *ngIf="userService.canViewAverageTime()"><label>OU</label></div>
+      <div class="second-section" *ngIf="userService.canViewAverageTime()"
         [ngClass]="{'selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
         (click)="compareOption=2">
         <div class="header"> un référentiel
-          <br />de temps moyens {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}
+          <br />de temps moyens <label [ngClass]="{'greffe': categorySelected === 'fonctionnaires'}">{{
+            categorySelected === 'magistrats' ? 'SIÈGE':'GREFFE' }}</label>
         </div>
         <div class="content">
           <ng-template *ngIf="filteredBackups.length;then content else empty">

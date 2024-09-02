@@ -6,6 +6,8 @@ import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { KPIService } from 'src/app/services/kpi/kpi.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { UserService } from 'src/app/services/user/user.service'
+import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 
 /**
  * Composant de la page en vue analytique
@@ -85,6 +87,18 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
    * Show detail of ETPT EAM
    */
   showDetailETPTEam: boolean = false
+  /**
+   * Peux voir l'interface magistrat
+   */
+  canViewMagistrat: boolean = false
+  /**
+   * Peux voir l'interface greffier
+   */
+  canViewGreffier: boolean = false
+  /**
+   * Peux voir l'interface contractuel
+   */
+  canViewContractuel: boolean = false
 
   /**
    * Constructor
@@ -92,7 +106,8 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private kpiService:KPIService
+    private kpiService:KPIService,
+    private userService:UserService
   ) {
     super()
   }
@@ -107,6 +122,13 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
         )
       })
     )
+
+    this.watch(
+      this.userService.user.subscribe((u) => {
+        this.canViewMagistrat = userCanViewMagistrat(u)
+        this.canViewGreffier = userCanViewGreffier(u)
+        this.canViewContractuel = userCanViewContractuel(u)
+      }))
   }
 
   /**
