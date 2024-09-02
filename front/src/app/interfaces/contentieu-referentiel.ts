@@ -88,10 +88,6 @@ export interface ContentieuReferentielInterface {
    */
   averageProcessingTime: number | null
   /**
-   * Voir les tempos moyens des greffiers
-   */
-  averageProcessingTimeFonc: number | null
-  /**
    * Parent en cas d'héritage
    */
   parent?: ContentieuReferentielInterface

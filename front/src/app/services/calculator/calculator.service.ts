@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
-import { setTimeToMidDay } from 'src/app/utils/dates'
+import { month, setTimeToMidDay } from 'src/app/utils/dates'
 import { ContentieuxOptionsService } from '../contentieux-options/contentieux-options.service'
 import { ServerService } from '../http-server/server.service'
 import { HumanResourceService } from '../human-resource/human-resource.service'
@@ -36,21 +36,24 @@ export class CalculatorService extends MainClass {
    * Liste des réferentiels sélectionnées
    */
   referentielIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
- /**
+  /**
    * Liste des fonctions selectionnées
    */
- selectedFonctionsIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
- /**
+  selectedFonctionsIds: BehaviorSubject<number[]> = new BehaviorSubject<
+    number[]
+  >([])
+  /**
    * Liste des fonctions selectionnées
    */
- categorySelected: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null)
+  categorySelected: BehaviorSubject<string | null> = new BehaviorSubject<
+    string | null
+  >(null)
 
- 
   /**
    * Constructeur
-   * @param serverService 
-   * @param humanResourceService 
-   * @param contentieuxOptionsService 
+   * @param serverService
+   * @param humanResourceService
+   * @param contentieuxOptionsService
    */
   constructor(
     private serverService: ServerService,
@@ -67,20 +70,58 @@ export class CalculatorService extends MainClass {
 
   /**
    * API retourne la liste du tableau du calculateur pour une juridiction et une date choisie
-   * @param categorySelected 
-   * @param selectedFonctionsIds 
-   * @returns 
+   * @param categorySelected
+   * @param selectedFonctionsIds
+   * @returns
    */
-  filterList(categorySelected: string, selectedFonctionsIds: number[] | null) {
+  filterList(
+    categorySelected: string,
+    selectedFonctionsIds: number[] | null,
+    dateStart: Date | null = this.dateStart.getValue(),
+    dateStop: Date | null = this.dateStop.getValue()
+  ) {
+    console.log('FILTER LIST')
+    console.log('BACK Start', dateStart)
+    console.log('BACK Stop', dateStop)
     return this.serverService
       .post(`calculator/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
-        dateStart:  setTimeToMidDay(this.dateStart.getValue()),
-        dateStop:  setTimeToMidDay(this.dateStop.getValue()),
+        dateStart: setTimeToMidDay(dateStart),
+        dateStop: setTimeToMidDay(dateStop),
         contentieuxIds: this.referentielIds.getValue(),
         optionBackupId: this.contentieuxOptionsService.backupId.getValue(),
         categorySelected,
         selectedFonctionsIds,
+      })
+      .then((data) => data.data || [])
+  }
+
+  changePeriodSelected(monthToAdd: number) {
+    this.dateStart.next(month(this.dateStart.getValue(), monthToAdd))
+    console.log('step1', this.dateStop.getValue())
+    this.dateStop.next(month(this.dateStop.getValue(), monthToAdd, 'lastDay'))
+    console.log('step2', this.dateStop.getValue())
+  }
+
+  /**
+   * Liste des données entre 2 dates
+   * @param contentieuxId
+   * @param type
+   * @returns
+   */
+  rangeValues(
+    contentieuxId: number,
+    type: string,
+    dateStart: Date | null = this.dateStart.getValue(),
+    dateStop: Date | null = this.dateStop.getValue()
+  ) {
+    return this.serverService
+      .post(`calculator/range-values`, {
+        backupId: this.humanResourceService.backupId.getValue(),
+        dateStart: setTimeToMidDay(dateStart),
+        dateStop: setTimeToMidDay(dateStop),
+        contentieuxId,
+        type,
       })
       .then((data) => data.data || [])
   }

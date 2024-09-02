@@ -37,11 +37,11 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
+
     for (let i = 0; i < list.length; i++) {
       list[i] = {
         id: list[i].id,
         averageProcessingTime: list[i].average_processing_time,
-        averageProcessingTimeFonc: list[i].average_processing_time_fonc,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
@@ -76,7 +76,6 @@ export default (sequelizeInstance, Model) => {
       list[i] = {
         id: list[i].id,
         averageProcessingTime: list[i].average_processing_time,
-        averageProcessingTimeFonc: list[i].average_processing_time_fonc,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],

@@ -11,6 +11,119 @@
   margin: auto 0;
   height: 55px;
 
+  &.greffe {
+    &.selected {
+      .title-select {
+        border-right: 1px solid #a558a0 !important;
+      }
+    }
+  }
+
+  &.calculator {
+    height: 32px;
+    border-radius: 4px;
+    border: solid 1px #ddd;
+    background-color: #fff;
+    display: flex;
+    padding: 0px 8px;
+    flex-direction: row;
+
+    &.popup {
+      width: 114px;
+    }
+
+    &.selected {
+      .title-select {
+        border-right: solid 1px #6a6af4;
+        ;
+      }
+    }
+
+    div {
+      display: inline;
+
+      mat-icon {
+        display: none;
+      }
+
+      p {
+        font-size: 14px;
+        font-weight: normal;
+        width: fit-content;
+        line-height: 28px;
+        min-width: 62px;
+        color: #3a3a3a;
+      }
+    }
+
+    .title-select {
+      border-right: solid 1px #ddd;
+      line-height: 28px;
+      padding: 0 10px 0 2px;
+      font-size: 10px;
+      margin-right: 8px;
+    }
+  }
+
+  &.no-label {
+    border-left: none;
+    height: 32px;
+    border-radius: 4px;
+    border: solid 1px #ddd;
+    background-color: #fff;
+    padding: 0px 8px;
+    width: 130px;
+
+    .title-select {
+      display: none;
+    }
+
+    div {
+      p {
+        padding-right: 16px;
+        font-weight: normal;
+        font-size: 14px;
+        width: initial;
+        line-height: 28px;
+        height: 30px;
+        border-right: solid 1px #ddd;
+        color: #3a3a3a;
+      }
+
+      mat-icon {
+        margin-left: 7px;
+        margin-right: 0px;
+        color: #929292;
+      }
+    }
+
+    &.right {
+      text-align: right;
+      padding-right: 16px !important;
+    }
+
+    &.left {
+      border: solid 1px #ddd;
+      border-right: none;
+
+      div {
+        flex-direction: row-reverse;
+
+        p {
+          padding-left: 16px;
+          padding-right: 0px;
+          border-right: none;
+          border-left: solid 1px #ddd;
+        }
+
+        mat-icon {
+          margin-right: 8px;
+          margin-left: 0px;
+        }
+      }
+    }
+  }
+
   &.extend {
     div {
       p {

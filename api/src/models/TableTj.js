@@ -128,7 +128,7 @@ export default (sequelizeInstance, Model) => {
         attributes: ['id', ['i_elst', 'iElst'], 'label', 'type', 'parent_id'],
         where: {
           parent_id: parentId,
-          type: ['TGI', 'TPRX'],
+          type: ['TGI', 'TPRX', 'CPH'],
         },
         raw: true,
       })

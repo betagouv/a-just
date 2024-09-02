@@ -27,17 +27,49 @@ export interface CalculatorInterface {
 	 */
 	totalIn: number | null;
 	/**
+	 * Entrées moyennes after
+	 */
+	totalInAf: number | null;
+	/**
+	 * Entrées moyennes before
+	 */
+	totalInBf: number | null;
+	/**
 	 * Sorties moyennes
 	 */
 	totalOut: number | null;
+	/**
+	 * Sorties moyennes after
+	 */
+	totalOutAf: number | null;
+	/**
+	 * Sorties moyennes before
+	 */
+	totalOutBf: number | null;
 	/**
 	 * Dernière valeure de stock
 	 */
 	lastStock: number | null;
 	/**
+	 * Dernière valeure de stock after
+	 */
+	lastStockAf: number | null;
+	/**
+	 * Dernière valeure de stock before
+	 */
+	lastStockBf: number | null;
+	/**
 	 * Calcul des ETP magistrat sur la période
 	 */
 	etpMag: number | null;
+	/**
+	 * Calcul des ETP magistrat sur la période after
+	 */
+	etpMagAf: number | null;
+	/**
+	 * Calcul des ETP magistrat sur la période before
+	 */
+	etpMagBf: number | null;
 	/**
 	 * Temps de traitement réel des magistrats
 	 */
@@ -63,6 +95,14 @@ export interface CalculatorInterface {
 	 */
 	etpFon: number | null;
 	/**
+	 * ETP Fonctionnaires after
+	 */
+	etpFonAf: number | null;
+	/**
+	 * ETP Fonctionnaires before
+	 */
+	etpFonBf: number | null;
+	/**
 	 * Temps de traitement réel des fonctionnaires
 	 */
 	fonRealTimePerCase: number | null;
@@ -87,13 +127,33 @@ export interface CalculatorInterface {
 	 */
 	etpCont: number | null;
 	/**
+	 * ETP Contractuel before
+	 */
+	etpContBf: number | null;
+	/**
+	 * ETP Contractuel after
+	 */
+	etpContAf: number | null;
+	/**
 	 * Couverture global
 	 */
 	realCoverage: number | null;
 	/**
+	 * Couverture global before
+	 */
+	realCoverageBf: number | null;
+	/**
+	 * Couverture global after
+	 */
+	realCoverageAf: number | null;
+	/**
 	 * DTES glbal
 	 */
 	realDTESInMonths: number | null;
+	/**
+	 * DTES au début
+	 */
+	realDTESInMonthsStart: number | null;
 	/**
 	 * Contentieux rataché
 	 */

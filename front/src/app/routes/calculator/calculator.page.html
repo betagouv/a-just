@@ -1,214 +1,278 @@
-<aj-wrapper #wrapper title="Calculateur" [documentation]="documentation" [actionTemplate]="actions"
-  class="content-margin-null action-fit-width" [isLoading]="isLoading">
+<aj-wrapper #wrapper title="Cockpit" [documentation]="documentation" [actionTemplate]="actions"
+  class="content-margin-null action-fit-width space-help no-scroll" [isLoading]="isLoading">
   <div class="container" *ngIf="categorySelected">
     <div class="sub-main-header">
-      <aj-date-select title="Pour la période du" [value]="dateStart"
-        (valueChange)="updateReferentielSelected('dateStart', $event)" class="date-start bg-white" [max]="dateStop"
-        [dateClass]="dateClass">
-      </aj-date-select>
-      <aj-date-select title="À" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
-        class="date-stop bg-white" [dateClass]="dateClass">
-      </aj-date-select>
+      <div class="categories-switch">
+        <div class="magistrats" *ngIf="canViewMagistrat"
+          [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
+          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
+          <p>Siège</p>
+        </div>
+        <div class="fonctionnaires" *ngIf="canViewGreffier"
+          [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
+          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
+          <p>Greffe</p>
+        </div>
+      </div>
+
+      <aj-select class="large new-fonction" [subTitleTemplate]="subTitleTemplate" title="Choix des fonctions"
+        [defaultAllValue]="'Toutes'" [value]="selectedFonctionsIds" [datas]="fonctions"
+        (valueChange)="onChangeFonctionsSelected($event)">
+      </aj-select>
+
+      <div class="dates-selector">
+        <aj-date-select title="de" [value]="dateStart" (valueChange)="updateReferentielSelected('dateStart', $event)"
+          class="bg-white calculator" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
+          [icon]="'chevron_left'">
+        </aj-date-select>
+        <aj-date-select title="à" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
+          class="bg-white calculator" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
+          [icon]="'chevron_right'">
+        </aj-date-select>
+      </div>
       <div class="flex-1"></div>
-      <button class="ref-button" (click)="calculatorSaver();$event.stopPropagation();">
-        <mat-icon>save</mat-icon>
-        <div>
-          <p>Enregistrer les temps </p>
-          <p>moyens constatés</p>
+
+      <div class="switch-tab">
+        <div class="brut" [ngClass]="{'selected': tabSelected === 0 && !compareTemplates}"
+          (click)="tabSelected=0;unselectTemplate();$event.stopPropagation()">
+          <i class="ri-table-view"></i>
+          <p>Données brutes</p>
+        </div>
+        <div class="fonctionnaires" *ngIf="canViewGreffier"
+          [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
+          (click)="tabSelected=1;unselectTemplate();logChartView();$event.stopPropagation()">
+          <i class="ri-bar-chart-box-line"></i>
+          <p>Graphiques</p>
+        </div>
+      </div>
+    </div>
+    <div class="filters-item" *ngIf="fonctionRealValue.length>0 || compareTemplates"> <label
+        *ngIf="fonctionRealValue.length" class="fonction-values"
+        [ngClass]="{'Greffe': categorySelected === FONCTIONNAIRES}"> {{fonctionRealValue}}
+        <i class="ri-close-line" (click)="selectAllFct()"></i> </label>
+      <label *ngIf="compareTemplates" class="fonction-values"> Comparaison à {{compareAtString}}
+        <i class="ri-close-line" (click)="tabSelected=1;unselectTemplate();"></i> </label>
+    </div>
+
+    <ng-template [ngIf]="!compareTemplates">
+      <ng-template [ngIf]="tabSelected === 0">
+        <div class="header-calculator ">
+
+          <div class="contentieux-header-calculator" title="">
+            <div class="width-contentieux">
+              <p>Contentieux</p>
+            </div>
+            <div class="item dtes" (click)="onSortBy('realDTESInMonths')"
+              [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
+              <div class="flex-1"></div>
+              <p>DTES<br />instantané</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonths'}"></i>
+              <aj-tooltips title="DTES instantané" class="medium"
+                content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties enregistrées pour la période antérieure."
+                footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
+              </aj-tooltips>
+            </div>
+            <div class="item coverage" (click)="onSortBy('realCoverage')"
+              [ngClass]="{'selected': sortBy === 'realCoverage'}">
+              <div class="flex-1"></div>
+              <p>Taux de<br />couverture</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realCoverage'}"></i>
+              <aj-tooltips title="Taux de couverture" content="SORTIES /ENTREES de la période en %">
+              </aj-tooltips>
+            </div>
+            <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
+              <div class="flex-1"></div>
+              <p>Stock</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'lastStock'}"></i>
+              <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
+            </div>
+            <div class="item" (click)="onSortBy('totalIn')" [ngClass]="{'selected': sortBy === 'totalIn'}">
+              <div class="flex-1"></div>
+              <p>Entrées</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalIn'}"></i>
+              <aj-tooltips title="Entrées" content="Entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
+            </div>
+            <div class="item" (click)="onSortBy('totalOut')" [ngClass]="{'selected': sortBy === 'totalOut'}">
+              <div class="flex-1"></div>
+              <p>Sorties</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalOut'}"></i>
+              <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
+            </div>
+            <div *ngIf="canViewMagistrat" class="tooltip medium item" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag',
+                'bg-magistrats': categorySelected === MAGISTRATS
+              }">
+              <div class="flex-1"></div>
+              <p>ETPT <br />Siège</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
+              <aj-tooltips class="medium" title="ETPT siège"
+                content="Total des ETP travaillés sur la période par les agents du siège affectés à ce contentieux">
+              </aj-tooltips>
+            </div>
+            <div *ngIf="canViewGreffier" class="tooltip medium item" (click)="onSortBy('etpFon')"
+              [ngClass]="{'selected': sortBy === 'etpFon', 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES}">
+              <div class="flex-1"></div>
+              <p>ETPT<br />Greffe</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
+              <aj-tooltips class="medium" title="ETPT greffe"
+                content="Total des ETP travaillés sur la période par les agents du greffe affectés à ce contentieux">
+              </aj-tooltips>
+            </div>
+            <div *ngIf="canViewContractuel" class="tooltip medium item" (click)="onSortBy('etpCont')"
+              [ngClass]="{'selected': sortBy === 'etpCont'}">
+              <div class="flex-1"></div>
+              <p>ETPT<br />EAM</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
+              <aj-tooltips class="medium" title="ETPT EAM"
+                content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés à ce contentieux">
+              </aj-tooltips>
+            </div>
+
+            <div class="tooltip large item tmd" (click)="onSortBy('magRealTimePerCase')"
+              [ngClass]="{'selected': sortBy === 'magRealTimePerCase'}">
+              <div class="flex-1"></div>
+              <p>Temps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier observé</p>
+              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCase'}"></i>
+              <aj-tooltips title="Temps moyen par dossier observé" class="large"
+                content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux sur la période."
+                footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>">
+              </aj-tooltips>
+            </div>
+
+          </div>
+        </div>
+        <div class="content-list">
+          <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackByCont" [calculator]="r"
+            [sortBy]="sortBy" [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate">
+          </aj-referentiel-calculator>
+        </div>
+      </ng-template>
+      <aj-view-analytics *ngIf="tabSelected === 1" [datasFilted]="datasFilted"
+        [categorySelected]="categorySelected"></aj-view-analytics>
+    </ng-template>
+    <aj-template-analytics *ngIf="compareTemplates" [lines]="compareTemplates"></aj-template-analytics>
+  </div>
+
+  <div class="black-opacity" *ngIf="showPicker===true" (click)="showPicker=!showPicker;"></div>
+
+  <!-- POPUP CHOIX COMPARAISON -->
+  <aj-popup *ngIf="onEdit===true" [closeIcon]="true" (onClose)="onEdit = false" [removeShadow]="'noShadow'"
+    class="border-radius width-575-custom">
+    <div id="circle">
+      <i class="ri-a-b"></i>
+    </div>
+
+    <p class="title">Comparer les données du {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}</p>
+    <p class="title">de {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à :</p>
+
+    <div class="picker">
+      <div class="first-section"
+        [ngClass]="{'selected': compareOption===1, 'greffe': compareOption===1 && categorySelected === 'fonctionnaires' }"
+        (click)="compareOption=1;unselectBackup()">
+
+        <div class="header"> une autre période de ma juridiction</div>
+
+        <div class="content">
+          <div class="action">
+            <label>Choisir la période :</label>
+            <div class="dates-selector popup" (click)="compareOption=1">
+              <aj-date-select
+                [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires'}"
+                title="de" [value]="optionDateStart" (valueChange)="optionDateStart = $event"
+                class="bg-white calculator popup" [max]="optionDateStop" [dateClass]="dateClass" [dateType]="'month'"
+                [icon]="'none'">
+              </aj-date-select>
+              <aj-date-select
+                [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires' }"
+                title="à" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
+                class="bg-white calculator popup" [dateClass]="dateClass" [dateType]="'month'" [min]="optionDateStart"
+                [icon]="'none'">
+              </aj-date-select>
+            </div>
+          </div>
         </div>
 
-      </button>
-      <aj-options-backup-panel [readOnly]="true" class="bg-white"></aj-options-backup-panel>
-    </div>
-    <div class="header-calculator window-scrool-width-margin">
-      <div class="title-header-calculator">
-        <div class="width-contentieux"></div>
-        <div class="item">
-          <p>
-            Données renseignées
-            <i class="ri-lightbulb-flash-line" (click)="onShowPanel('données renseignées')"></i>
-            <aj-tooltips title="Données renseignées" class="medium">
-              Données renseignées depuis les écrans
-              <a routerLink="/ventilations">Affectation des ETP</a> et
-              <a routerLink="/donnees-d-activite">Données d’activité</a>
-            </aj-tooltips>
-          </p>
-        </div>
-        <div class="item activity">
-          <p>
-            Activité constatée
-            <i class="ri-lightbulb-flash-line" (click)="onShowPanel('activité constatée')"></i>
-            <aj-tooltips title="Activité constatée" class="medium">
-              Calculs effectués à partir des données constatées
-            </aj-tooltips>
-          </p>
-        </div>
-        <div class="item calculate">
-          <p>
-            Activité calculée
-            <i class="ri-lightbulb-flash-line" (click)="onShowPanel('activité calculée')"></i>
-            <aj-tooltips title="Activité calculée" class="medium left">
-              Calculs théoriques effectués à partir des temps moyens de
-              comparaison sélectionnés dans « Mes temps moyens de comparaison »
-            </aj-tooltips>
-          </p>
-        </div>
       </div>
-      <div class="contentieux-header-calculator window-scrool-width-margin" title="">
-        <div class="width-contentieux">
-          <p>Contentieux</p>
+      <div class="or"><label>OU</label></div>
+      <div class="second-section"
+        [ngClass]="{'selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
+        (click)="compareOption=2">
+        <div class="header"> un référentiel
+          <br />de temps moyens {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}
         </div>
-        <div class="item datas">
-          <div (click)="onSortBy('totalIn')" [ngClass]="{'selected': sortBy === 'totalIn'}">
-            <div class="flex-1"></div>
-            <p>Entrées</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalIn'}"></i>
-            <aj-tooltips title="Entrées" content="Entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
-          </div>
-          <div (click)="onSortBy('totalOut')" [ngClass]="{'selected': sortBy === 'totalOut'}">
-            <div class="flex-1"></div>
-            <p>Sorties</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalOut'}"></i>
-            <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
-          </div>
-          <div (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
-            <div class="flex-1"></div>
-            <p>Stock</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'lastStock'}"></i>
-            <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
-          </div>
-          <div *ngIf="canViewMagistrat" class="tooltip medium" (click)="onSortBy('etpMag')"
-            [ngClass]="{'selected': sortBy === 'etpMag'}">
-            <div class="flex-1"></div>
-            <p>ETPT <br />Siège</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
-            <aj-tooltips class="medium" title="ETPT siège"
-              content="Total des ETP travaillés sur la période par les agents du siège affectés à ce contentieux">
-            </aj-tooltips>
-          </div>
-          <div *ngIf="canViewGreffier" class="tooltip medium" (click)="onSortBy('etpFon')"
-            [ngClass]="{'selected': sortBy === 'etpFon'}">
-            <div class="flex-1"></div>
-            <p>ETPT<br />Greffe</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
-            <aj-tooltips class="medium" title="ETPT greffe"
-              content="Total des ETP travaillés sur la période par les agents du greffe affectés à ce contentieux">
-            </aj-tooltips>
-          </div>
-          <div *ngIf="canViewContractuel" class="tooltip medium" (click)="onSortBy('etpCont')"
-            [ngClass]="{'selected': sortBy === 'etpCont'}">
-            <div class="flex-1"></div>
-            <p>ETPT<br />EAM</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
-            <aj-tooltips class="medium" title="ETPT EAM"
-              content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés à ce contentieux">
-            </aj-tooltips>
-          </div>
+        <div class="content">
+          <ng-template *ngIf="filteredBackups.length;then content else empty">
+          </ng-template>
+
+          <ng-template #content>
+            <div class="ref-list">
+              <button class="small full-width"
+                [ngClass]="{'selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
+                (click)="goToCreateRef()">Créer un référentiel</button>
+              <div class="line-item" *ngFor="let backup of filteredBackups; index as i;" (click)="selectBackup(backup)"
+                [ngClass]="{'selected': backup.selected===true, 'greffe':categorySelected === 'fonctionnaires' && backup.selected===true}">
+                <p class="element-list"><label class="name">{{trunc(backup.label)}}</label>
+                  <label>{{getRealValue(getLastDate(backup))}}</label>
+                </p>
+              </div>
+            </div>
+          </ng-template>
+
+
+          <ng-template #empty>
+            <div class="tab-header"><label class="name">Nom</label>
+              <div class="flex-1"></div>
+              <label class="creation">Date de création</label>
+            </div>
+            <div class="ref-list centered">
+              <button class="small" [ngClass]="{'greffe':categorySelected === 'fonctionnaires'}"
+                (click)="goToCreateRef()">Créer mon premier référentiel</button>
+            </div>
+          </ng-template>
+
+
+          <div class="page-picker"></div>
+
         </div>
-        <div class="item activity">
-          <div (click)="onSortBy('realCoverage')" [ngClass]="{'selected': sortBy === 'realCoverage'}">
-            <div class="flex-1"></div>
-            <p>Taux de<br />couverture</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realCoverage'}"></i>
-            <aj-tooltips title="Taux de couverture" content="SORTIES /ENTREES de la période en %">
-            </aj-tooltips>
-          </div>
-          <div (click)="onSortBy('realDTESInMonths')" [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
-            <div class="flex-1"></div>
-            <p>DTES<br />instantané</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonths'}"></i>
-            <aj-tooltips title="DTES instantané" class="medium"
-              content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties enregistrées pour la période antérieure."
-              footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
-            </aj-tooltips>
-          </div>
-          <div class="tooltip large" (click)="onSortBy('magRealTimePerCase')"
-            [ngClass]="{'selected': sortBy === 'magRealTimePerCase'}">
-            <div class="flex-1"></div>
-            <p>Tps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier observé</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCase'}"></i>
-            <aj-tooltips title="Temps moyen par dossier observé" class="large"
-              content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux sur la période."
-              footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>">
-            </aj-tooltips>
-          </div>
-        </div>
-        <div class="item calculate">
-          <div class="tooltip" (click)="onSortBy('magCalculateCoverage')"
-            [ngClass]="{'selected': sortBy === 'magCalculateCoverage'}">
-            <div class="flex-1"></div>
-            <p>Taux de<br />couverture</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateCoverage'}"></i>
-            <aj-tooltips title="Taux de couverture" class="medium"
-              content="SORTIES possibles/ENTREES de la période en %">
-            </aj-tooltips>
-          </div>
-          <div class="tooltip large last" (click)="onSortBy('magCalculateDTESInMonths')"
-            [ngClass]="{'selected': sortBy === 'magCalculateDTESInMonths'}">
-            <div class="flex-1"></div>
-            <p>DTES<br />calculé</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateDTESInMonths'}"></i>
-            <aj-tooltips title="DTES calculé" class="large left"
-              content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties possibles sur la période."
-              footer="Mode de calcul :<br/><b>STOCK/SORTIES POSSIBLES</b>">
-            </aj-tooltips>
-          </div>
-          <div class="tooltip large last" (click)="onSortBy('magCalculateTimePerCase')"
-            [ngClass]="{'selected': sortBy === 'magCalculateTimePerCase'}">
-            <div class="flex-1"></div>
-            <p>Temps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier saisi</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateTimePerCase'}"></i>
-            <aj-tooltips title="Temps moyen par dossier saisi" class="medium left"
-              content="Donnée saisie dans le jeu de données choisi dans «Mes temps moyens de comparaison»">
-            </aj-tooltips>
-          </div>
-          <div class="tooltip large last" (click)="onSortBy('magCalculateOut')"
-            [ngClass]="{'selected': sortBy === 'magCalculateOut'}">
-            <div class="flex-1"></div>
-            <p>Sorties {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />possibles</p>
-            <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magCalculateOut'}"></i>
-            <aj-tooltips title="Sorties possibles" class="large left"
-              content="Nombre moyen de dossiers pouvant être traités mensuellement par les ETPT affectés en fonction du temps moyen de traitement par dossier choisi."
-              footer="Mode de calcul :<br/><b>NOMBRE DE DOSSIERS PAR ETPT x ETPT MAGISTRATS</b>">
-            </aj-tooltips>
-          </div>
-        </div>
+
       </div>
+
     </div>
-    <div class="content-list">
-      <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackByCont" [calculator]="r" [sortBy]="sortBy"
-        [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate">
-      </aj-referentiel-calculator>
+    <div class="actions">
+      <div class="save" (click)="onCompare()">Comparer</div>
     </div>
-  </div>
+  </aj-popup>
 </aj-wrapper>
 
 <ng-template #actions>
-  <div class="categories-switch">
-    <div class="magistrats" *ngIf="canViewMagistrat"
-      [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
-      (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
-      <input type="radio" [checked]="categorySelected === MAGISTRATS" />
-      <p>Siège</p>
-    </div>
-    <div class="fonctionnaires" *ngIf="canViewGreffier"
-      [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
-      (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
-      <input type="radio" [checked]="categorySelected === FONCTIONNAIRES" />
-      <p>Greffe</p>
-    </div>
-  </div>
-
-  <aj-select class="large" title="Choix des fonctions (option)" [defaultAllValue]="'Toutes'"
-    [value]="selectedFonctionsIds" [datas]="fonctions" (valueChange)="onChangeFonctionsSelected($event)">
-  </aj-select>
-
   <div class="flex-1"></div>
+  <button class="compare" (click)="showPicker=!showPicker;$event.stopPropagation();">
+    <i class="ri-a-b"></i>
+    <label>Comparer</label>
+    <div><i [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
 
-  <button class="primary light" (click)="onExport()">
-    <mat-icon>save</mat-icon>
-    Exporter en PDF
+    <!-- DROP DOWN REFERENTIEL DE TEMPS -->
+    <div *ngIf="showPicker===true" class="drop-down" (click)="$event.stopPropagation();">
+      <label class="header">la période
+        {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à
+      </label>
+      <div *ngFor="let ref of referentiels" class="item" (click)="radioSelect(ref);$event.stopPropagation();">
+        <i [class]="ref.selected===false ?'':'filled'" (click)="radioSelect(ref);$event.stopPropagation();"
+          class="radio"></i><span>{{trunc(ref.label,30)}}</span>
+        <div class="flex-1"></div>
+        <i class="ri-close-line" *ngIf="!ref.isLocked"
+          (click)="onRemoveSetting(ref.label);$event.stopPropagation();"></i>
+      </div>
+      <label class="footer"
+        (click)="onEdit = true; showPicker = false; filterBackupsByCategory(); $event.stopPropagation();">+
+        Personnaliser</label>
+    </div>
+  </button>
+  <button class="primary light export" (click)="onExport()">
+    <label><i class="ri-file-pdf-fill"></i>
+      Exporter en PDF</label>
   </button>
 </ng-template>
+
+<ng-template #subTitleTemplate><label class="grey">(option)</label></ng-template>
 
 <aj-intro-js *ngIf="datasFilted && datasFilted.length" [steps]="introSteps" typeId="calculator"></aj-intro-js>

@@ -202,7 +202,6 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     const { data } = await this.gitbook.search.searchContent({
       query: this.searchValue,
     })
-    console.log(data)
     this.data = data.items
   }
 
@@ -304,7 +303,6 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   }
 
   async sendForm(phoneNumber: string) {
-    console.log(this.userService.user.getValue()?.id)
     let userId = this.userService.user.getValue()?.id || null
     if (userId)
       await this.serverService
@@ -313,7 +311,6 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
           phoneNumber,
         })
         .then((r) => {
-          console.log(r.data)
           return r.data
         })
   }

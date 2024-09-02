@@ -31,6 +31,10 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    */
   @Input() percent: number = 0
   /**
+   * automatic resize component
+   */
+  @Input() autoResize: boolean = true
+  /**
    * Canvas sur lequel on va dessiner
    */
   @ViewChild('canvas') domCanvas: ElementRef | null = null
@@ -120,9 +124,11 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    * @param width Largeur disponible au composant
    */
   prepareComponent(width: number) {
-    this.styleHeight = convertWidthToheight(width)+'px'
-    this.width = convertWidthToheight(width)
-    this.onDraw()
+    if (this.autoResize) {
+      this.styleHeight = convertWidthToheight(width) + 'px'
+      this.width = convertWidthToheight(width)
+      this.onDraw()
+    }
   }
 
   /**
@@ -136,8 +142,8 @@ export class SpeedometerComponent extends MainClass implements OnInit {
       this.radius = this.canvasWidth / 2 - this.lineWidth / 2
       canvas.width = this.width
       canvas.height = this.width
-      canvas.style.width = this.width+'px'
-      canvas.style.height = this.width+'px'
+      canvas.style.width = this.width + 'px'
+      canvas.style.height = this.width + 'px'
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, this.width, this.width)
       this.generateBackground()
@@ -190,7 +196,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
   drawArrows() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d')
     ctx.beginPath()
-    let percent = (this.percent || 0)
+    let percent = (this.percent || 0)
     if (percent < 0) {
       percent = 0
     } else if (percent > 200) {
