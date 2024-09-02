@@ -509,13 +509,6 @@ export class SimulatorPage
   }
 
   /**
-   * Destruction du composant
-   */
-  ngOnDestroy(): void {
-    this.resetParams()
-  }
-
-  /**
    * Initialisation du composant
    */
   ngOnInit(): void {
