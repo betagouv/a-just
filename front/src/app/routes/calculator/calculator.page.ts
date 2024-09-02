@@ -112,7 +112,7 @@ export class CalculatorPage
    * Lien de la documentation
    */
   documentation: DocumentationInterface = {
-    title: 'Calculateur',
+    title: 'Cockpit',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
     printSubTitle: true,
   }
@@ -392,7 +392,7 @@ export class CalculatorPage
           )
           this.tabSelected = 1
           this.onEdit = true
-          this.location.replaceState('/calculateur')
+          this.location.replaceState('/cockpit')
           this.filterBackupsByCategory()
         }
       })
@@ -884,7 +884,7 @@ export class CalculatorPage
     }
 
     this.onLoadCompare()
-    this.location.replaceState('/calculateur')
+    this.location.replaceState('/cockpit')
   }
 
   /**

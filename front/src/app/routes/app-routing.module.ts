@@ -62,7 +62,7 @@ const routes: Routes = [
     canActivate: [AuthGuard, AppTypeGuard],
   },
   {
-    path: 'calculateur',
+    path: 'cockpit',
     loadChildren: () =>
       import('./calculator/calculator.module').then(
         (mod) => mod.CalculatorModule

@@ -15,6 +15,8 @@ import jsPDF from 'jspdf'
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_URL,
+  IMPORT_ETP_TEMPLATE,
+  IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
 } from 'src/app/constants/documentation'
@@ -32,6 +34,8 @@ import { Title } from '@angular/platform-browser'
 import { downloadFile } from 'src/app/utils/system'
 import { DateSelectorinterface } from 'src/app/interfaces/date'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
+import { USER_ACCESS_AVERAGE_TIME } from 'src/app/constants/user-access'
+import { ServerService } from 'src/app/services/http-server/server.service'
 
 declare const Quill: any
 
@@ -219,6 +223,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private appService: AppService,
     private titlePlatform: Title,
     private activitiesService: ActivitiesService,
+    private serverService: ServerService
   ) {
     super()
 
@@ -502,10 +507,17 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.pageSelected.emit(path)
   }
 
-  downloadAsset(type: string, download = false) {
+  async downloadAsset(type: string, download = false) {
     let url = null
     if (type === 'nomenclature') url = this.userService.isCa() ? NOMENCLATURE_DOWNLOAD_URL_CA : NOMENCLATURE_DOWNLOAD_URL
     else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL
+    else if (type === 'fiche-agent') url = this.userService.isCa() ? IMPORT_ETP_TEMPLATE_CA : IMPORT_ETP_TEMPLATE
+    
+    await this.serverService
+    .post('centre-d-aide/log-documentation-link',
+      {
+        value: url,
+      })
 
     if (url) {
       if (download) {
