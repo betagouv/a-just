@@ -266,6 +266,20 @@ export class PopinEditActivitiesComponent
   }
 
   /**
+   * Vérification que le charactère entré par l'utilisateur est compris entr '0' et '9' 
+   * @param e
+   * @returns 
+   */
+  validateNo(e: any) {
+    const charCode = e.which ? e.which : e.keyCode
+
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false
+    }
+    return true
+  }
+
+  /**
    * Mise à jour des totaux du contentieux concerné suite à une modification de donnée
    */
   updateTotal() {

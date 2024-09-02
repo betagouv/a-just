@@ -124,6 +124,25 @@ export default (sequelizeInstance, Model) => {
               case 'Contentieux de fond JIRS':
                 elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux de fond JIRS')
                 break
+              case 'Contentieux général hors JIRS':
+                child.label = 'Contentieux général'
+                break
+              case 'Contentieux spécialisés hors JIRS':
+                child.label = 'Contentieux spécialisés'
+                break
+              case 'Contentieux de la détention hors JIRS':
+                child.label = 'Contentieux de la détention'
+                break
+              case 'Contentieux du contrôle judiciaire hors JIRS':
+                child.label = 'Contentieux du contrôle judiciaire'
+                break
+              case 'Contentieux de fond hors JIRS':
+                child.label = 'Contentieux de fond'
+                break
+              case 'Assises hors JIRS':
+                child.label = 'Assises'
+                break
+
             }
           })
         })

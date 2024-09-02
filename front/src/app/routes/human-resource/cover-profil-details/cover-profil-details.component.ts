@@ -6,7 +6,9 @@ import {
   Output,
   ViewChildren,
   QueryList,
-  ElementRef 
+  ElementRef,
+  Renderer2,
+  OnInit
 } from '@angular/core'
 import { FormGroup } from '@angular/forms'
 import { Location } from '@angular/common'
@@ -20,6 +22,7 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { etpLabel } from 'src/app/utils/referentiel'
+import { DateSelectComponent } from 'src/app/components/date-select/date-select.component'
 
 /**
  * Panneau de présentation d'une fiche
@@ -32,9 +35,10 @@ import { etpLabel } from 'src/app/utils/referentiel'
 })
 export class CoverProfilDetailsComponent
   extends MainClass
-  implements OnChanges {
+  implements OnChanges, OnInit {
 
   @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
+  @ViewChildren(DateSelectComponent) calendar! : QueryList<DateSelectComponent>
 
   /**
    * Fiche courante
@@ -98,11 +102,27 @@ export class CoverProfilDetailsComponent
   indisponibility: number = 0
 
   /**
+   * Taille des champs d'inputs (firstName et LastName)
+   */
+  inputsWidth : { firstName: number, lastName: number } = { firstName: 120, lastName: 120 }
+
+  /**
    * Constructeur
    * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor(private humanResourceService: HumanResourceService, private renderer: Renderer2) {
     super()
+  }
+  
+  /**
+   * Déclenchemet à la création du composent
+   */
+  ngOnInit(): void {
+    const firstName = this.currentHR?.firstName || ''
+    const lastName = this.currentHR?.lastName || ''
+
+    this.inputsWidth['firstName'] = this.calculateTextWidth(firstName , 'firstName');
+    this.inputsWidth['lastName'] = this.calculateTextWidth(lastName, 'lastName');
   }
 
   /**
@@ -206,7 +226,6 @@ export class CoverProfilDetailsComponent
     }
   }
 
-
   /**
    * Bloque le champ de texte à 10 characters maximum
    * @param event
@@ -228,12 +247,16 @@ export class CoverProfilDetailsComponent
   focusNext(event: any) {
     event.preventDefault()
     const inputsArray = this.inputs.toArray();
-    const currentIndex = inputsArray.findIndex(input => input.nativeElement === event.target);
-    if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
-      inputsArray[currentIndex + 1].nativeElement.focus();
+    if (event.target.id !== 'lastName') {
+      const currentIndex = inputsArray.findIndex(input => input.nativeElement === event.target);
+      if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
+        inputsArray[currentIndex + 1].nativeElement.focus();
+      }
+    } else {
+      inputsArray.map(elem => elem.nativeElement.blur() )
+      this.calendar.first.onClick()
     }
   }
-    
     
   /**
    * Empêche la soumission du formulaire lorsque l'utilisateur presse la touche "Entrée"
@@ -243,5 +266,47 @@ export class CoverProfilDetailsComponent
     if (event.key === 'Enter') {
       event.preventDefault();
     }
+  }
+
+  /**
+   * Permet l'ajustement de la width des inputs pour le Nom et Prénom
+   * @param event 
+   * @param type 
+   */
+  adjustInputWidth(event: Event, type : 'lastName' | 'firstName') {
+    const elem = event.target as HTMLInputElement;
+    const text = elem.value
+    this.inputsWidth[type] = this.calculateTextWidth(text, type);
+  }
+
+  /**
+   * Calcul la width du text passer en paramètre en prenant en compte
+   * la police d'écriture ainsi que la taille
+   * @param text
+   * @param type 
+   * @returns 
+   */
+  calculateTextWidth(text: string, type : 'lastName' | 'firstName') {
+    const input = document.getElementById(type) as HTMLElement
+
+    const fontFamily = window.getComputedStyle(input).fontFamily
+    const fontSize = window.getComputedStyle(input).fontSize
+
+    const span = this.renderer.createElement('span');
+
+    this.renderer.setStyle(span, 'visibility', 'hidden');
+    this.renderer.setStyle(span, 'white-space', 'nowrap');
+    this.renderer.setStyle(span, 'position', 'absolute');
+    this.renderer.setProperty(span, 'textContent', text);
+    this.renderer.setStyle(span, 'font-size', fontSize);
+    this.renderer.setStyle(span, 'font-family', fontFamily);
+
+    this.renderer.appendChild(document.body, span);
+
+    const width = span.offsetWidth;
+    
+    this.renderer.removeChild(document.body, span);
+
+    return width + 20;
   }
 }

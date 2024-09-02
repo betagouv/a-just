@@ -34,13 +34,13 @@
           <br />
           <br />Vous n'avez plus qu'à choisir les scénarios que vous voulez
           jouer !
-          <div class="button-sim" (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator()">
+          <div class="button-sim" (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator();setDocUrl(documentationUrl.main)">
             Continuer
           </div>
         </div>
       </div>
 
-      <p class="intro-second-title" (click)="whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator()">
+      <p class="intro-second-title" (click)="whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator();setDocUrl(documentationUrl.whiteSimulator)">
         <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
       </p>
       <p class="intro-second-desc">

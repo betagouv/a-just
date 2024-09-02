@@ -286,7 +286,11 @@
           }
         ">
       </ng-container>
-      <input #inputElement type="number" [ngModel]="newValue" [placeholder]="original !== null ? original : '-' "
+      <input 
+        #inputElement 
+        type="number" 
+        [ngModel]="newValue" 
+        [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
           'to-confirm': valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
           'blue-bottom': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: true}) ,
@@ -294,8 +298,9 @@
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }"
-        [id]="'contentieux-' + items.id +'-' + type " 
+        [id]="'contentieux-' + items.id +'-' + type "
         (keyup.enter)="onBlur(inputElement.value, type, items)"
+        (keypress)="validateNo($event)"
         (blur)="onBlur(inputElement.value, type, items)"
       />
     </div>

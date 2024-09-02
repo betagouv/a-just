@@ -24,13 +24,12 @@
 <div class="panel-footer">
   <div class="pages">
     <a href="/contact">Contact</a>
-    <a href="/plan-du-site">Plan du site</a>
     <a href="/mentions-legales">Mentions légales</a>
     <a href="/conditions-generales-d-utilisation/default">CGU</a>
     <a href="/donnees-personnelles">Données personnelles</a>
     <a href="/declaration-accessibilite">Accessibilité : non conforme</a>
     <a href="/qui-sommes-nous">Qui sommes-nous ?</a>
-    <a href="/stats">Statistiques</a>
+    <a href="/stats" *ngIf="userService.isCa()===false">Statistiques</a>
     <a
       href="https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/procedure-publique-de-signalement-dun-incident-de-securite">Signaler
       un incident sécurité</a>
