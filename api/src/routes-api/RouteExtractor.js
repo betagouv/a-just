@@ -211,7 +211,7 @@ export default class RouteExtractor extends Route {
 
     let activities = await this.models.Activities.getAllDetails(backupId)
     activities = orderBy(activities, 'periode', ['asc'])
-      .filter((act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop).filter((act)=> act.contentieux!==null)
+      .filter((act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop)
       .map((x) => {
         return { ...x, periode: new Date(x.periode.setHours(12, 0, 0, 0)).setDate(1) }
       })
