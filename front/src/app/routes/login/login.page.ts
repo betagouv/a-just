@@ -66,7 +66,7 @@ export class LoginPage implements OnInit {
     private title: Title,
     private ssoService: SSOService
   ) {
-    this.title.setTitle('Se connecter | A-Just')
+    this.title.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + 'Se connecter')
   }
 
   /**

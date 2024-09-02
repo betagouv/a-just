@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core'
 import { sumBy } from 'lodash'
-import { DDG_REFERENTIELS_EAM, DDG_REFERENTIELS_GREFFE, DDG_REFERENTIELS_MAG, REFERENTIELS_CANT_UPDATED, getReferentielCADetail, getReferentielDetail } from 'src/app/constants/referentiel'
+import { DDG_REFERENTIELS_EAM, DDG_REFERENTIELS_EAM_CA, DDG_REFERENTIELS_GREFFE, DDG_REFERENTIELS_GREFFE_CA, DDG_REFERENTIELS_MAG, DDG_REFERENTIELS_MAG_CA, REFERENTIELS_CANT_UPDATED, getReferentielCADetail, getReferentielDetail } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
@@ -361,11 +361,20 @@ export class PanelActivitiesComponent
    */
   isDdgContentieux(label: string) {
     if (this.category?.label === "Magistrat")
-      return DDG_REFERENTIELS_MAG.includes(label.toUpperCase())
+      if (this.userService.isCa())
+        return [...DDG_REFERENTIELS_MAG, ...DDG_REFERENTIELS_MAG_CA].includes(label.toUpperCase())
+      else
+        return DDG_REFERENTIELS_MAG.includes(label.toUpperCase())
     if (this.category?.label === "Greffe")
-      return DDG_REFERENTIELS_GREFFE.includes(label.toUpperCase())
+      if (this.userService.isCa())
+        return [...DDG_REFERENTIELS_GREFFE, ...DDG_REFERENTIELS_GREFFE_CA].includes(label.toUpperCase())
+      else
+        return DDG_REFERENTIELS_GREFFE.includes(label.toUpperCase())
     if (this.category?.label === "Autour du magistrat")
-      return DDG_REFERENTIELS_EAM.includes(label.toUpperCase())
+      if (this.userService.isCa())
+        return [...DDG_REFERENTIELS_EAM, ...DDG_REFERENTIELS_EAM_CA].includes(label.toUpperCase())
+      else
+        return DDG_REFERENTIELS_EAM.includes(label.toUpperCase())
     return false
   }
 

@@ -207,6 +207,8 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
 
   getDocIcon(title: string) {
     switch (title) {
+      //case "Guide d'utilisateur A-JUST CA":
+      //return 'supervised_user_circle'
       case "Guide d'utilisateur A-JUST":
         return 'supervised_user_circle'
       case 'FAQ A-JUST':
@@ -233,6 +235,12 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       })
 
     switch (title) {
+      case "Guide d'utilisateur A-JUST CA":
+        window.open(
+          'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/' +
+          researchRes.path
+        )
+        break
       case "Guide d'utilisateur A-JUST":
         window.open(
           'https://docs.a-just.beta.gouv.fr/documentation-deploiement/' +
@@ -251,14 +259,18 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
 
   isValid(space: string) {
     if (this.userService.isCa()) {
+      //console.log('OK')
       switch (space) {
         case "Guide d'utilisateur A-JUST CA":
+          //console.log('isValid OK')
           return true
         default:
+          //console.log('isValid NOT OK')
           return false
       }
     }
     else {
+      //console.log('NOT OK')
       switch (space) {
         case "Guide d'utilisateur A-JUST":
           return true

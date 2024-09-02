@@ -28,7 +28,7 @@ export async function getHumanRessourceList (
         isOk = false
       }
     } else {
-      if (hr.dateStart && hr.dateStart.getTime() > date.getTime()) {
+      if (hr.dateStart && today(hr.dateStart).getTime() > date.getTime()) {
         isOk = false
       }
     }

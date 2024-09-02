@@ -295,7 +295,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       target: '.menu-item.tools',
       //target: '.menu .sub-tools > p:nth-child(2n)',
       title: 'Découvrez nos outils :',
-      intro: 'La <b>calculatrice</b> vous permet d\'obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.<br/><br/>La <b>nomenclature</b> permet par les codes NAC de connaître la nature des affaires prises en compte dans un sous-contentieux : c\'est la colonne vertébrale d\'A-JUST !'
+      intro: 'Téléchargeable dans chaque fiche agent, la <b>calculatrice</b> vous permet d\'obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.<br/><br/>La <b>nomenclature</b> permet par les codes NAC de connaître la nature des affaires prises en compte dans un sous-contentieux : c\'est la colonne vertébrale d\'A-JUST !'
       /*intro:
         "vous permet de convertir en <b>pourcentage d'ETPT la part de temps de travail</b> qu'un agent consacre à une activité.",
         beforeLoad: async (intro: any) => {
@@ -358,7 +358,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       target: '.menu-item.tools',
       //target: '.menu .sub-tools > p:nth-child(2n)',
       title: 'Découvrez nos outils :',
-      intro: 'La <b>calculatrice</b> vous permet d\'obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.<br/>Téléchargeable dans chaque fiche agent.'
+      intro: 'Téléchargeable dans chaque fiche agent, la <b>calculatrice</b> vous permet d\'obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.'
     },
   ]
 
