@@ -1,8 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW } from 'src/app/constants/log-codes'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 
 /**
@@ -89,7 +91,8 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
    */
   constructor(
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    private kpiService:KPIService
   ) {
     super()
   }
@@ -181,6 +184,7 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
       this.showDetailETPTSiege = true;
       this.showDetailETPTGreffe = true;
       this.showDetailETPTEam = true;
+      this.logOpenDetails();
     }
   }
 
@@ -194,5 +198,10 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     this.showDetailETPTEam]
 
     return valueToCheck.every((v: boolean) => v === true);
+  }
+
+  logOpenDetails(open:boolean = true){
+    if (open===true)
+      this.kpiService.register(CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW,'')
   }
 }

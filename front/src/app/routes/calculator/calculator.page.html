@@ -40,7 +40,7 @@
         </div>
         <div class="fonctionnaires" *ngIf="canViewGreffier"
           [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
-          (click)="tabSelected=1;unselectTemplate();$event.stopPropagation()">
+          (click)="tabSelected=1;unselectTemplate();logChartView();$event.stopPropagation()">
           <i class="ri-bar-chart-box-line"></i>
           <p>Graphiques</p>
         </div>
