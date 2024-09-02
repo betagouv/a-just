@@ -7,7 +7,8 @@
     #top>div.top-header-back-title>div>div>aj-help-button {
       margin-left: 8px;
     }
-    .header{
+
+    .header {
       border-bottom: none;
     }
   }
@@ -62,12 +63,18 @@
     display: flex;
     flex-direction: column;
     padding-left: 32px;
+    padding-right: 16px;
 
     p {
       color: #3a3a3a;
       font-size: 14px;
       margin: 8px 0px;
       cursor: pointer;
+
+      i {
+        margin-left: 4px;
+        font-size: 14px;
+      }
     }
   }
 

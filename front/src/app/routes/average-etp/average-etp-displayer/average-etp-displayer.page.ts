@@ -512,7 +512,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * Retour au calculateur
    */
   backToCockpit(){
-    setTimeout(() => { this.router.navigate(['/calculateur', { datestart: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStart, datestop: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStop, category: this.contentieuxOptionsService.openedFromCockpit.getValue().category }]) }, 100)
+    setTimeout(() => { this.router.navigate(['/cockpit', { datestart: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStart, datestop: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStop, category: this.contentieuxOptionsService.openedFromCockpit.getValue().category }]) }, 100)
   }
 
     /**

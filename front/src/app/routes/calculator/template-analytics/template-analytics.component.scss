@@ -44,7 +44,7 @@
         border-bottom: solid 1px #ddd;
         background-color: #f6f6f6;
         font-size: 14px;
-        
+
         >div:first-child {
             width: 179px;
             display: flex;
@@ -73,6 +73,7 @@
     .scroll-container {
         overflow: auto;
         height: calc(100% - 40px);
+        padding-bottom: 100px;
 
         >div {
             display: flex;
@@ -117,7 +118,9 @@
             margin-bottom: 16px;
         }
 
-        >div.first-empty-block, >div.end-empty-block, >div.middle-empty-block {
+        >div.first-empty-block,
+        >div.end-empty-block,
+        >div.middle-empty-block {
             background-color: #fff;
             height: 41px;
             padding-left: 8px;
@@ -182,7 +185,7 @@
 
         p {
             font-size: 12px;
-            color: #3a3a3a;    
+            color: #3a3a3a;
         }
     }
 }
