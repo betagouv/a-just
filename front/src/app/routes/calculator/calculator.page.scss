@@ -263,6 +263,20 @@
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
         border-bottom: solid 1px #ddd !important;
+
+        label {
+          padding: 0 8px;
+          border-radius: 4px;
+          background-color: #e8edff;
+          color: #0063cb;
+          font-size: 14px;
+
+          &.greffe {
+            //background-color: white;
+            background-color: #fee7fc;
+            color: #a558a0;
+          }
+        }
       }
     }
 
@@ -292,6 +306,19 @@
       font-size: 18px;
       font-weight: bold;
       text-align: center;
+
+      label {
+        padding: 0 8px;
+        border-radius: 4px;
+        background-color: #e8edff;
+        color: #0063cb;
+        font-size: 14px;
+
+        &.greffe {
+          background-color: #fee7fc;
+          color: #a558a0;
+        }
+      }
     }
   }
 

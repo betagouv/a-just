@@ -225,12 +225,13 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="canViewMagistrat">
         <div class="container-colum">
             <p class="title-section">ETPT Siège</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details" (click)="showDetailETPTSiege = !showDetailETPTSiege;logOpenDetails(showDetailETPTSiege);">
+            <button class="details"
+                (click)="showDetailETPTSiege = !showDetailETPTSiege;logOpenDetails(showDetailETPTSiege);">
                 <i [class]="
             showDetailETPTSiege ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailETPTSiege ? 'Masquer les détails' :
@@ -278,12 +279,13 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="canViewGreffier">
         <div class="container-colum">
             <p class="title-section">ETPT Greffe</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details" (click)="showDetailETPTGreffe = !showDetailETPTGreffe;logOpenDetails(showDetailETPTGreffe);">
+            <button class="details"
+                (click)="showDetailETPTGreffe = !showDetailETPTGreffe;logOpenDetails(showDetailETPTGreffe);">
                 <i [class]="
             showDetailETPTGreffe ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailETPTGreffe ? 'Masquer les détails' :
@@ -332,7 +334,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="canViewContractuel">
         <div class="container-colum">
             <p class="title-section">ETPT EAM</p>
             <p class="details-section">sur la période</p>
