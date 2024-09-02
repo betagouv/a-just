@@ -263,6 +263,10 @@ export class CalculatorPage
    * Label du ref à comparer
    */
   compareAtString: string = ''
+  /**
+   * Premier chargement
+   */
+  firstLoading=true
 
   /**
    * Constructeur
@@ -537,8 +541,15 @@ export class CalculatorPage
           this.formatDatas(list)
           this.isLoading = false
           this.lastCategorySelected = this.categorySelected
+
+          if (this.firstLoading === false)
+            this.appService.notification('Les données du cockpit ont été mis à jour !')
+          this.firstLoading = false
+
         })
-        .catch(() => (this.isLoading = false))
+        .catch(() => {
+          this.isLoading = false
+        })
     }
   }
 
@@ -1502,6 +1513,7 @@ export class CalculatorPage
 
       this.compareTemplates = list
     }
+    this.appService.notification('Les données du cockpit ont été mis à jour !')
   }
 
   getHours(value: number) {
@@ -1539,5 +1551,12 @@ export class CalculatorPage
     if (this.categorySelected === 'magistrats')
       this.filteredBackups = this.backups.filter((r) => r.type === 'SIEGE')
     else this.filteredBackups = this.backups.filter((r) => r.type === 'GREFFE')
+  }
+
+  unselectTemplate(){
+    this.compareTemplates=null
+    this.referentiels.map((x) => {
+      x.selected = false
+    })
   }
 }
