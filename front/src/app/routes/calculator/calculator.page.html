@@ -34,13 +34,13 @@
 
       <div class="switch-tab">
         <div class="brut" [ngClass]="{'selected': tabSelected === 0 && !compareTemplates}"
-          (click)="tabSelected=0;compareTemplates=null;$event.stopPropagation()">
+          (click)="tabSelected=0;unselectTemplate();$event.stopPropagation()">
           <i class="ri-table-view"></i>
           <p>Données brutes</p>
         </div>
         <div class="fonctionnaires" *ngIf="canViewGreffier"
           [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
-          (click)="tabSelected=1;compareTemplates=null;$event.stopPropagation()">
+          (click)="tabSelected=1;unselectTemplate();$event.stopPropagation()">
           <i class="ri-bar-chart-box-line"></i>
           <p>Graphiques</p>
         </div>
@@ -51,7 +51,7 @@
         [ngClass]="{'Greffe': categorySelected === FONCTIONNAIRES}"> {{fonctionRealValue}}
         <i class="ri-close-line" (click)="selectAllFct()"></i> </label>
       <label *ngIf="compareTemplates" class="fonction-values"> Comparaison à {{compareAtString}}
-        <i class="ri-close-line" (click)="tabSelected=1;compareTemplates=null;"></i> </label>
+        <i class="ri-close-line" (click)="tabSelected=1;unselectTemplate();"></i> </label>
     </div>
 
     <ng-template [ngIf]="!compareTemplates">
@@ -224,7 +224,8 @@
               <label class="creation">Date de création</label>
             </div>
             <div class="ref-list centered">
-              <button class="small" [ngClass]="{'greffe':categorySelected === 'fonctionnaires'}" (click)="goToCreateRef()">Créer mon premier référentiel</button>
+              <button class="small" [ngClass]="{'greffe':categorySelected === 'fonctionnaires'}"
+                (click)="goToCreateRef()">Créer mon premier référentiel</button>
             </div>
           </ng-template>
 
