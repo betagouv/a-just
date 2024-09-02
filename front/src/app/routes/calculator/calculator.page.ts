@@ -43,6 +43,8 @@ import {
 } from 'src/app/constants/category'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
+import { CALCULATOR_OPEN_CHARTS_VIEW, CALCULATOR_OPEN_CONMPARAISON_RANGE, CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL, CALCULATOR_SELECT_GREFFE, EXECUTE_CALCULATOR_CHANGE_DATE } from 'src/app/constants/log-codes'
 
 /**
  * Page du calculateur
@@ -290,7 +292,8 @@ export class CalculatorPage
     private router: Router,
     private appService: AppService,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private kpiService: KPIService
   ) {
     super()
   }
@@ -597,9 +600,11 @@ export class CalculatorPage
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
       this.calculatorService.dateStart.next(this.dateStart)
+      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE,'')
     } else if (type === 'dateStop') {
       this.dateStop = month(new Date(event), undefined, 'lastDay')
       this.calculatorService.dateStop.next(this.dateStop)
+      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE,'')
     }
 
     this.filtredDatas()
@@ -637,6 +642,8 @@ export class CalculatorPage
     this.categorySelected = category
     this.calculatorService.categorySelected.next(this.categorySelected)
     this.fonctionRealValue = ''
+    if (this.categorySelected === this.FONCTIONNAIRES)
+      this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
     this.onLoad()
   }
 
@@ -798,14 +805,17 @@ export class CalculatorPage
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
         this.optionDateStop = new Date(ref.datas.dateStop)
+        this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE,ref.label+'')
       } else if (ref.datas.referentielId) {
         this.compareOption = 2
         this.backups = this.backups.map((b) => ({
           ...b,
           selected: ref.datas.referentielId == b.id,
         }))
+        this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL, ref.datas.referentielId+'')
       }
       this.showPicker = false
+      console.log(ref)
       this.onLoadCompare()
     }
   }
@@ -857,15 +867,18 @@ export class CalculatorPage
         return
       }
 
+      let rangeTitle = `${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(
+        this.optionDateStop
+      )}`
       this.backupSettingsService
         .addOrUpdate(
-          `${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(
-            this.optionDateStop
-          )}`,
+          rangeTitle,
           BACKUP_SETTING_COMPARE,
           { dateStart: this.optionDateStart, dateStop: this.optionDateStop }
         )
         .then(() => this.onLoadComparaisons())
+
+      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE,rangeTitle)
     } else {
       const backupSelected = this.backups.find((b) => b.selected)
       if (!backupSelected) {
@@ -881,6 +894,9 @@ export class CalculatorPage
           referentielId: backupSelected.id,
         })
         .then(() => this.onLoadComparaisons())
+
+      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,backupSelected.id+'')
+
     }
 
     this.onLoadCompare()
@@ -1579,10 +1595,21 @@ export class CalculatorPage
     else this.filteredBackups = this.backups.filter((r) => r.type === 'GREFFE')
   }
 
+  /**
+   * Drop down deselection
+   */
   unselectTemplate(){
     this.compareTemplates=null
     this.referentiels.map((x) => {
       x.selected = false
     })
   }
+
+  /**
+   * Envoie d'une log lors de l'ouverture de la vue graphique
+   */
+  logChartView(){
+    this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW,'')
+  }
+
 }

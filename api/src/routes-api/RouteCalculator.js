@@ -54,12 +54,13 @@ export default class RouteCalculator extends Route {
       await this.models.Logs.addLog(EXECUTE_CALCULATOR, ctx.state.user.id)
     }
 
-    if (
+    /**if (
       lastMonthStock &&
-      (month(dateStart).getTime() !== month(lastMonthStock, -2).getTime() || month(dateStop).getTime() !== month(lastMonthStock).getTime())
+      (month(dateStart).getTime() !== month(lastMonthStock, -11).getTime() || month(dateStop).getTime() !== month(lastMonthStock).getTime())
     ) {
       await this.models.Logs.addLog(EXECUTE_CALCULATOR_CHANGE_DATE, ctx.state.user.id)
-    }
+    }*/
+    
     let fonctions = await this.models.HRFonctions.getAll()
     let categoryIdSelected = -1
     switch (categorySelected) {

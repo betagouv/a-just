@@ -1,8 +1,10 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core'
+import { CALCULATOR_OPEN_CONTENTIEUX } from 'src/app/constants/log-codes'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
 import { month } from 'src/app/utils/dates'
@@ -68,6 +70,7 @@ export class ReferentielCalculatorComponent extends MainClass {
     private referentielService: ReferentielService,
     private calculatorService: CalculatorService,
     private activitiesService: ActivitiesService,
+    private kpiService:KPIService
   ) {
     super()
 
@@ -108,6 +111,8 @@ export class ReferentielCalculatorComponent extends MainClass {
       this.showChildren = !this.showChildren
       this.calculator.childIsVisible = this.showChildren
     }
+    if(this.showChildren===true)
+      this.kpiService.register(CALCULATOR_OPEN_CONTENTIEUX, this.calculator?.contentieux.label+'')
   }
 
   /**
