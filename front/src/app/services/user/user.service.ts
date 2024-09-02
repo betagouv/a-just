@@ -311,6 +311,19 @@ export class UserService implements OnInit {
       : false
   }
 
+
+  /**
+   * Can view Activites
+   */
+  canViewAverageTime(user: UserInterface | null = null) {
+    user = user || this.user.getValue()
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
+      ? true
+      : false
+  }
+
   /**
    * Retourne la liste des toutes les pages qu'un utilisateur à accès
    */
@@ -340,22 +353,11 @@ export class UserService implements OnInit {
     if (
       user &&
       user.access &&
-      user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
-    ) {
-      menu.push({
-        label: 'Temps moyens',
-        path: 'temps-moyens',
-      })
-    }
-
-    if (
-      user &&
-      user.access &&
       user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1
     ) {
       menu.push({
-        label: 'Calculateur',
-        path: 'calculateur',
+        label: 'Cockpit',
+        path: 'cockpit',
       })
     }
 

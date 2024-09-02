@@ -25,6 +25,7 @@ import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.serv
 import { fixDecimal } from 'src/app/utils/numbers'
 import { debounceTime } from 'rxjs'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { sortDates } from 'src/app/utils/dates'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -33,7 +34,7 @@ export interface HumanResourceIsInInterface extends HumanResourceInterface {
   /**
    * Est présent dans l'interface
    */
-  isIn: boolean
+  isIn:  boolean
   /**
    * Category name
    */
@@ -653,6 +654,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.allPersonsFiltered,
       false
     )
+  }
+
+/**
+ * Vérifie si un agent arrive bientôt ou est déjà parti de la juridiction
+ * @param date 
+ * @returns 
+ */
+  isArriving(date : Date | string) : boolean {
+    const now = new Date()
+
+    const diff = sortDates(date, now, false)
+    const res = diff > 0 ? true : false
+
+    return res
   }
 
   /**

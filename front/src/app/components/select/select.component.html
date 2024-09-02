@@ -1,8 +1,3 @@
-<p (click)="openDropDown(matSelect)" class="title">{{ title }}</p>
-<div (click)="openDropDown(matSelect)">
-  <p class="bold-family">{{ realValue || defaultRealValue }}</p>
-  <mat-icon>{{ icon }}</mat-icon>
-</div>
 <mat-select [multiple]="multiple" #matSelect class="hide-visualisation" [ngModel]="value"
   (ngModelChange)="onSelectedChanged($event)" #selectionModel="ngModel">
   <app-select-check-all *ngIf="multiple" [model]="selectionModel"
@@ -19,3 +14,11 @@
     </mat-option>
   </ng-template>
 </mat-select>
+<p (click)="openDropDown(matSelect)" class="title">{{ title }} <ng-template [ngIf]="subTitleTemplate">
+    <ng-container *ngTemplateOutlet="subTitleTemplate" class="test"></ng-container>
+  </ng-template>
+</p>
+<div (click)="openDropDown(matSelect)">
+  <p class="bold-family value">{{ realValue || defaultRealValue }}</p>
+  <mat-icon>{{ icon }}</mat-icon>
+</div>

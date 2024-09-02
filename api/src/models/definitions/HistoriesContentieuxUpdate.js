@@ -1,6 +1,6 @@
-import Sequelize from 'sequelize';
+import Sequelize from 'sequelize'
 
-const tableName = 'HistoriesContentieuxUpdate';
+const tableName = 'HistoriesContentieuxUpdate'
 
 export default (sequelizeInstance) => {
   const Model = sequelizeInstance.define(
@@ -41,14 +41,14 @@ export default (sequelizeInstance) => {
       underscored: true,
       tableName,
     }
-  );
+  )
 
   Model.associate = function (models) {
-    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' });
-    Model.hasOne(models.OptionsBackupJuridictions, { foreignKey: 'id', sourceKey: 'backup_id' });
+    Model.hasOne(models.Users, { foreignKey: 'id', sourceKey: 'user_id' })
+    Model.hasOne(models.OptionsBackupJuridictions, { foreignKey: 'id', sourceKey: 'backup_id' })
 
-    return models;
-  };
+    return models
+  }
 
-  return Model;
-};
+  return Model
+}

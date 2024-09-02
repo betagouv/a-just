@@ -1,59 +1,19 @@
-<aj-select *ngIf="readOnly === true" title="Mes temps moyens de comparaison" [value]="selectedIds" [datas]="formDatas"
-  (valueChange)="onChangeBackup($event)" [multiple]="false" class="width-auto bg-white">
-</aj-select>
-
 <ng-template [ngIf]="readOnly === false">
-  <div class="flex-1"></div>
-
-  <button id="trigger-drop-down" class="left-margin blue-button options" [matMenuTriggerFor]="menu" #t="matMenuTrigger"
-    aria-label="Example icon-button with a menu">
-    Options
-    <mat-icon class="no-margin">{{ !t.menuOpen ? 'expand_less' : 'expand_more' }}
-    </mat-icon>
+  <button (click)="onBackBackup()" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
+    class="left-margin blue-button empty">
+    Annuler
   </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="openFilePicker();$event.stopPropagation();">
-      <mat-icon>upload</mat-icon>
-      <div class="form">
-        <form #formAllActivities>
-          <div>
-            <label class="custom-file-upload pointer-events-none">Importer
-              <input id="filePicker" name="file" type="file" accept=".xlsx" class="pointer-events-none"
-                (change)="onSendAllActivity(formAllActivities);formAllActivities.reset()"
-                (click)="$event.stopPropagation();" />
-            </label>
-          </div>
-        </form>
-      </div>
-    </button>
-    <button mat-menu-item (click)="downloadTemplate();$event.stopPropagation();">
-      <mat-icon>download</mat-icon>
-      <span>Exporter sous Excel</span>
-    </button>
-    <button mat-menu-item (click)="onRenameBackup()">
-      <mat-icon>edit</mat-icon>
-      <span>Renommer</span>
-    </button>
-    <button mat-menu-item (click)="onRemoveBackup()">
-      <mat-icon>delete_outline</mat-icon>
-      <span>Supprimer</span>
-    </button>
-    <button mat-menu-item (click)="onDuplicateBackup()">
-      <mat-icon>content_copy</mat-icon>
-      <span>Dupliquer</span>
-    </button>
-    <button mat-menu-item (click)="onCreateEmptyBackup()">
-      <mat-icon>add</mat-icon>
-      <span>Créer une sauvegarde vierge</span>
-    </button>
-  </mat-menu>
 
-  <button [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }" mat-stroked-button
-    class="left-margin blue-button empty" (click)="onSaveHR(true)">
+  <div class="flex-1"></div>
+  <button class="left-margin white-button empty" (click)="downloadTemplate();$event.stopPropagation();">
+    Exporter sous Excel
+  </button>
+  <button [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }" class="left-margin blue-button empty"
+    (click)="onSaveHR(true)">
     Enregistrer sous
   </button>
   <button *ngIf="selectedIds.length" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
-    mat-stroked-button class="left-margin blue-button" (click)="onSaveHR(false)">
+    class="left-margin blue-button" (click)="onSaveHR(false)">
     Enregister
   </button>
 </ng-template>

@@ -12,6 +12,7 @@ import { dataInterface } from 'src/app/components/select/select.component'
 import { Renderer } from 'xlsx-renderer'
 import * as FileSaver from 'file-saver'
 import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
+import { ReferentielService } from '../referentiel/referentiel.service'
 
 /**
  * Excel file extension
@@ -61,7 +62,14 @@ export class ContentieuxOptionsService extends MainClass {
    * Si c'est la première fois que l'on charge les données
    */
   initValue: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-
+  /**
+   * Si la creation est faite depuos le cockpit
+   */
+  openedFromCockpit: BehaviorSubject<any> = new BehaviorSubject<any>({ value: false, dateStart: null, dateStop: null, category:null })
+  /**
+   * Ouverture de la popup pour retourner au calculateur
+   */
+  onFollowComparaison:BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   /**
    * Liste des sauvegardes formatés pour le menu roulant
    */
@@ -85,7 +93,8 @@ export class ContentieuxOptionsService extends MainClass {
    */
   constructor(
     private serverService: ServerService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
+    private referentielService: ReferentielService
   ) {
     super()
   }
@@ -107,12 +116,11 @@ export class ContentieuxOptionsService extends MainClass {
   loadBackupsAndId() {
     const juridictionId = this.humanResourceService.backupId.getValue()
     if (juridictionId !== null) {
-      console.log(juridictionId)
       this.optionsIsModify.next(false)
       this.getAllContentieuxOptions(juridictionId).then((result) => {
         this.nbOfBackups.next(result.backups.length)
         this.backups.next(result.backups)
-        this.backupId.next(result.backupId)
+        //this.backupId.next(result.backupId)
       })
     }
   }
@@ -153,15 +161,12 @@ export class ContentieuxOptionsService extends MainClass {
       (a) => a.contentieux.id === referentiel.id
     )
     if (
-      referentiel.averageProcessingTime ||
-      referentiel.averageProcessingTimeFonc
+      referentiel.averageProcessingTime
     ) {
       if (findIndexOptions === -1) {
         // add
         options.push({
           averageProcessingTime: referentiel.averageProcessingTime || null,
-          averageProcessingTimeFonc:
-            referentiel.averageProcessingTimeFonc || null,
           contentieux: referentiel,
         })
       } else {
@@ -169,8 +174,6 @@ export class ContentieuxOptionsService extends MainClass {
         options[findIndexOptions] = {
           ...options[findIndexOptions],
           averageProcessingTime: referentiel.averageProcessingTime || null,
-          averageProcessingTimeFonc:
-            referentiel.averageProcessingTimeFonc || null,
         }
       }
     } else if (findIndexOptions !== -1) {
@@ -196,6 +199,22 @@ export class ContentieuxOptionsService extends MainClass {
         })
     }
 
+    return Promise.resolve()
+  }
+
+  /**
+ * API suppréssion d'une sauvegarde d'options
+ * @returns
+ */
+  async removeBackupByIds(ids: (number | undefined)[]) {
+    ids?.map((id) => {
+      return this.serverService
+        .delete(`contentieux-options/remove-backup/${id}`)
+        .then(() => {
+          this.backupId.next(null)
+          this.loadBackupsAndId()
+        })
+    })
     return Promise.resolve()
   }
 
@@ -226,19 +245,49 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   /**
+    * Recopie d'options dans un nouveau jeux de données
+    * @returns
+    */
+  duplicateBackupById(backupId: number, type: string) {
+    const backup = this.backups
+      .getValue()
+      .find((b) => b.id === backupId)
+
+    const backupName = prompt('Sous quel nom ?', `${backup?.label} - copie`)
+
+    if (backupName) {
+      return this.serverService
+        .post(`contentieux-options/duplicate-backup`, {
+          backupId: backupId,
+          backupName,
+          type,
+          backupStatus: 'Local',
+          juridictionId: this.humanResourceService.backupId.getValue(),
+        })
+        .then((r) => {
+          this.backupId.next(r.data)
+          this.loadBackupsAndId()
+        })
+    }
+
+    return Promise.resolve()
+  }
+
+  /**
    * Sauvegarde d'un jeux de données dans la même ou une autre base
    * @param isCopy
    * @returns
    */
-  onSaveDatas(isCopy: boolean) {
+  async onSaveDatas(isCopy: boolean, type = 'SIEGE') {
     let backupName = null
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
     }
-    return this.serverService
+    return await this.serverService
       .post(`contentieux-options/save-backup`, {
         list: this.contentieuxOptions.getValue(),
         backupId: this.backupId.getValue(),
+        type,
         backupName: backupName ? backupName : null,
         juridictionId: this.humanResourceService.backupId.getValue(),
       })
@@ -252,11 +301,13 @@ export class ContentieuxOptionsService extends MainClass {
    * API création d'une base vide
    * @returns
    */
-  createEmpy(first = false) {
+  createEmpy(first = false, name = '', status = 'Local', type = 'SIEGE') {
     let backupName = null
 
     if (first)
       backupName = 'Mon premier référentiel'
+    else if (name !== '')
+      backupName = name
     else
       backupName = prompt('Sous quel nom ?')
 
@@ -265,12 +316,14 @@ export class ContentieuxOptionsService extends MainClass {
         .post(`contentieux-options/save-backup`, {
           list: [],
           backupName: backupName,
+          backupStatus: status,
+          type,
           juridictionId: this.humanResourceService.backupId.getValue(),
         })
         .then((r) => {
-          console.log('created')
           this.backupId.next(r.data)
           this.loadBackupsAndId()
+          return r.data
         })
     }
 
@@ -308,6 +361,35 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   /**
+ * API rénommage d'un jeu de données
+ * @returns
+ */
+  renameBackupById(backupId: number) {
+    const getBackup = this.backups
+      .getValue()
+      .find((b) => b.id === backupId)
+    let backupName = prompt('Sous quel nom ?', getBackup ? getBackup.label : '')
+
+    if (backupName) {
+      return this.serverService
+        .post(`contentieux-options/rename-backup`, {
+          backupId: backupId,
+          backupName: backupName,
+          juridictionId: this.humanResourceService.backupId.getValue(),
+        })
+        .then(() => {
+          const list = this.backups.getValue()
+          const index = list.findIndex((b) => b.id === backupId)
+          if (index !== -1) {
+            list[index].label = '' + backupName
+            this.backups.next(list)
+          }
+        })
+    }
+
+    return Promise.resolve()
+  }
+  /**
    * Récupération de la dernière mise à jour des options d'une juridiction
    * @returns
    */
@@ -333,6 +415,11 @@ export class ContentieuxOptionsService extends MainClass {
     this.optionsIsModify.next(false)
   }
 
+  /**
+   * Formate et envoi au back l'ensemble des valeurs
+   * @param form 
+   * @returns 
+   */
   async onSendAllActivity(form: any) {
     const file = form.file.files[0]
 
@@ -341,7 +428,7 @@ export class ContentieuxOptionsService extends MainClass {
       return
     }
 
-    const MagRefList = await readXlsxFile(file, { sheet: 2 })
+    const RefList = await readXlsxFile(file, { sheet: 2 })
       .then((rows: any) => {
         rows.splice(0, 2)
         const optionsMag = rows
@@ -359,35 +446,15 @@ export class ContentieuxOptionsService extends MainClass {
       })
       .then((data: any) => data)
 
-    const FoncRefList = await readXlsxFile(file, { sheet: 3 })
-      .then((rows: any) => {
-        rows.splice(0, 2)
-        const optionsFonc = rows
-          .filter((y: any) => {
-            if (y[2] !== null) return true
-            else return false
-          })
-          .map((x: any) => {
-            return {
-              averageProcessingTimeFonc: this.castToDecimalTime(String(x[2])),
-              contentieux: { id: x[0], label: x[1] },
-            }
-          })
-        return optionsFonc
-      })
-      .then((data: any) => data)
-
-    const res = groupBy([...MagRefList, ...FoncRefList], 'contentieux.id')
+    const res = groupBy([...RefList], 'contentieux.id')
     const resultat = await Object.keys(res).map((key) => {
       if (res[key].length > 1)
         return { ...res[key][0], ...res[key][1] } as ContentieuxOptionsInterface
       else return res[key][0] as ContentieuxOptionsInterface
     })
-
     this.contentieuxOptions.next(resultat)
     this.optionsIsModify.next(true)
-
-    await this.onSaveDatas(true)
+    //await this.onSaveDatas(true)
   }
 
   castToDecimalTime(value: string) {
@@ -397,21 +464,29 @@ export class ContentieuxOptionsService extends MainClass {
       return parseFloat(arrayValue[0]) + parseFloat(arrayValue[1]) / 60
     else return Number(value)
   }
+
   /**
-   * Télécharger le referentiel au format excel
+   * Fonction qui génère automatiquement le nom du fichier téléchargé
+   * @returns String - Nom du fichier téléchargé
    */
-  downloadTemplate() {
-    const tmpList = this.generateFlateList(this.referentiel)
+  getFileName(label: string | null) {
+    return `Extraction_Référentiel de temps moyen - ` + (label || '')
+  }
+
+
+  /**
+    * Télécharger le referentiel au format excel
+    */
+  downloadTemplate(empty = false) {
+    let ref = this.humanResourceService.contentieuxReferentielOnly.getValue().filter((x) => x.label !== 'Autres activités')
+    console.log(ref)
+
+    const tmpList = this.generateFlateList(empty ? ref : this.referentiel, empty)
     this.refNameSelected =
       this.formDatas.getValue().find((x) => x.id === this.backupId.getValue())
         ?.value || ''
 
-    const viewModel = {
-      referentiels: tmpList,
-      name: this.refNameSelected + ' (MAGISTRATS)',
-      referentielsFonc: tmpList,
-      nameFonc: this.refNameSelected + ' (FONCTIONNAIRES)',
-    }
+    const viewModel = { referentiels: tmpList }
 
     fetch('/assets/template0.xlsx')
       // 2. Get template as ArrayBuffer.
@@ -426,7 +501,7 @@ export class ContentieuxOptionsService extends MainClass {
       })
       // 5. Use `saveAs` to download on browser site.
       .then((buffer) => {
-        const filename = this.getFileName(this.refNameSelected)
+        const filename = empty ? 'Modèle - référentiel de temps moyens ' : this.getFileName(this.refNameSelected)
         return FileSaver.saveAs(new Blob([buffer]), (filename) + EXCEL_EXTENSION)
       })
       .catch((err) => console.log('Error writing excel export', err))
@@ -436,78 +511,46 @@ export class ContentieuxOptionsService extends MainClass {
    * Génère une liste de contentieux/sous contentieux à plat
    * @returns
    */
-  generateFlateList(list: any) {
+  generateFlateList(list: any, empty = false) {
     const flatList = new Array()
-    list.getValue().map((x: any) => {
+    list = empty ? list : list.getValue()
+    list.map((x: any) => {
       const magAvg = decimalToStringDate(x.averageProcessingTime, ':')
-      const foncAvg = decimalToStringDate(x.averageProcessingTimeFonc, ':')
-
+      flatList.push({
+        ...this.getFileValues(x),
+        ...x,
+        averageProcessingTime: magAvg === '0' || empty ? '' : magAvg,
+      })
       if (x.childrens) {
-        flatList.push({
-          ...this.getFileValues(x),
-          ...x,
-          averageProcessingTime: magAvg === '0' ? '' : magAvg,
-          averageProcessingTimeFonc: foncAvg === '0' ? '' : foncAvg,
-        })
         x.childrens.map((y: any) => {
           const magAvgChild = decimalToStringDate(y.averageProcessingTime, ':')
-          const foncAvgChild = decimalToStringDate(
-            y.averageProcessingTimeFonc,
-            ':'
-          )
           flatList.push({
             ...this.getFileValues(y),
             ...y,
-            averageProcessingTime: magAvgChild === '0' ? '' : magAvgChild,
-            averageProcessingTimeFonc: foncAvgChild === '0' ? '' : foncAvgChild,
+            averageProcessingTime: magAvgChild === '0' || empty ? '' : magAvgChild,
           })
         })
-      } else
-        flatList.push({
-          ...this.getFileValues(x),
-          ...x,
-          averageProcessingTime: magAvg === '0' ? '' : magAvg,
-          averageProcessingTimeFonc: foncAvg === '0' ? '' : foncAvg,
-        })
+      }
     })
     return flatList
   }
-  /**
-   * Fonction qui génère automatiquement le nom du fichier téléchargé
-   * @returns String - Nom du fichier téléchargé
-   */
-  getFileName(label: string | null) {
-    return `Extraction_Référentiel de temps moyen - ` + (label || '')
-  }
+
 
   /**
-   * Récupère les valeurs pour chaque contentieux
-   * @param ref
-   * @returns
+   * Calcul les valeurs par jour et pas moi via la valeur de référence en heure
+   * @param ref 
+   * @returns 
    */
   getFileValues(ref: any) {
     return {
-      id: Number(ref.id),
-      nbPerDay: this.getInputValue(
+      id: Number(ref.id), nbPerDay: this.getInputValue(
         ref.averageProcessingTime,
         'nbPerDay',
-        'averageProcessingTime'
       ),
       nbPerMonth: this.getInputValue(
         ref.averageProcessingTime,
         'nbPerMonth',
-        'averageProcessingTime'
-      ),
-      nbPerDayFonc: this.getInputValue(
-        ref.averageProcessingTimeFonc,
-        'nbPerDay',
-        'averageProcessingTimeFonc'
-      ),
-      nbPerMonthFonc: this.getInputValue(
-        ref.averageProcessingTimeFonc,
-        'nbPerMonth',
-        'averageProcessingTimeFonc'
-      ),
+      )
     }
   }
 
@@ -540,4 +583,5 @@ export class ContentieuxOptionsService extends MainClass {
     }
     return '0'
   }
+
 }

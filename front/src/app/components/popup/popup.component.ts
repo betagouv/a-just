@@ -30,7 +30,11 @@ export interface ActionsInterface {
     /**
      * Id du bouton
      */
-    id: string
+    id: string,
+    /**
+     * Taille du bouton
+     */
+    size?:string
 }
 
 /**

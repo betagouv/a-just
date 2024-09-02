@@ -5,6 +5,7 @@ import { CanDeactivateGuardService } from './canDeactivate-guard-service'
 import { ReaffectatorPage } from './reaffectator/reaffectator.page'
 import { SimulatorPage } from './simulator/simulator.page'
 import { AppTypeGuard } from './app-type-guard.service'
+import { AverageEtpDisplayerPage } from './average-etp/average-etp-displayer/average-etp-displayer.page'
 
 const routes: Routes = [
   {
@@ -61,7 +62,7 @@ const routes: Routes = [
     canActivate: [AuthGuard, AppTypeGuard],
   },
   {
-    path: 'calculateur',
+    path: 'cockpit',
     loadChildren: () =>
       import('./calculator/calculator.module').then(
         (mod) => mod.CalculatorModule
@@ -99,6 +100,12 @@ const routes: Routes = [
       import('./change-password/change-password.module').then(
         (mod) => mod.ChangePasswordModule
       ),
+  },
+  {
+    path: 'referentiel-de-temps/:id',
+    component: AverageEtpDisplayerPage,
+    canActivate: [AuthGuard, AppTypeGuard],
+    canDeactivate: [CanDeactivateGuardService],
   },
   {
     path: 'simulateur',

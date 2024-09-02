@@ -1,6 +1,6 @@
 <aj-news></aj-news>
 <div>
-  <div class="menu no-print" title="">
+  <div id="side-menu-bar" class="menu no-print" title="">
     <div class="images">
       <div class="logo white-mode block-marque-white"></div>
 
@@ -51,16 +51,14 @@
       <div *ngIf="openTools" class="sub-tools">
         <p (click)="downloadAsset('nomenclature')">
           La nomenclature
-          <i (click)="
-              $event.stopPropagation(); downloadAsset('nomenclature', true)
-            " class="ri-file-download-line"></i>
+          <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('nomenclature', true)"></i>
         </p>
-        <p (click)="downloadAsset('calculatrice')">La calculatrice</p>
+        <p (click)="downloadAsset('calculatrice')">La calculatrice <i class="ri-download-line"></i></p>
         <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')" *ngIf="this.userService.isCa()===false">
-          L'extracteur de données d'effectifs
+          Les extracteurs
         </p>
-        <p [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')" *ngIf="this.userService.isCa()===false">
-          L'extracteur de données d'activité
+        <p (click)="downloadAsset('fiche-agent',true)">Modèle de feuille de temps <i class="ri-download-line"></i></p>
+        <p *ngIf="userService.canViewAverageTime()" [routerLink]="['/' + 'temps-moyens']">Référentiels de temps moyens
         </p>
       </div>
 

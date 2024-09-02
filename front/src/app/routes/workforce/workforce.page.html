@@ -186,10 +186,38 @@
           filterParams.display === 'nom/prénom' ? person.firstName :
           person.lastName}}
         </p>
-        <i class="ri-user-shared-line"
-          [style.color]="person.categoryName ? getCategoryColor(person.categoryName) : null"
-          [style.background-color]="person.categoryName ? getBgCategoryColor(person.categoryName) : null"></i>
+
+        <div 
+          *ngIf="person.dateStart && isArriving(person.dateStart)" 
+          class="agent-status" 
+          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
+        >
+          <i
+            class="ri-user-received-line"
+            [ngStyle]="{
+              color: person.categoryName ? getCategoryColor(person.categoryName) : null,
+            }"
+          >
+          </i>
+          <p>Arrivée prévue</p>
+        </div>
+        <div 
+          *ngIf="person.dateStart && !isArriving(person.dateStart)" 
+          class="agent-status" 
+          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
+        >
+          <i
+            class="ri-user-shared-line"
+            [ngStyle]="{
+              color: person.categoryName ? getCategoryColor(person.categoryName) : null,
+            }"
+          >
+         </i>
+         <p>Parti</p>
+        </div>
       </a>
+      
+      <!-- //"ri-user-shared-line" -->
       <div *ngIf="allPersonsFiltered.length === 0">Nom non trouvé !</div>
     </div>
   </div>
