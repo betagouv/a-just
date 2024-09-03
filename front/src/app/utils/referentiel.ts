@@ -209,33 +209,31 @@ export function referentielMappingColorCAActivity(
 ): string {
   switch (name) {
     case "Contentieux social":
-      return `rgba(66, 66, 66, ${opacity})`
+      return `rgba(213, 231, 232, ${opacity})`
     case "Contentieux de la famille":
-      return `rgba(55, 71, 79, ${opacity})`
+      return `rgba(208, 226, 242, ${opacity})`
     case "Contentieux de la protection":
-      return `rgba(198, 40, 40, ${opacity})`
+      return `rgba(208, 222, 242, ${opacity})`
     case "Contentieux civil non spécialisé":
-      return `rgba(2, 119, 189, ${opacity})`
-    case "Contentieux de la protection":
-      return `rgba(0, 131, 143, ${opacity})`
+      return `rgba(213, 216, 235, ${opacity})`
     case "Contentieux commercial":
-      return `rgba(21, 101, 192, ${opacity})`
+      return `rgba(190, 224, 230, ${opacity})`
     case "Attributions du PP":
-      return `rgba(106, 27, 154, ${opacity})`
+      return `rgba(255, 248, 214, ${opacity})`
     case "Contentieux civil JLD":
-      return `rgba(40, 53, 147, ${opacity})`
+      return `rgba(217, 211, 237, ${opacity})`
     case "Contentieux des mineurs":
-      return `rgba(216, 67, 21, ${opacity})`
+      return `rgba(227, 211, 237, ${opacity})`
     case "Instruction et entraide":
-      return `rgba(69, 39, 160, ${opacity})`
+      return `rgba(250, 221, 212, ${opacity})`
     case "Correctionnel":
       return `rgba(239, 108, 0, ${opacity})`
     case "Contentieux criminel":
-      return `rgba(255, 143, 0, ${opacity})`
+      return `rgba(255, 235, 214, ${opacity})`
     case "Application des peines":
-      return `rgba(69, 39, 160, ${opacity})`
+      return `rgba(255, 227, 212, ${opacity})`
     case "Autres activités":
-      return `rgba(100, 100, 100, ${opacity})`
+      return `rgba(215, 217, 219, ${opacity})`
   }
 
   return ''
