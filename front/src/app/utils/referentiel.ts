@@ -227,7 +227,7 @@ export function referentielMappingColorCAActivity(
     case "Instruction et entraide":
       return `rgba(250, 221, 212, ${opacity})`
     case "Correctionnel":
-      return `rgba(239, 108, 0, ${opacity})`
+      return `rgba(245, 214, 213, ${opacity})`
     case "Contentieux criminel":
       return `rgba(255, 235, 214, ${opacity})`
     case "Application des peines":
