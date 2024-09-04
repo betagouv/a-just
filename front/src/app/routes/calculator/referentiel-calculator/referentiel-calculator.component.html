@@ -1,6 +1,5 @@
-<!-- [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(calculator.contentieux.label ==='Autres activités'? 'other': calculator.contentieux.label))"> -->
 <div *ngIf="calculator" class="main-referentiel"
-    [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(calculator.contentieux.label)">
+    [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(calculator.contentieux.label ==='Autres activités'? 'other': calculator.contentieux.label))">
     <div class="width-contentieux contentieux" (click)="onToggleChildren()">
 
 
