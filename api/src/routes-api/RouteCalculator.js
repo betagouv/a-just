@@ -42,25 +42,18 @@ export default class RouteCalculator extends Route {
       optionBackupId: Types.number(),
       categorySelected: Types.string().required(),
       selectedFonctionsIds: Types.array(),
+      loadChildrens: Types.boolean(),
     }),
     accesses: [Access.canVewCalculator],
   })
   async filterList (ctx) {
-    const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds } = this.body(ctx)
-    const lastMonthStock = await this.model.models.Activities.getLastMonth(backupId)
+    const { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds, loadChildrens } = this.body(ctx)
 
     if (!selectedFonctionsIds) {
       // memorize first execution by user
       await this.models.Logs.addLog(EXECUTE_CALCULATOR, ctx.state.user.id)
     }
 
-    /**if (
-      lastMonthStock &&
-      (month(dateStart).getTime() !== month(lastMonthStock, -11).getTime() || month(dateStop).getTime() !== month(lastMonthStock).getTime())
-    ) {
-      await this.models.Logs.addLog(EXECUTE_CALCULATOR_CHANGE_DATE, ctx.state.user.id)
-    }*/
-    
     let fonctions = await this.models.HRFonctions.getAll()
     let categoryIdSelected = -1
     switch (categorySelected) {
@@ -132,7 +125,7 @@ export default class RouteCalculator extends Route {
     console.timeEnd('calculator-7')
 
     console.time('calculator-8')
-    list = syncCalculatorDatas(list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups)
+    list = syncCalculatorDatas(list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
 
     const cleanDataToSent = (item) => ({
       ...item,
