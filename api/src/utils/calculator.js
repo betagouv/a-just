@@ -176,22 +176,32 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
   const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 100) : 0
   const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 100) : 0
 
-  // ETP début
-  let oneDayAfterStart = new Date(dateStart)
-  oneDayAfterStart.setDate(oneDayAfterStart.getDate() + 2)
-  const etpAffectedBf = getHRPositions(hr, categories, referentielId, dateStart, oneDayAfterStart)
-  const etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 100) : 0
-  const etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 100) : 0
-  const etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 100) : 0
+  let etpAffectedBf = []
+  let etpMagBf = null
+  let etpFonBf = null
+  let etpContBf = null
+  let etpAffectedAf = []
+  let etpMagAf = null
+  let etpFonAf = null
+  let etpContAf = null
 
-  // ETP fin
-  let oneDayBeforeEnd = new Date(dateStop)
-  oneDayBeforeEnd.setDate(oneDayBeforeEnd.getDate() - 2)
-  const etpAffectedAf = getHRPositions(hr, categories, referentielId, oneDayBeforeEnd, dateStop)
-  const etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 100) : 0
-  const etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 100) : 0
-  const etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 100) : 0
+  if (loadDetails === true) {
+    // ETP début
+    let oneDayAfterStart = new Date(dateStart)
+    oneDayAfterStart.setDate(oneDayAfterStart.getDate() + 2)
+    etpAffectedBf = getHRPositions(hr, categories, referentielId, dateStart, oneDayAfterStart)
+    etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 100) : 0
+    etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 100) : 0
+    etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 100) : 0
 
+    // ETP fin
+    let oneDayBeforeEnd = new Date(dateStop)
+    oneDayBeforeEnd.setDate(oneDayBeforeEnd.getDate() - 2)
+    etpAffectedAf = getHRPositions(hr, categories, referentielId, oneDayBeforeEnd, dateStop)
+    etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 100) : 0
+    etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 100) : 0
+    etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 100) : 0
+  }
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
   const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (meanOutCs / etpMagCs), 100)
   const fonRealTimePerCase = fixDecimal(((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (meanOutCs / etpFonCs), 100)
