@@ -125,7 +125,7 @@ export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateSt
  * @returns
  */
 const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups) => {
-  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(dateStart, dateStop, activities, referentielId, hr, categories)
+  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(dateStart, dateStop, activities, referentielId, hr, categories, false)
 
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
@@ -146,9 +146,9 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
   const realCoverageAf = fixDecimal(totalOutAf / totalInAf, 100)
 
   // ETP 12 derniers mois fin
-  const realDTESInMonths = lastStock !== null ? fixDecimal(lastStock / meanOutCs, 100) : null
+  const realDTESInMonths = lastStock !== null && meanOutCs !== null ? fixDecimal(lastStock / meanOutCs, 100) : null
   // ETP 12 derniers mois début
-  const realDTESInMonthsStart = lastStockBf !== null ? fixDecimal(lastStockBf / meanOutBf, 100) : null
+  const realDTESInMonthsStart = lastStockBf !== null && meanOutBf !== null ? fixDecimal(lastStockBf / meanOutBf, 100) : null
 
   // ETP moyen sur la période
   const etpAffected = getHRPositions(hr, categories, referentielId, dateStart, dateStop)
@@ -196,7 +196,7 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
 /**
  * 
  */
-const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr, categories) => {
+const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr, categories, computeAll) => {
   /**
    * Calcul sur les 12 derniers mois avant date de fin
    */
@@ -231,38 +231,40 @@ const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr,
   const etpMagCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[0].totalEtp, 100) : 0
   const etpFonCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[1].totalEtp, 100) : 0
 
-  /**
-   * Calcul sur les 12 derniers mois avant date de début
-   */
-
-  // Date début de période selecitonnée dans le calculateur (fin du mois)
-  const endBf = month(new Date(dateStart), 0, 'lastday')
   let lastStockBf = null
   let totalInBf = null
   let totalOutBf = null
+  let meanOutBf = null
 
-  // Date 12 mois avant la date de début selectionnée dans le calculateur (début du mois)
-  const startBf = month(new Date(endBf), -11)
-  startBf.setDate(startBf.getDate() + 1)
-  startBf.setMinutes(startBf.getMinutes() + 1)
+  if (computeAll === true) {
+    /**
+     * Calcul sur les 12 derniers mois avant date de début
+     */
+    // Date début de période selecitonnée dans le calculateur (fin du mois)
+    const endBf = month(new Date(dateStart), 0, 'lastday')
 
-  // Clone de l'objet activities et filtre par date
-  let activitesStart = cloneDeep(activities)
-  activitesStart = activitesStart.filter((a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime())
+    // Date 12 mois avant la date de début selectionnée dans le calculateur (début du mois)
+    const startBf = month(new Date(endBf), -11)
+    startBf.setDate(startBf.getDate() + 1)
+    startBf.setMinutes(startBf.getMinutes() + 1)
 
-  // Calcul des sorties moyennes 12 derniers mois à compter de la date de début selectionnée dans le calculateur
-  const meanOutBf = (activitesStart || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesStart, 'sorties') / 12 : null
+    // Clone de l'objet activities et filtre par date
+    let activitesStart = cloneDeep(activities)
+    activitesStart = activitesStart.filter((a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime())
 
-  if (activitesStart.length) {
-    const lastActivities = activitesStart[activitesStart.length - 1]
-    if (lastActivities.stock !== null && isSameMonthAndYear(lastActivities.periode, endBf)) {
-      lastStockBf = lastActivities.stock
-      totalInBf = lastActivities.entrees
-      totalOutBf = lastActivities.sorties
+    // Calcul des sorties moyennes 12 derniers mois à compter de la date de début selectionnée dans le calculateur
+    meanOutBf = (activitesStart || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesStart, 'sorties') / 12 : null
+
+    if (activitesStart.length) {
+      const lastActivities = activitesStart[activitesStart.length - 1]
+      if (lastActivities.stock !== null && isSameMonthAndYear(lastActivities.periode, endBf)) {
+        lastStockBf = lastActivities.stock
+        totalInBf = lastActivities.entrees
+        totalOutBf = lastActivities.sorties
+      }
     }
   }
-
-  return { meanOutCs, etpMagCs, etpFonCs, startCs, endCs, startBf, endBf, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf: lastStockCs, totalInAf: totalInCs, totalOutAf: totalOutCs }
+  return { meanOutCs, etpMagCs, etpFonCs, startCs, endCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf: lastStockCs, totalInAf: totalInCs, totalOutAf: totalOutCs }
 }
 /**
  * Calcul d'un taux de ventilation d'un contentieux pour tous les utilisateurs
