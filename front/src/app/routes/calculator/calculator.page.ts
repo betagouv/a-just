@@ -515,7 +515,7 @@ export class CalculatorPage
   /**
    * Chargement des données back
    */
-  onLoad() {
+  onLoad(loadDetail = true) {
     if (
       this.humanResourceService.backupId.getValue() &&
       this.calculatorService.referentielIds.getValue().length &&
@@ -531,7 +531,10 @@ export class CalculatorPage
           this.categorySelected,
           this.lastCategorySelected === this.categorySelected
             ? this.selectedFonctionsIds
-            : null
+            : null,
+          this.dateStart,
+          this.dateStop,
+          false
         )
         .then(({ list, fonctions }) => {
           this.appService.appLoading.next(false)
@@ -559,6 +562,23 @@ export class CalculatorPage
         })
         .catch(() => {
           this.isLoading = false
+        })
+        .finally(() => {
+          if (this.categorySelected && loadDetail) {
+            this.calculatorService
+              .filterList(
+                this.categorySelected,
+                this.lastCategorySelected === this.categorySelected
+                  ? this.selectedFonctionsIds
+                  : null,
+                this.dateStart,
+                this.dateStop,
+                true
+              )
+              .then(({ list }) => {
+                this.formatDatas(list)
+              })
+          }
         })
     }
   }
@@ -990,7 +1010,8 @@ export class CalculatorPage
             ? this.selectedFonctionsIds
             : null,
           this.optionDateStart,
-          this.optionDateStop
+          this.optionDateStop,
+          false
         )
         this.appService.appLoading.next(false)
         const nextRangeString = `${this.getRealValue(

@@ -70,12 +70,11 @@ export class ReferentielCalculatorComponent extends MainClass {
     private referentielService: ReferentielService,
     private calculatorService: CalculatorService,
     private activitiesService: ActivitiesService,
-    private kpiService:KPIService
+    private kpiService: KPIService
   ) {
     super()
 
     if (this.maxDateSelectionDate === null) {
-
       this.activitiesService.getLastMonthActivities().then((date) => {
         if (date === null) {
           date = new Date()
@@ -84,7 +83,6 @@ export class ReferentielCalculatorComponent extends MainClass {
         const max = month(date, 0, 'lastday')
         this.maxDateSelectionDate = max
       })
-
     }
 
     this.watch(
@@ -111,8 +109,11 @@ export class ReferentielCalculatorComponent extends MainClass {
       this.showChildren = !this.showChildren
       this.calculator.childIsVisible = this.showChildren
     }
-    if(this.showChildren===true)
-      this.kpiService.register(CALCULATOR_OPEN_CONTENTIEUX, this.calculator?.contentieux.label+'')
+    if (this.showChildren === true)
+      this.kpiService.register(
+        CALCULATOR_OPEN_CONTENTIEUX,
+        this.calculator?.contentieux.label + ''
+      )
   }
 
   /**
@@ -132,25 +133,27 @@ export class ReferentielCalculatorComponent extends MainClass {
    * Indique si la date de fin selectionnée est dans le passé
    */
   checkPastDate() {
-    return this.calculatorService.dateStop.value! <= (this.maxDateSelectionDate || new Date())
+    return (
+      this.calculatorService.dateStop.value! <=
+      (this.maxDateSelectionDate || new Date())
+    )
   }
 
   /**
-  * Récuperer le type de l'app
-  */
+   * Récuperer le type de l'app
+   */
   getInterfaceType() {
     return this.userService.interfaceType === 1
   }
 
   /**
- * Mapping des noms de contentieux selon l'interface
- * @param label 
- * @returns 
- */
+   * Mapping des noms de contentieux selon l'interface
+   * @param label
+   * @returns
+   */
   referentielMappingNameByInterface(label: string) {
     if (this.getInterfaceType() === true)
       return this.referentielCAMappingName(label)
     else return this.referentielMappingName(label)
   }
-
 }
