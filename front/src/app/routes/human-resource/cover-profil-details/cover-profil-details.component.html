@@ -20,9 +20,9 @@
 <div class="second-row">
   <div class="left-second-row">
     <div class="user-name">
-      <div class="input-wrapper">
-        <span class="input-span-firstName"></span>
-        <input 
+      <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['firstName'] + 'px' }">
+        <span id="input-span-firstName"></span>
+        <input
           id="firstName"
           #firstNameDom
           #input
@@ -31,10 +31,11 @@
           (ngModelChange)="completeFormWithDomObject('firstName', $event)"
           (keydown)="preventSubmit($event)"
           (keyup.enter)="focusNext($event)"
+          (input)="adjustInputWidth($event, 'firstName')"
         />
       </div>
-      <div class="input-wrapper">
-        <span class="input-span-lastName"></span>
+      <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['lastName'] + 'px' }">
+        <span id="input-span-lastName"></span>
         <input
           id="lastName"
           #input
@@ -43,6 +44,7 @@
           (ngModelChange)="completeFormWithDomObject('lastName', $event)"
           (keydown)="preventSubmit($event)"
           (keyup.enter)="focusNext($event)"
+          (input)="adjustInputWidth($event, 'lastName')"
         />
       </div>
       <mat-icon class="iconPen no-print cursor-pointer"
@@ -56,7 +58,7 @@
         <input
           id="matricule"
           #matriculeDom 
-          [placeholder]="'Matricule'"
+          [placeholder]="'Matricule (facultatif)'"
           [ngModel]="currentHR?.matricule" 
           (ngModelChange)="completeFormWithDomObject('matricule', $event)"
           (keydown)="keyPress($event);"
