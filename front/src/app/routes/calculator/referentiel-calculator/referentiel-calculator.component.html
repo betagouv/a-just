@@ -20,7 +20,8 @@
     </div>
     <div [ngClass]="{ selected: sortBy === 'realCoverage' }" class="item coverage">
         <div class="block left-border" *ngIf="!isSoutien(calculator.contentieux.id)">
-            <ng-template [ngIf]=" checkPastDate()" [ngIfElse]="nr">
+            <ng-template [ngIf]="checkPastDate() && calculator.totalOut !== null && calculator.totalIn !== null"
+                [ngIfElse]="nr">
                 <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
             </ng-template>
         </div>
