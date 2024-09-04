@@ -126,7 +126,8 @@
                 </div>
               </div>
               <div class="color"
-                [ngStyle]="{'background-color': userService.referentielMappingColorByInterface(ref.label)}"></div>
+                [ngStyle]="{'background-color': userService.referentielMappingColorByInterface(ref.label, OPACITY)}">
+              </div>
             </div>
           </div>
           <div class="actions"></div>
@@ -187,36 +188,24 @@
           person.lastName}}
         </p>
 
-        <div 
-          *ngIf="person.dateStart && isArriving(person.dateStart)" 
-          class="agent-status" 
-          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
-        >
-          <i
-            class="ri-user-received-line"
-            [ngStyle]="{
+        <div *ngIf="person.dateStart && isArriving(person.dateStart)" class="agent-status"
+          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }">
+          <i class="ri-user-received-line" [ngStyle]="{
               color: person.categoryName ? getCategoryColor(person.categoryName) : null,
-            }"
-          >
+            }">
           </i>
           <p>Arrivée prévue</p>
         </div>
-        <div 
-          *ngIf="person.dateStart && !isArriving(person.dateStart)" 
-          class="agent-status" 
-          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
-        >
-          <i
-            class="ri-user-shared-line"
-            [ngStyle]="{
+        <div *ngIf="person.dateStart && !isArriving(person.dateStart)" class="agent-status"
+          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }">
+          <i class="ri-user-shared-line" [ngStyle]="{
               color: person.categoryName ? getCategoryColor(person.categoryName) : null,
-            }"
-          >
-         </i>
-         <p>Parti</p>
+            }">
+          </i>
+          <p>Parti</p>
         </div>
       </a>
-      
+
       <!-- //"ri-user-shared-line" -->
       <div *ngIf="allPersonsFiltered.length === 0">Nom non trouvé !</div>
     </div>
