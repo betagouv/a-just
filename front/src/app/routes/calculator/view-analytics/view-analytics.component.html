@@ -404,10 +404,7 @@
                 <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                     <div class="gray-block">
                         <p>
-                            <b>{{ getHours(datasFilted[index].magRealTimePerCase
-                                || 0) }}h{{
-                                getMinutes(datasFilted[index].magRealTimePerCase ||
-                                0) }}</b>
+                            <b>{{ decimalToStringDate(datasFilted[index].magRealTimePerCase) }}</b>
                         </p>
                     </div>
                 </div>
@@ -431,10 +428,7 @@
                 <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                     <div class="gray-block">
                         <p>
-                            <b>{{ getHours(datasFilted[index].fonRealTimePerCase
-                                || 0) }}h{{
-                                getMinutes(datasFilted[index].fonRealTimePerCase ||
-                                0) }}</b>
+                            <b>{{ decimalToStringDate(datasFilted[index].fonRealTimePerCase) }}</b>
                         </p>
                     </div>
                 </div>
