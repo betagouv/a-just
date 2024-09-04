@@ -1093,7 +1093,7 @@ export class CalculatorPage
             {
               label: 'Variation',
               values: variationsCouverture,
-              subTitle: '%',
+              subTitle: 'pts',
               showArrow: true,
             },
             {
@@ -1522,7 +1522,7 @@ export class CalculatorPage
             {
               label: 'Variation',
               values: variationsCouverture,
-              subTitle: '%',
+              subTitle: 'pts',
               showArrow: true,
             },
             {
