@@ -1,3 +1,4 @@
+import { OPACITY_20 } from "../constants/colors"
 import { ETP_NEED_TO_BE_UPDATED } from "../constants/referentiel"
 //import { juridictionJIRS } from "../constants/juridiction-jirs"
 //import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
@@ -80,33 +81,64 @@ export function referentielMappingColor(
   name: string,
   opacity: number = 1
 ): string {
-  switch (name) {
-    case 'Autres activités':
-      return `rgba(66, 66, 66, ${opacity})`
-    case 'Indisponibilité':
-      return `rgba(55, 71, 79, ${opacity})`
-    case 'Siège Pénal':
-      return `rgba(198, 40, 40, ${opacity})`
-    case 'Contentieux JAF':
-      return `rgba(2, 119, 189, ${opacity})`
-    case 'Contentieux Social':
-      return `rgba(0, 131, 143, ${opacity})`
-    case 'Contentieux de la Protection':
-      return `rgba(21, 101, 192, ${opacity})`
-    case 'Juges des Enfants':
-      return `rgba(106, 27, 154, ${opacity})`
-    case 'Civil Non Spécialisé':
-      return `rgba(40, 53, 147, ${opacity})`
-    case "Juges d'Instruction":
-      return `rgba(216, 67, 21, ${opacity})`
-    case 'JLD Civil':
-      return `rgba(69, 39, 160, ${opacity})`
-    case 'JAP':
-      return `rgba(239, 108, 0, ${opacity})`
-    case 'JLD pénal':
-      return `rgba(255, 143, 0, ${opacity})`
-    case 'JLD civil':
-      return `rgba(69, 39, 160, ${opacity})`
+  if (opacity === OPACITY_20) {
+    switch (name) {
+      case 'Autres activités':
+        return `rgb(215, 217, 219)`
+      case 'Indisponibilité':
+        return `rgb(55, 71, 79)`
+      case 'Siège Pénal':
+        return `rgb(245, 214, 213)`
+      case 'Contentieux JAF':
+        return `rgb(208, 226, 242)`
+      case 'Contentieux Social':
+        return `rgb(213, 231, 232)`
+      case 'Contentieux de la Protection':
+        return `rgb(208, 222, 242)`
+      case 'Juges des Enfants':
+        return `rgb(227, 211, 237)`
+      case 'Civil Non Spécialisé':
+        return `rgb(213, 216, 235)`
+      case "Juges d'Instruction":
+        return `rgb(250, 221, 212)`
+      case 'JLD Civil':
+        return `rgb(217, 211, 237)`
+      case 'JAP':
+        return `rgb(255, 227, 212)`
+      case 'JLD pénal':
+        return `rgb(255, 235, 214)`
+      case 'JLD civil':
+        return `rgb(217, 211, 237)`
+    }
+  } else {
+    switch (name) {
+      case 'Autres activités':
+        return `rgba(66, 66, 66, ${opacity})`
+      case 'Indisponibilité':
+        return `rgba(55, 71, 79, ${opacity})`
+      case 'Siège Pénal':
+        return `rgba(199, 40, 40, ${opacity})`
+      case 'Contentieux JAF':
+        return `rgba(2, 120, 189, ${opacity})`
+      case 'Contentieux Social':
+        return `rgba(1, 131, 143, ${opacity})`
+      case 'Contentieux de la Protection':
+        return `rgba(21, 100, 191, ${opacity})`
+      case 'Juges des Enfants':
+        return `rgba(105, 28, 153, ${opacity})`
+      case 'Civil Non Spécialisé':
+        return `rgba(40, 53, 148, ${opacity})`
+      case "Juges d'Instruction":
+        return `rgba(217, 66, 20, ${opacity})`
+      case 'JLD Civil':
+        return `rgba(69, 39, 161, ${opacity})`
+      case 'JAP':
+        return `rgba(240, 108, 0, ${opacity})`
+      case 'JLD pénal':
+        return `rgba(255, 145, 0, ${opacity})`
+      case 'JLD civil':
+        return `rgba(69, 39, 161, ${opacity})`
+    }
   }
 
   return ''
@@ -121,35 +153,64 @@ export function referentielCAMappingColor(
   name: string,
   opacity: number = 1
 ): string {
-  switch (name) {
-    case "Contentieux social":
-      return `rgba(3, 131, 143, ${opacity})`
-    case "Contentieux de la famille":
-      return `rgba(1, 118, 190, ${opacity})`
-    case "Contentieux de la protection":
-      return `rgba(22, 100, 192, ${opacity})`
-    case "Contentieux civil non spécialisé":
-      return `rgba(40, 53, 146, ${opacity})`
-    case "Contentieux de la protection":
-      return `rgba(22, 100, 192, ${opacity})`
-    case "Contentieux commercial":
-      return `rgba(38, 190, 206, ${opacity})`
-    case "Attributions du PP":
-      return `rgba(251, 202, 12, ${opacity})`
-    case "Contentieux civil JLD":
-      return `rgba(69, 38, 160, ${opacity})`
-    case "Contentieux des mineurs":
-      return `rgba(105, 26, 154, ${opacity})`
-    case "Instruction et entraide": //CHINS
-      return `rgba(215, 66, 21, ${opacity})`
-    case "Contentieux criminel":
-      return `rgba(255, 143, 0,${opacity})`
-    case "Application des peines": //CHAP
-      return `rgba(239, 108, 0, ${opacity})`
-    case "Correctionnel": //CHAC
-      return `rgba(197, 41, 40, ${opacity})`
-    case "Autres activités":
-      return `rgba(66, 66, 66, ${opacity})`
+  if (opacity === OPACITY_20) {
+    switch (name) {
+      case "Contentieux social":
+        return `rgb(213, 231, 232)`
+      case "Contentieux de la famille":
+        return `rgb(208, 226, 242)`
+      case "Contentieux de la protection":
+        return `rgb(208, 222, 242)`
+      case "Contentieux civil non spécialisé":
+        return `rgb(213, 216, 235)`
+      case "Contentieux commercial":
+        return `rgb(190, 224, 230)`
+      case "Attributions du PP":
+        return `rgb(255, 248, 214)`
+      case "Contentieux civil JLD":
+        return `rgb(217, 211, 237)`
+      case "Contentieux des mineurs":
+        return `rgb(227, 211, 237)`
+      case "Instruction et entraide":
+        return `rgb(250, 221, 212)`
+      case "Correctionnel":
+        return `rgb(245, 214, 213)`
+      case "Contentieux criminel":
+        return `rgb(255, 235, 214)`
+      case "Application des peines":
+        return `rgb(255, 227, 212)`
+      case "Autres activités":
+        return `rgb(215, 217, 219)`
+    }
+  } else {
+    switch (name) {
+      case "Contentieux social":
+        return `rgba(1, 131, 143, ${opacity})`
+      case "Contentieux de la famille":
+        return `rgba(0, 118, 191, ${opacity})`
+      case "Contentieux de la protection":
+        return `rgba(21, 100, 191, ${opacity})`
+      case "Contentieux civil non spécialisé":
+        return `rgba(39, 52, 145, ${opacity})`
+      case "Contentieux commercial":
+        return `rgba(37, 190, 207, ${opacity})`
+      case "Attributions du PP":
+        return `rgba(250, 202, 12, ${opacity})`
+      case "Contentieux civil JLD":
+        return `rgba(70, 37, 161, ${opacity})`
+      case "Contentieux des mineurs":
+        return `rgba(104, 26, 153, ${opacity})`
+      case "Instruction et entraide":
+        return `rgba(214, 65, 19, ${opacity})`
+      case "Correctionnel":
+        return `rgba(196, 39, 39, ${opacity})`
+      case "Contentieux criminel":
+        return `rgba(255, 145, 0, ${opacity})`
+      case "Application des peines":
+        return `rgba(240, 108, 0, ${opacity})`
+      case "Autres activités":
+        return `rgba(100, 100, 100, ${opacity})`
+    }
   }
 
   return ''
@@ -164,35 +225,68 @@ export function referentielMappingColorActivity(
   name: string,
   opacity: number = 1
 ): string {
-  switch (name) {
-    case 'Autres activités':
-      return `rgba(66, 66, 66, ${opacity})`
-    case 'Indisponibilité':
-      return `rgba(55, 71, 79, ${opacity})`
-    case 'Pénal':
-      return `rgba(245, 214, 213, ${opacity})`
-    case 'JAF':
-      return `rgba(210, 227, 243, ${opacity})`
-    case 'Social':
-      return `rgba(212, 230, 232, ${opacity})`
-    case 'JCP':
-      return `rgba(210, 224, 243, ${opacity})`
-    case 'JE':
-      return `rgba(225, 210, 236, ${opacity})`
-    case 'Civil NS':
-      return `rgba(213, 216, 233, ${opacity})`
-    case "JI":
-      return `rgba(249, 219, 210, ${opacity})`
-    case 'JLD Civil':
-      return `rgba(218, 212, 237, ${opacity})`
-    case 'JAP':
-      return `rgba(253, 226, 211, ${opacity})`
-    case 'JLD pénal':
-      return `rgba(254, 234, 212, ${opacity})`
-    case 'JLD civil':
-      return `rgba(218, 212, 237, ${opacity})`
-    case 'other':
-      return '#d8dadc'
+  if (opacity === OPACITY_20) {
+    switch (name) {
+      case 'Autres activités':
+        return `rgb(215, 217, 219)`
+      case 'Indisponibilité':
+        return `rgb(55, 71, 79)`
+      case 'Pénal':
+        return `rgb(245, 214, 213)`
+      case 'JAF':
+        return `rgb(208, 226, 242)`
+      case 'Social':
+        return `rgb(213, 231, 232)`
+      case 'JCP':
+        return `rgb(208, 222, 242)`
+      case 'JE':
+        return `rgb(227, 211, 237)`
+      case 'Civil NS':
+        return `rgb(213, 216, 235)`
+      case "JI":
+        return `rgb(250, 221, 212)`
+      case 'JLD Civil':
+        return `rgb(217, 211, 237)`
+      case 'JAP':
+        return `rgb(255, 227, 212)`
+      case 'JLD pénal':
+        return `rgb(255, 235, 214)`
+      case 'JLD civil':
+        return `rgb(217, 211, 237)`
+      case 'other':
+        return '#d8dadc'
+    }
+  } else {
+    switch (name) {
+      case 'Autres activités':
+        return `rgba(66, 66, 66, ${opacity})`
+      case 'Indisponibilité':
+        return `rgba(55, 71, 79, ${opacity})`
+      case 'Pénal':
+        return `rgba(199, 40, 40, ${opacity})`
+      case 'JAF':
+        return `rgba(2, 120, 189, ${opacity})`
+      case 'Social':
+        return `rgba(1, 131, 143, ${opacity})`
+      case 'JCP':
+        return `rgba(21, 100, 191, ${opacity})`
+      case 'JE':
+        return `rgba(105, 28, 153, ${opacity})`
+      case 'Civil NS':
+        return `rgba(40, 53, 148, ${opacity})`
+      case "JI":
+        return `rgba(217, 66, 20, ${opacity})`
+      case 'JLD Civil':
+        return `rgba(69, 39, 161, ${opacity})`
+      case 'JAP':
+        return `rgba(240, 108, 0, ${opacity})`
+      case 'JLD pénal':
+        return `rgba(255, 145, 0, ${opacity})`
+      case 'JLD civil':
+        return `rgba(69, 39, 161, ${opacity})`
+      case 'other':
+        return '#d8dadc'
+    }
   }
 
   return ''
@@ -207,35 +301,64 @@ export function referentielMappingColorCAActivity(
   name: string,
   opacity: number = 1
 ): string {
-  switch (name) {
-    case "Contentieux social":
-      return `rgba(66, 66, 66, ${opacity})`
-    case "Contentieux de la famille":
-      return `rgba(55, 71, 79, ${opacity})`
-    case "Contentieux de la protection":
-      return `rgba(198, 40, 40, ${opacity})`
-    case "Contentieux civil non spécialisé":
-      return `rgba(2, 119, 189, ${opacity})`
-    case "Contentieux de la protection":
-      return `rgba(0, 131, 143, ${opacity})`
-    case "Contentieux commercial":
-      return `rgba(21, 101, 192, ${opacity})`
-    case "Attributions du PP":
-      return `rgba(106, 27, 154, ${opacity})`
-    case "Contentieux civil JLD":
-      return `rgba(40, 53, 147, ${opacity})`
-    case "Contentieux des mineurs":
-      return `rgba(216, 67, 21, ${opacity})`
-    case "Instruction et entraide":
-      return `rgba(69, 39, 160, ${opacity})`
-    case "Correctionnel":
-      return `rgba(239, 108, 0, ${opacity})`
-    case "Contentieux criminel":
-      return `rgba(255, 143, 0, ${opacity})`
-    case "Application des peines":
-      return `rgba(69, 39, 160, ${opacity})`
-    case "Autres activités":
-      return `rgba(100, 100, 100, ${opacity})`
+  if (opacity === OPACITY_20) {
+    switch (name) {
+      case "Social":
+        return `rgb(213, 231, 232)`
+      case "Famille":
+        return `rgb(208, 226, 242)`
+      case "CTX JCP":
+        return `rgb(208, 222, 242)`
+      case "Civil Ns":
+        return `rgb(213, 216, 235)`
+      case "Comm.":
+        return `rgb(190, 224, 230)`
+      case "PP":
+        return `rgb(255, 248, 214)`
+      case "Jld Civil":
+        return `rgb(217, 211, 237)`
+      case "Mineurs":
+        return `rgb(227, 211, 237)`
+      case "CHINS":
+        return `rgb(250, 221, 212)`
+      case "CHAC":
+        return `rgb(245, 214, 213)`
+      case "Crim.":
+        return `rgb(255, 235, 214)`
+      case "CHAP":
+        return `rgb(255, 227, 212)`
+      case "Autres":
+        return `rgb(215, 217, 219)`
+    }
+  } else {
+    switch (name) {
+      case "Social":
+        return `rgba(1, 131, 143, ${opacity})`
+      case "Famille":
+        return `rgba(0, 118, 191, ${opacity})`
+      case "CTX JCP":
+        return `rgba(21, 100, 191, ${opacity})`
+      case "Civil Ns":
+        return `rgba(39, 52, 145, ${opacity})`
+      case "Comm.":
+        return `rgba(37, 190, 207, ${opacity})`
+      case "PP":
+        return `rgba(250, 202, 12, ${opacity})`
+      case "Jld Civil":
+        return `rgba(70, 37, 161, ${opacity})`
+      case "Mineurs":
+        return `rgba(104, 26, 153, ${opacity})`
+      case "CHINS":
+        return `rgba(214, 65, 19, ${opacity})`
+      case "CHAC":
+        return `rgba(196, 39, 39, ${opacity})`
+      case "Crim.":
+        return `rgba(255, 145, 0, ${opacity})`
+      case "CHAP":
+        return `rgba(240, 108, 0, ${opacity})`
+      case "Autres":
+        return `rgba(100, 100, 100, ${opacity})`
+    }
   }
 
   return ''

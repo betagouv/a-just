@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core'
 import { sumBy } from 'lodash'
+import { OPACITY_20 } from 'src/app/constants/colors'
 import { DDG_REFERENTIELS_EAM, DDG_REFERENTIELS_EAM_CA, DDG_REFERENTIELS_GREFFE, DDG_REFERENTIELS_GREFFE_CA, DDG_REFERENTIELS_MAG, DDG_REFERENTIELS_MAG_CA, REFERENTIELS_CANT_UPDATED, getReferentielCADetail, getReferentielDetail } from 'src/app/constants/referentiel'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
@@ -108,6 +109,10 @@ export class PanelActivitiesComponent
   * Detail du référentiel survolé
   */
   hoveredReferentielDetail: string | null = null
+  /**
+   * Opacité du background des contentieux
+   */
+  OPACITY = OPACITY_20
 
   /**
    * Constructeur
