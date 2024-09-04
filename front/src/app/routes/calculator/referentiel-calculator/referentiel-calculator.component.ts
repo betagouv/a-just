@@ -1,4 +1,10 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  HostBinding,
+  Input,
+  OnInit,
+} from '@angular/core'
 import { CALCULATOR_OPEN_CONTENTIEUX } from 'src/app/constants/log-codes'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
@@ -23,7 +29,10 @@ import {
   templateUrl: './referentiel-calculator.component.html',
   styleUrls: ['./referentiel-calculator.component.scss'],
 })
-export class ReferentielCalculatorComponent extends MainClass {
+export class ReferentielCalculatorComponent
+  extends MainClass
+  implements AfterViewInit
+{
   /**
    * Un item de la liste du calculateur
    */
@@ -74,17 +83,6 @@ export class ReferentielCalculatorComponent extends MainClass {
   ) {
     super()
 
-    if (this.maxDateSelectionDate === null) {
-      this.activitiesService.getLastMonthActivities().then((date) => {
-        if (date === null) {
-          date = new Date()
-        }
-        date = new Date(date ? date : '')
-        const max = month(date, 0, 'lastday')
-        this.maxDateSelectionDate = max
-      })
-    }
-
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
@@ -101,6 +99,21 @@ export class ReferentielCalculatorComponent extends MainClass {
     this.watcherDestroy()
   }
 
+  /**
+   * Initialisation de valeur par défaut
+   */
+  ngAfterViewInit() {
+    if (this.maxDateSelectionDate === null) {
+      this.activitiesService.getLastMonthActivities().then((date) => {
+        if (date === null) {
+          date = new Date()
+        }
+        date = new Date(date ? date : '')
+        const max = month(date, 0, 'lastday')
+        this.maxDateSelectionDate = max
+      })
+    }
+  }
   /**
    * Switch la visibilité des enfants
    */
