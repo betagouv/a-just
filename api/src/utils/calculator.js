@@ -82,15 +82,27 @@ export const emptyCalulatorValues = (referentiels) => {
  * @param {*} optionsBackups
  * @returns
  */
-export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups) => {
+export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens) => {
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
-    const childrens = (list[i].childrens || []).map((c) => ({
-      ...c,
-      nbMonth,
-      ...getActivityValues(dateStart, dateStop, prefiltersActivities[c.contentieux.id] || [], c.contentieux.id, nbMonth, hr, categories, optionsBackups),
-    }))
+    const childrens = !loadChildrens
+      ? []
+      : (list[i].childrens || []).map((c) => ({
+        ...c,
+        nbMonth,
+        ...getActivityValues(
+          dateStart,
+          dateStop,
+          prefiltersActivities[c.contentieux.id] || [],
+          c.contentieux.id,
+          nbMonth,
+          hr,
+          categories,
+          optionsBackups,
+          false
+        ),
+      }))
 
     list[i] = {
       ...list[i],
@@ -124,8 +136,16 @@ export const syncCalculatorDatas = (list, nbMonth, activities, dateStart, dateSt
  * @param {*} optionsBackups
  * @returns
  */
-const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups) => {
-  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(dateStart, dateStop, activities, referentielId, hr, categories, false)
+const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups, loadDetails = true) => {
+  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
+    dateStart,
+    dateStop,
+    activities,
+    referentielId,
+    hr,
+    categories,
+    loadDetails
+  )
 
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
 
@@ -179,22 +199,44 @@ const getActivityValues = (dateStart, dateStop, activities, referentielId, nbMon
   return {
     ...calculateActivities(referentielId, totalIn, lastStock, etpMag, etpFon, optionsBackups),
     // entrée sorties et taux de couverture moyen sur la période avec stock de fin
-    totalIn, totalOut, lastStock, realCoverage,
+    totalIn,
+    totalOut,
+    lastStock,
+    realCoverage,
     // DTES début (Start) et DTES fin
-    realDTESInMonthsStart, realDTESInMonths,
+    realDTESInMonthsStart,
+    realDTESInMonths,
     // TMD magistrat et fonctionnaire
-    magRealTimePerCase, fonRealTimePerCase,
+    magRealTimePerCase,
+    fonRealTimePerCase,
     // ETP moyen sur la période
-    etpMag, etpFon, etpCont, etpAffected,
+    etpMag,
+    etpFon,
+    etpCont,
+    etpAffected,
     // Valeurs de début de période (Bf = Before)
-    totalInBf, totalOutBf, lastStockBf, realCoverageBf, etpAffectedBf, etpMagBf, etpFonBf, etpContBf,
+    totalInBf,
+    totalOutBf,
+    lastStockBf,
+    realCoverageBf,
+    etpAffectedBf,
+    etpMagBf,
+    etpFonBf,
+    etpContBf,
     // Valeurs de fin de période (Af = After)
-    lastStockAf, totalInAf, totalOutAf, realCoverageAf, etpAffectedAf, etpMagAf, etpFonAf, etpContAf,
+    lastStockAf,
+    totalInAf,
+    totalOutAf,
+    realCoverageAf,
+    etpAffectedAf,
+    etpMagAf,
+    etpFonAf,
+    etpContAf,
   }
 }
 
 /**
- * 
+ *
  */
 const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr, categories, computeAll) => {
   /**
@@ -250,7 +292,9 @@ const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr,
 
     // Clone de l'objet activities et filtre par date
     let activitesStart = cloneDeep(activities)
-    activitesStart = activitesStart.filter((a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime())
+    activitesStart = activitesStart.filter(
+      (a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime()
+    )
 
     // Calcul des sorties moyennes 12 derniers mois à compter de la date de début selectionnée dans le calculateur
     meanOutBf = (activitesStart || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesStart, 'sorties') / 12 : null
@@ -264,7 +308,20 @@ const getLastTwelveMonths = (dateStart, dateStop, activities, referentielId, hr,
       }
     }
   }
-  return { meanOutCs, etpMagCs, etpFonCs, startCs, endCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf: lastStockCs, totalInAf: totalInCs, totalOutAf: totalOutCs }
+  return {
+    meanOutCs,
+    etpMagCs,
+    etpFonCs,
+    startCs,
+    endCs,
+    meanOutBf,
+    lastStockBf,
+    totalInBf,
+    totalOutBf,
+    lastStockAf: lastStockCs,
+    totalInAf: totalInCs,
+    totalOutAf: totalOutCs,
+  }
 }
 /**
  * Calcul d'un taux de ventilation d'un contentieux pour tous les utilisateurs
