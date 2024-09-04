@@ -1202,152 +1202,158 @@ export class CalculatorPage
           ],
         })
 
-        const value2ETPTSiege: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.etpMag)
-        const variationsETPTSiege = getVariations(
-          value2ETPTSiege,
-          value1ETPTSiege
-        )
-        list.push({
-          title: 'ETPT Siège',
-          type: 'verticals-lines',
-          description: '-',
-          lineMax:
-            Math.max(
-              ...value1ETPTSiege.map((m) => m || 0),
-              ...value2ETPTSiege.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTSiege.map((v, index) => [
-            v || 0,
-            value2ETPTSiege[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTSiege,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTSiege,
-              /*graph: {
+        if (this.canViewMagistrat) {
+          const value2ETPTSiege: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpMag)
+          const variationsETPTSiege = getVariations(
+            value2ETPTSiege,
+            value1ETPTSiege
+          )
+          list.push({
+            title: 'ETPT Siège',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTSiege.map((m) => m || 0),
+                ...value2ETPTSiege.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTSiege.map((v, index) => [
+              v || 0,
+              value2ETPTSiege[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTSiege,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTSiege,
+                /*graph: {
                 type: 'ETPTSiege',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('magistrat', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTSiege,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTSiege,
+                /*graph: {
                 type: 'ETPTSiege',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('magistrat', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
 
-        const value2ETPTGreffe: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.etpFon)
-        const variationsETPTGreffe = getVariations(
-          value2ETPTGreffe,
-          value1ETPTGreffe
-        )
-        list.push({
-          title: 'ETPT Greffe',
-          type: 'verticals-lines',
-          description: '-',
-          lineMax:
-            Math.max(
-              ...value1ETPTGreffe.map((m) => m || 0),
-              ...value2ETPTGreffe.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTGreffe.map((v, index) => [
-            v || 0,
-            value2ETPTGreffe[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTGreffe,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTGreffe,
-              /*graph: {
+        if (this.canViewGreffier) {
+          const value2ETPTGreffe: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpFon)
+          const variationsETPTGreffe = getVariations(
+            value2ETPTGreffe,
+            value1ETPTGreffe
+          )
+          list.push({
+            title: 'ETPT Greffe',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTGreffe.map((m) => m || 0),
+                ...value2ETPTGreffe.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTGreffe.map((v, index) => [
+              v || 0,
+              value2ETPTGreffe[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTGreffe,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTGreffe,
+                /*graph: {
                 type: 'ETPTGreffe',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('greffe', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTGreffe,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTGreffe,
+                /*graph: {
                 type: 'ETPTGreffe',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('greffe', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
 
-        const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) => d.etpCont
-        )
-        const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
-        list.push({
-          title: 'ETPT EAM',
-          type: 'verticals-lines',
-          description: '-',
-          lineMax:
-            Math.max(
-              ...value1ETPTEam.map((m) => m || 0),
-              ...value2ETPTEam.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTEam.map((v, index) => [
-            v || 0,
-            value2ETPTEam[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTEam,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTEam,
-              /*graph: {
+        if (this.canViewContractuel) {
+          const value2ETPTEam: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpCont)
+          const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
+          list.push({
+            title: 'ETPT EAM',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTEam.map((m) => m || 0),
+                ...value2ETPTEam.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTEam.map((v, index) => [
+              v || 0,
+              value2ETPTEam[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTEam,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTEam,
+                /*graph: {
                 type: 'ETPTEam',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('eam', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTEam,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTEam,
+                /*graph: {
                 type: 'ETPTEam',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('eam', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
       } else {
         const refSelected = this.backups.find((b) => b.selected)
         if (!refSelected) {
