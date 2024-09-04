@@ -7,7 +7,11 @@ import { HumanResourceService } from 'src/app/services/human-resource/human-reso
 import { KPIService } from 'src/app/services/kpi/kpi.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
+import {
+  userCanViewContractuel,
+  userCanViewGreffier,
+  userCanViewMagistrat,
+} from 'src/app/utils/user'
 
 /**
  * Composant de la page en vue analytique
@@ -18,7 +22,10 @@ import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } fro
   templateUrl: './view-analytics.component.html',
   styleUrls: ['./view-analytics.component.scss'],
 })
-export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestroy {
+export class ViewAnalyticsComponent
+  extends MainClass
+  implements OnInit, OnDestroy
+{
   /**
    * Référentiel
    */
@@ -106,8 +113,8 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    private kpiService:KPIService,
-    private userService:UserService
+    private kpiService: KPIService,
+    private userService: UserService
   ) {
     super()
   }
@@ -128,7 +135,8 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
         this.canViewContractuel = userCanViewContractuel(u)
-      }))
+      })
+    )
   }
 
   /**
@@ -139,39 +147,75 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   }
 
   ngOnChanges() {
-    const allDTES = [...this.datasFilted.map(d => (d.realDTESInMonthsStart || 0)), ...this.datasFilted.map(d => (d.realDTESInMonths || 0))]
+    const list = [...this.datasFilted].filter(
+      (r) =>
+        this.referentielService.idsIndispo.indexOf(r.contentieux.id) === -1 &&
+        this.referentielService.idsSoutien.indexOf(r.contentieux.id) === -1
+    )
+
+    const allDTES = [
+      ...list.map((d) => d.realDTESInMonthsStart || 0),
+      ...list.map((d) => d.realDTESInMonths || 0),
+    ]
     this.dtesMax = (Math.max(...allDTES) || 0) * 1.1
-    const allStocks = [...this.datasFilted.map(d => (d.lastStock || 0)), ...this.datasFilted.map(d => (d.lastStockBf || 0)), ...this.datasFilted.map(d => (d.lastStockAf || 0))]
+    const allStocks = [
+      ...list.map((d) => d.lastStock || 0),
+      ...list.map((d) => d.lastStockBf || 0),
+      ...list.map((d) => d.lastStockAf || 0),
+    ]
     this.stockMax = (Math.max(...allStocks) || 0) * 1.1
-    const allEntrees = [...this.datasFilted.map(d => (d.totalIn || 0)), ...this.datasFilted.map(d => (d.totalInBf || 0)), ...this.datasFilted.map(d => (d.totalInAf || 0))]
+    const allEntrees = [
+      ...list.map((d) => d.totalIn || 0),
+      ...list.map((d) => d.totalInBf || 0),
+      ...list.map((d) => d.totalInAf || 0),
+    ]
     this.entreesMax = (Math.max(...allEntrees) || 0) * 1.1
-    const allSorties = [...this.datasFilted.map(d => (d.totalOut || 0)), ...this.datasFilted.map(d => (d.totalOutBf || 0)), ...this.datasFilted.map(d => (d.totalOutAf || 0))]
+    const allSorties = [
+      ...list.map((d) => d.totalOut || 0),
+      ...list.map((d) => d.totalOutBf || 0),
+      ...list.map((d) => d.totalOutAf || 0),
+    ]
     this.sortiesMax = (Math.max(...allSorties) || 0) * 1.1
-    const allSeges = [...this.datasFilted.map(d => (d.etpMag || 0)), ...this.datasFilted.map(d => (d.etpMagBf || 0)), ...this.datasFilted.map(d => (d.etpMagAf || 0))]
+    const allSeges = [
+      ...list.map((d) => d.etpMag || 0),
+      ...list.map((d) => d.etpMagBf || 0),
+      ...list.map((d) => d.etpMagAf || 0),
+    ]
     this.siegeMax = (Math.max(...allSeges) || 0) * 1.1
-    const allGreffes = [...this.datasFilted.map(d => (d.etpFon || 0)), ...this.datasFilted.map(d => (d.etpFonBf || 0)), ...this.datasFilted.map(d => (d.etpFonAf || 0))]
+    const allGreffes = [
+      ...list.map((d) => d.etpFon || 0),
+      ...list.map((d) => d.etpFonBf || 0),
+      ...list.map((d) => d.etpFonAf || 0),
+    ]
     this.greffeMax = (Math.max(...allGreffes) || 0) * 1.1
-    const allEAM = [...this.datasFilted.map(d => (d.etpCont || 0)), ...this.datasFilted.map(d => (d.etpContBf || 0)), ...this.datasFilted.map(d => (d.etpContAf || 0))]
+    const allEAM = [
+      ...list.map((d) => d.etpCont || 0),
+      ...list.map((d) => d.etpContBf || 0),
+      ...list.map((d) => d.etpContAf || 0),
+    ]
     this.eamMax = (Math.max(...allEAM) || 0) * 1.1
   }
 
-  onUpdateMax({ type, max }: { type: string, max: number }) {
+  onUpdateMax({ type, max }: { type: string; max: number }) {
     max = max * 1.1
     switch (type) {
       case 'stock': {
         if (this.stockMax < max) {
-          this.stockMax = max;
-        } return
+          this.stockMax = max
+        }
+        return
       }
       case 'entrees': {
         if (this.entreesMax < max) {
-          this.entreesMax = max;
-        } return
+          this.entreesMax = max
+        }
+        return
       }
       case 'sorties': {
         if (this.sortiesMax < max) {
-          this.sortiesMax = max;
-        } return
+          this.sortiesMax = max
+        }
+        return
       }
     }
   }
@@ -190,40 +234,41 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   openAll() {
     let checker = this.checkAllDataShow()
     if (checker) {
-      this.showDetailCover = false;
-      this.showDetailStock = false;
-      this.showDetailEntrees = false;
-      this.showDetailSorties = false;
-      this.showDetailETPTSiege = false;
-      this.showDetailETPTGreffe = false;
-      this.showDetailETPTEam = false;
-    }
-    else {
-      this.showDetailCover = true;
-      this.showDetailStock = true;
-      this.showDetailEntrees = true;
-      this.showDetailSorties = true;
-      this.showDetailETPTSiege = true;
-      this.showDetailETPTGreffe = true;
-      this.showDetailETPTEam = true;
-      this.logOpenDetails();
+      this.showDetailCover = false
+      this.showDetailStock = false
+      this.showDetailEntrees = false
+      this.showDetailSorties = false
+      this.showDetailETPTSiege = false
+      this.showDetailETPTGreffe = false
+      this.showDetailETPTEam = false
+    } else {
+      this.showDetailCover = true
+      this.showDetailStock = true
+      this.showDetailEntrees = true
+      this.showDetailSorties = true
+      this.showDetailETPTSiege = true
+      this.showDetailETPTGreffe = true
+      this.showDetailETPTEam = true
+      this.logOpenDetails()
     }
   }
 
   checkAllDataShow() {
-    let valueToCheck = [this.showDetailCover,
-    this.showDetailStock,
-    this.showDetailEntrees,
-    this.showDetailSorties,
-    this.showDetailETPTSiege,
-    this.showDetailETPTGreffe,
-    this.showDetailETPTEam]
+    let valueToCheck = [
+      this.showDetailCover,
+      this.showDetailStock,
+      this.showDetailEntrees,
+      this.showDetailSorties,
+      this.showDetailETPTSiege,
+      this.showDetailETPTGreffe,
+      this.showDetailETPTEam,
+    ]
 
-    return valueToCheck.every((v: boolean) => v === true);
+    return valueToCheck.every((v: boolean) => v === true)
   }
 
-  logOpenDetails(open:boolean = true){
-    if (open===true)
-      this.kpiService.register(CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW,'')
+  logOpenDetails(open: boolean = true) {
+    if (open === true)
+      this.kpiService.register(CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW, '')
   }
 }

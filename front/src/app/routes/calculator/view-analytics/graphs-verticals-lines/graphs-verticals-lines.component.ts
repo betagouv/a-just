@@ -125,7 +125,6 @@ export class GraphsVerticalsLinesComponent
   ngOnInit() {
     this.watch(
       this.width$.subscribe((w) => {
-        console.log('on w', w)
         this.width = w
         this.draw()
         this.drawMultiple()
@@ -178,7 +177,7 @@ export class GraphsVerticalsLinesComponent
         })
     }
 
-    if (changes['maxValue']) {
+    if (changes['maxValue'] || changes['showLines']) {
       this.draw()
     }
   }
@@ -201,41 +200,47 @@ export class GraphsVerticalsLinesComponent
       canvas.height = this.height
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, this.width * 200, this.height * 200)
-      ctx.beginPath()
 
-      const line: number[] = this.line.getValue().map((v) => v || 0)
+      if (this.showLines) {
+        ctx.beginPath()
 
-      if (this.showLines && line.length >= 2) {
-        this.updateMax.emit({ type: this.type, max: Math.max(...line) || 0 })
+        const line: number[] = this.line.getValue().map((v) => v || 0)
 
-        ctx.strokeStyle = this.referentielMappingColor(this.referentielName)
-        ctx.setLineDash([2])
-        ctx.lineWidth = 1
-        ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue))
-        for (let i = 1; i < line.length; i++) {
-          ctx.lineTo(
-            this.width * ((1 / (line.length - 1)) * i),
-            this.height * (1 - line[i] / this.maxValue)
+        if (this.showLines && line.length >= 2) {
+          this.updateMax.emit({ type: this.type, max: Math.max(...line) || 0 })
+
+          ctx.strokeStyle = this.referentielMappingColor(this.referentielName)
+          ctx.setLineDash([2])
+          ctx.lineWidth = 1
+          ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue))
+          for (let i = 1; i < line.length; i++) {
+            ctx.lineTo(
+              this.width * ((1 / (line.length - 1)) * i),
+              this.height * (1 - line[i] / this.maxValue)
+            )
+          }
+          ctx.stroke()
+
+          // Create path
+          let region = new Path2D()
+          region.moveTo(0, this.height * (1 - line[0] / this.maxValue))
+          for (let i = 1; i < line.length; i++) {
+            region.lineTo(
+              this.width * ((1 / (line.length - 1)) * i),
+              this.height * (1 - line[i] / this.maxValue)
+            )
+          }
+          region.lineTo(this.width, this.height)
+          region.lineTo(0, this.height)
+          region.closePath()
+
+          // Fill path
+          ctx.fillStyle = this.referentielMappingColor(
+            this.referentielName,
+            0.6
           )
+          ctx.fill(region, 'evenodd')
         }
-        ctx.stroke()
-
-        // Create path
-        let region = new Path2D()
-        region.moveTo(0, this.height * (1 - line[0] / this.maxValue))
-        for (let i = 1; i < line.length; i++) {
-          region.lineTo(
-            this.width * ((1 / (line.length - 1)) * i),
-            this.height * (1 - line[i] / this.maxValue)
-          )
-        }
-        region.lineTo(this.width, this.height)
-        region.lineTo(0, this.height)
-        region.closePath()
-
-        // Fill path
-        ctx.fillStyle = this.referentielMappingColor(this.referentielName, 0.6)
-        ctx.fill(region, 'evenodd')
       }
     }
   }
