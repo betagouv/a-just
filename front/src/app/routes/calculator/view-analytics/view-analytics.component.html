@@ -32,11 +32,11 @@
             datasFilted[index].realDTESInMonths || 0
           ]" [maxValue]="dtesMax" type="dtes" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <aj-graphs-numbers [referentielName]="ref.label"
-                    [title]="'' + (datasFilted[index].realDTESInMonthsStart || 0)" subTitle="mois"
+                    title="{{(datasFilted[index].realDTESInMonthsStart || 0) | number:'0.2'}}" subTitle="mois"
                     class="no-border-bottom"></aj-graphs-numbers>
                 <aj-graphs-numbers [referentielName]="ref.label"
-                    [title]="'' + (datasFilted[index].realDTESInMonths || 0)" subTitle="mois" [isWhite]="true"
-                    class="no-border-top"></aj-graphs-numbers>
+                    title="{{(datasFilted[index].realDTESInMonths || 0) | number:'0.2'}}" subTitle="mois"
+                    [isWhite]="true" class="no-border-top"></aj-graphs-numbers>
             </div>
         </div>
     </div>
@@ -262,18 +262,18 @@
                     type="ETPTSiege" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTSiege">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpMag || 0)" class="text-center"
+                        title="{{fixDecimal(datasFilted[index].etpMag || 0) | number:'0.2'}}" class="text-center"
                         [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTSiege">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpMag || 0)" class="text-center no-border-bottom"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{fixDecimal(datasFilted[index].etpMag || 0) | number:'0.2'}}"
+                        class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpMagBf || 0)"
+                        title="{{fixDecimal(datasFilted[index].etpMagBf || 0) | number:'0.2'}}"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpMagAf || 0)"
+                        title="{{fixDecimal(datasFilted[index].etpMagAf || 0) | number:'0.2'}}"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -317,18 +317,18 @@
                     (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTGreffe">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpFon || 0)" class="text-center"
+                        title="{{fixDecimal(datasFilted[index].etpFon || 0) | number:'0.2'}}" class="text-center"
                         [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTGreffe">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpFon || 0)" class="text-center no-border-bottom"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{fixDecimal(datasFilted[index].etpFon || 0) | number:'0.2'}}"
+                        class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpFonBf || 0)"
+                        title="{{fixDecimal(datasFilted[index].etpFonBf || 0) | number:'0.2'}}"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpFonAf || 0)"
+                        title="{{fixDecimal(datasFilted[index].etpFonAf || 0) | number:'0.2'}}"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -370,18 +370,18 @@
                     type="ETPTEam" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTEam">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpCont || 0)" class="text-center"
+                        title="{{fixDecimal(datasFilted[index].etpCont || 0) | number:'0.2'}}" class="text-center"
                         [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTEam">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpCont || 0)" class="text-center no-border-bottom"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{fixDecimal(datasFilted[index].etpCont || 0) | number:'0.2'}}"
+                        class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpContBf || 0)"
+                        title="{{fixDecimal(datasFilted[index].etpContBf || 0) | number:'0.2'}}"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpContAf || 0)"
+                        title="{{fixDecimal(datasFilted[index].etpContAf || 0) | number:'0.2'}}"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
