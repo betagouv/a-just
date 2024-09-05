@@ -5,7 +5,7 @@ import { getNbMonth, month } from '../utils/date'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { EXECUTE_CALCULATOR, EXECUTE_CALCULATOR_CHANGE_DATE } from '../constants/log-codes'
+import { EXECUTE_CALCULATOR } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { sumBy } from 'lodash'
@@ -121,11 +121,11 @@ export default class RouteCalculator extends Route {
     console.timeEnd('calculator-6-2')
 
     console.time('calculator-7')
-    const activities = await this.models.Activities.getAll(backupId)
+    const activities = await this.models.Activities.getAll(backupId, !loadChildrens ? referentiels.map((r) => r.id) : null)
     console.timeEnd('calculator-7')
 
     console.time('calculator-8')
-    list = syncCalculatorDatas(list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
+    list = syncCalculatorDatas(this.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
 
     const cleanDataToSent = (item) => ({
       ...item,

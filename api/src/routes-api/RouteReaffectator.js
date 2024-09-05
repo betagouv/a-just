@@ -75,7 +75,7 @@ export default class RouteReaffectator extends Route {
 
         return {
           originalLabel: category.label,
-          allHr: allHr.filter(h => h.category.id === category.id), // force to filter by actual category
+          allHr: allHr.filter((h) => h.category.id === category.id), // force to filter by actual category
           categoryId: category.id,
           referentiel,
         }
