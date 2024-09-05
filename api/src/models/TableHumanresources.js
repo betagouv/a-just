@@ -4,13 +4,63 @@ import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
 import { today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
+import { cloneDeep } from 'lodash'
 
 /**
  * Cache des juridicitions avec leurs magistrats
  */
 let cacheJuridictionPeoples = {}
+/**
+ * Cache des agents
+ */
+let cacheAgents = {}
 
 export default (sequelizeInstance, Model) => {
+  /**
+   * Cache d'un agent
+   * @param {*} agentId
+   * @returns
+   */
+  Model.cacheAgent = (agentId, node) => {
+    if (node && typeof node !== 'string') {
+      node = JSON.stringify(node)
+    }
+
+    if (node && cacheAgents[agentId]) {
+      return cacheAgents[agentId][node]
+    }
+
+    return cacheAgents[agentId]
+  }
+
+  /**
+   * Update cache d'un agent
+   * @param {*} agentId
+   * @returns
+   */
+  Model.updateCacheAgent = (agentId, node, values) => {
+    if (node && typeof node !== 'string') {
+      node = JSON.stringify(node)
+    }
+
+    if (!cacheAgents[agentId]) {
+      cacheAgents[agentId] = {}
+    }
+
+    cacheAgents[agentId][node] = cloneDeep(values)
+  }
+
+  /**
+   * remove cache d'un agent
+   * @param {*} agentId
+   * @returns
+   */
+  Model.removeCacheAgent = (agentId) => {
+    if (cacheAgents[agentId]) {
+      delete cacheAgents[agentId]
+    }
+  }
+
   /**
    * Chargement des juridictions
    */
@@ -29,6 +79,8 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    */
   Model.removeCacheByUser = async (humanId, backupId) => {
+    Model.removeCacheAgent(humanId)
+
     const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === humanId)
 
     if (cacheJuridictionPeoples[backupId] && index !== -1) {
@@ -41,6 +93,8 @@ export default (sequelizeInstance, Model) => {
    * @param {*} human
    */
   Model.updateCacheByUser = async (human) => {
+    Model.removeCacheAgent(human.id)
+
     const backupId = human.backupId
     const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === human.id)
 
@@ -265,7 +319,7 @@ export default (sequelizeInstance, Model) => {
         if (findFonction) {
           situation.fonction_id = findFonction.id
         } else if (statut === 'Magistrat' || notImported.includes(code)) {
-          console.log("code no imported=>", code, statut)
+          console.log('code no imported=>', code, statut)
           // dont save this profil
           importSituation.push(list[i].nom_usage + ' no add by fonction ')
           continue
@@ -344,12 +398,10 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-
     // remove cache
     cacheJuridictionPeoples = {}
     Model.onPreload()
     console.log('IMPORT!:', importSituation)
-
   }
 
   /**

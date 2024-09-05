@@ -7,14 +7,14 @@ import { getHRVentilation } from '../utils/calculator'
 /**
  * Exception relevés par madame De Jong - statistitienne de Lyon
  */
-export const exceptionMadameDeJong = ["CONT A JP", "CONT B JP", "CONT C JP"]
+export const exceptionMadameDeJong = ['CONT A JP', 'CONT B JP', 'CONT C JP']
 /**
  * Tri par catégorie et par fonction
  * @param {*} a
  * @param {*} b
  * @returns boolean
  */
-export function sortByCatAndFct(a, b) {
+export function sortByCatAndFct (a, b) {
   if (a['Catégorie'] === b['Catégorie']) {
     return a.Fonction < b.Fonction ? -1 : 1
   } else {
@@ -27,7 +27,7 @@ export function sortByCatAndFct(a, b) {
  * @param {*} flatReferentielsList
  * @returns
  */
-export function emptyRefObj(flatReferentielsList) {
+export function emptyRefObj (flatReferentielsList) {
   let obj = { ...JSON.parse(JSON.stringify({})) }
   flatReferentielsList.map((referentiel) => {
     if (referentiel.childrens !== undefined) {
@@ -109,10 +109,10 @@ export const getIndispoDetails = (referentiels) => {
     idsMainIndispo = refIndispo.id
     allIndispRef.push(refIndispo)
     idsIndispo.push(refIndispo.id)
-      ; (refIndispo.childrens || []).map((c) => {
-        idsIndispo.push(c.id)
-        allIndispRef.push(c)
-      })
+    ;(refIndispo.childrens || []).map((c) => {
+      idsIndispo.push(c.id)
+      allIndispRef.push(c)
+    })
   }
 
   const allIndispRefIds = allIndispRef.map(function (obj) {
@@ -237,7 +237,7 @@ export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
   return nbDay
 }
 
-export const computeExtractDdg = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
+export const computeExtractDdg = async (models, allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let onglet2 = []
 
   console.time('extractor-7.1')
@@ -263,7 +263,6 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
       let CETTotalEtp = 0
       let nbGlobalDaysCET = 0
 
-
       let nbCETDays = 0
       let absLabels = [...ABSENTEISME_LABELS]
 
@@ -271,7 +270,6 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
       nbGlobalDaysCET = nbCETDays
 
       if (nbGlobalDaysCET < 30) absLabels.push(CET_LABEL)
-
 
       indispoArray = [
         ...(await Promise.all(
@@ -288,7 +286,7 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
                 return indisponibility.contentieux.id === referentiel.id
               })
             ) {
-              const etpAffected = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels)
+              const etpAffected = await getHRVentilation(models, human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels)
 
               const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
@@ -390,25 +388,33 @@ export const computeExtractDdg = async (allHuman, flatReferentielsList, categori
 export const getViewModel = async (params) => {
   const keys1 = params.onglet1.values != null && params.onglet1.values.length ? Object.keys(params.onglet1.values[0]) : []
   const keys2 = params.onglet2.values != null && params.onglet2.values.length ? Object.keys(params.onglet2.values[0]) : []
-  const tgilist = [...params.allJuridiction].filter((x) => x.type === 'TGI').map(x => x.tprox)
-  const tpxlist = [...params.allJuridiction].filter((x) => x.type === 'TPRX').map(x => x.tprox)
-  const cphlist = [...params.allJuridiction].filter((x) => x.type === 'CPH').map(x => x.tprox)
+  const tgilist = [...params.allJuridiction].filter((x) => x.type === 'TGI').map((x) => x.tprox)
+  const tpxlist = [...params.allJuridiction].filter((x) => x.type === 'TPRX').map((x) => x.tprox)
+  const cphlist = [...params.allJuridiction].filter((x) => x.type === 'CPH').map((x) => x.tprox)
 
   let uniqueJur = await sortBy(params.tproxs, 'tprox').map((t) => t.tprox)
-  const uniqueCity = uniqueJur.map(x => { const [first, rest] = x.split(/\s+(.*)/); return rest })
-  const isolatedCPH = cphlist.filter(x => {
-    const [first, rest] = x.split(/\s+(.*)/);
-    if (rest.length && uniqueCity.includes(rest))
-      return false
+  const uniqueCity = uniqueJur.map((x) => {
+    const [first, rest] = x.split(/\s+(.*)/)
+    return rest
+  })
+  const isolatedCPH = cphlist.filter((x) => {
+    const [first, rest] = x.split(/\s+(.*)/)
+    if (rest.length && uniqueCity.includes(rest)) return false
     else return true
   })
   uniqueJur = [...uniqueJur, ...isolatedCPH]
   const uniqueJurIndex = await uniqueJur.map((value, index) => [value, index])
-  const tProximite = ['"' + await uniqueJur.join(',').replaceAll("'", "").replaceAll("(", "").replaceAll(")", "") + '"']
+  const tProximite = ['"' + (await uniqueJur.join(',').replaceAll("'", '').replaceAll('(', '').replaceAll(')', '')) + '"']
   const agregat = params.onglet2.excelRef.filter((x) => x.sub !== '12.2. COMPTE ÉPARGNE TEMPS')
 
   return {
-    tgilist, tpxlist, cphlist, uniqueJur, uniqueJurIndex, tProximite, isolatedCPH,
+    tgilist,
+    tpxlist,
+    cphlist,
+    uniqueJur,
+    uniqueJurIndex,
+    tProximite,
+    isolatedCPH,
     agregat,
     referentiel: params.referentiels.map((x) => {
       return {
@@ -438,7 +444,7 @@ export const getViewModel = async (params) => {
   }
 }
 
-export const computeExtract = async (allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
+export const computeExtract = async (models, allHuman, flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop) => {
   let data = []
 
   console.time('extractor-6.0')
@@ -474,7 +480,7 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
                 return indisponibility.contentieux.id === referentiel.id
               })
             ) {
-              etpAffected = await getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop)
+              etpAffected = await getHRVentilation(models, human, referentiel.id, [...categories], dateStart, dateStop)
 
               const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
@@ -540,7 +546,6 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
         } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
-
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction')
           data.push({
@@ -561,7 +566,6 @@ export const computeExtract = async (allHuman, flatReferentielsList, categories,
   )
 
   console.timeEnd('extractor-6.0')
-
 
   return data
 }
