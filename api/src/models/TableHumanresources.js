@@ -1,10 +1,16 @@
 import { Op } from 'sequelize'
 import { posad } from '../constants/hr'
 import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
-import { today } from '../utils/date'
+import { getNbMonth, today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 import { cloneDeep } from 'lodash'
+import { EXECUTE_CALCULATOR } from '../constants/log-codes'
+import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
+import { emptyCalulatorValues, getHRPositions, syncCalculatorDatas } from '../utils/calculator'
+import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
+import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
+import { dbInstance } from './index'
 
 /**
  * Cache des juridicitions avec leurs magistrats
@@ -67,9 +73,40 @@ export default (sequelizeInstance, Model) => {
   Model.onPreload = async () => {
     if (config.preloadHumanResourcesDatas) {
       const allBackups = await Model.models.HRBackups.getAll()
+      const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
+      const categories = await Model.models.HRCategories.getAll()
+      dbInstance.options.logging = false
+      console.log('onPreload - start')
+      console.time('onPreload')
       for (let i = 0; i < allBackups.length; i++) {
-        cacheJuridictionPeoples[allBackups[i].id] = await Model.getCurrentHr(allBackups[i].id)
+        const agents = await Model.getCurrentHr(allBackups[i].id)
+        cacheJuridictionPeoples[allBackups[i].id] = cloneDeep(agents)
+
+        const lastMonthStock = await Model.models.Activities.getLastMonth(allBackups[i].id)
+
+        if (lastMonthStock) {
+          const dateStop = new Date(lastMonthStock)
+
+          for (let nbMonth = 24; nbMonth > 0; nbMonth--) {
+            const dateStart = new Date(dateStop)
+            dateStart.setMonth(dateStart.getMonth() - nbMonth)
+
+            for (let y = 0; y < referentiels.length; y++) {
+              (referentiels[y].childrens || []).map((c) => {
+                // c.id
+                getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, c.id, dateStart, dateStop)
+              })
+
+              // referentiels[i].id
+              getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, referentiels[y].id, dateStart, dateStop)
+            }
+          }
+        }
       }
+    }
+    console.timeEnd('onPreload')
+    if (config.database.logging) {
+      dbInstance.options.logging = true
     }
   }
 
@@ -646,6 +683,111 @@ export default (sequelizeInstance, Model) => {
 
     // update cache
     Model.onPreload()
+  }
+
+  Model.onCalculate = async (
+    { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds, loadChildrens },
+    user
+  ) => {
+    if (!selectedFonctionsIds && user) {
+      // memorize first execution by user
+      await Model.models.Logs.addLog(EXECUTE_CALCULATOR, user.id)
+    }
+
+    let fonctions = await Model.models.HRFonctions.getAll()
+    let categoryIdSelected = -1
+    switch (categorySelected) {
+    case MAGISTRATS:
+      categoryIdSelected = 1
+      break
+    case FONCTIONNAIRES:
+      categoryIdSelected = 2
+      break
+    default:
+      categoryIdSelected = 3
+      break
+    }
+
+    fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
+
+    console.time('calculator-1')
+    const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels()).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
+    console.timeEnd('calculator-1')
+
+    console.time('calculator-2')
+    const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : []
+    console.timeEnd('calculator-2')
+
+    console.time('calculator-3')
+    let list = emptyCalulatorValues(referentiels)
+    console.timeEnd('calculator-3')
+
+    console.time('calculator-4')
+    const nbMonth = getNbMonth(dateStart, dateStop)
+    console.timeEnd('calculator-4')
+
+    console.time('calculator-5')
+    const categories = await Model.models.HRCategories.getAll()
+    console.timeEnd('calculator-5')
+
+    console.time('calculator-6')
+    let hr = await Model.getCache(backupId)
+    console.timeEnd('calculator-6')
+
+    console.time('calculator-6-2')
+    // filter by fonctions
+    hr = hr
+      .map((human) => {
+        let situations = human.situations || []
+
+        situations = situations.filter(
+          (s) =>
+            (s.category && s.category.id !== categoryIdSelected) ||
+            (selectedFonctionsIds && selectedFonctionsIds.length && s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) !== -1) ||
+            (!selectedFonctionsIds && s.category && s.category.id === categoryIdSelected)
+        )
+
+        return {
+          ...human,
+          situations,
+        }
+      })
+      .filter((h) => h.situations.length)
+
+    console.timeEnd('calculator-6-2')
+
+    console.time('calculator-7')
+    const activities = await Model.models.Activities.getAll(backupId, !loadChildrens ? referentiels.map((r) => r.id) : null)
+    console.timeEnd('calculator-7')
+
+    console.time('calculator-8')
+    list = syncCalculatorDatas(Model.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
+
+    const cleanDataToSent = (item) => ({
+      ...item,
+      etpMag: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.etpMag : null,
+      magRealTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magRealTimePerCase : null,
+      magCalculateCoverage: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateCoverage : null,
+      magCalculateDTESInMonths: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateDTESInMonths : null,
+      magCalculateTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateTimePerCase : null,
+      magCalculateOut: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateOut : null,
+      etpFon: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.etpFon : null,
+      fonRealTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonRealTimePerCase : null,
+      fonCalculateCoverage: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateCoverage : null,
+      fonCalculateDTESInMonths: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateDTESInMonths : null,
+      fonCalculateTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateTimePerCase : null,
+      fonCalculateOut: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateOut : null,
+      etpCont: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_CONTRACTUEL) ? item.etpCont : null,
+    })
+
+    list = list.map((item) => ({
+      ...cleanDataToSent(item),
+      childrens: (item.childrens || []).map(cleanDataToSent),
+    }))
+
+    console.timeEnd('calculator-8')
+
+    return { fonctions, list }
   }
 
   return Model
