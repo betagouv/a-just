@@ -601,12 +601,19 @@ export class CalculatorPage
   filtredDatas() {
     let list = this.datas
     if (this.sortBy) {
+      let sort = this.sortBy
+      if (
+        this.sortBy === 'magRealTimePerCase' &&
+        this.categorySelected !== 'magistrats'
+      ) {
+        sort = 'fonRealTimePerCase'
+      }
       list = orderBy(
         list,
         [
           (o) => {
             // @ts-ignore
-            return o[this.sortBy] || 0
+            return o[sort] || 0
           },
         ],
         ['desc']
@@ -952,7 +959,7 @@ export class CalculatorPage
       )
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) =>
         d === null
-          ? '-'
+          ? 'N/R'
           : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
       )
       const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
@@ -976,7 +983,7 @@ export class CalculatorPage
       ) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null) {
-            return '-'
+            return 'N/R'
           }
 
           if (d === 0 && tab1[index] === 0) {
@@ -1053,7 +1060,7 @@ export class CalculatorPage
         ).map((d: CalculatorInterface) => d.magRealTimePerCase)
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
-            ? '-'
+            ? 'N/R'
             : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
         )
         const variationsTempsMoyen = getVariations(
@@ -1107,7 +1114,7 @@ export class CalculatorPage
           description: 'moyen sur la période',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((v || 0) * 100),
+            v === null ? null : Math.floor((v || 0) * 100),
             Math.floor((value2TauxCouverture[index] || 0) * 100),
           ]),
           variations: [
@@ -1121,14 +1128,14 @@ export class CalculatorPage
               label: actualRangeString,
               isOption: true,
               values: value1TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: nextRangeString,
               isOption: true,
               values: value2TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
           ],
@@ -1397,7 +1404,7 @@ export class CalculatorPage
         })
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
-            ? '-'
+            ? 'N/R'
             : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
         )
         const variationsTempsMoyen = getVariations(
@@ -1429,7 +1436,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
 
@@ -1477,7 +1484,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
         const variationsDTES = getVariations(value2DTES, value1DTES)
@@ -1521,7 +1528,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
 
@@ -1536,7 +1543,7 @@ export class CalculatorPage
           description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((v || 0) * 100),
+            v === null ? null : Math.floor((v || 0) * 100),
             Math.floor((value2TauxCouverture[index] || 0) * 100),
           ]),
           variations: [
@@ -1550,14 +1557,14 @@ export class CalculatorPage
               label: actualRangeString,
               isOption: true,
               values: value1TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: refSelected.label,
               isOption: true,
               values: value2TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
           ],
