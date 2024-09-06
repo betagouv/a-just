@@ -1,4 +1,11 @@
-import { Component, ElementRef, HostBinding, Input, OnInit, ViewChild } from '@angular/core'
+import {
+  Component,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core'
 import { degreesToRadians } from 'src/app/utils/geometry'
 import { ngResizeObserverProviders, NgResizeObserver } from 'ng-resize-observer'
 import { map, Observable } from 'rxjs'
@@ -13,7 +20,7 @@ Gris : #999999
 Rouge logo A-JUST : #FF0000
  */
 
-const convertWidthToheight = (width: number) => (width * 55 / 70)
+const convertWidthToheight = (width: number) => (width * 55) / 70
 
 /**
  * Composant affichant un cadran de 0 à 200%
@@ -29,7 +36,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
   /**
    * Pourcentage affiché
    */
-  @Input() percent: number = 0
+  @Input() percent: number | null = null
   /**
    * automatic resize component
    */
@@ -75,7 +82,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
   /**
    * Conversion d'un pourcent en stfing
    */
-  percentString: number = 0
+  percentString: string = ''
   /**
    * Epaisseur du trai du cercle
    */
@@ -83,7 +90,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
 
   /**
    * Constructeur
-   * @param resize$ 
+   * @param resize$
    */
   constructor(private resize$: NgResizeObserver) {
     super()
@@ -107,7 +114,8 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    * Ecoute de la variable pourcent puis redessiner
    */
   ngOnChanges() {
-    this.percentString = Math.floor(this.percent)
+    this.percentString =
+      this.percent === null ? 'N/R' : Math.floor(this.percent) + '%'
 
     this.onDraw()
   }
@@ -196,22 +204,35 @@ export class SpeedometerComponent extends MainClass implements OnInit {
   drawArrows() {
     const ctx = this.domCanvas?.nativeElement.getContext('2d')
     ctx.beginPath()
-    let percent = (this.percent || 0)
-    if (percent < 0) {
-      percent = 0
-    } else if (percent > 200) {
-      percent = 200
-    }
-    const radiusAngle = this.getRadiusPosition(percent)
+    if (this.percent !== null) {
+      let percent = this.percent || 0
+      if (percent < 0) {
+        percent = 0
+      } else if (percent > 200) {
+        percent = 200
+      }
+      const radiusAngle = this.getRadiusPosition(percent)
 
-    ctx.strokeStyle = this.classTextBlue ? '#0063cb' : (this.classDarkMode ? 'white' : 'black')
-    ctx.lineWidth = 1
-    ctx.moveTo(this.canvasWidth / 2 + this.lineWidth / 2, this.canvasWidth / 2 + this.lineWidth / 2)
-    ctx.lineTo(
-      Math.cos(radiusAngle) * (this.radius * 0.8) + this.canvasWidth / 2 + this.lineWidth / 2,
-      Math.sin(radiusAngle) * (this.radius * 0.8) + this.canvasWidth / 2 + this.lineWidth / 2
-    )
-    ctx.stroke()
+      ctx.strokeStyle = this.classTextBlue
+        ? '#0063cb'
+        : this.classDarkMode
+        ? 'white'
+        : 'black'
+      ctx.lineWidth = 1
+      ctx.moveTo(
+        this.canvasWidth / 2 + this.lineWidth / 2,
+        this.canvasWidth / 2 + this.lineWidth / 2
+      )
+      ctx.lineTo(
+        Math.cos(radiusAngle) * (this.radius * 0.8) +
+          this.canvasWidth / 2 +
+          this.lineWidth / 2,
+        Math.sin(radiusAngle) * (this.radius * 0.8) +
+          this.canvasWidth / 2 +
+          this.lineWidth / 2
+      )
+      ctx.stroke()
+    }
   }
 
   /**

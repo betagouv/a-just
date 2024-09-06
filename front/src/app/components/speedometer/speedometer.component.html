@@ -1,2 +1,3 @@
 <canvas #canvas></canvas>
-<div class="title" [ngClass]="{'alert':percent < 80, 'good':percent > 120}">{{ percentString || 0 }}%</div>
+<div class="title" [ngClass]="{'alert':percent !== null && percent < 80, 'good':percent !== null && percent > 120}">{{
+    percentString }}</div>
