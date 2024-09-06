@@ -103,10 +103,10 @@ export default (sequelizeInstance, Model) => {
           }
         }
       }
-    }
-    console.timeEnd('onPreload')
-    if (config.database.logging) {
-      dbInstance.options.logging = true
+      console.timeEnd('onPreload')
+      if (config.database.logging) {
+        dbInstance.options.logging = true
+      }
     }
   }
 
