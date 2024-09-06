@@ -82,7 +82,8 @@ export default (sequelizeInstance, Model) => {
         const agents = await Model.getCurrentHr(allBackups[i].id)
         cacheJuridictionPeoples[allBackups[i].id] = cloneDeep(agents)
 
-        const lastMonthStock = await Model.models.Activities.getLastMonth(allBackups[i].id)
+        // TODO fast loading
+        /*const lastMonthStock = await Model.models.Activities.getLastMonth(allBackups[i].id)
 
         if (lastMonthStock) {
           const dateStop = new Date(lastMonthStock)
@@ -101,7 +102,7 @@ export default (sequelizeInstance, Model) => {
               getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, referentiels[y].id, dateStart, dateStop)
             }
           }
-        }
+        }*/
       }
       console.timeEnd('onPreload')
       if (config.database.logging) {
