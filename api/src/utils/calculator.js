@@ -346,7 +346,7 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
  * @param {*} dateStop
  * @returns
  */
-const getHRPositions = (models, hr, categories, referentielId, dateStart, dateStop) => {
+export const getHRPositions = (models, hr, categories, referentielId, dateStart, dateStop) => {
   const hrCategories = {}
 
   categories.map((c) => {
@@ -426,7 +426,33 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
       let sumByInd = 0
       if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
       nbDay++
-      const { etp, situation, indispoFiltred, nextDeltaDate, reelEtp } = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
+
+      let etp = null
+      let situation = null
+      let indispoFiltred = null
+      let nextDeltaDate = null
+      let reelEtp = null
+      /*const cache = models.HumanResources.cacheAgent(hr.id, `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`)
+      if (cache) {
+        etp = cache.etp
+        situation = cache.situation
+        indispoFiltred = cache.indispoFiltred
+        nextDeltaDate = cache.nextDeltaDate
+        reelEtp = cache.reelEtp
+      } else {*/
+      const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
+      /*models.HumanResources.updateCacheAgent(
+          hr.id,
+          `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`,
+          etpByDateAndPerson
+        )*/
+      etp = etpByDateAndPerson.etp
+      situation = etpByDateAndPerson.situation
+      indispoFiltred = etpByDateAndPerson.indispoFiltred
+      nextDeltaDate = etpByDateAndPerson.nextDeltaDate
+      reelEtp = etpByDateAndPerson.reelEtp
+      //}
+
       if (nextDeltaDate) {
         nextDateFinded = new Date(nextDeltaDate)
       }
