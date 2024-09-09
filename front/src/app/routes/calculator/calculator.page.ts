@@ -838,7 +838,7 @@ export class CalculatorPage
       if (ref.datas.dateStart) {
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
-        this.optionDateStop = new Date(ref.datas.dateStop)
+        this.optionDateStop = month(new Date(ref.datas.dateStop), 0, 'lastday')
         this.kpiService.register(
           CALCULATOR_OPEN_CONMPARAISON_RANGE,
           ref.label + ''
@@ -962,6 +962,7 @@ export class CalculatorPage
           ? 'N/R'
           : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
       )
+
       const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
       const value1TauxCouverture = (this.datasFilted || []).map(
         (d) => d.realCoverage
