@@ -190,19 +190,19 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
   let etpFonAf = null
   let etpContAf = null
 
+  let oneMonthAfterStart = month(new Date(dateStart), 0, 'lastday')
+  let oneMonthBeforeEnd = new Date(dateStop)
+  oneMonthBeforeEnd.setDate(1)
+
   if (loadDetails === true) {
     // ETP début
-    let oneDayAfterStart = new Date(dateStart)
-    oneDayAfterStart.setDate(oneDayAfterStart.getDate() + 2)
-    etpAffectedBf = getHRPositions(models, hr, categories, referentielId, dateStart, oneDayAfterStart)
+    etpAffectedBf = getHRPositions(models, hr, categories, referentielId, dateStart, oneMonthAfterStart)
     etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 100) : 0
     etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 100) : 0
     etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 100) : 0
 
     // ETP fin
-    let oneDayBeforeEnd = new Date(dateStop)
-    oneDayBeforeEnd.setDate(oneDayBeforeEnd.getDate() - 2)
-    etpAffectedAf = getHRPositions(models, hr, categories, referentielId, oneDayBeforeEnd, dateStop)
+    etpAffectedAf = getHRPositions(models, hr, categories, referentielId, oneMonthBeforeEnd, dateStop)
     etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 100) : 0
     etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 100) : 0
     etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 100) : 0
@@ -246,6 +246,8 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
     etpMagAf,
     etpFonAf,
     etpContAf,
+    oneMonthBeforeEnd,
+    oneMonthAfterStart,
   }
 }
 

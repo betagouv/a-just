@@ -43,7 +43,7 @@
                         [subTitle]="variant.subTitle"
                         [ngClass]="{'no-border-bottom': variantIndex < getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1, 'no-border-top': variantIndex > 0 && getOptionsToShow(line).length !== 1}"
                         [isWhite]="variantIndex === getOptionsToShow(line).length - 1"
-                        [showArrow]="variant.showArrow === true"
+                        [showArrow]="variant.showArrow === true" [type]="line.title"
                         [isTransparent]="variant.showArrow === true"></aj-graphs-numbers>
                 </ng-template>
             </div>
