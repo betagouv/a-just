@@ -167,7 +167,7 @@
         ? 'résultats' : 'résultat'}} dans les effectifs
       </div>
       <a *ngFor="let person of allPersonsFilteredIsIn" [routerLink]="['/resource-humaine', person.id]" class="is-in">
-        <p>
+        <p class="agent-username">
           {{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
@@ -180,43 +180,31 @@
         1 ? 'résultats' : 'résultat'}} hors effectifs
       </div>
       <a *ngFor="let person of allPersonsFilteredNotIn" [routerLink]="['/resource-humaine', person.id]">
-        <p>
+        <p class="agent-username">
           {{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
           person.lastName}}
         </p>
 
-        <div 
-          *ngIf="person.dateStart && isArriving(person.dateStart)" 
-          class="agent-status" 
-          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
-        >
-          <i
-            class="ri-user-received-line"
-            [ngStyle]="{
-              color: person.categoryName ? getCategoryColor(person.categoryName) : null,
-            }"
-          >
+        <div *ngIf="person.dateStart && isArriving(person.dateStart)" class="agent-status"
+          [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
+          <i class="ri-user-received-line" [ngStyle]="{
+              color: getCategoryColor(person.categoryName),
+            }">
           </i>
           <p>Arrivée prévue</p>
         </div>
-        <div 
-          *ngIf="person.dateStart && !isArriving(person.dateStart)" 
-          class="agent-status" 
-          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }"
-        >
-          <i
-            class="ri-user-shared-line"
-            [ngStyle]="{
-              color: person.categoryName ? getCategoryColor(person.categoryName) : null,
-            }"
-          >
-         </i>
-         <p>Parti</p>
+        <div *ngIf="person.dateStart && !isArriving(person.dateStart)" class="agent-status"
+          [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
+          <i class="ri-user-shared-line" [ngStyle]="{
+              color: getCategoryColor(person.categoryName),
+            }">
+          </i>
+          <p>Parti</p>
         </div>
       </a>
-      
+
       <!-- //"ri-user-shared-line" -->
       <div *ngIf="allPersonsFiltered.length === 0">Nom non trouvé !</div>
     </div>
