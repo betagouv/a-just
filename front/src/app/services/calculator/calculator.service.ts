@@ -78,7 +78,8 @@ export class CalculatorService extends MainClass {
     categorySelected: string,
     selectedFonctionsIds: number[] | null,
     dateStart: Date | null = this.dateStart.getValue(),
-    dateStop: Date | null = this.dateStop.getValue()
+    dateStop: Date | null = this.dateStop.getValue(),
+    loadChildrens: boolean = true
   ) {
     console.log('FILTER LIST')
     console.log('BACK Start', dateStart)
@@ -92,6 +93,7 @@ export class CalculatorService extends MainClass {
         optionBackupId: this.contentieuxOptionsService.backupId.getValue(),
         categorySelected,
         selectedFonctionsIds,
+        loadChildrens,
       })
       .then((data) => data.data || [])
   }
