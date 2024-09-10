@@ -515,7 +515,7 @@ export class CalculatorPage
   /**
    * Chargement des données back
    */
-  onLoad() {
+  onLoad(loadDetail = true) {
     if (
       this.humanResourceService.backupId.getValue() &&
       this.calculatorService.referentielIds.getValue().length &&
@@ -531,7 +531,10 @@ export class CalculatorPage
           this.categorySelected,
           this.lastCategorySelected === this.categorySelected
             ? this.selectedFonctionsIds
-            : null
+            : null,
+          this.dateStart,
+          this.dateStop,
+          false
         )
         .then(({ list, fonctions }) => {
           this.appService.appLoading.next(false)
@@ -560,6 +563,23 @@ export class CalculatorPage
         .catch(() => {
           this.isLoading = false
         })
+        .finally(() => {
+          if (this.categorySelected && loadDetail) {
+            this.calculatorService
+              .filterList(
+                this.categorySelected,
+                this.lastCategorySelected === this.categorySelected
+                  ? this.selectedFonctionsIds
+                  : null,
+                this.dateStart,
+                this.dateStop,
+                true
+              )
+              .then(({ list }) => {
+                this.formatDatas(list)
+              })
+          }
+        })
     }
   }
 
@@ -581,12 +601,19 @@ export class CalculatorPage
   filtredDatas() {
     let list = this.datas
     if (this.sortBy) {
+      let sort = this.sortBy
+      if (
+        this.sortBy === 'magRealTimePerCase' &&
+        this.categorySelected !== 'magistrats'
+      ) {
+        sort = 'fonRealTimePerCase'
+      }
       list = orderBy(
         list,
         [
           (o) => {
             // @ts-ignore
-            return o[this.sortBy] || 0
+            return o[sort] || 0
           },
         ],
         ['desc']
@@ -607,10 +634,12 @@ export class CalculatorPage
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
       this.calculatorService.dateStart.next(this.dateStart)
+      this.unselectTemplate()
       this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
     } else if (type === 'dateStop') {
       this.dateStop = month(new Date(event), undefined, 'lastDay')
       this.calculatorService.dateStop.next(this.dateStop)
+      this.unselectTemplate()
       this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
     }
 
@@ -811,7 +840,7 @@ export class CalculatorPage
       if (ref.datas.dateStart) {
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
-        this.optionDateStop = new Date(ref.datas.dateStop)
+        this.optionDateStop = month(new Date(ref.datas.dateStop), 0, 'lastday')
         this.kpiService.register(
           CALCULATOR_OPEN_CONMPARAISON_RANGE,
           ref.label + ''
@@ -932,9 +961,10 @@ export class CalculatorPage
       )
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) =>
         d === null
-          ? '-'
+          ? 'N/R'
           : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
       )
+
       const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
       const value1TauxCouverture = (this.datasFilted || []).map(
         (d) => d.realCoverage
@@ -956,7 +986,7 @@ export class CalculatorPage
       ) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null) {
-            return '-'
+            return 'N/R'
           }
 
           if (d === 0 && tab1[index] === 0) {
@@ -990,7 +1020,8 @@ export class CalculatorPage
             ? this.selectedFonctionsIds
             : null,
           this.optionDateStart,
-          this.optionDateStop
+          this.optionDateStop,
+          false
         )
         this.appService.appLoading.next(false)
         const nextRangeString = `${this.getRealValue(
@@ -1032,7 +1063,7 @@ export class CalculatorPage
         ).map((d: CalculatorInterface) => d.magRealTimePerCase)
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
-            ? '-'
+            ? 'N/R'
             : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
         )
         const variationsTempsMoyen = getVariations(
@@ -1086,28 +1117,28 @@ export class CalculatorPage
           description: 'moyen sur la période',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((v || 0) * 100),
+            v === null ? null : Math.floor((v || 0) * 100),
             Math.floor((value2TauxCouverture[index] || 0) * 100),
           ]),
           variations: [
             {
               label: 'Variation',
               values: variationsCouverture,
-              subTitle: '%',
+              subTitle: 'pts',
               showArrow: true,
             },
             {
               label: actualRangeString,
               isOption: true,
               values: value1TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: nextRangeString,
               isOption: true,
               values: value2TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
           ],
@@ -1202,152 +1233,158 @@ export class CalculatorPage
           ],
         })
 
-        const value2ETPTSiege: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.etpMag)
-        const variationsETPTSiege = getVariations(
-          value2ETPTSiege,
-          value1ETPTSiege
-        )
-        list.push({
-          title: 'ETPT Siège',
-          type: 'verticals-lines',
-          description: '-',
-          lineMax:
-            Math.max(
-              ...value1ETPTSiege.map((m) => m || 0),
-              ...value2ETPTSiege.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTSiege.map((v, index) => [
-            v || 0,
-            value2ETPTSiege[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTSiege,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTSiege,
-              /*graph: {
+        if (this.canViewMagistrat) {
+          const value2ETPTSiege: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpMag)
+          const variationsETPTSiege = getVariations(
+            value2ETPTSiege,
+            value1ETPTSiege
+          )
+          list.push({
+            title: 'ETPT Siège',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTSiege.map((m) => m || 0),
+                ...value2ETPTSiege.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTSiege.map((v, index) => [
+              v || 0,
+              value2ETPTSiege[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTSiege,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTSiege,
+                /*graph: {
                 type: 'ETPTSiege',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('magistrat', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTSiege,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTSiege,
+                /*graph: {
                 type: 'ETPTSiege',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('magistrat', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
 
-        const value2ETPTGreffe: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.etpFon)
-        const variationsETPTGreffe = getVariations(
-          value2ETPTGreffe,
-          value1ETPTGreffe
-        )
-        list.push({
-          title: 'ETPT Greffe',
-          type: 'verticals-lines',
-          description: '-',
-          lineMax:
-            Math.max(
-              ...value1ETPTGreffe.map((m) => m || 0),
-              ...value2ETPTGreffe.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTGreffe.map((v, index) => [
-            v || 0,
-            value2ETPTGreffe[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTGreffe,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTGreffe,
-              /*graph: {
+        if (this.canViewGreffier) {
+          const value2ETPTGreffe: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpFon)
+          const variationsETPTGreffe = getVariations(
+            value2ETPTGreffe,
+            value1ETPTGreffe
+          )
+          list.push({
+            title: 'ETPT Greffe',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTGreffe.map((m) => m || 0),
+                ...value2ETPTGreffe.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTGreffe.map((v, index) => [
+              v || 0,
+              value2ETPTGreffe[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTGreffe,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTGreffe,
+                /*graph: {
                 type: 'ETPTGreffe',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('greffe', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTGreffe,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTGreffe,
+                /*graph: {
                 type: 'ETPTGreffe',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('greffe', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
 
-        const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) => d.etpCont
-        )
-        const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
-        list.push({
-          title: 'ETPT EAM',
-          type: 'verticals-lines',
-          description: '-',
-          lineMax:
-            Math.max(
-              ...value1ETPTEam.map((m) => m || 0),
-              ...value2ETPTEam.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTEam.map((v, index) => [
-            v || 0,
-            value2ETPTEam[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTEam,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTEam,
-              /*graph: {
+        if (this.canViewContractuel) {
+          const value2ETPTEam: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpCont)
+          const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
+          list.push({
+            title: 'ETPT EAM',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTEam.map((m) => m || 0),
+                ...value2ETPTEam.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTEam.map((v, index) => [
+              v || 0,
+              value2ETPTEam[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTEam,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTEam,
+                /*graph: {
                 type: 'ETPTEam',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('eam', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTEam,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTEam,
+                /*graph: {
                 type: 'ETPTEam',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('eam', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
       } else {
         const refSelected = this.backups.find((b) => b.selected)
         if (!refSelected) {
@@ -1370,7 +1407,7 @@ export class CalculatorPage
         })
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
-            ? '-'
+            ? 'N/R'
             : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
         )
         const variationsTempsMoyen = getVariations(
@@ -1402,7 +1439,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
 
@@ -1450,7 +1487,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
         const variationsDTES = getVariations(value2DTES, value1DTES)
@@ -1494,7 +1531,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
 
@@ -1509,28 +1546,28 @@ export class CalculatorPage
           description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((v || 0) * 100),
+            v === null ? null : Math.floor((v || 0) * 100),
             Math.floor((value2TauxCouverture[index] || 0) * 100),
           ]),
           variations: [
             {
               label: 'Variation',
               values: variationsCouverture,
-              subTitle: '%',
+              subTitle: 'pts',
               showArrow: true,
             },
             {
               label: actualRangeString,
               isOption: true,
               values: value1TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: refSelected.label,
               isOption: true,
               values: value2TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
           ],
@@ -1608,6 +1645,7 @@ export class CalculatorPage
    * Drop down deselection
    */
   unselectTemplate() {
+    this.showPicker = false
     this.compareTemplates = null
     this.referentiels.map((x) => {
       x.selected = false
