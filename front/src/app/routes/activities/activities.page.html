@@ -34,12 +34,12 @@
       <ng-template [ngIf]="canEditActivities">
         <div *ngFor="let ref of referentiel" class="item-grouped" [class.maximize]="ref.showActivityGroup">
           <div class="item"
-            [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label), OPACITY)"
+            [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(ref.label, OPACITY)"
             (click)="(ref.childrens || []).length ? ref.showActivityGroup = !ref.showActivityGroup : null; onShowLevel4(ref)"
             [class.selectable]="(ref.childrens || []).length">
             <div class="label">
               <div class="color-border"
-                [style.backgroundColor]="ref.showActivityGroup ? null : userService.referentielMappingColorByInterface(ref.label)">
+                [style.backgroundColor]="ref.showActivityGroup ? null : userService.referentielMappingColorByInterface(ref.label, OPACITY)">
               </div>
               <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showActivityGroup ? 'expand_more' : 'chevron_right'
                 }}

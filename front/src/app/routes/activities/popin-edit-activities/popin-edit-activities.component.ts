@@ -163,8 +163,7 @@ export class PopinEditActivitiesComponent
     // Mettre la couleur du background du header selon le contentieux
     if (this.referentiel){
       const element = document.getElementById('header-popin')
-      const label = this.userService.referentielMappingNameByInterface(this.referentiel?.label)
-      const bgColor = this.userService.referentielMappingColorActivityByInterface(label, OPACITY_20)
+      const bgColor = this.userService.referentielMappingColorActivityByInterface(this.referentiel?.label, OPACITY_20)
 
       if (element)
         element.style.backgroundColor = bgColor;

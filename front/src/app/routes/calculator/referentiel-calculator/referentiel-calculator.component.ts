@@ -1,4 +1,5 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core'
+import { OPACITY_20 } from 'src/app/constants/colors'
 import { CALCULATOR_OPEN_CONTENTIEUX } from 'src/app/constants/log-codes'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
 import { MainClass } from 'src/app/libs/main-class'
@@ -61,6 +62,10 @@ export class ReferentielCalculatorComponent extends MainClass {
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
+  /**
+   * Opacité background des contentieux
+   */
+    OPACITY = OPACITY_20
 
   /**
    * Constructor
