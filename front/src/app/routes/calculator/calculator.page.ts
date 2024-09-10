@@ -634,10 +634,12 @@ export class CalculatorPage
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
       this.calculatorService.dateStart.next(this.dateStart)
+      this.unselectTemplate()
       this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
     } else if (type === 'dateStop') {
       this.dateStop = month(new Date(event), undefined, 'lastDay')
       this.calculatorService.dateStop.next(this.dateStop)
+      this.unselectTemplate()
       this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
     }
 
@@ -1643,6 +1645,7 @@ export class CalculatorPage
    * Drop down deselection
    */
   unselectTemplate() {
+    this.showPicker = false
     this.compareTemplates = null
     this.referentiels.map((x) => {
       x.selected = false
