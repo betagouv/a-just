@@ -3,7 +3,6 @@ import {
   referentielMappingName,
   referentielCAMappingName,
   referentielMappingColor,
-  referentielCAMappingColor,
   referentielMappingColorActivity,
   referentielMappingColorCAActivity,
 } from '../utils/referentiel'
@@ -123,15 +122,6 @@ export class MainClass {
    */
   public referentielMappingColor(name: string, opacity: number = 1): string {
     return referentielMappingColor(name, opacity)
-  }
-
-  /**
- * Methode de reprise des couleur des référentiel
- * @param name
- * @returns
- */
-  public referentielCAMappingColor(name: string, opacity: number = 1): string {
-    return referentielCAMappingColor(name, opacity)
   }
 
   /**

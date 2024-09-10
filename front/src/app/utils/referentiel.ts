@@ -85,21 +85,21 @@ export function referentielMappingColor(
     switch (name) {
       case 'Autres activités':
         return `rgb(215, 217, 219)`
-      case 'Indisponibilité':
+      case 'Indisp.':
         return `rgb(55, 71, 79)`
-      case 'Siège Pénal':
+      case 'Pénal':
         return `rgb(245, 214, 213)`
-      case 'Contentieux JAF':
+      case 'JAF':
         return `rgb(208, 226, 242)`
-      case 'Contentieux Social':
+      case 'Social':
         return `rgb(213, 231, 232)`
-      case 'Contentieux de la Protection':
+      case 'JCP':
         return `rgb(208, 222, 242)`
-      case 'Juges des Enfants':
+      case 'JE':
         return `rgb(227, 211, 237)`
-      case 'Civil Non Spécialisé':
+      case 'Civil NS':
         return `rgb(213, 216, 235)`
-      case "Juges d'Instruction":
+      case "JI":
         return `rgb(250, 221, 212)`
       case 'JLD Civil':
         return `rgb(217, 211, 237)`
@@ -114,21 +114,21 @@ export function referentielMappingColor(
     switch (name) {
       case 'Autres activités':
         return `rgba(66, 66, 66, ${opacity})`
-      case 'Indisponibilité':
+      case 'Indisp.':
         return `rgba(55, 71, 79, ${opacity})`
-      case 'Siège Pénal':
+      case 'Pénal':
         return `rgba(199, 40, 40, ${opacity})`
-      case 'Contentieux JAF':
+      case 'JAF':
         return `rgba(2, 120, 189, ${opacity})`
-      case 'Contentieux Social':
+      case 'Social':
         return `rgba(1, 131, 143, ${opacity})`
-      case 'Contentieux de la Protection':
+      case 'JCP':
         return `rgba(21, 100, 191, ${opacity})`
-      case 'Juges des Enfants':
+      case 'JE':
         return `rgba(105, 28, 153, ${opacity})`
-      case 'Civil Non Spécialisé':
+      case 'Civil NS':
         return `rgba(40, 53, 148, ${opacity})`
-      case "Juges d'Instruction":
+      case "JI":
         return `rgba(217, 66, 20, ${opacity})`
       case 'JLD Civil':
         return `rgba(69, 39, 161, ${opacity})`
@@ -138,78 +138,6 @@ export function referentielMappingColor(
         return `rgba(255, 145, 0, ${opacity})`
       case 'JLD civil':
         return `rgba(69, 39, 161, ${opacity})`
-    }
-  }
-
-  return ''
-}
-
-/**
- * Récupération du code couleur des référentiels CA NEW COLORS
- * @param name
- * @returns
- */
-export function referentielCAMappingColor(
-  name: string,
-  opacity: number = 1
-): string {
-  if (opacity === OPACITY_20) {
-    switch (name) {
-      case "Contentieux social":
-        return `rgb(213, 231, 232)`
-      case "Contentieux de la famille":
-        return `rgb(208, 226, 242)`
-      case "Contentieux de la protection":
-        return `rgb(208, 222, 242)`
-      case "Contentieux civil non spécialisé":
-        return `rgb(213, 216, 235)`
-      case "Contentieux commercial":
-        return `rgb(190, 224, 230)`
-      case "Attributions du PP":
-        return `rgb(255, 248, 214)`
-      case "Contentieux civil JLD":
-        return `rgb(217, 211, 237)`
-      case "Contentieux des mineurs":
-        return `rgb(227, 211, 237)`
-      case "Instruction et entraide":
-        return `rgb(250, 221, 212)`
-      case "Correctionnel":
-        return `rgb(245, 214, 213)`
-      case "Contentieux criminel":
-        return `rgb(255, 235, 214)`
-      case "Application des peines":
-        return `rgb(255, 227, 212)`
-      case "Autres activités":
-        return `rgb(215, 217, 219)`
-    }
-  } else {
-    switch (name) {
-      case "Contentieux social":
-        return `rgba(1, 131, 143, ${opacity})`
-      case "Contentieux de la famille":
-        return `rgba(0, 118, 191, ${opacity})`
-      case "Contentieux de la protection":
-        return `rgba(21, 100, 191, ${opacity})`
-      case "Contentieux civil non spécialisé":
-        return `rgba(39, 52, 145, ${opacity})`
-      case "Contentieux commercial":
-        return `rgba(37, 190, 207, ${opacity})`
-      case "Attributions du PP":
-        return `rgba(250, 202, 12, ${opacity})`
-      case "Contentieux civil JLD":
-        return `rgba(70, 37, 161, ${opacity})`
-      case "Contentieux des mineurs":
-        return `rgba(104, 26, 153, ${opacity})`
-      case "Instruction et entraide":
-        return `rgba(214, 65, 19, ${opacity})`
-      case "Correctionnel":
-        return `rgba(196, 39, 39, ${opacity})`
-      case "Contentieux criminel":
-        return `rgba(255, 145, 0, ${opacity})`
-      case "Application des peines":
-        return `rgba(240, 108, 0, ${opacity})`
-      case "Autres activités":
-        return `rgba(100, 100, 100, ${opacity})`
     }
   }
 
@@ -229,7 +157,7 @@ export function referentielMappingColorActivity(
     switch (name) {
       case 'Autres activités':
         return `rgb(215, 217, 219)`
-      case 'Indisponibilité':
+      case 'Indisp.':
         return `rgb(55, 71, 79)`
       case 'Pénal':
         return `rgb(245, 214, 213)`
@@ -260,7 +188,7 @@ export function referentielMappingColorActivity(
     switch (name) {
       case 'Autres activités':
         return `rgba(66, 66, 66, ${opacity})`
-      case 'Indisponibilité':
+      case 'Indisp.':
         return `rgba(55, 71, 79, ${opacity})`
       case 'Pénal':
         return `rgba(199, 40, 40, ${opacity})`
@@ -301,43 +229,45 @@ export function referentielMappingColorCAActivity(
   name: string,
   opacity: number = 1
 ): string {
+  const tmp = referentielCAMappingName(name)
+
   if (opacity === OPACITY_20) {
-    switch (name) {
+    switch (tmp) {
       case "Social":
-        return `rgb(213, 231, 232)`
+        return `rgb(211, 231, 232)`
       case "Famille":
-        return `rgb(208, 226, 242)`
+        return `rgb(211, 228, 242)`
       case "CTX JCP":
-        return `rgb(208, 222, 242)`
+        return `rgb(211, 223, 242)`
       case "Civil Ns":
         return `rgb(213, 216, 235)`
       case "Comm.":
-        return `rgb(190, 224, 230)`
+        return `rgb(215, 241, 245)`
       case "PP":
-        return `rgb(255, 248, 214)`
+        return `rgb(255, 245, 214)`
       case "Jld Civil":
         return `rgb(217, 211, 237)`
       case "Mineurs":
-        return `rgb(227, 211, 237)`
-      case "CHINS":
+        return `rgb(228, 211, 237)`
+      case "CHINS": //CHINS
         return `rgb(250, 221, 212)`
       case "CHAC":
-        return `rgb(245, 214, 213)`
+        return `rgb(245, 214, 213)` //CHAC
       case "Crim.":
-        return `rgb(255, 235, 214)`
-      case "CHAP":
+        return `rgb(255, 234, 214)`
+      case "CHAP": //CHAP
         return `rgb(255, 227, 212)`
       case "Autres":
-        return `rgb(215, 217, 219)`
+        return `rgb(217, 217, 217)`
     }
   } else {
-    switch (name) {
+    switch (tmp) {
       case "Social":
         return `rgba(1, 131, 143, ${opacity})`
       case "Famille":
         return `rgba(0, 118, 191, ${opacity})`
       case "CTX JCP":
-        return `rgba(21, 100, 191, ${opacity})`
+        return `rgba(23, 99, 191, ${opacity})`
       case "Civil Ns":
         return `rgba(39, 52, 145, ${opacity})`
       case "Comm.":
@@ -348,16 +278,16 @@ export function referentielMappingColorCAActivity(
         return `rgba(70, 37, 161, ${opacity})`
       case "Mineurs":
         return `rgba(104, 26, 153, ${opacity})`
-      case "CHINS":
+      case "CHINS": //CHINS
         return `rgba(214, 65, 19, ${opacity})`
       case "CHAC":
-        return `rgba(196, 39, 39, ${opacity})`
+        return `rgba(196, 39, 39, ${opacity})` //CHAC
       case "Crim.":
         return `rgba(255, 145, 0, ${opacity})`
-      case "CHAP":
+      case "CHAP": //CHAP
         return `rgba(240, 108, 0, ${opacity})`
       case "Autres":
-        return `rgba(100, 100, 100, ${opacity})`
+        return `rgba(66, 66, 66, ${opacity})`
     }
   }
 
