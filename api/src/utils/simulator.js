@@ -746,8 +746,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
       simulation[x] = params.beginSituation[x]
-      if (x === 'etpMag') simulation.etpFon = params.beginSituation.etpFon
-      if (x === 'etpFon') simulation.etpMag = params.beginSituation.etpMag
+      if (x === 'etpMag') simulation.etpFon = params.endSituation.etpFon
+      if (x === 'etpFon') simulation.etpMag = params.endSituation.etpMag
     }
   })
 
@@ -856,7 +856,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
       }
 
       if (x === 'etpMag') {
-        simulation.etpFon = params.beginSituation.etpFon
+        simulation.etpFon = params.endSituation.etpFon
         simulation.etpMag =
           Math.round(
             (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
@@ -865,7 +865,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
           ) / 100
       }
       if (x === 'etpFon') {
-        simulation.etpMag = params.beginSituation.etpMag
+        simulation.etpMag = params.endSituation.etpMag
         simulation.etpFon =
           Math.round(
             (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
