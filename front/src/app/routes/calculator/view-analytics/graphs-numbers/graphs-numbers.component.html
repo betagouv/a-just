@@ -1,5 +1,6 @@
 <div>
-    <div *ngIf="showArrow && title !== '-' && title !== '0'" class="zone-arrow" [class.is-up]="(''+title)[0] === '-'">
+    <div *ngIf="showArrow && title !== '-' && title !== '0' && title !== 'N/R'" class="zone-arrow"
+        [class.is-up]="getArrowSide(title)" [class.is-green]="getArrowColor(title)">
         <i class="ri-arrow-up-line up"></i>
         <i class="ri-arrow-down-line down"></i>
     </div>

@@ -69,7 +69,11 @@
     }
   }
 
-  .user-name, .matricule {
+
+
+  .user-name,
+  .matricule {
+
     input {
       border: none;
       font-size: 20px;
@@ -81,23 +85,47 @@
       background: none;
       box-sizing: border-box;
       //overflow: hidden;
+      height: 30px;
+      width: inherit;
+      min-width: 110px;
+      overflow: hidden;
 
+      /**
+      position: relative;
+      top: 0;
+      left: 0;
+      min-width: 120px;
+
+      appearance: none;
+      box-sizing: border-box;
+      font-size: 20px;
+      padding: 0px 0px 6px;
+      //border: 0;
+      //background: linear-gradient(to right, gray 50%, transparent 50%), linear-gradient(to right, gray 50%, transparent 50%), linear-gradient(to bottom, gray 50%, transparent 50%), linear-gradient(to bottom, gray 50%, transparent 50%);
+      background-size: 8px 1px, 8px 1px, 1px 8px, 1px 8px;
+      background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+      background-position: 0px 0px, 0px 1em, 0px 0px, 100% 0px;
+      box-shadow: inset 0px -10px 0px white;
+      outline: none;
+*/
       &::placeholder {
         color: #aeaeae;
       }
-  
+
       &:focus {
-        border: 1px solid #6a6af4 !important;
+        outline: 1px solid #6a6af4 !important;
         background-color: #ededed;
         color: fColor(cblack);
       }
-    };
+    }
+
+    ;
   }
 
   .user-name {
     display: flex;
-    margin-bottom: 6px;
-    margin-top: 6px;
+    align-items: center;
+
     width: 100%;
     flex-wrap: wrap;
 
@@ -106,25 +134,17 @@
     }
 
     .input-wrapper {
+      min-width: 120px;
       position: relative;
       box-sizing: border-box;
       line-height: 1em;
-      padding: 4px;
+      padding: 4px 4px 4px 1px;
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
-      min-width: 120px;
     }
-  
-    input {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      white-space: normal;
-    }
-    
+
+
     mat-icon {
       width: 12px;
       height: 12px;
@@ -141,7 +161,7 @@
 
   [id^="input-span"] {
     font-family: inherit;
-    white-space: normal;//nowrap;
+    white-space: normal; //nowrap;
     height: 1em;
     display: inline-block;
     font-size: inherit;
@@ -158,6 +178,7 @@
     display: flex;
     align-items: center;
     margin-right: 14px;
+    padding-left: 1px;
 
     mat-icon {
       width: 7px;
@@ -169,6 +190,12 @@
 
     input {
       font-size: 12px !important;
+      /**
+      position: relative;
+      padding-bottom: 0;
+      height: 30px;
+      overflow: hidden;
+*/
     }
   }
 

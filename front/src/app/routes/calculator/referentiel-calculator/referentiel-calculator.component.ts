@@ -1,4 +1,10 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  HostBinding,
+  Input,
+  OnInit,
+} from '@angular/core'
 import { OPACITY_20 } from 'src/app/constants/colors'
 import { CALCULATOR_OPEN_CONTENTIEUX } from 'src/app/constants/log-codes'
 import { CalculatorInterface } from 'src/app/interfaces/calculator'
@@ -24,7 +30,10 @@ import {
   templateUrl: './referentiel-calculator.component.html',
   styleUrls: ['./referentiel-calculator.component.scss'],
 })
-export class ReferentielCalculatorComponent extends MainClass {
+export class ReferentielCalculatorComponent
+  extends MainClass
+  implements AfterViewInit
+{
   /**
    * Un item de la liste du calculateur
    */
@@ -65,7 +74,7 @@ export class ReferentielCalculatorComponent extends MainClass {
   /**
    * Opacité background des contentieux
    */
-    OPACITY = OPACITY_20
+  OPACITY = OPACITY_20
 
   /**
    * Constructor
@@ -75,22 +84,9 @@ export class ReferentielCalculatorComponent extends MainClass {
     private referentielService: ReferentielService,
     private calculatorService: CalculatorService,
     private activitiesService: ActivitiesService,
-    private kpiService:KPIService
+    private kpiService: KPIService
   ) {
     super()
-
-    if (this.maxDateSelectionDate === null) {
-
-      this.activitiesService.getLastMonthActivities().then((date) => {
-        if (date === null) {
-          date = new Date()
-        }
-        date = new Date(date ? date : '')
-        const max = month(date, 0, 'lastday')
-        this.maxDateSelectionDate = max
-      })
-
-    }
 
     this.watch(
       this.userService.user.subscribe((u) => {
@@ -109,6 +105,21 @@ export class ReferentielCalculatorComponent extends MainClass {
   }
 
   /**
+   * Initialisation de valeur par défaut
+   */
+  ngAfterViewInit() {
+    if (this.maxDateSelectionDate === null) {
+      this.activitiesService.getLastMonthActivities().then((date) => {
+        if (date === null) {
+          date = new Date()
+        }
+        date = new Date(date ? date : '')
+        const max = month(date, 0, 'lastday')
+        this.maxDateSelectionDate = max
+      })
+    }
+  }
+  /**
    * Switch la visibilité des enfants
    */
   onToggleChildren() {
@@ -116,8 +127,11 @@ export class ReferentielCalculatorComponent extends MainClass {
       this.showChildren = !this.showChildren
       this.calculator.childIsVisible = this.showChildren
     }
-    if(this.showChildren===true)
-      this.kpiService.register(CALCULATOR_OPEN_CONTENTIEUX, this.calculator?.contentieux.label+'')
+    if (this.showChildren === true)
+      this.kpiService.register(
+        CALCULATOR_OPEN_CONTENTIEUX,
+        this.calculator?.contentieux.label + ''
+      )
   }
 
   /**
@@ -137,25 +151,27 @@ export class ReferentielCalculatorComponent extends MainClass {
    * Indique si la date de fin selectionnée est dans le passé
    */
   checkPastDate() {
-    return this.calculatorService.dateStop.value! <= (this.maxDateSelectionDate || new Date())
+    return (
+      this.calculatorService.dateStop.value! <=
+      (this.maxDateSelectionDate || new Date())
+    )
   }
 
   /**
-  * Récuperer le type de l'app
-  */
+   * Récuperer le type de l'app
+   */
   getInterfaceType() {
     return this.userService.interfaceType === 1
   }
 
   /**
- * Mapping des noms de contentieux selon l'interface
- * @param label 
- * @returns 
- */
+   * Mapping des noms de contentieux selon l'interface
+   * @param label
+   * @returns
+   */
   referentielMappingNameByInterface(label: string) {
     if (this.getInterfaceType() === true)
       return this.referentielCAMappingName(label)
     else return this.referentielMappingName(label)
   }
-
 }

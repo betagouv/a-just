@@ -1,9 +1,9 @@
 <div *ngIf="calculator" class="main-referentiel"
-    [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(calculator.contentieux.label ==='Autres activités'? 'other':calculator.contentieux.label, OPACITY)">
+    [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(calculator.contentieux.label ==='Autres activités'? 'other': calculator.contentieux.label), OPACITY)">
     <div class="width-contentieux contentieux" (click)="onToggleChildren()">
 
 
-        <mat-icon *ngIf="calculator.childrens && calculator.childrens.length">{{ showChildren ? 'expand_less' :
+        <mat-icon>{{ showChildren ? 'expand_more' :
             'chevron_right' }}
         </mat-icon>
 
@@ -20,7 +20,8 @@
     </div>
     <div [ngClass]="{ selected: sortBy === 'realCoverage' }" class="item coverage">
         <div class="block left-border" *ngIf="!isSoutien(calculator.contentieux.id)">
-            <ng-template [ngIf]=" checkPastDate()" [ngIfElse]="nr">
+            <ng-template [ngIf]="checkPastDate() && calculator.totalOut !== null && calculator.totalIn !== null"
+                [ngIfElse]="nr">
                 <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
             </ng-template>
         </div>

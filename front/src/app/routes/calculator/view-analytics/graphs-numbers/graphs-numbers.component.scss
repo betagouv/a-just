@@ -46,12 +46,22 @@
         &.is-up {
             i.down {
                 display: inline-block;
+            }
+
+            i.up {
+                display: none;
+            }
+        }
+
+        &.is-green {
+            i.down {
                 color: #00a95f;
                 background-color: #c3fad5;
             }
 
             i.up {
-                display: none;
+                color: #00a95f;
+                background-color: #c3fad5;
             }
         }
 
