@@ -75,39 +75,36 @@ export default (sequelizeInstance, Model) => {
       const allBackups = await Model.models.HRBackups.getAll()
       const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
       const categories = await Model.models.HRCategories.getAll()
-      dbInstance.options.logging = false
+      /*dbInstance.options.logging = false
       console.log('onPreload - start')
       console.time('onPreload')
       for (let i = 0; i < allBackups.length; i++) {
         const agents = await Model.getCurrentHr(allBackups[i].id)
         cacheJuridictionPeoples[allBackups[i].id] = cloneDeep(agents)
 
-        // TODO fast loading
-        /*const lastMonthStock = await Model.models.Activities.getLastMonth(allBackups[i].id)
+        const lastMonthStock = await Model.models.Activities.getLastMonth(allBackups[i].id)
 
         if (lastMonthStock) {
           const dateStop = new Date(lastMonthStock)
 
-          for (let nbMonth = 24; nbMonth > 0; nbMonth--) {
-            const dateStart = new Date(dateStop)
-            dateStart.setMonth(dateStart.getMonth() - nbMonth)
+          const dateStart = new Date(dateStop)
+          dateStart.setMonth(dateStart.getMonth() - 11)
 
-            for (let y = 0; y < referentiels.length; y++) {
-              (referentiels[y].childrens || []).map((c) => {
-                // c.id
-                getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, c.id, dateStart, dateStop)
-              })
+          for (let y = 0; y < referentiels.length; y++) {
+            (referentiels[y].childrens || []).map((c) => {
+              // c.id
+              getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, c.id, dateStart, dateStop)
+            })
 
-              // referentiels[i].id
-              getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, referentiels[y].id, dateStart, dateStop)
-            }
+            // referentiels[i].id
+            getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, referentiels[y].id, dateStart, dateStop)
           }
-        }*/
+        }
       }
       console.timeEnd('onPreload')
       if (config.database.logging) {
         dbInstance.options.logging = true
-      }
+      }*/
     }
   }
 

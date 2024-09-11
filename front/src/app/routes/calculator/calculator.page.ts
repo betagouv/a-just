@@ -51,6 +51,7 @@ import {
   CALCULATOR_SELECT_GREFFE,
   EXECUTE_CALCULATOR_CHANGE_DATE,
 } from 'src/app/constants/log-codes'
+import { BehaviorSubject } from 'rxjs'
 
 /**
  * Page du calculateur
@@ -275,6 +276,14 @@ export class CalculatorPage
    * Premier chargement
    */
   firstLoading = true
+  /**
+   * on add delay to time out
+   */
+  onTimeoutLoad: any = null
+  /**
+   * Lock global loader
+   */
+  lockLoader: BehaviorSubject<boolean> = new BehaviorSubject(false)
 
   /**
    * Constructeur
@@ -382,6 +391,18 @@ export class CalculatorPage
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         this.backups = b
+      })
+    )
+
+    this.watch(
+      this.lockLoader.subscribe((l) => {
+        if (l) {
+          if (this.onTimeoutLoad) {
+            clearTimeout(this.onTimeoutLoad)
+          }
+        } else {
+          this.onLoad()
+        }
       })
     )
   }
@@ -516,71 +537,81 @@ export class CalculatorPage
    * Chargement des données back
    */
   onLoad(loadDetail = true) {
-    if (
-      this.humanResourceService.backupId.getValue() &&
-      this.calculatorService.referentielIds.getValue().length &&
-      this.dateStart !== null &&
-      this.dateStop !== null &&
-      this.isLoading === false &&
-      this.categorySelected
-    ) {
-      this.isLoading = true
-      this.appService.appLoading.next(true)
-      this.calculatorService
-        .filterList(
-          this.categorySelected,
-          this.lastCategorySelected === this.categorySelected
-            ? this.selectedFonctionsIds
-            : null,
-          this.dateStart,
-          this.dateStop,
-          false
-        )
-        .then(({ list, fonctions }) => {
-          this.appService.appLoading.next(false)
-          if (this.lastCategorySelected !== this.categorySelected) {
-            this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
-              id: f.id,
-              value: f.code,
-            }))
-            this.selectedFonctionsIds = fonctions.map(
-              (f: HRFonctionInterface) => f.id
-            )
-            this.calculatorService.selectedFonctionsIds.next(
-              this.selectedFonctionsIds
-            )
-          }
-          this.formatDatas(list)
-          this.isLoading = false
-          this.lastCategorySelected = this.categorySelected
-
-          if (this.firstLoading === false)
-            this.appService.notification(
-              'Les données du cockpit ont été mis à jour !'
-            )
-          this.firstLoading = false
-        })
-        .catch(() => {
-          this.isLoading = false
-        })
-        .finally(() => {
-          if (this.categorySelected && loadDetail) {
-            this.calculatorService
-              .filterList(
-                this.categorySelected,
-                this.lastCategorySelected === this.categorySelected
-                  ? this.selectedFonctionsIds
-                  : null,
-                this.dateStart,
-                this.dateStop,
-                true
-              )
-              .then(({ list }) => {
-                this.formatDatas(list)
-              })
-          }
-        })
+    if (this.onTimeoutLoad) {
+      clearTimeout(this.onTimeoutLoad)
     }
+
+    this.onTimeoutLoad = setTimeout(
+      () => {
+        if (
+          this.humanResourceService.backupId.getValue() &&
+          this.calculatorService.referentielIds.getValue().length &&
+          this.dateStart !== null &&
+          this.dateStop !== null &&
+          this.isLoading === false &&
+          this.categorySelected
+        ) {
+          this.onTimeoutLoad = null
+          this.isLoading = true
+          this.appService.appLoading.next(true)
+          this.calculatorService
+            .filterList(
+              this.categorySelected,
+              this.lastCategorySelected === this.categorySelected
+                ? this.selectedFonctionsIds
+                : null,
+              this.dateStart,
+              this.dateStop,
+              false
+            )
+            .then(({ list, fonctions }) => {
+              this.appService.appLoading.next(false)
+              if (this.lastCategorySelected !== this.categorySelected) {
+                this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
+                  id: f.id,
+                  value: f.code,
+                }))
+                this.selectedFonctionsIds = fonctions.map(
+                  (f: HRFonctionInterface) => f.id
+                )
+                this.calculatorService.selectedFonctionsIds.next(
+                  this.selectedFonctionsIds
+                )
+              }
+              this.formatDatas(list)
+              this.isLoading = false
+              this.lastCategorySelected = this.categorySelected
+
+              if (this.firstLoading === false)
+                this.appService.notification(
+                  'Les données du cockpit ont été mis à jour !'
+                )
+              this.firstLoading = false
+            })
+            .catch(() => {
+              this.isLoading = false
+            })
+            .finally(() => {
+              if (this.categorySelected && loadDetail) {
+                this.calculatorService
+                  .filterList(
+                    this.categorySelected,
+                    this.lastCategorySelected === this.categorySelected
+                      ? this.selectedFonctionsIds
+                      : null,
+                    this.dateStart,
+                    this.dateStop,
+                    true
+                  )
+                  .then(({ list }) => {
+                    this.formatDatas(list)
+                  })
+              }
+            })
+        }
+      },
+      this.firstLoading ? 0 : 1500
+    )
   }
 
   /**
@@ -680,7 +711,6 @@ export class CalculatorPage
     this.fonctionRealValue = ''
     if (this.categorySelected === this.FONCTIONNAIRES)
       this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
-    this.onLoad()
   }
 
   /**
