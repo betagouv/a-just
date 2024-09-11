@@ -145,7 +145,6 @@ export default class RouteCalculator extends Route {
               totalAffected += (timeAffected / 100) * realETP
             }
           })
-          console.log(dateStart, hList.length, totalAffected)
           list.push(totalAffected)
         }
         break
