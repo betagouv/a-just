@@ -8,7 +8,7 @@ export interface AnalyticsLine {
   title: string
   description?: string
   type: string
-  values?: number[][]
+  values?: any[][]
   lineMax: number
   variations: {
     label: string

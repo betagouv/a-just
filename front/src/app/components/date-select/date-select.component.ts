@@ -67,6 +67,10 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    */
   @Output() valueChange = new EventEmitter()
   /**
+   * Emit is open
+   */
+  @Output() isOpen = new EventEmitter()
+  /**
    * Class host qui permet d'afficher un design de read only
    */
   @HostBinding('class.read-only') onReadOnly: boolean = false
@@ -162,10 +166,7 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * @param normalizedMonthAndYear
    * @param datepicker
    */
-  setMonthAndYear(
-    normalizedMonthAndYear: any,
-    datepicker: MatDatepicker<any>
-  ) {
+  setMonthAndYear(normalizedMonthAndYear: any, datepicker: MatDatepicker<any>) {
     if (this.dateType === 'month') {
       const date = new Date(
         normalizedMonthAndYear.year(),

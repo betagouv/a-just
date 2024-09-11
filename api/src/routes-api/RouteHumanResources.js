@@ -21,10 +21,6 @@ export default class RouteHumanResources extends Route {
    */
   constructor (params) {
     super({ ...params, model: 'HumanResources' })
-
-    setTimeout(() => {
-      this.model.onPreload() // preload juridiction after 1 minute
-    }, 60000)
   }
 
   /**
@@ -234,7 +230,7 @@ export default class RouteHumanResources extends Route {
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
 
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck, true)
-    
+
     const allCategories = await this.models.HRCategories.getAll()
 
     if (categoriesIds && categoriesIds.length === 3 && (!contentieuxIds || contentieuxIds.length === 0)) {

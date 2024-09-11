@@ -44,7 +44,14 @@ import {
 import { fixDecimal } from 'src/app/utils/numbers'
 import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
 import { KPIService } from 'src/app/services/kpi/kpi.service'
-import { CALCULATOR_OPEN_CHARTS_VIEW, CALCULATOR_OPEN_CONMPARAISON_RANGE, CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL, CALCULATOR_SELECT_GREFFE, EXECUTE_CALCULATOR_CHANGE_DATE } from 'src/app/constants/log-codes'
+import {
+  CALCULATOR_OPEN_CHARTS_VIEW,
+  CALCULATOR_OPEN_CONMPARAISON_RANGE,
+  CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
+  CALCULATOR_SELECT_GREFFE,
+  EXECUTE_CALCULATOR_CHANGE_DATE,
+} from 'src/app/constants/log-codes'
+import { BehaviorSubject } from 'rxjs'
 
 /**
  * Page du calculateur
@@ -268,7 +275,15 @@ export class CalculatorPage
   /**
    * Premier chargement
    */
-  firstLoading=true
+  firstLoading = true
+  /**
+   * on add delay to time out
+   */
+  onTimeoutLoad: any = null
+  /**
+   * Lock global loader
+   */
+  lockLoader: BehaviorSubject<boolean> = new BehaviorSubject(false)
 
   /**
    * Constructeur
@@ -287,7 +302,7 @@ export class CalculatorPage
     private referentielService: ReferentielService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private activitiesService: ActivitiesService,
-    private userService: UserService,
+    public userService: UserService,
     private backupSettingsService: BackupSettingsService,
     private router: Router,
     private appService: AppService,
@@ -376,6 +391,18 @@ export class CalculatorPage
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         this.backups = b
+      })
+    )
+
+    this.watch(
+      this.lockLoader.subscribe((l) => {
+        if (l) {
+          if (this.onTimeoutLoad) {
+            clearTimeout(this.onTimeoutLoad)
+          }
+        } else {
+          this.onLoad()
+        }
       })
     )
   }
@@ -509,51 +536,82 @@ export class CalculatorPage
   /**
    * Chargement des données back
    */
-  onLoad() {
-    if (
-      this.humanResourceService.backupId.getValue() &&
-      this.calculatorService.referentielIds.getValue().length &&
-      this.dateStart !== null &&
-      this.dateStop !== null &&
-      this.isLoading === false &&
-      this.categorySelected
-    ) {
-      this.isLoading = true
-      this.appService.appLoading.next(true)
-      this.calculatorService
-        .filterList(
-          this.categorySelected,
-          this.lastCategorySelected === this.categorySelected
-            ? this.selectedFonctionsIds
-            : null
-        )
-        .then(({ list, fonctions }) => {
-          this.appService.appLoading.next(false)
-          if (this.lastCategorySelected !== this.categorySelected) {
-            this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
-              id: f.id,
-              value: f.code,
-            }))
-            this.selectedFonctionsIds = fonctions.map(
-              (f: HRFonctionInterface) => f.id
-            )
-            this.calculatorService.selectedFonctionsIds.next(
-              this.selectedFonctionsIds
-            )
-          }
-          this.formatDatas(list)
-          this.isLoading = false
-          this.lastCategorySelected = this.categorySelected
-
-          if (this.firstLoading === false)
-            this.appService.notification('Les données du cockpit ont été mis à jour !')
-          this.firstLoading = false
-
-        })
-        .catch(() => {
-          this.isLoading = false
-        })
+  onLoad(loadDetail = true) {
+    if (this.onTimeoutLoad) {
+      clearTimeout(this.onTimeoutLoad)
     }
+
+    this.onTimeoutLoad = setTimeout(
+      () => {
+        if (
+          this.humanResourceService.backupId.getValue() &&
+          this.calculatorService.referentielIds.getValue().length &&
+          this.dateStart !== null &&
+          this.dateStop !== null &&
+          this.isLoading === false &&
+          this.categorySelected
+        ) {
+          this.onTimeoutLoad = null
+          this.isLoading = true
+          this.appService.appLoading.next(true)
+          this.calculatorService
+            .filterList(
+              this.categorySelected,
+              this.lastCategorySelected === this.categorySelected
+                ? this.selectedFonctionsIds
+                : null,
+              this.dateStart,
+              this.dateStop,
+              false
+            )
+            .then(({ list, fonctions }) => {
+              this.appService.appLoading.next(false)
+              if (this.lastCategorySelected !== this.categorySelected) {
+                this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
+                  id: f.id,
+                  value: f.code,
+                }))
+                this.selectedFonctionsIds = fonctions.map(
+                  (f: HRFonctionInterface) => f.id
+                )
+                this.calculatorService.selectedFonctionsIds.next(
+                  this.selectedFonctionsIds
+                )
+              }
+              this.formatDatas(list)
+              this.isLoading = false
+              this.lastCategorySelected = this.categorySelected
+
+              if (this.firstLoading === false)
+                this.appService.notification(
+                  'Les données du cockpit ont été mis à jour !'
+                )
+              this.firstLoading = false
+            })
+            .catch(() => {
+              this.isLoading = false
+            })
+            .finally(() => {
+              if (this.categorySelected && loadDetail) {
+                this.calculatorService
+                  .filterList(
+                    this.categorySelected,
+                    this.lastCategorySelected === this.categorySelected
+                      ? this.selectedFonctionsIds
+                      : null,
+                    this.dateStart,
+                    this.dateStop,
+                    true
+                  )
+                  .then(({ list }) => {
+                    this.formatDatas(list)
+                  })
+              }
+            })
+        }
+      },
+      this.firstLoading ? 0 : 1500
+    )
   }
 
   /**
@@ -574,12 +632,19 @@ export class CalculatorPage
   filtredDatas() {
     let list = this.datas
     if (this.sortBy) {
+      let sort = this.sortBy
+      if (
+        this.sortBy === 'magRealTimePerCase' &&
+        this.categorySelected !== 'magistrats'
+      ) {
+        sort = 'fonRealTimePerCase'
+      }
       list = orderBy(
         list,
         [
           (o) => {
             // @ts-ignore
-            return o[this.sortBy] || 0
+            return o[sort] || 0
           },
         ],
         ['desc']
@@ -600,11 +665,13 @@ export class CalculatorPage
     } else if (type === 'dateStart') {
       this.dateStart = new Date(event)
       this.calculatorService.dateStart.next(this.dateStart)
-      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE,'')
+      this.unselectTemplate()
+      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
     } else if (type === 'dateStop') {
       this.dateStop = month(new Date(event), undefined, 'lastDay')
       this.calculatorService.dateStop.next(this.dateStop)
-      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE,'')
+      this.unselectTemplate()
+      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
     }
 
     this.filtredDatas()
@@ -644,7 +711,6 @@ export class CalculatorPage
     this.fonctionRealValue = ''
     if (this.categorySelected === this.FONCTIONNAIRES)
       this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
-    this.onLoad()
   }
 
   /**
@@ -804,15 +870,21 @@ export class CalculatorPage
       if (ref.datas.dateStart) {
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
-        this.optionDateStop = new Date(ref.datas.dateStop)
-        this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE,ref.label+'')
+        this.optionDateStop = month(new Date(ref.datas.dateStop), 0, 'lastday')
+        this.kpiService.register(
+          CALCULATOR_OPEN_CONMPARAISON_RANGE,
+          ref.label + ''
+        )
       } else if (ref.datas.referentielId) {
         this.compareOption = 2
         this.backups = this.backups.map((b) => ({
           ...b,
           selected: ref.datas.referentielId == b.id,
         }))
-        this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL, ref.datas.referentielId+'')
+        this.kpiService.register(
+          CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
+          ref.datas.referentielId + ''
+        )
       }
       this.showPicker = false
       console.log(ref)
@@ -867,18 +939,17 @@ export class CalculatorPage
         return
       }
 
-      let rangeTitle = `${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(
-        this.optionDateStop
-      )}`
+      let rangeTitle = `${this.getRealValue(
+        this.optionDateStart
+      )} - ${this.getRealValue(this.optionDateStop)}`
       this.backupSettingsService
-        .addOrUpdate(
-          rangeTitle,
-          BACKUP_SETTING_COMPARE,
-          { dateStart: this.optionDateStart, dateStop: this.optionDateStop }
-        )
+        .addOrUpdate(rangeTitle, BACKUP_SETTING_COMPARE, {
+          dateStart: this.optionDateStart,
+          dateStop: this.optionDateStop,
+        })
         .then(() => this.onLoadComparaisons())
 
-      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE,rangeTitle)
+      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE, rangeTitle)
     } else {
       const backupSelected = this.backups.find((b) => b.selected)
       if (!backupSelected) {
@@ -895,8 +966,10 @@ export class CalculatorPage
         })
         .then(() => this.onLoadComparaisons())
 
-      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,backupSelected.id+'')
-
+      this.kpiService.register(
+        CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
+        backupSelected.id + ''
+      )
     }
 
     this.onLoadCompare()
@@ -918,9 +991,10 @@ export class CalculatorPage
       )
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) =>
         d === null
-          ? '-'
+          ? 'N/R'
           : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
       )
+
       const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
       const value1TauxCouverture = (this.datasFilted || []).map(
         (d) => d.realCoverage
@@ -942,7 +1016,7 @@ export class CalculatorPage
       ) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null) {
-            return '-'
+            return 'N/R'
           }
 
           if (d === 0 && tab1[index] === 0) {
@@ -976,7 +1050,8 @@ export class CalculatorPage
             ? this.selectedFonctionsIds
             : null,
           this.optionDateStart,
-          this.optionDateStop
+          this.optionDateStop,
+          false
         )
         this.appService.appLoading.next(false)
         const nextRangeString = `${this.getRealValue(
@@ -991,8 +1066,7 @@ export class CalculatorPage
         list.push({
           title: 'DTES',
           type: 'verticals-lines',
-          description:
-            'possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)',
+          description: 'de la période<br/>(calculé sur les 12 mois précédents)',
           lineMax:
             Math.max(
               ...value1DTES.map((m) => m || 0),
@@ -1019,7 +1093,7 @@ export class CalculatorPage
         ).map((d: CalculatorInterface) => d.magRealTimePerCase)
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
-            ? '-'
+            ? 'N/R'
             : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
         )
         const variationsTempsMoyen = getVariations(
@@ -1029,7 +1103,7 @@ export class CalculatorPage
         list.push({
           title: 'Temps moyen',
           type: 'verticals-lines',
-          description: 'de référence<br/>v/s<br/>temps moyen de la période',
+          description: 'sur la période',
           lineMax:
             Math.max(
               ...value1TempsMoyen.map((m) => m || 0),
@@ -1070,31 +1144,31 @@ export class CalculatorPage
         list.push({
           title: 'Taux de couverture',
           type: 'progress',
-          description: 'possible<br/>v/s<br/>taux de couverture de la période',
+          description: 'moyen sur la période',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((v || 0) * 100),
+            v === null ? null : Math.floor((v || 0) * 100),
             Math.floor((value2TauxCouverture[index] || 0) * 100),
           ]),
           variations: [
             {
               label: 'Variation',
               values: variationsCouverture,
-              subTitle: '%',
+              subTitle: 'pts',
               showArrow: true,
             },
             {
               label: actualRangeString,
               isOption: true,
               values: value1TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: nextRangeString,
               isOption: true,
               values: value2TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
           ],
@@ -1107,8 +1181,7 @@ export class CalculatorPage
         list.push({
           title: 'Stock',
           type: 'verticals-lines',
-          description:
-            'mensuelles possibles<br/>v/s<br/>stock en fin de période',
+          description: 'sur la période',
           lineMax:
             Math.max(
               ...value1Stock.map((m) => m || 0),
@@ -1138,7 +1211,7 @@ export class CalculatorPage
         list.push({
           title: 'Entrée',
           type: 'verticals-lines',
-          description: 'mensuelles possibles<br/>v/s<br/>entrée de la période',
+          description: 'moyenne<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Entrees.map((m) => m || 0),
@@ -1168,7 +1241,7 @@ export class CalculatorPage
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
-          description: 'mensuelles possibles<br/>v/s<br/>sorties de la période',
+          description: 'moyenne<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Sorties.map((m) => m || 0),
@@ -1190,155 +1263,158 @@ export class CalculatorPage
           ],
         })
 
-        const value2ETPTSiege: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.etpMag)
-        const variationsETPTSiege = getVariations(
-          value2ETPTSiege,
-          value1ETPTSiege
-        )
-        list.push({
-          title: 'ETPT Siège',
-          type: 'verticals-lines',
-          description:
-            'mensuelles possibles<br/>v/s<br/>ETPTSiege en fin de période',
-          lineMax:
-            Math.max(
-              ...value1ETPTSiege.map((m) => m || 0),
-              ...value2ETPTSiege.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTSiege.map((v, index) => [
-            v || 0,
-            value2ETPTSiege[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTSiege,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTSiege,
-              /*graph: {
+        if (this.canViewMagistrat) {
+          const value2ETPTSiege: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpMag)
+          const variationsETPTSiege = getVariations(
+            value2ETPTSiege,
+            value1ETPTSiege
+          )
+          list.push({
+            title: 'ETPT Siège',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTSiege.map((m) => m || 0),
+                ...value2ETPTSiege.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTSiege.map((v, index) => [
+              v || 0,
+              value2ETPTSiege[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTSiege,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTSiege,
+                /*graph: {
                 type: 'ETPTSiege',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('magistrat', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTSiege,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTSiege,
+                /*graph: {
                 type: 'ETPTSiege',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('magistrat', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
 
-        const value2ETPTGreffe: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.etpFon)
-        const variationsETPTGreffe = getVariations(
-          value2ETPTGreffe,
-          value1ETPTGreffe
-        )
-        list.push({
-          title: 'ETPT Greffe',
-          type: 'verticals-lines',
-          description:
-            'mensuelles possibles<br/>v/s<br/>ETPTGreffe en fin de période',
-          lineMax:
-            Math.max(
-              ...value1ETPTGreffe.map((m) => m || 0),
-              ...value2ETPTGreffe.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTGreffe.map((v, index) => [
-            v || 0,
-            value2ETPTGreffe[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTGreffe,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTGreffe,
-              /*graph: {
+        if (this.canViewGreffier) {
+          const value2ETPTGreffe: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpFon)
+          const variationsETPTGreffe = getVariations(
+            value2ETPTGreffe,
+            value1ETPTGreffe
+          )
+          list.push({
+            title: 'ETPT Greffe',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTGreffe.map((m) => m || 0),
+                ...value2ETPTGreffe.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTGreffe.map((v, index) => [
+              v || 0,
+              value2ETPTGreffe[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTGreffe,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTGreffe,
+                /*graph: {
                 type: 'ETPTGreffe',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('greffe', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTGreffe,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTGreffe,
+                /*graph: {
                 type: 'ETPTGreffe',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('greffe', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
 
-        const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) => d.etpCont
-        )
-        const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
-        list.push({
-          title: 'ETPT EAM',
-          type: 'verticals-lines',
-          description:
-            'mensuelles possibles<br/>v/s<br/>ETPTEam en fin de période',
-          lineMax:
-            Math.max(
-              ...value1ETPTEam.map((m) => m || 0),
-              ...value2ETPTEam.map((m) => m || 0)
-            ) * 1.1,
-          values: value1ETPTEam.map((v, index) => [
-            v || 0,
-            value2ETPTEam[index] || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsETPTEam,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: actualRangeString,
-              values: value1ETPTEam,
-              /*graph: {
+        if (this.canViewContractuel) {
+          const value2ETPTEam: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.etpCont)
+          const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
+          list.push({
+            title: 'ETPT EAM',
+            type: 'verticals-lines',
+            description: '-',
+            lineMax:
+              Math.max(
+                ...value1ETPTEam.map((m) => m || 0),
+                ...value2ETPTEam.map((m) => m || 0)
+              ) * 1.1,
+            values: value1ETPTEam.map((v, index) => [
+              v || 0,
+              value2ETPTEam[index] || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsETPTEam,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTEam,
+                /*graph: {
                 type: 'ETPTEam',
                 dateStart: new Date(this.dateStart || ''),
                 dateStop: new Date(this.dateStop || ''),
                 color: getCategoryColor('eam', 1),
               },*/
-            },
-            {
-              label: nextRangeString,
-              values: value2ETPTEam,
-              /*graph: {
+              },
+              {
+                label: nextRangeString,
+                values: value2ETPTEam,
+                /*graph: {
                 type: 'ETPTEam',
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('eam', 0.5),
               },*/
-            },
-          ],
-        })
+              },
+            ],
+          })
+        }
       } else {
         const refSelected = this.backups.find((b) => b.selected)
         if (!refSelected) {
@@ -1361,7 +1437,7 @@ export class CalculatorPage
         })
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
-            ? '-'
+            ? 'N/R'
             : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
         )
         const variationsTempsMoyen = getVariations(
@@ -1393,7 +1469,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
 
@@ -1441,7 +1517,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
         const variationsDTES = getVariations(value2DTES, value1DTES)
@@ -1449,7 +1525,7 @@ export class CalculatorPage
           title: 'DTES',
           type: 'verticals-lines',
           description:
-            'possible<br/>v/s<br/>DTES de la période<br/><br/>(calculé sur les 12 mois précédents)',
+            'de la période<br/>v/s<br/>DTES possible<br/><br/>(calculé sur les 12 mois précédents)',
           lineMax:
             Math.max(
               ...value1DTES.map((m) => m || 0),
@@ -1485,7 +1561,7 @@ export class CalculatorPage
               )
             }
 
-            return v1
+            return null
           }),
         ]
 
@@ -1497,31 +1573,31 @@ export class CalculatorPage
         list.push({
           title: 'Taux de couverture',
           type: 'progress',
-          description: 'possible<br/>v/s<br/>taux de couverture de la période',
+          description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((v || 0) * 100),
+            v === null ? null : Math.floor((v || 0) * 100),
             Math.floor((value2TauxCouverture[index] || 0) * 100),
           ]),
           variations: [
             {
               label: 'Variation',
               values: variationsCouverture,
-              subTitle: '%',
+              subTitle: 'pts',
               showArrow: true,
             },
             {
               label: actualRangeString,
               isOption: true,
               values: value1TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: refSelected.label,
               isOption: true,
               values: value2TauxCouverture.map((t) =>
-                t === null ? '-' : Math.floor(t * 100) + ' %'
+                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
           ],
@@ -1530,7 +1606,7 @@ export class CalculatorPage
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
-          description: 'mensuelles possibles<br/>v/s<br/>sorties de la période',
+          description: 'de la période<br/>v/s<br/>sorties mensuelles possibles',
           lineMax:
             Math.max(
               ...value1Sorties.map((m) => m || 0),
@@ -1598,8 +1674,9 @@ export class CalculatorPage
   /**
    * Drop down deselection
    */
-  unselectTemplate(){
-    this.compareTemplates=null
+  unselectTemplate() {
+    this.showPicker = false
+    this.compareTemplates = null
     this.referentiels.map((x) => {
       x.selected = false
     })
@@ -1608,8 +1685,33 @@ export class CalculatorPage
   /**
    * Envoie d'une log lors de l'ouverture de la vue graphique
    */
-  logChartView(){
-    this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW,'')
+  logChartView() {
+    this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW, '')
   }
 
+  filterReferentiels(referentiels: any[]) {
+    return referentiels.reduce((previous, current) => {
+      if (current.datas && current.datas && current.datas.referentielId) {
+        const bup = this.backups.find(
+          (b) => b.id === current.datas.referentielId
+        )
+        if (bup && bup.type) {
+          if (
+            this.categorySelected === this.MAGISTRATS &&
+            bup.type !== 'SIEGE'
+          ) {
+            return previous
+          } else if (
+            this.categorySelected === this.FONCTIONNAIRES &&
+            bup.type !== 'GREFFE'
+          ) {
+            return previous
+          }
+        }
+      }
+
+      previous.push(current)
+      return previous
+    }, [])
+  }
 }

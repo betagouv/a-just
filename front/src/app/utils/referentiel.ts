@@ -1,5 +1,5 @@
-import { OPACITY_20 } from "../constants/colors"
-import { ETP_NEED_TO_BE_UPDATED } from "../constants/referentiel"
+import { OPACITY_20 } from '../constants/colors'
+import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
 //import { juridictionJIRS } from "../constants/juridiction-jirs"
 //import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 
@@ -33,7 +33,6 @@ export function referentielMappingName(name: string): string {
   return name
 }
 
-
 /**
  * Conversion d'un nom de référentiel en version simplifiée CA
  * @param name
@@ -41,35 +40,35 @@ export function referentielMappingName(name: string): string {
  */
 export function referentielCAMappingName(name: string): string {
   switch (name) {
-    case "Contentieux social":
-      return "Social";
-    case "Contentieux de la famille":
-      return "Famille";
-    case "Contentieux de la protection":
-      return "CTX JCP";
-    case "Contentieux civil non spécialisé":
-      return "Civil Ns";
-    case "Contentieux commercial":
-      return "Comm.";
-    case "Attributions du PP":
-      return "PP";
-    case "Contentieux civil JLD":
-      return "Jld Civil";
-    case "Contentieux des mineurs":
-      return "Mineurs";
-    case "Instruction et entraide":
-      return "CHINS";
-    case "Correctionnel":
-      return "CHAC";
-    case "Contentieux criminel":
-      return "Crim.";
-    case "Application des peines":
-      return "CHAP";
-    case "Autres activités":
-      return "Autres";
+    case 'Contentieux social':
+      return 'Social'
+    case 'Contentieux de la famille':
+      return 'Famille'
+    case 'Contentieux de la protection':
+      return 'CTX JCP'
+    case 'Contentieux civil non spécialisé':
+      return 'Civil Ns'
+    case 'Contentieux commercial':
+      return 'Comm.'
+    case 'Attributions du PP':
+      return 'PP'
+    case 'Contentieux civil JLD':
+      return 'Jld Civil'
+    case 'Contentieux des mineurs':
+      return 'Mineurs'
+    case 'Instruction et entraide':
+      return 'CHINS'
+    case 'Correctionnel':
+      return 'CHAC'
+    case 'Contentieux criminel':
+      return 'Crim.'
+    case 'Application des peines':
+      return 'CHAP'
+    case 'Autres activités':
+      return 'Autres'
   }
 
-  return name;
+  return name
 }
 
 /**
@@ -99,7 +98,7 @@ export function referentielMappingColor(
         return `rgb(227, 211, 237)`
       case 'Civil NS':
         return `rgb(213, 216, 235)`
-      case "JI":
+      case 'JI':
         return `rgb(250, 221, 212)`
       case 'JLD Civil':
         return `rgb(217, 211, 237)`
@@ -128,7 +127,7 @@ export function referentielMappingColor(
         return `rgba(105, 28, 153, ${opacity})`
       case 'Civil NS':
         return `rgba(40, 53, 148, ${opacity})`
-      case "JI":
+      case 'JI':
         return `rgba(217, 66, 20, ${opacity})`
       case 'JLD Civil':
         return `rgba(69, 39, 161, ${opacity})`
@@ -171,7 +170,7 @@ export function referentielMappingColorActivity(
         return `rgb(227, 211, 237)`
       case 'Civil NS':
         return `rgb(213, 216, 235)`
-      case "JI":
+      case 'JI':
         return `rgb(250, 221, 212)`
       case 'JLD Civil':
         return `rgb(217, 211, 237)`
@@ -202,7 +201,7 @@ export function referentielMappingColorActivity(
         return `rgba(105, 28, 153, ${opacity})`
       case 'Civil NS':
         return `rgba(40, 53, 148, ${opacity})`
-      case "JI":
+      case 'JI':
         return `rgba(217, 66, 20, ${opacity})`
       case 'JLD Civil':
         return `rgba(69, 39, 161, ${opacity})`
@@ -233,60 +232,60 @@ export function referentielMappingColorCAActivity(
 
   if (opacity === OPACITY_20) {
     switch (tmp) {
-      case "Social":
+      case 'Social':
         return `rgb(211, 231, 232)`
-      case "Famille":
+      case 'Famille':
         return `rgb(211, 228, 242)`
-      case "CTX JCP":
+      case 'CTX JCP':
         return `rgb(211, 223, 242)`
-      case "Civil Ns":
+      case 'Civil Ns':
         return `rgb(213, 216, 235)`
-      case "Comm.":
+      case 'Comm.':
         return `rgb(215, 241, 245)`
-      case "PP":
+      case 'PP':
         return `rgb(255, 245, 214)`
-      case "Jld Civil":
+      case 'Jld Civil':
         return `rgb(217, 211, 237)`
-      case "Mineurs":
+      case 'Mineurs':
         return `rgb(228, 211, 237)`
-      case "CHINS": //CHINS
+      case 'CHINS': //CHINS
         return `rgb(250, 221, 212)`
-      case "CHAC":
+      case 'CHAC':
         return `rgb(245, 214, 213)` //CHAC
-      case "Crim.":
+      case 'Crim.':
         return `rgb(255, 234, 214)`
-      case "CHAP": //CHAP
+      case 'CHAP': //CHAP
         return `rgb(255, 227, 212)`
-      case "Autres":
+      case 'Autres':
         return `rgb(217, 217, 217)`
     }
   } else {
     switch (tmp) {
-      case "Social":
+      case 'Social':
         return `rgba(1, 131, 143, ${opacity})`
-      case "Famille":
+      case 'Famille':
         return `rgba(0, 118, 191, ${opacity})`
-      case "CTX JCP":
+      case 'CTX JCP':
         return `rgba(23, 99, 191, ${opacity})`
-      case "Civil Ns":
+      case 'Civil Ns':
         return `rgba(39, 52, 145, ${opacity})`
-      case "Comm.":
+      case 'Comm.':
         return `rgba(37, 190, 207, ${opacity})`
-      case "PP":
+      case 'PP':
         return `rgba(250, 202, 12, ${opacity})`
-      case "Jld Civil":
+      case 'Jld Civil':
         return `rgba(70, 37, 161, ${opacity})`
-      case "Mineurs":
+      case 'Mineurs':
         return `rgba(104, 26, 153, ${opacity})`
-      case "CHINS": //CHINS
+      case 'CHINS': //CHINS
         return `rgba(214, 65, 19, ${opacity})`
-      case "CHAC":
+      case 'CHAC':
         return `rgba(196, 39, 39, ${opacity})` //CHAC
-      case "Crim.":
+      case 'Crim.':
         return `rgba(255, 145, 0, ${opacity})`
-      case "CHAP": //CHAP
+      case 'CHAP': //CHAP
         return `rgba(240, 108, 0, ${opacity})`
-      case "Autres":
+      case 'Autres':
         return `rgba(66, 66, 66, ${opacity})`
     }
   }

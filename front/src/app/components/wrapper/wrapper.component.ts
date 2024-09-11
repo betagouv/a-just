@@ -34,7 +34,6 @@ import { Title } from '@angular/platform-browser'
 import { downloadFile } from 'src/app/utils/system'
 import { DateSelectorinterface } from 'src/app/interfaces/date'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
-import { USER_ACCESS_AVERAGE_TIME } from 'src/app/constants/user-access'
 import { ServerService } from 'src/app/services/http-server/server.service'
 
 declare const Quill: any
