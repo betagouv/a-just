@@ -85,7 +85,6 @@ const etpFonToDefine = '[un volume moyen de]'
 })
 export class SimulatorPage
   extends MainClass
-
   implements OnInit, IDeactivateComponent, OnDestroy
 {
   /**
@@ -246,7 +245,8 @@ export class SimulatorPage
    */
   documentationUrl = {
     main: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
-    whiteSimulator: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
+    whiteSimulator:
+      'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
   }
 
   /**
@@ -500,7 +500,6 @@ export class SimulatorPage
     }
   }
 
-
   /**
    * Destruction du composant
    */
@@ -540,7 +539,7 @@ export class SimulatorPage
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
-        console.log('Situation actuelle : ', d)
+        //console.log('Situation actuelle : ', d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue()
       })
@@ -548,7 +547,7 @@ export class SimulatorPage
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
-        console.log('Situation proj : ', d)
+        //console.log('Situation proj : ', d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue()
       })
@@ -556,8 +555,7 @@ export class SimulatorPage
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
         if (d !== null) {
-          console.log('Situation simu : ', d)
-
+          //console.log('Situation simu : ', d)
           this.simulatedSationData = d
           const findTitle = document.getElementsByClassName('simulation-title')
           const findElement = document.getElementById('content')
@@ -778,9 +776,8 @@ export class SimulatorPage
     this.startRealValue = ''
     this.stopRealValue = ''
     this.mooveClass = ''
-    this.documentation.path = this.documentationUrl.main,
-
-      this.toDisplaySimulation = false
+    ;(this.documentation.path = this.documentationUrl.main),
+      (this.toDisplaySimulation = false)
     //this.simulatorService.situationSimulated.next(null)
     document.getElementById('init-button')?.click()
 
@@ -2062,7 +2059,7 @@ export class SimulatorPage
 
   /**
    * Changmenet de l'url de la documentation selon le simulateur sélectionnée
-   * @param docUrl 
+   * @param docUrl
    */
   setDocUrl(docUrl: string) {
     this.documentation.path = docUrl
