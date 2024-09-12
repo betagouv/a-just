@@ -34,7 +34,7 @@
           <br />
           <br />Vous n'avez plus qu'à choisir les scénarios que vous voulez
           jouer !
-          <div class="button-sim"
+          <div id="on-button-continue" class="button-sim"
             (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator();setDocUrl(documentationUrl.main)">
             Continuer
           </div>
@@ -884,3 +884,5 @@
     <p class="title">Tout réinitialiser</p>
   </div>
 </ng-template>
+
+<aj-intro-js [steps]="introSteps" typeId="simulator"></aj-intro-js>
