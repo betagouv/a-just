@@ -8,10 +8,10 @@ import { CommonModule } from '@angular/common'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { PopupModule } from 'src/app/components/popup/popup.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
-import { SelectModule } from 'src/app/components/select/select.module';
-import { HeaderSelectorsComponent } from './header-selectors/header-selectors.component';
-import { PeriodSelectorComponent } from './period-selector/period-selector.component';
-import { SituationDisplayerComponent } from './situation-displayer/situation-displayer.component';
+import { SelectModule } from 'src/app/components/select/select.module'
+import { HeaderSelectorsComponent } from './header-selectors/header-selectors.component'
+import { PeriodSelectorComponent } from './period-selector/period-selector.component'
+import { SituationDisplayerComponent } from './situation-displayer/situation-displayer.component'
 import { BackButtonModule } from 'src/app/components/back-button/back-button.module'
 import { DtesChartModule } from './charts/dtes-chart/dtes-chart.module'
 import { InOutChartModule } from './charts/in-out-chart/in-out.module'
@@ -20,9 +20,15 @@ import { EditableSituationModule } from './editable-situation/editable-situation
 import { DialWidgetModule } from './widgets/dial-widget/dial-widget.module'
 import { CoveragePreviewModule } from './widgets/coverage-preview/coverage-preview.module'
 import { LoadersWidgetModule } from './widgets/loaders-widget/loaders-widget.module'
+import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
 
 @NgModule({
-  declarations: [SimulatorPage, HeaderSelectorsComponent, PeriodSelectorComponent, SituationDisplayerComponent],
+  declarations: [
+    SimulatorPage,
+    HeaderSelectorsComponent,
+    PeriodSelectorComponent,
+    SituationDisplayerComponent,
+  ],
   imports: [
     SimulatorPageModule,
     RouterModule,
@@ -40,7 +46,8 @@ import { LoadersWidgetModule } from './widgets/loaders-widget/loaders-widget.mod
     EditableSituationModule,
     CoveragePreviewModule,
     LoadersWidgetModule,
-    DialWidgetModule
+    DialWidgetModule,
+    IntroJSModule,
   ],
 })
-export class SimulatorModule { }
+export class SimulatorModule {}

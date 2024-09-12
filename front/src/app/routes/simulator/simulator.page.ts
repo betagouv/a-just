@@ -39,6 +39,8 @@ import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ServerService } from 'src/app/services/http-server/server.service'
 import { HubspotChatService } from 'src/app/services/hubspot-chat/hubspot-chat.service'
+import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { sleep } from 'src/app/utils'
 
 /**
  * Variable ETP magistrat field name
@@ -392,6 +394,48 @@ export class SimulatorPage
 
   onReloadAction = false
   /**
+   * Intro JS Steps
+   */
+  introSteps: IntroJSStep[] = [
+    {
+      target: '.intro-simulateur',
+      title: 'Comment simuler votre trajectoire avec A-JUST ?',
+      intro:
+        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.',
+    },
+    {
+      target: '.header-list',
+      title: 'Effectuer votre simulation :',
+      intro:
+        'Découvrez, en <b>vidéo</b>, comment prévoir la trajectoire de votre ' +
+        (this.isTJ() ? 'juridiction' : "cour d'appel") +
+        ' pour un contentieux ou sous-contentieux considéré compte tenu des données renseignées, toutes choses restant égales par ailleurs.<br/><video controls autoplay class="intro-js-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video><p>Et expérimentez l’A-JUSTement d’un ou deux paramètres de votre choix pour déterminer leur impact prévisible sur les autres selon les scenarii qui vous intéressent.</p><p>Nous vous y donnerons également toutes les clés pour <b>analyser les résultats de votre simulation</b>.</p>',
+    },
+    {
+      target: '.intro-simulateur',
+      title: 'Choisissez le type de simulation',
+      intro:
+        '<p>Vous pouvez <b>effectuer une simulation en utilisant les données renseignées dans A-JUST</b>, c’est ce que nous vous recommandons pour une vision fine de la trajectoire de votre ' +
+        (this.isTJ() ? 'juridiction' : "cour d'appel") +
+        ' sur des contentieux avec des données pré-alimentées par A-JUST.</p><p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.</p><p><b>Montrer deux boutons</b> : effectuer une simulation avec des données renseignées / effectuer une simulation sans données renseignées.</p>',
+    },
+    {
+      target: '#content',
+      title: 'Configurez votre hypothèse',
+      intro:
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe. Ensuite, sélectionnez un <b>contentieux</b> dans le menu déroulant. Suivant votre besoin, vous pouvez affiner votre simulation en sélectionnant un sous-contentieux voire une fonction spécifique.</p><p>Enfin, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date ou les dates du futur sur lesquelles vous souhaitez vous projeter ; </p><p><b>Nommez votre simulation</b> : c’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('#on-button-continue')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
+    },
+  ]
+
+  /**
    * Constructeur
    */
   constructor(
@@ -479,6 +523,14 @@ export class SimulatorPage
     let updatedMsg = this.replaceAll(originalMsg, etpMagTitle, etpFonTitle)
     updatedMsg = this.replaceAll(updatedMsg, etpMagToDefine, etpFonToDefine)
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
+  }
+
+  /**
+   * Detect is TJ
+   * @returns
+   */
+  isTJ() {
+    return this.userService.interfaceType !== 1
   }
 
   /**
