@@ -54,7 +54,7 @@ export default class RouteReaffectator extends Route {
     const hr = await this.model.getCache(backupId)
     let hrfiltered = filterByCategoryAndFonction(copyArray(hr), null, fonctionsIds)
     let categories = await this.models.HRCategories.getAll()
-    const activities = await this.models.Activities.getAll(backupId, date)
+    const activities = await this.models.Activities.getAll(backupId)
 
     for (let i = 0; i < referentiel.length; i++) {
       referentiel[i] = {
