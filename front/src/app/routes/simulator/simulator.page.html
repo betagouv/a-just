@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <aj-period-selector [whiteSimulator]="whiteSimulator"></aj-period-selector>
+    <aj-period-selector #periodSelector [whiteSimulator]="whiteSimulator"></aj-period-selector>
   </div>
 
   <!-- SIMULATOR STD -->
@@ -885,4 +885,4 @@
   </div>
 </ng-template>
 
-<aj-intro-js [steps]="introSteps" typeId="simulator"></aj-intro-js>
+<aj-intro-js [steps]="whiteSimulator ? introStepsWhiteSimulator : introStepsDefault" typeId="simulator"></aj-intro-js>

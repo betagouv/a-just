@@ -5,6 +5,7 @@ import {
   monthDiffList,
   nbOfDays,
   stringToDecimalDate,
+  today,
 } from 'src/app/utils/dates'
 import {
   Component,
@@ -41,6 +42,8 @@ import { ServerService } from 'src/app/services/http-server/server.service'
 import { HubspotChatService } from 'src/app/services/hubspot-chat/hubspot-chat.service'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sleep } from 'src/app/utils'
+import { PeriodSelectorComponent } from './period-selector/period-selector.component'
+import { position } from 'html2canvas/dist/types/css/property-descriptors/position'
 
 /**
  * Variable ETP magistrat field name
@@ -89,6 +92,9 @@ export class SimulatorPage
   extends MainClass
   implements OnInit, IDeactivateComponent, OnDestroy
 {
+  @ViewChild('periodSelector') periodSelector:
+    | PeriodSelectorComponent
+    | undefined
   /**
    * Wrapper de page contenant le simulateur
    */
@@ -394,9 +400,9 @@ export class SimulatorPage
 
   onReloadAction = false
   /**
-   * Intro JS Steps
+   * Intro JS Steps par défaut
    */
-  introSteps: IntroJSStep[] = [
+  introStepsDefault: IntroJSStep[] = [
     {
       target: '.intro-simulateur',
       title: 'Comment simuler votre trajectoire avec A-JUST ?',
@@ -431,6 +437,56 @@ export class SimulatorPage
           itemToClick.click()
           await sleep(200)
         }
+      },
+    },
+  ]
+  /**
+   * Intro JS Steps du simulateur à blanc
+   */
+  introStepsWhiteSimulator: IntroJSStep[] = [
+    {
+      target: '#wrapper-contener',
+      title: 'La simulation sans données pré-alimentées',
+      intro:
+        '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas suivies dans A-JUST comme les activités administratives ou du soutien, les activités du Parquet, ou les contentieux qui ne seraient pas isolés dans A-JUST.</p><p><b>Texte sur le bouton des données pré-alimentées dans le menu d’accès :</b> effectuer une simulation avec des données renseignées / effectuer une simulation sans données renseignées.</p>',
+    },
+    {
+      target: '.date-bar-container',
+      title: 'Configurez votre hypothèse :',
+      intro:
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à lesquelles vous souhaitez vous projeter (ex : atteindre un stock de X dossier à la fin du semestre) ;</p><p><b>Nommez votre simulation :</b> c’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+      beforeLoad: async (intro: any) => {
+        if (this.periodSelector) {
+          const now = today()
+          now.setMonth(now.getMonth() + 12)
+          this.periodSelector.updateDateSelected('dateStop', now, false)
+        }
+      },
+    },
+    {
+      target: 'aj-editable-situation',
+      title: 'Renseignez vos données d’activité :',
+      intro:
+        '<p>Renseignez <b>librement les données d’entrées, de sorties, de stock et d’ETPT</b> pour mesurer l’impact d’un changement à venir. <b>Tous les champs ne sont pas à alimenter</b>, vous les adapterez à votre connaissance de la situation actuelle du service ou aux besoins de votre simulation.</p><p>Dès lors que suffisamment de champs sont renseignés, notre algorithme effectue les calculs utiles et les champs non renseignés (par ex. taux de couverture/DTES ou TMD) se remplissent automatiquement. Vous pouvez "<b>valider</b>" pour figer cette situation de départ ou "<b>effacer</b>" si vous souhaitez la modifier.</p><p>Une petite astuce : pour calculer les entrées/sorties moyennes mensuelles, faites-le sur une période relativement longue, idéalement de plusieurs mois voire une année, pour qu’elles soient les plus représentatives et effacent les effets saisonniers.</p>',
+      beforeLoad: async (intro: any) => {
+        setTimeout(() => {
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            introTooltip.classList.add('introjs-bottom-left-aligned')
+            introTooltip.classList.remove('introjs-floating')
+            // @ts-ignore
+            introTooltip.style.left = '0px'
+            // @ts-ignore
+            introTooltip.style.top = '176px'
+            // @ts-ignore
+            introTooltip.style.marginLeft = '0'
+            // @ts-ignore
+            introTooltip.style.marginTop = '0'
+          }
+        }, 380)
+      },
+      options: {
+        position: 'bottom',
       },
     },
   ]
