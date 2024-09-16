@@ -6,6 +6,7 @@ import { ActivitiesService } from 'src/app/services/activities/activities.servic
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { month } from 'src/app/utils/dates';
+import { OPACITY_20 } from 'src/app/constants/colors';
 
 interface TagInterface {
   dateStart: Date;
@@ -63,6 +64,11 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
    * Liste des contentieux ayants un manque
    */
   list: ContentieuxSelected[] = []
+
+  /**
+   * Opacité background des contentieux
+   */
+  OPACITY = OPACITY_20
 
 
   /**
