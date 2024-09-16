@@ -149,7 +149,7 @@ export class GraphsVerticalsLinesComponent
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.referentielName) {
-      this.background = `linear-gradient(${this.referentielMappingColor(
+      this.background = `linear-gradient(${this.userService.referentielMappingColorByInterface(
         this.referentielName,
         0.25
       )}, #ffffff)`
@@ -209,7 +209,7 @@ export class GraphsVerticalsLinesComponent
         if (this.showLines && line.length >= 2) {
           this.updateMax.emit({ type: this.type, max: Math.max(...line) || 0 })
 
-          ctx.strokeStyle = this.referentielMappingColor(this.referentielName)
+          ctx.strokeStyle = this.userService.referentielMappingColorByInterface(this.referentielName)
           ctx.setLineDash([2])
           ctx.lineWidth = 1
           ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue))
@@ -235,7 +235,7 @@ export class GraphsVerticalsLinesComponent
           region.closePath()
 
           // Fill path
-          ctx.fillStyle = this.referentielMappingColor(
+          ctx.fillStyle = this.userService.referentielMappingColorByInterface(
             this.referentielName,
             0.6
           )

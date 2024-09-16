@@ -36,7 +36,7 @@ export class GraphsProgressComponent extends MainClass implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.referentielName) {
-      this.background = `linear-gradient(38deg, ${this.referentielMappingColor(this.referentielName, 0.25)} 5%, #fff 117%)`
+      this.background = `linear-gradient(38deg, ${this.userService.referentielMappingColorByInterface(this.referentielName, 0.25)} 5%, #fff 117%)`
     }
   }
 }

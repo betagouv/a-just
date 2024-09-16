@@ -7,6 +7,7 @@ import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { OPACITY_20 } from 'src/app/constants/colors'
 
 interface ActivityByHuman {
   contentieux: ContentieuReferentielInterface;
@@ -28,6 +29,10 @@ interface ActivityByHuman {
 })
 export class ActivitiesLastModificationsComponent extends MainClass implements OnInit, OnDestroy {
   list: ActivityByHuman[] = []
+  /**
+   * Opacité background des contentieux
+   */
+  OPACITY = OPACITY_20
 
   /**
    * Constructor

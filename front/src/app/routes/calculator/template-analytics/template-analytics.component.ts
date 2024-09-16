@@ -3,6 +3,8 @@ import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-re
 import { MainClass } from 'src/app/libs/main-class'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
+import { UserService } from 'src/app/services/user/user.service'
+import { OPACITY_20 } from 'src/app/constants/colors'
 
 export interface AnalyticsLine {
   title: string
@@ -47,6 +49,10 @@ export class TemplateAnalyticsComponent
    */
   referentiel: ContentieuReferentielInterface[] = []
   /**
+   * Opacité background des contentieux
+   */
+  OPACITY = OPACITY_20
+  /**
    * Templates
    */
   @Input() lines: AnalyticsLine[] = []
@@ -56,7 +62,8 @@ export class TemplateAnalyticsComponent
    */
   constructor(
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
+    public userService: UserService,
   ) {
     super()
   }
