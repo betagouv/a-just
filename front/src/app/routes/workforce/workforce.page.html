@@ -168,7 +168,7 @@
         ? 'résultats' : 'résultat'}} dans les effectifs
       </div>
       <a *ngFor="let person of allPersonsFilteredIsIn" [routerLink]="['/resource-humaine', person.id]" class="is-in">
-        <p>
+        <p class="agent-username">
           {{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
@@ -181,7 +181,7 @@
         1 ? 'résultats' : 'résultat'}} hors effectifs
       </div>
       <a *ngFor="let person of allPersonsFilteredNotIn" [routerLink]="['/resource-humaine', person.id]">
-        <p>
+        <p class="agent-username">
           {{ filterParams && filterParams.display === 'nom/prénom' ?
           person.lastName:person.firstName}} {{ filterParams &&
           filterParams.display === 'nom/prénom' ? person.firstName :
@@ -189,17 +189,17 @@
         </p>
 
         <div *ngIf="person.dateStart && isArriving(person.dateStart)" class="agent-status"
-          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }">
+          [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
           <i class="ri-user-received-line" [ngStyle]="{
-              color: person.categoryName ? getCategoryColor(person.categoryName) : null,
+              color: getCategoryColor(person.categoryName),
             }">
           </i>
           <p>Arrivée prévue</p>
         </div>
         <div *ngIf="person.dateStart && !isArriving(person.dateStart)" class="agent-status"
-          [ngStyle]="{ backgroundColor: person.categoryName ? getBgCategoryColor(person.categoryName) : null }">
+          [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
           <i class="ri-user-shared-line" [ngStyle]="{
-              color: person.categoryName ? getCategoryColor(person.categoryName) : null,
+              color: getCategoryColor(person.categoryName),
             }">
           </i>
           <p>Parti</p>

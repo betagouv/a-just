@@ -489,6 +489,7 @@ progression-bar {
       display: flex;
       align-items: center;
       height: 40px;
+      width: 100%;
       white-space: nowrap;
       text-decoration: none;
 
@@ -499,11 +500,17 @@ progression-bar {
         flex: 1;
       }
 
+      .agent-username {
+        width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       .agent-status {
         display: flex;
         flex-direction: row;
         align-items: center;
-        width: 30%;
+        width: 34%;
         margin-right: 16px;
         border-radius: 16px;
 

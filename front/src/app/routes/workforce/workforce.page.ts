@@ -667,12 +667,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
  * @returns 
  */
   isArriving(date : Date | string) : boolean {
-    const now = new Date()
+    const now = new Date(this.dateSelected)
 
     const diff = sortDates(date, now, false)
-    const res = diff > 0 ? true : false
-
-    return res
+    
+    return diff > 0 ? true : false
   }
 
   /**

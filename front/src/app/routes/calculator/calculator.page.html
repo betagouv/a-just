@@ -23,11 +23,11 @@
       <div class="dates-selector">
         <aj-date-select title="de" [value]="dateStart" (valueChange)="updateReferentielSelected('dateStart', $event)"
           class="bg-white calculator" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
-          [icon]="'chevron_left'">
+          [icon]="'chevron_left'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
         <aj-date-select title="à" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
           class="bg-white calculator" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
-          [icon]="'chevron_right'">
+          [icon]="'chevron_right'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
       </div>
       <div class="flex-1"></div>
@@ -38,8 +38,7 @@
           <i class="ri-table-view"></i>
           <p>Données brutes</p>
         </div>
-        <div class="fonctionnaires" *ngIf="canViewGreffier"
-          [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
+        <div class="fonctionnaires" [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
           (click)="tabSelected=1;unselectTemplate();logChartView();$event.stopPropagation()">
           <i class="ri-bar-chart-box-line"></i>
           <p>Graphiques</p>
@@ -58,7 +57,7 @@
       <ng-template [ngIf]="tabSelected === 0">
         <div class="header-calculator ">
 
-          <div class="contentieux-header-calculator" title="">
+          <div class="contentieux-header-calculator window-scrool-width-margin" title="">
             <div class="width-contentieux">
               <p>Contentieux</p>
             </div>
@@ -105,7 +104,7 @@
               <p>ETPT <br />Siège</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
               <aj-tooltips class="medium" title="ETPT siège"
-                content="Total des ETP travaillés sur la période par les agents du siège affectés à ce contentieux">
+                content="Total des ETP travaillés sur la période par les agents du siège affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewGreffier" class="tooltip medium item" (click)="onSortBy('etpFon')"
@@ -114,7 +113,7 @@
               <p>ETPT<br />Greffe</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
               <aj-tooltips class="medium" title="ETPT greffe"
-                content="Total des ETP travaillés sur la période par les agents du greffe affectés à ce contentieux">
+                content="Total des ETP travaillés sur la période par les agents du greffe affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewContractuel" class="tooltip medium item" (click)="onSortBy('etpCont')"
@@ -123,7 +122,7 @@
               <p>ETPT<br />EAM</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
               <aj-tooltips class="medium" title="ETPT EAM"
-                content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés à ce contentieux">
+                content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés au contentieux">
               </aj-tooltips>
             </div>
 
@@ -132,8 +131,8 @@
               <div class="flex-1"></div>
               <p>Temps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier observé</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCase'}"></i>
-              <aj-tooltips title="Temps moyen par dossier observé" class="large"
-                content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux sur la période."
+              <aj-tooltips title="Temps moyen par dossier observé" class="large left"
+                content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur la période."
                 footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>">
               </aj-tooltips>
             </div>
@@ -161,7 +160,8 @@
       <i class="ri-a-b"></i>
     </div>
 
-    <p class="title">Comparer les données du {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}</p>
+    <p class="title">Comparer les données du <label [ngClass]="{'greffe': categorySelected === 'fonctionnaires'}">{{
+        categorySelected === 'magistrats' ? 'SIÈGE':'GREFFE' }}</label></p>
     <p class="title">de {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à :</p>
 
     <div class="picker">
@@ -192,12 +192,13 @@
         </div>
 
       </div>
-      <div class="or"><label>OU</label></div>
-      <div class="second-section"
+      <div class="or" *ngIf="userService.canViewAverageTime()"><label>OU</label></div>
+      <div class="second-section" *ngIf="userService.canViewAverageTime()"
         [ngClass]="{'selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
         (click)="compareOption=2">
         <div class="header"> un référentiel
-          <br />de temps moyens {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}
+          <br />de temps moyens <label [ngClass]="{'greffe': categorySelected === 'fonctionnaires'}">{{
+            categorySelected === 'magistrats' ? 'SIÈGE':'GREFFE' }}</label>
         </div>
         <div class="content">
           <ng-template *ngIf="filteredBackups.length;then content else empty">
@@ -255,8 +256,10 @@
       <label class="header">la période
         {{getRealValue(dateStart)}} - {{getRealValue(dateStop)}} à
       </label>
-      <div *ngFor="let ref of referentiels" class="item" (click)="radioSelect(ref);$event.stopPropagation();">
-        <i [class]="ref.selected===false ?'':'filled'" (click)="radioSelect(ref);$event.stopPropagation();"
+      <div *ngFor="let ref of filterReferentiels(referentiels)" class="item"
+        (click)="ref.selected===true?unselectTemplate():radioSelect(ref);$event.stopPropagation();">
+        <i [class]="ref.selected===false ?'':'filled'"
+          (click)="ref.selected===true?unselectTemplate():radioSelect(ref);$event.stopPropagation();"
           class="radio"></i><span>{{trunc(ref.label,30)}}</span>
         <div class="flex-1"></div>
         <i class="ri-close-line" *ngIf="!ref.isLocked"
