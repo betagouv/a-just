@@ -33,6 +33,10 @@ export class GraphsNumbersComponent extends MainClass implements OnChanges {
    */
   @Input() showArrow: boolean = false
   /**
+   * type
+   */
+  @Input() type: string = ''
+  /**
    * Show transparent class
    */
   @Input() @HostBinding('class.is-transparent') isTransparent: boolean = false
@@ -48,19 +52,41 @@ export class GraphsNumbersComponent extends MainClass implements OnChanges {
   /**
    * Constructor
    */
-  constructor(
-    public userService: UserService,
-  ) {
+  constructor(public userService: UserService) {
     super()
   }
 
   ngOnChanges() {
     if (this.referentielName) {
       if (!this.isTransparent) {
-        this.backgroundColor = this.referentielMappingColor(this.referentielName, this.isWhite ? 1 : 0.25)
+        this.backgroundColor = this.referentielMappingColor(
+          this.referentielName,
+          this.isWhite ? 1 : 0.25
+        )
       } else {
-        this.borderColor = this.referentielMappingColor(this.referentielName, 0.25)
+        this.borderColor = this.referentielMappingColor(
+          this.referentielName,
+          0.25
+        )
       }
     }
+  }
+
+  getArrowSide(title: string) {
+    return ('' + title)[0] === '-'
+  }
+
+  getArrowColor(title: string) {
+    if (
+      [
+        'ETPT Siège',
+        'ETPT Greffe',
+        'ETPT EAM',
+        'Sorties',
+        'Taux de couverture',
+      ].includes(this.type)
+    )
+      return !(('' + title)[0] === '-')
+    else return ('' + title)[0] === '-'
   }
 }

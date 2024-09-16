@@ -232,7 +232,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   ngAfterViewInit() {
     console.log('this.appService.previousUrl:', this.appService.previousUrl)
-    this.routerLinkToGoBack = this.appService.previousUrl ? [this.appService.previousUrl] : ['/']
+    this.routerLinkToGoBack = this.appService.previousUrl
+      ? [this.appService.previousUrl]
+      : ['/']
   }
 
   /**
@@ -430,8 +432,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           dateStop: null,
           situationForTheFirstTime:
             (id !== -1 && this.histories.length === 0) ||
-              (this.histories.length &&
-                this.histories[this.histories.length - 1].id !== id)
+            (this.histories.length &&
+              this.histories[this.histories.length - 1].id !== id)
               ? true
               : false,
         })
@@ -445,7 +447,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       currentDateEnd &&
       !this.histories[this.histories.length - 1].dateStop &&
       this.histories[this.histories.length - 1].dateStart.getTime() <
-      currentDateEnd.getTime()
+        currentDateEnd.getTime()
     ) {
       this.histories[this.histories.length - 1].dateStop = currentDateEnd
     }
@@ -455,7 +457,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.histories.length &&
       this.currentHR.dateStart &&
       this.histories[0].dateStart.getTime() >
-      today(this.currentHR.dateStart).getTime()
+        today(this.currentHR.dateStart).getTime()
     ) {
       const firstSituationExistant = this.histories.find((h) => h.category)
       this.histories.splice(0, 0, {
@@ -634,13 +636,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.updateIndisponiblity = indispo
       ? copy(indispo)
       : {
-        id: this.allIndisponibilities.length * -1 - 1,
-        percent: 0,
-        contentieux: {
-          ...this.allIndisponibilityReferentiel[0],
-        },
-        dateStart: null,
-      }
+          id: this.allIndisponibilities.length * -1 - 1,
+          percent: 0,
+          contentieux: {
+            ...this.allIndisponibilityReferentiel[0],
+          },
+          dateStart: null,
+        }
   }
 
   /**
@@ -707,9 +709,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
               this.updateIndisponiblity &&
               this.updateIndisponiblity.dateStart
             ) {
-              const indispDateStart = today(
-                this.updateIndisponiblity.dateStart
-              )
+              const indispDateStart = today(this.updateIndisponiblity.dateStart)
               if (hrDateStart.getTime() > indispDateStart.getTime()) {
                 alert(
                   "Vous ne pouvez pas saisir une date de début d'indisponibilité antérieure à la date d'arrivée !"
@@ -788,8 +788,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           }
 
           // Verification that unavailability is not added while the agent has no ventilations provided.
-          const totalActivities = this.currentHR?.situations.map((elem: any) => elem.activities.length)
-          if ((this.addDomVentilation && sumBy(this.addDomVentilation.updatedReferentiels, 'percent') !== 100) || (!this.addDomVentilation && !sum(totalActivities))) {
+          const totalActivities = this.currentHR?.situations.map(
+            (elem: any) => elem.activities.length
+          )
+          if (
+            (this.addDomVentilation &&
+              sumBy(this.addDomVentilation.updatedReferentiels, 'percent') !==
+                100) ||
+            (!this.addDomVentilation && !sum(totalActivities))
+          ) {
             this.appService.alert.next({
               title: 'Attention',
               text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
@@ -894,8 +901,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
     const index = history
       ? this.histories.findIndex(
-        (h) => h.id === history.id && h.dateStart === history.dateStart
-      )
+          (h) => h.id === history.id && h.dateStart === history.dateStart
+        )
       : -1
 
     if (this.onEditIndex === null) {
@@ -950,18 +957,23 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     const reduire1 = document.getElementById('logo-2')
     const reduire2 = document.getElementById('logo-4')
 
+    const details = document.getElementById('second-row')
+
+    details?.classList.add('size')
     reduire1?.classList.add('hide')
     reduire2?.classList.add('hide')
 
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
-        `Fiche individuelle${this.currentHR
-          ? ' de ' + this.currentHR.firstName + ' ' + this.currentHR.lastName
-          : ''
+        `Fiche individuelle${
+          this.currentHR
+            ? ' de ' + this.currentHR.firstName + ' ' + this.currentHR.lastName
+            : ''
         } en date du ${new Date().toJSON().slice(0, 10)}.pdf`
       )
       .then(() => {
+        details?.classList.remove('size')
         reduire1?.classList.remove('hide')
         reduire2?.classList.remove('hide')
         this.hrCommentService.forceOpenAll.next(false)
@@ -969,7 +981,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         parent2?.removeChild(child as Node)
         parent?.appendChild(child as Node)
       })
-
   }
 
   /**
@@ -989,7 +1000,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       case 'indispo':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Ajouter des indisponibilités',
-          path: this.userService.isCa() ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/renseigner-les-indisponibilites' : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
+          path: this.userService.isCa()
+            ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/renseigner-les-indisponibilites'
+            : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ajouter-des-indisponibilites',
           subTitle: "Qu'est-ce que c'est ?",
           printSubTitle: true,
         })
@@ -997,7 +1010,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       case 'nouvelle-situation':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Enregistrer une nouvelle situation',
-          path: this.userService.isCa() ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation' : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation',
+          path: this.userService.isCa()
+            ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation'
+            : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/enregistrer-une-nouvelle-situation',
           subTitle: "Qu'est-ce que c'est ?",
           printSubTitle: true,
         })
@@ -1005,7 +1020,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       case 'fix-fiche':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Corriger une fiche préexistante',
-          path: this.userService.isCa() ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante' : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante',
+          path: this.userService.isCa()
+            ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante'
+            : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/creer-ou-modifier-une-fiche/corriger-une-fiche-preexistante',
           subTitle: "Qu'est-ce que c'est ?",
           printSubTitle: true,
         })
@@ -1028,10 +1045,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   /**
-   * Open panel 
+   * Open panel
    */
   preOpenSituation() {
-    const findIndex = this.histories.findIndex(h => h.etp === this.ETP_NEED_TO_BE_UPDATED)
+    const findIndex = this.histories.findIndex(
+      (h) => h.etp === this.ETP_NEED_TO_BE_UPDATED
+    )
 
     if (findIndex !== -1) {
       this.onSelectSituationToEdit(this.histories[findIndex])

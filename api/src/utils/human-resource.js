@@ -1,5 +1,4 @@
 import { minBy, orderBy, sumBy } from 'lodash'
-import { ABSENTEISME_LABELS } from '../constants/referentiel'
 import { today } from '../utils/date'
 
 /**
@@ -32,18 +31,6 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
     if (reelEtp < 0) {
       reelEtp = 0
     }
-    /**
-    if (hr.id === 2609 && referentielId === 507)
-      console.log('on est la', {
-        ddgFilter,
-        absLabels,
-        referentielId,
-        reelEtp,
-        pp: sumBy(activitiesFiltred, 'percent') / 100,
-        situ: situation.etp,
-        xx: sumBy(indispoFiltred, 'percent'),
-        indispoFiltred,
-      })*/
 
     //const nextIndispoDate = getNextIndisponiblitiesDate(hr, date)
     let nextDeltaDate = null

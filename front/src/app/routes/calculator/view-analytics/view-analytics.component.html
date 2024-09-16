@@ -32,11 +32,11 @@
             datasFilted[index].realDTESInMonths || 0
           ]" [maxValue]="dtesMax" type="dtes" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <aj-graphs-numbers [referentielName]="ref.label"
-                    [title]="'' + (datasFilted[index].realDTESInMonthsStart || 0)" subTitle="mois"
-                    class="no-border-bottom"></aj-graphs-numbers>
+                    title="{{datasFilted[index].realDTESInMonthsStart === null ? 'N/R' : (datasFilted[index].realDTESInMonthsStart || 0) | number:'0.2'}}"
+                    subTitle="mois" class="no-border-bottom"></aj-graphs-numbers>
                 <aj-graphs-numbers [referentielName]="ref.label"
-                    [title]="'' + (datasFilted[index].realDTESInMonths || 0)" subTitle="mois" [isWhite]="true"
-                    class="no-border-top"></aj-graphs-numbers>
+                    title="{{datasFilted[index].realDTESInMonths=== null ? 'N/R' : (datasFilted[index].realDTESInMonths || 0) | number:'0.2'}}"
+                    subTitle="mois" [isWhite]="true" class="no-border-top"></aj-graphs-numbers>
             </div>
         </div>
     </div>
@@ -66,10 +66,10 @@
                     [percent]="datasFilted[index].realCoverage === null ? null : (datasFilted[index].realCoverage || 0) * 100"></aj-graphs-progress>
                 <div *ngIf="showDetailCover" class="height-8"></div>
                 <aj-graphs-numbers *ngIf="showDetailCover" [referentielName]="ref.label"
-                    [title]="datasFilted[index].realCoverageBf === null ? '- %' : floor(datasFilted[index].realCoverageBf || 0) * 100 + ' %'"
+                    [title]="datasFilted[index].realCoverageBf === null ? 'N/R' : (datasFilted[index].realCoverageBf || 0) * 100 + ' %'"
                     class="no-border-bottom"></aj-graphs-numbers>
                 <aj-graphs-numbers *ngIf="showDetailCover" [referentielName]="ref.label"
-                    [title]="datasFilted[index].realCoverageAf === null ? '- %' : floor(datasFilted[index].realCoverageAf || 0) * 100 + ' %'"
+                    [title]="datasFilted[index].realCoverageAf === null ? 'N/R' : (datasFilted[index].realCoverageAf || 0) * 100 + ' %'"
                     [isWhite]="true" class="no-border-top"></aj-graphs-numbers>
             </div>
         </div>
@@ -101,7 +101,8 @@
                     <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
                         [values]="[datasFilted[index].lastStock || 0]" [maxValue]="stockMax" type="stocks"
                         (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
-                    <aj-graphs-numbers [referentielName]="ref.label" [title]="'' + (datasFilted[index].lastStock || 0)"
+                    <aj-graphs-numbers [referentielName]="ref.label"
+                        [title]="datasFilted[index].lastStock === null ? 'N/R' : '' + (datasFilted[index].lastStock || 0)"
                         class="text-center" [isWhite]="true"></aj-graphs-numbers></ng-template>
                 <ng-template [ngIf]="showDetailStock">
                     <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
@@ -109,11 +110,11 @@
                         [maxValue]="stockMax" type="stocks"
                         (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + (datasFilted[index].lastStockBf || 0)"
+                        [title]="datasFilted[index].lastStockBf === null ? 'N/R' : '' + (datasFilted[index].lastStockBf || 0)"
                         class="text-center no-border-bottom"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + (datasFilted[index].lastStockAf || 0)" class="text-center no-border-top"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        [title]="datasFilted[index].lastStockAf === null ? 'N/R' : '' + (datasFilted[index].lastStockAf || 0)"
+                        class="text-center no-border-top" [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
             </div>
         </div>
@@ -154,18 +155,18 @@
                     type="entrees" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailEntrees">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalIn || 0)" class="text-center"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        [title]="datasFilted[index].totalIn === null ? 'N/R' : '' + floor(datasFilted[index].totalIn || 0)"
+                        class="text-center" [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailEntrees">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalIn || 0)" class="text-center no-border-bottom"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        [title]="datasFilted[index].totalIn === null ? 'N/R' : '' + floor(datasFilted[index].totalIn || 0)"
+                        class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalInBf || 0)"
+                        [title]="datasFilted[index].totalInBf === null ? 'N/R' : '' + floor(datasFilted[index].totalInBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalInAf || 0)"
+                        [title]="datasFilted[index].totalInAf === null ? 'N/R' : '' + floor(datasFilted[index].totalInAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -208,29 +209,30 @@
                     (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailSorties">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalOut || 0)" class="text-center"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        [title]="datasFilted[index].totalOut === null ? 'N/R' : '' + floor(datasFilted[index].totalOut || 0)"
+                        class="text-center" [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailSorties">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalOut || 0)" class="text-center no-border-bottom"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        [title]="datasFilted[index].totalOut === null ? 'N/R' : '' + floor(datasFilted[index].totalOut || 0)"
+                        class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalOutBf || 0)"
+                        [title]="datasFilted[index].totalOutBf === null ? 'N/R' : '' + floor(datasFilted[index].totalOutBf || 0)"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + floor(datasFilted[index].totalOutAf || 0)"
+                        [title]="datasFilted[index].totalOutAf === null ? 'N/R' : '' + floor(datasFilted[index].totalOutAf || 0)"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="canViewMagistrat">
         <div class="container-colum">
             <p class="title-section">ETPT Siège</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details" (click)="showDetailETPTSiege = !showDetailETPTSiege;logOpenDetails(showDetailETPTSiege);">
+            <button class="details"
+                (click)="showDetailETPTSiege = !showDetailETPTSiege;logOpenDetails(showDetailETPTSiege);">
                 <i [class]="
             showDetailETPTSiege ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailETPTSiege ? 'Masquer les détails' :
@@ -261,29 +263,30 @@
                     type="ETPTSiege" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTSiege">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpMag || 0)" class="text-center"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{datasFilted[index].etpMag === null ? 'N/R' : fixDecimal(datasFilted[index].etpMag || 0) | number:'0.2'}}"
+                        class="text-center" [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTSiege">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpMag || 0)" class="text-center no-border-bottom"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{datasFilted[index].etpMag === null ? 'N/R' : fixDecimal(datasFilted[index].etpMag || 0) | number:'0.2'}}"
+                        class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpMagBf || 0)"
+                        title="{{datasFilted[index].etpMagBf === null ? 'N/R' : fixDecimal(datasFilted[index].etpMagBf || 0) | number:'0.2'}}"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpMagAf || 0)"
+                        title="{{datasFilted[index].etpMagAf === null ? 'N/R' : fixDecimal(datasFilted[index].etpMagAf || 0) | number:'0.2'}}"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="canViewGreffier">
         <div class="container-colum">
             <p class="title-section">ETPT Greffe</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details" (click)="showDetailETPTGreffe = !showDetailETPTGreffe;logOpenDetails(showDetailETPTGreffe);">
+            <button class="details"
+                (click)="showDetailETPTGreffe = !showDetailETPTGreffe;logOpenDetails(showDetailETPTGreffe);">
                 <i [class]="
             showDetailETPTGreffe ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailETPTGreffe ? 'Masquer les détails' :
@@ -315,24 +318,24 @@
                     (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTGreffe">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpFon || 0)" class="text-center"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{datasFilted[index].etpFon === null ? 'N/R' : fixDecimal(datasFilted[index].etpFon || 0) | number:'0.2'}}"
+                        class="text-center" [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTGreffe">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpFon || 0)" class="text-center no-border-bottom"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{datasFilted[index].etpFon === null ? 'N/R' : fixDecimal(datasFilted[index].etpFon || 0) | number:'0.2'}}"
+                        class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpFonBf || 0)"
+                        title="{{datasFilted[index].etpFonBf === null ? 'N/R' : fixDecimal(datasFilted[index].etpFonBf || 0) | number:'0.2'}}"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpFonAf || 0)"
+                        title="{{datasFilted[index].etpFonAf === null ? 'N/R' : fixDecimal(datasFilted[index].etpFonAf || 0) | number:'0.2'}}"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="canViewContractuel">
         <div class="container-colum">
             <p class="title-section">ETPT EAM</p>
             <p class="details-section">sur la période</p>
@@ -368,18 +371,18 @@
                     type="ETPTEam" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="!showDetailETPTEam">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpCont || 0)" class="text-center"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{datasFilted[index].etpCont === null ? 'N/R' : fixDecimal(datasFilted[index].etpCont || 0) | number:'0.2'}}"
+                        class="text-center" [isWhite]="true"></aj-graphs-numbers>
                 </ng-template>
                 <ng-template [ngIf]="showDetailETPTEam">
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpCont || 0)" class="text-center no-border-bottom"
-                        [isWhite]="true"></aj-graphs-numbers>
+                        title="{{datasFilted[index].etpCont === null ? 'N/R' : fixDecimal(datasFilted[index].etpCont || 0) | number:'0.2'}}"
+                        class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpContBf || 0)"
+                        title="{{datasFilted[index].etpContBf === null ? 'N/R' : fixDecimal(datasFilted[index].etpContBf || 0) | number:'0.2'}}"
                         class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
                     <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="'' + fixDecimal(datasFilted[index].etpContAf || 0)"
+                        title="{{datasFilted[index].etpContAf === null ? 'N/R' : fixDecimal(datasFilted[index].etpContAf || 0) | number:'0.2'}}"
                         class="text-center no-border-top"></aj-graphs-numbers>
                 </ng-template>
             </div>
@@ -387,7 +390,7 @@
     </div>
     <div *ngIf="categorySelected === MAGISTRATS">
         <div class="container-colum">
-            <p class="title-section">Temps moyen siège</p>
+            <p class="title-section">Temps moyen Siège</p>
             <p class="details-section">par dossier observé</p>
             <div class="flex-1"></div>
             <div class="middle-empty-block">
@@ -402,10 +405,8 @@
                 <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                     <div class="gray-block">
                         <p>
-                            <b>{{ getHours(datasFilted[index].magRealTimePerCase
-                                || 0) }}h{{
-                                getMinutes(datasFilted[index].magRealTimePerCase ||
-                                0) }}</b>
+                            <b>{{ datasFilted[index].magRealTimePerCase === null ? 'N/R' :
+                                decimalToStringDate(datasFilted[index].magRealTimePerCase) }}</b>
                         </p>
                     </div>
                 </div>
@@ -429,10 +430,8 @@
                 <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                     <div class="gray-block">
                         <p>
-                            <b>{{ getHours(datasFilted[index].fonRealTimePerCase
-                                || 0) }}h{{
-                                getMinutes(datasFilted[index].fonRealTimePerCase ||
-                                0) }}</b>
+                            <b>{{ datasFilted[index].fonRealTimePerCase === null ? 'N/R' :
+                                decimalToStringDate(datasFilted[index].fonRealTimePerCase) }}</b>
                         </p>
                     </div>
                 </div>

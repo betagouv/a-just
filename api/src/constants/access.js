@@ -55,7 +55,7 @@ export const accessToString = (roleId) => {
   case USER_ACCESS_AVERAGE_TIME:
     return 'Temps moyens'
   case USER_ACCESS_CALCULATOR:
-    return 'Calculateur'
+    return 'Cockpit'
   case USER_ACCESS_SIMULATOR:
     return 'Simulateur'
   case USER_ACCESS_REAFFECTATOR:
