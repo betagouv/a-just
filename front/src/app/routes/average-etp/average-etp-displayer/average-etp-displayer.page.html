@@ -9,7 +9,7 @@
     </div>
     <div class="content-list" *ngIf="categorySelected">
       <div *ngFor="let ref of referentiel" class="item-grouped"
-        [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label))">
+        [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(ref.label, OPACITY)">
         <div class="item position-relative" (click)="ref.showOptionGroup = !ref.showOptionGroup"
           [class.selectable]="(ref.childrens || []).length">
           <div class="label head">

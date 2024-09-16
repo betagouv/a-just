@@ -15,6 +15,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 import { Renderer } from 'xlsx-renderer'
 import { IDeactivateComponent } from '../../canDeactivate-guard-service'
+import { OPACITY_20 } from 'src/app/constants/colors'
 
 /**
  * Excel file extension
@@ -103,6 +104,10 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * Popup pour être redirigé vers la comparaison
    */
   onFollowCompare:boolean=false
+  /**
+   * Opacité background des contentieux
+   */
+    OPACITY = OPACITY_20
   /**
    * Constructeur
    * @param contentieuxOptionsService
