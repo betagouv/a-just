@@ -63,13 +63,13 @@
       }">
             <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
                 <aj-graphs-progress [referentielName]="ref.label"
-                    [percent]="datasFilted[index].realCoverage === null ? null : (datasFilted[index].realCoverage || 0) * 100"></aj-graphs-progress>
+                    [percent]="datasFilted[index].realCoverage === null ? null : round((datasFilted[index].realCoverage || 0) * 100)"></aj-graphs-progress>
                 <div *ngIf="showDetailCover" class="height-8"></div>
                 <aj-graphs-numbers *ngIf="showDetailCover" [referentielName]="ref.label"
-                    [title]="datasFilted[index].realCoverageBf === null ? 'N/R' : (datasFilted[index].realCoverageBf || 0) * 100 + ' %'"
+                    [title]="datasFilted[index].realCoverageBf === null ? 'N/R' : round((datasFilted[index].realCoverageBf || 0) * 100) + ' %'"
                     class="no-border-bottom"></aj-graphs-numbers>
                 <aj-graphs-numbers *ngIf="showDetailCover" [referentielName]="ref.label"
-                    [title]="datasFilted[index].realCoverageAf === null ? 'N/R' : (datasFilted[index].realCoverageAf || 0) * 100 + ' %'"
+                    [title]="datasFilted[index].realCoverageAf === null ? 'N/R' : round((datasFilted[index].realCoverageAf || 0) * 100) + ' %'"
                     [isWhite]="true" class="no-border-top"></aj-graphs-numbers>
             </div>
         </div>

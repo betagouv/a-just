@@ -271,4 +271,8 @@ export class ViewAnalyticsComponent
     if (open === true)
       this.kpiService.register(CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW, '')
   }
+
+  round(num: number) {
+    return Math.round(num)
+  }
 }
