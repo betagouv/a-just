@@ -1051,12 +1051,11 @@ export class CalculatorPage
 
           if (isPercentComparaison) {
             percent = this.fixDecimal(
-              (1 - (d || 0) / (tab1[index] || 0)) * 100,
+              ((tab1[index] || 0) / (d || 0) - 1) * 100,
               10
             )
           } else {
-            percent =
-              Math.floor((d || 0) * 100) - Math.floor((tab1[index] || 0) * 100)
+            percent = Math.floor((tab1[index] || 0) * 100 - (d || 0) * 100)
           }
 
           if (percent > 0) {
@@ -1097,8 +1096,8 @@ export class CalculatorPage
               ...value2DTES.map((m) => m || 0)
             ) * 1.1,
           values: value1DTES.map((v, index) => [
-            v || 0,
             value2DTES[index] || 0,
+            v || 0,
           ]),
           variations: [
             {
@@ -1107,8 +1106,8 @@ export class CalculatorPage
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
             { label: nextRangeString, values: value2DTES, subTitle: 'mois' },
+            { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
           ],
         })
 
@@ -1134,8 +1133,8 @@ export class CalculatorPage
               ...value2TempsMoyen.map((m) => m || 0)
             ) * 1.1,
           values: value1TempsMoyen.map((v, index) => [
-            v || 0,
             value2TempsMoyen[index] || 0,
+            v || 0,
           ]),
           variations: [
             {
@@ -1145,13 +1144,13 @@ export class CalculatorPage
               showArrow: true,
             },
             {
-              label: actualRangeString,
-              values: stringValue1TempsMoyen,
+              label: nextRangeString,
+              values: stringValue2TempsMoyen,
               subTitle: 'heures',
             },
             {
-              label: nextRangeString,
-              values: stringValue2TempsMoyen,
+              label: actualRangeString,
+              values: stringValue1TempsMoyen,
               subTitle: 'heures',
             },
           ],
@@ -1171,8 +1170,8 @@ export class CalculatorPage
           description: 'moyen sur la période',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            v === null ? null : Math.floor((v || 0) * 100),
             Math.floor((value2TauxCouverture[index] || 0) * 100),
+            v === null ? null : Math.floor((v || 0) * 100),
           ]),
           variations: [
             {
@@ -1182,16 +1181,16 @@ export class CalculatorPage
               showArrow: true,
             },
             {
-              label: actualRangeString,
+              label: nextRangeString,
               isOption: true,
-              values: value1TauxCouverture.map((t) =>
+              values: value2TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
-              label: nextRangeString,
+              label: actualRangeString,
               isOption: true,
-              values: value2TauxCouverture.map((t) =>
+              values: value1TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
@@ -1212,8 +1211,8 @@ export class CalculatorPage
               ...value2Stock.map((m) => m || 0)
             ) * 1.1,
           values: value1Stock.map((v, index) => [
-            v || 0,
             value2Stock[index] || 0,
+            v || 0,
           ]),
           variations: [
             {
@@ -1222,8 +1221,8 @@ export class CalculatorPage
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1Stock },
             { label: nextRangeString, values: value2Stock },
+            { label: actualRangeString, values: value1Stock },
           ],
         })
 
@@ -1242,8 +1241,8 @@ export class CalculatorPage
               ...value2Entrees.map((m) => m || 0)
             ) * 1.1,
           values: value1Entrees.map((v, index) => [
-            v || 0,
             value2Entrees[index] || 0,
+            v || 0,
           ]),
           variations: [
             {
@@ -1252,8 +1251,8 @@ export class CalculatorPage
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1Entrees },
             { label: nextRangeString, values: value2Entrees },
+            { label: actualRangeString, values: value1Entrees },
           ],
         })
 
@@ -1272,8 +1271,8 @@ export class CalculatorPage
               ...value2Sorties.map((m) => m || 0)
             ) * 1.1,
           values: value1Sorties.map((v, index) => [
-            v || 0,
             value2Sorties[index] || 0,
+            v || 0,
           ]),
           variations: [
             {
@@ -1282,8 +1281,8 @@ export class CalculatorPage
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1Sorties },
             { label: nextRangeString, values: value2Sorties },
+            { label: actualRangeString, values: value1Sorties },
           ],
         })
 
@@ -1305,8 +1304,8 @@ export class CalculatorPage
                 ...value2ETPTSiege.map((m) => m || 0)
               ) * 1.1,
             values: value1ETPTSiege.map((v, index) => [
-              v || 0,
               value2ETPTSiege[index] || 0,
+              v || 0,
             ]),
             variations: [
               {
@@ -1316,16 +1315,6 @@ export class CalculatorPage
                 showArrow: true,
               },
               {
-                label: actualRangeString,
-                values: value1ETPTSiege,
-                /*graph: {
-                type: 'ETPTSiege',
-                dateStart: new Date(this.dateStart || ''),
-                dateStop: new Date(this.dateStop || ''),
-                color: getCategoryColor('magistrat', 1),
-              },*/
-              },
-              {
                 label: nextRangeString,
                 values: value2ETPTSiege,
                 /*graph: {
@@ -1333,6 +1322,16 @@ export class CalculatorPage
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('magistrat', 0.5),
+              },*/
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTSiege,
+                /*graph: {
+                type: 'ETPTSiege',
+                dateStart: new Date(this.dateStart || ''),
+                dateStop: new Date(this.dateStop || ''),
+                color: getCategoryColor('magistrat', 1),
               },*/
               },
             ],
@@ -1357,8 +1356,8 @@ export class CalculatorPage
                 ...value2ETPTGreffe.map((m) => m || 0)
               ) * 1.1,
             values: value1ETPTGreffe.map((v, index) => [
-              v || 0,
               value2ETPTGreffe[index] || 0,
+              v || 0,
             ]),
             variations: [
               {
@@ -1368,16 +1367,6 @@ export class CalculatorPage
                 showArrow: true,
               },
               {
-                label: actualRangeString,
-                values: value1ETPTGreffe,
-                /*graph: {
-                type: 'ETPTGreffe',
-                dateStart: new Date(this.dateStart || ''),
-                dateStop: new Date(this.dateStop || ''),
-                color: getCategoryColor('greffe', 1),
-              },*/
-              },
-              {
                 label: nextRangeString,
                 values: value2ETPTGreffe,
                 /*graph: {
@@ -1385,6 +1374,16 @@ export class CalculatorPage
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('greffe', 0.5),
+              },*/
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTGreffe,
+                /*graph: {
+                type: 'ETPTGreffe',
+                dateStart: new Date(this.dateStart || ''),
+                dateStop: new Date(this.dateStop || ''),
+                color: getCategoryColor('greffe', 1),
               },*/
               },
             ],
@@ -1406,8 +1405,8 @@ export class CalculatorPage
                 ...value2ETPTEam.map((m) => m || 0)
               ) * 1.1,
             values: value1ETPTEam.map((v, index) => [
-              v || 0,
               value2ETPTEam[index] || 0,
+              v || 0,
             ]),
             variations: [
               {
@@ -1417,16 +1416,6 @@ export class CalculatorPage
                 showArrow: true,
               },
               {
-                label: actualRangeString,
-                values: value1ETPTEam,
-                /*graph: {
-                type: 'ETPTEam',
-                dateStart: new Date(this.dateStart || ''),
-                dateStop: new Date(this.dateStop || ''),
-                color: getCategoryColor('eam', 1),
-              },*/
-              },
-              {
                 label: nextRangeString,
                 values: value2ETPTEam,
                 /*graph: {
@@ -1434,6 +1423,16 @@ export class CalculatorPage
                 dateStart: new Date(this.optionDateStart || ''),
                 dateStop: new Date(this.optionDateStop || ''),
                 color: getCategoryColor('eam', 0.5),
+              },*/
+              },
+              {
+                label: actualRangeString,
+                values: value1ETPTEam,
+                /*graph: {
+                type: 'ETPTEam',
+                dateStart: new Date(this.dateStart || ''),
+                dateStop: new Date(this.dateStop || ''),
+                color: getCategoryColor('eam', 1),
               },*/
               },
             ],
@@ -1507,8 +1506,8 @@ export class CalculatorPage
               ...value2TempsMoyen.map((m) => m || 0)
             ) * 1.1,
           values: value1TempsMoyen.map((v, index) => [
-            v || 0,
             value2TempsMoyen[index] || 0,
+            v || 0,
           ]),
           variations: [
             {
@@ -1518,13 +1517,13 @@ export class CalculatorPage
               showArrow: true,
             },
             {
-              label: actualRangeString,
-              values: stringValue1TempsMoyen,
+              label: refSelected.label,
+              values: stringValue2TempsMoyen,
               subTitle: 'heures',
             },
             {
-              label: refSelected.label,
-              values: stringValue2TempsMoyen,
+              label: actualRangeString,
+              values: stringValue1TempsMoyen,
               subTitle: 'heures',
             },
           ],
@@ -1556,8 +1555,8 @@ export class CalculatorPage
               ...value2DTES.map((m) => m || 0)
             ) * 1.1,
           values: value1DTES.map((v, index) => [
-            v || 0,
             value2DTES[index] || 0,
+            v || 0,
           ]),
           variations: [
             {
@@ -1566,8 +1565,8 @@ export class CalculatorPage
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
             { label: refSelected.label, values: value2DTES, subTitle: 'mois' },
+            { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
           ],
         })
 
@@ -1600,8 +1599,8 @@ export class CalculatorPage
           description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            v === null ? null : Math.floor((v || 0) * 100),
             Math.floor((value2TauxCouverture[index] || 0) * 100),
+            v === null ? null : Math.floor((v || 0) * 100),
           ]),
           variations: [
             {
@@ -1611,16 +1610,16 @@ export class CalculatorPage
               showArrow: true,
             },
             {
-              label: actualRangeString,
+              label: refSelected.label,
               isOption: true,
-              values: value1TauxCouverture.map((t) =>
+              values: value2TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
-              label: refSelected.label,
+              label: actualRangeString,
               isOption: true,
-              values: value2TauxCouverture.map((t) =>
+              values: value1TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
@@ -1637,8 +1636,8 @@ export class CalculatorPage
               ...value2Sorties.map((m) => m || 0)
             ) * 1.1,
           values: value1Sorties.map((v, index) => [
-            v || 0,
             value2Sorties[index] || 0,
+            v || 0,
           ]),
           variations: [
             {
@@ -1647,8 +1646,8 @@ export class CalculatorPage
               subTitle: '%',
               showArrow: true,
             },
-            { label: actualRangeString, values: value1Sorties },
             { label: refSelected.label, values: value2Sorties },
+            { label: actualRangeString, values: value1Sorties },
           ],
         })
       }
