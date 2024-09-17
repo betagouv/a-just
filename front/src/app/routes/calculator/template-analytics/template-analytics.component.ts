@@ -97,6 +97,7 @@ export class TemplateAnalyticsComponent
   getGraphs(
     line: AnalyticsLine
   ): { type: string; dateStart: Date; dateStop: Date; color: string }[] {
+    console.log(line)
     // @ts-ignore
     return this.getOptionsToShow(line)
       .filter((o) => o.graph)
