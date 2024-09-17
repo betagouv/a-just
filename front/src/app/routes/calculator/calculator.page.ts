@@ -284,7 +284,10 @@ export class CalculatorPage
    * Lock global loader
    */
   lockLoader: BehaviorSubject<boolean> = new BehaviorSubject(false)
-
+  /**
+   * Title created from popup while compare loaded
+   */
+  createdTitle: null | string = null
   /**
    * Constructeur
    * @param humanResourceService
@@ -495,19 +498,37 @@ export class CalculatorPage
         if (bup) {
           preselectedRefId = bup.id
         }
+        refs.map((r) => (r.selected = false))
       }
 
-      l.slice(0, NB_MAX_CUSTOM_COMPARAISONS).map((l) => {
-        refs.push({
-          label: l.label,
-          selected:
-            l.datas && l.datas.referentielId === preselectedRefId
-              ? true
-              : false,
-          isLocked: false,
-          datas: l.datas,
+      if (this.compareOption === 1) {
+        const bup = l.find((b) => b.label === this.createdTitle)
+        if (bup) {
+          preselectedRefId = bup.id
+          this.createdTitle = null
+        }
+        refs.map((r) => (r.selected = false))
+        l.slice(0, NB_MAX_CUSTOM_COMPARAISONS).map((l) => {
+          refs.push({
+            label: l.label,
+            selected: l && l.id === preselectedRefId ? true : false,
+            isLocked: false,
+            datas: l.datas,
+          })
         })
-      })
+      } else {
+        l.slice(0, NB_MAX_CUSTOM_COMPARAISONS).map((l) => {
+          refs.push({
+            label: l.label,
+            selected:
+              l.datas && l.datas.referentielId === preselectedRefId
+                ? true
+                : false,
+            isLocked: false,
+            datas: l.datas,
+          })
+        })
+      }
 
       for (let i = NB_MAX_CUSTOM_COMPARAISONS; i < l.length; i++) {
         this.backupSettingsService.removeSetting(l[i].id)
@@ -927,8 +948,8 @@ export class CalculatorPage
    */
   onCompare() {
     this.showPicker = false
-
     if (this.compareOption === 1) {
+      this.unselectBackup()
       if (!this.optionDateStart) {
         alert('Vous devez saisir une date de début !')
         return
@@ -942,6 +963,9 @@ export class CalculatorPage
       let rangeTitle = `${this.getRealValue(
         this.optionDateStart
       )} - ${this.getRealValue(this.optionDateStop)}`
+
+      this.createdTitle = rangeTitle
+
       this.backupSettingsService
         .addOrUpdate(rangeTitle, BACKUP_SETTING_COMPARE, {
           dateStart: this.optionDateStart,
