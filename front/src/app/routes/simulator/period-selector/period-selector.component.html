@@ -8,7 +8,7 @@
         [max]="dateStop" [min]="today" [side]="mooveClass==='future' ? 'right' : ''">
       </aj-date-select-blue>
       <div class="space"></div>
-      <aj-date-select-blue class="{{disabled}}" [title]="'Fin de période'" [value]="dateStop"
+      <aj-date-select-blue id="bt-white-simulator" class="{{disabled}}" [title]="'Fin de période'" [value]="dateStop"
         (valueChange)="updateDateSelected('dateStop', $event)" [min]="getMin()" [side]="'right'">
       </aj-date-select-blue>
     </div>

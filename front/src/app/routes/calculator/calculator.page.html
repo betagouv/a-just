@@ -67,7 +67,7 @@
               <p>DTES<br />instantané</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonths'}"></i>
               <aj-tooltips title="DTES instantané" class="medium"
-                content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties enregistrées pour la période antérieure."
+                content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
                 footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
               </aj-tooltips>
             </div>
@@ -132,7 +132,7 @@
               <p>Temps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier observé</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCase'}"></i>
               <aj-tooltips title="Temps moyen par dossier observé" class="large left"
-                content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur la période."
+                content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur les 12 mois précédents."
                 footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>">
               </aj-tooltips>
             </div>
@@ -260,7 +260,7 @@
         (click)="ref.selected===true?unselectTemplate():radioSelect(ref);$event.stopPropagation();">
         <i [class]="ref.selected===false ?'':'filled'"
           (click)="ref.selected===true?unselectTemplate():radioSelect(ref);$event.stopPropagation();"
-          class="radio"></i><span>{{trunc(ref.label,30)}}</span>
+          class="radio"></i><span>{{trunc(ref.label,25)}}</span>
         <div class="flex-1"></div>
         <i class="ri-close-line" *ngIf="!ref.isLocked"
           (click)="onRemoveSetting(ref.label);$event.stopPropagation();"></i>
