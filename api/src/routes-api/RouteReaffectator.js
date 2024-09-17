@@ -4,6 +4,8 @@ import { preformatHumanResources } from '../utils/ventilator'
 import { filterByCategoryAndFonction, getSituation } from '../utils/simulator'
 import { copyArray } from '../utils/array'
 import { EXECUTE_REAFFECTATOR } from '../constants/log-codes'
+import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
+import { HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 
 /**
  * Route de la page réaffectateur
@@ -46,7 +48,12 @@ export default class RouteReaffectator extends Route {
       referentielList = null
     }
 
-    if (categoryId === 1 && !fonctionsIds && !referentielList) {
+    if (
+      !fonctionsIds &&
+      !referentielList &&
+      ((categoryId === 1 && canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT)) ||
+        (categoryId !== 1 && !canHaveUserCategoryAccess(ctx.state.user, HAS_ACCESS_TO_MAGISTRAT)))
+    ) {
       // memorize first execution by user
       await this.models.Logs.addLog(EXECUTE_REAFFECTATOR, ctx.state.user.id)
     }
@@ -54,7 +61,7 @@ export default class RouteReaffectator extends Route {
     const hr = await this.model.getCache(backupId)
     let hrfiltered = filterByCategoryAndFonction(copyArray(hr), null, fonctionsIds)
     let categories = await this.models.HRCategories.getAll()
-    const activities = await this.models.Activities.getAll(backupId, date)
+    const activities = await this.models.Activities.getAll(backupId)
 
     for (let i = 0; i < referentiel.length; i++) {
       referentiel[i] = {

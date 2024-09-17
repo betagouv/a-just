@@ -1,17 +1,20 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { DATE_WHITE_SIMULATOR, END_DATE_SIMULATOR, START_DATE_SIMULATOR } from 'src/app/constants/log-codes';
-import { MainClass } from 'src/app/libs/main-class';
-import { KPIService } from 'src/app/services/kpi/kpi.service';
-import { SimulatorService } from 'src/app/services/simulator/simulator.service';
-import { monthDiffList, nbOfDays } from 'src/app/utils/dates';
+import { Component, Input, OnChanges } from '@angular/core'
+import {
+  DATE_WHITE_SIMULATOR,
+  END_DATE_SIMULATOR,
+  START_DATE_SIMULATOR,
+} from 'src/app/constants/log-codes'
+import { MainClass } from 'src/app/libs/main-class'
+import { KPIService } from 'src/app/services/kpi/kpi.service'
+import { SimulatorService } from 'src/app/services/simulator/simulator.service'
+import { monthDiffList, nbOfDays } from 'src/app/utils/dates'
 
 @Component({
   selector: 'aj-period-selector',
   templateUrl: './period-selector.component.html',
-  styleUrls: ['./period-selector.component.scss']
+  styleUrls: ['./period-selector.component.scss'],
 })
 export class PeriodSelectorComponent extends MainClass implements OnChanges {
-
   /**
    * Mode de simulation
    */
@@ -23,18 +26,18 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
   today = new Date()
 
   /**
-  * Indicateur de selection de paramètre de simulation
-  */
+   * Indicateur de selection de paramètre de simulation
+   */
   disabled: string = ''
 
   /**
- * Indicateur de saisie date de début de simulation
- */
+   * Indicateur de saisie date de début de simulation
+   */
   mooveClass: string = ''
 
   /**
-    * Date de début de simulation
-    */
+   * Date de début de simulation
+   */
   dateStart: Date = new Date()
   /**
    * Date de fin de simulation
@@ -45,14 +48,17 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
    */
   nbOfMonthWithinPeriod: number[] = []
   /**
- * Nombre de jour de simulation à blanc
- */
+   * Nombre de jour de simulation à blanc
+   */
   whiteNbOfDays: number = 0
 
   /**
    * Constructeur
    */
-  constructor(private simulatorService: SimulatorService, private kpiService: KPIService) {
+  constructor(
+    private simulatorService: SimulatorService,
+    private kpiService: KPIService
+  ) {
     super()
 
     this.watch(
@@ -66,13 +72,19 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
           this.dateStop = null
           this.dateStart = new Date()
         }
-      }))
+      })
+    )
 
     this.watch(
       this.simulatorService.disabled.subscribe((disabled) => {
-        if (this.whiteSimulator && this.simulatorService.contentieuOrSubContentieuId.getValue() === null) this.disabled = ''
+        if (
+          this.whiteSimulator &&
+          this.simulatorService.contentieuOrSubContentieuId.getValue() === null
+        )
+          this.disabled = ''
         else this.disabled = disabled
-      }))
+      })
+    )
 
     this.watch(
       this.simulatorService.situationSimulated.subscribe((situation) => {
@@ -85,21 +97,26 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
           this.dateStop = null
           this.dateStart = new Date()
         }
-      }))
+      })
+    )
   }
 
   ngOnChanges(change: any) {
     if (change.whiteSimulator && change.whiteSimulator.currentValue === true)
       this.disabled = ''
-
   }
-  updateDateSelected(type: string = '', event: any = null) {
+  updateDateSelected(type: string = '', event: any = null, logKPI = true) {
     if (this.whiteSimulator === false) {
       if (type === 'dateStart') {
         this.dateStart = new Date(event)
         this.simulatorService.dateStart.next(this.dateStart)
-        this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
-        this.kpiService.register(START_DATE_SIMULATOR, this.dateStart + '')
+        this.nbOfMonthWithinPeriod = monthDiffList(
+          this.dateStart,
+          this.dateStop
+        )
+        if (logKPI) {
+          this.kpiService.register(START_DATE_SIMULATOR, this.dateStart + '')
+        }
 
         if (
           this.dateStart.getDate() !== this.today.getDate() ||
@@ -117,7 +134,9 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
         this.disabled = 'disabled-date'
         this.simulatorService.disabled.next(this.disabled)
         this.dateStop = new Date(event)
-        this.kpiService.register(END_DATE_SIMULATOR, this.dateStop + '')
+        if (logKPI) {
+          this.kpiService.register(END_DATE_SIMULATOR, this.dateStop + '')
+        }
 
         if (
           this.dateStart.getDate() !== this.today.getDate() ||
@@ -127,31 +146,33 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
           this.mooveClass = 'future'
         else this.mooveClass = 'present'
         this.simulatorService.dateStop.next(this.dateStop)
-        this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop)
+        this.nbOfMonthWithinPeriod = monthDiffList(
+          this.dateStart,
+          this.dateStop
+        )
       }
-    }
-    else {
+    } else {
       if (type === 'dateStart') {
         this.disabled = 'disabled-date'
         this.simulatorService.disabled.next(this.disabled)
         this.dateStart = new Date(event)
         this.simulatorService.dateStart.next(this.dateStart)
-      }
-      else if (type === 'dateStop') {
+      } else if (type === 'dateStop') {
         this.disabled = 'disabled-date'
         this.simulatorService.disabled.next(this.disabled)
         this.dateStop = new Date(event)
         this.simulatorService.dateStop.next(this.dateStop)
-        this.simulatorService.whiteSimulatorNbOfDays.next(nbOfDays(this.dateStart, this.dateStop))
+        this.simulatorService.whiteSimulatorNbOfDays.next(
+          nbOfDays(this.dateStart, this.dateStop)
+        )
         this.kpiService.register(DATE_WHITE_SIMULATOR, this.dateStop + '')
       }
-
     }
   }
 
   /**
-  *  Get minimum date you can select on the date picker
-  */
+   *  Get minimum date you can select on the date picker
+   */
   getMin(): Date {
     const date = new Date(this.dateStart)
     date.setDate(this.dateStart.getDate() + 1)
