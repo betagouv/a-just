@@ -16,14 +16,7 @@ import {
 } from 'src/app/constants/user-access'
 import { NEED_BOOKING_PAGE } from 'src/app/constants/pages'
 import { Router } from '@angular/router'
-import {
-  referentielCAMappingColor,
-  referentielCAMappingName,
-  referentielMappingColor,
-  referentielMappingColorActivity,
-  referentielMappingColorCAActivity,
-  referentielMappingName,
-} from 'src/app/utils/referentiel'
+import { referentielCAMappingName, referentielMappingColor, referentielMappingColorActivity, referentielMappingColorCAActivity, referentielMappingName } from 'src/app/utils/referentiel'
 
 /**
  * Service de sauvegarde de l'utilisateur actuel
@@ -96,9 +89,11 @@ export class UserService implements OnInit {
    * @returns
    */
   referentielMappingColorByInterface(label: string, opacity: number = 1) {
+    const name = this.referentielMappingNameByInterface(label)
+
     if (this.interfaceType === 1)
-      return this.referentielCAMappingColor(label, opacity)
-    else return this.referentielMappingColor(label, opacity)
+      return this.referentielMappingColorCAActivity(name, opacity)
+    else return this.referentielMappingColor(name, opacity)
   }
 
   /**
@@ -106,15 +101,13 @@ export class UserService implements OnInit {
    * @param label
    * @returns
    */
-  referentielMappingColorActivityByInterface(
-    label: string,
-    opacity: number = 1
-  ) {
+  referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
+    const name = this.referentielMappingNameByInterface(label)
+    
     if (this.interfaceType === 1)
-      return this.referentielMappingColorCAActivity(label, opacity)
-    else {
-      return this.referentielMappingColorActivity(label, opacity)
-    }
+      return this.referentielMappingColorCAActivity(name, opacity)
+    else
+      return this.referentielMappingColorActivity(name, opacity)
   }
 
   /**
@@ -148,15 +141,6 @@ export class UserService implements OnInit {
    */
   public referentielMappingColor(name: string, opacity: number = 1): string {
     return referentielMappingColor(name, opacity)
-  }
-
-  /**
-   * Methode de reprise des couleur des référentiel
-   * @param name
-   * @returns
-   */
-  public referentielCAMappingColor(name: string, opacity: number = 1): string {
-    return referentielCAMappingColor(name, opacity)
   }
 
   /**

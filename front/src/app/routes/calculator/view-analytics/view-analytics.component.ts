@@ -12,6 +12,7 @@ import {
   userCanViewGreffier,
   userCanViewMagistrat,
 } from 'src/app/utils/user'
+import { OPACITY_20 } from 'src/app/constants/colors'
 
 /**
  * Composant de la page en vue analytique
@@ -106,6 +107,10 @@ export class ViewAnalyticsComponent
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
+  /**
+   * Opacité background des contentieux
+   */
+  OPACITY = OPACITY_20
 
   /**
    * Constructor
@@ -114,7 +119,7 @@ export class ViewAnalyticsComponent
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private kpiService: KPIService,
-    private userService: UserService
+    public userService: UserService
   ) {
     super()
   }

@@ -26,6 +26,7 @@ import { downloadFile } from 'src/app/utils/system'
 import { groupBy, mapValues, get, isNumber } from 'lodash';
 import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 import { UserService } from 'src/app/services/user/user.service'
+import { OPACITY_20 } from 'src/app/constants/colors'
 
 /**
  * Composant page activité
@@ -162,7 +163,7 @@ export class PopinEditActivitiesComponent
     // Mettre la couleur du background du header selon le contentieux
     if (this.referentiel){
       const element = document.getElementById('header-popin')
-      const bgColor = this.referentielMappingColorActivity(this.referentiel?.label, 1)
+      const bgColor = this.userService.referentielMappingColorActivityByInterface(this.referentiel?.label, OPACITY_20)
 
       if (element)
         element.style.backgroundColor = bgColor;

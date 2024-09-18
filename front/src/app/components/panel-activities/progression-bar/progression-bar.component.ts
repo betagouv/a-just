@@ -19,6 +19,10 @@ export class ProgressionBarComponent {
    */
   @Input() color: string = '#005500'
   /**
+     * Couleur du fond avec opacit"
+     */
+  @Input() colorOpacity: string = '#000'
+  /**
    * Selectionnable
    */
   @Input() selected: boolean = true

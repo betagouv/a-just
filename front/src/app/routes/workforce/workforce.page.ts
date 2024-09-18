@@ -26,6 +26,7 @@ import { fixDecimal } from 'src/app/utils/numbers'
 import { debounceTime } from 'rxjs'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sortDates } from 'src/app/utils/dates'
+import { OPACITY_20 } from 'src/app/constants/colors'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -245,6 +246,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Poste string
    */
   listPoste = ['titulaire', 'placé', 'contractuel']
+  /**
+   * Opacité pour les background des contentieux
+   */
+  OPACITY = OPACITY_20
   /**
    * Intro JS Steps
    */

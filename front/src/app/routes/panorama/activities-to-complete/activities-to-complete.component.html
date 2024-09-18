@@ -21,7 +21,7 @@
       [queryParams]="{month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true}"><span class="tag"
         [ngStyle]="{
         color: userService.referentielMappingColorByInterface(row.label),
-        'background-color': userService.referentielMappingColorByInterface(row.label, 0.2)
+        'background-color': userService.referentielMappingColorByInterface(row.label, OPACITY)
       }">{{ userService.referentielMappingNameByInterface(tag.label)
         }}</span></a>
   </div>
