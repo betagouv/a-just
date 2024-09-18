@@ -5,17 +5,6 @@
   class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null large-actions"
   [actionTemplate]="ressources" [alignLeft]="false">
 
-  <div class="action-bar">
-    <label>Référentiels</label>
-    <div class="flex-1"></div>
-    <div class="delete-action">
-      <i class="ri-delete-bin-6-line"></i>
-      <label (click)="onRemove()">Supprimer</label>
-    </div>
-    <div class="import-action" (click)="onCreation=true;onUpload=true">Importer un référentiel</div>
-    <div class="create-action" (click)="onCreation=true;onUpload=false">Créer un référentiel</div>
-  </div>
-
   <!-- POPUP CREATION -->
   <aj-popup *ngIf="onCreation===true" [closeIcon]="true"
     (onClose)="onCreation = false;nameLength = 0; openedFromCockpit=false" [removeShadow]="'noShadow'"
@@ -76,16 +65,27 @@
     </div>
   </aj-popup>
 
+  <div class="sticky-bar">
+    <div class="action-bar">
+      <label>Référentiels</label>
+      <div class="flex-1"></div>
+      <div class="delete-action">
+        <i class="ri-delete-bin-6-line"></i>
+        <label (click)="onRemove()">Supprimer</label>
+      </div>
+      <div class="import-action" (click)="onCreation=true;onUpload=true">Importer un référentiel</div>
+      <div class="create-action" (click)="onCreation=true;onUpload=false">Créer un référentiel</div>
+    </div>
 
-
-  <div class="header-bar">
-    <aj-checkbox class="black" (valueChange)="checkAll($event)" [value]="checkAll()"></aj-checkbox>
-    <label class="name">Nom</label>
-    <label class="apply">Appliqué au</label>
-    <label class="create">Date de création</label>
-    <label class="modify">Dernière modification</label>
-    <label class="status">Statut</label>
-    <div class="actions"></div>
+    <div class="header-bar">
+      <aj-checkbox class="black" (valueChange)="checkAll($event)" [value]="checkAll()"></aj-checkbox>
+      <label class="name">Nom</label>
+      <label class="apply">Appliqué au</label>
+      <label class="create">Date de création</label>
+      <label class="modify">Dernière modification</label>
+      <label class="status">Statut</label>
+      <div class="actions"></div>
+    </div>
   </div>
 
 
