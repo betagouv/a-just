@@ -207,7 +207,7 @@
           <ng-template #content>
             <div class="ref-list">
               <button class="small full-width"
-                [ngClass]="{'selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
+                [ngClass]="{'color-greffe': categorySelected === 'fonctionnaires','selected': compareOption===2,'greffe': compareOption===2 && categorySelected === 'fonctionnaires'}"
                 (click)="goToCreateRef()">Créer un référentiel</button>
               <div class="line-item" *ngFor="let backup of filteredBackups; index as i;" (click)="selectBackup(backup)"
                 [ngClass]="{'selected': backup.selected===true, 'greffe':categorySelected === 'fonctionnaires' && backup.selected===true}">
