@@ -4,8 +4,9 @@
             détails':'Voir tous les détails'}}</button>
     </div>
     <div>
-        <div *ngFor="let ref of referentiel" class="flex-1" [style.color]="referentielMappingColor(ref.label)"
-            [style.background-color]="referentielMappingColor(ref.label, 0.2)">
+        <div *ngFor="let ref of referentiel" class="flex-1"
+            [style.color]="userService.referentielMappingColorByInterface(ref.label)"
+            [style.background-color]="userService.referentielMappingColorByInterface(ref.label, OPACITY)">
             {{ referentielMappingName(ref.label) }}
         </div>
     </div>

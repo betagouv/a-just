@@ -7,9 +7,9 @@
 </div>
 <div class="text">
     <p *ngIf="subTitle" class="sub-title"
-        [style.color]="isWhite && !isTransparent ? 'white' : referentielMappingColor(referentielName)">
+        [style.color]="isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)">
         {{subTitle}}</p>
     <p *ngIf="title" class="title"
-        [style.color]="isWhite && !isTransparent ? 'white' : referentielMappingColor(referentielName)">
+        [style.color]="isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)">
         {{title}}</p>
 </div>

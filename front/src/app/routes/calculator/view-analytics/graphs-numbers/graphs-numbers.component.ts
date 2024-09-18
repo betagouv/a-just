@@ -59,12 +59,12 @@ export class GraphsNumbersComponent extends MainClass implements OnChanges {
   ngOnChanges() {
     if (this.referentielName) {
       if (!this.isTransparent) {
-        this.backgroundColor = this.referentielMappingColor(
+        this.backgroundColor = this.userService.referentielMappingColorByInterface(
           this.referentielName,
           this.isWhite ? 1 : 0.25
         )
       } else {
-        this.borderColor = this.referentielMappingColor(
+        this.borderColor = this.userService.referentielMappingColorByInterface(
           this.referentielName,
           0.25
         )
