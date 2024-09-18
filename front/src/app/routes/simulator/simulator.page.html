@@ -34,13 +34,15 @@
           <br />
           <br />Vous n'avez plus qu'à choisir les scénarios que vous voulez
           jouer !
-          <div class="button-sim" (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator();setDocUrl(documentationUrl.main)">
+          <div id="on-button-continue" class="button-sim"
+            (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator();setDocUrl(documentationUrl.main)">
             Continuer
           </div>
         </div>
       </div>
 
-      <p class="intro-second-title" (click)="whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator();setDocUrl(documentationUrl.whiteSimulator)">
+      <p class="intro-second-title"
+        (click)="dateStop=null;whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator();setDocUrl(documentationUrl.whiteSimulator)">
         <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
       </p>
       <p class="intro-second-desc">
@@ -71,7 +73,7 @@
       </div>
     </div>
 
-    <aj-period-selector [whiteSimulator]="whiteSimulator"></aj-period-selector>
+    <aj-period-selector #periodSelector [whiteSimulator]="whiteSimulator"></aj-period-selector>
   </div>
 
   <!-- SIMULATOR STD -->
@@ -882,3 +884,5 @@
     <p class="title">Tout réinitialiser</p>
   </div>
 </ng-template>
+
+<aj-intro-js [steps]="whiteSimulator ? introStepsWhiteSimulator : introStepsDefault" typeId="simulator"></aj-intro-js>

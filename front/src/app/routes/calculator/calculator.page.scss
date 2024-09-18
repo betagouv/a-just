@@ -157,9 +157,13 @@
             height: 190px;
             overflow: auto;
 
-            .greffe {
-              border: solid 1px #a558a0 !important;
+            .color-greffe {
               color: #a558a0;
+            }
+
+            .greffe {
+              color: #a558a0 !important;
+              border: solid 1px #a558a0 !important;
             }
 
             &.centered {
@@ -169,9 +173,14 @@
             }
 
             button {
-              color: #000091;
-              border: solid 1px #000091;
+              color: #0063cb !important;
+              border: solid 1px #0063cb;
               background-color: transparent;
+
+              &.color-greffe {
+                color: #a558a0 !important;
+                border: solid 1px #a558a0;
+              }
 
               &.full-width {
                 width: 100%;
@@ -183,13 +192,11 @@
                 &.selected {
                   border: none !important;
                   border-bottom: solid 1px #6a6af4 !important;
-                  color: #0063cb !important;
 
                   &.greffe {
                     border: none;
-                    border-bottom: solid 1px #a558a0 !important;
                     color: #a558a0 !important;
-
+                    border-bottom: solid 1px #a558a0 !important;
                   }
                 }
               }
