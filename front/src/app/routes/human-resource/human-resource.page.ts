@@ -799,7 +799,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           ) {
             this.appService.alert.next({
               title: 'Attention',
-              text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
+              text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
             })
             //this.updateIndisponiblity = null
             //return false;

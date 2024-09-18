@@ -8,7 +8,11 @@ import {
 } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
-import { DOCUMENTATION_VENTILATEUR_PERSON, IMPORT_ETP_TEMPLATE, IMPORT_ETP_TEMPLATE_CA } from 'src/app/constants/documentation'
+import {
+  DOCUMENTATION_VENTILATEUR_PERSON,
+  IMPORT_ETP_TEMPLATE,
+  IMPORT_ETP_TEMPLATE_CA,
+} from 'src/app/constants/documentation'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
@@ -20,21 +24,21 @@ import { CalculatriceService } from 'src/app/services/calculatrice/calculatrice.
 import { HRCategoryService } from 'src/app/services/hr-category/hr-category.service'
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { ServerService } from 'src/app/services/http-server/server.service';
+import { ServerService } from 'src/app/services/http-server/server.service'
 import { today } from 'src/app/utils/dates'
 import { fixDecimal } from 'src/app/utils/numbers'
 import { CALCULATE_DOWNLOAD_URL } from 'src/app/constants/documentation'
-import * as xlsx from 'xlsx';
+import * as xlsx from 'xlsx'
 import { UserService } from 'src/app/services/user/user.service'
 
 export interface importedVentillation {
-  referentiel: ContentieuReferentielInterface,
-  percent: number | undefined,
+  referentiel: ContentieuReferentielInterface
+  percent: number | undefined
   parentReferentiel: ContentieuReferentielInterface | null
 }
 
 export interface importedSituation {
-  index: number | null,
+  index: number | null
   ventillation: importedVentillation[]
 }
 
@@ -135,7 +139,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
-    etp: new FormControl<number | null>(null, [Validators.required, Validators.min(0), Validators.max(1)]),
+    etp: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+      Validators.max(1),
+    ]),
     fonctionId: new FormControl<number | null>(null, [Validators.required]),
     categoryId: new FormControl<number | null>(null, [Validators.required]),
   })
@@ -197,8 +205,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(
         () =>
-        (this.allIndisponibilityReferentiel =
-          this.humanResourceService.allIndisponibilityReferentiel.slice(1))
+          (this.allIndisponibilityReferentiel =
+            this.humanResourceService.allIndisponibilityReferentiel.slice(1))
       )
     )
     this.watch(
@@ -206,9 +214,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         this.loadCategories().then(() => {
           let fct = null
           if (this.displayImportLabels) {
-            fct = this.fonctions.find(c => c.id === this.importedFunction)
-          }
-          else {
+            fct = this.fonctions.find((c) => c.id === this.importedFunction)
+          } else {
             fct = this.fonctions[0]
           }
           this.form.get('fonctionId')?.setValue(fct?.id || null)
@@ -221,17 +228,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.watch(
       this.form.get('etp')?.valueChanges.subscribe((value) => {
         if (value) {
-          if (value > 1)
-            value = 1
-          else if (value < 0)
-            value = 0
+          if (value > 1) value = 1
+          else if (value < 0) value = 0
           let str_value = value?.toString()
-          let validationPattern = /^\d+(\.\d{0,2})?$/;
+          let validationPattern = /^\d+(\.\d{0,2})?$/
 
           if (!validationPattern.test(str_value)) {
-            value = this.parseFloat(str_value.substring(0, str_value.length - 1))
+            value = this.parseFloat(
+              str_value.substring(0, str_value.length - 1)
+            )
           }
-          this.form.get('etp')?.setValue(value, { emitEvent: false });
+          this.form.get('etp')?.setValue(value, { emitEvent: false })
         }
       })
     )
@@ -332,7 +339,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       } else if (totalAffected < 100) {
         this.appService.alert.next({
           title: 'Attention',
-          text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doit constituer 100% de son temps de travail.<br/><br/>Il est également essentiel que, même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il soit affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank">cliquez ici</a>`,
+          text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doit constituer 100% de son temps de travail.<br/><br/>Il est également essentiel que, même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il soit affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           callback: () => {
             this.onSave(true)
           },
@@ -463,14 +470,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           percent: r.percent || 0,
           contentieux: r,
         })
-          ; (r.childrens || [])
-            .filter((r) => r.percent && r.percent > 0)
-            .map((child) => {
-              activities.push({
-                percent: child.percent || 0,
-                contentieux: child,
-              })
+        ;(r.childrens || [])
+          .filter((r) => r.percent && r.percent > 0)
+          .map((child) => {
+            activities.push({
+              percent: child.percent || 0,
+              contentieux: child,
             })
+          })
       })
 
     console.log(
@@ -572,9 +579,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     ) {
       if (
         this.calculatriceService.dataCalculatrice.getValue().vacation.value !==
-        null &&
+          null &&
         this.calculatriceService.dataCalculatrice.getValue().vacation.unit !==
-        null
+          null
       ) {
         this.openCalculatricePopup = false
         this.form
@@ -601,10 +608,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   async downloadCalculator() {
     await this.serverService
-      .post('centre-d-aide/log-documentation-link',
-        {
-          value: CALCULATE_DOWNLOAD_URL,
-        })
+      .post('centre-d-aide/log-documentation-link', {
+        value: CALCULATE_DOWNLOAD_URL,
+      })
       .then((r) => {
         return r.data
       })
@@ -613,120 +619,145 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   async downloadEtpTemplate() {
     await this.serverService
-      .post('centre-d-aide/log-documentation-link',
-        {
-          value: IMPORT_ETP_TEMPLATE,
-        })
+      .post('centre-d-aide/log-documentation-link', {
+        value: IMPORT_ETP_TEMPLATE,
+      })
       .then((r) => {
         return r.data
       })
-    window.open(this.userService.isCa() ? IMPORT_ETP_TEMPLATE_CA : IMPORT_ETP_TEMPLATE)
+    window.open(
+      this.userService.isCa() ? IMPORT_ETP_TEMPLATE_CA : IMPORT_ETP_TEMPLATE
+    )
   }
 
   /**
    * Récupère le nom d'une catégorie
    */
   getCategoryLabel() {
-    const cat = this.categories.find((c) => this.form.get('categoryId')?.value == c.id) || null
+    const cat =
+      this.categories.find((c) => this.form.get('categoryId')?.value == c.id) ||
+      null
     return cat
   }
 
   /**
    * Interprete le fichier Excel importé par l'utilisateur
-   * @param event 
-   * @param element 
+   * @param event
+   * @param element
    */
   getFile(event: any, element: HTMLInputElement) {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
 
     const classe = {
       codeImport: null,
-      value: null
-    };
+      value: null,
+    }
 
-    this.fileReader(file, classe, event);
+    this.fileReader(file, classe, event)
     element.value = ''
   }
 
   private fileReader(file: any, line: any, event: any) {
-    let fileReader = new FileReader();
+    let fileReader = new FileReader()
     fileReader.onload = (e) => {
-      let arrayBuffer = fileReader.result;
-      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-      const arr = new Array();
+      let arrayBuffer = fileReader.result
+      const data = new Uint8Array(arrayBuffer as ArrayBuffer)
+      const arr = new Array()
 
       for (let i = 0; i !== data.length; i++) {
-        arr[i] = String.fromCharCode(data[i]);
+        arr[i] = String.fromCharCode(data[i])
       }
 
-      const bstr = arr.join('');
-      const workbook = xlsx.read(bstr, { type: 'binary', cellDates: true });
-      const first_sheet_name = workbook.SheetNames[0];
-      const second_sheet_name = workbook.SheetNames[1];
+      const bstr = arr.join('')
+      const workbook = xlsx.read(bstr, { type: 'binary', cellDates: true })
+      const first_sheet_name = workbook.SheetNames[0]
+      const second_sheet_name = workbook.SheetNames[1]
 
-      if (second_sheet_name === "Fonction" && this.userService.isCa()) {
-        alert('Le fichier que vous essayez d\'importer est un fichier pour A-JUST TJ !');
-        event.target.value = '';
+      if (second_sheet_name === 'Fonction' && this.userService.isCa()) {
+        alert(
+          "Le fichier que vous essayez d'importer est un fichier pour A-JUST TJ !"
+        )
+        event.target.value = ''
         return
-      } else if (second_sheet_name === "Fonction_CA" && !this.userService.isCa()) {
-        alert('Le fichier que vous essayez d\'importer est un fichier pour A-JUST CA !');
-        event.target.value = '';
+      } else if (
+        second_sheet_name === 'Fonction_CA' &&
+        !this.userService.isCa()
+      ) {
+        alert(
+          "Le fichier que vous essayez d'importer est un fichier pour A-JUST CA !"
+        )
+        event.target.value = ''
         return
       }
 
-      if (!(second_sheet_name === "Fonction" || second_sheet_name === "Fonction_CA")) {
-        alert('Le fichier que vous essayez d\'importer n\'est pas au bon format, veuillez réessayer !');
-        event.target.value = '';
+      if (
+        !(
+          second_sheet_name === 'Fonction' ||
+          second_sheet_name === 'Fonction_CA'
+        )
+      ) {
+        alert(
+          "Le fichier que vous essayez d'importer n'est pas au bon format, veuillez réessayer !"
+        )
+        event.target.value = ''
         return
       }
 
-
-      const worksheet = workbook.Sheets[first_sheet_name];
-      let firstWorksheet = xlsx.utils.sheet_to_json(worksheet, { blankrows: false });
+      const worksheet = workbook.Sheets[first_sheet_name]
+      let firstWorksheet = xlsx.utils.sheet_to_json(worksheet, {
+        blankrows: false,
+      })
 
       // Formated data from the Excel file imported
       const importedSituation = { ...this.matchingCell(firstWorksheet, line) }
 
       this.displayImportLabels = true
-      let situation: importedSituation = { index: this.indexSituation, ventillation: this.affectImportedSituation(importedSituation) }
+      let situation: importedSituation = {
+        index: this.indexSituation,
+        ventillation: this.affectImportedSituation(importedSituation),
+      }
       this.humanResourceService.importedSituation.next(situation)
       this.appService.notification(
         `L’import de vos données a bien été réalisé.`
       )
-    };
-    fileReader.readAsArrayBuffer(file);
-
+    }
+    fileReader.readAsArrayBuffer(file)
   }
 
   /**
    * Matching des différents champs de text Excel avec fiche agent AJUST
-   * @param worksheet 
-   * @param line 
-   * @returns 
+   * @param worksheet
+   * @param line
+   * @returns
    */
   private matchingCell(worksheet: any, line: any) {
-    const monTab = { value: [] };
+    const monTab = { value: [] }
     let fct = null
     let category: any = null
     let mainEtp = null
     let startDate = null
     let worksheetLine = null
     for (let i = 0; i < worksheet.length; i++) {
-      worksheetLine = worksheet[i];
+      worksheetLine = worksheet[i]
 
-      if (worksheetLine['__EMPTY_1'] === "Fonction" && worksheetLine['__EMPTY_2']) {
+      if (
+        worksheetLine['__EMPTY_1'] === 'Fonction' &&
+        worksheetLine['__EMPTY_2']
+      ) {
         const fctStr = worksheetLine['__EMPTY_2']
 
-        fct = this.humanResourceService.fonctions
-          .getValue()
-          .find(
-            (c: HRFonctionInterface) =>
-              c.label.toUpperCase() === fctStr?.toUpperCase()
-          ) || null
-
-      }
-      else if (worksheetLine['__EMPTY_1'] === "Catégorie" && worksheetLine['__EMPTY_2']) {
-        let categoryStr = worksheetLine['__EMPTY_2'].replaceAll("_", " ")
+        fct =
+          this.humanResourceService.fonctions
+            .getValue()
+            .find(
+              (c: HRFonctionInterface) =>
+                c.label.toUpperCase() === fctStr?.toUpperCase()
+            ) || null
+      } else if (
+        worksheetLine['__EMPTY_1'] === 'Catégorie' &&
+        worksheetLine['__EMPTY_2']
+      ) {
+        let categoryStr = worksheetLine['__EMPTY_2'].replaceAll('_', ' ')
         category =
           this.humanResourceService.categories
             .getValue()
@@ -734,36 +765,39 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
               (c: HRCategoryInterface) =>
                 c.label.toUpperCase() === categoryStr?.toUpperCase()
             ) || null
-      }
-      else if (worksheetLine['__EMPTY_1'] === "ACTIVITES EXERCEES DEPUIS LE :") {
+      } else if (
+        worksheetLine['__EMPTY_1'] === 'ACTIVITES EXERCEES DEPUIS LE :'
+      ) {
         startDate = worksheetLine['__EMPTY_2']
-        if (['(saisir ici depuis quelle date)', '', undefined].includes(startDate))
+        if (
+          ['(saisir ici depuis quelle date)', '', undefined].includes(startDate)
+        )
           startDate = null
         else {
           startDate = new Date(startDate)
           startDate.setHours(startDate.getHours() + 5)
         }
-        this.form
-          .get('activitiesStartDate')
-          ?.setValue(startDate)
-      }
-      else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail' && worksheetLine['__EMPTY_4']) {
+        this.form.get('activitiesStartDate')?.setValue(startDate)
+      } else if (
+        worksheetLine['__EMPTY_1'] === 'Temps administratif de travail' &&
+        worksheetLine['__EMPTY_4']
+      ) {
         mainEtp = worksheetLine['__EMPTY_4'] as number
         mainEtp = fixDecimal(mainEtp)
-      }
-      else if (worksheetLine['__EMPTY'] && worksheetLine['__EMPTY_4']) {
+      } else if (worksheetLine['__EMPTY'] && worksheetLine['__EMPTY_4']) {
         const updatedLine = {
           codeImport: worksheetLine['__EMPTY'],
-          value: worksheetLine['__EMPTY_4']
-        };
-        line = { ...line, ...updatedLine };
-        monTab.value.push(line as never);
+          value: worksheetLine['__EMPTY_4'],
+        }
+        line = { ...line, ...updatedLine }
+        monTab.value.push(line as never)
       }
-
     }
 
     this.importedFunction = fct?.id || null
-    category !== null ? this.form.get('categoryId')?.setValue(category.id || null) : this.form.get('categoryId')?.setValue(null)
+    category !== null
+      ? this.form.get('categoryId')?.setValue(category.id || null)
+      : this.form.get('categoryId')?.setValue(null)
     this.form.get('etp')?.setValue(mainEtp)
 
     return { category, fct, mainEtp, startDate, ventilation: monTab }
@@ -771,50 +805,51 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   /**
    * Comptage ventillation importé sous Excel
-   * @param formatedData 
-   * @returns 
+   * @param formatedData
+   * @returns
    */
   affectImportedSituation(formatedData: any) {
     let result: importedVentillation[] = []
     this.sumPercentImported = 0
     formatedData.ventilation.value.map((ref: any) => {
       let found = false
-      this.updatedReferentiels = this.updatedReferentiels.map(item => {
-        const re = new RegExp('[0-9]{1,2}[.]');
+      this.updatedReferentiels = this.updatedReferentiels.map((item) => {
+        const re = new RegExp('[0-9]{1,2}[.]')
         const startCode = ref.codeImport.split('.')[0] + '.'
-        if (re.exec(ref.codeImport) !== null && ref.codeImport == item.code_import) {
-          item.percent = ref.value;
+        if (
+          re.exec(ref.codeImport) !== null &&
+          ref.codeImport == item.code_import
+        ) {
+          item.percent = ref.value
           found = true
           result.push({
             referentiel: item,
             percent: item.percent,
-            parentReferentiel: null
+            parentReferentiel: null,
           })
 
           this.sumPercentImported += item.percent || 0
           let sumSubRef = 0
           const allImported = result.map((r) => r.referentiel.code_import)
           const childs = item.childrens?.map((r) => {
-            if (allImported.includes(r.code_import))
-              sumSubRef += r.percent || 0
+            if (allImported.includes(r.code_import)) sumSubRef += r.percent || 0
             return r.code_import
           })
 
           if (sumSubRef !== item.percent)
-            result = result.filter((r) => childs?.includes(r.referentiel.code_import) === false)
-        }
-        else {
-
+            result = result.filter(
+              (r) => childs?.includes(r.referentiel.code_import) === false
+            )
+        } else {
           if (startCode === item.code_import && found === false) {
-
-            item.childrens = item.childrens?.map(child => {
+            item.childrens = item.childrens?.map((child) => {
               if (child.code_import === ref.codeImport) {
                 child.percent = ref.value
                 found = true
                 result.push({
                   referentiel: child,
                   percent: child.percent,
-                  parentReferentiel: item
+                  parentReferentiel: item,
                 })
               }
               return child
@@ -823,7 +858,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         }
         return item
       })
-
     })
 
     return result
@@ -831,29 +865,27 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   /**
    * Event outfocus DropDown import de type 1
-   * @param e 
+   * @param e
    */
   onclick(e: MouseEvent) {
     if (document.getElementById('drop-down')?.contains(e.target as Node)) {
       // Clicked in box
     } else {
       // Clicked outside the box
-      if (this.isEdit || this.saveActions)
-        this.toggleDropDown = false
+      if (this.isEdit || this.saveActions) this.toggleDropDown = false
     }
   }
 
   /**
- * Event outfocus DropDown import de type 2
- * @param e 
- */
+   * Event outfocus DropDown import de type 2
+   * @param e
+   */
   onclick2(e: MouseEvent) {
     if (document.getElementById('drop-down2')?.contains(e.target as Node)) {
       // Clicked in box
     } else {
       // Clicked outside the box
-      if (!this.isEdit && !this.saveActions)
-        this.toggleDropDown = false
+      if (!this.isEdit && !this.saveActions) this.toggleDropDown = false
     }
   }
 }

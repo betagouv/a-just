@@ -2,8 +2,9 @@
   <div class="content-news">
     <i *ngIf="news.icon" class="ri-{{news.icon}} icon" [ngStyle]="{color: news.textColor}"></i>
     <p [innerHTML]="news.html | sanitizeHtml" [ngStyle]="{color: news.textColor}"></p>
-    <a [href]="news.actionButtonUrl" target="_blank"><button *ngIf="news.actionButtonText" class="small"
-        [ngStyle]="{borderColor: news.actionButtonColor, color: news.actionButtonColor}">{{ news.actionButtonText
+    <a [href]="news.actionButtonUrl" target="_blank" rel="noreferrer"><button *ngIf="news.actionButtonText"
+        class="small" [ngStyle]="{borderColor: news.actionButtonColor, color: news.actionButtonColor}">{{
+        news.actionButtonText
         }}</button></a>
   </div>
   <i class="ri-close-line close cursor-pointer" (click)="onClose()"></i>
