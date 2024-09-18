@@ -47,7 +47,7 @@ export class UserService implements OnInit {
     private serverService: ServerService,
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getInterfaceType()
@@ -85,8 +85,8 @@ export class UserService implements OnInit {
 
   /**
    * Mapping de la couleur du référentiel selon l'interface
-   * @param label 
-   * @returns 
+   * @param label
+   * @returns
    */
   referentielMappingColorByInterface(label: string, opacity: number = 1) {
     const name = this.referentielMappingNameByInterface(label)
@@ -98,11 +98,12 @@ export class UserService implements OnInit {
 
   /**
    * Mapping de la couleur des activités selon l'interface
-   * @param label 
-   * @returns 
+   * @param label
+   * @returns
    */
   referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
     const name = this.referentielMappingNameByInterface(label)
+    
     if (this.interfaceType === 1)
       return this.referentielMappingColorCAActivity(name, opacity)
     else
@@ -110,13 +111,12 @@ export class UserService implements OnInit {
   }
 
   /**
-* Mapping des noms de contentieux selon l'interface
-* @param label 
-* @returns 
-*/
+   * Mapping des noms de contentieux selon l'interface
+   * @param label
+   * @returns
+   */
   referentielMappingNameByInterface(label: string) {
-    if (this.interfaceType === 1)
-      return this.referentielCAMappingName(label)
+    if (this.interfaceType === 1) return this.referentielCAMappingName(label)
     else return this.referentielMappingName(label)
   }
 
@@ -128,8 +128,8 @@ export class UserService implements OnInit {
   }
 
   /**
- * Methode de reprise des noms de référentiel CA
- */
+   * Methode de reprise des noms de référentiel CA
+   */
   public referentielCAMappingName(name: string): string {
     return referentielCAMappingName(name)
   }
@@ -143,22 +143,27 @@ export class UserService implements OnInit {
     return referentielMappingColor(name, opacity)
   }
 
+  /**
+   * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+   * @param name
+   * @returns
+   */
+  public referentielMappingColorActivity(
+    name: string,
+    opacity: number = 1
+  ): string {
+    return referentielMappingColorActivity(name, opacity)
+  }
 
   /**
    * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
    * @param name
    * @returns
    */
-  public referentielMappingColorActivity(name: string, opacity: number = 1): string {
-    return referentielMappingColorActivity(name, opacity)
-  }
-
-  /**
-  * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
-  * @param name
-  * @returns
-  */
-  public referentielMappingColorCAActivity(name: string, opacity: number = 1): string {
+  public referentielMappingColorCAActivity(
+    name: string,
+    opacity: number = 1
+  ): string {
     return referentielMappingColorCAActivity(name, opacity)
   }
 
@@ -305,7 +310,6 @@ export class UserService implements OnInit {
       : false
   }
 
-
   /**
    * Can view Activites
    */
@@ -331,19 +335,6 @@ export class UserService implements OnInit {
       })
     }
 
-    if (this.canViewVentilation(user)) {
-      menu.push({
-        label: 'Ventilateur',
-        path: 'ventilations',
-      })
-    }
-    if (this.canViewActivities(user)) {
-      menu.push({
-        label: "Données d'activité",
-        path: 'donnees-d-activite',
-      })
-    }
-
     if (
       user &&
       user.access &&
@@ -365,6 +356,18 @@ export class UserService implements OnInit {
         path: 'simulateur',
       })
     }
+    if (this.canViewVentilation(user)) {
+      menu.push({
+        label: 'Ventilateur',
+        path: 'ventilations',
+      })
+    }
+    if (this.canViewActivities(user)) {
+      menu.push({
+        label: "Données d'activité",
+        path: 'donnees-d-activite',
+      })
+    }
 
     if (
       user &&
@@ -376,7 +379,6 @@ export class UserService implements OnInit {
         path: 'dashboard',
       })
     }
-
 
     if (menu.length === 0) {
       this.serverService.removeToken() // logout user without access

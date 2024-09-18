@@ -246,7 +246,7 @@ export default class App extends AppBase {
         xContentTypeOptions: 'nosniff',
         xDnsPrefetchControl: false,
         xDownloadOptions: false,
-        xFrameOptions: { action: 'sameorigin' },
+        xFrameOptions: { action: 'deny' },
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
         //xXssProtection: 1, don't work
