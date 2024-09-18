@@ -1,3 +1,5 @@
+import config from 'config'
+
 /**
  * Table de stockage des notifications
  */
@@ -13,12 +15,20 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.addNotification = async ({ title, content, to, isAdmin = false }) => {
-    const user = await Model.models.Users.findOne({
-      where: {
-        id: to,
-      },
-      raw: true,
-    })
+    let user
+    if (to === -1) {
+      user = {
+        email: config.supportEmail,
+        first_name: 'Équipe support',
+      }
+    } else {
+      user = await Model.models.Users.findOne({
+        where: {
+          id: to,
+        },
+        raw: true,
+      })
+    }
 
     if (user) {
       await Model.create({
@@ -54,6 +64,10 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < users.length; i++) {
       await Model.addNotification({ title, content, to: users[i].id, isAdmin: true })
     }
+  }
+
+  Model.toSupport = async (title, content) => {
+    await Model.addNotification({ title, content, to: -1, isAdmin: false })
   }
 
   return Model

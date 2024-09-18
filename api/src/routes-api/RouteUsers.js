@@ -109,9 +109,9 @@ export default class RouteUsers extends Route {
       if (email.indexOf('justice.fr') !== -1 || email.indexOf('.gouv.fr') !== -1) {
         // check firstname and lastname
         if (email.indexOf((firstName || '').toLowerCase()) === -1 || email.indexOf((lastName || '').toLowerCase()) === -1) {
-          await this.models.Notifications.toAdmins(
+          await this.models.Notifications.toSupport(
             "Control du mail d'un agent",
-            `Il est recommandé de controller le mail de l'agent <b>${email}</b> affin d'être sur qu'il soit valide !`
+            `Il est recommandé de contrôler le mail de l'agent <b>${email}</b> afin d'être sûr qu'il soit valide !<br/><br/>Les informations nominatives de l’utilisateur saisies par l’utilisateur ne correspondent pas exactement au courriel renseigné.`
           )
         }
       }
