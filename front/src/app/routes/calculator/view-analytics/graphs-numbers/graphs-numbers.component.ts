@@ -1,4 +1,5 @@
 import { Component, HostBinding, Input, OnChanges } from '@angular/core'
+import { OPACITY_20 } from 'src/app/constants/colors'
 import { MainClass } from 'src/app/libs/main-class'
 import { UserService } from 'src/app/services/user/user.service'
 
@@ -59,14 +60,15 @@ export class GraphsNumbersComponent extends MainClass implements OnChanges {
   ngOnChanges() {
     if (this.referentielName) {
       if (!this.isTransparent) {
-        this.backgroundColor = this.userService.referentielMappingColorByInterface(
-          this.referentielName,
-          this.isWhite ? 1 : 0.25
-        )
+        this.backgroundColor =
+          this.userService.referentielMappingColorByInterface(
+            this.referentielName,
+            this.isWhite ? 1 : OPACITY_20
+          )
       } else {
         this.borderColor = this.userService.referentielMappingColorByInterface(
           this.referentielName,
-          0.25
+          OPACITY_20
         )
       }
     }

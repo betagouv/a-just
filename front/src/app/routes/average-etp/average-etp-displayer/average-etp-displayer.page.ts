@@ -22,12 +22,14 @@ import { OPACITY_20 } from 'src/app/constants/colors'
  */
 const EXCEL_EXTENSION = '.xlsx'
 
-
 @Component({
   templateUrl: './average-etp-displayer.page.html',
-  styleUrls: ['./average-etp-displayer.page.scss']
+  styleUrls: ['./average-etp-displayer.page.scss'],
 })
-export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnInit, IDeactivateComponent {
+export class AverageEtpDisplayerPage
+  extends MainClass
+  implements OnDestroy, OnInit, IDeactivateComponent
+{
   /**
    * Référentiel complet
    */
@@ -103,11 +105,11 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
   /**
    * Popup pour être redirigé vers la comparaison
    */
-  onFollowCompare:boolean=false
+  onFollowCompare: boolean = false
   /**
    * Opacité background des contentieux
    */
-    OPACITY = OPACITY_20
+  OPACITY = OPACITY_20
   /**
    * Constructeur
    * @param contentieuxOptionsService
@@ -121,7 +123,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     public userService: UserService,
-    private router: Router,
+    private router: Router
   ) {
     super()
 
@@ -151,8 +153,6 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
         }
       })
     )
-
-
 
     this.watch(
       this.contentieuxOptionsService.initValue.subscribe((b) => {
@@ -196,7 +196,6 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
               strDate = strDate === '' ? " aujourd'hui" : ' le ' + strDate
               this.subTitleDate = 'Mis à jour' + strDate + ', par '
               this.subTitleName = res.user.firstName + ' ' + res.user.lastName
-
             }
           } else {
             this.subTitleDate = ''
@@ -220,19 +219,14 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
           this.backup = this.backups.find((value) => value.id === id)
           this.subTitleType = this.backup?.type || ''
         }
-      }))
+      })
+    )
 
-
-      this.watch(
-        this.contentieuxOptionsService.onFollowComparaison.subscribe(
-          (b) => {
-            if (b===true)
-              this.onFollowCompare = true
-          }
-        )
-      )
-
-
+    this.watch(
+      this.contentieuxOptionsService.onFollowComparaison.subscribe((b) => {
+        if (b === true) this.onFollowCompare = true
+      })
+    )
   }
 
   ngOnInit() {
@@ -257,17 +251,15 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
 
   /**
    * Fonction bloquage data non sauvegardé
-   * @param nextState 
-   * @returns 
+   * @param nextState
+   * @returns
    */
   canDeactivate(nextState: string) {
     if (this.contentieuxOptionsService.optionsIsModify.getValue() === true) {
       this.nextState = nextState
       this.savePopup = true
       return false
-    }
-    else
-      return true
+    } else return true
   }
 
   /**
@@ -311,7 +303,6 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
 
           return ref
         })
-
 
       this.contentieuxOptionsService.referentiel.next(this.referentiel)
 
@@ -438,7 +429,9 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
       })
       // 5. Use `saveAs` to download on browser site.
       .then((buffer) => {
-        const filename = this.contentieuxOptionsService.getFileName(this.refNameSelected)
+        const filename = this.contentieuxOptionsService.getFileName(
+          this.refNameSelected
+        )
         return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
       })
       .catch((err) => console.log('Error writing excel export', err))
@@ -446,7 +439,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
 
   /**
    * Génère un objet contenant l'ensemble des valeurs d'un référentiel
-   * @returns 
+   * @returns
    */
   generateFlateList() {
     const flatList = new Array()
@@ -469,19 +462,14 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
 
   /**
    * Calcul les valeurs par jour et pas moi via la valeur de référence en heure
-   * @param ref 
-   * @returns 
+   * @param ref
+   * @returns
    */
   getFileValues(ref: any) {
     return {
-      id: Number(ref.id), nbPerDay: this.getInputValue(
-        ref.averageProcessingTime,
-        'nbPerDay',
-      ),
-      nbPerMonth: this.getInputValue(
-        ref.averageProcessingTime,
-        'nbPerMonth',
-      )
+      id: Number(ref.id),
+      nbPerDay: this.getInputValue(ref.averageProcessingTime, 'nbPerDay'),
+      nbPerMonth: this.getInputValue(ref.averageProcessingTime, 'nbPerMonth'),
     }
   }
 
@@ -496,8 +484,7 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
    * Popup de sauvegarde, action à effectuer
    */
   actionPopup(event: any) {
-    if (event.id === 'cancel')
-      this.savePopup = false
+    if (event.id === 'cancel') this.savePopup = false
     else if (event.id === 'save') {
       this.contentieuxOptionsService.optionsIsModify.next(false)
       this.router.navigate([this.nextState])
@@ -506,9 +493,9 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
   }
 
   /**
- * Demande de sauvegarde des nouvelles données saisies
- * @param isCopy 
- */
+   * Demande de sauvegarde des nouvelles données saisies
+   * @param isCopy
+   */
   saveHR() {
     this.contentieuxOptionsService.onSaveDatas(false)
   }
@@ -516,32 +503,48 @@ export class AverageEtpDisplayerPage extends MainClass implements OnDestroy, OnI
   /**
    * Retour au calculateur
    */
-  backToCockpit(){
-    setTimeout(() => { this.router.navigate(['/cockpit', { datestart: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStart, datestop: this.contentieuxOptionsService.openedFromCockpit.getValue().dateStop, category: this.contentieuxOptionsService.openedFromCockpit.getValue().category }]) }, 100)
+  backToCockpit() {
+    setTimeout(() => {
+      this.router.navigate([
+        '/cockpit',
+        {
+          datestart:
+            this.contentieuxOptionsService.openedFromCockpit.getValue()
+              .dateStart,
+          datestop:
+            this.contentieuxOptionsService.openedFromCockpit.getValue()
+              .dateStop,
+          category:
+            this.contentieuxOptionsService.openedFromCockpit.getValue()
+              .category,
+        },
+      ])
+    }, 100)
   }
 
-    /**
+  /**
    * Popup de sauvegarde, action à effectuer
    */
-    actionPopupFollow(event: any) {
-      if (event.id === 'cancel')
-        this.onCloseCompare()
-      if (event.id === 'follow')
-      {
-        this.contentieuxOptionsService.onFollowComparaison.next(false)
-        this.backToCockpit()
-      }
-    }
-
-    /**
-     * Refus de poursuivre vers la comparaison du calculateur
-     */
-    onCloseCompare(){
-      this.onFollowCompare = false
+  actionPopupFollow(event: any) {
+    if (event.id === 'cancel') this.onCloseCompare()
+    this.router.navigate(['/temps-moyens'])
+    if (event.id === 'follow') {
       this.contentieuxOptionsService.onFollowComparaison.next(false)
-      this.contentieuxOptionsService.openedFromCockpit.next({ value: false, dateStart: null, dateStop: null, category: null})
+      this.backToCockpit()
     }
+  }
+
+  /**
+   * Refus de poursuivre vers la comparaison du calculateur
+   */
+  onCloseCompare() {
+    this.onFollowCompare = false
+    this.contentieuxOptionsService.onFollowComparaison.next(false)
+    this.contentieuxOptionsService.openedFromCockpit.next({
+      value: false,
+      dateStart: null,
+      dateStop: null,
+      category: null,
+    })
+  }
 }
-
-
-
