@@ -484,6 +484,21 @@
       height: 100%;
       position: relative;
 
+      &.selected {
+        border: solid 1px fColor(cbluedark);
+        background-color: fColor(cbluemiddle);
+
+        >div.arrow-zone {
+          border-left: solid 1px fColor(cbluedark);
+        }
+
+        >i,
+        >label,
+        >div.arrow-zone i {
+          color: fColor(cbluedark);
+        }
+      }
+
       i {
         color: #6a6af4;
         font-size: 18px;

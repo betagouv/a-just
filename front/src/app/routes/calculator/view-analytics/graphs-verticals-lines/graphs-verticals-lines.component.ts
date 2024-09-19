@@ -151,7 +151,7 @@ export class GraphsVerticalsLinesComponent
     if (this.referentielName) {
       this.background = `linear-gradient(${this.userService.referentielMappingColorByInterface(
         this.referentielName,
-        0.25
+        0.5
       )}, #ffffff)`
     }
 
@@ -209,7 +209,9 @@ export class GraphsVerticalsLinesComponent
         if (this.showLines && line.length >= 2) {
           this.updateMax.emit({ type: this.type, max: Math.max(...line) || 0 })
 
-          ctx.strokeStyle = this.userService.referentielMappingColorByInterface(this.referentielName)
+          ctx.strokeStyle = this.userService.referentielMappingColorByInterface(
+            this.referentielName
+          )
           ctx.setLineDash([2])
           ctx.lineWidth = 1
           ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue))
