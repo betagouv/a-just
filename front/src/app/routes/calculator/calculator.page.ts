@@ -1151,14 +1151,12 @@ export class CalculatorPage
             },
             {
               label: nextRangeString,
-              isOption: true,
               values: value2TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: actualRangeString,
-              isOption: true,
               values: value1TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
@@ -1580,14 +1578,12 @@ export class CalculatorPage
             },
             {
               label: refSelected.label,
-              isOption: true,
               values: value2TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: actualRangeString,
-              isOption: true,
               values: value1TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
