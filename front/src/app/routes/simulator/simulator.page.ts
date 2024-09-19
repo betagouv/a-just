@@ -407,15 +407,7 @@ export class SimulatorPage
       target: '.intro-simulateur',
       title: 'Comment simuler votre trajectoire avec A-JUST ?',
       intro:
-        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.',
-    },
-    {
-      target: '.header-list',
-      title: 'Effectuer votre simulation :',
-      intro:
-        'Découvrez, en <b>vidéo</b>, comment prévoir la trajectoire de votre ' +
-        (this.isTJ() ? 'juridiction' : "cour d'appel") +
-        ' pour un contentieux ou sous-contentieux considéré compte tenu des données renseignées, toutes choses restant égales par ailleurs.<br/><video controls autoplay class="intro-js-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video><p>Et expérimentez l’A-JUSTement d’un ou deux paramètres de votre choix pour déterminer leur impact prévisible sur les autres selon les scenarii qui vous intéressent.</p><p>Nous vous y donnerons également toutes les clés pour <b>analyser les résultats de votre simulation</b>.</p>',
+        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls autoplay class="intro-js-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
     },
     {
       target: '.intro-simulateur',
@@ -454,7 +446,7 @@ export class SimulatorPage
       target: '.date-bar-container',
       title: 'Configurez votre hypothèse :',
       intro:
-        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à lesquelles vous souhaitez vous projeter (ex : atteindre un stock de X dossier à la fin du semestre) ;</p><p><b>Nommez votre simulation :</b> c’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à lesquelles vous souhaitez vous projeter (ex : atteindre un stock de X dossier à la fin du semestre) ;</p>',
       beforeLoad: async (intro: any) => {
         if (this.periodSelector) {
           const now = today()
