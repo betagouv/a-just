@@ -223,35 +223,7 @@ export class CalculatorPage
   /**
    * liste des référentiels
    */
-  referentiels: any[] = [
-    {
-      label: 'trimestre précédent',
-      selected: false,
-      isLocked: true,
-      datas: {
-        dateStop: month(),
-        dateStart: month(new Date(), -3),
-      },
-    },
-    {
-      label: 'semestre précédent',
-      selected: false,
-      isLocked: true,
-      datas: {
-        dateStop: month(),
-        dateStart: month(new Date(), -6),
-      },
-    },
-    {
-      label: 'année précédente',
-      selected: false,
-      isLocked: true,
-      datas: {
-        dateStop: month(),
-        dateStart: month(new Date(), -12),
-      },
-    },
-  ]
+  referentiels: any[] = []
   /**
    * Liste des sauvegardes
    */
@@ -364,7 +336,6 @@ export class CalculatorPage
     this.watch(
       this.humanResourceService.backupId.subscribe(() => {
         this.onLoad()
-        this.onLoadComparaisons()
       })
     )
     this.watch(
@@ -458,22 +429,7 @@ export class CalculatorPage
         const min = month(max, -11)
         this.calculatorService.dateStart.next(min)
         this.calculatorService.dateStop.next(max)
-
-        this.referentiels = this.referentiels.map((ref, index) => ({
-          ...ref,
-          datas:
-            index < 3
-              ? {
-                  dateStop: month(min, -1),
-                  dateStart:
-                    index === 0
-                      ? month(min, -3)
-                      : index === 1
-                      ? month(min, -6)
-                      : month(min, -12),
-                }
-              : ref.datas,
-        }))
+        this.onLoadComparaisons()
       })
     }
   }
@@ -535,6 +491,20 @@ export class CalculatorPage
       }
 
       this.referentiels = [...refs]
+
+      this.referentiels = this.referentiels
+      if (this.referentiels.length === 0) {
+        const start = month(this.calculatorService.dateStart.getValue(), -12)
+        const stop = month(this.calculatorService.dateStop.getValue(), -12)
+        this.referentiels.push({
+          label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
+          selected: false,
+          isLocked: false,
+          dateStop: start,
+          dateStart: stop,
+        })
+      }
+
       this.backupSettingSaved = l
     })
   }
@@ -908,7 +878,6 @@ export class CalculatorPage
         )
       }
       this.showPicker = false
-      console.log(ref)
       this.onLoadCompare()
     }
   }

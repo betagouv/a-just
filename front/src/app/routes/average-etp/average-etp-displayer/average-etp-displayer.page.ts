@@ -109,7 +109,7 @@ export class AverageEtpDisplayerPage
   /**
    * Opacité background des contentieux
    */
-    OPACITY = OPACITY_20
+  OPACITY = OPACITY_20
   /**
    * Constructeur
    * @param contentieuxOptionsService
@@ -529,7 +529,10 @@ export class AverageEtpDisplayerPage
    * Popup de sauvegarde, action à effectuer
    */
   actionPopupFollow(event: any) {
-    if (event.id === 'cancel') this.onCloseCompare()
+    if (event.id === 'cancel') {
+      this.onCloseCompare()
+      this.router.navigate(['/temps-moyens'])
+    }
     if (event.id === 'follow') {
       this.contentieuxOptionsService.onFollowComparaison.next(false)
       this.backToCockpit()
