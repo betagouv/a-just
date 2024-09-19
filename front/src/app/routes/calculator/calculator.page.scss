@@ -62,7 +62,7 @@
         .header {
           border-bottom: solid 1px #6a6af4 !important;
           background-color: #e8edff;
-          color: #0063cb;
+          color: #000091;
         }
 
         .content {
@@ -72,7 +72,7 @@
             background-color: #e3e3fd !important;
 
             label {
-              color: #0063cb !important;
+              color: #000091 !important;
             }
           }
         }
@@ -173,8 +173,8 @@
             }
 
             button {
-              color: #0063cb !important;
-              border: solid 1px #0063cb;
+              color: #000091 !important;
+              border: solid 1px #000091;
               background-color: transparent;
 
               &.color-greffe {
@@ -275,7 +275,7 @@
           padding: 0 8px;
           border-radius: 4px;
           background-color: #e8edff;
-          color: #0063cb;
+          color: #000091;
           font-size: 14px;
 
           &.greffe {
@@ -318,7 +318,7 @@
         padding: 0 8px;
         border-radius: 4px;
         background-color: #e8edff;
-        color: #0063cb;
+        color: #000091;
         font-size: 14px;
 
         &.greffe {
@@ -484,6 +484,21 @@
       height: 100%;
       position: relative;
 
+      &.selected {
+        border: solid 1px fColor(cbluedark);
+        background-color: fColor(cbluemiddle);
+
+        >div.arrow-zone {
+          border-left: solid 1px fColor(cbluedark);
+        }
+
+        >i,
+        >label,
+        >div.arrow-zone i {
+          color: fColor(cbluedark);
+        }
+      }
+
       i {
         color: #6a6af4;
         font-size: 18px;
@@ -547,7 +562,7 @@
 
   .content-list {
     flex: 1;
-    overflow: scroll;
+    overflow-y: scroll;
     padding-bottom: 80px;
   }
 }

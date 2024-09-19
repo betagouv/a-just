@@ -73,7 +73,7 @@
     }
 
     .scroll-container {
-        overflow: auto;
+        overflow-y: scroll;
         height: calc(100% - 40px);
 
         >div {
