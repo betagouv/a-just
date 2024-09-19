@@ -547,7 +547,7 @@
 
   .content-list {
     flex: 1;
-    overflow: auto;
+    overflow-y: scroll;
     padding-bottom: 80px;
   }
 }
