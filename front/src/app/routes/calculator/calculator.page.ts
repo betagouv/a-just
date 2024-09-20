@@ -437,9 +437,9 @@ export class CalculatorPage
   /**
    * Charge la liste des contentieux de comparaison
    */
-  onLoadComparaisons() {
+  onLoadComparaisons(forceSelection = false) {
     this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then((l) => {
-      const refs = this.referentiels
+      let refs = this.referentiels
       let indexRef = -1
       do {
         indexRef = refs.findIndex((r) => !r.isLocked)
@@ -486,6 +486,13 @@ export class CalculatorPage
         })
       }
 
+      if (forceSelection) {
+        refs = refs.map((i) => ({
+          ...i,
+          selected: true,
+        }))
+      }
+
       for (let i = NB_MAX_CUSTOM_COMPARAISONS; i < l.length; i++) {
         this.backupSettingsService.removeSetting(l[i].id)
       }
@@ -504,6 +511,13 @@ export class CalculatorPage
       (b) => b.label === refSettingLabel
     )
     if (backupSettingSaved) {
+      if (this.referentiels.length <= 1) {
+        this.showPicker = false
+        this.tabSelected = 1
+        this.unselectTemplate()
+        this.logChartView()
+      }
+
       this.backupSettingsService
         .removeSetting(backupSettingSaved.id)
         .then(() => this.onLoadComparaisons())
@@ -844,6 +858,15 @@ export class CalculatorPage
     ref.selected = true
 
     if (ref.datas) {
+      if (ref.isLocked) {
+        this.backupSettingsService
+          .addOrUpdate(ref.label, BACKUP_SETTING_COMPARE, {
+            dateStart: this.optionDateStart,
+            dateStop: this.optionDateStop,
+          })
+          .then(() => this.onLoadComparaisons(true))
+      }
+
       if (ref.datas.dateStart) {
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
@@ -1668,22 +1691,6 @@ export class CalculatorPage
   }
 
   filterReferentiels(referentiels: any[]) {
-    /**
-     * 
-
-      this.referentiels = this.referentiels
-      if (this.referentiels.length === 0) {
-        const start = month(this.calculatorService.dateStart.getValue(), -12)
-        const stop = month(this.calculatorService.dateStop.getValue(), -12)
-        this.referentiels.push({
-          label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
-          selected: false,
-          isLocked: false,
-          dateStop: start,
-          dateStart: stop,
-        })
-      }
-     */
     let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(
@@ -1715,8 +1722,12 @@ export class CalculatorPage
         label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
         selected: false,
         isLocked: true,
-        dateStop: start,
-        dateStart: stop,
+        dateStop: stop,
+        dateStart: start,
+        datas: {
+          dateStop: stop,
+          dateStart: start,
+        },
       })
     }
 
