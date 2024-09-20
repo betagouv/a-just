@@ -491,20 +491,6 @@ export class CalculatorPage
       }
 
       this.referentiels = [...refs]
-
-      this.referentiels = this.referentiels
-      if (this.referentiels.length === 0) {
-        const start = month(this.calculatorService.dateStart.getValue(), -12)
-        const stop = month(this.calculatorService.dateStop.getValue(), -12)
-        this.referentiels.push({
-          label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
-          selected: false,
-          isLocked: false,
-          dateStop: start,
-          dateStart: stop,
-        })
-      }
-
       this.backupSettingSaved = l
     })
   }
@@ -1027,6 +1013,10 @@ export class CalculatorPage
             percent = Math.floor((tab1[index] || 0) * 100 - (d || 0) * 100)
           }
 
+          if (percent === Infinity) {
+            return 'N/R'
+          }
+
           if (percent > 0) {
             return '+' + percent
           }
@@ -1139,7 +1129,7 @@ export class CalculatorPage
           description: 'moyen sur la période',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((value2TauxCouverture[index] || 0) * 100),
+            Math.floor((value1TauxCouverture[index] || 0) * 100),
             v === null ? null : Math.floor((v || 0) * 100),
           ]),
           variations: [
@@ -1566,7 +1556,7 @@ export class CalculatorPage
           description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((value2TauxCouverture[index] || 0) * 100),
+            Math.floor((value1TauxCouverture[index] || 0) * 100),
             v === null ? null : Math.floor((v || 0) * 100),
           ]),
           variations: [
@@ -1678,7 +1668,23 @@ export class CalculatorPage
   }
 
   filterReferentiels(referentiels: any[]) {
-    return referentiels.reduce((previous, current) => {
+    /**
+     * 
+
+      this.referentiels = this.referentiels
+      if (this.referentiels.length === 0) {
+        const start = month(this.calculatorService.dateStart.getValue(), -12)
+        const stop = month(this.calculatorService.dateStop.getValue(), -12)
+        this.referentiels.push({
+          label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
+          selected: false,
+          isLocked: false,
+          dateStop: start,
+          dateStart: stop,
+        })
+      }
+     */
+    let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(
           (b) => b.id === current.datas.referentielId
@@ -1701,5 +1707,19 @@ export class CalculatorPage
       previous.push(current)
       return previous
     }, [])
+
+    if (refsList.length === 0) {
+      const start = month(this.calculatorService.dateStart.getValue(), -12)
+      const stop = month(this.calculatorService.dateStop.getValue(), -12)
+      refsList.push({
+        label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
+        selected: false,
+        isLocked: true,
+        dateStop: start,
+        dateStart: stop,
+      })
+    }
+
+    return refsList
   }
 }
