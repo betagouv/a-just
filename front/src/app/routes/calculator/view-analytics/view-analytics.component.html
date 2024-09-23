@@ -1,6 +1,6 @@
 <div class="header-refs window-scrool-width-margin">
     <div>
-        <button (click)="openAll()">{{checkAllDataShow()?'Réduire tous les
+        <button class="no-print" (click)="openAll()">{{checkAllDataShow()?'Réduire tous les
             détails':'Voir tous les détails'}}</button>
     </div>
     <div>
@@ -45,7 +45,8 @@
         <div class="container-colum">
             <p class="title-section">Taux de couverture</p>
             <p class="details-section">moyens sur la période</p>
-            <button class="details" (click)="showDetailCover = !showDetailCover;logOpenDetails(showDetailCover);">
+            <button class="details no-print"
+                (click)="showDetailCover = !showDetailCover;logOpenDetails(showDetailCover);">
                 <i [class]="
             showDetailCover ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailCover ? 'Masquer les détails' : 'Voir les détails'
@@ -80,7 +81,8 @@
             <p class="title-section">Stock</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details" (click)="showDetailStock = !showDetailStock;logOpenDetails(showDetailStock);">
+            <button class="details no-print"
+                (click)="showDetailStock = !showDetailStock;logOpenDetails(showDetailStock);">
                 <i [class]="
             showDetailStock ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailStock ? 'Masquer les détails' : 'Voir les détails'
@@ -125,7 +127,8 @@
             <p class="title-section">Entrées</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details" (click)="showDetailEntrees = !showDetailEntrees;logOpenDetails(showDetailEntrees);">
+            <button class="details no-print"
+                (click)="showDetailEntrees = !showDetailEntrees;logOpenDetails(showDetailEntrees);">
                 <i [class]="
             showDetailEntrees ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailEntrees ? 'Masquer les détails' :
@@ -178,7 +181,8 @@
             <p class="title-section">Sorties</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details" (click)="showDetailSorties = !showDetailSorties;logOpenDetails(showDetailSorties);">
+            <button class="details no-print"
+                (click)="showDetailSorties = !showDetailSorties;logOpenDetails(showDetailSorties);">
                 <i [class]="
             showDetailSorties ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailSorties ? 'Masquer les détails' :
@@ -232,7 +236,7 @@
             <p class="title-section">ETPT Siège</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details"
+            <button class="details no-print"
                 (click)="showDetailETPTSiege = !showDetailETPTSiege;logOpenDetails(showDetailETPTSiege);">
                 <i [class]="
             showDetailETPTSiege ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
@@ -286,7 +290,7 @@
             <p class="title-section">ETPT Greffe</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details"
+            <button class="details no-print"
                 (click)="showDetailETPTGreffe = !showDetailETPTGreffe;logOpenDetails(showDetailETPTGreffe);">
                 <i [class]="
             showDetailETPTGreffe ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
@@ -341,7 +345,8 @@
             <p class="title-section">ETPT EAM</p>
             <p class="details-section">sur la période</p>
             <div class="flex-1"></div>
-            <button class="details" (click)="showDetailETPTEam = !showDetailETPTEam;logOpenDetails(showDetailETPTEam);">
+            <button class="details no-print"
+                (click)="showDetailETPTEam = !showDetailETPTEam;logOpenDetails(showDetailETPTEam);">
                 <i [class]="
             showDetailETPTEam ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
           "></i>{{ showDetailETPTEam ? 'Masquer les détails' :

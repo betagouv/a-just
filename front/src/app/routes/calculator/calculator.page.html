@@ -35,12 +35,12 @@
       <div class="switch-tab">
         <div class="brut" [ngClass]="{'selected': tabSelected === 0 && !compareTemplates}"
           (click)="tabSelected=0;unselectTemplate();$event.stopPropagation()">
-          <i class="ri-table-view"></i>
+          <i class="ri-table-view no-print"></i>
           <p>Données brutes</p>
         </div>
         <div class="fonctionnaires" [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
           (click)="tabSelected=1;unselectTemplate();logChartView();$event.stopPropagation()">
-          <i class="ri-bar-chart-box-line"></i>
+          <i class="ri-bar-chart-box-line no-print"></i>
           <p>Graphiques</p>
         </div>
       </div>
