@@ -1201,9 +1201,9 @@ export class CalculatorPage
         )
         const variationsEntrees = getVariations(value2Entrees, value1Entrees)
         list.push({
-          title: 'Entrée',
+          title: 'Entrées',
           type: 'verticals-lines',
-          description: 'moyenne<br/>sur la période',
+          description: 'moyennes<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Entrees.map((m) => m || 0),
@@ -1233,7 +1233,7 @@ export class CalculatorPage
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
-          description: 'moyenne<br/>sur la période',
+          description: 'moyennes<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Sorties.map((m) => m || 0),
