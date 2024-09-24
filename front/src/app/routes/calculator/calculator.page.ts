@@ -159,9 +159,9 @@ export class CalculatorPage
   introSteps: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
-      title: 'A quoi sert le calculateur ?',
+      title: 'A quoi sert le cockpit ?',
       intro:
-        "Le calculateur vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
+        "Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
     },
     {
       target: '.sub-main-header',
@@ -758,7 +758,7 @@ export class CalculatorPage
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
-        `Calculateur_par ${
+        `Cockpit_par ${
           this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
@@ -1212,9 +1212,9 @@ export class CalculatorPage
         )
         const variationsEntrees = getVariations(value2Entrees, value1Entrees)
         list.push({
-          title: 'Entrée',
+          title: 'Entrées',
           type: 'verticals-lines',
-          description: 'moyenne<br/>sur la période',
+          description: 'moyennes<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Entrees.map((m) => m || 0),
@@ -1244,7 +1244,7 @@ export class CalculatorPage
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
-          description: 'moyenne<br/>sur la période',
+          description: 'moyennes<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Sorties.map((m) => m || 0),

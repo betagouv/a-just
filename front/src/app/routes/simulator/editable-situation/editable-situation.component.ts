@@ -743,19 +743,12 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     const keyChanged = Object.keys(value[0]).filter(
       (key) => oldValues[key] !== newValues[key]
     )[0]
-
-    Object.keys(newValues).map((key) => {
-      newValues[key] = newValues[key].replaceAll(',', '.')
-    })
-
     return {
       actualSituation: newValues,
       input: {
         field: keyChanged,
         value:
-          newValues[keyChanged] === ''
-            ? -1
-            : Number(newValues[keyChanged].replaceAll(',', '.')),
+          newValues[keyChanged] === '' ? -1 : Number(newValues[keyChanged]),
       },
     }
   }
@@ -772,38 +765,24 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   }
   generateEndSituation() {
     let newStock = Math.floor(
-      Number(
-        this.formWhiteSim.controls['lastStock'].value?.replaceAll(',', '.')
-      ) +
+      Number(this.formWhiteSim.controls['lastStock'].value) +
         (this.nbOfDays / (365 / 12)) *
-          Number(
-            this.formWhiteSim.controls['totalIn'].value?.replaceAll(',', '.')
-          ) -
+          Number(this.formWhiteSim.controls['totalIn'].value) -
         (this.nbOfDays / (365 / 12)) *
-          Number(
-            this.formWhiteSim.controls['totalOut'].value?.replaceAll(',', '.')
-          )
+          Number(this.formWhiteSim.controls['totalOut'].value)
     )
     newStock = newStock < 0 ? 0 : newStock
 
-    const startTotalIn = Number(
-      this.formWhiteSim.controls['totalIn'].value?.replaceAll(',', '.')
-    )
-    const startTotalOut = Number(
-      this.formWhiteSim.controls['totalOut'].value?.replaceAll(',', '.')
-    )
-    const startLastStock = Number(
-      this.formWhiteSim.controls['lastStock'].value?.replaceAll(',', '.')
-    )
+    const startTotalIn = Number(this.formWhiteSim.controls['totalIn'].value)
+    const startTotalOut = Number(this.formWhiteSim.controls['totalOut'].value)
+    const startLastStock = Number(this.formWhiteSim.controls['lastStock'].value)
     const startetpMag = fixDecimal(
-      Number(this.formWhiteSim.controls['etpMag'].value?.replaceAll(',', '.'))
+      Number(this.formWhiteSim.controls['etpMag'].value)
     )
     const startetpFon = fixDecimal(
-      Number(this.formWhiteSim.controls['etpMag'].value?.replaceAll(',', '.'))
+      Number(this.formWhiteSim.controls['etpMag'].value)
     )
-    const startetpCont = Number(
-      this.formWhiteSim.controls['etpCont'].value?.replaceAll(',', '.')
-    )
+    const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value)
 
     const coverage = Math.round((startTotalOut / startTotalIn) * 100)
     this.formWhiteSim.controls['realCoverage'].setValue(String(coverage) + '%')
@@ -811,9 +790,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     const dtes = fixDecimal(startLastStock / startTotalOut)
     this.formWhiteSim.controls['realDTESInMonths'].setValue(String(dtes))
 
-    this.formWhiteSim.controls['etpMag'].setValue(
-      String(startetpMag).replaceAll('.', ',')
-    )
+    this.formWhiteSim.controls['etpMag'].setValue(String(startetpMag))
     const prefix1 =
       this.category === 'MAGISTRAT'
         ? 'nbDaysByMagistrat'
@@ -890,6 +867,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       etpAffected: null,
     })
   }
+
   validateNo(e: any) {
     const charCode = e.which ? e.which : e.keyCode
     this.pressedKey = true

@@ -408,20 +408,34 @@ export class SimulatorPage
       title: 'Comment simuler votre trajectoire avec A-JUST ?',
       intro:
         'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls autoplay class="intro-js-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('aj-back-button a')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
     },
     {
-      target: '.intro-simulateur',
+      target: '.second-pan .blue-pan',
       title: 'Choisissez le type de simulation',
       intro:
         '<p>Vous pouvez <b>effectuer une simulation en utilisant les données renseignées dans A-JUST</b>, c’est ce que nous vous recommandons pour une vision fine de la trajectoire de votre ' +
         (this.isTJ() ? 'juridiction' : "cour d'appel") +
-        ' sur des contentieux avec des données pré-alimentées par A-JUST.</p><p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.</p><p><b>Montrer deux boutons</b> : effectuer une simulation avec des données renseignées / effectuer une simulation sans données renseignées.</p>',
+        ' sur des contentieux avec des données pré-alimentées par A-JUST.</p>',
     },
     {
-      target: '#content',
+      target: '#panel-empty-simulator',
+      title: 'Choisissez le type de simulation',
+      intro:
+        '<p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.” en montrant le “effectuer une simulation sans données pré-alimentées.</p>',
+    },
+    {
+      target: '.categories-switch',
       title: 'Configurez votre hypothèse',
       intro:
-        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe. Ensuite, sélectionnez un <b>contentieux</b> dans le menu déroulant. Suivant votre besoin, vous pouvez affiner votre simulation en sélectionnant un sous-contentieux voire une fonction spécifique.</p><p>Enfin, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date ou les dates du futur sur lesquelles vous souhaitez vous projeter ; </p><p><b>Nommez votre simulation</b> : c’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+        '<p>Choisissez la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe</p>',
       beforeLoad: async (intro: any) => {
         const itemToClick = document.querySelector('#on-button-continue')
         if (itemToClick) {
@@ -429,6 +443,78 @@ export class SimulatorPage
           itemToClick.click()
           await sleep(200)
         }
+      },
+    },
+    {
+      target: '.action-simulator-bar',
+      title: 'Configurez votre hypothèse',
+      intro:
+        '<p>Sélectionnez un <b>contentieux</b> dans le menu déroulant. Suivant votre besoin, vous pouvez affiner votre simulation en sélectionnant un sous-contentieux voire une fonction spécifique</p>',
+      beforeLoad: async (intro: any) => {
+        const introTooltip = document.querySelector('.introjs-tooltip')
+        if (introTooltip) {
+          // @ts-ignore
+          introTooltip.style.visibility = 'hidden'
+        }
+        setTimeout(() => {
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            introTooltip.classList.add('introjs-bottom-left-aligned')
+            introTooltip.classList.remove('introjs-floating')
+            // @ts-ignore
+            introTooltip.style.left = '0px'
+            // @ts-ignore
+            introTooltip.style.top = '85px'
+            // @ts-ignore
+            introTooltip.style.marginLeft = '0'
+            // @ts-ignore
+            introTooltip.style.marginTop = '0'
+            // @ts-ignore
+            introTooltip.style.visibility = 'visible'
+          }
+        }, 380)
+      },
+      options: {
+        position: 'bottom',
+      },
+    },
+    {
+      target: '.container-timeline-button',
+      title: 'Configurez votre hypothèse',
+      intro:
+        '<p>Déterminez une <b>date de début et de fin de période</b>, c’est à dire la date ou les dates du futur sur lesquelles vous souhaitez vous projeter</p>',
+    },
+    {
+      target: '#editable-sim-name',
+      title: 'Nommez votre simulation :',
+      intro:
+        '<p>C’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+      beforeLoad: async (intro: any) => {
+        const introTooltip = document.querySelector('.introjs-tooltip')
+        if (introTooltip) {
+          // @ts-ignore
+          introTooltip.style.visibility = 'hidden'
+        }
+        setTimeout(() => {
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            introTooltip.classList.add('introjs-bottom-left-aligned')
+            introTooltip.classList.remove('introjs-floating')
+            // @ts-ignore
+            introTooltip.style.left = '0px'
+            // @ts-ignore
+            introTooltip.style.top = '45px'
+            // @ts-ignore
+            introTooltip.style.marginLeft = '0'
+            // @ts-ignore
+            introTooltip.style.marginTop = '0'
+            // @ts-ignore
+            introTooltip.style.visibility = 'visible'
+          }
+        }, 380)
+      },
+      options: {
+        position: 'bottom',
       },
     },
   ]
@@ -440,13 +526,13 @@ export class SimulatorPage
       target: '#wrapper-contener',
       title: 'La simulation sans données pré-alimentées',
       intro:
-        '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas suivies dans A-JUST comme les activités administratives ou du soutien, les activités du Parquet, ou les contentieux qui ne seraient pas isolés dans A-JUST.</p><p><b>Texte sur le bouton des données pré-alimentées dans le menu d’accès :</b> effectuer une simulation avec des données renseignées / effectuer une simulation sans données renseignées.</p>',
+        '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas suivies dans A-JUST comme les activités administratives ou du soutien, les activités du Parquet, ou les contentieux qui ne seraient pas isolés dans A-JUST.</p>',
     },
     {
       target: '.date-bar-container',
       title: 'Configurez votre hypothèse :',
       intro:
-        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à lesquelles vous souhaitez vous projeter (ex : atteindre un stock de X dossier à la fin du semestre) ;</p>',
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à lesquelles vous souhaitez vous projeter (ex : atteindre un stock de X dossier dans 12 mois) ;</p>',
       beforeLoad: async (intro: any) => {
         if (this.periodSelector) {
           const now = today()
@@ -461,6 +547,11 @@ export class SimulatorPage
       intro:
         '<p>Renseignez <b>librement les données d’entrées, de sorties, de stock et d’ETPT</b> pour mesurer l’impact d’un changement à venir. <b>Tous les champs ne sont pas à alimenter</b>, vous les adapterez à votre connaissance de la situation actuelle du service ou aux besoins de votre simulation.</p><p>Dès lors que suffisamment de champs sont renseignés, notre algorithme effectue les calculs utiles et les champs non renseignés (par ex. taux de couverture/DTES ou TMD) se remplissent automatiquement. Vous pouvez "<b>valider</b>" pour figer cette situation de départ ou "<b>effacer</b>" si vous souhaitez la modifier.</p><p>Une petite astuce : pour calculer les entrées/sorties moyennes mensuelles, faites-le sur une période relativement longue, idéalement de plusieurs mois voire une année, pour qu’elles soient les plus représentatives et effacent les effets saisonniers.</p>',
       beforeLoad: async (intro: any) => {
+        const introTooltip = document.querySelector('.introjs-tooltip')
+        if (introTooltip) {
+          // @ts-ignore
+          introTooltip.style.visibility = 'hidden'
+        }
         setTimeout(() => {
           const introTooltip = document.querySelector('.introjs-tooltip')
           if (introTooltip) {
@@ -474,6 +565,41 @@ export class SimulatorPage
             introTooltip.style.marginLeft = '0'
             // @ts-ignore
             introTooltip.style.marginTop = '0'
+            // @ts-ignore
+            introTooltip.style.visibility = 'visible'
+          }
+        }, 380)
+      },
+      options: {
+        position: 'bottom',
+      },
+    },
+    {
+      target: '#editable-sim-name',
+      title: 'Nommez votre simulation :',
+      intro:
+        '<p>C’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+      beforeLoad: async (intro: any) => {
+        const introTooltip = document.querySelector('.introjs-tooltip')
+        if (introTooltip) {
+          // @ts-ignore
+          introTooltip.style.visibility = 'hidden'
+        }
+        setTimeout(() => {
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            introTooltip.classList.add('introjs-bottom-left-aligned')
+            introTooltip.classList.remove('introjs-floating')
+            // @ts-ignore
+            introTooltip.style.left = '0px'
+            // @ts-ignore
+            introTooltip.style.top = '45px'
+            // @ts-ignore
+            introTooltip.style.marginLeft = '0'
+            // @ts-ignore
+            introTooltip.style.marginTop = '0'
+            // @ts-ignore
+            introTooltip.style.visibility = 'visible'
           }
         }, 380)
       },

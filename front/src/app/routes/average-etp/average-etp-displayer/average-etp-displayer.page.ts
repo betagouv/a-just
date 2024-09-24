@@ -142,6 +142,20 @@ export class AverageEtpDisplayerPage
         }
       })
     )
+  }
+
+  ngOnInit() {
+    this.watch(
+      this.route.params.subscribe((params) => {
+        if (params['id']) {
+          console.log('MON ID', params['id'])
+          const id = +this.route.snapshot.params['id']
+          this.contentieuxOptionsService.backupId.next(id)
+          this.backup = this.backups.find((value) => value.id === id)
+          this.subTitleType = this.backup?.type || ''
+        }
+      })
+    )
 
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
@@ -229,24 +243,13 @@ export class AverageEtpDisplayerPage
     )
   }
 
-  ngOnInit() {
-    this.watch(
-      this.route.params.subscribe((params) => {
-        if (params['id']) {
-          const id = +this.route.snapshot.params['id']
-          this.contentieuxOptionsService.backupId.next(id)
-          this.backup = this.backups.find((value) => value.id === id)
-          this.subTitleType = this.backup?.type || ''
-        }
-      })
-    )
-  }
-
   /**
    * Destruction des observables
    */
   ngOnDestroy() {
     this.watcherDestroy()
+    this.referentiel = []
+    this.backup = undefined
   }
 
   /**
@@ -278,6 +281,7 @@ export class AverageEtpDisplayerPage
           this.referentielService.idsSoutien.indexOf(r.id) === -1
       )
 
+      console.log('onLoad', this.backup)
       if (this.backup)
         this.referentiel = referentiels.map((ref) => {
           const getOption = options.find((a) => a.contentieux.id === ref.id)
@@ -526,8 +530,10 @@ export class AverageEtpDisplayerPage
    * Popup de sauvegarde, action à effectuer
    */
   actionPopupFollow(event: any) {
-    if (event.id === 'cancel') this.onCloseCompare()
-    this.router.navigate(['/temps-moyens'])
+    if (event.id === 'cancel') {
+      this.onCloseCompare()
+      this.router.navigate(['/temps-moyens'])
+    }
     if (event.id === 'follow') {
       this.contentieuxOptionsService.onFollowComparaison.next(false)
       this.backToCockpit()
