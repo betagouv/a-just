@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core'
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core'
 import { NewsInterface } from 'src/app/interfaces/news'
 import { MainClass } from 'src/app/libs/main-class'
 import { NewsService } from 'src/app/services/news/news.service'
@@ -18,7 +24,10 @@ export class NewsComponent extends MainClass implements OnInit {
    * News item
    */
   news: NewsInterface | null = null
-
+  /**
+   * Output pour recharger la page
+   */
+  @Output() isClosed = new EventEmitter<boolean>(false)
   /**
    * Constructeur
    * @param newsService
@@ -26,7 +35,8 @@ export class NewsComponent extends MainClass implements OnInit {
    */
   constructor(
     private newsService: NewsService,
-    private userService: UserService
+    private userService: UserService,
+    private el: ElementRef
   ) {
     super()
   }
@@ -40,6 +50,13 @@ export class NewsComponent extends MainClass implements OnInit {
         this.loadNews()
       })
     )
+  }
+
+  /**
+   * Getter pour recuperer la hauteur du composant
+   */
+  get offsetHeight() {
+    return this.el.nativeElement.offsetHeight
   }
 
   /**
@@ -58,6 +75,7 @@ export class NewsComponent extends MainClass implements OnInit {
     if (this.news) {
       this.newsService.updateNewsOnClick(this.news.id)
       this.news = null
+      this.isClosed.emit(true)
     }
   }
 }
