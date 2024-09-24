@@ -488,8 +488,12 @@ export class AverageEtpDisplayerPage
    * Popup de sauvegarde, action à effectuer
    */
   actionPopup(event: any) {
-    if (event.id === 'cancel') this.savePopup = false
-    else if (event.id === 'save') {
+    if (event.id === 'cancel') {
+      //this.savePopup = false
+      this.contentieuxOptionsService.optionsIsModify.next(false)
+      console.log([this.nextState])
+      this.router.navigate([this.nextState])
+    } else if (event.id === 'save') {
       this.contentieuxOptionsService.optionsIsModify.next(false)
       this.router.navigate([this.nextState])
       this.saveHR()
