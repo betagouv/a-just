@@ -142,6 +142,20 @@ export class AverageEtpDisplayerPage
         }
       })
     )
+  }
+
+  ngOnInit() {
+    this.watch(
+      this.route.params.subscribe((params) => {
+        if (params['id']) {
+          console.log('MON ID', params['id'])
+          const id = +this.route.snapshot.params['id']
+          this.contentieuxOptionsService.backupId.next(id)
+          this.backup = this.backups.find((value) => value.id === id)
+          this.subTitleType = this.backup?.type || ''
+        }
+      })
+    )
 
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
@@ -225,19 +239,6 @@ export class AverageEtpDisplayerPage
     this.watch(
       this.contentieuxOptionsService.onFollowComparaison.subscribe((b) => {
         if (b === true) this.onFollowCompare = true
-      })
-    )
-  }
-
-  ngOnInit() {
-    this.watch(
-      this.route.params.subscribe((params) => {
-        if (params['id']) {
-          const id = +this.route.snapshot.params['id']
-          this.contentieuxOptionsService.backupId.next(id)
-          this.backup = this.backups.find((value) => value.id === id)
-          this.subTitleType = this.backup?.type || ''
-        }
       })
     )
   }
