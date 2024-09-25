@@ -77,11 +77,13 @@
     padding-left: 32px;
     padding-right: 16px;
 
-    p {
+    p,
+    a {
       color: #3a3a3a;
       font-size: 14px;
       margin: 8px 0px;
       cursor: pointer;
+      text-decoration: none;
 
       i {
         margin-left: 4px;

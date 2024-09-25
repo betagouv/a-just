@@ -1214,7 +1214,7 @@ export class CalculatorPage
         list.push({
           title: 'Stock',
           type: 'verticals-lines',
-          description: 'sur la période',
+          description: 'en fin de période',
           lineMax:
             Math.max(
               ...value1Stock.map((m) => m || 0),
