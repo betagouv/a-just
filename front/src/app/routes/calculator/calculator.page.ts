@@ -1067,7 +1067,7 @@ export class CalculatorPage
           }
 
           if (percent === Infinity) {
-            return 'N/R'
+            return 'N/A'
           }
 
           if (percent > 0) {
