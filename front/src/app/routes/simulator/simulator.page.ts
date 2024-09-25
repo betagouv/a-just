@@ -404,10 +404,10 @@ export class SimulatorPage
    */
   introStepsDefault: IntroJSStep[] = [
     {
-      target: '.intro-simulateur',
+      target: '#wrapper-contener',
       title: 'Comment simuler votre trajectoire avec A-JUST ?',
       intro:
-        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls autoplay class="intro-js-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
+        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls autoplay class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
       beforeLoad: async (intro: any) => {
         const itemToClick = document.querySelector('aj-back-button a')
         if (itemToClick) {
@@ -429,7 +429,7 @@ export class SimulatorPage
       target: '#panel-empty-simulator',
       title: 'Choisissez le type de simulation',
       intro:
-        '<p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.” en montrant le “effectuer une simulation sans données pré-alimentées.</p>',
+        '<p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.”</p>',
     },
     {
       target: '.categories-switch',
@@ -532,7 +532,7 @@ export class SimulatorPage
       target: '.date-bar-container',
       title: 'Configurez votre hypothèse :',
       intro:
-        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à lesquelles vous souhaitez vous projeter (ex : atteindre un stock de X dossier dans 12 mois) ;</p>',
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à lesquelles vous souhaitez vous projeter (ex : atteindre un stock de X dossier dans 12 mois).</p>',
       beforeLoad: async (intro: any) => {
         if (this.periodSelector) {
           const now = today()
