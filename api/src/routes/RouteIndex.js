@@ -35,9 +35,27 @@ export default class RouteIndex extends Route {
       if (ctx.request.url && ctx.request.url !== '/' && stats.isFile()) {
         console.log('load page', file)
 
-        const src = createReadStream(file)
-        ctx.type = mime.getType(file)
-        ctx.body = src
+        // only for video
+        if (file.indexOf('.mp4') !== -1) {
+          const { range } = ctx.request.headers
+          const { size } = stats
+          const start = Number((range || '').replace(/bytes=/, '').split('-')[0])
+          const end = size - 1
+          const chunkSize = end - start + 1
+          ctx.set('Content-Range', `bytes ${start}-${end}/${size}`)
+          ctx.set('Accept-Ranges', 'bytes')
+          ctx.set('Content-Length', chunkSize)
+          ctx.set('Content-Type', 'video/mp4')
+          ctx.status = 206
+          const src = createReadStream(file, { start, end })
+          ctx.body = src
+          //stream.on('open', () => stream.pipe(res))
+          //stream.on('error', (streamErr) => res.end(streamErr))
+        } else {
+          const src = createReadStream(file)
+          ctx.type = mime.getType(file)
+          ctx.body = src
+        }
       } else {
         const indexFile = `${__dirname}/../../dist/front/index.html`
         const src = createReadStream(indexFile)
@@ -45,6 +63,7 @@ export default class RouteIndex extends Route {
         ctx.body = src
       }
     } catch (err) {
+      console.log('on error', err)
       const indexFile = `${__dirname}/../../dist/front/index.html`
       const src = createReadStream(indexFile)
       ctx.type = mime.getType(indexFile)
