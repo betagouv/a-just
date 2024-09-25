@@ -52,6 +52,7 @@ import {
   EXECUTE_CALCULATOR_CHANGE_DATE,
 } from 'src/app/constants/log-codes'
 import { BehaviorSubject } from 'rxjs'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 
 /**
  * Page du calculateur
@@ -381,6 +382,34 @@ export class CalculatorPage
     )
   }
 
+  /**
+   * Chargement de la liste des fonctions
+   */
+  loadFunctions() {
+    let cat =
+      this.categorySelected?.toUpperCase() === 'FONCTIONNAIRES'
+        ? 'Greffe'
+        : 'Magistrat'
+
+    const findCategory =
+      this.humanResourceService.categories
+        .getValue()
+        .find((c: HRCategoryInterface) => c.label === cat) || null
+
+    this.fonctions = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === findCategory?.id)
+      .map(
+        (f: HRFonctionInterface) =>
+          ({
+            id: f.id,
+            value: f.code,
+          } as dataInterface)
+      )
+    this.lastCategorySelected = this.categorySelected
+    this.selectedFonctionsIds = this.fonctions.map((a) => a.id)
+  }
+
   ngAfterViewInit() {
     this.watch(
       this.route.params.subscribe((params) => {
@@ -700,6 +729,7 @@ export class CalculatorPage
     this.categorySelected = category
     this.calculatorService.categorySelected.next(this.categorySelected)
     this.fonctionRealValue = ''
+    this.loadFunctions()
     if (this.categorySelected === this.FONCTIONNAIRES)
       this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
   }

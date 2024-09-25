@@ -5,12 +5,12 @@
       <div class="categories-switch">
         <div class="magistrats" *ngIf="canViewMagistrat"
           [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
-          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
+          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS);unselectTemplate();">
           <p>Siège</p>
         </div>
         <div class="fonctionnaires" *ngIf="canViewGreffier"
           [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
-          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
+          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES);unselectTemplate();">
           <p>Greffe</p>
         </div>
       </div>
