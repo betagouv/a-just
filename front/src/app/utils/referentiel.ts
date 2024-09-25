@@ -233,58 +233,58 @@ export function referentielMappingColorCAActivity(
   if (opacity === OPACITY_20) {
     switch (tmp) {
       case 'Social':
-        return `rgb(211, 231, 232)`
+        return `rgb(212, 231, 232)`
       case 'Famille':
-        return `rgb(211, 228, 242)`
+        return `rgb(210, 227, 243)`
       case 'CTX JCP':
-        return `rgb(211, 223, 242)`
+        return `rgb(211, 224, 243)`
       case 'Civil Ns':
         return `rgb(213, 216, 235)`
       case 'Comm.':
-        return `rgb(215, 241, 245)`
+        return `rgb(218, 212, 237)`
       case 'PP':
-        return `rgb(255, 245, 214)`
+        return `rgb(255, 248, 213)`
       case 'Jld Civil':
-        return `rgb(217, 211, 237)`
+        return `rgb(218, 212, 237)`
       case 'Mineurs':
         return `rgb(228, 211, 237)`
       case 'CHINS': //CHINS
-        return `rgb(250, 221, 212)`
+        return `rgb(249, 219, 211)`
       case 'CHAC':
         return `rgb(245, 214, 213)` //CHAC
       case 'Crim.':
-        return `rgb(255, 234, 214)`
+        return `rgb(255, 234, 213)`
       case 'CHAP': //CHAP
-        return `rgb(255, 227, 212)`
+        return `rgb(253, 226, 211)`
       case 'Autres':
-        return `rgb(217, 217, 217)`
+        return `rgb(216, 218, 220)`
     }
   } else {
     switch (tmp) {
       case 'Social':
-        return `rgba(1, 131, 143, ${opacity})`
+        return `rgba(3, 131, 143, ${opacity})`
       case 'Famille':
-        return `rgba(0, 118, 191, ${opacity})`
-      case 'CTX JCP':
-        return `rgba(23, 99, 191, ${opacity})`
+        return `rgba(1, 118, 190, ${opacity})`
+      case 'CTX JCP': // Protection
+        return `rgba(22, 100, 192, ${opacity})`
       case 'Civil Ns':
-        return `rgba(39, 52, 145, ${opacity})`
+        return `rgba(40, 53, 146, ${opacity})`
       case 'Comm.':
-        return `rgba(37, 190, 207, ${opacity})`
+        return `rgba(38, 190, 206, ${opacity})`
       case 'PP':
-        return `rgba(250, 202, 12, ${opacity})`
+        return `rgba(251, 202, 12, ${opacity})`
       case 'Jld Civil':
-        return `rgba(70, 37, 161, ${opacity})`
+        return `rgba(69, 38, 160, ${opacity})`
       case 'Mineurs':
-        return `rgba(104, 26, 153, ${opacity})`
+        return `rgba(105, 26, 154, ${opacity})`
       case 'CHINS': //CHINS
-        return `rgba(214, 65, 19, ${opacity})`
+        return `rgba(215, 66, 21, ${opacity})`
       case 'CHAC':
-        return `rgba(196, 39, 39, ${opacity})` //CHAC
+        return `rgba(197, 41, 40, ${opacity})` //CHAC
       case 'Crim.':
-        return `rgba(255, 145, 0, ${opacity})`
+        return `rgba(255, 143, 0, ${opacity})`
       case 'CHAP': //CHAP
-        return `rgba(240, 108, 0, ${opacity})`
+        return `rgba(239, 108, 0, ${opacity})`
       case 'Autres':
         return `rgba(66, 66, 66, ${opacity})`
     }
