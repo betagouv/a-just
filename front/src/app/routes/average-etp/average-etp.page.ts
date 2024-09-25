@@ -67,6 +67,10 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Ouverture provenant du cockpit
    */
   openedFromCockpit: boolean = false
+  /**
+   * Activer le bouton
+   */
+  enableImport: boolean = false
 
   /**
    * Constructor
@@ -267,6 +271,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
   async onSendAllActivity(elem: any) {
     try {
       await this.contentieuxOptionsService.onSendAllActivity(elem)
+      this.enableImport = true
     } catch (e) {
       let form = document.getElementById('form') as HTMLFormElement
       form?.reset()

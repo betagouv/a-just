@@ -41,7 +41,7 @@
     </button>
 
     <div class="actions">
-      <div *ngIf="onUpload" class="save" (click)="import()">Importer</div>
+      <div *ngIf="onUpload" [ngClass]="{'enable': enableImport===true}" class="save" (click)="import()">Importer</div>
       <div *ngIf="!onUpload" class="save" (click)="create(name.value,type.name)">Enregistrer</div>
     </div>
   </aj-popup>
