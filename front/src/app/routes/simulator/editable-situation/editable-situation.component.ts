@@ -743,12 +743,19 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     const keyChanged = Object.keys(value[0]).filter(
       (key) => oldValues[key] !== newValues[key]
     )[0]
+
+    Object.keys(newValues).map((key) => {
+      newValues[key] = newValues[key].replaceAll(',', '.')
+    })
+
     return {
       actualSituation: newValues,
       input: {
         field: keyChanged,
         value:
-          newValues[keyChanged] === '' ? -1 : Number(newValues[keyChanged]),
+          newValues[keyChanged] === ''
+            ? -1
+            : Number(newValues[keyChanged].replaceAll(',', '.')),
       },
     }
   }
@@ -764,6 +771,8 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       )
   }
   generateEndSituation() {
+    this.replaceSeparator()
+
     let newStock = Math.floor(
       Number(this.formWhiteSim.controls['lastStock'].value) +
         (this.nbOfDays / (365 / 12)) *
@@ -790,7 +799,9 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     const dtes = fixDecimal(startLastStock / startTotalOut)
     this.formWhiteSim.controls['realDTESInMonths'].setValue(String(dtes))
 
-    this.formWhiteSim.controls['etpMag'].setValue(String(startetpMag))
+    this.formWhiteSim.controls['etpMag'].setValue(
+      String(startetpMag).replaceAll('.', ',')
+    )
     const prefix1 =
       this.category === 'MAGISTRAT'
         ? 'nbDaysByMagistrat'
@@ -868,6 +879,39 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     })
   }
 
+  replaceSeparator() {
+    this.formWhiteSim.controls['lastStock'].setValue(
+      this.formWhiteSim.controls['lastStock'].value?.replaceAll(',', '.') || ''
+    )
+    this.formWhiteSim.controls['realCoverage'].setValue(
+      this.formWhiteSim.controls['realCoverage'].value?.replaceAll(',', '.') ||
+        ''
+    )
+    this.formWhiteSim.controls['totalIn'].setValue(
+      this.formWhiteSim.controls['totalIn'].value?.replaceAll(',', '.') || ''
+    )
+    this.formWhiteSim.controls['totalOut'].setValue(
+      this.formWhiteSim.controls['totalOut'].value?.replaceAll(',', '.') || ''
+    )
+    this.formWhiteSim.controls['etpMag'].setValue(
+      this.formWhiteSim.controls['etpMag'].value?.replaceAll(',', '.') || ''
+    )
+    this.formWhiteSim.controls['etpFon'].setValue(
+      this.formWhiteSim.controls['etpFon'].value?.replaceAll(',', '.') || ''
+    )
+    this.formWhiteSim.controls['realDTESInMonths'].setValue(
+      this.formWhiteSim.controls['realDTESInMonths'].value?.replaceAll(
+        ',',
+        '.'
+      ) || ''
+    )
+    this.formWhiteSim.controls['magRealTimePerCase'].setValue(
+      this.formWhiteSim.controls['magRealTimePerCase'].value?.replaceAll(
+        ',',
+        '.'
+      ) || ''
+    )
+  }
   validateNo(e: any) {
     const charCode = e.which ? e.which : e.keyCode
     this.pressedKey = true
