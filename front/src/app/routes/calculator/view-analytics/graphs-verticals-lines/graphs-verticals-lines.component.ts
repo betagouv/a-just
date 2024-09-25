@@ -14,6 +14,7 @@ import {
 } from '@angular/core'
 import { NgResizeObserver, ngResizeObserverProviders } from 'ng-resize-observer'
 import { BehaviorSubject, map, Observable } from 'rxjs'
+import { OPACITY_20 } from 'src/app/constants/colors'
 import { MainClass } from 'src/app/libs/main-class'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { UserService } from 'src/app/services/user/user.service'
@@ -151,7 +152,7 @@ export class GraphsVerticalsLinesComponent
     if (this.referentielName) {
       this.background = `linear-gradient(${this.userService.referentielMappingColorByInterface(
         this.referentielName,
-        0.5
+        OPACITY_20
       )}, #ffffff)`
     }
 
