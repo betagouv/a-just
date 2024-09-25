@@ -5,7 +5,7 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { findRealValueCustom } from 'src/app/utils/dates'
+import { findRealValueCustom, getTime } from 'src/app/utils/dates'
 
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 import { Location } from '@angular/common'
@@ -93,7 +93,16 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         console.log(b)
-        this.backups = orderBy(b, ['date'], ['desc'])
+        this.backups = orderBy(
+          b,
+          [
+            (val) => {
+              const date = val.update?.date || val.date
+              return getTime(date)
+            },
+          ],
+          ['desc']
+        )
         this.backups = this.backups.filter((x) => {
           if (x.type === 'GREFFE' && this.canViewGreffier) return true
           if (x.type === 'SIEGE' && this.canViewMagistrat) return true
