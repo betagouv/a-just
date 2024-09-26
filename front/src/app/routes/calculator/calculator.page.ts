@@ -159,9 +159,9 @@ export class CalculatorPage
   introSteps: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
-      title: 'A quoi sert le calculateur ?',
+      title: 'A quoi sert le cockpit ?',
       intro:
-        "Le calculateur vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
+        "Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
     },
     {
       target: '.sub-main-header',
@@ -437,9 +437,9 @@ export class CalculatorPage
   /**
    * Charge la liste des contentieux de comparaison
    */
-  onLoadComparaisons() {
+  onLoadComparaisons(forceSelection = false) {
     this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then((l) => {
-      const refs = this.referentiels
+      let refs = this.referentiels
       let indexRef = -1
       do {
         indexRef = refs.findIndex((r) => !r.isLocked)
@@ -486,25 +486,18 @@ export class CalculatorPage
         })
       }
 
+      if (forceSelection) {
+        refs = refs.map((i) => ({
+          ...i,
+          selected: true,
+        }))
+      }
+
       for (let i = NB_MAX_CUSTOM_COMPARAISONS; i < l.length; i++) {
         this.backupSettingsService.removeSetting(l[i].id)
       }
 
       this.referentiels = [...refs]
-
-      this.referentiels = this.referentiels
-      if (this.referentiels.length === 0) {
-        const start = month(this.calculatorService.dateStart.getValue(), -12)
-        const stop = month(this.calculatorService.dateStop.getValue(), -12)
-        this.referentiels.push({
-          label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
-          selected: false,
-          isLocked: false,
-          dateStop: start,
-          dateStart: stop,
-        })
-      }
-
       this.backupSettingSaved = l
     })
   }
@@ -518,6 +511,13 @@ export class CalculatorPage
       (b) => b.label === refSettingLabel
     )
     if (backupSettingSaved) {
+      if (this.referentiels.length <= 1) {
+        this.showPicker = false
+        this.tabSelected = 1
+        this.unselectTemplate()
+        this.logChartView()
+      }
+
       this.backupSettingsService
         .removeSetting(backupSettingSaved.id)
         .then(() => this.onLoadComparaisons())
@@ -758,7 +758,7 @@ export class CalculatorPage
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
-        `Calculateur_par ${
+        `Cockpit_par ${
           this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
@@ -858,6 +858,15 @@ export class CalculatorPage
     ref.selected = true
 
     if (ref.datas) {
+      if (ref.isLocked) {
+        this.backupSettingsService
+          .addOrUpdate(ref.label, BACKUP_SETTING_COMPARE, {
+            dateStart: this.optionDateStart,
+            dateStop: this.optionDateStop,
+          })
+          .then(() => this.onLoadComparaisons(true))
+      }
+
       if (ref.datas.dateStart) {
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
@@ -1027,6 +1036,10 @@ export class CalculatorPage
             percent = Math.floor((tab1[index] || 0) * 100 - (d || 0) * 100)
           }
 
+          if (percent === Infinity) {
+            return 'N/R'
+          }
+
           if (percent > 0) {
             return '+' + percent
           }
@@ -1139,7 +1152,7 @@ export class CalculatorPage
           description: 'moyen sur la période',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((value2TauxCouverture[index] || 0) * 100),
+            Math.floor((value1TauxCouverture[index] || 0) * 100),
             v === null ? null : Math.floor((v || 0) * 100),
           ]),
           variations: [
@@ -1151,14 +1164,12 @@ export class CalculatorPage
             },
             {
               label: nextRangeString,
-              isOption: true,
               values: value2TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: actualRangeString,
-              isOption: true,
               values: value1TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
@@ -1201,9 +1212,9 @@ export class CalculatorPage
         )
         const variationsEntrees = getVariations(value2Entrees, value1Entrees)
         list.push({
-          title: 'Entrée',
+          title: 'Entrées',
           type: 'verticals-lines',
-          description: 'moyenne<br/>sur la période',
+          description: 'moyennes<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Entrees.map((m) => m || 0),
@@ -1233,7 +1244,7 @@ export class CalculatorPage
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
-          description: 'moyenne<br/>sur la période',
+          description: 'moyennes<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Sorties.map((m) => m || 0),
@@ -1568,7 +1579,7 @@ export class CalculatorPage
           description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((value2TauxCouverture[index] || 0) * 100),
+            Math.floor((value1TauxCouverture[index] || 0) * 100),
             v === null ? null : Math.floor((v || 0) * 100),
           ]),
           variations: [
@@ -1580,14 +1591,12 @@ export class CalculatorPage
             },
             {
               label: refSelected.label,
-              isOption: true,
               values: value2TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: actualRangeString,
-              isOption: true,
               values: value1TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
@@ -1682,7 +1691,7 @@ export class CalculatorPage
   }
 
   filterReferentiels(referentiels: any[]) {
-    return referentiels.reduce((previous, current) => {
+    let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(
           (b) => b.id === current.datas.referentielId
@@ -1705,5 +1714,23 @@ export class CalculatorPage
       previous.push(current)
       return previous
     }, [])
+
+    if (refsList.length === 0) {
+      const start = month(this.calculatorService.dateStart.getValue(), -12)
+      const stop = month(this.calculatorService.dateStop.getValue(), -12)
+      refsList.push({
+        label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
+        selected: false,
+        isLocked: true,
+        dateStop: stop,
+        dateStart: start,
+        datas: {
+          dateStop: stop,
+          dateStart: start,
+        },
+      })
+    }
+
+    return refsList
   }
 }

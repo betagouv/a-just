@@ -92,7 +92,8 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     // Chargement des référentiels
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
-        this.backups = orderBy(b, ['update.date'], ['desc'])
+        console.log(b)
+        this.backups = orderBy(b, ['date'], ['desc'])
         this.backups = this.backups.filter((x) => {
           if (x.type === 'GREFFE' && this.canViewGreffier) return true
           if (x.type === 'SIEGE' && this.canViewMagistrat) return true

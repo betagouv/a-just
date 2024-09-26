@@ -41,15 +41,17 @@
         </div>
       </div>
 
-      <p class="intro-second-title"
-        (click)="dateStop=null;whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator();setDocUrl(documentationUrl.whiteSimulator)">
-        <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
-      </p>
-      <p class="intro-second-desc">
-        Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de
-        temps moyen par dossier) pour effectuer des projections sur
-        l&apos;activité (y compris non juridictionnelle) de votre choix.
-      </p>
+      <div id="panel-empty-simulator">
+        <p class="intro-second-title"
+          (click)="dateStop=null;whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator();setDocUrl(documentationUrl.whiteSimulator)">
+          <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
+        </p>
+        <p class="intro-second-desc">
+          Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de
+          temps moyen par dossier) pour effectuer des projections sur
+          l&apos;activité (y compris non juridictionnelle) de votre choix.
+        </p>
+      </div>
     </div>
   </div>
 
