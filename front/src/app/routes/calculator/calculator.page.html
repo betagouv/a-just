@@ -66,7 +66,7 @@
               <div class="flex-1"></div>
               <p>DTES<br />instantané</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonths'}"></i>
-              <aj-tooltips title="DTES instantané" class="medium"
+              <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium"
                 content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
                 footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
               </aj-tooltips>
@@ -76,7 +76,8 @@
               <div class="flex-1"></div>
               <p>Taux de<br />couverture</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realCoverage'}"></i>
-              <aj-tooltips title="Taux de couverture" content="SORTIES /ENTREES de la période en %">
+              <aj-tooltips title="TAUX DE CONVERTURE MOYEN SUR LA PÉRIODE"
+                content="SORTIES /ENTREES de la période en %">
               </aj-tooltips>
             </div>
             <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">

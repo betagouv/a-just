@@ -23,7 +23,7 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { month } from 'src/app/utils/dates'
+import { getTime, month } from 'src/app/utils/dates'
 import {
   userCanViewContractuel,
   userCanViewGreffier,
@@ -365,7 +365,16 @@ export class CalculatorPage
     // Chargement des référentiels
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
-        this.backups = b
+        this.backups = orderBy(
+          b,
+          [
+            (val) => {
+              const date = val.update?.date || val.date
+              return getTime(date)
+            },
+          ],
+          ['desc']
+        )
       })
     )
 
@@ -466,7 +475,7 @@ export class CalculatorPage
   /**
    * Charge la liste des contentieux de comparaison
    */
-  onLoadComparaisons(forceSelection = false) {
+  onLoadComparaisons(selectedByLabel: string | null = null) {
     this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then((l) => {
       let refs = this.referentiels
       let indexRef = -1
@@ -515,10 +524,10 @@ export class CalculatorPage
         })
       }
 
-      if (forceSelection) {
+      if (selectedByLabel) {
         refs = refs.map((i) => ({
           ...i,
-          selected: true,
+          selected: i.label === selectedByLabel,
         }))
       }
 
@@ -540,13 +549,6 @@ export class CalculatorPage
       (b) => b.label === refSettingLabel
     )
     if (backupSettingSaved) {
-      if (this.referentiels.length <= 1) {
-        this.showPicker = false
-        this.tabSelected = 1
-        this.unselectTemplate()
-        this.logChartView()
-      }
-
       this.backupSettingsService
         .removeSetting(backupSettingSaved.id)
         .then(() => this.onLoadComparaisons())
@@ -882,19 +884,17 @@ export class CalculatorPage
    * @param ref
    */
   radioSelect(ref: any) {
-    this.referentiels.map((x) => {
-      x.selected = false
+    this.referentiels = this.referentiels.map((x) => {
+      x.selected = ref.label === x.label
+      return x
     })
     ref.selected = true
 
     if (ref.datas) {
       if (ref.isLocked) {
         this.backupSettingsService
-          .addOrUpdate(ref.label, BACKUP_SETTING_COMPARE, {
-            dateStart: this.optionDateStart,
-            dateStop: this.optionDateStop,
-          })
-          .then(() => this.onLoadComparaisons(true))
+          .addOrUpdate(ref.label, BACKUP_SETTING_COMPARE, ref.datas)
+          .then(() => this.onLoadComparaisons(ref.label))
       }
 
       if (ref.datas.dateStart) {
@@ -1018,8 +1018,10 @@ export class CalculatorPage
         this.dateStart
       )} - ${this.getRealValue(this.dateStop)}`
       const list: AnalyticsLine[] = []
-      const value1TempsMoyen = (this.datasFilted || []).map(
-        (d) => d.magRealTimePerCase
+      const value1TempsMoyen = (this.datasFilted || []).map((d) =>
+        this.categorySelected === MAGISTRATS
+          ? d.magRealTimePerCase
+          : d.fonRealTimePerCase
       )
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) =>
         d === null
@@ -1125,7 +1127,11 @@ export class CalculatorPage
 
         const value2TempsMoyen: (number | null)[] = (
           resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.magRealTimePerCase)
+        ).map((d: CalculatorInterface) =>
+          this.categorySelected === MAGISTRATS
+            ? d.magRealTimePerCase
+            : d.fonRealTimePerCase
+        )
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
             ? 'N/R'
@@ -1708,8 +1714,9 @@ export class CalculatorPage
   unselectTemplate() {
     this.showPicker = false
     this.compareTemplates = null
-    this.referentiels.map((x) => {
+    this.referentiels = this.referentiels.map((x) => {
       x.selected = false
+      return x
     })
   }
 
@@ -1745,11 +1752,12 @@ export class CalculatorPage
       return previous
     }, [])
 
-    if (refsList.length === 0) {
-      const start = month(this.calculatorService.dateStart.getValue(), -12)
-      const stop = month(this.calculatorService.dateStop.getValue(), -12)
-      refsList.push({
-        label: `${this.getRealValue(start)} - ${this.getRealValue(stop)}`,
+    const start = month(this.calculatorService.dateStart.getValue(), -12)
+    const stop = month(this.calculatorService.dateStop.getValue(), -12)
+    const newLabel = `${this.getRealValue(start)} - ${this.getRealValue(stop)}`
+    if (!refsList.find((r: any) => r.label === newLabel)) {
+      refsList.splice(0, 0, {
+        label: newLabel,
         selected: false,
         isLocked: true,
         dateStop: stop,

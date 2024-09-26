@@ -138,6 +138,11 @@ export class GraphsVerticalsLinesComponent
     this.watch(
       this.calculatorService.dateStop.subscribe(() => this.refreshDatas())
     )
+    this.watch(
+      this.calculatorService.selectedFonctionsIds.subscribe(() =>
+        this.refreshDatas()
+      )
+    )
   }
 
   ngAfterViewInit() {

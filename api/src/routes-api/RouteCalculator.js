@@ -68,11 +68,12 @@ export default class RouteCalculator extends Route {
       dateStop: Types.date().required(),
       contentieuxId: Types.number().required(),
       type: Types.string().required(),
+      fonctionsIds: Types.array(),
     }),
     accesses: [Access.canVewCalculator],
   })
   async rangeValues (ctx) {
-    let { backupId, dateStart, dateStop, contentieuxId, type } = this.body(ctx)
+    let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds } = this.body(ctx)
     dateStart = month(dateStart)
     dateStop = month(dateStop)
     const hrList = await this.model.getCache(backupId)
@@ -112,6 +113,7 @@ export default class RouteCalculator extends Route {
         }
         break
       case 'stock':
+      case 'stocks':
         {
           const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
           if (activites.length) {
@@ -131,7 +133,7 @@ export default class RouteCalculator extends Route {
       case 'ETPTSiege':
         {
           const catId = type === 'ETPTSiege' ? 1 : type === 'ETPTGreffe' ? 2 : 3
-          const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart)
+          const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart, null, fonctionsIds)
           let hList = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], [catId], dateStart)
           let totalAffected = 0
           hList.map((agent) => {

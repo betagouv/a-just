@@ -103,15 +103,15 @@
                 <ng-template [ngIf]="!showDetailStock">
                     <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
                         [values]="[datasFilted[index].lastStock || 0]" [maxValue]="stockMax" type="stocks"
-                        (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
+                        (updateMax)="onUpdateMax($event)" [showLines]="showDetailStock"></aj-graphs-verticals-lines>
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="datasFilted[index].lastStock === null ? 'N/R' : '' + (datasFilted[index].lastStock || 0)"
                         class="text-center" [isWhite]="true"></aj-graphs-numbers></ng-template>
                 <ng-template [ngIf]="showDetailStock">
                     <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
                         [values]="[datasFilted[index].lastStockBf || 0, datasFilted[index].lastStockAf || 0]"
-                        [maxValue]="stockMax" type="stocks"
-                        (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
+                        [maxValue]="stockMax" type="stocks" (updateMax)="onUpdateMax($event)"
+                        [showLines]="showDetailStock"></aj-graphs-verticals-lines>
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="datasFilted[index].lastStockBf === null ? 'N/R' : '' + (datasFilted[index].lastStockBf || 0)"
                         class="text-center no-border-bottom"></aj-graphs-numbers>
