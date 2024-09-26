@@ -44,25 +44,25 @@ export default class App {
     await onGetIelstListApi().then(async (response) => {
       if (response) {
         // CIVIL
-        // await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
-        // await this.formatAndGroupJuridiction(
-        //   tmpFolder,
-        //   outputFolder,
-        //   outputAllFolder,
-        //   categoriesOfRules,
-        //   referentiel,
-        //   response
-        // );
-
-        // WIP datas pénal
-        await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
-        await this.formatAndGroupJuridictionPenal(
+        await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
+        await this.formatAndGroupJuridiction(
           tmpFolder,
           outputFolder,
           outputAllFolder,
           categoriesOfRules,
+          referentiel,
           response
         );
+
+        // WIP datas pénal
+        // await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
+        // await this.formatAndGroupJuridictionPenal(
+        //   tmpFolder,
+        //   outputFolder,
+        //   outputAllFolder,
+        //   categoriesOfRules,
+        //   response
+        // );
       }
     });
 
@@ -142,6 +142,10 @@ export default class App {
 
     groupedFiles.MINTI = readdirSync(inputFolder).filter(
       (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1 && f.indexOf('MINTI') !== -1
+    );
+
+    groupedFiles.CA = readdirSync(inputFolder).filter(
+      (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1 && f.indexOf('RGC-CA') !== -1
     );
 
     for (let type of Object.keys(groupedFiles)) {
@@ -349,9 +353,8 @@ export default class App {
 
         const tj_label = fileName.replace(/^export-activities-/, '').replace(/-\w+\.csv$/, '');
         const ielst = Object.keys(I_ELST_LIST).find(key => I_ELST_LIST[key] === tj_label);
-        const type = fileName.includes('CPH') ? 'CPH' : (fileName.includes('MINTI') ? 'MINTI' : 'TGI_TI');
+        const type = fileName.includes('CPH') ? 'CPH' : (fileName.includes('MINTI') ? 'MINTI' : fileName.includes('TGI_TI') ? 'TGI_TI' : 'CA');
         const rulesToApply = categoriesOfRules[type]
-
         if (!ielst) {
             continue
         }
