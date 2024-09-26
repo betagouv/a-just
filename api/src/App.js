@@ -78,7 +78,7 @@ export default class App extends AppBase {
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
     // (session) - required for cookie signature generation
-    this.koaApp.keys = ['newest secresfsdt key', 'oldsdfsdfsder secdsfsdfsdfret key']
+    this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
