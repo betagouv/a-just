@@ -22,11 +22,16 @@ import { Router } from '@angular/router'
 })
 export class OptionsBackupPanelComponent
   extends MainClass
-  implements OnDestroy, OnChanges {
+  implements OnDestroy, OnChanges
+{
   /**
    * Autoriser à changer ou non la sauvergarde actuelle
    */
   @Input() readOnly: boolean = false
+  /**
+   * Autoriser à changer ou non la sauvergarde actuelle
+   */
+  @Input() category: string = ''
   /**
    * Ecoute de la variable de largeur du composant
    */
@@ -50,9 +55,12 @@ export class OptionsBackupPanelComponent
 
   /**
    * Constructeur qui écoute tous les changements
-   * @param contentieuxOptionsService 
+   * @param contentieuxOptionsService
    */
-  constructor(private contentieuxOptionsService: ContentieuxOptionsService, private router: Router) {
+  constructor(
+    private contentieuxOptionsService: ContentieuxOptionsService,
+    private router: Router
+  ) {
     super()
 
     this.watch(
@@ -115,8 +123,8 @@ export class OptionsBackupPanelComponent
 
   /**
    * Sélection d'une nouvelle sauvegarde
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   onChangeBackup(id: any[]) {
     if (
@@ -148,15 +156,18 @@ export class OptionsBackupPanelComponent
 
   /**
    * Demande de sauvegarde des nouvelles données saisies
-   * @param isCopy 
+   * @param isCopy
    */
   onSaveHR(isCopy: boolean = false) {
-    this.contentieuxOptionsService.onSaveDatas(isCopy)
-    if (isCopy)
-      this.router.navigate(['/temps-moyens'])
-    if (this.contentieuxOptionsService.openedFromCockpit.getValue().value === true)
+    this.contentieuxOptionsService.onSaveDatas(isCopy, this.category)
+    if (isCopy) {
+      //this.router.navigate(['/temps-moyens'])
+      this.contentieuxOptionsService.optionsIsModify.next(false)
+    }
+    if (
+      this.contentieuxOptionsService.openedFromCockpit.getValue().value === true
+    )
       this.contentieuxOptionsService.onFollowComparaison.next(true)
-      
   }
 
   async onSendAllActivity(elem: any) {
@@ -194,7 +205,7 @@ export class OptionsBackupPanelComponent
    * Ouvre le selecteur de fichier
    */
   openFilePicker() {
-    document.getElementById('filePicker')!.click();
-    document.getElementById('trigger-drop-down')!.click();
+    document.getElementById('filePicker')!.click()
+    document.getElementById('trigger-drop-down')!.click()
   }
 }

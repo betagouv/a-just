@@ -63,7 +63,7 @@ export class TemplateAnalyticsComponent
   constructor(
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
-    public userService: UserService,
+    public userService: UserService
   ) {
     super()
   }
@@ -104,7 +104,6 @@ export class TemplateAnalyticsComponent
   getGraphs(
     line: AnalyticsLine
   ): { type: string; dateStart: Date; dateStop: Date; color: string }[] {
-    console.log(line)
     // @ts-ignore
     return this.getOptionsToShow(line)
       .filter((o) => o.graph)
