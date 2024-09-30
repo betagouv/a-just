@@ -82,6 +82,15 @@
             margin-right: 0px;
         }
 
+        .italic {
+            margin-top: 4px;
+            font-size: 12px;
+            font-style: italic;
+            line-height: 18px;
+            font-weight: bold !important;
+            font-weight: 500;
+        }
+
         .blue {
             &::before {
                 content: '';
