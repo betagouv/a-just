@@ -7,8 +7,8 @@
 
   <!-- POPUP CREATION -->
   <aj-popup *ngIf="onCreation===true" [closeIcon]="true"
-    (onClose)="onCreation = false;nameLength = 0; openedFromCockpit=false" [removeShadow]="'noShadow'"
-    class="border-radius fix-width-400">
+    (onClose)="onCreation = false;nameLength = 0; openedFromCockpit=false;this.enableImport = false;"
+    [removeShadow]="'noShadow'" class="border-radius fix-width-400">
     <div id="circle">
       <i class="ri-ball-pen-line"></i>
     </div>
