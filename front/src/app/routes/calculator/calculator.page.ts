@@ -287,6 +287,12 @@ export class CalculatorPage
     private kpiService: KPIService
   ) {
     super()
+
+    this.watch(
+      this.humanResourceService.backupId.subscribe(() => {
+        this.onLoad()
+      })
+    )
   }
 
   /**
@@ -331,11 +337,6 @@ export class CalculatorPage
     this.watch(
       this.calculatorService.dateStop.subscribe((date) => {
         this.dateStop = date
-        this.onLoad()
-      })
-    )
-    this.watch(
-      this.humanResourceService.backupId.subscribe(() => {
         this.onLoad()
       })
     )
