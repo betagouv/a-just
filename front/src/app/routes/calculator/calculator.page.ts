@@ -634,6 +634,7 @@ export class CalculatorPage
       },
       this.firstLoading ? 0 : 1500
     )
+    this.onLoadComparaisons()
   }
 
   /**
@@ -1728,6 +1729,7 @@ export class CalculatorPage
   }
 
   filterReferentiels(referentiels: any[]) {
+    console.log(this.referentiel)
     let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(
