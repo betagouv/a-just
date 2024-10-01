@@ -229,6 +229,10 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
               dateStop: null,
               category: null,
             })
+          if (data)
+            setTimeout(() => {
+              this.goTo(data)
+            }, 100)
         })
     }
   }
@@ -309,9 +313,14 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
         'Importé',
         type
       )
-      await this.contentieuxOptionsService.onSaveDatas(false, type)
-      const backupId = this.contentieuxOptionsService.backupId.getValue()
-      if (backupId) this.goTo(backupId)
+      this.contentieuxOptionsService.onSaveDatas(false, type).then(() => {
+        const backupId = this.contentieuxOptionsService.backupId.getValue()
+        if (backupId)
+          setTimeout(() => {
+            this.goTo(backupId), 200
+          })
+      })
+
       form.reset()
     }
   }
