@@ -1315,7 +1315,7 @@ export class CalculatorPage
           list.push({
             title: 'ETPT Siège',
             type: 'verticals-lines',
-            description: '-',
+            description: 'moyens sur la période',
             lineMax:
               Math.max(
                 ...value1ETPTSiege.map((m) => m || 0),
@@ -1367,7 +1367,7 @@ export class CalculatorPage
           list.push({
             title: 'ETPT Greffe',
             type: 'verticals-lines',
-            description: '-',
+            description: 'moyens sur la période',
             lineMax:
               Math.max(
                 ...value1ETPTGreffe.map((m) => m || 0),
@@ -1416,7 +1416,7 @@ export class CalculatorPage
           list.push({
             title: 'ETPT EAM',
             type: 'verticals-lines',
-            description: '-',
+            description: 'moyens sur la période',
             lineMax:
               Math.max(
                 ...value1ETPTEam.map((m) => m || 0),

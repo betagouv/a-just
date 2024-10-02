@@ -118,6 +118,9 @@ export class CalculatorService extends MainClass {
     dateStop: Date | null = this.dateStop.getValue(),
     fonctionsIds: number[] = this.selectedFonctionsIds.getValue()
   ) {
+    if (!dateStart || !dateStop) {
+      return new Promise((resolve) => resolve([]))
+    }
     return this.serverService
       .post(`calculator/range-values`, {
         backupId: this.humanResourceService.backupId.getValue(),
