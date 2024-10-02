@@ -105,7 +105,7 @@
               <p>ETPT <br />Siège</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
               <aj-tooltips class="medium" title="ETPT siège"
-                content="Total des ETP travaillés sur la période par les agents du siège affectés au contentieux">
+                content="Moyenne des ETPT travaillés sur la période par les agents du siège affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewGreffier" class="tooltip medium item" (click)="onSortBy('etpFon')"
@@ -114,7 +114,7 @@
               <p>ETPT<br />Greffe</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
               <aj-tooltips class="medium" title="ETPT greffe"
-                content="Total des ETP travaillés sur la période par les agents du greffe affectés au contentieux">
+                content="Moyenne des ETPT travaillés sur la période par les agents du greffe affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewContractuel" class="tooltip medium item" (click)="onSortBy('etpCont')"
@@ -123,7 +123,7 @@
               <p>ETPT<br />EAM</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
               <aj-tooltips class="medium" title="ETPT EAM"
-                content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés au contentieux">
+                content="Moyenne des ETPT travaillés sur la période par les agents autour du magistrat affectés au contentieux">
               </aj-tooltips>
             </div>
 
