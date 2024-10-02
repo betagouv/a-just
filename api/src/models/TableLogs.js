@@ -11,12 +11,13 @@ export default (sequelizeInstance, Model) => {
    * @param {*} userId
    * @param {*} datas
    */
-  Model.addLog = async (codeId, userId, datas = {}, options = { formatValue: true }) => {
+  Model.addLog = async (codeId, userId, datas = {}, options = { formatValue: true, datas2: null }) => {
     console.log(codeId, userId, datas)
     await Model.create({
       code_id: codeId,
       user_id: userId,
       datas: options.formatValue ? JSON.stringify(datas) : datas,
+      datas2: options?.datas2 || null,
     })
   }
 
