@@ -39,7 +39,6 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ServerService } from 'src/app/services/http-server/server.service'
-import { HubspotChatService } from 'src/app/services/hubspot-chat/hubspot-chat.service'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sleep } from 'src/app/utils'
 import { PeriodSelectorComponent } from './period-selector/period-selector.component'
@@ -502,8 +501,7 @@ export class SimulatorPage
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
     private route: ActivatedRoute,
-    private serverService: ServerService,
-    private hubspotChatService: HubspotChatService
+    private serverService: ServerService
   ) {
     super()
 
@@ -619,7 +617,6 @@ export class SimulatorPage
    * Initialisation du composant
    */
   ngOnInit(): void {
-    //this.hubspotChatService.loadHubSpotChat();
     this.resetParams()
     this.onResetUserAction()
     this.dateStop = null
