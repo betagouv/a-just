@@ -117,7 +117,7 @@ export default class RouteCalculator extends Route {
       case 'stocks':
         {
           const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
-          if (activites.length) {
+          if (activites && activites.length) {
             const acti = activites[0]
             if (acti.stock !== null) {
               list.push(acti.stock)
