@@ -200,7 +200,7 @@
         <aj-input-percentage (focusin)="volume.value = ''"
           [etpMode]="buttonSelected.id === 'etpMag'|| buttonSelected.id === 'etpFon'"
           [float]="buttonSelected.id === 'magRealTimePerCase'?true:false"
-          [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),buttonSelected.id === 'magRealTimePerCase'?true:false)"
+          [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),buttonSelected.id === 'magRealTimePerCase'?true:false, buttonSelected.id === 'etpMag'||buttonSelected.id === 'etpFon'?true:false)"
           [reset]="resetPercentage" [defaultValue]="valueSaved(2)" (valueChange)="onUpdateValueToAjust($event)">
         </aj-input-percentage>
       </div>

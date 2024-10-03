@@ -1261,6 +1261,8 @@ export class SimulatorPage
         inputField.value = result + '%'
       else if (inputField.id === 'realDTESInMonths')
         inputField.value = result + ' mois'
+      else if (inputField.id === 'etpMag' || inputField.id === 'etpFon')
+        inputField.value = parseFloat(this.valueToAjust.value)
       else inputField.value = result
       this.valueToAjust.value = ''
 
@@ -1424,10 +1426,11 @@ export class SimulatorPage
    * @param value string
    * @returns integer
    */
-  getReferenceValue(value: any, time = false) {
+  getReferenceValue(value: any, time = false, float = false) {
     if (time === true) {
       return stringToDecimalDate(value, ':')
     }
+    if (float === true) return parseFloat(value)
     return parseInt(value)
   }
 

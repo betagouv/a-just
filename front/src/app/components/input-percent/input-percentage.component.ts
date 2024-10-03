@@ -55,10 +55,15 @@ export class InputPercentageComponent implements OnChanges {
   })
 
   /**
+   * Touche pressée
+   */
+  keyPressed: boolean = false
+  /**
    * Constructeur
    */
   constructor() {
     this.valueForm.controls.percentage.valueChanges.subscribe((value) => {
+      console.log('SUBSCRIBE', value)
       // if TMD
       if (this.float === true)
         this.valueChange.emit({
@@ -115,7 +120,23 @@ export class InputPercentageComponent implements OnChanges {
    */
   //PERMETTRE AJUSTEMENT A 0 %
   returnPercentage(x: any, displayValue = false): string {
+    console.log(
+      'VAL',
+      x,
+      'REF',
+      this.referenceValue,
+      'this.keyPressed',
+      this.keyPressed
+    )
     if (x === 0) return String(this.referenceValue)
+    if (this.etpMode === true)
+      if (this.keyPressed === true) {
+        this.keyPressed = false
+        return String(
+          Math.round((this.referenceValue + parseFloat(x)) * 100) / 100
+        )
+      } else return String(Math.round(this.referenceValue * x * 100) / 100)
+
     if (this.float) {
       const res = x
         ? String(
