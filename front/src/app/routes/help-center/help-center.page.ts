@@ -1,7 +1,15 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core'
 import { GitBookAPI } from '@gitbook/api'
 import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component'
-import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL, DOCUMENTATION_URL_CA, HELP_CENTER_GITBOOK, NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA } from 'src/app/constants/documentation'
+import {
+  CALCULATE_DOWNLOAD_URL,
+  DATA_GITBOOK,
+  DOCUMENTATION_URL,
+  DOCUMENTATION_URL_CA,
+  HELP_CENTER_GITBOOK,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+} from 'src/app/constants/documentation'
 import { AppService } from 'src/app/services/app/app.service'
 import { ServerService } from 'src/app/services/http-server/server.service'
 import { UserService } from 'src/app/services/user/user.service'
@@ -73,7 +81,9 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     description:
       'Vous permet de visualiser globalement et en détail le contenu de chaque contentieux et sous-contentieux. Au civil, vous y retrouverez la liste des NAC prises en compte dans chaque rubrique.',
     image: '/assets/images/system.svg',
-    url: this.userService.isCa() ? NOMENCLATURE_DOWNLOAD_URL_CA : NOMENCLATURE_DOWNLOAD_URL,
+    url: this.userService.isCa()
+      ? NOMENCLATURE_DOWNLOAD_URL_CA
+      : NOMENCLATURE_DOWNLOAD_URL,
     localUrl: false,
     download: true,
   }
@@ -145,15 +155,15 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     },
     {
       url: 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/',
-      title: 'Soulager les équipes',
+      title: 'Prenez en main votre espace',
     },
     {
       url: 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/',
-      title: 'Gagner du temps',
+      title: 'Pilotez votre juridiction',
     },
     {
       url: 'https://docs.a-just.beta.gouv.fr/construire-le-futur/',
-      title: 'Construire le futur',
+      title: 'Cas d’usage',
     },
   ]
   /**
@@ -178,14 +188,16 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
 
   ngOnInit() {
     if (this.userService.isCa())
-      this.docTools = [this.nomenclature,
-      {
-        tag: 'Les outils A-JUST',
-        title: 'La calculatrice de ventilation des ETPT',
-        description: '',
-        image: '/assets/images/coding.svg',
-        url: CALCULATE_DOWNLOAD_URL,
-      },]
+      this.docTools = [
+        this.nomenclature,
+        {
+          tag: 'Les outils A-JUST',
+          title: 'La calculatrice de ventilation des ETPT',
+          description: '',
+          image: '/assets/images/coding.svg',
+          url: CALCULATE_DOWNLOAD_URL,
+        },
+      ]
     this.loadWebinaires()
   }
   ngAfterViewInit(): void {
@@ -194,7 +206,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
 
   onClick(e: any) {
     if (document.getElementById('help-center')?.contains(e.target)) {
-      this.popinCall = false;
+      this.popinCall = false
     }
   }
 
@@ -238,13 +250,13 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       case "Guide d'utilisateur A-JUST CA":
         window.open(
           'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/' +
-          researchRes.path
+            researchRes.path
         )
         break
       case "Guide d'utilisateur A-JUST":
         window.open(
           'https://docs.a-just.beta.gouv.fr/documentation-deploiement/' +
-          researchRes.path
+            researchRes.path
         )
         break
       case 'Le data-book':
@@ -268,8 +280,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
           //console.log('isValid NOT OK')
           return false
       }
-    }
-    else {
+    } else {
       //console.log('NOT OK')
       switch (space) {
         case "Guide d'utilisateur A-JUST":
