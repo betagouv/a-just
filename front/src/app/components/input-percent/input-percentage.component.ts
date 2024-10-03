@@ -38,6 +38,11 @@ export class InputPercentageComponent implements OnChanges {
   @Input() float: boolean = false
 
   /**
+   * Mode etp
+   */
+  @Input() etpMode: boolean = false
+
+  /**
    * Valeur de sortie
    */
   @Output() valueChange = new EventEmitter()
@@ -54,23 +59,38 @@ export class InputPercentageComponent implements OnChanges {
    */
   constructor() {
     this.valueForm.controls.percentage.valueChanges.subscribe((value) => {
+      // if TMD
       if (this.float === true)
         this.valueChange.emit({
-          value:
-            parseFloat(
-              this.returnPercentage(this.valueForm.controls['percentage'].value)
-            )
-          ,
+          value: parseFloat(
+            this.returnPercentage(this.valueForm.controls['percentage'].value)
+          ),
           percentage: this.valueForm.controls['percentage'].value,
         })
-      else this.valueChange.emit({
-        value: Math.round(
-          parseInt(
-            this.returnPercentage(this.valueForm.controls['percentage'].value)
-          )
-        ),
-        percentage: this.valueForm.controls['percentage'].value,
-      })
+      // else
+      else {
+        if (this.etpMode === true) {
+          this.valueChange.emit({
+            value:
+              parseFloat(String(this.valueForm.controls['percentage'].value)) +
+              this.referenceValue,
+            percentage:
+              (parseFloat(String(this.valueForm.controls['percentage'].value)) +
+                this.referenceValue) /
+              this.referenceValue,
+          })
+        } else
+          this.valueChange.emit({
+            value: Math.round(
+              parseInt(
+                this.returnPercentage(
+                  this.valueForm.controls['percentage'].value
+                )
+              )
+            ),
+            percentage: this.valueForm.controls['percentage'].value,
+          })
+      }
     })
   }
 
@@ -99,28 +119,24 @@ export class InputPercentageComponent implements OnChanges {
     if (this.float) {
       const res = x
         ? String(
-
-          this.referenceValue -
-          ((-parseInt(x) * 1) / 100) * this.referenceValue
-
-        )
+            this.referenceValue -
+              ((-parseInt(x) * 1) / 100) * this.referenceValue
+          )
         : ''
 
       if (displayValue) {
         if (x === '') return ''
-        else
-          return String(decimalToStringDate(parseFloat(res)))
+        else return String(decimalToStringDate(parseFloat(res)))
       }
       return res
-    }
-    else {
+    } else {
       const res = x
         ? String(
-          Math.round(
-            this.referenceValue -
-            ((-parseInt(x) * 1) / 100) * this.referenceValue
+            Math.round(
+              this.referenceValue -
+                ((-parseInt(x) * 1) / 100) * this.referenceValue
+            )
           )
-        )
         : ''
       return res
     }

@@ -190,17 +190,30 @@
           [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)" (focusin)="resetPercentage = true"
           (focusout)="resetPercentage = false" [defaultValue]="parseFloat(volume.value)||-1"></app-time-selector>
       </div>
-      <div class="rectangle" *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'">
+      <div class="rectangle"
+        *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'||buttonSelected.id === 'etpMag'|| buttonSelected.id === 'etpFon'">
         <div class="title">
           Définir {{getText('secondInput')}} :<br />
           <span>(en % par rapport à la situation {{startRealValue? 'au' : "d'"}}
             {{startRealValue||"aujourd'hui"}})</span>
         </div>
         <aj-input-percentage (focusin)="volume.value = ''"
+          [etpMode]="buttonSelected.id === 'etpMag'|| buttonSelected.id === 'etpFon'"
           [float]="buttonSelected.id === 'magRealTimePerCase'?true:false"
           [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),buttonSelected.id === 'magRealTimePerCase'?true:false)"
           [reset]="resetPercentage" [defaultValue]="valueSaved(2)" (valueChange)="onUpdateValueToAjust($event)">
         </aj-input-percentage>
+      </div>
+
+      <div class="rectangle" *ngIf="buttonSelected.id === 'etpMag'|| buttonSelected.id === 'etpFon'">
+        <div class="title">
+          Définir une variation de :<br />
+          <span>(en etp à la situation {{startRealValue? 'au' : "d'"}}
+            {{startRealValue||"aujourd'hui"}})</span>
+        </div>
+
+        <input type="number" (oninput)="onUpdateValueToAjust($event)" value="{{valueSaved(1)}}" #volume />
+
       </div>
     </aj-popup>
 

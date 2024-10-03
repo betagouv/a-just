@@ -1291,6 +1291,7 @@ export class SimulatorPage
    * @param event
    */
   onUpdateValueToAjust(event: any) {
+    console.log('EVENT', event)
     //only if percentage filled
     if (event.value === 0) {
       if (
