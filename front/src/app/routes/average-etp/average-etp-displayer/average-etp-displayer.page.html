@@ -73,7 +73,7 @@
       </div>
     </div>
     <div class="sticky-action-footer">
-      <aj-options-backup-panel></aj-options-backup-panel>
+      <aj-options-backup-panel [category]="subTitleType"></aj-options-backup-panel>
     </div>
   </div>
 
@@ -92,7 +92,7 @@
   <!-- POPUP COMPARAISON -->
   <aj-popup *ngIf="onFollowCompare===true" [closeIcon]="true" (onClose)="onCloseCompare();" [removeShadow]="'noShadow'"
     class="border-radius width-500-custom comparaison" [actions]="[
-    { id: 'cancel', content: 'Rester sur la liste des référentiels', size: 'medium'},
+    { id: 'cancel', content: 'Aller à la liste des référentiels', size: 'medium'},
     { id: 'follow', content: 'Poursuivre', fill: true , size: 'medium'}
     ]" (selectedAction)="actionPopupFollow($event)">
     <div id="circle">

@@ -72,28 +72,34 @@
             </div>
         </div>
 
-        <p class="sub-title" *ngIf="this.userService.isCa()===false">Suggestions d'usage</p>
+        <p class="sub-title" *ngIf="this.userService.isCa()===false">Questions fréquentes</p>
         <div class="suggestion" *ngIf="this.userService.isCa()===false">
             <div (click)="openToIframe=documentation[0]; reloadContent()">
-                <label><span class="blue">Tout
-                        savoir</span><br />
-                    <span class="blue">en
-                        un coup
-                        d’oeil</span></label><br />
+                <label><span class="blue">Tout savoir en un coup d’oeil</span><br />
+                    <p class="italic">Les questions que tout le monde se pose</p>
+                </label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
             <div (click)="openToIframe=documentation[1];reloadContent()">
-                <label><span class="green">Soulager</span><br /> <span class="green">les
-                        équipes</span></label><br />
+                <label><span class="green">Prenez en main votre espace</span><br />
+                    <p class="italic">Gérez vos
+                        effectifs et vos données d’activité</p>
+                </label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
             <div (click)="openToIframe=documentation[2];reloadContent()">
-                <label><span class="red">Gagner</span><br /> <span class="red">du temps</span></label><br />
+                <label><span class="red">Pilotez votre juridiction</span><br />
+                    <p class="italic">Simulez une
+                        trajectoire ou des affectations,<br /> exploitez vos données et indicateurs</p>
+                </label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
             <div (click)="openToIframe=documentation[3];reloadContent()">
-                <label><span class="yellow">Construire</span><br /> <span class="yellow">le
-                        futur</span></label><br />
+                <label><span class="yellow">Cas d'usage</span><br />
+                    <p class="italic">Dialogues de gestion, demande de
+                        <br />renforts, organisation des services...
+                    </p>
+                </label><br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
         </div>

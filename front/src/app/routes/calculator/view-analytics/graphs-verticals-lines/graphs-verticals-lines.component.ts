@@ -14,6 +14,7 @@ import {
 } from '@angular/core'
 import { NgResizeObserver, ngResizeObserverProviders } from 'ng-resize-observer'
 import { BehaviorSubject, map, Observable } from 'rxjs'
+import { OPACITY_20 } from 'src/app/constants/colors'
 import { MainClass } from 'src/app/libs/main-class'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { UserService } from 'src/app/services/user/user.service'
@@ -137,6 +138,11 @@ export class GraphsVerticalsLinesComponent
     this.watch(
       this.calculatorService.dateStop.subscribe(() => this.refreshDatas())
     )
+    this.watch(
+      this.calculatorService.selectedFonctionsIds.subscribe(() =>
+        this.refreshDatas()
+      )
+    )
   }
 
   ngAfterViewInit() {
@@ -151,7 +157,7 @@ export class GraphsVerticalsLinesComponent
     if (this.referentielName) {
       this.background = `linear-gradient(${this.userService.referentielMappingColorByInterface(
         this.referentielName,
-        0.25
+        OPACITY_20
       )}, #ffffff)`
     }
 
@@ -209,7 +215,9 @@ export class GraphsVerticalsLinesComponent
         if (this.showLines && line.length >= 2) {
           this.updateMax.emit({ type: this.type, max: Math.max(...line) || 0 })
 
-          ctx.strokeStyle = this.userService.referentielMappingColorByInterface(this.referentielName)
+          ctx.strokeStyle = this.userService.referentielMappingColorByInterface(
+            this.referentielName
+          )
           ctx.setLineDash([2])
           ctx.lineWidth = 1
           ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue))

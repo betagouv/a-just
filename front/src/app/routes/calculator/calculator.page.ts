@@ -23,7 +23,7 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { month } from 'src/app/utils/dates'
+import { getTime, month } from 'src/app/utils/dates'
 import {
   userCanViewContractuel,
   userCanViewGreffier,
@@ -52,6 +52,7 @@ import {
   EXECUTE_CALCULATOR_CHANGE_DATE,
 } from 'src/app/constants/log-codes'
 import { BehaviorSubject } from 'rxjs'
+import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
 
 /**
  * Page du calculateur
@@ -159,9 +160,9 @@ export class CalculatorPage
   introSteps: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
-      title: 'A quoi sert le calculateur ?',
+      title: 'A quoi sert le cockpit ?',
       intro:
-        "Le calculateur vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
+        "Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
     },
     {
       target: '.sub-main-header',
@@ -223,35 +224,7 @@ export class CalculatorPage
   /**
    * liste des référentiels
    */
-  referentiels: any[] = [
-    {
-      label: 'trimestre précédent',
-      selected: false,
-      isLocked: true,
-      datas: {
-        dateStop: month(),
-        dateStart: month(new Date(), -3),
-      },
-    },
-    {
-      label: 'semestre précédent',
-      selected: false,
-      isLocked: true,
-      datas: {
-        dateStop: month(),
-        dateStart: month(new Date(), -6),
-      },
-    },
-    {
-      label: 'année précédente',
-      selected: false,
-      isLocked: true,
-      datas: {
-        dateStop: month(),
-        dateStart: month(new Date(), -12),
-      },
-    },
-  ]
+  referentiels: any[] = []
   /**
    * Liste des sauvegardes
    */
@@ -314,6 +287,12 @@ export class CalculatorPage
     private kpiService: KPIService
   ) {
     super()
+
+    this.watch(
+      this.humanResourceService.backupId.subscribe(() => {
+        this.onLoad()
+      })
+    )
   }
 
   /**
@@ -362,12 +341,6 @@ export class CalculatorPage
       })
     )
     this.watch(
-      this.humanResourceService.backupId.subscribe(() => {
-        this.onLoad()
-        this.onLoadComparaisons()
-      })
-    )
-    this.watch(
       this.calculatorService.referentielIds.subscribe((refs) => {
         this.referentielIds = refs
         this.onLoad()
@@ -393,7 +366,16 @@ export class CalculatorPage
     // Chargement des référentiels
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
-        this.backups = b
+        this.backups = orderBy(
+          b,
+          [
+            (val) => {
+              const date = val.update?.date || val.date
+              return getTime(date)
+            },
+          ],
+          ['desc']
+        )
       })
     )
 
@@ -408,6 +390,34 @@ export class CalculatorPage
         }
       })
     )
+  }
+
+  /**
+   * Chargement de la liste des fonctions
+   */
+  loadFunctions() {
+    let cat =
+      this.categorySelected?.toUpperCase() === 'FONCTIONNAIRES'
+        ? 'Greffe'
+        : 'Magistrat'
+
+    const findCategory =
+      this.humanResourceService.categories
+        .getValue()
+        .find((c: HRCategoryInterface) => c.label === cat) || null
+
+    this.fonctions = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === findCategory?.id)
+      .map(
+        (f: HRFonctionInterface) =>
+          ({
+            id: f.id,
+            value: f.code,
+          } as dataInterface)
+      )
+    this.lastCategorySelected = this.categorySelected
+    this.selectedFonctionsIds = this.fonctions.map((a) => a.id)
   }
 
   ngAfterViewInit() {
@@ -458,22 +468,7 @@ export class CalculatorPage
         const min = month(max, -11)
         this.calculatorService.dateStart.next(min)
         this.calculatorService.dateStop.next(max)
-
-        this.referentiels = this.referentiels.map((ref, index) => ({
-          ...ref,
-          datas:
-            index < 3
-              ? {
-                  dateStop: month(min, -1),
-                  dateStart:
-                    index === 0
-                      ? month(min, -3)
-                      : index === 1
-                      ? month(min, -6)
-                      : month(min, -12),
-                }
-              : ref.datas,
-        }))
+        this.onLoadComparaisons()
       })
     }
   }
@@ -481,9 +476,9 @@ export class CalculatorPage
   /**
    * Charge la liste des contentieux de comparaison
    */
-  onLoadComparaisons() {
+  onLoadComparaisons(selectedByLabel: string | null = null) {
     this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then((l) => {
-      const refs = this.referentiels
+      let refs = this.referentiels
       let indexRef = -1
       do {
         indexRef = refs.findIndex((r) => !r.isLocked)
@@ -528,6 +523,13 @@ export class CalculatorPage
             datas: l.datas,
           })
         })
+      }
+
+      if (selectedByLabel) {
+        refs = refs.map((i) => ({
+          ...i,
+          selected: i.label === selectedByLabel,
+        }))
       }
 
       for (let i = NB_MAX_CUSTOM_COMPARAISONS; i < l.length; i++) {
@@ -633,6 +635,7 @@ export class CalculatorPage
       },
       this.firstLoading ? 0 : 1500
     )
+    this.onLoadComparaisons()
   }
 
   /**
@@ -730,6 +733,7 @@ export class CalculatorPage
     this.categorySelected = category
     this.calculatorService.categorySelected.next(this.categorySelected)
     this.fonctionRealValue = ''
+    this.loadFunctions()
     if (this.categorySelected === this.FONCTIONNAIRES)
       this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
   }
@@ -788,7 +792,7 @@ export class CalculatorPage
     this.duringPrint = true
     this.wrapper
       ?.exportAsPdf(
-        `Calculateur_par ${
+        `Cockpit_par ${
           this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
@@ -882,12 +886,19 @@ export class CalculatorPage
    * @param ref
    */
   radioSelect(ref: any) {
-    this.referentiels.map((x) => {
-      x.selected = false
+    this.referentiels = this.referentiels.map((x) => {
+      x.selected = ref.label === x.label
+      return x
     })
     ref.selected = true
 
     if (ref.datas) {
+      if (ref.isLocked) {
+        this.backupSettingsService
+          .addOrUpdate(ref.label, BACKUP_SETTING_COMPARE, ref.datas)
+          .then(() => this.onLoadComparaisons(ref.label))
+      }
+
       if (ref.datas.dateStart) {
         this.compareOption = 1
         this.optionDateStart = new Date(ref.datas.dateStart)
@@ -908,7 +919,6 @@ export class CalculatorPage
         )
       }
       this.showPicker = false
-      console.log(ref)
       this.onLoadCompare()
     }
   }
@@ -1010,8 +1020,10 @@ export class CalculatorPage
         this.dateStart
       )} - ${this.getRealValue(this.dateStop)}`
       const list: AnalyticsLine[] = []
-      const value1TempsMoyen = (this.datasFilted || []).map(
-        (d) => d.magRealTimePerCase
+      const value1TempsMoyen = (this.datasFilted || []).map((d) =>
+        this.categorySelected === MAGISTRATS
+          ? d.magRealTimePerCase
+          : d.fonRealTimePerCase
       )
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) =>
         d === null
@@ -1056,6 +1068,10 @@ export class CalculatorPage
             )
           } else {
             percent = Math.floor((tab1[index] || 0) * 100 - (d || 0) * 100)
+          }
+
+          if (percent === Infinity) {
+            return 'N/A'
           }
 
           if (percent > 0) {
@@ -1113,7 +1129,11 @@ export class CalculatorPage
 
         const value2TempsMoyen: (number | null)[] = (
           resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.magRealTimePerCase)
+        ).map((d: CalculatorInterface) =>
+          this.categorySelected === MAGISTRATS
+            ? d.magRealTimePerCase
+            : d.fonRealTimePerCase
+        )
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
             ? 'N/R'
@@ -1170,7 +1190,7 @@ export class CalculatorPage
           description: 'moyen sur la période',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((value2TauxCouverture[index] || 0) * 100),
+            Math.floor((value1TauxCouverture[index] || 0) * 100),
             v === null ? null : Math.floor((v || 0) * 100),
           ]),
           variations: [
@@ -1182,14 +1202,12 @@ export class CalculatorPage
             },
             {
               label: nextRangeString,
-              isOption: true,
               values: value2TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: actualRangeString,
-              isOption: true,
               values: value1TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
@@ -1204,7 +1222,7 @@ export class CalculatorPage
         list.push({
           title: 'Stock',
           type: 'verticals-lines',
-          description: 'sur la période',
+          description: 'en fin de période',
           lineMax:
             Math.max(
               ...value1Stock.map((m) => m || 0),
@@ -1232,9 +1250,9 @@ export class CalculatorPage
         )
         const variationsEntrees = getVariations(value2Entrees, value1Entrees)
         list.push({
-          title: 'Entrée',
+          title: 'Entrées',
           type: 'verticals-lines',
-          description: 'moyenne<br/>sur la période',
+          description: 'moyennes<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Entrees.map((m) => m || 0),
@@ -1264,7 +1282,7 @@ export class CalculatorPage
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
-          description: 'moyenne<br/>sur la période',
+          description: 'moyennes<br/>sur la période',
           lineMax:
             Math.max(
               ...value1Sorties.map((m) => m || 0),
@@ -1297,7 +1315,7 @@ export class CalculatorPage
           list.push({
             title: 'ETPT Siège',
             type: 'verticals-lines',
-            description: '-',
+            description: 'moyens sur la période',
             lineMax:
               Math.max(
                 ...value1ETPTSiege.map((m) => m || 0),
@@ -1349,7 +1367,7 @@ export class CalculatorPage
           list.push({
             title: 'ETPT Greffe',
             type: 'verticals-lines',
-            description: '-',
+            description: 'moyens sur la période',
             lineMax:
               Math.max(
                 ...value1ETPTGreffe.map((m) => m || 0),
@@ -1398,7 +1416,7 @@ export class CalculatorPage
           list.push({
             title: 'ETPT EAM',
             type: 'verticals-lines',
-            description: '-',
+            description: 'moyens sur la période',
             lineMax:
               Math.max(
                 ...value1ETPTEam.map((m) => m || 0),
@@ -1599,7 +1617,7 @@ export class CalculatorPage
           description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
           values: value1TauxCouverture.map((v, index) => [
-            Math.floor((value2TauxCouverture[index] || 0) * 100),
+            Math.floor((value1TauxCouverture[index] || 0) * 100),
             v === null ? null : Math.floor((v || 0) * 100),
           ]),
           variations: [
@@ -1611,14 +1629,12 @@ export class CalculatorPage
             },
             {
               label: refSelected.label,
-              isOption: true,
               values: value2TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
             },
             {
               label: actualRangeString,
-              isOption: true,
               values: value1TauxCouverture.map((t) =>
                 t === null ? 'N/R' : Math.floor(t * 100) + ' %'
               ),
@@ -1700,8 +1716,9 @@ export class CalculatorPage
   unselectTemplate() {
     this.showPicker = false
     this.compareTemplates = null
-    this.referentiels.map((x) => {
+    this.referentiels = this.referentiels.map((x) => {
       x.selected = false
+      return x
     })
   }
 
@@ -1713,7 +1730,8 @@ export class CalculatorPage
   }
 
   filterReferentiels(referentiels: any[]) {
-    return referentiels.reduce((previous, current) => {
+    console.log(this.referentiel)
+    let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(
           (b) => b.id === current.datas.referentielId
@@ -1736,5 +1754,24 @@ export class CalculatorPage
       previous.push(current)
       return previous
     }, [])
+
+    const start = month(this.calculatorService.dateStart.getValue(), -12)
+    const stop = month(this.calculatorService.dateStop.getValue(), -12)
+    const newLabel = `${this.getRealValue(start)} - ${this.getRealValue(stop)}`
+    if (!refsList.find((r: any) => r.label === newLabel)) {
+      refsList.splice(0, 0, {
+        label: newLabel,
+        selected: false,
+        isLocked: true,
+        dateStop: stop,
+        dateStart: start,
+        datas: {
+          dateStop: stop,
+          dateStart: start,
+        },
+      })
+    }
+
+    return refsList
   }
 }

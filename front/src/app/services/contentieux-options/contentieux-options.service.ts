@@ -40,8 +40,9 @@ export class ContentieuxOptionsService extends MainClass {
   /**
    * Nombre de référentiel chargé
    */
-  nbOfBackups: BehaviorSubject<number | null> = new BehaviorSubject<number | null>(
-    null)
+  nbOfBackups: BehaviorSubject<number | null> = new BehaviorSubject<
+    number | null
+  >(null)
   /**
    * Date de dernière modification d'un contentieux
    */
@@ -65,11 +66,18 @@ export class ContentieuxOptionsService extends MainClass {
   /**
    * Si la creation est faite depuos le cockpit
    */
-  openedFromCockpit: BehaviorSubject<any> = new BehaviorSubject<any>({ value: false, dateStart: null, dateStop: null, category:null })
+  openedFromCockpit: BehaviorSubject<any> = new BehaviorSubject<any>({
+    value: false,
+    dateStart: null,
+    dateStop: null,
+    category: null,
+  })
   /**
    * Ouverture de la popup pour retourner au calculateur
    */
-  onFollowComparaison:BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  onFollowComparaison: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  )
   /**
    * Liste des sauvegardes formatés pour le menu roulant
    */
@@ -160,9 +168,7 @@ export class ContentieuxOptionsService extends MainClass {
     const findIndexOptions = options.findIndex(
       (a) => a.contentieux.id === referentiel.id
     )
-    if (
-      referentiel.averageProcessingTime
-    ) {
+    if (referentiel.averageProcessingTime) {
       if (findIndexOptions === -1) {
         // add
         options.push({
@@ -203,9 +209,9 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   /**
- * API suppréssion d'une sauvegarde d'options
- * @returns
- */
+   * API suppréssion d'une sauvegarde d'options
+   * @returns
+   */
   async removeBackupByIds(ids: (number | undefined)[]) {
     ids?.map((id) => {
       return this.serverService
@@ -245,13 +251,11 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   /**
-    * Recopie d'options dans un nouveau jeux de données
-    * @returns
-    */
+   * Recopie d'options dans un nouveau jeux de données
+   * @returns
+   */
   duplicateBackupById(backupId: number, type: string) {
-    const backup = this.backups
-      .getValue()
-      .find((b) => b.id === backupId)
+    const backup = this.backups.getValue().find((b) => b.id === backupId)
 
     const backupName = prompt('Sous quel nom ?', `${backup?.label} - copie`)
 
@@ -282,6 +286,7 @@ export class ContentieuxOptionsService extends MainClass {
     let backupName = null
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
+      if (backupName===null) return null
     }
     return await this.serverService
       .post(`contentieux-options/save-backup`, {
@@ -304,12 +309,9 @@ export class ContentieuxOptionsService extends MainClass {
   createEmpy(first = false, name = '', status = 'Local', type = 'SIEGE') {
     let backupName = null
 
-    if (first)
-      backupName = 'Mon premier référentiel'
-    else if (name !== '')
-      backupName = name
-    else
-      backupName = prompt('Sous quel nom ?')
+    if (first) backupName = 'Mon premier référentiel'
+    else if (name !== '') backupName = name
+    else backupName = prompt('Sous quel nom ?')
 
     if (backupName) {
       return this.serverService
@@ -361,13 +363,11 @@ export class ContentieuxOptionsService extends MainClass {
   }
 
   /**
- * API rénommage d'un jeu de données
- * @returns
- */
+   * API rénommage d'un jeu de données
+   * @returns
+   */
   renameBackupById(backupId: number) {
-    const getBackup = this.backups
-      .getValue()
-      .find((b) => b.id === backupId)
+    const getBackup = this.backups.getValue().find((b) => b.id === backupId)
     let backupName = prompt('Sous quel nom ?', getBackup ? getBackup.label : '')
 
     if (backupName) {
@@ -417,8 +417,8 @@ export class ContentieuxOptionsService extends MainClass {
 
   /**
    * Formate et envoi au back l'ensemble des valeurs
-   * @param form 
-   * @returns 
+   * @param form
+   * @returns
    */
   async onSendAllActivity(form: any) {
     const file = form.file.files[0]
@@ -473,15 +473,19 @@ export class ContentieuxOptionsService extends MainClass {
     return `Extraction_Référentiel de temps moyen - ` + (label || '')
   }
 
-
   /**
-    * Télécharger le referentiel au format excel
-    */
+   * Télécharger le referentiel au format excel
+   */
   downloadTemplate(empty = false) {
-    let ref = this.humanResourceService.contentieuxReferentielOnly.getValue().filter((x) => x.label !== 'Autres activités')
+    let ref = this.humanResourceService.contentieuxReferentielOnly
+      .getValue()
+      .filter((x) => x.label !== 'Autres activités')
     console.log(ref)
 
-    const tmpList = this.generateFlateList(empty ? ref : this.referentiel, empty)
+    const tmpList = this.generateFlateList(
+      empty ? ref : this.referentiel,
+      empty
+    )
     this.refNameSelected =
       this.formDatas.getValue().find((x) => x.id === this.backupId.getValue())
         ?.value || ''
@@ -501,8 +505,10 @@ export class ContentieuxOptionsService extends MainClass {
       })
       // 5. Use `saveAs` to download on browser site.
       .then((buffer) => {
-        const filename = empty ? 'Modèle - référentiel de temps moyens ' : this.getFileName(this.refNameSelected)
-        return FileSaver.saveAs(new Blob([buffer]), (filename) + EXCEL_EXTENSION)
+        const filename = empty
+          ? 'Modèle - référentiel de temps moyens '
+          : this.getFileName(this.refNameSelected)
+        return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
       })
       .catch((err) => console.log('Error writing excel export', err))
   }
@@ -527,7 +533,8 @@ export class ContentieuxOptionsService extends MainClass {
           flatList.push({
             ...this.getFileValues(y),
             ...y,
-            averageProcessingTime: magAvgChild === '0' || empty ? '' : magAvgChild,
+            averageProcessingTime:
+              magAvgChild === '0' || empty ? '' : magAvgChild,
           })
         })
       }
@@ -535,22 +542,16 @@ export class ContentieuxOptionsService extends MainClass {
     return flatList
   }
 
-
   /**
    * Calcul les valeurs par jour et pas moi via la valeur de référence en heure
-   * @param ref 
-   * @returns 
+   * @param ref
+   * @returns
    */
   getFileValues(ref: any) {
     return {
-      id: Number(ref.id), nbPerDay: this.getInputValue(
-        ref.averageProcessingTime,
-        'nbPerDay',
-      ),
-      nbPerMonth: this.getInputValue(
-        ref.averageProcessingTime,
-        'nbPerMonth',
-      )
+      id: Number(ref.id),
+      nbPerDay: this.getInputValue(ref.averageProcessingTime, 'nbPerDay'),
+      nbPerMonth: this.getInputValue(ref.averageProcessingTime, 'nbPerMonth'),
     }
   }
 
@@ -583,5 +584,4 @@ export class ContentieuxOptionsService extends MainClass {
     }
     return '0'
   }
-
 }

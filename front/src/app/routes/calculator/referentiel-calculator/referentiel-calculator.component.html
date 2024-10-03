@@ -3,7 +3,8 @@
     <div class="width-contentieux contentieux" (click)="onToggleChildren()">
 
 
-        <mat-icon *ngIf="calculator.childrens && calculator.childrens.length">{{ showChildren ? 'expand_more' :
+        <mat-icon class="no-print" *ngIf="calculator.childrens && calculator.childrens.length">{{ showChildren ?
+            'expand_more' :
             'chevron_right' }}
         </mat-icon>
 

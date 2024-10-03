@@ -1,5 +1,10 @@
-import { AfterViewInit, Component, Input } from '@angular/core'
-import { HELP_AUTOSTART, HELP_AUTOSTART_AND_STOP, HELP_START, HELP_STOP } from 'src/app/constants/log-codes'
+import { AfterViewInit, Component, HostListener, Input } from '@angular/core'
+import {
+  HELP_AUTOSTART,
+  HELP_AUTOSTART_AND_STOP,
+  HELP_START,
+  HELP_STOP,
+} from 'src/app/constants/log-codes'
 import { KPIService } from 'src/app/services/kpi/kpi.service'
 import { today } from 'src/app/utils/dates'
 
@@ -44,8 +49,19 @@ export class IntroJSComponent implements AfterViewInit {
    * has complete form
    */
   hasCompleteForm: boolean = false
+  /**
+   * Intro JS instance
+   */
+  intro: any
 
-  constructor(private kpiService: KPIService) { }
+  @HostListener('window:popstate', ['$event'])
+  onPopState() {
+    if (this.intro) {
+      this.intro.exit()
+    }
+  }
+
+  constructor(private kpiService: KPIService) {}
 
   ngAfterViewInit(): void {
     if (this.steps) {
@@ -102,38 +118,38 @@ export class IntroJSComponent implements AfterViewInit {
           ...(s.options || {}),
         }
       })
-      const intro = introJs().setOptions({
+      this.intro = introJs().setOptions({
         nextLabel: 'Suivant',
         prevLabel: 'Précédent',
         doneLabel: 'Terminer la présentation',
         steps: allStep,
       })
-      intro.onchange(() => {
-        const currentStep = allStep[intro.currentStep()]
+      this.intro.onchange(() => {
+        const currentStep = allStep[this.intro.currentStep()]
 
         if (currentStep.actions) {
           Object.keys(currentStep.actions).map((key) => {
             window['INTROJS_AJ_' + key] = () => {
               // @ts-ignore
               currentStep.actions[key].call.apply(null, arguments)
-              intro.exit()
+              this.intro.exit()
             }
             listFunctions.push('INTROJS_AJ_' + key)
           })
         }
       })
-      intro.onbeforechange(async () => {
-        const currentStep = allStep[intro.currentStep()]
+      this.intro.onbeforechange(async () => {
+        const currentStep = allStep[this.intro.currentStep()]
         currentStep.element = document.querySelector(currentStep.target)
 
         if (currentStep.beforeLoad) {
-          await currentStep.beforeLoad(intro)
+          await currentStep.beforeLoad(this.intro)
         }
 
         const domElement = document.querySelector(currentStep.target)
         if (domElement) {
-          intro._introItems[intro.currentStep()].element = domElement
-          intro.refresh() // NE MARCHE PAS !!!!
+          this.intro._introItems[this.intro.currentStep()].element = domElement
+          this.intro.refresh() // NE MARCHE PAS !!!!
         }
 
         listFunctions.map((f) => {
@@ -141,11 +157,19 @@ export class IntroJSComponent implements AfterViewInit {
         })
         listFunctions = []
       })
-      intro.onexit(() => {
+      this.intro.onexit(() => {
         if (log) {
-          this.kpiService.register(HELP_STOP, (this.typeId ? this.typeId + '_' : '') + (intro.currentStep() + 1))
+          this.kpiService.register(
+            HELP_STOP,
+            (this.typeId ? this.typeId + '_' : '') +
+              (this.intro.currentStep() + 1)
+          )
         } else {
-          this.kpiService.register(HELP_AUTOSTART_AND_STOP, (this.typeId ? this.typeId + '_' : '') + (intro.currentStep() + 1))
+          this.kpiService.register(
+            HELP_AUTOSTART_AND_STOP,
+            (this.typeId ? this.typeId + '_' : '') +
+              (this.intro.currentStep() + 1)
+          )
         }
 
         if (this.typeId) {
@@ -156,7 +180,7 @@ export class IntroJSComponent implements AfterViewInit {
           this.hasCompleteForm = true
         }
       })
-      intro.start()
+      this.intro.start()
     }, 200)
   }
 }

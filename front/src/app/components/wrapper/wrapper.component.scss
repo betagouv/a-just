@@ -3,6 +3,14 @@
 :host {
   height: 100%;
 
+  aj-news {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    z-index: 2;
+  }
+
   &.space-help {
     #top>div.top-header-back-title>div>div>aj-help-button {
       margin-left: 8px;
@@ -69,11 +77,13 @@
     padding-left: 32px;
     padding-right: 16px;
 
-    p {
+    p,
+    a {
       color: #3a3a3a;
       font-size: 14px;
       margin: 8px 0px;
       cursor: pointer;
+      text-decoration: none;
 
       i {
         margin-left: 4px;

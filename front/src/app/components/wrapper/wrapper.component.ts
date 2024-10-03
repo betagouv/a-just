@@ -251,8 +251,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * On Changes titles
    */
   ngOnChanges() {
-
-    this.titlePlatform.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + this.title)
+    this.titlePlatform.setTitle(
+      (this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + this.title
+    )
   }
 
   /**
@@ -488,9 +489,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Methode à disposition pour forcer l'ouverture du paneau, pratique pour un appel exterieur du composant
    * @param documentation
    */
-  onForcePanelHelperToShow(documentation: DocumentationInterface | null, opened: boolean = true) {
-    if (documentation)
-      this.documentationToShow = documentation
+  onForcePanelHelperToShow(
+    documentation: DocumentationInterface | null,
+    opened: boolean = true
+  ) {
+    if (documentation) this.documentationToShow = documentation
     this.panelHelper = opened
   }
 
@@ -509,15 +512,19 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   async downloadAsset(type: string, download = false) {
     let url = null
-    if (type === 'nomenclature') url = this.userService.isCa() ? NOMENCLATURE_DOWNLOAD_URL_CA : NOMENCLATURE_DOWNLOAD_URL
+    if (type === 'nomenclature')
+      url = this.userService.isCa()
+        ? NOMENCLATURE_DOWNLOAD_URL_CA
+        : NOMENCLATURE_DOWNLOAD_URL
     else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL
-    else if (type === 'fiche-agent') url = this.userService.isCa() ? IMPORT_ETP_TEMPLATE_CA : IMPORT_ETP_TEMPLATE
-    
-    await this.serverService
-    .post('centre-d-aide/log-documentation-link',
-      {
-        value: url,
-      })
+    else if (type === 'fiche-agent')
+      url = this.userService.isCa()
+        ? IMPORT_ETP_TEMPLATE_CA
+        : IMPORT_ETP_TEMPLATE
+
+    await this.serverService.post('centre-d-aide/log-documentation-link', {
+      value: url,
+    })
 
     if (url) {
       if (download) {
@@ -529,10 +536,18 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   }
 
   /**
- * Changement de la date via le selecteur
- * @param date
- */
+   * Changement de la date via le selecteur
+   * @param date
+   */
   changeMonth(date: Date) {
     this.activitiesService.activityMonth.next(date)
+  }
+
+  /**
+   * Resize le wrapper lorsqu'il n'y a plus de news active
+   * @param elem
+   */
+  refreshHeight(elem: any) {
+    elem.style['padding-top'] = '0px'
   }
 }

@@ -5,12 +5,12 @@
       <div class="categories-switch">
         <div class="magistrats" *ngIf="canViewMagistrat"
           [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
-          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
+          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS);unselectTemplate();">
           <p>Siège</p>
         </div>
         <div class="fonctionnaires" *ngIf="canViewGreffier"
           [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
-          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
+          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES);unselectTemplate();">
           <p>Greffe</p>
         </div>
       </div>
@@ -35,12 +35,12 @@
       <div class="switch-tab">
         <div class="brut" [ngClass]="{'selected': tabSelected === 0 && !compareTemplates}"
           (click)="tabSelected=0;unselectTemplate();$event.stopPropagation()">
-          <i class="ri-table-view"></i>
+          <i class="ri-table-view no-print"></i>
           <p>Données brutes</p>
         </div>
         <div class="fonctionnaires" [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
           (click)="tabSelected=1;unselectTemplate();logChartView();$event.stopPropagation()">
-          <i class="ri-bar-chart-box-line"></i>
+          <i class="ri-bar-chart-box-line no-print"></i>
           <p>Graphiques</p>
         </div>
       </div>
@@ -66,7 +66,7 @@
               <div class="flex-1"></div>
               <p>DTES<br />instantané</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonths'}"></i>
-              <aj-tooltips title="DTES instantané" class="medium"
+              <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium"
                 content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
                 footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
               </aj-tooltips>
@@ -76,7 +76,8 @@
               <div class="flex-1"></div>
               <p>Taux de<br />couverture</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realCoverage'}"></i>
-              <aj-tooltips title="Taux de couverture" content="SORTIES /ENTREES de la période en %">
+              <aj-tooltips title="TAUX DE CONVERTURE MOYEN SUR LA PÉRIODE"
+                content="SORTIES /ENTREES de la période en %">
               </aj-tooltips>
             </div>
             <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
@@ -104,7 +105,7 @@
               <p>ETPT <br />Siège</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
               <aj-tooltips class="medium" title="ETPT siège"
-                content="Total des ETP travaillés sur la période par les agents du siège affectés au contentieux">
+                content="Moyenne des ETPT travaillés sur la période par les agents du siège affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewGreffier" class="tooltip medium item" (click)="onSortBy('etpFon')"
@@ -113,7 +114,7 @@
               <p>ETPT<br />Greffe</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
               <aj-tooltips class="medium" title="ETPT greffe"
-                content="Total des ETP travaillés sur la période par les agents du greffe affectés au contentieux">
+                content="Moyenne des ETPT travaillés sur la période par les agents du greffe affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewContractuel" class="tooltip medium item" (click)="onSortBy('etpCont')"
@@ -122,7 +123,7 @@
               <p>ETPT<br />EAM</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
               <aj-tooltips class="medium" title="ETPT EAM"
-                content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés au contentieux">
+                content="Moyenne des ETPT travaillés sur la période par les agents autour du magistrat affectés au contentieux">
               </aj-tooltips>
             </div>
 
@@ -246,10 +247,11 @@
 
 <ng-template #actions>
   <div class="flex-1"></div>
-  <button class="compare" (click)="showPicker=!showPicker;$event.stopPropagation();">
+  <button class="compare" [ngClass]="{selected: compareTemplates}"
+    (click)="showPicker=!showPicker;$event.stopPropagation();">
     <i class="ri-a-b"></i>
     <label>Comparer</label>
-    <div><i [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
+    <div class="arrow-zone"><i [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
 
     <!-- DROP DOWN REFERENTIEL DE TEMPS -->
     <div *ngIf="showPicker===true" class="drop-down" (click)="$event.stopPropagation();">
