@@ -262,6 +262,11 @@ export class CalculatorPage
    */
   createdTitle: null | string = null
   /**
+   * Date minimum selectionnable
+   */
+  minDateSelectable: Date = new Date(2021, 0, 1)
+
+  /**
    * Constructeur
    * @param humanResourceService
    * @param calculatorService
