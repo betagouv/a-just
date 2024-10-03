@@ -18,6 +18,7 @@ import { OPACITY_20 } from 'src/app/constants/colors'
 import { MainClass } from 'src/app/libs/main-class'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { getRandomInt } from 'src/app/utils/numbers'
 
 /**
  * Composant de la page en vue analytique
@@ -216,7 +217,7 @@ export class GraphsVerticalsLinesComponent
             this.draw()
           })
       }
-    }, 250)
+    }, getRandomInt(700))
   }
 
   draw() {
