@@ -1,6 +1,7 @@
 FROM node:16.15.1
 
+COPY ./front /home/front
 WORKDIR /home/front
 
-CMD npm install && \
-        npm run start; \
+CMD   npm install --production=false && \
+      npm run start -- --configuration=test; \
