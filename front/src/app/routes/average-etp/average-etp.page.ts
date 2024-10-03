@@ -5,11 +5,11 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { findRealValueCustom } from 'src/app/utils/dates'
+import { findRealValueCustom, getTime } from 'src/app/utils/dates'
 
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
-import { Location } from '@angular/common';
-
+import { Location } from '@angular/common'
+import { orderBy } from 'lodash'
 
 /**
  * Page des temps moyens par dossier
@@ -20,8 +20,8 @@ import { Location } from '@angular/common';
 })
 export class AverageEtpPage extends MainClass implements AfterViewInit {
   /**
-  * Lien de la doc
-  */
+   * Lien de la doc
+   */
   documentation: DocumentationInterface = {
     title: "Données d'activité A-JUST :",
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
@@ -67,12 +67,17 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Ouverture provenant du cockpit
    */
   openedFromCockpit: boolean = false
+  /**
+   * Activer le bouton
+   */
+  enableImport: boolean = false
 
   /**
    * Constructor
-   * @param userService 
+   * @param userService
    */
-  constructor(private userService: UserService,
+  constructor(
+    private userService: UserService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
     private route: ActivatedRoute,
@@ -91,12 +96,20 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     // Chargement des référentiels
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
-        this.backups = b
+        console.log(b)
+        this.backups = orderBy(
+          b,
+          [
+            (val) => {
+              const date = val.update?.date || val.date
+              return getTime(date)
+            },
+          ],
+          ['desc']
+        )
         this.backups = this.backups.filter((x) => {
-          if (x.type === 'GREFFE' && this.canViewGreffier)
-            return true
-          if (x.type === 'SIEGE' && this.canViewMagistrat)
-            return true
+          if (x.type === 'GREFFE' && this.canViewGreffier) return true
+          if (x.type === 'SIEGE' && this.canViewMagistrat) return true
           else return false
         })
         this.backups.map(() => this.checkList.push(false))
@@ -104,31 +117,33 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     )
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.watch(
       this.route.params.subscribe((params) => {
-        if (params['datestart'] && params['datestop'] && params['category'] ) {
+        if (params['datestart'] && params['datestop'] && params['category']) {
           this.openedFromCockpit = true
-          this.location.replaceState("/temps-moyens");
+          this.location.replaceState('/temps-moyens')
           this.onCreation = true
 
-          setTimeout(()=>{
+          setTimeout(() => {
             let elem = document.getElementById('type') as HTMLButtonElement
             if (elem) {
-              const label = this.route.snapshot.params['category'] === 'magistrats' ? 'SIEGE':'GREFFE'
+              const label =
+                this.route.snapshot.params['category'] === 'magistrats'
+                  ? 'SIEGE'
+                  : 'GREFFE'
               elem.value = label
               elem.name = label
             }
-          },100)
-
+          }, 100)
         }
       })
     )
   }
   /**
    * Renvoi la date à un format d'affichage
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
   realValue(date: Date) {
     return findRealValueCustom(new Date(date))
@@ -136,16 +151,16 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
 
   /**
    * Duplique un référentiel par ID
-   * @param backupId 
-   * @param type 
+   * @param backupId
+   * @param type
    */
   duplicate(backupId: number, type: string) {
     this.contentieuxOptionsService.duplicateBackupById(backupId, type)
   }
 
   /**
-  * Demande de renommage de la sauvegarde
-  */
+   * Demande de renommage de la sauvegarde
+   */
   rename(backupId: number) {
     this.contentieuxOptionsService.renameBackupById(backupId)
   }
@@ -154,71 +169,92 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Suppression d'un backup
    */
   remove() {
-    this.contentieuxOptionsService.removeBackupByIds(this.getSelectedBackups()).then(() => {
-      setTimeout(() => {
-        this.checkList = this.backups.map(() => false)
-        this.onDelete = false
-      }, 100)
-    })
+    this.contentieuxOptionsService
+      .removeBackupByIds(this.getSelectedBackups())
+      .then(() => {
+        setTimeout(() => {
+          this.checkList = this.backups.map(() => false)
+          this.onDelete = false
+        }, 100)
+      })
   }
 
   /**
-  * Demande de suppresion d'une sauvegarde
-  */
+   * Demande de suppresion d'une sauvegarde
+   */
   onRemove() {
-    if (this.getSelectedBackups().length)
-      this.onDelete = true
+    if (this.getSelectedBackups().length) this.onDelete = true
   }
 
   /**
    * Récupère les backup selectionnées
-   * @returns 
+   * @returns
    */
   getSelectedBackups() {
-    return this.checkList.map((value, index) => {
-      if (value === true) { return this.backups[index].id }
-      return
-    }).filter(x => x !== undefined)
+    return this.checkList
+      .map((value, index) => {
+        if (value === true) {
+          return this.backups[index].id
+        }
+        return
+      })
+      .filter((x) => x !== undefined)
   }
 
   /**
-  * Demande de création d'une sauvegarde vide
-  */
+   * Demande de création d'une sauvegarde vide
+   */
   create(name: any, type: any) {
-    if (name.length === 0)
-      alert('Vous devez saisir un nom !')
-    else
-      if (name.length > 0 && type.length > 0) {
-        this.contentieuxOptionsService.createEmpy(false, name, 'Local', type).then((data) => {
-          this.onCreation = false;
+    if (name.length === 0) alert('Vous devez saisir un nom !')
+    else if (name.length > 0 && type.length > 0) {
+      this.contentieuxOptionsService
+        .createEmpy(false, name, 'Local', type)
+        .then((data) => {
+          this.onCreation = false
           this.nameLength = 0
           if (this.openedFromCockpit === true) {
-            this.contentieuxOptionsService.openedFromCockpit.next({ value: true, dateStart: new Date(this.route.snapshot.params['datestart']), dateStop: new Date(this.route.snapshot.params['datestop']), category: this.route.snapshot.params['category'] })
-            setTimeout(() => { this.goTo(data) }, 100)
-          } else this.contentieuxOptionsService.openedFromCockpit.next({ value: false, dateStart: null, dateStop: null, category: null})
+            this.contentieuxOptionsService.openedFromCockpit.next({
+              value: true,
+              dateStart: new Date(this.route.snapshot.params['datestart']),
+              dateStop: new Date(this.route.snapshot.params['datestop']),
+              category: this.route.snapshot.params['category'],
+            })
+            setTimeout(() => {
+              this.goTo(data)
+            }, 100)
+          } else
+            this.contentieuxOptionsService.openedFromCockpit.next({
+              value: false,
+              dateStart: null,
+              dateStop: null,
+              category: null,
+            })
+          if (data)
+            setTimeout(() => {
+              this.goTo(data)
+            }, 100)
         })
-
-      }
+    }
   }
-
 
   /**
    * Selectionne tous les référentiels
-   * @param value 
-   * @returns 
+   * @param value
+   * @returns
    */
   checkAll(value?: boolean) {
-    if (value !== undefined)
-      this.checkList = this.backups.map(() => value)
+    if (value !== undefined) this.checkList = this.backups.map(() => value)
     else if (this.checkList.length) {
-      return this.checkList.reduce((accumulator, currentValue) => currentValue && accumulator)
+      return this.checkList.reduce(
+        (accumulator, currentValue) => currentValue && accumulator
+      )
     }
     return false
   }
 
   /**
    * Compte la taille d'une string
-   * @param text 
+   * @param text
    */
   countLen(text: string) {
     this.nameLength = text.length
@@ -226,7 +262,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
 
   /**
    * Navigation vers un référentiel
-   * @param id 
+   * @param id
    */
   goTo(id: number) {
     this.router.navigate(['/referentiel-de-temps', id])
@@ -234,49 +270,59 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
 
   /**
    * Envoie du fichier d'import
-   * @param elem 
+   * @param elem
    */
   async onSendAllActivity(elem: any) {
     try {
       await this.contentieuxOptionsService.onSendAllActivity(elem)
-    }
-    catch (e) {
-      let form = (document.getElementById('form') as HTMLFormElement)
+      this.enableImport = true
+    } catch (e) {
+      let form = document.getElementById('form') as HTMLFormElement
       form?.reset()
-      alert('Le fichier n\'est pas au bon format, veuillez vous assurer que le fichier correspond bien à la dernière version du template A-JUST.')
+      alert(
+        "Le fichier n'est pas au bon format, veuillez vous assurer que le fichier correspond bien à la dernière version du template A-JUST."
+      )
       throw e
     }
   }
 
   /**
- * Ouvre le selecteur de fichier
- */
+   * Ouvre le selecteur de fichier
+   */
   openFilePicker() {
-    document.getElementById('filePicker')!.click();
+    document.getElementById('filePicker')!.click()
   }
 
   /**
    * Import d'un référentiel
    */
   async import() {
-    let form = (document.getElementById('form') as HTMLFormElement)
-    let name = (document.getElementById('name') as HTMLTextAreaElement)?.value || ''
+    this.enableImport = false
+    let form = document.getElementById('form') as HTMLFormElement
+    let name =
+      (document.getElementById('name') as HTMLTextAreaElement)?.value || ''
     let type = (document.getElementById('type') as HTMLButtonElement)?.name
     const file = form['file'].files[0]
-    if (name.length === 0)
-      alert('Vous devez saisir un nom !')
+    if (name.length === 0) alert('Vous devez saisir un nom !')
     else if (!file) {
       alert('Vous devez saisir une fichier !')
-    }
-    else
-      if (name.length > 0 && type.length > 0) {
-        await this.contentieuxOptionsService.createEmpy(false, name, 'Importé', type)
-        await this.contentieuxOptionsService.onSaveDatas(false, type)
+    } else if (name.length > 0 && type.length > 0) {
+      await this.contentieuxOptionsService.createEmpy(
+        false,
+        name,
+        'Importé',
+        type
+      )
+      this.contentieuxOptionsService.onSaveDatas(false, type).then(() => {
         const backupId = this.contentieuxOptionsService.backupId.getValue()
         if (backupId)
-          this.goTo(backupId)
-        form.reset();
-      }
+          setTimeout(() => {
+            this.goTo(backupId), 200
+          })
+      })
+
+      form.reset()
+    }
   }
 
   /**

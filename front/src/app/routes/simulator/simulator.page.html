@@ -41,15 +41,17 @@
         </div>
       </div>
 
-      <p class="intro-second-title"
-        (click)="dateStop=null;whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator();setDocUrl(documentationUrl.whiteSimulator)">
-        <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
-      </p>
-      <p class="intro-second-desc">
-        Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de
-        temps moyen par dossier) pour effectuer des projections sur
-        l&apos;activité (y compris non juridictionnelle) de votre choix.
-      </p>
+      <div id="panel-empty-simulator">
+        <p class="intro-second-title"
+          (click)="dateStop=null;whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator();setDocUrl(documentationUrl.whiteSimulator)">
+          <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
+        </p>
+        <p class="intro-second-desc">
+          Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de
+          temps moyen par dossier) pour effectuer des projections sur
+          l&apos;activité (y compris non juridictionnelle) de votre choix.
+        </p>
+      </div>
     </div>
   </div>
 
@@ -581,15 +583,15 @@
         <div class="item blue-bg">
           <p>Stock</p>
         </div>
-        <div *ngIf="canViewMagistrat" class="item"
-          [ngClass]="{'display-none': whiteSimulator && categorySelected === 'GREFFE'}">
+        <div *ngIf="canViewMagistrat && categorySelected === 'MAGISTRAT'" class="item">
           <p>ETPT siège</p>
         </div>
-        <div *ngIf="canViewGreffier" class="item blue-bg"
+        <div *ngIf="canViewGreffier && categorySelected === 'GREFFE'" class="item blue-bg"
           [ngClass]="{'display-none': whiteSimulator && categorySelected !== 'GREFFE'}">
           <p>ETPT greffe</p>
         </div>
-        <div *ngIf="canViewContractuel" class="item" [ngClass]="{'display-none': whiteSimulator}">
+        <div *ngIf="canViewContractuel && categorySelected === ''" class="item"
+          [ngClass]="{'display-none': whiteSimulator}">
           <p>ETPT EAM</p>
         </div>
         <div class="item blue-bg">
@@ -675,10 +677,8 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewMagistrat" class="line-item"
-          [ngClass]="{'display-none': whiteSimulator && categorySelected === 'GREFFE'}">
-          <input [value]="whiteSimulator && categorySelected==='GREFFE'?'':getFieldValue('etpMag',simulatedSationData)"
-            disabled />
+        <div *ngIf="canViewMagistrat && categorySelected === 'MAGISTRAT'" class="line-item">
+          <input [value]="getFieldValue('etpMag',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
@@ -697,11 +697,8 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewGreffier" class="line-item"
-          [ngClass]="{'display-none': whiteSimulator && categorySelected !== 'GREFFE'}">
-          <input
-            [value]="whiteSimulator && categorySelected==='MAGISTRAT'?'':getFieldValue('etpFon',simulatedSationData)"
-            disabled />
+        <div *ngIf="canViewGreffier && categorySelected === 'GREFFE'" class="line-item">
+          <input [value]="getFieldValue('etpFon',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
@@ -721,8 +718,9 @@
           </div>
         </div>
 
-        <div *ngIf="canViewContractuel" class="line-item" [ngClass]="{'display-none': whiteSimulator }">
-          <input [value]="whiteSimulator?'':getFieldValue('etpCont',projectedSituationData)" disabled />
+        <div *ngIf="canViewContractuel && categorySelected === ''" class="line-item"
+          [ngClass]="{'display-none': whiteSimulator }">
+          <input [value]="getFieldValue('etpCont',projectedSituationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
