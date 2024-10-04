@@ -53,6 +53,7 @@ import {
 } from 'src/app/constants/log-codes'
 import { BehaviorSubject } from 'rxjs'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
+import { sleep } from 'src/app/utils'
 
 /**
  * Page du calculateur
@@ -162,7 +163,7 @@ export class CalculatorPage
       target: '#wrapper-contener',
       title: 'A quoi sert le cockpit ?',
       intro:
-        "Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
+        "<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.</p><p>Ces données sont également restituées à l’aide de graphiques.</p><p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions.</b></p><p>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.</p>",
     },
     {
       target: '.sub-main-header',
@@ -171,34 +172,69 @@ export class CalculatorPage
         'sur laquelle effectuer les calculs. Certaines des données étant des <b>moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.',
     },
     {
-      target: 'aj-referentiel-calculator:first-child .item.actual',
-      title: 'Les données renseignées',
+      target: '.switch-tab .brut',
+      title: 'Les données brute',
       intro:
-        "Vous pouvez visualiser, pour chaque contentieux ou sous-contentieux :<ul><li>Les <b>entrées et sorties</b> moyennes mensuelles sur la période sélectionnée (calculées à partir des données d’activité) ;</li><li>Le <b>stock</b> à la fin de la période sélectionnée (tel qu’affiché dans les données d’activité) ;</li><li>Les <b>ETPT</b> affectés à chaque contentieux sur la période sélectionnée (calculés à partir des données individuelles d’affectation saisies dans le ventilateur) pour chacune des catégories d'agents (magistrats, fonctionnaires, équipe autour du magistrat = EAM).</li></ul>",
+        "<p>Cette section permet de visualiser deux indicateurs simples, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p><ul><li>le taux de couverture</li><li>et le DTES (Délai Théorique d’Écoulement du Stock).</li></ul><p>Vous retrouvez également :</p><ul><li>Les <b>entrées et sorties</b> moyennes mensuelles sur la période sélectionnée (calculées à partir des données d’activité);</li><li>Le <b>stock</b> à la fin de la période sélectionnée (tel qu’affiché dans les données d’activité);</li><li>Les <b>ETPT</b> affectés à chaque contentieux sur la période sélectionnée (calculés à partir des données individuelles d’affectation saisies dans le ventilateur) pour chacune des catégories d'agents (magistrats, fonctionnaires, équipe autour du magistrat = EAM).</li><li><b>Les temps moyens par dossier</b>, siège ou greffe en fonction de votre sélection, à la fin de la période calculé sur les douze derniers mois de données disponibles.</li></ul>",
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('.switch-tab .brut')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
     },
     {
-      target: 'aj-referentiel-calculator:first-child .item.activity',
-      title: "Les données de l'activité constatée",
+      target: '.switch-tab .analytique',
+      title: 'Les graphiques',
       intro:
-        'Cette section permet de <b>visualiser deux indicateurs simples</li>, calculés à partir des « <b>Données renseignées</b> » :<ul><li>le <b>taux de couverture</b></li><li>et le <b>DTES</b> (Délai Théorique d’Écoulement du Stock).</li></ul><br/>Vous pourrez aussi visualiser le <b>temps de traitement moyen par dossier observé</b> sur la période antérieure qui constitue une clé de projection pour les simulations.',
+        '<p>Pour chaque contentieux, nous vous restituons les mêmes indicateurs que précédemment, en perspective avec les données de débuts et de fin de période :</p><ul><li>Les données du <b>DTES</b> sont affichées à la date de début et de fin de période ;</li><li>Le stock en fin de période puis en début de période si vous cliquez sur «<b>voir les détails</b>».</li><li><b>Les autres indicateurs</b> affichent une moyenne sur la période, comme dans l’écran des données brutes, et vous pouvez afficher les données de début et de fin de période pour chacun d’entre-deux en cliquant sur «<b>voir les détails</b>».</li></ul>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('.switch-tab .analytique')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
     },
     {
-      target: 'aj-referentiel-calculator:first-child .item.calculate',
-      title: "Les données de l'activité calculée",
+      target: '.drop-down',
+      title: 'Comparez votre juridiction',
       intro:
-        'Les données de l\'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d\'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page "<b>Temps moyens</b>".<div class="intro-js-action"><a href="/temps-moyens">J\'accède aux temps moyens</a></div>',
-    },
-    {
-      target: '.ref-button',
-      title: 'Enregistrez les temps moyens constatés',
-      intro:
-        "comme référentiel, si vous souhaitez comparer leur évolution dans la juridiction d'une période à l'autre.",
-    },
-    {
-      target: 'aj-options-backup-panel',
-      title: 'Mes temps moyens de comparaison',
-      intro:
-        'Si vous avez renseigné des temps moyens de référence, il vous suffit de <b>sélectionner le référentiel de votre choix dans ce menu déroulant</b>.',
+        '<p>Vous pouvez choisir de mettre en perspective vos indicateurs avec ceux d’une période passée ou ceux d’un référentiel de temps pour obtenir les indicateurs possibles de votre juridiction en fonction des temps moyens renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('button.compare')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            // @ts-ignore
+            introTooltip.style.visibility = 'hidden'
+          }
+          setTimeout(() => {
+            const introTooltip = document.querySelector('.introjs-tooltip')
+            if (introTooltip) {
+              introTooltip.classList.add('introjs-bottom-left-aligned')
+              introTooltip.classList.remove('introjs-floating')
+              // @ts-ignore
+              introTooltip.style.left = '0px'
+              // @ts-ignore
+              introTooltip.style.top = '170px'
+              // @ts-ignore
+              introTooltip.style.marginLeft = '-20px'
+              // @ts-ignore
+              introTooltip.style.marginTop = '0'
+              // @ts-ignore
+              introTooltip.style.visibility = 'visible'
+            }
+          }, 380)
+        }
+      },
     },
   ]
   /**
