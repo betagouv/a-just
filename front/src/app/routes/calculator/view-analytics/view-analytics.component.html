@@ -13,7 +13,7 @@
 </div>
 
 <div class="scroll-container" *ngIf="datasFilted && datasFilted.length">
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">DTES</p>
             <p class="description-section">de la période</p>
@@ -41,7 +41,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">Taux de couverture</p>
             <p class="details-section">moyens sur la période</p>
@@ -76,7 +76,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">Stock</p>
             <p class="details-section">sur la période</p>
@@ -121,7 +121,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">Entrées</p>
             <p class="details-section">sur la période</p>
@@ -175,7 +175,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">Sorties</p>
             <p class="details-section">sur la période</p>

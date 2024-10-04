@@ -397,11 +397,15 @@ export function isFirstDayOfMonth(date = new Date()) {
  */
 export function isDateBiggerThan(
   firstDate: string | Date,
-  secondDate: string | Date
+  secondDate: string | Date,
+  strict: boolean = false
 ): boolean {
   firstDate = new Date(firstDate)
   secondDate = new Date(secondDate)
 
+  if (strict) {
+    return firstDate.getTime() > secondDate.getTime()
+  }
   return firstDate.getTime() >= secondDate.getTime()
 }
 
