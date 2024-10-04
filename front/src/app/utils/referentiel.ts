@@ -241,7 +241,7 @@ export function referentielMappingColorCAActivity(
       case 'Civil Ns':
         return `rgb(213, 216, 235)`
       case 'Comm.':
-        return `rgb(218, 212, 237)`
+        return `rgb(191, 225, 230)`
       case 'PP':
         return `rgb(255, 248, 213)`
       case 'Jld Civil':
