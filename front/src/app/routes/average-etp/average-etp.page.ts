@@ -306,6 +306,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     if (name.length === 0) alert('Vous devez saisir un nom !')
     else if (!file) {
       alert('Vous devez saisir une fichier !')
+      this.enableImport = true
     } else if (name.length > 0 && type.length > 0) {
       await this.contentieuxOptionsService.createEmpy(
         false,
