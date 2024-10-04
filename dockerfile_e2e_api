@@ -1,0 +1,7 @@
+FROM node:20.9.0
+
+COPY ./ /home
+WORKDIR /home
+
+CMD echo "$NODE_ENV" && \
+    npm build && npm run start:production; 
