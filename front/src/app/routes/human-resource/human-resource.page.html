@@ -18,7 +18,7 @@
       <comment-profil id="comment-profil" [currentHR]="currentHR"></comment-profil>
     </div>
 
-    <actual-panel-situation *ngIf="currentHR && histories.length" [currentHR]="currentHR"
+    <actual-panel-situation *ngIf="currentHR && histories.length && showActuelPanel" [currentHR]="currentHR"
       [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
       [canEdit]="!duringPrint && indexOfTheFuture !== null"
       [canRemoveSituation]="!duringPrint && indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
@@ -41,8 +41,8 @@
       </div>
     </ng-template>
 
-    <add-ventilation [ngClass]="{'existing-agent':histories.length !== 0}" *ngIf="onEditIndex !== null" #addDomVentilation
-      [human]="currentHR"
+    <add-ventilation [ngClass]="{'existing-agent':histories.length !== 0}" *ngIf="onEditIndex !== null"
+      #addDomVentilation [human]="currentHR"
       [activities]="onEditIndex !== -1 ? histories[onEditIndex].activities : (histories.length ? histories[0].activities : [])"
       [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [indexSituation]="onEditIndex"
       [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null"
