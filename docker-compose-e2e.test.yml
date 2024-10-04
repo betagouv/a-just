@@ -9,9 +9,8 @@ services:
       - "5450:5432"
     expose:
       - "5432"
-    # networks:
-    #   ajust_network:
-    #     ipv4_address: 173.0.0.50
+    networks:
+       - ajust_e2e_network
     environment:
       - POSTGRES_DB=ajust
       - POSTGRES_USER=ajust-user
@@ -55,15 +54,15 @@ services:
   api:
     build:
       context: .
-      dockerfile: dockerfile_api
-    # networks:
-    #   ajust_network:
-    #     ipv4_address: 173.0.0.20
+      dockerfile: dockerfile_e2e_api
+    networks:
+      - ajust_e2e_network
     expose:
       - "8080"
     depends_on:
       - "db"
     volumes:
+      - "./:/home"
       - "./api/coverage:/home/api/coverage"
     environment:
       - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust
@@ -71,43 +70,27 @@ services:
       - NODE_ENV=test
       - JSON_WEB_TOKEN=123456789
       - PORT=8080
-  
-  web:
-    build:
-      context: .
-      dockerfile: dockerfile_front
-    environment:
-      - NODE_ENV=test
-    expose:
-      - "4200"
-    ports: 
-      - "4300:4200"
-    depends_on:
-      - "api"
-      - "db"
 
   cypress:
     image: cypress/included:12.7.0
+    networks:
+      - ajust_e2e_network
     depends_on:
-      - "web"
       - "api"
       - "db"
-    entrypoint: /scripts/wait-for-it.sh web:4200 --timeout=300 -- cypress run
+    entrypoint: /scripts/wait-for-it.sh api:8080 --timeout=300 -- cypress run
     volumes:
       - ./front:/e2e
       - ./front/scripts:/scripts
     working_dir: /e2e
     environment:
-      - CYPRESS_BASE_URL=http://web:4200
+      - CYPRESS_BASE_URL=http://api:8080
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://web:4200"]
+      test: ["CMD", "curl", "-f", "http://api:8080"]
       interval: 30s
       timeout: 300s
       retries: 5
 
-# networks:
-#   ajust_network:
-#     driver: bridge
-#     ipam:
-#       config:
-#         - subnet: 173.0.0.0/16
+networks:
+   ajust_e2e_network:
+     driver: bridge
