@@ -16,6 +16,21 @@
     }
   }
 
+  &.right .tooltip-text {
+    right: 0;
+    left: inherit;
+
+    >div {
+      position: relative;
+      transform: translateX(0);
+    }
+
+    .triangle {
+      right: 55px;
+      left: inherit;
+    }
+  }
+
   &.top .tooltip-text {
     bottom: calc(85% + 4px);
 
