@@ -646,10 +646,14 @@ export class CalculatorPage
               this.isLoading = false
               this.lastCategorySelected = this.categorySelected
 
-              if (this.firstLoading === false)
+              if (
+                this.firstLoading === false &&
+                this.location.path() === '/cockpit'
+              ) {
                 this.appService.notification(
                   'Les données du cockpit ont été mis à jour !'
                 )
+              }
               this.firstLoading = false
             })
             .catch(() => {
