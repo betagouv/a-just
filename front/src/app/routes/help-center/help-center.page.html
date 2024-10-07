@@ -75,13 +75,16 @@
         <p class="sub-title" *ngIf="this.userService.isCa()===false">Questions fréquentes</p>
         <div class="suggestion" *ngIf="this.userService.isCa()===false">
             <div (click)="openToIframe=documentation[0]; reloadContent()">
-                <label><span class="blue">Tout savoir en un coup d’oeil</span><br />
+                <label><span class="blue">Tout savoir </span><br /><span class="blue">en un coup
+                        d’oeil</span><br />
                     <p class="italic">Les questions que tout le monde se pose</p>
-                </label><br />
+                </label>
+                <br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
             <div (click)="openToIframe=documentation[1];reloadContent()">
-                <label><span class="green">Prenez en main votre espace</span><br />
+                <label><span class="green">Prenez en main</span><br /><span class="green">votre
+                        espace</span><br />
                     <p class="italic">Gérez vos
                         effectifs et vos données d’activité</p>
                 </label><br />
