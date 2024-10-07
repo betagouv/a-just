@@ -301,19 +301,25 @@ export class ReaffectatorPage
       target: '#wrapper-contener',
       title: 'À quoi sert le simulateur des affectations ?',
       intro:
-        '<p>Cet écran qui se présente comme le ventilateur en mode « nuit », c’est-à-dire simulation, vous permet <b>d’adapter finement l’affectation de vos effectifs, à ressources constantes</b>, sur les différents contentieux, <b>en visualisant instantanément l’impact de votre projet de réorganisation sur les délais de traitement du contentieux que vous voulez renforcer</b> mais aussi sur les autres matières que vous allez de ce fait nécessairement dégarnir.</p><p><b>Toutes vos actions sur cet écran n’ont aucun impact sur la ventilation actuelle de vos agents</b> : ce sont que des projections</p>',
+        '<p>Cet écran qui se présente comme le ventilateur en mode « nuit », c’est-à-dire simulation, vous permet <b>d’adapter finement l’affectation de vos effectifs, à ressources constantes</b>, sur les différents contentieux, <b>en visualisant instantanément l’impact de votre projet de réorganisation sur les délais de traitement du contentieux que vous voulez renforcer</b> mais aussi sur les autres matières que vous allez de ce fait nécessairement dégarnir.</p><p><b>Toutes vos actions sur cet écran n’ont aucun impact sur la ventilation actuelle de vos agents</b> : ce ne sont que des projections</p>',
     },
     {
       target: '#content .container .title',
       title: 'Choisissez le calendrier, et la catégorie d’agent',
       intro:
-        "<p>Afin de déterminer le <b>champ d’application des hypothèses que vous allez jouer</b>. Comme dans le ventilateur, en modifiant la date dans le calendrier, vous affichez la liste <b>des agents présents, selon leur catégorie et les ETPT mobilisés</b> sur les différents contentieux à la date choisie. Vous pouvez aussi choisir de n'afficher que <b>les données d'ETPT relatives à certains contentieux</b>, ou à <b>certaines fonctions</b>.</p>",
+        '<p>Choisissez la date et la catégorie d’agent afin de déterminer <b>le champ d’application des hypothèses que vous allez jouer.</b> Comme dans le ventilateur, en modifiant la date dans le calendrier, vous affichez la liste <b>des agents présents selon leur catégorie ainsi que la ventilation de leur ETPT</b> sur les différents contentieux à la date choisie. Vous pouvez <b>filtrer par fonction ou contentieux</b> selon vos besoins.</p>',
+    },
+    {
+      target: '#content .container .title .search-bar',
+      title: 'Option',
+      intro:
+        '<p>Vous pouvez également rechercher un agent de façon nominative</p>',
     },
     {
       target: '#content .container .indicators',
       title: 'Vos indicateurs d’impact affichent',
       intro:
-        "<p>pour chaque contentieux, la situation à la date choisie, en termes <b>d’ETPT affectés, de taux de couverture et de DTES exprimé en nombre de mois</b>.</p><p>Ces indicateurs sont construits en lien avec les <b>données d'activité</b> et <b>d’effectifs</b> présentes dans A-JUST. Pour obtenir une projection précise et fine, il convient de compléter et mettre à jour ces éléments en fonction des informations locales dont vous disposez.</p>",
+        "<p>Vos indicateurs d’impact affichent, pour chaque contentieux, la situation à la date choisie : <ul><li>des <b>ETPT affectés</b></li><li> du <b>taux de couverture et du DTES exprimé en nombre de mois</b> issue des <b>données d'activité</b> et <b>d’effectifs</b> enregistrées dans A-JUST .Pour obtenir une projection précise et fine, actualisez ces éléments en fonction des informations dont vous disposez.</li></ul><br/> Vous pouvez renseigner la <b>valeur cible d’ETPT</b> que vous souhaitez atteindre dans un contentieux.</p>",
     },
     {
       target: '#wrapper-contener',
