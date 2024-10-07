@@ -488,6 +488,7 @@
                 display: flex;
                 align-items: flex-end;
                 z-index: 1;
+                position: relative;
 
                 .tab {
                     min-height: 40px;
@@ -498,6 +499,7 @@
                     font-weight: bold;
                     color: black;
                     cursor: pointer;
+                    position: relative;
 
                     &.selected {
                         border: solid 1px #ddd;
@@ -506,6 +508,58 @@
                         //outline:10px solid black;
                         border-top: solid 2px #000091;
                         border-bottom: none;
+                    }
+
+                    &.blue {
+                        &::before {
+                            content: '';
+                            height: 0px;
+                            width: 100%;
+                            border-bottom: 8px solid #96b8f0;
+                            opacity: 0.4;
+                            position: absolute;
+                            bottom: 0px;
+                            left: 0px;
+                        }
+                    }
+
+                    &.green {
+                        &::before {
+                            content: '';
+                            height: 0px;
+                            width: 100%;
+                            border-bottom: 8px solid #00fb90;
+                            position: absolute;
+                            bottom: 0px;
+                            left: 0px;
+                            opacity: 0.3;
+                        }
+                    }
+
+                    &.red {
+                        &::before {
+                            content: '';
+                            height: 0px;
+                            width: 100%;
+                            border-bottom: 8px solid #a558a0;
+                            opacity: 0.5;
+                            position: absolute;
+                            bottom: 0px;
+                            left: 0px;
+                        }
+                    }
+
+                    &.yellow {
+                        &::before {
+                            content: '';
+                            height: 0px;
+                            width: 100%;
+                            border-bottom: 8px solid #f6e157;
+                            opacity: 0.5;
+                            position: absolute;
+                            bottom: 0px;
+                            left: 0px;
+                        }
                     }
                 }
 

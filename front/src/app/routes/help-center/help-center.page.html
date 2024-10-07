@@ -136,7 +136,7 @@
                 <p>Aide</p>
             </div>
             <div class="panel-header">
-                <p class="tab" [ngClass]="{'selected':openToIframe.url===documentation[i].url}"
+                <p class="tab {{doc.color}}" [ngClass]="{'selected':openToIframe.url===documentation[i].url}"
                     *ngFor="let doc of documentation; index as i;" (click)="openToIframe=documentation[i]">
                     {{doc.title}}
                 </p>
