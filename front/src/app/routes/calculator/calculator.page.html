@@ -249,9 +249,10 @@
   <div class="flex-1"></div>
   <button class="compare" [ngClass]="{selected: compareTemplates}"
     (click)="showPicker=!showPicker;$event.stopPropagation();">
-    <i class="ri-a-b"></i>
-    <label>Comparer</label>
-    <div class="arrow-zone"><i [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
+    <i class="ri-a-b" (click)="showPicker=!showPicker;$event.stopPropagation();"></i>
+    <label (click)="showPicker=!showPicker;$event.stopPropagation();">Comparer</label>
+    <div (click)="showPicker=!showPicker;$event.stopPropagation();" class="arrow-zone"><i
+        [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
 
     <!-- DROP DOWN REFERENTIEL DE TEMPS -->
     <div *ngIf="showPicker===true" class="drop-down" (click)="$event.stopPropagation();">
