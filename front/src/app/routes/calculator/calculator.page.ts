@@ -161,21 +161,21 @@ export class CalculatorPage
   introSteps: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
-      title: 'A quoi sert le cockpit ?',
+      title: 'À quoi sert le cockpit ?',
       intro:
-        "<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.</p><p>Ces données sont également restituées à l’aide de graphiques.</p><p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions.</b></p><p>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.</p>",
+        "<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><br/><p>Des visualisations graphiques vous sont également proposées.</p><br/><p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et <b>exporter</b> ces restitutions en PDF pour les enregistrer et/ou les partager.</p>",
     },
     {
       target: '.sub-main-header',
       title: 'Choisir la période',
       intro:
-        'sur laquelle effectuer les calculs. Certaines des données étant des <b>moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.',
+        'Certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.',
     },
     {
       target: '.switch-tab .brut',
       title: 'Les données brute',
       intro:
-        "<p>Cette section permet de visualiser deux indicateurs simples, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p><ul><li>le taux de couverture</li><li>et le DTES (Délai Théorique d’Écoulement du Stock).</li></ul><p>Vous retrouvez également :</p><ul><li>Les <b>entrées et sorties</b> moyennes mensuelles sur la période sélectionnée (calculées à partir des données d’activité);</li><li>Le <b>stock</b> à la fin de la période sélectionnée (tel qu’affiché dans les données d’activité);</li><li>Les <b>ETPT</b> affectés à chaque contentieux sur la période sélectionnée (calculés à partir des données individuelles d’affectation saisies dans le ventilateur) pour chacune des catégories d'agents (magistrats, fonctionnaires, équipe autour du magistrat = EAM).</li><li><b>Les temps moyens par dossier</b>, siège ou greffe en fonction de votre sélection, à la fin de la période calculé sur les douze derniers mois de données disponibles.</li></ul>",
+        '<p>Cette section permet de visualiser deux indicateurs simples, sur la période, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p><ul><li>le taux de couverture moyen</li><li>et le DTES (Délai Théorique d’Écoulement du Stock) à la date de fin de période.</li></ul><p>Vous retrouvez également :</p><ul><li>Les <b>entrées et sorties</b> moyennes mensuelles</li><li>Le <b>stock</b> à la fin de la période choisie</li><li>Les <b>ETPT</b> affectés à chaque contentieux</li><li><b>Les temps moyens par dossier</b> (siège ou greffe selon votre sélection), clé théorique de projection dans le futur calculée sur à la fin de la période sur les 12 mois précédents.</li></ul>',
       beforeLoad: async (intro: any) => {
         const itemToClick = document.querySelector('.switch-tab .brut')
         if (itemToClick) {
@@ -189,7 +189,7 @@ export class CalculatorPage
       target: '.switch-tab .analytique',
       title: 'Les graphiques',
       intro:
-        '<p>Pour chaque contentieux, nous vous restituons les mêmes indicateurs que précédemment, en perspective avec les données de débuts et de fin de période :</p><ul><li>Les données du <b>DTES</b> sont affichées à la date de début et de fin de période ;</li><li>Le stock en fin de période puis en début de période si vous cliquez sur «<b>voir les détails</b>».</li><li><b>Les autres indicateurs</b> affichent une moyenne sur la période, comme dans l’écran des données brutes, et vous pouvez afficher les données de début et de fin de période pour chacun d’entre-deux en cliquant sur «<b>voir les détails</b>».</li></ul>',
+        '<p>Pour chaque contentieux, une représentation visuelle des indicateurs, comprenant le détail des données et leurs évolutions entre le début et la fin de la période.</p>',
       beforeLoad: async (intro: any) => {
         const itemToClick = document.querySelector('.switch-tab .analytique')
         if (itemToClick) {
@@ -203,7 +203,7 @@ export class CalculatorPage
       target: '.drop-down',
       title: 'Comparez votre juridiction',
       intro:
-        '<p>Vous pouvez choisir de mettre en perspective vos indicateurs avec ceux d’une période passée ou ceux d’un référentiel de temps pour obtenir les indicateurs possibles de votre juridiction en fonction des temps moyens renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
+        '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période passée ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTESde votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
       beforeLoad: async (intro: any) => {
         const itemToClick = document.querySelector('button.compare')
         if (itemToClick) {
