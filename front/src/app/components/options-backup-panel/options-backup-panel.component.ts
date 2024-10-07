@@ -163,9 +163,15 @@ export class OptionsBackupPanelComponent
       .onSaveDatas(isCopy, this.category)
       .then((x) => {
         if (isCopy && x !== null) {
-          //this.router.navigate(['/temps-moyens'])
           this.contentieuxOptionsService.optionsIsModify.next(false)
         }
+        if (
+          isCopy === false &&
+          x !== null &&
+          this.contentieuxOptionsService.openedFromCockpit.getValue().value !==
+            true
+        )
+          this.router.navigate(['/temps-moyens'])
       })
     if (
       this.contentieuxOptionsService.openedFromCockpit.getValue().value === true
