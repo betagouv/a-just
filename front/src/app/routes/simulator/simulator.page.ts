@@ -428,7 +428,15 @@ export class SimulatorPage
       target: '#panel-empty-simulator',
       title: 'Choisissez le type de simulation',
       intro:
-        '<p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.”</p>',
+        '<p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.</p>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('aj-back-button a')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
     },
     {
       target: '.categories-switch',
