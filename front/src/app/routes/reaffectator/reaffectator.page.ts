@@ -305,9 +305,9 @@ export class ReaffectatorPage
     },
     {
       target: '#content .container .title',
-      title: 'Choisissez le calendrier, et la catégorie d’agent',
+      title: 'Choisissez la date et la catégorie d’agent',
       intro:
-        '<p>Choisissez la date et la catégorie d’agent afin de déterminer <b>le champ d’application des hypothèses que vous allez jouer.</b> Comme dans le ventilateur, en modifiant la date dans le calendrier, vous affichez la liste <b>des agents présents selon leur catégorie ainsi que la ventilation de leur ETPT</b> sur les différents contentieux à la date choisie. Vous pouvez <b>filtrer par fonction ou contentieux</b> selon vos besoins.</p>',
+        '<p>afin de déterminer <b>le champ d’application des hypothèses que vous allez jouer.</b> Comme dans le ventilateur, en modifiant la date dans le calendrier, vous affichez la liste <b>des agents présents selon leur catégorie ainsi que la ventilation de leur ETPT</b> sur les différents contentieux à la date choisie. Vous pouvez <b>filtrer par fonction ou contentieux</b> selon vos besoins.</p>',
     },
     {
       target: '#content .container .title .search-bar',
@@ -319,7 +319,7 @@ export class ReaffectatorPage
       target: '#content .container .indicators',
       title: 'Vos indicateurs d’impact affichent',
       intro:
-        "<p>Vos indicateurs d’impact affichent, pour chaque contentieux, la situation à la date choisie : <ul><li>des <b>ETPT affectés</b></li><li> du <b>taux de couverture et du DTES exprimé en nombre de mois</b> issue des <b>données d'activité</b> et <b>d’effectifs</b> enregistrées dans A-JUST .Pour obtenir une projection précise et fine, actualisez ces éléments en fonction des informations dont vous disposez.</li></ul><br/> Vous pouvez renseigner la <b>valeur cible d’ETPT</b> que vous souhaitez atteindre dans un contentieux.</p>",
+        "<p>pour chaque contentieux, la situation à la date choisie : <ul><li>des <b>ETPT affectés</b></li><li> du <b>taux de couverture et du DTES exprimé en nombre de mois</b></li></ul> issue des <b>données d'activité</b> et <b>d’effectifs</b> enregistrées dans A-JUST. La projection sera d’autant plus précise et fine que vous aurez actualisé ces éléments, en fonction des informations dont vous disposez, dans le ventilateur et l'écran de données d’activité.<br/> Vous pouvez renseigner la <b>valeur cible d’ETPT</b> que vous souhaitez atteindre dans un contentieux.</p>",
     },
     {
       target: '#wrapper-contener',
