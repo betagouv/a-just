@@ -397,7 +397,7 @@ export default (sequelizeInstance, Model) => {
         // prepare person
         const options = {
           first_name: list[i].prenom || '',
-          last_name: list[i].nom_usage || list[i].nom_marital || '',
+          last_name: list[i].nom_usage || list[i].nom_marital || list[i].nom || '',
           matricule: list[i].hmatricule || '',
           backup_id: backupId,
           registration_number: list[i].hRegMatricule,
