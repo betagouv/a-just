@@ -185,8 +185,8 @@
               <aj-date-select
                 [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires' }"
                 title="à" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
-                class="bg-white calculator popup" [max]="maxDateSelectionDate" [dateClass]="dateClass"
-                [dateType]="'month'" [min]="optionDateStart" [icon]="'none'">
+                class="bg-white calculator popup" [dateClass]="dateClass" [dateType]="'month'" [min]="optionDateStart"
+                [icon]="'none'">
               </aj-date-select>
             </div>
           </div>
