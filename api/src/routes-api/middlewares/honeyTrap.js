@@ -9,7 +9,6 @@ const TRAPS = [
   '.axd',
   '/api/cu',
   '/api/cu',
-  '/api/j',
   '/api/ti',
   '/api/l',
   '/api/su',
@@ -160,3 +159,12 @@ export default async (ctx, next, models) => {
 
   await next()
 }
+
+// /api/juridictions-details/get-cle
+/*
+console.log(
+  'TRAP',
+  TRAPS.filter((t) => {
+    return '/api/juridictions-details/get-cle'.includes(t)
+  })
+)*/
