@@ -33,7 +33,8 @@ import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 })
 export class PanoramaPage
   extends MainClass
-  implements OnInit, OnDestroy, AfterViewInit {
+  implements OnInit, OnDestroy, AfterViewInit
+{
   /**
    * Dom du contenu scrollable
    */
@@ -150,13 +151,17 @@ export class PanoramaPage
       target: '#wrapper-contener',
       title: 'Panorama',
       intro:
-        'Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace ' + (this.isTJ() ? 'du TJ' : 'de la CA') + '.',
+        'Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace ' +
+        (this.isTJ() ? 'du TJ' : 'de la CA') +
+        '.',
     },
     {
       target: '.effectifs-panels',
       title: "Les données d'effectifs",
       intro:
-        "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la " + (this.isTJ() ? 'juridiction' : 'cour d\'appel') + " et les éventuels changements dans les 15 derniers et 15 prochains jours.",
+        "Récapitulent l'ensemble des ressources humaines à date, la situation des agents de la " +
+        (this.isTJ() ? 'juridiction' : "cour d'appel") +
+        ' et les éventuels changements dans les 15 derniers et 15 prochains jours.',
     },
     {
       target: '.wordforce-composition',
@@ -168,14 +173,16 @@ export class PanoramaPage
       target: '.records-update',
       title: 'Pourcentage et date de mise à jour',
       intro:
-        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la ' + (this.isTJ() ? 'juridiction' : 'cour d\'appel') + '.',
+        'Ici, visualisez et <b>priorisez les tâches à effectuer</b>, pour vous ou vos équipes.<br/><br/>Veillez à ce que ces données soient à jour et actualisées afin de disposer d’une vision précise et fine de la mobilisation des ressources humaines dans la ' +
+        (this.isTJ() ? 'juridiction' : "cour d'appel") +
+        '.',
     },
     {
       target: 'workforce-change',
       title: 'Changements récents',
       intro:
         "Cet espace rassemble les <b>arrivées, départs ou indisponibilités</b> enregistrés dans le ventilateur pour les 15 derniers et 15 prochains jours. Vous pouvez ainsi pré-renseigner dans la fiche des agents une date prévisionnelle de départ, de retour d’indisponibilité ou d'arrivée et la modifier si vous découvrez qu’elle a évolué.",
-    }
+    },
   ]
 
   stepsOnlyForTJ: IntroJSStep[] = [
@@ -200,7 +207,9 @@ export class PanoramaPage
       target: 'activities-last-modifications',
       title: 'Dernières modifications',
       intro:
-        "Effectuées sur vos données d’activité par les différents agents de la " + (this.isTJ() ? 'juridiction' : 'cour d\'appel') + " utilisateurs d'A-JUST.",
+        'Effectuées sur vos données d’activité par les différents agents de la ' +
+        (this.isTJ() ? 'juridiction' : "cour d'appel") +
+        " utilisateurs d'A-JUST.",
     },
   ]
 
@@ -216,7 +225,7 @@ export class PanoramaPage
    */
   constructor(
     public userService: UserService,
-    public humanResourceService: HumanResourceService,
+    public humanResourceService: HumanResourceService
   ) {
     super()
   }
@@ -233,13 +242,21 @@ export class PanoramaPage
         this.canViewVentilation = this.userService.canViewVentilation()
         this.canViewActivities = this.userService.canViewActivities()
 
-        if (this.userService.isCa()) this.introSteps = [...this.introSteps, this.lastStep]
-        else this.introSteps = [...this.introSteps, ...this.stepsOnlyForTJ, this.lastStep]
+        if (this.userService.isCa())
+          this.introSteps = [...this.introSteps, this.lastStep]
+        else
+          this.introSteps = [
+            ...this.introSteps,
+            ...this.stepsOnlyForTJ,
+            this.lastStep,
+          ]
 
-        // @ts-ignore
-        this.introSteps[this.introSteps.length - 1]['actions'][
-          'onClickToIntro'
-        ].enable = this.canViewVentilation
+        try {
+          // @ts-ignore
+          this.introSteps[this.introSteps.length - 1]['actions'][
+            'onClickToIntro'
+          ].enable = this.canViewVentilation
+        } catch (err) {}
       })
     )
 
