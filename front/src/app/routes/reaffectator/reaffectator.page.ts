@@ -311,7 +311,7 @@ export class ReaffectatorPage
     },
     {
       target: '#content .container .title .search-bar',
-      title: 'Option',
+      title: 'Rechercher',
       intro:
         '<p>Vous pouvez également rechercher un agent de façon nominative</p>',
     },
