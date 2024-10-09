@@ -520,7 +520,7 @@ export class DtesChartComponent {
               display: true,
               mirror: true,
               labelOffset: 0,
-              padding: 10,
+              padding: 20,
               callback: (value: any, index: any, values: any) =>
                 index == values.length - 1 ? '' : value,
             },
