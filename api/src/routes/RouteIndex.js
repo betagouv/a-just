@@ -53,7 +53,7 @@ export default class RouteIndex extends Route {
           //stream.on('error', (streamErr) => res.end(streamErr))
         } else {
           const src = createReadStream(file)
-          ctx.type = mime.getType(file)
+          ctx.type = mime.getType(file) || 'text/html'
           ctx.body = src
         }
       } else {
