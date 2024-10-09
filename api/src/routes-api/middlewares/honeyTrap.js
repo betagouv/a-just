@@ -148,8 +148,7 @@ export default async (ctx, next, models) => {
 
   if (
     TRAPS.some((t) => {
-      const re = new RegExp(t)
-      return re.test(ctx.request.url)
+      return (ctx.request.url || '').includes(t)
     })
   ) {
     console.log('NEW IP BLOCKED - ', ctx.request.ip, ctx.request.url)
