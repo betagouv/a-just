@@ -146,8 +146,8 @@
           </aj-referentiel-calculator>
         </div>
       </ng-template>
-      <aj-view-analytics *ngIf="tabSelected === 1" [datasFilted]="datasFilted" [categorySelected]="categorySelected"
-        [maxDateSelectionDate]="maxDateSelectionDate"></aj-view-analytics>
+      <aj-view-analytics *ngIf="tabSelected === 1 && !isLoading" [datasFilted]="datasFilted"
+        [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate"></aj-view-analytics>
     </ng-template>
     <aj-template-analytics *ngIf="compareTemplates" [lines]="compareTemplates"></aj-template-analytics>
   </div>
