@@ -23,7 +23,7 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { getTime, month } from 'src/app/utils/dates'
+import { getTime, isDateBiggerThan, month } from 'src/app/utils/dates'
 import {
   userCanViewContractuel,
   userCanViewGreffier,
@@ -1137,217 +1137,257 @@ export class CalculatorPage
           this.optionDateStop,
           false
         )
+
+        let dateEndIsPast = false
+        if (this.dateStop && this.maxDateSelectionDate) {
+          dateEndIsPast = isDateBiggerThan(
+            this.dateStop,
+            this.maxDateSelectionDate,
+            true
+          )
+        }
+        if (
+          !dateEndIsPast &&
+          this.optionDateStop &&
+          this.maxDateSelectionDate
+        ) {
+          dateEndIsPast = isDateBiggerThan(
+            this.optionDateStop,
+            this.maxDateSelectionDate,
+            true
+          )
+        }
+
         this.appService.appLoading.next(false)
         const nextRangeString = `${this.getRealValue(
           this.optionDateStart
         )} - ${this.getRealValue(this.optionDateStop)}`
         this.compareAtString = nextRangeString
 
-        const value2DTES: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) => d.realDTESInMonths
-        )
-        const variationsDTES = getVariations(value2DTES, value1DTES)
-        list.push({
-          title: 'DTES',
-          type: 'verticals-lines',
-          description: 'de la période<br/>(calculé sur les 12 mois précédents)',
-          lineMax:
-            Math.max(
-              ...value1DTES.map((m) => m || 0),
-              ...value2DTES.map((m) => m || 0)
-            ) * 1.1,
-          values: value1DTES.map((v, index) => [
-            value2DTES[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsDTES,
-              subTitle: '%',
-              showArrow: true,
-            },
-            { label: nextRangeString, values: value2DTES, subTitle: 'mois' },
-            { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
-          ],
-        })
+        if (!dateEndIsPast) {
+          const value2DTES: (number | null)[] = (resultCalcul.list || []).map(
+            (d: CalculatorInterface) => d.realDTESInMonths
+          )
+          const variationsDTES = getVariations(value2DTES, value1DTES)
+          list.push({
+            title: 'DTES',
+            type: 'verticals-lines',
+            description:
+              'de la période<br/>(calculé sur les 12 mois précédents)',
+            lineMax:
+              Math.max(
+                ...value1DTES.map((m) => m || 0),
+                ...value2DTES.map((m) => m || 0)
+              ) * 1.1,
+            values: value1DTES.map((v, index) => [
+              value2DTES[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsDTES,
+                subTitle: '%',
+                showArrow: true,
+              },
+              { label: nextRangeString, values: value2DTES, subTitle: 'mois' },
+              {
+                label: actualRangeString,
+                values: value1DTES,
+                subTitle: 'mois',
+              },
+            ],
+          })
+        }
 
-        const value2TempsMoyen: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) =>
-          this.categorySelected === MAGISTRATS
-            ? d.magRealTimePerCase
-            : d.fonRealTimePerCase
-        )
-        const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
-          d === null
-            ? 'N/R'
-            : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
-        )
-        const variationsTempsMoyen = getVariations(
-          value2TempsMoyen,
-          value1TempsMoyen
-        )
-        list.push({
-          title: 'Temps moyen',
-          type: 'verticals-lines',
-          description: 'sur la période',
-          lineMax:
-            Math.max(
-              ...value1TempsMoyen.map((m) => m || 0),
-              ...value2TempsMoyen.map((m) => m || 0)
-            ) * 1.1,
-          values: value1TempsMoyen.map((v, index) => [
-            value2TempsMoyen[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsTempsMoyen,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: nextRangeString,
-              values: stringValue2TempsMoyen,
-              subTitle: 'heures',
-            },
-            {
-              label: actualRangeString,
-              values: stringValue1TempsMoyen,
-              subTitle: 'heures',
-            },
-          ],
-        })
+        if (!dateEndIsPast) {
+          const value2TempsMoyen: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) =>
+            this.categorySelected === MAGISTRATS
+              ? d.magRealTimePerCase
+              : d.fonRealTimePerCase
+          )
+          const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
+            d === null
+              ? 'N/R'
+              : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
+          )
+          const variationsTempsMoyen = getVariations(
+            value2TempsMoyen,
+            value1TempsMoyen
+          )
+          list.push({
+            title: 'Temps moyen',
+            type: 'verticals-lines',
+            description: 'sur la période',
+            lineMax:
+              Math.max(
+                ...value1TempsMoyen.map((m) => m || 0),
+                ...value2TempsMoyen.map((m) => m || 0)
+              ) * 1.1,
+            values: value1TempsMoyen.map((v, index) => [
+              value2TempsMoyen[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsTempsMoyen,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: nextRangeString,
+                values: stringValue2TempsMoyen,
+                subTitle: 'heures',
+              },
+              {
+                label: actualRangeString,
+                values: stringValue1TempsMoyen,
+                subTitle: 'heures',
+              },
+            ],
+          })
+        }
 
-        const value2TauxCouverture: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.realCoverage)
-        const variationsCouverture = getVariations(
-          value2TauxCouverture,
-          value1TauxCouverture,
-          false
-        )
-        list.push({
-          title: 'Taux de couverture',
-          type: 'progress',
-          description: 'moyen sur la période',
-          lineMax: 0,
-          values: value1TauxCouverture.map((v, index) => [
-            Math.floor((value1TauxCouverture[index] || 0) * 100),
-            v === null ? null : Math.floor((v || 0) * 100),
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsCouverture,
-              subTitle: 'pts',
-              showArrow: true,
-            },
-            {
-              label: nextRangeString,
-              values: value2TauxCouverture.map((t) =>
-                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
-              ),
-            },
-            {
-              label: actualRangeString,
-              values: value1TauxCouverture.map((t) =>
-                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
-              ),
-            },
-          ],
-        })
+        if (!dateEndIsPast) {
+          const value2TauxCouverture: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.realCoverage)
+          const variationsCouverture = getVariations(
+            value2TauxCouverture,
+            value1TauxCouverture,
+            false
+          )
+          list.push({
+            title: 'Taux de couverture',
+            type: 'progress',
+            description: 'moyen sur la période',
+            lineMax: 0,
+            values: value1TauxCouverture.map((v, index) => [
+              Math.floor((value1TauxCouverture[index] || 0) * 100),
+              v === null ? null : Math.floor((v || 0) * 100),
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsCouverture,
+                subTitle: 'pts',
+                showArrow: true,
+              },
+              {
+                label: nextRangeString,
+                values: value2TauxCouverture.map((t) =>
+                  t === null ? 'N/R' : Math.floor(t * 100) + ' %'
+                ),
+              },
+              {
+                label: actualRangeString,
+                values: value1TauxCouverture.map((t) =>
+                  t === null ? 'N/R' : Math.floor(t * 100) + ' %'
+                ),
+              },
+            ],
+          })
+        }
 
-        const value2Stock: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) => d.lastStock
-        )
-        const variationsStock = getVariations(value2Stock, value1Stock)
-        list.push({
-          title: 'Stock',
-          type: 'verticals-lines',
-          description: 'en fin de période',
-          lineMax:
-            Math.max(
-              ...value1Stock.map((m) => m || 0),
-              ...value2Stock.map((m) => m || 0)
-            ) * 1.1,
-          values: value1Stock.map((v, index) => [
-            value2Stock[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsStock,
-              subTitle: '%',
-              showArrow: true,
-            },
-            { label: nextRangeString, values: value2Stock },
-            { label: actualRangeString, values: value1Stock },
-          ],
-        })
+        if (!dateEndIsPast) {
+          const value2Stock: (number | null)[] = (resultCalcul.list || []).map(
+            (d: CalculatorInterface) => d.lastStock
+          )
+          const variationsStock = getVariations(value2Stock, value1Stock)
+          list.push({
+            title: 'Stock',
+            type: 'verticals-lines',
+            description: 'en fin de période',
+            lineMax:
+              Math.max(
+                ...value1Stock.map((m) => m || 0),
+                ...value2Stock.map((m) => m || 0)
+              ) * 1.1,
+            values: value1Stock.map((v, index) => [
+              value2Stock[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsStock,
+                subTitle: '%',
+                showArrow: true,
+              },
+              { label: nextRangeString, values: value2Stock },
+              { label: actualRangeString, values: value1Stock },
+            ],
+          })
+        }
 
-        const value2Entrees: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) =>
+        if (!dateEndIsPast) {
+          const value2Entrees: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) =>
             d.totalIn ? Math.floor(d.totalIn) : d.totalIn
-        )
-        const variationsEntrees = getVariations(value2Entrees, value1Entrees)
-        list.push({
-          title: 'Entrées',
-          type: 'verticals-lines',
-          description: 'moyennes<br/>sur la période',
-          lineMax:
-            Math.max(
-              ...value1Entrees.map((m) => m || 0),
-              ...value2Entrees.map((m) => m || 0)
-            ) * 1.1,
-          values: value1Entrees.map((v, index) => [
-            value2Entrees[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsEntrees,
-              subTitle: '%',
-              showArrow: true,
-            },
-            { label: nextRangeString, values: value2Entrees },
-            { label: actualRangeString, values: value1Entrees },
-          ],
-        })
+          )
+          const variationsEntrees = getVariations(value2Entrees, value1Entrees)
+          list.push({
+            title: 'Entrées',
+            type: 'verticals-lines',
+            description: 'moyennes<br/>sur la période',
+            lineMax:
+              Math.max(
+                ...value1Entrees.map((m) => m || 0),
+                ...value2Entrees.map((m) => m || 0)
+              ) * 1.1,
+            values: value1Entrees.map((v, index) => [
+              value2Entrees[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsEntrees,
+                subTitle: '%',
+                showArrow: true,
+              },
+              { label: nextRangeString, values: value2Entrees },
+              { label: actualRangeString, values: value1Entrees },
+            ],
+          })
+        }
 
-        const value2Sorties: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) =>
+        if (!dateEndIsPast) {
+          const value2Sorties: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) =>
             d.totalOut ? Math.floor(d.totalOut) : d.totalOut
-        )
-        const variationsSorties = getVariations(value2Sorties, value1Sorties)
-        list.push({
-          title: 'Sorties',
-          type: 'verticals-lines',
-          description: 'moyennes<br/>sur la période',
-          lineMax:
-            Math.max(
-              ...value1Sorties.map((m) => m || 0),
-              ...value2Sorties.map((m) => m || 0)
-            ) * 1.1,
-          values: value1Sorties.map((v, index) => [
-            value2Sorties[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsSorties,
-              subTitle: '%',
-              showArrow: true,
-            },
-            { label: nextRangeString, values: value2Sorties },
-            { label: actualRangeString, values: value1Sorties },
-          ],
-        })
+          )
+          const variationsSorties = getVariations(value2Sorties, value1Sorties)
+          list.push({
+            title: 'Sorties',
+            type: 'verticals-lines',
+            description: 'moyennes<br/>sur la période',
+            lineMax:
+              Math.max(
+                ...value1Sorties.map((m) => m || 0),
+                ...value2Sorties.map((m) => m || 0)
+              ) * 1.1,
+            values: value1Sorties.map((v, index) => [
+              value2Sorties[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsSorties,
+                subTitle: '%',
+                showArrow: true,
+              },
+              { label: nextRangeString, values: value2Sorties },
+              { label: actualRangeString, values: value1Sorties },
+            ],
+          })
+        }
 
         if (this.canViewMagistrat) {
           const value2ETPTSiege: (number | null)[] = (
