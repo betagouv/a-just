@@ -22,11 +22,11 @@
 
       <div class="dates-selector">
         <aj-date-select title="de" [value]="dateStart" (valueChange)="updateReferentielSelected('dateStart', $event)"
-          class="bg-white calculator" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
+          class="bg-white calculator bottom-popin" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
           [min]="minDateSelectable" [icon]="'chevron_left'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
         <aj-date-select title="à" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
-          class="bg-white calculator" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
+          class="bg-white calculator bottom-popin" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
           [icon]="'chevron_right'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
       </div>
