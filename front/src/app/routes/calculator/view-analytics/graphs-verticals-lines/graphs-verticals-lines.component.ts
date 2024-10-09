@@ -141,17 +141,18 @@ export class GraphsVerticalsLinesComponent
       })
     )
     this.watch(this.line.subscribe(() => this.draw()))
-    this.watch(
-      this.calculatorService.dateStart.subscribe(() => this.refreshDatas())
+    // Le composant est maintenant recharger complétement car il est détruit
+    /*this.watch(
+      this.calculatorService.dateStart.subscribe(() => this.clearDatas())
     )
     this.watch(
-      this.calculatorService.dateStop.subscribe(() => this.refreshDatas())
+      this.calculatorService.dateStop.subscribe(() => this.clearDatas())
     )
     this.watch(
       this.calculatorService.selectedFonctionsIds.subscribe(() =>
-        this.refreshDatas()
+        this.clearDatas()
       )
-    )
+    )*/
   }
 
   ngAfterViewInit() {
@@ -198,6 +199,11 @@ export class GraphsVerticalsLinesComponent
     if (this.showLines && this.referentielId && this.type) {
       this.startLoading()
     }
+  }
+
+  clearDatas() {
+    this.line.next([])
+    this.draw()
   }
 
   startLoading() {
