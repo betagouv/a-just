@@ -12,7 +12,7 @@ logger.add(
   new winston.transports.Console({
     format: winston.format.combine(
       winston.format.colorize(),
-      winston.format.printf(({ level, message }) => `${level}: ${message}`)
+      winston.format.printf(({ level, message }) => `${level}: ${JSON.stringify(message)}`)
     ),
   })
 )
