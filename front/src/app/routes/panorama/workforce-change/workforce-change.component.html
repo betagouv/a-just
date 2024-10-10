@@ -128,7 +128,8 @@
           <span class="total">{{ workforce.totalAffected }}%</span>
           <mat-icon class="light-arrow">chevron_right</mat-icon>
           <div class="activities">
-            <div *ngFor="let activity of workforce.currentActivities" class="activity">
+            <div *ngFor="let activity of workforce.currentActivities" class="activity"
+              [ngStyle]="{color: userService.referentielMappingColorByInterface(activity.contentieux.label)}">
               {{
               userService.referentielMappingNameByInterface(activity.contentieux.label).toUpperCase()
               }}
