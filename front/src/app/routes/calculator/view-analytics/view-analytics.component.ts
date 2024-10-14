@@ -14,7 +14,8 @@ import {
 } from 'src/app/utils/user'
 import { OPACITY_20 } from 'src/app/constants/colors'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
-import { isDateBiggerThan } from 'src/app/utils/dates'
+import { isDateBiggerThan, month } from 'src/app/utils/dates'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
 
 /**
  * Composant de la page en vue analytique
@@ -130,7 +131,8 @@ export class ViewAnalyticsComponent
     private referentielService: ReferentielService,
     private kpiService: KPIService,
     public userService: UserService,
-    private calculatorService: CalculatorService
+    private calculatorService: CalculatorService,
+    private activitiesService: ActivitiesService
   ) {
     super()
   }
@@ -155,7 +157,14 @@ export class ViewAnalyticsComponent
     )
 
     this.watch(
-      this.calculatorService.dateStop.subscribe((d) => (this.dateStop = d))
+      this.calculatorService.dateStop.subscribe((d) => {
+        this.dateStop = d
+        this.activitiesService.getLastMonthActivities().then((date) => {
+          date = new Date(date ? date : '')
+          const max = month(date, 0, 'lastday')
+          this.maxDateSelectionDate = max
+        })
+      })
     )
   }
 
