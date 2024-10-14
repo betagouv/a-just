@@ -301,7 +301,7 @@ export class ReaffectatorPage
       target: '#wrapper-contener',
       title: 'À quoi sert le simulateur des affectations ?',
       intro:
-        '<p>Cet écran qui se présente comme le ventilateur en mode « nuit », c’est-à-dire simulation, vous permet <b>d’adapter finement l’affectation de vos effectifs, à ressources constantes</b>, sur les différents contentieux, <b>en visualisant instantanément l’impact de votre projet de réorganisation sur les délais de traitement du contentieux que vous voulez renforcer</b> mais aussi sur les autres matières que vous allez de ce fait nécessairement dégarnir.</p><p><b>Toutes vos actions sur cet écran n’ont aucun impact sur la ventilation actuelle de vos agents</b> : ce ne sont que des projections</p>',
+        '<p>Cet écran qui se présente comme le ventilateur en mode « nuit », c’est-à-dire simulation, vous permet <b>d’adapter finement l’affectation de vos effectifs, à ressources constantes</b>, sur les différents contentieux, <b>en visualisant instantanément l’impact de votre projet de réorganisation sur les délais de traitement du contentieux que vous voulez renforcer</b> mais aussi sur les autres matières que vous allez de ce fait nécessairement dégarnir.</p><p><b>Toutes vos actions sur cet écran n’ont aucun impact sur la ventilation actuelle de vos agents</b> : ce ne sont que des projections.</p>',
     },
     {
       target: '#content .container .title',
