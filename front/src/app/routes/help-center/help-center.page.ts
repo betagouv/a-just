@@ -155,17 +155,17 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       color: 'blue',
     },
     {
-      url: 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/',
+      url: 'https://docs.a-just.beta.gouv.fr/prenez-en-main-votre-espace/',
       title: 'Prenez en main votre espace',
       color: 'green',
     },
     {
-      url: 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/',
+      url: 'https://docs.a-just.beta.gouv.fr/pilotez-votre-juridiction/',
       title: 'Pilotez votre juridiction',
       color: 'red',
     },
     {
-      url: 'https://docs.a-just.beta.gouv.fr/construire-le-futur/',
+      url: 'https://docs.a-just.beta.gouv.fr/cas-dusage/',
       title: 'Cas d’usage',
       color: 'yellow',
     },
