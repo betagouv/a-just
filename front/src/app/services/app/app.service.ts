@@ -31,6 +31,10 @@ export class AppService {
   tooltipsOpenId: BehaviorSubject<string | null> = new BehaviorSubject<
     string | null
   >(null)
+  /**
+   * Mettre un grand loader
+   */
+  appLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
   constructor() {
     this.initToastrConfig()
@@ -38,21 +42,21 @@ export class AppService {
 
   initToastrConfig() {
     toastr.options = {
-      "closeButton": false,
-      "debug": false,
-      "newestOnTop": false,
-      "progressBar": false,
-      "positionClass": "toast-top-center",
-      "preventDuplicates": false,
-      "onclick": null,
-      "showDuration": "300",
-      "hideDuration": "1000",
-      "timeOut": "5000",
-      "extendedTimeOut": "1000",
-      "showEasing": "swing",
-      "hideEasing": "linear",
-      "showMethod": "fadeIn",
-      "hideMethod": "fadeOut"
+      closeButton: false,
+      debug: false,
+      newestOnTop: false,
+      progressBar: false,
+      positionClass: 'toast-top-center',
+      preventDuplicates: false,
+      onclick: null,
+      showDuration: '300',
+      hideDuration: '2000',
+      timeOut: '1000',
+      extendedTimeOut: '1000',
+      showEasing: 'swing',
+      hideEasing: 'linear',
+      showMethod: 'fadeIn',
+      hideMethod: 'fadeOut',
     }
   }
 

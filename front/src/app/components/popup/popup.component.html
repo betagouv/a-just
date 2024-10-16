@@ -4,24 +4,26 @@
             <ng-container *ngTemplateOutlet="titleTemplate || defaultTitleTemplate"></ng-container>
             <div class="flex-1"></div>
             <div *ngIf="closeIcon" class="close" (click)="onClose.emit()">
-                <i class="material-icons pointer">close</i>
+                <label>Fermer</label><i class="material-icons pointer">close</i>
             </div>
         </div>
         <div class="content">
             <ng-content></ng-content>
         </div>
         <div class="actions {{ removeShadow }}" *ngIf="actions.length + actionsLeft.length > 0">
-            <button *ngFor="let action of actionsLeft" (click)="onSelectAction(action)" class="small" [ngClass]="{
+            <button *ngFor="let action of actionsLeft" (click)="onSelectAction(action)"
+                class="{{action.size ? action.size : 'small'}}" [ngClass]="{
                     'material-icons': action.type && action.type === 'icon',
                     red: action.red && action.red === true,
                     primary: !action.red,
                     fill: action.fill && action.fill === true,
                     outline: !action.fill
-                }">
+                    }">
                 {{ action.content }}
             </button>
             <div class="flex-1"></div>
-            <button *ngFor="let action of actions" (click)="onSelectAction(action)" class="small" [ngClass]="{
+            <button *ngFor="let action of actions" (click)="onSelectAction(action)"
+                class="{{action.size ? action.size : 'small'}}" [ngClass]="{
                     'material-icons': action.type && action.type === 'icon',
                     red: action.red && action.red === true,
                     primary: !action.red,

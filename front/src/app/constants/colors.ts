@@ -14,3 +14,5 @@ export const GET_COLOR = (color: string, opacity: number = 1) => {
 
   return color
 }
+
+export const OPACITY_20 = 0.2

@@ -25,6 +25,7 @@ import { UserService } from 'src/app/services/user/user.service'
 import { ACTIVITIES_SHOW_LEVEL_4 } from 'src/app/constants/log-codes'
 import { KPIService } from 'src/app/services/kpi/kpi.service'
 import { MIN_DATE_SELECT } from 'src/app/constants/activities'
+import { OPACITY_20 } from 'src/app/constants/colors'
 
 /**
  * Composant page activité
@@ -126,6 +127,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Id du sous-contentieux selectionné
    */
   selectedReferentielId: number = 0
+  /**
+   * Opacité background des contentieux
+   */
+  OPACITY = OPACITY_20
 
   /**
    * Intro JS Steps
@@ -674,7 +679,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       path: url,
       subTitle: '',
       printSubTitle: false,
-      bgColor: this.userService.referentielMappingColorActivityByInterface(label),
+      bgColor: this.userService.referentielMappingColorActivityByInterface(label, OPACITY_20),
       closeColor: 'black',
     })
   }
@@ -741,9 +746,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   setItemBgColor(label: string, elementId: number, remove: boolean = false) {
     const element = document.querySelector(`#item-${elementId}`) as HTMLElement
-    const tmpColor = this.userService.referentielMappingColorActivityByInterface(label).replace(/[^\d,]/g, '').split(',')
+    const tmpColor = this.userService.referentielMappingColorActivityByInterface(this.userService.referentielMappingNameByInterface(label)).replace(/[^\d,]/g, '').split(',')
     tmpColor.pop()
-    tmpColor.push('0.4')
+    tmpColor.push('0.1')
     const bgColor = `rgba(${tmpColor.join(',')})`
 
     if (element) {

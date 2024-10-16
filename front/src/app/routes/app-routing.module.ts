@@ -5,6 +5,7 @@ import { CanDeactivateGuardService } from './canDeactivate-guard-service'
 import { ReaffectatorPage } from './reaffectator/reaffectator.page'
 import { SimulatorPage } from './simulator/simulator.page'
 import { AppTypeGuard } from './app-type-guard.service'
+import { AverageEtpDisplayerPage } from './average-etp/average-etp-displayer/average-etp-displayer.page'
 
 const routes: Routes = [
   {
@@ -61,7 +62,7 @@ const routes: Routes = [
     canActivate: [AuthGuard, AppTypeGuard],
   },
   {
-    path: 'calculateur',
+    path: 'cockpit',
     loadChildren: () =>
       import('./calculator/calculator.module').then(
         (mod) => mod.CalculatorModule
@@ -101,6 +102,12 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'referentiel-de-temps/:id',
+    component: AverageEtpDisplayerPage,
+    canActivate: [AuthGuard, AppTypeGuard],
+    canDeactivate: [CanDeactivateGuardService],
+  },
+  {
     path: 'simulateur',
     component: SimulatorPage,
     canActivate: [AuthGuard, AppTypeGuard],
@@ -115,9 +122,7 @@ const routes: Routes = [
   {
     path: 'panorama',
     loadChildren: () =>
-      import('./panorama/panorama.module').then(
-        (mod) => mod.PanoramaModule
-      ),
+      import('./panorama/panorama.module').then((mod) => mod.PanoramaModule),
     canActivate: [AuthGuard, AppTypeGuard],
   },
   {
@@ -130,9 +135,7 @@ const routes: Routes = [
   {
     path: 'plan-du-site',
     loadChildren: () =>
-      import('./sitemap/sitemap.module').then(
-        (mod) => mod.SiteMapModule
-      ),
+      import('./sitemap/sitemap.module').then((mod) => mod.SiteMapModule),
   },
   {
     path: 'mentions-legales',
@@ -144,9 +147,7 @@ const routes: Routes = [
   {
     path: 'donnees-personnelles',
     loadChildren: () =>
-      import('./privacy/privacy.module').then(
-        (mod) => mod.PrivacyModule
-      ),
+      import('./privacy/privacy.module').then((mod) => mod.PrivacyModule),
   },
   {
     path: 'declaration-accessibilite',
@@ -158,30 +159,21 @@ const routes: Routes = [
   {
     path: 'contact',
     loadChildren: () =>
-      import('./contact/contact.module').then(
-        (mod) => mod.ContactModule
-      ),
+      import('./contact/contact.module').then((mod) => mod.ContactModule),
   },
   {
     path: 'stats',
     loadChildren: () =>
-      import('./stats/stats.module').then(
-        (mod) => mod.StatsModule
-      ),
+      import('./stats/stats.module').then((mod) => mod.StatsModule),
   },
   {
     path: 'logout',
     loadChildren: () =>
-      import('./logout/logout.module').then(
-        (mod) => mod.LogoutModule
-      ),
+      import('./logout/logout.module').then((mod) => mod.LogoutModule),
   },
   {
     path: 'conditions-generales-d-utilisation',
-    loadChildren: () =>
-      import('./cgu/cgu.module').then(
-        (mod) => mod.CGUModule
-      ),
+    loadChildren: () => import('./cgu/cgu.module').then((mod) => mod.CGUModule),
   },
   {
     path: 'centre-d-aide',
@@ -190,6 +182,11 @@ const routes: Routes = [
         (mod) => mod.HelpCenterModule
       ),
     canActivate: [AuthGuard, AppTypeGuard],
+  },
+  {
+    path: '**',
+    redirectTo: '/connexion',
+    pathMatch: 'full',
   },
 ]
 
@@ -200,5 +197,4 @@ const routes: Routes = [
   providers: [AuthGuard, AppTypeGuard, CanDeactivateGuardService],
   exports: [RouterModule],
 })
-
-export class AppRoutingModule { }
+export class AppRoutingModule {}

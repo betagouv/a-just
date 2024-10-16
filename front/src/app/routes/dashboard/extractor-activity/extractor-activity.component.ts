@@ -185,7 +185,7 @@ export class ExtractorActivityComponent extends MainClass {
    * @returns
    */
   generateFormatedDataMonth(act: any, monthTabName: string, total = false) {
-    const sortCodeArray = act.contentieux.code_import
+    const sortCodeArray =(act.contentieux.code_import||'')
       .split('.').filter((y: String) => y !== '').map((x: string) => x === '0' ? 0.1 : Number(x))
 
     const ref = this.humanResourceService.contentieuxReferentielOnly.value.map(x => x.id).includes(act.idReferentiel) === true ? true : false

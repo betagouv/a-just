@@ -15,6 +15,8 @@ import jsPDF from 'jspdf'
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_URL,
+  IMPORT_ETP_TEMPLATE,
+  IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
 } from 'src/app/constants/documentation'
@@ -32,6 +34,7 @@ import { Title } from '@angular/platform-browser'
 import { downloadFile } from 'src/app/utils/system'
 import { DateSelectorinterface } from 'src/app/interfaces/date'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
+import { ServerService } from 'src/app/services/http-server/server.service'
 
 declare const Quill: any
 
@@ -219,6 +222,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private appService: AppService,
     private titlePlatform: Title,
     private activitiesService: ActivitiesService,
+    private serverService: ServerService
   ) {
     super()
 
@@ -247,8 +251,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * On Changes titles
    */
   ngOnChanges() {
-
-    this.titlePlatform.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + this.title)
+    this.titlePlatform.setTitle(
+      (this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + this.title
+    )
   }
 
   /**
@@ -292,6 +297,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   onChangeHRBackup(id: number) {
     this.humanResourceService.backupId.next(id)
+    this.router.navigate(['/panorama'])
   }
 
   /**
@@ -484,9 +490,11 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * Methode à disposition pour forcer l'ouverture du paneau, pratique pour un appel exterieur du composant
    * @param documentation
    */
-  onForcePanelHelperToShow(documentation: DocumentationInterface | null, opened: boolean = true) {
-    if (documentation)
-      this.documentationToShow = documentation
+  onForcePanelHelperToShow(
+    documentation: DocumentationInterface | null,
+    opened: boolean = true
+  ) {
+    if (documentation) this.documentationToShow = documentation
     this.panelHelper = opened
   }
 
@@ -503,10 +511,21 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.pageSelected.emit(path)
   }
 
-  downloadAsset(type: string, download = false) {
+  async downloadAsset(type: string, download = false) {
     let url = null
-    if (type === 'nomenclature') url = this.userService.isCa() ? NOMENCLATURE_DOWNLOAD_URL_CA : NOMENCLATURE_DOWNLOAD_URL
+    if (type === 'nomenclature')
+      url = this.userService.isCa()
+        ? NOMENCLATURE_DOWNLOAD_URL_CA
+        : NOMENCLATURE_DOWNLOAD_URL
     else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL
+    else if (type === 'fiche-agent')
+      url = this.userService.isCa()
+        ? IMPORT_ETP_TEMPLATE_CA
+        : IMPORT_ETP_TEMPLATE
+
+    await this.serverService.post('centre-d-aide/log-documentation-link', {
+      value: url,
+    })
 
     if (url) {
       if (download) {
@@ -518,10 +537,18 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   }
 
   /**
- * Changement de la date via le selecteur
- * @param date
- */
+   * Changement de la date via le selecteur
+   * @param date
+   */
   changeMonth(date: Date) {
     this.activitiesService.activityMonth.next(date)
+  }
+
+  /**
+   * Resize le wrapper lorsqu'il n'y a plus de news active
+   * @param elem
+   */
+  refreshHeight(elem: any) {
+    elem.style['padding-top'] = '0px'
   }
 }

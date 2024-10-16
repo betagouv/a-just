@@ -1,4 +1,4 @@
-<div class="group-first-row">
+<div id="group-first-row" class="group-first-row">
   <div class="first-row" [style.background-color]="category ? getBgCategoryColor(category && category.label) : null"
     [style.border-bottom-color]="category ? getCategoryColor(category && category.label) : null">
     <div id="backButton">
@@ -17,35 +17,18 @@
   </div>
 </div>
 
-<div class="second-row">
+<div id="second-row" class="second-row">
   <div class="left-second-row">
     <div class="user-name">
       <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['firstName'] + 'px' }">
-        <span id="input-span-firstName"></span>
-        <input
-          id="firstName"
-          #firstNameDom
-          #input
-          [placeholder]="'Prénom'"
-          [ngModel]="currentHR?.firstName" 
-          (ngModelChange)="completeFormWithDomObject('firstName', $event)"
-          (keydown)="preventSubmit($event)"
-          (keyup.enter)="focusNext($event)"
-          (input)="adjustInputWidth($event, 'firstName')"
-        />
+        <input id="firstName" #firstNameDom #input [placeholder]="'Prénom'" [ngModel]="currentHR?.firstName"
+          (ngModelChange)="completeFormWithDomObject('firstName', $event)" (keydown)="preventSubmit($event)"
+          (keyup.enter)="focusNext($event)" (input)="adjustInputWidth($event, 'firstName')" />
       </div>
       <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['lastName'] + 'px' }">
-        <span id="input-span-lastName"></span>
-        <input
-          id="lastName"
-          #input
-          [placeholder]="'Nom'"
-          [ngModel]="currentHR?.lastName" 
-          (ngModelChange)="completeFormWithDomObject('lastName', $event)"
-          (keydown)="preventSubmit($event)"
-          (keyup.enter)="focusNext($event)"
-          (input)="adjustInputWidth($event, 'lastName')"
-        />
+        <input id="lastName" #input [placeholder]="'Nom'" [ngModel]="currentHR?.lastName"
+          (ngModelChange)="completeFormWithDomObject('lastName', $event)" (keydown)="preventSubmit($event)"
+          (keyup.enter)="focusNext($event)" (input)="adjustInputWidth($event, 'lastName')" />
       </div>
       <mat-icon class="iconPen no-print cursor-pointer"
         (click)="onFocus(firstNameDom)">drive_file_rename_outline</mat-icon>
@@ -55,14 +38,8 @@
     </div>
     <div class="last-row">
       <div class="matricule">
-        <input
-          id="matricule"
-          #matriculeDom 
-          [placeholder]="'Matricule (facultatif)'"
-          [ngModel]="currentHR?.matricule" 
-          (ngModelChange)="completeFormWithDomObject('matricule', $event)"
-          (keydown)="keyPress($event);"
-        />
+        <input id="matricule" #matriculeDom [placeholder]="'Matricule (facultatif)'" [ngModel]="currentHR?.matricule"
+          (ngModelChange)="completeFormWithDomObject('matricule', $event)" (keydown)="keyPress($event);" />
         <mat-icon class="iconPenSmall no-print cursor-pointer"
           (click)="onFocus(matriculeDom)">drive_file_rename_outline</mat-icon>
       </div>

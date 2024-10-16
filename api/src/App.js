@@ -171,10 +171,10 @@ export default class App extends AppBase {
             'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
             'frame-src': [
-              'https://app.videas.fr/', 
-              'https://docs.a-just.beta.gouv.fr', 
-              'https://meta.a-just.beta.gouv.fr', 
-              'https://forms-eu1.hsforms.com/', 
+              'https://app.videas.fr/',
+              'https://docs.a-just.beta.gouv.fr',
+              'https://meta.a-just.beta.gouv.fr',
+              'https://forms-eu1.hsforms.com/',
               'https://calendly.com',
             ],
             'object-src': ["'self'"],
@@ -197,13 +197,13 @@ export default class App extends AppBase {
         xContentTypeOptions: 'nosniff',
         xDnsPrefetchControl: false,
         xDownloadOptions: false,
-        xFrameOptions: { action: 'sameorigin' },
+        xFrameOptions: { action: 'deny' },
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
         //xXssProtection: 1, don't work
       }),
       async (ctx, next) => {
-        console.log('Client IP', ctx.request.ip)
+        //console.log('Client IP', ctx.request.ip)
         ctx.set('x-xss-protection', '1')
 
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {

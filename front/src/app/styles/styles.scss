@@ -117,14 +117,23 @@ body {
 	color: fColor(cred);
 }
 
+.height-8 {
+	height: 8px;
+}
+
+.height-80 {
+	height: 80px;
+}
+
 // FOR WINDOWS ONLY
 
 body:not(.iIOS) .window-scrool-width-margin {
-	margin-right: 10px;
+	margin-right: 17px;
 }
 
 // global vars
 
-.global-tooltiptext *, .global-tooltiptext * * {
+.global-tooltiptext *,
+.global-tooltiptext * * {
 	color: white !important;
 }

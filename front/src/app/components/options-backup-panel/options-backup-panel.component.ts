@@ -9,6 +9,7 @@ import { BackupInterface } from 'src/app/interfaces/backup'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { dataInterface } from '../select/select.component'
+import { Router } from '@angular/router'
 
 /**
  * Composant de la liste des sauvegardes des options (temps moyens / dossier)
@@ -27,6 +28,10 @@ export class OptionsBackupPanelComponent
    * Autoriser à changer ou non la sauvergarde actuelle
    */
   @Input() readOnly: boolean = false
+  /**
+   * Autoriser à changer ou non la sauvergarde actuelle
+   */
+  @Input() category: string = ''
   /**
    * Ecoute de la variable de largeur du composant
    */
@@ -50,9 +55,12 @@ export class OptionsBackupPanelComponent
 
   /**
    * Constructeur qui écoute tous les changements
-   * @param contentieuxOptionsService 
+   * @param contentieuxOptionsService
    */
-  constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
+  constructor(
+    private contentieuxOptionsService: ContentieuxOptionsService,
+    private router: Router
+  ) {
     super()
 
     this.watch(
@@ -77,6 +85,7 @@ export class OptionsBackupPanelComponent
    * A la destruction supprimer les watcher
    */
   ngOnDestroy() {
+    this.contentieuxOptionsService.optionsIsModify.next(false)
     this.watcherDestroy()
   }
 
@@ -114,8 +123,8 @@ export class OptionsBackupPanelComponent
 
   /**
    * Sélection d'une nouvelle sauvegarde
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   onChangeBackup(id: any[]) {
     if (
@@ -147,14 +156,31 @@ export class OptionsBackupPanelComponent
 
   /**
    * Demande de sauvegarde des nouvelles données saisies
-   * @param isCopy 
+   * @param isCopy
    */
   onSaveHR(isCopy: boolean = false) {
-    this.contentieuxOptionsService.onSaveDatas(isCopy)
+    this.contentieuxOptionsService
+      .onSaveDatas(isCopy, this.category)
+      .then((x) => {
+        if (isCopy && x !== null) {
+          this.contentieuxOptionsService.optionsIsModify.next(false)
+        }
+        if (
+          isCopy === false &&
+          x !== null &&
+          this.contentieuxOptionsService.openedFromCockpit.getValue().value !==
+            true
+        )
+          this.router.navigate(['/temps-moyens'])
+      })
+    if (
+      this.contentieuxOptionsService.openedFromCockpit.getValue().value === true
+    )
+      this.contentieuxOptionsService.onFollowComparaison.next(true)
   }
 
-  async onSendAllActivity(elem:any){
-    await this.contentieuxOptionsService.onSendAllActivity(elem)
+  async onSendAllActivity(elem: any) {
+    //await this.contentieuxOptionsService.onSendAllActivity(elem)
   }
   /**
    * Demande de création d'une sauvegarde vide
@@ -180,15 +206,15 @@ export class OptionsBackupPanelComponent
   /**
    * Télécharger le referentiel au format excel
    */
-  downloadTemplate(){
+  downloadTemplate() {
     this.contentieuxOptionsService.downloadTemplate()
   }
 
   /**
    * Ouvre le selecteur de fichier
    */
-  openFilePicker(){
-    document.getElementById('filePicker')!.click();
-    document.getElementById('trigger-drop-down')!.click();
+  openFilePicker() {
+    document.getElementById('filePicker')!.click()
+    document.getElementById('trigger-drop-down')!.click()
   }
 }
