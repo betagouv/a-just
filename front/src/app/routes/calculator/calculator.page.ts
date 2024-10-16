@@ -301,6 +301,10 @@ export class CalculatorPage
    * Date minimum selectionnable
    */
   minDateSelectable: Date = new Date(2021, 0, 1)
+  /**
+   * Detect if last month is loading
+   */
+  checkLastMonthLoading: boolean = false
 
   /**
    * Constructeur
@@ -492,23 +496,22 @@ export class CalculatorPage
   /**
    * Demande au serveur quelle est la dernière date des datas
    */
-  onCheckLastMonth() {
+  async onCheckLastMonth(force = false) {
     if (
-      this.calculatorService.dateStart.getValue() === null &&
-      this.referentiel.length
+      ((!force && this.calculatorService.dateStart.getValue() === null) ||
+        force) &&
+      !this.checkLastMonthLoading
     ) {
-      this.activitiesService.getLastMonthActivities().then((date) => {
-        if (date === null) {
-          date = new Date()
-        }
-
-        date = new Date(date ? date : '')
+      this.checkLastMonthLoading = true
+      return this.activitiesService.getLastMonthActivities().then((date) => {
+        date = new Date(date || null)
         const max = month(date, 0, 'lastday')
         this.maxDateSelectionDate = max
 
         const min = month(max, -11)
         this.calculatorService.dateStart.next(min)
         this.calculatorService.dateStop.next(max)
+        this.checkLastMonthLoading = false
         this.onLoadComparaisons()
       })
     }
@@ -1145,6 +1148,10 @@ export class CalculatorPage
         )
 
         let dateEndIsPast = false
+        if (!this.maxDateSelectionDate) {
+          await this.onCheckLastMonth(true)
+        }
+
         if (this.dateStop && this.maxDateSelectionDate) {
           dateEndIsPast = isDateBiggerThan(
             this.dateStop,
