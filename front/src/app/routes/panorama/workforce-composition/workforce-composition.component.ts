@@ -30,11 +30,10 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
 }
 
 interface cleInterface {
-  juridiction_id: number,
-  category_id: number,
+  juridiction_id: number
+  category_id: number
   value: number
 }
-
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -46,7 +45,8 @@ interface cleInterface {
 })
 export class WorkforceCompositionComponent
   extends MainClass
-  implements OnChanges {
+  implements OnChanges
+{
   /**
    * Filter categories to view
    */
@@ -63,11 +63,16 @@ export class WorkforceCompositionComponent
    * Cle
    */
   cleByCategory: cleInterface[] | null = null
+  /**
+   * on add delay to time out
+   */
+  onTimeoutLoad: any[] = [null, null, null]
 
   /**
    * Constructor
    */
-  constructor(private humanResourceService: HumanResourceService,
+  constructor(
+    private humanResourceService: HumanResourceService,
     private serverService: ServerService
   ) {
     super()
@@ -141,26 +146,44 @@ export class WorkforceCompositionComponent
     }
   }
 
-  saveCLE(value: EventTarget | null, category: listFormatedWithDatasInterface) {
+  saveCLE(
+    value: EventTarget | null,
+    category: listFormatedWithDatasInterface,
+    index: number
+  ) {
+    if (this.onTimeoutLoad && this.onTimeoutLoad[index]) {
+      clearTimeout(this.onTimeoutLoad[index])
+    }
+
     if (value) {
-      const value = (document.getElementById("cle-" + category.categoryId) as HTMLInputElement).value
-      const res = this.serverService
-        .put('juridictions-details/update-cle',
-          {
+      const value = (
+        document.getElementById(
+          'cle-' + category.categoryId
+        ) as HTMLInputElement
+      ).value
+      this.onTimeoutLoad[index] = setTimeout(() => {
+        this.onTimeoutLoad[index] = null
+        const res = this.serverService
+          .put('juridictions-details/update-cle', {
             juridictionId: this.humanResourceService.backupId.getValue(),
             categoryId: category.categoryId,
-            value: ((document.getElementById("cle-" + category.categoryId) as HTMLInputElement).value)
+            value: (
+              document.getElementById(
+                'cle-' + category.categoryId
+              ) as HTMLInputElement
+            ).value,
           })
-        .then((r) => {
-          return r.data
-        })
+          .then((r) => {
+            return r.data
+          })
+      }, 500)
     }
   }
 
   getCLE(category: listFormatedWithDatasInterface) {
     if (this.humanResourceService.backupId.getValue()) {
       let res = null
-      this.cleByCategory?.map(x => {
+      this.cleByCategory?.map((x) => {
         if (x.category_id === category.categoryId) res = x.value
       })
       return res
@@ -171,10 +194,9 @@ export class WorkforceCompositionComponent
 
   async getAllCle() {
     this.cleByCategory = await this.serverService
-      .post('juridictions-details/get-cle',
-        {
-          juridictionId: this.humanResourceService.backupId.getValue(),
-        })
+      .post('juridictions-details/get-cle', {
+        juridictionId: this.humanResourceService.backupId.getValue(),
+      })
       .then((r) => {
         return r.data
       })
