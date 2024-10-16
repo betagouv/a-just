@@ -80,6 +80,7 @@ export default class App extends AppBase {
     this.koaApp.context.models = this.models
     // (session) - required for cookie signature generation
     this.koaApp.keys = ['dmlkdmlsqkdmkqmlqskdqmldkmqlsdqkml']
+    this.koaApp.proxy = true // Si vous utilisez un reverse proxy (comme nginx)
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
