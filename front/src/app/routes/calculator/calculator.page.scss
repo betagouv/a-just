@@ -157,6 +157,14 @@
             height: 190px;
             overflow: auto;
 
+            @media screen and (max-height: 680px) {
+              height: 100px;
+            }
+
+            @media screen and (max-height: 580px) {
+              height: 50px;
+            }
+
             .color-greffe {
               color: #a558a0;
             }
@@ -290,6 +298,7 @@
     #circle {
       width: 60px;
       height: 60px;
+      min-height: 60px;
       background: #ececfe;
       border-radius: 70px;
       margin: auto;
