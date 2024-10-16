@@ -519,6 +519,12 @@ export class CalculatorPage
    */
   onLoadComparaisons(selectedByLabel: string | null = null) {
     this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then((l) => {
+      // clean list from brokens saves
+      l = l.filter(
+        (item) =>
+          item.datas && (item.datas.dateStart || item.datas.referentielId)
+      )
+
       let refs = this.referentiels
       let indexRef = -1
       do {
@@ -1157,6 +1163,23 @@ export class CalculatorPage
             true
           )
         }
+        console.log(
+          dateEndIsPast,
+          this.dateStop,
+          this.maxDateSelectionDate,
+          isDateBiggerThan(
+            this.dateStop || new Date(),
+            this.maxDateSelectionDate || new Date(),
+            true
+          ),
+          this.optionDateStop,
+          this.maxDateSelectionDate,
+          isDateBiggerThan(
+            this.optionDateStop || new Date(),
+            this.maxDateSelectionDate || new Date(),
+            true
+          )
+        )
 
         this.appService.appLoading.next(false)
         const nextRangeString = `${this.getRealValue(
