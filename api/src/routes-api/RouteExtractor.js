@@ -1,7 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import {
-  addSumLine,
   autofitColumns,
   computeExtract,
   computeExtractDdg,
@@ -26,7 +25,7 @@ export default class RouteExtractor extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor(params) {
+  constructor (params) {
     super({ ...params, model: 'HumanResources' })
   }
 
@@ -46,7 +45,7 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async filterList(ctx) {
+  async filterList (ctx) {
     let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
@@ -77,7 +76,7 @@ export default class RouteExtractor extends Route {
     console.timeEnd('extractor-5')
 
     console.time('extractor-6')
-    let onglet1 = await computeExtract(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
+    let onglet1 = await computeExtract(this.models, cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
 
     const absenteismeList = []
@@ -111,7 +110,16 @@ export default class RouteExtractor extends Route {
     console.timeEnd('extractor-6.2')
 
     console.time('extractor-7')
-    let onglet2 = await computeExtractDdg(cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
+    let onglet2 = await computeExtractDdg(
+      this.models,
+      cloneDeep(allHuman),
+      flatReferentielsList,
+      categories,
+      categoryFilter,
+      juridictionName,
+      dateStart,
+      dateStop
+    )
     console.timeEnd('extractor-7')
 
     console.time('extractor-8')
@@ -137,7 +145,7 @@ export default class RouteExtractor extends Route {
       tproxs,
       onglet1: { values: onglet1, columnSize: columnSize1 },
       onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
-      allJuridiction
+      allJuridiction,
     })
 
     this.sendOk(ctx, {
@@ -146,7 +154,7 @@ export default class RouteExtractor extends Route {
       onglet1: { values: onglet1, columnSize: columnSize1 },
       onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
       allJuridiction,
-      viewModel
+      viewModel,
     })
   }
 
@@ -163,14 +171,13 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async juridictionAjustedDataList(ctx) {
+  async juridictionAjustedDataList (ctx) {
     let { dateStart /*, dateStop */ } = this.body(ctx)
     let result = []
 
-    await this.models.HRBackups.getAll()
-      .then(async (res) => {
-        res.map(async (elem) => {
-          await this.models.Activities.getByMonth(dateStart, elem.id)
+    await this.models.HRBackups.getAll().then(async (res) => {
+      res.map(async (elem) => {
+        await this.models.Activities.getByMonth(dateStart, elem.id)
           .then((res) => {
             if (res.length) {
               for (let i = 0; i < res.length; i++) {
@@ -194,7 +201,7 @@ export default class RouteExtractor extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async filterListAct(ctx) {
+  async filterListAct (ctx) {
     let { backupId, dateStart, dateStop } = this.body(ctx)
 
     if (!Access.isAdmin(ctx)) {
@@ -231,7 +238,6 @@ export default class RouteExtractor extends Route {
     let sumTab = []
 
     Object.keys(sum).map((key) => {
-
       sumTab.push({
         periode: replaceIfZero(last(sum[key]).periode),
         entrees: sumBy(sum[key], 'ajustedIn'),

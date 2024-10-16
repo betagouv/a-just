@@ -70,6 +70,12 @@
   }
 }
 
+.introjs-tooltiptext {
+  p {
+    margin-bottom: 8px;
+  }
+}
+
 .introjs-bullets ul li a {
   background-color: fColor(cblue) !important;
 }
@@ -78,6 +84,11 @@
 
 .intro-js-video {
   width: 100%;
+  min-width: 500px;
   margin-top: 16px;
   height: auto !important;
+
+  &.small-video {
+    height: 250px !important;
+  }
 }

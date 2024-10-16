@@ -53,7 +53,8 @@
         position: relative;
 
         input {
-            border-bottom: 2px solid #e5e5e5;
+            outline: none;
+            border-bottom: 2px solid #8d8d8d;
 
             &.changed {
                 color: #000091

@@ -26,11 +26,10 @@
     <div class="line-item {{header.elementColorClass}}">
         <input [value]="getFieldValue('lastStock',situation)" disabled />
     </div>
-    <div *ngIf="canViewMagistrat" class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
+    <div *ngIf="canViewMagistrat" class="line-item">
         <input [value]="getFieldValue('etpMag',situation)" disabled />
     </div>
-    <div *ngIf="canViewGreffier" class="line-item {{header.elementColorClass}}"
-        [ngClass]="{'selected': categorySelected === 'GREFFE'}">
+    <div *ngIf="canViewGreffier" class="line-item {{header.elementColorClass}}">
         <input [value]="getFieldValue('etpFon',situation)" disabled />
     </div>
     <div *ngIf="canViewContractuel" class="line-item">
@@ -39,11 +38,10 @@
     <div class="line-item {{header.elementColorClass}}">
         <input [value]="getFieldValue('realCoverage',situation)" disabled />
     </div>
-    <div class="line-item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
+    <div class="line-item">
         <input [value]="getFieldValue('realDTESInMonths',situation)" disabled />
     </div>
-    <div class="line-item {{header.elementColorClass}}"
-        [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
+    <div class="line-item {{header.elementColorClass}}">
         <input [value]="getFieldValue('magRealTimePerCase',situation)" disabled />
     </div>
 </div>

@@ -12,11 +12,36 @@ export interface BackupInterface {
 	 */
 	label: string;
 	/**
-	 * Date de dernière mise à jour de lui ou de ses enfants
+	 * Status local ou importé
+	 */
+	status: string;
+	/**
+	 * Type siege ou greffe
+	 */
+	type: string;
+	/**
+	 * Date de création
 	 */
 	date: Date;
+	/**
+ * Date de dernière mise à jour de lui ou de ses enfants
+ */
+	update: UpdateInterface;
 	/**
 	 * Interface du référentiel associé à la juridiction = contentieux
 	 */
 	referentiels: ContentieuReferentielInterface[]
+	/**
+	 * Nom du créateur du referentiel
+	 */
+	userName?: string
+	/**
+	 * Selectionné à l'affichage ou non
+	 */
+	selected?: boolean
+}
+
+export interface UpdateInterface {
+	date: Date;
+	user: Object;
 }

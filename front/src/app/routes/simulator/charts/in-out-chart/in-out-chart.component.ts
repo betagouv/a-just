@@ -480,7 +480,6 @@ export class InOutChartComponent implements OnDestroy {
           autocolors: false,
           annotation: {
             click: function (e: any, items: any) {
-              console.log('CLICK')
               if (items.length == 0) return
               items.chart.options.plugins.annotation.annotations.box1.display =
                 false

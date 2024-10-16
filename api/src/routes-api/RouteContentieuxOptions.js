@@ -63,14 +63,16 @@ export default class RouteContentieuxOptions extends Route {
       backupId: Types.number().required(),
       backupName: Types.string().required(),
       juridictionId: Types.number().required(),
+      backupStatus: Types.string().required(),
+      type: Types.string().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async duplicateBackup (ctx) {
-    const { backupId, backupName, juridictionId } = this.body(ctx)
+    const { backupId, backupName, backupStatus, type, juridictionId } = this.body(ctx)
 
     if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {
-      this.sendOk(ctx, await this.model.models.OptionsBackups.duplicateBackup(backupId, backupName, juridictionId))
+      this.sendOk(ctx, await this.model.models.OptionsBackups.duplicateBackup(ctx.state.user.id, backupId, backupName, juridictionId, backupStatus, type))
     } else {
       this.sendOk(ctx, null)
     }
@@ -89,20 +91,20 @@ export default class RouteContentieuxOptions extends Route {
       backupId: Types.number(),
       backupName: Types.string(),
       juridictionId: Types.number().required(),
+      backupStatus: Types.string(),
+      type: Types.string().required(),
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
   async saveBackup (ctx) {
-    const { backupId, list, backupName, juridictionId } = this.body(ctx)
+    const { backupId, list, backupName, juridictionId, backupStatus, type } = this.body(ctx)
     if (
       (backupId && (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id))) ||
       (!backupId && (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)))
     ) {
+      const newId = await this.model.models.OptionsBackups.saveBackup(ctx.state.user.id, list, backupId, backupName, juridictionId, backupStatus, type)
 
-      const newId = await this.model.models.OptionsBackups.saveBackup(list, backupId, backupName, juridictionId)
-      
-      if (newId!== null)
-        await this.model.models.HistoriesContentieuxUpdate.addHistory(ctx.state.user.id, newId)
+      if (newId !== null) await this.model.models.HistoriesContentieuxUpdate.addHistory(ctx.state.user.id, newId)
 
       this.sendOk(ctx, newId)
     } else {

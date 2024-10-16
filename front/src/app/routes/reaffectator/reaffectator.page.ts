@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, ViewChild, HostListener } from '@angular/core'
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  HostListener,
+} from '@angular/core'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
@@ -14,7 +20,10 @@ import { WorkforceService } from 'src/app/services/workforce/workforce.service'
 import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
 import { ReaffectatorService } from 'src/app/services/reaffectator/reaffectator.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { getCategoryTitle, getCategoryTitlePlurial } from 'src/app/utils/category'
+import {
+  getCategoryTitle,
+  getCategoryTitlePlurial,
+} from 'src/app/utils/category'
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { Router } from '@angular/router'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
@@ -185,7 +194,10 @@ interface ContentieuReferentielCalculateInterface
 /**
  * Page de réaffectation
  */
-export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, IDeactivateComponent {
+export class ReaffectatorPage
+  extends MainClass
+  implements OnInit, OnDestroy, IDeactivateComponent
+{
   /**
    * Dom du wrapper
    * @param wrapper
@@ -287,9 +299,33 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
   introSteps: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
-      title: "Découvrir la fonctionnalité",
+      title: 'À quoi sert le simulateur des affectations ?',
       intro:
-        "<p>Explorez notre vidéo explicative du \"<b>simulateur des affectations</b>\", orientée autour de deux cas d'usage : <b>réagir à une diminution des ETPT disponibles</b> et <b>prioriser un contentieux pour en améliorer les délais de traitement</b>.</p><video controls autoplay class=\"intro-js-video\"><source src=\"/assets/videos/video-reaffectateur.mp4\" type=\"video/mp4\" /></video>",
+        '<p>Cet écran qui se présente comme le ventilateur en mode « nuit », c’est-à-dire simulation, vous permet <b>d’adapter finement l’affectation de vos effectifs, à ressources constantes</b>, sur les différents contentieux, <b>en visualisant instantanément l’impact de votre projet de réorganisation sur les délais de traitement du contentieux que vous voulez renforcer</b> mais aussi sur les autres matières que vous allez de ce fait nécessairement dégarnir.</p><p><b>Toutes vos actions sur cet écran n’ont aucun impact sur la ventilation actuelle de vos agents</b> : ce ne sont que des projections.</p>',
+    },
+    {
+      target: '#content .container .title',
+      title: 'Choisissez la date et la catégorie d’agent',
+      intro:
+        '<p>afin de déterminer <b>le champ d’application des hypothèses que vous allez jouer.</b> Comme dans le ventilateur, en modifiant la date dans le calendrier, vous affichez la liste <b>des agents présents selon leur catégorie ainsi que la ventilation de leur ETPT</b> sur les différents contentieux à la date choisie. Vous pouvez <b>filtrer par fonction ou contentieux</b> selon vos besoins.</p>',
+    },
+    {
+      target: '#content .container .title .search-bar',
+      title: 'Rechercher',
+      intro:
+        '<p>Vous pouvez également rechercher un agent de façon nominative</p>',
+    },
+    {
+      target: '#content .container .indicators',
+      title: 'Vos indicateurs d’impact affichent',
+      intro:
+        "<p>pour chaque contentieux, la situation à la date choisie : <ul><li>des <b>ETPT affectés</b></li><li> du <b>taux de couverture et du DTES exprimé en nombre de mois</b></li></ul> issue des <b>données d'activité</b> et <b>d’effectifs</b> enregistrées dans A-JUST. La projection sera d’autant plus précise et fine que vous aurez actualisé ces éléments, en fonction des informations dont vous disposez, dans le ventilateur et l'écran de données d’activité.<br/> Vous pouvez renseigner la <b>valeur cible d’ETPT</b> que vous souhaitez atteindre dans un contentieux.</p>",
+    },
+    {
+      target: '#wrapper-contener',
+      title: 'Découvrir la fonctionnalité',
+      intro:
+        '<p>Explorez notre vidéo explicative du "<b>simulateur des affectations</b>", orientée autour de deux cas d\'usage : <b>réagir à une diminution des ETPT disponibles</b> et <b>prioriser un contentieux pour en améliorer les délais de traitement</b>.</p><video controls autoplay class="intro-js-video"><source src="/assets/videos/video-reaffectateur.mp4" type="video/mp4" /></video>',
     },
   ]
 
@@ -315,7 +351,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
   popupAction = [
     { id: 'leave', content: 'Quitter sans exporter' },
     { id: 'export', content: 'Exporter en PDF et quitter', fill: true },
-  ];
+  ]
 
   /**
    * A l'initialisation chercher les variables globals puis charger
@@ -340,8 +376,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
             this.reaffectatorService.selectedCategoriesId !== null
               ? [this.reaffectatorService.selectedCategoriesId]
               : this.formFilterSelect.length
-                ? [this.formFilterSelect[0].id]
-                : []
+              ? [this.formFilterSelect[0].id]
+              : []
           )
         }
       )
@@ -356,11 +392,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
   }
 
   canDeactivate(nextState: string) {
-    const modified = this.listFormated.filter(elem => {
-      return elem.hrFiltered.some(hr => hr.isModify)
+    const modified = this.listFormated.filter((elem) => {
+      return elem.hrFiltered.some((hr) => hr.isModify)
     })
-    if (modified.length === 0)
-      return true
+    if (modified.length === 0) return true
 
     this.isLeaving = true
     this.nextState = nextState
@@ -375,14 +410,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
           this.forceDeactivate = true
           this.router.navigate([this.nextState])
         }
-        break;
+        break
       case 'export':
         {
           this.isLeaving = false
           this.forceDeactivate = true
           this.onExport()
         }
-        break;
+        break
     }
   }
 
@@ -396,14 +431,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
 
       if (itemBlock && itemBlock.hrFiltered) {
         console.log(itemBlock.hrFiltered)
-        c.value = `${itemBlock.hrFiltered.length} ${itemBlock.hrFiltered.length > 1 ? (c.orignalValuePlurial || c.orignalValue) : c.orignalValue
-          } (${fixDecimal(
-            sumBy(itemBlock.hrFiltered || [], function (h) {
-              const etp = h.etp - h.hasIndisponibility
-              return etp > 0 ? etp : 0
-            }),
-            100
-          )} ETPT)`
+        c.value = `${itemBlock.hrFiltered.length} ${
+          itemBlock.hrFiltered.length > 1
+            ? c.orignalValuePlurial || c.orignalValue
+            : c.orignalValue
+        } (${fixDecimal(
+          sumBy(itemBlock.hrFiltered || [], function (h) {
+            const etp = h.etp - h.hasIndisponibility
+            return etp > 0 ? etp : 0
+          }),
+          100
+        )} ETPT)`
       }
 
       if (c.id === this.reaffectatorService.selectedCategoriesId) {
@@ -462,7 +500,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     let selectedReferentielIds: number[] | null = null
     if (
       this.formReferentiel.length !==
-      this.reaffectatorService.selectedReferentielIds.length &&
+        this.reaffectatorService.selectedReferentielIds.length &&
       this.formReferentiel.length !== 0
     ) {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
@@ -686,7 +724,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
     this.workforceService.dateSelected.next(date)
     this.onFilterList()
     this.kpiService.register(DATE_REAFECTATOR, date)
-
   }
 
   /**
@@ -712,13 +749,15 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
 
     this.wrapper
       ?.exportAsPdf(
-        `Simulation-D-Affectation_par ${this.userService.user.getValue()!.firstName
+        `Simulation-D-Affectation_par ${
+          this.userService.user.getValue()!.firstName
         }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
           .toJSON()
           .slice(0, 10)}.pdf`,
         true,
         true,
-        `Simulation d'affectation par ${this.userService.user.getValue()!.firstName
+        `Simulation d'affectation par ${
+          this.userService.user.getValue()!.firstName
         } ${this.userService.user.getValue()!.lastName} - le ${(
           date.getDate() + ''
         ).padStart(2, '0')} ${this.getShortMonthString(
@@ -727,8 +766,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
       )
       .then(() => {
         this.duringPrint = false
-        if (this.forceDeactivate)
-          this.router.navigate([this.nextState])
+        if (this.forceDeactivate) this.router.navigate([this.nextState])
       })
   }
 
@@ -878,23 +916,21 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
             id: r.id,
             label: r.label,
             averageProcessingTime: null,
-            averageProcessingTimeFonc: null,
           },
         })
-          ; (r.childrens || [])
-            .filter((rc: ContentieuReferentielInterface) => rc.percent)
-            .map((rc: ContentieuReferentielInterface) => {
-              list.push({
-                id: -1,
-                percent: rc.percent || 0,
-                contentieux: {
-                  id: rc.id,
-                  label: rc.label,
-                  averageProcessingTime: null,
-                  averageProcessingTimeFonc: null,
-                },
-              })
+        ;(r.childrens || [])
+          .filter((rc: ContentieuReferentielInterface) => rc.percent)
+          .map((rc: ContentieuReferentielInterface) => {
+            list.push({
+              id: -1,
+              percent: rc.percent || 0,
+              contentieux: {
+                id: rc.id,
+                label: rc.label,
+                averageProcessingTime: null,
+              },
             })
+          })
       })
 
     const humanId = hr.id
@@ -988,17 +1024,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy, ID
   }
 
   /**
-  * Récuperer le type de l'app
-  */
+   * Récuperer le type de l'app
+   */
   getInterfaceType() {
     return this.userService.interfaceType === 1
   }
 
   /**
-* Mapping des noms de contentieux selon l'interface
-* @param label 
-* @returns 
-*/
+   * Mapping des noms de contentieux selon l'interface
+   * @param label
+   * @returns
+   */
   referentielMappingNameByInterface(label: string) {
     if (this.getInterfaceType() === true)
       return this.referentielCAMappingName(label)

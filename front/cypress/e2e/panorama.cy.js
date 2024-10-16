@@ -10,8 +10,7 @@ describe('Panorama page', () => {
           .should('contain.text', 'Panorama')
           .should('contain.text', 'Ventilateur')
           .should('contain.text', "Données d'activité")
-          .should('contain.text', 'Temps moyens')
-          .should('contain.text', 'Calculateur')
+          .should('contain.text', 'Cockpit')
           .should('contain.text', 'Simulateur')
           .should('contain.text', 'Outils')
           .should('contain.text', 'Aide')
@@ -22,8 +21,9 @@ describe('Panorama page', () => {
           .get('.sub-tools')
           .should('contain.text', 'La nomenclature')
           .should('contain.text', 'La calculatrice')
-          .should('contain.text', "L'extracteur de données d'effectifs")
-          .should('contain.text', "L'extracteur de données d'activité")        
+          .should('contain.text', "Les extracteurs")
+          .should('contain.text', 'Référentiels de temps moyens')
+
     })
 
     it("Check that we have two tabs = 'Effectifs' and 'Données d'activité", () => {

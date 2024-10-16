@@ -22,7 +22,7 @@ import { PopupModule } from './popup/popup.module'
 import { PanelActivitiesModule } from './panel-activities/panel-activities.module'
 import { SelectModule } from './select/select.module'
 import { DateSelectModule } from './date-select/date-select.module';
-import { DocCardComponent } from './doc-card/doc-card.component'
+import { DocCardComponent } from './doc-card/doc-card.component';
 
 /**
  * Liste des composants à importer

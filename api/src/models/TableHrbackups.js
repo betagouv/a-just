@@ -139,7 +139,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
     //console.log('\n\n\n\n\n\n\n\n\n\n\n\nLIST:', list)
-    //list.map((elem) => console.log('id:', elem.id, ' | label:', elem.label))
+    //list.map((elem) => console.log('id:', elem.id, ' | label:', elem.label))
     //console.log('\n\n\n\n\n\n\n\n\n\n\n\n')
     return list
   }

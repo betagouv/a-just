@@ -3,7 +3,6 @@ import {
   referentielMappingName,
   referentielCAMappingName,
   referentielMappingColor,
-  referentielCAMappingColor,
   referentielMappingColorActivity,
   referentielMappingColorCAActivity,
 } from '../utils/referentiel'
@@ -24,8 +23,14 @@ import {
   getCategoryColor,
   MAGISTRATS,
 } from '../constants/category'
-import { ETP_NEED_TO_BE_UPDATED, VALUE_QUALITY_GOOD, VALUE_QUALITY_OPTION, VALUE_QUALITY_TO_COMPLETE, VALUE_QUALITY_TO_VERIFY } from '../constants/referentiel'
-import { PLACEHOLDER_COLOR } from '../constants/colors'
+import {
+  ETP_NEED_TO_BE_UPDATED,
+  VALUE_QUALITY_GOOD,
+  VALUE_QUALITY_OPTION,
+  VALUE_QUALITY_TO_COMPLETE,
+  VALUE_QUALITY_TO_VERIFY,
+} from '../constants/referentiel'
+import { OPACITY_20, PLACEHOLDER_COLOR } from '../constants/colors'
 
 /**
  * Class principal pour simplifier les doublons de méthodes générales
@@ -49,10 +54,11 @@ export class MainClass {
   FONCTIONNAIRES = FONCTIONNAIRES
   ETP_NEED_TO_BE_UPDATED = ETP_NEED_TO_BE_UPDATED
   PLACEHOLDER_COLOR = PLACEHOLDER_COLOR
-  VALUE_QUALITY_OPTION = VALUE_QUALITY_OPTION;
-  VALUE_QUALITY_GOOD = VALUE_QUALITY_GOOD;
-  VALUE_QUALITY_TO_COMPLETE = VALUE_QUALITY_TO_COMPLETE;
-  VALUE_QUALITY_TO_VERIFY = VALUE_QUALITY_TO_VERIFY;
+  VALUE_QUALITY_OPTION = VALUE_QUALITY_OPTION
+  VALUE_QUALITY_GOOD = VALUE_QUALITY_GOOD
+  VALUE_QUALITY_TO_COMPLETE = VALUE_QUALITY_TO_COMPLETE
+  VALUE_QUALITY_TO_VERIFY = VALUE_QUALITY_TO_VERIFY
+  OPACITY_20 = OPACITY_20
 
   /**
    * Methode d'arrondi
@@ -98,7 +104,7 @@ export class MainClass {
     this.watcherList.map((w) => {
       try {
         w.unsubscribe()
-      } catch (err) { }
+      } catch (err) {}
     })
   }
 
@@ -110,8 +116,8 @@ export class MainClass {
   }
 
   /**
- * Methode de reprise des noms de référentiel CA
- */
+   * Methode de reprise des noms de référentiel CA
+   */
   public referentielCAMappingName(name: string): string {
     return referentielCAMappingName(name)
   }
@@ -126,12 +132,15 @@ export class MainClass {
   }
 
   /**
- * Methode de reprise des couleur des référentiel
- * @param name
- * @returns
- */
-  public referentielCAMappingColor(name: string, opacity: number = 1): string {
-    return referentielCAMappingColor(name, opacity)
+   * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
+   * @param name
+   * @returns
+   */
+  public referentielMappingColorActivity(
+    name: string,
+    opacity: number = 1
+  ): string {
+    return referentielMappingColorActivity(name, opacity)
   }
 
   /**
@@ -139,16 +148,10 @@ export class MainClass {
    * @param name
    * @returns
    */
-  public referentielMappingColorActivity(name: string, opacity: number = 1): string {
-    return referentielMappingColorActivity(name, opacity)
-  }
-
-  /**
-  * Methode de reprise des couleur des référentiel pour l'écran "Données d'activité"
-  * @param name
-  * @returns
-  */
-  public referentielMappingColorCAActivity(name: string, opacity: number = 1): string {
+  public referentielMappingColorCAActivity(
+    name: string,
+    opacity: number = 1
+  ): string {
     return referentielMappingColorCAActivity(name, opacity)
   }
 
@@ -303,7 +306,10 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getMonth(date: Date | null | undefined = new Date(), monthAdd: number = 0): Date {
+  public getMonth(
+    date: Date | null | undefined = new Date(),
+    monthAdd: number = 0
+  ): Date {
     return month(date, monthAdd)
   }
 
@@ -406,5 +412,12 @@ export class MainClass {
           (detalScrollY || 0),
       })
     }
+  }
+
+  /**
+   * floor
+   */
+  public floor(value: number) {
+    return Math.floor(value)
   }
 }

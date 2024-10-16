@@ -21,6 +21,41 @@
   padding: 4px 8px;
   cursor: pointer;
 
+  &.new-fonction {
+    border-color: #dddddd;
+    display: flex;
+    height: 32px;
+    padding: 0;
+    border: solid 1px #ddd;
+    background-color: #fff;
+
+    p {
+      margin-right: 7px;
+    }
+
+    .title {
+      padding: 4px 4px 4px 8px;
+      color: #3a3a3a;
+      font-size: 14px;
+    }
+
+    .value {
+      display: none;
+    }
+
+    div {
+      position: relative;
+      left: 0px;
+      border-left: solid 1px #dddddd;
+
+      mat-icon {
+        margin-left: 0px;
+        color: #929292;
+        margin: 8px;
+      }
+    }
+  }
+
   &.large {
     width: auto;
   }

@@ -5,8 +5,16 @@ import {
   monthDiffList,
   nbOfDays,
   stringToDecimalDate,
+  today,
 } from 'src/app/utils/dates'
-import { Component, OnInit, HostListener, ViewChild, OnDestroy } from '@angular/core'
+import {
+  Component,
+  OnInit,
+  HostListener,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core'
+
 import { dataInterface } from 'src/app/components/select/select.component'
 import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
 import { SimulatorInterface } from 'src/app/interfaces/simulator'
@@ -31,6 +39,10 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ServerService } from 'src/app/services/http-server/server.service'
+import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
+import { sleep } from 'src/app/utils'
+import { PeriodSelectorComponent } from './period-selector/period-selector.component'
+import { position } from 'html2canvas/dist/types/css/property-descriptors/position'
 
 /**
  * Variable ETP magistrat field name
@@ -77,7 +89,11 @@ const etpFonToDefine = '[un volume moyen de]'
 })
 export class SimulatorPage
   extends MainClass
-  implements OnInit, IDeactivateComponent, OnDestroy {
+  implements OnInit, IDeactivateComponent, OnDestroy
+{
+  @ViewChild('periodSelector') periodSelector:
+    | PeriodSelectorComponent
+    | undefined
   /**
    * Wrapper de page contenant le simulateur
    */
@@ -196,12 +212,12 @@ export class SimulatorPage
     isComingBack: boolean
     isClosingTab: boolean
   } = {
-      isLeaving: false, // L'utilisateur change d'onglet
-      isReseting: false, // L'utilisateur réinitialise la simulation
-      isResetingParams: false, // L'utilisateur réinitialise les paramètres ajusté
-      isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
-      isClosingTab: false, // L'utilisateur ferme la fenêtre
-    }
+    isLeaving: false, // L'utilisateur change d'onglet
+    isReseting: false, // L'utilisateur réinitialise la simulation
+    isResetingParams: false, // L'utilisateur réinitialise les paramètres ajusté
+    isComingBack: false, // L'utilisateur revient en arrière depuis le bouton retour
+    isClosingTab: false, // L'utilisateur ferme la fenêtre
+  }
   /**
    * Liste des actions possibles
    */
@@ -212,12 +228,12 @@ export class SimulatorPage
     closeTab: string
     leave: string
   } = {
-      reinit: 'réinitialiser',
-      reinitAll: 'tout réinitialiser',
-      return: 'retour',
-      closeTab: 'close',
-      leave: 'sort',
-    }
+    reinit: 'réinitialiser',
+    reinitAll: 'tout réinitialiser',
+    return: 'retour',
+    closeTab: 'close',
+    leave: 'sort',
+  }
 
   /**
    * Nom de la prochaine route lors d'un changement de page
@@ -236,7 +252,8 @@ export class SimulatorPage
    */
   documentationUrl = {
     main: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
-    whiteSimulator: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
+    whiteSimulator:
+      'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
   }
 
   /**
@@ -273,9 +290,9 @@ export class SimulatorPage
     | { id: string; content: string; fill?: undefined }
     | { id: string; content: string; fill: boolean }
   )[] = [
-      { id: '', content: '' },
-      { id: '', content: '', fill: true },
-    ]
+    { id: '', content: '' },
+    { id: '', content: '', fill: true },
+  ]
 
   printPopup: boolean = false
 
@@ -382,6 +399,224 @@ export class SimulatorPage
 
   onReloadAction = false
   /**
+   * Intro JS Steps par défaut
+   */
+  introStepsDefault: IntroJSStep[] = [
+    {
+      target: '#wrapper-contener',
+      title: 'Comment simuler votre trajectoire avec A-JUST ?',
+      intro:
+        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls autoplay class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('aj-back-button a')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
+    },
+    {
+      target: '.second-pan .blue-pan',
+      title: 'Choisissez le type de simulation',
+      intro:
+        '<p>Vous pouvez <b>effectuer une simulation en utilisant les données renseignées dans A-JUST</b>, c’est ce que nous vous recommandons pour une vision fine de la trajectoire de votre ' +
+        (this.isTJ() ? 'juridiction' : "cour d'appel") +
+        ' sur des contentieux avec des données pré-alimentées par A-JUST.</p>',
+    },
+    {
+      target: '#panel-empty-simulator',
+      title: 'Choisissez le type de simulation',
+      intro:
+        '<p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.</p>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('aj-back-button a')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
+    },
+    {
+      target: '.categories-switch',
+      title: 'Configurez votre hypothèse',
+      intro:
+        '<p>Choisissez la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe</p>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('#on-button-continue')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
+    },
+    {
+      target: '.action-simulator-bar',
+      title: 'Configurez votre hypothèse',
+      intro:
+        '<p>Sélectionnez un <b>contentieux</b> dans le menu déroulant. Suivant votre besoin, vous pouvez affiner votre simulation en sélectionnant un sous-contentieux voire une fonction spécifique</p>',
+      beforeLoad: async (intro: any) => {
+        const introTooltip = document.querySelector('.introjs-tooltip')
+        if (introTooltip) {
+          // @ts-ignore
+          introTooltip.style.visibility = 'hidden'
+        }
+        setTimeout(() => {
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            introTooltip.classList.add('introjs-bottom-left-aligned')
+            introTooltip.classList.remove('introjs-floating')
+            // @ts-ignore
+            introTooltip.style.left = '0px'
+            // @ts-ignore
+            introTooltip.style.top = '85px'
+            // @ts-ignore
+            introTooltip.style.marginLeft = '0'
+            // @ts-ignore
+            introTooltip.style.marginTop = '0'
+            // @ts-ignore
+            introTooltip.style.visibility = 'visible'
+          }
+        }, 380)
+      },
+      options: {
+        position: 'bottom',
+      },
+    },
+    {
+      target: '.container-timeline-button',
+      title: 'Configurez votre hypothèse',
+      intro:
+        '<p>Déterminez une <b>date de début et de fin de période</b>, c’est à dire la date ou les dates du futur sur lesquelles vous souhaitez vous projeter</p>',
+    },
+    {
+      target: '#editable-sim-name',
+      title: 'Nommez votre simulation :',
+      intro:
+        '<p>C’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+      beforeLoad: async (intro: any) => {
+        const introTooltip = document.querySelector('.introjs-tooltip')
+        if (introTooltip) {
+          // @ts-ignore
+          introTooltip.style.visibility = 'hidden'
+        }
+        setTimeout(() => {
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            introTooltip.classList.add('introjs-bottom-left-aligned')
+            introTooltip.classList.remove('introjs-floating')
+            // @ts-ignore
+            introTooltip.style.left = '0px'
+            // @ts-ignore
+            introTooltip.style.top = '45px'
+            // @ts-ignore
+            introTooltip.style.marginLeft = '0'
+            // @ts-ignore
+            introTooltip.style.marginTop = '0'
+            // @ts-ignore
+            introTooltip.style.visibility = 'visible'
+          }
+        }, 380)
+      },
+      options: {
+        position: 'bottom',
+      },
+    },
+  ]
+  /**
+   * Intro JS Steps du simulateur à blanc
+   */
+  introStepsWhiteSimulator: IntroJSStep[] = [
+    {
+      target: '#wrapper-contener',
+      title: 'La simulation sans données pré-alimentées',
+      intro:
+        '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas suivies dans A-JUST comme les activités administratives ou du soutien, les activités du Parquet, ou les contentieux qui ne seraient pas isolés dans A-JUST.</p>',
+    },
+    {
+      target: '.date-bar-container',
+      title: 'Configurez votre hypothèse :',
+      intro:
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à laquelle vous souhaitez vous projeter (ex : atteindre un stock de X dossier dans 12 mois).</p>',
+      beforeLoad: async (intro: any) => {
+        if (this.periodSelector) {
+          const now = today()
+          now.setMonth(now.getMonth() + 12)
+          this.periodSelector.updateDateSelected('dateStop', now, false)
+        }
+      },
+    },
+    {
+      target: 'aj-editable-situation',
+      title: 'Renseignez vos données d’activité :',
+      intro:
+        '<p>Renseignez <b>librement les données d’entrées, de sorties, de stock et d’ETPT</b> pour mesurer l’impact d’un changement à venir. <b>Tous les champs ne sont pas à alimenter</b>, vous les adapterez à votre connaissance de la situation actuelle du service ou aux besoins de votre simulation.</p><p>Dès lors que suffisamment de champs sont renseignés, notre algorithme effectue les calculs utiles et les champs non renseignés (par ex. taux de couverture/DTES ou TMD) se remplissent automatiquement. Vous pouvez "<b>valider</b>" pour figer cette situation de départ ou "<b>effacer</b>" si vous souhaitez la modifier.</p><p>Une petite astuce : pour calculer les entrées/sorties moyennes mensuelles, faites-le sur une période relativement longue, idéalement de plusieurs mois voire une année, pour qu’elles soient les plus représentatives et effacent les effets saisonniers.</p>',
+      beforeLoad: async (intro: any) => {
+        const introTooltip = document.querySelector('.introjs-tooltip')
+        if (introTooltip) {
+          // @ts-ignore
+          introTooltip.style.visibility = 'hidden'
+        }
+        setTimeout(() => {
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            introTooltip.classList.add('introjs-bottom-left-aligned')
+            introTooltip.classList.remove('introjs-floating')
+            // @ts-ignore
+            introTooltip.style.left = '0px'
+            // @ts-ignore
+            introTooltip.style.top = '176px'
+            // @ts-ignore
+            introTooltip.style.marginLeft = '0'
+            // @ts-ignore
+            introTooltip.style.marginTop = '0'
+            // @ts-ignore
+            introTooltip.style.visibility = 'visible'
+          }
+        }, 380)
+      },
+      options: {
+        position: 'bottom',
+      },
+    },
+    {
+      target: '#editable-sim-name',
+      title: 'Nommez votre simulation :',
+      intro:
+        '<p>C’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+      beforeLoad: async (intro: any) => {
+        const introTooltip = document.querySelector('.introjs-tooltip')
+        if (introTooltip) {
+          // @ts-ignore
+          introTooltip.style.visibility = 'hidden'
+        }
+        setTimeout(() => {
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            introTooltip.classList.add('introjs-bottom-left-aligned')
+            introTooltip.classList.remove('introjs-floating')
+            // @ts-ignore
+            introTooltip.style.left = '0px'
+            // @ts-ignore
+            introTooltip.style.top = '45px'
+            // @ts-ignore
+            introTooltip.style.marginLeft = '0'
+            // @ts-ignore
+            introTooltip.style.marginTop = '0'
+            // @ts-ignore
+            introTooltip.style.visibility = 'visible'
+          }
+        }, 380)
+      },
+      options: {
+        position: 'bottom',
+      },
+    },
+  ]
+
+  /**
    * Constructeur
    */
   constructor(
@@ -470,6 +705,13 @@ export class SimulatorPage
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon)
   }
 
+  /**
+   * Detect is TJ
+   * @returns
+   */
+  isTJ() {
+    return this.userService.interfaceType !== 1
+  }
 
   /**
    * Détection de la fermeture de la fenêtre
@@ -482,7 +724,6 @@ export class SimulatorPage
     }
   }
 
-
   @HostListener('window:popstate', ['$event'])
   onPopState(event: Event) {
     if (!this.chooseScreen) {
@@ -490,7 +731,6 @@ export class SimulatorPage
       this.resetParams()
     }
   }
-
 
   /**
    * Destruction du composant
@@ -530,7 +770,7 @@ export class SimulatorPage
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
-        console.log('Situation actuelle : ', d)
+        //console.log('Situation actuelle : ', d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue()
       })
@@ -538,7 +778,7 @@ export class SimulatorPage
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
-        console.log('Situation proj : ', d)
+        //console.log('Situation proj : ', d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue()
       })
@@ -546,8 +786,7 @@ export class SimulatorPage
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
         if (d !== null) {
-          console.log('Situation simu : ', d)
-
+          //console.log('Situation simu : ', d)
           this.simulatedSationData = d
           const findTitle = document.getElementsByClassName('simulation-title')
           const findElement = document.getElementById('content')
@@ -768,9 +1007,8 @@ export class SimulatorPage
     this.startRealValue = ''
     this.stopRealValue = ''
     this.mooveClass = ''
-    this.documentation.path = this.documentationUrl.main,
-
-      this.toDisplaySimulation = false
+    ;(this.documentation.path = this.documentationUrl.main),
+      (this.toDisplaySimulation = false)
     //this.simulatorService.situationSimulated.next(null)
     document.getElementById('init-button')?.click()
 
@@ -1000,11 +1238,11 @@ export class SimulatorPage
           ? this.buttonSelected.id === 'lastStock'
             ? 0
             : this.buttonSelected.id === 'realDTESInMonths'
-              ? 0
-              : -1
-          : parseFloat(volumeInput) >= 0
-            ? parseFloat(volumeInput)
+            ? 0
             : -1
+          : parseFloat(volumeInput) >= 0
+          ? parseFloat(volumeInput)
+          : -1
     else if (
       this.valueToAjust.value !== '' &&
       String(this.valueToAjust.value) !== 'NaN'
@@ -1123,7 +1361,7 @@ export class SimulatorPage
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param1.value) -
-        parseFloat(projectedValue as string)
+          parseFloat(projectedValue as string)
       )
     if (
       id === 'realCoverage' &&
@@ -1131,7 +1369,7 @@ export class SimulatorPage
     )
       return this.percantageWithSign(
         parseFloat(this.paramsToAjust.param2.value) -
-        parseFloat(projectedValue as string)
+          parseFloat(projectedValue as string)
       )
 
     return this.paramsToAjust.param1.label === id
@@ -1139,8 +1377,8 @@ export class SimulatorPage
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
       : this.percantageWithSign(this.paramsToAjust.param2.percentage)
-        ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
-        : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
+      ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
+      : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
   }
 
   /**
@@ -1164,7 +1402,7 @@ export class SimulatorPage
       Math.round(
         (((parseFloat(result) - parseFloat(initialValue)) * 100) /
           parseFloat(initialValue as string)) *
-        100
+          100
       ) / 100
     if (!isFinite(roundedValue)) return 'NA'
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
@@ -1448,9 +1686,9 @@ export class SimulatorPage
         const objSecond =
           find && find.secondLocked
             ? find.secondLocked.find(
-              (obj: any) =>
-                obj.locked === this.pickersParamsToLock[paramNumber]
-            )
+                (obj: any) =>
+                  obj.locked === this.pickersParamsToLock[paramNumber]
+              )
             : null
         if (objSecond) {
           this.toDisplay = objSecond.toDisplay
@@ -1557,11 +1795,13 @@ export class SimulatorPage
         ?.label.replace(' ', '_')
       const editableName = document.getElementById('editable-sim-name')
 
-      const filename = `${editableName?.innerText === '' ? 'Simulation' : editableName?.innerText
-        }${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${this.userService.user.getValue()!.firstName
-        }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-          .toJSON()
-          .slice(0, 10)}.pdf`
+      const filename = `${
+        editableName?.innerText === '' ? 'Simulation' : editableName?.innerText
+      }${contentieuLabel ? '-' + contentieuLabel + '_' : '-A-JUST_'}par ${
+        this.userService.user.getValue()!.firstName
+      }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+        .toJSON()
+        .slice(0, 10)}.pdf`
 
       const title = document.getElementById('print-title')
       if (title) {
@@ -1591,7 +1831,6 @@ export class SimulatorPage
       if (exportButton1) {
         exportButton1.classList.add('display-none')
       }
-
 
       const ajWrapper = document.getElementById('simu-wrapper')
       if (ajWrapper) ajWrapper?.classList.add('full-screen')
@@ -1632,9 +1871,12 @@ export class SimulatorPage
       return new Promise((resolve, reject) => {
         setTimeout(() => resolve('Export done'), 200)
       })
-    }
-    else {
-      alert('Le commentaire que vous avez saisi comprend ' + this.commentaire.length + ' charactères. Il dépasse la limite de 20000 charactères autorisés.')
+    } else {
+      alert(
+        'Le commentaire que vous avez saisi comprend ' +
+          this.commentaire.length +
+          ' charactères. Il dépasse la limite de 20000 charactères autorisés.'
+      )
       return new Promise((resolve, reject) => {
         setTimeout(() => reject('Comment too long'), 100)
       })
@@ -1733,7 +1975,7 @@ export class SimulatorPage
     return (
       Math.trunc(
         Number(this.getFieldValue(param, data, initialValue, toCompute)) *
-        100000
+          100000
       ) / 100000
     )
   }
@@ -1754,11 +1996,11 @@ export class SimulatorPage
   getLockedResultedParams(index: number) {
     return index === 0
       ? this.simulatorService.getLabelTranslation(
-        this.paramsToLock.param1.label
-      )
+          this.paramsToLock.param1.label
+        )
       : this.simulatorService.getLabelTranslation(
-        this.paramsToLock.param2.label
-      )
+          this.paramsToLock.param2.label
+        )
   }
 
   /**
@@ -1952,7 +2194,6 @@ export class SimulatorPage
           break
         case 'export':
           {
-            console.log('Exporting...')
             this.printPopup = false
             this.forceDeactivate = true
             this.onResetUserAction()
@@ -1984,19 +2225,15 @@ export class SimulatorPage
       })
   }
 
-
   /**
    * Log du lancement d'une simulation à blanc
    */
   async logOpenSimulator() {
     history.pushState({}, 'simulateur', '/simulateur')
-    await this.serverService
-      .post('simulator/log-simulation')
-      .then((r) => {
-        return r.data
-      })
+    await this.serverService.post('simulator/log-simulation').then((r) => {
+      return r.data
+    })
   }
-
 
   /**
    * Log du lancement d'une simulation
@@ -2020,7 +2257,6 @@ export class SimulatorPage
       })
   }
 
-
   /**
    * Demande de rechargement de la page
    */
@@ -2035,17 +2271,17 @@ export class SimulatorPage
   }
 
   /**
-  * Récuperer le type de l'app
-  */
+   * Récuperer le type de l'app
+   */
   getInterfaceType() {
     return this.userService.interfaceType === 1
   }
 
   /**
-* Mapping des noms de contentieux selon l'interface
-* @param label 
-* @returns 
-*/
+   * Mapping des noms de contentieux selon l'interface
+   * @param label
+   * @returns
+   */
   referentielMappingNameByInterface(label: string) {
     if (this.getInterfaceType() === true)
       return this.referentielCAMappingName(label)
@@ -2054,10 +2290,9 @@ export class SimulatorPage
 
   /**
    * Changmenet de l'url de la documentation selon le simulateur sélectionnée
-   * @param docUrl 
+   * @param docUrl
    */
   setDocUrl(docUrl: string) {
     this.documentation.path = docUrl
   }
 }
-

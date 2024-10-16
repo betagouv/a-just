@@ -3,9 +3,9 @@ import { environment } from 'src/environments/environment'
 
 /**
  * Calcul du nombre de mois entre deux dates
- * @param d1 
- * @param d2 
- * @returns 
+ * @param d1
+ * @param d2
+ * @returns
  */
 export function monthDiff(d1: Date, d2: Date) {
   var months
@@ -17,8 +17,8 @@ export function monthDiff(d1: Date, d2: Date) {
 
 /**
  * Retourne si la date est une journée de travail
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
 export function workingDay(date: Date) {
   return [1, 2, 3, 4, 5].indexOf(date.getDay()) !== -1
@@ -26,8 +26,8 @@ export function workingDay(date: Date) {
 
 /**
  * Recupération du mois en texte d'une date
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
 export function getMonthString(date: Date | string) {
   if (typeof date === 'string') {
@@ -50,9 +50,9 @@ export function getMonthString(date: Date | string) {
 }
 
 /**
- * Récupération du mois en texte d'une date en version raccourcie 
- * @param date 
- * @returns 
+ * Récupération du mois en texte d'une date en version raccourcie
+ * @param date
+ * @returns
  */
 export function getShortMonthString(date: Date | string) {
   if (typeof date === 'string') {
@@ -76,8 +76,8 @@ export function getShortMonthString(date: Date | string) {
 
 /**
  * Conversion d'une mois raccourcie en mois réel
- * @param shortString 
- * @returns 
+ * @param shortString
+ * @returns
  */
 export function getLongMonthString(shortString: string) {
   switch (shortString) {
@@ -111,8 +111,8 @@ export function getLongMonthString(shortString: string) {
 
 /**
  * Conversion d'une date à l'heure 00 de la journée
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
 export function today(date: Date | null | undefined = new Date()): Date {
   let now = new Date()
@@ -124,10 +124,10 @@ export function today(date: Date | null | undefined = new Date()): Date {
 
 /**
  * Conversion d'une date au jour 0 et l'heure 0
- * @param date 
- * @param monthToAdd 
+ * @param date
+ * @param monthToAdd
  * @param lastDay prendre le dernier jour du mois
- * @returns 
+ * @returns
  */
 export function month(
   date: Date | null = new Date(),
@@ -135,8 +135,8 @@ export function month(
   lastDay?: string
 ) {
   date = date ? new Date(date) : new Date()
-  
-  if(lastDay) {
+
+  if (lastDay) {
     date = endOfMonth(date)
   } else {
     date = startOfMonth(date)
@@ -149,12 +149,11 @@ export function month(
   return date
 }
 
-
 /**
  * Calcul du nombre de jours travaillés entre 2 dates
- * @param startDate 
- * @param endDate 
- * @returns 
+ * @param startDate
+ * @param endDate
+ * @returns
  */
 export function nbOfWorkingDays(startDate: Date, endDate: Date) {
   const start = new Date(startDate)
@@ -168,8 +167,8 @@ export function nbOfWorkingDays(startDate: Date, endDate: Date) {
 
 /**
  * Conversion des millieseconds en jours
- * @param ms 
- * @returns 
+ * @param ms
+ * @returns
  */
 const convertMsToDays = (ms: number) => {
   const msInOneSecond = 1000
@@ -186,9 +185,9 @@ const convertMsToDays = (ms: number) => {
 
 /**
  * Calcul du nombre de jours entre 2 dates
- * @param startDate 
- * @param endDate 
- * @returns 
+ * @param startDate
+ * @param endDate
+ * @returns
  */
 export function nbOfDays(startDate: Date, endDate: Date) {
   startDate = new Date(startDate)
@@ -202,12 +201,11 @@ export function nbOfDays(startDate: Date, endDate: Date) {
   return convertMsToDays(differenceInMs)
 }
 
-
 /**
  * Ajout ou soustraction d'un nombre de jour à une date
- * @param date 
- * @param nbDays 
- * @returns 
+ * @param date
+ * @param nbDays
+ * @returns
  */
 export function dateAddDays(date: Date, nbDays: number = 0) {
   date = new Date(date)
@@ -217,8 +215,8 @@ export function dateAddDays(date: Date, nbDays: number = 0) {
 
 /**
  * Conversion d'une date en date string complête sauf si aujourd'hui
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
 export function findRealValue(date: Date) {
   const today = new Date()
@@ -236,10 +234,30 @@ export function findRealValue(date: Date) {
 }
 
 /**
+ * Conversion d'une date en date string complête sauf si aujourd'hui
+ * @param date
+ * @returns
+ */
+export function findRealValueCustom(date: Date) {
+  const today = new Date()
+  if (
+    today.getDate() === date.getDate() &&
+    today.getMonth() === date.getMonth() &&
+    today.getFullYear() === date.getFullYear()
+  ) {
+    return "Aujourd'hui"
+  } else if (date && typeof date.getMonth === 'function') {
+    return `${(date.getDate() + '').padStart(2, '0')} ${getMonthString(
+      date
+    )} ${date.getFullYear()}`
+  } else return ''
+}
+
+/**
  * Génération d'un tableau qui liste chaque mois entre deux dates sous forme de tableau
- * @param dateFrom 
- * @param dateTo 
- * @returns 
+ * @param dateFrom
+ * @param dateTo
+ * @returns
  */
 export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
   if (dateTo)
@@ -255,10 +273,10 @@ export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
 
 /**
  * Conversion d'une date en HH:MM en date fonction
- * @param str 
- * @returns 
+ * @param str
+ * @returns
  */
-export function stringToDecimalDate (str: string, sep ='h') {
+export function stringToDecimalDate(str: string, sep = 'h') {
   if (str !== null || str !== '') {
     const strArray = str.split(sep)
     return (parseInt(strArray[0]) * 60 + parseInt(strArray[1])) / 60
@@ -269,10 +287,13 @@ export function stringToDecimalDate (str: string, sep ='h') {
 
 /**
  * Conversion d'une date en HH:MM
- * @param decimal 
- * @returns 
+ * @param decimal
+ * @returns
  */
-export function decimalToStringDate(decimal: number | null | undefined, sep='h') {
+export function decimalToStringDate(
+  decimal: number | null | undefined,
+  sep = 'h'
+) {
   if (decimal != null) {
     const strArray = String(decimal).split('.')
     const dMin = decimal - parseInt(strArray[0])
@@ -285,9 +306,9 @@ export function decimalToStringDate(decimal: number | null | undefined, sep='h')
 
 /**
  * Création d'un tableau de mois différents entre 2 dates en string
- * @param startDate 
- * @param endDate 
- * @returns 
+ * @param startDate
+ * @param endDate
+ * @returns
  */
 export function getRangeOfMonths(startDate: Date, endDate: Date) {
   const dates = new Array<string>()
@@ -316,10 +337,10 @@ export function getRangeOfMonths(startDate: Date, endDate: Date) {
 
 /**
  * Création d'un objet de mois différents entre 2 dates
- * @param startDate 
- * @param endDate 
- * @param asObject 
- * @returns 
+ * @param startDate
+ * @param endDate
+ * @param asObject
+ * @returns
  */
 export function getRangeOfMonthsAsObject(
   startDate: Date,
@@ -361,8 +382,8 @@ export function getRangeOfMonthsAsObject(
 
 /**
  * Retourne si c'est le premier jour du mois
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
 export function isFirstDayOfMonth(date = new Date()) {
   return date.getDate() === 1
@@ -370,24 +391,28 @@ export function isFirstDayOfMonth(date = new Date()) {
 
 /**
  * Compare si la premiere date est plus ancienne que la seconde
- * @param firstDate 
- * @param secondDate 
- * @returns 
+ * @param firstDate
+ * @param secondDate
+ * @returns
  */
 export function isDateBiggerThan(
   firstDate: string | Date,
-  secondDate: string | Date
+  secondDate: string | Date,
+  strict: boolean = false
 ): boolean {
   firstDate = new Date(firstDate)
   secondDate = new Date(secondDate)
 
+  if (strict) {
+    return firstDate.getTime() > secondDate.getTime()
+  }
   return firstDate.getTime() >= secondDate.getTime()
 }
 
 /**
  * Calcul du nombre d'heure travaillé par un magistrat dans un mois
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
 export function nbHourInMonth(date: Date = new Date()) {
   const dateStart = new Date(date.getFullYear(), date.getMonth())
@@ -408,16 +433,18 @@ export function nbHourInMonth(date: Date = new Date()) {
 
 /**
  * Suppression de la time zone à une date
- * @param date 
- * @returns 
+ * @param date
+ * @returns
  */
-export function generalizeTimeZone(date: Date | undefined|null) {
-  if (date === undefined || date ===null) return undefined
-  else {return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())}
+export function generalizeTimeZone(date: Date | undefined | null) {
+  if (date === undefined || date === null) return undefined
+  else {
+    return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+  }
 }
 
-export function setTimeToMidDay(date: Date | undefined|null) {
-  if (date === undefined || date ===null) return undefined
+export function setTimeToMidDay(date: Date | undefined | null) {
+  if (date === undefined || date === null) return undefined
   date.setHours(12)
   date.setMinutes(0)
   date.setSeconds(0)
@@ -429,7 +456,6 @@ export function setTimeToMidDay(date: Date | undefined|null) {
   return date
 }
 
-
 /**
  * Trie entre deux dates
  * @param firstDate
@@ -437,11 +463,25 @@ export function setTimeToMidDay(date: Date | undefined|null) {
  * @param reverse
  * @returns
  */
-export function sortDates(firstDate: string | Date, secondDate: string | Date, reverse: boolean) {
+export function sortDates(
+  firstDate: string | Date,
+  secondDate: string | Date,
+  reverse: boolean
+) {
   firstDate = new Date(firstDate)
   secondDate = new Date(secondDate)
 
-  return (reverse ? secondDate.getTime() - firstDate.getTime() : firstDate.getTime() - secondDate.getTime())
+  return reverse
+    ? secondDate.getTime() - firstDate.getTime()
+    : firstDate.getTime() - secondDate.getTime()
 }
 
-
+/**
+ * Get time of date
+ * @param date
+ * @returns
+ */
+export function getTime(date: string | Date | null = null) {
+  date = new Date(date || '')
+  return date.getTime()
+}
