@@ -305,6 +305,19 @@ export default (sequelizeInstance, Model) => {
           } else situation.category_id = findCategory.id
         }
 
+        let findHRToDBByMatricule = await Model.findOne({
+          where: {
+            backup_id: backupId,
+            matricule: list[i].hmatricule,
+          },
+          logging: false,
+        })
+
+        if (list[i].hmatricule !== '' && findHRToDBByMatricule) {
+          importSituation.push(list[i].hmatricule + ' no add by matricule already existing')
+          continue
+        }
+
         switch (code) {
         case 'MHFJS':
           code = 'MHFJ'
