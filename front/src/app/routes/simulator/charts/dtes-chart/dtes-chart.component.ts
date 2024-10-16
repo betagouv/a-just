@@ -464,7 +464,7 @@ export class DtesChartComponent {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                100
+                  100
               )
               return '(' + percent + '%)'
             },
@@ -519,8 +519,8 @@ export class DtesChartComponent {
               z: 1,
               display: true,
               mirror: true,
-              labelOffset: -15,
-              padding: -3,
+              labelOffset: 0,
+              padding: 20,
               callback: (value: any, index: any, values: any) =>
                 index == values.length - 1 ? '' : value,
             },
@@ -622,16 +622,21 @@ export class DtesChartComponent {
           let higuerYPosition = value.y ? value.y : 0
           let higuerXPosition = value.x ? value.x : 0
 
-          if (value.pointIndex !== null)
-          // xScale.top
-          {
+          if (value.pointIndex !== null) {
+            // xScale.top
             higuerYPosition = Math.min(
-              this.myChart.getDatasetMeta(0).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(1).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(2).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(3).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(1).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(2).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(3).data[value.pointIndex as number]
+                .y | 0
             )
-            higuerXPosition = this.myChart.getDatasetMeta(0).data[value.pointIndex as number].x | 0
+            higuerXPosition =
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number]
+                .x | 0
           }
 
           this.myChart.tooltip.active = false
@@ -643,7 +648,9 @@ export class DtesChartComponent {
           tooltipElTriangle.style.left =
             Number(String(higuerXPosition).replace('px', '')) + 4 + 'px'
           tooltipElTriangle.style.top =
-            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) + 128 + 'px' //68
+            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) +
+            128 +
+            'px' //68
 
           this.tooltip.projectedStock =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
@@ -679,11 +686,8 @@ export class DtesChartComponent {
         }
 
         this.myChart.update()
-
       }
     })
-
-
   }
 
   /**
@@ -768,4 +772,3 @@ export class DtesChartComponent {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }
-

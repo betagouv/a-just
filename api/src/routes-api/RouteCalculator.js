@@ -68,11 +68,13 @@ export default class RouteCalculator extends Route {
       dateStop: Types.date().required(),
       contentieuxId: Types.number().required(),
       type: Types.string().required(),
+      fonctionsIds: Types.array(),
     }),
     accesses: [Access.canVewCalculator],
   })
   async rangeValues (ctx) {
-    let { backupId, dateStart, dateStop, contentieuxId, type } = this.body(ctx)
+    let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds } = this.body(ctx)
+    console.log('body', this.body(ctx))
     dateStart = month(dateStart)
     dateStop = month(dateStop)
     const hrList = await this.model.getCache(backupId)
@@ -112,9 +114,10 @@ export default class RouteCalculator extends Route {
         }
         break
       case 'stock':
+      case 'stocks':
         {
           const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
-          if (activites.length) {
+          if (activites && activites.length) {
             const acti = activites[0]
             if (acti.stock !== null) {
               list.push(acti.stock)
@@ -131,7 +134,13 @@ export default class RouteCalculator extends Route {
       case 'ETPTSiege':
         {
           const catId = type === 'ETPTSiege' ? 1 : type === 'ETPTGreffe' ? 2 : 3
-          const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart)
+          const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === catId)
+          let newFonctions = fonctionsIds
+          if ((newFonctions || []).every((fonctionId) => !fonctions.find((f) => f.id === fonctionId))) {
+            newFonctions = null
+          }
+
+          const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart, null, newFonctions)
           let hList = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], [catId], dateStart)
           let totalAffected = 0
           hList.map((agent) => {

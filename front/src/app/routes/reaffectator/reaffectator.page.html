@@ -17,7 +17,7 @@
         [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)" [defaultAllValue]="'Tous'">
       </aj-select>
       <div class="flex-1"></div>
-      <aj-input-button class="dark-mode" title="Rechercher un agent" placeholder="Rechercher" [ngModel]="searchValue"
+      <aj-input-button class="dark-mode search-bar" title="Rechercher un agent" placeholder="Rechercher" [ngModel]="searchValue"
         (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()" ngDefaultControl icon="">
       </aj-input-button>
       <div class="search-next" *ngIf="valuesFinded !== null">

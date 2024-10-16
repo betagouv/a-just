@@ -7,8 +7,8 @@
 
   <!-- POPUP CREATION -->
   <aj-popup *ngIf="onCreation===true" [closeIcon]="true"
-    (onClose)="onCreation = false;nameLength = 0; openedFromCockpit=false" [removeShadow]="'noShadow'"
-    class="border-radius fix-width-400">
+    (onClose)="onCreation = false;nameLength = 0; openedFromCockpit=false;this.enableImport = false;"
+    [removeShadow]="'noShadow'" class="border-radius fix-width-400">
     <div id="circle">
       <i class="ri-ball-pen-line"></i>
     </div>
@@ -41,8 +41,8 @@
     </button>
 
     <div class="actions">
-      <div *ngIf="onUpload" class="save" (click)="import()">Importer</div>
-      <div *ngIf="!onUpload" class="save" (click)="create(name.value,type.name)">Enregistrer</div>
+      <div *ngIf="onUpload" [ngClass]="{'enable': enableImport===true}" class="save" (click)="import()">Importer</div>
+      <div *ngIf="!onUpload" class="save enable" (click)="create(name.value,type.name)">Enregistrer</div>
     </div>
   </aj-popup>
 
@@ -61,7 +61,7 @@
     </div>
     <div class="actions">
       <div class="back" (click)="onDelete = false">Annuler</div>
-      <div class="save" (click)="remove()">Supprimer</div>
+      <div class="save enable" (click)="remove()">Supprimer</div>
     </div>
   </aj-popup>
 

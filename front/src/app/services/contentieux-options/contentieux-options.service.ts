@@ -286,6 +286,7 @@ export class ContentieuxOptionsService extends MainClass {
     let backupName = null
     if (isCopy) {
       backupName = prompt('Sous quel nom ?')
+      if (backupName===null) return null
     }
     return await this.serverService
       .post(`contentieux-options/save-backup`, {
