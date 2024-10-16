@@ -5,7 +5,7 @@ import { DocumentationInterface } from 'src/app/interfaces/documentation'
 import { MainClass } from 'src/app/libs/main-class'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { findRealValueCustom } from 'src/app/utils/dates'
+import { findRealValueCustom, getTime } from 'src/app/utils/dates'
 
 import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
 import { Location } from '@angular/common'
@@ -67,6 +67,10 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Ouverture provenant du cockpit
    */
   openedFromCockpit: boolean = false
+  /**
+   * Activer le bouton
+   */
+  enableImport: boolean = false
 
   /**
    * Constructor
@@ -93,7 +97,16 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
         console.log(b)
-        this.backups = orderBy(b, ['date'], ['desc'])
+        this.backups = orderBy(
+          b,
+          [
+            (val) => {
+              const date = val.update?.date || val.date
+              return getTime(date)
+            },
+          ],
+          ['desc']
+        )
         this.backups = this.backups.filter((x) => {
           if (x.type === 'GREFFE' && this.canViewGreffier) return true
           if (x.type === 'SIEGE' && this.canViewMagistrat) return true
@@ -216,6 +229,10 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
               dateStop: null,
               category: null,
             })
+          if (data)
+            setTimeout(() => {
+              this.goTo(data)
+            }, 100)
         })
     }
   }
@@ -258,6 +275,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
   async onSendAllActivity(elem: any) {
     try {
       await this.contentieuxOptionsService.onSendAllActivity(elem)
+      this.enableImport = true
     } catch (e) {
       let form = document.getElementById('form') as HTMLFormElement
       form?.reset()
@@ -288,15 +306,21 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     else if (!file) {
       alert('Vous devez saisir une fichier !')
     } else if (name.length > 0 && type.length > 0) {
+      this.enableImport = true
       await this.contentieuxOptionsService.createEmpy(
         false,
         name,
         'Importé',
         type
       )
-      await this.contentieuxOptionsService.onSaveDatas(false, type)
-      const backupId = this.contentieuxOptionsService.backupId.getValue()
-      if (backupId) this.goTo(backupId)
+      this.contentieuxOptionsService.onSaveDatas(false, type).then(() => {
+        const backupId = this.contentieuxOptionsService.backupId.getValue()
+        if (backupId)
+          setTimeout(() => {
+            this.goTo(backupId), 200
+          })
+      })
+
       form.reset()
     }
   }

@@ -87,6 +87,16 @@ input[type='radio'] {
     content: ' ';
     display: inline-block;
   }
+
+  &.pink {
+    &:checked:before {
+      background-color: fColor(cpink) !important;
+    }
+
+    &:after {
+      border: 1px solid fColor(cpink) !important;
+    }
+  }
 }
 
 input[type=submit] {

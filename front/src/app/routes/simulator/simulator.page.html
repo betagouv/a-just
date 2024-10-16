@@ -70,7 +70,8 @@
       <div *ngIf="canViewGreffier" class="fonctionnaires {{disabled}}"
         [ngClass]="{'selected': categorySelected === 'GREFFE', alone: !canViewMagistrat}" class="fonctionnaires"
         (click)="$event.stopPropagation(); changeCategorySelected('GREFFE')">
-        <input type="radio" [checked]="categorySelected === 'GREFFE'" />
+        <input type="radio" [ngClass]="{'pink': categorySelected === 'GREFFE'}"
+          [checked]="categorySelected === 'GREFFE'" />
         <p>Greffe</p>
       </div>
     </div>
@@ -80,32 +81,31 @@
 
   <!-- SIMULATOR STD -->
   <div class="items before-after" [ngClass]="{'hide': whiteSimulator === true, 'display-none': chooseScreen}">
-    <div class="item blue-bg">
+    <div class="item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE'}">
       <p>Entrées moyennes mensuelles</p>
     </div>
     <div class="item">
       <p>Sorties mensuelles possibles</p>
     </div>
-    <div class="item blue-bg">
+    <div class="item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE'}">
       <p>Stock</p>
     </div>
-    <div *ngIf="canViewMagistrat" class="item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
+    <div *ngIf="canViewMagistrat" class="item">
       <p>ETPT siège</p>
     </div>
-    <div *ngIf="canViewGreffier" class="item blue-bg" [ngClass]="{'selected': categorySelected === 'GREFFE'}">
+    <div *ngIf="canViewGreffier" class="item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE'}">
       <p>ETPT greffe</p>
     </div>
     <div *ngIf="canViewContractuel" class="item">
       <p>ETPT EAM</p>
     </div>
-    <div class="item blue-bg">
+    <div class="item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE'}">
       <p>Taux de couverture</p>
     </div>
-    <div class="item" [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
+    <div class="item">
       <p>DTES</p>
     </div>
-    <div class="item blue-bg"
-      [ngClass]="{'selected': categorySelected === 'MAGISTRAT' || categorySelected === 'GREFFE'}">
+    <div class="item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE'}">
       <p>Temps moyen / dossier</p>
     </div>
   </div>
@@ -120,7 +120,7 @@
   <aj-situation-displayer
     *ngIf="dateStop!==null && projectedSituationData !== null && whiteSimulator === false && chooseScreen === false"
     [categorySelected]="categorySelected" [situation]="projectedSituationData"
-    [header]="{type:'fin', label: stopRealValue,colorClass:'color-blue',elementColorClass:'grey-bg'}">
+    [header]="{type:'fin', label: stopRealValue,colorClass: categorySelected === 'GREFFE'? 'color-pink':'color-blue',elementColorClass:categorySelected === 'GREFFE'? 'pink-bg':'grey-bg'}">
   </aj-situation-displayer>
 
   <!-- SIMULATOR STD - Action Simuler et ajustement -->
@@ -219,9 +219,10 @@
     </aj-popup>
 
     <!-- BOUTON AJUSTER -->
-    <div class="line-item blue-bg">
-      <input class="ajusted-button" id="totalIn" [class.filled]="totalIn.value!=='Ajuster'"
-        (click)="openPopupWithParams(totalIn)" value="Ajuster" readonly="readonly" #totalIn />
+    <div class="line-item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE'}">
+      <input class="ajusted-button" [ngClass]="{'greffe': categorySelected === 'GREFFE'}" id="totalIn"
+        [class.filled]="totalIn.value!=='Ajuster'" (click)="openPopupWithParams(totalIn)" value="Ajuster"
+        readonly="readonly" #totalIn />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -232,8 +233,9 @@
       </div>
     </div>
     <div class="line-item">
-      <input class="ajusted-button" id="totalOut" [class.filled]="totalOut.value!=='Ajuster'"
-        (click)="openPopupWithParams(totalOut)" value="Ajuster" readonly="readonly" #totalOut />
+      <input class="ajusted-button" [ngClass]="{'greffe': categorySelected === 'GREFFE'}" id="totalOut"
+        [class.filled]="totalOut.value!=='Ajuster'" (click)="openPopupWithParams(totalOut)" value="Ajuster"
+        readonly="readonly" #totalOut />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -242,9 +244,10 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div class="line-item blue-bg">
-      <input class="ajusted-button" id="lastStock" [class.filled]="lastStock.value!=='Ajuster'"
-        (click)="openPopupWithParams(lastStock)" value="Ajuster" readonly="readonly" #lastStock />
+    <div class="line-item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE'}">
+      <input class="ajusted-button" [ngClass]="{'greffe': categorySelected === 'GREFFE'}" id="lastStock"
+        [class.filled]="lastStock.value!=='Ajuster'" (click)="openPopupWithParams(lastStock)" value="Ajuster"
+        readonly="readonly" #lastStock />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -255,9 +258,9 @@
       </div>
     </div>
     <div [ngClass]="{'hide-by-category': !canViewMagistrat}" class="line-item">
-      <input class="ajusted-button" id="etpMag" [class.filled]="etpMag.value!=='Ajuster'"
-        (click)="openPopupWithParams(etpMag)" value="Ajuster" readonly="readonly"
-        [ngClass]="{disable: categorySelected !== 'MAGISTRAT'}" #etpMag />
+      <input class="ajusted-button" [ngClass]="{'greffe': categorySelected === 'GREFFE'}" id="etpMag"
+        [class.filled]="etpMag.value!=='Ajuster'" (click)="openPopupWithParams(etpMag)" value="Ajuster"
+        readonly="readonly" [ngClass]="{disable: categorySelected !== 'MAGISTRAT'}" #etpMag />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -266,10 +269,11 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div [ngClass]="{'hide-by-category': !canViewGreffier}" class="line-item blue-bg">
+    <div [ngClass]="{'hide-by-category': !canViewGreffier, 'pink-bg': categorySelected === 'GREFFE'}"
+      class="line-item blue-bg">
       <input class="ajusted-button" id="etpFon" [class.filled]="etpFon.value!=='Ajuster'"
         (click)="openPopupWithParams(etpFon)" value="Ajuster" readonly="readonly"
-        [ngClass]="{disable: categorySelected !== 'GREFFE'}" #etpFon />
+        [ngClass]="{disable: categorySelected !== 'GREFFE', 'greffe': categorySelected === 'GREFFE'}" #etpFon />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -279,8 +283,9 @@
       </div>
     </div>
     <div [ngClass]="{'hide-by-category': !canViewContractuel}" class="line-item">
-      <input class="ajusted-button disable" id="etpCont" [class.filled]="etpCont.value!=='Ajuster'"
-        (click)="openPopupWithParams(etpCont)" value="Ajuster" readonly="readonly" #etpCont />
+      <input class="ajusted-button disable" [ngClass]="{'greffe': categorySelected === 'GREFFE'}" id="etpCont"
+        [class.filled]="etpCont.value!=='Ajuster'" (click)="openPopupWithParams(etpCont)" value="Ajuster"
+        readonly="readonly" #etpCont />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -290,9 +295,10 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div class="line-item blue-bg">
-      <input class="ajusted-button" id="realCoverage" [class.filled]="realCoverage.value!=='Ajuster'"
-        (click)="openPopupWithParams(realCoverage)" value="Ajuster" readonly="readonly" #realCoverage />
+    <div class="line-item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE' }">
+      <input class="ajusted-button" [ngClass]="{'greffe': categorySelected === 'GREFFE'}" id="realCoverage"
+        [class.filled]="realCoverage.value!=='Ajuster'" (click)="openPopupWithParams(realCoverage)" value="Ajuster"
+        readonly="readonly" #realCoverage />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -303,8 +309,9 @@
       </div>
     </div>
     <div class="line-item">
-      <input class="ajusted-button" id="realDTESInMonths" [class.filled]="realDTESInMonths.value!=='Ajuster'"
-        (click)="openPopupWithParams(realDTESInMonths)" value="Ajuster" readonly="readonly" #realDTESInMonths />
+      <input class="ajusted-button" [ngClass]="{'greffe': categorySelected === 'GREFFE'}" id="realDTESInMonths"
+        [class.filled]="realDTESInMonths.value!=='Ajuster'" (click)="openPopupWithParams(realDTESInMonths)"
+        value="Ajuster" readonly="readonly" #realDTESInMonths />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -315,9 +322,10 @@
         <div class="triangle"></div>
       </div>
     </div>
-    <div class="line-item blue-bg">
-      <input class="ajusted-button" id="magRealTimePerCase" [class.filled]="magRealTimePerCase.value!=='Ajuster'"
-        (click)="openPopupWithParams(magRealTimePerCase)" value="Ajuster" readonly="readonly" #magRealTimePerCase />
+    <div class="line-item blue-bg" [ngClass]="{'pink-bg': categorySelected === 'GREFFE'}">
+      <input class="ajusted-button" [ngClass]="{'greffe': categorySelected === 'GREFFE'}" id="magRealTimePerCase"
+        [class.filled]="magRealTimePerCase.value!=='Ajuster'" (click)="openPopupWithParams(magRealTimePerCase)"
+        value="Ajuster" readonly="readonly" #magRealTimePerCase />
       <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
@@ -443,7 +451,8 @@
       </aj-popup>
 
       <!-- TOOLTIP DE MODIFICATION -->
-      <div class="line-item" [ngClass]="{'blue-bg': !whiteSimulator}">
+      <div class="line-item"
+        [ngClass]="{'blue-bg': !whiteSimulator, 'pink-bg':  !whiteSimulator && categorySelected === 'GREFFE'}">
         <input class="ajusted-button white-button" id="totalIn" [class.filled]="totalInWhite.value!=='Ajuster'"
           (click)="openPopupWithParams(totalInWhite)" value="Ajuster" readonly="readonly" #totalInWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()" matTooltipShowDelay="0"
@@ -467,7 +476,8 @@
           <div class="triangle"></div>
         </div>
       </div>
-      <div class="line-item" [ngClass]="{'blue-bg': !whiteSimulator}">
+      <div class="line-item"
+        [ngClass]="{'blue-bg': !whiteSimulator, 'pink-bg':  !whiteSimulator && categorySelected === 'GREFFE'}">
         <input class="ajusted-button white-button" id="lastStock" [class.filled]="lastStockWhite.value!=='Ajuster'"
           (click)="openPopupWithParams(lastStockWhite)" value="Ajuster" readonly="readonly" #lastStockWhite />
         <div class="modified-label" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
@@ -520,7 +530,8 @@
           <div class="triangle"></div>
         </div>
       </div>
-      <div class="line-item" [ngClass]="{'blue-bg': !whiteSimulator}">
+      <div class="line-item"
+        [ngClass]="{'blue-bg': !whiteSimulator, 'pink-bg': !whiteSimulator && categorySelected === 'GREFFE'}">
         <input class="ajusted-button white-button" id="realCoverage"
           [class.filled]="realCoverageWhite.value!=='Ajuster'" (click)="openPopupWithParams(realCoverageWhite)"
           value="Ajuster" readonly="readonly" #realCoverageWhite />
@@ -547,7 +558,8 @@
           <div class="triangle"></div>
         </div>
       </div>
-      <div class="line-item" [ngClass]="{'blue-bg': !whiteSimulator}">
+      <div class="line-item"
+        [ngClass]="{'blue-bg': !whiteSimulator, 'pink-bg': !whiteSimulator && categorySelected === 'GREFFE'}">
         <input class="ajusted-button white-button" id="magRealTimePerCase"
           [class.filled]="magRealTimePerCaseWhite.value!=='Ajuster'"
           (click)="openPopupWithParams(magRealTimePerCaseWhite)" value="Ajuster" readonly="readonly"
@@ -601,33 +613,36 @@
     </div>
     <div class="simulation-table">
       <div class="items">
-        <div class="item blue-bg">
+        <div class="item blue-bg"
+          [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator}">
           <p>Entrées mensuelles</p>
         </div>
         <div class="item">
           <p>Sorties mensuelles</p>
         </div>
-        <div class="item blue-bg">
+        <div class="item blue-bg"
+          [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator}">
           <p>Stock</p>
         </div>
-        <div *ngIf="canViewMagistrat && categorySelected === 'MAGISTRAT'" class="item">
+        <div *ngIf="canViewMagistrat" class="item">
           <p>ETPT siège</p>
         </div>
-        <div *ngIf="canViewGreffier && categorySelected === 'GREFFE'" class="item blue-bg"
-          [ngClass]="{'display-none': whiteSimulator && categorySelected !== 'GREFFE'}">
+        <div *ngIf="canViewGreffier" class="item blue-bg"
+          [ngClass]="{'display-none': whiteSimulator && categorySelected !== 'GREFFE' && !whiteSimulator, 'pink-bg': categorySelected === 'GREFFE','no-bg':whiteSimulator}">
           <p>ETPT greffe</p>
         </div>
-        <div *ngIf="canViewContractuel && categorySelected === ''" class="item"
-          [ngClass]="{'display-none': whiteSimulator}">
+        <div *ngIf="canViewContractuel" class="item" [ngClass]="{'display-none': whiteSimulator}">
           <p>ETPT EAM</p>
         </div>
-        <div class="item blue-bg">
+        <div class="item blue-bg"
+          [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator }">
           <p>Taux de couverture</p>
         </div>
         <div class="item">
           <p>DTES</p>
         </div>
-        <div class="item blue-bg">
+        <div class="item blue-bg"
+          [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator }">
           <p>Temps moyen / dossier</p>
         </div>
       </div>
@@ -704,7 +719,8 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewMagistrat && categorySelected === 'MAGISTRAT'" class="line-item">
+        <div *ngIf="canViewMagistrat" class="line-item"
+          [style.visibility]="categorySelected==='GREFFE'?'hidden':'visible'">
           <input [value]="getFieldValue('etpMag',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -724,7 +740,8 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewGreffier && categorySelected === 'GREFFE'" class="line-item">
+        <div *ngIf="canViewGreffier" class="line-item"
+          [style.visibility]="categorySelected!=='GREFFE'?'hidden':'visible'">
           <input [value]="getFieldValue('etpFon',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -745,7 +762,7 @@
           </div>
         </div>
 
-        <div *ngIf="canViewContractuel && categorySelected === ''" class="line-item"
+        <div *ngIf="canViewContractuel" [style.visibility]="'hidden'" class="line-item"
           [ngClass]="{'display-none': whiteSimulator }">
           <input [value]="getFieldValue('etpCont',projectedSituationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"

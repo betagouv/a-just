@@ -157,6 +157,10 @@
             height: 190px;
             overflow: auto;
 
+            @media screen and (max-height: 680px) {
+              height: 100px;
+            }
+
             .color-greffe {
               color: #a558a0;
             }
@@ -290,6 +294,7 @@
     #circle {
       width: 60px;
       height: 60px;
+      min-height: 60px;
       background: #ececfe;
       border-radius: 70px;
       margin: auto;
@@ -297,6 +302,10 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 18px;
+
+      @media screen and (max-height: 680px) {
+        display: none;
+      }
 
       i {
         font-size: 24px;
@@ -573,7 +582,7 @@
 
 .contentieux-header-calculator {
   display: flex;
-
+  font-weight: bold;
   min-height: 80px;
 
   .width-contentieux {

@@ -115,8 +115,12 @@ export class CalculatorService extends MainClass {
     contentieuxId: number,
     type: string,
     dateStart: Date | null = this.dateStart.getValue(),
-    dateStop: Date | null = this.dateStop.getValue()
+    dateStop: Date | null = this.dateStop.getValue(),
+    fonctionsIds: number[] = this.selectedFonctionsIds.getValue()
   ) {
+    if (!dateStart || !dateStop) {
+      return new Promise((resolve) => resolve([]))
+    }
     return this.serverService
       .post(`calculator/range-values`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -124,6 +128,7 @@ export class CalculatorService extends MainClass {
         dateStop: setTimeToMidDay(dateStop),
         contentieuxId,
         type,
+        fonctionsIds: fonctionsIds.length ? fonctionsIds : null,
       })
       .then((data) => data.data || [])
   }

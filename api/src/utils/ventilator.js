@@ -62,3 +62,18 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
     return isFiltered
   })
 }
+
+export const listCategories = (list) => {
+  return list.map((h) => {
+    let currentSituation
+    const situations = h.situations || []
+    if (situations.length) {
+      currentSituation = situations[0]
+    }
+
+    return {
+      ...h,
+      category: currentSituation && currentSituation.category,
+    }
+  })
+}

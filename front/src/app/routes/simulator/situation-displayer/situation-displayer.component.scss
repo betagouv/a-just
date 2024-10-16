@@ -38,6 +38,17 @@
             }
         }
 
+        &.color-pink {
+            background-color: #fee7fc7d !important;
+
+            &::before {
+                background-color: #fee7fc7d !important;
+            }
+
+            &::after {
+                background-color: #fee7fc7d !important;
+            }
+        }
 
         .line-title {
             padding: 30px 0px;
@@ -77,6 +88,10 @@
             &.selected {
                 mix-blend-mode: multiply;
                 background-color: #ececfe !important;
+            }
+
+            &.pink-bg {
+                background-color: #fee7fcdc !important;
             }
 
             &.grey-bg {
