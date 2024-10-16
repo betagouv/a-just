@@ -102,7 +102,7 @@ export default class RouteContentieuxOptions extends Route {
       (backupId && (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id))) ||
       (!backupId && (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)))
     ) {
-      const newId = await this.model.models.OptionsBackups.saveBackup(list, backupId, backupName, juridictionId)
+      const newId = await this.model.models.OptionsBackups.saveBackup(ctx.state.user.id, list, backupId, backupName, juridictionId, backupStatus, type)
 
       if (newId !== null) await this.model.models.HistoriesContentieuxUpdate.addHistory(ctx.state.user.id, newId)
 
