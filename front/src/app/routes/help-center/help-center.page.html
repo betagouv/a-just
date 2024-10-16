@@ -145,18 +145,17 @@
                 </p>
             </div>
         </div>
-        <iframe *ngSwitchCase="'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/'" id="iframe-doc"
-            loading="lazy"
-            [src]="('https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/' + cleDate)||'' | sanitizeResourceUrl">
+        <iframe *ngSwitchCase="documentation[0].url" id="iframe-doc" loading="lazy"
+            [src]="(documentation[0].url + cleDate)||'' | sanitizeResourceUrl">
         </iframe>
-        <iframe *ngSwitchCase="'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/'" id="iframe-doc" loading="lazy"
-            [src]="('https://docs.a-just.beta.gouv.fr/soulager-les-equipes/' + cleDate)||'' | sanitizeResourceUrl">
+        <iframe *ngSwitchCase="documentation[1].url" id="iframe-doc" loading="lazy"
+            [src]="(documentation[1].url + cleDate)||'' | sanitizeResourceUrl">
         </iframe>
-        <iframe *ngSwitchCase="'https://docs.a-just.beta.gouv.fr/gagner-du-temps/'" id="iframe-doc" loading="lazy"
-            [src]="('https://docs.a-just.beta.gouv.fr/gagner-du-temps/' + cleDate)||'' | sanitizeResourceUrl">
+        <iframe *ngSwitchCase="documentation[2].url" id="iframe-doc" loading="lazy"
+            [src]="(documentation[2].url + cleDate)||'' | sanitizeResourceUrl">
         </iframe>
-        <iframe *ngSwitchCase="'https://docs.a-just.beta.gouv.fr/construire-le-futur/'" id="iframe-doc" loading="lazy"
-            [src]="('https://docs.a-just.beta.gouv.fr/construire-le-futur/' + cleDate)||'' | sanitizeResourceUrl">
+        <iframe *ngSwitchCase="documentation[3].url" id="iframe-doc" loading="lazy"
+            [src]="(documentation[3].url + cleDate)||'' | sanitizeResourceUrl">
         </iframe>
 
         <div class="hide-powered-by-gitbook"></div>
