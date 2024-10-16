@@ -64,7 +64,7 @@
         [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
         [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
-        (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint">
+        (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint" [isPast]="false">
       </panel-history-ventilation>
     </div>
 
@@ -79,7 +79,7 @@
         [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
         [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
-        (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint">
+        (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint" [isPast]="true">
       </panel-history-ventilation>
     </div>
 

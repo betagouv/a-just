@@ -25,7 +25,8 @@ import { etpLabel } from 'src/app/utils/referentiel'
 })
 export class PanelHistoryVentilationComponent
   extends MainClass
-  implements OnChanges {
+  implements OnChanges
+{
   /**
    * Date de début de situation
    */
@@ -43,8 +44,8 @@ export class PanelHistoryVentilationComponent
    */
   @Input() fonction: HRFonctionInterface | null = null
   /**
- * Category de la situation
- */
+   * Category de la situation
+   */
   @Input() category: HRCategoryInterface | null = null
   /**
    * ETP de la situation
@@ -74,6 +75,10 @@ export class PanelHistoryVentilationComponent
    * Force to show sub contentieux
    */
   @Input() forceToShowContentieuxDetail: boolean = false
+  /**
+   * Date is Past
+   */
+  @Input() isPast: boolean = false
   /**
    * Event lors du souhait de modifier la situation
    */
