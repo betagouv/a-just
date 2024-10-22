@@ -128,6 +128,14 @@ export class CalculatorPage
     printSubTitle: true,
   }
   /**
+   * Documentation list
+   */
+  docLinks: string[] = [
+    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
+    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
+    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
+  ]
+  /**
    * Mémorisation de la dernière categorie
    */
   lastCategorySelected: string | null = null
@@ -1575,6 +1583,9 @@ export class CalculatorPage
         const refSelected = this.backups.find((b) => b.selected)
         if (!refSelected) {
           this.compareTemplates = null
+          if ([0, 1].includes(this.tabSelected)) {
+            this.documentation.path = this.docLinks[this.tabSelected]
+          }
           return
         }
         const refDetails = await this.contentieuxOptionsService.loadDetails(
@@ -1784,6 +1795,7 @@ export class CalculatorPage
       }
 
       this.compareTemplates = list
+      this.documentation.path = this.docLinks[2]
     }
     this.appService.notification('Les données du cockpit ont été mis à jour !')
   }
@@ -1831,6 +1843,9 @@ export class CalculatorPage
   unselectTemplate() {
     this.showPicker = false
     this.compareTemplates = null
+    if ([0, 1].includes(this.tabSelected)) {
+      this.documentation.path = this.docLinks[this.tabSelected]
+    }
     this.referentiels = this.referentiels.map((x) => {
       x.selected = false
       return x
