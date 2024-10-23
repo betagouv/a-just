@@ -22,11 +22,11 @@
 
       <div class="dates-selector">
         <aj-date-select title="de" [value]="dateStart" (valueChange)="updateReferentielSelected('dateStart', $event)"
-          class="bg-white calculator" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
-          [icon]="'chevron_left'" (isOpen)="lockLoader.next($event)">
+          class="bg-white calculator bottom-popin" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
+          [min]="minDateSelectable" [icon]="'chevron_left'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
         <aj-date-select title="à" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
-          class="bg-white calculator" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
+          class="bg-white calculator bottom-popin" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
           [icon]="'chevron_right'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
       </div>
@@ -34,12 +34,12 @@
 
       <div class="switch-tab">
         <div class="brut" [ngClass]="{'selected': tabSelected === 0 && !compareTemplates}"
-          (click)="tabSelected=0;unselectTemplate();$event.stopPropagation()">
+          (click)="tabSelected=0;unselectTemplate();documentation.path=docLinks[0];$event.stopPropagation()">
           <i class="ri-table-view no-print"></i>
           <p>Données brutes</p>
         </div>
         <div class="fonctionnaires" [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
-          (click)="tabSelected=1;unselectTemplate();logChartView();$event.stopPropagation()">
+          (click)="tabSelected=1;unselectTemplate();logChartView();documentation.path=docLinks[1];$event.stopPropagation()">
           <i class="ri-bar-chart-box-line no-print"></i>
           <p>Graphiques</p>
         </div>
@@ -122,8 +122,8 @@
               <div class="flex-1"></div>
               <p>ETPT<br />EAM</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
-              <aj-tooltips class="medium" title="ETPT EAM"
-                content="Moyenne des ETPT travaillés sur la période par les agents autour du magistrat affectés au contentieux">
+              <aj-tooltips class="medium right" title="ETPT EAM"
+                content="Moyenne des ETPT travaillés sur la période par l'équipe autour du magistrat affectés au contentieux">
               </aj-tooltips>
             </div>
 
@@ -146,8 +146,8 @@
           </aj-referentiel-calculator>
         </div>
       </ng-template>
-      <aj-view-analytics *ngIf="tabSelected === 1" [datasFilted]="datasFilted"
-        [categorySelected]="categorySelected"></aj-view-analytics>
+      <aj-view-analytics *ngIf="tabSelected === 1 && !isLoading" [datasFilted]="datasFilted"
+        [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate"></aj-view-analytics>
     </ng-template>
     <aj-template-analytics *ngIf="compareTemplates" [lines]="compareTemplates"></aj-template-analytics>
   </div>
@@ -179,14 +179,14 @@
               <aj-date-select
                 [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires'}"
                 title="de" [value]="optionDateStart" (valueChange)="optionDateStart = $event"
-                class="bg-white calculator popup" [max]="optionDateStop" [dateClass]="dateClass" [dateType]="'month'"
-                [icon]="'none'">
+                class="bg-white calculator popup bottom-popin" [max]="optionDateStop" [min]="minDateSelectable"
+                [dateClass]="dateClass" [dateType]="'month'" [icon]="'none'">
               </aj-date-select>
               <aj-date-select
                 [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires' }"
                 title="à" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
-                class="bg-white calculator popup" [dateClass]="dateClass" [dateType]="'month'" [min]="optionDateStart"
-                [icon]="'none'">
+                class="bg-white calculator popup bottom-popin" [dateClass]="dateClass" [dateType]="'month'"
+                [min]="optionDateStart" [icon]="'none'">
               </aj-date-select>
             </div>
           </div>
@@ -249,9 +249,10 @@
   <div class="flex-1"></div>
   <button class="compare" [ngClass]="{selected: compareTemplates}"
     (click)="showPicker=!showPicker;$event.stopPropagation();">
-    <i class="ri-a-b"></i>
-    <label>Comparer</label>
-    <div class="arrow-zone"><i [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
+    <i class="ri-a-b" (click)="showPicker=!showPicker;$event.stopPropagation();"></i>
+    <label (click)="showPicker=!showPicker;$event.stopPropagation();">Comparer</label>
+    <div (click)="showPicker=!showPicker;$event.stopPropagation();" class="arrow-zone"><i
+        [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
 
     <!-- DROP DOWN REFERENTIEL DE TEMPS -->
     <div *ngIf="showPicker===true" class="drop-down" (click)="$event.stopPropagation();">
@@ -268,7 +269,7 @@
           (click)="onRemoveSetting(ref.label);$event.stopPropagation();"></i>
       </div>
       <label class="footer"
-        (click)="onEdit = true; showPicker = false; filterBackupsByCategory(); $event.stopPropagation();">+
+        (click)="onEdit = true; showPicker = false; filterBackupsByCategory(); $event.stopPropagation();optionDateStart=null;optionDateStop=null;">+
         Personnaliser</label>
     </div>
   </button>

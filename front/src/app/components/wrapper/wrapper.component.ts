@@ -297,6 +297,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   onChangeHRBackup(id: number) {
     this.humanResourceService.backupId.next(id)
+    this.router.navigate(['/panorama'])
   }
 
   /**

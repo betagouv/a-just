@@ -297,7 +297,6 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Import d'un référentiel
    */
   async import() {
-    this.enableImport = false
     let form = document.getElementById('form') as HTMLFormElement
     let name =
       (document.getElementById('name') as HTMLTextAreaElement)?.value || ''
@@ -307,6 +306,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     else if (!file) {
       alert('Vous devez saisir une fichier !')
     } else if (name.length > 0 && type.length > 0) {
+      this.enableImport = true
       await this.contentieuxOptionsService.createEmpy(
         false,
         name,

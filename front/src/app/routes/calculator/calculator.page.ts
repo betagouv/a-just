@@ -23,7 +23,7 @@ import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
 import { UserService } from 'src/app/services/user/user.service'
-import { getTime, month } from 'src/app/utils/dates'
+import { getTime, isDateBiggerThan, month } from 'src/app/utils/dates'
 import {
   userCanViewContractuel,
   userCanViewGreffier,
@@ -53,6 +53,7 @@ import {
 } from 'src/app/constants/log-codes'
 import { BehaviorSubject } from 'rxjs'
 import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
+import { sleep } from 'src/app/utils'
 
 /**
  * Page du calculateur
@@ -127,6 +128,14 @@ export class CalculatorPage
     printSubTitle: true,
   }
   /**
+   * Documentation list
+   */
+  docLinks: string[] = [
+    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
+    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
+    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
+  ]
+  /**
    * Mémorisation de la dernière categorie
    */
   lastCategorySelected: string | null = null
@@ -160,45 +169,80 @@ export class CalculatorPage
   introSteps: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
-      title: 'A quoi sert le cockpit ?',
+      title: 'À quoi sert le cockpit ?',
       intro:
-        "Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à un référentiel</b> que vous auriez renseigné.<br/><br/>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée et également restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b>.<br/><br/>Vous pourrez <b>exporter</b> ces restitutions en PDF pour les enregistrer.",
+        "<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><br/><p>Des visualisations graphiques vous sont également proposées.</p><br/><p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et <b>exporter</b> ces restitutions en PDF pour les enregistrer et/ou les partager.</p>",
     },
     {
       target: '.sub-main-header',
       title: 'Choisir la période',
       intro:
-        'sur laquelle effectuer les calculs. Certaines des données étant des <b>moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.',
+        'Certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.',
     },
     {
-      target: 'aj-referentiel-calculator:first-child .item.actual',
-      title: 'Les données renseignées',
+      target: '.switch-tab .brut',
+      title: 'Les données brutes',
       intro:
-        "Vous pouvez visualiser, pour chaque contentieux ou sous-contentieux :<ul><li>Les <b>entrées et sorties</b> moyennes mensuelles sur la période sélectionnée (calculées à partir des données d’activité) ;</li><li>Le <b>stock</b> à la fin de la période sélectionnée (tel qu’affiché dans les données d’activité) ;</li><li>Les <b>ETPT</b> affectés à chaque contentieux sur la période sélectionnée (calculés à partir des données individuelles d’affectation saisies dans le ventilateur) pour chacune des catégories d'agents (magistrats, fonctionnaires, équipe autour du magistrat = EAM).</li></ul>",
+        '<p>Cette section permet de visualiser deux indicateurs simples, sur la période, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p><ul><li>le taux de couverture moyen</li><li>et le DTES (Délai Théorique d’Écoulement du Stock) à la date de fin de période.</li></ul><p>Vous retrouvez également :</p><ul><li>Les <b>entrées et sorties</b> moyennes mensuelles</li><li>Le <b>stock</b> à la fin de la période choisie</li><li>Les <b>ETPT</b> affectés à chaque contentieux</li><li><b>Les temps moyens par dossier</b> (siège ou greffe selon votre sélection), clé théorique de projection dans le futur calculée à la fin de la période sur les 12 mois précédents.</li></ul>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('.switch-tab .brut')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
     },
     {
-      target: 'aj-referentiel-calculator:first-child .item.activity',
-      title: "Les données de l'activité constatée",
+      target: '.switch-tab .analytique',
+      title: 'Les graphiques',
       intro:
-        'Cette section permet de <b>visualiser deux indicateurs simples</li>, calculés à partir des « <b>Données renseignées</b> » :<ul><li>le <b>taux de couverture</b></li><li>et le <b>DTES</b> (Délai Théorique d’Écoulement du Stock).</li></ul><br/>Vous pourrez aussi visualiser le <b>temps de traitement moyen par dossier observé</b> sur la période antérieure qui constitue une clé de projection pour les simulations.',
+        '<p>Pour chaque contentieux, une représentation visuelle des indicateurs, comprenant le détail des données et leurs évolutions entre le début et la fin de la période.</p>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('.switch-tab .analytique')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+        }
+      },
     },
     {
-      target: 'aj-referentiel-calculator:first-child .item.calculate',
-      title: "Les données de l'activité calculée",
+      target: '.drop-down',
+      title: 'Comparez votre juridiction',
       intro:
-        'Les données de l\'activité calculée permettent, si vous le souhaitez, de <b>comparer les indicateurs de l’activité constatée</b>, décrits précédemment, à ceux d\'un <b>référentiel théorique</b> que vous avez la faculté de saisir dans la page "<b>Temps moyens</b>".<div class="intro-js-action"><a href="/temps-moyens">J\'accède aux temps moyens</a></div>',
-    },
-    {
-      target: '.ref-button',
-      title: 'Enregistrez les temps moyens constatés',
-      intro:
-        "comme référentiel, si vous souhaitez comparer leur évolution dans la juridiction d'une période à l'autre.",
-    },
-    {
-      target: 'aj-options-backup-panel',
-      title: 'Mes temps moyens de comparaison',
-      intro:
-        'Si vous avez renseigné des temps moyens de référence, il vous suffit de <b>sélectionner le référentiel de votre choix dans ce menu déroulant</b>.',
+        '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
+      beforeLoad: async (intro: any) => {
+        const itemToClick = document.querySelector('button.compare')
+        if (itemToClick) {
+          // @ts-ignore
+          itemToClick.click()
+          await sleep(200)
+
+          const introTooltip = document.querySelector('.introjs-tooltip')
+          if (introTooltip) {
+            // @ts-ignore
+            introTooltip.style.visibility = 'hidden'
+          }
+          setTimeout(() => {
+            const introTooltip = document.querySelector('.introjs-tooltip')
+            if (introTooltip) {
+              introTooltip.classList.add('introjs-bottom-left-aligned')
+              introTooltip.classList.remove('introjs-floating')
+              // @ts-ignore
+              introTooltip.style.left = '0px'
+              // @ts-ignore
+              introTooltip.style.top = '170px'
+              // @ts-ignore
+              introTooltip.style.marginLeft = '-20px'
+              // @ts-ignore
+              introTooltip.style.marginTop = '0'
+              // @ts-ignore
+              introTooltip.style.visibility = 'visible'
+            }
+          }, 380)
+        }
+      },
     },
   ]
   /**
@@ -261,6 +305,15 @@ export class CalculatorPage
    * Title created from popup while compare loaded
    */
   createdTitle: null | string = null
+  /**
+   * Date minimum selectionnable
+   */
+  minDateSelectable: Date = new Date(2021, 0, 1)
+  /**
+   * Detect if last month is loading
+   */
+  checkLastMonthLoading: boolean = false
+
   /**
    * Constructeur
    * @param humanResourceService
@@ -451,23 +504,22 @@ export class CalculatorPage
   /**
    * Demande au serveur quelle est la dernière date des datas
    */
-  onCheckLastMonth() {
+  async onCheckLastMonth(force = false) {
     if (
-      this.calculatorService.dateStart.getValue() === null &&
-      this.referentiel.length
+      ((!force && this.calculatorService.dateStart.getValue() === null) ||
+        force) &&
+      !this.checkLastMonthLoading
     ) {
-      this.activitiesService.getLastMonthActivities().then((date) => {
-        if (date === null) {
-          date = new Date()
-        }
-
-        date = new Date(date ? date : '')
+      this.checkLastMonthLoading = true
+      return this.activitiesService.getLastMonthActivities().then((date) => {
+        date = new Date(date || null)
         const max = month(date, 0, 'lastday')
         this.maxDateSelectionDate = max
 
         const min = month(max, -11)
         this.calculatorService.dateStart.next(min)
         this.calculatorService.dateStop.next(max)
+        this.checkLastMonthLoading = false
         this.onLoadComparaisons()
       })
     }
@@ -478,6 +530,12 @@ export class CalculatorPage
    */
   onLoadComparaisons(selectedByLabel: string | null = null) {
     this.backupSettingsService.list([BACKUP_SETTING_COMPARE]).then((l) => {
+      // clean list from brokens saves
+      l = l.filter(
+        (item) =>
+          item.datas && (item.datas.dateStart || item.datas.referentielId)
+      )
+
       let refs = this.referentiels
       let indexRef = -1
       do {
@@ -605,10 +663,14 @@ export class CalculatorPage
               this.isLoading = false
               this.lastCategorySelected = this.categorySelected
 
-              if (this.firstLoading === false)
+              if (
+                this.firstLoading === false &&
+                this.location.path() === '/cockpit'
+              ) {
                 this.appService.notification(
                   'Les données du cockpit ont été mis à jour !'
                 )
+              }
               this.firstLoading = false
             })
             .catch(() => {
@@ -1092,217 +1154,278 @@ export class CalculatorPage
           this.optionDateStop,
           false
         )
+
+        let dateEndIsPast = false
+        if (!this.maxDateSelectionDate) {
+          await this.onCheckLastMonth(true)
+        }
+
+        if (this.dateStop && this.maxDateSelectionDate) {
+          dateEndIsPast = isDateBiggerThan(
+            this.dateStop,
+            this.maxDateSelectionDate,
+            true
+          )
+        }
+        if (
+          !dateEndIsPast &&
+          this.optionDateStop &&
+          this.maxDateSelectionDate
+        ) {
+          dateEndIsPast = isDateBiggerThan(
+            this.optionDateStop,
+            this.maxDateSelectionDate,
+            true
+          )
+        }
+        console.log(
+          dateEndIsPast,
+          this.dateStop,
+          this.maxDateSelectionDate,
+          isDateBiggerThan(
+            this.dateStop || new Date(),
+            this.maxDateSelectionDate || new Date(),
+            true
+          ),
+          this.optionDateStop,
+          this.maxDateSelectionDate,
+          isDateBiggerThan(
+            this.optionDateStop || new Date(),
+            this.maxDateSelectionDate || new Date(),
+            true
+          )
+        )
+
         this.appService.appLoading.next(false)
         const nextRangeString = `${this.getRealValue(
           this.optionDateStart
         )} - ${this.getRealValue(this.optionDateStop)}`
         this.compareAtString = nextRangeString
 
-        const value2DTES: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) => d.realDTESInMonths
-        )
-        const variationsDTES = getVariations(value2DTES, value1DTES)
-        list.push({
-          title: 'DTES',
-          type: 'verticals-lines',
-          description: 'de la période<br/>(calculé sur les 12 mois précédents)',
-          lineMax:
-            Math.max(
-              ...value1DTES.map((m) => m || 0),
-              ...value2DTES.map((m) => m || 0)
-            ) * 1.1,
-          values: value1DTES.map((v, index) => [
-            value2DTES[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsDTES,
-              subTitle: '%',
-              showArrow: true,
-            },
-            { label: nextRangeString, values: value2DTES, subTitle: 'mois' },
-            { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
-          ],
-        })
+        if (!dateEndIsPast) {
+          const value2DTES: (number | null)[] = (resultCalcul.list || []).map(
+            (d: CalculatorInterface) => d.realDTESInMonths
+          )
+          const variationsDTES = getVariations(value2DTES, value1DTES)
+          list.push({
+            title: 'DTES',
+            type: 'verticals-lines',
+            description:
+              'de la période<br/>(calculé sur les 12 mois précédents)',
+            lineMax:
+              Math.max(
+                ...value1DTES.map((m) => m || 0),
+                ...value2DTES.map((m) => m || 0)
+              ) * 1.1,
+            values: value1DTES.map((v, index) => [
+              value2DTES[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsDTES,
+                subTitle: '%',
+                showArrow: true,
+              },
+              { label: nextRangeString, values: value2DTES, subTitle: 'mois' },
+              {
+                label: actualRangeString,
+                values: value1DTES,
+                subTitle: 'mois',
+              },
+            ],
+          })
+        }
 
-        const value2TempsMoyen: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) =>
-          this.categorySelected === MAGISTRATS
-            ? d.magRealTimePerCase
-            : d.fonRealTimePerCase
-        )
-        const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
-          d === null
-            ? 'N/R'
-            : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
-        )
-        const variationsTempsMoyen = getVariations(
-          value2TempsMoyen,
-          value1TempsMoyen
-        )
-        list.push({
-          title: 'Temps moyen',
-          type: 'verticals-lines',
-          description: 'sur la période',
-          lineMax:
-            Math.max(
-              ...value1TempsMoyen.map((m) => m || 0),
-              ...value2TempsMoyen.map((m) => m || 0)
-            ) * 1.1,
-          values: value1TempsMoyen.map((v, index) => [
-            value2TempsMoyen[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsTempsMoyen,
-              subTitle: '%',
-              showArrow: true,
-            },
-            {
-              label: nextRangeString,
-              values: stringValue2TempsMoyen,
-              subTitle: 'heures',
-            },
-            {
-              label: actualRangeString,
-              values: stringValue1TempsMoyen,
-              subTitle: 'heures',
-            },
-          ],
-        })
+        if (!dateEndIsPast) {
+          const value2TempsMoyen: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) =>
+            this.categorySelected === MAGISTRATS
+              ? d.magRealTimePerCase
+              : d.fonRealTimePerCase
+          )
+          const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
+            d === null
+              ? 'N/R'
+              : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
+          )
+          const variationsTempsMoyen = getVariations(
+            value2TempsMoyen,
+            value1TempsMoyen
+          )
+          list.push({
+            title: 'Temps moyen',
+            type: 'verticals-lines',
+            description: 'sur la période',
+            lineMax:
+              Math.max(
+                ...value1TempsMoyen.map((m) => m || 0),
+                ...value2TempsMoyen.map((m) => m || 0)
+              ) * 1.1,
+            values: value1TempsMoyen.map((v, index) => [
+              value2TempsMoyen[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsTempsMoyen,
+                subTitle: '%',
+                showArrow: true,
+              },
+              {
+                label: nextRangeString,
+                values: stringValue2TempsMoyen,
+                subTitle: 'heures',
+              },
+              {
+                label: actualRangeString,
+                values: stringValue1TempsMoyen,
+                subTitle: 'heures',
+              },
+            ],
+          })
+        }
 
-        const value2TauxCouverture: (number | null)[] = (
-          resultCalcul.list || []
-        ).map((d: CalculatorInterface) => d.realCoverage)
-        const variationsCouverture = getVariations(
-          value2TauxCouverture,
-          value1TauxCouverture,
-          false
-        )
-        list.push({
-          title: 'Taux de couverture',
-          type: 'progress',
-          description: 'moyen sur la période',
-          lineMax: 0,
-          values: value1TauxCouverture.map((v, index) => [
-            Math.floor((value1TauxCouverture[index] || 0) * 100),
-            v === null ? null : Math.floor((v || 0) * 100),
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsCouverture,
-              subTitle: 'pts',
-              showArrow: true,
-            },
-            {
-              label: nextRangeString,
-              values: value2TauxCouverture.map((t) =>
-                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
-              ),
-            },
-            {
-              label: actualRangeString,
-              values: value1TauxCouverture.map((t) =>
-                t === null ? 'N/R' : Math.floor(t * 100) + ' %'
-              ),
-            },
-          ],
-        })
+        if (!dateEndIsPast) {
+          const value2TauxCouverture: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) => d.realCoverage)
+          const variationsCouverture = getVariations(
+            value2TauxCouverture,
+            value1TauxCouverture,
+            false
+          )
+          list.push({
+            title: 'Taux de couverture',
+            type: 'progress',
+            description: 'moyen sur la période',
+            lineMax: 0,
+            values: value1TauxCouverture.map((v, index) => [
+              Math.floor((value1TauxCouverture[index] || 0) * 100),
+              v === null ? null : Math.floor((v || 0) * 100),
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsCouverture,
+                subTitle: 'pts',
+                showArrow: true,
+              },
+              {
+                label: nextRangeString,
+                values: value2TauxCouverture.map((t) =>
+                  t === null ? 'N/R' : Math.floor(t * 100) + ' %'
+                ),
+              },
+              {
+                label: actualRangeString,
+                values: value1TauxCouverture.map((t) =>
+                  t === null ? 'N/R' : Math.floor(t * 100) + ' %'
+                ),
+              },
+            ],
+          })
+        }
 
-        const value2Stock: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) => d.lastStock
-        )
-        const variationsStock = getVariations(value2Stock, value1Stock)
-        list.push({
-          title: 'Stock',
-          type: 'verticals-lines',
-          description: 'en fin de période',
-          lineMax:
-            Math.max(
-              ...value1Stock.map((m) => m || 0),
-              ...value2Stock.map((m) => m || 0)
-            ) * 1.1,
-          values: value1Stock.map((v, index) => [
-            value2Stock[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsStock,
-              subTitle: '%',
-              showArrow: true,
-            },
-            { label: nextRangeString, values: value2Stock },
-            { label: actualRangeString, values: value1Stock },
-          ],
-        })
+        if (!dateEndIsPast) {
+          const value2Stock: (number | null)[] = (resultCalcul.list || []).map(
+            (d: CalculatorInterface) => d.lastStock
+          )
+          const variationsStock = getVariations(value2Stock, value1Stock)
+          list.push({
+            title: 'Stock',
+            type: 'verticals-lines',
+            description: 'en fin de période',
+            lineMax:
+              Math.max(
+                ...value1Stock.map((m) => m || 0),
+                ...value2Stock.map((m) => m || 0)
+              ) * 1.1,
+            values: value1Stock.map((v, index) => [
+              value2Stock[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsStock,
+                subTitle: '%',
+                showArrow: true,
+              },
+              { label: nextRangeString, values: value2Stock },
+              { label: actualRangeString, values: value1Stock },
+            ],
+          })
+        }
 
-        const value2Entrees: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) =>
+        if (!dateEndIsPast) {
+          const value2Entrees: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) =>
             d.totalIn ? Math.floor(d.totalIn) : d.totalIn
-        )
-        const variationsEntrees = getVariations(value2Entrees, value1Entrees)
-        list.push({
-          title: 'Entrées',
-          type: 'verticals-lines',
-          description: 'moyennes<br/>sur la période',
-          lineMax:
-            Math.max(
-              ...value1Entrees.map((m) => m || 0),
-              ...value2Entrees.map((m) => m || 0)
-            ) * 1.1,
-          values: value1Entrees.map((v, index) => [
-            value2Entrees[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsEntrees,
-              subTitle: '%',
-              showArrow: true,
-            },
-            { label: nextRangeString, values: value2Entrees },
-            { label: actualRangeString, values: value1Entrees },
-          ],
-        })
+          )
+          const variationsEntrees = getVariations(value2Entrees, value1Entrees)
+          list.push({
+            title: 'Entrées',
+            type: 'verticals-lines',
+            description: 'moyennes<br/>sur la période',
+            lineMax:
+              Math.max(
+                ...value1Entrees.map((m) => m || 0),
+                ...value2Entrees.map((m) => m || 0)
+              ) * 1.1,
+            values: value1Entrees.map((v, index) => [
+              value2Entrees[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsEntrees,
+                subTitle: '%',
+                showArrow: true,
+              },
+              { label: nextRangeString, values: value2Entrees },
+              { label: actualRangeString, values: value1Entrees },
+            ],
+          })
+        }
 
-        const value2Sorties: (number | null)[] = (resultCalcul.list || []).map(
-          (d: CalculatorInterface) =>
+        if (!dateEndIsPast) {
+          const value2Sorties: (number | null)[] = (
+            resultCalcul.list || []
+          ).map((d: CalculatorInterface) =>
             d.totalOut ? Math.floor(d.totalOut) : d.totalOut
-        )
-        const variationsSorties = getVariations(value2Sorties, value1Sorties)
-        list.push({
-          title: 'Sorties',
-          type: 'verticals-lines',
-          description: 'moyennes<br/>sur la période',
-          lineMax:
-            Math.max(
-              ...value1Sorties.map((m) => m || 0),
-              ...value2Sorties.map((m) => m || 0)
-            ) * 1.1,
-          values: value1Sorties.map((v, index) => [
-            value2Sorties[index] || 0,
-            v || 0,
-          ]),
-          variations: [
-            {
-              label: 'Variation',
-              values: variationsSorties,
-              subTitle: '%',
-              showArrow: true,
-            },
-            { label: nextRangeString, values: value2Sorties },
-            { label: actualRangeString, values: value1Sorties },
-          ],
-        })
+          )
+          const variationsSorties = getVariations(value2Sorties, value1Sorties)
+          list.push({
+            title: 'Sorties',
+            type: 'verticals-lines',
+            description: 'moyennes<br/>sur la période',
+            lineMax:
+              Math.max(
+                ...value1Sorties.map((m) => m || 0),
+                ...value2Sorties.map((m) => m || 0)
+              ) * 1.1,
+            values: value1Sorties.map((v, index) => [
+              value2Sorties[index] || 0,
+              v || 0,
+            ]),
+            variations: [
+              {
+                label: 'Variation',
+                values: variationsSorties,
+                subTitle: '%',
+                showArrow: true,
+              },
+              { label: nextRangeString, values: value2Sorties },
+              { label: actualRangeString, values: value1Sorties },
+            ],
+          })
+        }
 
         if (this.canViewMagistrat) {
           const value2ETPTSiege: (number | null)[] = (
@@ -1460,6 +1583,9 @@ export class CalculatorPage
         const refSelected = this.backups.find((b) => b.selected)
         if (!refSelected) {
           this.compareTemplates = null
+          if ([0, 1].includes(this.tabSelected)) {
+            this.documentation.path = this.docLinks[this.tabSelected]
+          }
           return
         }
         const refDetails = await this.contentieuxOptionsService.loadDetails(
@@ -1669,6 +1795,7 @@ export class CalculatorPage
       }
 
       this.compareTemplates = list
+      this.documentation.path = this.docLinks[2]
     }
     this.appService.notification('Les données du cockpit ont été mis à jour !')
   }
@@ -1716,6 +1843,9 @@ export class CalculatorPage
   unselectTemplate() {
     this.showPicker = false
     this.compareTemplates = null
+    if ([0, 1].includes(this.tabSelected)) {
+      this.documentation.path = this.docLinks[this.tabSelected]
+    }
     this.referentiels = this.referentiels.map((x) => {
       x.selected = false
       return x
