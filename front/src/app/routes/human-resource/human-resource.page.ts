@@ -16,7 +16,7 @@ import { HRCategoryService } from 'src/app/services/hr-category/hr-category.serv
 import { HRFonctionService } from 'src/app/services/hr-fonction/hr-function.service'
 import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
 import { copy } from 'src/app/utils'
-import { dateAddDays, today } from 'src/app/utils/dates'
+import { dateAddDays, isDateBiggerThan, today } from 'src/app/utils/dates'
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component'
 import { AppService } from 'src/app/services/app/app.service'
 import { sum } from 'lodash'
@@ -140,6 +140,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     firstName: new FormControl(''),
     matricule: new FormControl(''),
   })
+  /**
+   * showActuelPanel
+   */
+  showActuelPanel: boolean = false
 
   /**
    * Constructeur
@@ -533,6 +537,23 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       actualHistoryDateStart: this.actualHistoryDateStart,
       actualHistoryDateStop: this.actualHistoryDateStop,
     }) */
+
+    if (
+      this.actualHistoryDateStart &&
+      this.currentHR.dateEnd &&
+      isDateBiggerThan(this.actualHistoryDateStart, this.currentHR.dateEnd)
+    ) {
+      this.showActuelPanel = false
+    } else if (
+      !this.actualHistoryDateStart &&
+      this.actualHistoryDateStop &&
+      this.currentHR.dateStart &&
+      isDateBiggerThan(this.currentHR.dateStart, this.actualHistoryDateStop)
+    ) {
+      this.showActuelPanel = false
+    } else {
+      this.showActuelPanel = true
+    }
 
     this.preOpenSituation()
   }

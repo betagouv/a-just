@@ -10,7 +10,7 @@ export default class RouteContentieuxOptions extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor(params) {
+  constructor (params) {
     super({ ...params, model: 'ContentieuxOptions' })
   }
 
@@ -26,7 +26,7 @@ export default class RouteContentieuxOptions extends Route {
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
-  async getAll(ctx) {
+  async getAll (ctx) {
     let { juridictionId, backupId } = this.body(ctx)
     const backups = await this.model.models.OptionsBackups.getBackup(ctx.state.user.id, juridictionId)
     backupId = backups.find((b) => b.id === backupId) ? backupId : backups.length ? backups[backups.length - 1].id : null
@@ -44,7 +44,7 @@ export default class RouteContentieuxOptions extends Route {
     path: 'remove-backup/:backupId',
     accesses: [Access.canVewContentieuxOptions],
   })
-  async removeBackup(ctx) {
+  async removeBackup (ctx) {
     const { backupId } = ctx.params
 
     await this.model.models.OptionsBackups.removeBackup(backupId)
@@ -68,7 +68,7 @@ export default class RouteContentieuxOptions extends Route {
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
-  async duplicateBackup(ctx) {
+  async duplicateBackup (ctx) {
     const { backupId, backupName, backupStatus, type, juridictionId } = this.body(ctx)
 
     if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {
@@ -96,7 +96,7 @@ export default class RouteContentieuxOptions extends Route {
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
-  async saveBackup(ctx) {
+  async saveBackup (ctx) {
     const { backupId, list, backupName, juridictionId, backupStatus, type } = this.body(ctx)
     if (
       (backupId && (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id))) ||
@@ -104,7 +104,7 @@ export default class RouteContentieuxOptions extends Route {
     ) {
       const newId = await this.model.models.OptionsBackups.saveBackup(ctx.state.user.id, list, backupId, backupName, juridictionId, backupStatus, type)
 
-      await this.model.models.HistoriesContentieuxUpdate.addHistory(ctx.state.user.id, newId)
+      if (newId !== null) await this.model.models.HistoriesContentieuxUpdate.addHistory(ctx.state.user.id, newId)
 
       this.sendOk(ctx, newId)
     } else {
@@ -126,7 +126,7 @@ export default class RouteContentieuxOptions extends Route {
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
-  async renameBackup(ctx) {
+  async renameBackup (ctx) {
     const { backupId, backupName, juridictionId } = this.body(ctx)
 
     if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {
@@ -144,7 +144,7 @@ export default class RouteContentieuxOptions extends Route {
   @Route.Get({
     accesses: [Access.isAdmin],
   })
-  async getAllAdmin(ctx) {
+  async getAllAdmin (ctx) {
     const list = await this.models.OptionsBackups.adminGetAll()
 
     const juridictions = await this.models.HRBackups.findAll({
@@ -170,7 +170,7 @@ export default class RouteContentieuxOptions extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async updateBackup(ctx) {
+  async updateBackup (ctx) {
     const { id, juridictions } = this.body(ctx)
 
     await this.model.models.OptionsBackupJuridictions.changeRules(id, juridictions)
@@ -185,7 +185,7 @@ export default class RouteContentieuxOptions extends Route {
     path: 'get-backup-details/:backupId',
     accesses: [Access.canVewContentieuxOptions],
   })
-  async getBackupDetails(ctx) {
+  async getBackupDetails (ctx) {
     const { backupId } = ctx.params
 
     if (await this.models.OptionsBackups.haveAccessWithoutJuridiction(backupId, ctx.state.user.id)) {
@@ -207,7 +207,7 @@ export default class RouteContentieuxOptions extends Route {
     }),
     accesses: [Access.canVewContentieuxOptions],
   })
-  async getLastUpdate(ctx) {
+  async getLastUpdate (ctx) {
     const { backupId, juridictionId } = this.body(ctx)
 
     if (await this.models.OptionsBackups.haveAccess(backupId, juridictionId, ctx.state.user.id)) {

@@ -1,7 +1,7 @@
 <div class="header-refs window-scrool-width-margin">
     <div>
-        <button class="no-print" (click)="openAll()">{{checkAllDataShow()?'Réduire tous les
-            détails':'Voir tous les détails'}}</button>
+        <!-- <button class="no-print" (click)="openAll()">{{checkAllDataShow()?'Réduire tous les
+            détails':'Voir tous les détails'}}</button> -->
     </div>
     <div>
         <div *ngFor="let ref of referentiel" class="flex-1"
@@ -13,7 +13,7 @@
 </div>
 
 <div class="scroll-container" *ngIf="datasFilted && datasFilted.length">
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">DTES</p>
             <p class="description-section">de la période</p>
@@ -41,7 +41,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">Taux de couverture</p>
             <p class="details-section">moyens sur la période</p>
@@ -76,7 +76,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">Stock</p>
             <p class="details-section">sur la période</p>
@@ -103,15 +103,14 @@
                 <ng-template [ngIf]="!showDetailStock">
                     <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
                         [values]="[datasFilted[index].lastStock || 0]" [maxValue]="stockMax" type="stocks"
-                        (updateMax)="onUpdateMax($event)" [showLines]="showDetailStock"></aj-graphs-verticals-lines>
+                        (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="datasFilted[index].lastStock === null ? 'N/R' : '' + (datasFilted[index].lastStock || 0)"
                         class="text-center" [isWhite]="true"></aj-graphs-numbers></ng-template>
                 <ng-template [ngIf]="showDetailStock">
                     <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
-                        [values]="[datasFilted[index].lastStockBf || 0, datasFilted[index].lastStockAf || 0]"
                         [maxValue]="stockMax" type="stocks" (updateMax)="onUpdateMax($event)"
-                        [showLines]="showDetailStock"></aj-graphs-verticals-lines>
+                        [showLines]="true"></aj-graphs-verticals-lines>
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="datasFilted[index].lastStockBf === null ? 'N/R' : '' + (datasFilted[index].lastStockBf || 0)"
                         class="text-center no-border-bottom"></aj-graphs-numbers>
@@ -122,7 +121,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">Entrées</p>
             <p class="details-section">sur la période</p>
@@ -176,7 +175,7 @@
             </div>
         </div>
     </div>
-    <div>
+    <div *ngIf="!dateEndIsPast()">
         <div class="container-colum">
             <p class="title-section">Sorties</p>
             <p class="details-section">sur la période</p>
@@ -394,54 +393,56 @@
             </div>
         </div>
     </div>
-    <div *ngIf="categorySelected === MAGISTRATS">
-        <div class="container-colum">
-            <p class="title-section">Temps moyen Siège</p>
-            <p class="details-section">par dossier observé</p>
-            <div class="flex-1"></div>
-            <div class="middle-empty-block">
-                <p>Fin de période</p>
+    <ng-template [ngIf]="!dateEndIsPast()">
+        <div *ngIf="categorySelected === MAGISTRATS">
+            <div class="container-colum">
+                <p class="title-section">Temps moyen Siège</p>
+                <p class="details-section">par dossier observé</p>
+                <div class="flex-1"></div>
+                <div class="middle-empty-block">
+                    <p>Fin de période</p>
+                </div>
+                <div class="height-80"></div>
             </div>
-            <div class="height-80"></div>
-        </div>
-        <div class="container-element-text">
-            <p class="description-container">(calculé sur les 12 mois
-                précédents)</p>
-            <div class="container-elements">
-                <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                    <div class="gray-block">
-                        <p>
-                            <b>{{ datasFilted[index].magRealTimePerCase === null ? 'N/R' :
-                                decimalToStringDate(datasFilted[index].magRealTimePerCase) }}</b>
-                        </p>
+            <div class="container-element-text">
+                <p class="description-container">(calculé sur les 12 mois
+                    précédents)</p>
+                <div class="container-elements">
+                    <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                        <div class="gray-block">
+                            <p>
+                                <b>{{ datasFilted[index].magRealTimePerCase === null ? 'N/R' :
+                                    decimalToStringDate(datasFilted[index].magRealTimePerCase) }}</b>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div *ngIf="categorySelected === FONCTIONNAIRES">
-        <div class="container-colum">
-            <p class="title-section">Temps moyen Greffe</p>
-            <p class="details-section">par dossier observé</p>
-            <div class="flex-1"></div>
-            <div class="middle-empty-block">
-                <p>Fin de période</p>
+        <div *ngIf="categorySelected === FONCTIONNAIRES">
+            <div class="container-colum">
+                <p class="title-section">Temps moyen Greffe</p>
+                <p class="details-section">par dossier observé</p>
+                <div class="flex-1"></div>
+                <div class="middle-empty-block">
+                    <p>Fin de période</p>
+                </div>
+                <div class="height-80"></div>
             </div>
-            <div class="height-80"></div>
-        </div>
-        <div class="container-element-text">
-            <p class="description-container">(calculé sur les 12 mois
-                précédents)</p>
-            <div class="container-elements">
-                <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
-                    <div class="gray-block">
-                        <p>
-                            <b>{{ datasFilted[index].fonRealTimePerCase === null ? 'N/R' :
-                                decimalToStringDate(datasFilted[index].fonRealTimePerCase) }}</b>
-                        </p>
+            <div class="container-element-text">
+                <p class="description-container">(calculé sur les 12 mois
+                    précédents)</p>
+                <div class="container-elements">
+                    <div *ngFor="let ref of referentiel; let index = index" class="flex-1">
+                        <div class="gray-block">
+                            <p>
+                                <b>{{ datasFilted[index].fonRealTimePerCase === null ? 'N/R' :
+                                    decimalToStringDate(datasFilted[index].fonRealTimePerCase) }}</b>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </ng-template>
 </div>

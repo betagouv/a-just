@@ -18,6 +18,7 @@ import { OPACITY_20 } from 'src/app/constants/colors'
 import { MainClass } from 'src/app/libs/main-class'
 import { CalculatorService } from 'src/app/services/calculator/calculator.service'
 import { UserService } from 'src/app/services/user/user.service'
+import { getRandomInt } from 'src/app/utils/numbers'
 
 /**
  * Composant de la page en vue analytique
@@ -108,6 +109,14 @@ export class GraphsVerticalsLinesComponent
    * is multiple graph printed
    */
   isMultipleGraphPrinted: boolean = false
+  /**
+   * Wait serveur loading
+   */
+  isLoading: boolean = false
+  /**
+   * timeout
+   */
+  timeout: any
 
   /**
    * Constructor
@@ -128,25 +137,26 @@ export class GraphsVerticalsLinesComponent
       this.width$.subscribe((w) => {
         this.width = w
         this.draw()
-        this.drawMultiple()
+        //this.drawMultiple()
       })
     )
     this.watch(this.line.subscribe(() => this.draw()))
-    this.watch(
-      this.calculatorService.dateStart.subscribe(() => this.refreshDatas())
+    // Le composant est maintenant recharger complétement car il est détruit
+    /*this.watch(
+      this.calculatorService.dateStart.subscribe(() => this.clearDatas())
     )
     this.watch(
-      this.calculatorService.dateStop.subscribe(() => this.refreshDatas())
+      this.calculatorService.dateStop.subscribe(() => this.clearDatas())
     )
     this.watch(
       this.calculatorService.selectedFonctionsIds.subscribe(() =>
-        this.refreshDatas()
+        this.clearDatas()
       )
-    )
+    )*/
   }
 
   ngAfterViewInit() {
-    this.drawMultiple()
+    //this.drawMultiple()
   }
 
   ngOnDestroy() {
@@ -176,11 +186,7 @@ export class GraphsVerticalsLinesComponent
       this.type &&
       this.line.getValue().length === 0
     ) {
-      this.calculatorService
-        .rangeValues(this.referentielId, this.type)
-        .then((lines) => {
-          this.line.next(lines)
-        })
+      this.startLoading()
     }
 
     if (changes['maxValue'] || changes['showLines']) {
@@ -191,12 +197,33 @@ export class GraphsVerticalsLinesComponent
   refreshDatas() {
     this.line.next([])
     if (this.showLines && this.referentielId && this.type) {
-      this.calculatorService
-        .rangeValues(this.referentielId, this.type)
-        .then((lines) => {
-          this.line.next(lines)
-        })
+      this.startLoading()
     }
+  }
+
+  clearDatas() {
+    this.line.next([])
+    this.draw()
+  }
+
+  startLoading() {
+    if (this.timeout) {
+      clearTimeout(this.timeout)
+    }
+
+    this.timeout = setTimeout(() => {
+      if (this.referentielId && this.type && !this.isLoading) {
+        this.isLoading = true
+        this.calculatorService
+          .rangeValues(this.referentielId, this.type)
+          .then((lines) => {
+            this.isLoading = false
+            this.timeout = null
+            this.line.next(lines)
+            this.draw()
+          })
+      }
+    }, getRandomInt(700))
   }
 
   draw() {
@@ -264,7 +291,8 @@ export class GraphsVerticalsLinesComponent
       ctx.clearRect(0, 0, this.width * 200, this.height * 200)
       ctx.beginPath()
 
-      if (this.referentielId) {
+      if (this.referentielId && !this.isLoading) {
+        this.isLoading = true
         this.graphs.map((g, index) => {
           this.calculatorService
             .rangeValues(
@@ -275,6 +303,7 @@ export class GraphsVerticalsLinesComponent
             )
             .then((line) => {
               line = line.map((v: any) => +v || 0)
+              this.isLoading = false
 
               ctx.strokeStyle = g.color
               ctx.lineWidth = 1

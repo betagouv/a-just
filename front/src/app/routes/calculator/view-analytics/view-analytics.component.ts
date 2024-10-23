@@ -13,6 +13,9 @@ import {
   userCanViewMagistrat,
 } from 'src/app/utils/user'
 import { OPACITY_20 } from 'src/app/constants/colors'
+import { CalculatorService } from 'src/app/services/calculator/calculator.service'
+import { isDateBiggerThan, month } from 'src/app/utils/dates'
+import { ActivitiesService } from 'src/app/services/activities/activities.service'
 
 /**
  * Composant de la page en vue analytique
@@ -39,6 +42,10 @@ export class ViewAnalyticsComponent
    * Type of category selected
    */
   @Input() categorySelected: string = ''
+  /**
+   * maxDateSelectionDate
+   */
+  @Input() maxDateSelectionDate: Date | null = null
   /**
    * Define max DTES
    */
@@ -111,6 +118,10 @@ export class ViewAnalyticsComponent
    * Opacité background des contentieux
    */
   OPACITY = OPACITY_20
+  /**
+   * End date
+   */
+  dateStop: Date | null = null
 
   /**
    * Constructor
@@ -119,7 +130,9 @@ export class ViewAnalyticsComponent
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private kpiService: KPIService,
-    public userService: UserService
+    public userService: UserService,
+    private calculatorService: CalculatorService,
+    private activitiesService: ActivitiesService
   ) {
     super()
   }
@@ -140,6 +153,17 @@ export class ViewAnalyticsComponent
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
         this.canViewContractuel = userCanViewContractuel(u)
+      })
+    )
+
+    this.watch(
+      this.calculatorService.dateStop.subscribe((d) => {
+        this.dateStop = d
+        this.activitiesService.getLastMonthActivities().then((date) => {
+          date = new Date(date ? date : '')
+          const max = month(date, 0, 'lastday')
+          this.maxDateSelectionDate = max
+        })
       })
     )
   }
@@ -279,5 +303,17 @@ export class ViewAnalyticsComponent
 
   round(num: number) {
     return Math.round(num)
+  }
+
+  /**
+   * Check if the end date is after max selection date
+   * @returns
+   */
+  dateEndIsPast() {
+    if (this.dateStop && this.maxDateSelectionDate) {
+      return isDateBiggerThan(this.dateStop, this.maxDateSelectionDate, true)
+    }
+
+    return false
   }
 }

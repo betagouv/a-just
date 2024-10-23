@@ -75,13 +75,16 @@
         <p class="sub-title" *ngIf="this.userService.isCa()===false">Questions fréquentes</p>
         <div class="suggestion" *ngIf="this.userService.isCa()===false">
             <div (click)="openToIframe=documentation[0]; reloadContent()">
-                <label><span class="blue">Tout savoir en un coup d’oeil</span><br />
+                <label><span class="blue">Tout savoir </span><br /><span class="blue">en un coup
+                        d’oeil</span><br />
                     <p class="italic">Les questions que tout le monde se pose</p>
-                </label><br />
+                </label>
+                <br />
                 <mat-icon>arrow_forward</mat-icon>
             </div>
             <div (click)="openToIframe=documentation[1];reloadContent()">
-                <label><span class="green">Prenez en main votre espace</span><br />
+                <label><span class="green">Prenez en main</span><br /><span class="green">votre
+                        espace</span><br />
                     <p class="italic">Gérez vos
                         effectifs et vos données d’activité</p>
                 </label><br />
@@ -128,7 +131,7 @@
             </ng-container>
         </div>
     </ng-container>
-    <div *ngIf="openSuggestionPanel" class="open-panel animate__animated">
+    <div *ngIf="openSuggestionPanel" class="open-panel animate__animated" [ngSwitch]="openToIframe.url">
         <div class="suggestion-header">
 
             <div class="back-title">
@@ -136,14 +139,25 @@
                 <p>Aide</p>
             </div>
             <div class="panel-header">
-                <p class="tab" [ngClass]="{'selected':openToIframe.url===documentation[i].url}"
+                <p class="tab {{doc.color}}" [ngClass]="{'selected':openToIframe.url===documentation[i].url}"
                     *ngFor="let doc of documentation; index as i;" (click)="openToIframe=documentation[i]">
                     {{doc.title}}
                 </p>
             </div>
         </div>
-        <iframe id="iframe-doc" [src]="(openToIframe.url + cleDate)||'' | sanitizeResourceUrl">
+        <iframe *ngSwitchCase="documentation[0].url" id="iframe-doc" loading="lazy"
+            [src]="(documentation[0].url + cleDate)||'' | sanitizeResourceUrl">
         </iframe>
+        <iframe *ngSwitchCase="documentation[1].url" id="iframe-doc" loading="lazy"
+            [src]="(documentation[1].url + cleDate)||'' | sanitizeResourceUrl">
+        </iframe>
+        <iframe *ngSwitchCase="documentation[2].url" id="iframe-doc" loading="lazy"
+            [src]="(documentation[2].url + cleDate)||'' | sanitizeResourceUrl">
+        </iframe>
+        <iframe *ngSwitchCase="documentation[3].url" id="iframe-doc" loading="lazy"
+            [src]="(documentation[3].url + cleDate)||'' | sanitizeResourceUrl">
+        </iframe>
+
         <div class="hide-powered-by-gitbook"></div>
 
     </div>

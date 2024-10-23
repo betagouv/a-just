@@ -5,7 +5,6 @@ import { findAllIndisponibilities } from './indisponibilities'
 import { fixDecimal } from './number'
 
 export const preformatHumanResources = (list, dateSelected, referentielList, fonctionsIds) => {
-  console.log('fonctionsIds', fonctionsIds)
   return orderBy(
     list.map((h) => {
       const indisponibilities = dateSelected ? findAllIndisponibilities(h, dateSelected) : []
@@ -61,5 +60,20 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
     }
 
     return isFiltered
+  })
+}
+
+export const listCategories = (list) => {
+  return list.map((h) => {
+    let currentSituation
+    const situations = h.situations || []
+    if (situations.length) {
+      currentSituation = situations[0]
+    }
+
+    return {
+      ...h,
+      category: currentSituation && currentSituation.category,
+    }
   })
 }

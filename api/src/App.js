@@ -168,11 +168,7 @@ export default class App extends AppBase {
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
             'default-src': ["'none'"],
-            'style-src': [
-              "'self'",
-              ...styleSha1Generate([`${__dirname}/front/index.html`]),
-              'cdnjs.cloudflare.com',
-            ],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
             'frame-src': [
               'https://app.videas.fr/',

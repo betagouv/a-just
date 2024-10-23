@@ -235,13 +235,13 @@ export function referentielMappingColorCAActivity(
       case 'Social':
         return `rgb(212, 231, 232)`
       case 'Famille':
-        return `rgb(210, 227, 243)`
+        return `rgba(210, 227, 243, 1)`
       case 'CTX JCP':
-        return `rgb(211, 224, 243)`
+        return `rgba(198, 219, 242, 1)`
       case 'Civil Ns':
-        return `rgb(213, 216, 235)`
+        return `rgba(208, 213, 248, 1)`
       case 'Comm.':
-        return `rgb(218, 212, 237)`
+        return `rgba(222, 237, 239, 1)`
       case 'PP':
         return `rgb(255, 248, 213)`
       case 'Jld Civil':
@@ -264,13 +264,13 @@ export function referentielMappingColorCAActivity(
       case 'Social':
         return `rgba(3, 131, 143, ${opacity})`
       case 'Famille':
-        return `rgba(1, 118, 190, ${opacity})`
+        return `rgba(4, 134, 213, ${opacity})`
       case 'CTX JCP': // Protection
-        return `rgba(22, 100, 192, ${opacity})`
+        return `rgba(5, 89, 189, ${opacity})`
       case 'Civil Ns':
         return `rgba(40, 53, 146, ${opacity})`
       case 'Comm.':
-        return `rgba(38, 190, 206, ${opacity})`
+        return `rgba(3, 167, 184, ${opacity})`
       case 'PP':
         return `rgba(251, 202, 12, ${opacity})`
       case 'Jld Civil':
