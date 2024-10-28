@@ -164,6 +164,35 @@
               ],
               "outputHashing": "all"
             },
+            "test": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "6mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "25kb",
+                  "maximumError": "50kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "sandbox": {
               "optimization": {
                 "scripts": true,
@@ -217,6 +246,9 @@
             "staging": {
               "browserTarget": "a-just-front:build:staging"
             },
+            "test": {
+              "browserTarget": "a-just-front:build:test"
+            },
             "sandbox": {
               "browserTarget": "a-just-front:build:sandbox"
             },
@@ -247,6 +279,9 @@
               "node_modules/animate.css/animate.min.css"
             ],
             "scripts": ["node_modules/quill/dist/quill.min.js"]
+          },
+          "configurations": {
+            "browserTarget": "a-just-front:build:test"
           }
         }
       }
