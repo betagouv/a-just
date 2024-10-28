@@ -1,6 +1,3 @@
-// @ts-ignore
-import packageJSON from '../../../package.json'
-
 /**
  * Variables global avec url serveur différent ou matomo qui change
  */
@@ -11,7 +8,7 @@ export const environment = {
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
   nbHoursPerDayAndFonctionnaire: 7,
   nbHoursPerDayAndMagistrat: 8,
-  version: packageJSON.version,
+  version: 'test',
   matomo: 64,
   matomoTM: 'ypx7B8mu',
   forceSSL: true,

@@ -5,6 +5,7 @@ import { i18n, compress, cors, addDefaultBody } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
 import sslMiddleware from './routes-api/middlewares/ssl'
+import honeyTrap from './routes-api/middlewares/honeyTrap'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
@@ -78,11 +79,15 @@ export default class App extends AppBase {
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
     // (session) - required for cookie signature generation
-    this.koaApp.keys = ['newest secresfsdt key', 'oldsdfsdfsder secdsfsdfsdfret key']
+    this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
       max: config.maxQueryLimit, // limit each IP to 100 requests per interval
+    })
+
+    this.koaApp.use(async (ctx, next) => {
+      return await honeyTrap(ctx, next, this.models)
     })
 
     this.koaApp.use(session(config.session, this.koaApp))
@@ -168,7 +173,11 @@ export default class App extends AppBase {
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
             'default-src': ["'none'"],
-            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
+            'style-src': [
+              "'self'",
+              ...styleSha1Generate([`${__dirname}/front/index.html`]),
+              'cdnjs.cloudflare.com',
+            ],
             'worker-src': ['blob:'],
             'frame-src': [
               'https://app.videas.fr/',
