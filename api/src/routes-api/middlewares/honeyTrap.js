@@ -137,23 +137,25 @@ const IP_TRAPPED = []
  * Module de control des urls interdit
  */
 export default async (ctx, next, models) => {
-  //console.log('Client IP', ctx.request.ip, ctx.request.url)
+  console.log('Client IP', ctx.request.ip, ctx.request.url)
+
   if (IP_TRAPPED.indexOf(ctx.request.ip) !== -1) {
     console.log('IP BLOCKED - ', ctx.request.ip)
     models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url, logging: false })
-    ctx.res.writeHead(500).end()
+    ctx.res.writeHead(403).end()
     return
   }
 
   if (
+    ctx.request.url &&
     TRAPS.some((t) => {
-      return (ctx.request.url || '').includes(t)
+      return ctx.request.url.includes(t)
     })
   ) {
     console.log('NEW IP BLOCKED - ', ctx.request.ip, ctx.request.url)
     IP_TRAPPED.push(ctx.request.ip)
     models.Logs.addLog(HONEY_IP_TRAPPED, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url, logging: false })
-    ctx.res.writeHead(500).end()
+    ctx.res.writeHead(403).end()
     return
   }
 

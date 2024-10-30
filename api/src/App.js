@@ -80,6 +80,7 @@ export default class App extends AppBase {
     this.koaApp.context.models = this.models
     // (session) - required for cookie signature generation
     this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
+    this.koaApp.proxy = true
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
@@ -173,11 +174,7 @@ export default class App extends AppBase {
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
             ],
             'default-src': ["'none'"],
-            'style-src': [
-              "'self'",
-              ...styleSha1Generate([`${__dirname}/front/index.html`]),
-              'cdnjs.cloudflare.com',
-            ],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
             'worker-src': ['blob:'],
             'frame-src': [
               'https://app.videas.fr/',

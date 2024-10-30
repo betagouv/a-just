@@ -1,7 +1,6 @@
 import { createReadStream, statSync } from 'fs'
 import mime from 'mime'
 import Route from './Route'
-import config from 'config'
 
 @Route.Route({
   routeBase: '',
