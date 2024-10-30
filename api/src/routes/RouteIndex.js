@@ -49,7 +49,6 @@ export default class RouteIndex extends Route {
           ctx.status = 206
           const src = createReadStream(file, { start, end })
           ctx.body = src
-          src.close()
           //stream.on('open', () => stream.pipe(res))
           //stream.on('error', (streamErr) => res.end(streamErr))
         } else {
@@ -62,7 +61,6 @@ export default class RouteIndex extends Route {
         const src = createReadStream(indexFile)
         ctx.type = mime.getType(indexFile)
         ctx.body = src
-        src.close()
       }
     } catch (err) {
       console.log('on error', err)
@@ -70,7 +68,6 @@ export default class RouteIndex extends Route {
       const src = createReadStream(indexFile)
       ctx.type = mime.getType(indexFile)
       ctx.body = src
-      src.close()
     }
   }
 }
