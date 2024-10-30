@@ -7,12 +7,16 @@ import { ACTIVITIES_CHANGE_DATE, ACTIVITIES_PAGE_LOAD } from '../constants/log-c
  * Route contenant les lectures et modifications des activités
  */
 export default class RouteActivities extends Route {
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'Activities' })
+    super(params)
+
+    this.model = params.models.Activities
 
     // this.cleanDatas() TO TEST
   }
@@ -68,11 +72,9 @@ export default class RouteActivities extends Route {
   async getByMonth (ctx) {
     const { date, hrBackupId } = this.body(ctx)
 
-    if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id) || Access.isAdmin(ctx)) {
-
+    if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) || Access.isAdmin(ctx)) {
       const dateLastMonth = await this.model.getLastMonth(hrBackupId)
       this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
-
 
       const list = await this.model.getByMonth(date, hrBackupId)
       this.sendOk(ctx, {
