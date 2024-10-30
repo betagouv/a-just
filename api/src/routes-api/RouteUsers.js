@@ -20,12 +20,17 @@ import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
  * Route de la gestion des utilisateurs
  */
 export default class RouteUsers extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'Users' })
+    super(params)
+
+    this.model = params.models.Users
   }
 
   /**
