@@ -16,20 +16,10 @@ export default class RouteIndex extends Route {
     path: '*',
   })
   async readFile(ctx) {
-    if (config.forceURL && ctx.request?.header?.referer && ctx.request.header.referer.startsWith('http:')) {
-      console.log('config redirect', config, ctx.request?.header?.referer)
-      ctx.res
-        .writeHead(301, {
-          Location: ctx.request.header.referer.replace('http', 'https'),
-        })
-        .end()
-      return
-    }
-
-    let file = `${__dirname}/../../dist/front${decodeURIComponent(ctx.request.url)}`
-    const fileSplited = file.split('?')
-    file = fileSplited.length > 1 ? fileSplited.slice(0, -1).join('?') : file
     try {
+      let file = `${__dirname}/../../dist/front${decodeURIComponent(ctx.request.url)}`
+      const fileSplited = file.split('?')
+      file = fileSplited.length > 1 ? fileSplited.slice(0, -1).join('?') : file
       const stats = statSync(file)
 
       if (ctx.request.url && ctx.request.url !== '/' && stats.isFile()) {
