@@ -137,7 +137,7 @@ const IP_TRAPPED = []
  * Module de control des urls interdit
  */
 export default async (ctx, next, models) => {
-  console.log('Client IP', ctx.request.ip, ctx.request.url)
+  //console.log('Client IP', ctx.request.ip, ctx.request.url)
 
   if (IP_TRAPPED.indexOf(ctx.request.ip) !== -1) {
     console.log('IP BLOCKED - ', ctx.request.ip)
