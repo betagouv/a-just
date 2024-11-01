@@ -1,11 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Sort } from '@angular/material/sort';
-import { BackupInterface } from 'src/app/interfaces/backup';
-import { PageAccessInterface } from 'src/app/interfaces/page-access-interface';
-import { UserInterface } from 'src/app/interfaces/user-interface';
-import { MainClass } from 'src/app/libs/main-class';
-import { UserService } from 'src/app/services/user/user.service';
-import { compare } from 'src/app/utils/array';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MainClass } from '../../libs/main-class';
+import { UserInterface } from '../../interfaces/user-interface';
+import { UserService } from '../../services/user/user.service';
+import { PopupComponent } from '../../components/popup/popup.component';
+import { WrapperComponent } from '../../components/wrapper/wrapper.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { PageAccessInterface } from '../../interfaces/page-access-interface';
+import { BackupInterface } from '../../interfaces/backup';
 
 interface FormSelection {
   id: number;
@@ -14,13 +17,18 @@ interface FormSelection {
 }
 
 @Component({
+  standalone: true,
+  imports: [
+    PopupComponent,
+    WrapperComponent,
+    MatSortModule,
+    CommonModule,
+    FormsModule,
+  ],
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
 })
-export class UsersPage
-  extends MainClass
-  implements OnInit, OnDestroy
-{
+export class UsersPage extends MainClass implements OnInit, OnDestroy {
   datas: UserInterface[] = [];
   datasSource: UserInterface[] = [];
   access: FormSelection[] = [];
@@ -36,7 +44,7 @@ export class UsersPage
   popupDeleteAction = [
     { id: 'confirm', content: 'Confirmer', fill: true, red: true },
     { id: 'cancel', content: 'Annuler' },
-  ]
+  ];
 
   constructor(private userService: UserService) {
     super();
@@ -76,10 +84,14 @@ export class UsersPage
         selected: false,
       }));
 
-      this.sortData(this.sort ? this.sort : {
-        active: "id", 
-        direction: "desc"
-      })
+      this.sortData(
+        this.sort
+          ? this.sort
+          : {
+              active: 'id',
+              direction: 'desc',
+            }
+      );
     });
   }
 
@@ -163,28 +175,22 @@ export class UsersPage
       this.userConnected &&
       this.userConnected.role !== this.USER_ROLE_SUPER_ADMIN
     ) {
-      alert(
-        "Vous n'avez pas le droit de supprimer un super administrateur."
-      );
+      alert("Vous n'avez pas le droit de supprimer un super administrateur.");
       return;
     }
-    this.userDelete = user
+    this.userDelete = user;
   }
-
 
   onPopupDeleteAction(action: any) {
     switch (action.id) {
       case 'confirm':
         {
-          const userId = this.userDelete && this.userDelete.id
+          const userId = this.userDelete && this.userDelete.id;
           if (userId) {
-            this.userService
-            .deleteUser(userId)
-            .then(() => {
+            this.userService.deleteUser(userId).then(() => {
               this.userDelete = null;
               this.onLoad();
-            })
-        
+            });
           }
         }
         break;

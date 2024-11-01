@@ -1,18 +1,38 @@
-import { Color } from '@angular-material-components/color-picker';
-import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { AngularEditorConfig } from '@kolkov/angular-editor';
-import { REMIXICONLIST } from 'src/app/constants/icons';
-import { NewsInterface } from 'src/app/interfaces/news';
-import { MainClass } from 'src/app/libs/main-class';
-import { NewsService } from 'src/app/services/news/news.service';
-import { hexToRgb } from 'src/app/utils/color';
+import { ColorPickerModule } from 'ngx-color-picker';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MainClass } from '../../libs/main-class';
+import { REMIXICONLIST } from '../../constants/icons';
+import { NewsInterface } from '../../interfaces/news';
+import { NewsService } from '../../services/news/news.service';
+import { hexToRgb } from '../../utils/color';
+import { CommonModule } from '@angular/common';
+import { WrapperComponent } from '../../components/wrapper/wrapper.component';
+import { PopupComponent } from '../../components/popup/popup.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { Editor, NgxEditorModule } from 'ngx-editor';
 
 @Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTableModule,
+    WrapperComponent,
+    PopupComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    MatDatepickerModule,
+    ColorPickerModule,
+    NgxEditorModule,
+  ],
   templateUrl: './news.page.html',
   styleUrls: ['./news.page.scss'],
 })
-export class NewsPage extends MainClass implements OnInit {
+export class NewsPage extends MainClass implements OnInit, OnDestroy {
   REMIXICONLIST = REMIXICONLIST;
   displayedColumns: string[] = [
     'html',
@@ -27,7 +47,8 @@ export class NewsPage extends MainClass implements OnInit {
     { id: 'save', content: 'Modifier', fill: true },
     { id: 'close', content: 'Fermer' },
   ];
-  htmlEditorConfig: AngularEditorConfig = {
+  editor: Editor | undefined;
+  /*htmlEditorConfig: AngularEditorConfig = {
     editable: true,
     height: 'auto',
     minHeight: '100',
@@ -67,29 +88,44 @@ export class NewsPage extends MainClass implements OnInit {
         'toggleEditorMode',
       ],
     ],
-  };
+  };*/
 
   constructor(private newsService: NewsService) {
     super();
   }
 
   ngOnInit() {
+    this.editor = new Editor();
     this.onLoad();
+  }
+
+  // make sure to destory the editor
+  ngOnDestroy(): void {
+    this.editor?.destroy();
   }
 
   onLoad() {
     this.newsService.getAll().then((datas) => {
       this.dataSource.data = datas.map((d: NewsInterface) => {
-        const textColorHex = d.textColor && typeof d.textColor === 'string' ? hexToRgb(d.textColor) : null
-        const backgroundColorHex = d.backgroundColor && typeof d.backgroundColor === 'string' ? hexToRgb(d.backgroundColor) : null
-        const actionButtonColorHex = d.actionButtonColor && typeof d.actionButtonColor === 'string' ? hexToRgb(d.actionButtonColor) : null
+        const textColorHex =
+          d.textColor && typeof d.textColor === 'string'
+            ? hexToRgb(d.textColor)
+            : null;
+        const backgroundColorHex =
+          d.backgroundColor && typeof d.backgroundColor === 'string'
+            ? hexToRgb(d.backgroundColor)
+            : null;
+        const actionButtonColorHex =
+          d.actionButtonColor && typeof d.actionButtonColor === 'string'
+            ? hexToRgb(d.actionButtonColor)
+            : null;
 
         return {
           ...d,
-          textColor: textColorHex ? new Color(textColorHex.r, textColorHex.g, textColorHex.b) : '',
-          backgroundColor: backgroundColorHex ? new Color(backgroundColorHex.r, backgroundColorHex.g, backgroundColorHex.b) : '',
-          actionButtonColor: actionButtonColorHex ? new Color(actionButtonColorHex.r, actionButtonColorHex.g, actionButtonColorHex.b) : ''
-        }
+          textColor: textColorHex || '',
+          backgroundColor: backgroundColorHex || '',
+          actionButtonColor: actionButtonColorHex || '',
+        };
       });
     });
   }
@@ -111,6 +147,9 @@ export class NewsPage extends MainClass implements OnInit {
       id: -1,
       html: '',
       enabled: false,
+      backgroundColor: '',
+      textColor: '',
+      actionButtonColor: '',
     };
   }
 
@@ -135,32 +174,6 @@ export class NewsPage extends MainClass implements OnInit {
             }
 
             console.log(this.newsToEdit);
-            if (
-              this.newsToEdit &&
-              this.newsToEdit.actionButtonColor &&
-              typeof this.newsToEdit.actionButtonColor !== 'string' && 
-              this.newsToEdit.actionButtonColor.hex
-            ) {
-              this.newsToEdit.actionButtonColor = `#${this.newsToEdit.actionButtonColor.hex}`;
-            }
-
-            if (
-              this.newsToEdit &&
-              this.newsToEdit.backgroundColor &&
-              typeof this.newsToEdit.backgroundColor !== 'string' && 
-              this.newsToEdit.backgroundColor.hex
-            ) {
-              this.newsToEdit.backgroundColor = `#${this.newsToEdit.backgroundColor.hex}`;
-            }
-
-            if (
-              this.newsToEdit &&
-              this.newsToEdit.textColor &&
-              typeof this.newsToEdit.textColor !== 'string' && 
-              this.newsToEdit.textColor.hex
-            ) {
-              this.newsToEdit.textColor = `#${this.newsToEdit.textColor.hex}`;
-            }
 
             this.newsService.updateOrCreate(this.newsToEdit).then(() => {
               this.newsToEdit = null;

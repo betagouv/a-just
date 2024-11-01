@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { NewsInterface } from 'src/app/interfaces/news';
 import { ServerService } from '../http-server/server.service';
+import { NewsInterface } from '../../interfaces/news';
 
 @Injectable({
   providedIn: 'root',
