@@ -1,13 +1,21 @@
-import { Component } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
-import { Router } from "@angular/router";
-import { LOGIN_STATUS_GET_CODE } from "src/app/constants/login";
-import { AuthService } from "src/app/services/auth/auth.service";
-import { UserService } from "src/app/services/user/user.service";
+import { Component } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
+import { UserService } from '../../services/user/user.service';
+import { LOGIN_STATUS_GET_CODE } from '../../constants/login';
+import { PopupComponent } from '../../components/popup/popup.component';
 
 @Component({
-  templateUrl: "./login.page.html",
-  styleUrls: ["./login.page.scss"],
+  standalone: true,
+  imports: [PopupComponent, FormsModule, ReactiveFormsModule],
+  templateUrl: './login.page.html',
+  styleUrls: ['./login.page.scss'],
 })
 export class LoginPage {
   form = new FormGroup({
@@ -17,14 +25,18 @@ export class LoginPage {
   /**
    * Popin to required code
    */
-  needToGetCode: string | null = null
+  needToGetCode: string | null = null;
 
-  constructor(private authService: AuthService, private userService: UserService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.userService.me().then((data) => {
       if (data) {
-        this.router.navigate(["/users"]);
+        this.router.navigate(['/users']);
       }
     });
   }
@@ -37,26 +49,26 @@ export class LoginPage {
         returnLogin.data &&
         returnLogin.data.status === LOGIN_STATUS_GET_CODE
       ) {
-        this.needToGetCode = returnLogin.data.datas.code || ''
+        this.needToGetCode = returnLogin.data.datas.code || '';
       } else {
-        this.router.navigate(["/users"]);
+        this.router.navigate(['/users']);
       }
     });
   }
 
   onContinuToLogin(action: any, input: any) {
-    console.log(action, input.value)
+    console.log(action, input.value);
     switch (action.id) {
       case 'connect':
         this.authService
           .completeLogin({ code: input.value })
           .then((returnLogin) => {
-            this.router.navigate(["/users"]);
-          })
-        break
+            this.router.navigate(['/users']);
+          });
+        break;
       default:
-        this.needToGetCode = null
-        break
+        this.needToGetCode = null;
+        break;
     }
   }
 }

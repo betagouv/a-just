@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Sort } from '@angular/material/sort';
-import { JuridictionInterface } from 'src/app/interfaces/juridiction';
-import { MainClass } from 'src/app/libs/main-class';
-import { JuridictionsService } from 'src/app/services/juridictions/juridictions.service';
-import { compare } from 'src/app/utils/array';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MainClass } from '../../libs/main-class';
+import { JuridictionInterface } from '../../interfaces/juridiction';
+import { JuridictionsService } from '../../services/juridictions/juridictions.service';
+import { WrapperComponent } from '../../components/wrapper/wrapper.component';
+import { PopupComponent } from '../../components/popup/popup.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
+  imports: [WrapperComponent, PopupComponent, CommonModule, MatSortModule],
   templateUrl: './juridictions.page.html',
   styleUrls: ['./juridictions.page.scss'],
 })

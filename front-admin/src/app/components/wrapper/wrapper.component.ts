@@ -1,53 +1,71 @@
-import { Component, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
-import { Router } from '@angular/router';
-import { MainClass } from 'src/app/libs/main-class';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+} from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { MainClass } from '../../libs/main-class';
+import { AuthService } from '../../services/auth/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'aj-wrapper',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './wrapper.component.html',
   styleUrls: ['./wrapper.component.scss'],
 })
 export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
   @Input() actionTemplate: TemplateRef<any> | undefined;
-  @Input() title: string = "";
-  menu = [{
-    label: 'Utilisateurs',
-    path: 'users',
-  }, {
-    label: 'Temps moyens de référentiel',
-    path: 'backup-options',
-  }, {
-    label: 'Référentiel',
-    path: 'referentiel',
-  }, {
-    label: 'Imports',
-    path: 'imports',
-  }, {
-    label: 'Notifications',
-    path: 'news',
-  }, {
-    label: 'Juridictions',
-    path: 'juridictions',
-  }, {
-    label: 'Yaml tools',
-    path: 'yaml-tools',
-  }, {
-    label: 'Data',
-    path: 'data',
-  }];
+  @Input() title: string = '';
+  menu = [
+    {
+      label: 'Utilisateurs',
+      path: 'users',
+    },
+    {
+      label: 'Temps moyens de référentiel',
+      path: 'backup-options',
+    },
+    {
+      label: 'Référentiel',
+      path: 'referentiel',
+    },
+    {
+      label: 'Imports',
+      path: 'imports',
+    },
+    {
+      label: 'Notifications',
+      path: 'news',
+    },
+    {
+      label: 'Juridictions',
+      path: 'juridictions',
+    },
+    {
+      label: 'Yaml tools',
+      path: 'yaml-tools',
+    },
+    {
+      label: 'Data',
+      path: 'data',
+    },
+  ];
 
   constructor(private authService: AuthService, private router: Router) {
     super();
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 
-  ngOnDestroy() { }
+  ngOnDestroy() {}
 
   onDisconnect() {
     this.authService.onLogout().then(() => {
-      this.router.navigate(["/"]);
+      this.router.navigate(['/']);
     });
   }
 }

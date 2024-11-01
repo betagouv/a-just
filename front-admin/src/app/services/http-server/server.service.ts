@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-
-import { HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { HttpService } from './http.service';
 import { BehaviorSubject } from 'rxjs';
@@ -12,25 +10,10 @@ export class ServerService {
   userToken: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   serverUrl: string = environment.serverUrl;
 
-  constructor(private _http: HttpService/*, private appService: AppService*/) { }
+  constructor(private _http: HttpService) {}
 
   getUrl(url: string): string {
     return this.serverUrl + url;
-  }
-
-  getOptions(header = {}) {
-    const json = {
-      'Content-Type': 'application/json',
-      Authorization: '',
-      ...header,
-    };
-    const token = this.getToken();
-    if (token) {
-      json.Authorization = token;
-    }
-    const headers = new HttpHeaders(json);
-
-    return { headers: headers, withCredentials: true };
   }
 
   handleError(error: any) {
@@ -78,7 +61,7 @@ export class ServerService {
         if (localStorage && localStorage.getItem('token')) {
           this.setToken(localStorage.getItem('token'));
         }
-      } catch (err) { }
+      } catch (err) {}
     }
 
     return this.userToken.getValue();
@@ -99,7 +82,7 @@ export class ServerService {
     console.log('HTTP GET ' + this.getUrl(url));
     //this.appService.setIsLoading(true);
     return this._http
-      .get(this.getUrl(url), { ...this.getOptions(), ...options })
+      .get(this.getUrl(url), options)
       .then((r) => {
         //this.appService.setIsLoading(false);
         return r;
@@ -109,24 +92,16 @@ export class ServerService {
 
   getWithoutError(url: string, options = {}): Promise<any> {
     console.log('HTTP GET ' + this.getUrl(url));
-    return this._http
-      .get(this.getUrl(url), {
-        ...this.getOptions(),
-        ...options,
-      })
-      .then((r) => {
-        //this.appService.setIsLoading(false);
-        return r;
-      });
+    return this._http.get(this.getUrl(url), options).then((r) => {
+      //this.appService.setIsLoading(false);
+      return r;
+    });
   }
 
   post(url: string, params = {}, options = {}, header = {}): Promise<any> {
     console.log('HTTP POST ' + this.getUrl(url));
     return this._http
-      .post(this.getUrl(url), params, {
-        ...this.getOptions(header),
-        ...options,
-      })
+      .post(this.getUrl(url), params, options)
       .then((r) => {
         //this.appService.setIsLoading(false);
         return r;
@@ -136,21 +111,16 @@ export class ServerService {
 
   postWithoutError(url: string, params = {}, options = {}): Promise<any> {
     console.log('HTTP GET ' + this.getUrl(url));
-    return this._http
-      .post(this.getUrl(url), params, {
-        ...this.getOptions(),
-        ...options,
-      })
-      .then((r) => {
-        //this.appService.setIsLoading(false);
-        return r;
-      });
+    return this._http.post(this.getUrl(url), params, options).then((r) => {
+      //this.appService.setIsLoading(false);
+      return r;
+    });
   }
 
   put(url: string, params = {}, options = {}): Promise<any> {
     console.log('HTTP PUT ' + this.getUrl(url));
     return this._http
-      .put(this.getUrl(url), params, { ...this.getOptions(), ...options })
+      .put(this.getUrl(url), params, options)
       .then((r) => {
         //this.appService.setIsLoading(false);
         return r;
@@ -161,7 +131,7 @@ export class ServerService {
   delete(url: string, options = {}): Promise<any> {
     console.log('HTTP DELETE ' + this.getUrl(url));
     return this._http
-      .delete(this.getUrl(url), { ...this.getOptions(), ...options })
+      .delete(this.getUrl(url), options)
       .then((r) => {
         //this.appService.setIsLoading(false);
         return r;
