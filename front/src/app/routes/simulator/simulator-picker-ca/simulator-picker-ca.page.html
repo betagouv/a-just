@@ -1,0 +1,56 @@
+<aj-wrapper #wrapper class="no-padding" id="simu-wrapper" title="Les simulateurs" [alignLeft]="true"
+    [documentation]="documentation">
+
+    <!-- ECRAN DE CHOIX SIMULATEUR -->
+    <div class="intro-simulateur">
+        <div class="first-pan">
+            <p class="intro-title">
+                <img src="/assets/icons/calculatrice-black.svg" /> Les simulateurs
+            </p>
+            <div class="intro-desc">
+                Visualisez l&apos;impact d&apos;une modification, subie ou choisie, sur
+                une période donnée. Jouez des scénarios pour anticiper un changement (de
+                volume d&apos;ETPT ou d&apos;affaires nouvelles, d’organisation...) ou
+                rechercher la manière d’atteindre au mieux vos objectifs (réduction de
+                stock, de délai, taux de couverture...). <br />
+                <b>Deux options s&apos;offrent à vous :</b>
+            </div>
+        </div>
+        <div class="second-pan">
+            <div class="blue-pan">
+                <p class="intro-blue-title">
+                    Utiliser les données enregistrées dans l’outil
+                </p>
+                <div class="intro-blue-desc">
+                    Choisissez un contentieux et/ou un sous-contentieux référencé dans
+                    A-JUST : les situations de début et de fin de période de simulation
+                    (entrées moyennes mensuelles, sorties possibles, stock, DTES, taux de
+                    couverture, temps moyen par dossier) sont calculées automatiquement à
+                    partir des données d'ETPT et d'activité enregistrées à ce jour dans
+                    l'outil.
+                    <br />
+                    <br />Vous n'avez plus qu'à choisir les scénarios que vous voulez
+                    jouer !
+                    <div id="on-button-continue" class="button-sim">
+                        Bientôt disponible
+                    </div>
+                </div>
+            </div>
+
+            <div class="blue-pan blue">
+                <p class="intro-blue-title">
+                    Effectuer une simulation sur des champs non couverts par A-JUST
+                </p>
+                <div class="intro-blue-desc">
+                    Renseignez librement les données (d'activité, d'ETPT ou de temps moyen par dossier) pour effectuer
+                    des projections sur l'activité (y compris non juridictionnelle) de votre choix.
+                    <div id="on-button-continue" class="button-sim-blue" (click)="changePage()">
+                        Continuer
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</aj-wrapper>

@@ -34,49 +34,31 @@ import {
   userCanViewContractuel,
   userCanViewGreffier,
   userCanViewMagistrat,
+  userCanViewSimulator,
   userCanViewWhiteSimulator,
 } from 'src/app/utils/user'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
-import { IDeactivateComponent } from '../canDeactivate-guard-service'
+import { IDeactivateComponent } from '../../canDeactivate-guard-service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ServerService } from 'src/app/services/http-server/server.service'
 import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
 import { sleep } from 'src/app/utils'
-import { PeriodSelectorComponent } from './period-selector/period-selector.component'
-import { position } from 'html2canvas/dist/types/css/property-descriptors/position'
-
-/**
- * Variable ETP magistrat field name
- */
-export const etpMag = 'etpMag'
-/**
- * Variable ETP magistrat popup title
- */
-export const etpMagTitle = 'des ETPT siège'
-/**
- * Variable ETP magistrat unité
- */
-export const etpMagToDefine = '[un volume moyen de]'
-
-/**
- * Variable ETP fonctionnaire field name
- */
-export const etpFon = 'etpFon'
-/**
- * Variable ETP fonctionnaire popup title
- */
-export const etpFonTitle = 'des ETPT greffe'
-/**
- * Variable ETP fonctionnaire unité
- */
-export const etpFonToDefine = '[un volume moyen de]'
+import { PeriodSelectorComponent } from '../period-selector/period-selector.component'
+import {
+  etpFon,
+  etpFonTitle,
+  etpFonToDefine,
+  etpMag,
+  etpMagTitle,
+  etpMagToDefine,
+} from '../simulator.page'
 
 /**
  * Composant page simulateur
  */
 @Component({
-  templateUrl: './simulator.page.html',
-  styleUrls: ['./simulator.page.scss'],
+  templateUrl: './white-simulator.page.html',
+  styleUrls: ['./white-simulator.page.scss'],
 
   animations: [
     trigger('fadeInOut', [
@@ -88,7 +70,7 @@ export const etpFonToDefine = '[un volume moyen de]'
     ]),
   ],
 })
-export class SimulatorPage
+export class WhiteSimulatorPage
   extends MainClass
   implements OnInit, IDeactivateComponent, OnDestroy
 {
@@ -252,7 +234,6 @@ export class SimulatorPage
    * URL des différentes documentations selon le simulateur sélectionnée
    */
   documentationUrl = {
-    main: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/simulateur/quest-ce-que-cest',
     whiteSimulator:
       'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
   }
@@ -261,8 +242,8 @@ export class SimulatorPage
    * Documentation widget
    */
   documentation: DocumentationInterface = {
-    title: 'Simulateur A-JUST :',
-    path: this.documentationUrl.main,
+    title: 'Simulateur à blanc A-JUST :',
+    path: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
     printSubTitle: true,
   }
 
@@ -380,9 +361,9 @@ export class SimulatorPage
    */
   canViewContractuel: boolean = false
   /**
-   * Peux utiliser le simulateur à blanc
+   * Peux voir l'interface contractuel
    */
-  canViewWhiteSimulator: boolean = false
+  canViewSimulator: boolean = false
   /**
    * Commentaires pour PDF
    */
@@ -390,7 +371,7 @@ export class SimulatorPage
   /**
    * Activation du simulator à blanc
    */
-  whiteSimulator: boolean = false
+  whiteSimulator: boolean = true
   /**
    * Nombre de jour de simulation à blanc
    */
@@ -402,136 +383,9 @@ export class SimulatorPage
   /**
    * Affichage de l'écran de choix de simulateur
    */
-  chooseScreen = true
+  chooseScreen = false
 
   onReloadAction = false
-  /**
-   * Intro JS Steps par défaut
-   */
-  introStepsDefault: IntroJSStep[] = [
-    {
-      target: '#wrapper-contener',
-      title: 'Comment simuler votre trajectoire avec A-JUST ?',
-      intro:
-        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls autoplay class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
-      beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('aj-back-button a')
-        if (itemToClick) {
-          // @ts-ignore
-          itemToClick.click()
-          await sleep(200)
-        }
-      },
-    },
-    {
-      target: '.second-pan .blue-pan',
-      title: 'Choisissez le type de simulation',
-      intro:
-        '<p>Vous pouvez <b>effectuer une simulation en utilisant les données renseignées dans A-JUST</b>, c’est ce que nous vous recommandons pour une vision fine de la trajectoire de votre ' +
-        (this.isTJ() ? 'juridiction' : "cour d'appel") +
-        ' sur des contentieux avec des données pré-alimentées par A-JUST.</p>',
-    },
-    {
-      target: '#panel-empty-simulator',
-      title: 'Choisissez le type de simulation',
-      intro:
-        '<p>Vous pouvez effectuer <b>une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas recensées en tant que telles dans A-JUST comme les activités administratives ou le soutien (gestion des scellés par ex.), ou des contentieux qui ne seraient pas isolés spécialement dans A-JUST.</p>',
-      beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('aj-back-button a')
-        if (itemToClick) {
-          // @ts-ignore
-          itemToClick.click()
-          await sleep(200)
-        }
-      },
-    },
-    {
-      target: '.categories-switch',
-      title: 'Configurez votre hypothèse',
-      intro:
-        '<p>Choisissez la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe</p>',
-      beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('#on-button-continue')
-        if (itemToClick) {
-          // @ts-ignore
-          itemToClick.click()
-          await sleep(200)
-        }
-      },
-    },
-    {
-      target: '.action-simulator-bar',
-      title: 'Configurez votre hypothèse',
-      intro:
-        '<p>Sélectionnez un <b>contentieux</b> dans le menu déroulant. Suivant votre besoin, vous pouvez affiner votre simulation en sélectionnant un sous-contentieux voire une fonction spécifique</p>',
-      beforeLoad: async (intro: any) => {
-        const introTooltip = document.querySelector('.introjs-tooltip')
-        if (introTooltip) {
-          // @ts-ignore
-          introTooltip.style.visibility = 'hidden'
-        }
-        setTimeout(() => {
-          const introTooltip = document.querySelector('.introjs-tooltip')
-          if (introTooltip) {
-            introTooltip.classList.add('introjs-bottom-left-aligned')
-            introTooltip.classList.remove('introjs-floating')
-            // @ts-ignore
-            introTooltip.style.left = '0px'
-            // @ts-ignore
-            introTooltip.style.top = '85px'
-            // @ts-ignore
-            introTooltip.style.marginLeft = '0'
-            // @ts-ignore
-            introTooltip.style.marginTop = '0'
-            // @ts-ignore
-            introTooltip.style.visibility = 'visible'
-          }
-        }, 380)
-      },
-      options: {
-        position: 'bottom',
-      },
-    },
-    {
-      target: '.container-timeline-button',
-      title: 'Configurez votre hypothèse',
-      intro:
-        '<p>Déterminez une <b>date de début et de fin de période</b>, c’est à dire la date ou les dates du futur sur lesquelles vous souhaitez vous projeter</p>',
-    },
-    {
-      target: '#editable-sim-name',
-      title: 'Nommez votre simulation :',
-      intro:
-        '<p>C’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
-      beforeLoad: async (intro: any) => {
-        const introTooltip = document.querySelector('.introjs-tooltip')
-        if (introTooltip) {
-          // @ts-ignore
-          introTooltip.style.visibility = 'hidden'
-        }
-        setTimeout(() => {
-          const introTooltip = document.querySelector('.introjs-tooltip')
-          if (introTooltip) {
-            introTooltip.classList.add('introjs-bottom-left-aligned')
-            introTooltip.classList.remove('introjs-floating')
-            // @ts-ignore
-            introTooltip.style.left = '0px'
-            // @ts-ignore
-            introTooltip.style.top = '45px'
-            // @ts-ignore
-            introTooltip.style.marginLeft = '0'
-            // @ts-ignore
-            introTooltip.style.marginTop = '0'
-            // @ts-ignore
-            introTooltip.style.visibility = 'visible'
-          }
-        }, 380)
-      },
-      options: {
-        position: 'bottom',
-      },
-    },
-  ]
   /**
    * Intro JS Steps du simulateur à blanc
    */
@@ -630,7 +484,7 @@ export class SimulatorPage
     private humanResourceService: HumanResourceService,
     private referentielService: ReferentielService,
     private simulatorService: SimulatorService,
-    private userService: UserService,
+    public userService: UserService,
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
     private route: ActivatedRoute,
@@ -638,7 +492,7 @@ export class SimulatorPage
   ) {
     super()
 
-    this.serverService.post('simulator/check-access-simulator')
+    this.serverService.post('simulator/check-access-white-simulator')
 
     this.watch(
       this.simulatorService.disabled.subscribe((disabled) => {
@@ -678,7 +532,6 @@ export class SimulatorPage
         this.displayWhiteElements = b
         if (b === false) {
           this.toDisplaySimulation = false
-          //this.simulatorService.situationSimulated.next(null)
           this.initParamsToAjust()
         }
       })
@@ -689,7 +542,7 @@ export class SimulatorPage
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
         this.canViewContractuel = userCanViewContractuel(u)
-        this.canViewWhiteSimulator = userCanViewWhiteSimulator(u)
+        this.canViewSimulator = userCanViewSimulator(u)
       })
     )
 
@@ -824,11 +677,23 @@ export class SimulatorPage
         this.startRealValue = findRealValue(this.dateStart)
       })
     )
+
     this.watch(
       this.simulatorService.dateStop.subscribe((date) => {
-        if (date !== undefined) {
-          this.dateStop = date
-          this.stopRealValue = findRealValue(this.dateStop)
+        console.log('CHANGE', this.dateStop, date)
+
+        if (date !== undefined && date !== null) {
+          if (
+            !(
+              date.getDate() === this.today.getDate() &&
+              date.getMonth() === this.today.getMonth() &&
+              date.getFullYear() === this.today.getFullYear()
+            )
+          ) {
+            this.dateStop = date
+            this.stopRealValue = findRealValue(this.dateStop)
+            console.log('CHANGE', this.dateStop)
+          }
         }
       })
     )
@@ -837,6 +702,7 @@ export class SimulatorPage
       this.simulatorService.getSituation([this.contentieuId])
 
     this.loadFunctions()
+    console.log(this.dateStop)
   }
 
   /**
@@ -943,28 +809,6 @@ export class SimulatorPage
   }
 
   /**
-   * Action lors de la selection d'une date simulateur à blanc
-   */
-  whiteDateSelector(type: string = '', event: any = null) {
-    if (type === 'dateStart') {
-      this.disabled = 'disabled-date'
-      this.simulatorService.disabled.next(this.disabled)
-
-      this.dateStart = new Date(event)
-      this.startRealValue = findRealValue(this.dateStart)
-      this.simulatorService.dateStart.next(this.dateStart)
-    } else if (type === 'dateStop') {
-      this.disabled = 'disabled-date'
-      this.simulatorService.disabled.next(this.disabled)
-
-      this.dateStop = new Date(event)
-      this.stopRealValue = findRealValue(this.dateStop)
-      this.simulatorService.dateStop.next(this.dateStop)
-      this.whiteNbOfDays = nbOfDays(this.dateStart, this.dateStop)
-    }
-  }
-
-  /**
    * Récupère un contentieux ou sous-contentieux grâce à son identifiant
    * @param id identifiant contentieux/sous-contentieux
    * @returns noeud du contentieux trouvé
@@ -1019,8 +863,7 @@ export class SimulatorPage
     this.startRealValue = ''
     this.stopRealValue = ''
     this.mooveClass = ''
-    ;(this.documentation.path = this.documentationUrl.main),
-      (this.toDisplaySimulation = false)
+    this.toDisplaySimulation = false
     //this.simulatorService.situationSimulated.next(null)
     document.getElementById('init-button')?.click()
 
@@ -1865,9 +1708,9 @@ export class SimulatorPage
         x.classList.add('disable')
       })
 
-      this.logRunSimulator(params)
+      this.logRunWhiteSimulator(params)
 
-      this.simulatorService.toSimulate(params, simulation)
+      this.simulatorService.toSimulate(params, simulation, true)
     } else {
       this.simulateButton = ''
       alert(
@@ -2150,15 +1993,6 @@ export class SimulatorPage
     return true
   }
 
-  onReturn() {
-    if (this.toDisplaySimulation) {
-      this.onUserActionClick(this.action.return)
-    } else {
-      this.chooseScreen = true
-      this.resetParams()
-    }
-  }
-
   onUserActionClick(button: string, paramsToInit?: any) {
     if (this.toDisplaySimulation) {
       this.printPopup = true
@@ -2347,6 +2181,17 @@ export class SimulatorPage
   }
 
   /**
+   * Log du lancement d'une simulation
+   */
+  async logRunWhiteSimulator(params: any) {
+    await this.serverService
+      .post('simulator/log-launch-white-simulation', { params })
+      .then((r) => {
+        return r.data
+      })
+  }
+
+  /**
    * Log du lancement d'une simulation à blanc
    */
   async logRunSimulator(params: any) {
@@ -2394,12 +2239,5 @@ export class SimulatorPage
    */
   setDocUrl(docUrl: string) {
     this.documentation.path = docUrl
-  }
-
-  /**
-   * Aller sur le simulateur a blanc
-   */
-  changePage() {
-    window.location.href = 'simulateur-a-blanc'
   }
 }
