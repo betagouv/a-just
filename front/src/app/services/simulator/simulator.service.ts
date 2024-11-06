@@ -9,6 +9,7 @@ import { SimulationInterface } from 'src/app/interfaces/simulation'
 import * as _ from 'lodash'
 import { ChartAnnotationBoxInterface } from 'src/app/interfaces/chart-annotation-box'
 import { ServerService } from '../http-server/server.service'
+import { UserService } from '../user/user.service'
 
 /**
  * Service de la page du simulateur
@@ -48,7 +49,9 @@ export class SimulatorService extends MainClass {
   /**
    * Date de fin de situation selectionnée par l'utilisateur
    */
-  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date())
+  dateStop: BehaviorSubject<Date | undefined> = new BehaviorSubject<
+    Date | undefined
+  >(undefined)
   /**
    * Categorie selectionnée par l'utilisateur (Magistrat/Fonctionnaire)
    */
@@ -71,20 +74,23 @@ export class SimulatorService extends MainClass {
       content: undefined,
     })
   /**
- * Indicateur de selection de paramètre de simulation
- */
+   * Indicateur de selection de paramètre de simulation
+   */
   disabled: BehaviorSubject<string> = new BehaviorSubject<string>('disabled')
 
   /**
    * Validation de la situation de début sur simulateur à blanc
    */
-  isValidatedWhiteSimu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  isValidatedWhiteSimu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  )
 
   /**
- * Nombre de jour à projeter pour la situation projetee du simulateur a blanc
- */
-  whiteSimulatorNbOfDays: BehaviorSubject<number> = new BehaviorSubject<number>(0)
-
+   * Nombre de jour à projeter pour la situation projetee du simulateur a blanc
+   */
+  whiteSimulatorNbOfDays: BehaviorSubject<number> = new BehaviorSubject<number>(
+    0
+  )
 
   /**
    * Constructeur
@@ -93,15 +99,19 @@ export class SimulatorService extends MainClass {
    */
   constructor(
     private serverService: ServerService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
+    private userService: UserService
   ) {
     super()
 
-    this.watch(this.chartAnnotationBox.subscribe(() => { }))
+    this.watch(this.chartAnnotationBox.subscribe(() => {}))
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null && this.contentieuOrSubContentieuId.getValue()?.length) {
+        if (
+          this.contentieuOrSubContentieuId.getValue() !== null &&
+          this.contentieuOrSubContentieuId.getValue()?.length
+        ) {
           this.getSituation(this.contentieuOrSubContentieuId.getValue())
         }
       })
@@ -180,23 +190,41 @@ export class SimulatorService extends MainClass {
    * @param params containing the object parameters used to compute the simulation
    * @param simulation empty situation object to be filled
    */
-  toSimulate(params: any, simulation: SimulationInterface) {
+  toSimulate(params: any, simulation: SimulationInterface, white = false) {
     this.isLoading.next(true)
     console.log(params)
-    this.serverService
-      .post(`simulator/to-simulate`, {
-        backupId: this.humanResourceService.backupId.getValue(),
-        params: params,
-        simulation: simulation,
-        dateStart: setTimeToMidDay(this.dateStart.getValue()),
-        dateStop: setTimeToMidDay(this.dateStop.getValue()),
-        selectedCategoryId: this.selectedCategory.getValue()?.id,
-      })
-      .then((data) => {
-        console.log('simu', data.data)
-        this.situationSimulated.next(data.data)
-        this.isLoading.next(false)
-      })
+    console.log(this.userService.user)
+    if (white === true) {
+      this.serverService
+        .post(`simulator/to-simulate-white`, {
+          backupId: this.humanResourceService.backupId.getValue(),
+          params: params,
+          simulation: simulation,
+          dateStart: setTimeToMidDay(this.dateStart.getValue()),
+          dateStop: setTimeToMidDay(this.dateStop.getValue()),
+          selectedCategoryId: this.selectedCategory.getValue()?.id,
+        })
+        .then((data) => {
+          console.log('simu', data.data)
+          this.situationSimulated.next(data.data)
+          this.isLoading.next(false)
+        })
+    } else {
+      this.serverService
+        .post(`simulator/to-simulate`, {
+          backupId: this.humanResourceService.backupId.getValue(),
+          params: params,
+          simulation: simulation,
+          dateStart: setTimeToMidDay(this.dateStart.getValue()),
+          dateStop: setTimeToMidDay(this.dateStop.getValue()),
+          selectedCategoryId: this.selectedCategory.getValue()?.id,
+        })
+        .then((data) => {
+          console.log('simu', data.data)
+          this.situationSimulated.next(data.data)
+          this.isLoading.next(false)
+        })
+    }
   }
 
   /**
@@ -242,34 +270,48 @@ export class SimulatorService extends MainClass {
   ): any {
     switch (param) {
       case 'etpMag':
-        if (data?.etpMag === null) { return 'N/R' }
+        if (data?.etpMag === null) {
+          return 'N/R'
+        }
         return data?.etpMag || '0'
       case 'totalOut': {
-        if (data?.totalOut === null) { return 'N/R' }
+        if (data?.totalOut === null) {
+          return 'N/R'
+        }
         if (data?.totalOut && data?.totalOut >= 0) {
           return data?.totalOut
         } else return '0'
       }
       case 'totalIn': {
-        if (data?.totalIn === null) { return 'N/R' }
+        if (data?.totalIn === null) {
+          return 'N/R'
+        }
         if (data?.totalIn && data?.totalIn >= 0) {
           return toCompute === true ? data?.totalIn : Math.floor(data?.totalIn)
         } else return '0'
       }
       case 'lastStock': {
-        if (data?.lastStock === null) { return 'N/R' }
+        if (data?.lastStock === null) {
+          return 'N/R'
+        }
         if (data?.lastStock && data?.lastStock >= 0) {
           return data?.lastStock
         } else return '0'
       }
       case 'etpCont':
-        if (data?.etpCont === null) { return 'N/R' }
+        if (data?.etpCont === null) {
+          return 'N/R'
+        }
         return data?.etpCont || '0'
       case 'etpFon':
-        if (data?.etpFon === null) { return 'N/R' }
+        if (data?.etpFon === null) {
+          return 'N/R'
+        }
         return data?.etpFon || '0'
       case 'realCoverage': {
-        if (data?.realCoverage === null) { return 'N/R' }
+        if (data?.realCoverage === null) {
+          return 'N/R'
+        }
         if (data?.realCoverage && toCompute === true) {
           return Math.round(data?.realCoverage) || '0'
         } else if (data?.realCoverage && initialValue === true)
@@ -279,7 +321,9 @@ export class SimulatorService extends MainClass {
         else return '0'
       }
       case 'realDTESInMonths':
-        if (data?.realDTESInMonths === null) { return 'N/R' }
+        if (data?.realDTESInMonths === null) {
+          return 'N/R'
+        }
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
           if (data?.realDTESInMonths <= 0) {
             return '0'
@@ -287,7 +331,9 @@ export class SimulatorService extends MainClass {
         }
         return '0'
       case 'magRealTimePerCase':
-        if (data?.magRealTimePerCase === null) { return 'N/R' }
+        if (data?.magRealTimePerCase === null) {
+          return 'N/R'
+        }
         if (initialValue) return data?.magRealTimePerCase || '0'
         else {
           return decimalToStringDate(data?.magRealTimePerCase, ':') || '0'

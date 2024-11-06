@@ -1,14 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { MainClass } from 'src/app/libs/main-class';
-import { AppService } from 'src/app/services/app/app.service';
-import { ExcelService } from 'src/app/services/excel/excel.service';
-import { UserService } from 'src/app/services/user/user.service';
-import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user';
+import { Component, OnInit } from '@angular/core'
+import { MainClass } from 'src/app/libs/main-class'
+import { AppService } from 'src/app/services/app/app.service'
+import { ExcelService } from 'src/app/services/excel/excel.service'
+import { UserService } from 'src/app/services/user/user.service'
+import {
+  userCanViewContractuel,
+  userCanViewGreffier,
+  userCanViewMagistrat,
+} from 'src/app/utils/user'
 
 @Component({
   selector: 'aj-extractor-ventilation',
   templateUrl: './extractor-ventilation.component.html',
-  styleUrls: ['./extractor-ventilation.component.scss']
+  styleUrls: ['./extractor-ventilation.component.scss'],
 })
 export class ExtractorVentilationComponent extends MainClass {
   /**
@@ -75,9 +79,13 @@ export class ExtractorVentilationComponent extends MainClass {
         if (this.canViewMagistrat)
           this.categories.push({ id: 2, label: 'Magistrat', value: 'Siège' })
         if (this.canViewContractuel)
-          this.categories.push({ id: 3, label: 'Greffe', value: 'Greffe' })
+          this.categories.push({
+            id: 4,
+            label: 'Autour du magistrat',
+            value: 'Equipe autour du magistrat',
+          })
         if (this.canViewGreffier)
-          this.categories.push({ id: 4, label: 'Autour du magistrat', value: 'Equipe autour du magistrat' })
+          this.categories.push({ id: 3, label: 'Greffe', value: 'Greffe' })
       })
     )
   }
@@ -121,19 +129,15 @@ export class ExtractorVentilationComponent extends MainClass {
     const category = new Array()
     if (event !== null)
       event.map((x: any) => {
-        category.push(this.categories.find(
-          (category) => category.id === x
-        ))
+        category.push(this.categories.find((category) => category.id === x))
       })
     console.log(category)
-    this.selectedCategorieId = category?.map(x => x.label.toLowerCase())
+    this.selectedCategorieId = category?.map((x) => x.label.toLowerCase())
 
     console.log(this.selectedCategorieId)
     this.checkValidity()
     if (this.selectedCategorieId.length) {
-      this.excelService.selectedCategory.next(
-        this.selectedCategorieId
-      )
+      this.excelService.selectedCategory.next(this.selectedCategorieId)
     }
   }
 
@@ -151,15 +155,13 @@ export class ExtractorVentilationComponent extends MainClass {
   }
 
   async onSendActivity(form: any) {
-    const file = form.file.files[0];
+    const file = form.file.files[0]
 
     if (!file) {
-      alert('Vous devez saisir une fichier !');
-      return;
+      alert('Vous devez saisir une fichier !')
+      return
     }
 
     this.excelService.modifyExcel(file)
-
   }
-
 }
