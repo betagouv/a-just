@@ -385,7 +385,7 @@ export class UserService implements OnInit {
     ) {
       menu.push({
         label: 'Simulateur',
-        path: 'simulateur-a-blanc',
+        path: 'simulateur-sans-donnees',
       })
     }
 
