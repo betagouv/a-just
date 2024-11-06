@@ -28,6 +28,6 @@ export class SimulatorPickerCaPage extends MainClass {
    * Go to simulateur a blanc
    */
   changePage() {
-    window.location.href = 'simulateur-a-blanc'
+    window.location.href = 'simulateur-sans-donnees'
   }
 }

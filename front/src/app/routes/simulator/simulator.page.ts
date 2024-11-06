@@ -2400,6 +2400,6 @@ export class SimulatorPage
    * Aller sur le simulateur a blanc
    */
   changePage() {
-    window.location.href = 'simulateur-a-blanc'
+    window.location.href = 'simulateur-sans-donnees'
   }
 }
