@@ -122,7 +122,7 @@ const routes: Routes = [
     canDeactivate: [CanDeactivateGuardService],
   },
   {
-    path: 'simulateur-a-blanc',
+    path: 'simulateur-sans-donnees',
     component: WhiteSimulatorPage,
     canActivate: [AuthGuard, AppTypeGuard],
     canDeactivate: [CanDeactivateGuardService],
