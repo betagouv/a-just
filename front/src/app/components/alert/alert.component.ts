@@ -4,8 +4,8 @@ import {
   Input,
   OnChanges,
   Output,
-} from '@angular/core'
-import { ActionsInterface } from '../popup/popup.component'
+} from '@angular/core';
+import { ActionsInterface, PopupComponent } from '../popup/popup.component';
 
 /**
  * Composant alert qui affiche une alerte non bloquante
@@ -13,6 +13,8 @@ import { ActionsInterface } from '../popup/popup.component'
 
 @Component({
   selector: 'aj-alert',
+  standalone: true,
+  imports: [PopupComponent],
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],
 })
@@ -20,39 +22,39 @@ export class AlertComponent implements OnChanges {
   /**
    * Titre text dans l'alerte
    */
-  @Input() alertTitle: string | undefined = ''
+  @Input() alertTitle: string | undefined = '';
   /**
    * Message text dans l'alerte
    */
-  @Input() alertMessage: string = ''
+  @Input() alertMessage: string = '';
   /**
    * En option, mettre un delay de fermeture automatique de l'alerte
    */
-  @Input() delay: number | undefined
+  @Input() delay: number | undefined;
   /**
    * Texte du bouton ok
    */
-  @Input() okText: string | undefined = ''
+  @Input() okText: string | undefined = '';
   /**
    * Texte du bouton secondary
    */
-  @Input() secondaryText: string | undefined = ''
+  @Input() secondaryText: string | undefined = '';
   /**
    * Texte du bouton secondary
    */
-  @Input() classPopin: string | undefined = ''
+  @Input() classPopin: string | undefined = '';
   /**
    * Event, clique sur le bouton pour fermer l'alert
    */
-  @Output() onClose: EventEmitter<boolean> = new EventEmitter()
+  @Output() onClose: EventEmitter<boolean> = new EventEmitter();
   /**
    * Event, clique sur le bouton pour fermer l'alert
    */
-  @Output() onCloseSecondary: EventEmitter<boolean> = new EventEmitter()
+  @Output() onCloseSecondary: EventEmitter<boolean> = new EventEmitter();
   /**
    * Instance du timeout en cas de delay
    */
-  timeout: any
+  timeout: any;
 
   /**
    * Génération du timeaout en cas de changement de message ou du delay
@@ -60,14 +62,14 @@ export class AlertComponent implements OnChanges {
   ngOnChanges() {
     if (this.delay) {
       if (this.timeout) {
-        clearTimeout(this.timeout)
-        this.timeout = undefined
+        clearTimeout(this.timeout);
+        this.timeout = undefined;
       }
 
       this.timeout = setTimeout(() => {
-        this.onClose.emit(false)
-        this.timeout = undefined
-      }, this.delay * 1000)
+        this.onClose.emit(false);
+        this.timeout = undefined;
+      }, this.delay * 1000);
     }
   }
 
@@ -75,9 +77,13 @@ export class AlertComponent implements OnChanges {
    * Close fonction
    */
   close(action: ActionsInterface) {
-    switch(action.id) {
-      case 'secondary': this.onCloseSecondary.emit(true); return;
-      default: this.onClose.emit(true); return;
+    switch (action.id) {
+      case 'secondary':
+        this.onCloseSecondary.emit(true);
+        return;
+      default:
+        this.onClose.emit(true);
+        return;
     }
   }
 }

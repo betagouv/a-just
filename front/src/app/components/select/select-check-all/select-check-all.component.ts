@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { FormsModule, NgModel } from '@angular/forms';
 
 /**
  * Composant de tout selectionner pour la liste
@@ -7,6 +7,8 @@ import { NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-select-check-all',
+  standalone: true,
+  imports: [FormsModule],
   template: `
     <mat-checkbox
       class="mat-option"
@@ -36,7 +38,7 @@ export class SelectCheckAllComponent {
 
   /**
    * Retour si l'ensemble des éléments sont checks
-   * @returns 
+   * @returns
    */
   isChecked(): boolean {
     return (
@@ -49,12 +51,12 @@ export class SelectCheckAllComponent {
 
   /**
    * Force la selection ou la déselection de la liste
-   * @param change 
+   * @param change
    */
   toggleSelection(change: any): void {
     if (this.model) {
       if (change.checked) {
-        this.model.update.emit(this.values.map(v => v.id));
+        this.model.update.emit(this.values.map((v) => v.id));
       } else {
         this.model.update.emit([]);
       }

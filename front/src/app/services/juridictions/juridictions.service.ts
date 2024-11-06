@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
-import { JuridictionInterface } from 'src/app/interfaces/juridiction';
+import { JuridictionInterface } from '../../interfaces/juridiction';
 
 @Injectable({
   providedIn: 'root',

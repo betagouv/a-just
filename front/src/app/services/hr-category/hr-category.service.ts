@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category';
 import { ServerService } from '../http-server/server.service';
+import { HRCategoryInterface } from '../../interfaces/hr-category';
 
 /**
- * Service d'appel au serveur des différentes catégories existantes. 
+ * Service d'appel au serveur des différentes catégories existantes.
  * Exemple : Magistrat, Greffier....
  */
 @Injectable({
@@ -17,16 +17,16 @@ export class HRCategoryService {
 
   /**
    * Constructeur
-   * @param serverService 
+   * @param serverService
    */
   constructor(private serverService: ServerService) {}
 
   /**
    * Appel au serveur pour récupérer la liste de toutes les catégories
-   * @returns 
+   * @returns
    */
   getAll(): Promise<HRCategoryInterface[]> {
-    if(this.categories.length) {
+    if (this.categories.length) {
       return new Promise((resolve) => {
         resolve(this.categories);
       });
@@ -35,9 +35,9 @@ export class HRCategoryService {
     return this.serverService
       .get('hr-categories/get-all')
       .then((r) => r.data || [])
-      .then(list => {
+      .then((list) => {
         this.categories = list;
         return list;
-      })
+      });
   }
 }

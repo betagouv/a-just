@@ -1,24 +1,29 @@
-import { AfterViewInit, Component } from '@angular/core'
-import { NavigationEnd, Router } from '@angular/router'
-import { environment } from 'src/environments/environment'
-import { USER_ACCESS_AVERAGE_TIME } from './constants/user-access'
-import { AlertInterface } from './interfaces/alert'
-import { AppService } from './services/app/app.service'
-import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
-import { UserService } from './services/user/user.service'
-import { iIOS } from './utils/system'
-import { filter } from 'rxjs'
+import { AfterViewInit, Component } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { USER_ACCESS_AVERAGE_TIME } from './constants/user-access';
+import { AlertInterface } from './interfaces/alert';
+import { AppService } from './services/app/app.service';
+import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service';
+import { UserService } from './services/user/user.service';
+import { iIOS } from './utils/system';
+import { filter } from 'rxjs';
+import { environment } from '../environments/environment';
+import { CommonModule } from '@angular/common';
+import { AlertComponent } from './components/alert/alert.component';
+import { BigLoaderComponent } from './components/big-loader/big-loader.component';
 
 /**
  * Variable d'environement en global
  */
-declare const window: any
+declare const window: any;
 
 /**
  * Composant principal du projet
  */
 @Component({
   selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, AlertComponent, BigLoaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -26,15 +31,15 @@ export class AppComponent implements AfterViewInit {
   /**
    * Variable pour savoir si on change le serveur
    */
-  dbReady: boolean = false
+  dbReady: boolean = false;
   /**
    * Variable qui permet d'afficher une alert
    */
-  alertMessage: AlertInterface | null = null
+  alertMessage: AlertInterface | null = null;
   /**
    * loading
    */
-  appLoading = false
+  appLoading = false;
 
   /**
    * Constructeur de control SSL + Matomo
@@ -50,82 +55,82 @@ export class AppComponent implements AfterViewInit {
     private appService: AppService
   ) {
     if (iIOS()) {
-      document.body.classList.add('iIOS')
+      document.body.classList.add('iIOS');
     }
 
     router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       // @ts-ignore
       .subscribe((event: NavigationEnd) => {
-        this.appService.previousUrl = this.appService.currentUrl
-        this.appService.currentUrl = event.url
-      })
+        this.appService.previousUrl = this.appService.currentUrl;
+        this.appService.currentUrl = event.url;
+      });
 
     router.events.subscribe(() => {
-      const user = this.userService.user.getValue()
+      const user = this.userService.user.getValue();
       if (user && this.dbReady === false) {
-        this.dbReady = true
+        this.dbReady = true;
 
-        this.userService.initDatas()
+        this.userService.initDatas();
         if (user.access && user.access.includes(USER_ACCESS_AVERAGE_TIME)) {
-          this.contentieuxOptionsService.initDatas()
+          this.contentieuxOptionsService.initDatas();
         }
       }
-    })
+    });
 
     this.appService.alert.subscribe((a) => {
-      this.alertMessage = a
-    })
+      this.alertMessage = a;
+    });
 
-    this.appService.appLoading.subscribe((a) => (this.appLoading = a))
+    this.appService.appLoading.subscribe((a) => (this.appLoading = a));
 
     if (environment.matomo !== null) {
-      var _paq = (window._paq = window._paq || [])
-      _paq.push(['trackPageView'])
-      _paq.push(['enableLinkTracking'])
-      ;(function () {
-        var u = 'https://stats.beta.gouv.fr/'
-        _paq.push(['setTrackerUrl', u + 'piwik.php'])
-        _paq.push(['setSiteId', environment.matomo])
+      var _paq = (window._paq = window._paq || []);
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function () {
+        var u = 'https://stats.beta.gouv.fr/';
+        _paq.push(['setTrackerUrl', u + 'piwik.php']);
+        _paq.push(['setSiteId', environment.matomo]);
         var d = document,
           g = d.createElement('script'),
-          s = d.getElementsByTagName('script')[0]
-        g.async = true
-        g.src = u + 'piwik.js'
+          s = d.getElementsByTagName('script')[0];
+        g.async = true;
+        g.src = u + 'piwik.js';
         if (s && s.parentNode) {
-          s.parentNode.insertBefore(g, s)
+          s.parentNode.insertBefore(g, s);
         }
-      })()
+      })();
     }
 
     if (environment.matomoTM !== null) {
-      var _mtm = (window._mtm = window._mtm || [])
-      _mtm.push({ 'mtm.startTime': new Date().getTime(), event: 'mtm.Start' })
-      ;(function () {
+      var _mtm = (window._mtm = window._mtm || []);
+      _mtm.push({ 'mtm.startTime': new Date().getTime(), event: 'mtm.Start' });
+      (function () {
         var d = document,
           g = d.createElement('script'),
-          s = d.getElementsByTagName('script')[0]
-        g.async = true
-        g.src = `https://stats.beta.gouv.fr/js/container_${environment.matomoTM}.js`
-        s.parentNode?.insertBefore(g, s)
-      })()
+          s = d.getElementsByTagName('script')[0];
+        g.async = true;
+        g.src = `https://stats.beta.gouv.fr/js/container_${environment.matomoTM}.js`;
+        s.parentNode?.insertBefore(g, s);
+      })();
     }
 
-    this.userService.getInterfaceType()
+    this.userService.getInterfaceType();
   }
 
   ngAfterViewInit(): void {
-    this.listenSelectElement()
+    this.listenSelectElement();
   }
 
   /**
    * Suppression de l'alert et du texte dans le service
    */
   onCloseAlert(clickToOk = false) {
-    const alertObject = this.appService.alert.getValue()
-    this.appService.alert.next(null)
+    const alertObject = this.appService.alert.getValue();
+    this.appService.alert.next(null);
     if (clickToOk && alertObject && alertObject.callback) {
-      alertObject.callback()
+      alertObject.callback();
     }
   }
 
@@ -133,10 +138,10 @@ export class AppComponent implements AfterViewInit {
    * Suppression de l'alert et du texte dans le service
    */
   onCloseAlertSecondary(clickToOk = false) {
-    const alertObject = this.appService.alert.getValue()
-    this.appService.alert.next(null)
+    const alertObject = this.appService.alert.getValue();
+    this.appService.alert.next(null);
     if (clickToOk && alertObject && alertObject.callbackSecondary) {
-      alertObject.callbackSecondary()
+      alertObject.callbackSecondary();
     }
   }
 

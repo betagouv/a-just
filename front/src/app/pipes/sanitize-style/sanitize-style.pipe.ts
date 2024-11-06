@@ -1,14 +1,12 @@
-import { PipeTransform, Pipe, Injectable } from '@angular/core'
-import { DomSanitizer, SafeStyle } from '@angular/platform-browser'
+import { PipeTransform, Pipe } from '@angular/core';
+import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 /**
  * Force to parse le style
  */
-
-@Injectable()
 @Pipe({
+  standalone: true,
   name: 'sanitizeStyle',
-  pure: false, // required to update the value when the promise is resolved
 })
 export class SanitizeStylePipe implements PipeTransform {
   /**
@@ -23,6 +21,6 @@ export class SanitizeStylePipe implements PipeTransform {
    * @returns
    */
   transform(v: string): SafeStyle {
-    return this._sanitizer.bypassSecurityTrustStyle(v)
+    return this._sanitizer.bypassSecurityTrustStyle(v);
   }
 }

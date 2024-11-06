@@ -4,13 +4,16 @@ import {
   Input,
   OnChanges,
   Output,
-} from '@angular/core'
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
-import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
-import { MainClass } from 'src/app/libs/main-class'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { today } from 'src/app/utils/dates'
+} from '@angular/core';
+import { MainClass } from '../../../libs/main-class';
+import { CommonModule } from '@angular/common';
+import { PanelActivitiesComponent } from '../../../components/panel-activities/panel-activities.component';
+import { HumanResourceInterface } from '../../../interfaces/human-resource-interface';
+import { RHActivityInterface } from '../../../interfaces/rh-activity';
+import { HRCategoryInterface } from '../../../interfaces/hr-category';
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
+import { today } from '../../../utils/dates';
+import { MatIconModule } from '@angular/material/icon';
 
 /**
  * Panneau de la situation actuelle
@@ -18,77 +21,78 @@ import { today } from 'src/app/utils/dates'
 
 @Component({
   selector: 'actual-panel-situation',
+  standalone: true,
+  imports: [CommonModule, PanelActivitiesComponent, MatIconModule],
   templateUrl: './actual-panel-situation.component.html',
   styleUrls: ['./actual-panel-situation.component.scss'],
 })
 export class ActualPanelSituationComponent
   extends MainClass
-  implements OnChanges {
+  implements OnChanges
+{
   /**
    * Fiche courante
    */
-  @Input() currentHR: HumanResourceInterface | null = null
-  /** 
+  @Input() currentHR: HumanResourceInterface | null = null;
+  /**
    * Date de début de la situation actuelle
    */
-  @Input() dateStart: Date | null = null
+  @Input() dateStart: Date | null = null;
   /**
    * Date de fin de la situation actuelle
    */
-  @Input() dateStop: Date | null = null
+  @Input() dateStop: Date | null = null;
   /**
    * Affiche ou non un bouton "modifier la situation"
    */
-  @Input() canEdit: boolean = false
+  @Input() canEdit: boolean = false;
   /**
    * Affiche ou non un bouton "Supprimer la situation"
    */
-  @Input() canRemoveSituation: boolean = false
+  @Input() canRemoveSituation: boolean = false;
   /**
    * Affiche l'ETP calculé
    */
-  @Input() etp: number = 0
+  @Input() etp: number = 0;
   /**
    * Liste des indispo courrante
    */
-  @Input() indisponibilities: RHActivityInterface[] = []
+  @Input() indisponibilities: RHActivityInterface[] = [];
   /**
    * Force to show sub contentieux
    */
-  @Input() forceToShowContentieuxDetail: boolean = false
+  @Input() forceToShowContentieuxDetail: boolean = false;
   /**
- * Categorie courante
- */
-  @Input() category: HRCategoryInterface | null = null
+   * Categorie courante
+   */
+  @Input() category: HRCategoryInterface | null = null;
   /**
    * Event lors du choix d'éditer une ventilation
    */
-  @Output() editVentilation = new EventEmitter()
+  @Output() editVentilation = new EventEmitter();
   /**
    * Event lors du choix de supprimer une indispo
    */
-  @Output() onRemove = new EventEmitter()
+  @Output() onRemove = new EventEmitter();
   /**
    * ETP des indispo
    */
-  indisponibility: number = 0
+  indisponibility: number = 0;
   /**
    * Temps de travail en text
    */
-  timeWorked: string = ''
+  timeWorked: string = '';
   /**
    * Liste des activités de la situation
    */
-  activities: RHActivityInterface[] = []
+  activities: RHActivityInterface[] = [];
 
   /**
    * Constructeur
-   * @param humanResourceService 
+   * @param humanResourceService
    */
-  constructor(
-    private humanResourceService: HumanResourceService
-  ) {
-    super()
+  constructor(private humanResourceService: HumanResourceService) {
+    super();
   }
 
   /**
@@ -98,7 +102,8 @@ export class ActualPanelSituationComponent
     const findSituation = this.humanResourceService.findSituation(
       this.currentHR,
       today()
-    )
-    this.activities = (findSituation && findSituation.activities) || []
+    );
+    // @ts-ignore
+    this.activities = (findSituation && findSituation.activities) || [];
   }
 }

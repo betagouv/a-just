@@ -3,18 +3,17 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
-  SimpleChanges,
-} from '@angular/core'
-import { FormControl, FormGroup } from '@angular/forms'
-import { decimalToStringDate } from 'src/app/utils/dates'
+} from '@angular/core';
+import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 
 /**
  * Composant input pourcentage
  */
 @Component({
   selector: 'aj-input-addition',
+  standalone: true,
+  imports: [FormsModule],
   templateUrl: './input-addition.component.html',
   styleUrls: ['./input-addition.component.scss'],
 })
@@ -22,26 +21,26 @@ export class InputAdditionComponent implements OnChanges {
   /**
    * Valeur au dénominateur
    */
-  @Input() referenceValue: number = 0
+  @Input() referenceValue: number = 0;
   /**
    * Valeur par défaut
    */
-  @Input() defaultValue: string | null = null
+  @Input() defaultValue: string | null = null;
   /**
    * Réinitialisation
    */
-  @Input() reset: boolean = false
+  @Input() reset: boolean = false;
   /**
    * Valeur de sortie
    */
-  @Output() valueChange = new EventEmitter()
+  @Output() valueChange = new EventEmitter();
 
   /**
    * Formulaire de saisie
    */
   valueForm = new FormGroup({
     addition: new FormControl(''),
-  })
+  });
 
   /**
    * Constructeur
@@ -53,8 +52,8 @@ export class InputAdditionComponent implements OnChanges {
           this.returnAddition(this.valueForm.controls['addition'].value)
         ),
         addition: this.valueForm.controls['addition'].value,
-      })
-    })
+      });
+    });
   }
 
   /**
@@ -62,12 +61,12 @@ export class InputAdditionComponent implements OnChanges {
    */
   ngOnChanges() {
     if (this.reset === true) {
-      this.valueForm.controls['addition'].setValue('')
-      this.defaultValue = null
-      this.reset = false
+      this.valueForm.controls['addition'].setValue('');
+      this.defaultValue = null;
+      this.reset = false;
     }
     if (this.defaultValue !== null) {
-      this.valueForm.controls['addition'].setValue(this.defaultValue)
+      this.valueForm.controls['addition'].setValue(this.defaultValue);
     }
   }
 
@@ -77,14 +76,14 @@ export class InputAdditionComponent implements OnChanges {
    * @returns value
    */
   returnAddition(x: any): string {
-    if (x === '') return ''
-    if (x === 0) return String(this.referenceValue)
+    if (x === '') return '';
+    if (x === 0) return String(this.referenceValue);
     let res =
       Math.trunc(
         (this.referenceValue +
           parseFloat(this.valueForm.controls['addition'].value || '')) *
           100
-      ) / 100
-    return String(res)
+      ) / 100;
+    return String(res);
   }
 }
