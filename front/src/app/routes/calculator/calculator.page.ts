@@ -4,62 +4,81 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
-} from '@angular/core'
-import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
-import * as _ from 'lodash'
-import { orderBy } from 'lodash'
-import { IntroJSStep } from 'src/app/components/intro-js/intro-js.component'
-import { dataInterface } from 'src/app/components/select/select.component'
-import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
-import { BackupInterface } from 'src/app/interfaces/backup'
-import { CalculatorInterface } from 'src/app/interfaces/calculator'
-import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel'
-import { DocumentationInterface } from 'src/app/interfaces/documentation'
-import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
-import { MainClass } from 'src/app/libs/main-class'
-import { ActivitiesService } from 'src/app/services/activities/activities.service'
-import { CalculatorService } from 'src/app/services/calculator/calculator.service'
-import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
-import { UserService } from 'src/app/services/user/user.service'
-import { getTime, isDateBiggerThan, month } from 'src/app/utils/dates'
+} from '@angular/core';
+import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
+import * as _ from 'lodash';
+import { orderBy } from 'lodash';
+import {
+  AnalyticsLine,
+  TemplateAnalyticsComponent,
+} from './template-analytics/template-analytics.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { BehaviorSubject } from 'rxjs';
+import { WrapperComponent } from '../../components/wrapper/wrapper.component';
+import {
+  dataInterface,
+  SelectComponent,
+} from '../../components/select/select.component';
+import { DateSelectComponent } from '../../components/date-select/date-select.component';
+import { TooltipsComponent } from '../../components/tooltips/tooltips.component';
+import { ReferentielCalculatorComponent } from './referentiel-calculator/referentiel-calculator.component';
+import { PopupComponent } from '../../components/popup/popup.component';
+import { FormsModule } from '@angular/forms';
+import { MainClass } from '../../libs/main-class';
+import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
+import { CalculatorInterface } from '../../interfaces/calculator';
+import { DocumentationInterface } from '../../interfaces/documentation';
+import { IntroJSStep } from '../../components/intro-js/intro-js.component';
+import { sleep } from '../../utils';
+import { BackupInterface } from '../../interfaces/backup';
+import { BackupSettingInterface } from '../../interfaces/backup-setting';
+import { HumanResourceService } from '../../services/human-resource/human-resource.service';
+import { CalculatorService } from '../../services/calculator/calculator.service';
+import { ReferentielService } from '../../services/referentiel/referentiel.service';
+import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
+import { ActivitiesService } from '../../services/activities/activities.service';
+import { UserService } from '../../services/user/user.service';
+import { BackupSettingsService } from '../../services/backup-settings/backup-settings.service';
+import { AppService } from '../../services/app/app.service';
+import { KPIService } from '../../services/kpi/kpi.service';
 import {
   userCanViewContractuel,
   userCanViewGreffier,
   userCanViewMagistrat,
-} from 'src/app/utils/user'
-import { AnalyticsLine } from './template-analytics/template-analytics.component'
-import { BackupSettingsService } from 'src/app/services/backup-settings/backup-settings.service'
-import { BACKUP_SETTING_COMPARE } from 'src/app/constants/backup-settings'
-import { BackupSettingInterface } from 'src/app/interfaces/backup-setting'
-import { ActivatedRoute, Router } from '@angular/router'
-import { AppService } from 'src/app/services/app/app.service'
-import { Location } from '@angular/common'
-import {
-  getCategoryColor,
-  FONCTIONNAIRES,
-  MAGISTRATS,
-} from 'src/app/constants/category'
-import { fixDecimal } from 'src/app/utils/numbers'
-import { NB_MAX_CUSTOM_COMPARAISONS } from 'src/app/constants/calculator'
-import { KPIService } from 'src/app/services/kpi/kpi.service'
+} from '../../utils/user';
+import { getTime, isDateBiggerThan, month } from '../../utils/dates';
+import { HRCategoryInterface } from '../../interfaces/hr-category';
+import { HRFonctionInterface } from '../../interfaces/hr-fonction';
+import { BACKUP_SETTING_COMPARE } from '../../constants/backup-settings';
+import { NB_MAX_CUSTOM_COMPARAISONS } from '../../constants/calculator';
 import {
   CALCULATOR_OPEN_CHARTS_VIEW,
   CALCULATOR_OPEN_CONMPARAISON_RANGE,
   CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
   CALCULATOR_SELECT_GREFFE,
   EXECUTE_CALCULATOR_CHANGE_DATE,
-} from 'src/app/constants/log-codes'
-import { BehaviorSubject } from 'rxjs'
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { sleep } from 'src/app/utils'
+} from '../../constants/log-codes';
+import { MAGISTRATS } from '../../constants/category';
+import { fixDecimal } from '../../utils/numbers';
 
 /**
  * Page du calculateur
  */
 
 @Component({
+  standalone: true,
+  imports: [
+    WrapperComponent,
+    CommonModule,
+    SelectComponent,
+    DateSelectComponent,
+    TooltipsComponent,
+    ReferentielCalculatorComponent,
+    PopupComponent,
+    TemplateAnalyticsComponent,
+    FormsModule,
+  ],
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
 })
@@ -70,55 +89,56 @@ export class CalculatorPage
   /**
    * Dom du wrapper
    */
-  @ViewChild('wrapper') wrapper: WrapperComponent | undefined
+  @ViewChild('wrapper') wrapper: WrapperComponent | undefined;
   /**
    * Référentiel
    */
-  referentiel: ContentieuReferentielInterface[] = []
+  referentiel: ContentieuReferentielInterface[] = [];
   /**
    * Liste des id des référentiels
    */
-  referentielIds: number[] = this.calculatorService.referentielIds.getValue()
+  // @ts-ignore
+  referentielIds: number[] = this.calculatorService.referentielIds.getValue();
   /**
    * Date de début du calcul
    */
-  dateStart: Date | null = null
+  dateStart: Date | null = null;
   /**
    * Date de fin du calcul
    */
-  dateStop: Date | null = null
+  dateStop: Date | null = null;
   /**
    * Date de début du calcul
    */
-  optionDateStart: Date | null = null
+  optionDateStart: Date | null = null;
   /**
    * Date de fin du calcul
    */
-  optionDateStop: Date | null = null
+  optionDateStop: Date | null = null;
   /**
    * Tri ou non
    */
-  sortBy: string = ''
+  sortBy: string = '';
   /**
    * Liste des lignes du calculateurs venant du back
    */
-  datas: CalculatorInterface[] = []
+  datas: CalculatorInterface[] = [];
   /**
    * Filtre des lignes du calculateur visible
    */
-  datasFilted: CalculatorInterface[] = []
+  datasFilted: CalculatorInterface[] = [];
   /**
    * En chargement
    */
-  isLoading: boolean = false
+  isLoading: boolean = false;
   /**
    * Date max du calculateur
    */
-  maxDateSelectionDate: Date | null = null
+  maxDateSelectionDate: Date | null = null;
   /**
    * Catégories selectionnée (magistrats, fonctionnaire)
    */
-  categorySelected: string | null = null
+  categorySelected: string | null = null;
   /**
    * Lien de la documentation
    */
@@ -126,7 +146,7 @@ export class CalculatorPage
     title: 'Cockpit',
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
     printSubTitle: true,
-  }
+  };
   /**
    * Documentation list
    */
@@ -134,35 +154,35 @@ export class CalculatorPage
     'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
     'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
     'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
-  ]
+  ];
   /**
    * Mémorisation de la dernière categorie
    */
-  lastCategorySelected: string | null = null
+  lastCategorySelected: string | null = null;
   /**
    * Liste des ids des fonctions
    */
-  selectedFonctionsIds: number[] = []
+  selectedFonctionsIds: number[] = [];
   /**
    * Liste des fonctions
    */
-  fonctions: dataInterface[] = []
+  fonctions: dataInterface[] = [];
   /**
    * Variable en cours d'export de page
    */
-  duringPrint: boolean = false
+  duringPrint: boolean = false;
   /**
    * Peux voir l'interface magistrat
    */
-  canViewMagistrat: boolean = false
+  canViewMagistrat: boolean = false;
   /**
    * Peux voir l'interface greffier
    */
-  canViewGreffier: boolean = false
+  canViewGreffier: boolean = false;
   /**
    * Peux voir l'interface contractuel
    */
-  canViewContractuel: boolean = false
+  canViewContractuel: boolean = false;
   /**
    * Intro JS Steps
    */
@@ -185,11 +205,11 @@ export class CalculatorPage
       intro:
         '<p>Cette section permet de visualiser deux indicateurs simples, sur la période, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p><ul><li>le taux de couverture moyen</li><li>et le DTES (Délai Théorique d’Écoulement du Stock) à la date de fin de période.</li></ul><p>Vous retrouvez également :</p><ul><li>Les <b>entrées et sorties</b> moyennes mensuelles</li><li>Le <b>stock</b> à la fin de la période choisie</li><li>Les <b>ETPT</b> affectés à chaque contentieux</li><li><b>Les temps moyens par dossier</b> (siège ou greffe selon votre sélection), clé théorique de projection dans le futur calculée à la fin de la période sur les 12 mois précédents.</li></ul>',
       beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('.switch-tab .brut')
+        const itemToClick = document.querySelector('.switch-tab .brut');
         if (itemToClick) {
           // @ts-ignore
-          itemToClick.click()
-          await sleep(200)
+          itemToClick.click();
+          await sleep(200);
         }
       },
     },
@@ -199,11 +219,11 @@ export class CalculatorPage
       intro:
         '<p>Pour chaque contentieux, une représentation visuelle des indicateurs, comprenant le détail des données et leurs évolutions entre le début et la fin de la période.</p>',
       beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('.switch-tab .analytique')
+        const itemToClick = document.querySelector('.switch-tab .analytique');
         if (itemToClick) {
           // @ts-ignore
-          itemToClick.click()
-          await sleep(200)
+          itemToClick.click();
+          await sleep(200);
         }
       },
     },
@@ -213,106 +233,106 @@ export class CalculatorPage
       intro:
         '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
       beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('button.compare')
+        const itemToClick = document.querySelector('button.compare');
         if (itemToClick) {
           // @ts-ignore
-          itemToClick.click()
-          await sleep(200)
+          itemToClick.click();
+          await sleep(200);
 
-          const introTooltip = document.querySelector('.introjs-tooltip')
+          const introTooltip = document.querySelector('.introjs-tooltip');
           if (introTooltip) {
             // @ts-ignore
-            introTooltip.style.visibility = 'hidden'
+            introTooltip.style.visibility = 'hidden';
           }
           setTimeout(() => {
-            const introTooltip = document.querySelector('.introjs-tooltip')
+            const introTooltip = document.querySelector('.introjs-tooltip');
             if (introTooltip) {
-              introTooltip.classList.add('introjs-bottom-left-aligned')
-              introTooltip.classList.remove('introjs-floating')
+              introTooltip.classList.add('introjs-bottom-left-aligned');
+              introTooltip.classList.remove('introjs-floating');
               // @ts-ignore
-              introTooltip.style.left = '0px'
+              introTooltip.style.left = '0px';
               // @ts-ignore
-              introTooltip.style.top = '170px'
+              introTooltip.style.top = '170px';
               // @ts-ignore
-              introTooltip.style.marginLeft = '-20px'
+              introTooltip.style.marginLeft = '-20px';
               // @ts-ignore
-              introTooltip.style.marginTop = '0'
+              introTooltip.style.marginTop = '0';
               // @ts-ignore
-              introTooltip.style.visibility = 'visible'
+              introTooltip.style.visibility = 'visible';
             }
-          }, 380)
+          }, 380);
         }
       },
     },
-  ]
+  ];
   /**
    * Labels of fct selected
    */
-  fonctionRealValue = ''
+  fonctionRealValue = '';
   /**
    * Onglet selectionné
    */
-  tabSelected = 0
+  tabSelected = 0;
   /**
    * Affichage du menu déroulant de référentiel de temps
    */
-  showPicker = false
+  showPicker = false;
   /**
    * Edition d'un referentiel de comparaison
    */
-  onEdit = false
+  onEdit = false;
   /**
    * Choix du mode de comparaison 1=> date à date 2=> référentiel
    */
-  compareOption = 0
+  compareOption = 0;
   /**
    * liste des référentiels
    */
-  referentiels: any[] = []
+  referentiels: any[] = [];
   /**
    * Liste des sauvegardes
    */
-  backups: BackupInterface[] = []
+  backups: BackupInterface[] = [];
   /**
    * Liste des sauvegardes filtré par catégorie
    */
-  filteredBackups: BackupInterface[] = []
+  filteredBackups: BackupInterface[] = [];
   /**
    * Template to compare
    */
-  compareTemplates: AnalyticsLine[] | null = null
+  compareTemplates: AnalyticsLine[] | null = null;
   /**
    * Liste des comparaisons sauvegardés
    */
-  backupSettingSaved: BackupSettingInterface[] = []
+  backupSettingSaved: BackupSettingInterface[] = [];
   /**
    * Label du ref à comparer
    */
-  compareAtString: string = ''
+  compareAtString: string = '';
   /**
    * Premier chargement
    */
-  firstLoading = true
+  firstLoading = true;
   /**
    * on add delay to time out
    */
-  onTimeoutLoad: any = null
+  onTimeoutLoad: any = null;
   /**
    * Lock global loader
    */
-  lockLoader: BehaviorSubject<boolean> = new BehaviorSubject(false)
+  lockLoader: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /**
    * Title created from popup while compare loaded
    */
-  createdTitle: null | string = null
+  createdTitle: null | string = null;
   /**
    * Date minimum selectionnable
    */
-  minDateSelectable: Date = new Date(2021, 0, 1)
+  minDateSelectable: Date = new Date(2021, 0, 1);
   /**
    * Detect if last month is loading
    */
-  checkLastMonthLoading: boolean = false
+  checkLastMonthLoading: boolean = false;
 
   /**
    * Constructeur
@@ -339,13 +359,13 @@ export class CalculatorPage
     private location: Location,
     private kpiService: KPIService
   ) {
-    super()
+    super();
 
     this.watch(
       this.humanResourceService.backupId.subscribe(() => {
-        this.onLoad()
+        this.onLoad();
       })
-    )
+    );
   }
 
   /**
@@ -354,67 +374,67 @@ export class CalculatorPage
   ngOnInit() {
     this.watch(
       this.userService.user.subscribe((u) => {
-        this.canViewMagistrat = userCanViewMagistrat(u)
-        this.canViewGreffier = userCanViewGreffier(u)
-        this.canViewContractuel = userCanViewContractuel(u)
+        this.canViewMagistrat = userCanViewMagistrat(u);
+        this.canViewGreffier = userCanViewGreffier(u);
+        this.canViewContractuel = userCanViewContractuel(u);
 
         if (this.canViewMagistrat) {
-          this.categorySelected = this.MAGISTRATS
+          this.categorySelected = this.MAGISTRATS;
         } else if (this.canViewGreffier) {
-          this.categorySelected = this.FONCTIONNAIRES
+          this.categorySelected = this.FONCTIONNAIRES;
         } else {
-          this.categorySelected = null
+          this.categorySelected = null;
           alert(
             "Vos droits ne vous permettent pas d'exécuter un calcul, veuillez contacter un administrateur."
-          )
+          );
         }
-        this.calculatorService.categorySelected.next(this.categorySelected)
+        this.calculatorService.categorySelected.next(this.categorySelected);
       })
-    )
+    );
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
-        this.onLoad()
+        this.onLoad();
       })
-    )
+    );
     this.watch(
       this.calculatorService.dateStart.subscribe((date) => {
-        this.dateStart = date
+        this.dateStart = date;
         if (date === null) {
-          this.onCheckLastMonth()
+          this.onCheckLastMonth();
         } else {
-          this.onLoad()
+          this.onLoad();
         }
       })
-    )
+    );
     this.watch(
       this.calculatorService.dateStop.subscribe((date) => {
-        this.dateStop = date
-        this.onLoad()
+        this.dateStop = date;
+        this.onLoad();
       })
-    )
+    );
     this.watch(
       this.calculatorService.referentielIds.subscribe((refs) => {
-        this.referentielIds = refs
-        this.onLoad()
+        this.referentielIds = refs;
+        this.onLoad();
       })
-    )
+    );
 
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
         this.referentiel = c.filter(
           (r) => this.referentielService.idsIndispo.indexOf(r.id) === -1
-        )
+        );
 
         if (this.referentielIds.length === 0) {
           this.calculatorService.referentielIds.next(
             this.referentiel.map((r) => r.id)
-          )
+          );
         }
 
-        this.onCheckLastMonth()
+        this.onCheckLastMonth();
       })
-    )
+    );
 
     // Chargement des référentiels
     this.watch(
@@ -423,26 +443,26 @@ export class CalculatorPage
           b,
           [
             (val) => {
-              const date = val.update?.date || val.date
-              return getTime(date)
+              const date = val.update?.date || val.date;
+              return getTime(date);
             },
           ],
           ['desc']
-        )
+        );
       })
-    )
+    );
 
     this.watch(
       this.lockLoader.subscribe((l) => {
         if (l) {
           if (this.onTimeoutLoad) {
-            clearTimeout(this.onTimeoutLoad)
+            clearTimeout(this.onTimeoutLoad);
           }
         } else {
-          this.onLoad()
+          this.onLoad();
         }
       })
-    )
+    );
   }
 
   /**
@@ -452,12 +472,12 @@ export class CalculatorPage
     let cat =
       this.categorySelected?.toUpperCase() === 'FONCTIONNAIRES'
         ? 'Greffe'
-        : 'Magistrat'
+        : 'Magistrat';
 
     const findCategory =
       this.humanResourceService.categories
         .getValue()
-        .find((c: HRCategoryInterface) => c.label === cat) || null
+        .find((c: HRCategoryInterface) => c.label === cat) || null;
 
     this.fonctions = this.humanResourceService.fonctions
       .getValue()
@@ -468,37 +488,37 @@ export class CalculatorPage
             id: f.id,
             value: f.code,
           } as dataInterface)
-      )
-    this.lastCategorySelected = this.categorySelected
-    this.selectedFonctionsIds = this.fonctions.map((a) => a.id)
+      );
+    this.lastCategorySelected = this.categorySelected;
+    this.selectedFonctionsIds = this.fonctions.map((a) => a.id);
   }
 
   ngAfterViewInit() {
     this.watch(
       this.route.params.subscribe((params) => {
         if (params['datestart'] && params['datestop']) {
-          this.dateStart = new Date(this.route.snapshot.params['datestart'])
-          this.calculatorService.dateStart.next(this.dateStart)
-          this.dateStop = new Date(this.route.snapshot.params['datestop'])
-          this.calculatorService.dateStop.next(this.dateStop)
+          this.dateStart = new Date(this.route.snapshot.params['datestart']);
+          this.calculatorService.dateStart.next(this.dateStart);
+          this.dateStop = new Date(this.route.snapshot.params['datestop']);
+          this.calculatorService.dateStop.next(this.dateStop);
           this.changeCategorySelected(
             this.route.snapshot.params['category'] === 'magistrats'
               ? this.MAGISTRATS
               : this.FONCTIONNAIRES
-          )
-          this.tabSelected = 1
-          this.onEdit = true
-          this.location.replaceState('/cockpit')
-          this.filterBackupsByCategory()
+          );
+          this.tabSelected = 1;
+          this.onEdit = true;
+          this.location.replaceState('/cockpit');
+          this.filterBackupsByCategory();
         }
       })
-    )
+    );
   }
   /**
    * Suppresion des observables lors de la suppression de la page
    */
   ngOnDestroy() {
-    this.watcherDestroy()
+    this.watcherDestroy();
   }
 
   /**
@@ -510,18 +530,18 @@ export class CalculatorPage
         force) &&
       !this.checkLastMonthLoading
     ) {
-      this.checkLastMonthLoading = true
+      this.checkLastMonthLoading = true;
       return this.activitiesService.getLastMonthActivities().then((date) => {
-        date = new Date(date || null)
-        const max = month(date, 0, 'lastday')
-        this.maxDateSelectionDate = max
+        date = new Date(date || null);
+        const max = month(date, 0, 'lastday');
+        this.maxDateSelectionDate = max;
 
-        const min = month(max, -11)
-        this.calculatorService.dateStart.next(min)
-        this.calculatorService.dateStop.next(max)
-        this.checkLastMonthLoading = false
-        this.onLoadComparaisons()
-      })
+        const min = month(max, -11);
+        this.calculatorService.dateStart.next(min);
+        this.calculatorService.dateStop.next(max);
+        this.checkLastMonthLoading = false;
+        this.onLoadComparaisons();
+      });
     }
   }
 
@@ -534,41 +554,41 @@ export class CalculatorPage
       l = l.filter(
         (item) =>
           item.datas && (item.datas.dateStart || item.datas.referentielId)
-      )
+      );
 
-      let refs = this.referentiels
-      let indexRef = -1
+      let refs = this.referentiels;
+      let indexRef = -1;
       do {
-        indexRef = refs.findIndex((r) => !r.isLocked)
+        indexRef = refs.findIndex((r) => !r.isLocked);
         if (indexRef !== -1) {
-          refs.splice(indexRef, 1)
+          refs.splice(indexRef, 1);
         }
-      } while (indexRef !== -1)
+      } while (indexRef !== -1);
 
-      let preselectedRefId = -1
+      let preselectedRefId = -1;
       if (this.compareOption === 2) {
-        const bup = this.backups.find((b) => b.selected)
+        const bup = this.backups.find((b) => b.selected);
         if (bup) {
-          preselectedRefId = bup.id
+          preselectedRefId = bup.id;
         }
-        refs.map((r) => (r.selected = false))
+        refs.map((r) => (r.selected = false));
       }
 
       if (this.compareOption === 1) {
-        const bup = l.find((b) => b.label === this.createdTitle)
+        const bup = l.find((b) => b.label === this.createdTitle);
         if (bup) {
-          preselectedRefId = bup.id
-          this.createdTitle = null
+          preselectedRefId = bup.id;
+          this.createdTitle = null;
         }
-        refs.map((r) => (r.selected = false))
+        refs.map((r) => (r.selected = false));
         l.slice(0, NB_MAX_CUSTOM_COMPARAISONS).map((l) => {
           refs.push({
             label: l.label,
             selected: l && l.id === preselectedRefId ? true : false,
             isLocked: false,
             datas: l.datas,
-          })
-        })
+          });
+        });
       } else {
         l.slice(0, NB_MAX_CUSTOM_COMPARAISONS).map((l) => {
           refs.push({
@@ -579,24 +599,24 @@ export class CalculatorPage
                 : false,
             isLocked: false,
             datas: l.datas,
-          })
-        })
+          });
+        });
       }
 
       if (selectedByLabel) {
         refs = refs.map((i) => ({
           ...i,
           selected: i.label === selectedByLabel,
-        }))
+        }));
       }
 
       for (let i = NB_MAX_CUSTOM_COMPARAISONS; i < l.length; i++) {
-        this.backupSettingsService.removeSetting(l[i].id)
+        this.backupSettingsService.removeSetting(l[i].id);
       }
 
-      this.referentiels = [...refs]
-      this.backupSettingSaved = l
-    })
+      this.referentiels = [...refs];
+      this.backupSettingSaved = l;
+    });
   }
 
   /**
@@ -606,11 +626,11 @@ export class CalculatorPage
   onRemoveSetting(refSettingLabel: string) {
     const backupSettingSaved = this.backupSettingSaved.find(
       (b) => b.label === refSettingLabel
-    )
+    );
     if (backupSettingSaved) {
       this.backupSettingsService
         .removeSetting(backupSettingSaved.id)
-        .then(() => this.onLoadComparaisons())
+        .then(() => this.onLoadComparaisons());
     }
   }
 
@@ -619,7 +639,7 @@ export class CalculatorPage
    */
   onLoad(loadDetail = true) {
     if (this.onTimeoutLoad) {
-      clearTimeout(this.onTimeoutLoad)
+      clearTimeout(this.onTimeoutLoad);
     }
 
     this.onTimeoutLoad = setTimeout(
@@ -632,9 +652,9 @@ export class CalculatorPage
           this.isLoading === false &&
           this.categorySelected
         ) {
-          this.onTimeoutLoad = null
-          this.isLoading = true
-          this.appService.appLoading.next(true)
+          this.onTimeoutLoad = null;
+          this.isLoading = true;
+          this.appService.appLoading.next(true);
           this.calculatorService
             .filterList(
               this.categorySelected,
@@ -646,22 +666,22 @@ export class CalculatorPage
               false
             )
             .then(({ list, fonctions }) => {
-              this.appService.appLoading.next(false)
+              this.appService.appLoading.next(false);
               if (this.lastCategorySelected !== this.categorySelected) {
                 this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
                   id: f.id,
                   value: f.code,
-                }))
+                }));
                 this.selectedFonctionsIds = fonctions.map(
                   (f: HRFonctionInterface) => f.id
-                )
+                );
                 this.calculatorService.selectedFonctionsIds.next(
                   this.selectedFonctionsIds
-                )
+                );
               }
-              this.formatDatas(list)
-              this.isLoading = false
-              this.lastCategorySelected = this.categorySelected
+              this.formatDatas(list);
+              this.isLoading = false;
+              this.lastCategorySelected = this.categorySelected;
 
               if (
                 this.firstLoading === false &&
@@ -669,12 +689,12 @@ export class CalculatorPage
               ) {
                 this.appService.notification(
                   'Les données du cockpit ont été mis à jour !'
-                )
+                );
               }
-              this.firstLoading = false
+              this.firstLoading = false;
             })
             .catch(() => {
-              this.isLoading = false
+              this.isLoading = false;
             })
             .finally(() => {
               if (this.categorySelected && loadDetail) {
@@ -689,15 +709,15 @@ export class CalculatorPage
                     true
                   )
                   .then(({ list }) => {
-                    this.formatDatas(list)
-                  })
+                    this.formatDatas(list);
+                  });
               }
-            })
+            });
         }
       },
       this.firstLoading ? 0 : 1500
-    )
-    this.onLoadComparaisons()
+    );
+    this.onLoadComparaisons();
   }
 
   /**
@@ -708,36 +728,36 @@ export class CalculatorPage
     /*const backupLabel = localStorage.getItem('backupLabel')
     backupLabel && filterReferentielCalculator(list, backupLabel)*/
 
-    this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
-    this.filtredDatas()
+    this.datas = list.map((l) => ({ ...l, childIsVisible: false }));
+    this.filtredDatas();
   }
 
   /**
    * Trier les datas en fonction d'un trie
    */
   filtredDatas() {
-    let list = this.datas
+    let list = this.datas;
     if (this.sortBy) {
-      let sort = this.sortBy
+      let sort = this.sortBy;
       if (
         this.sortBy === 'magRealTimePerCase' &&
         this.categorySelected !== 'magistrats'
       ) {
-        sort = 'fonRealTimePerCase'
+        sort = 'fonRealTimePerCase';
       }
       list = orderBy(
         list,
         [
           (o) => {
             // @ts-ignore
-            return o[sort] || 0
+            return o[sort] || 0;
           },
         ],
         ['desc']
-      )
+      );
     }
 
-    this.datasFilted = list
+    this.datasFilted = list;
   }
 
   /**
@@ -747,20 +767,20 @@ export class CalculatorPage
    */
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
-      this.calculatorService.referentielIds.next(event)
+      this.calculatorService.referentielIds.next(event);
     } else if (type === 'dateStart') {
-      this.dateStart = new Date(event)
-      this.calculatorService.dateStart.next(this.dateStart)
-      this.unselectTemplate()
-      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
+      this.dateStart = new Date(event);
+      this.calculatorService.dateStart.next(this.dateStart);
+      this.unselectTemplate();
+      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '');
     } else if (type === 'dateStop') {
-      this.dateStop = month(new Date(event), undefined, 'lastDay')
-      this.calculatorService.dateStop.next(this.dateStop)
-      this.unselectTemplate()
-      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '')
+      this.dateStop = month(new Date(event), undefined, 'lastDay');
+      this.calculatorService.dateStop.next(this.dateStop);
+      this.unselectTemplate();
+      this.kpiService.register(EXECUTE_CALCULATOR_CHANGE_DATE, '');
     }
 
-    this.filtredDatas()
+    this.filtredDatas();
   }
 
   /**
@@ -770,7 +790,7 @@ export class CalculatorPage
    * @returns
    */
   trackByCont(index: number, item: CalculatorInterface) {
-    return item.contentieux.id
+    return item.contentieux.id;
   }
 
   /**
@@ -779,12 +799,12 @@ export class CalculatorPage
    */
   onSortBy(type: string) {
     if (this.sortBy === type) {
-      this.sortBy = ''
+      this.sortBy = '';
     } else {
-      this.sortBy = type
+      this.sortBy = type;
     }
 
-    this.filtredDatas()
+    this.filtredDatas();
   }
 
   /**
@@ -792,12 +812,12 @@ export class CalculatorPage
    * @param category
    */
   changeCategorySelected(category: string) {
-    this.categorySelected = category
-    this.calculatorService.categorySelected.next(this.categorySelected)
-    this.fonctionRealValue = ''
-    this.loadFunctions()
+    this.categorySelected = category;
+    this.calculatorService.categorySelected.next(this.categorySelected);
+    this.fonctionRealValue = '';
+    this.loadFunctions();
     if (this.categorySelected === this.FONCTIONNAIRES)
-      this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
+      this.kpiService.register(CALCULATOR_SELECT_GREFFE, '');
   }
 
   /**
@@ -805,17 +825,17 @@ export class CalculatorPage
    * @param fonctionsId
    */
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
-    this.selectedFonctionsIds = fonctionsId.map((f) => +f)
-    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
-    this.onLoad()
-    this.getFctRealValue()
+    this.selectedFonctionsIds = fonctionsId.map((f) => +f);
+    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds);
+    this.onLoad();
+    this.getFctRealValue();
   }
 
   selectAllFct() {
-    this.selectedFonctionsIds = this.fonctions.map((x) => x.id)
-    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
-    this.onLoad()
-    this.getFctRealValue()
+    this.selectedFonctionsIds = this.fonctions.map((x) => x.id);
+    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds);
+    this.onLoad();
+    this.getFctRealValue();
   }
   /**
    * Force l'ouverture d'un paneau d'aide
@@ -828,22 +848,22 @@ export class CalculatorPage
           title: 'Données renseignées',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/visualiser-son-activite-grace-aux-donnees-renseignees',
           printSubTitle: true,
-        })
-        break
+        });
+        break;
       case 'activité constatée':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Activité constatée',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/indicateurs-issus-de-lactivite-constatee',
           printSubTitle: true,
-        })
-        break
+        });
+        break;
       case 'activité calculée':
         this.wrapper?.onForcePanelHelperToShow({
           title: 'Activité calculée',
           path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/comparer-son-activite-grace-a-lactivite-calculee',
           printSubTitle: true,
-        })
-        break
+        });
+        break;
     }
   }
 
@@ -851,7 +871,7 @@ export class CalculatorPage
    * Demande d'extraction de la page au format pdf
    */
   onExport() {
-    this.duringPrint = true
+    this.duringPrint = true;
     this.wrapper
       ?.exportAsPdf(
         `Cockpit_par ${
@@ -862,8 +882,8 @@ export class CalculatorPage
         false
       )
       .then(() => {
-        this.duringPrint = false
-      })
+        this.duringPrint = false;
+      });
   }
 
   /**
@@ -877,11 +897,11 @@ export class CalculatorPage
       return 'material-date-calendar-no-datas';
     }*/
 
-    return ''
-  }
+    return '';
+  };
 
   calculatorSaver() {
-    let refToSave = new Array()
+    let refToSave = new Array();
 
     this.datas.map((x) => {
       if (x.childrens.length > 0)
@@ -892,43 +912,43 @@ export class CalculatorPage
               label: y.contentieux.label,
             },
             averageProcessingTime: y.magRealTimePerCase,
-          })
-        })
+          });
+        });
       refToSave.push({
         contentieux: {
           id: x.contentieux.id,
           label: x.contentieux.label,
         },
         averageProcessingTime: x.magRealTimePerCase,
-      })
-    })
+      });
+    });
 
-    this.contentieuxOptionsService.contentieuxOptions.next(refToSave)
-    this.contentieuxOptionsService.optionsIsModify.next(true)
-    this.contentieuxOptionsService.onSaveDatas(true)
+    this.contentieuxOptionsService.contentieuxOptions.next(refToSave);
+    this.contentieuxOptionsService.optionsIsModify.next(true);
+    this.contentieuxOptionsService.onSaveDatas(true);
   }
 
   /**
    * Génère la valeur du filtre de fonction
    */
   getFctRealValue() {
-    let tmpStr = ''
-    let counter = 0
+    let tmpStr = '';
+    let counter = 0;
     this.selectedFonctionsIds.map((id) => {
-      const find = this.fonctions.find((d) => d.id === id)
+      const find = this.fonctions.find((d) => d.id === id);
       if (find) {
         if (counter < 3)
-          tmpStr = tmpStr.length ? [tmpStr, find.value].join(', ') : find.value
-        counter++
+          tmpStr = tmpStr.length ? [tmpStr, find.value].join(', ') : find.value;
+        counter++;
       }
-    })
-    if (counter > 4) tmpStr = tmpStr + ' et ' + (counter - 3) + ' autres'
+    });
+    if (counter > 4) tmpStr = tmpStr + ' et ' + (counter - 3) + ' autres';
     else if (counter === 4)
-      tmpStr = tmpStr + ' et ' + (counter - 3) + ' autre de plus'
+      tmpStr = tmpStr + ' et ' + (counter - 3) + ' autre de plus';
 
-    if (this.selectedFonctionsIds.length === this.fonctions.length) tmpStr = ''
+    if (this.selectedFonctionsIds.length === this.fonctions.length) tmpStr = '';
 
-    this.fonctionRealValue = tmpStr
+    this.fonctionRealValue = tmpStr;
   }
 
   /**
@@ -938,9 +958,9 @@ export class CalculatorPage
    */
   getRealValue(date: Date | null) {
     if (date !== null) {
-      date = new Date(date)
-      return `${this.getShortMonthString(date)} ${date.getFullYear()}`
-    } else return ''
+      date = new Date(date);
+      return `${this.getShortMonthString(date)} ${date.getFullYear()}`;
+    } else return '';
   }
 
   /**
@@ -949,39 +969,39 @@ export class CalculatorPage
    */
   radioSelect(ref: any) {
     this.referentiels = this.referentiels.map((x) => {
-      x.selected = ref.label === x.label
-      return x
-    })
-    ref.selected = true
+      x.selected = ref.label === x.label;
+      return x;
+    });
+    ref.selected = true;
 
     if (ref.datas) {
       if (ref.isLocked) {
         this.backupSettingsService
           .addOrUpdate(ref.label, BACKUP_SETTING_COMPARE, ref.datas)
-          .then(() => this.onLoadComparaisons(ref.label))
+          .then(() => this.onLoadComparaisons(ref.label));
       }
 
       if (ref.datas.dateStart) {
-        this.compareOption = 1
-        this.optionDateStart = new Date(ref.datas.dateStart)
-        this.optionDateStop = month(new Date(ref.datas.dateStop), 0, 'lastday')
+        this.compareOption = 1;
+        this.optionDateStart = new Date(ref.datas.dateStart);
+        this.optionDateStop = month(new Date(ref.datas.dateStop), 0, 'lastday');
         this.kpiService.register(
           CALCULATOR_OPEN_CONMPARAISON_RANGE,
           ref.label + ''
-        )
+        );
       } else if (ref.datas.referentielId) {
-        this.compareOption = 2
+        this.compareOption = 2;
         this.backups = this.backups.map((b) => ({
           ...b,
           selected: ref.datas.referentielId == b.id,
-        }))
+        }));
         this.kpiService.register(
           CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
           ref.datas.referentielId + ''
-        )
+        );
       }
-      this.showPicker = false
-      this.onLoadCompare()
+      this.showPicker = false;
+      this.onLoadCompare();
     }
   }
 
@@ -991,7 +1011,7 @@ export class CalculatorPage
    * @returns
    */
   trunc(str: string, len = 40) {
-    return _.truncate(str, { length: len, separator: '...' })
+    return _.truncate(str, { length: len, separator: '...' });
   }
 
   /**
@@ -1000,9 +1020,9 @@ export class CalculatorPage
    */
   selectBackup(backup: BackupInterface) {
     this.backups.map((x) => {
-      x.selected = false
-    })
-    backup.selected = true
+      x.selected = false;
+    });
+    backup.selected = true;
   }
 
   /**
@@ -1011,65 +1031,65 @@ export class CalculatorPage
    */
   unselectBackup() {
     this.backups.map((x) => {
-      x.selected = false
-    })
+      x.selected = false;
+    });
   }
 
   /**
    * On lance une comparaison
    */
   onCompare() {
-    this.showPicker = false
+    this.showPicker = false;
     if (this.compareOption === 1) {
-      this.unselectBackup()
+      this.unselectBackup();
       if (!this.optionDateStart) {
-        alert('Vous devez saisir une date de début !')
-        return
+        alert('Vous devez saisir une date de début !');
+        return;
       }
 
       if (!this.optionDateStop) {
-        alert('Vous devez saisir une date de fin !')
-        return
+        alert('Vous devez saisir une date de fin !');
+        return;
       }
 
       let rangeTitle = `${this.getRealValue(
         this.optionDateStart
-      )} - ${this.getRealValue(this.optionDateStop)}`
+      )} - ${this.getRealValue(this.optionDateStop)}`;
 
-      this.createdTitle = rangeTitle
+      this.createdTitle = rangeTitle;
 
       this.backupSettingsService
         .addOrUpdate(rangeTitle, BACKUP_SETTING_COMPARE, {
           dateStart: this.optionDateStart,
           dateStop: this.optionDateStop,
         })
-        .then(() => this.onLoadComparaisons())
+        .then(() => this.onLoadComparaisons());
 
-      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE, rangeTitle)
+      this.kpiService.register(CALCULATOR_OPEN_CONMPARAISON_RANGE, rangeTitle);
     } else {
-      const backupSelected = this.backups.find((b) => b.selected)
+      const backupSelected = this.backups.find((b) => b.selected);
       if (!backupSelected) {
-        alert('Vous devez saisir un référentiel de comparaison !')
-        return
+        alert('Vous devez saisir un référentiel de comparaison !');
+        return;
       }
       if (backupSelected.type === 'GREFFE')
-        this.categorySelected = this.FONCTIONNAIRES
-      else this.categorySelected = this.MAGISTRATS
+        this.categorySelected = this.FONCTIONNAIRES;
+      else this.categorySelected = this.MAGISTRATS;
 
       this.backupSettingsService
         .addOrUpdate(backupSelected.label, BACKUP_SETTING_COMPARE, {
           referentielId: backupSelected.id,
         })
-        .then(() => this.onLoadComparaisons())
+        .then(() => this.onLoadComparaisons());
 
       this.kpiService.register(
         CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL,
         backupSelected.id + ''
-      )
+      );
     }
 
-    this.onLoadCompare()
-    this.location.replaceState('/cockpit')
+    this.onLoadCompare();
+    this.location.replaceState('/cockpit');
   }
 
   /**
@@ -1077,36 +1097,38 @@ export class CalculatorPage
    */
   async onLoadCompare() {
     if (this.categorySelected && this.isLoading === false) {
-      this.onEdit = false
+      this.onEdit = false;
       const actualRangeString = `${this.getRealValue(
         this.dateStart
-      )} - ${this.getRealValue(this.dateStop)}`
-      const list: AnalyticsLine[] = []
+      )} - ${this.getRealValue(this.dateStop)}`;
+      const list: AnalyticsLine[] = [];
       const value1TempsMoyen = (this.datasFilted || []).map((d) =>
         this.categorySelected === MAGISTRATS
           ? d.magRealTimePerCase
           : d.fonRealTimePerCase
-      )
+      );
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) =>
         d === null
           ? 'N/R'
           : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
-      )
+      );
 
-      const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
+      const value1DTES = (this.datasFilted || []).map(
+        (d) => d.realDTESInMonths
+      );
       const value1TauxCouverture = (this.datasFilted || []).map(
         (d) => d.realCoverage
-      )
+      );
       const value1Sorties = (this.datasFilted || []).map((d) =>
         d.totalOut ? Math.floor(d.totalOut) : d.totalOut
-      )
+      );
       const value1Entrees = (this.datasFilted || []).map((d) =>
         d.totalIn ? Math.floor(d.totalIn) : d.totalIn
-      )
-      const value1Stock = (this.datasFilted || []).map((d) => d.lastStock)
-      const value1ETPTSiege = (this.datasFilted || []).map((d) => d.etpMag)
-      const value1ETPTGreffe = (this.datasFilted || []).map((d) => d.etpFon)
-      const value1ETPTEam = (this.datasFilted || []).map((d) => d.etpCont)
+      );
+      const value1Stock = (this.datasFilted || []).map((d) => d.lastStock);
+      const value1ETPTSiege = (this.datasFilted || []).map((d) => d.etpMag);
+      const value1ETPTGreffe = (this.datasFilted || []).map((d) => d.etpFon);
+      const value1ETPTEam = (this.datasFilted || []).map((d) => d.etpCont);
       const getVariations = (
         tab2: any[],
         tab1: any[],
@@ -1114,37 +1136,37 @@ export class CalculatorPage
       ) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null) {
-            return 'N/R'
+            return 'N/R';
           }
 
           if (d === 0 && tab1[index] === 0) {
-            return 0
+            return 0;
           }
 
-          let percent = 0
+          let percent = 0;
 
           if (isPercentComparaison) {
             percent = this.fixDecimal(
               ((tab1[index] || 0) / (d || 0) - 1) * 100,
               10
-            )
+            );
           } else {
-            percent = Math.floor((tab1[index] || 0) * 100 - (d || 0) * 100)
+            percent = Math.floor((tab1[index] || 0) * 100 - (d || 0) * 100);
           }
 
           if (percent === Infinity) {
-            return 'N/A'
+            return 'N/A';
           }
 
           if (percent > 0) {
-            return '+' + percent
+            return '+' + percent;
           }
 
-          return percent
-        })
+          return percent;
+        });
 
       if (this.compareOption === 1) {
-        this.appService.appLoading.next(true)
+        this.appService.appLoading.next(true);
         const resultCalcul = await this.calculatorService.filterList(
           this.categorySelected,
           this.lastCategorySelected === this.categorySelected
@@ -1153,11 +1175,11 @@ export class CalculatorPage
           this.optionDateStart,
           this.optionDateStop,
           false
-        )
+        );
 
-        let dateEndIsPast = false
+        let dateEndIsPast = false;
         if (!this.maxDateSelectionDate) {
-          await this.onCheckLastMonth(true)
+          await this.onCheckLastMonth(true);
         }
 
         if (this.dateStop && this.maxDateSelectionDate) {
@@ -1165,7 +1187,7 @@ export class CalculatorPage
             this.dateStop,
             this.maxDateSelectionDate,
             true
-          )
+          );
         }
         if (
           !dateEndIsPast &&
@@ -1176,7 +1198,7 @@ export class CalculatorPage
             this.optionDateStop,
             this.maxDateSelectionDate,
             true
-          )
+          );
         }
         console.log(
           dateEndIsPast,
@@ -1194,19 +1216,19 @@ export class CalculatorPage
             this.maxDateSelectionDate || new Date(),
             true
           )
-        )
+        );
 
-        this.appService.appLoading.next(false)
+        this.appService.appLoading.next(false);
         const nextRangeString = `${this.getRealValue(
           this.optionDateStart
-        )} - ${this.getRealValue(this.optionDateStop)}`
-        this.compareAtString = nextRangeString
+        )} - ${this.getRealValue(this.optionDateStop)}`;
+        this.compareAtString = nextRangeString;
 
         if (!dateEndIsPast) {
           const value2DTES: (number | null)[] = (resultCalcul.list || []).map(
             (d: CalculatorInterface) => d.realDTESInMonths
-          )
-          const variationsDTES = getVariations(value2DTES, value1DTES)
+          );
+          const variationsDTES = getVariations(value2DTES, value1DTES);
           list.push({
             title: 'DTES',
             type: 'verticals-lines',
@@ -1235,7 +1257,7 @@ export class CalculatorPage
                 subTitle: 'mois',
               },
             ],
-          })
+          });
         }
 
         if (!dateEndIsPast) {
@@ -1245,16 +1267,16 @@ export class CalculatorPage
             this.categorySelected === MAGISTRATS
               ? d.magRealTimePerCase
               : d.fonRealTimePerCase
-          )
+          );
           const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
             d === null
               ? 'N/R'
               : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
-          )
+          );
           const variationsTempsMoyen = getVariations(
             value2TempsMoyen,
             value1TempsMoyen
-          )
+          );
           list.push({
             title: 'Temps moyen',
             type: 'verticals-lines',
@@ -1286,18 +1308,18 @@ export class CalculatorPage
                 subTitle: 'heures',
               },
             ],
-          })
+          });
         }
 
         if (!dateEndIsPast) {
           const value2TauxCouverture: (number | null)[] = (
             resultCalcul.list || []
-          ).map((d: CalculatorInterface) => d.realCoverage)
+          ).map((d: CalculatorInterface) => d.realCoverage);
           const variationsCouverture = getVariations(
             value2TauxCouverture,
             value1TauxCouverture,
             false
-          )
+          );
           list.push({
             title: 'Taux de couverture',
             type: 'progress',
@@ -1327,14 +1349,14 @@ export class CalculatorPage
                 ),
               },
             ],
-          })
+          });
         }
 
         if (!dateEndIsPast) {
           const value2Stock: (number | null)[] = (resultCalcul.list || []).map(
             (d: CalculatorInterface) => d.lastStock
-          )
-          const variationsStock = getVariations(value2Stock, value1Stock)
+          );
+          const variationsStock = getVariations(value2Stock, value1Stock);
           list.push({
             title: 'Stock',
             type: 'verticals-lines',
@@ -1358,7 +1380,7 @@ export class CalculatorPage
               { label: nextRangeString, values: value2Stock },
               { label: actualRangeString, values: value1Stock },
             ],
-          })
+          });
         }
 
         if (!dateEndIsPast) {
@@ -1366,8 +1388,8 @@ export class CalculatorPage
             resultCalcul.list || []
           ).map((d: CalculatorInterface) =>
             d.totalIn ? Math.floor(d.totalIn) : d.totalIn
-          )
-          const variationsEntrees = getVariations(value2Entrees, value1Entrees)
+          );
+          const variationsEntrees = getVariations(value2Entrees, value1Entrees);
           list.push({
             title: 'Entrées',
             type: 'verticals-lines',
@@ -1391,7 +1413,7 @@ export class CalculatorPage
               { label: nextRangeString, values: value2Entrees },
               { label: actualRangeString, values: value1Entrees },
             ],
-          })
+          });
         }
 
         if (!dateEndIsPast) {
@@ -1399,8 +1421,8 @@ export class CalculatorPage
             resultCalcul.list || []
           ).map((d: CalculatorInterface) =>
             d.totalOut ? Math.floor(d.totalOut) : d.totalOut
-          )
-          const variationsSorties = getVariations(value2Sorties, value1Sorties)
+          );
+          const variationsSorties = getVariations(value2Sorties, value1Sorties);
           list.push({
             title: 'Sorties',
             type: 'verticals-lines',
@@ -1424,17 +1446,17 @@ export class CalculatorPage
               { label: nextRangeString, values: value2Sorties },
               { label: actualRangeString, values: value1Sorties },
             ],
-          })
+          });
         }
 
         if (this.canViewMagistrat) {
           const value2ETPTSiege: (number | null)[] = (
             resultCalcul.list || []
-          ).map((d: CalculatorInterface) => d.etpMag)
+          ).map((d: CalculatorInterface) => d.etpMag);
           const variationsETPTSiege = getVariations(
             value2ETPTSiege,
             value1ETPTSiege
-          )
+          );
           list.push({
             title: 'ETPT Siège',
             type: 'verticals-lines',
@@ -1476,17 +1498,17 @@ export class CalculatorPage
               },*/
               },
             ],
-          })
+          });
         }
 
         if (this.canViewGreffier) {
           const value2ETPTGreffe: (number | null)[] = (
             resultCalcul.list || []
-          ).map((d: CalculatorInterface) => d.etpFon)
+          ).map((d: CalculatorInterface) => d.etpFon);
           const variationsETPTGreffe = getVariations(
             value2ETPTGreffe,
             value1ETPTGreffe
-          )
+          );
           list.push({
             title: 'ETPT Greffe',
             type: 'verticals-lines',
@@ -1528,14 +1550,14 @@ export class CalculatorPage
               },*/
               },
             ],
-          })
+          });
         }
 
         if (this.canViewContractuel) {
           const value2ETPTEam: (number | null)[] = (
             resultCalcul.list || []
-          ).map((d: CalculatorInterface) => d.etpCont)
-          const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
+          ).map((d: CalculatorInterface) => d.etpCont);
+          const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam);
           list.push({
             title: 'ETPT EAM',
             type: 'verticals-lines',
@@ -1577,53 +1599,55 @@ export class CalculatorPage
               },*/
               },
             ],
-          })
+          });
         }
       } else {
-        const refSelected = this.backups.find((b) => b.selected)
+        const refSelected = this.backups.find((b) => b.selected);
         if (!refSelected) {
-          this.compareTemplates = null
+          this.compareTemplates = null;
           if ([0, 1].includes(this.tabSelected)) {
-            this.documentation.path = this.docLinks[this.tabSelected]
+            this.documentation.path = this.docLinks[this.tabSelected];
           }
-          return
+          return;
         }
         const refDetails = await this.contentieuxOptionsService.loadDetails(
           refSelected.id
-        )
-        this.compareAtString = refSelected.label
+        );
+        this.compareAtString = refSelected.label;
 
         const value2TempsMoyen = this.referentiel.map((ref) => {
-          const findDetail = refDetails.find((r) => r.contentieux.id === ref.id)
+          const findDetail = refDetails.find(
+            (r) => r.contentieux.id === ref.id
+          );
 
           if (findDetail && findDetail.averageProcessingTime) {
-            return findDetail.averageProcessingTime
+            return findDetail.averageProcessingTime;
           }
 
-          return null
-        })
+          return null;
+        });
         const stringValue2TempsMoyen = (value2TempsMoyen || []).map((d) =>
           d === null
             ? 'N/R'
             : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `
-        )
+        );
         const variationsTempsMoyen = getVariations(
           value2TempsMoyen,
           value1TempsMoyen
-        )
+        );
 
         const nbDayByMonth =
           this.categorySelected === MAGISTRATS
             ? this.environment.nbDaysByMagistrat / 12
-            : this.environment.nbDaysByFonctionnaire / 12
+            : this.environment.nbDaysByFonctionnaire / 12;
         const nbHoursPerDay =
           this.categorySelected === MAGISTRATS
             ? this.environment.nbHoursPerDayAndMagistrat
-            : this.environment.nbHoursPerDayAndFonctionnaire
+            : this.environment.nbHoursPerDayAndFonctionnaire;
         const valETPT =
           this.categorySelected === MAGISTRATS
             ? [...value1ETPTSiege]
-            : [...value1ETPTGreffe]
+            : [...value1ETPTGreffe];
         const value2Sorties = [
           ...value1Sorties.map((v1, index) => {
             if (value2TempsMoyen[index] !== null && valETPT[index] !== null) {
@@ -1633,12 +1657,12 @@ export class CalculatorPage
               return Math.floor(
                 ((valETPT[index] || 0) * nbHoursPerDay * nbDayByMonth) /
                   (value2TempsMoyen[index] || 0)
-              )
+              );
             }
 
-            return null
+            return null;
           }),
-        ]
+        ];
 
         list.push({
           title: 'Temps moyen',
@@ -1671,7 +1695,7 @@ export class CalculatorPage
               subTitle: 'heures',
             },
           ],
-        })
+        });
 
         const value2DTES = [
           ...value1DTES.map((v1, index) => {
@@ -1681,13 +1705,13 @@ export class CalculatorPage
               return fixDecimal(
                 (value1Stock[index] || 0) / (value2Sorties[index] || 0),
                 10
-              )
+              );
             }
 
-            return null
+            return null;
           }),
-        ]
-        const variationsDTES = getVariations(value2DTES, value1DTES)
+        ];
+        const variationsDTES = getVariations(value2DTES, value1DTES);
         list.push({
           title: 'DTES',
           type: 'verticals-lines',
@@ -1712,7 +1736,7 @@ export class CalculatorPage
             { label: refSelected.label, values: value2DTES, subTitle: 'mois' },
             { label: actualRangeString, values: value1DTES, subTitle: 'mois' },
           ],
-        })
+        });
 
         const value2TauxCouverture = [
           ...value1TauxCouverture.map((v1, index) => {
@@ -1725,18 +1749,18 @@ export class CalculatorPage
               return fixDecimal(
                 (value2Sorties[index] || 0) / (value1Entrees[index] || 0),
                 10
-              )
+              );
             }
 
-            return null
+            return null;
           }),
-        ]
+        ];
 
         const variationsCouverture = getVariations(
           value2TauxCouverture,
           value1TauxCouverture,
           false
-        )
+        );
         list.push({
           title: 'Taux de couverture',
           type: 'progress',
@@ -1766,8 +1790,8 @@ export class CalculatorPage
               ),
             },
           ],
-        })
-        const variationsSorties = getVariations(value2Sorties, value1Sorties)
+        });
+        const variationsSorties = getVariations(value2Sorties, value1Sorties);
         list.push({
           title: 'Sorties',
           type: 'verticals-lines',
@@ -1791,27 +1815,27 @@ export class CalculatorPage
             { label: refSelected.label, values: value2Sorties },
             { label: actualRangeString, values: value1Sorties },
           ],
-        })
+        });
       }
 
-      this.compareTemplates = list
-      this.documentation.path = this.docLinks[2]
+      this.compareTemplates = list;
+      this.documentation.path = this.docLinks[2];
     }
-    this.appService.notification('Les données du cockpit ont été mis à jour !')
+    this.appService.notification('Les données du cockpit ont été mis à jour !');
   }
 
   getHours(value: number) {
-    return Math.floor(value)
+    return Math.floor(value);
   }
 
   getMinutes(value: number) {
-    return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0')
+    return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0');
   }
 
   /** Retourne la derniere date de maj si elle existe ou date de creation */
   getLastDate(backup: BackupInterface) {
-    if (backup.update !== null) return backup.update.date
-    else return backup.date
+    if (backup.update !== null) return backup.update.date;
+    else return backup.date;
   }
 
   /**
@@ -1825,7 +1849,7 @@ export class CalculatorPage
         datestop: this.dateStop,
         category: this.categorySelected,
       },
-    ])
+    ]);
   }
 
   /**
@@ -1833,61 +1857,61 @@ export class CalculatorPage
    */
   filterBackupsByCategory() {
     if (this.categorySelected === 'magistrats')
-      this.filteredBackups = this.backups.filter((r) => r.type === 'SIEGE')
-    else this.filteredBackups = this.backups.filter((r) => r.type === 'GREFFE')
+      this.filteredBackups = this.backups.filter((r) => r.type === 'SIEGE');
+    else this.filteredBackups = this.backups.filter((r) => r.type === 'GREFFE');
   }
 
   /**
    * Drop down deselection
    */
   unselectTemplate() {
-    this.showPicker = false
-    this.compareTemplates = null
+    this.showPicker = false;
+    this.compareTemplates = null;
     if ([0, 1].includes(this.tabSelected)) {
-      this.documentation.path = this.docLinks[this.tabSelected]
+      this.documentation.path = this.docLinks[this.tabSelected];
     }
     this.referentiels = this.referentiels.map((x) => {
-      x.selected = false
-      return x
-    })
+      x.selected = false;
+      return x;
+    });
   }
 
   /**
    * Envoie d'une log lors de l'ouverture de la vue graphique
    */
   logChartView() {
-    this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW, '')
+    this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW, '');
   }
 
   filterReferentiels(referentiels: any[]) {
-    console.log(this.referentiel)
+    console.log(this.referentiel);
     let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(
           (b) => b.id === current.datas.referentielId
-        )
+        );
         if (bup && bup.type) {
           if (
             this.categorySelected === this.MAGISTRATS &&
             bup.type !== 'SIEGE'
           ) {
-            return previous
+            return previous;
           } else if (
             this.categorySelected === this.FONCTIONNAIRES &&
             bup.type !== 'GREFFE'
           ) {
-            return previous
+            return previous;
           }
         }
       }
 
-      previous.push(current)
-      return previous
-    }, [])
+      previous.push(current);
+      return previous;
+    }, []);
 
-    const start = month(this.calculatorService.dateStart.getValue(), -12)
-    const stop = month(this.calculatorService.dateStop.getValue(), -12)
-    const newLabel = `${this.getRealValue(start)} - ${this.getRealValue(stop)}`
+    const start = month(this.calculatorService.dateStart.getValue(), -12);
+    const stop = month(this.calculatorService.dateStop.getValue(), -12);
+    const newLabel = `${this.getRealValue(start)} - ${this.getRealValue(stop)}`;
     if (!refsList.find((r: any) => r.label === newLabel)) {
       refsList.splice(0, 0, {
         label: newLabel,
@@ -1899,9 +1923,9 @@ export class CalculatorPage
           dateStop: stop,
           dateStart: start,
         },
-      })
+      });
     }
 
-    return refsList
+    return refsList;
   }
 }

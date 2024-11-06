@@ -1,14 +1,14 @@
-import { Injectable, OnInit } from '@angular/core'
-import { BehaviorSubject } from 'rxjs'
-import { SimulatorInterface } from 'src/app/interfaces/simulator'
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { MainClass } from 'src/app/libs/main-class'
-import { decimalToStringDate, setTimeToMidDay } from 'src/app/utils/dates'
-import { HumanResourceService } from '../human-resource/human-resource.service'
-import { SimulationInterface } from 'src/app/interfaces/simulation'
-import * as _ from 'lodash'
-import { ChartAnnotationBoxInterface } from 'src/app/interfaces/chart-annotation-box'
-import { ServerService } from '../http-server/server.service'
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { HumanResourceService } from '../human-resource/human-resource.service';
+import * as _ from 'lodash';
+import { ServerService } from '../http-server/server.service';
+import { MainClass } from '../../libs/main-class';
+import { SimulatorInterface } from '../../interfaces/simulator';
+import { SimulationInterface } from '../../interfaces/simulation';
+import { HRCategoryInterface } from '../../interfaces/hr-category';
+import { ChartAnnotationBoxInterface } from '../../interfaces/chart-annotation-box';
+import { decimalToStringDate, setTimeToMidDay } from '../../utils/dates';
 
 /**
  * Service de la page du simulateur
@@ -20,46 +20,46 @@ export class SimulatorService extends MainClass {
   /**
    * Loader display boolean
    */
-  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   /**
    * Object contenant les données propres à la situation actuelle (aujourd'hui ou date de début selectionnée)
    */
   situationActuelle: BehaviorSubject<SimulatorInterface | null> =
-    new BehaviorSubject<SimulatorInterface | null>(null)
+    new BehaviorSubject<SimulatorInterface | null>(null);
   /**
    * Object contenant les données propres à la situation projetée à une date de fin choisie
    */
   situationProjected: BehaviorSubject<SimulatorInterface | null> =
-    new BehaviorSubject<SimulatorInterface | null>(null)
+    new BehaviorSubject<SimulatorInterface | null>(null);
   /**
    * Object contenant les données propres à la situation simulée à une date de fin choisie
    */
   situationSimulated: BehaviorSubject<SimulationInterface | null> =
-    new BehaviorSubject<SimulationInterface | null>(null)
+    new BehaviorSubject<SimulationInterface | null>(null);
   /**
    * Liste de contentieux/sous contentieux selectionné(s) par l'utilisateur
    */
   contentieuOrSubContentieuId: BehaviorSubject<Array<number> | null> =
-    new BehaviorSubject<Array<number> | null>(null)
+    new BehaviorSubject<Array<number> | null>(null);
   /**
    * Date de début de simulation selectionnée par l'utilisateur (définie par défaut à aujourd'hui)
    */
-  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date())
+  dateStart: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
   /**
    * Date de fin de situation selectionnée par l'utilisateur
    */
-  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date())
+  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
   /**
    * Categorie selectionnée par l'utilisateur (Magistrat/Fonctionnaire)
    */
   selectedCategory: BehaviorSubject<HRCategoryInterface | null> =
-    new BehaviorSubject<HRCategoryInterface | null>(null)
+    new BehaviorSubject<HRCategoryInterface | null>(null);
   /**
    * Fonction(s) selectionnées par l'utilisateur
    */
   selectedFonctionsIds: BehaviorSubject<number[]> = new BehaviorSubject<
     number[]
-  >([])
+  >([]);
   /**
    * Popin pour graphiques de simulation
    */
@@ -69,22 +69,25 @@ export class SimulatorService extends MainClass {
       xMin: null,
       xMax: null,
       content: undefined,
-    })
+    });
   /**
- * Indicateur de selection de paramètre de simulation
- */
-  disabled: BehaviorSubject<string> = new BehaviorSubject<string>('disabled')
+   * Indicateur de selection de paramètre de simulation
+   */
+  disabled: BehaviorSubject<string> = new BehaviorSubject<string>('disabled');
 
   /**
    * Validation de la situation de début sur simulateur à blanc
    */
-  isValidatedWhiteSimu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  isValidatedWhiteSimu: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
 
   /**
- * Nombre de jour à projeter pour la situation projetee du simulateur a blanc
- */
-  whiteSimulatorNbOfDays: BehaviorSubject<number> = new BehaviorSubject<number>(0)
-
+   * Nombre de jour à projeter pour la situation projetee du simulateur a blanc
+   */
+  whiteSimulatorNbOfDays: BehaviorSubject<number> = new BehaviorSubject<number>(
+    0
+  );
 
   /**
    * Constructeur
@@ -95,25 +98,28 @@ export class SimulatorService extends MainClass {
     private serverService: ServerService,
     private humanResourceService: HumanResourceService
   ) {
-    super()
+    super();
 
-    this.watch(this.chartAnnotationBox.subscribe(() => { }))
+    this.watch(this.chartAnnotationBox.subscribe(() => {}));
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null && this.contentieuOrSubContentieuId.getValue()?.length) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue())
+        if (
+          this.contentieuOrSubContentieuId.getValue() !== null &&
+          this.contentieuOrSubContentieuId.getValue()?.length
+        ) {
+          this.getSituation(this.contentieuOrSubContentieuId.getValue());
         }
       })
-    )
+    );
 
     this.watch(
       this.selectedFonctionsIds.subscribe(() => {
         if (this.contentieuOrSubContentieuId.getValue() !== null) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue())
+          this.getSituation(this.contentieuOrSubContentieuId.getValue());
         }
       })
-    )
+    );
 
     this.watch(
       this.dateStart.subscribe(() => {
@@ -121,10 +127,10 @@ export class SimulatorService extends MainClass {
           this.getSituation(
             this.contentieuOrSubContentieuId.getValue(),
             this.dateStart.getValue()
-          )
+          );
         }
       })
-    )
+    );
 
     this.watch(
       this.dateStop.subscribe(() => {
@@ -133,10 +139,10 @@ export class SimulatorService extends MainClass {
             this.contentieuOrSubContentieuId.getValue(),
             this.dateStart.getValue(),
             this.dateStop.getValue()
-          )
+          );
         }
       })
-    )
+    );
   }
 
   /**
@@ -155,7 +161,7 @@ export class SimulatorService extends MainClass {
       this.selectedCategory.getValue()?.id !== null &&
       this.selectedFonctionsIds.getValue() !== null
     ) {
-      this.isLoading.next(true)
+      this.isLoading.next(true);
 
       return this.serverService
         .post(`simulator/get-situation`, {
@@ -168,11 +174,11 @@ export class SimulatorService extends MainClass {
         })
         .then((data) => {
           if (dateStop) {
-            this.situationProjected.next(data.data.situation.endSituation)
-          } else this.situationActuelle.next(data.data.situation)
+            this.situationProjected.next(data.data.situation.endSituation);
+          } else this.situationActuelle.next(data.data.situation);
         })
-        .then(() => this.isLoading.next(false))
-    } else return null
+        .then(() => this.isLoading.next(false));
+    } else return null;
   }
 
   /**
@@ -181,8 +187,8 @@ export class SimulatorService extends MainClass {
    * @param simulation empty situation object to be filled
    */
   toSimulate(params: any, simulation: SimulationInterface) {
-    this.isLoading.next(true)
-    console.log(params)
+    this.isLoading.next(true);
+    console.log(params);
     this.serverService
       .post(`simulator/to-simulate`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -193,10 +199,10 @@ export class SimulatorService extends MainClass {
         selectedCategoryId: this.selectedCategory.getValue()?.id,
       })
       .then((data) => {
-        console.log('simu', data.data)
-        this.situationSimulated.next(data.data)
-        this.isLoading.next(false)
-      })
+        console.log('simu', data.data);
+        this.situationSimulated.next(data.data);
+        this.isLoading.next(false);
+      });
   }
 
   /**
@@ -207,23 +213,23 @@ export class SimulatorService extends MainClass {
   getLabelTranslation(value: string): string {
     switch (value) {
       case 'etpMag':
-        return 'ETPT'
+        return 'ETPT';
       case 'etpFon':
-        return 'ETPT greffe'
+        return 'ETPT greffe';
       case 'totalIn':
-        return 'entrées mensuelles'
+        return 'entrées mensuelles';
       case 'totalOut':
-        return 'sorties mensuelles'
+        return 'sorties mensuelles';
       case 'lastStock':
-        return 'stock'
+        return 'stock';
       case 'realDTESInMonths':
-        return 'DTES'
+        return 'DTES';
       case 'realCoverage':
-        return 'taux de couverture'
+        return 'taux de couverture';
       case 'magRealTimePerCase':
-        return 'temps moyen par dossier'
+        return 'temps moyen par dossier';
     }
-    return ''
+    return '';
   }
 
   /**
@@ -242,58 +248,76 @@ export class SimulatorService extends MainClass {
   ): any {
     switch (param) {
       case 'etpMag':
-        if (data?.etpMag === null) { return 'N/R' }
-        return data?.etpMag || '0'
+        if (data?.etpMag === null) {
+          return 'N/R';
+        }
+        return data?.etpMag || '0';
       case 'totalOut': {
-        if (data?.totalOut === null) { return 'N/R' }
+        if (data?.totalOut === null) {
+          return 'N/R';
+        }
         if (data?.totalOut && data?.totalOut >= 0) {
-          return data?.totalOut
-        } else return '0'
+          return data?.totalOut;
+        } else return '0';
       }
       case 'totalIn': {
-        if (data?.totalIn === null) { return 'N/R' }
+        if (data?.totalIn === null) {
+          return 'N/R';
+        }
         if (data?.totalIn && data?.totalIn >= 0) {
-          return toCompute === true ? data?.totalIn : Math.floor(data?.totalIn)
-        } else return '0'
+          return toCompute === true ? data?.totalIn : Math.floor(data?.totalIn);
+        } else return '0';
       }
       case 'lastStock': {
-        if (data?.lastStock === null) { return 'N/R' }
+        if (data?.lastStock === null) {
+          return 'N/R';
+        }
         if (data?.lastStock && data?.lastStock >= 0) {
-          return data?.lastStock
-        } else return '0'
+          return data?.lastStock;
+        } else return '0';
       }
       case 'etpCont':
-        if (data?.etpCont === null) { return 'N/R' }
-        return data?.etpCont || '0'
+        if (data?.etpCont === null) {
+          return 'N/R';
+        }
+        return data?.etpCont || '0';
       case 'etpFon':
-        if (data?.etpFon === null) { return 'N/R' }
-        return data?.etpFon || '0'
+        if (data?.etpFon === null) {
+          return 'N/R';
+        }
+        return data?.etpFon || '0';
       case 'realCoverage': {
-        if (data?.realCoverage === null) { return 'N/R' }
+        if (data?.realCoverage === null) {
+          return 'N/R';
+        }
         if (data?.realCoverage && toCompute === true) {
-          return Math.round(data?.realCoverage) || '0'
+          return Math.round(data?.realCoverage) || '0';
         } else if (data?.realCoverage && initialValue === true)
-          return Math.round(data?.realCoverage) + '%' || '0'
+          return Math.round(data?.realCoverage) + '%' || '0';
         else if (data?.realCoverage)
-          return Math.round(data?.realCoverage * 100) + '%' || '0'
-        else return '0'
+          return Math.round(data?.realCoverage * 100) + '%' || '0';
+        else return '0';
       }
       case 'realDTESInMonths':
-        if (data?.realDTESInMonths === null) { return 'N/R' }
+        if (data?.realDTESInMonths === null) {
+          return 'N/R';
+        }
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
           if (data?.realDTESInMonths <= 0) {
-            return '0'
-          } else return data?.realDTESInMonths + ' mois' || '0'
+            return '0';
+          } else return data?.realDTESInMonths + ' mois' || '0';
         }
-        return '0'
+        return '0';
       case 'magRealTimePerCase':
-        if (data?.magRealTimePerCase === null) { return 'N/R' }
-        if (initialValue) return data?.magRealTimePerCase || '0'
+        if (data?.magRealTimePerCase === null) {
+          return 'N/R';
+        }
+        if (initialValue) return data?.magRealTimePerCase || '0';
         else {
-          return decimalToStringDate(data?.magRealTimePerCase, ':') || '0'
+          return decimalToStringDate(data?.magRealTimePerCase, ':') || '0';
         }
     }
-    return ''
+    return '';
   }
 
   /**
@@ -304,14 +328,14 @@ export class SimulatorService extends MainClass {
    * @returns Array of values between start and end value using a defined step
    */
   range(start: number, end: number, length: number) {
-    const step = (end - start) / (length - 1)
+    const step = (end - start) / (length - 1);
     return Array(length)
       .fill(0)
       .map((_, index) => {
-        if (index === 0) return start
-        else if (index === length) return end
-        else return start + step * index
-      })
+        if (index === 0) return start;
+        else if (index === length) return end;
+        else return start + step * index;
+      });
   }
 
   /**
@@ -322,21 +346,21 @@ export class SimulatorService extends MainClass {
    * @returns return a LinearDataset
    */
   generateLinearData(value1: number, value2: number, step: number) {
-    if (value1 < 0) value1 = 0
-    if (value2 < 0) value2 = 0
+    if (value1 < 0) value1 = 0;
+    if (value2 < 0) value2 = 0;
 
-    let v = null
+    let v = null;
     if (step === 1 || step === 2) {
-      v = [value1, value2]
+      v = [value1, value2];
     } else if (step === 3) {
-      v = [value1, (value1 + value2) / 2, value2]
+      v = [value1, (value1 + value2) / 2, value2];
     } else if (value1 === value2) {
-      return Array(step).fill(value1)
+      return Array(step).fill(value1);
     } else {
-      v = this.range(value1, value2, step)
+      v = this.range(value1, value2, step);
     }
 
-    return v
+    return v;
   }
 
   /**
@@ -346,7 +370,7 @@ export class SimulatorService extends MainClass {
    * @returns Array of values
    */
   generateData(value1: number, size: number) {
-    if (value1 < 0) value1 = 0
-    return Array(size).fill(value1)
+    if (value1 < 0) value1 = 0;
+    return Array(size).fill(value1);
   }
 }

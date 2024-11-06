@@ -1,11 +1,15 @@
-import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, Input, OnInit } from '@angular/core'
+import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { CoveragePreviewComponent } from '../coverage-preview/coverage-preview.component';
 
 /**
  * Composant d'affichage du widget taux de couverture
  */
 @Component({
   selector: 'aj-dial-widget',
+  standalone: true,
+  imports: [CommonModule, CoveragePreviewComponent],
   templateUrl: './dial-widget.component.html',
   styleUrls: ['./dial-widget.component.scss'],
   animations: [
@@ -19,30 +23,30 @@ import { Component, Input, OnInit } from '@angular/core'
   ],
 })
 export class DialWidgetComponent {
-        /**
-   * Date de début de simulation
-   */
-        @Input() print: boolean = false
   /**
    * Date de début de simulation
    */
-  @Input() dateStart: string = ''
+  @Input() print: boolean = false;
+  /**
+   * Date de début de simulation
+   */
+  @Input() dateStart: string = '';
   /**
    * Date de fin de simulation
    */
-  @Input() dateStop: string = ''
+  @Input() dateStop: string = '';
   /**
    * Valeur projeté
    */
-  @Input() valueProjected: string = ''
+  @Input() valueProjected: string = '';
   /**
    * Valeur simulé
    */
-  @Input() valueSimulated: string = ''
+  @Input() valueSimulated: string = '';
   /**
    * Choix de la situation à afficher
    */
-  selectedSituation = 'simulated'
+  selectedSituation = 'simulated';
 
   /**
    * Constructeur
@@ -55,15 +59,15 @@ export class DialWidgetComponent {
    * @returns
    */
   toNumber(str: string): number {
-    return parseInt(str)
+    return parseInt(str);
   }
 
   /**
    * Switch des valeurs à afficher
    */
   permuteValues() {
-    const tmpVal = String(this.valueProjected)
-    this.valueProjected = this.valueSimulated
-    this.valueSimulated = tmpVal
+    const tmpVal = String(this.valueProjected);
+    this.valueProjected = this.valueSimulated;
+    this.valueSimulated = tmpVal;
   }
 }

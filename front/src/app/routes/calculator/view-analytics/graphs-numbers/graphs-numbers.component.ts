@@ -1,7 +1,9 @@
-import { Component, HostBinding, Input, OnChanges } from '@angular/core'
-import { OPACITY_20 } from 'src/app/constants/colors'
-import { MainClass } from 'src/app/libs/main-class'
-import { UserService } from 'src/app/services/user/user.service'
+import { CommonModule } from '@angular/common';
+import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { TooltipsComponent } from '../../../../components/tooltips/tooltips.component';
+import { MainClass } from '../../../../libs/main-class';
+import { UserService } from '../../../../services/user/user.service';
+import { OPACITY_20 } from '../../../../constants/colors';
 
 /**
  * Composant de la page en vue analytique
@@ -9,6 +11,8 @@ import { UserService } from 'src/app/services/user/user.service'
 
 @Component({
   selector: 'aj-graphs-numbers',
+  standalone: true,
+  imports: [CommonModule, TooltipsComponent],
   templateUrl: './graphs-numbers.component.html',
   styleUrls: ['./graphs-numbers.component.scss'],
 })
@@ -16,45 +20,45 @@ export class GraphsNumbersComponent extends MainClass implements OnChanges {
   /**
    * Default ref name
    */
-  @Input() referentielName: string = ''
+  @Input() referentielName: string = '';
   /**
    * Title
    */
-  @Input() title: string = ''
+  @Input() title: string = '';
   /**
    * Sub title
    */
-  @Input() subTitle?: string
+  @Input() subTitle?: string;
   /**
    * White mode
    */
-  @Input() isWhite: boolean = false
+  @Input() isWhite: boolean = false;
   /**
    * Show indicator arrow
    */
-  @Input() showArrow: boolean = false
+  @Input() showArrow: boolean = false;
   /**
    * type
    */
-  @Input() type: string = ''
+  @Input() type: string = '';
   /**
    * Show transparent class
    */
-  @Input() @HostBinding('class.is-transparent') isTransparent: boolean = false
+  @Input() @HostBinding('class.is-transparent') isTransparent: boolean = false;
   /**
    * Style background
    */
-  @HostBinding('style.background-color') backgroundColor: string = ''
+  @HostBinding('style.background-color') backgroundColor: string = '';
   /**
    * Style background
    */
-  @HostBinding('style.border-color') borderColor: string = ''
+  @HostBinding('style.border-color') borderColor: string = '';
 
   /**
    * Constructor
    */
   constructor(public userService: UserService) {
-    super()
+    super();
   }
 
   ngOnChanges() {
@@ -64,18 +68,18 @@ export class GraphsNumbersComponent extends MainClass implements OnChanges {
           this.userService.referentielMappingColorByInterface(
             this.referentielName,
             this.isWhite ? 1 : OPACITY_20
-          )
+          );
       } else {
         this.borderColor = this.userService.referentielMappingColorByInterface(
           this.referentielName,
           OPACITY_20
-        )
+        );
       }
     }
   }
 
   getArrowSide(title: string) {
-    return ('' + title)[0] === '-'
+    return ('' + title)[0] === '-';
   }
 
   getArrowColor(title: string) {
@@ -88,7 +92,7 @@ export class GraphsNumbersComponent extends MainClass implements OnChanges {
         'Taux de couverture',
       ].includes(this.type)
     )
-      return !(('' + title)[0] === '-')
-    else return ('' + title)[0] === '-'
+      return !(('' + title)[0] === '-');
+    else return ('' + title)[0] === '-';
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction';
 import { ServerService } from '../http-server/server.service';
+import { HRFonctionInterface } from '../../interfaces/hr-fonction';
 
 /**
  * Service de listing des fonctions
@@ -17,17 +17,17 @@ export class HRFonctionService {
 
   /**
    * Constructeur
-   * @param serverService 
+   * @param serverService
    */
   constructor(private serverService: ServerService) {}
 
   /**
-   * API récupération de la liste complète 
+   * API récupération de la liste complète
    * Et si c'est en cache ne pas faire d'appel
-   * @returns 
+   * @returns
    */
   getAll(): Promise<HRFonctionInterface[]> {
-    if(this.fonctions.length) {
+    if (this.fonctions.length) {
       return new Promise((resolve) => {
         resolve(this.fonctions);
       });
@@ -35,10 +35,10 @@ export class HRFonctionService {
 
     return this.serverService
       .get('hr-fonctions/get-all')
-      .then((r) => r.data || [])
-      .then(list => {
+      .then((r) => r.data || [])
+      .then((list) => {
         this.fonctions = list;
         return list;
-      })
+      });
   }
 }
