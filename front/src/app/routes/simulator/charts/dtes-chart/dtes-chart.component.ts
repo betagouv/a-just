@@ -80,12 +80,14 @@ export class DtesChartComponent {
     private ngZone: NgZone
   ) {
     simulatorService.dateStop.subscribe((value) => {
-      this.stopRealValue = findRealValue(value)
-      this.dateStop = value
-      this.labels = getRangeOfMonths(
-        new Date(this.dateStart),
-        new Date(this.dateStop)
-      )
+      if (value !== undefined) {
+        this.stopRealValue = findRealValue(value)
+        this.dateStop = value
+        this.labels = getRangeOfMonths(
+          new Date(this.dateStart),
+          new Date(this.dateStop)
+        )
+      }
     })
     simulatorService.dateStart.subscribe((value) => {
       this.startRealValue = findRealValue(value)

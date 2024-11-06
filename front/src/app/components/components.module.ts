@@ -17,12 +17,13 @@ import { CoveragePreviewComponent } from '../routes/simulator/widgets/coverage-p
 import { NgSelectModule } from '@ng-select/ng-select'
 import { RadioButtonComponent } from './radio-button/radio-button.component'
 import { EditableSituationComponent } from '../routes/simulator/editable-situation/editable-situation.component'
-import { CalculatriceComponent } from './calculatrice/calculatrice.component';
+import { CalculatriceComponent } from './calculatrice/calculatrice.component'
 import { PopupModule } from './popup/popup.module'
 import { PanelActivitiesModule } from './panel-activities/panel-activities.module'
 import { SelectModule } from './select/select.module'
-import { DateSelectModule } from './date-select/date-select.module';
-import { DocCardComponent } from './doc-card/doc-card.component';
+import { DateSelectModule } from './date-select/date-select.module'
+import { DocCardComponent } from './doc-card/doc-card.component'
+import { InputAdditionComponent } from './input-addition/input-addition.component'
 
 /**
  * Liste des composants à importer
@@ -34,10 +35,11 @@ const list = [
   TooltipsComponent,
   TimeSelectorComponent,
   InputPercentageComponent,
+  InputAdditionComponent,
   FiguresWidgetComponent,
   RadioButtonComponent,
   CalculatriceComponent,
-  DocCardComponent
+  DocCardComponent,
 ]
 
 /**
@@ -56,8 +58,8 @@ const list = [
     PopupModule,
     PanelActivitiesModule,
     SelectModule,
-    DateSelectModule
+    DateSelectModule,
   ],
   exports: list,
 })
-export class ComponentsModule { }
+export class ComponentsModule {}
