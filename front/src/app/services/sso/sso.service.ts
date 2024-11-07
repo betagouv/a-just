@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { ping } from '../../utils/system';
 
@@ -9,11 +9,7 @@ import { ping } from '../../utils/system';
   providedIn: 'root',
 })
 export class SSOService {
-  /**
-   * Constructeur
-   * @param serverService
-   */
-  constructor(private serverService: ServerService) {}
+  serverService = inject(ServerService);
 
   /**
    * Récupération du serveur SSO justice

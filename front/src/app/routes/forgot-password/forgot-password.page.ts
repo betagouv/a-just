@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
 import { PopupComponent } from '../../components/popup/popup.component';
@@ -18,11 +23,14 @@ import { UserService } from '../../services/user/user.service';
     WrapperNoConnectedComponent,
     PopupComponent,
     RouterLink,
+    ReactiveFormsModule,
   ],
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
 })
 export class ForgotPassword {
+  userService = inject(UserService);
+  router = inject(Router);
   /**
    * Formulaire
    */
@@ -33,13 +41,6 @@ export class ForgotPassword {
    * Popin de confirmation
    */
   openPopin = false;
-
-  /**
-   * Constructeur
-   * @param userService
-   * @param router
-   */
-  constructor(private userService: UserService, private router: Router) {}
 
   /**
    * Demande de génération d'un code de changement de mot de passe

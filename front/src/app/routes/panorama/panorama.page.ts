@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  inject,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -33,6 +34,8 @@ import {
   userCanViewMagistrat,
 } from '../../utils/user';
 import { BackupInterface } from '../../interfaces/backup';
+import { CommonModule } from '@angular/common';
+import { ActivitiesToCompleteComponent } from './activities-to-complete/activities-to-complete.component';
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -49,6 +52,8 @@ import { BackupInterface } from '../../interfaces/backup';
     ActivitiesLastModificationsComponent,
     ActivitiesLastModificationsComponent,
     IntroJSComponent,
+    CommonModule,
+    ActivitiesToCompleteComponent,
   ],
   templateUrl: './panorama.page.html',
   styleUrls: ['./panorama.page.scss'],
@@ -57,6 +62,8 @@ export class PanoramaPage
   extends MainClass
   implements OnInit, OnDestroy, AfterViewInit
 {
+  userService = inject(UserService);
+  humanResourceService = inject(HumanResourceService);
   /**
    * Dom du contenu scrollable
    */
@@ -245,10 +252,7 @@ export class PanoramaPage
   /**
    * Constructor
    */
-  constructor(
-    public userService: UserService,
-    public humanResourceService: HumanResourceService
-  ) {
+  constructor() {
     super();
   }
 

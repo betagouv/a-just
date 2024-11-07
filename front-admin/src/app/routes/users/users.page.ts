@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MainClass } from '../../libs/main-class';
 import { UserInterface } from '../../interfaces/user-interface';
@@ -29,6 +29,7 @@ interface FormSelection {
   styleUrls: ['./users.page.scss'],
 })
 export class UsersPage extends MainClass implements OnInit, OnDestroy {
+  userService = inject(UserService);
   datas: UserInterface[] = [];
   datasSource: UserInterface[] = [];
   access: FormSelection[] = [];
@@ -46,7 +47,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
     { id: 'cancel', content: 'Annuler' },
   ];
 
-  constructor(private userService: UserService) {
+  constructor() {
     super();
 
     this.watch(

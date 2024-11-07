@@ -10,6 +10,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MainClass } from '../../libs/main-class';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 /**
  * Composant selecteur de date de type bleu
@@ -17,7 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'aj-date-select-blue',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatDatepickerModule],
   templateUrl: './date-select-blue.component.html',
   styleUrls: ['./date-select-blue.component.scss'],
 })
@@ -114,7 +115,7 @@ export class DateSelectBlueComponent extends MainClass implements OnChanges {
    * @param event
    */
   onDateChanged(event: any) {
-    const date = new Date(event._i.year, event._i.month, event._i.date);
+    const date = new Date(event);
     this.value = date;
     this.valueChange.emit(this.value);
     this.findRealValue();

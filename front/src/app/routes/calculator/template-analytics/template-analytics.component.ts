@@ -8,6 +8,8 @@ import { OPACITY_20 } from '../../../constants/colors';
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
 import { ReferentielService } from '../../../services/referentiel/referentiel.service';
 import { UserService } from '../../../services/user/user.service';
+import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe';
+import { GraphsProgressComponent } from '../view-analytics/graphs-progress/graphs-progress.component';
 
 export interface AnalyticsLine {
   title: string;
@@ -44,6 +46,8 @@ export interface AnalyticsLine {
     CommonModule,
     GraphsVerticalsLinesComponent,
     GraphsNumbersComponent,
+    SanitizeHtmlPipe,
+    GraphsProgressComponent,
   ],
   selector: 'aj-template-analytics',
   templateUrl: './template-analytics.component.html',

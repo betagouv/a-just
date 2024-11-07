@@ -1,6 +1,7 @@
 import {
   Component,
   HostBinding,
+  inject,
   Input,
   OnChanges,
   SimpleChanges,
@@ -21,6 +22,8 @@ import { UserService } from '../../../../services/user/user.service';
   styleUrls: ['./graphs-progress.component.scss'],
 })
 export class GraphsProgressComponent extends MainClass implements OnChanges {
+  userService = inject(UserService);
+
   /**
    * Default ref name
    */
@@ -37,7 +40,7 @@ export class GraphsProgressComponent extends MainClass implements OnChanges {
   /**
    * Constructor
    */
-  constructor(public userService: UserService) {
+  constructor() {
     super();
   }
 

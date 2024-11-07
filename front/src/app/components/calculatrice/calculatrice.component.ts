@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CalculatriceInterface } from '../../interfaces/calculatrice';
 import { CalculatriceService } from '../../services/calculatrice/calculatrice.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'aj-calculatrice',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './calculatrice.component.html',
   styleUrls: ['./calculatrice.component.scss'],
 })
 export class CalculatriceComponent implements OnInit, OnDestroy {
+  calculatriceService = inject(CalculatriceService);
   /**
    * Option radio button
    */
@@ -24,12 +26,6 @@ export class CalculatriceComponent implements OnInit, OnDestroy {
     volume: { value: null, option: null },
     selectedTab: '',
   };
-
-  /**
-   * Constructeur
-   * @param calculatriceService
-   */
-  constructor(private calculatriceService: CalculatriceService) {}
 
   /**
    * Déclenchemet à la création du composent

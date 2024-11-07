@@ -6,7 +6,7 @@ import {
   OnChanges,
   Output,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { decimalToStringDate } from '../../utils/dates';
 
 /**
@@ -15,7 +15,7 @@ import { decimalToStringDate } from '../../utils/dates';
 @Component({
   selector: 'aj-input-percentage',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './input-percentage.component.html',
   styleUrls: ['./input-percentage.component.scss'],
 })

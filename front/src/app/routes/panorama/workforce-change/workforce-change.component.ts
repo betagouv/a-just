@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnDestroy } from '@angular/core';
 import { HumanResourceSelectedInterface } from '../../workforce/workforce.page';
 import { sortBy } from 'lodash';
 import { CommonModule } from '@angular/common';
@@ -6,6 +6,8 @@ import { MainClass } from '../../../libs/main-class';
 import { UserService } from '../../../services/user/user.service';
 import { today } from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 interface categoryButtonsInterface {
   label: string;
@@ -28,7 +30,7 @@ interface listToPrintInterface {
 @Component({
   selector: 'workforce-change',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, RouterLink, NgxPaginationModule],
   templateUrl: './workforce-change.component.html',
   styleUrls: ['./workforce-change.component.scss'],
 })
@@ -36,6 +38,7 @@ export class WorkforceChangeComponent
   extends MainClass
   implements OnChanges, OnDestroy
 {
+  userService = inject(UserService);
   @Input() listArrivals: HumanResourceSelectedInterface[] = [];
   @Input() listDepartures: HumanResourceSelectedInterface[] = [];
   @Input() listUnavailabilities: HumanResourceSelectedInterface[] = [];
@@ -101,7 +104,7 @@ export class WorkforceChangeComponent
   /**
    * Constructor
    */
-  constructor(public userService: UserService) {
+  constructor() {
     super();
   }
 

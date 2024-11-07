@@ -31,17 +31,20 @@
         <div class="grid-double">
           <div>
             <label>Prénom</label>
-            <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text" (keyup.enter)="focusNext($event)" />
+            <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text"
+              (keyup.enter)="focusNext($event)" />
           </div>
           <div>
             <label>NOM</label>
-            <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text" (keyup.enter)="focusNext($event)" />
+            <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text"
+              (keyup.enter)="focusNext($event)" />
           </div>
         </div>
         <label>Courriel professionnel :</label>
         <label class="sub-label">Adresse nominative uniquement, ne pas utiliser de boîte générique ou
           structurelle</label>
-        <input #input class="ethics-ui" placeholder="" formControlName="email" type="email" (keyup.enter)="focusNext($event)" />
+        <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
+          (keyup.enter)="focusNext($event)" />
 
         <ng-template [ngIf]="!paramsUrl?.provider">
           <div class="password-line">
@@ -52,7 +55,8 @@
             </div>
           </div>
           <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"
-            type="{{!form.controls['checkboxPassword'].value?'password':'text'}}" (keyup)="checkStrength($event)" (keyup.enter)="focusNext($event)" />
+            type="{{!form.controls['checkboxPassword'].value?'password':'text'}}" (keyup)="checkStrength($event)"
+            (keyup.enter)="focusNext($event)" />
           <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>
           <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(0)}"><span
               [ngStyle]="{ 'background-color': getParamColor(0)}">i</span>
@@ -68,11 +72,12 @@
             &nbsp; 1 majuscule</label>
 
           <label>Confirmation de votre mot de passe :</label>
-          <input #input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password" (keyup.enter)="focusNext($event)"/>
+          <input #input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password"
+            (keyup.enter)="focusNext($event)" />
         </ng-template>
 
         <div class="checkbox-container checkbox-row">
-          <input #checkbox class="large" type="checkbox" formControlName="checkbox"  (keyup.enter)="focusNext($event)"/>
+          <input #checkbox class="large" type="checkbox" formControlName="checkbox" (keyup.enter)="focusNext($event)" />
           <p (click)="checkbox.click()">
             Je certifie avoir lu et accepté les
             <a [routerLink]="['/conditions-generales-d-utilisation', 'signUp']">Conditions générales d'utilisation</a>.

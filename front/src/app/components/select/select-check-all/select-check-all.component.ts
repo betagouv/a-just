@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 /**
  * Composant de tout selectionner pour la liste
@@ -8,7 +9,7 @@ import { FormsModule, NgModel } from '@angular/forms';
 @Component({
   selector: 'app-select-check-all',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatCheckboxModule],
   template: `
     <mat-checkbox
       class="mat-option"

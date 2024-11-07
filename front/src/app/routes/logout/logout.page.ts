@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 
@@ -13,14 +13,8 @@ import { AuthService } from '../../services/auth/auth.service';
   styleUrls: ['./logout.page.scss'],
 })
 export class LogoutPage {
-  /**
-   * Constructeur
-   * @param authService
-   * @param userService
-   * @param router
-   * @param title
-   */
-  constructor(private authService: AuthService, private router: Router) {}
+  authService = inject(AuthService);
+  router = inject(Router);
 
   /**
    * Vérificiation si l'utilisateur est connecté

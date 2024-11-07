@@ -1,5 +1,16 @@
-import { Component, ViewChildren, QueryList, ElementRef } from '@angular/core';
-import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import {
+  Component,
+  ViewChildren,
+  QueryList,
+  ElementRef,
+  inject,
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
@@ -16,11 +27,24 @@ const MIN_PASSWORD_LENGTH = 8;
  */
 @Component({
   standalone: true,
-  imports: [WrapperNoConnectedComponent, FormsModule, CommonModule, RouterLink],
+  imports: [
+    WrapperNoConnectedComponent,
+    FormsModule,
+    CommonModule,
+    RouterLink,
+    ReactiveFormsModule,
+  ],
   templateUrl: './signup.page.html',
   styleUrls: ['./signup.page.scss'],
 })
 export class SignupPage {
+  userService = inject(UserService);
+  router = inject(Router);
+  title = inject(Title);
+  serverService = inject(ServerService);
+  route = inject(ActivatedRoute);
+  ssoService = inject(SSOService);
+
   @ViewChildren('input') inputs: QueryList<ElementRef> =
     new QueryList<ElementRef>();
 
@@ -65,13 +89,11 @@ export class SignupPage {
    * Liste des fonctions (1VP, VP, ...)
    */
   fonctions: string[] = [
-    // @ts-ignore
     this.userService.isCa() ? 'Premier président' : 'Président(e)',
     'Directeur/trice de greffe',
     'Secrétaire général(e)',
     'Chef(fe) de cabinet',
     'Chargé(e) de mission',
-    // @ts-ignore
     this.userService.isCa()
       ? 'Secrétariat Première présidence'
       : 'Secrétaire administratif - présidence',
@@ -92,18 +114,8 @@ export class SignupPage {
 
   /**
    * Constructeur
-   * @param userService
-   * @param router
-   * @param title
    */
-  constructor(
-    public userService: UserService,
-    private router: Router,
-    private title: Title,
-    private serverService: ServerService,
-    private route: ActivatedRoute,
-    private ssoService: SSOService
-  ) {
+  constructor() {
     this.title.setTitle(
       (this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') +
         'Embarquement'

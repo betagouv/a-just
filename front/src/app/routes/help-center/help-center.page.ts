@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
 import { GitBookAPI } from '@gitbook/api';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,9 @@ import { AppService } from '../../services/app/app.service';
 import { environment } from '../../../environments/environment';
 import { downloadFile } from '../../utils/system';
 import { MatIconModule } from '@angular/material/icon';
+import { SanitizeResourceUrlPipe } from '../../pipes/sanitize-resource-url/sanitize-resource-url.pipe';
+import { BackButtonComponent } from '../../components/back-button/back-button.component';
+import { FormsModule } from '@angular/forms';
 
 interface webinaire {
   img: string;
@@ -37,11 +40,17 @@ interface webinaire {
     CommonModule,
     InputButtonComponent,
     MatIconModule,
+    SanitizeResourceUrlPipe,
+    BackButtonComponent,
+    FormsModule,
   ],
   templateUrl: './help-center.page.html',
   styleUrls: ['./help-center.page.scss'],
 })
 export class HelpCenterPage implements OnInit, AfterViewInit {
+  userService = inject(UserService);
+  serverService = inject(ServerService);
+  appService = inject(AppService);
   /**
    * Résultat de la recherche GitBook
    */
@@ -73,7 +82,6 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     description:
       'Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!',
     image: '/assets/images/avatar.svg',
-    // @ts-ignore
     url: this.userService.isCa() ? DOCUMENTATION_URL_CA : DOCUMENTATION_URL,
   };
   /** Carte data book */
@@ -92,7 +100,6 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     description:
       'Vous permet de visualiser globalement et en détail le contenu de chaque contentieux et sous-contentieux. Au civil, vous y retrouverez la liste des NAC prises en compte dans chaque rubrique.',
     image: '/assets/images/system.svg',
-    // @ts-ignore
     url: this.userService.isCa()
       ? NOMENCLATURE_DOWNLOAD_URL_CA
       : NOMENCLATURE_DOWNLOAD_URL,
@@ -188,13 +195,8 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   cleDate = '?date=' + new Date();
   /**
    * Constructeur
-   * @param title
    */
-  constructor(
-    public userService: UserService,
-    private serverService: ServerService,
-    private appService: AppService
-  ) {
+  constructor() {
     this.gitToken = environment.gitbookToken;
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,

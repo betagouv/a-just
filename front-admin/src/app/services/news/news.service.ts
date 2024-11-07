@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { NewsInterface } from '../../interfaces/news';
 
@@ -6,7 +6,7 @@ import { NewsInterface } from '../../interfaces/news';
   providedIn: 'root',
 })
 export class NewsService {
-  constructor(private serverService: ServerService) {}
+  serverService = inject(ServerService);
 
   getAll() {
     return this.serverService

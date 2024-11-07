@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   HostBinding,
+  inject,
   Input,
   OnInit,
   ViewChild,
@@ -40,6 +41,7 @@ const convertWidthToheight = (width: number) => (width * 55) / 70;
   providers: [...ngResizeObserverProviders],
 })
 export class SpeedometerComponent extends MainClass implements OnInit {
+  resize$ = inject(NgResizeObserver);
   /**
    * Pourcentage affiché
    */
@@ -67,7 +69,6 @@ export class SpeedometerComponent extends MainClass implements OnInit {
   /**
    * Variable d'écoute de la largeur dynamique
    */
-  // @ts-ignore
   width$: Observable<number> = this.resize$.pipe(
     map((entry) => entry.contentRect.width)
   );
@@ -100,7 +101,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    * Constructeur
    * @param resize$
    */
-  constructor(private resize$: NgResizeObserver) {
+  constructor() {
     super();
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { setTimeToMidDay } from '../../utils/dates';
 
@@ -9,6 +9,7 @@ import { setTimeToMidDay } from '../../utils/dates';
   providedIn: 'root',
 })
 export class ReaffectatorService {
+  serverService = inject(ServerService);
   /**
    * Liste des référentiels sélectionnés et mise en cache
    */
@@ -21,12 +22,6 @@ export class ReaffectatorService {
    * Liste des fonctions sélectionnées et mise en cache
    */
   selectedFonctionsIds: number[] = [];
-
-  /**
-   * Constructeur
-   * @param serverService
-   */
-  constructor(private serverService: ServerService) {}
 
   /**
    * API Appel au serveur pour lister les fiches d'une juridiction par catégorie

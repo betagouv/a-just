@@ -5,7 +5,12 @@ import {
   OnChanges,
   Output,
 } from '@angular/core';
-import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 
 /**
  * Composant input pourcentage
@@ -13,7 +18,7 @@ import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 @Component({
   selector: 'aj-input-addition',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './input-addition.component.html',
   styleUrls: ['./input-addition.component.scss'],
 })

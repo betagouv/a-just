@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, HostListener, Input } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  HostListener,
+  inject,
+  Input,
+} from '@angular/core';
 import { KPIService } from '../../services/kpi/kpi.service';
 import {
   HELP_AUTOSTART,
@@ -40,6 +46,7 @@ export interface IntroJSStep {
   styleUrls: ['./intro-js.component.scss'],
 })
 export class IntroJSComponent implements AfterViewInit {
+  kpiService = inject(KPIService);
   /**
    * Etapes d'intros text dans l'alerte
    */
@@ -63,8 +70,6 @@ export class IntroJSComponent implements AfterViewInit {
       this.intro.exit();
     }
   }
-
-  constructor(private kpiService: KPIService) {}
 
   ngAfterViewInit(): void {
     if (this.steps) {

@@ -1,8 +1,15 @@
-import { AfterViewInit, Component, ElementRef, Input } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+} from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { AppService } from '../../services/app/app.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe';
 
 /**
  * Composant de génération des tooltips
@@ -11,11 +18,13 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'aj-tooltips',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, SanitizeHtmlPipe],
   templateUrl: './tooltips.component.html',
   styleUrls: ['./tooltips.component.scss'],
 })
 export class TooltipsComponent implements AfterViewInit {
+  elementRef = inject(ElementRef);
+  appService = inject(AppService);
   /** ID unique */
   @Input() id: string = uuidv4();
   /**
@@ -46,12 +55,6 @@ export class TooltipsComponent implements AfterViewInit {
    * Variable tempo pour laisser un delai avant affichage du tooltips
    */
   timeoutBeforeShow: any = null;
-
-  /**
-   * Constructeur
-   * @param elementRef
-   */
-  constructor(private elementRef: ElementRef, private appService: AppService) {}
 
   /**
    * A l'initialisation préparation des événements de type click ou mouse pour l'apparition du tooltips

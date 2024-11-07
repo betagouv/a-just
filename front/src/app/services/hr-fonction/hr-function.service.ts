@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { HRFonctionInterface } from '../../interfaces/hr-fonction';
 
@@ -10,16 +10,11 @@ import { HRFonctionInterface } from '../../interfaces/hr-fonction';
   providedIn: 'root',
 })
 export class HRFonctionService {
+  serverService = inject(ServerService);
   /**
    * Liste mise en cache
    */
   fonctions: HRFonctionInterface[] = [];
-
-  /**
-   * Constructeur
-   * @param serverService
-   */
-  constructor(private serverService: ServerService) {}
 
   /**
    * API récupération de la liste complète

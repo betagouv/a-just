@@ -1,4 +1,4 @@
-import { PipeTransform, Pipe } from '@angular/core';
+import { PipeTransform, Pipe, inject } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 /**
@@ -9,11 +9,7 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
   name: 'sanitizeResourceUrl',
 })
 export class SanitizeResourceUrlPipe implements PipeTransform {
-  /**
-   * Construteur
-   * @param _sanitizer
-   */
-  constructor(private _sanitizer: DomSanitizer) {}
+  _sanitizer = inject(DomSanitizer);
 
   /**
    * Analyse la chaine

@@ -1,5 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MainClass } from '../../libs/main-class';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
@@ -11,7 +16,12 @@ import { UserService } from '../../services/user/user.service';
 
 @Component({
   standalone: true,
-  imports: [WrapperNoConnectedComponent, FormsModule, RouterLink],
+  imports: [
+    WrapperNoConnectedComponent,
+    FormsModule,
+    RouterLink,
+    ReactiveFormsModule,
+  ],
   templateUrl: './change-password.page.html',
   styleUrls: ['./change-password.page.scss'],
 })

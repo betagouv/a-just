@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
@@ -30,6 +31,7 @@ export class ActualPanelSituationComponent
   extends MainClass
   implements OnChanges
 {
+  humanResourceService = inject(HumanResourceService);
   /**
    * Fiche courante
    */
@@ -89,9 +91,8 @@ export class ActualPanelSituationComponent
 
   /**
    * Constructeur
-   * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor() {
     super();
   }
 

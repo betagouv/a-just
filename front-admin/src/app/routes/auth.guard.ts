@@ -2,11 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth/auth.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 class PermissionsService {
-  private authService = inject(AuthService);
-
-  constructor(private router: Router) {}
+  router = inject(Router);
+  authService = inject(AuthService);
 
   async checkLogin() {
     if (await this.authService.userAdminConnected()) {

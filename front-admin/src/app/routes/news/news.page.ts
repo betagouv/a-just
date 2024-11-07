@@ -1,5 +1,5 @@
 import { ColorPickerModule } from 'ngx-color-picker';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MainClass } from '../../libs/main-class';
 import { REMIXICONLIST } from '../../constants/icons';
@@ -33,6 +33,7 @@ import { Editor, NgxEditorModule } from 'ngx-editor';
   styleUrls: ['./news.page.scss'],
 })
 export class NewsPage extends MainClass implements OnInit, OnDestroy {
+  newsService = inject(NewsService);
   REMIXICONLIST = REMIXICONLIST;
   displayedColumns: string[] = [
     'html',
@@ -90,7 +91,7 @@ export class NewsPage extends MainClass implements OnInit, OnDestroy {
     ],
   };*/
 
-  constructor(private newsService: NewsService) {
+  constructor() {
     super();
   }
 

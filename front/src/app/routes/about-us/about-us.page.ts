@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
 import { BackButtonComponent } from '../../components/back-button/back-button.component';
@@ -14,11 +14,12 @@ import { BackButtonComponent } from '../../components/back-button/back-button.co
   styleUrls: ['./about-us.page.scss'],
 })
 export class AboutUsPage {
+  title = inject(Title);
   /**
    * Constructeur
    * @param title
    */
-  constructor(private title: Title) {
+  constructor() {
     this.title.setTitle('Qui sommes-nous ? | A-Just');
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges } from '@angular/core';
 import { listFormatedInterface } from '../../workforce/workforce.page';
 import { sumBy } from 'lodash';
 import { CommonModule } from '@angular/common';
@@ -38,6 +38,8 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
   styleUrls: ['./records-update.component.scss'],
 })
 export class RecordsUpdateComponent extends MainClass implements OnChanges {
+  humanResourceService = inject(HumanResourceService);
+
   /**
    * Filter categories to view
    */
@@ -54,7 +56,7 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
   /**
    * Constructor
    */
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor() {
     super();
   }
 

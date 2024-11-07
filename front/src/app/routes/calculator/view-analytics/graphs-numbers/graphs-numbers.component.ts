@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import {
+  Component,
+  HostBinding,
+  inject,
+  Input,
+  OnChanges,
+} from '@angular/core';
 import { TooltipsComponent } from '../../../../components/tooltips/tooltips.component';
 import { MainClass } from '../../../../libs/main-class';
 import { UserService } from '../../../../services/user/user.service';
@@ -17,6 +23,7 @@ import { OPACITY_20 } from '../../../../constants/colors';
   styleUrls: ['./graphs-numbers.component.scss'],
 })
 export class GraphsNumbersComponent extends MainClass implements OnChanges {
+  userService = inject(UserService);
   /**
    * Default ref name
    */
@@ -57,7 +64,7 @@ export class GraphsNumbersComponent extends MainClass implements OnChanges {
   /**
    * Constructor
    */
-  constructor(public userService: UserService) {
+  constructor() {
     super();
   }
 

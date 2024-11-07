@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
 
@@ -9,6 +9,7 @@ import { ContentieuReferentielInterface } from '../../interfaces/contentieu-refe
   providedIn: 'root',
 })
 export class ReferentielService {
+  humanResourceService = inject(HumanResourceService);
   /**
    * Ids du référentiels des indispo
    */
@@ -28,9 +29,8 @@ export class ReferentielService {
 
   /**
    * Constructor
-   * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService) {
+  constructor() {
     this.humanResourceService.hrBackup.subscribe((backup) => {
       if (backup && backup.referentiels) {
         this.formatDatas(backup.referentiels);

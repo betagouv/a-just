@@ -13,6 +13,7 @@ import { UserService } from '../../services/user/user.service';
 import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
 import { userCanViewGreffier, userCanViewMagistrat } from '../../utils/user';
 import { findRealValueCustom, getTime } from '../../utils/dates';
+import { DateAgoPipe } from '../../pipes/date-ago/date-ago.pipe';
 
 /**
  * Page des temps moyens par dossier
@@ -25,6 +26,7 @@ import { findRealValueCustom, getTime } from '../../utils/dates';
     PopupComponent,
     FormsModule,
     CheckboxComponent,
+    DateAgoPipe,
   ],
   templateUrl: './average-etp.page.html',
   styleUrls: ['./average-etp.page.scss'],

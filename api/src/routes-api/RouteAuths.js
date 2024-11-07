@@ -244,17 +244,6 @@ export default class RouteAuths extends Route {
         userId: ctx.state.user.id,
       })
 
-      const transaction = Sentry.startTransaction({ name: 'Logingg' })
-      Sentry.getCurrentHub().configureScope((scope) => scope.setSpan(transaction))
-      const span = transaction.startChild({
-        data: {
-          res: '',
-        },
-        op: 'task',
-        description: 'auto loging',
-      })
-      span.finish() // Remember that only finished spans will be sent with the transaction
-      transaction.finish()
       this.sendOk(ctx)
     } else {
       ctx.throw(401)

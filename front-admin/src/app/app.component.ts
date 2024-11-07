@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AppService } from './services/app/app.service';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
@@ -11,9 +11,10 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  appService = inject(AppService);
   isLoading: boolean = false;
 
-  constructor(private appService: AppService) {
+  constructor() {
     this.appService.isLoading.subscribe((s) => (this.isLoading = s));
   }
 }

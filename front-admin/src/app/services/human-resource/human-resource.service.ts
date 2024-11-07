@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { BehaviorSubject } from 'rxjs';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
@@ -10,6 +10,7 @@ import { HRCategoryInterface } from '../../interfaces/hr-category';
   providedIn: 'root',
 })
 export class HumanResourceService {
+  serverService = inject(ServerService);
   /**
    * Liste des contentieux uniquement
    */
@@ -55,8 +56,6 @@ export class HumanResourceService {
    * Liste des référentiels sélectionnée dans l'écran du ventilateur en cache
    */
   selectedReferentielIds: number[] = [];
-
-  constructor(private serverService: ServerService) {}
 
   getBackupList() {
     return this.serverService

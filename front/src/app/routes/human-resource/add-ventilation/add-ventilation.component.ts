@@ -10,6 +10,7 @@ import {
   FormControl,
   FormGroup,
   FormsModule,
+  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { sumBy } from 'lodash';
@@ -40,6 +41,8 @@ import {
 } from '../../../constants/documentation';
 import { today } from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
+import { DateSelectComponent } from '../../../components/date-select/date-select.component';
+import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
 
 export interface importedVentillation {
   referentiel: ContentieuReferentielInterface;
@@ -67,6 +70,9 @@ export interface importedSituation {
     CalculatriceComponent,
     PanelActivitiesComponent,
     MatIconModule,
+    ReactiveFormsModule,
+    DateSelectComponent,
+    HelpButtonComponent,
   ],
   templateUrl: './add-ventilation.component.html',
   styleUrls: ['./add-ventilation.component.scss'],

@@ -10,6 +10,9 @@ import { SelectCheckAllComponent } from './select-check-all/select-check-all.com
 import { MainClass } from '../../libs/main-class';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 
 /**
  * Interface d'un réferentiel selectionné
@@ -65,7 +68,14 @@ export interface childrenInterface {
 @Component({
   selector: 'aj-select',
   standalone: true,
-  imports: [SelectCheckAllComponent, CommonModule, MatIconModule],
+  imports: [
+    SelectCheckAllComponent,
+    CommonModule,
+    MatIconModule,
+    SanitizeHtmlPipe,
+    MatSelectModule,
+    FormsModule,
+  ],
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
 })

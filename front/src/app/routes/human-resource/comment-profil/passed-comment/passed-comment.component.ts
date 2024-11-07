@@ -10,6 +10,8 @@ import {
 import { MainClass } from '../../../../libs/main-class';
 import { HumanResourceInterface } from '../../../../interfaces/human-resource-interface';
 import { HRCommentService } from '../../../../services/hr-comment/hr-comment.service';
+import { FormsModule } from '@angular/forms';
+import { TextEditorComponent } from '../../../../components/text-editor/text-editor.component';
 
 /**
  * Composant de prévisualisation des ETP
@@ -17,7 +19,7 @@ import { HRCommentService } from '../../../../services/hr-comment/hr-comment.ser
 @Component({
   selector: 'passed-comment',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, TextEditorComponent],
   templateUrl: './passed-comment.component.html',
   styleUrls: ['./passed-comment.component.scss'],
 })

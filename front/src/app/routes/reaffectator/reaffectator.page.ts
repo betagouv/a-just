@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { orderBy, sumBy } from 'lodash';
 import { Router } from '@angular/router';
 import { HumanResourceInterface } from '../../interfaces/human-resource-interface';
@@ -36,6 +36,8 @@ import {
 import { fixDecimal } from '../../utils/numbers';
 import { DATE_REAFECTATOR } from '../../constants/log-codes';
 import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe';
 
 /**
  * Interface d'une fiche surchargé avec des rendus visuels
@@ -208,6 +210,8 @@ interface ContentieuReferentielCalculateInterface
     PanelActivitiesComponent,
     IntroJSComponent,
     MatIconModule,
+    FormsModule,
+    SanitizeHtmlPipe,
   ],
   templateUrl: './reaffectator.page.html',
   styleUrls: ['./reaffectator.page.scss'],
@@ -216,6 +220,12 @@ interface ContentieuReferentielCalculateInterface
  * Page de réaffectation
  */
 export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
+  humanResourceService = inject(HumanResourceService);
+  workforceService = inject(WorkforceService);
+  rs = inject(ReaffectatorService);
+  userService = inject(UserService);
+  router = inject(Router);
+  kpiService = inject(KPIService);
   /**
    * Dom du wrapper
    * @param wrapper
@@ -264,7 +274,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Date sélectionnée
    */
-  // @ts-ignore
   dateSelected: Date = this.workforceService.dateSelected.getValue();
   /**
    * Liste reçu par le serveur
@@ -350,19 +359,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Constructeur
-   * @param humanResourceService
-   * @param workforceService
-   * @param reaffectatorService
-   * @param  serverService
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private workforceService: WorkforceService,
-    private rs: ReaffectatorService,
-    private userService: UserService,
-    private router: Router,
-    private kpiService: KPIService
-  ) {
+  constructor() {
     super();
     this.reaffectatorService = this.rs;
   }
