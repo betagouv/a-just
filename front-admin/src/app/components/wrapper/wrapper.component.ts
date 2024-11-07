@@ -1,5 +1,6 @@
 import {
   Component,
+  inject,
   Input,
   OnDestroy,
   OnInit,
@@ -18,6 +19,8 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./wrapper.component.scss'],
 })
 export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
+  authService = inject(AuthService);
+  router = inject(Router);
   @Input() actionTemplate: TemplateRef<any> | undefined;
   @Input() title: string = '';
   menu = [
@@ -54,10 +57,6 @@ export class WrapperComponent extends MainClass implements OnInit, OnDestroy {
       path: 'data',
     },
   ];
-
-  constructor(private authService: AuthService, private router: Router) {
-    super();
-  }
 
   ngOnInit() {}
 

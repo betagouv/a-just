@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { MainClass } from '../../libs/main-class';
 import { JuridictionInterface } from '../../interfaces/juridiction';
 import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
@@ -30,6 +36,7 @@ export class BackupOptionsPage
   extends MainClass
   implements OnInit, AfterViewInit, OnDestroy
 {
+  contentieuxOptionsService = inject(ContentieuxOptionsService);
   displayedColumns: string[] = [
     'id',
     'backup-average-times',
@@ -44,7 +51,7 @@ export class BackupOptionsPage
     { id: 'close', content: 'Fermer' },
   ];
 
-  constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
+  constructor() {
     super();
   }
 

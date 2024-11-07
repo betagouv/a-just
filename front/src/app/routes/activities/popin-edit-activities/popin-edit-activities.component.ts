@@ -26,6 +26,7 @@ import { VALUE_QUALITY_TO_VERIFY } from '../../../constants/referentiel';
 import { copy } from '../../../utils';
 import { downloadFile } from '../../../utils/system';
 import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 /**
  * Composant page activité
@@ -33,7 +34,13 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'aj-popin-edit-activities',
   standalone: true,
-  imports: [PopupComponent, DateSelectComponent, CommonModule, MatIconModule],
+  imports: [
+    PopupComponent,
+    DateSelectComponent,
+    CommonModule,
+    MatIconModule,
+    FormsModule,
+  ],
   templateUrl: './popin-edit-activities.component.html',
   styleUrls: ['./popin-edit-activities.component.scss'],
 })

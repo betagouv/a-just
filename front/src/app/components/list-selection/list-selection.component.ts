@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { ItemInterface } from '../../interfaces/item';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 /**
  * Comoposant liste
@@ -18,7 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'aj-list-selection',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, MatCheckboxModule],
   templateUrl: './list-selection.component.html',
   styleUrls: ['./list-selection.component.scss'],
 })

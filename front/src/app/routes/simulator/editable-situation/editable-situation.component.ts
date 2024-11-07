@@ -1,8 +1,9 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   FormsModule,
+  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { map, pairwise, startWith } from 'rxjs';
@@ -14,6 +15,7 @@ import { fixDecimal } from '../../../utils/numbers';
 import { basicEtptData } from '../../../constants/etpt-calculation';
 import { decimalToStringDate } from '../../../utils/dates';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TimeSelectorComponent } from '../../../components/time-selector/time-selector.component';
 
 const etpMagFactor = (208 / 12) * 8;
 const etpGreffeFactor = (229.57 / 12) * 7;
@@ -21,11 +23,20 @@ const etpGreffeFactor = (229.57 / 12) * 7;
 @Component({
   selector: 'aj-editable-situation',
   standalone: true,
-  imports: [TooltipsComponent, FormsModule, CommonModule, MatTooltipModule],
+  imports: [
+    TooltipsComponent,
+    FormsModule,
+    CommonModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+    TimeSelectorComponent,
+  ],
   templateUrl: './editable-situation.component.html',
   styleUrls: ['./editable-situation.component.scss'],
 })
 export class EditableSituationComponent extends MainClass implements OnChanges {
+  simulatorService = inject(SimulatorService);
+
   /**
    * Number of day to simulate
    */
@@ -144,7 +155,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   /**
    * Constructor
    */
-  constructor(private simulatorService: SimulatorService) {
+  constructor() {
     super();
     this.formWhiteSim.valueChanges
       .pipe(startWith(this.formWhiteSim.value), pairwise())

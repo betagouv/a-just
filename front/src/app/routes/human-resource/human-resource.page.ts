@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { maxBy, minBy, orderBy, sumBy } from 'lodash';
 import { debounceTime } from 'rxjs';
@@ -32,6 +32,8 @@ import { UserService } from '../../services/user/user.service';
 import { dateAddDays, isDateBiggerThan, today } from '../../utils/dates';
 import { copy } from '../../utils';
 import { DOCUMENTATION_VENTILATEUR_PERSON } from '../../constants/documentation';
+import { HelpButtonComponent } from '../../components/help-button/help-button.component';
+import { CommonModule } from '@angular/common';
 
 /**
  * Interface d'une situation
@@ -67,6 +69,9 @@ export interface HistoryInterface extends HRSituationInterface {
     PanelHistoryVentilationComponent,
     PopupComponent,
     DateSelectComponent,
+    HelpButtonComponent,
+    CommonModule,
+    FormsModule,
   ],
   templateUrl: './human-resource.page.html',
   styleUrls: ['./human-resource.page.scss'],

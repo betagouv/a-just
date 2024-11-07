@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MainClass } from '../../libs/main-class';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
 import { QUALITY_LIST } from '../../constants/referentiels';
@@ -14,10 +14,11 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./referentiel.page.scss'],
 })
 export class ReferentielPage extends MainClass implements OnInit {
+  referentielService = inject(ReferentielService);
   referentiels: ContentieuReferentielInterface[] = [];
   QUALITY_LIST = QUALITY_LIST;
 
-  constructor(private referentielService: ReferentielService) {
+  constructor() {
     super();
   }
 

@@ -9,10 +9,10 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { ActionsInterface } from '../popup/popup.component';
+import { ActionsInterface, PopupComponent } from '../popup/popup.component';
 import { Title } from '@angular/platform-browser';
 import { NewsComponent } from './news/news.component';
 import { MainClass } from '../../libs/main-class';
@@ -37,6 +37,13 @@ import { UserInterface } from '../../interfaces/user-interface';
 import { addHTML } from '../../utils/js-pdf';
 import { downloadFile } from '../../utils/system';
 import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
+import { TextEditorComponent } from '../text-editor/text-editor.component';
+import { SanitizeResourceUrlPipe } from '../../pipes/sanitize-resource-url/sanitize-resource-url.pipe';
+import { MatMenuModule } from '@angular/material/menu';
+import { HelpButtonComponent } from '../help-button/help-button.component';
+import { DateSelectComponent } from '../date-select/date-select.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 /**
  * Interface de génération d'un commentaire
@@ -67,7 +74,19 @@ interface ExportPDFInterface {
 @Component({
   selector: 'aj-wrapper',
   standalone: true,
-  imports: [NewsComponent, MatIconModule],
+  imports: [
+    NewsComponent,
+    MatIconModule,
+    CommonModule,
+    PopupComponent,
+    TextEditorComponent,
+    SanitizeResourceUrlPipe,
+    MatMenuModule,
+    RouterLink,
+    HelpButtonComponent,
+    DateSelectComponent,
+    MatProgressBarModule,
+  ],
   templateUrl: './wrapper.component.html',
   styleUrls: ['./wrapper.component.scss'],
 })

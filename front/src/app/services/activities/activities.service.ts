@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ServerService } from '../http-server/server.service';
 import { ActivityInterface } from '../../interfaces/activity';
@@ -12,6 +12,7 @@ import { setTimeToMidDay } from '../../utils/dates';
   providedIn: 'root',
 })
 export class ActivitiesService {
+  serverService = inject(ServerService);
   /**
    * List de l'ensemble des activités
    */
@@ -27,12 +28,6 @@ export class ActivitiesService {
    * Id de la juridiction
    */
   hrBackupId: number | null = null;
-
-  /**
-   * Constructeur
-   * @param serverService
-   */
-  constructor(private serverService: ServerService) {}
 
   /**
    * API qui permet de mettre à jour l'entrée, sorties et stock d'un contentieux à un mois donnée

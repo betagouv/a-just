@@ -10,6 +10,7 @@ import { NewsInterface } from '../../../interfaces/news';
 import { NewsService } from '../../../services/news/news.service';
 import { UserService } from '../../../services/user/user.service';
 import { CommonModule } from '@angular/common';
+import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe';
 
 /**
  * Composant news qui affiche un panneau de news
@@ -18,7 +19,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'aj-news',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SanitizeHtmlPipe],
   templateUrl: './news.component.html',
   styleUrls: ['./news.component.scss'],
 })

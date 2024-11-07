@@ -5,6 +5,7 @@ import {
   HostListener,
   ViewChild,
   OnDestroy,
+  inject,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PeriodSelectorComponent } from './period-selector/period-selector.component';
@@ -60,6 +61,8 @@ import { HRCategoryInterface } from '../../interfaces/hr-category';
 import { HRFonctionInterface } from '../../interfaces/hr-fonction';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BackButtonComponent } from '../../components/back-button/back-button.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 /**
  * Variable ETP magistrat field name
@@ -114,6 +117,8 @@ const etpFonToDefine = '[un volume moyen de]';
     IntroJSComponent,
     MatIconModule,
     MatTooltipModule,
+    BackButtonComponent,
+    MatProgressBarModule,
   ],
   styleUrls: ['./simulator.page.scss'],
   animations: [
@@ -127,6 +132,15 @@ const etpFonToDefine = '[un volume moyen de]';
   ],
 })
 export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
+  humanResourceService = inject(HumanResourceService);
+  referentielService = inject(ReferentielService);
+  simulatorService = inject(SimulatorService);
+  userService = inject(UserService);
+  contentieuxOptionsService = inject(ContentieuxOptionsService);
+  router = inject(Router);
+  route = inject(ActivatedRoute);
+  serverService = inject(ServerService);
+
   @ViewChild('periodSelector') periodSelector:
     | PeriodSelectorComponent
     | undefined;
@@ -657,16 +671,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Constructeur
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
-    private simulatorService: SimulatorService,
-    private userService: UserService,
-    private contentieuxOptionsService: ContentieuxOptionsService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private serverService: ServerService
-  ) {
+  constructor() {
     super();
 
     this.watch(

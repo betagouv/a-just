@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { NewsInterface } from '../../interfaces/news';
 
@@ -15,11 +15,7 @@ const NEWS_TOKEN = 'news-token-closes';
   providedIn: 'root',
 })
 export class NewsService {
-  /**
-   * Constructeur
-   * @param serverService
-   */
-  constructor(private serverService: ServerService) {}
+  serverService = inject(ServerService);
 
   /**
    * API qui permet retourner la news propre à une personne

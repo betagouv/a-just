@@ -27,6 +27,7 @@ import { fixDecimal } from '../../../utils/numbers';
 import { today } from '../../../utils/dates';
 import { etpLabel } from '../../../utils/referentiel';
 import { MatIconModule } from '@angular/material/icon';
+import { BigEtpPreviewComponent } from '../big-etp-preview/big-etp-preview.component';
 
 /**
  * Panneau de présentation d'une fiche
@@ -43,6 +44,7 @@ import { MatIconModule } from '@angular/material/icon';
     HelpButtonComponent,
     DateSelectComponent,
     MatIconModule,
+    BigEtpPreviewComponent,
   ],
   templateUrl: './cover-profil-details.component.html',
   styleUrls: ['./cover-profil-details.component.scss'],

@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  inject,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -29,7 +30,10 @@ import { MainClass } from '../../libs/main-class';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
 import { CalculatorInterface } from '../../interfaces/calculator';
 import { DocumentationInterface } from '../../interfaces/documentation';
-import { IntroJSStep } from '../../components/intro-js/intro-js.component';
+import {
+  IntroJSComponent,
+  IntroJSStep,
+} from '../../components/intro-js/intro-js.component';
 import { sleep } from '../../utils';
 import { BackupInterface } from '../../interfaces/backup';
 import { BackupSettingInterface } from '../../interfaces/backup-setting';
@@ -61,6 +65,7 @@ import {
 } from '../../constants/log-codes';
 import { MAGISTRATS } from '../../constants/category';
 import { fixDecimal } from '../../utils/numbers';
+import { ViewAnalyticsComponent } from './view-analytics/view-analytics.component';
 
 /**
  * Page du calculateur
@@ -78,6 +83,8 @@ import { fixDecimal } from '../../utils/numbers';
     PopupComponent,
     TemplateAnalyticsComponent,
     FormsModule,
+    IntroJSComponent,
+    ViewAnalyticsComponent,
   ],
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
@@ -86,6 +93,18 @@ export class CalculatorPage
   extends MainClass
   implements OnDestroy, OnInit, AfterViewInit
 {
+  humanResourceService = inject(HumanResourceService);
+  calculatorService = inject(CalculatorService);
+  referentielService = inject(ReferentielService);
+  contentieuxOptionsService = inject(ContentieuxOptionsService);
+  activitiesService = inject(ActivitiesService);
+  userService = inject(UserService);
+  backupSettingsService = inject(BackupSettingsService);
+  router = inject(Router);
+  appService = inject(AppService);
+  route = inject(ActivatedRoute);
+  location = inject(Location);
+  kpiService = inject(KPIService);
   /**
    * Dom du wrapper
    */
@@ -97,7 +116,6 @@ export class CalculatorPage
   /**
    * Liste des id des référentiels
    */
-  // @ts-ignore
   referentielIds: number[] = this.calculatorService.referentielIds.getValue();
   /**
    * Date de début du calcul
@@ -336,29 +354,8 @@ export class CalculatorPage
 
   /**
    * Constructeur
-   * @param humanResourceService
-   * @param calculatorService
-   * @param referentielService
-   * @param contentieuxOptionsService
-   * @param activitiesService
-   * @param appService
-   * @param backupSettingsService
-   * @param appService
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private calculatorService: CalculatorService,
-    private referentielService: ReferentielService,
-    private contentieuxOptionsService: ContentieuxOptionsService,
-    private activitiesService: ActivitiesService,
-    public userService: UserService,
-    private backupSettingsService: BackupSettingsService,
-    private router: Router,
-    private appService: AppService,
-    private route: ActivatedRoute,
-    private location: Location,
-    private kpiService: KPIService
-  ) {
+  constructor() {
     super();
 
     this.watch(

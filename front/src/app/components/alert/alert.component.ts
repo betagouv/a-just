@@ -6,6 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { ActionsInterface, PopupComponent } from '../popup/popup.component';
+import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe';
 
 /**
  * Composant alert qui affiche une alerte non bloquante
@@ -14,7 +15,7 @@ import { ActionsInterface, PopupComponent } from '../popup/popup.component';
 @Component({
   selector: 'aj-alert',
   standalone: true,
-  imports: [PopupComponent],
+  imports: [PopupComponent, SanitizeHtmlPipe],
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],
 })

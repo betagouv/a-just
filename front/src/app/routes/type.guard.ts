@@ -5,11 +5,12 @@ import { UserService } from '../services/user/user.service';
 /**
  * Guard de protection qui demande si l'application concernée est de type CA ou TJ
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 class TypeGuardService {
-  private userService = inject(UserService);
-
-  constructor(private router: Router) {}
+  userService = inject(UserService);
+  router = inject(Router);
 
   async checkInterfaceType() {
     if (await this.userService.getInterfaceType()) {

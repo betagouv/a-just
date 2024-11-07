@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { orderBy, sumBy, union } from 'lodash';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -180,6 +180,14 @@ export interface listFormatedInterface {
   styleUrls: ['./workforce.page.scss'],
 })
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
+  humanResourceService = inject(HumanResourceService);
+  referentielService = inject(ReferentielService);
+  route = inject(ActivatedRoute);
+  router = inject(Router);
+  workforceService = inject(WorkforceService);
+  userService = inject(UserService);
+  hrFonctionService = inject(HRFonctionService);
+
   /**
    * Liste de toutes les RH
    */
@@ -251,7 +259,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Date selectionnée
    */
-  // @ts-ignore
   dateSelected: Date = this.workforceService.dateSelected.getValue();
   /**
    * Liste formatée contenant l'ensemble des informations nécessaire au chargement de la page
@@ -269,7 +276,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Paramètres de filtre selectionnés
    */
   filterParams: FilterPanelInterface | null =
-    // @ts-ignore
     this.workforceService.filterParams;
   /**
    * Accès au réafectateur
@@ -280,7 +286,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: 'Le ventilateur :',
-    // @ts-ignore
     path: this.userService.isCa()
       ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/quest-ce-que-cest'
       : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest',
@@ -422,23 +427,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Constructor
-   * @param humanResourceService
-   * @param referentielService
-   * @param route
-   * @param router
-   * @param workforceService
-   * @param userService
-   * @param appService
    */
-  constructor(
-    public humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private workforceService: WorkforceService,
-    public userService: UserService,
-    private hrFonctionService: HRFonctionService
-  ) {
+  constructor() {
     super();
   }
 

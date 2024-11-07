@@ -7,11 +7,15 @@ import {
   HostBinding,
   ViewChild,
 } from '@angular/core';
-import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
+import {
+  MatCalendarCellClassFunction,
+  MatDatepickerModule,
+} from '@angular/material/datepicker';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { MainClass } from '../../libs/main-class';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 /**
  * Bouton de selection de date prédesigner
@@ -19,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'aj-date-select',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, MatDatepickerModule, FormsModule],
   templateUrl: './date-select.component.html',
   styleUrls: ['./date-select.component.scss'],
 })
@@ -147,12 +151,8 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * @param event
    */
   onDateChanged(event: any) {
-    if (event && event._i.year) {
-      const date = new Date(event._i.year, event._i.month, event._i.date);
-      this.value = date;
-    } else {
-      this.value = event;
-    }
+    const date = new Date(event);
+    this.value = date;
 
     this.valueChange.emit(this.value);
     this.findRealValue();

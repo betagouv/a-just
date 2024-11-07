@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { MainClass } from '../../libs/main-class';
@@ -16,6 +16,8 @@ import { BackButtonComponent } from '../../components/back-button/back-button.co
   styleUrls: ['./cgu.page.scss'],
 })
 export class CGUPage extends MainClass implements OnInit {
+  title = inject(Title);
+  route = inject(ActivatedRoute);
   /**
    * Back link
    */
@@ -24,7 +26,7 @@ export class CGUPage extends MainClass implements OnInit {
    * Constructeur
    * @param title
    */
-  constructor(private title: Title, private route: ActivatedRoute) {
+  constructor() {
     super();
     this.title.setTitle("Conditions générales d'utilisation | A-Just");
   }

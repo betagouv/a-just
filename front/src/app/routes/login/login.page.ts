@@ -5,7 +5,12 @@ import {
   QueryList,
   ElementRef,
 } from '@angular/core';
-import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
@@ -19,6 +24,7 @@ import {
   SAML_STATUS_PENDING,
 } from '../../constants/saml';
 import { LOGIN_STATUS_GET_CODE } from '../../constants/login';
+import { CommonModule } from '@angular/common';
 
 /**
  * Page de connexion
@@ -31,6 +37,8 @@ import { LOGIN_STATUS_GET_CODE } from '../../constants/login';
     RouterLink,
     FormsModule,
     PopupComponent,
+    ReactiveFormsModule,
+    CommonModule,
   ],
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],

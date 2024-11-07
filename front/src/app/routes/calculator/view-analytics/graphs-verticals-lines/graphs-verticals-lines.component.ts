@@ -5,6 +5,7 @@ import {
   ElementRef,
   EventEmitter,
   HostBinding,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -40,6 +41,9 @@ export class GraphsVerticalsLinesComponent
   extends MainClass
   implements OnInit, OnChanges, OnDestroy, AfterViewInit
 {
+  userService = inject(UserService);
+  resize$ = inject(NgResizeObserver);
+  calculatorService = inject(CalculatorService);
   /**
    * Canvas sur lequel on va dessiner
    */
@@ -96,7 +100,6 @@ export class GraphsVerticalsLinesComponent
   /**
    * Variable d'écoute de la largeur dynamique
    */
-  // @ts-ignore
   width$: Observable<number> = this.resize$.pipe(
     map((entry) => entry.contentRect.width)
   );
@@ -128,11 +131,7 @@ export class GraphsVerticalsLinesComponent
   /**
    * Constructor
    */
-  constructor(
-    public userService: UserService,
-    private resize$: NgResizeObserver,
-    private calculatorService: CalculatorService
-  ) {
+  constructor() {
     super();
   }
 

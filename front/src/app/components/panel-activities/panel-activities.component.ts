@@ -29,6 +29,7 @@ import { UserService } from '../../services/user/user.service';
 import { importedVentillation } from '../../routes/human-resource/add-ventilation/add-ventilation.component';
 import { fixDecimal } from '../../utils/numbers';
 import { copyArray } from '../../utils/array';
+import { CommonModule } from '@angular/common';
 
 /**
  * Composant d'affichage de la liste des ventilations en grilles
@@ -37,7 +38,7 @@ import { copyArray } from '../../utils/array';
 @Component({
   selector: 'panel-activities',
   standalone: true,
-  imports: [ProgressionBarComponent],
+  imports: [ProgressionBarComponent, CommonModule],
   templateUrl: './panel-activities.component.html',
   styleUrls: ['./panel-activities.component.scss'],
 })

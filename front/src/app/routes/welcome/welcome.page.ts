@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, inject } from '@angular/core';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
 import { RouterLink } from '@angular/router';
 import { MEETING_URL } from '../../constants/pages';
@@ -14,9 +14,8 @@ import { SSOService } from '../../services/sso/sso.service';
   styleUrls: ['./welcome.page.scss'],
 })
 export class WelcomePage implements AfterViewInit {
+  ssoService = inject(SSOService);
   MEETING_URL = MEETING_URL;
-
-  constructor(private ssoService: SSOService) {}
 
   ngAfterViewInit() {
     const my_awesome_script = document.createElement('script');

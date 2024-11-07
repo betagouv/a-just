@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpService } from './http.service';
 import { BehaviorSubject } from 'rxjs';
@@ -7,10 +7,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class ServerService {
+  _http = inject(HttpService);
   userToken: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   serverUrl: string = environment.serverUrl;
-
-  constructor(private _http: HttpService) {}
 
   getUrl(url: string): string {
     return this.serverUrl + url;

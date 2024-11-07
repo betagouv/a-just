@@ -1,13 +1,20 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnInit,
   Output,
 } from '@angular/core';
-import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
+import { CommonModule } from '@angular/common';
 
 /**
  * Composant de selection d'heure/minute
@@ -15,11 +22,12 @@ import { ContentieuxOptionsService } from '../../services/contentieux-options/co
 @Component({
   selector: 'app-time-selector',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './time-selector.component.html',
   styleUrls: ['./time-selector.component.scss'],
 })
 export class TimeSelectorComponent implements OnChanges, OnInit {
+  contentieuxOptionsService = inject(ContentieuxOptionsService);
   /**
    * Valeur décimal saisie
    */
@@ -75,7 +83,7 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
    * Constructeur
    * @param contentieuxOptionsService Instance de contentieuxOptionsService
    */
-  constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
+  constructor() {
     this.contentieuxOptionsService.initValue.subscribe((value) => {
       if (value === true) {
         this.changed = false;

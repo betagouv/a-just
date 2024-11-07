@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PopinEditActivitiesComponent } from './popin-edit-activities/popin-edit-activities.component';
 import { MainClass } from '../../libs/main-class';
@@ -14,7 +14,10 @@ import { MIN_DATE_SELECT } from '../../constants/activities';
 import { DATA_GITBOOK } from '../../constants/documentation';
 import { DocumentationInterface } from '../../interfaces/documentation';
 import { OPACITY_20 } from '../../constants/colors';
-import { IntroJSStep } from '../../components/intro-js/intro-js.component';
+import {
+  IntroJSComponent,
+  IntroJSStep,
+} from '../../components/intro-js/intro-js.component';
 import { sleep } from '../../utils';
 import { ActivitiesService } from '../../services/activities/activities.service';
 import { HumanResourceService } from '../../services/human-resource/human-resource.service';
@@ -28,17 +31,34 @@ import { activityPercentColor } from '../../utils/activity';
 import { VALUE_QUALITY_TO_VERIFY } from '../../constants/referentiel';
 import { ACTIVITIES_SHOW_LEVEL_4 } from '../../constants/log-codes';
 import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
+import { TooltipsComponent } from '../../components/tooltips/tooltips.component';
+import { CompletionBarComponent } from '../../components/completion-bar/completion-bar.component';
 
 /**
  * Composant page activité
  */
 @Component({
   standalone: true,
-  imports: [PopinEditActivitiesComponent, MatIconModule],
+  imports: [
+    PopinEditActivitiesComponent,
+    MatIconModule,
+    CommonModule,
+    IntroJSComponent,
+    WrapperComponent,
+    TooltipsComponent,
+    CompletionBarComponent,
+  ],
   templateUrl: './activities.page.html',
   styleUrls: ['./activities.page.scss'],
 })
 export class ActivitiesPage extends MainClass implements OnDestroy {
+  activitiesService = inject(ActivitiesService);
+  humanResourceService = inject(HumanResourceService);
+  referentielService = inject(ReferentielService);
+  route = inject(ActivatedRoute);
+  userService = inject(UserService);
+  kpiService = inject(KPIService);
   /**
    * Dom du wrapper
    */
@@ -234,20 +254,8 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
   /**
    * Constructeur
-   * @param activitiesService
-   * @param humanResourceService
-   * @param referentielService
-   * @param userService
-   * @param kpiService
    */
-  constructor(
-    private activitiesService: ActivitiesService,
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
-    private route: ActivatedRoute,
-    public userService: UserService,
-    private kpiService: KPIService
-  ) {
+  constructor() {
     super();
 
     this.watch(

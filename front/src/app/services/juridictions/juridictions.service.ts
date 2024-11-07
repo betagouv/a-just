@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 import { JuridictionInterface } from '../../interfaces/juridiction';
 
@@ -6,7 +6,7 @@ import { JuridictionInterface } from '../../interfaces/juridiction';
   providedIn: 'root',
 })
 export class JuridictionsService {
-  constructor(private serverService: ServerService) {}
+  serverService = inject(ServerService);
 
   getAllVisible(): Promise<JuridictionInterface[]> {
     return this.serverService

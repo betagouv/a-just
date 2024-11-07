@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { JuridictionInterface } from '../../interfaces/juridiction';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
 import { environment } from '../../../environments/environment';
@@ -16,6 +16,7 @@ declare const mapboxgl: any;
   styleUrls: ['./juridictions-installed.page.scss'],
 })
 export class JuridictionsInstalledPage {
+  juridictionsService = inject(JuridictionsService);
   /**
    * Mapbox styling
    */
@@ -32,12 +33,6 @@ export class JuridictionsInstalledPage {
    * Liste juridictions
    */
   list: JuridictionInterface[] = [];
-
-  /**
-   * Constructeur
-   * @param juridictionsService
-   */
-  constructor(private juridictionsService: JuridictionsService) {}
 
   ngAfterViewInit() {
     this.juridictionsService.getAllVisible().then((l) => {

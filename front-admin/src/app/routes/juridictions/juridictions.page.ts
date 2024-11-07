@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MainClass } from '../../libs/main-class';
 import { JuridictionInterface } from '../../interfaces/juridiction';
@@ -14,11 +14,12 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./juridictions.page.scss'],
 })
 export class JuridictionsPage extends MainClass implements OnInit {
+  juridictionsService = inject(JuridictionsService);
   datas: JuridictionInterface[] = [];
   datasSource: JuridictionInterface[] = [];
   selectedJuridiction: JuridictionInterface | null = null;
 
-  constructor(private juridictionsService: JuridictionsService) {
+  constructor() {
     super();
   }
 
