@@ -5,6 +5,8 @@ import { closeGuard } from './close.guard';
 import { SimulatorPage } from './simulator/simulator.page';
 import { AverageEtpDisplayerPage } from './average-etp/average-etp-displayer/average-etp-displayer.page';
 import { ReaffectatorPage } from './reaffectator/reaffectator.page';
+import { SimulatorPickerCaPage } from './simulator/simulator-picker-ca/simulator-picker-ca.page';
+import { WhiteSimulatorPage } from './simulator/white-simulator/white-simulator.page';
 
 export const routes: Routes = [
   {
@@ -103,8 +105,20 @@ export const routes: Routes = [
     canDeactivate: [closeGuard],
   },
   {
+    path: 'simulateurs',
+    component: SimulatorPickerCaPage,
+    canActivate: [authGuard, typeGuard],
+    canDeactivate: [closeGuard],
+  },
+  {
     path: 'simulateur',
     component: SimulatorPage,
+    canActivate: [authGuard, typeGuard],
+    canDeactivate: [closeGuard],
+  },
+  {
+    path: 'simulateur-sans-donnees',
+    component: WhiteSimulatorPage,
     canActivate: [authGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
