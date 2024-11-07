@@ -23,6 +23,10 @@ export const USER_ACCESS_CALCULATOR = 5
  */
 export const USER_ACCESS_SIMULATOR = 6
 /**
+ * Constante id d'accés au simulateur
+ */
+export const USER_ACCESS_WHITE_SIMULATOR = 61
+/**
  * Constante id d'accés au réaffectateur
  */
 export const USER_ACCESS_REAFFECTATOR = 7
@@ -58,6 +62,8 @@ export const accessToString = (roleId) => {
     return 'Cockpit'
   case USER_ACCESS_SIMULATOR:
     return 'Simulateur'
+  case USER_ACCESS_WHITE_SIMULATOR:
+    return 'Simulateur à blanc'
   case USER_ACCESS_REAFFECTATOR:
     return 'Réaffectateur'
   case HAS_ACCESS_TO_MAGISTRAT:
@@ -96,6 +102,10 @@ export const accessList = [
   {
     id: USER_ACCESS_SIMULATOR,
     label: accessToString(USER_ACCESS_SIMULATOR),
+  },
+  {
+    id: USER_ACCESS_WHITE_SIMULATOR,
+    label: accessToString(USER_ACCESS_WHITE_SIMULATOR),
   },
   {
     id: USER_ACCESS_REAFFECTATOR,

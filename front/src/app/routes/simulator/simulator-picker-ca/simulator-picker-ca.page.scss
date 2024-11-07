@@ -1,0 +1,141 @@
+@import '../../../styles/utils.scss';
+
+:host {
+    .intro-simulateur {
+        margin-top: 24px;
+
+        .first-pan {
+            padding: 36px 32px;
+            width: 632px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border: solid 1px #ddd;
+            margin: auto;
+            background-color: white;
+            position: relative;
+
+            .intro-title {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 16px;
+                display: flex;
+
+                img {
+                    color: black;
+                    margin-right: 8px;
+                }
+            }
+
+            .intro-desc {
+                font-size: 14px;
+                line-height: 1.71;
+                color: #3a3a3a;
+            }
+        }
+
+
+        .second-pan {
+            padding: 24px 32px;
+            width: 632px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            border: solid 1px #ddd;
+            border-top: none;
+            margin: auto;
+            background-color: white;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+
+            .locked {
+                pointer-events: none;
+                background: var(--light-decisions-background-background-alt-grey, #F6F6F6);
+                color: var(--light-decisions-text-text-mention-grey, #666) !important;
+                opacity: 0.3;
+            }
+
+            .blue-pan {
+                padding: 16px 24px;
+                border-radius: 8px;
+                border: 1px solid var(--light-decisions-border-border-default-grey, #DDD);
+                background: var(--light-decisions-background-background-alt-grey, #F6F6F6);
+
+                &.blue {
+                    margin-top: 16px;
+                    border: 1px solid var(--light-decisions-border-border-action-high-blue-france, #000091);
+                    background: var(--light-decisions-background-background-contrast-info, #E8EDFF);
+                }
+
+                .intro-blue-title {
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #3a3a3a;
+                    margin-bottom: 8px;
+
+                    span {
+                        width: 103px;
+                        height: 20px;
+                        padding: 0 6px;
+                        border-radius: 4px;
+                        background-color: #e8edff;
+                        font-size: 12px;
+                        font-weight: bold;
+                        text-align: center;
+                        color: #0063cb;
+                    }
+                }
+
+                .intro-blue-desc {
+                    font-size: 14px;
+                    color: #3a3a3a;
+                    display: flex;
+                    flex-direction: column;
+
+                    .button-sim {
+                        align-self: flex-end;
+
+                        color: var(--light-decisions-text-text-mention-grey, #666);
+                        text-align: center;
+                        margin-top: 16px;
+                        padding: 8px 16px;
+
+                        background: var(--light-decisions-background-background-disabled-grey, #E5E5E5);
+                    }
+
+                    .button-sim-blue {
+                        align-self: flex-end;
+
+                        color: white;
+                        text-align: center;
+                        margin-top: 16px;
+                        padding: 8px 16px;
+
+                        background: #000091;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .intro-second-title {
+                padding: 16px 24px 0 24px;
+                font-size: 16px;
+                color: #000091;
+                cursor: pointer;
+                margin-top: 16px;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+            }
+
+            .intro-second-desc {
+                padding: 0 24px 16px 24px;
+                font-size: 14px;
+                color: #3a3a3a;
+                border-bottom-left-radius: 4px;
+                border-bottom-right-radius: 4px;
+                margin-bottom: 8px;
+            }
+
+        }
+
+    }
+}
