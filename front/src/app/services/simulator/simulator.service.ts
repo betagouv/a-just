@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 import * as _ from 'lodash';
 import { ServerService } from '../http-server/server.service';
+import { UserService } from '../user/user.service';
 import { MainClass } from '../../libs/main-class';
 import { SimulatorInterface } from '../../interfaces/simulator';
 import { SimulationInterface } from '../../interfaces/simulation';
@@ -17,6 +18,9 @@ import { decimalToStringDate, setTimeToMidDay } from '../../utils/dates';
   providedIn: 'root',
 })
 export class SimulatorService extends MainClass {
+  serverService = inject(ServerService);
+  humanResourceService = inject(HumanResourceService);
+  userService = inject(UserService);
   /**
    * Loader display boolean
    */
@@ -48,7 +52,9 @@ export class SimulatorService extends MainClass {
   /**
    * Date de fin de situation selectionnée par l'utilisateur
    */
-  dateStop: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
+  dateStop: BehaviorSubject<Date | undefined> = new BehaviorSubject<
+    Date | undefined
+  >(undefined);
   /**
    * Categorie selectionnée par l'utilisateur (Magistrat/Fonctionnaire)
    */
@@ -91,13 +97,8 @@ export class SimulatorService extends MainClass {
 
   /**
    * Constructeur
-   * @param serverService
-   * @param humanResourceService
    */
-  constructor(
-    private serverService: ServerService,
-    private humanResourceService: HumanResourceService
-  ) {
+  constructor() {
     super();
 
     this.watch(this.chartAnnotationBox.subscribe(() => {}));
@@ -186,23 +187,41 @@ export class SimulatorService extends MainClass {
    * @param params containing the object parameters used to compute the simulation
    * @param simulation empty situation object to be filled
    */
-  toSimulate(params: any, simulation: SimulationInterface) {
+  toSimulate(params: any, simulation: SimulationInterface, white = false) {
     this.isLoading.next(true);
     console.log(params);
-    this.serverService
-      .post(`simulator/to-simulate`, {
-        backupId: this.humanResourceService.backupId.getValue(),
-        params: params,
-        simulation: simulation,
-        dateStart: setTimeToMidDay(this.dateStart.getValue()),
-        dateStop: setTimeToMidDay(this.dateStop.getValue()),
-        selectedCategoryId: this.selectedCategory.getValue()?.id,
-      })
-      .then((data) => {
-        console.log('simu', data.data);
-        this.situationSimulated.next(data.data);
-        this.isLoading.next(false);
-      });
+    console.log(this.userService.user);
+    if (white === true) {
+      this.serverService
+        .post(`simulator/to-simulate-white`, {
+          backupId: this.humanResourceService.backupId.getValue(),
+          params: params,
+          simulation: simulation,
+          dateStart: setTimeToMidDay(this.dateStart.getValue()),
+          dateStop: setTimeToMidDay(this.dateStop.getValue()),
+          selectedCategoryId: this.selectedCategory.getValue()?.id,
+        })
+        .then((data) => {
+          console.log('simu', data.data);
+          this.situationSimulated.next(data.data);
+          this.isLoading.next(false);
+        });
+    } else {
+      this.serverService
+        .post(`simulator/to-simulate`, {
+          backupId: this.humanResourceService.backupId.getValue(),
+          params: params,
+          simulation: simulation,
+          dateStart: setTimeToMidDay(this.dateStart.getValue()),
+          dateStop: setTimeToMidDay(this.dateStop.getValue()),
+          selectedCategoryId: this.selectedCategory.getValue()?.id,
+        })
+        .then((data) => {
+          console.log('simu', data.data);
+          this.situationSimulated.next(data.data);
+          this.isLoading.next(false);
+        });
+    }
   }
 
   /**

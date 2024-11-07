@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { inject, Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
@@ -22,6 +22,7 @@ import {
   USER_ACCESS_DASHBOARD,
   USER_ACCESS_SIMULATOR,
   USER_ACCESS_VENTILATIONS,
+  USER_ACCESS_WHITE_SIMULATOR,
 } from '../../constants/user-access';
 
 /**
@@ -31,6 +32,10 @@ import {
   providedIn: 'root',
 })
 export class UserService implements OnInit {
+  router = inject(Router);
+  serverService = inject(ServerService);
+  humanResourceService = inject(HumanResourceService);
+  referentielService = inject(ReferentielService);
   /**
    * Format de l'utilisateur connecté
    */
@@ -41,19 +46,6 @@ export class UserService implements OnInit {
    * Interface front TJ ou CA
    */
   interfaceType: number | null = null;
-
-  /**
-   * Constructeur
-   * @param serverService
-   * @param humanResourceService
-   * @param referentielService
-   */
-  constructor(
-    private router: Router,
-    private serverService: ServerService,
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
-  ) {}
 
   ngOnInit(): void {
     this.getInterfaceType();
@@ -353,17 +345,41 @@ export class UserService implements OnInit {
         path: 'cockpit',
       });
     }
-
     if (
       user &&
       user.access &&
-      user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
+      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 &&
+      this.isCa() === true
+    ) {
+      menu.push({
+        label: 'Simulateurs',
+        path: 'simulateurs',
+      });
+    }
+    if (
+      user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1 &&
+      this.isCa() === false
     ) {
       menu.push({
         label: 'Simulateur',
         path: 'simulateur',
       });
     }
+    if (
+      user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_SIMULATOR) === -1 &&
+      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 &&
+      this.isCa() === false
+    ) {
+      menu.push({
+        label: 'Simulateur',
+        path: 'simulateur-sans-donnees',
+      });
+    }
+
     if (this.canViewVentilation(user)) {
       menu.push({
         label: 'Ventilateur',

@@ -5,6 +5,7 @@ import {
   USER_ACCESS_CALCULATOR,
   USER_ACCESS_SIMULATOR,
   USER_ACCESS_VENTILATIONS,
+  USER_ACCESS_WHITE_SIMULATOR,
 } from "../constants/access";
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from "../constants/roles";
 import { snakeToCamelObject } from "../utils/utils";
@@ -250,6 +251,14 @@ function canVewSimulation(ctx) {
 }
 
 /**
+ * Control si l'utiliusateur des simulations
+ * @param {*} ctx
+ * @returns
+ */
+function canVewWhiteSimulation (ctx) {
+  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1
+}
+/**
  * Model d'export
  */
 export const Access = {
@@ -260,4 +269,5 @@ export const Access = {
   canVewActivities,
   canVewSimulation,
   canVewContentieuxOptions,
-};
+  canVewWhiteSimulation,
+}
