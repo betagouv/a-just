@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PageAccessInterface } from '../../interfaces/page-access-interface';
 import { BackupInterface } from '../../interfaces/backup';
+import { compare } from '../../utils/array';
 
 interface FormSelection {
   id: number;

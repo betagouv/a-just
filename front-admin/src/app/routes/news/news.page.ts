@@ -13,7 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Editor, NgxEditorModule } from 'ngx-editor';
+import { Editor, NgxEditorModule, Toolbar } from 'ngx-editor';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   standalone: true,
@@ -23,6 +24,7 @@ import { Editor, NgxEditorModule } from 'ngx-editor';
     WrapperComponent,
     PopupComponent,
     MatFormFieldModule,
+    MatInputModule,
     MatSelectModule,
     FormsModule,
     MatDatepickerModule,
@@ -49,47 +51,14 @@ export class NewsPage extends MainClass implements OnInit, OnDestroy {
     { id: 'close', content: 'Fermer' },
   ];
   editor: Editor | undefined;
-  /*htmlEditorConfig: AngularEditorConfig = {
-    editable: true,
-    height: 'auto',
-    minHeight: '100',
-    maxHeight: 'auto',
-    width: 'auto',
-    enableToolbar: true,
-    showToolbar: true,
-    sanitize: true,
-    toolbarPosition: 'top',
-    toolbarHiddenButtons: [
-      [
-        'strikeThrough',
-        'subscript',
-        'superscript',
-        'justifyLeft',
-        'justifyCenter',
-        'justifyRight',
-        'justifyFull',
-        'indent',
-        'outdent',
-        'insertUnorderedList',
-        'insertOrderedList',
-        'heading',
-        'fontName',
-      ],
-      [
-        'fontSize',
-        'textColor',
-        'backgroundColor',
-        'customClasses',
-        'link',
-        'unlink',
-        'insertImage',
-        'insertVideo',
-        'insertHorizontalRule',
-        'removeFormat',
-        'toggleEditorMode',
-      ],
-    ],
-  };*/
+  toolbar: Toolbar = [
+    ['bold', 'italic'],
+    ['underline', 'strike'],
+    ['code', 'blockquote'],
+    ['ordered_list', 'bullet_list'],
+    ['align_left', 'align_center', 'align_right', 'align_justify'],
+    ['undo', 'redo'],
+  ];
 
   constructor() {
     super();
@@ -193,8 +162,8 @@ export class NewsPage extends MainClass implements OnInit, OnDestroy {
     // @ts-ignore
     this.newsToEdit[node] = undefined;
 
-    if (event && event._i.year) {
-      const date = new Date(event._i.year, event._i.month, event._i.date);
+    if (event) {
+      const date = new Date(event);
       // @ts-ignore
       this.newsToEdit[node] = date;
     }
