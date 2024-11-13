@@ -127,7 +127,7 @@ export default class App extends AppBase {
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
           directives: {
-            'media-src': ["'self'"],
+            'media-src': ["'self'", "https://client.crisp.chat"],
             'connect-src': [
               'https://api.gitbook.com',
               'https://www.google-analytics.com/j/collect',
@@ -142,8 +142,12 @@ export default class App extends AppBase {
               'https://*.hotjar.io',
               'wss://*.hotjar.com',
               '*.justice.gouv.fr',
+              'https://client.crisp.chat',
+              'https://storage.crisp.chat',
+              'wss://client.relay.crisp.chat',
+              'wss://stream.relay.crisp.chat'
             ],
-            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com'],
+            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com', 'https://client.crisp.chat'],
             'img-src': [
               "'self'",
               'data:',
@@ -155,6 +159,9 @@ export default class App extends AppBase {
               'https://img.freepik.com',
               'https://image.noelshack.com',
               'https://i.goopics.net/',
+              'https://client.crisp.chat',
+              'https://image.crisp.chat',
+              'https://storage.crisp.chat'
             ],
             'script-src': [
               "'self'",
@@ -172,9 +179,11 @@ export default class App extends AppBase {
               "'sha256-tBBLGYs6fvYemOy9hpbgu6tIIJNpdIZpuGpDXkhGTVw='",
               "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
+              'https://client.crisp.chat',
+              'https://settings.crisp.chat',
             ],
             'default-src': ["'none'"],
-            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com', 'https://client.crisp.chat'],
             'worker-src': ['blob:'],
             'frame-src': [
               'https://app.videas.fr/',
@@ -182,6 +191,7 @@ export default class App extends AppBase {
               'https://meta.a-just.beta.gouv.fr',
               'https://forms-eu1.hsforms.com/',
               'https://calendly.com',
+              'https://game.crisp.chat'
             ],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],
