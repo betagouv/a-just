@@ -117,6 +117,45 @@ export default class RouteSimulator extends Route {
   }
 
   /**
+   * Interface de résultat de simulation de la page de simulation
+   * @param {*} backupId
+   * @param {*} params
+   * @param {*} simulation
+   * @param {*} dateStart
+   * @param {*} dateStop
+   * @param {*} selectedCategoryId
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      params: Types.any().required(),
+      simulation: Types.object().required(),
+      dateStart: Types.date().required(),
+      dateStop: Types.date().required(),
+      selectedCategoryId: Types.number().required(),
+    }),
+    accesses: [Access.canVewWhiteSimulation],
+  })
+  async toSimulateWhite (ctx) {
+    let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
+    }
+
+    const categories = await this.models.HRCategories.getAll()
+
+    let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
+
+    await this.models.Logs.addLog(EXECUTE_SIMULATOR_PARAM, ctx.state.user.id, params)
+
+    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)
+
+    if (simulatedSituation === null) ctx.throw(400, 'Une erreur est survenue lors de votre simulation, veuillez réessayer !')
+    else this.sendOk(ctx, simulatedSituation)
+  }
+
+  /**
    * Log lancement simulation à blanc
    * @param {*} node
    * @param {*} juridictionId
@@ -125,7 +164,7 @@ export default class RouteSimulator extends Route {
     bodyType: Types.object().keys({
       params: Types.any().required(),
     }),
-    accesses: [Access.canVewSimulation],
+    accesses: [Access.canVewWhiteSimulation],
   })
   async logLaunchWhiteSimulation (ctx) {
     let { params } = this.body(ctx)
@@ -175,4 +214,24 @@ export default class RouteSimulator extends Route {
     await this.models.Logs.addLog(EXECUTE_SIMULATION, ctx.state.user.id)
     this.sendOk(ctx, 'Ok')
   }
+
+  /**
+   * Log accès au simulateur classique
+   * @param {*} node
+   * @param {*} juridictionId
+   */
+  @Route.Post({
+    accesses: [Access.canVewSimulation],
+  })
+  async checkAccessSimulator (ctx) {}
+
+  /**
+   * Log accès au simulateur classique
+   * @param {*} node
+   * @param {*} juridictionId
+   */
+  @Route.Post({
+    accesses: [Access.canVewWhiteSimulation],
+  })
+  async checkAccessWhiteSimulator (ctx) {}
 }

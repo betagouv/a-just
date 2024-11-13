@@ -83,12 +83,14 @@ export class InOutChartComponent implements OnDestroy {
     private ngZone: NgZone
   ) {
     simulatorService.dateStop.subscribe((value) => {
-      this.stopRealValue = findRealValue(value)
-      this.dateStop = value
-      this.labels = getRangeOfMonths(
-        new Date(this.dateStart),
-        new Date(this.dateStop)
-      )
+      if (value !== undefined) {
+        this.stopRealValue = findRealValue(value)
+        this.dateStop = value
+        this.labels = getRangeOfMonths(
+          new Date(this.dateStart),
+          new Date(this.dateStop)
+        )
+      }
     })
     simulatorService.dateStart.subscribe((value) => {
       this.startRealValue = findRealValue(value)
@@ -427,7 +429,7 @@ export class InOutChartComponent implements OnDestroy {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                100
+                  100
               )
               return '(' + percent + '%)'
             },
@@ -581,16 +583,21 @@ export class InOutChartComponent implements OnDestroy {
           let higuerYPosition = value.y ? value.y : 0
           let higuerXPosition = value.x ? value.x : 0
 
-          if (value.pointIndex !== null)
-          // xScale.top
-          {
+          if (value.pointIndex !== null) {
+            // xScale.top
             higuerYPosition = Math.min(
-              this.myChart.getDatasetMeta(0).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(1).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(2).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(3).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(1).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(2).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(3).data[value.pointIndex as number]
+                .y | 0
             )
-            higuerXPosition = this.myChart.getDatasetMeta(0).data[value.pointIndex as number].x | 0
+            higuerXPosition =
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number]
+                .x | 0
           }
 
           this.myChart.tooltip.active = false
@@ -602,7 +609,9 @@ export class InOutChartComponent implements OnDestroy {
           tooltipElTriangle.style.left =
             Number(String(higuerXPosition).replace('px', '')) + 10 + 'px'
           tooltipElTriangle.style.top =
-            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) + 128 + 'px'
+            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) +
+            128 +
+            'px'
           this.tooltip.projectedIn =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
           this.tooltip.simulatedIn =
@@ -720,4 +729,3 @@ export class InOutChartComponent implements OnDestroy {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }
-

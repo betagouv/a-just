@@ -9,9 +9,6 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 import { PopupModule } from 'src/app/components/popup/popup.module'
 import { WrapperModule } from 'src/app/components/wrapper/wrapper.module'
 import { SelectModule } from 'src/app/components/select/select.module'
-import { HeaderSelectorsComponent } from './header-selectors/header-selectors.component'
-import { PeriodSelectorComponent } from './period-selector/period-selector.component'
-import { SituationDisplayerComponent } from './situation-displayer/situation-displayer.component'
 import { BackButtonModule } from 'src/app/components/back-button/back-button.module'
 import { DtesChartModule } from './charts/dtes-chart/dtes-chart.module'
 import { InOutChartModule } from './charts/in-out-chart/in-out.module'
@@ -21,14 +18,13 @@ import { DialWidgetModule } from './widgets/dial-widget/dial-widget.module'
 import { CoveragePreviewModule } from './widgets/coverage-preview/coverage-preview.module'
 import { LoadersWidgetModule } from './widgets/loaders-widget/loaders-widget.module'
 import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
+import { WhiteSimulatorModule } from './white-simulator/white-simulator.module'
+import { HeaderSelectorsModule } from './header-selectors/header-selectors.module'
+import { PeriodSelectorModule } from './period-selector/period-selector.module'
+import { SituationDisplayerModule } from './situation-displayer/situation-displayer.module'
 
 @NgModule({
-  declarations: [
-    SimulatorPage,
-    HeaderSelectorsComponent,
-    PeriodSelectorComponent,
-    SituationDisplayerComponent,
-  ],
+  declarations: [SimulatorPage],
   imports: [
     SimulatorPageModule,
     RouterModule,
@@ -48,6 +44,9 @@ import { IntroJSModule } from 'src/app/components/intro-js/intro-js.module'
     LoadersWidgetModule,
     DialWidgetModule,
     IntroJSModule,
+    HeaderSelectorsModule,
+    PeriodSelectorModule,
+    SituationDisplayerModule,
   ],
 })
 export class SimulatorModule {}

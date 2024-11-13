@@ -9,7 +9,6 @@ const TRAPS = [
   '.axd',
   '/api/cu',
   '/api/cu',
-  '/api/j',
   '/api/ti',
   '/api/l',
   '/api/su',
@@ -120,13 +119,11 @@ const TRAPS = [
   '.gz',
   'system',
   '/tmp',
-  '/temp',
   'www',
   '.1tmhl',
   '/bin/',
   '.action',
   '.cfm',
-  '.html',
   '.rst',
   'passwd',
   '.vscode',
@@ -139,25 +136,35 @@ const IP_TRAPPED = []
  */
 export default async (ctx, next, models) => {
   //console.log('Client IP', ctx.request.ip, ctx.request.url)
+
   if (IP_TRAPPED.indexOf(ctx.request.ip) !== -1) {
     console.log('IP BLOCKED - ', ctx.request.ip)
-    models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url })
-    ctx.res.writeHead(500).end()
+    models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url, logging: false })
+    ctx.res.writeHead(403).end()
     return
   }
 
   if (
+    ctx.request.url &&
     TRAPS.some((t) => {
-      const re = new RegExp(t)
-      return re.test(ctx.request.url)
+      return ctx.request.url.includes(t)
     })
   ) {
     console.log('NEW IP BLOCKED - ', ctx.request.ip, ctx.request.url)
     IP_TRAPPED.push(ctx.request.ip)
-    models.Logs.addLog(HONEY_IP_TRAPPED, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url })
-    ctx.res.writeHead(500).end()
+    models.Logs.addLog(HONEY_IP_TRAPPED, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url, logging: false })
+    ctx.res.writeHead(403).end()
     return
   }
 
   await next()
 }
+
+// /api/juridictions-details/get-cle
+/*
+console.log(
+  'TRAP',
+  TRAPS.filter((t) => {
+    return '/api/juridictions-details/get-cle'.includes(t)
+  })
+)*/
