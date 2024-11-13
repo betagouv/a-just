@@ -1011,8 +1011,8 @@ export default (sequelizeInstance, Model) => {
         raw: true,
         logging: false,
       }).then(async (result) => {
-        const percentageThreshold = 25
-        const absoluteThreshold = 50
+        const percentageThreshold = 10 //25
+        const absoluteThreshold = 100 //50
         const newData = {
           in: to_create[i].original_entrees,
           out: to_create[i].original_sorties,
@@ -1144,8 +1144,8 @@ export default (sequelizeInstance, Model) => {
         raw: true,
         logging: false,
       }).then(async (result) => {
-        const percentageThreshold = 25
-        const absoluteThreshold = 50
+        const percentageThreshold = 10
+        const absoluteThreshold = 100
         const newData = {
           in: to_create[i].original_entrees,
           out: to_create[i].original_sorties,
