@@ -49,6 +49,7 @@ export class AppComponent implements AfterViewInit {
     private contentieuxOptionsService: ContentieuxOptionsService,
     private appService: AppService
   ) {
+    this.crispChat()
     if (iIOS()) {
       document.body.classList.add('iIOS')
     }
@@ -138,6 +139,16 @@ export class AppComponent implements AfterViewInit {
     if (clickToOk && alertObject && alertObject.callbackSecondary) {
       alertObject.callbackSecondary()
     }
+  }
+
+  crispChat() {
+    window.$crisp = []
+    window.CRISP_WEBSITE_ID = environment.crisp
+    const d = document
+    const s: any = d.createElement('script')
+    s.src = 'https://client.crisp.chat/l.js'
+    s.async = 1
+    d.getElementsByTagName('head')[0].appendChild(s)
   }
 
   listenSelectElement() {

@@ -25,6 +25,7 @@ export const environment = {
   gitbookToken: 'gb_api_rHt5wBv5WBzk2mjUuO2QymdKNpNujdBD8TLfYpsA',
   gitbookId: 'S99g6aJCtkSrC9hKXFqV',
   enableSSO: true,
+  crisp: '93a1edd2-d8a9-4bc5-9d13-98be0fbebdf4',
   //typeId: process.env['TYPE_ID'] || 0,
 }
 
