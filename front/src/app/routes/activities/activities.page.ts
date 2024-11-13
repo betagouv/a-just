@@ -110,6 +110,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     dateType: 'month',
     value: null,
     minDate: new Date(MIN_DATE_SELECT),
+    showArrow: true,
   };
   /**
    * Lien du guide de la donnée
