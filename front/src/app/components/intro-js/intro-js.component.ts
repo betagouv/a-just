@@ -46,6 +46,10 @@ export class IntroJSComponent implements AfterViewInit {
    */
   @Input() typeId: string | undefined
   /**
+   * Rejouer systématiquement
+   */
+  @Input() playEachTime: boolean = false
+  /**
    * has complete form
    */
   hasCompleteForm: boolean = false
@@ -66,7 +70,7 @@ export class IntroJSComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     if (this.steps) {
       let canStartPlayer = true
-      if (this.typeId) {
+      if (this.typeId && this.playEachTime === false) {
         const idUsed = localStorage.getItem('INTRO_JS_' + this.typeId)
         if (idUsed) {
           this.hasCompleteForm = true

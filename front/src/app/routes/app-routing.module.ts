@@ -6,6 +6,8 @@ import { ReaffectatorPage } from './reaffectator/reaffectator.page'
 import { SimulatorPage } from './simulator/simulator.page'
 import { AppTypeGuard } from './app-type-guard.service'
 import { AverageEtpDisplayerPage } from './average-etp/average-etp-displayer/average-etp-displayer.page'
+import { WhiteSimulatorPage } from './simulator/white-simulator/white-simulator.page'
+import { SimulatorPickerCaPage } from './simulator/simulator-picker-ca/simulator-picker-ca.page'
 
 const routes: Routes = [
   {
@@ -108,8 +110,20 @@ const routes: Routes = [
     canDeactivate: [CanDeactivateGuardService],
   },
   {
+    path: 'simulateurs',
+    component: SimulatorPickerCaPage,
+    canActivate: [AuthGuard, AppTypeGuard],
+    canDeactivate: [CanDeactivateGuardService],
+  },
+  {
     path: 'simulateur',
     component: SimulatorPage,
+    canActivate: [AuthGuard, AppTypeGuard],
+    canDeactivate: [CanDeactivateGuardService],
+  },
+  {
+    path: 'simulateur-sans-donnees',
+    component: WhiteSimulatorPage,
     canActivate: [AuthGuard, AppTypeGuard],
     canDeactivate: [CanDeactivateGuardService],
   },
