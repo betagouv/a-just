@@ -19,11 +19,6 @@
       border-radius: 0px;
       border: solid 1px #dddddd;
       background-color: #fff;
-      pointer-events: none;
-
-      &.editing {
-        pointer-events: initial;
-      }
     }
   }
 

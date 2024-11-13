@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   Output,
   SimpleChanges,
@@ -57,6 +58,10 @@ export class TextEditorComponent extends MainClass {
    */
   @Input() previousValue: string | null = null;
   /**
+   * Valeure par défaut de l'éditeur
+   */
+  @Input() defaultReadOnly: boolean = false;
+  /**
    * Emit value
    */
   @Output() resetField = new EventEmitter();
@@ -76,6 +81,7 @@ export class TextEditorComponent extends MainClass {
    * Ignore update
    */
   ignoreUpdate: boolean = false;
+
   /**
    * Constructeur
    */
@@ -94,6 +100,13 @@ export class TextEditorComponent extends MainClass {
   ngOnChanges(change: SimpleChanges) {
     if (this.quillEditor) {
       if (change['askToModify']) {
+        console.log('this.askToModify', this.askToModify);
+        if (this.askToModify) {
+          this.quillEditor.enable();
+        } else {
+          this.quillEditor.disable();
+        }
+
         if (this.askToModify) {
           this.quillEditor.focus();
           setTimeout(() => {
@@ -103,9 +116,7 @@ export class TextEditorComponent extends MainClass {
                 0
               );
           }, 0);
-          this.askToModify = false;
           this.onFocus();
-          this.focusField.emit(false);
         }
       }
       if (change['previousValue'] && this.previousValue !== null) {
@@ -121,7 +132,20 @@ export class TextEditorComponent extends MainClass {
       if (change['value']) {
         this.ignoreUpdate = true;
         this.quillEditor.root.innerHTML = this.value;
+        this.quillEditor.root.dataset.placeholder = this.value
+          ? ''
+          : this.placeholder;
       }
+    }
+  }
+
+  @HostListener('click', ['$event.target'])
+  onClick(btn: any) {
+    if (btn && btn.href && !this.askToModify) {
+      // do nothing
+    } else {
+      this.focusField.next(true);
+      this.onFocus();
     }
   }
 
@@ -131,10 +155,11 @@ export class TextEditorComponent extends MainClass {
   initQuillEditor() {
     const dom = this.contener?.nativeElement;
     this.quillEditor = new Quill(dom, {
+      readOnly: this.defaultReadOnly,
       modules: {
         toolbar: ['bold', 'italic', 'underline', 'strike', 'link'],
       },
-      placeholder: this.placeholder,
+      //placeholder: this.placeholder,
       theme: 'snow',
     });
 
@@ -167,8 +192,8 @@ export class TextEditorComponent extends MainClass {
       (range: any, oldRange: any, source: any) => {
         if (range) {
           if (range.length == 0) {
-            this.focusField.next(true);
-            this.onFocus();
+            //this.focusField.next(true);
+            //this.onFocus();
           }
         } else {
           this.focusField.next(false);
