@@ -211,7 +211,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Loader
    */
-  isLoading: boolean = false;
+  isLoading: boolean = true;
   /**
    * Catégorie selectionnée
    */
@@ -736,6 +736,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.simulatorService.getSituation([this.contentieuId]);
 
     this.loadFunctions();
+    this.isLoading = false;
     console.log(this.dateStop);
   }
 
