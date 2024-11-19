@@ -282,8 +282,11 @@ export class ContentieuxOptionsService extends MainClass {
    * @param isCopy
    * @returns
    */
-  async onSaveDatas(isCopy: boolean, type = 'SIEGE') {
-    let backupName = null;
+  async onSaveDatas(
+    isCopy: boolean,
+    type = 'SIEGE',
+    backupName: string | null = null
+  ) {
     if (isCopy) {
       backupName = prompt('Sous quel nom ?');
       if (backupName === null) return null;
