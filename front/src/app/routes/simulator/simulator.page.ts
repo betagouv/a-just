@@ -1198,8 +1198,17 @@ export class SimulatorPage
       }
     } else if (
       this.valueToAjust.addition &&
-      (this.valueToAjust.addition !== '' || this.valueToAjust.addition !== null)
+      this.valueToAjust.addition !== '' &&
+      this.valueToAjust.addition !== null
     ) {
+      if (
+        ['etpMag', 'etpFon', 'etpCont'].includes(inputField.id) &&
+        parseFloat(this.valueToAjust.value) <= 0
+      ) {
+        alert('La valeur choisie ne peut pas être égale à 0')
+        return
+      }
+
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -1245,7 +1254,7 @@ export class SimulatorPage
           'etpFon',
           'etpCont',
         ].includes(inputField.id) &&
-        volumeInput === '0'
+        parseFloat(volumeInput) <= 0
       ) {
         alert('La valeur choisie ne peut pas être égale à 0')
         return
@@ -1356,13 +1365,23 @@ export class SimulatorPage
         this.buttonSelected.id === 'realDTESInMonths'
       )
         this.valueToAjust = event
+      else if (
+        (this.buttonSelected.id === 'etpMag' ||
+          this.buttonSelected.id === 'etpFon') &&
+        event.addition !== ''
+      )
+        this.valueToAjust = event
       else this.valueToAjust = { value: '', percentage: null, addition: null }
     } else if (
       this.buttonSelected.id === 'magRealTimePerCase' &&
       event.percentage !== ''
     )
       this.valueToAjust = event
-    else if (this.buttonSelected.id === 'etpMag' && event.addition !== '')
+    else if (
+      (this.buttonSelected.id === 'etpMag' ||
+        this.buttonSelected.id === 'etpFon') &&
+      event.addition !== ''
+    )
       this.valueToAjust = event
     else this.valueToAjust = event
   }
@@ -2137,7 +2156,7 @@ export class SimulatorPage
   ) {
     let res = this.percentageModifiedInputText(id, projectedValue)
     if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts'
-    if (etpUnit) return res === 'NA' ? 'NA' : res + ' etp'
+    if (etpUnit) return res === 'NA' ? 'NA' : res + ' ETPT'
     return res === 'NA' ? 'NA' : res + '%'
   }
 
