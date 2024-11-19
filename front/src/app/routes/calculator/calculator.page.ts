@@ -346,6 +346,22 @@ export class CalculatorPage
    * Detect if last month is loading
    */
   checkLastMonthLoading: boolean = false;
+  /**
+   * Menu déroulant export
+   */
+  dropdownExport: boolean = false;
+  /**
+   * Ouvrir popup name ref
+   */
+  promptRef: boolean = false;
+  /**
+   * Ouvrir popup name ref
+   */
+  displayRouterRef: boolean = false;
+  /**
+   * Placeholder referentiel name
+   */
+  defaultRefName: string = '';
 
   /**
    * Constructeur
@@ -1919,5 +1935,63 @@ export class CalculatorPage
     }
 
     return refsList;
+  }
+
+  saveCurrentAvgTime() {
+    let datas: any[] = [...this.datas];
+
+    datas = datas.filter((x) => x.magRealTimePerCase !== null);
+    datas = datas.map((y) => {
+      return {
+        averageProcessingTime: y.magRealTimePerCase,
+        contentieux: { id: y.contentieux.id, label: y.contentieux.label },
+      };
+    });
+
+    this.contentieuxOptionsService.contentieuxOptions.next(datas);
+    this.contentieuxOptionsService.onSaveDatas(
+      false,
+      this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE',
+      this.defaultRefName
+    );
+
+    this.promptRef = false;
+  }
+
+  /**
+   * Popup de sauvegarde, action à effectuer
+   */
+  actionPopupFollow(event: any) {
+    if (event.id === 'cancel') {
+      this.promptRef = false;
+    }
+    if (event.id === 'save') {
+      this.saveCurrentAvgTime();
+      this.displayRouterRef = true;
+      console.log(this.defaultRefName);
+    }
+  }
+
+  /**
+   * Popup de sauvegarde, action à effectuer
+   */
+  actionPopupEnd(event: any) {
+    if (event.id === 'cancel') {
+      this.displayRouterRef = false;
+    }
+    if (event.id === 'location') {
+      this.router.navigate(['/temps-moyens']);
+    }
+  }
+
+  setDefaultRefName() {
+    let dates = `${this.getRealValue(this.dateStart)} à ${this.getRealValue(
+      this.dateStop
+    )}`;
+    this.defaultRefName =
+      'Mes TMD ' +
+      (this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE') +
+      ' de ' +
+      dates;
   }
 }
