@@ -44,7 +44,7 @@ export class RadioButtonComponent implements OnChanges, OnInit {
   /**
    * Paramétrage de la largeur du bouton
    */
-  @HostBinding('style.width') @Input() width: string = '25px';
+  @HostBinding('style.min-width') @Input() width: string = '25px';
   /**
    * Paramétrage à la hauteur du bouton
    */

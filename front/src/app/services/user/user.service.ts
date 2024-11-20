@@ -1,4 +1,4 @@
-import { inject, Injectable, OnInit } from '@angular/core';
+import { inject, Injectable, OnInit, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
@@ -41,11 +41,33 @@ export class UserService implements OnInit {
    */
   user: BehaviorSubject<UserInterface | null> =
     new BehaviorSubject<UserInterface | null>(null);
+  /**
+   * User infos to signal
+   */
+  userOriginalS = signal<UserInterface | null>(null);
+  /**
+   * User infos to signal
+   */
+  userS = signal<UserInterface | null>(null);
 
   /**
    * Interface front TJ ou CA
    */
   interfaceType: number | null = null;
+
+  constructor() {
+    this.user.subscribe((s) => {
+      this.userS.set(
+        s
+          ? {
+              ...s,
+              initials:
+                (s.firstName || '').charAt(0) + (s.lastName || '').charAt(0),
+            }
+          : s
+      );
+    });
+  }
 
   ngOnInit(): void {
     this.getInterfaceType();

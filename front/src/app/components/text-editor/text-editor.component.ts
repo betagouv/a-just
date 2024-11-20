@@ -100,7 +100,6 @@ export class TextEditorComponent extends MainClass {
   ngOnChanges(change: SimpleChanges) {
     if (this.quillEditor) {
       if (change['askToModify']) {
-        console.log('this.askToModify', this.askToModify);
         if (this.askToModify) {
           this.quillEditor.enable();
         } else {
@@ -132,9 +131,6 @@ export class TextEditorComponent extends MainClass {
       if (change['value']) {
         this.ignoreUpdate = true;
         this.quillEditor.root.innerHTML = this.value;
-        this.quillEditor.root.dataset.placeholder = this.value
-          ? ''
-          : this.placeholder;
       }
     }
   }
@@ -159,7 +155,7 @@ export class TextEditorComponent extends MainClass {
       modules: {
         toolbar: ['bold', 'italic', 'underline', 'strike', 'link'],
       },
-      //placeholder: this.placeholder,
+      placeholder: this.placeholder,
       theme: 'snow',
     });
 
