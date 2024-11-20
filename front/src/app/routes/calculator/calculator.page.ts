@@ -1941,14 +1941,23 @@ export class CalculatorPage
     let datas: any[] = [...this.datas];
 
     datas = datas.filter((x) => x.magRealTimePerCase !== null);
-    datas = datas.map((y) => {
-      return {
+
+    let list = new Array();
+
+    datas.map((y) => {
+      list.push({
         averageProcessingTime: y.magRealTimePerCase,
         contentieux: { id: y.contentieux.id, label: y.contentieux.label },
-      };
+      });
+      y.childrens.map((z: any) => {
+        list.push({
+          averageProcessingTime: z.magRealTimePerCase,
+          contentieux: { id: z.contentieux.id, label: z.contentieux.label },
+        });
+      });
     });
 
-    this.contentieuxOptionsService.contentieuxOptions.next(datas);
+    this.contentieuxOptionsService.contentieuxOptions.next(list);
     this.contentieuxOptionsService.onSaveDatas(
       false,
       this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE',
