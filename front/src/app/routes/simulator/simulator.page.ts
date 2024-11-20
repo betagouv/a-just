@@ -1006,6 +1006,24 @@ export class SimulatorPage
    * Réinitalisation de simulation
    */
   resetParams(changeCategory = false) {
+    this.paramsToAjust = {
+      param1: {
+        label: '',
+        value: '',
+        percentage: null,
+        input: 0,
+        addition: null,
+        button: { value: '' },
+      },
+      param2: {
+        label: '',
+        value: '',
+        percentage: null,
+        input: 0,
+        addition: null,
+        button: { value: '' },
+      },
+    }
     this.contentieuId = null
     this.simulatorService.contentieuOrSubContentieuId.next(null)
     this.subList = []
