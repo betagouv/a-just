@@ -52,6 +52,7 @@ import {
   etpMagTitle,
   etpMagToDefine,
 } from '../simulator.page'
+import { AppService } from 'src/app/services/app/app.service'
 
 /**
  * Composant page simulateur
@@ -387,6 +388,10 @@ export class WhiteSimulatorPage
 
   onReloadAction = false
   /**
+   * Application chargée entièrement
+   */
+  loaded: boolean = false
+  /**
    * Intro JS Steps du simulateur à blanc
    */
   introStepsWhiteSimulator: IntroJSStep[] = [
@@ -488,11 +493,13 @@ export class WhiteSimulatorPage
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router,
     private route: ActivatedRoute,
-    private serverService: ServerService
+    private serverService: ServerService,
+    private appService: AppService
   ) {
     super()
 
     this.serverService.post('simulator/check-access-white-simulator')
+    this.watch(this.appService.appLoading.subscribe((a) => (this.loaded = !a)))
 
     this.watch(
       this.simulatorService.disabled.subscribe((disabled) => {
