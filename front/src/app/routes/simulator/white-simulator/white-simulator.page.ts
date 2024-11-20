@@ -1048,7 +1048,7 @@ export class WhiteSimulatorPage
         ['etpMag', 'etpFon', 'etpCont'].includes(inputField.id) &&
         parseFloat(this.valueToAjust.value) <= 0
       ) {
-        alert('La valeur choisie ne peut pas être égale à 0')
+        alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0')
         return
       }
 
@@ -1099,7 +1099,7 @@ export class WhiteSimulatorPage
         ].includes(inputField.id) &&
         parseFloat(volumeInput) <= 0
       ) {
-        alert('La valeur choisie ne peut pas être égale à 0')
+        alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0')
         return
       }
       // if param1 reset =>  reset all params
