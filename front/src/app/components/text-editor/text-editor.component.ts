@@ -224,4 +224,25 @@ export class TextEditorComponent extends MainClass {
         'hidden';
     }
   }
+
+  /**
+   * Force focus
+   */
+  focus() {
+    if (this.quillEditor) {
+      this.quillEditor.enable();
+      this.quillEditor.focus();
+      this.quillEditor.setSelection(this.quillEditor.getLength(), 0);
+      this.focusField.next(true);
+    }
+  }
+
+  /**
+   * Force new value
+   */
+  setValue(text: string) {
+    this.value = text;
+    this.ignoreUpdate = true;
+    this.quillEditor.root.innerHTML = this.value;
+  }
 }

@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
+import { HumanResourceService } from '../human-resource/human-resource.service';
 
 /**
  * Service de gestion des commentaires globaux
@@ -10,69 +11,47 @@ import { ServerService } from '../http-server/server.service';
 export class CommentService {
   // service d'appel au serveur
   serverService = inject(ServerService);
-  /**
-   * A comment is editing
-   */
-  //mainEditing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-  /**
-   * A comment is editing
-   */
-  //forceOpenAll: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+  // service de gestion des ressources
+  humanResourceService = inject(HumanResourceService);
 
   /**
-   * API appel au serveur pour récuperer le commentaire d'une fiche
-   * @param id 
-   * @returns 
-   
-  getHRComment(id: number) {
-    return this.serverService
-      .post('hr-comment/get-hr-comment', {
-        hrId: id,
+   * API appel au serveur pour récuperer les commentaires en fonction d'un type
+   * @param type
+   * @returns
+   */
+  getComments = async (type: string) =>
+    (
+      await this.serverService.post('comment/get-comments', {
+        type,
+        juridictionId: this.humanResourceService.backupId.getValue(),
       })
-      .then((r) => r.data);
-  }
+    )?.data || [];
 
   /**
- * API appel au serveur pour récuperer le commentaire d'une fiche
- * @param id 
- * @returns 
- 
-  getHRCommentByCommentId(id: number, hrId: number) {
-    return this.serverService
-      .post('hr-comment/get-hr-comment-by-id', {
-        id: id,
-        hrId: hrId
-      })
-      .then((r) => r.data);
-  }
-  /**
-   * API mise à jour du commentaire d'une fiche
-   * @param id 
-   * @param comment 
-   * @returns 
-   
-  updateHRComment(id: number, comment: string, userId: number, commentId: number = -1) {
-    return this.serverService
-      .post('hr-comment/update-hr-comment', {
-        commentId,
-        hrId: id,
-        comment,
-        userId: userId || -1
-      })
-      .then((r) => {
-        const updateAt = new Date(r.data);
-        return updateAt;
-      });
-  }
+   * API mise à jour d'un commentaire
+   * @param type
+   * @param comment
+   * @param commentId
+   * @returns
+   */
+  updateComment = async (
+    type: string,
+    comment: string,
+    commentId: number | null = null
+  ) =>
+    this.serverService.post('comment/update-comment', {
+      type,
+      juridictionId: this.humanResourceService.backupId.getValue(),
+      commentId,
+      comment,
+    });
 
   /**
    * API suppression d'un commentaire
-   
-  deleteHRComment(commentId: number, hrId: number) {
-    return this.serverService
-      .post('hr-comment/delete-hr-comment', {
-        commentId,
-        hrId
-      })
-  }*/
+   */
+  deleteComment = async (commentId: number) =>
+    this.serverService.post('comment/delete-comment', {
+      commentId,
+      juridictionId: this.humanResourceService.backupId.getValue(),
+    });
 }

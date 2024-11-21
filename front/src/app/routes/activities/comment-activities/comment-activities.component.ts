@@ -1,9 +1,19 @@
-import { Component, inject, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '../../../services/user/user.service';
 import { CommonModule } from '@angular/common';
 import { TextEditorComponent } from '../../../components/text-editor/text-editor.component';
 import { CommentService } from '../../../services/comment/comment.service';
+import { CommentInterface } from '../../../interfaces/comment';
+import { OneCommentComponent } from './one-comment/one-comment.component';
 
 /**
  * Composant des commentaires de la page d'activités
@@ -11,11 +21,16 @@ import { CommentService } from '../../../services/comment/comment.service';
 @Component({
   selector: 'aj-comment-activities',
   standalone: true,
-  imports: [MatIconModule, CommonModule, TextEditorComponent],
+  imports: [
+    MatIconModule,
+    CommonModule,
+    TextEditorComponent,
+    OneCommentComponent,
+  ],
   templateUrl: './comment-activities.component.html',
   styleUrls: ['./comment-activities.component.scss'],
 })
-export class CommentActivitiesComponent {
+export class CommentActivitiesComponent implements OnChanges {
   // service utilisateur
   userService = inject(UserService);
   // service de gestion des commentaires
@@ -25,7 +40,49 @@ export class CommentActivitiesComponent {
    */
   @Input() type: string = '';
   /**
+   * On close popin
+   */
+  @Output() close: EventEmitter<any> = new EventEmitter();
+  /**
    * List des commentaires
    */
-  comments: [] = [];
+  comments: CommentInterface[] = [];
+  /**
+   * Commentaire principal
+   */
+  commentContent: string = '';
+
+  /**
+   * Load comment by type
+   */
+  ngOnChanges(change: SimpleChanges) {
+    if (change['type'].previousValue !== change['type'].currentValue) {
+      this.onLoad();
+    }
+  }
+
+  /**
+   * Load datas
+   */
+  async onLoad() {
+    if (this.type) {
+      const list = await this.commentService.getComments(this.type);
+      this.comments = list;
+    }
+  }
+
+  /**
+   * sent new comment
+   */
+  async onSentComment(
+    comment: string,
+    id: number | null = null,
+    editor: TextEditorComponent
+  ) {
+    if (comment && this.type) {
+      await this.commentService.updateComment(this.type, comment, id);
+      editor.value = '';
+      await this.onLoad();
+    }
+  }
 }

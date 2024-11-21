@@ -25,6 +25,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      hr_backup_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
