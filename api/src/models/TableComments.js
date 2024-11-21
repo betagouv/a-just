@@ -4,15 +4,16 @@
 
 export default (sequelizeInstance, Model) => {
   /**
-   * Récupération d'un commentaire d'une fiche
-   * @param {*} hrId
+   * Récupération des commentaires en fonction d'un type
+   * @param {*} type
    * @returns
-   
-  Model.getComment = async (type) => {
+   */
+  Model.getComments = async (type, juridictionId) => {
     let comments = await Model.findAll({
-      attributes: ['id', 'comment', 'user_id', 'created_at', 'updated_at'],
+      attributes: ['id', 'comment', 'user_id', 'created_at', 'updated_at', 'type'],
       where: {
-        human_id: hrId,
+        type,
+        hr_backup_id: juridictionId,
       },
       include: [
         {
@@ -23,17 +24,17 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < comments.length; i++) {
-      console.log(comments[i])
       comments[i] = {
-        commentId: comments[i].id,
+        id: comments[i].id,
         comment: comments[i].comment,
-        user_id: comments[i].user_id,
+        type: comments[i].type,
         createdAt: comments[i].created_at,
         updatedAt: comments[i].updated_at,
-        editorId: comments[i]['User.id'],
-        editorFirstName: comments[i]['User.first_name'],
-        editorLastName: comments[i]['User.last_name'],
-        editorInitials: (comments[i]['User.first_name'] || '').charAt(0) + (comments[i]['User.last_name'] || '').charAt(0),
+        editor: {
+          firstName: comments[i]['User.first_name'],
+          lastName: comments[i]['User.last_name'],
+          initials: (comments[i]['User.first_name'] || '').charAt(0) + (comments[i]['User.last_name'] || '').charAt(0),
+        }
       }
     }
 
@@ -41,133 +42,48 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
-   * Récupère le dernier commentaire en date
-   * @param {*} id 
-   * @returns 
-   
-  Model.getLastComment = async (hrId) => {
-    let com = await Model.findOne({
-      attributes: ['id', 'comment', 'user_id', 'created_at', 'updated_at'],
-      where: {
-        human_id: hrId,
-      },
-      order: [['createdAt', 'DESC']],
-      raw: true,
-    })
-
-    if (com) {
-      com = {
-        commentId: com.id,
-        comment: com.comment,
-        user_id: com.user_id,
-        createdAt: com.created_at,
-        updatedAt: com.updated_at,
-        editorId: com['User.id'],
-        editorFirstName: com['User.first_name'],
-        editorLastName: com['User.last_name'],
-        editorInitials: (com['User.first_name'] || '').charAt(0) + (com['User.last_name'] || '').charAt(0),
-      }
-    }
-
-    return com
-  }
-
-  /**
- * Récupération d'un commentaire d'une fiche
- * @param {*} hrId
- * @returns
- 
-  Model.getCommentById = async (id) => {
-    let com = await Model.findOne({
-      attributes: ['id', 'comment', 'user_id', 'created_at', 'updated_at'],
-      where: {
-        id
-      },
-      include: [
-        {
-          attributes: ['id', 'first_name', 'last_name'],
-          model: Model.models.Users,
-        }],
-      raw: true,
-    })
-
-    if (com) {
-      com = {
-        commentId: com.id,
-        comment: com.comment,
-        user_id: com.user_id,
-        createdAt: com.created_at,
-        updatedAt: com.updated_at,
-        editorId: com['User.id'],
-        editorFirstName: com['User.first_name'],
-        editorLastName: com['User.last_name'],
-        editorInitials: (com['User.first_name'] || '').charAt(0) + (com['User.last_name'] || '').charAt(0),
-      }
-    }
-
-    return com
-  }
-
-
-  /**
-   * Modification du commentaire d'une fiche
-   * @param {*} hrId
+   * Modification d'un commentaire
+   * @param {*} type
+   * @param {*} juridictionId
    * @param {*} comment
+   * @param {*} userId
+   * @param {*} commentId
    * @returns
-   
-  Model.updateComment = async (hrId, comment, userId, commentId) => {
-    let com = await Model.findOne({
+   */
+  Model.updateComment = async (type, juridictionId, comment, userId, commentId) => {
+    const com = await Model.findOne({
       where: {
         id: commentId,
-        human_id: hrId,
+        type,
+        hr_backup_id: juridictionId,
       },
     })
 
     if (com) {
-      com = await com.update({ comment, user_id: userId === -1 ? null : userId })
+      await com.update({ comment })
     } else {
-      com = await Model.create({ comment, human_id: hrId, user_id: userId === -1 ? null : userId })
+      await Model.create({ comment, type, hr_backup_id: juridictionId, user_id: userId })
     }
-
-    // update date of backup
-    await Model.models.HumanResources.updateById(hrId, {
-      updated_at: new Date(),
-    })
-
-    // save cache
-    await Model.models.HumanResources.getHr(hrId)
-
-    return com.dataValues.updatedAt
   }
 
   /**
- * Modification du commentaire d'une fiche
- * @param {*} hrId
- * @param {*} comment
- * @returns
-
-  Model.deleteComment = async (commentId, hrId) => {
-    let com = await Model.findOne({
+  * Suppression du commentaire d'une fiche
+  * @param {*} commentId
+  * @param {*} juridictionId
+  * @returns
+  */
+  Model.deleteComment = async (commentId, juridictionId) => {
+    const com = await Model.findOne({
       where: {
         id: commentId,
+        hr_backup_id: juridictionId,
       },
     })
 
     if (com) {
-      //com = await com.update({ user_id: userId })
-      await Model.destroyById(commentId)
+      await com.destroy()
     }
-
-    // update date of backup
-    await Model.models.HumanResources.updateById(hrId, {
-      updated_at: new Date(),
-    })
-
-    // save cache
-    await Model.models.HumanResources.getHr(hrId)
-
-    return com.dataValues.updatedAt
-  }*/
+  }
 
   return Model
 }

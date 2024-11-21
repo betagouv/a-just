@@ -20,41 +20,22 @@ export default class RouteComment extends Route {
   }
 
   /**
-   * Interface de retour d'un commentaire d'une fiche
+   * Interface de retour des commentaires en fonction d'un type
    * @param {*} hrId
-   
+   */
   @Route.Post({
     bodyType: Types.object().keys({
-      hrId: Types.number().required(),
+      type: Types.string().required(),
+      juridictionId: Types.number().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewActivities],
   })
-  async getHrComment (ctx) {
-    const { hrId } = this.body(ctx)
-    if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
-      this.sendOk(ctx, await this.model.getComment(hrId))
+  async getComments (ctx) {
+    const { type, juridictionId } = this.body(ctx)
+    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.getComments(type, juridictionId))
     } else {
-      this.sendOk(ctx, null)
-    }
-  }
-
-  /**
-   * Interface de retour d'un commentaire d'une fiche
-   * @param {*} hrId
-   
-  @Route.Post({
-    bodyType: Types.object().keys({
-      id: Types.number().required(),
-      hrId: Types.number().required(),
-    }),
-    accesses: [Access.canVewHR],
-  })
-  async getHrCommentById (ctx) {
-    const { id, hrId } = this.body(ctx)
-    if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
-      this.sendOk(ctx, await this.model.getCommentById(id))
-    } else {
-      this.sendOk(ctx, null)
+      this.sendOk(ctx, [])
     }
   }
 
@@ -62,20 +43,20 @@ export default class RouteComment extends Route {
    * Interface de modification d'un commentaire d'une fiche
    * @param {*} hrId
    * @param {*} comment
-   
+   */
   @Route.Post({
     bodyType: Types.object().keys({
-      hrId: Types.number().required(),
+      type: Types.string().required(),
+      juridictionId: Types.number().required(),
       comment: Types.string().required(),
-      userId: Types.number().required(),
-      commentId: Types.number().required(),
+      commentId: Types.number(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewActivities],
   })
-  async updateHrComment (ctx) {
-    const { hrId, comment, userId, commentId } = this.body(ctx)
-    if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
-      this.sendOk(ctx, await this.model.updateComment(hrId, comment, userId, commentId))
+  async updateComment (ctx) {
+    const { type, juridictionId, comment, commentId } = this.body(ctx)
+    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.updateComment(type, juridictionId, comment, ctx.state.user.id, commentId))
     } else {
       this.sendOk(ctx, null)
     }
@@ -85,20 +66,20 @@ export default class RouteComment extends Route {
    * Interface de modification d'un commentaire d'une fiche
    * @param {*} hrId
    * @param {*} comment
-   
+   */
   @Route.Post({
     bodyType: Types.object().keys({
-      hrId: Types.number().required(),
       commentId: Types.number().required(),
+      juridictionId: Types.number().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canVewActivities],
   })
-  async deleteHrComment (ctx) {
-    const { hrId, commentId } = this.body(ctx)
-    if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
-      this.sendOk(ctx, await this.model.deleteComment(commentId, hrId))
+  async deleteComment (ctx) {
+    const { juridictionId, commentId } = this.body(ctx)
+    if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
+      this.sendOk(ctx, await this.model.deleteComment(commentId, juridictionId))
     } else {
       this.sendOk(ctx, null)
     }
-  }*/
+  }
 }
