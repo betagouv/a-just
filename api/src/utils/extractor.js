@@ -446,22 +446,16 @@ export const computeExtractDdg = async (
           }
         });
 
-        const isGone = dateStop > human.dateEnd;
-        if (
-          human.dateEnd &&
-          isGone &&
-          sumBy(reelEtpObject, "etp") /
-            sumBy(reelEtpObject, "countNbOfDays") ===
-            1
-        ) {
-          let difCalculation =
-            (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0);
-          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation;
-        } else
+        const isGone = dateStop > human.dateEnd
+        const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop
+        if (human.dateEnd && isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
+          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        } else if (hasArrived && dateStart) {
           reelEtp =
-            sumBy(reelEtpObject, "etp") /
-              sumBy(reelEtpObject, "countNbOfDays") -
-            (refObj[key] || 0);
+            ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays')) * nbOfDays(human.dateStart, dateStop)) / nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0)
+        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
@@ -771,22 +765,16 @@ export const computeExtract = async (
           }
         });
 
-        const isGone = dateStop > human.dateEnd;
-        if (
-          human.dateEnd &&
-          isGone &&
-          sumBy(reelEtpObject, "etp") /
-            sumBy(reelEtpObject, "countNbOfDays") ===
-            1
-        ) {
-          let difCalculation =
-            (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0);
-          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation;
-        } else
+        const isGone = dateStop > human.dateEnd
+        const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop
+        if (human.dateEnd && isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
+          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        } else if (hasArrived && dateStart) {
           reelEtp =
-            sumBy(reelEtpObject, "etp") /
-              sumBy(reelEtpObject, "countNbOfDays") -
-            (refObj[key] || 0);
+            ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays')) * nbOfDays(human.dateStart, dateStop)) / nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0)
+        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
