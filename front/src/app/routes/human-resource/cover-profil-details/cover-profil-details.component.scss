@@ -62,19 +62,88 @@
     &.right-second-row {
       align-items: flex-end;
     }
+
+    &.left-second-row {
+      display: flex;
+      width: 60%;
+    }
+  }
+
+
+
+  .user-name,
+  .matricule {
+
+    input {
+      border: none;
+      font-size: 20px;
+      font-weight: bold;
+      white-space: wrap;
+      outline: none;
+      color: fColor(cblack);
+      padding: 4px;
+      background: none;
+      box-sizing: border-box;
+      //overflow: hidden;
+      height: 30px;
+      width: inherit;
+      min-width: 110px;
+      overflow: hidden;
+
+      /**
+      position: relative;
+      top: 0;
+      left: 0;
+      min-width: 120px;
+
+      appearance: none;
+      box-sizing: border-box;
+      font-size: 20px;
+      padding: 0px 0px 6px;
+      //border: 0;
+      //background: linear-gradient(to right, gray 50%, transparent 50%), linear-gradient(to right, gray 50%, transparent 50%), linear-gradient(to bottom, gray 50%, transparent 50%), linear-gradient(to bottom, gray 50%, transparent 50%);
+      background-size: 8px 1px, 8px 1px, 1px 8px, 1px 8px;
+      background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+      background-position: 0px 0px, 0px 1em, 0px 0px, 100% 0px;
+      box-shadow: inset 0px -10px 0px white;
+      outline: none;
+*/
+      &::placeholder {
+        color: #aeaeae;
+      }
+
+      &:focus {
+        outline: 1px solid #6a6af4 !important;
+        background-color: #ededed;
+        color: fColor(cblack);
+      }
+    }
+
+    ;
   }
 
   .user-name {
     display: flex;
     align-items: center;
-    margin-bottom: 6px;
 
-    p {
-      font-size: 20px;
-      font-weight: bold;
-      white-space: nowrap;
-      color: fColor(cblack);
+    width: 100%;
+    flex-wrap: wrap;
+
+    .input-wrapper:first-child {
+      margin-right: 6px;
     }
+
+    .input-wrapper {
+      min-width: 120px;
+      position: relative;
+      box-sizing: border-box;
+      line-height: 1em;
+      padding: 4px 4px 4px 1px;
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
 
     mat-icon {
       width: 12px;
@@ -82,6 +151,7 @@
       font-size: 12px;
       margin-left: 10px;
       margin-top: 4px;
+      align-self: center;
     }
 
     aj-help-button {
@@ -89,17 +159,26 @@
     }
   }
 
+  [id^="input-span"] {
+    font-family: inherit;
+    white-space: normal; //nowrap;
+    height: 1em;
+    display: inline-block;
+    font-size: inherit;
+    line-height: inherit;
+    box-sizing: border-box;
+    position: relative;
+    opacity: 0;
+    min-width: 2px;
+    user-select: none;
+    vertical-align: top;
+  }
+
   .matricule {
     display: flex;
     align-items: center;
-    //width: 77px;
     margin-right: 14px;
-
-    p {
-      font-size: 12px;
-      white-space: nowrap;
-      color: fColor(cgray);
-    }
+    padding-left: 1px;
 
     mat-icon {
       width: 7px;
@@ -107,6 +186,16 @@
       font-size: 7px;
       margin-left: 5px;
       margin-top: 1px;
+    }
+
+    input {
+      font-size: 12px !important;
+      /**
+      position: relative;
+      padding-bottom: 0;
+      height: 30px;
+      overflow: hidden;
+*/
     }
   }
 

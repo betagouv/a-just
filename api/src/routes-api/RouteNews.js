@@ -5,12 +5,17 @@ import { Types } from '../utils/types'
  * Route des news
  */
 export default class RouteNews extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'News' })
+    super(params)
+
+    this.model = params.models.News
   }
 
   /**

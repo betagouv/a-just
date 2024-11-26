@@ -3,6 +3,28 @@
 :host {
   height: 100%;
 
+  aj-news {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    z-index: 2;
+  }
+
+  &.space-help {
+    #top>div.top-header-back-title>div>div>aj-help-button {
+      margin-left: 8px;
+    }
+
+    .content {
+      overflow-x: hidden;
+    }
+
+    .header {
+      border-bottom: none;
+    }
+  }
+
   &.help-center {
     #content {
       background-color: blue;
@@ -23,6 +45,7 @@
     .top-header {
       padding-top: 0px !important;
     }
+
     div {
       .contener {
         #content {
@@ -52,12 +75,20 @@
     display: flex;
     flex-direction: column;
     padding-left: 32px;
+    padding-right: 16px;
 
-    p {
+    p,
+    a {
       color: #3a3a3a;
       font-size: 14px;
       margin: 8px 0px;
       cursor: pointer;
+      text-decoration: none;
+
+      i {
+        margin-left: 4px;
+        font-size: 14px;
+      }
     }
   }
 
@@ -82,16 +113,14 @@
     cursor: pointer;
   }
 
-  > div {
+  >div {
     display: flex;
     height: 100%;
   }
 
-  .subtitle-name {
-    border-radius: 12px;
-    background-color: #eee;
-    padding: 3px 6px;
-  }
+
+
+
 
   .logo-ajust {
     cursor: pointer;
@@ -102,6 +131,12 @@
   }
 
   &.print {
+    .content {
+      overflow: inherit !important;
+    }
+  }
+
+  &.no-scroll {
     .content {
       overflow: inherit !important;
     }
@@ -168,6 +203,7 @@
   &.title-margin-right-null {
     .header {
       padding-right: 0;
+
       .top-header {
         .title-with-doc {
           margin-right: 34px;
@@ -210,6 +246,7 @@
       z-index: 200;
 
       .menu-item {
+
         &.disconnect,
         a,
         p {
@@ -282,7 +319,7 @@
     margin-bottom: 8px;
     margin-top: 8px;
 
-    > div {
+    >div {
       width: 45%;
       height: 80px;
       background-repeat: no-repeat;
@@ -366,6 +403,7 @@
     }
 
     &.selected {
+
       a,
       p {
         color: fColor(cbluedark);
@@ -530,7 +568,7 @@
   flex-direction: column;
   align-items: stretch;
 
-  > div.panel-header {
+  >div.panel-header {
     padding: 14px 0 90px 0;
 
     .over-title {
@@ -570,11 +608,11 @@
     }
   }
 
-  > div.panel-header:has(.over-title-small) {
+  >div.panel-header:has(.over-title-small) {
     padding: 0 !important;
   }
 
-  > iframe {
+  >iframe {
     border-radius: 4px;
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);

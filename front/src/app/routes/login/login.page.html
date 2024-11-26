@@ -13,7 +13,7 @@
       </button></a>
   </div>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" (keydown)="preventSubmit($event)">
     <p>Vous avez déjà un compte</p>
     <ng-template [ngIf]="ssoIsActivate && !userService.isCa()">
       <button class="outline white strict-border sso-bt" (click)="onUseSSO()" type="button"
@@ -30,9 +30,11 @@
     <h3 class="intro-step-3">Se connecter avec son compte</h3>
 
     <label>Email</label>
-    <input class="ethics-ui" placeholder="" formControlName="email" type="email" />
+    <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
+      (keyup.enter)="focusNext($event)" />
     <label>Mot de passe</label>
-    <input class="ethics-ui" placeholder="" formControlName="password" type="password" />
+    <input #input class="ethics-ui" placeholder="" formControlName="password" type="password"
+      (keyup.enter)="focusNext($event)" />
     <span class="remember-me"><input type="checkbox" formControlName="remember" /><label>Se souvenir de
         moi</label></span>
     <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>

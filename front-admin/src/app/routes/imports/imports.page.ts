@@ -1,12 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import * as _ from 'lodash';
-import { BackupInterface } from 'src/app/interfaces/backup';
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service';
-import { ImportService } from 'src/app/services/import/import.service';
-import { exportFileToString } from 'src/app/utils/file';
-import { parse, stringify } from 'yaml'
+import { BackupInterface } from '../../interfaces/backup';
+import { ImportService } from '../../services/import/import.service';
+import { HumanResourceService } from '../../services/human-resource/human-resource.service';
+import { exportFileToString } from '../../utils/file';
+import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 
 @Component({
+  standalone: true,
+  imports: [WrapperComponent],
   templateUrl: './imports.page.html',
   styleUrls: ['./imports.page.scss'],
 })
@@ -16,7 +18,7 @@ export class ImportsPage {
   constructor(
     private importService: ImportService,
     private humanResourceService: HumanResourceService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.onLoad();
@@ -65,40 +67,4 @@ export class ImportsPage {
       this.onLoad();
     });
   }
-
-  async onSendActivity(form: any) {
-    const backupId = form.backupId.value;
-    const file = form.file.files[0];
-
-    if (!file) {
-      alert('Vous devez saisir une fichier !');
-      return;
-    }
-
-    this.importService
-      .importActivities({ file: await exportFileToString(file), backupId })
-      .then(() => {
-        alert('OK !');
-        form.reset();
-      });
-  }
-
-  async onSendAllActivity(form: any) {
-    const file = form.file.files[0];
-
-    if (!file) {
-      alert('Vous devez saisir une fichier !');
-      return;
-    }
-
-    this.importService
-      .importAllActivities({ file: await exportFileToString(file) })
-      .then(() => {
-        alert('OK !');
-        form.reset();
-      });
-  }
 }
-
-
-

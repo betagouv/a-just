@@ -27,38 +27,29 @@ import user from '../fixtures/user.json'
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
-declare namespace Cypress {
-    interface Chainable<Subject = any> {
-        login(): Chainable<any>;
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      login(email: string, password: string): Chainable<void>
+      // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
+      // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
+      // visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
     }
+  }
 }
 
-let storage = null
-
-Cypress.Commands.add('getLocalStorage', () => {
-    
-})
-
-
 Cypress.Commands.add('login', () => {
-    cy.visit('http://localhost:4200/connexion');
-    cy.get('form')
-        .get('input[type=email]').type(user.email)
-        .get('input[type=password]').type(user.password)
-        .get('input[type=submit]').click()
-        storage = cy.getAllSessionStorage()
-})
+    cy.clearLocalStorage()
+    cy.clearAllSessionStorage()
+    cy.visit('/connexion')
+    cy.get('input[type=email]').type(user.email)
+    cy.get('input[type=password]').type(user.password)
+    cy.get('form').submit();
+    cy.url().should('contain', '/panorama')
 
-Cypress.Commands.add('restoreLocalStorage', () => {
-    localStorage.setItem()
+    // Close popup
+    cy.get('.introjs-tooltip-header')
+        .get('.introjs-skipbutton')
+        .click()
+    //storage = cy.getAllSessionStorage()
 })

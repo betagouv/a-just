@@ -62,3 +62,24 @@ export const preformatActivitiesArray = (list, index) => {
 
   return total !== null && total < 0 ? 0 : total
 }
+
+
+/**
+ * Compare deux données d'activité en messurant l'écart en % la différence absolue
+ * @param {*} data1
+ * @param {*} data2
+ * @param {*} percentageThreshold
+ * @param {*} absoluteThreshold
+ */
+export const compareGapBetweenData = (data1, data2, percentageThreshold, absoluteThreshold ) => {
+  const absoluteDiff = Math.abs(data1 - data2)
+  const gap = (absoluteDiff / data2) * 100
+
+  if (gap >= percentageThreshold || absoluteDiff >= absoluteThreshold) {
+    return {
+      new: data1,
+      last: data2,
+    }
+  }
+  return null
+}

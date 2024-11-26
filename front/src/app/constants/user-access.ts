@@ -23,6 +23,10 @@ export const USER_ACCESS_CALCULATOR = 5
  */
 export const USER_ACCESS_SIMULATOR = 6
 /**
+ * Constante id d'accés au simulateur
+ */
+export const USER_ACCESS_WHITE_SIMULATOR = 61
+/**
  * Constante id d'accés au réaffectateur
  */
 export const USER_ACCESS_REAFFECTATOR = 7

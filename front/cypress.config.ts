@@ -1,11 +1,14 @@
 import { defineConfig } from "cypress";
-import { environment } from "src/environments/environment";
+const { verifyDownloadTasks } = require('cy-verify-downloads');
 
 export default defineConfig({
   e2e: {
+    testIsolation: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      on('task', verifyDownloadTasks);
     },
-    baseUrl: process.env.FRONT_URL || 'http://localhost:4200',
+    baseUrl: process.env.FRONT_URL || process.env.CYPRESS_BASE_URL || 'http://localhost:4200',
+    video: false,
   },
 });

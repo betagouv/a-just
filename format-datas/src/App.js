@@ -44,25 +44,25 @@ export default class App {
     await onGetIelstListApi().then(async (response) => {
       if (response) {
         // CIVIL
-        // await this.getGroupByJuridiction(tmpFolder, inputFolder);
-        // await this.formatAndGroupJuridiction(
-        //   tmpFolder,
-        //   outputFolder,
-        //   outputAllFolder,
-        //   categoriesOfRules,
-        //   referentiel,
-        //   response
-        // );
-
-        // WIP datas pénal
-        await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
-        await this.formatAndGroupJuridictionPenal(
+        await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
+        await this.formatAndGroupJuridiction(
           tmpFolder,
           outputFolder,
           outputAllFolder,
           categoriesOfRules,
+          referentiel,
           response
         );
+
+        // WIP datas pénal
+        // await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
+        // await this.formatAndGroupJuridictionPenal(
+        //   tmpFolder,
+        //   outputFolder,
+        //   outputAllFolder,
+        //   categoriesOfRules,
+        //   response
+        // );
       }
     });
 
@@ -76,15 +76,15 @@ export default class App {
 
   getRules(inputFolder) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith(".yml"));
-    let categories = [];
-
+    let categories = {};
     for (let i = 0; i < files.length; i++) {
       const fileName = files[i];
 
       const file = readFileSync(`${inputFolder}/${fileName}`, "utf8");
       const yamlParsed = YAML.parse(file);
-      categories = categories.concat(
-        Object.values(yamlParsed.categories || [])
+      const type = yamlParsed.type
+      categories[type] = (
+          Object.values(yamlParsed.categories || []) 
       );
     }
     return categories;
@@ -121,110 +121,128 @@ export default class App {
     return list;
   }
 
-  getCsvOutputPath(tmpFolder, juridiction) {
-    return `${tmpFolder}/export-activities-${juridiction}.csv`;
+  getCsvOutputPath(tmpFolder, juridiction, type) {
+    return `${tmpFolder}/export-activities-${juridiction}-${type}.csv`;
   }
 
-  getCsvOutputPathPenal(inputFileName, tmpFolder, juridiction) {
-    return `${tmpFolder}/${inputFileName}-export-activities-${juridiction}.csv`;
+  getCsvOutputPathPenal(tmpFolder, juridiction, type) {
+    return `${tmpFolder}/export-activities-${juridiction}-${type}.csv`;
   }
 
-  async getGroupByJuridiction(tmpFolder, inputFolder) {
-    const files = readdirSync(inputFolder).filter(
-      (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1
+  async getGroupByJuridiction(tmpFolder, inputFolder, I_ELST_LIST) {
+    let groupedFiles = {} 
+    
+    groupedFiles.TGI_TI = readdirSync(inputFolder).filter(
+      (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1 && (f.indexOf('RGC-TGI') !== -1 || f.indexOf('RGC-TI') !== -1)
     );
 
-    let headerMap = [];
-    // generate header
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    groupedFiles.CPH = readdirSync(inputFolder).filter(
+      (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1 && f.indexOf('RGC-CPH') !== -1
+    );
 
-      let liner = new lineByLine(`${inputFolder}/${file}`);
-      let line;
-      let nbLine = 0;
-      let secondTag = "";
-      let isEnd = false;
+    groupedFiles.MINTI = readdirSync(inputFolder).filter(
+      (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1 && f.indexOf('MINTI') !== -1
+    );
 
-      // get header
-      while ((line = liner.next()) !== false && !isEnd) {
-        const lineFormated = line.toString("ascii").trim();
+    groupedFiles.CA = readdirSync(inputFolder).filter(
+      (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1 && f.indexOf('RGC-CA') !== -1
+    );
 
-        if (nbLine === 2) {
-          secondTag = this.getTagName(lineFormated);
-        } else if (`</${secondTag}>` === lineFormated) {
-          isEnd = true;
-        } else if (nbLine > 2) {
-          const newTag = this.getTagName(lineFormated);
-          // merge all columns name
-          if (headerMap.indexOf(newTag) === -1) {
-            headerMap.push(newTag);
-          }
-        }
+    for (let type of Object.keys(groupedFiles)) {
+      let headerMap = [];
+      // generate header
+      for (let i = 0; i < groupedFiles[type].length; i++) {
+        const file = groupedFiles[type][i];
 
-        nbLine++;
-      }
-    }
-    headerMap.push("type_juridiction");
+        let liner = new lineByLine(`${inputFolder}/${file}`);
+        let line;
+        let nbLine = 0;
+        let secondTag = "";
+        let isEnd = false;
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+        // get header
+        while ((line = liner.next()) !== false && !isEnd) {
+          const lineFormated = line.toString("ascii").trim();
 
-      const regex = new RegExp("(_RGC-(.*?)_)|(_MINTI_(.*?).xml)", "g");
-      let testRegex;
-      let getTypeOfJuridiction;
-      if ((testRegex = regex.exec(file)) !== null) {
-        getTypeOfJuridiction = testRegex[1];
-      } else {
-        break;
-      }
-
-      // complete file
-      let liner = new lineByLine(`${inputFolder}/${file}`);
-      let dataLines = headerMap.map(() => ""); // create empty map
-      let totalLine = 0;
-      let nbLine = 0;
-      let line;
-      let secondTag = "";
-      while ((line = liner.next()) !== false) {
-        const lineFormated = line.toString("ascii").trim();
-        const tag = this.getTagName(lineFormated);
-
-        if (nbLine === 2) {
-          secondTag = this.getTagName(lineFormated);
-        } else if (tag === secondTag) {
-          secondTag = this.getTagName(lineFormated);
-          dataLines = headerMap.map(() => ""); // create empty map
-        } else if (`</${secondTag}>` === lineFormated) {
-          // create file if not exist and only for authorizes jurdiction
-          const codeJuridiction = dataLines[0];
-
-          if (!existsSync(this.getCsvOutputPath(tmpFolder, codeJuridiction))) {
-            // create file
-            writeFileSync(
-              this.getCsvOutputPath(tmpFolder, codeJuridiction),
-              `${headerMap.join(",")},\n`
-            );
+          if (nbLine === 2) {
+            secondTag = this.getTagName(lineFormated);
+          } else if (`</${secondTag}>` === lineFormated) {
+            isEnd = true;
+          } else if (nbLine > 2) {
+            const newTag = this.getTagName(lineFormated);
+            // merge all columns name
+            if (headerMap.indexOf(newTag) === -1) {
+              headerMap.push(newTag);
+            }
           }
 
-          dataLines[dataLines.length - 1] = getTypeOfJuridiction; // add type of juridiction
-          appendFileSync(
-            this.getCsvOutputPath(tmpFolder, codeJuridiction),
-            `${dataLines.join(",")},\n`
-          );
-          totalLine++;
-        } else if (nbLine > 2) {
-          const index = headerMap.indexOf(tag);
-          if (index !== -1) {
-            dataLines[index] = this.getTagValue(lineFormated);
-          }
-        }
-
-        nbLine++;
-        if (nbLine % 1000000 === 0) {
-          console.log(nbLine);
+          nbLine++;
         }
       }
-      console.log(`add ${totalLine} lines add`);
+      headerMap.push("type_juridiction");
+
+      for (let i = 0; i < groupedFiles[type].length; i++) {
+        const file = groupedFiles[type][i];
+
+        const regex = new RegExp("(_RGC-(.*?)_)|(_MINTI_(.*?).xml)", "g");
+        let testRegex;
+        let getTypeOfJuridiction;
+        if ((testRegex = regex.exec(file)) !== null) {
+          getTypeOfJuridiction = testRegex[1];
+        } else {
+          break;
+        }
+
+        // complete file
+        let liner = new lineByLine(`${inputFolder}/${file}`);
+        let dataLines = headerMap.map(() => ""); // create empty map
+        let totalLine = 0;
+        let nbLine = 0;
+        let line;
+        let secondTag = "";
+        while ((line = liner.next()) !== false) {
+          const lineFormated = line.toString("ascii").trim();
+          const tag = this.getTagName(lineFormated);
+
+          if (nbLine === 2) {
+            secondTag = this.getTagName(lineFormated);
+          } else if (tag === secondTag) {
+            secondTag = this.getTagName(lineFormated);
+            dataLines = headerMap.map(() => ""); // create empty map
+          } else if (`</${secondTag}>` === lineFormated) {
+            // create file if not exist and only for authorizes jurdiction
+            const juridiction = I_ELST_LIST[dataLines[0]];
+
+            if (juridiction) {
+              if (!existsSync(this.getCsvOutputPath(tmpFolder, juridiction, type))) {
+                // create file
+                writeFileSync(
+                  this.getCsvOutputPath(tmpFolder, juridiction, type),
+                  `${headerMap.join(",")},\n`
+                );
+              }
+
+              dataLines[dataLines.length - 1] = getTypeOfJuridiction; // add type of juridiction
+              appendFileSync(
+                this.getCsvOutputPath(tmpFolder, juridiction, type),
+                `${dataLines.join(",")},\n`
+              );
+              totalLine++;
+            }
+          } else if (nbLine > 2) {
+            const index = headerMap.indexOf(tag);
+            if (index !== -1) {
+              dataLines[index] = this.getTagValue(lineFormated);
+            }
+          }
+
+          nbLine++;
+          if (nbLine % 1000000 === 0) {
+            console.log(nbLine);
+          }
+        }
+        console.log(`add ${totalLine} lines add`);
+      }
     }
   }
 
@@ -263,25 +281,26 @@ export default class App {
           }
           if (codeJuridiction.length === 6)
             codeJuridiction = `00${codeJuridiction}`;
-          if (I_ELST_LIST[codeJuridiction]) {
-            const fileName = file.replace(".csv", "");
+          const juridiction = I_ELST_LIST[codeJuridiction]
+          if (juridiction) {
+            const type = file.replace('.csv', '');
             if (
               !existsSync(
-                this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction)
+                this.getCsvOutputPathPenal(tmpFolder, juridiction, type)
               )
             ) {
               // create file
               writeFileSync(
                 this.getCsvOutputPathPenal(
-                  fileName,
                   tmpFolder,
-                  codeJuridiction
+                  juridiction,
+                  type
                 ),
                 header + "\n"
               );
             }
             appendFileSync(
-              this.getCsvOutputPathPenal(fileName, tmpFolder, codeJuridiction),
+              this.getCsvOutputPathPenal(tmpFolder, juridiction, type),
               `${data}\n`
             );
           }
@@ -313,90 +332,100 @@ export default class App {
   ) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
+    const groupedFiles = files.reduce((acc, file) => {
+      const ielst = file.match(/^export-activities-([^\-]+)-/);
+      if (ielst) {
+        const number = ielst[1]
+
+        if (!acc[number]) {
+          acc[number] = [];
+        }
+        acc[number].push(file);
+      }
+      return acc;
+    }, {})
 
     // id, code_import, periode, stock, entrees, sorties
     // .....
-    console.log("files:", files);
-    for (let i = 0; i < files.length; i++) {
-      const fileName = files[i];
-      const ielst = fileName
-        .replace("export-activities-", "")
-        .replace(".csv", "");
+    for( const tj in groupedFiles) {
+      for (let i = 0; i < groupedFiles[tj].length; i++) {
+        const fileName = groupedFiles[tj][i];
 
-      if (!I_ELST_LIST[ielst]) {
-        continue;
-      }
-
-      if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
-        JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = [];
-      }
-
-      console.log(
-        fileName,
-        fileName.replace("export-activities-", "").replace(".csv", ""),
-        I_ELST_LIST[ielst]
-      );
-
-      const arrayOfCsv = await csvToArrayJson(
-        readFileSync(`${tmpFolder}/${fileName}`, "utf8"),
-        {
-          delimiter: ",",
-        }
-      );
-      const groupByMonthObject = groupBy(arrayOfCsv, "periode");
-
-      let list = [];
-      Object.values(groupByMonthObject).map((monthValues) => {
-        console.log("TJ:", I_ELST_LIST[ielst], " | monthValues:", monthValues);
-        // format string to integer
-        monthValues = monthValues.map((m) => ({
-          ...m,
-          nbaff: m.nbaff ? parseInt(m.nbaff) : null,
-          nbaffdur: m.nbaffdur ? parseInt(m.nbaffdur) : null,
-        }));
-
-        console.log(ielst);
-        const formatMonthDataFromRules = this.formatMonthFromRules(
-          monthValues,
-          categoriesOfRules,
-          referentiel
-        );
-        list = list.concat(formatMonthDataFromRules);
-      });
-
-      // merge to existing list
-      JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
-        const index = acc.findIndex(
-          (a) => a.code_import === cur.code_import && a.periode === cur.periode
-        );
-        if (index === -1) {
-          acc.push(cur);
-        } else {
-          let entrees = acc[index].entrees;
-          if (cur.entrees !== null) {
-            entrees = (entrees || 0) + (cur.entrees || 0);
-          }
-
-          let sorties = acc[index].sorties;
-          if (cur.sorties !== null) {
-            sorties = (sorties || 0) + (cur.sorties || 0);
-          }
-
-          let stock = acc[index].stock;
-          if (cur.stock !== null) {
-            stock = (stock || 0) + (cur.stock || 0);
-          }
-
-          acc[index] = {
-            ...acc[index],
-            entrees,
-            sorties,
-            stock,
-          };
+        const tj_label = fileName.replace(/^export-activities-/, '').replace(/-\w+\.csv$/, '');
+        const ielst = Object.keys(I_ELST_LIST).find(key => I_ELST_LIST[key] === tj_label);
+        const type = fileName.includes('CPH') ? 'CPH' : (fileName.includes('MINTI') ? 'MINTI' : fileName.includes('TGI_TI') ? 'TGI_TI' : 'CA');
+        const rulesToApply = categoriesOfRules[type]
+        if (!ielst) {
+            continue
         }
 
-        return acc;
-      }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]);
+        if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
+          JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = [];
+        }
+
+        console.log(
+          fileName,
+          fileName.replace(/^export-activities-/, '').replace(/-\w+\.csv$/, ''),
+          I_ELST_LIST[ielst]
+        );
+
+        const arrayOfCsv = await csvToArrayJson(
+          readFileSync(`${tmpFolder}/${fileName}`, "utf8"),
+          {
+            delimiter: ",",
+          }
+        );
+        const groupByMonthObject = groupBy(arrayOfCsv, "periode");
+        let list = [];
+        Object.values(groupByMonthObject).map((monthValues) => {
+          // format string to integer
+          monthValues = monthValues.map((m) => ({
+            ...m,
+            nbaff: m.nbaff ? parseInt(m.nbaff) : null,
+            nbaffdur: m.nbaffdur ? parseInt(m.nbaffdur) : null,
+          }));
+
+          const formatMonthDataFromRules = this.formatMonthFromRules(
+            monthValues,
+            rulesToApply,
+            referentiel
+          );
+          list = list.concat(formatMonthDataFromRules);
+        });
+
+        // merge to existing list
+        JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
+          const index = acc.findIndex(
+            (a) => a.code_import === cur.code_import && a.periode === cur.periode
+          );
+          if (index === -1) {
+            acc.push(cur);
+          } else {
+            let entrees = acc[index].entrees;
+            if (cur.entrees !== null) {
+              entrees = (entrees || 0) + (cur.entrees || 0);
+            }
+
+            let sorties = acc[index].sorties;
+            if (cur.sorties !== null) {
+              sorties = (sorties || 0) + (cur.sorties || 0);
+            }
+
+            let stock = acc[index].stock;
+            if (cur.stock !== null) {
+              stock = (stock || 0) + (cur.stock || 0);
+            }
+
+            acc[index] = {
+              ...acc[index],
+              entrees,
+              sorties,
+              stock,
+            };
+          }
+          return acc;
+        }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]);
+      }
     }
 
     for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
@@ -412,7 +441,6 @@ export default class App {
           .join("\n")}`
       );
     }
-
     writeFileSync(
       `${outputAllFolder}/AllJuridictionsCiviles.csv`,
       "juridiction,code_import,periode,entrees,sorties,stock,\n"
@@ -582,152 +610,169 @@ export default class App {
   ) {
     const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
     const JURIDICTIONS_EXPORTS = {};
+    const groupedFiles = files.reduce((acc, file) => {
+      const ielst = file.match(/^export-activities-([^\-]+)-/);
+      
+      if (ielst) {
+        const number = ielst[1]
 
-    for (let i = 0; i < files.length; i++) {
-      const fileName = files[i].replace(/-export-activities-.*/, "");
-      let ielst = files[i]
-        .replace(/.+?(?=export-activities-)/, "")
-        .replace("export-activities-", "")
-        .replace(".csv", "");
-
-      if (!I_ELST_LIST[ielst]) {
-        continue;
-      }
-
-      if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
-        JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = [];
-      }
-
-      const arrayOfCsv = await csvToArrayJson(
-        readFileSync(`${tmpFolder}/${files[i]}`, "utf8")
-      );
-      const tmpCategoriesOfRules = categoriesOfRules.filter((rule) => {
-        return fileName.includes(rule.fichier);
-      });
-
-      let dateInFile = null;
-      if (arrayOfCsv.length) {
-        const line1 = arrayOfCsv[0];
-        const datesNames = ["cod_moi", "annee", "mois"];
-
-        for (let date of datesNames) {
-          if (date in line1) {
-            if (date === datesNames[0]) {
-              dateInFile = date;
-              break;
-            } else if (date === datesNames[1] || date === datesNames[2]) {
-              if (date === datesNames[2] && !(datesNames[1] in line1)) {
-                dateInFile = date;
-              } else {
-                dateInFile = [datesNames[1], datesNames[2]];
-              }
-              break;
-            }
-          }
+        if (!acc[number]) {
+          acc[number] = [];
         }
+        acc[number].push(file);
       }
+      return acc;
+    }, {})
 
-      // group by month
-      let groupByMonthObject = null;
-      if (!Array.isArray(dateInFile)) {
-        groupByMonthObject = groupBy(arrayOfCsv, dateInFile);
-      } else {
-        const tmp = arrayOfCsv.map((tj) => {
-          const mois =
-            tj.mois.length < 2 ? tj.annee + `0${tj.mois}` : tj.annee + tj.mois;
-          delete tj.annee;
-          return { ...tj, mois: mois };
-        });
-        groupByMonthObject = groupBy(tmp, dateInFile[1]);
-      }
-
-      let list = [];
-      const entreeNames = ["nb_aff_nouv", "instr_nb_aff_nouv"];
-      const sortieNames = ["nb_aff_end", "instr_nb_aff_cloturee", "nb_aff"];
-      const stockNames = ["nb_aff_old", "instr_nb_aff_stock"];
-      Object.values(groupByMonthObject).map((monthValues) => {
-        // format string to integer
-
-        monthValues = monthValues.map((m) => {
-          for (let entree of entreeNames) {
-            if (entree in m) {
-              m[entree] = m[entree] ? parseInt(m[entree]) : null;
-              break;
-            }
-          }
-          for (let sortie of sortieNames) {
-            if (sortie in m) {
-              m[sortie] = m[sortie] ? parseInt(m[sortie]) : null;
-              break;
-            }
-          }
-          for (let stock of stockNames) {
-            if (stock in m) {
-              m[stock] = m[stock] ? parseInt(m[stock]) : null;
-              break;
-            }
-          }
-
-          return m;
+    for( const tj in groupedFiles) {
+      for (let i = 0; i < groupedFiles[tj].length; i++) {
+        const fileName =  groupedFiles[tj][i];
+        
+        const tj_label = fileName.replace(/^export-activities-/, '').replace(/-\w+\.csv$/, '');
+        const ielst = Object.keys(I_ELST_LIST).find(key => I_ELST_LIST[key] === tj_label);
+        const type = 'Penal';
+        const rules = categoriesOfRules[type]
+        const rulesToApply = rules.filter((rule) => {
+          return fileName.includes(rule.fichier);
         });
 
-        const actualDate = new Date();
-        const year = actualDate.getFullYear().toString();
-        let month = (actualDate.getMonth() + 1).toString();
-        if (month.length < 2) month = `0${month}`;
-        const now = year + month;
-
-        let tmp_date = null;
-        if (!Array.isArray(dateInFile)) {
-          tmp_date = monthValues[0][dateInFile];
-        } else {
-          tmp_date = monthValues[0][dateInFile[1]];
+        if (!ielst) {
+          continue
         }
 
-        if (tmp_date <= now - 1) {
-          let formatMonthDataFromRules = null;
-          formatMonthDataFromRules = this.formatMonthFromRules(
-            monthValues,
-            tmpCategoriesOfRules
-          );
-          list = list.concat(formatMonthDataFromRules);
+        if (!JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]) {
+          JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = [];
         }
-      });
 
-      // merge to existing list
-      JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
-        const index = acc.findIndex(
-          (a) => a.code_import === cur.code_import && a.periode === cur.periode
+        const arrayOfCsv = await csvToArrayJson(
+          readFileSync(`${tmpFolder}/${fileName}`, "utf8")
         );
-        if (index === -1) {
-          acc.push(cur);
-        } else {
-          let entrees = acc[index].entrees;
-          if (cur.entrees !== null) {
-            entrees = (entrees || 0) + (cur.entrees || 0);
-          }
+        
+        let dateInfo = null;
+        if (arrayOfCsv.length) {
+          const header = Object.keys(arrayOfCsv[0]);
+          const dateColumns = ['cod_moi', 'annee', 'mois'];
 
-          let sorties = acc[index].sorties;
-          if (cur.sorties !== null) {
-            sorties = (sorties || 0) + (cur.sorties || 0);
-          }
+          const foundDateColumns = dateColumns.filter(col => header.includes(col));
 
-          let stock = acc[index].stock;
-          if (cur.stock !== null) {
-            stock = (stock || 0) + (cur.stock || 0);
+          if (foundDateColumns.length) {
+            if (foundDateColumns.includes('cod_moi')) {
+              dateInfo = 'cod_moi';
+            } else if (foundDateColumns.includes('mois')) {
+              dateInfo = foundDateColumns.includes('annee') ? ['annee', 'mois'] : 'mois';
+            } else {
+              dateInfo = ['annee']; // Cas où seule 'annee' est présente
+            }
           }
-
-          acc[index] = {
-            ...acc[index],
-            entrees,
-            sorties,
-            stock,
-          };
         }
 
-        return acc;
-      }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]);
+        // group by month
+        let groupByMonthObject = null;
+        let arrayOfCsv_copy = null
+        if (!Array.isArray(dateInfo)) {
+          arrayOfCsv_copy = arrayOfCsv.map((values) => {
+            const periode = values[dateInfo]
+            delete values[dateInfo]
+            return { ...values, periode: periode }
+          })
+        } else {
+          arrayOfCsv_copy = arrayOfCsv.map((values) => {
+            const mois =
+              values.mois.length < 2 ? values.annee + `0${values.mois}` : values.annee + values.mois;
+            delete values.annee;
+            delete values.mois;
+            return { ...values, periode: mois };
+          });
+        }
+
+        groupByMonthObject = groupBy(arrayOfCsv_copy, 'periode');
+
+        let list = [];
+        const entreeNames = ["nb_aff_nouv", "instr_nb_aff_nouv"];
+        const sortieNames = ["nb_aff_end", "instr_nb_aff_cloturee", "nb_aff"];
+        const stockNames = ["nb_aff_old", "instr_nb_aff_stock"];
+        Object.values(groupByMonthObject).map((monthValues) => {
+          // format string to integer
+
+          monthValues = monthValues.map((values) => {
+            for (let entree of entreeNames) {
+              if (entree in values) {
+                values[entree] = values[entree] ? parseInt(values[entree]) : null;
+                break;
+              }
+            }
+            for (let sortie of sortieNames) {
+              if (sortie in values) {
+                values[sortie] = values[sortie] ? parseInt(values[sortie]) : null;
+                break;
+              }
+            }
+            for (let stock of stockNames) {
+              if (stock in values) {
+                values[stock] = values[stock] ? parseInt(values[stock]) : null;
+                break;
+              }
+            }
+
+            return values;
+          });
+          const now = new Date()
+          now.setDate(1)
+
+          const year = parseInt(monthValues[0].periode.substring(0, 4), 10);
+          const month = parseInt(monthValues[0].periode.substring(4, 6), 10) - 1;
+          const periode = new Date(year, month, 1);
+          
+          const previousMonth = new Date(now);
+          previousMonth.setMonth(now.getMonth() - 1);
+        
+
+          if (periode <= previousMonth) {
+            let formatMonthDataFromRules = null;
+            formatMonthDataFromRules = this.formatMonthFromRules(
+              monthValues,
+              rulesToApply
+            );
+            list = list.concat(formatMonthDataFromRules);
+          }
+        });
+
+        // merge to existing list
+        JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]] = list.reduce((acc, cur) => {
+          const index = acc.findIndex(
+            (a) => a.code_import === cur.code_import && a.periode === cur.periode
+          );
+          if (index === -1) {
+            acc.push(cur);
+          } else {
+            let entrees = acc[index].entrees;
+            if (cur.entrees !== null) {
+              entrees = (entrees || 0) + (cur.entrees || 0);
+            }
+
+            let sorties = acc[index].sorties;
+            if (cur.sorties !== null) {
+              sorties = (sorties || 0) + (cur.sorties || 0);
+            }
+
+            let stock = acc[index].stock;
+            if (cur.stock !== null) {
+              stock = (stock || 0) + (cur.stock || 0);
+            }
+
+            acc[index] = {
+              ...acc[index],
+              entrees,
+              sorties,
+              stock,
+            };
+          }
+
+          return acc;
+        }, JURIDICTIONS_EXPORTS[I_ELST_LIST[ielst]]);
+      }
     }
+
     for (const [key, value] of Object.entries(JURIDICTIONS_EXPORTS)) {
       writeFileSync(
         `${outputFolder}/${key}.csv`,

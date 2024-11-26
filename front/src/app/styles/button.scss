@@ -17,11 +17,26 @@ button {
     font-size: 16px;
   }
 
+  &.medium {
+    height: 38px;
+    line-height: 40px;
+    border-radius: 0px;
+    font-size: 16px;
+
+    mat-icon {
+      height: 18px;
+      width: 18px;
+      font-size: 18px;
+      position: relative;
+      top: 3px;
+    }
+  }
+
   &.small {
     height: 32px;
     line-height: 30px;
     border-radius: 0px;
-    font-size: 16px;
+    font-size: 14px;
 
     mat-icon {
       height: 18px;
@@ -99,10 +114,10 @@ button {
 
 /* INDISPONIBILITIES STYLING */
 .indispo-content {
-  margin-top: 24px;
+  margin-top: 16px;
 
   >div {
-    min-height: 57px;
+    min-height: 56px;
     border-radius: 4px;
     border: solid 1px fColor(cred);
     background-color: fColor(credlight);

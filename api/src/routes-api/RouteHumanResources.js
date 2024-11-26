@@ -15,16 +15,17 @@ import { etpLabel } from '../constants/referentiel'
  * Route des fiches
  */
 export default class RouteHumanResources extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HumanResources' })
+    super(params)
 
-    setTimeout(() => {
-      this.model.onPreload() // preload juridiction after 1 minute
-    }, 60000)
+    this.model = params.models.HumanResources
   }
 
   /**
@@ -234,7 +235,7 @@ export default class RouteHumanResources extends Route {
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
 
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck, true)
-    
+
     const allCategories = await this.models.HRCategories.getAll()
 
     if (categoriesIds && categoriesIds.length === 3 && (!contentieuxIds || contentieuxIds.length === 0)) {

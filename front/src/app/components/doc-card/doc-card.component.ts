@@ -1,24 +1,29 @@
-import { Component, Input } from '@angular/core'
-import { AppService } from 'src/app/services/app/app.service'
-import { ServerService } from 'src/app/services/http-server/server.service'
-import { downloadFile } from 'src/app/utils/system'
+import { CommonModule } from '@angular/common';
+import { Component, inject, Input } from '@angular/core';
+import { ServerService } from '../../services/http-server/server.service';
+import { downloadFile } from '../../utils/system';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 export interface DocCardInterface {
-  title: string
-  description: string
-  image: string
-  tag: string
-  url: string
-  localUrl?: boolean
-  download?: boolean
+  title: string;
+  description: string;
+  image: string;
+  tag: string;
+  url: string;
+  localUrl?: boolean;
+  download?: boolean;
 }
 
 @Component({
   selector: 'aj-doc-card',
+  standalone: true,
+  imports: [CommonModule, MatIconModule, RouterLink],
   templateUrl: './doc-card.component.html',
   styleUrls: ['./doc-card.component.scss'],
 })
 export class DocCardComponent {
+  serverService = inject(ServerService);
   /**
    * Data card
    */
@@ -29,20 +34,12 @@ export class DocCardComponent {
     tag: '',
     url: '',
     download: false,
-  }
+  };
   /**
    * Localisation du fichier nomenclature
    */
   CALCULATRICE_DOWNLOAD_URL =
-    '/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx'
-
-  /**
-   * Constructeur
-   */
-  constructor(
-    private serverService: ServerService,
-    private appService: AppService
-  ) { }
+    '/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx';
 
   async goTo(url: string) {
     await this.serverService
@@ -50,15 +47,14 @@ export class DocCardComponent {
         value: url,
       })
       .then((r) => {
-        return r.data
-      })
+        return r.data;
+      });
 
-
-    console.log(this.data)
+    console.log(this.data);
     if (this.data.download) {
-      downloadFile(url)
+      downloadFile(url);
     } else {
-      window.open(url)
+      window.open(url);
     }
   }
 }

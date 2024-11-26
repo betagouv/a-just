@@ -11,5 +11,6 @@ jobs:
     steps:
       - run: echo "TEST PROJECT"
       - uses: actions/checkout@v2
+      - run: docker compose version
       - run: npm i
       - run: npm run test

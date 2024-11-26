@@ -1,8 +1,5 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "cli": {
-    "analytics": false
-  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -11,9 +8,6 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
         }
       },
       "root": "",
@@ -21,46 +15,44 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "customWebpackConfig": {
-              "path": "./extra-webpack.config.js"
-            },
             "allowedCommonJsDependencies": [
-              "chart.js",
-              "lodash",
-              "moment",
-              "core-js/modules/es.array.index-of.js",
-              "core-js/modules/es.array.iterator.js",
-              "core-js/modules/es.array.reduce.js",
-              "core-js/modules/es.array.reverse.js",
-              "core-js/modules/es.promise.js",
-              "core-js/modules/es.regexp.to-string.js",
-              "core-js/modules/es.string.ends-with.js",
-              "core-js/modules/es.string.includes.js",
+              "moment", 
+              "file-saver", 
+              "lodash", 
+              "core-js/modules/es.promise.js", 
               "core-js/modules/es.string.match.js",
               "core-js/modules/es.string.replace.js",
-              "core-js/modules/es.string.split.js",
               "core-js/modules/es.string.starts-with.js",
-              "core-js/modules/es.string.trim.js",
+              "core-js/modules/es.array.iterator.js",
               "core-js/modules/web.dom-collections.iterator.js",
+              "core-js/modules/es.array.reduce.js",
+              "core-js/modules/es.string.ends-with.js",
+              "core-js/modules/es.string.split.js",
               "raf",
+              "core-js/modules/es.string.trim.js",
               "rgbcolor",
+              "core-js/modules/es.array.index-of.js",
+              "core-js/modules/es.string.includes.js",
+              "core-js/modules/es.array.reverse.js",
+              "core-js/modules/es.regexp.to-string.js",
               "html2canvas",
-              "file-saver",
-              "quill",
-              "mapbox-gl",
-              "xlsx-renderer"
+              "xlsx-renderer",
+              "dompurify"
             ],
             "outputPath": "dist",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "sass",
-            "assets": ["src/favicon.ico", "src/favicon.svg", "src/assets"],
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "@angular/material/prebuilt-themes/azure-blue.css",
               "node_modules/quill/dist/quill.snow.css",
               "node_modules/toastr/build/toastr.min.css",
               "src/app/styles/styles.scss",
@@ -69,7 +61,7 @@
               "node_modules/intro.js/minified/introjs.min.css"
             ],
             "scripts": [
-              "node_modules/quill/dist/quill.min.js",
+              "node_modules/quill/dist/quill.js",
               "node_modules/mapbox-gl/dist/mapbox-gl.js",
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/toastr/build/toastr.min.js",
@@ -78,18 +70,10 @@
           },
           "configurations": {
             "production": {
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": false
-                },
-                "fonts": true
-              },
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
+                  "maximumWarning": "2mb",
                   "maximumError": "6mb"
                 },
                 {
@@ -107,18 +91,10 @@
               "outputHashing": "all"
             },
             "preproduction": {
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": false
-                },
-                "fonts": true
-              },
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
+                  "maximumWarning": "2mb",
                   "maximumError": "6mb"
                 },
                 {
@@ -136,18 +112,10 @@
               "outputHashing": "all"
             },
             "staging": {
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": false
-                },
-                "fonts": true
-              },
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
+                  "maximumWarning": "2mb",
                   "maximumError": "6mb"
                 },
                 {
@@ -165,19 +133,10 @@
               "outputHashing": "all"
             },
             "sandbox": {
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": false
-                },
-                "fonts": true
-              },
-
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
+                  "maximumWarning": "2mb",
                   "maximumError": "6mb"
                 },
                 {
@@ -195,12 +154,9 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -209,48 +165,52 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "a-just-front:build:production"
+              "buildTarget": "a-just-front:build:production"
             },
             "preproduction": {
-              "browserTarget": "a-just-front:build:preproduction"
+              "buildTarget": "a-just-front:build:preproduction"
             },
             "staging": {
-              "browserTarget": "a-just-front:build:staging"
+              "buildTarget": "a-just-front:build:staging"
             },
             "sandbox": {
-              "browserTarget": "a-just-front:build:sandbox"
+              "buildTarget": "a-just-front:build:sandbox"
             },
             "development": {
-              "browserTarget": "a-just-front:build:development"
+              "buildTarget": "a-just-front:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "a-just-front:build"
-          }
+          "builder": "@angular-devkit/build-angular:extract-i18n"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "inlineStyleLanguage": "sass",
-            "assets": ["src/favicon.ico", "src/favicon.svg", "src/assets"],
-            "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "node_modules/quill/dist/quill.snow.css",
-              "src/app/styles/styles.scss",
-              "node_modules/animate.css/animate.min.css"
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
             ],
-            "scripts": ["node_modules/quill/dist/quill.min.js"]
+            "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.scss"
+            ],
+            "scripts": []
           }
         }
       }
     }
   },
-  "defaultProject": "a-just-front"
+  "cli": {
+    "analytics": false
+  }
 }

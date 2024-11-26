@@ -3,7 +3,7 @@
 :host {
   display: block;
 
-  .header{
+  .header {
     padding: 24px;
     display: flex;
     align-items: flex-end;
@@ -21,7 +21,7 @@
       font-size: 14px;
     }
   }
-  
+
   .buttons {
     display: flex;
     margin-left: 16px;
@@ -51,13 +51,13 @@
       margin-left: 3px;
     }
   }
-  
+
   .cards {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     width: 100%;
-    
+
     ul {
       list-style-type: none;
       padding: 0;
@@ -94,13 +94,13 @@
         width: 25%;
         padding-left: 48px;
       }
-      
-      .assignement{
+
+      .assignement {
         width: 50%;
         margin-left: 3px;
       }
 
-      .date{
+      .date {
         display: flex;
         justify-content: space-between;
         width: 18%;
@@ -112,8 +112,9 @@
       display: flex;
       background-color: #fff;
       min-height: 60.9px;
-      
+
       border: 1px solid #dddddd;
+
       .identity-section {
         display: flex;
         align-items: center;
@@ -126,6 +127,7 @@
           padding: 4px 6px;
           border-radius: 12px;
         }
+
         .main-infos {
           display: flex;
           flex-direction: column;
@@ -136,12 +138,12 @@
           line-height: 1.71;
           font-weight: bold;
         }
-        
+
         .infos {
           display: flex;
           font-size: 10px;
 
-          .category{
+          .category {
             border-radius: 12px;
             padding: 2px 8px;
             margin-right: 3px;
@@ -161,7 +163,7 @@
         margin-left: 3px;
         width: 50%;
         align-items: flex-end;
-        
+
         .activities {
           display: flex;
           flex-wrap: wrap;
@@ -189,7 +191,7 @@
             }
           }
         }
-  
+
         .total {
           font-weight: bold;
           background-color: #f6f6f6;
@@ -202,6 +204,7 @@
           margin-bottom: 8px;
           height: 25.6px;
         }
+
         .light-arrow {
           color: #0063cb;
           margin-right: 4px;
@@ -229,6 +232,7 @@
           border-radius: 4px;
           width: 95px;
           text-align: center;
+          white-space: nowrap;
         }
 
         .coming {

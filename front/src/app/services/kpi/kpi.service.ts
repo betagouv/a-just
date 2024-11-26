@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core'
-import { ServerService } from '../http-server/server.service'
+import { inject, Injectable } from '@angular/core';
+import { ServerService } from '../http-server/server.service';
 
 /**
  * Service des KPI
@@ -8,11 +8,7 @@ import { ServerService } from '../http-server/server.service'
   providedIn: 'root',
 })
 export class KPIService {
-  /**
-   * Constructeur
-   * @param serverService
-   */
-  constructor(private serverService: ServerService) {}
+  serverService = inject(ServerService);
 
   /**
    * API de sauvegarde d'une action
@@ -20,6 +16,6 @@ export class KPIService {
    * @returns
    */
   register(codeId: number, value: string): Promise<any> {
-    return this.serverService.post('kpi/call', { type: codeId, value })
+    return this.serverService.post('kpi/call', { type: codeId, value });
   }
 }

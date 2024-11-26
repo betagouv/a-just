@@ -1,22 +1,22 @@
-require('dotenv').config()
+import "dotenv/config";
 
 module.exports = {
   /**
    * String pour préfixer le nom de l'environement (idéal pour les mails de test)
    */
-  envName: '',
+  envName: "",
   /**
    * String pour préfixer le nom de l'environement (idéal pour les mails de test)
    */
-  displayEnvName: '',
+  displayEnvName: "",
   /**
    * Url du serveur (idéal pour le contenu des mails)
    */
-  serverUrl: process.env.SERVER_URL || 'http://localhost:8081/api',
+  serverUrl: process.env.SERVER_URL || "http://localhost:8081/api",
   /**
    * Url du font (idéal pour le contenu des mails)
    */
-  frontUrl: process.env.FRONT_URL || 'http://localhost:4200',
+  frontUrl: process.env.FRONT_URL || "http://localhost:4200",
   /**
    * Url du cors
    */
@@ -39,10 +39,6 @@ module.exports = {
   jsonwebtoken: {
     private_key: process.env.JSON_WEB_TOKEN,
   },
-  /**
-   * Affiche ou non les consoles
-   */
-  consoleLog: true,
   /**
    * Clé API de sendinblue
    */
@@ -163,7 +159,7 @@ module.exports = {
    * SESSION CONFIG
    */
   session: {
-    key: 'koa.sess' /** (string) cookie key (default is koa.sess) */,
+    key: "koa.sess" /** (string) cookie key (default is koa.sess) */,
     /** (number || 'session') maxAge in ms (default is 1 days) */
     /** 'session' will result in a cookie that expires when session/browser is closed */
     /** Warning: If a session cookie is stolen, this cookie will never expire */
@@ -174,14 +170,15 @@ module.exports = {
     signed: true /** (boolean) signed or not (default true) */,
     rolling: false,
     renew: false /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/,
-    secure: false /** (boolean) secure cookie*/,
-    sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
+    secure: true /** (boolean) secure cookie*/,
+    sameSite:
+      null /** (string) session cookie sameSite options (default null, don't set it) */,
   },
   // IP to block
   ipFilter: {
     blacklist: [
-      '107.150.63.5', // Appel important depuis les états unies qui serait peut être matomo mais j'ai un doute (FX)
+      "107.150.63.5", // Appel important depuis les états unies qui serait peut être matomo mais j'ai un doute (FX)
       //'::1',
     ],
   },
-}
+};

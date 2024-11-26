@@ -9,12 +9,17 @@ import config from 'config'
  * Route des imports
  */
 export default class RouteImports extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HumanResources' })
+    super(params)
+
+    this.model = params.models.HumanResources
   }
 
   /**
@@ -106,5 +111,56 @@ export default class RouteImports extends Route {
     console.timeEnd('step0')
     console.log('IMPORTS - DONE')
     this.sendOk(ctx, 'OK')
+  }
+
+  /**
+   * Route des activités pour vérifier la qualité des données avant import de toutes les juridictions
+   * @param {*} file
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      file: Types.string(),
+    }),
+    accesses: [Access.isAdmin],
+  })
+  async checkDataBeforeImportAll (ctx) {
+    const { file } = this.body(ctx)
+    // console.log('CHECK - START')
+
+    // console.time('step0')
+    // console.time('step1')
+    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
+      delimiter: ',',
+    })
+    // console.timeEnd('step1')
+    // console.timeEnd('step0')
+    // console.log('CHECK - DONE')
+    this.sendOk(ctx, await this.model.models.Activities.checkDataBeforeImportAll(arrayOfHR))
+  }
+
+  /**
+   * Route des activités pour vérifier la qualité des données avant import d'une seule juridiction
+   * @param {*} file
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number(),
+      file: Types.string(),
+    }),
+    accesses: [Access.isAdmin],
+  })
+  async checkDataBeforeImportOne (ctx) {
+    const { backupId, file } = this.body(ctx)
+    // console.log('CHECK - START')
+
+    // console.time('step0')
+    // console.time('step1')
+    const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
+      delimiter: ',',
+    })
+    // console.timeEnd('step1')
+    // console.timeEnd('step0')
+    // console.log('CHECK - DONE')
+    this.sendOk(ctx, await this.model.models.Activities.checkDataBeforeImportOne(arrayOfHR, backupId))
   }
 }

@@ -14,9 +14,13 @@ input[type='email'] {
   border-top-right-radius: 4px;
   background-color: fColor(cgrayDefault);
   border: none;
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid #8d8d8d;
   width: 100%;
   font-size: 16px;
+
+  &:focus {
+    border-bottom: 2px solid black;
+  }
 }
 
 select {
@@ -83,9 +87,19 @@ input[type='radio'] {
     content: ' ';
     display: inline-block;
   }
+
+  &.pink {
+    &:checked:before {
+      background-color: fColor(cpink) !important;
+    }
+
+    &:after {
+      border: 1px solid fColor(cpink) !important;
+    }
+  }
 }
 
-input[type=submit]{
+input[type=submit] {
   &.big-button {
     height: 48px;
     color: white;

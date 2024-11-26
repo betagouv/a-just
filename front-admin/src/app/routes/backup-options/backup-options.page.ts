@@ -1,9 +1,18 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { JuridictionInterface } from 'src/app/interfaces/juridiction';
-import { UserInterface } from 'src/app/interfaces/user-interface';
-import { MainClass } from 'src/app/libs/main-class';
-import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service';
+import {
+  AfterViewInit,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { MainClass } from '../../libs/main-class';
+import { JuridictionInterface } from '../../interfaces/juridiction';
+import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
+import { MatTableModule } from '@angular/material/table';
+import { CommonModule } from '@angular/common';
+import { PopupComponent } from '../../components/popup/popup.component';
+import { FormsModule } from '@angular/forms';
+import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 
 interface BackupOptionSelection {
   id: number;
@@ -12,6 +21,14 @@ interface BackupOptionSelection {
 }
 
 @Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTableModule,
+    PopupComponent,
+    FormsModule,
+    WrapperComponent,
+  ],
   templateUrl: './backup-options.page.html',
   styleUrls: ['./backup-options.page.scss'],
 })
@@ -19,13 +36,14 @@ export class BackupOptionsPage
   extends MainClass
   implements OnInit, AfterViewInit, OnDestroy
 {
+  contentieuxOptionsService = inject(ContentieuxOptionsService);
   displayedColumns: string[] = [
     'id',
     'backup-average-times',
     'juridictions',
     'actions',
   ];
-  dataSource = new MatTableDataSource();
+  dataSource = [];
   juridictions: JuridictionInterface[] = [];
   backup: BackupOptionSelection | null = null;
   popupAction = [
@@ -33,7 +51,7 @@ export class BackupOptionsPage
     { id: 'close', content: 'Fermer' },
   ];
 
-  constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
+  constructor() {
     super();
   }
 
@@ -48,7 +66,7 @@ export class BackupOptionsPage
   onLoad() {
     this.contentieuxOptionsService.getAll().then((elements) => {
       this.juridictions = elements.juridictions;
-      this.dataSource.data = elements.list.map((u: any) => ({
+      this.dataSource = elements.list.map((u: any) => ({
         ...u,
         juridictionsString: u.juridictions
           .map((j: number) => {
