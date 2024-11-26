@@ -1,42 +1,45 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core'
+import { CommonModule } from '@angular/common';
+import { Component, Input, OnChanges } from '@angular/core';
 
 /**
  * Composant barres de chargement simulateur
  */
 @Component({
   selector: 'aj-loaders-widget',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './loaders-widget.component.html',
   styleUrls: ['./loaders-widget.component.scss'],
 })
 export class LoadersWidgetComponent implements OnChanges {
-      /**
-   * Date de début de simulation
-   */
-      @Input() print: boolean = false
   /**
    * Date de début de simulation
    */
-  @Input() dateStart: string = ''
+  @Input() print: boolean = false;
+  /**
+   * Date de début de simulation
+   */
+  @Input() dateStart: string = '';
   /**
    * Date de fin de simulation
    */
-  @Input() dateStop: string = ''
+  @Input() dateStop: string = '';
   /**
    * Valeur à aujourd'hui
    */
-  @Input() valueAt: string = ''
+  @Input() valueAt: string = '';
   /**
    * Valeur projetée
    */
-  @Input() valueProjected: string = ''
+  @Input() valueProjected: string = '';
   /**
    * Valeur simulée
    */
-  @Input() valueSimulated: string = ''
+  @Input() valueSimulated: string = '';
   /** Valeur par défaut bar 1 */
-  valueBar1 = 100
+  valueBar1 = 100;
   /** Valeur par défaut bar 2 */
-  valueBar2 = 100
+  valueBar2 = 100;
 
   /**
    * Constructeur
@@ -52,16 +55,16 @@ export class LoadersWidgetComponent implements OnChanges {
         ((parseFloat(this.valueAt.split(' ')[0]) -
           parseFloat(this.valueProjected.split(' ')[0])) /
           parseFloat(this.valueAt.split(' ')[0])) *
-        100
-      this.valueBar1 = delta <= 100 && delta >= 0 ? delta : 0
+        100;
+      this.valueBar1 = delta <= 100 && delta >= 0 ? delta : 0;
     }
     if (this.valueSimulated !== '') {
       const delta =
         ((parseFloat(this.valueAt.split(' ')[0]) -
           parseFloat(this.valueSimulated.split(' ')[0])) /
           parseFloat(this.valueAt.split(' ')[0])) *
-        100
-      this.valueBar2 = delta <= 100 && delta >= 0 ? delta : 0
+        100;
+      this.valueBar2 = delta <= 100 && delta >= 0 ? delta : 0;
     }
   }
 }

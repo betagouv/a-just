@@ -3,7 +3,8 @@
   <div>
     <div class="triangle"></div>
     <mat-icon (click)="tooltipsIsVisible = false; $event.stopPropagation();">close</mat-icon>
-    <div class="title" *ngIf="title" [ngClass]="{'radius' : content.length === 0}" [innerHTML]="title | sanitizeHtml"></div>
+    <div class="title" *ngIf="title" [ngClass]="{'radius' : content.length === 0}" [innerHTML]="title | sanitizeHtml">
+    </div>
     <div class="content" *ngIf="content">
       <div [innerHTML]="content | sanitizeHtml"></div>
       <ng-content></ng-content>

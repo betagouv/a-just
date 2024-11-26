@@ -1,16 +1,19 @@
-<aj-popup class="medium no-padding-content no-title border-radius" [ngClass]="{'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4, 'margin-left': this.wrapper?.panelHelper }">
+<aj-popup class="medium no-padding-content no-title border-radius"
+  [ngClass]="{'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4, 'margin-left': wrapper?.panelHelper || showComments }">
   <div id="header-popin">
     <div class="left-section">
       <div class="title-popin">
         <p>Visualisation du détail des données d'activité du</p>
         <div>
           <h2>{{ referentiel?.label }}</h2>
-          <i
-            *ngIf="referentiel && referentiel.helpUrl"
-            class="ri-lightbulb-flash-line cursor-pointer blue"
-            (click)="onShowHelpPanel({url: referentiel.helpUrl})"
-          ></i>
+          <i *ngIf="referentiel && referentiel.helpUrl" class="ri-lightbulb-flash-line cursor-pointer blue"
+            (click)="onShowHelpPanel({url: referentiel.helpUrl})"></i>
         </div>
+      </div>
+      <div class="switch-comments">
+        <p>Afficher les commentaires</p>
+        <aj-radio-button bgColor="#000091" [switchColor]="showComments ? 'white' : '#000091'" [value]="showComments"
+          (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
       </div>
       <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
         (valueChange)="selectMonth($event)">
@@ -24,8 +27,8 @@
 
   <div class="sub-header">
     <h2>Nos ressources :</h2>
-    <!-- <a [href]="DATA_GITBOOK" target="_blank">Le databook <mat-icon inline=true>open_in_new</mat-icon></a>
-    <a [href]="NOMENCLATURE_DOWNLOAD_URL" target="_blank">La nomenclature <mat-icon inline=true>open_in_new</mat-icon></a> -->
+    <!-- <a [href]="DATA_GITBOOK" target="_blank" rel="noreferrer">Le databook <mat-icon inline=true>open_in_new</mat-icon></a>
+    <a [href]="NOMENCLATURE_DOWNLOAD_URL" target="_blank" rel="noreferrer">La nomenclature <mat-icon inline=true>open_in_new</mat-icon></a> -->
     <div class="elements">
       <div class="element" (click)="downloadAsset('dataBook')">
         <p>
@@ -44,7 +47,7 @@
 
   <div class="contentieux-header" [ngStyle]="{'padding-right': getScrollbarWidth()}">
     <div class="contentieux-title-header">
-      <p>Contentieux</p> 
+      <p>Contentieux</p>
     </div>
     <div class="contentieux-title-header-entrees">
       <p>Entrées</p>
@@ -56,7 +59,7 @@
           </span>
         </p>
         <p>
-          <span (click)="onShowHelpPanel({url: calculatedDataUrl})" >
+          <span (click)="onShowHelpPanel({url: calculatedDataUrl})">
             <i class="ri-lightbulb-flash-line cursor-pointer"></i>
             A-JUSTées
           </span>
@@ -68,7 +71,7 @@
       <div>
         <p>
           <span (click)="onShowHelpPanel({url: logicielDataUrl})">
-            <i class="ri-lightbulb-flash-line cursor-pointer" ></i>
+            <i class="ri-lightbulb-flash-line cursor-pointer"></i>
             Logiciel
           </span>
         </p>
@@ -85,13 +88,13 @@
       <div>
         <p>
           <span (click)="onShowHelpPanel({url: logicielDataUrl})">
-            <i class="ri-lightbulb-flash-line cursor-pointer" ></i>
+            <i class="ri-lightbulb-flash-line cursor-pointer"></i>
             Logiciel
           </span>
         </p>
         <p>
           <span (click)="onShowHelpPanel({url: calculatedDataUrl})">
-            <i class="ri-lightbulb-flash-line cursor-pointer" ></i>
+            <i class="ri-lightbulb-flash-line cursor-pointer"></i>
             A-JUSTé
           </span>
         </p>
@@ -99,13 +102,11 @@
     </div>
   </div>
 
-  <div class="contentieux-title" [ngStyle]="{'padding-right': getScrollbarWidth()}" *ngIf="referentiel && hasValuesToShow">
+  <div class="contentieux-title" [ngStyle]="{'padding-right': getScrollbarWidth()}"
+    *ngIf="referentiel && hasValuesToShow">
     <div class="contentieux-title-label">
       <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
-      <i
-        class="ri-lightbulb-flash-line cursor-pointer"
-        (click)="onShowHelpPanel({url: totalUrl})"
-      ></i>
+      <i class="ri-lightbulb-flash-line cursor-pointer" (click)="onShowHelpPanel({url: totalUrl})"></i>
     </div>
     <div class="contentieux-title-label-entrees">
       <ng-container *ngTemplateOutlet="
@@ -206,33 +207,20 @@
   <div class="bottom-popin">
     <button class="small outline blue" (click)="close()">Annuler</button>
     <div class="flex-1"></div>
-    <button
-      class="small outline blue"
-      (click)="selectMonth(getMonth(activityMonth, -1))"
-    >
+    <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, -1))">
       {{ checkIfHasUpdates() ? 'Enregistrer puis mois précédent' : 'Aller au mois précédent' }}
     </button>
-    <button
-      class="small outline"
-      [ngClass]="{
+    <button class="small outline" [ngClass]="{
         'gray': !hasNextMonth,
         'blue': hasNextMonth
-      }"
-      (click)="selectMonth(getMonth(activityMonth, 1))"
-      [disabled]="!hasNextMonth"
-    >
+      }" (click)="selectMonth(getMonth(activityMonth, 1))" [disabled]="!hasNextMonth">
       {{ checkIfHasUpdates() ? 'Enregistrer puis mois suivant' : 'Aller au mois suivant' }}
     </button>
-    <button 
-      class="small"
-      [ngClass]="{
+    <button class="small" [ngClass]="{
         'gray': !checkIfHasUpdates(),
         'outline': !checkIfHasUpdates(),
         'primary': checkIfHasUpdates(),
-      }"
-      (click)="onSave({force: false, exit: true})"
-      [disabled]="!checkIfHasUpdates()"
-    >
+      }" (click)="onSave({force: false, exit: true})" [disabled]="!checkIfHasUpdates()">
       Enregistrer
     </button>
   </div>
@@ -253,7 +241,8 @@
         <p>{{ original == null ? '-' : original }}</p>
       </div>
       <span *ngIf="valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)">
-        <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">Confirmer</p>
+        <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">
+          Confirmer</p>
       </span>
     </div>
     <div class="item-template-new-total" [ngClass]="{
@@ -271,7 +260,7 @@
       </ng-container>
       <p [ngClass]="{
         'blue': checkIfBlue({level: 3, cont: items, node: type, isForBulbOrBottom: false})
-      }" >{{ newValue !== null ? newValue : (original !== null ? original : '-') }}</p>
+      }">{{ newValue !== null ? newValue : (original !== null ? original : '-') }}</p>
     </div>
     <div class="item-template-new" *ngIf="!items.childrens">
       <ng-container *ngTemplateOutlet="
@@ -293,34 +282,24 @@
           'blue-txt': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: false}),
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
-        }"
-        [id]="'contentieux-' + items.id +'-' + type " 
-        (keyup.enter)="onBlur(inputElement.value, type, items)"
-        (blur)="onBlur(inputElement.value, type, items)"
-      />
+        }" [id]="'contentieux-' + items.id +'-' + type " (keyup.enter)="onBlur(inputElement.value, type, items)"
+        (keypress)="validateNo($event)" (blur)="onBlur(inputElement.value, type, items)" />
     </div>
   </div>
 </ng-template>
 
-<ng-template
-  #tooltip
-  let-type="type"
-  let-contentieux="contentieux"
-  let-value="value"
-  let-level="level"
-  let-valueQuality="valueQuality"
-  let-updated="updated"
->
-  <i
-    *ngIf='level === 4 || (level === 3 && checkIfBlue({level: 3, cont: contentieux, node: type, isForBulbOrBottom: false}))'
+<ng-template #tooltip let-type="type" let-contentieux="contentieux" let-value="value" let-level="level"
+  let-valueQuality="valueQuality" let-updated="updated">
+  <i *ngIf='level === 4 || (level === 3 && checkIfBlue({level: 3, cont: contentieux, node: type, isForBulbOrBottom: false}))'
     class="{{
       ( level === 4 && ( value === null || checkIfBlue({level: level, cont: contentieux, node: type, isForBulbOrBottom: true}) ) ) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
     }}
     cursor-pointer
     {{  checkIfBlue({level: level, cont: contentieux, node: type, isForBulbOrBottom: false}) ? 'blue' : 'grey' }}"
-    #light
-    [id]="'tooltip-icon-' + contentieux.id +'-' + type "
-    (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"
-  ></i>
+    #light [id]="'tooltip-icon-' + contentieux.id +'-' + type "
+    (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"></i>
 </ng-template>
+
+<aj-comment-activities *ngIf="showComments && referentiel" class="animate__animated animate__bounceInLeft"
+  [type]="'activities_'+referentiel.code_import" (close)="showComments = false"></aj-comment-activities>

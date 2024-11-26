@@ -2,6 +2,8 @@
  * Liste des options d'une juridiction
  */
 
+import { BACKUP_SETTING_COMPARE } from '../constants/backup-settings'
+
 export default (sequelizeInstance, Model) => {
   /**
    * Liste des sauvegardes
@@ -11,8 +13,12 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getBackup = async (userId, juridictionId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date']],
+      attributes: ['id', 'label', ['created_at', 'date'], 'type', 'status', 'user_id'],
       include: [
+        {
+          attributes: ['id', 'first_name', 'last_name'],
+          model: Model.models.Users,
+        },
         {
           model: Model.models.OptionsBackupJuridictions,
           required: true,
@@ -34,10 +40,18 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < list.length; i++) {
+      const lastUpdate = await Model.models.HistoriesContentieuxUpdate.getLastUpdate(list[i].id)
+      let user = null
+      if (list[i]['User.first_name'] && list[i]['User.last_name']) user = list[i]['User.first_name'] + ' ' + list[i]['User.last_name']
       list[i] = {
         id: list[i].id,
         label: list[i].label,
         date: list[i].date,
+        type: list[i].type,
+        status: list[i].status,
+        update: lastUpdate,
+        userId: list[i].user_id,
+        userName: user,
       }
     }
 
@@ -66,6 +80,14 @@ export default (sequelizeInstance, Model) => {
         option_backup_id: backupId,
       },
     })
+
+    const settings = await Model.models.HRBackupsSettings.list(null, [BACKUP_SETTING_COMPARE])
+    for (let i = 0; i < settings.length; i++) {
+      const datas = settings[i].datas
+      if (datas.referentielId && datas.referentielId === backupId) {
+        await Model.models.HRBackupsSettings.removeSetting(settings[i].id)
+      }
+    }
   }
 
   /**
@@ -75,7 +97,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridictionId
    * @returns
    */
-  Model.duplicateBackup = async (backupId, backupName, juridictionId) => {
+  Model.duplicateBackup = async (userId, backupId, backupName, juridictionId, status, type) => {
     const backup = await Model.findOne({
       where: {
         id: backupId,
@@ -85,7 +107,7 @@ export default (sequelizeInstance, Model) => {
 
     if (backup) {
       delete backup.id
-      const backupCreated = await Model.create({ ...backup, label: backupName })
+      const backupCreated = await Model.create({ label: backupName, status, type, created_at: new Date(), user_id: userId })
       const newBackupId = backupCreated.dataValues.id
 
       const hrList = await Model.models.ContentieuxOptions.findAll({
@@ -121,13 +143,16 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridictionId
    * @returns
    */
-  Model.saveBackup = async (list, backupId, backupName, juridictionId) => {
+  Model.saveBackup = async (userId, list, backupId, backupName, juridictionId, backupStatus = 'Local', type) => {
     let newBackupId = backupId
     let reelIds = []
     // if backup name create a copy
     if (backupName) {
       const newBackup = await Model.create({
         label: backupName,
+        type,
+        status: backupStatus,
+        user_id: userId,
       })
       newBackupId = newBackup.dataValues.id
       await Model.models.OptionsBackupJuridictions.create({
@@ -141,7 +166,6 @@ export default (sequelizeInstance, Model) => {
       const options = {
         contentieux_id: op.contentieux.id,
         average_processing_time: op.averageProcessingTime,
-        average_processing_time_fonc: op.averageProcessingTimeFonc,
         backup_id: newBackupId,
       }
 

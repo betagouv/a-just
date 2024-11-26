@@ -1,19 +1,32 @@
-import { Route as RouteBase } from 'koa-smart'
-import { USER_ACCESS_ACTIVITIES, USER_ACCESS_AVERAGE_TIME, USER_ACCESS_CALCULATOR, USER_ACCESS_SIMULATOR, USER_ACCESS_VENTILATIONS } from '../constants/access'
-import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
-import { snakeToCamelObject } from '../utils/utils'
-import * as Sentry from '@sentry/node'
+import { Route as RouteBase } from "koa-smart";
+import {
+  USER_ACCESS_ACTIVITIES,
+  USER_ACCESS_AVERAGE_TIME,
+  USER_ACCESS_CALCULATOR,
+  USER_ACCESS_SIMULATOR,
+  USER_ACCESS_VENTILATIONS,
+  USER_ACCESS_WHITE_SIMULATOR,
+} from "../constants/access";
+import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from "../constants/roles";
+import { snakeToCamelObject } from "../utils/utils";
+import Sentry from "../utils/sentry";
 
 /**
  * Class autour de la l'authentification et des droits
  */
 export default class Route extends RouteBase {
+  // liste des models de BDD
+  models;
+
   /**
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
-    super(params)
+
+  constructor(params) {
+    super(params);
+
+    this.models = params.models;
   }
 
   /**
@@ -22,23 +35,18 @@ export default class Route extends RouteBase {
    * @param {*} infos
    * @param {*} next
    */
-  async beforeRoute (ctx, infos, next) {
+  async beforeRoute(ctx, infos, next) {
     // the "beforeRoute" function is executed before any call to a route belonging to the same class
     // (or a class ihneriting from it) is made.
     try {
       // force to load user access
-      await this.addUserToBody(ctx)
+      await this.addUserToBody(ctx);
 
-      await super.beforeRoute(ctx, infos, next)
+      await super.beforeRoute(ctx, infos, next);
     } catch (e) {
-      console.error(e)
-      Sentry.withScope((scope) => {
-        scope.addEventProcessor((event) => {
-          return Sentry.addRequestDataToEvent(event, ctx.request)
-        })
-        Sentry.captureException(e)
-      })
-      throw e
+      console.error(e);
+      Sentry.captureException(e);
+      throw e;
     }
   }
 
@@ -47,8 +55,8 @@ export default class Route extends RouteBase {
    * @param {*} ctx
    * @returns
    */
-  user (ctx) {
-    return ctx.state.user
+  user(ctx) {
+    return ctx.state.user;
   }
 
   /**
@@ -56,8 +64,8 @@ export default class Route extends RouteBase {
    * @param {*} ctx
    * @returns
    */
-  userId (ctx) {
-    return this.user(ctx) ? this.user(ctx).id : null
+  userId(ctx) {
+    return this.user(ctx) ? this.user(ctx).id : null;
   }
 
   /**
@@ -66,31 +74,31 @@ export default class Route extends RouteBase {
    * @param {*} id
    * @returns
    */
-  async addUserInfoInBody (ctx, id) {
+  async addUserInfoInBody(ctx, id) {
     if (!id && ctx.state.user) {
-      id = ctx.state.user.id
+      id = ctx.state.user.id;
     }
-    this.assertUnauthorized(id)
+    this.assertUnauthorized(id);
 
     let user = await this.models.Users.findOne({
-      attributes: ['id', 'email', 'role', 'first_name', 'last_name'],
+      attributes: ["id", "email", "role", "first_name", "last_name"],
       where: {
         id,
         status: 1,
       },
       raw: true,
-    })
+    });
     user = {
       ...user,
       ...snakeToCamelObject(user),
       access: await this.models.UsersAccess.getUserAccess(id),
-    }
+    };
 
-    this.assertUnauthorized(user)
-    ctx.body.user = user
-    ctx.state.user = user // force to add to state with regenerated access
+    this.assertUnauthorized(user);
+    ctx.body.user = user;
+    ctx.state.user = user; // force to add to state with regenerated access
 
-    return user
+    return user;
   }
 
   /**
@@ -98,31 +106,31 @@ export default class Route extends RouteBase {
    * @param {*} ctx
    * @returns
    */
-  async addUserToBody (ctx) {
-    const id = ctx && ctx.state && ctx.state.user && ctx.state.user.id
+  async addUserToBody(ctx) {
+    const id = ctx && ctx.state && ctx.state.user && ctx.state.user.id;
     if (!id) {
-      return
+      return;
     }
 
     let user = await this.models.Users.findOne({
-      attributes: ['id', 'email', 'role', 'first_name', 'last_name'],
+      attributes: ["id", "email", "role", "first_name", "last_name"],
       where: {
         id,
         status: 1,
       },
       raw: true,
-    })
+    });
     if (!user) {
-      return
+      return;
     }
 
     user = {
       ...user,
       ...snakeToCamelObject(user),
       access: await this.models.UsersAccess.getUserAccess(id),
-    }
-    ctx.body.user = user
-    ctx.state.user = user // force to add to state with regenerated access
+    };
+    ctx.body.user = user;
+    ctx.state.user = user; // force to add to state with regenerated access
   }
 
   /**
@@ -130,8 +138,8 @@ export default class Route extends RouteBase {
    * @param {*} ctx
    * @returns
    */
-  isAdmin (ctx) {
-    return isAdmin(ctx)
+  isAdmin(ctx) {
+    return isAdmin(ctx);
   }
 
   /**
@@ -139,8 +147,8 @@ export default class Route extends RouteBase {
    * @param {*} ctx
    * @returns
    */
-  isSuperAdmin (ctx) {
-    return isSuperAdmin(ctx)
+  isSuperAdmin(ctx) {
+    return isSuperAdmin(ctx);
   }
 }
 
@@ -149,8 +157,8 @@ export default class Route extends RouteBase {
  * @param {*} ctx
  * @returns
  */
-function isLogin (ctx) {
-  return !!ctx.body.user
+function isLogin(ctx) {
+  return !!ctx.body.user;
 }
 
 /**
@@ -158,9 +166,11 @@ function isLogin (ctx) {
  * @param {*} ctx
  * @returns
  */
-function isAdmin (ctx) {
-  console.log('IS ADMIN', ctx.body.user.role, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1)
-  return !!ctx.body.user && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1
+function isAdmin(ctx) {
+  return (
+    !!ctx.body.user &&
+    [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1
+  );
 }
 
 /**
@@ -168,8 +178,11 @@ function isAdmin (ctx) {
  * @param {*} ctx
  * @returns
  */
-function isSuperAdmin (ctx) {
-  return !!ctx.body.user && [USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1
+function isSuperAdmin(ctx) {
+  return (
+    !!ctx.body.user &&
+    [USER_ROLE_SUPER_ADMIN].indexOf(ctx.body.user.role) !== -1
+  );
 }
 
 /**
@@ -177,8 +190,12 @@ function isSuperAdmin (ctx) {
  * @param {*} ctx
  * @returns
  */
-function canVewCalculator (ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1
+function canVewCalculator(ctx) {
+  return (
+    !!ctx.body.user &&
+    ctx.body.user.access &&
+    ctx.body.user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1
+  );
 }
 
 /**
@@ -186,8 +203,12 @@ function canVewCalculator (ctx) {
  * @param {*} ctx
  * @returns
  */
-function canVewHR (ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1
+function canVewHR(ctx) {
+  return (
+    !!ctx.body.user &&
+    ctx.body.user.access &&
+    ctx.body.user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1
+  );
 }
 
 /**
@@ -195,8 +216,12 @@ function canVewHR (ctx) {
  * @param {*} ctx
  * @returns
  */
-function canVewActivities (ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES) !== -1
+function canVewActivities(ctx) {
+  return (
+    !!ctx.body.user &&
+    ctx.body.user.access &&
+    ctx.body.user.access.indexOf(USER_ACCESS_ACTIVITIES) !== -1
+  );
 }
 
 /**
@@ -204,8 +229,12 @@ function canVewActivities (ctx) {
  * @param {*} ctx
  * @returns
  */
-function canVewContentieuxOptions (ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
+function canVewContentieuxOptions(ctx) {
+  return (
+    !!ctx.body.user &&
+    ctx.body.user.access &&
+    ctx.body.user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
+  );
 }
 
 /**
@@ -213,10 +242,22 @@ function canVewContentieuxOptions (ctx) {
  * @param {*} ctx
  * @returns
  */
-function canVewSimulation (ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
+function canVewSimulation(ctx) {
+  return (
+    !!ctx.body.user &&
+    ctx.body.user.access &&
+    ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
+  );
 }
 
+/**
+ * Control si l'utiliusateur des simulations
+ * @param {*} ctx
+ * @returns
+ */
+function canVewWhiteSimulation (ctx) {
+  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1
+}
 /**
  * Model d'export
  */
@@ -228,4 +269,5 @@ export const Access = {
   canVewActivities,
   canVewSimulation,
   canVewContentieuxOptions,
+  canVewWhiteSimulation,
 }

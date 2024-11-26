@@ -1,85 +1,95 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnInit,
   Output,
-} from '@angular/core'
-import { FormControl, FormGroup } from '@angular/forms'
-import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
+import { CommonModule } from '@angular/common';
 
 /**
  * Composant de selection d'heure/minute
  */
 @Component({
   selector: 'app-time-selector',
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './time-selector.component.html',
   styleUrls: ['./time-selector.component.scss'],
 })
 export class TimeSelectorComponent implements OnChanges, OnInit {
+  contentieuxOptionsService = inject(ContentieuxOptionsService);
   /**
    * Valeur décimal saisie
    */
-  @Input() value: number = 0
+  @Input() value: number = 0;
   /**
    * Activation du champ
    */
-  @Input() disabled: boolean = false
+  @Input() disabled: boolean = false;
   /**
    * Indicateur de modification (pour surlignage en bleu)
    */
-  @Input() changed: boolean = false
+  @Input() changed: boolean = false;
   /**
    * Modification provenant d'une conversion d'un autre composant
    */
-  @Input() outsideChange: boolean | undefined = false
+  @Input() outsideChange: boolean | undefined = false;
   /**
    * Valeur par défaut magistrat
    */
-  @Input() defaultValue: number = 0
+  @Input() defaultValue: number = 0;
   /**
    * Valeur par défaut fonctionnaire
    */
-  @Input() defaultValueFonc: number = 0
+  @Input() defaultValueFonc: number = 0;
   /**
    * Categorie selectionnée
    */
-  @Input() category: string = ''
+  @Input() category: string = '';
   /**
    * Emetteur de changement
    */
-  @Output() valueChange = new EventEmitter()
+  @Output() valueChange = new EventEmitter();
   /**
    * Expression reguliaire hh/mm
    */
-  regex = '^([0-9]+|^1000)$|(([0-9]+|^1000):[0-5][0-9])$' //'^([0-9]?[0-9]{1}|^1000):[0-5][0-9]$' //'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+  regex = '^([0-9]+|^1000)$|(([0-9]+|^1000):[0-5][0-9])$'; //'^([0-9]?[0-9]{1}|^1000):[0-5][0-9]$' //'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
   /**
    * Objet regex
    */
-  regexObj = new RegExp(this.regex)
+  regexObj = new RegExp(this.regex);
   /**
    * Premier changement effectué
    */
-  firstChange = true
+  firstChange = true;
   /**
    * Formulaire de saisie
    */
   timeForm = new FormGroup({
     time: new FormControl(''),
-  })
+  });
 
   /**
    * Constructeur
    * @param contentieuxOptionsService Instance de contentieuxOptionsService
    */
-  constructor(private contentieuxOptionsService: ContentieuxOptionsService) {
+  constructor() {
     this.contentieuxOptionsService.initValue.subscribe((value) => {
       if (value === true) {
-        this.changed = false
-        this.firstChange = true
+        this.changed = false;
+        this.firstChange = true;
       }
-    })
+    });
   }
 
   /**
@@ -88,24 +98,27 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
   ngOnChanges(change: any) {
     this.timeForm.controls['time'].setValue(
       this.decimalToStringDate(this.value) || ''
-    )
-    if (this.outsideChange === true) this.changed = true
-    else this.changed = false
-    this.firstChange = false
+    );
+    if (this.outsideChange === true) this.changed = true;
+    else this.changed = false;
+    this.firstChange = false;
     if (change.defaultValue && change.defaultValue.currentValue === -1) {
       this.timeForm.controls['time'].setValue('');
-      this.onChangeHour('')
+      this.onChangeHour('');
     }
-    if (change.value && change.value.currentValue === 0 && this.defaultValue === -1) {
+    if (
+      change.value &&
+      change.value.currentValue === 0 &&
+      this.defaultValue === -1
+    ) {
       this.timeForm.controls['time'].setValue('');
-      this.onChangeHour('')
+      this.onChangeHour('');
     }
-
   }
 
   ngOnInit() {
     if (this.defaultValue === -1) {
-      this.timeForm.controls['time'].setValue('')
+      this.timeForm.controls['time'].setValue('');
     }
   }
 
@@ -114,25 +127,25 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
    * @param event maj event
    */
   updateVal(event: any) {
-    const value = event.target.value
+    const value = event.target.value;
     if (value !== null && this.regexObj.test(value)) {
       if (this.firstChange === true) {
-        if (this.category === 'MAGISTRATS') this.value = this.defaultValue
-        else this.value = this.defaultValueFonc
-        this.changed = false
-        this.firstChange = false
+        if (this.category === 'MAGISTRATS') this.value = this.defaultValue;
+        else this.value = this.defaultValueFonc;
+        this.changed = false;
+        this.firstChange = false;
       } else if (
         this.category === 'MAGISTRATS' &&
         value !== this.decimalToStringDate(this.defaultValue)
       ) {
-        this.onChangeHour(value)
-        this.changed = true
+        this.onChangeHour(value);
+        this.changed = true;
       } else if (
         this.category === 'FONCTIONNAIRES' &&
         value !== this.decimalToStringDate(this.defaultValueFonc)
       ) {
-        this.onChangeHour(value)
-        this.changed = true
+        this.onChangeHour(value);
+        this.changed = true;
       }
     }
   }
@@ -144,13 +157,14 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
    */
   decimalToStringDate(decimal: number) {
     if (decimal != null) {
-      const n = new Date(0, 0)
-      n.setMinutes(Math.round(+decimal * 60))
-      const subValue = Math.round(+decimal * 60)
-      if (subValue === 60 && decimal - Math.trunc(decimal) > 0.9) return Math.trunc(decimal) + 1 + n.toTimeString().slice(2, 5)
-      return Math.trunc(decimal) + n.toTimeString().slice(2, 5)
+      const n = new Date(0, 0);
+      n.setMinutes(Math.round(+decimal * 60));
+      const subValue = Math.round(+decimal * 60);
+      if (subValue === 60 && decimal - Math.trunc(decimal) > 0.9)
+        return Math.trunc(decimal) + 1 + n.toTimeString().slice(2, 5);
+      return Math.trunc(decimal) + n.toTimeString().slice(2, 5);
     }
-    return ''
+    return '';
   }
 
   /**
@@ -158,7 +172,7 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
    * @param str chaine de caractère Date
    */
   onChangeHour(str: string) {
-    this.valueChange.emit(this.timeToDecimal(str))
+    this.valueChange.emit(this.timeToDecimal(str));
   }
 
   /**
@@ -167,13 +181,13 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
    * @returns float
    */
   timeToDecimal(time: string) {
-    var arr = time.split(':')
-    var dec = (parseInt(arr[1], 10) / 6) * 10
-    let fulldec = String(dec).split('.').join('')
+    var arr = time.split(':');
+    var dec = (parseInt(arr[1], 10) / 6) * 10;
+    let fulldec = String(dec).split('.').join('');
 
     return parseFloat(
       (parseInt(arr[0], 10) || 0) + '.' + (dec < 10 ? '0' : '') + fulldec
-    )
+    );
   }
 
   /**
@@ -183,7 +197,7 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
   getImg() {
     return this.changed
       ? '/assets/icons/time-line-blue.svg'
-      : '/assets/icons/time-line.svg'
+      : '/assets/icons/time-line.svg';
   }
 
   /**
@@ -191,6 +205,6 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
    * @param event mouse event
    */
   blur(event: any) {
-    event.target.blur()
+    event.target.blur();
   }
 }

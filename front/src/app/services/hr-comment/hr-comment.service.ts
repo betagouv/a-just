@@ -61,12 +61,6 @@ export class HRCommentService {
    * @returns 
    */
   updateHRComment(id: number, comment: string, userId: number, commentId: number = -1) {
-    console.log({
-      commentId,
-      hrId: id,
-      comment,
-      userId
-    })
     return this.serverService
       .post('hr-comment/update-hr-comment', {
         commentId,
@@ -75,7 +69,6 @@ export class HRCommentService {
         userId: userId || -1
       })
       .then((r) => {
-        console.log('BACK', r)
         const updateAt = new Date(r.data);
         return updateAt;
       });

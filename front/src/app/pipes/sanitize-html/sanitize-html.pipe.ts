@@ -1,25 +1,20 @@
-import { PipeTransform, Pipe, Injectable } from '@angular/core';
+import { PipeTransform, Pipe, inject } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 /**
  * Force to parse le html pour le passer dans un dom
  */
-@Injectable()
 @Pipe({
+  standalone: true,
   name: 'sanitizeHtml',
-  pure: false, // required to update the value when the promise is resolved
 })
 export class SanitizeHtmlPipe implements PipeTransform {
-  /**
-   * Constructeur
-   * @param _sanitizer 
-   */
-  constructor(private _sanitizer: DomSanitizer) {}
+  _sanitizer = inject(DomSanitizer);
 
   /**
    * Analyse la chaine
-   * @param v 
-   * @returns 
+   * @param v
+   * @returns
    */
   transform(v: string): SafeStyle {
     return this._sanitizer.bypassSecurityTrustHtml(v);

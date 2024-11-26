@@ -34,8 +34,23 @@
   }
 
   .blue-button {
-    //background-color: #000091;
-    //color: white;
+    height: 48px;
+    line-height: initial !important;
+  }
+
+  .white-button {
+    background-color: white;
+    color: #000091;
+    border: solid 1px #000091;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    height: 48px;
+    line-height: initial !important;
+
+    &:focus {
+      background-color: white;
+    }
   }
 
   .list {
@@ -55,13 +70,13 @@ input[type='file'] {
 
 .enable {
   background-color: #000091 !important;
-  color: white!important;
+  color: white !important;
 
   border: solid 1px;
 
   &.empty {
     background-color: white !important;
-    color: #000091!important;
+    color: #000091 !important;
     border: solid 1px #000091;
   }
 }

@@ -1,8 +1,16 @@
-import { Component, OnInit } from '@angular/core'
-import { NewsInterface } from 'src/app/interfaces/news'
-import { MainClass } from 'src/app/libs/main-class'
-import { NewsService } from 'src/app/services/news/news.service'
-import { UserService } from 'src/app/services/user/user.service'
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { MainClass } from '../../../libs/main-class';
+import { NewsInterface } from '../../../interfaces/news';
+import { NewsService } from '../../../services/news/news.service';
+import { UserService } from '../../../services/user/user.service';
+import { CommonModule } from '@angular/common';
+import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe';
 
 /**
  * Composant news qui affiche un panneau de news
@@ -10,6 +18,8 @@ import { UserService } from 'src/app/services/user/user.service'
 
 @Component({
   selector: 'aj-news',
+  standalone: true,
+  imports: [CommonModule, SanitizeHtmlPipe],
   templateUrl: './news.component.html',
   styleUrls: ['./news.component.scss'],
 })
@@ -17,8 +27,11 @@ export class NewsComponent extends MainClass implements OnInit {
   /**
    * News item
    */
-  news: NewsInterface | null = null
-
+  news: NewsInterface | null = null;
+  /**
+   * Output pour recharger la page
+   */
+  @Output() isClosed = new EventEmitter<boolean>(false);
   /**
    * Constructeur
    * @param newsService
@@ -26,9 +39,10 @@ export class NewsComponent extends MainClass implements OnInit {
    */
   constructor(
     private newsService: NewsService,
-    private userService: UserService
+    private userService: UserService,
+    private el: ElementRef
   ) {
-    super()
+    super();
   }
 
   /**
@@ -37,9 +51,16 @@ export class NewsComponent extends MainClass implements OnInit {
   ngOnInit() {
     this.watch(
       this.userService.user.subscribe((u) => {
-        this.loadNews()
+        this.loadNews();
       })
-    )
+    );
+  }
+
+  /**
+   * Getter pour recuperer la hauteur du composant
+   */
+  get offsetHeight() {
+    return this.el.nativeElement.offsetHeight;
   }
 
   /**
@@ -47,8 +68,8 @@ export class NewsComponent extends MainClass implements OnInit {
    */
   loadNews() {
     this.newsService.getLast().then((n) => {
-      this.news = n
-    })
+      this.news = n;
+    });
   }
 
   /**
@@ -56,8 +77,9 @@ export class NewsComponent extends MainClass implements OnInit {
    */
   onClose() {
     if (this.news) {
-      this.newsService.updateNewsOnClick(this.news.id)
-      this.news = null
+      this.newsService.updateNewsOnClick(this.news.id);
+      this.news = null;
+      this.isClosed.emit(true);
     }
   }
 }

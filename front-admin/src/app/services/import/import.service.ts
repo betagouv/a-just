@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ServerService } from '../http-server/server.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ImportService {
-  constructor(private serverService: ServerService) {}
+  serverService = inject(ServerService);
 
   importReferentiel(file: string): Promise<string> {
     return this.serverService
@@ -23,5 +23,19 @@ export class ImportService {
 
   importAllActivities(params: any) {
     return this.serverService.post('imports/import-all-activities', params);
+  }
+
+  checkDataBeforeImportAll(params: any) {
+    return this.serverService.post(
+      'imports/check-data-before-import-all',
+      params
+    );
+  }
+
+  checkDataBeforeImportOne(params: any) {
+    return this.serverService.post(
+      'imports/check-data-before-import-one',
+      params
+    );
   }
 }

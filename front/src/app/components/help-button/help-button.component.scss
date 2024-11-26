@@ -4,6 +4,7 @@
   height: 26px;
   min-width: 26px;
   position: relative;
+  z-index: 1;
 
   > div {
     background-color: fColor(bgHelper);

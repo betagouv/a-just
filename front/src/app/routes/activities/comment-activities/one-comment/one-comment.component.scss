@@ -1,0 +1,147 @@
+@import '../../../../styles/utils.scss';
+
+:host {
+
+  .panel-content {
+    margin: 24px 48px 0 48px;
+
+    &.editing {
+      padding-top: 42px;
+      background-color: white;
+      border-radius: 8px;
+      border: solid 1px #ddd;
+      background-color: #fff;
+      border: solid 1px #6a6af4;
+      background-color: #fff;
+    }
+
+    aj-text-editor {
+      border-radius: 8px;
+      border: solid 1px #dddddd;
+      background-color: #fff;
+    }
+  }
+
+  >div {
+    padding-bottom: 24px;
+
+    .properties {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+
+      .number-circle {
+        background-color: #ededed;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        padding: 3px 4.5px;
+        text-align: center;
+        font-size: 12px;
+        color: #929292;
+        margin-right: 8px;
+      }
+
+      label {
+        font-size: 14px;
+        font-weight: bold;
+        color: #3a3a3a;
+        bottom: 2px;
+        position: relative;
+        margin-right: 8px;
+      }
+
+      .com {
+        color: fColor(cblack);
+        font-size: 16px;
+        font-weight: bold;
+        bottom: 1px;
+        position: relative;
+      }
+
+      .com-at {
+        color: fColor(titleSelect);
+        font-size: 14px;
+      }
+    }
+
+    .com-mod {
+      color: fColor(titleSelect);
+      font-size: 14px;
+      margin-left: 8px;
+      font-style: italic;
+      margin-left: 48px;
+      position: absolute;
+      top: -8px;
+    }
+  }
+
+  .footer-panel {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 8px 24px 8px 24px;
+
+    >div {
+      &.active {
+        color: #929292;
+        border-color: #929292;
+        cursor: pointer;
+        pointer-events: initial;
+
+      }
+    }
+
+    .unsave {
+      border: solid 1px #dddddd;
+      color: #dddddd;
+      margin-right: 16px;
+      height: 32px;
+      padding: 4px 12px;
+      font-size: 14px;
+      line-height: 24px;
+      color: #929292;
+      border-color: #929292;
+      cursor: pointer;
+      pointer-events: initial;
+    }
+
+    .save {
+      color: white;
+      background-color: fColor(primary);
+      height: 32px;
+      padding: 4px 12px;
+      font-size: 14px;
+      line-height: 24px;
+      cursor: pointer;
+
+      &.disabled {
+        pointer-events: none;
+        opacity: 0.6;
+      }
+    }
+  }
+
+  .actions {
+    font-size: 14px;
+    color: #929292;
+
+    .modify {
+      margin-left: 48px;
+      margin-right: 4px;
+      line-height: 24px;
+      display: inline-block;
+      border-bottom: solid 1px #929292;
+      cursor: pointer;
+    }
+
+    .delete {
+      margin-left: 4px;
+      line-height: 24px;
+      display: inline-block;
+      border-bottom: solid 1px #929292;
+      cursor: pointer;
+    }
+  }
+}

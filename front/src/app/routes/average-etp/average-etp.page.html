@@ -1,123 +1,136 @@
-<aj-wrapper title="Temps moyens" class="content-margin-null" [subtitle]="subTitleDate" [subtitleName]="subTitleName"
-  [actionTemplate]="actions" [isLoading]="isLoading" [actionsLeftTemplate]="actionsLeft">
-  <div class="container">
-    <div class="header-list">
-      <div class="label empty"></div>
-      <div class="label col">Temps moyens en heures/minutes</div>
-      <div class="label col">Nombre de dossiers par jour</div>
-      <div class="label col">Nombre de dossiers par mois</div>
+<!--
+<app-avarage-etp-displayer></app-avarage-etp-displayer>
+-->
+<aj-wrapper #wrapper title="Référentiels de temps moyens" [documentation]="documentation"
+  class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null large-actions"
+  [actionTemplate]="ressources" [alignLeft]="false">
+
+  <!-- POPUP CREATION -->
+  <aj-popup *ngIf="onCreation===true" [closeIcon]="true"
+    (onClose)="onCreation = false;nameLength = 0; openedFromCockpit=false;this.enableImport = false;"
+    [removeShadow]="'noShadow'" class="border-radius fix-width-400">
+    <div id="circle">
+      <i class="ri-ball-pen-line"></i>
     </div>
-    <div class="content-list" *ngIf="categorySelected">
-      <div *ngFor="let ref of referentiel" class="item-grouped">
-        <div class="item position-relative" (click)="ref.showOptionGroup = !ref.showOptionGroup"
-          [class.selectable]="(ref.childrens || []).length">
-          <div class="label head">
-            <div class="color-border"
-              [style.backgroundColor]="ref.showOptionGroup ? null : userService.referentielMappingColorByInterface(ref.label)">
-            </div>
-            <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showOptionGroup ? 'expand_less' : 'expand_more' }}
-            </mat-icon>
-            <p>{{ref.label}}</p>
+    <p>Quel sera le nom du référentiel ?</p>
+    <label class="max-char">{{nameLength}} / 48 caractères maximum</label>
+    <div class="container">
+      <textarea id="name" #name placeholder="Saisir un nom" maxlength="48" (keyup)="countLen(name.value)"></textarea>
+    </div>
+    <div class="container radio">
+      Appliqué au
+      <button id="type" #type class="radio-button" name="{{this.canViewMagistrat?'SIEGE':'GREFFE'}}">
+        <label *ngIf="this.canViewMagistrat" class="left" (click)="type.value = 'SIEGE';type.name = 'SIEGE'"
+          [ngClass]="{'selected-mag':type.name=== 'SIEGE'}">Siège</label>
+        <label *ngIf="this.canViewGreffier" class="right" (click)="type.value = 'Greffe';type.name = 'GREFFE'"
+          [ngClass]="{'selected-greffe':type.name=== 'GREFFE'}">Greffe</label>
+      </button>
+    </div>
+
+    <button *ngIf="onUpload" mat-menu-item (click)="openFilePicker();$event.stopPropagation();">
+      <div class="form">
+        <form id="form" #formAllActivities>
+          <div>
+            <label class="custom-file-upload pointer-events-none">
+              <input id="filePicker" name="file" type="file" accept=".xlsx" class="pointer-events-none"
+                (change)="onSendAllActivity(formAllActivities)" (click)="$event.stopPropagation();" />
+            </label>
           </div>
-          <div class="column-item">
-            <div class="label col">
-              <app-time-selector [value]="getInputValue(ref[getCategoryStr()],'hour')"
-                (valueChange)="onUpdateOptions(ref, $event,'hour')" [outsideChange]="ref[getCategoryModifStr()]"
-                [defaultValue]="ref.defaultValue" [defaultValueFonc]="ref.defaultValueFonc"
-                [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
-            </div>
-            <div class="label col">
-              <input type="number" placeholder="Nb de dossiers"
-                [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
-                [ngModel]="fixDecimal(getInputValue(ref[getCategoryStr()],'nbPerDay'),100)"
-                (blur)="getField(ref,$event,'nbPerDay')" (keydown.enter)="getField(ref,$event,'nbPerDay')"
-                (click)="$event.stopPropagation();" min="0" />
-            </div>
-            <div class="label col no-margin">
-              <input type="number" placeholder="Nb de dossiers"
-                [ngClass]="{ modified: ref[getCategoryModifStr()] === true}"
-                [ngModel]="fixDecimal(getInputValue(ref[getCategoryStr()],'nbPerMonth'))"
-                (blur)="getField(ref,$event,'nbPerMonth')" (keydown.enter)="getField(ref,$event,'nbPerMonth')"
-                (click)="$event.stopPropagation();" min="0" />
-            </div>
-          </div>
-          <div
-            [style.backgroundColor]="!ref.showOptionGroup ? null : userService.referentielMappingColorByInterface(ref.label)"
-            class="div-custom-style"></div>
-        </div>
-        <div class="group" [class.enable]="ref.showOptionGroup">
-          <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])"
-            [style.borderColor]="userService.referentielMappingColorByInterface(ref.label)">
-            <div class="label head">
-              <p>{{itemGroup.label}}</p>
-            </div>
-            <div class="column-item">
-              <div class="label col">
-                <app-time-selector [value]="getInputValue(itemGroup[getCategoryStr()],'hour')"
-                  (valueChange)="onUpdateOptions(itemGroup, $event,'hour')"
-                  [outsideChange]="itemGroup[getCategoryModifStr()]" [defaultValue]="itemGroup.defaultValue"
-                  [defaultValueFonc]="itemGroup.defaultValueFonc" [category]="categorySelected"
-                  (click)="$event.stopPropagation();"></app-time-selector>
-              </div>
-              <div class="label col">
-                <input type="number" placeholder="Nb de dossiers"
-                  [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
-                  [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerDay'))"
-                  (blur)="getField(itemGroup,$event,'nbPerDay')" (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
-                  (click)="$event.stopPropagation();" min="0" />
-              </div>
-              <div class="label col no-margin">
-                <input type="number" placeholder="Nb de dossiers"
-                  [ngClass]="{ modified: itemGroup[getCategoryModifStr()] === true}"
-                  [ngModel]="fixDecimal(getInputValue(itemGroup[getCategoryStr()],'nbPerMonth'))"
-                  (blur)="getField(itemGroup,$event,'nbPerMonth')"
-                  (keydown.enter)="getField(itemGroup,$event,'nbPerMonth')" (click)="$event.stopPropagation();"
-                  min="0" />
-              </div>
-            </div>
-          </div>
-          <div class="empty-separator">
-            <div class="label col"></div>
-            <div class="label col"></div>
-            <div class="label col no-margin"></div>
-          </div>
-        </div>
+        </form>
       </div>
+    </button>
+
+    <div class="actions">
+      <div *ngIf="onUpload" [ngClass]="{'enable': enableImport===true}" class="save" (click)="import()">Importer</div>
+      <div *ngIf="!onUpload" class="save enable" (click)="create(name.value,type.name)">Enregistrer</div>
     </div>
-    <div class="sticky-action-footer">
-      <aj-options-backup-panel></aj-options-backup-panel>
+  </aj-popup>
+
+
+  <!-- POPUP SUPPRESSION -->
+  <aj-popup *ngIf="onDelete===true" [closeIcon]="true" (onClose)="onDelete = false" [removeShadow]="'noShadow'"
+    class="border-radius width-500">
+    <div id="circle">
+      <i class="ri-delete-bin-6-line"></i>
+    </div>
+    <p>Supprimer ce référentiel</p>
+    <div class="text">
+      Vous vous apprétez à supprimer ce référentiel. Cela entrainera la suppression de l’ensemble des données
+      renseignées.
+      <label class="follow">👉 Souhaitez vous poursuivre ?</label>
+    </div>
+    <div class="actions">
+      <div class="back" (click)="onDelete = false">Annuler</div>
+      <div class="save enable" (click)="remove()">Supprimer</div>
+    </div>
+  </aj-popup>
+
+  <div class="sticky-bar">
+    <div class="action-bar">
+      <label>Référentiels</label>
+      <div class="flex-1"></div>
+      <div class="delete-action">
+        <i class="ri-delete-bin-6-line"></i>
+        <label (click)="onRemove()">Supprimer</label>
+      </div>
+      <div class="import-action" (click)="onCreation=true;onUpload=true">Importer un référentiel</div>
+      <div class="create-action" (click)="onCreation=true;onUpload=false">Créer un référentiel</div>
+    </div>
+
+    <div class="header-bar">
+      <aj-checkbox class="black" (valueChange)="checkAll($event)" [value]="checkAll()"></aj-checkbox>
+      <label class="name">Nom</label>
+      <label class="apply">Appliqué au</label>
+      <label class="create">Date de création</label>
+      <label class="modify">Dernière modification</label>
+      <label class="status">Statut</label>
+      <div class="actions"></div>
+    </div>
+  </div>
+
+
+  <div class="line-item" *ngFor="let backup of backups; index as i;" (click)="goTo(backup.id)">
+    <aj-checkbox [(value)]="checkList[i]" (click)="$event.stopPropagation()"></aj-checkbox>
+    <label class="name">{{backup.label}}</label>
+    <div class="apply">
+      <label class="tag" [ngStyle]="{'background-color': backup.type === 'GREFFE' ? '#fee7fc' : '#e3e3fd',
+        'color': backup.type === 'GREFFE' ? '#a558a0':'#000091'}">{{backup.type === 'GREFFE'?'Greffe':'Siège'}}
+      </label>
+    </div>
+    <label class="create">{{realValue(backup.date)}}</label>
+    <label class="modify">{{backup.update ? (backup.update.date|dateAgo) : ''}}</label>
+    <div class="status">
+      <label class="tag"
+        [ngStyle]="{'background-color': backup.status==='Importé' ? '#c3fad5' : '#dee5fd', 'color': backup.status==='Importé'  ? '#00a95f':'#465f9d'}">{{backup.status==='Importé'
+        ?'Importé':'Local'}}
+      </label>
+    </div>
+    <div class="actions">
+      <div class="rename" (click)="rename(backup.id);$event.stopPropagation()">
+        <i class="ri-edit-line"></i>
+        Renommer
+      </div>
+      <div class="duplicate" (click)="duplicate(backup.id,backup.type);$event.stopPropagation()">
+        <i class="ri-file-copy-line"></i>
+        Dupliquer
+      </div>
     </div>
   </div>
 </aj-wrapper>
 
-<ng-template #actionsLeft>
-  <aj-back-button *ngIf="optionsIsModify" (click)="onBackBackup()" class="top-left-action"
-    text="Annuler les modifications" />
-</ng-template>
-
-<ng-template #actions>
-  <div class="flex-1"></div>
-
-  <div class="categories-switch">
-    <div *ngIf="canViewMagistrat" class="magistrats"
-      [ngClass]="{'selected': categorySelected === 'MAGISTRATS',  alone: !canViewGreffier}"
-      (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRATS')">
-      <input type="radio" [checked]="categorySelected === 'MAGISTRATS'" />
-      <p>Siège</p>
-    </div>
-    <div *ngIf="canViewGreffier" class="fonctionnaires"
-      [ngClass]="{'selected': categorySelected === 'FONCTIONNAIRES',  alone: !canViewMagistrat}" class="fonctionnaires"
-      (click)="$event.stopPropagation(); changeCategorySelected('FONCTIONNAIRES')">
-      <input type="radio" [checked]="categorySelected === 'FONCTIONNAIRES'" />
-      <p>Greffe</p>
+<ng-template #ressources>
+  <div class="top-right-header">
+    <div class="flex-1"></div>
+    <div class="right-panel">
+      <h2>Ressources :</h2>
+      <div class="elements">
+        <div class="element" (click)="downloadAsset()">
+          <p>
+            Télécharger un référentiel vierge
+          </p>
+          <img src="/assets/icons/download-line-blue.svg" />
+        </div>
+      </div>
     </div>
   </div>
-  <aj-select title="Mes temps moyens de comparaison" [value]="selectedIds" [datas]="formDatas"
-    (valueChange)="onChangeBackup($event)" [multiple]="false" class="width-auto bg-white">
-  </aj-select>
-  <!-- 
-  <div class="export-button" (click)="extractionExcel()">
-    <p>Exporter</p>
-  </div>
-  -->
 </ng-template>

@@ -16,8 +16,16 @@ export const ADMIN_CHANGE_USER_ACCESS = 200
 export const ADMIN_REMOVE_HR = 201
 
 export const EXECUTE_VENTILATION = 300
+
 export const EXECUTE_CALCULATOR = 301
 export const EXECUTE_CALCULATOR_CHANGE_DATE = 3011
+export const CALCULATOR_SELECT_GREFFE = 3012
+export const CALCULATOR_OPEN_CONTENTIEUX = 3013
+export const CALCULATOR_OPEN_CONMPARAISON_RANGE = 3014
+export const CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL = 3015
+export const CALCULATOR_OPEN_CHARTS_VIEW = 3016
+export const CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW = 3017
+
 export const EXECUTE_SIMULATION = 302
 export const EXECUTE_LAUNCH_SIMULATOR = 310
 export const EXECUTE_REAFFECTATOR = 303
@@ -34,7 +42,6 @@ export const END_DATE_SIMULATOR = 351
 export const DATE_REAFECTATOR = 352
 export const DATE_WHITE_SIMULATOR = 353
 
-
 export const HELP_START = 400
 export const HELP_STOP = 401
 export const HELP_AUTOSTART = 402
@@ -44,6 +51,8 @@ export const ACTIVITIES_PAGE_LOAD = 500
 export const ACTIVITIES_CHANGE_DATE = 501
 export const ACTIVITIES_SHOW_LEVEL_4 = 502
 
+export const HONEY_IP_TRAPPED = 10001
+export const HONEY_IP_BLOCK_AGAIN = 10002
 
 export const CODES = {
   [USER_USER_SIGN_IN]: '[UTILISATEUR] Inscription utilisateur ${email}',
@@ -58,6 +67,14 @@ export const CODES = {
   [EXECUTE_VENTILATION]: '[UTILISATEUR] Un utilisateur vient de réaliser une ventilation',
   [EXECUTE_CALCULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser un calcul',
   [EXECUTE_CALCULATOR_CHANGE_DATE]: "[UTILISATEUR] Un utilisateur vient de réaliser un calcul et à changé la date au lieu d'aujourd'hui",
+
+  [CALCULATOR_SELECT_GREFFE]: '[UTILISATEUR] Un utilisateur vient de selectionner la catégorie Greffe dans le cockpit',
+  [CALCULATOR_OPEN_CONTENTIEUX]: '[UTILISATEUR] Un utilisateur vient de dérouler un contentieux dans la vue données brutes du cockpit',
+  [CALCULATOR_OPEN_CONMPARAISON_RANGE]: "[UTILISATEUR] Un utilisateur vient d'effectuer une comparaison avec une autre période de temps via le cockpit",
+  [CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL]: "[UTILISATEUR] Un utilisateur vient d'effectuer une comparaison avec un référentiel de temps via le cockpit",
+  [CALCULATOR_OPEN_CHARTS_VIEW]: "[UTILISATEUR] Un utilisateur vient d'ouvrir la vue graphique dans le cockpit",
+  [CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW]: "[UTILISATEUR] Un utilisateur vient d'afficher les détails dans la vue graphique du cockpit",
+
   [EXECUTE_SIMULATION]: '[UTILISATEUR] Un utilisateur vient d ouvrir le simulateur',
   [EXECUTE_REAFFECTATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une réaffectation',
   [EXECUTE_EXTRACTOR]: '[UTILISATEUR] Un utilisateur vient de réaliser un extracteur',

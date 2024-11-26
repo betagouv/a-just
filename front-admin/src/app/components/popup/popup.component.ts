@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   OnInit,
@@ -17,6 +18,8 @@ interface ActionsInterface {
 }
 
 @Component({
+  standalone: true,
+  imports: [CommonModule],
   selector: 'aj-popup',
   templateUrl: './popup.component.html',
   styleUrls: ['./popup.component.scss'],
@@ -39,8 +42,7 @@ export class PopupComponent implements OnInit, OnDestroy {
   _visible = true;
   selectedOptions = 0;
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnInit() {
     const element = document.getElementById(

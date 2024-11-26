@@ -1,16 +1,7 @@
 
 describe('Panorama page', () => {
-    // before(() => {
-    //     // cy.login()
-    //    // cy.saveLocalStorage()
-    // })
-
     beforeEach(() => {
       cy.login()
-      cy.get('.introjs-tooltip-header')
-        .get('.introjs-skipbutton')
-        .click()
-       // cy.restoreLocalStorage()
     })
     
     it('Check that we have the menu', () => {
@@ -19,8 +10,7 @@ describe('Panorama page', () => {
           .should('contain.text', 'Panorama')
           .should('contain.text', 'Ventilateur')
           .should('contain.text', "Données d'activité")
-          .should('contain.text', 'Temps moyens')
-          .should('contain.text', 'Calculateur')
+          .should('contain.text', 'Cockpit')
           .should('contain.text', 'Simulateur')
           .should('contain.text', 'Outils')
           .should('contain.text', 'Aide')
@@ -31,17 +21,16 @@ describe('Panorama page', () => {
           .get('.sub-tools')
           .should('contain.text', 'La nomenclature')
           .should('contain.text', 'La calculatrice')
-          .should('contain.text', "L'extracteur de données d'effectifs")
-          .should('contain.text', "L'extracteur de données d'activité")        
+          .should('contain.text', "Les extracteurs")
+          .should('contain.text', 'Référentiels de temps moyens')
+
     })
 
     it("Check that we have two tabs = 'Effectifs' and 'Données d'activité", () => {
-     //setTimeout(() => { 
       cy.get('.panorama-container')
         .get('.header-panorama')
         .should('contain.text', 'Effectifs')
         .should('contain.text', "Données d'activité")
-      //}, 2000)
     })
 
     it("Check that we have three sections on 'Effectifs' = 'Composition des effectifs' + 'Actualisation des fiches' + 'changement dans les effectifs' ", () => {
@@ -137,8 +126,6 @@ describe('Panorama page', () => {
         .should('eq', '/ventilations')
       cy.get('.radio-border-left').first()
         .find('aj-radio-button')
-        .should('have.class', 'fqzdqz')
-        //.should('have.class', 'selected')
+        .should('have.class', 'selected')
     })
-
 })
