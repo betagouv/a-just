@@ -1148,20 +1148,23 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
       //else (no value filled in popup)
     } else {
       if (
-        [
-          'totalIn',
-          'totalOut',
-          'realCoverage',
-          'magRealTimePerCase',
-          'etpMag',
-          'etpFon',
-          'etpCont',
-        ].includes(inputField.id) &&
+        ['etpMag', 'etpFon', 'etpCont'].includes(inputField.id) &&
         parseFloat(volumeInput) <= 0
       ) {
         alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0');
         return;
       }
+
+      if (
+        ['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase'].includes(
+          inputField.id
+        ) &&
+        parseFloat(volumeInput) <= 0
+      ) {
+        alert('Le nombre total ne peut pas être inférieur ou égal à 0');
+        return;
+      }
+
       // if param1 reset =>  reset all params
       if (inputField.id === this.paramsToAjust.param1.label) {
         this.paramsToAjust.param1.value = '';
