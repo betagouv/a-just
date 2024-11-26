@@ -1219,11 +1219,19 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           'etpFon',
           'etpCont',
         ].includes(inputField.id) &&
-        this.valueToAjust.percentage === null
+        parseFloat(this.valueToAjust.value) <= 0
       ) {
-        alert('La valeur choisie ne peut pas être égale à 0');
+        alert('La valeur totale ne peut pas être inférieure ou égale à 0');
         return;
       }
+      if (
+        ['lastStock'].includes(inputField.id) &&
+        parseFloat(this.valueToAjust.value) < 0
+      ) {
+        alert('La valeur totale ne peut pas être inférieure 0');
+        return;
+      }
+
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
