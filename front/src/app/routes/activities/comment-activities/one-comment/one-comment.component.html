@@ -3,11 +3,13 @@
     <div class="number-circle">{{comment.editor.initials}}</div>
     <label>{{comment.editor.firstName + ' ' +
       comment.editor.lastName}}</label>
-    <p *ngIf="comment.createdAt" class="com-at">{{ compareCommentsDates()? 'Créé ':''}}{{
-      compareCommentsDates()? formatDate(comment.createdAt):capitalize(formatDate(comment.createdAt)) }}</p>
   </div>
-  <p *ngIf="comment.updatedAt && compareCommentsDates()" class="com-mod">
-    (Modifié {{formatDate(comment.updatedAt)}})</p>
+  <p class="com-date">
+    <ng-template [ngIf]="comment.createdAt">{{ compareCommentsDates()? 'Créé ':''}}{{
+      compareCommentsDates()? formatDate(comment.createdAt):capitalize(formatDate(comment.createdAt)) }}</ng-template>
+    <ng-template [ngIf]="comment.updatedAt && compareCommentsDates()">
+      (Modifié {{formatDate(comment.updatedAt)}})</ng-template>
+  </p>
 
   <div class="panel-content"> <aj-text-editor #editor [value]="comment.comment || ''" class="no-main-style"
       placeholder="Écrivez un commentaire" [hideToolbar]="true" (focusField)="isEditing = $event"></aj-text-editor>

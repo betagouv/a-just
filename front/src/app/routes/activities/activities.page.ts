@@ -487,6 +487,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             newRef.originalStock = getActivity
               ? getActivity.originalStock
               : null;
+            newRef.nbComments = getActivity
+              ? getActivity.nbComments
+              : undefined;
 
             newRef.childrens = (newRef.childrens || []).map((c) => {
               if (!c.activityUpdated) {

@@ -14,6 +14,7 @@ import { TextEditorComponent } from '../../../components/text-editor/text-editor
 import { CommentService } from '../../../services/comment/comment.service';
 import { CommentInterface } from '../../../interfaces/comment';
 import { OneCommentComponent } from './one-comment/one-comment.component';
+import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel';
 
 /**
  * Composant des commentaires de la page d'activités
@@ -39,6 +40,10 @@ export class CommentActivitiesComponent implements OnChanges {
    * Type of comment to categories
    */
   @Input() type: string = '';
+  /**
+   * Referentiel
+   */
+  @Input() referentiel: ContentieuReferentielInterface | null = null;
   /**
    * On close popin
    */
@@ -68,6 +73,9 @@ export class CommentActivitiesComponent implements OnChanges {
     if (this.type) {
       const list = await this.commentService.getComments(this.type);
       this.comments = list;
+      if (this.referentiel) {
+        this.referentiel.nbComments = this.comments.length;
+      }
     }
   }
 
