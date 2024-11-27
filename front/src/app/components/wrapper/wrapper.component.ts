@@ -267,7 +267,6 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       this.humanResourceService.backupId.subscribe((backupId) => {
         this.hrBackupId = backupId;
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId);
-        this.appService.appLoading.next(false);
       })
     );
   }
