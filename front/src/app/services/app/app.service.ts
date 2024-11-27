@@ -34,7 +34,7 @@ export class AppService {
   /**
    * Mettre un grand loader
    */
-  appLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  appLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.initToastrConfig();
