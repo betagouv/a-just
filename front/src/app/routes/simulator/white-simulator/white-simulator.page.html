@@ -600,5 +600,4 @@
   </div>
 </ng-template>
 
-<aj-intro-js [steps]="introStepsWhiteSimulator" typeId="simulator"
-  [playEachTime]="userService.isCa()?true:false"></aj-intro-js>
+<aj-intro-js *ngIf="loaded" [steps]="introStepsWhiteSimulator" typeId="simulator" [playEachTime]="true"></aj-intro-js>
