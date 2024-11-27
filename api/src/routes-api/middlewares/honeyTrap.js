@@ -117,7 +117,6 @@ const TRAPS = [
   'nsversion',
   'Injection',
   '.gz',
-  'system',
   '/tmp',
   'www',
   '.1tmhl',
