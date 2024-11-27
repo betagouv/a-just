@@ -398,8 +398,9 @@ export class WhiteSimulatorPage
     {
       target: '#wrapper-contener',
       title: 'La simulation sans données pré-alimentées',
-      intro:
-        '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas suivies dans A-JUST comme les activités administratives ou du soutien, les activités du Parquet, ou les contentieux qui ne seraient pas isolés dans A-JUST.</p>',
+      intro: this.userService.isCa()
+        ? '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités dont les données ne sont pas actuellement à disposition dans A-JUST.'
+        : '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas suivies dans A-JUST comme les activités administratives ou du soutien, les activités du Parquet, ou les contentieux qui ne seraient pas isolés dans A-JUST.</p>',
     },
     {
       target: '.date-bar-container',
