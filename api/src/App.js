@@ -246,8 +246,6 @@ export default class App extends AppBase {
           ctx.set("content-security-policy", "");
         }
 
-        await sleep(3000000)
-
         await next();
       },
     ]);
