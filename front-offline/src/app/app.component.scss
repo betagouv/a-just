@@ -1,0 +1,75 @@
+:host {
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    padding: 0 102px;
+
+    @media (max-width: 950px) {
+        padding: 56px 16px 32px 16px;
+        flex-direction: column;
+        height: fit-content;
+        min-height: 100vh;
+    }
+}
+
+.panel-logo {
+    @media (max-width: 950px) {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin-bottom: 56px;
+    }
+}
+
+h1 {
+    margin-bottom: 24px;
+}
+
+p {
+    margin-bottom: 24px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.panel {
+    display: flex;
+    align-items: center;
+
+    @media (max-width: 950px) {
+        display: block;
+
+        >div:last-child {
+            margin-top: 56px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+    }
+
+    >div:first-child {
+        margin-right: 126px;
+
+        @media (max-width: 950px) {
+            margin-right: 0;
+        }
+    }
+}
+
+.logo-gouv {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    margin-left: -33px;
+
+    @media (max-width: 950px) {
+        position: relative;
+        bottom: inherit;
+        left: inherit;
+        margin-left: 0;
+        display: block;
+        margin-top: 56px;
+    }
+}
