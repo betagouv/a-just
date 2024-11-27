@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --base-href https://cdn.a-just.beta.gouv.fr",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:front-offline": "node dist/front-offline/server/server.mjs"
