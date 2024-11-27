@@ -16,6 +16,7 @@ import { RateLimit } from "koa2-ratelimit";
 import ip from "koa-ip";
 import { styleSha1Generate } from "./utils/csp";
 import * as Sentry from "@sentry/node";
+import { sleep } from "./utils/utils";
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -244,6 +245,8 @@ export default class App extends AppBase {
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
           ctx.set("content-security-policy", "");
         }
+
+        await sleep(3000000)
 
         await next();
       },
