@@ -1,5 +1,5 @@
-import { ContentieuReferentielInterface } from './contentieu-referentiel'
-import { UserInterface } from './user-interface'
+import { ContentieuReferentielInterface } from './contentieu-referentiel';
+import { UserInterface } from './user-interface';
 
 /**
  * Entrées / Sorties / Stock d'un contentieux à un mois donnée
@@ -8,56 +8,59 @@ export interface ActivityInterface {
   /**
    * Mois d'une activité
    */
-  periode: Date
+  periode: Date;
   /**
    * Entrées d'une activité
    */
-  entrees: number
+  entrees: number;
   /**
    * Entrées venant de la SDSE
    */
-  originalEntrees?: number
+  originalEntrees?: number;
   /**
    * Sorties d'une activité
    */
-  sorties: number
+  sorties: number;
   /**
    * Sorties venant de la SDSE
    */
-  originalSorties?: number
+  originalSorties?: number;
   /**
    * Stock calculé
    */
-  stock: number
+  stock: number;
   /**
    * Stock de la SDSE
    */
-  originalStock?: number
+  originalStock?: number;
   /**
    * Contentieux concerné
    */
-  contentieux: ContentieuReferentielInterface
+  contentieux: ContentieuReferentielInterface;
   /**
    * Node qui précise qui à mise à jour et quand
    */
-  updatedBy?: NodeActivityUpdatedInterface
+  updatedBy?: NodeActivityUpdatedInterface;
+  /**
+   * Nombre de commentaire pour le contentieux
+   */
+  nbComments?: number;
 }
 
-
-  /**
-   * Node qui précise qui à mise à jour et quand
-   */
+/**
+ * Node qui précise qui à mise à jour et quand
+ */
 export interface NodeActivityUpdatedInterface {
   /**
    * Utilisateur plus sa date de mise à jour
    */
-  entrees: { user: UserInterface | null; date: Date ; value?: number } | null
+  entrees: { user: UserInterface | null; date: Date; value?: number } | null;
   /**
    * Utilisateur plus sa date de mise à jour
    */
-  sorties: { user: UserInterface | null; date: Date ; value?: number } | null
+  sorties: { user: UserInterface | null; date: Date; value?: number } | null;
   /**
    * Utilisateur plus sa date de mise à jour
    */
-  stock: { user: UserInterface | null; date: Date ; value?: number } | null
+  stock: { user: UserInterface | null; date: Date; value?: number } | null;
 }

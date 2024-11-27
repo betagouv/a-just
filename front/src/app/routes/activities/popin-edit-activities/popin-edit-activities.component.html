@@ -11,8 +11,9 @@
         </div>
       </div>
       <div class="switch-comments">
-        <p>Afficher les commentaires</p>
-        <aj-radio-button bgColor="#000091" [switchColor]="showComments ? 'white' : '#000091'" [value]="showComments"
+        <p> <mat-icon class="material-icons-outlined">sms</mat-icon>
+          {{referentiel?.nbComments || 0}} commentaire{{(referentiel?.nbComments || 0) > 1 ? 's' : ''}}</p>
+        <aj-radio-button bgColor="#000091" [switchColor]="showComments ? '#f6f6f6' : '#000091'" [value]="showComments"
           (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
       </div>
       <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
@@ -302,4 +303,5 @@
 </ng-template>
 
 <aj-comment-activities *ngIf="showComments && referentiel" class="animate__animated animate__bounceInLeft"
-  [type]="'activities_'+referentiel.code_import" (close)="showComments = false"></aj-comment-activities>
+  [type]="'activities_'+referentiel.id" [referentiel]="referentiel"
+  (close)="showComments = false"></aj-comment-activities>

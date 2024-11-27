@@ -84,6 +84,17 @@ export default (sequelizeInstance, Model) => {
       await com.destroy()
     }
   }
+  /**
+   * Récupération du nombre de commentaire par contentieux
+   * @param {*} contId
+   * @returns
+   */
+  Model.getNbConId = async (contId) => 
+    await Model.count({
+      where: {
+        type: "activities_"+contId,
+      },
+    })
 
   return Model
 }
