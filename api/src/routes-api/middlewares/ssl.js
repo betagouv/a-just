@@ -10,6 +10,7 @@ export default async (ctx, next) => {
         Location: (ctx.request.origin || '').replace('http://', 'https://') + (ctx.request.url || ''),
       })
       .end()
+    return
   }
 
   await next()

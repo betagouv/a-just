@@ -1,6 +1,3 @@
-// @ts-ignore
-import packageJSON from '../../../package.json'
-
 /**
  * Variables global avec url serveur différent ou matomo qui change
  */
@@ -11,7 +8,7 @@ export const environment = {
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
   nbHoursPerDayAndFonctionnaire: 7,
   nbHoursPerDayAndMagistrat: 8,
-  version: packageJSON.version,
+  version: 'test',
   matomo: 64,
   matomoTM: 'ypx7B8mu',
   forceSSL: true,
@@ -22,5 +19,6 @@ export const environment = {
   gitbookToken: 'gb_api_rHt5wBv5WBzk2mjUuO2QymdKNpNujdBD8TLfYpsA',
   gitbookId: 'S99g6aJCtkSrC9hKXFqV',
   enableSSO: true,
+  crisp: '93a1edd2-d8a9-4bc5-9d13-98be0fbebdf4',
   //typeId: process.env['TYPE_ID'] || 0,
 }

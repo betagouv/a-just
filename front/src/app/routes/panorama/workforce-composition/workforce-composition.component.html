@@ -1,6 +1,6 @@
 <h3>Composition des effectifs</h3>
 <div class="cards">
-  <div *ngFor="let category of listFormatedFiltered" class="category"
+  <div *ngFor="let category of listFormatedFiltered;index as i" class="category"
     [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
     <div class="header">
       <div class="header-wrapper">
@@ -14,7 +14,7 @@
     <div class="middle">
       Personnels CLE
       <input id="cle-{{category.categoryId}}" type="text" placeholder="-" [value]="getCLE(category)"
-        (keyup)="saveCLE($event.srcElement, category)" />
+        (keyup)="saveCLE($event.srcElement, category,i)" />
     </div>
     <span [ngStyle]="{'border-bottom': '1px solid ' + category.textColor }" class="separation">
     </span>

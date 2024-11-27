@@ -8,9 +8,11 @@ import { AlertComponent } from './components/alert/alert.component'
 import { PopupModule } from './components/popup/popup.module'
 import { PipesModule } from './pipes/pipes.module'
 import { ReaffectatorModule } from './routes/reaffectator/reaffectator.module'
-import { SimulatorModule } from './routes/simulator/simulator.module';
+import { SimulatorModule } from './routes/simulator/simulator.module'
 import { AverageEtpDisplayerModule } from './routes/average-etp/average-etp-displayer/average-etp-displayer.module'
 import { BigLoaderModule } from './components/big-loader/big-loader.module'
+import { WhiteSimulatorModule } from './routes/simulator/white-simulator/white-simulator.module'
+import { SimulatorPickerCaModule } from './routes/simulator/simulator-picker-ca/simulator-picker-ca.module'
 
 /**
  * Module principal du projet
@@ -27,9 +29,11 @@ import { BigLoaderModule } from './components/big-loader/big-loader.module'
     PopupModule,
     ReaffectatorModule,
     SimulatorModule,
+    WhiteSimulatorModule,
     AverageEtpDisplayerModule,
+    SimulatorPickerCaModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

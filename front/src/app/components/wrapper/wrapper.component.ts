@@ -225,7 +225,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private serverService: ServerService
   ) {
     super()
-
+    this.appService.appLoading.next(true)
     this.watch(
       this.userService.user.subscribe((u) => {
         this.updateMenu(u)
@@ -236,6 +236,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups
         this.hrBackup = this.hrBackups.find((b) => b.id === this.hrBackupId)
+        if (backups.length) this.appService.appLoading.next(false)
       })
     )
 

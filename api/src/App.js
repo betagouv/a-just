@@ -5,6 +5,7 @@ import { i18n, compress, cors, addDefaultBody } from 'koa-smart/middlewares'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
 import sslMiddleware from './routes-api/middlewares/ssl'
+import honeyTrap from './routes-api/middlewares/honeyTrap'
 import givePassword from './routes-logs/middlewares/givePassword'
 import db from './models'
 import { start as startCrons } from './crons'
@@ -78,11 +79,16 @@ export default class App extends AppBase {
     this.koaApp.context.sequelize = db.instance
     this.koaApp.context.models = this.models
     // (session) - required for cookie signature generation
-    this.koaApp.keys = ['newest secresfsdt key', 'oldsdfsdfsder secdsfsdfsdfret key']
+    this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
+    this.koaApp.proxy = true
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
       max: config.maxQueryLimit, // limit each IP to 100 requests per interval
+    })
+
+    this.koaApp.use(async (ctx, next) => {
+      return await honeyTrap(ctx, next, this.models)
     })
 
     this.koaApp.use(session(config.session, this.koaApp))
@@ -121,7 +127,7 @@ export default class App extends AppBase {
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
           directives: {
-            'media-src': ["'self'"],
+            'media-src': ["'self'", "https://client.crisp.chat"],
             'connect-src': [
               'https://api.gitbook.com',
               'https://www.google-analytics.com/j/collect',
@@ -136,8 +142,12 @@ export default class App extends AppBase {
               'https://*.hotjar.io',
               'wss://*.hotjar.com',
               '*.justice.gouv.fr',
+              'https://client.crisp.chat',
+              'https://storage.crisp.chat',
+              'wss://client.relay.crisp.chat',
+              'wss://stream.relay.crisp.chat'
             ],
-            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com'],
+            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com', 'https://client.crisp.chat'],
             'img-src': [
               "'self'",
               'data:',
@@ -149,6 +159,9 @@ export default class App extends AppBase {
               'https://img.freepik.com',
               'https://image.noelshack.com',
               'https://i.goopics.net/',
+              'https://client.crisp.chat',
+              'https://image.crisp.chat',
+              'https://storage.crisp.chat'
             ],
             'script-src': [
               "'self'",
@@ -165,10 +178,13 @@ export default class App extends AppBase {
               "'sha256-Z/I+tLSqFCDH08E3fvI/F+QNinxE6TM+KmCxNmRcAAw='",
               "'sha256-tBBLGYs6fvYemOy9hpbgu6tIIJNpdIZpuGpDXkhGTVw='",
               "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
+              "'sha256-A+0b+HOyTgrPPZgW1Tcb6UJIvj7fs09WPLWFtyqq1ks='",
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
+              'https://client.crisp.chat',
+              'https://settings.crisp.chat',
             ],
             'default-src': ["'none'"],
-            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`]), 'cdnjs.cloudflare.com'],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`, ]), 'cdnjs.cloudflare.com', 'https://client.crisp.chat', "'sha256-Ks+4bfA56EzWbsVt5/a+A7rCibdXWRQVb7y2dkDLIZM='", "'sha256-MKASWYfd3dGFQes9nQT5XnslE3xYlnUb4cHpxhk4fag='"],
             'worker-src': ['blob:'],
             'frame-src': [
               'https://app.videas.fr/',
@@ -176,6 +192,7 @@ export default class App extends AppBase {
               'https://meta.a-just.beta.gouv.fr',
               'https://forms-eu1.hsforms.com/',
               'https://calendly.com',
+              'https://game.crisp.chat'
             ],
             'object-src': ["'self'"],
             //'report-uri': ['/api/csp/report'],

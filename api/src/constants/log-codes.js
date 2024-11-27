@@ -42,7 +42,6 @@ export const END_DATE_SIMULATOR = 351
 export const DATE_REAFECTATOR = 352
 export const DATE_WHITE_SIMULATOR = 353
 
-
 export const HELP_START = 400
 export const HELP_STOP = 401
 export const HELP_AUTOSTART = 402
@@ -52,6 +51,8 @@ export const ACTIVITIES_PAGE_LOAD = 500
 export const ACTIVITIES_CHANGE_DATE = 501
 export const ACTIVITIES_SHOW_LEVEL_4 = 502
 
+export const HONEY_IP_TRAPPED = 10001
+export const HONEY_IP_BLOCK_AGAIN = 10002
 
 export const CODES = {
   [USER_USER_SIGN_IN]: '[UTILISATEUR] Inscription utilisateur ${email}',
@@ -69,10 +70,10 @@ export const CODES = {
 
   [CALCULATOR_SELECT_GREFFE]: '[UTILISATEUR] Un utilisateur vient de selectionner la catégorie Greffe dans le cockpit',
   [CALCULATOR_OPEN_CONTENTIEUX]: '[UTILISATEUR] Un utilisateur vient de dérouler un contentieux dans la vue données brutes du cockpit',
-  [CALCULATOR_OPEN_CONMPARAISON_RANGE]: '[UTILISATEUR] Un utilisateur vient d\'effectuer une comparaison avec une autre période de temps via le cockpit',
-  [CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL]:'[UTILISATEUR] Un utilisateur vient d\'effectuer une comparaison avec un référentiel de temps via le cockpit',
-  [CALCULATOR_OPEN_CHARTS_VIEW]:'[UTILISATEUR] Un utilisateur vient d\'ouvrir la vue graphique dans le cockpit',
-  [CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW]: '[UTILISATEUR] Un utilisateur vient d\'afficher les détails dans la vue graphique du cockpit',
+  [CALCULATOR_OPEN_CONMPARAISON_RANGE]: "[UTILISATEUR] Un utilisateur vient d'effectuer une comparaison avec une autre période de temps via le cockpit",
+  [CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL]: "[UTILISATEUR] Un utilisateur vient d'effectuer une comparaison avec un référentiel de temps via le cockpit",
+  [CALCULATOR_OPEN_CHARTS_VIEW]: "[UTILISATEUR] Un utilisateur vient d'ouvrir la vue graphique dans le cockpit",
+  [CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW]: "[UTILISATEUR] Un utilisateur vient d'afficher les détails dans la vue graphique du cockpit",
 
   [EXECUTE_SIMULATION]: '[UTILISATEUR] Un utilisateur vient d ouvrir le simulateur',
   [EXECUTE_REAFFECTATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une réaffectation',

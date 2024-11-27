@@ -34,6 +34,7 @@ import {
   userCanViewContractuel,
   userCanViewGreffier,
   userCanViewMagistrat,
+  userCanViewWhiteSimulator,
 } from 'src/app/utils/user'
 import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
 import { IDeactivateComponent } from '../canDeactivate-guard-service'
@@ -47,28 +48,28 @@ import { position } from 'html2canvas/dist/types/css/property-descriptors/positi
 /**
  * Variable ETP magistrat field name
  */
-const etpMag = 'etpMag'
+export const etpMag = 'etpMag'
 /**
  * Variable ETP magistrat popup title
  */
-const etpMagTitle = 'des ETPT siège'
+export const etpMagTitle = 'des ETPT siège'
 /**
  * Variable ETP magistrat unité
  */
-const etpMagToDefine = '[un volume moyen de]'
+export const etpMagToDefine = '[un volume moyen de]'
 
 /**
  * Variable ETP fonctionnaire field name
  */
-const etpFon = 'etpFon'
+export const etpFon = 'etpFon'
 /**
  * Variable ETP fonctionnaire popup title
  */
-const etpFonTitle = 'des ETPT greffe'
+export const etpFonTitle = 'des ETPT greffe'
 /**
  * Variable ETP fonctionnaire unité
  */
-const etpFonToDefine = '[un volume moyen de]'
+export const etpFonToDefine = '[un volume moyen de]'
 
 /**
  * Composant page simulateur
@@ -177,7 +178,7 @@ export class SimulatorPage
   /**
    * Objet d'édition de paramètre de simulation
    */
-  valueToAjust = { value: '', percentage: null }
+  valueToAjust = { value: '', percentage: null, addition: null }
   /**
    * Correspond au noeud selectionné dans l'arbre de décision en fonction des paramètres édités lors de la simulation
    */
@@ -305,6 +306,7 @@ export class SimulatorPage
       value: '',
       percentage: null,
       input: 0,
+      addition: null,
       button: { value: '' },
     },
     param2: {
@@ -312,6 +314,7 @@ export class SimulatorPage
       value: '',
       percentage: null,
       input: 0,
+      addition: null,
       button: { value: '' },
     },
   }
@@ -376,6 +379,10 @@ export class SimulatorPage
    * Peux voir l'interface contractuel
    */
   canViewContractuel: boolean = false
+  /**
+   * Peux utiliser le simulateur à blanc
+   */
+  canViewWhiteSimulator: boolean = false
   /**
    * Commentaires pour PDF
    */
@@ -631,6 +638,8 @@ export class SimulatorPage
   ) {
     super()
 
+    this.serverService.post('simulator/check-access-simulator')
+
     this.watch(
       this.simulatorService.disabled.subscribe((disabled) => {
         this.disabled = disabled
@@ -680,6 +689,7 @@ export class SimulatorPage
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
         this.canViewContractuel = userCanViewContractuel(u)
+        this.canViewWhiteSimulator = userCanViewWhiteSimulator(u)
       })
     )
 
@@ -816,8 +826,10 @@ export class SimulatorPage
     )
     this.watch(
       this.simulatorService.dateStop.subscribe((date) => {
-        this.dateStop = date
-        this.stopRealValue = findRealValue(this.dateStop)
+        if (date !== undefined) {
+          this.dateStop = date
+          this.stopRealValue = findRealValue(this.dateStop)
+        }
       })
     )
 
@@ -994,6 +1006,24 @@ export class SimulatorPage
    * Réinitalisation de simulation
    */
   resetParams(changeCategory = false) {
+    this.paramsToAjust = {
+      param1: {
+        label: '',
+        value: '',
+        percentage: null,
+        input: 0,
+        addition: null,
+        button: { value: '' },
+      },
+      param2: {
+        label: '',
+        value: '',
+        percentage: null,
+        input: 0,
+        addition: null,
+        button: { value: '' },
+      },
+    }
     this.contentieuId = null
     this.simulatorService.contentieuOrSubContentieuId.next(null)
     this.subList = []
@@ -1085,6 +1115,7 @@ export class SimulatorPage
    * @param allButton liste de tous les boutons
    */
   setParamsToAjust(volumeInput: any, inputField: any, allButton: any): void {
+    this.resetPercentage = false
     // get list of params to ajust from the currentNode selected
     const paramsToAjust =
       this.paramsToAjust.param1.input === 0 && this.currentNode
@@ -1133,7 +1164,10 @@ export class SimulatorPage
         })
       }
       // if param comming from input type %
-    } else if (this.valueToAjust.percentage !== '') {
+    } else if (
+      this.valueToAjust.percentage &&
+      this.valueToAjust.percentage !== ''
+    ) {
       if (
         [
           'totalIn',
@@ -1180,6 +1214,52 @@ export class SimulatorPage
           }
         })
       }
+    } else if (
+      this.valueToAjust.addition &&
+      this.valueToAjust.addition !== '' &&
+      this.valueToAjust.addition !== null
+    ) {
+      if (
+        ['etpMag', 'etpFon', 'etpCont'].includes(inputField.id) &&
+        parseFloat(this.valueToAjust.value) <= 0
+      ) {
+        alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0')
+        return
+      }
+
+      // if param 1 not filled yet or if param 1 selected to be edited
+      if (
+        this.paramsToAjust.param1.input === 0 ||
+        this.paramsToAjust.param1.label === inputField.id
+      ) {
+        this.paramsToAjust.param1.value = this.valueToAjust.value
+        this.paramsToAjust.param1.label = inputField.id
+        this.paramsToAjust.param1.input = 3
+        this.paramsToAjust.param1.button = inputField
+        this.paramsToAjust.param1.percentage = null
+        this.paramsToAjust.param1.addition = this.valueToAjust.addition
+        this.disabled = 'disabled-only-date'
+        this.simulatorService.disabled.next(this.disabled)
+
+        //else edit param 2
+      } else {
+        this.paramsToAjust.param2.value = this.valueToAjust.value
+        this.paramsToAjust.param2.label = inputField.id
+        this.paramsToAjust.param2.input = 3
+        this.paramsToAjust.param2.button = inputField
+        this.paramsToAjust.param1.percentage = null
+        this.paramsToAjust.param1.addition = this.valueToAjust.addition
+
+        // disable all buttons excepted those already filled
+        allButton.map((x: any) => {
+          if (
+            x.id !== this.paramsToAjust.param1.label &&
+            x.id !== this.paramsToAjust.param2.label
+          ) {
+            x.classList.add('disable')
+          }
+        })
+      }
       //else (no value filled in popup)
     } else {
       if (
@@ -1192,9 +1272,9 @@ export class SimulatorPage
           'etpFon',
           'etpCont',
         ].includes(inputField.id) &&
-        volumeInput === '0'
+        parseFloat(volumeInput) <= 0
       ) {
-        alert('La valeur choisie ne peut pas être égale à 0')
+        alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0')
         return
       }
       // if param1 reset =>  reset all params
@@ -1247,7 +1327,7 @@ export class SimulatorPage
       this.valueToAjust.value !== '' &&
       String(this.valueToAjust.value) !== 'NaN'
     )
-      result = parseInt(this.valueToAjust.value)
+      result = parseFloat(this.valueToAjust.value)
 
     // if result
     if (result > -1) {
@@ -1283,7 +1363,7 @@ export class SimulatorPage
     //close the popup
     this.openPopup = false
 
-    this.valueToAjust = { value: '', percentage: null }
+    this.valueToAjust = { value: '', percentage: null, addition: null }
     if (
       this.paramsToAjust.param1.input !== 0 ||
       this.paramsToAjust.param2.input !== 0
@@ -1303,10 +1383,22 @@ export class SimulatorPage
         this.buttonSelected.id === 'realDTESInMonths'
       )
         this.valueToAjust = event
-      else this.valueToAjust = { value: '', percentage: null }
+      else if (
+        (this.buttonSelected.id === 'etpMag' ||
+          this.buttonSelected.id === 'etpFon') &&
+        event.addition !== ''
+      )
+        this.valueToAjust = event
+      else this.valueToAjust = { value: '', percentage: null, addition: null }
     } else if (
       this.buttonSelected.id === 'magRealTimePerCase' &&
       event.percentage !== ''
+    )
+      this.valueToAjust = event
+    else if (
+      (this.buttonSelected.id === 'etpMag' ||
+        this.buttonSelected.id === 'etpFon') &&
+      event.addition !== ''
     )
       this.valueToAjust = event
     else this.valueToAjust = event
@@ -1340,6 +1432,17 @@ export class SimulatorPage
           this.paramsToAjust.param2.percentage !== null
           ? String(this.paramsToAjust.param2.percentage)
           : ''
+    } else if (input === 3) {
+      if (this.buttonSelected.id === this.paramsToAjust.param1.label)
+        return this.paramsToAjust.param1.input === 3 &&
+          this.paramsToAjust.param1.addition !== null
+          ? String(this.paramsToAjust.param1.addition)
+          : ''
+      else
+        return this.paramsToAjust.param2.input === 3 &&
+          this.paramsToAjust.param2.addition !== null
+          ? String(this.paramsToAjust.param2.addition)
+          : ''
     }
     return ''
   }
@@ -1371,7 +1474,48 @@ export class SimulatorPage
         parseFloat(this.paramsToAjust.param2.value) -
           parseFloat(projectedValue as string)
       )
-
+    if (
+      (id === 'etpMag' && this.paramsToAjust.param1.label === 'etpMag') ||
+      (id === 'etpFon' && this.paramsToAjust.param1.label === 'etpFon')
+    ) {
+      let res = parseFloat(this.paramsToAjust.param1.addition || '')
+      if (this.paramsToAjust.param1.addition) return res >= 0 ? '+' + res : res
+      else {
+        let res =
+          Math.round(
+            (parseFloat(this.paramsToAjust.param1.value || '') -
+              Number(
+                this.getFieldValue(
+                  this.paramsToAjust.param1.label,
+                  this.firstSituationData
+                )
+              )) *
+              100
+          ) / 100
+        return res >= 0 ? '+' + res : res
+      }
+    }
+    if (
+      (id === 'etpMag' && this.paramsToAjust.param2.label === 'etpMag') ||
+      (id === 'etpFon' && this.paramsToAjust.param2.label === 'etpFon')
+    ) {
+      let res = parseFloat(this.paramsToAjust.param2.addition || '')
+      if (this.paramsToAjust.param2.addition) return res >= 0 ? '+' + res : res
+      else {
+        let res =
+          Math.round(
+            (parseFloat(this.paramsToAjust.param2.value || '') -
+              Number(
+                this.getFieldValue(
+                  this.paramsToAjust.param2.label,
+                  this.firstSituationData
+                )
+              )) *
+              100
+          ) / 100
+        return res >= 0 ? '+' + res : res
+      }
+    }
     return this.paramsToAjust.param1.label === id
       ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
@@ -1428,10 +1572,11 @@ export class SimulatorPage
    * @param value string
    * @returns integer
    */
-  getReferenceValue(value: any, time = false) {
+  getReferenceValue(value: any, time = false, addition = false) {
     if (time === true) {
       return stringToDecimalDate(value, ':')
     }
+    if (addition === true) return parseFloat(value)
     return parseInt(value)
   }
 
@@ -1461,6 +1606,7 @@ export class SimulatorPage
         value: '',
         percentage: null,
         input: 0,
+        addition: null,
         button: { value: '' },
       },
       param2: {
@@ -1468,6 +1614,7 @@ export class SimulatorPage
         value: '',
         percentage: null,
         input: 0,
+        addition: null,
         button: { value: '' },
       },
     }
@@ -1755,8 +1902,7 @@ export class SimulatorPage
         x.classList.add('disable')
       })
 
-      if (this.whiteSimulator) this.logRunWhiteSimulator(params)
-      else this.logRunSimulator(params)
+      this.logRunSimulator(params)
 
       this.simulatorService.toSimulate(params, simulation)
     } else {
@@ -2023,10 +2169,12 @@ export class SimulatorPage
   percentageModifiedInputTextStr(
     id: string,
     projectedValue: string | number | undefined,
-    ptsUnit = false
+    ptsUnit = false,
+    etpUnit = false
   ) {
     let res = this.percentageModifiedInputText(id, projectedValue)
     if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts'
+    if (etpUnit) return res === 'NA' ? 'NA' : res + ' ETPT'
     return res === 'NA' ? 'NA' : res + '%'
   }
 
@@ -2236,17 +2384,6 @@ export class SimulatorPage
   }
 
   /**
-   * Log du lancement d'une simulation
-   */
-  async logRunWhiteSimulator(params: any) {
-    await this.serverService
-      .post('simulator/log-launch-white-simulation', { params })
-      .then((r) => {
-        return r.data
-      })
-  }
-
-  /**
    * Log du lancement d'une simulation à blanc
    */
   async logRunSimulator(params: any) {
@@ -2294,5 +2431,12 @@ export class SimulatorPage
    */
   setDocUrl(docUrl: string) {
     this.documentation.path = docUrl
+  }
+
+  /**
+   * Aller sur le simulateur a blanc
+   */
+  changePage() {
+    window.location.href = 'simulateur-sans-donnees'
   }
 }
