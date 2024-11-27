@@ -49,7 +49,7 @@ export class AppComponent implements AfterViewInit {
     private contentieuxOptionsService: ContentieuxOptionsService,
     private appService: AppService
   ) {
-    this.crispChat()
+    //this.crispChat()
     if (iIOS()) {
       document.body.classList.add('iIOS')
     }
