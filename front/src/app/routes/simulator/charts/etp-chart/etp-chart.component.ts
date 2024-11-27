@@ -125,12 +125,14 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
     private ngZone: NgZone
   ) {
     simulatorService.dateStop.subscribe((value) => {
-      this.stopRealValue = findRealValue(value)
-      this.dateStop = value
-      this.labels = getRangeOfMonths(
-        new Date(this.dateStart),
-        new Date(this.dateStop)
-      )
+      if (value !== undefined) {
+        this.stopRealValue = findRealValue(value)
+        this.dateStop = value
+        this.labels = getRangeOfMonths(
+          new Date(this.dateStart),
+          new Date(this.dateStop)
+        )
+      }
     })
     simulatorService.dateStart.subscribe((value) => {
       this.startRealValue = findRealValue(value)
@@ -165,14 +167,12 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         let monthlyContValues: any = undefined
         let monthlyFonValues: any = undefined
 
-        console.log(simulatorService.situationProjected
-          .getValue())
+        console.log(simulatorService.situationProjected.getValue())
 
-
-
-        if (simulatorService.situationProjected
-          .getValue()!
-          .monthlyReport !== undefined) {
+        if (
+          simulatorService.situationProjected.getValue()!.monthlyReport !==
+          undefined
+        ) {
           simulatorService.situationProjected
             .getValue()!
             .monthlyReport!.forEach((x) => {
@@ -190,29 +190,18 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
             this.data.projectedCont.values.push(monthlyContValues[x].etpt)
           })
-
-        }
-        else {
-
+        } else {
           this.data.projectedMag.values = simulatorService.generateLinearData(
-            simulatorService.situationProjected
-              .getValue()?.etpMag as number,
-            simulatorService.situationProjected
-              .getValue()?.etpMag as number,
+            simulatorService.situationProjected.getValue()?.etpMag as number,
+            simulatorService.situationProjected.getValue()?.etpMag as number,
             this.labels.length
           )
           this.data.projectedGref.values = simulatorService.generateLinearData(
-            simulatorService.situationProjected
-              .getValue()?.etpFon as number,
-            simulatorService.situationProjected
-              .getValue()?.etpFon as number,
+            simulatorService.situationProjected.getValue()?.etpFon as number,
+            simulatorService.situationProjected.getValue()?.etpFon as number,
             this.labels.length
           )
-
-
         }
-
-
 
         console.log(this.data.projectedMag)
         if (this.myChart !== null) {
@@ -563,7 +552,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
               var percent = Math.round(
                 (dataset['data'][tooltipItem['index']] /
                   dataset['_meta'][0]['total']) *
-                100
+                  100
               )
               return '(' + percent + '%)'
             },
@@ -678,7 +667,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       )
     })
 
-
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
         this.myChart.options.plugins.annotation.annotations.box1.yMax =
@@ -715,16 +703,21 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           let higuerYPosition = value.y ? value.y : 0
           let higuerXPosition = value.x ? value.x : 0
 
-          if (value.pointIndex !== null)
-          // xScale.top
-          {
+          if (value.pointIndex !== null) {
+            // xScale.top
             higuerYPosition = Math.min(
-              this.myChart.getDatasetMeta(0).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(1).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(2).data[value.pointIndex as number].y | 0,
-              this.myChart.getDatasetMeta(3).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(1).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(2).data[value.pointIndex as number]
+                .y | 0,
+              this.myChart.getDatasetMeta(3).data[value.pointIndex as number]
+                .y | 0
             )
-            higuerXPosition = this.myChart.getDatasetMeta(0).data[value.pointIndex as number].x | 0
+            higuerXPosition =
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number]
+                .x | 0
           }
 
           this.myChart.tooltip.active = false
@@ -736,7 +729,9 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           tooltipElTriangle.style.left =
             Number(String(higuerXPosition).replace('px', '')) + 10 + 'px'
           tooltipElTriangle.style.top =
-            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) + 160 + 'px'
+            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) +
+            160 +
+            'px'
 
           this.tooltip.projectedMag =
             this.myChart.data.datasets[0].data[value.pointIndex as number]
@@ -750,7 +745,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
 
           this.tooltip.projectedCont =
             this.myChart.data.datasets[4].data[value.pointIndex as number]
-
 
           for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
             if ((value.pointIndex as number) === i) {
@@ -906,4 +900,3 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
     return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }
-

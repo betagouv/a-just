@@ -12,11 +12,18 @@ import {
   USER_ACCESS_CALCULATOR,
   USER_ACCESS_DASHBOARD,
   USER_ACCESS_SIMULATOR,
+  USER_ACCESS_WHITE_SIMULATOR,
   USER_ACCESS_VENTILATIONS,
 } from 'src/app/constants/user-access'
 import { NEED_BOOKING_PAGE } from 'src/app/constants/pages'
 import { Router } from '@angular/router'
-import { referentielCAMappingName, referentielMappingColor, referentielMappingColorActivity, referentielMappingColorCAActivity, referentielMappingName } from 'src/app/utils/referentiel'
+import {
+  referentielCAMappingName,
+  referentielMappingColor,
+  referentielMappingColorActivity,
+  referentielMappingColorCAActivity,
+  referentielMappingName,
+} from 'src/app/utils/referentiel'
 
 /**
  * Service de sauvegarde de l'utilisateur actuel
@@ -101,13 +108,15 @@ export class UserService implements OnInit {
    * @param label
    * @returns
    */
-  referentielMappingColorActivityByInterface(label: string, opacity: number = 1) {
+  referentielMappingColorActivityByInterface(
+    label: string,
+    opacity: number = 1
+  ) {
     const name = this.referentielMappingNameByInterface(label)
-    
+
     if (this.interfaceType === 1)
       return this.referentielMappingColorCAActivity(name, opacity)
-    else
-      return this.referentielMappingColorActivity(name, opacity)
+    else return this.referentielMappingColorActivity(name, opacity)
   }
 
   /**
@@ -345,17 +354,41 @@ export class UserService implements OnInit {
         path: 'cockpit',
       })
     }
-
     if (
       user &&
       user.access &&
-      user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
+      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 &&
+      this.isCa() === true
+    ) {
+      menu.push({
+        label: 'Simulateurs',
+        path: 'simulateurs',
+      })
+    }
+    if (
+      user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1 &&
+      this.isCa() === false
     ) {
       menu.push({
         label: 'Simulateur',
         path: 'simulateur',
       })
     }
+    if (
+      user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_SIMULATOR) === -1 &&
+      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 &&
+      this.isCa() === false
+    ) {
+      menu.push({
+        label: 'Simulateur',
+        path: 'simulateur-sans-donnees',
+      })
+    }
+
     if (this.canViewVentilation(user)) {
       menu.push({
         label: 'Ventilateur',

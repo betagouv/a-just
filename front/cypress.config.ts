@@ -8,7 +8,7 @@ export default defineConfig({
       // implement node event listeners here
       on('task', verifyDownloadTasks);
     },
-    baseUrl: process.env.FRONT_URL || 'http://localhost:4200',
-
+    baseUrl: process.env.FRONT_URL || process.env.CYPRESS_BASE_URL || 'http://localhost:4200',
+    video: false,
   },
 });

@@ -21,6 +21,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.TEXT,
         allowNull: true,
       },
+      datas2: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: true,

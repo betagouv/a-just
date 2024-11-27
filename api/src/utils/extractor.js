@@ -351,9 +351,14 @@ export const computeExtractDdg = async (models, allHuman, flatReferentielsList, 
         })
 
         const isGone = dateStop > human.dateEnd
-        if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+        const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop
+        if (human.dateEnd && isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
           let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
           reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        } else if (hasArrived && dateStart) {
+          reelEtp =
+            ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays')) * nbOfDays(human.dateStart, dateStop)) / nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0)
         } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 
@@ -540,9 +545,14 @@ export const computeExtract = async (models, allHuman, flatReferentielsList, cat
         })
 
         const isGone = dateStop > human.dateEnd
-        if (isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
+        const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop
+        if (human.dateEnd && isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
           let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
           reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        } else if (hasArrived && dateStart) {
+          reelEtp =
+            ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays')) * nbOfDays(human.dateStart, dateStop)) / nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0)
         } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
       }
 

@@ -42,11 +42,11 @@
       </div>
 
       <div id="panel-empty-simulator">
-        <p class="intro-second-title"
-          (click)="dateStop=null;whiteSimulator=true;chooseScreen=false;logOpenWhiteSimulator();setDocUrl(documentationUrl.whiteSimulator)">
+        <p class="intro-second-title" [ngClass]="{'locked': !canViewWhiteSimulator}"
+          (click)="dateStop=null;logOpenWhiteSimulator();changePage()">
           <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
         </p>
-        <p class="intro-second-desc">
+        <p class="intro-second-desc" [ngClass]="{'locked': !canViewWhiteSimulator}">
           Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de
           temps moyen par dossier) pour effectuer des projections sur
           l&apos;activité (y compris non juridictionnelle) de votre choix.
@@ -202,6 +202,20 @@
           [reset]="resetPercentage" [defaultValue]="valueSaved(2)" (valueChange)="onUpdateValueToAjust($event)">
         </aj-input-percentage>
       </div>
+
+      <div class="rectangle" *ngIf="buttonSelected.id === 'etpMag'||buttonSelected.id === 'etpFon'">
+        <div class="title">
+          Définir une variation de :<br />
+          <span>(en etp par rapport à la situation <br /> {{startRealValue? 'au' : "d'"}}
+            {{startRealValue||"aujourd'hui"}})</span>
+        </div>
+        <aj-input-addition (focusin)="volume.value = ''"
+          [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),false,true)"
+          [reset]="resetPercentage" [defaultValue]="valueSaved(3)" (valueChange)="onUpdateValueToAjust($event)">
+        </aj-input-addition>
+      </div>
+
+
     </aj-popup>
 
     <!-- BOUTON AJUSTER -->
@@ -251,8 +265,7 @@
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===etpMag.id  || paramsToAjust.param2.label===etpMag.id" [@fadeInOut]>
-        {{percentageModifiedInputTextStr(etpMag.id,getFieldValue('etpMag',firstSituationData))}}
-
+        {{percentageModifiedInputTextStr(etpMag.id,getFieldValue('etpMag',firstSituationData),false,true)}}
         <div class="triangle"></div>
       </div>
     </div>
@@ -265,7 +278,7 @@
         [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
         matTooltipHideDelay="0"
         *ngIf="paramsToAjust.param1.label===etpFon.id  || paramsToAjust.param2.label===etpFon.id" [@fadeInOut]>
-        {{percentageModifiedInputTextStr(etpFon.id,getFieldValue('etpFon',firstSituationData))}}
+        {{percentageModifiedInputTextStr(etpFon.id,getFieldValue('etpFon',firstSituationData),false,true)}}
         <div class="triangle"></div>
       </div>
     </div>
@@ -409,6 +422,7 @@
             [category]="'MAGISTRATS'" (valueChange)="valueChange(volume,$event)" (focusin)="resetPercentage = true"
             (focusout)="resetPercentage = false" [defaultValue]="parseFloat(volume.value)||-1"></app-time-selector>
         </div>
+
         <div class="rectangle" *ngIf="getNbOfParams()===2 ||buttonSelected.id === 'magRealTimePerCase'">
           <div class="title">
             Définir {{getText('secondInput')}} :<br />
@@ -421,6 +435,19 @@
             [reset]="resetPercentage" [defaultValue]="valueSaved(2)" (valueChange)="onUpdateValueToAjust($event)">
           </aj-input-percentage>
         </div>
+
+        <div class="rectangle" *ngIf="buttonSelected.id === 'etpMag'||buttonSelected.id === 'etpFon'">
+          <div class="title">
+            Définir une variation de :<br />
+            <span>(en etp par rapport à la situation <br /> {{startRealValue? 'au' : "d'"}}
+              {{startRealValue||"aujourd'hui"}})</span>
+          </div>
+          <aj-input-addition (focusin)="volume.value = ''"
+            [referenceValue]="getReferenceValue(getFieldValue(buttonSelected.id,firstSituationData),false,true)"
+            [reset]="resetPercentage" [defaultValue]="valueSaved(3)" (valueChange)="onUpdateValueToAjust($event)">
+          </aj-input-addition>
+        </div>
+
       </aj-popup>
 
       <!-- TOOLTIP DE MODIFICATION -->
@@ -472,7 +499,7 @@
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===etpMagWhite.id  || paramsToAjust.param2.label===etpMagWhite.id"
           [@fadeInOut]>
-          {{percentageModifiedInputTextStr(etpMagWhite.id,getFieldValue('etpMag',firstSituationData))}}
+          {{percentageModifiedInputTextStr(etpMagWhite.id,getFieldValue('etpMag',firstSituationData),false,true)}}
 
           <div class="triangle"></div>
         </div>
@@ -486,7 +513,7 @@
           matTooltipHideDelay="0"
           *ngIf="paramsToAjust.param1.label===etpFonWhite.id  || paramsToAjust.param2.label===etpFonWhite.id"
           [@fadeInOut]>
-          {{percentageModifiedInputTextStr(etpFonWhite.id,getFieldValue('etpFon',firstSituationData))}}
+          {{percentageModifiedInputTextStr(etpFonWhite.id,getFieldValue('etpFon',firstSituationData),false,true)}}
           <div class="triangle"></div>
         </div>
       </div>
@@ -699,7 +726,7 @@
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='etpMag'  || paramsToAjust.param2.label==='etpMag'" [@fadeInOut]>
-            {{percentageModifiedInputTextStr('etpMag',getFieldValue('etpMag',firstSituationData))}}
+            {{percentageModifiedInputTextStr('etpMag',getFieldValue('etpMag',firstSituationData),false,true)}}
 
             <div class="triangle simulated"></div>
           </div>
@@ -720,7 +747,7 @@
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
             *ngIf="paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon'" [@fadeInOut]>
-            {{percentageModifiedInputTextStr('etpFon',getFieldValue('etpFon',firstSituationData))}}
+            {{percentageModifiedInputTextStr('etpFon',getFieldValue('etpFon',firstSituationData),false,true)}}
 
             <div class="triangle simulated"></div>
           </div>

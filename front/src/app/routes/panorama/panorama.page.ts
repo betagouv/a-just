@@ -384,11 +384,14 @@ export class PanoramaPage
 
     let fifteenDaysLater = today(this.dateSelected)
     fifteenDaysLater.setDate(fifteenDaysLater.getDate() + 15)
+
     let fifteenDaysBefore = today(this.dateSelected)
     fifteenDaysBefore.setDate(fifteenDaysBefore.getDate() - 15)
+
     this.listDepartures = []
     this.listArrivals = []
     this.listUnavailabilities = []
+
     for (let i = 0; i < hrList.length; i++) {
       const hr = hrList[i]
 
@@ -396,8 +399,11 @@ export class PanoramaPage
       if (hr.indisponibilities.length > 0) {
         const list = hr.indisponibilities.filter(
           (elem) =>
-            today(elem.dateStart).getTime() >= fifteenDaysBefore.getTime() &&
-            today(elem.dateStart).getTime() <= fifteenDaysLater.getTime()
+            (today(elem.dateStart).getTime() >= fifteenDaysBefore.getTime() &&
+              today(elem.dateStart).getTime() <= fifteenDaysLater.getTime()) ||
+            (elem.dateStop !== null &&
+              today(elem.dateStop).getTime() >= fifteenDaysBefore.getTime() &&
+              today(elem.dateStop).getTime() <= fifteenDaysLater.getTime())
         )
         if (list.length && !this.listUnavailabilities.includes(hr)) {
           this.listUnavailabilities.push(hr)
