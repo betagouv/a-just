@@ -11,12 +11,11 @@ import { authInterceptor } from './interceptors';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import localeFr from '@angular/common/locales/fr';
-import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
 import {
   MAT_TOOLTIP_DEFAULT_OPTIONS,
   MatTooltipDefaultOptions,
 } from '@angular/material/tooltip';
-import { environment } from '../environments/environment';
 registerLocaleData(localeFr, 'fr');
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
@@ -27,7 +26,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    { provide: APP_BASE_HREF, useValue: environment.frontUrl },
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
