@@ -26,7 +26,6 @@ const TRAPS = [
   'PreAuth',
   '.file',
   'menus',
-  'mail',
   'server_status',
   'whoami',
   'apis',
