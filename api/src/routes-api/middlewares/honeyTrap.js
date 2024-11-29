@@ -159,10 +159,10 @@ export default async (ctx, next, models) => {
 }
 
 // /api/juridictions-details/get-cle
-
+/*
 console.log(
   'TRAP',
   TRAPS.filter((t) => {
     return '/inscription?email=gregory.david@justice.fr&firstName=Gr%C3%A9gory&lastName=DAVID&provider=justice-sso'.includes(t)
   })
-)
+)*/
