@@ -54,7 +54,7 @@
           <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('nomenclature', true)"></i>
         </p>
         <p (click)="downloadAsset('calculatrice')">La calculatrice <i class="ri-download-line"></i></p>
-        <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')" *ngIf="this.userService.isCa()===false">
+        <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
           Les extracteurs
         </a>
         <p (click)="downloadAsset('fiche-agent',true)">Modèle de feuille de temps <i class="ri-download-line"></i></p>

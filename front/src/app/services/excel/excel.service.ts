@@ -138,6 +138,7 @@ export class ExcelService extends MainClass {
           })
           // 4. Get a report as buffer.
           .then(async (report) => {
+            console.log('VIEW MODEL', viewModel);
             report = await this.getReport(report, viewModel);
             if (this.tabs.onglet1.values.length === 0) {
               alert(
