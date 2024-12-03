@@ -21,7 +21,6 @@ import {
   ContentieuReferentielActivitiesInterface,
   ContentieuReferentielInterface,
 } from 'src/app/interfaces/contentieu-referentiel'
-import { MainClass } from 'src/app/libs/main-class'
 import { ActivitiesService } from 'src/app/services/activities/activities.service'
 import { AppService } from 'src/app/services/app/app.service'
 import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
