@@ -1946,12 +1946,18 @@ export class CalculatorPage
 
     datas.map((y) => {
       list.push({
-        averageProcessingTime: y.magRealTimePerCase,
+        averageProcessingTime:
+          this.categorySelected === 'magistrats'
+            ? y.magRealTimePerCase
+            : y.fonRealTimePerCase,
         contentieux: { id: y.contentieux.id, label: y.contentieux.label },
       });
       y.childrens.map((z: any) => {
         list.push({
-          averageProcessingTime: z.magRealTimePerCase,
+          averageProcessingTime:
+            this.categorySelected === 'magistrats'
+              ? z.magRealTimePerCase
+              : z.fonRealTimePerCase,
           contentieux: { id: z.contentieux.id, label: z.contentieux.label },
         });
       });
