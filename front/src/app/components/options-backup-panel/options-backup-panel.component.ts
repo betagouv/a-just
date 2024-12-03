@@ -4,12 +4,13 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-} from '@angular/core'
-import { BackupInterface } from 'src/app/interfaces/backup'
-import { MainClass } from 'src/app/libs/main-class'
-import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
-import { dataInterface } from '../select/select.component'
-import { Router } from '@angular/router'
+} from '@angular/core';
+import { dataInterface } from '../select/select.component';
+import { Router } from '@angular/router';
+import { MainClass } from '../../libs/main-class';
+import { CommonModule } from '@angular/common';
+import { BackupInterface } from '../../interfaces/backup';
+import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
 
 /**
  * Composant de la liste des sauvegardes des options (temps moyens / dossier)
@@ -17,6 +18,8 @@ import { Router } from '@angular/router'
 
 @Component({
   selector: 'aj-options-backup-panel',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './options-backup-panel.component.html',
   styleUrls: ['./options-backup-panel.component.scss'],
 })
@@ -27,31 +30,31 @@ export class OptionsBackupPanelComponent
   /**
    * Autoriser à changer ou non la sauvergarde actuelle
    */
-  @Input() readOnly: boolean = false
+  @Input() readOnly: boolean = false;
   /**
    * Autoriser à changer ou non la sauvergarde actuelle
    */
-  @Input() category: string = ''
+  @Input() category: string = '';
   /**
    * Ecoute de la variable de largeur du composant
    */
-  @HostBinding('style.width') withLine!: string
+  @HostBinding('style.width') withLine!: string;
   /**
    * Liste des sauvegardes
    */
-  backups: BackupInterface[] = []
+  backups: BackupInterface[] = [];
   /**
    * Mémorisation s'il y a eu une modificiation avant sauvegarde
    */
-  optionsIsModify: boolean = false
+  optionsIsModify: boolean = false;
   /**
    * Id de sauvegarde sélectionnée
    */
-  selectedIds: any[] = []
+  selectedIds: any[] = [];
   /**
    * Formateur de la liste des backups
    */
-  formDatas: dataInterface[] = []
+  formDatas: dataInterface[] = [];
 
   /**
    * Constructeur qui écoute tous les changements
@@ -61,39 +64,39 @@ export class OptionsBackupPanelComponent
     private contentieuxOptionsService: ContentieuxOptionsService,
     private router: Router
   ) {
-    super()
+    super();
 
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
-        this.backups = b
-        this.formatDatas()
+        this.backups = b;
+        this.formatDatas();
       })
-    )
+    );
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(
         (b) => (this.selectedIds = [b])
       )
-    )
+    );
     this.watch(
       this.contentieuxOptionsService.optionsIsModify.subscribe(
         (b) => (this.optionsIsModify = b)
       )
-    )
+    );
   }
 
   /**
    * A la destruction supprimer les watcher
    */
   ngOnDestroy() {
-    this.contentieuxOptionsService.optionsIsModify.next(false)
-    this.watcherDestroy()
+    this.contentieuxOptionsService.optionsIsModify.next(false);
+    this.watcherDestroy();
   }
 
   /**
    * Écoute du changement la variable readOnly
    */
   ngOnChanges() {
-    this.withLine = this.readOnly ? 'fit-content' : '100%'
+    this.withLine = this.readOnly ? 'fit-content' : '100%';
   }
 
   /**
@@ -105,11 +108,11 @@ export class OptionsBackupPanelComponent
       this.selectedIds.length &&
       !this.backups.find((b) => b.id === this.selectedIds[0])
     ) {
-      this.selectedIds = []
+      this.selectedIds = [];
     }
 
     this.formDatas = this.backups.map((back) => {
-      const date = new Date(back.date)
+      const date = new Date(back.date);
 
       return {
         id: back.id,
@@ -117,8 +120,8 @@ export class OptionsBackupPanelComponent
           2,
           '0'
         )} ${this.getShortMonthString(date)} ${date.getFullYear()}`,
-      }
-    })
+      };
+    });
   }
 
   /**
@@ -131,12 +134,12 @@ export class OptionsBackupPanelComponent
       this.contentieuxOptionsService.optionsIsModify.getValue() &&
       !confirm('Vous avez des modifications en cours. Supprimer ?')
     ) {
-      this.selectedIds = [this.contentieuxOptionsService.backupId.getValue()]
-      return
+      this.selectedIds = [this.contentieuxOptionsService.backupId.getValue()];
+      return;
     }
 
     if (id.length) {
-      this.contentieuxOptionsService.backupId.next(id[0])
+      this.contentieuxOptionsService.backupId.next(id[0]);
     }
   }
 
@@ -144,14 +147,14 @@ export class OptionsBackupPanelComponent
    * Demande de suppresion d'une sauvegarde
    */
   onRemoveBackup() {
-    this.contentieuxOptionsService.removeBackup()
+    this.contentieuxOptionsService.removeBackup();
   }
 
   /**
    * Demande de duplicate une sauvegarde
    */
   onDuplicateBackup() {
-    this.contentieuxOptionsService.duplicateBackup()
+    this.contentieuxOptionsService.duplicateBackup();
   }
 
   /**
@@ -163,7 +166,7 @@ export class OptionsBackupPanelComponent
       .onSaveDatas(isCopy, this.category)
       .then((x) => {
         if (isCopy && x !== null) {
-          this.contentieuxOptionsService.optionsIsModify.next(false)
+          this.contentieuxOptionsService.optionsIsModify.next(false);
         }
         if (
           isCopy === false &&
@@ -171,12 +174,12 @@ export class OptionsBackupPanelComponent
           this.contentieuxOptionsService.openedFromCockpit.getValue().value !==
             true
         )
-          this.router.navigate(['/temps-moyens'])
-      })
+          this.router.navigate(['/temps-moyens']);
+      });
     if (
       this.contentieuxOptionsService.openedFromCockpit.getValue().value === true
     )
-      this.contentieuxOptionsService.onFollowComparaison.next(true)
+      this.contentieuxOptionsService.onFollowComparaison.next(true);
   }
 
   async onSendAllActivity(elem: any) {
@@ -186,35 +189,35 @@ export class OptionsBackupPanelComponent
    * Demande de création d'une sauvegarde vide
    */
   onCreateEmptyBackup() {
-    this.contentieuxOptionsService.createEmpy()
+    this.contentieuxOptionsService.createEmpy();
   }
 
   /**
    * Demande de renommage de la sauvegarde actuelle
    */
   onRenameBackup() {
-    this.contentieuxOptionsService.renameBackup()
+    this.contentieuxOptionsService.renameBackup();
   }
 
   /**
    * Demande de réinitilisation des données de bases
    */
   onBackBackup() {
-    this.contentieuxOptionsService.setInitValue()
+    this.contentieuxOptionsService.setInitValue();
   }
 
   /**
    * Télécharger le referentiel au format excel
    */
   downloadTemplate() {
-    this.contentieuxOptionsService.downloadTemplate()
+    this.contentieuxOptionsService.downloadTemplate();
   }
 
   /**
    * Ouvre le selecteur de fichier
    */
   openFilePicker() {
-    document.getElementById('filePicker')!.click()
-    document.getElementById('trigger-drop-down')!.click()
+    document.getElementById('filePicker')!.click();
+    document.getElementById('trigger-drop-down')!.click();
   }
 }

@@ -1,17 +1,36 @@
-import { Component } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
-import { Router } from "@angular/router";
-import { UserService } from "src/app/services/user/user.service";
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
+import { PopupComponent } from '../../components/popup/popup.component';
+import { UserService } from '../../services/user/user.service';
 
 /**
  * Page de demande de nouveau mot de passe
  */
 
 @Component({
-  templateUrl: "./forgot-password.page.html",
-  styleUrls: ["./forgot-password.page.scss"],
+  standalone: true,
+  imports: [
+    FormsModule,
+    CommonModule,
+    WrapperNoConnectedComponent,
+    PopupComponent,
+    RouterLink,
+    ReactiveFormsModule,
+  ],
+  templateUrl: './forgot-password.page.html',
+  styleUrls: ['./forgot-password.page.scss'],
 })
 export class ForgotPassword {
+  userService = inject(UserService);
+  router = inject(Router);
   /**
    * Formulaire
    */
@@ -21,14 +40,7 @@ export class ForgotPassword {
   /**
    * Popin de confirmation
    */
-  openPopin = false
-
-  /**
-   * Constructeur
-   * @param userService 
-   * @param router 
-   */
-  constructor(private userService: UserService, private router: Router) { }
+  openPopin = false;
 
   /**
    * Demande de génération d'un code de changement de mot de passe
@@ -37,24 +49,24 @@ export class ForgotPassword {
     let { email } = this.form.value;
     this.userService.forgotPassword({ email }).then((msg) => {
       if (msg) {
-        this.openPopin = true
+        this.openPopin = true;
       }
-    })
+    });
   }
 
   /**
    * Retour à la page login
    */
   onClosePopin() {
-    this.router.navigate(['/login'])
+    this.router.navigate(['/login']);
   }
 
   /**
    * Renvoi le mail saisi par l'utilisateur
-   * @returns 
+   * @returns
    */
   getEmail() {
     let { email } = this.form.value;
-    return email ? email : null
+    return email ? email : null;
   }
 }

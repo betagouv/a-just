@@ -6,16 +6,25 @@ import {
   EventEmitter,
   HostBinding,
   ViewChild,
-} from '@angular/core'
-import { MatCalendarCellClassFunction } from '@angular/material/datepicker'
-import { MatDatepicker } from '@angular/material/datepicker'
-import { MainClass } from 'src/app/libs/main-class'
+} from '@angular/core';
+import {
+  MatCalendarCellClassFunction,
+  MatDatepickerModule,
+} from '@angular/material/datepicker';
+import { MatDatepicker } from '@angular/material/datepicker';
+import { MainClass } from '../../libs/main-class';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { today } from '../../utils/dates';
 
 /**
  * Bouton de selection de date prédesigner
  */
 @Component({
   selector: 'aj-date-select',
+  standalone: true,
+  imports: [CommonModule, MatIconModule, MatDatepickerModule, FormsModule],
   templateUrl: './date-select.component.html',
   styleUrls: ['./date-select.component.scss'],
 })
@@ -23,89 +32,93 @@ export class DateSelectComponent extends MainClass implements OnChanges {
   /**
    * Titre du bouton
    */
-  @Input() title: string | null = null
+  @Input() title: string | null = null;
   /**
    * Icon affichée sur la droite
    */
-  @Input() icon: string = 'calendar_today'
+  @Input() icon: string = 'calendar_today';
   /**
    * Type de sélection par défaut de date
    */
-  @Input() dateType: string = 'date' // date | month
+  @Input() dateType: string = 'date'; // date | month
   /**
    * Valeure par défaut
    */
-  @Input() value: Date | string | undefined | null = null
+  @Input() value: Date | string | undefined | null = null;
   /**
    * Est éditable ou non
    */
-  @Input() readOnly: boolean = false
+  @Input() readOnly: boolean = false;
   /**
    * Affiche "aujourd'hui" quand la date est de aujourd'hui
    */
-  @Input() showToday: boolean = true
+  @Input() showToday: boolean = true;
   /**
    * Possibilité d'avoir une date nule
    */
-  @Input() clearable: boolean = false
+  @Input() clearable: boolean = false;
   /**
    * Date minimal
    */
-  @Input() min: Date | null | undefined = null
+  @Input() min: Date | null | undefined = null;
   /**
    * Date maximal
    */
-  @Input() max: Date | null = null
+  @Input() max: Date | null = null;
+  /**
+   * Show arrow
+   */
+  @Input() showArrow: boolean = false;
   /**
    * Date class du calendrier
    */
   @Input() dateClass: MatCalendarCellClassFunction<any> = (cellDate, view) => {
-    return ''
-  }
+    return '';
+  };
   /**
    * Rémontée au parent en cas de changement de date sélectionnée
    */
-  @Output() valueChange = new EventEmitter()
+  @Output() valueChange = new EventEmitter();
   /**
    * Emit is open
    */
-  @Output() isOpen = new EventEmitter()
+  @Output() isOpen = new EventEmitter();
   /**
    * Class host qui permet d'afficher un design de read only
    */
-  @HostBinding('class.read-only') onReadOnly: boolean = false
+  @HostBinding('class.read-only') onReadOnly: boolean = false;
   /**
    * Composant de selection de date de material
    */
-  @ViewChild('picker') picker: any
+  @ViewChild('picker') picker: any;
   /**
    * Conversion du champs date en un champs date humaine
    */
-  realValue: string = ''
+  realValue: string = '';
 
   /**
    * Constructeur
    */
   constructor() {
-    super()
+    super();
   }
 
   /**
    * Détection en cas de change de date via le père
    */
   ngOnChanges() {
-    this.findRealValue()
-    this.onReadOnly = this.readOnly
+    this.findRealValue();
+    this.onReadOnly = this.readOnly;
   }
 
   /**
    * Conversion du champs date en un champs date humaine
    */
   findRealValue() {
-    const now = new Date()
+    const now = new Date();
 
     if (typeof this.value === 'string') {
-      this.value = new Date(this.value)
+      this.value = new Date(this.value);
     }
 
     if (this.value && typeof this.value.getMonth === 'function') {
@@ -117,24 +130,24 @@ export class DateSelectComponent extends MainClass implements OnChanges {
             now.getDate() === this.value.getDate() &&
             this.showToday === true
           ) {
-            this.realValue = "Aujourd'hui"
+            this.realValue = "Aujourd'hui";
           } else {
             this.realValue = `${(this.value.getDate() + '').padStart(
               2,
               '0'
             )} ${this.getShortMonthString(
               this.value
-            )} ${this.value.getFullYear()}`
+            )} ${this.value.getFullYear()}`;
           }
-          break
+          break;
         case 'month':
           this.realValue = `${this.getShortMonthString(
             this.value
-          )} ${this.value.getFullYear()}`
-          break
+          )} ${this.value.getFullYear()}`;
+          break;
       }
     } else {
-      this.realValue = ''
+      this.realValue = '';
     }
   }
 
@@ -143,22 +156,18 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * @param event
    */
   onDateChanged(event: any) {
-    if (event && event._i.year) {
-      const date = new Date(event._i.year, event._i.month, event._i.date)
-      this.value = date
-    } else {
-      this.value = event
-    }
+    const date = new Date(event);
+    this.value = date;
 
-    this.valueChange.emit(this.value)
-    this.findRealValue()
+    this.valueChange.emit(this.value);
+    this.findRealValue();
   }
 
   /**
    * Ouverture du selecteur de date de material
    */
   onClick() {
-    this.readOnly === false ? this.picker.open() : null
+    this.readOnly === false ? this.picker.open() : null;
   }
 
   /**
@@ -166,17 +175,93 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * @param normalizedMonthAndYear
    * @param datepicker
    */
-  setMonthAndYear(normalizedMonthAndYear: any, datepicker: MatDatepicker<any>) {
+  setMonthAndYear(
+    normalizedMonthAndYear: Date,
+    datepicker: MatDatepicker<any>
+  ) {
     if (this.dateType === 'month') {
       const date = new Date(
-        normalizedMonthAndYear.year(),
-        normalizedMonthAndYear.month()
-      )
+        normalizedMonthAndYear.getFullYear(),
+        normalizedMonthAndYear.getMonth()
+      );
 
-      this.value = date
-      this.valueChange.emit(this.value)
-      this.findRealValue()
-      datepicker.close()
+      this.value = date;
+      this.valueChange.emit(this.value);
+      this.findRealValue();
+      datepicker.close();
     }
+  }
+
+  /**
+   * Change date selected with delta
+   * @param delta
+   */
+  onChangeDate(delta: number) {
+    this.value = new Date(this.value || '');
+
+    if (this.dateType === 'month') {
+      this.value.setMonth(this.value.getMonth() + delta);
+    } else {
+      this.value.setDate(this.value.getDate() + delta);
+    }
+
+    this.valueChange.emit(this.value);
+    this.findRealValue();
+  }
+
+  /**
+   * Show or hide left chevron
+   */
+  onShowLeftArrow() {
+    if (this.showArrow) {
+      if (!this.min) {
+        return true;
+      } else if (this.value && this.min) {
+        const dValue = new Date(this.value || '');
+        const compareDate =
+          this.dateType === 'month' ? this.getMonth(this.min) : today(this.min);
+        if (
+          this.dateType === 'month' &&
+          this.getMonth(dValue).getTime() > compareDate.getTime()
+        ) {
+          return true;
+        } else if (
+          this.dateType !== 'month' &&
+          today(dValue).getTime() > compareDate.getTime()
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Show or hide right chevron
+   */
+  onShowRightArrow() {
+    if (this.showArrow) {
+      if (!this.max) {
+        return true;
+      } else if (this.value && this.max) {
+        const dValue = new Date(this.value || '');
+        const compareDate =
+          this.dateType === 'month' ? this.getMonth(this.max) : today(this.max);
+        if (
+          this.dateType === 'month' &&
+          this.getMonth(dValue).getTime() < compareDate.getTime()
+        ) {
+          return true;
+        } else if (
+          this.dateType !== 'month' &&
+          today(dValue).getTime() < compareDate.getTime()
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }

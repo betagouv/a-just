@@ -1,12 +1,13 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 
 /**
  * Page d'accueil
  */
 
 @Component({
-  templateUrl: "./home.page.html",
-  styleUrls: ["./home.page.scss"],
+  standalone: true,
+  imports: [],
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
 })
-export class HomePage {
-}
+export class HomePage {}

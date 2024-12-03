@@ -1,14 +1,18 @@
 import {
   AfterViewInit,
-  OnInit,
   Component,
   EventEmitter,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
-} from '@angular/core'
-import { WrapperComponent } from 'src/app/components/wrapper/wrapper.component'
+} from '@angular/core';
+import { groupBy, mapValues, get, isNumber } from 'lodash';
+import { MainClass } from '../../../libs/main-class';
+import { PopupComponent } from '../../../components/popup/popup.component';
+import { DateSelectComponent } from '../../../components/date-select/date-select.component';
+import { CommonModule } from '@angular/common';
+import { WrapperComponent } from '../../../components/wrapper/wrapper.component';
 import {
   DATA_GITBOOK,
   NOMENCLATURE_DOWNLOAD_URL,
@@ -28,11 +32,22 @@ import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
 import { UserService } from 'src/app/services/user/user.service'
 import { OPACITY_20 } from 'src/app/constants/colors'
 
+
 /**
  * Composant page activité
  */
 @Component({
   selector: 'aj-popin-edit-activities',
+  standalone: true,
+  imports: [
+    PopupComponent,
+    DateSelectComponent,
+    CommonModule,
+    MatIconModule,
+    FormsModule,
+    CommentActivitiesComponent,
+    RadioButtonComponent,
+  ],
   templateUrl: './popin-edit-activities.component.html',
   styleUrls: ['./popin-edit-activities.component.scss'],
 })
@@ -43,19 +58,19 @@ export class PopinEditActivitiesComponent
   /**
    * Dom du wrapper
    */
-  @Input() wrapper: WrapperComponent | undefined
+  @Input() wrapper: WrapperComponent | undefined;
   /**
    * Référentiel
    */
-  @Input() referentiel: ContentieuReferentielInterface | null = null
+  @Input() referentiel: ContentieuReferentielInterface | null = null;
   /**
    * Référentiel sélectionné
    */
-  @Input() selectedReferentielId: number = 0
+  @Input() selectedReferentielId: number = 0;
   /**
    * Date du mois sélectionné
    */
-  @Input() activityMonth: Date = new Date()
+  @Input() activityMonth: Date = new Date();
   /**
    * On Close event
    */
@@ -63,18 +78,19 @@ export class PopinEditActivitiesComponent
     reload: boolean
     month?: Date | undefined
   }> = new EventEmitter()
+
   /**
    * Current updates
    */
-  updates: any = {}
+  updates: any = {};
   /**
    * Databook url
    */
-  DATA_GITBOOK = DATA_GITBOOK
+  DATA_GITBOOK = DATA_GITBOOK;
   /**
    * Nomeclature url
    */
-  NOMENCLATURE_DOWNLOAD_URL = NOMENCLATURE_DOWNLOAD_URL
+  NOMENCLATURE_DOWNLOAD_URL = NOMENCLATURE_DOWNLOAD_URL;
   /**
    * Total in, out, stock
    */
@@ -90,19 +106,19 @@ export class PopinEditActivitiesComponent
   /**
    * have values to show
    */
-  hasValuesToShow: boolean = true
+  hasValuesToShow: boolean = true;
   /**
    * Lien vers la nomenclature a-just
    */
-  nomenclature = '/assets/nomenclature-A-Just.html'
+  nomenclature = '/assets/nomenclature-A-Just.html';
   /**
    * Lien vers le data book
    */
-  dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/'
+  dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/';
   /**
    *
    */
-  totalUrl = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/'
+  totalUrl = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/';
   /**
    *
    */
@@ -118,6 +134,11 @@ export class PopinEditActivitiesComponent
    *  Vérifie que le mois prochain comporte des données d'activité
    */
   hasNextMonth: boolean = false
+  
+  /**
+   * Show comments
+   */
+  showComments: boolean = false;
 
   /**
    * Constructeur
@@ -127,17 +148,16 @@ export class PopinEditActivitiesComponent
    */
   constructor(
     private appService: AppService,
-    private referentielService: ReferentielService,
     private activitiesService: ActivitiesService,
     private userService: UserService
   ) {
-    super()
+    super();
   }
 
   ngAfterViewInit() {
-    this.checkIfNextMonthHasValue()
+    this.checkIfNextMonthHasValue();
     // Mise en gris du background du sous-contentieux sélectionné et scroll automatique au niveau de ce contentieux
-    const container = document.getElementById('contentieux-list')
+    const container = document.getElementById('contentieux-list');
     if (container) {
       const element = container.querySelector(
         `#contentieux-${this.selectedReferentielId}`
@@ -147,26 +167,26 @@ export class PopinEditActivitiesComponent
       )
       if (element) {
         // Mise en gris du background
-        const referentielList = container.querySelectorAll('.header-list')
-        const containerTop = container.getBoundingClientRect().top
-        const selectedElementTop = element.getBoundingClientRect().top
-        let delta = containerTop
+        const referentielList = container.querySelectorAll('.header-list');
+        const containerTop = container.getBoundingClientRect().top;
+        const selectedElementTop = element.getBoundingClientRect().top;
+        let delta = containerTop;
 
-        element.classList.add('grey-bg')
+        element.classList.add('grey-bg');
 
         // Scroll automatique au niveau de ce contentieux
         for (let i = 0; i < referentielList.length; i++) {
-          const topHeader = referentielList[i].getBoundingClientRect().top
+          const topHeader = referentielList[i].getBoundingClientRect().top;
           if (topHeader === containerTop || containerTop < selectedElementTop) {
-            delta += referentielList[i].getBoundingClientRect().height
-            break
+            delta += referentielList[i].getBoundingClientRect().height;
+            break;
           }
         }
-        let scrollTop = selectedElementTop - delta + container.scrollTop - 8
+        let scrollTop = selectedElementTop - delta + container.scrollTop - 8;
         container.scroll({
           behavior: 'smooth',
           top: scrollTop,
-        })
+        });
       }
     }
 
@@ -184,9 +204,9 @@ export class PopinEditActivitiesComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('new ref', this.referentiel, changes)
+    console.log('new ref', this.referentiel, changes);
     if (changes['referentiel']) {
-      this.updateTotal()
+      this.updateTotal();
     }
   }
 
@@ -194,7 +214,7 @@ export class PopinEditActivitiesComponent
    * Récuperer le type de l'app
    */
   getInterfaceType() {
-    return this.userService.interfaceType === 1
+    return this.userService.interfaceType === 1;
   }
 
   /**
@@ -203,7 +223,7 @@ export class PopinEditActivitiesComponent
    */
   checkIfNextMonthHasValue() {
     this.activitiesService.getLastMonthActivities().then((resp) => {
-      const tmp = new Date(resp)
+      const tmp = new Date(resp);
 
       const date1 = new Date(tmp.getFullYear(), tmp.getMonth(), 1)
       const date2 = new Date(
@@ -233,7 +253,7 @@ export class PopinEditActivitiesComponent
   async controlBeforeChange(close = false) {
     return new Promise((resolve) => {
       if (Object.values(this.updates).length === 0) {
-        resolve(true)
+        resolve(true);
       } else {
         if (this.checkIfHasUpdates()) {
           if (close) {
@@ -243,19 +263,19 @@ export class PopinEditActivitiesComponent
               text: 'Si vous fermez cette fenêtre sans avoir enregistré vos modifications, les nouvelles valeurs A-JUSTées seront automatiquement effacées.',
               okText: 'Annuler les modifications',
               callback: () => {
-                resolve(true)
+                resolve(true);
               },
               secondaryText: 'Enregistrer les modifications',
               callbackSecondary: () => {
                 this.onSave({ force: false, exit: true })
               },
-            })
+            });
           } else {
             this.onSave({ force: false, exit: false }).then(() => resolve(true))
           }
         }
       }
-    })
+    });
   }
 
   /**
@@ -289,22 +309,22 @@ export class PopinEditActivitiesComponent
    * @returns
    */
   validateNo(e: any) {
-    const charCode = e.which ? e.which : e.keyCode
+    const charCode = e.which ? e.which : e.keyCode;
 
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
   /**
    * Mise à jour des totaux du contentieux concerné suite à une modification de donnée
    */
   updateTotal() {
-    this.total.in.value = this.referentiel?.in
-    this.total.out.value = this.referentiel?.out
-    this.total.stock.value = this.referentiel?.stock
-    const updates = Object.values(this.updates)
+    this.total.in.value = this.referentiel?.in;
+    this.total.out.value = this.referentiel?.out;
+    this.total.stock.value = this.referentiel?.stock;
+    const updates = Object.values(this.updates);
 
     if (updates.length) {
       this.total.in.value =
@@ -321,26 +341,27 @@ export class PopinEditActivitiesComponent
         this.referentiel?.originalStock
 
       updates.map((elem: any) => {
-        let nodeValue = null
-        let updatedValue = elem.value
+        let nodeValue = null;
+        let updatedValue = elem.value;
 
         switch (elem.node) {
           case 'entrees':
-            nodeValue = elem.contentieux.in ?? elem.contentieux.originalIn
+            nodeValue = elem.contentieux.in ?? elem.contentieux.originalIn;
             if (elem.value === null)
               updatedValue = isNumber(elem.contentieux.originalIn)
                 ? elem.contentieux.originalIn
                 : null
             break
           case 'sorties':
-            nodeValue = elem.contentieux.out ?? elem.contentieux.originalOut
+            nodeValue = elem.contentieux.out ?? elem.contentieux.originalOut;
             if (elem.value === null)
               updatedValue = isNumber(elem.contentieux.originalOut)
                 ? elem.contentieux.originalOut
                 : null
             break
           case 'stock':
-            nodeValue = elem.contentieux.stock ?? elem.contentieux.originalStock
+            nodeValue =
+              elem.contentieux.stock ?? elem.contentieux.originalStock;
             if (elem.value === null)
               updatedValue = isNumber(elem.contentieux.originalStock)
                 ? elem.contentieux.originalStock
@@ -348,7 +369,7 @@ export class PopinEditActivitiesComponent
             break
         }
 
-        let delta = (updatedValue || 0) - (nodeValue || 0)
+        let delta = (updatedValue || 0) - (nodeValue || 0);
 
         switch (elem.node) {
           case 'entrees':
@@ -363,6 +384,7 @@ export class PopinEditActivitiesComponent
             break
           case 'sorties':
             this.total.out.value = (this.total.out.value || 0) + delta
+
             if (
               updatedValue === null &&
               this.referentiel?.originalOut === null
@@ -373,6 +395,7 @@ export class PopinEditActivitiesComponent
             break
           case 'stock':
             this.total.stock.value = (this.total.stock.value || 0) + delta
+
             if (
               updatedValue === null &&
               this.referentiel?.originalStock === null
@@ -383,12 +406,13 @@ export class PopinEditActivitiesComponent
             break
         }
       })
+
       if (
         this.total.in.value !== null &&
         this.total.in.value !== undefined &&
         this.total.in.value < 0
       ) {
-        this.total.in.value = 0
+        this.total.in.value = 0;
       }
 
       if (
@@ -396,7 +420,7 @@ export class PopinEditActivitiesComponent
         this.total.out.value !== undefined &&
         this.total.out.value < 0
       ) {
-        this.total.out.value = 0
+        this.total.out.value = 0;
       }
 
       if (
@@ -404,7 +428,7 @@ export class PopinEditActivitiesComponent
         this.total.stock.value !== undefined &&
         this.total.stock.value < 0
       ) {
-        this.total.stock.value = 0
+        this.total.stock.value = 0;
       }
     }
   }
@@ -425,8 +449,9 @@ export class PopinEditActivitiesComponent
     let isToVerify: boolean = false
     let updateTotal: boolean = false
 
+
     if (newValue !== '' && newValue.length > 0) {
-      value = +newValue
+      value = +newValue;
     }
 
     switch (nodeName) {
@@ -435,15 +460,15 @@ export class PopinEditActivitiesComponent
           ? contentieux.originalIn
           : null
         if (contentieux.valueQualityIn === this.VALUE_QUALITY_TO_VERIFY)
-          isToVerify = true
-        break
+          isToVerify = true;
+        break;
       case 'sorties':
         originalValue = isNumber(contentieux.originalOut)
           ? contentieux.originalOut
           : null
         if (contentieux.valueQualityOut === this.VALUE_QUALITY_TO_VERIFY)
-          isToVerify = true
-        break
+          isToVerify = true;
+        break;
       case 'stock':
         originalValue = isNumber(contentieux.originalStock)
           ? contentieux.originalStock
@@ -454,8 +479,8 @@ export class PopinEditActivitiesComponent
     }
 
     if (newValue.length !== 0 && newValue === null) {
-      delete this.updates[`${contentieux.id}-${nodeName}`]
-      updateTotal = true
+      delete this.updates[`${contentieux.id}-${nodeName}`];
+      updateTotal = true;
     } else {
       if (newValue.length === 0) {
         this.updates[`${contentieux.id}-${nodeName}`] = {
@@ -465,7 +490,7 @@ export class PopinEditActivitiesComponent
           calculated: false,
           setted: true,
           sendBack: true,
-        }
+        };
       } else {
         this.updates[`${contentieux.id}-${nodeName}`] = {
           value,
@@ -474,9 +499,9 @@ export class PopinEditActivitiesComponent
           calculated: false,
           setted: true,
           sendBack: true,
-        }
+        };
       }
-      updateTotal = true
+      updateTotal = true;
     }
     const stock = document.getElementById(
       `contentieux-${contentieux.id}-stock`
@@ -503,7 +528,7 @@ export class PopinEditActivitiesComponent
           this.updates[`${contentieux.id}-stock`].value === null)) /*|| 
         (contentieux.stock !== null && (!contentieux.activityUpdated || (contentieux.activityUpdated && (contentieux.activityUpdated.stock === null || contentieux.activityUpdated.stock.value === null ))))*/
     ) {
-      updateTotal = true
+      updateTotal = true;
       this.updates[`${contentieux.id}-stock`] = {
         value: contentieux.originalStock,
         node: 'stock',
@@ -529,6 +554,7 @@ export class PopinEditActivitiesComponent
       let sortieValue = 0
       let stockValue = 0
 
+
       if (
         this.updates[`${contentieux.id}-entrees`] &&
         this.updates[`${contentieux.id}-entrees`].value !== null &&
@@ -538,6 +564,7 @@ export class PopinEditActivitiesComponent
               contentieux.originalIn))
       )
         entreeValue = this.updates[`${contentieux.id}-entrees`].value
+
       else {
         if (
           (this.updates[`${contentieux.id}-entrees`] &&
@@ -546,6 +573,7 @@ export class PopinEditActivitiesComponent
         ) {
           entreeValue = contentieux.originalIn ?? 0
         } else entreeValue = contentieux.in ?? 0
+
       }
 
       if (
@@ -577,6 +605,7 @@ export class PopinEditActivitiesComponent
       this.getLastMonthStock(contentieux.id).then((resp) => {
         let newStock: number | null =
           (resp ?? stockValue ?? 0) + entreeValue - sortieValue
+
         // condition spécifique pour envoyer une donnée au back dans le cas suivant: Entrée, Sortie et Stock ajusté puis supression du stock ajusté et ensuite suppression de l'entrée et/ou sortie ajusté.
         // Sans cette condition, la suppression du stock n'est pas prise en compte car la donnée est recalculé (suite à la supression de l'entrée et/ou sortie) et on indique pas au back que l'on souhaite supprimer la valeur précédement entrés
         // (plus bas on met sendBack à false car uopdate[stock].value !== null)
@@ -587,6 +616,7 @@ export class PopinEditActivitiesComponent
             this.updates[`${contentieux.id}-sorties`])
             ? true
             : false
+
 
         this.updates[`${contentieux.id}-stock`] = {
           value: newStock !== null ? (newStock > 0 ? newStock : 0) : null,
@@ -605,9 +635,10 @@ export class PopinEditActivitiesComponent
         stock.value =
           newStock !== null ? (newStock > 0 ? newStock.toString() : '0') : '-'
       })
+
     }
-    console.log('this.updates 00:', this.updates)
-    updateTotal && setTimeout(() => this.updateTotal(), 1000)
+    console.log('this.updates 00:', this.updates);
+    updateTotal && setTimeout(() => this.updateTotal(), 1000);
   }
 
   /**
@@ -627,6 +658,7 @@ export class PopinEditActivitiesComponent
       if (tmp) stock = tmp.stock ?? tmp.originalStock ?? null
       return stock
     })
+
   }
 
   /**
@@ -643,13 +675,14 @@ export class PopinEditActivitiesComponent
           text: `Les valeurs A-JUSTées que vous allez enregistrer vont se substituer aux données logiciel dans l'écran de synthèse et seront prises en compte comme nouvelle base des calculs.<br/><br/>Vous conserverez, dans l'écran de saisie, les données "logiciels" et les A-JUSTements que vous avez réalisés afin de vous en servir comme donnée de référence si besoin.`,
           okText: 'Annuler les modifications',
           callback: () => {
-            this.updates = {} // clear datas
+            this.updates = {}; // clear datas
             if (exit) {
               if (this.wrapper)
                 this.wrapper?.onForcePanelHelperToShow(null, false)
               this.onClose.emit({ reload: false })
+
             }
-            resolve(true)
+            resolve(true);
           },
           secondaryText: 'Enregistrer les modifications',
           callbackSecondary: async () => {
@@ -659,9 +692,10 @@ export class PopinEditActivitiesComponent
               await this.onSave({ force: true, exit: true })
             } else await this.onSave({ force: true })
             resolve(true)
+
           },
-        })
-      })
+        });
+      });
     } else {
       let updates: any = Object.values(this.updates).filter(
         (elem: any) => (elem.calculated && elem.sendBack) || elem.sendBack
@@ -671,6 +705,7 @@ export class PopinEditActivitiesComponent
         return elem
       })
       let contentieux = groupBy(updates, (elem) => get(elem, 'contentieux.id'))
+
       contentieux = mapValues(contentieux, (group) =>
         group.map((elem) => {
           const initialValues = {
@@ -688,28 +723,29 @@ export class PopinEditActivitiesComponent
                 : elem.contentieux.originalStock,
           }
           return { ...elem, ...initialValues }
+
         })
-      )
+      );
       for (const cont of Object.keys(contentieux)) {
-        const up: any = contentieux[cont]
+        const up: any = contentieux[cont];
         let options = {
           entrees: null,
           sorties: null,
           stock: null,
-        }
+        };
         for (const elem of up) {
           switch (elem.node) {
             case 'entrees':
-              options.entrees = elem.value
-              break
+              options.entrees = elem.value;
+              break;
             case 'sorties':
-              options.sorties = elem.value
-              break
+              options.sorties = elem.value;
+              break;
             case 'stock':
-              options.stock = elem.value
-              break
+              options.stock = elem.value;
+              break;
           }
-          console.log('OPTIONS:', options)
+          console.log('OPTIONS:', options);
           await this.activitiesService.updateDatasAt(
             Number(cont),
             this.activityMonth,
@@ -728,9 +764,9 @@ export class PopinEditActivitiesComponent
           }</b> a été ajusté avec succès pour ${this.getMonthString(
             this.activityMonth
           )} ${this.activityMonth.getFullYear()}`
-        )
+        );
       }
-      this.updates = {} // clear datas
+      this.updates = {}; // clear datas
       if (exit)
         this.onClose.emit({
           reload: updates.length ? true : false,
@@ -746,18 +782,18 @@ export class PopinEditActivitiesComponent
   async selectMonth(date: any) {
     await this.controlBeforeChange().then(() => {
       this.activitiesService.loadMonthActivities(date).then((list: any) => {
-        this.activityMonth = new Date(date)
-        this.checkIfNextMonthHasValue()
-        this.hasValuesToShow = list.list.length !== 0
-        console.log(list, this.activityMonth)
+        this.activityMonth = new Date(date);
+        this.checkIfNextMonthHasValue();
+        this.hasValuesToShow = list.list.length !== 0;
+        console.log(list, this.activityMonth);
         if (this.referentiel) {
-          this.referentiel = copy(this.referentiel)
+          this.referentiel = copy(this.referentiel);
 
           if (this.referentiel) {
             const getValuesFromList = (id: number) => {
               const element = list.list.find(
                 (i: any) => i.contentieux.id === id
-              )
+              );
 
               return {
                 in: element ? element.entrees : null,
@@ -773,17 +809,17 @@ export class PopinEditActivitiesComponent
             this.referentiel = {
               ...this.referentiel,
               ...getValuesFromList(this.referentiel.id),
-            }
+            };
 
             this.referentiel.childrens = (this.referentiel.childrens || []).map(
               (child) => ({ ...child, ...getValuesFromList(child.id) })
-            )
+            );
 
             this.updateTotal()
           }
         }
-      })
-    })
+      });
+    });
   }
 
   /**
@@ -819,7 +855,7 @@ export class PopinEditActivitiesComponent
         } else if (cont.stock !== null) return true
         break
     }
-    return false
+    return false;
   }
 
   /**
@@ -841,7 +877,7 @@ export class PopinEditActivitiesComponent
     ) {
       return true
     }
-    return false
+    return false;
   }
 
   /**
@@ -974,7 +1010,7 @@ export class PopinEditActivitiesComponent
           OPACITY_20
         ),
         closeColor: 'black',
-      })
+      });
     }
   }
 
@@ -1023,7 +1059,7 @@ export class PopinEditActivitiesComponent
         } else if (cont.out !== null) {
           return true
         }
-        break
+        break;
       case 'stock':
         if (cont.valueQualityStock === this.VALUE_QUALITY_TO_COMPLETE) {
           if (
@@ -1046,7 +1082,7 @@ export class PopinEditActivitiesComponent
         }
         break
     }
-    return this.updates[`${cont.id}-${node}`]
+    return this.updates[`${cont.id}-${node}`];
   }
 
   /**
@@ -1128,7 +1164,7 @@ export class PopinEditActivitiesComponent
         }
         break
     }
-    return false
+    return false;
   }
 
   /**
@@ -1137,14 +1173,14 @@ export class PopinEditActivitiesComponent
    * @param download
    */
   downloadAsset(type: string, download = false) {
-    let url = null
+    let url = null;
 
     if (type === 'nomenclature') url = this.nomenclature
     else if (type === 'dataBook') url = this.dataBook
 
     if (url) {
       if (download) {
-        downloadFile(url)
+        downloadFile(url);
       } else {
         window.open(url)
       }
@@ -1158,7 +1194,7 @@ export class PopinEditActivitiesComponent
    */
   getScrollbarWidth() {
     if (this.isNotIOS()) {
-      const element = document.getElementById('contentieux-list')
+      const element = document.getElementById('contentieux-list');
       if (element) {
         let scrollWidth = element.offsetWidth - element.clientWidth
         return scrollWidth.toString() + 'px'

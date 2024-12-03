@@ -273,10 +273,49 @@
         Personnaliser</label>
     </div>
   </button>
-  <button class="primary light export" (click)="onExport()">
-    <label><i class="ri-file-pdf-fill"></i>
-      Exporter en PDF</label>
+
+  <button class="compare save" (click)="dropdownExport=!dropdownExport;$event.stopPropagation();">
+    <label (click)="dropdownExport=!dropdownExport;$event.stopPropagation();">Enregistrer</label>
+    <div (click)="dropdownExport=!dropdownExport;$event.stopPropagation();" class="arrow-zone"><i
+        [class]="dropdownExport ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
   </button>
+  <div *ngIf="dropdownExport===true" class="drop-down save" (click)="$event.stopPropagation();">
+    <div class="primary light export" (click)="onExport()"><label><i class="ri-save-fill"></i>Enregistrer cet écran en
+        pdf</label>
+    </div>
+    <div (click)="promptRef = true;setDefaultRefName()"><i class="ri-file-download-fill"></i><label>Enregistrer ces
+        temps
+        moyens comme
+        référentiel</label></div>
+  </div>
+
+  <aj-popup *ngIf="promptRef===true" [removeShadow]="'noShadow'" class="border-radius width-400-custom" [actions]="[
+    { id: 'cancel', content: 'Annuler', fill: false },
+    { id: 'save', content: 'Enregistrer', fill: true }
+    ]" (selectedAction)="actionPopupFollow($event)">
+    <div id="circle" class="avg">
+      <i class="ri-ball-pen-line"></i>
+    </div>
+
+    <p class="title avg">Souhaitez-vous renommer ce référentiel ?</p>
+
+    <input type="text" [(ngModel)]="defaultRefName" />
+  </aj-popup>
+
+  <aj-popup *ngIf="displayRouterRef===true" [removeShadow]="'noShadow'" class="border-radius width-420-custom"
+    [actions]="[
+  { id: 'location', content: 'Voir les référentiels', fill: false },
+  { id: 'cancel', content: 'Poursuivre dans le cockpit', fill: true }
+  ]" (selectedAction)="actionPopupEnd($event)">
+    <div id="circle" class="avg">
+      <i class="ri-save-line"></i>
+    </div>
+
+    <p class="title avg">Votre référentiel a bien été enregistré.</p>
+
+    <p>Retrouvez-le depuis le menu ”Outils”<br /> rubrique “Référentiels de temps moyens”</p>
+  </aj-popup>
+
 </ng-template>
 
 <ng-template #subTitleTemplate><label class="grey">(option)</label></ng-template>

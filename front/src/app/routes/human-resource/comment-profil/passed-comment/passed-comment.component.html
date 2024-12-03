@@ -12,8 +12,8 @@
   <div class="panel-content" [ngClass]="{'editing': isEditing}"> <aj-text-editor #editor
       [ngClass]="{'editing': isEditing}" [value]="commentContent || ''" class="no-main-style"
       (valueChange)="updateComment($event)" placeholder="Écrivez un commentaire" [hideToolbar]="true"
-      (focusField)="getFocusOn($event)" [previousValue]="valueToReset" [askToModify]="isEditing"
-      (resetField)="reset()"></aj-text-editor>
+      (focusField)="getFocusOn($event)" [previousValue]="valueToReset" [askToModify]="isEditing" (resetField)="reset()"
+      [defaultReadOnly]="true"></aj-text-editor>
     <div class="footer-panel" *ngIf="isEditing">
       <div class="unsave" (click)="setOldValue()">Annuler</div>
       <div class="save" (click)="save()">Enregistrer</div>

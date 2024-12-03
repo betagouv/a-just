@@ -5,12 +5,17 @@ import { Types } from '../utils/types'
  * Route des imports
  */
 export default class RouteCsp extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HumanResources' })
+    super(params)
+
+    this.model = params.models.HumanResources
   }
 
   /**

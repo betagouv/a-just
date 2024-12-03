@@ -1,10 +1,13 @@
-import { Component, Input, OnChanges } from '@angular/core'
-import { MainClass } from 'src/app/libs/main-class'
-import { listFormatedInterface } from '../../workforce/workforce.page'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { sumBy } from 'lodash'
-import { today } from 'src/app/utils/dates'
-import { fixDecimal } from 'src/app/utils/numbers'
+import { Component, inject, Input, OnChanges } from '@angular/core';
+import { listFormatedInterface } from '../../workforce/workforce.page';
+import { sumBy } from 'lodash';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MainClass } from '../../../libs/main-class';
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
+import { fixDecimal } from '../../../utils/numbers';
+import { today } from '../../../utils/dates';
+import { MatIconModule } from '@angular/material/icon';
 
 /**
  * Interface pour agencer la page
@@ -13,15 +16,15 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
   /**
    * Pourcentage des fiches 100% ventilés
    */
-  fullComplete?: number
+  fullComplete?: number;
   /**
    * Date de dernière mise à jours de la categorie
    */
-  lastUpdated?: Date
+  lastUpdated?: Date;
   /**
    * Titre de la categorie
    */
-  headerLabel?: string
+  headerLabel?: string;
 }
 
 /**
@@ -29,28 +32,32 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
  */
 @Component({
   selector: 'records-update',
+  standalone: true,
+  imports: [CommonModule, RouterLink, MatIconModule],
   templateUrl: './records-update.component.html',
   styleUrls: ['./records-update.component.scss'],
 })
 export class RecordsUpdateComponent extends MainClass implements OnChanges {
+  humanResourceService = inject(HumanResourceService);
+
   /**
    * Filter categories to view
    */
-  @Input() categoriesFiltered: number[] | null = null
+  @Input() categoriesFiltered: number[] | null = null;
   /**
    * List des categories
    */
-  @Input() listFormated: listFormatedWithDatasInterface[] = []
+  @Input() listFormated: listFormatedWithDatasInterface[] = [];
   /**
    * Liste filtré pour l'affichage
    */
-  listFormatedFiltered: listFormatedWithDatasInterface[] = []
+  listFormatedFiltered: listFormatedWithDatasInterface[] = [];
 
   /**
    * Constructor
    */
-  constructor(private humanResourceService: HumanResourceService) {
-    super()
+  constructor() {
+    super();
   }
 
   /**
@@ -59,7 +66,7 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
   ngOnChanges() {
     const contentieux = this.humanResourceService.contentieuxReferentielOnly
       .getValue()
-      .map((c) => c.id)
+      .map((c) => c.id);
 
     this.listFormatedFiltered = this.listFormated
       .filter(
@@ -69,20 +76,22 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
             this.categoriesFiltered.indexOf(category.categoryId) !== -1)
       )
       .map((category) => {
-        const listAgent = category.hr || []
-        let agentFullComplete = 0
+        const listAgent = category.hr || [];
+        let agentFullComplete = 0;
         listAgent.map((a) => {
-          const percent = Number(sumBy(
-            (a.currentActivities || []).filter((c) =>
-              contentieux.includes(c.contentieux.id)
-            ),
-            'percent'
-          ).toFixed(2))
+          const percent = Number(
+            sumBy(
+              (a.currentActivities || []).filter((c) =>
+                contentieux.includes(c.contentieux.id)
+              ),
+              'percent'
+            ).toFixed(2)
+          );
 
           if (percent === 100) {
-            agentFullComplete++
+            agentFullComplete++;
           }
-        })
+        });
 
         return {
           ...category,
@@ -96,11 +105,12 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
           lastUpdated: listAgent.length
             ? new Date(
                 Math.max(
+                  // @ts-ignore
                   ...listAgent.map((hr) => today(hr.updatedAt).getTime())
                 )
               )
             : undefined,
-        }
-      })
+        };
+      });
   }
 }

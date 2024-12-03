@@ -1,31 +1,37 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-	providedIn: 'root'
+  providedIn: 'root',
 })
 export class HttpService {
-	constructor(private _http: HttpClient) {}
+  _http = inject(HttpClient);
 
-	consoleResult(val: any) {
-		return val;
-	}
+  consoleResult(val: any) {
+    return val;
+  }
 
-	/* HTTPs request */
-	get(url: string, options = {}): Promise<any> {
-		return this._http.get(url, options).toPromise().then(this.consoleResult);
-	}
+  /* HTTPs request */
+  get(url: string, options = {}): Promise<any> {
+    return this._http.get(url, options).toPromise().then(this.consoleResult);
+  }
 
-	post(url: string, params = {}, options = {}): Promise<any> {
-		return this._http.post(url, params, options).toPromise().then(this.consoleResult);
-	}
+  post(url: string, params = {}, options = {}): Promise<any> {
+    return this._http
+      .post(url, params, options)
+      .toPromise()
+      .then(this.consoleResult);
+  }
 
-	put(url: string, params = {}, options = {}): Promise<any> {
-		return this._http.put(url, params, options).toPromise().then(this.consoleResult);
-	}
+  put(url: string, params = {}, options = {}): Promise<any> {
+    return this._http
+      .put(url, params, options)
+      .toPromise()
+      .then(this.consoleResult);
+  }
 
-	delete(url: string, options = {}): Promise<any> {
-		return this._http.delete(url, options).toPromise();
-	}
+  delete(url: string, options = {}): Promise<any> {
+    return this._http.delete(url, options).toPromise();
+  }
 }
