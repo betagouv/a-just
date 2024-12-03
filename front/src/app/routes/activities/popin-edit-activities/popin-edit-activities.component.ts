@@ -16,19 +16,19 @@ import { WrapperComponent } from '../../../components/wrapper/wrapper.component'
 import {
   DATA_GITBOOK,
   NOMENCLATURE_DOWNLOAD_URL,
-} from 'src/app/constants/documentation'
+} from '../../../constants/documentation'
 import {
   ContentieuReferentielActivitiesInterface,
   ContentieuReferentielInterface,
-} from 'src/app/interfaces/contentieu-referentiel'
-import { ActivitiesService } from 'src/app/services/activities/activities.service'
-import { AppService } from 'src/app/services/app/app.service'
-import { ReferentielService } from 'src/app/services/referentiel/referentiel.service'
-import { copy } from 'src/app/utils'
-import { downloadFile } from 'src/app/utils/system'
-import { VALUE_QUALITY_TO_VERIFY } from 'src/app/constants/referentiel'
-import { UserService } from 'src/app/services/user/user.service'
-import { OPACITY_20 } from 'src/app/constants/colors'
+} from '../../../interfaces/contentieu-referentiel'
+import { ActivitiesService } from '../../../services/activities/activities.service'
+import { AppService } from '../../../services/app/app.service'
+import { ReferentielService } from '../../../services/referentiel/referentiel.service'
+import { copy } from '../../../utils'
+import { downloadFile } from '../../../utils/system'
+import { VALUE_QUALITY_TO_VERIFY } from '../../../constants/referentiel'
+import { UserService } from '../../../services/user/user.service'
+import { OPACITY_20 } from '../../../constants/colors'
 
 
 /**
