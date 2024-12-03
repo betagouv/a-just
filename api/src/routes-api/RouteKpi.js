@@ -2,8 +2,17 @@ import Route from './Route'
 import { Types } from '../utils/types'
 
 export default class RouteKpi extends Route {
+  // model de BDD
+  model
+
+  /**
+   * Constructeur
+   * @param {*} params
+   */
   constructor (params) {
-    super({ ...params, model: 'Logs' })
+    super(params)
+
+    this.model = params.models.Logs
   }
 
   @Route.Post({

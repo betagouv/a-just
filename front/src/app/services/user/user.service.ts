@@ -1,29 +1,29 @@
-import { Injectable, OnInit } from '@angular/core'
-import { BehaviorSubject } from 'rxjs'
-import { BackupInterface } from 'src/app/interfaces/backup'
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { UserInterface } from 'src/app/interfaces/user-interface'
-import { ServerService } from '../http-server/server.service'
-import { HumanResourceService } from '../human-resource/human-resource.service'
-import { ReferentielService } from '../referentiel/referentiel.service'
-import {
-  USER_ACCESS_ACTIVITIES,
-  USER_ACCESS_AVERAGE_TIME,
-  USER_ACCESS_CALCULATOR,
-  USER_ACCESS_DASHBOARD,
-  USER_ACCESS_SIMULATOR,
-  USER_ACCESS_WHITE_SIMULATOR,
-  USER_ACCESS_VENTILATIONS,
-} from 'src/app/constants/user-access'
-import { NEED_BOOKING_PAGE } from 'src/app/constants/pages'
-import { Router } from '@angular/router'
+import { inject, Injectable, OnInit, signal } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { ServerService } from '../http-server/server.service';
+import { HumanResourceService } from '../human-resource/human-resource.service';
+import { ReferentielService } from '../referentiel/referentiel.service';
+import { Router } from '@angular/router';
+import { UserInterface } from '../../interfaces/user-interface';
 import {
   referentielCAMappingName,
   referentielMappingColor,
   referentielMappingColorActivity,
   referentielMappingColorCAActivity,
   referentielMappingName,
-} from 'src/app/utils/referentiel'
+} from '../../utils/referentiel';
+import { HRCategoryInterface } from '../../interfaces/hr-category';
+import { BackupInterface } from '../../interfaces/backup';
+import { NEED_BOOKING_PAGE } from '../../constants/pages';
+import {
+  USER_ACCESS_ACTIVITIES,
+  USER_ACCESS_AVERAGE_TIME,
+  USER_ACCESS_CALCULATOR,
+  USER_ACCESS_DASHBOARD,
+  USER_ACCESS_SIMULATOR,
+  USER_ACCESS_VENTILATIONS,
+  USER_ACCESS_WHITE_SIMULATOR,
+} from '../../constants/user-access';
 
 /**
  * Service de sauvegarde de l'utilisateur actuel
@@ -32,32 +32,45 @@ import {
   providedIn: 'root',
 })
 export class UserService implements OnInit {
+  router = inject(Router);
+  serverService = inject(ServerService);
+  humanResourceService = inject(HumanResourceService);
+  referentielService = inject(ReferentielService);
   /**
    * Format de l'utilisateur connecté
    */
   user: BehaviorSubject<UserInterface | null> =
-    new BehaviorSubject<UserInterface | null>(null)
+    new BehaviorSubject<UserInterface | null>(null);
+  /**
+   * User infos to signal
+   */
+  userOriginalS = signal<UserInterface | null>(null);
+  /**
+   * User infos to signal
+   */
+  userS = signal<UserInterface | null>(null);
 
   /**
    * Interface front TJ ou CA
    */
-  interfaceType: number | null = null
+  interfaceType: number | null = null;
 
-  /**
-   * Constructeur
-   * @param serverService
-   * @param humanResourceService
-   * @param referentielService
-   */
-  constructor(
-    private router: Router,
-    private serverService: ServerService,
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
-  ) {}
+  constructor() {
+    this.user.subscribe((s) => {
+      this.userS.set(
+        s
+          ? {
+              ...s,
+              initials:
+                (s.firstName || '').charAt(0) + (s.lastName || '').charAt(0),
+            }
+          : s
+      );
+    });
+  }
 
   ngOnInit(): void {
-    this.getInterfaceType()
+    this.getInterfaceType();
   }
 
   /**
@@ -65,12 +78,12 @@ export class UserService implements OnInit {
    * @param user
    */
   setUser(user: UserInterface | null) {
-    this.user.next(user)
+    this.user.next(user);
 
     if (user && user.token) {
-      this.serverService.setToken(user.token)
+      this.serverService.setToken(user.token);
 
-      this.initDatas()
+      this.initDatas();
     }
   }
 
@@ -80,14 +93,14 @@ export class UserService implements OnInit {
    */
   async getInterfaceType() {
     return this.serverService.get('users/interface-type').then((data) => {
-      this.interfaceType = [0, 1].includes(data.data) ? data.data : null
-      console.log(this.interfaceType, data)
-      return this.interfaceType !== null ? true : false
-    })
+      this.interfaceType = [0, 1].includes(data.data) ? data.data : null;
+      console.log(this.interfaceType, data);
+      return this.interfaceType !== null ? true : false;
+    });
   }
 
   isCa() {
-    return this.interfaceType === 1
+    return this.interfaceType === 1;
   }
 
   /**
@@ -96,11 +109,11 @@ export class UserService implements OnInit {
    * @returns
    */
   referentielMappingColorByInterface(label: string, opacity: number = 1) {
-    const name = this.referentielMappingNameByInterface(label)
+    const name = this.referentielMappingNameByInterface(label);
 
     if (this.interfaceType === 1)
-      return this.referentielMappingColorCAActivity(name, opacity)
-    else return this.referentielMappingColor(name, opacity)
+      return this.referentielMappingColorCAActivity(name, opacity);
+    else return this.referentielMappingColor(name, opacity);
   }
 
   /**
@@ -112,11 +125,11 @@ export class UserService implements OnInit {
     label: string,
     opacity: number = 1
   ) {
-    const name = this.referentielMappingNameByInterface(label)
+    const name = this.referentielMappingNameByInterface(label);
 
     if (this.interfaceType === 1)
-      return this.referentielMappingColorCAActivity(name, opacity)
-    else return this.referentielMappingColorActivity(name, opacity)
+      return this.referentielMappingColorCAActivity(name, opacity);
+    else return this.referentielMappingColorActivity(name, opacity);
   }
 
   /**
@@ -125,22 +138,22 @@ export class UserService implements OnInit {
    * @returns
    */
   referentielMappingNameByInterface(label: string) {
-    if (this.interfaceType === 1) return this.referentielCAMappingName(label)
-    else return this.referentielMappingName(label)
+    if (this.interfaceType === 1) return this.referentielCAMappingName(label);
+    else return this.referentielMappingName(label);
   }
 
   /**
    * Methode de reprise des noms de référentiel TJ
    */
   public referentielMappingName(name: string): string {
-    return referentielMappingName(name)
+    return referentielMappingName(name);
   }
 
   /**
    * Methode de reprise des noms de référentiel CA
    */
   public referentielCAMappingName(name: string): string {
-    return referentielCAMappingName(name)
+    return referentielCAMappingName(name);
   }
 
   /**
@@ -149,7 +162,7 @@ export class UserService implements OnInit {
    * @returns
    */
   public referentielMappingColor(name: string, opacity: number = 1): string {
-    return referentielMappingColor(name, opacity)
+    return referentielMappingColor(name, opacity);
   }
 
   /**
@@ -161,7 +174,7 @@ export class UserService implements OnInit {
     name: string,
     opacity: number = 1
   ): string {
-    return referentielMappingColorActivity(name, opacity)
+    return referentielMappingColorActivity(name, opacity);
   }
 
   /**
@@ -173,7 +186,7 @@ export class UserService implements OnInit {
     name: string,
     opacity: number = 1
   ): string {
-    return referentielMappingColorCAActivity(name, opacity)
+    return referentielMappingColorCAActivity(name, opacity);
   }
 
   /**
@@ -183,7 +196,7 @@ export class UserService implements OnInit {
   me() {
     return this.serverService
       .getWithoutError('users/me')
-      .then((data) => data.data || null)
+      .then((data) => data.data || null);
   }
 
   /**
@@ -195,9 +208,9 @@ export class UserService implements OnInit {
     return this.serverService
       .post('users/create-account', params)
       .then((data) => {
-        this.serverService.setToken(data.token)
-        return data
-      })
+        this.serverService.setToken(data.token);
+        return data;
+      });
   }
 
   /**
@@ -208,7 +221,7 @@ export class UserService implements OnInit {
   forgotPassword(params = {}): Promise<any> {
     return this.serverService
       .post('users/forgot-password', params)
-      .then((data) => data.data || null)
+      .then((data) => data.data || null);
   }
 
   /**
@@ -219,7 +232,7 @@ export class UserService implements OnInit {
   changePassword(params = {}): Promise<any> {
     return this.serverService
       .post('users/change-password', params)
-      .then((data) => data.data || null)
+      .then((data) => data.data || null);
   }
 
   /**
@@ -228,9 +241,9 @@ export class UserService implements OnInit {
    */
   logout() {
     return this.serverService.get('auths/logout').then(() => {
-      this.user.next(null)
-      this.serverService.removeToken()
-    })
+      this.user.next(null);
+      this.serverService.removeToken();
+    });
   }
 
   /**
@@ -240,7 +253,7 @@ export class UserService implements OnInit {
   getInitDatas() {
     return this.serverService
       .get('users/get-user-datas')
-      .then((data) => data.data || null)
+      .then((data) => data.data || null);
   }
 
   /**
@@ -250,23 +263,23 @@ export class UserService implements OnInit {
     this.getInitDatas().then((result) => {
       this.humanResourceService.categoriesFilterListIds = result.categories.map(
         (c: HRCategoryInterface) => c.id
-      )
-      this.humanResourceService.fonctions.next(result.fonctions)
-      this.humanResourceService.categories.next(result.categories)
-      this.referentielService.formatDatas(result.referentiel)
+      );
+      this.humanResourceService.fonctions.next(result.fonctions);
+      this.humanResourceService.categories.next(result.categories);
+      this.referentielService.formatDatas(result.referentiel);
       this.humanResourceService.backups.next(
         result.backups.map((b: BackupInterface) => ({
           ...b,
           date: new Date(b.date),
         }))
-      )
+      );
 
       // if no backup we need onboarding
       if (result.backups.length === 0) {
-        this.serverService.removeToken() // logout user without access
-        this.router.navigate(['/' + NEED_BOOKING_PAGE])
+        this.serverService.removeToken(); // logout user without access
+        this.router.navigate(['/' + NEED_BOOKING_PAGE]);
       }
-    })
+    });
   }
 
   /**
@@ -274,74 +287,74 @@ export class UserService implements OnInit {
    */
   getUserPageUrl(user: UserInterface) {
     if (user) {
-      const allPages = this.getAllUserPageUrl(user)
+      const allPages = this.getAllUserPageUrl(user);
       if (allPages) {
-        return `/${allPages[0].path}`
+        return `/${allPages[0].path}`;
       }
     }
 
-    return ''
+    return '';
   }
 
   /**
    * Can view Ventilations
    */
   canViewPanorama(user: UserInterface | null = null) {
-    user = user || this.user.getValue()
+    user = user || this.user.getValue();
     return user &&
       user.access &&
       user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1
       ? true
-      : false
+      : false;
   }
 
   /**
    * Can view Ventilations
    */
   canViewVentilation(user: UserInterface | null = null) {
-    user = user || this.user.getValue()
+    user = user || this.user.getValue();
     return user &&
       user.access &&
       user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1
       ? true
-      : false
+      : false;
   }
 
   /**
    * Can view Activites
    */
   canViewActivities(user: UserInterface | null = null) {
-    user = user || this.user.getValue()
+    user = user || this.user.getValue();
     return user &&
       user.access &&
       user.access.indexOf(USER_ACCESS_ACTIVITIES) !== -1
       ? true
-      : false
+      : false;
   }
 
   /**
    * Can view Activites
    */
   canViewAverageTime(user: UserInterface | null = null) {
-    user = user || this.user.getValue()
+    user = user || this.user.getValue();
     return user &&
       user.access &&
       user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
       ? true
-      : false
+      : false;
   }
 
   /**
    * Retourne la liste des toutes les pages qu'un utilisateur à accès
    */
   getAllUserPageUrl(user: UserInterface) {
-    const menu = []
+    const menu = [];
 
     if (this.canViewPanorama(user)) {
       menu.push({
         label: 'Panorama',
         path: 'panorama',
-      })
+      });
     }
 
     if (
@@ -352,7 +365,7 @@ export class UserService implements OnInit {
       menu.push({
         label: 'Cockpit',
         path: 'cockpit',
-      })
+      });
     }
     if (
       user &&
@@ -363,7 +376,7 @@ export class UserService implements OnInit {
       menu.push({
         label: 'Simulateurs',
         path: 'simulateurs',
-      })
+      });
     }
     if (
       user &&
@@ -374,7 +387,7 @@ export class UserService implements OnInit {
       menu.push({
         label: 'Simulateur',
         path: 'simulateur',
-      })
+      });
     }
     if (
       user &&
@@ -386,20 +399,20 @@ export class UserService implements OnInit {
       menu.push({
         label: 'Simulateur',
         path: 'simulateur-sans-donnees',
-      })
+      });
     }
 
     if (this.canViewVentilation(user)) {
       menu.push({
         label: 'Ventilateur',
         path: 'ventilations',
-      })
+      });
     }
     if (this.canViewActivities(user)) {
       menu.push({
         label: "Données d'activité",
         path: 'donnees-d-activite',
-      })
+      });
     }
 
     if (
@@ -410,17 +423,17 @@ export class UserService implements OnInit {
       menu.push({
         label: 'Extracteurs',
         path: 'dashboard',
-      })
+      });
     }
 
     if (menu.length === 0) {
-      this.serverService.removeToken() // logout user without access
+      this.serverService.removeToken(); // logout user without access
       menu.push({
         label: 'Bienvenue',
         path: 'bienvenue',
-      })
+      });
     }
 
-    return menu
+    return menu;
   }
 }

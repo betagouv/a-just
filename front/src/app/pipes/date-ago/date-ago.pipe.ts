@@ -1,28 +1,27 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { getMonthString, getShortMonthString } from 'src/app/utils/dates';
+import { getMonthString } from '../../utils/dates';
 
 @Pipe({
+  standalone: true,
   name: 'dateAgo',
-  pure: true
 })
 export class DateAgoPipe implements PipeTransform {
-
   transform(value: any, args?: any): any {
     if (value) {
       const seconds = Math.floor((+new Date() - +new Date(value)) / 1000);
-      if (seconds < 29) // less than 30 seconds ago will show as 'Just now'
-        return 'A l\'instant';
+      if (seconds < 29)
+        // less than 30 seconds ago will show as 'Just now'
+        return "A l'instant";
       const intervals = {
         //'an': 31536000,
         //'mois': 2592000,
         //'semaine': 604800,
-        'jour': 86400,
-        'heure': 3600,
-        'minute': 60,
-        'seconde': 1
+        jour: 86400,
+        heure: 3600,
+        minute: 60,
+        seconde: 1,
       };
-      if (seconds > 604800)
-        return this.getRealValue(value);
+      if (seconds > 604800) return this.getRealValue(value);
       let counter;
       for (const i in intervals) {
         counter = Math.floor(seconds / intervals[i as keyof typeof intervals]);
@@ -37,20 +36,17 @@ export class DateAgoPipe implements PipeTransform {
     return value;
   }
 
-
-    /**
+  /**
    * Renvoi la valeur de la date Mois - Année
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
-    getRealValue(date: Date | null) {
-      if (date !== null) {
-        date = new Date(date)
-        return `${(date.getDate() + '').padStart(
-          2,
-          '0'
-        )} ${getMonthString(date)} ${date.getFullYear()}`
-      }
-      else return ''
-    }
+  getRealValue(date: Date | null) {
+    if (date !== null) {
+      date = new Date(date);
+      return `${(date.getDate() + '').padStart(2, '0')} ${getMonthString(
+        date
+      )} ${date.getFullYear()}`;
+    } else return '';
+  }
 }

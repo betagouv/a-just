@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -8,21 +9,25 @@ import {
   QueryList,
   ElementRef,
   Renderer2,
-  OnInit
-} from '@angular/core'
-import { FormGroup } from '@angular/forms'
-import { Location } from '@angular/common'
-import { sumBy } from 'lodash'
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
-import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
-import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
-import { MainClass } from 'src/app/libs/main-class'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { today } from 'src/app/utils/dates'
-import { fixDecimal } from 'src/app/utils/numbers'
-import { etpLabel } from 'src/app/utils/referentiel'
-import { DateSelectComponent } from 'src/app/components/date-select/date-select.component'
+  OnInit,
+} from '@angular/core';
+import { FormGroup, FormsModule } from '@angular/forms';
+import { sumBy } from 'lodash';
+import { BackButtonComponent } from '../../../components/back-button/back-button.component';
+import { EtpPreviewComponent } from '../../../components/etp-preview/etp-preview.component';
+import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
+import { DateSelectComponent } from '../../../components/date-select/date-select.component';
+import { MainClass } from '../../../libs/main-class';
+import { HumanResourceInterface } from '../../../interfaces/human-resource-interface';
+import { HRFonctionInterface } from '../../../interfaces/hr-fonction';
+import { HRCategoryInterface } from '../../../interfaces/hr-category';
+import { RHActivityInterface } from '../../../interfaces/rh-activity';
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
+import { fixDecimal } from '../../../utils/numbers';
+import { today } from '../../../utils/dates';
+import { etpLabel } from '../../../utils/referentiel';
+import { MatIconModule } from '@angular/material/icon';
+import { BigEtpPreviewComponent } from '../big-etp-preview/big-etp-preview.component';
 
 /**
  * Panneau de présentation d'une fiche
@@ -30,99 +35,123 @@ import { DateSelectComponent } from 'src/app/components/date-select/date-select.
 
 @Component({
   selector: 'cover-profil-details',
+  standalone: true,
+  imports: [
+    CommonModule,
+    BackButtonComponent,
+    EtpPreviewComponent,
+    FormsModule,
+    HelpButtonComponent,
+    DateSelectComponent,
+    MatIconModule,
+    BigEtpPreviewComponent,
+  ],
   templateUrl: './cover-profil-details.component.html',
   styleUrls: ['./cover-profil-details.component.scss'],
 })
 export class CoverProfilDetailsComponent
   extends MainClass
-  implements OnChanges, OnInit {
-
-  @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
-  @ViewChildren(DateSelectComponent) calendar! : QueryList<DateSelectComponent>
+  implements OnChanges, OnInit
+{
+  @ViewChildren('input') inputs: QueryList<ElementRef> =
+    new QueryList<ElementRef>();
+  @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>;
 
   /**
    * Fiche courante
    */
-  @Input() currentHR: HumanResourceInterface | null = null
+  @Input() currentHR: HumanResourceInterface | null = null;
   /**
    * Ajout d'un bouton "back" avec un url
    */
-  @Input() backUrl: string | undefined
+  @Input() backUrl: string | undefined;
   /**
    * Ajouter d'une ancre sur le lien de retour
    */
-  @Input() backAnchor: string | undefined
+  @Input() backAnchor: string | undefined;
   /**
    * Affiche l'ETP calculé
    */
-  @Input() etp: number = 0
+  @Input() etp: number = 0;
   /**
    * Fonction courante
    */
-  @Input() fonction: HRFonctionInterface | null = null
+  @Input() fonction: HRFonctionInterface | null = null;
   /**
    * Categorie courante
    */
-  @Input() category: HRCategoryInterface | null = null
+  @Input() category: HRCategoryInterface | null = null;
   /**
    * Liste des indispo courrante
    */
-  @Input() indisponibilities: RHActivityInterface[] = []
+  @Input() indisponibilities: RHActivityInterface[] = [];
   /**
    * Mode d'édition courant
    */
-  @Input() onEditIndex: number | null = null
+  @Input() onEditIndex: number | null = null;
   /**
    * Formulaire
    */
-  @Input() basicHrInfo: FormGroup | null = null
+  @Input() basicHrInfo: FormGroup | null = null;
   /**
    * Date de début de la situation actuelle
    */
-  @Input() dateStart: Date | null = null
+  @Input() dateStart: Date | null = null;
   /**
    * Request an PDF export
    */
-  @Output() exportPDF = new EventEmitter()
+  @Output() exportPDF = new EventEmitter();
   /**
    * Request to help panel
    */
-  @Output() onOpenHelpPanel = new EventEmitter()
+  @Output() onOpenHelpPanel = new EventEmitter();
   /**
    * Request to to update screen
    */
-  @Output() ficheIsUpdated = new EventEmitter()
+  @Output() ficheIsUpdated = new EventEmitter();
   /**
    * Temps de travail en text
    */
-  timeWorked: string | null = ''
+  timeWorked: string | null = '';
   /**
    * ETP des indispo
    */
-  indisponibility: number = 0
+  indisponibility: number = 0;
 
   /**
    * Taille des champs d'inputs (firstName et LastName)
    */
-  inputsWidth : { firstName: number, lastName: number } = { firstName: 120, lastName: 120 }
+  inputsWidth: { firstName: number; lastName: number } = {
+    firstName: 120,
+    lastName: 120,
+  };
 
   /**
    * Constructeur
    * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService, private renderer: Renderer2) {
-    super()
+  constructor(
+    private humanResourceService: HumanResourceService,
+    private renderer: Renderer2
+  ) {
+    super();
   }
-  
+
   /**
    * Déclenchemet à la création du composent
    */
   ngOnInit(): void {
-    const firstName = this.currentHR?.firstName || ''
-    const lastName = this.currentHR?.lastName || ''
+    const firstName = this.currentHR?.firstName || '';
+    const lastName = this.currentHR?.lastName || '';
 
-    this.inputsWidth['firstName'] = this.calculateTextWidth(firstName , 'firstName');
-    this.inputsWidth['lastName'] = this.calculateTextWidth(lastName, 'lastName');
+    this.inputsWidth['firstName'] = this.calculateTextWidth(
+      firstName,
+      'firstName'
+    );
+    this.inputsWidth['lastName'] = this.calculateTextWidth(
+      lastName,
+      'lastName'
+    );
   }
 
   /**
@@ -131,33 +160,36 @@ export class CoverProfilDetailsComponent
   ngOnChanges() {
     this.indisponibility = fixDecimal(
       sumBy(this.indisponibilities, 'percent') / 100
-    )
+    );
     if (this.indisponibility > 1) {
-      this.indisponibility = 1
+      this.indisponibility = 1;
     }
 
-    (document.getElementById('firstName') as HTMLElement).innerHTML = this.basicHrInfo?.get('firstName')?.value;
-    (document.getElementById('lastName') as HTMLElement).innerHTML = this.basicHrInfo?.get('lastName')?.value;
-    (document.getElementById('matricule') as HTMLElement).innerHTML = this.basicHrInfo?.get('matricule')?.value;
+    (document.getElementById('firstName') as HTMLElement).innerHTML =
+      this.basicHrInfo?.get('firstName')?.value;
+    (document.getElementById('lastName') as HTMLElement).innerHTML =
+      this.basicHrInfo?.get('lastName')?.value;
+    (document.getElementById('matricule') as HTMLElement).innerHTML =
+      this.basicHrInfo?.get('matricule')?.value;
 
     if (this.currentHR && this.currentHR.situations.length) {
       const dateEndToJuridiction =
         this.currentHR && this.currentHR.dateEnd
           ? today(this.currentHR.dateEnd)
-          : null
+          : null;
       if (
         dateEndToJuridiction &&
         this.dateStart &&
         dateEndToJuridiction.getTime() <= this.dateStart.getTime()
       ) {
-        this.timeWorked = 'Parti'
+        this.timeWorked = 'Parti';
 
         // force to memorize last category
         if (this.currentHR && this.currentHR.situations.length) {
-          this.category = this.currentHR.situations[0].category
+          this.category = this.currentHR.situations[0].category;
         }
       } else {
-        this.timeWorked = etpLabel(this.etp)
+        this.timeWorked = etpLabel(this.etp);
       }
     }
   }
@@ -166,7 +198,7 @@ export class CoverProfilDetailsComponent
    * Request an PDF export
    */
   onExport() {
-    this.exportPDF.emit()
+    this.exportPDF.emit();
   }
 
   /**
@@ -178,14 +210,15 @@ export class CoverProfilDetailsComponent
     node: 'firstName' | 'lastName' | 'matricule',
     object: any
   ) {
-    const value = object || ' '
-    const spanInputElem = document.querySelector(`.input-span-${node}`) as HTMLElement
+    const value = object || ' ';
+    const spanInputElem = document.querySelector(
+      `.input-span-${node}`
+    ) as HTMLElement;
 
-    if (spanInputElem)
-        spanInputElem.innerText = value
+    if (spanInputElem) spanInputElem.innerText = value;
 
     if (this.basicHrInfo) {
-      this.basicHrInfo.get(node)?.setValue(object)
+      this.basicHrInfo.get(node)?.setValue(object);
       //this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
     }
   }
@@ -195,7 +228,7 @@ export class CoverProfilDetailsComponent
    * @param type
    */
   openHelpPanel(type: string | undefined = undefined) {
-    this.onOpenHelpPanel.emit(type)
+    this.onOpenHelpPanel.emit(type);
   }
 
   /**
@@ -206,23 +239,26 @@ export class CoverProfilDetailsComponent
   async updateHuman(nodeName: string, value: any) {
     if (this.currentHR) {
       if (value && typeof value.innerText !== 'undefined') {
-        value = value.innerText
+        value = value.innerText;
       }
 
       if ((nodeName === 'dateStart' || nodeName === 'dateEnd') && value) {
-        value = new Date(value)
-        value.setHours(12)
+        value = new Date(value);
+        value.setHours(12);
       }
 
       this.currentHR = {
         ...this.currentHR,
         [nodeName]: value,
-      }
+      };
 
-      const newHR = await this.humanResourceService.updatePersonById(this.currentHR, {
-        [nodeName]: value,
-      })
-      this.ficheIsUpdated.emit(newHR)
+      const newHR = await this.humanResourceService.updatePersonById(
+        this.currentHR,
+        {
+          [nodeName]: value,
+        }
+      );
+      this.ficheIsUpdated.emit(newHR);
     }
   }
 
@@ -233,31 +269,33 @@ export class CoverProfilDetailsComponent
    */
   keyPress(event: any) {
     if (event.which === 8 || event.which === 46) {
-      return true
+      return true;
     } else if (event.srcElement.innerHTML.length > 10) {
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
-    /**
+  /**
    * Permet à l'utilisateur de passer d'un input à un autre avec la touche "Entrée"
-   * @param event 
+   * @param event
    */
   focusNext(event: any) {
-    event.preventDefault()
+    event.preventDefault();
     const inputsArray = this.inputs.toArray();
     if (event.target.id !== 'lastName') {
-      const currentIndex = inputsArray.findIndex(input => input.nativeElement === event.target);
+      const currentIndex = inputsArray.findIndex(
+        (input) => input.nativeElement === event.target
+      );
       if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
         inputsArray[currentIndex + 1].nativeElement.focus();
       }
     } else {
-      inputsArray.map(elem => elem.nativeElement.blur() )
-      this.calendar.first.onClick()
+      inputsArray.map((elem) => elem.nativeElement.blur());
+      this.calendar.first.onClick();
     }
   }
-    
+
   /**
    * Empêche la soumission du formulaire lorsque l'utilisateur presse la touche "Entrée"
    * @param event
@@ -270,12 +308,12 @@ export class CoverProfilDetailsComponent
 
   /**
    * Permet l'ajustement de la width des inputs pour le Nom et Prénom
-   * @param event 
-   * @param type 
+   * @param event
+   * @param type
    */
-  adjustInputWidth(event: Event, type : 'lastName' | 'firstName') {
+  adjustInputWidth(event: Event, type: 'lastName' | 'firstName') {
     const elem = event.target as HTMLInputElement;
-    const text = elem.value
+    const text = elem.value;
     this.inputsWidth[type] = this.calculateTextWidth(text, type);
   }
 
@@ -283,14 +321,14 @@ export class CoverProfilDetailsComponent
    * Calcul la width du text passer en paramètre en prenant en compte
    * la police d'écriture ainsi que la taille
    * @param text
-   * @param type 
-   * @returns 
+   * @param type
+   * @returns
    */
-  calculateTextWidth(text: string, type : 'lastName' | 'firstName') {
-    const input = document.getElementById(type) as HTMLElement
+  calculateTextWidth(text: string, type: 'lastName' | 'firstName') {
+    const input = document.getElementById(type) as HTMLElement;
 
-    const fontFamily = window.getComputedStyle(input).fontFamily
-    const fontSize = window.getComputedStyle(input).fontSize
+    const fontFamily = window.getComputedStyle(input).fontFamily;
+    const fontSize = window.getComputedStyle(input).fontSize;
 
     const span = this.renderer.createElement('span');
 
@@ -304,7 +342,7 @@ export class CoverProfilDetailsComponent
     this.renderer.appendChild(document.body, span);
 
     const width = span.offsetWidth;
-    
+
     this.renderer.removeChild(document.body, span);
 
     return width + 20;

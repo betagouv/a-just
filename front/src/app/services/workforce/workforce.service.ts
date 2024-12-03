@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { FilterPanelInterface } from 'src/app/routes/workforce/filter-panel/filter-panel.component';
+import { FilterPanelInterface } from '../../routes/workforce/filter-panel/filter-panel.component';
 
 /**
  * Service de sauvegarde des filtres de la page ventilateur
@@ -16,7 +16,7 @@ export class WorkforceService {
   /**
    * Filtres sélectionnée en cache
    */
-  filterParams: FilterPanelInterface | null = null
+  filterParams: FilterPanelInterface | null = null;
 
   /**
    * Constructeur

@@ -10,5 +10,4 @@ module.exports = {
   jsonwebtoken: {
     private_key: process.env.JSON_WEB_TOKEN,
   },
-  consoleLog: true,
 };

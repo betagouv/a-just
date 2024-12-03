@@ -6,12 +6,17 @@ import Route, { Access } from './Route'
  */
 
 export default class RouteHrCategories extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HRCategories' })
+    super(params)
+
+    this.model = params.models.HRCategories
   }
 
   /**

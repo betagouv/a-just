@@ -7,12 +7,15 @@ import Route from './Route'
  */
 
 export default class RoutePublic extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params })
+    super(params)
   }
 
   /**

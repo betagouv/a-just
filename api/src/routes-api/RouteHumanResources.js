@@ -15,12 +15,17 @@ import { etpLabel } from '../constants/referentiel'
  * Route des fiches
  */
 export default class RouteHumanResources extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HumanResources' })
+    super(params)
+
+    this.model = params.models.HumanResources
   }
 
   /**

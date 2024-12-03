@@ -11,11 +11,17 @@ import { HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
  * Route de la page réaffectateur
  */
 export default class RouteReaffectator extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
+   * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HumanResources' })
+    super(params)
+
+    this.model = params.models.HumanResources
   }
 
   /**

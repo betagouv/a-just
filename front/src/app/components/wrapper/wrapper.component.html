@@ -113,7 +113,8 @@
         </div>
         <ng-template [ngIf]="dateSelector">
           <aj-date-select [title]="dateSelector.title" [dateType]="dateSelector.dateType" [value]="dateSelector.value"
-            [min]="dateSelector.minDate" (valueChange)="changeMonth($event)" class="date-selector">
+            [min]="dateSelector.minDate" [showArrow]="dateSelector.showArrow" (valueChange)="changeMonth($event)"
+            class="date-selector">
           </aj-date-select>
         </ng-template>
         <ng-template [ngIf]="titleTemplate">

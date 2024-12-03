@@ -2,14 +2,20 @@ import {
   Component,
   ElementRef,
   HostBinding,
+  inject,
   Input,
   OnInit,
   ViewChild,
-} from '@angular/core'
-import { degreesToRadians } from 'src/app/utils/geometry'
-import { ngResizeObserverProviders, NgResizeObserver } from 'ng-resize-observer'
-import { map, Observable } from 'rxjs'
-import { MainClass } from 'src/app/libs/main-class'
+} from '@angular/core';
+import {
+  ngResizeObserverProviders,
+  NgResizeObserver,
+} from 'ng-resize-observer';
+import { map, Observable } from 'rxjs';
+import { MainClass } from '../../libs/main-class';
+import { TooltipsComponent } from '../tooltips/tooltips.component';
+import { CommonModule } from '@angular/common';
+import { degreesToRadians } from '../../utils/geometry';
 /**
  * Rose : #E64B85
 Vert : #00B252 
@@ -20,7 +26,7 @@ Gris : #999999
 Rouge logo A-JUST : #FF0000
  */
 
-const convertWidthToheight = (width: number) => (width * 55) / 70
+const convertWidthToheight = (width: number) => (width * 55) / 70;
 
 /**
  * Composant affichant un cadran de 0 à 200%
@@ -28,86 +34,89 @@ const convertWidthToheight = (width: number) => (width * 55) / 70
 
 @Component({
   selector: 'aj-speedometer',
+  standalone: true,
+  imports: [TooltipsComponent, CommonModule],
   templateUrl: './speedometer.component.html',
   styleUrls: ['./speedometer.component.scss'],
   providers: [...ngResizeObserverProviders],
 })
 export class SpeedometerComponent extends MainClass implements OnInit {
+  resize$ = inject(NgResizeObserver);
   /**
    * Pourcentage affiché
    */
-  @Input() percent: number | null = null
+  @Input() percent: number | null = null;
   /**
    * automatic resize component
    */
-  @Input() autoResize: boolean = true
+  @Input() autoResize: boolean = true;
   /**
    * Canvas sur lequel on va dessiner
    */
-  @ViewChild('canvas') domCanvas: ElementRef | null = null
+  @ViewChild('canvas') domCanvas: ElementRef | null = null;
   /**
    * Connection au style de la haute du composant
    */
-  @HostBinding('style.height') styleHeight: string = ''
+  @HostBinding('style.height') styleHeight: string = '';
   /**
    * Paramétrage du mode sombre
    */
-  @Input() @HostBinding('class.dark-mode') classDarkMode: boolean = false
+  @Input() @HostBinding('class.dark-mode') classDarkMode: boolean = false;
   /**
    * Ecoute la valeur du forcing de couleur bleu
    */
-  @Input() @HostBinding('class.text-blue') classTextBlue: boolean = false
+  @Input() @HostBinding('class.text-blue') classTextBlue: boolean = false;
   /**
    * Variable d'écoute de la largeur dynamique
    */
   width$: Observable<number> = this.resize$.pipe(
     map((entry) => entry.contentRect.width)
-  )
+  );
   /**
    * Position 0% en degré
    */
-  bottomSpaceDegrees: number = 135
+  bottomSpaceDegrees: number = 135;
   /**
    * Rayon du cercle
    */
-  radius: number = 25
+  radius: number = 25;
   /**
    * Largeur du composant
    */
-  width: number = 55
+  width: number = 55;
   /**
    * Largeur du dessin
    */
-  canvasWidth: number = 55 - 4
+  canvasWidth: number = 55 - 4;
   /**
    * Conversion d'un pourcent en stfing
    */
-  percentString: string = ''
+  percentString: string = '';
   /**
    * Epaisseur du trai du cercle
    */
-  lineWidth: number = 4
+  lineWidth: number = 4;
 
   /**
    * Constructeur
    * @param resize$
    */
-  constructor(private resize$: NgResizeObserver) {
-    super()
+  constructor() {
+    super();
   }
 
   /**
    * A l'inialisation écouter la variable qui écoute la largeur
    */
   ngOnInit() {
-    this.watch(this.width$.subscribe((w) => this.prepareComponent(w)))
+    this.watch(this.width$.subscribe((w) => this.prepareComponent(w)));
   }
 
   /**
    * Après le rendu HTML, dessiner
    */
   ngAfterViewInit() {
-    this.onDraw()
+    this.onDraw();
   }
 
   /**
@@ -115,16 +124,16 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    */
   ngOnChanges() {
     this.percentString =
-      this.percent === null ? 'N/R' : Math.floor(this.percent) + '%'
+      this.percent === null ? 'N/R' : Math.floor(this.percent) + '%';
 
-    this.onDraw()
+    this.onDraw();
   }
 
   /**
    * A la suppression du composant supprimer les watcher
    */
   ngOnDestroy() {
-    this.watcherDestroy()
+    this.watcherDestroy();
   }
 
   /**
@@ -133,9 +142,9 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    */
   prepareComponent(width: number) {
     if (this.autoResize) {
-      this.styleHeight = convertWidthToheight(width) + 'px'
-      this.width = convertWidthToheight(width)
-      this.onDraw()
+      this.styleHeight = convertWidthToheight(width) + 'px';
+      this.width = convertWidthToheight(width);
+      this.onDraw();
     }
   }
 
@@ -143,19 +152,19 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    * Préparation de l'espace nécéssaire au canvas
    */
   onDraw() {
-    const canvas = this.domCanvas?.nativeElement
+    const canvas = this.domCanvas?.nativeElement;
     if (canvas) {
-      this.lineWidth = this.width * 0.08
-      this.canvasWidth = this.width - this.lineWidth
-      this.radius = this.canvasWidth / 2 - this.lineWidth / 2
-      canvas.width = this.width
-      canvas.height = this.width
-      canvas.style.width = this.width + 'px'
-      canvas.style.height = this.width + 'px'
-      const ctx = canvas.getContext('2d')
-      ctx.clearRect(0, 0, this.width, this.width)
-      this.generateBackground()
-      this.drawArrows()
+      this.lineWidth = this.width * 0.08;
+      this.canvasWidth = this.width - this.lineWidth;
+      this.radius = this.canvasWidth / 2 - this.lineWidth / 2;
+      canvas.width = this.width;
+      canvas.height = this.width;
+      canvas.style.width = this.width + 'px';
+      canvas.style.height = this.width + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, this.width, this.width);
+      this.generateBackground();
+      this.drawArrows();
     }
   }
 
@@ -163,66 +172,66 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    * Génération du fond avec les 3 niveaux de couleurs
    */
   generateBackground() {
-    const ctx = this.domCanvas?.nativeElement.getContext('2d')
-    ctx.beginPath()
-    ctx.lineCap = 'round'
-    ctx.lineWidth = this.lineWidth
-    ctx.strokeStyle = '#2aac5c'
+    const ctx = this.domCanvas?.nativeElement.getContext('2d');
+    ctx.beginPath();
+    ctx.lineCap = 'round';
+    ctx.lineWidth = this.lineWidth;
+    ctx.strokeStyle = '#2aac5c';
     ctx.arc(
       this.canvasWidth / 2 + this.lineWidth / 2,
       this.canvasWidth / 2 + this.lineWidth / 2,
       this.radius,
       this.getRadiusPosition(120),
       this.getRadiusPosition(200)
-    )
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.strokeStyle = '#ffe552'
+    );
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = '#ffe552';
     ctx.arc(
       this.canvasWidth / 2 + this.lineWidth / 2,
       this.canvasWidth / 2 + this.lineWidth / 2,
       this.radius,
       this.getRadiusPosition(80),
       this.getRadiusPosition(120)
-    )
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.strokeStyle = '#ce0500'
+    );
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = '#ce0500';
     ctx.arc(
       this.canvasWidth / 2 + this.lineWidth / 2,
       this.canvasWidth / 2 + this.lineWidth / 2,
       this.radius,
       this.getRadiusPosition(0),
       this.getRadiusPosition(80)
-    )
-    ctx.stroke()
+    );
+    ctx.stroke();
   }
 
   /**
    * Génération de la fléche. C'est le seul élement qui bouge
    */
   drawArrows() {
-    const ctx = this.domCanvas?.nativeElement.getContext('2d')
-    ctx.beginPath()
+    const ctx = this.domCanvas?.nativeElement.getContext('2d');
+    ctx.beginPath();
     if (this.percent !== null) {
-      let percent = this.percent || 0
+      let percent = this.percent || 0;
       if (percent < 0) {
-        percent = 0
+        percent = 0;
       } else if (percent > 200) {
-        percent = 200
+        percent = 200;
       }
-      const radiusAngle = this.getRadiusPosition(percent)
+      const radiusAngle = this.getRadiusPosition(percent);
 
       ctx.strokeStyle = this.classTextBlue
         ? '#0063cb'
         : this.classDarkMode
         ? 'white'
-        : 'black'
-      ctx.lineWidth = 1
+        : 'black';
+      ctx.lineWidth = 1;
       ctx.moveTo(
         this.canvasWidth / 2 + this.lineWidth / 2,
         this.canvasWidth / 2 + this.lineWidth / 2
-      )
+      );
       ctx.lineTo(
         Math.cos(radiusAngle) * (this.radius * 0.8) +
           this.canvasWidth / 2 +
@@ -230,8 +239,8 @@ export class SpeedometerComponent extends MainClass implements OnInit {
         Math.sin(radiusAngle) * (this.radius * 0.8) +
           this.canvasWidth / 2 +
           this.lineWidth / 2
-      )
-      ctx.stroke()
+      );
+      ctx.stroke();
     }
   }
 
@@ -242,7 +251,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    */
   getRadiusPosition(percent: number) {
     // calcul pro rata 100% = 160 degrees
-    const degrees = (percent * (180 - this.bottomSpaceDegrees / 2)) / 100
-    return degreesToRadians(degrees + 90 + this.bottomSpaceDegrees / 2)
+    const degrees = (percent * (180 - this.bottomSpaceDegrees / 2)) / 100;
+    return degreesToRadians(degrees + 90 + this.bottomSpaceDegrees / 2);
   }
 }

@@ -3,6 +3,6 @@
     "target": "ES6",
     "experimentalDecorators": true
   },
-  "include": ["src/**/*", "test/**/*", "config"],
+  "include": ["src/**/*", "test/**/*", "src/config"],
   "exclude": ["node_modules"]
 }
