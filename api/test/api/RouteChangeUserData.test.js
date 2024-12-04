@@ -1,4 +1,4 @@
-import { assert, expect } from 'chai'
+import { expect } from 'chai'
 import { onRemoveHrApi, onRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
 
 module.exports = function (datas) {
