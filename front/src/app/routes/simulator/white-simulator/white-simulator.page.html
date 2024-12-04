@@ -6,7 +6,7 @@
 
   <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
   <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true}">
-    <div class="categories-switch">
+    <div class="categories-switch" [ngClass]="{'disable': categorySelected===null}">
       <div *ngIf="canViewMagistrat" class="magistrats {{disabled}}"
         [ngClass]="{'selected': categorySelected === 'MAGISTRAT',  alone: !canViewGreffier}"
         (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRAT'); ">

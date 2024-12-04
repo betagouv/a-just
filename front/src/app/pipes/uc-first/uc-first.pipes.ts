@@ -1,9 +1,12 @@
-import { Pipe, PipeTransform } from '@angular/core'
+import { Pipe, PipeTransform } from '@angular/core';
 
 /**
  * Transforme une string en premier caratère en majuscule et le reste en minuscule
  */
-@Pipe({ name: 'ucFirst' })
+@Pipe({
+  standalone: true,
+  name: 'ucFirst',
+})
 export class UcFirstPipe implements PipeTransform {
   /**
    * Analyse la chaine
@@ -13,8 +16,8 @@ export class UcFirstPipe implements PipeTransform {
 
   transform(string: string) {
     if (string && typeof string === 'string') {
-      return string.charAt(0).toUpperCase() + string.slice(1)
+      return string.charAt(0).toUpperCase() + string.slice(1);
     }
-    return string
+    return string;
   }
 }

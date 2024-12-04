@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core'
-import { MainClass } from 'src/app/libs/main-class'
-import { AppService } from 'src/app/services/app/app.service'
-import { ExcelService } from 'src/app/services/excel/excel.service'
-import { UserService } from 'src/app/services/user/user.service'
+import { Component } from '@angular/core';
+import { DateSelectComponent } from '../../../components/date-select/date-select.component';
+import { SelectComponent } from '../../../components/select/select.component';
+import { MainClass } from '../../../libs/main-class';
+import { ExcelService } from '../../../services/excel/excel.service';
+import { UserService } from '../../../services/user/user.service';
+import { AppService } from '../../../services/app/app.service';
 import {
   userCanViewContractuel,
   userCanViewGreffier,
   userCanViewMagistrat,
-} from 'src/app/utils/user'
+} from '../../../utils/user';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'aj-extractor-ventilation',
+  standalone: true,
+  imports: [DateSelectComponent, SelectComponent, MatIconModule],
   templateUrl: './extractor-ventilation.component.html',
   styleUrls: ['./extractor-ventilation.component.scss'],
 })
@@ -18,39 +23,39 @@ export class ExtractorVentilationComponent extends MainClass {
   /**
    * Date de début selectionnée
    */
-  dateStart: Date | null = null
+  dateStart: Date | null = null;
   /**
    * Date de fin selectionnée
    */
-  dateStop: Date | null = null
+  dateStop: Date | null = null;
   /**
    * Date à aujourd'hui
    */
-  today = new Date()
+  today = new Date();
   /**
    * Activation selection
    */
-  classSelected = 'disabled'
+  classSelected = 'disabled';
   /**
    * Categories
    */
-  categories = new Array<any>()
+  categories = new Array<any>();
   /**
    * Categorie selectionée
    */
-  selectedCategorieId: undefined | Array<string> = undefined
+  selectedCategorieId: undefined | Array<string> = undefined;
   /**
    * Peux voir l'interface magistrat
    */
-  canViewMagistrat: boolean = false
+  canViewMagistrat: boolean = false;
   /**
    * Peux voir l'interface greffier
    */
-  canViewGreffier: boolean = false
+  canViewGreffier: boolean = false;
   /**
    * Peux voir l'interface contractuel
    */
-  canViewContractuel: boolean = false
+  canViewContractuel: boolean = false;
 
   /**
    * Constructeur
@@ -61,13 +66,13 @@ export class ExtractorVentilationComponent extends MainClass {
     private userService: UserService,
     private appService: AppService
   ) {
-    super()
+    super();
 
     this.watch(
       this.userService.user.subscribe((u) => {
-        this.canViewMagistrat = userCanViewMagistrat(u)
-        this.canViewGreffier = userCanViewGreffier(u)
-        this.canViewContractuel = userCanViewContractuel(u)
+        this.canViewMagistrat = userCanViewMagistrat(u);
+        this.canViewGreffier = userCanViewGreffier(u);
+        this.canViewContractuel = userCanViewContractuel(u);
         /**
                 if (
                   this.canViewMagistrat &&
@@ -77,17 +82,17 @@ export class ExtractorVentilationComponent extends MainClass {
                   this.categories.push({ id: 1, label: 'tous', value: 'Tous' })
                    */
         if (this.canViewMagistrat)
-          this.categories.push({ id: 2, label: 'Magistrat', value: 'Siège' })
+          this.categories.push({ id: 2, label: 'Magistrat', value: 'Siège' });
         if (this.canViewContractuel)
           this.categories.push({
             id: 4,
             label: 'Autour du magistrat',
             value: 'Equipe autour du magistrat',
-          })
+          });
         if (this.canViewGreffier)
-          this.categories.push({ id: 3, label: 'Greffe', value: 'Greffe' })
+          this.categories.push({ id: 3, label: 'Greffe', value: 'Greffe' });
       })
-    )
+    );
   }
 
   /**
@@ -97,9 +102,9 @@ export class ExtractorVentilationComponent extends MainClass {
     if (this.selectedCategorieId?.length) {
       this.appService.alert.next({
         text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-      })
-      this.excelService.isLoading.next(true)
-      this.excelService.exportExcel()
+      });
+      this.excelService.isLoading.next(true);
+      this.excelService.exportExcel();
     }
   }
 
@@ -110,14 +115,14 @@ export class ExtractorVentilationComponent extends MainClass {
    */
   selectDate(dateType: string, value: any): void {
     if (dateType === 'start') {
-      this.excelService.dateStart.next(value)
-      this.dateStart = value
+      this.excelService.dateStart.next(value);
+      this.dateStart = value;
     }
     if (dateType === 'stop') {
-      this.excelService.dateStop.next(value)
-      this.dateStop = value
+      this.excelService.dateStop.next(value);
+      this.dateStop = value;
     }
-    this.checkValidity()
+    this.checkValidity();
   }
 
   /**
@@ -125,19 +130,19 @@ export class ExtractorVentilationComponent extends MainClass {
    * @param event évenement click
    */
   updateCategory(event: any) {
-    console.log(event)
-    const category = new Array()
+    console.log(event);
+    const category = new Array();
     if (event !== null)
       event.map((x: any) => {
-        category.push(this.categories.find((category) => category.id === x))
-      })
-    console.log(category)
-    this.selectedCategorieId = category?.map((x) => x.label.toLowerCase())
+        category.push(this.categories.find((category) => category.id === x));
+      });
+    console.log(category);
+    this.selectedCategorieId = category?.map((x) => x.label.toLowerCase());
 
-    console.log(this.selectedCategorieId)
-    this.checkValidity()
+    console.log(this.selectedCategorieId);
+    this.checkValidity();
     if (this.selectedCategorieId.length) {
-      this.excelService.selectedCategory.next(this.selectedCategorieId)
+      this.excelService.selectedCategory.next(this.selectedCategorieId);
     }
   }
 
@@ -150,18 +155,18 @@ export class ExtractorVentilationComponent extends MainClass {
       this.dateStop !== null &&
       this.selectedCategorieId?.length
     )
-      this.classSelected = ''
-    else this.classSelected = 'disabled'
+      this.classSelected = '';
+    else this.classSelected = 'disabled';
   }
 
   async onSendActivity(form: any) {
-    const file = form.file.files[0]
+    const file = form.file.files[0];
 
     if (!file) {
-      alert('Vous devez saisir une fichier !')
-      return
+      alert('Vous devez saisir une fichier !');
+      return;
     }
 
-    this.excelService.modifyExcel(file)
+    this.excelService.modifyExcel(file);
   }
 }

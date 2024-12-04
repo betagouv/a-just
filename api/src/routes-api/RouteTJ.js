@@ -5,12 +5,17 @@ import { Types } from '../utils/types'
  * Route des juridictions
  */
 export default class RouteJuridictions extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'TJ' })
+    super(params)
+
+    this.model = params.models.TJ
   }
 
   /**
