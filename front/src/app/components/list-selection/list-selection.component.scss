@@ -73,27 +73,6 @@
   margin-bottom: 4px;
   position: relative;
 
-  &.bg-white {
-    background-color: white;
-
-
-
-
-    .select-area {
-      >div {
-        &.selected {
-          background-color: white !important;
-          color: gray;
-
-          p {
-            font-size: 16px !important;
-            color: black !important;
-          }
-        }
-      }
-    }
-  }
-
   &.large-drop {
     .select-area {
       width: 400px;
@@ -184,8 +163,8 @@
   left: 0;
   right: 0;
   margin-top: 4px;
-  background-color: fColor(bgSelect);
   border-radius: 4px;
+  background-color: fColor(bgSelect);
   overflow: auto;
 
   &.right {
@@ -204,6 +183,7 @@
     padding: 0 16px;
     color: fColor(cblack);
     cursor: pointer;
+    transition: background-color 0.5s;
 
     >div {
       display: flex;
@@ -215,17 +195,7 @@
       color: #0063cb;
 
       p {
-
         color: #0063cb; //white;
-      }
-    }
-
-    &.selected {
-      background-color: fColor(bgSelectSelected);
-      color: white;
-
-      p {
-        color: white;
       }
     }
 
