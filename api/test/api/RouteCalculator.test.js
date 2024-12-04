@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import { onUpdateAccountApi } from '../routes/user'
 import { onGetLastMonthApi } from '../routes/activities'
 import { onFilterListCalculatorApi } from '../routes/calculator'

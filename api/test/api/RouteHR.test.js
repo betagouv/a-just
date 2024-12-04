@@ -1,6 +1,5 @@
 import axios from 'axios'
 import config from 'config'
-import { assert } from 'chai'
 import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
 
 module.exports = function () {
