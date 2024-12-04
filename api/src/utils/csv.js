@@ -1,4 +1,4 @@
-import parse from 'csv-parse'
+import { parse } from 'csv-parse'
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier
 
 /**
