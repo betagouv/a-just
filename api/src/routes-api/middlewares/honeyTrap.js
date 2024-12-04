@@ -137,7 +137,7 @@ export default async (ctx, next, models) => {
   const ip = ctx.request.ip
   const url = ctx.request.url
 
-  console.log('ip', ip, config.ipFilter.whitelist.some(w => ip.includes(w)))
+  //console.log('ip', ip, config.ipFilter.whitelist.some(w => ip.includes(w)))
 
   if(config.ipFilter.whitelist.some(w => ip.includes(w))) {
     await next()
