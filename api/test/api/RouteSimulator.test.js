@@ -1,6 +1,5 @@
 import axios from 'axios'
 import config from 'config'
-import { assert } from 'chai'
 //import FormData from 'form-data'
 //import { createReadStream } from 'fs'
 import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
