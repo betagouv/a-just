@@ -6,12 +6,17 @@ import { Types } from '../utils/types'
  */
 
 export default class RouteContentieuxOptions extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'ContentieuxOptions' })
+    super(params)
+
+    this.model = params.models.ContentieuxOptions
   }
 
   /**

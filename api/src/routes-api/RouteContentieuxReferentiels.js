@@ -5,12 +5,17 @@ import { Types } from '../utils/types'
  * Route de la gestion des utilisateurs
  */
 export default class RouteContentieuxReferentiels extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'ContentieuxReferentiels' })
+    super(params)
+
+    this.model = params.models.ContentieuxReferentiels
   }
 
   /**
@@ -18,7 +23,7 @@ export default class RouteContentieuxReferentiels extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      isJirs : Types.boolean(),
+      isJirs: Types.boolean(),
     }),
     accesses: [Access.isAdmin],
   })

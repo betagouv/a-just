@@ -35,6 +35,10 @@
 
 :host {
 
+    .disable {
+        pointer-events: none;
+    }
+
     aj-dtes-chart,
     aj-etp-chart,
     aj-in-out-chart {

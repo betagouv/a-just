@@ -21,12 +21,17 @@ import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
  */
 
 export default class RouteExtractor extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HumanResources' })
+    super(params)
+
+    this.model = params.models.HumanResources
   }
 
   /**

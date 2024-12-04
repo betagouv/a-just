@@ -1,16 +1,20 @@
-import { AfterViewInit, Component } from '@angular/core'
-import { Title } from '@angular/platform-browser'
-import { ActivatedRoute } from '@angular/router'
-import { AppService } from 'src/app/services/app/app.service'
-import { loadFile } from 'src/app/utils/js-loader'
+import { AfterViewInit, Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
+import { loadFile } from '../../utils/js-loader';
+import { AppService } from '../../services/app/app.service';
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
+import { BackButtonComponent } from '../../components/back-button/back-button.component';
 
-declare const hbspt: any
+declare const hbspt: any;
 
 /**
  * Contact
  */
 
 @Component({
+  standalone: true,
+  imports: [WrapperNoConnectedComponent, BackButtonComponent],
   templateUrl: './contact.page.html',
   styleUrls: ['./contact.page.scss'],
 })
@@ -18,7 +22,7 @@ export class ContactPage implements AfterViewInit {
   /**
    * Get Link to back
    */
-  routerLinkToGoBack: string[] = ['/']
+  routerLinkToGoBack: string[] = ['/'];
 
   /**
    * Constructeur
@@ -29,7 +33,7 @@ export class ContactPage implements AfterViewInit {
     private route: ActivatedRoute,
     private appService: AppService
   ) {
-    this.title.setTitle('Contact | A-Just')
+    this.title.setTitle('Contact | A-Just');
   }
 
   ngAfterViewInit() {
@@ -39,12 +43,12 @@ export class ContactPage implements AfterViewInit {
         portalId: '26493393',
         formId: '0f776962-cddf-4ccb-b2a8-100936289ebb',
         target: '#hubspotForm',
-      })
-    })
+      });
+    });
 
-    const { backUrl } = this.route.snapshot.queryParams
+    const { backUrl } = this.route.snapshot.queryParams;
     if (backUrl && backUrl === 'true' && this.appService.previousUrl) {
-      this.routerLinkToGoBack = [this.appService.previousUrl]
+      this.routerLinkToGoBack = [this.appService.previousUrl];
     }
   }
 }

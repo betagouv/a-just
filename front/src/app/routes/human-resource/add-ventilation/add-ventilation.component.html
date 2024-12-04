@@ -60,7 +60,8 @@
               class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true"
               data-mat-icon-type="font">{{toggleDropDown=== false ?"expand_more":"expand_less"}}</mat-icon>
           </label>
-          <div class="drop-down-content" id="timesheet" [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
+          <div class="drop-down-content" id="timesheet"
+            [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
 
             <a (click)="downloadEtpTemplate()" class="download">
               <img src="/assets/icons/download-line.svg" />

@@ -30,9 +30,11 @@
     <h3 class="intro-step-3">Se connecter avec son compte</h3>
 
     <label>Email</label>
-    <input #input class="ethics-ui" placeholder="" formControlName="email" type="email" (keyup.enter)="focusNext($event)" />
+    <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
+      (keyup.enter)="focusNext($event)" />
     <label>Mot de passe</label>
-    <input #input class="ethics-ui" placeholder="" formControlName="password" type="password" (keyup.enter)="focusNext($event)" />
+    <input #input class="ethics-ui" placeholder="" formControlName="password" type="password"
+      (keyup.enter)="focusNext($event)" />
     <span class="remember-me"><input type="checkbox" formControlName="remember" /><label>Se souvenir de
         moi</label></span>
     <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>

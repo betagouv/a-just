@@ -1,20 +1,33 @@
-import { AfterViewInit, Component } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
-import { BackupInterface } from 'src/app/interfaces/backup'
-import { DocumentationInterface } from 'src/app/interfaces/documentation'
-import { MainClass } from 'src/app/libs/main-class'
-import { ContentieuxOptionsService } from 'src/app/services/contentieux-options/contentieux-options.service'
-import { UserService } from 'src/app/services/user/user.service'
-import { findRealValueCustom, getTime } from 'src/app/utils/dates'
-
-import { userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user'
-import { Location } from '@angular/common'
-import { orderBy } from 'lodash'
+import { AfterViewInit, Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { orderBy } from 'lodash';
+import { MainClass } from '../../libs/main-class';
+import { WrapperComponent } from '../../components/wrapper/wrapper.component';
+import { PopupComponent } from '../../components/popup/popup.component';
+import { FormsModule } from '@angular/forms';
+import { CheckboxComponent } from '../../components/checkbox/checkbox.component';
+import { DocumentationInterface } from '../../interfaces/documentation';
+import { BackupInterface } from '../../interfaces/backup';
+import { UserService } from '../../services/user/user.service';
+import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
+import { userCanViewGreffier, userCanViewMagistrat } from '../../utils/user';
+import { findRealValueCustom, getTime } from '../../utils/dates';
+import { DateAgoPipe } from '../../pipes/date-ago/date-ago.pipe';
 
 /**
  * Page des temps moyens par dossier
  */
 @Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    WrapperComponent,
+    PopupComponent,
+    FormsModule,
+    CheckboxComponent,
+    DateAgoPipe,
+  ],
   templateUrl: './average-etp.page.html',
   styleUrls: ['./average-etp.page.scss'],
 })
@@ -26,51 +39,51 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     title: "Données d'activité A-JUST :",
     path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
     printSubTitle: true,
-  }
+  };
   /**
    * Peux voir l'interface magistrat
    */
-  canViewMagistrat: boolean = false
+  canViewMagistrat: boolean = false;
   /**
    * Peux voir l'interface greffier
    */
-  canViewGreffier: boolean = false
+  canViewGreffier: boolean = false;
   /**
    * id de la juridiction
    */
-  backupId: number | null = null
+  backupId: number | null = null;
   /**
    * Liste des sauvegardes
    */
-  backups: BackupInterface[] = []
+  backups: BackupInterface[] = [];
   /**
    * Check list
    */
-  checkList: boolean[] = []
+  checkList: boolean[] = [];
   /**
    * Création demandée
    */
-  onCreation: boolean = false
+  onCreation: boolean = false;
   /**
    * Suppression demandée
    */
-  onDelete: boolean = false
+  onDelete: boolean = false;
   /**
    * Upload demandée
    */
-  onUpload: boolean = false
+  onUpload: boolean = false;
   /**
    * Longueur du nom saisi
    */
-  nameLength: number = 0
+  nameLength: number = 0;
   /**
    * Ouverture provenant du cockpit
    */
-  openedFromCockpit: boolean = false
+  openedFromCockpit: boolean = false;
   /**
    * Activer le bouton
    */
-  enableImport: boolean = false
+  enableImport: boolean = false;
 
   /**
    * Constructor
@@ -83,62 +96,62 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     private route: ActivatedRoute,
     private location: Location
   ) {
-    super()
+    super();
 
     // Vérification des droits
     this.watch(
       this.userService.user.subscribe((u) => {
-        this.canViewMagistrat = userCanViewMagistrat(u)
-        this.canViewGreffier = userCanViewGreffier(u)
+        this.canViewMagistrat = userCanViewMagistrat(u);
+        this.canViewGreffier = userCanViewGreffier(u);
       })
-    )
+    );
 
     // Chargement des référentiels
     this.watch(
       this.contentieuxOptionsService.backups.subscribe((b) => {
-        console.log(b)
+        console.log(b);
         this.backups = orderBy(
           b,
           [
             (val) => {
-              const date = val.update?.date || val.date
-              return getTime(date)
+              const date = val.update?.date || val.date;
+              return getTime(date);
             },
           ],
           ['desc']
-        )
+        );
         this.backups = this.backups.filter((x) => {
-          if (x.type === 'GREFFE' && this.canViewGreffier) return true
-          if (x.type === 'SIEGE' && this.canViewMagistrat) return true
-          else return false
-        })
-        this.backups.map(() => this.checkList.push(false))
+          if (x.type === 'GREFFE' && this.canViewGreffier) return true;
+          if (x.type === 'SIEGE' && this.canViewMagistrat) return true;
+          else return false;
+        });
+        this.backups.map(() => this.checkList.push(false));
       })
-    )
+    );
   }
 
   ngAfterViewInit() {
     this.watch(
       this.route.params.subscribe((params) => {
         if (params['datestart'] && params['datestop'] && params['category']) {
-          this.openedFromCockpit = true
-          this.location.replaceState('/temps-moyens')
-          this.onCreation = true
+          this.openedFromCockpit = true;
+          this.location.replaceState('/temps-moyens');
+          this.onCreation = true;
 
           setTimeout(() => {
-            let elem = document.getElementById('type') as HTMLButtonElement
+            let elem = document.getElementById('type') as HTMLButtonElement;
             if (elem) {
               const label =
                 this.route.snapshot.params['category'] === 'magistrats'
                   ? 'SIEGE'
-                  : 'GREFFE'
-              elem.value = label
-              elem.name = label
+                  : 'GREFFE';
+              elem.value = label;
+              elem.name = label;
             }
-          }, 100)
+          }, 100);
         }
       })
-    )
+    );
   }
   /**
    * Renvoi la date à un format d'affichage
@@ -146,7 +159,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * @returns
    */
   realValue(date: Date) {
-    return findRealValueCustom(new Date(date))
+    return findRealValueCustom(new Date(date));
   }
 
   /**
@@ -155,14 +168,14 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * @param type
    */
   duplicate(backupId: number, type: string) {
-    this.contentieuxOptionsService.duplicateBackupById(backupId, type)
+    this.contentieuxOptionsService.duplicateBackupById(backupId, type);
   }
 
   /**
    * Demande de renommage de la sauvegarde
    */
   rename(backupId: number) {
-    this.contentieuxOptionsService.renameBackupById(backupId)
+    this.contentieuxOptionsService.renameBackupById(backupId);
   }
 
   /**
@@ -173,17 +186,17 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
       .removeBackupByIds(this.getSelectedBackups())
       .then(() => {
         setTimeout(() => {
-          this.checkList = this.backups.map(() => false)
-          this.onDelete = false
-        }, 100)
-      })
+          this.checkList = this.backups.map(() => false);
+          this.onDelete = false;
+        }, 100);
+      });
   }
 
   /**
    * Demande de suppresion d'une sauvegarde
    */
   onRemove() {
-    if (this.getSelectedBackups().length) this.onDelete = true
+    if (this.getSelectedBackups().length) this.onDelete = true;
   }
 
   /**
@@ -194,46 +207,46 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
     return this.checkList
       .map((value, index) => {
         if (value === true) {
-          return this.backups[index].id
+          return this.backups[index].id;
         }
-        return
+        return;
       })
-      .filter((x) => x !== undefined)
+      .filter((x) => x !== undefined);
   }
 
   /**
    * Demande de création d'une sauvegarde vide
    */
   create(name: any, type: any) {
-    if (name.length === 0) alert('Vous devez saisir un nom !')
+    if (name.length === 0) alert('Vous devez saisir un nom !');
     else if (name.length > 0 && type.length > 0) {
       this.contentieuxOptionsService
         .createEmpy(false, name, 'Local', type)
         .then((data) => {
-          this.onCreation = false
-          this.nameLength = 0
+          this.onCreation = false;
+          this.nameLength = 0;
           if (this.openedFromCockpit === true) {
             this.contentieuxOptionsService.openedFromCockpit.next({
               value: true,
               dateStart: new Date(this.route.snapshot.params['datestart']),
               dateStop: new Date(this.route.snapshot.params['datestop']),
               category: this.route.snapshot.params['category'],
-            })
+            });
             setTimeout(() => {
-              this.goTo(data)
-            }, 100)
+              this.goTo(data);
+            }, 100);
           } else
             this.contentieuxOptionsService.openedFromCockpit.next({
               value: false,
               dateStart: null,
               dateStop: null,
               category: null,
-            })
+            });
           if (data)
             setTimeout(() => {
-              this.goTo(data)
-            }, 100)
-        })
+              this.goTo(data);
+            }, 100);
+        });
     }
   }
 
@@ -243,13 +256,13 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * @returns
    */
   checkAll(value?: boolean) {
-    if (value !== undefined) this.checkList = this.backups.map(() => value)
+    if (value !== undefined) this.checkList = this.backups.map(() => value);
     else if (this.checkList.length) {
       return this.checkList.reduce(
         (accumulator, currentValue) => currentValue && accumulator
-      )
+      );
     }
-    return false
+    return false;
   }
 
   /**
@@ -257,7 +270,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * @param text
    */
   countLen(text: string) {
-    this.nameLength = text.length
+    this.nameLength = text.length;
   }
 
   /**
@@ -265,7 +278,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * @param id
    */
   goTo(id: number) {
-    this.router.navigate(['/referentiel-de-temps', id])
+    this.router.navigate(['/referentiel-de-temps', id]);
   }
 
   /**
@@ -274,15 +287,15 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    */
   async onSendAllActivity(elem: any) {
     try {
-      await this.contentieuxOptionsService.onSendAllActivity(elem)
-      this.enableImport = true
+      await this.contentieuxOptionsService.onSendAllActivity(elem);
+      this.enableImport = true;
     } catch (e) {
-      let form = document.getElementById('form') as HTMLFormElement
-      form?.reset()
+      let form = document.getElementById('form') as HTMLFormElement;
+      form?.reset();
       alert(
         "Le fichier n'est pas au bon format, veuillez vous assurer que le fichier correspond bien à la dernière version du template A-JUST."
-      )
-      throw e
+      );
+      throw e;
     }
   }
 
@@ -290,38 +303,38 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Ouvre le selecteur de fichier
    */
   openFilePicker() {
-    document.getElementById('filePicker')!.click()
+    document.getElementById('filePicker')!.click();
   }
 
   /**
    * Import d'un référentiel
    */
   async import() {
-    let form = document.getElementById('form') as HTMLFormElement
+    let form = document.getElementById('form') as HTMLFormElement;
     let name =
-      (document.getElementById('name') as HTMLTextAreaElement)?.value || ''
-    let type = (document.getElementById('type') as HTMLButtonElement)?.name
-    const file = form['file'].files[0]
-    if (name.length === 0) alert('Vous devez saisir un nom !')
+      (document.getElementById('name') as HTMLTextAreaElement)?.value || '';
+    let type = (document.getElementById('type') as HTMLButtonElement)?.name;
+    const file = form['file'].files[0];
+    if (name.length === 0) alert('Vous devez saisir un nom !');
     else if (!file) {
-      alert('Vous devez saisir une fichier !')
+      alert('Vous devez saisir une fichier !');
     } else if (name.length > 0 && type.length > 0) {
-      this.enableImport = true
+      this.enableImport = true;
       await this.contentieuxOptionsService.createEmpy(
         false,
         name,
         'Importé',
         type
-      )
+      );
       this.contentieuxOptionsService.onSaveDatas(false, type).then(() => {
-        const backupId = this.contentieuxOptionsService.backupId.getValue()
+        const backupId = this.contentieuxOptionsService.backupId.getValue();
         if (backupId)
           setTimeout(() => {
-            this.goTo(backupId), 200
-          })
-      })
+            this.goTo(backupId), 200;
+          });
+      });
 
-      form.reset()
+      form.reset();
     }
   }
 
@@ -329,6 +342,6 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Téléchargement du template
    */
   downloadAsset() {
-    this.contentieuxOptionsService.downloadTemplate(true)
+    this.contentieuxOptionsService.downloadTemplate(true);
   }
 }

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core'
-import { NewsInterface } from 'src/app/interfaces/news'
-import { ServerService } from '../http-server/server.service'
+import { inject, Injectable } from '@angular/core';
+import { ServerService } from '../http-server/server.service';
+import { NewsInterface } from '../../interfaces/news';
 
 /**
  * Clé de token du local storage
  */
-const NEWS_TOKEN = 'news-token-closes'
+const NEWS_TOKEN = 'news-token-closes';
 
 /**
  * Liste des news pour les utilisateurs
@@ -15,11 +15,7 @@ const NEWS_TOKEN = 'news-token-closes'
   providedIn: 'root',
 })
 export class NewsService {
-  /**
-   * Constructeur
-   * @param serverService
-   */
-  constructor(private serverService: ServerService) {}
+  serverService = inject(ServerService);
 
   /**
    * API qui permet retourner la news propre à une personne
@@ -27,55 +23,55 @@ export class NewsService {
    */
   getLast(): Promise<NewsInterface> {
     return this.serverService.getWithoutError(`news/last`).then((d) => {
-      const news = d.data
+      const news = d.data;
 
-      if(news && news.id && !this.hasClose(news.id)) {
-        return news
+      if (news && news.id && !this.hasClose(news.id)) {
+        return news;
       }
 
-      return null
-    })
+      return null;
+    });
   }
 
   /**
    * API qui trace le clique utilisateur
    */
   updateNewsOnClick(id: number) {
-    this.addIdMemorise(id)
+    this.addIdMemorise(id);
     //return this.serverService.post(`news/on-close`, { id })
   }
 
   /**
    * Liste des ids déjà cliqué
-   * @returns 
+   * @returns
    */
   getIdsSelected() {
-    const ls = localStorage.getItem(NEWS_TOKEN)
-    const ids = ls ? JSON.parse(ls) as number[] : []
+    const ls = localStorage.getItem(NEWS_TOKEN);
+    const ids = ls ? (JSON.parse(ls) as number[]) : [];
 
-    return ids
+    return ids;
   }
 
   /**
    * Ajouter un id à la liste
-   * @returns 
+   * @returns
    */
   addIdMemorise(id: number) {
-    const ids = this.getIdsSelected()
+    const ids = this.getIdsSelected();
 
-    if(ids.indexOf(id) === -1) {
-      ids.push(id)
-      localStorage.setItem(NEWS_TOKEN, JSON.stringify(ids))
+    if (ids.indexOf(id) === -1) {
+      ids.push(id);
+      localStorage.setItem(NEWS_TOKEN, JSON.stringify(ids));
     }
   }
 
   /**
    * Has already close
-   * @returns 
+   * @returns
    */
   hasClose(id: number) {
-    const ids = this.getIdsSelected()
+    const ids = this.getIdsSelected();
 
-    return ids.indexOf(id) !== -1
+    return ids.indexOf(id) !== -1;
   }
 }

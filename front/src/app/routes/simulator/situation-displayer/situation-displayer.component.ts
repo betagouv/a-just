@@ -1,46 +1,61 @@
 import { Component, Input } from '@angular/core';
-import { SimulationInterface } from 'src/app/interfaces/simulation';
-import { SimulatorInterface } from 'src/app/interfaces/simulator';
-import { MainClass } from 'src/app/libs/main-class';
-import { SimulatorService } from 'src/app/services/simulator/simulator.service';
-import { UserService } from 'src/app/services/user/user.service';
-import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from 'src/app/utils/user';
+import { MainClass } from '../../../libs/main-class';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SimulatorService } from '../../../services/simulator/simulator.service';
+import { UserService } from '../../../services/user/user.service';
+import {
+  userCanViewContractuel,
+  userCanViewGreffier,
+  userCanViewMagistrat,
+} from '../../../utils/user';
+import { SimulatorInterface } from '../../../interfaces/simulator';
+import { SimulationInterface } from '../../../interfaces/simulation';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'aj-situation-displayer',
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatTooltipModule],
   templateUrl: './situation-displayer.component.html',
-  styleUrls: ['./situation-displayer.component.scss']
+  styleUrls: ['./situation-displayer.component.scss'],
 })
 export class SituationDisplayerComponent extends MainClass {
+  @Input() categorySelected: string | null = null;
 
-  @Input() categorySelected: string | null = null
+  @Input() situation: any = null;
 
-  @Input() situation: any = null
+  @Input() header: any = {
+    type: '',
+    label: '',
+    headerColorClass: '',
+    elementColorClass: '',
+  };
 
-  @Input() header: any = { type: '', label: '', headerColorClass: '', elementColorClass:'' }
+  canViewMagistrat: any = null;
+  canViewGreffier: any = null;
+  canViewContractuel: any = null;
 
-  canViewMagistrat: any = null
-  canViewGreffier: any = null
-  canViewContractuel: any = null
-
-  constructor(private simulatorService: SimulatorService, private userService: UserService) {
-    super()
+  constructor(
+    private simulatorService: SimulatorService,
+    private userService: UserService
+  ) {
+    super();
     this.userService.user.subscribe((u) => {
-      this.canViewMagistrat = userCanViewMagistrat(u)
-      this.canViewGreffier = userCanViewGreffier(u)
-      this.canViewContractuel = userCanViewContractuel(u)
-
-    })
+      this.canViewMagistrat = userCanViewMagistrat(u);
+      this.canViewGreffier = userCanViewGreffier(u);
+      this.canViewContractuel = userCanViewContractuel(u);
+    });
   }
 
   /**
-  * Récupère la valeur d'un champs à afficher
-  * @param param paramètre à afficher
-  * @param data simulation
-  * @param initialValue valeur initial
-  * @param toCompute valeur calculé ou non
-  * @returns valeur à afficher
-  */
+   * Récupère la valeur d'un champs à afficher
+   * @param param paramètre à afficher
+   * @param data simulation
+   * @param initialValue valeur initial
+   * @param toCompute valeur calculé ou non
+   * @returns valeur à afficher
+   */
   getFieldValue(
     param: string,
     data: SimulatorInterface | SimulationInterface | null,
@@ -48,27 +63,33 @@ export class SituationDisplayerComponent extends MainClass {
     toCompute = false
   ): string {
     if (
-      (this.simulatorService.situationActuelle.getValue() !== null &&
-        this.simulatorService.contentieuOrSubContentieuId.getValue()?.length)
+      this.simulatorService.situationActuelle.getValue() !== null &&
+      this.simulatorService.contentieuOrSubContentieuId.getValue()?.length
     ) {
       return this.simulatorService.getFieldValue(
         param,
         data,
         initialValue,
         toCompute
-      )
+      );
     }
-    return ''
+    return '';
   }
 
   /**
-  * Troncage valeur numérique
-  */
-  trunc(param: string,
+   * Troncage valeur numérique
+   */
+  trunc(
+    param: string,
     data: SimulatorInterface | SimulationInterface | null,
     initialValue = false,
-    toCompute = false) {
-    return Math.trunc(Number(this.getFieldValue(param, data, initialValue, toCompute)) * 100000) / 100000
+    toCompute = false
+  ) {
+    return (
+      Math.trunc(
+        Number(this.getFieldValue(param, data, initialValue, toCompute)) *
+          100000
+      ) / 100000
+    );
   }
-
 }
