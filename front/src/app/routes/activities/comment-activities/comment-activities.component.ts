@@ -6,6 +6,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '../../../services/user/user.service';
@@ -89,8 +90,15 @@ export class CommentActivitiesComponent implements OnChanges {
   ) {
     if (comment && this.type) {
       await this.commentService.updateComment(this.type, comment, id);
-      editor.value = '';
+      editor.setValue('');
       await this.onLoad();
+    }
+  }
+
+  removeComment(index: number) {
+    this.comments.splice(index, 1);
+    if (this.referentiel) {
+      this.referentiel.nbComments = this.comments.length;
     }
   }
 }

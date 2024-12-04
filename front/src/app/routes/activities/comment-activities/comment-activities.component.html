@@ -9,7 +9,7 @@
 </div>
 <div class="content">
   <one-comment *ngFor="let com of comments; let index = index" [comment]="com"
-    (deletedComment)="comments.splice(index, 1)"></one-comment>
+    (deletedComment)="removeComment(index)"></one-comment>
 </div>
 <div class="action">
   <div class="properties" *ngIf="userService.userS() as user">
