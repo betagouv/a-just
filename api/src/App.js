@@ -13,10 +13,8 @@ import helmet from "koa-helmet";
 import { CSP_URL_IGNORE_RULES } from "./constants/csp";
 import session from "koa-session";
 import { RateLimit } from "koa2-ratelimit";
-import ip from "koa-ip";
 import { styleSha1Generate } from "./utils/csp";
 import * as Sentry from "@sentry/node";
-import { sleep } from "./utils/utils";
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -115,12 +113,6 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
-      ip({
-        ...config.ipFilter,
-        handler: async (ctx) => {
-          ctx.status = 403;
-        },
-      }),
       helmet({
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
