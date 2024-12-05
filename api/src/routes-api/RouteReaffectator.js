@@ -49,7 +49,7 @@ export default class RouteReaffectator extends Route {
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
-    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels()).filter((r) => r.label !== 'Indisponibilité')
+    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((r) => r.label !== 'Indisponibilité')
     if (referentielList && referentielList.length == referentiel.length) {
       referentielList = null
     }

@@ -27,6 +27,8 @@ import { copy } from '../../../utils';
 import { downloadFile } from '../../../utils/system';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { CommentActivitiesComponent } from '../comment-activities/comment-activities.component';
+import { RadioButtonComponent } from '../../../components/radio-button/radio-button.component';
 
 /**
  * Composant page activité
@@ -40,6 +42,8 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     MatIconModule,
     FormsModule,
+    CommentActivitiesComponent,
+    RadioButtonComponent,
   ],
   templateUrl: './popin-edit-activities.component.html',
   styleUrls: ['./popin-edit-activities.component.scss'],
@@ -126,6 +130,10 @@ export class PopinEditActivitiesComponent
    *  Vérifie que le mois prochain comporte des données d'activité
    */
   hasNextMonth: boolean = false;
+  /**
+   * Show comments
+   */
+  showComments: boolean = false;
 
   /**
    * Constructeur

@@ -79,7 +79,6 @@ export class UserService {
       );
       this.humanResourceService.fonctions.next(result.fonctions);
       this.humanResourceService.categories.next(result.categories);
-      this.referentielService.formatDatas(result.referentiel);
       this.humanResourceService.backups.next(
         result.backups.map((b: BackupInterface) => ({
           ...b,

@@ -13,7 +13,6 @@ import helmet from "koa-helmet";
 import { CSP_URL_IGNORE_RULES } from "./constants/csp";
 import session from "koa-session";
 import { RateLimit } from "koa2-ratelimit";
-import ip from "koa-ip";
 import { styleSha1Generate } from "./utils/csp";
 import * as Sentry from "@sentry/node";
 
@@ -114,37 +113,45 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
-      ip({
-        ...config.ipFilter,
-        handler: async (ctx) => {
-          ctx.status = 403;
-        },
-      }),
       helmet({
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
           directives: {
-            "media-src": ["'self'"],
-            "connect-src": [
-              "https://api.gitbook.com",
-              "https://www.google-analytics.com/j/collect",
+            'media-src': ["'self'", "https://client.crisp.chat"],
+            'connect-src': [
+              'https://api.gitbook.com',
+              'https://www.google-analytics.com/j/collect',
               "'self'",
-              "https://api.mapbox.com",
-              "https://events.mapbox.com",
-              "https://stats.beta.gouv.fr",
-              "https://forms-eu1.hsforms.com",
-              "https://hubspot-forms-static-embed-eu1.s3.amazonaws.com",
-              "https://stats.beta-gouv.cloud-ed.fr",
-              "https://*.hotjar.com",
-              "https://*.hotjar.io",
-              "wss://*.hotjar.com",
-              "*.justice.gouv.fr",
+              'https://api.mapbox.com',
+              'https://events.mapbox.com',
+              'https://stats.beta.gouv.fr',
+              'https://forms-eu1.hsforms.com',
+              'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
+              'https://stats.beta-gouv.cloud-ed.fr',
+              'https://*.hotjar.com',
+              'https://*.hotjar.io',
+              'wss://*.hotjar.com',
+              '*.justice.gouv.fr',
+              'https://client.crisp.chat',
+              'https://storage.crisp.chat',
+              'wss://client.relay.crisp.chat',
+              'wss://stream.relay.crisp.chat'
             ],
-            "font-src": [
+            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com', 'https://client.crisp.chat'],
+            'img-src': [
               "'self'",
-              "https://fonts.gstatic.com",
-              "data:",
-              "https://*.hotjar.com",
+              'data:',
+              'https://js-eu1.hsforms.net',
+              'https://api.hubspot.com',
+              'https://forms-eu1.hsforms.com',
+              'https://forms.hsforms.com',
+              'https://www.ionos.fr',
+              'https://img.freepik.com',
+              'https://image.noelshack.com',
+              'https://i.goopics.net/',
+              'https://client.crisp.chat',
+              'https://image.crisp.chat',
+              'https://storage.crisp.chat'
             ],
             "img-src": [
               "'self'",
@@ -174,13 +181,21 @@ export default class App extends AppBase {
               "'sha256-tBBLGYs6fvYemOy9hpbgu6tIIJNpdIZpuGpDXkhGTVw='",
               "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
               "'sha256-6x6g2SYysPsSMI15om2cLqbYnqaoyjXQD+Aivk9OP4U='",
+              "'sha256-A+0b+HOyTgrPPZgW1Tcb6UJIvj7fs09WPLWFtyqq1ks='",
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
+              'https://client.crisp.chat',
+              'https://settings.crisp.chat',
             ],
-            "default-src": ["'none'"],
-            "style-src": [
-              "'self'",
-              ...styleSha1Generate([`${__dirname}/front/index.html`]),
-              "cdnjs.cloudflare.com",
+            'default-src': ["'none'"],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`, ]), 'cdnjs.cloudflare.com', 'https://client.crisp.chat', "'sha256-Ks+4bfA56EzWbsVt5/a+A7rCibdXWRQVb7y2dkDLIZM='", "'sha256-MKASWYfd3dGFQes9nQT5XnslE3xYlnUb4cHpxhk4fag='"],
+            'worker-src': ['blob:'],
+            'frame-src': [
+              'https://app.videas.fr/',
+              'https://docs.a-just.beta.gouv.fr',
+              'https://meta.a-just.beta.gouv.fr',
+              'https://forms-eu1.hsforms.com/',
+              'https://calendly.com',
+              'https://game.crisp.chat'
             ],
             "worker-src": ["blob:"],
             "frame-src": [

@@ -64,6 +64,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined;
   /**
+   * Popin to edit contentieux
+   */
+  @ViewChild('editActivites') editActivites:
+    | PopinEditActivitiesComponent
+    | undefined;
+  /**
    * Liste des activités
    */
   activities: ActivityInterface[] = [];
@@ -110,6 +116,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     dateType: 'month',
     value: null,
     minDate: new Date(MIN_DATE_SELECT),
+    showArrow: true,
   };
   /**
    * Lien du guide de la donnée
@@ -248,7 +255,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
       target: '#wrapper-contener',
       title: 'Découvrir la fonctionnalité',
       intro:
-        '<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l\'écran des données d’activité.</p><video controls autoplay class="intro-js-video"><source src="/assets/videos/video-activites.mp4" type="video/mp4" /></video>',
+        '<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l\'écran des données d’activité.</p><video controls class="intro-js-video"><source src="/assets/videos/video-activites.mp4" type="video/mp4" /></video>',
     },
   ];
 
@@ -486,6 +493,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             newRef.originalStock = getActivity
               ? getActivity.originalStock
               : null;
+            newRef.nbComments = getActivity
+              ? getActivity.nbComments
+              : undefined;
 
             newRef.childrens = (newRef.childrens || []).map((c) => {
               if (!c.activityUpdated) {
@@ -962,5 +972,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     if (cont.showActivityGroup) {
       this.kpiService.register(ACTIVITIES_SHOW_LEVEL_4, cont.id + '');
     }
+  }
+
+  showContComment(cont: ContentieuReferentielActivitiesInterface) {
+    this.contentieuxToUpdate = cont;
+
+    setTimeout(() => {
+      if (this.editActivites) {
+        this.editActivites.showComments = true;
+      }
+    }, 500);
   }
 }

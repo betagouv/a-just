@@ -353,7 +353,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       target: '#wrapper-contener',
       title: 'Découvrir la fonctionnalité',
       intro:
-        '<p>Explorez notre vidéo explicative du "<b>simulateur des affectations</b>", orientée autour de deux cas d\'usage : <b>réagir à une diminution des ETPT disponibles</b> et <b>prioriser un contentieux pour en améliorer les délais de traitement</b>.</p><video controls autoplay class="intro-js-video"><source src="/assets/videos/video-reaffectateur.mp4" type="video/mp4" /></video>',
+        '<p>Explorez notre vidéo explicative du "<b>simulateur des affectations</b>", orientée autour de deux cas d\'usage : <b>réagir à une diminution des ETPT disponibles</b> et <b>prioriser un contentieux pour en améliorer les délais de traitement</b>.</p><video controls class="intro-js-video"><source src="/assets/videos/video-reaffectateur.mp4" type="video/mp4" /></video>',
     },
   ];
 

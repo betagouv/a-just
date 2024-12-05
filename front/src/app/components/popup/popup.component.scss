@@ -68,6 +68,57 @@
     max-width: 575px;
   }
 
+
+  &.width-400-custom .popup>div {
+    width: 90%;
+    max-width: 400px;
+
+    .actions {
+      padding: 16px 24px 32px 24px;
+    }
+
+    .content {
+      padding: 0 24px;
+      min-width: 100px;
+    }
+
+    .title {
+      //color: fColor(popupWhiteTitle);
+      margin-bottom: 0px;
+    }
+
+  }
+
+  &.width-420-custom .popup>div {
+    width: 90%;
+    max-width: 420px;
+    align-items: center;
+    text-align: center;
+
+    .actions {
+      padding: 16px 24px 32px 24px;
+
+      :nth-child(2) {
+        margin-left: 0px;
+      }
+    }
+
+    .content {
+      padding: 0 20px;
+      min-width: 100px;
+    }
+
+    .title {
+      margin-bottom: 0px;
+    }
+
+  }
+
+  &.width-575 .popup>div {
+    width: 90%;
+    max-width: 575px;
+  }
+
   &.width-575-custom .popup>div {
     width: 90%;
     max-width: 575px;

@@ -70,6 +70,10 @@
           },
           "configurations": {
             "production": {
+              "index": {
+                "input": "src/index.production.html",
+                "output": "index.html"
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -91,6 +95,10 @@
               "outputHashing": "all"
             },
             "preproduction": {
+              "index": {
+                "input": "src/index.production.html",
+                "output": "index.html"
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -112,6 +120,10 @@
               "outputHashing": "all"
             },
             "staging": {
+              "index": {
+                "input": "src/index.staging.html",
+                "output": "index.html"
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -133,6 +145,10 @@
               "outputHashing": "all"
             },
             "sandbox": {
+              "index": {
+                "input": "src/index.sandbox.html",
+                "output": "index.html"
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -209,5 +225,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

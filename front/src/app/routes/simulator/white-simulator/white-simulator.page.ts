@@ -67,6 +67,7 @@ import { LoadersWidgetComponent } from '../widgets/loaders-widget/loaders-widget
 import { FiguresWidgetComponent } from '../../../components/figures-widget/figures-widget.component';
 import { DialWidgetComponent } from '../widgets/dial-widget/dial-widget.component';
 import { BackButtonComponent } from '../../../components/back-button/back-button.component';
+import { AppService } from '../../../services/app/app.service';
 
 /**
  * Composant page simulateur
@@ -116,6 +117,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
   router = inject(Router);
   route = inject(ActivatedRoute);
   serverService = inject(ServerService);
+  appService = inject(AppService);
 
   @ViewChild('periodSelector') periodSelector:
     | PeriodSelectorComponent
@@ -211,7 +213,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Loader
    */
-  isLoading: boolean = false;
+  isLoading: boolean = true;
   /**
    * Catégorie selectionnée
    */
@@ -430,14 +432,19 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
 
   onReloadAction = false;
   /**
+   * Application chargée entièrement
+   */
+  loaded: boolean = false;
+  /**
    * Intro JS Steps du simulateur à blanc
    */
   introStepsWhiteSimulator: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
       title: 'La simulation sans données pré-alimentées',
-      intro:
-        '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas suivies dans A-JUST comme les activités administratives ou du soutien, les activités du Parquet, ou les contentieux qui ne seraient pas isolés dans A-JUST.</p>',
+      intro: this.userService.isCa()
+        ? '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités dont les données ne sont pas actuellement à disposition dans A-JUST.'
+        : '<p>Vous avez la possibilité d’<b>effectuer une simulation sans données pré-alimentées</b> en renseignant les données d’effectifs et d’activité correspondantes. Ce peut être utile notamment pour jouer des scenarii sur des activités qui ne sont pas suivies dans A-JUST comme les activités administratives ou du soutien, les activités du Parquet, ou les contentieux qui ne seraient pas isolés dans A-JUST.</p>',
     },
     {
       target: '.date-bar-container',
@@ -527,6 +534,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
     super();
 
     this.serverService.post('simulator/check-access-white-simulator');
+    this.watch(this.appService.appLoading.subscribe((a) => (this.loaded = !a)));
 
     this.watch(
       this.simulatorService.disabled.subscribe((disabled) => {
@@ -736,6 +744,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.simulatorService.getSituation([this.contentieuId]);
 
     this.loadFunctions();
+    this.isLoading = false;
     console.log(this.dateStop);
   }
 
@@ -884,6 +893,24 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Réinitalisation de simulation
    */
   resetParams(changeCategory = false) {
+    this.paramsToAjust = {
+      param1: {
+        label: '',
+        value: '',
+        percentage: null,
+        input: 0,
+        addition: null,
+        button: { value: '' },
+      },
+      param2: {
+        label: '',
+        value: '',
+        percentage: null,
+        input: 0,
+        addition: null,
+        button: { value: '' },
+      },
+    };
     this.contentieuId = null;
     this.simulatorService.contentieuOrSubContentieuId.next(null);
     this.subList = [];
@@ -1037,11 +1064,19 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
           'etpFon',
           'etpCont',
         ].includes(inputField.id) &&
-        this.valueToAjust.percentage === null
+        parseFloat(this.valueToAjust.value) <= 0
       ) {
-        alert('La valeur choisie ne peut pas être égale à 0');
+        alert('La valeur totale ne peut pas être inférieure ou égale à 0');
         return;
       }
+      if (
+        ['lastStock'].includes(inputField.id) &&
+        parseFloat(this.valueToAjust.value) < 0
+      ) {
+        alert('La valeur totale ne peut pas être inférieure 0');
+        return;
+      }
+
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -1075,8 +1110,17 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
       }
     } else if (
       this.valueToAjust.addition &&
-      (this.valueToAjust.addition !== '' || this.valueToAjust.addition !== null)
+      this.valueToAjust.addition !== '' &&
+      this.valueToAjust.addition !== null
     ) {
+      if (
+        ['etpMag', 'etpFon', 'etpCont'].includes(inputField.id) &&
+        parseFloat(this.valueToAjust.value) <= 0
+      ) {
+        alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0');
+        return;
+      }
+
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -1113,20 +1157,23 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
       //else (no value filled in popup)
     } else {
       if (
-        [
-          'totalIn',
-          'totalOut',
-          'realCoverage',
-          'magRealTimePerCase',
-          'etpMag',
-          'etpFon',
-          'etpCont',
-        ].includes(inputField.id) &&
-        volumeInput === '0'
+        ['etpMag', 'etpFon', 'etpCont'].includes(inputField.id) &&
+        parseFloat(volumeInput) <= 0
       ) {
-        alert('La valeur choisie ne peut pas être égale à 0');
+        alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0');
         return;
       }
+
+      if (
+        ['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase'].includes(
+          inputField.id
+        ) &&
+        parseFloat(volumeInput) <= 0
+      ) {
+        alert('Le nombre total ne peut pas être inférieur ou égal à 0');
+        return;
+      }
+
       // if param1 reset =>  reset all params
       if (inputField.id === this.paramsToAjust.param1.label) {
         this.paramsToAjust.param1.value = '';
@@ -1233,13 +1280,23 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
         this.buttonSelected.id === 'realDTESInMonths'
       )
         this.valueToAjust = event;
+      else if (
+        (this.buttonSelected.id === 'etpMag' ||
+          this.buttonSelected.id === 'etpFon') &&
+        event.addition !== ''
+      )
+        this.valueToAjust = event;
       else this.valueToAjust = { value: '', percentage: null, addition: null };
     } else if (
       this.buttonSelected.id === 'magRealTimePerCase' &&
       event.percentage !== ''
     )
       this.valueToAjust = event;
-    else if (this.buttonSelected.id === 'etpMag' && event.addition !== '')
+    else if (
+      (this.buttonSelected.id === 'etpMag' ||
+        this.buttonSelected.id === 'etpFon') &&
+      event.addition !== ''
+    )
       this.valueToAjust = event;
     else this.valueToAjust = event;
   }
@@ -2014,7 +2071,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
   ) {
     let res = this.percentageModifiedInputText(id, projectedValue);
     if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts';
-    if (etpUnit) return res === 'NA' ? 'NA' : res + ' etp';
+    if (etpUnit) return res === 'NA' ? 'NA' : res + ' ETPT';
     return res === 'NA' ? 'NA' : res + '%';
   }
 

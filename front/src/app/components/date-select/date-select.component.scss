@@ -188,6 +188,11 @@
       width: 16px;
       height: 16px;
       margin-left: 8px;
+
+      &.left {
+        margin-left: 0;
+        margin-right: 8px;
+      }
     }
   }
 

@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   Output,
   SimpleChanges,
@@ -57,6 +58,10 @@ export class TextEditorComponent extends MainClass {
    */
   @Input() previousValue: string | null = null;
   /**
+   * Valeure par défaut de l'éditeur
+   */
+  @Input() defaultReadOnly: boolean = false;
+  /**
    * Emit value
    */
   @Output() resetField = new EventEmitter();
@@ -76,6 +81,7 @@ export class TextEditorComponent extends MainClass {
    * Ignore update
    */
   ignoreUpdate: boolean = false;
+
   /**
    * Constructeur
    */
@@ -95,6 +101,12 @@ export class TextEditorComponent extends MainClass {
     if (this.quillEditor) {
       if (change['askToModify']) {
         if (this.askToModify) {
+          this.quillEditor.enable();
+        } else {
+          this.quillEditor.disable();
+        }
+
+        if (this.askToModify) {
           this.quillEditor.focus();
           setTimeout(() => {
             if (this.quillEditor.getSelection())
@@ -103,9 +115,7 @@ export class TextEditorComponent extends MainClass {
                 0
               );
           }, 0);
-          this.askToModify = false;
           this.onFocus();
-          this.focusField.emit(false);
         }
       }
       if (change['previousValue'] && this.previousValue !== null) {
@@ -125,12 +135,23 @@ export class TextEditorComponent extends MainClass {
     }
   }
 
+  @HostListener('click', ['$event.target'])
+  onClick(btn: any) {
+    if (btn && btn.href && !this.askToModify) {
+      // do nothing
+    } else {
+      this.focusField.next(true);
+      this.onFocus();
+    }
+  }
+
   /**
    * Init Quill text editor
    */
   initQuillEditor() {
     const dom = this.contener?.nativeElement;
     this.quillEditor = new Quill(dom, {
+      readOnly: this.defaultReadOnly,
       modules: {
         toolbar: ['bold', 'italic', 'underline', 'strike', 'link'],
       },
@@ -167,8 +188,8 @@ export class TextEditorComponent extends MainClass {
       (range: any, oldRange: any, source: any) => {
         if (range) {
           if (range.length == 0) {
-            this.focusField.next(true);
-            this.onFocus();
+            //this.focusField.next(true);
+            //this.onFocus();
           }
         } else {
           this.focusField.next(false);
@@ -202,5 +223,26 @@ export class TextEditorComponent extends MainClass {
       this.quillEditor.theme.modules.toolbar.container.style.visibility =
         'hidden';
     }
+  }
+
+  /**
+   * Force focus
+   */
+  focus() {
+    if (this.quillEditor) {
+      this.quillEditor.enable();
+      this.quillEditor.focus();
+      this.quillEditor.setSelection(this.quillEditor.getLength(), 0);
+      this.focusField.next(true);
+    }
+  }
+
+  /**
+   * Force new value
+   */
+  setValue(text: string) {
+    this.value = text;
+    this.ignoreUpdate = true;
+    this.quillEditor.root.innerHTML = this.value;
   }
 }

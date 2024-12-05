@@ -16,6 +16,7 @@ import { MainClass } from '../../libs/main-class';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { today } from '../../utils/dates';
 
 /**
  * Bouton de selection de date prédesigner
@@ -64,6 +65,10 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * Date maximal
    */
   @Input() max: Date | null = null;
+  /**
+   * Show arrow
+   */
+  @Input() showArrow: boolean = false;
   /**
    * Date class du calendrier
    */
@@ -185,5 +190,78 @@ export class DateSelectComponent extends MainClass implements OnChanges {
       this.findRealValue();
       datepicker.close();
     }
+  }
+
+  /**
+   * Change date selected with delta
+   * @param delta
+   */
+  onChangeDate(delta: number) {
+    this.value = new Date(this.value || '');
+
+    if (this.dateType === 'month') {
+      this.value.setMonth(this.value.getMonth() + delta);
+    } else {
+      this.value.setDate(this.value.getDate() + delta);
+    }
+
+    this.valueChange.emit(this.value);
+    this.findRealValue();
+  }
+
+  /**
+   * Show or hide left chevron
+   */
+  onShowLeftArrow() {
+    if (this.showArrow) {
+      if (!this.min) {
+        return true;
+      } else if (this.value && this.min) {
+        const dValue = new Date(this.value || '');
+        const compareDate =
+          this.dateType === 'month' ? this.getMonth(this.min) : today(this.min);
+        if (
+          this.dateType === 'month' &&
+          this.getMonth(dValue).getTime() > compareDate.getTime()
+        ) {
+          return true;
+        } else if (
+          this.dateType !== 'month' &&
+          today(dValue).getTime() > compareDate.getTime()
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Show or hide right chevron
+   */
+  onShowRightArrow() {
+    if (this.showArrow) {
+      if (!this.max) {
+        return true;
+      } else if (this.value && this.max) {
+        const dValue = new Date(this.value || '');
+        const compareDate =
+          this.dateType === 'month' ? this.getMonth(this.max) : today(this.max);
+        if (
+          this.dateType === 'month' &&
+          this.getMonth(dValue).getTime() < compareDate.getTime()
+        ) {
+          return true;
+        } else if (
+          this.dateType !== 'month' &&
+          today(dValue).getTime() < compareDate.getTime()
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }
