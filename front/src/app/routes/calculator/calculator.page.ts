@@ -687,6 +687,7 @@ export class CalculatorPage
                   this.selectedFonctionsIds
                 );
               }
+              console.log(this.referentiel);
               this.formatDatas(list);
               this.isLoading = false;
               this.lastCategorySelected = this.categorySelected;
