@@ -9,7 +9,6 @@ import routePanorama from './api/RoutePanorama.test'
 import routeActivities from './api/RouteActivities.test'
 
 import axios from 'axios'
-import { assert } from 'chai'
 
 console.warn = () => { }
 console.error = () => { }
