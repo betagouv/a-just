@@ -1,11 +1,12 @@
 // @ts-ignore
-import packageJSON from '../../../package.json'
+import packageJSON from '../../../package.json';
 
 /**
  * Variables global avec url serveur différent ou matomo qui change
  */
 export const environment = {
   production: true,
+  frontUrl: 'https://sandbox.a-just.incubateur.net',
   serverUrl: '/api/',
   nbDaysByMagistrat: 208,
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
@@ -22,5 +23,6 @@ export const environment = {
   gitbookToken: 'gb_api_rHt5wBv5WBzk2mjUuO2QymdKNpNujdBD8TLfYpsA',
   gitbookId: 'S99g6aJCtkSrC9hKXFqV',
   enableSSO: true,
+  crisp: '93a1edd2-d8a9-4bc5-9d13-98be0fbebdf4',
   //typeId: process.env['TYPE_ID'] || 0,
-}
+};

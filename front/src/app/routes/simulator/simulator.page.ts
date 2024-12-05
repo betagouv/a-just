@@ -463,7 +463,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       target: '#wrapper-contener',
       title: 'Comment simuler votre trajectoire avec A-JUST ?',
       intro:
-        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls autoplay class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
+        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
       beforeLoad: async (intro: any) => {
         const itemToClick = document.querySelector('aj-back-button a');
         if (itemToClick) {
@@ -1047,6 +1047,24 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Réinitalisation de simulation
    */
   resetParams(changeCategory = false) {
+    this.paramsToAjust = {
+      param1: {
+        label: '',
+        value: '',
+        percentage: null,
+        input: 0,
+        addition: null,
+        button: { value: '' },
+      },
+      param2: {
+        label: '',
+        value: '',
+        percentage: null,
+        input: 0,
+        addition: null,
+        button: { value: '' },
+      },
+    };
     this.contentieuId = null;
     this.simulatorService.contentieuOrSubContentieuId.next(null);
     this.subList = [];
@@ -1201,11 +1219,19 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           'etpFon',
           'etpCont',
         ].includes(inputField.id) &&
-        this.valueToAjust.percentage === null
+        parseFloat(this.valueToAjust.value) <= 0
       ) {
-        alert('La valeur choisie ne peut pas être égale à 0');
+        alert('La valeur totale ne peut pas être inférieure ou égale à 0');
         return;
       }
+      if (
+        ['lastStock'].includes(inputField.id) &&
+        parseFloat(this.valueToAjust.value) < 0
+      ) {
+        alert('La valeur totale ne peut pas être inférieure 0');
+        return;
+      }
+
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -1239,8 +1265,17 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       }
     } else if (
       this.valueToAjust.addition &&
-      (this.valueToAjust.addition !== '' || this.valueToAjust.addition !== null)
+      this.valueToAjust.addition !== '' &&
+      this.valueToAjust.addition !== null
     ) {
+      if (
+        ['etpMag', 'etpFon', 'etpCont'].includes(inputField.id) &&
+        parseFloat(this.valueToAjust.value) <= 0
+      ) {
+        alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0');
+        return;
+      }
+
       // if param 1 not filled yet or if param 1 selected to be edited
       if (
         this.paramsToAjust.param1.input === 0 ||
@@ -1277,20 +1312,23 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       //else (no value filled in popup)
     } else {
       if (
-        [
-          'totalIn',
-          'totalOut',
-          'realCoverage',
-          'magRealTimePerCase',
-          'etpMag',
-          'etpFon',
-          'etpCont',
-        ].includes(inputField.id) &&
-        volumeInput === '0'
+        ['etpMag', 'etpFon', 'etpCont'].includes(inputField.id) &&
+        parseFloat(volumeInput) <= 0
       ) {
-        alert('La valeur choisie ne peut pas être égale à 0');
+        alert('Le nombre total d’ETPT ne peut pas être inférieur ou égal à 0');
         return;
       }
+
+      if (
+        ['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase'].includes(
+          inputField.id
+        ) &&
+        parseFloat(volumeInput) <= 0
+      ) {
+        alert('Le nombre total ne peut pas être inférieur ou égal à 0');
+        return;
+      }
+
       // if param1 reset =>  reset all params
       if (inputField.id === this.paramsToAjust.param1.label) {
         this.paramsToAjust.param1.value = '';
@@ -1397,13 +1435,23 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         this.buttonSelected.id === 'realDTESInMonths'
       )
         this.valueToAjust = event;
+      else if (
+        (this.buttonSelected.id === 'etpMag' ||
+          this.buttonSelected.id === 'etpFon') &&
+        event.addition !== ''
+      )
+        this.valueToAjust = event;
       else this.valueToAjust = { value: '', percentage: null, addition: null };
     } else if (
       this.buttonSelected.id === 'magRealTimePerCase' &&
       event.percentage !== ''
     )
       this.valueToAjust = event;
-    else if (this.buttonSelected.id === 'etpMag' && event.addition !== '')
+    else if (
+      (this.buttonSelected.id === 'etpMag' ||
+        this.buttonSelected.id === 'etpFon') &&
+      event.addition !== ''
+    )
       this.valueToAjust = event;
     else this.valueToAjust = event;
   }
@@ -2178,7 +2226,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
   ) {
     let res = this.percentageModifiedInputText(id, projectedValue);
     if (ptsUnit) return res === 'NA' ? 'NA' : res + 'pts';
-    if (etpUnit) return res === 'NA' ? 'NA' : res + ' etp';
+    if (etpUnit) return res === 'NA' ? 'NA' : res + ' ETPT';
     return res === 'NA' ? 'NA' : res + '%';
   }
 

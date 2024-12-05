@@ -123,6 +123,12 @@
               <p>{{ (ref.completion !== undefined && ref.completion < 100 ) ? 'il reste des données à compléter' : ''
                   }}</p>
             </div>
+            <div class="nb-comments-zone">
+              <div class="nb-comments" *ngIf="(ref?.nbComments || 0) > 0" (click)="showContComment(ref)">
+                <mat-icon class="material-icons-outlined">sms</mat-icon>
+                <p>{{ref?.nbComments || 0}}</p>
+              </div>
+            </div>
           </div>
           <div class="group">
             <div>
@@ -309,8 +315,8 @@
 
 
 
-<aj-popin-edit-activities *ngIf="contentieuxToUpdate" [wrapper]="wrapper" [referentiel]="contentieuxToUpdate"
-  [activityMonth]="activityMonth" [selectedReferentielId]="selectedReferentielId"
+<aj-popin-edit-activities #editActivites *ngIf="contentieuxToUpdate" [wrapper]="wrapper"
+  [referentiel]="contentieuxToUpdate" [activityMonth]="activityMonth" [selectedReferentielId]="selectedReferentielId"
   (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
 
 <aj-intro-js *ngIf="referentiel && referentiel.length" [steps]="introSteps" typeId="activities"></aj-intro-js>

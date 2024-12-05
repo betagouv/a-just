@@ -10,10 +10,17 @@ import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
 import { LOGIN_STATUS_GET_CODE } from '../../constants/login';
 import { PopupComponent } from '../../components/popup/popup.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [PopupComponent, FormsModule, ReactiveFormsModule],
+  imports: [
+    PopupComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    PopupComponent,
+    CommonModule,
+  ],
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })

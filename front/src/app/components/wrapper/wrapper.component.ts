@@ -44,6 +44,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { HelpButtonComponent } from '../help-button/help-button.component';
 import { DateSelectComponent } from '../date-select/date-select.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { BackButtonComponent } from '../back-button/back-button.component';
 
 /**
  * Interface de génération d'un commentaire
@@ -86,6 +87,7 @@ interface ExportPDFInterface {
     HelpButtonComponent,
     DateSelectComponent,
     MatProgressBarModule,
+    BackButtonComponent,
   ],
   templateUrl: './wrapper.component.html',
   styleUrls: ['./wrapper.component.scss'],
@@ -246,7 +248,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private serverService: ServerService
   ) {
     super();
-
+    this.appService.appLoading.next(true);
     this.watch(
       this.userService.user.subscribe((u) => {
         this.updateMenu(u);
@@ -257,6 +259,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups;
         this.hrBackup = this.hrBackups.find((b) => b.id === this.hrBackupId);
+        if (backups.length) this.appService.appLoading.next(false);
       })
     );
 

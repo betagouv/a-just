@@ -209,13 +209,13 @@ export class CalculatorPage
       target: '#wrapper-contener',
       title: 'À quoi sert le cockpit ?',
       intro:
-        "<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><br/><p>Des visualisations graphiques vous sont également proposées.</p><br/><p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et <b>exporter</b> ces restitutions en PDF pour les enregistrer et/ou les partager.</p>",
+        '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit.mp4" type="video/mp4" /></video>',
     },
     {
       target: '.sub-main-header',
-      title: 'Choisir la période',
+      title: 'Affinez votre sélection',
       intro:
-        'Certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.',
+        "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.</p>",
     },
     {
       target: '.switch-tab .brut',
@@ -249,36 +249,31 @@ export class CalculatorPage
       target: '.drop-down',
       title: 'Comparez votre juridiction',
       intro:
-        '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
+        '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>',
       beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('button.compare');
+        const itemToClick: any = document.querySelector('button.compare');
         if (itemToClick) {
-          // @ts-ignore
           itemToClick.click();
           await sleep(200);
 
-          const introTooltip = document.querySelector('.introjs-tooltip');
+          const introTooltip: any = document.querySelector('.introjs-tooltip');
           if (introTooltip) {
-            // @ts-ignore
             introTooltip.style.visibility = 'hidden';
           }
           setTimeout(() => {
-            const introTooltip = document.querySelector('.introjs-tooltip');
+            const introTooltip: any =
+              document.querySelector('.introjs-tooltip');
             if (introTooltip) {
               introTooltip.classList.add('introjs-bottom-left-aligned');
               introTooltip.classList.remove('introjs-floating');
-              // @ts-ignore
               introTooltip.style.left = '0px';
-              // @ts-ignore
               introTooltip.style.top = '170px';
-              // @ts-ignore
-              introTooltip.style.marginLeft = '-20px';
-              // @ts-ignore
+              introTooltip.style.marginLeft = '-150px';
               introTooltip.style.marginTop = '0';
-              // @ts-ignore
               introTooltip.style.visibility = 'visible';
+              introTooltip.style.height = '450px';
             }
-          }, 380);
+          }, 500);
         }
       },
     },
@@ -351,6 +346,22 @@ export class CalculatorPage
    * Detect if last month is loading
    */
   checkLastMonthLoading: boolean = false;
+  /**
+   * Menu déroulant export
+   */
+  dropdownExport: boolean = false;
+  /**
+   * Ouvrir popup name ref
+   */
+  promptRef: boolean = false;
+  /**
+   * Ouvrir popup name ref
+   */
+  displayRouterRef: boolean = false;
+  /**
+   * Placeholder referentiel name
+   */
+  defaultRefName: string = '';
 
   /**
    * Constructeur
@@ -676,6 +687,7 @@ export class CalculatorPage
                   this.selectedFonctionsIds
                 );
               }
+              console.log(this.referentiel);
               this.formatDatas(list);
               this.isLoading = false;
               this.lastCategorySelected = this.categorySelected;
@@ -1924,5 +1936,78 @@ export class CalculatorPage
     }
 
     return refsList;
+  }
+
+  saveCurrentAvgTime() {
+    let datas: any[] = [...this.datas];
+
+    datas = datas.filter((x) => x.magRealTimePerCase !== null);
+
+    let list = new Array();
+
+    datas.map((y) => {
+      list.push({
+        averageProcessingTime:
+          this.categorySelected === 'magistrats'
+            ? y.magRealTimePerCase
+            : y.fonRealTimePerCase,
+        contentieux: { id: y.contentieux.id, label: y.contentieux.label },
+      });
+      y.childrens.map((z: any) => {
+        list.push({
+          averageProcessingTime:
+            this.categorySelected === 'magistrats'
+              ? z.magRealTimePerCase
+              : z.fonRealTimePerCase,
+          contentieux: { id: z.contentieux.id, label: z.contentieux.label },
+        });
+      });
+    });
+
+    this.contentieuxOptionsService.contentieuxOptions.next(list);
+    this.contentieuxOptionsService.onSaveDatas(
+      false,
+      this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE',
+      this.defaultRefName
+    );
+
+    this.promptRef = false;
+  }
+
+  /**
+   * Popup de sauvegarde, action à effectuer
+   */
+  actionPopupFollow(event: any) {
+    if (event.id === 'cancel') {
+      this.promptRef = false;
+    }
+    if (event.id === 'save') {
+      this.saveCurrentAvgTime();
+      this.displayRouterRef = true;
+      console.log(this.defaultRefName);
+    }
+  }
+
+  /**
+   * Popup de sauvegarde, action à effectuer
+   */
+  actionPopupEnd(event: any) {
+    if (event.id === 'cancel') {
+      this.displayRouterRef = false;
+    }
+    if (event.id === 'location') {
+      this.router.navigate(['/temps-moyens']);
+    }
+  }
+
+  setDefaultRefName() {
+    let dates = `${this.getRealValue(this.dateStart)} à ${this.getRealValue(
+      this.dateStop
+    )}`;
+    this.defaultRefName =
+      'Mes TMD ' +
+      (this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE') +
+      ' de ' +
+      dates;
   }
 }

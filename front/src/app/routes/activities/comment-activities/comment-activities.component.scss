@@ -1,0 +1,130 @@
+@import '../../../styles/utils.scss';
+
+:host {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 431px;
+    bottom: 0;
+    background-color: white;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    border-right: solid 1px #ddd;
+
+    .header {
+        padding: 16px;
+        border-bottom: solid 1px #ddd;
+        background-color: #d5d8ea;
+        display: flex;
+        align-items: center;
+
+        >p {
+            font-size: 18px;
+            font-weight: bold;
+            color: fColor(cblack);
+        }
+
+        .tag {
+            margin-left: 16px;
+            height: 24px;
+            padding: 2px 9.7px 2px 7.6px;
+            border-radius: 40px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+
+            mat-icon {
+                font-size: 10px;
+                margin-right: 4px;
+                width: 10px;
+                height: 15px;
+                line-height: 15px;
+            }
+
+            p {
+                font-size: 12px;
+            }
+        }
+    }
+
+    .content {
+        flex: 1;
+        overflow: auto;
+    }
+
+    .action {
+        border-top: solid 1px #ddd;
+        background-color: #fff;
+        overflow: auto;
+
+        .properties {
+            background-color: white;
+            display: flex;
+            align-items: center;
+            padding: 16px 16px 32px 16px;
+
+            .number-circle {
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                padding: 3px 4.5px;
+                background-color: #ededed;
+                text-align: center;
+                font-size: 12px;
+                color: #929292;
+                margin-right: 8px;
+            }
+
+            label {
+                font-size: 14px;
+                font-weight: bold;
+                color: #3a3a3a;
+                bottom: 2px;
+                position: relative;
+            }
+        }
+
+        aj-text-editor {
+            border-radius: 0px;
+            border-right: none;
+            border-left: none;
+        }
+
+        .footer-panel {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 16px;
+            position: sticky;
+            bottom: 0;
+
+            .save {
+                color: white;
+                background-color: fColor(primary);
+                height: 32px;
+                padding: 4px 12px;
+                font-size: 14px;
+                line-height: 24px;
+                cursor: pointer;
+
+                &.disabled {
+                    pointer-events: none;
+                    opacity: 0.6;
+                }
+            }
+
+            .back {
+                border: solid 1px fColor(primary);
+                color: fColor(primary);
+                background-color: white;
+                height: 32px;
+                padding: 4px 12px;
+                font-size: 14px;
+                line-height: 24px;
+                cursor: pointer;
+                margin-right: 16px;
+            }
+        }
+    }
+}

@@ -1,4 +1,5 @@
 import { HONEY_IP_BLOCK_AGAIN, HONEY_IP_TRAPPED } from '../../constants/log-codes'
+import config from "config"
 
 const TRAPS = [
   'api/sn',
@@ -26,7 +27,6 @@ const TRAPS = [
   'PreAuth',
   '.file',
   'menus',
-  'mail',
   'server_status',
   'whoami',
   'apis',
@@ -117,7 +117,6 @@ const TRAPS = [
   'nsversion',
   'Injection',
   '.gz',
-  'system',
   '/tmp',
   'www',
   '.1tmhl',
@@ -135,24 +134,34 @@ const IP_TRAPPED = []
  * Module de control des urls interdit
  */
 export default async (ctx, next, models) => {
-  //console.log('Client IP', ctx.request.ip, ctx.request.url)
+  const ip = ctx.request.ip
+  const url = ctx.request.url
 
-  if (IP_TRAPPED.indexOf(ctx.request.ip) !== -1) {
-    console.log('IP BLOCKED - ', ctx.request.ip)
-    models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url, logging: false })
+  //console.log('ip', ip, config.ipFilter.whitelist.some(w => ip.includes(w)))
+
+  if(config.ipFilter.whitelist.some(w => ip.includes(w))) {
+    await next()
+    return
+  }
+
+  //console.log('Client IP', ip, url)
+
+  if (IP_TRAPPED.indexOf(ip) !== -1) {
+    console.log('IP BLOCKED - ', ip)
+    models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ip, { formatValue: false, datas2: url, logging: false })
     ctx.res.writeHead(403).end()
     return
   }
 
   if (
-    ctx.request.url &&
+    url &&
     TRAPS.some((t) => {
-      return ctx.request.url.includes(t)
+      return url.includes(t)
     })
   ) {
-    console.log('NEW IP BLOCKED - ', ctx.request.ip, ctx.request.url)
-    IP_TRAPPED.push(ctx.request.ip)
-    models.Logs.addLog(HONEY_IP_TRAPPED, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url, logging: false })
+    console.log('NEW IP BLOCKED - ', ip, url)
+    IP_TRAPPED.push(ip)
+    models.Logs.addLog(HONEY_IP_TRAPPED, null, ip, { formatValue: false, datas2: url, logging: false })
     ctx.res.writeHead(403).end()
     return
   }

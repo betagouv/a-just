@@ -8,10 +8,6 @@
   <button class="left-margin white-button empty" (click)="downloadTemplate();$event.stopPropagation();">
     Exporter sous Excel
   </button>
-  <button [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }" class="left-margin blue-button empty"
-    (click)="onSaveHR(true)">
-    Enregistrer sous
-  </button>
   <button *ngIf="selectedIds.length" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
     class="left-margin blue-button" (click)="onSaveHR(false)">
     Enregister
