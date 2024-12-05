@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import { JURIDICTION_DATA_BACKUP_ID } from '../constants/juridiction'
 import { onGetLastMonthApi, onGetDataByMonthApi } from '../routes/activities'
 import { onGetAllContentieuxReferentiels } from '../routes/contentieux'

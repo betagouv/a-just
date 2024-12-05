@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import { onUpdateAccountApi } from '../routes/user'
 import { onFilterListHRApi } from '../routes/hr'
 import { JURIDICTION_BACKUP_ID } from '../constants/juridiction'

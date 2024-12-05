@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import { JURIDICTION_BACKUP_ID } from '../constants/juridiction'
 import { MAGISTART_ID, GREFFIER_ID } from '../constants/hrCategories'
 import { onSaveCle, onGetAllCle } from '../routes/panorama'
