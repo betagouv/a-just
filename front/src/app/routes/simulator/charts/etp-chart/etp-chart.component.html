@@ -116,7 +116,8 @@
 
   <div class="space"></div>
   <aj-legend-label [title]="'projectedCont'" [label]="'EAM (projeté)'" [dotColor]="'#fdbfb7'" [bgColor]="'#fcd7d3'"
-    (value)="display($event)"></aj-legend-label>
+    (value)="display($event)" [disabledEl]="!canViewContractuel" [ngClass]="{
+      'disabled-label': !canViewContractuel }"></aj-legend-label>
 
   <aj-legend-label [title]="'simulatedCont'" [label]="'EAM (simulé)'" [dotColor]="'#fcd7d3'" [bgColor]="'#eba89f'"
     (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
