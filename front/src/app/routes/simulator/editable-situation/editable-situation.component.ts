@@ -792,20 +792,21 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   generateEndSituation() {
     this.replaceSeparator();
 
-    let newStock = Math.floor(
-      Number(this.formWhiteSim.controls['lastStock'].value) +
-        (this.nbOfDays / (365 / 12)) *
-          Number(this.formWhiteSim.controls['totalIn'].value) -
-        (this.nbOfDays / (365 / 12)) *
-          Number(this.formWhiteSim.controls['totalOut'].value)
+    const startTotalIn = fixDecimal(
+      Number(this.formWhiteSim.controls['totalIn'].value)
     );
-    newStock = newStock < 0 ? 0 : newStock;
+    this.formWhiteSim.controls['totalIn'].setValue(startTotalIn + '');
 
-    const startTotalIn = Number(this.formWhiteSim.controls['totalIn'].value);
-    const startTotalOut = Number(this.formWhiteSim.controls['totalOut'].value);
-    const startLastStock = Number(
-      this.formWhiteSim.controls['lastStock'].value
+    const startTotalOut = fixDecimal(
+      Number(this.formWhiteSim.controls['totalOut'].value)
     );
+    this.formWhiteSim.controls['totalOut'].setValue(startTotalOut + '');
+
+    const startLastStock = Math.floor(
+      Number(this.formWhiteSim.controls['lastStock'].value)
+    );
+    this.formWhiteSim.controls['lastStock'].setValue(startLastStock + '');
+
     const startetpMag = fixDecimal(
       Number(this.formWhiteSim.controls['etpMag'].value)
     );
@@ -814,7 +815,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     );
     const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value);
 
-    const coverage = Math.round((startTotalOut / startTotalIn) * 100);
+    let coverage = Number(this.formWhiteSim.controls['realCoverage'].value);
+    if (this.lockedParams.includes('realCoverage')) {
+      coverage = Math.round((startTotalOut / startTotalIn) * 100);
+    }
     this.formWhiteSim.controls['realCoverage'].setValue(String(coverage) + '%');
 
     const dtes = fixDecimal(startLastStock / startTotalOut);

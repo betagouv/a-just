@@ -9,15 +9,15 @@
   <i class="ri-close-fill close" (click)="close.emit()"></i>
   <p class="panel-title">Options d'affichage</p>
   <p class="filter-group">Filtrer par :</p>
-  <aj-list-selection labelPreviewText="Tous" class="bg-white" #filterContentieuxSelection icon="filter-2-line"
-    title="Contentieux" [multiple]="true" [list]="contentieuxFilterList" [values]="referentielIds!"
+  <aj-list-selection labelPreviewText="Tous" #filterContentieuxSelection icon="filter-2-line" title="Contentieux"
+    [multiple]="true" [list]="contentieuxFilterList" [values]="referentielIds!"
     (valuesChanged)="referentielIds=$event;updateParams()"
     (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close();"></aj-list-selection>
-  <aj-list-selection class="bg-white" #filterSelection icon="filter-2-line" title="Fonctions" [multiple]="true"
-    [list]="filterList" [values]="filterValues!" (valuesChanged)="filterValues=$event;updateParams()"
+  <aj-list-selection #filterSelection icon="filter-2-line" title="Fonctions" [multiple]="true" [list]="filterList"
+    [values]="filterValues!" (valuesChanged)="filterValues=$event;updateParams()"
     (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterContentieuxSelection.close();"></aj-list-selection>
-  <aj-list-selection class="bg-white" #filterIndispoSelection icon="filter-2-line" title="Indisponibilités"
-    [multiple]="true" [list]="allIndisponibilityReferentiel" [values]="filterIndispoValues!"
+  <aj-list-selection #filterIndispoSelection icon="filter-2-line" title="Indisponibilités" [multiple]="true"
+    [list]="allIndisponibilityReferentiel" [values]="filterIndispoValues!"
     (valuesChanged)="filterIndispoValues=$event;updateParams()"
     (onOpen)="sortSelection.close(); orderSelection.close(); filterContentieuxSelection.close(); filterSelection.close();"></aj-list-selection>
 

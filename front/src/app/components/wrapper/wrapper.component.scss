@@ -74,16 +74,19 @@
     background-color: #f6f6f6;
     display: flex;
     flex-direction: column;
-    padding-left: 32px;
-    padding-right: 16px;
 
     p,
     a {
       color: #3a3a3a;
       font-size: 14px;
-      margin: 8px 0px;
+      padding: 8px 16px 8px 32px;
       cursor: pointer;
       text-decoration: none;
+      transition: background-color 0.5s;
+
+      &:hover {
+        background-color: rgba(fColor(bgSelectSelected), 0.2);
+      }
 
       i {
         margin-left: 4px;
@@ -367,7 +370,20 @@
 
   .menu-item {
     display: block;
-    padding: 13px 4px 13px 13px;
+
+    &.top {
+      cursor: pointer;
+      transition: background-color 0.5s;
+
+      &:hover {
+        background-color: rgba(fColor(bgSelectSelected), 0.2);
+      }
+
+      >a {
+        padding: 13px 4px 13px 13px;
+        display: block;
+      }
+    }
 
     &.tools {
       display: flex;
@@ -381,6 +397,10 @@
         display: flex;
         justify-content: center;
       }
+    }
+
+    .menu-item {
+      padding: 13px 4px 13px 13px;
     }
 
     a {

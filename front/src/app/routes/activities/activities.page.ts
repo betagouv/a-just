@@ -64,6 +64,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined;
   /**
+   * Popin to edit contentieux
+   */
+  @ViewChild('editActivites') editActivites:
+    | PopinEditActivitiesComponent
+    | undefined;
+  /**
    * Liste des activités
    */
   activities: ActivityInterface[] = [];
@@ -487,6 +493,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             newRef.originalStock = getActivity
               ? getActivity.originalStock
               : null;
+            newRef.nbComments = getActivity
+              ? getActivity.nbComments
+              : undefined;
 
             newRef.childrens = (newRef.childrens || []).map((c) => {
               if (!c.activityUpdated) {
@@ -963,5 +972,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     if (cont.showActivityGroup) {
       this.kpiService.register(ACTIVITIES_SHOW_LEVEL_4, cont.id + '');
     }
+  }
+
+  showContComment(cont: ContentieuReferentielActivitiesInterface) {
+    this.contentieuxToUpdate = cont;
+
+    setTimeout(() => {
+      if (this.editActivites) {
+        this.editActivites.showComments = true;
+      }
+    }, 500);
   }
 }
