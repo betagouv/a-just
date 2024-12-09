@@ -1,7 +1,24 @@
-<div class="container">
-    <mat-selection-list #list [(ngModel)]="selectedRights" (ngModelChange)="onNgModelChange($event)">
-        <mat-list-option *ngFor="let right of rightsUser" [value]="right">
-            {{path? (right.NAC ? right.NAC + ' - ' : '') + right.name+ ' - ' + right.path[1] :right}}
-        </mat-list-option>
-    </mat-selection-list>
+<mat-select [multiple]="multiple" #matSelect class="hide-visualisation" [ngModel]="value"
+  (ngModelChange)="onSelectedChanged($event)" #selectionModel="ngModel">
+  <!-- <app-select-check-all *ngIf="multiple" [model]="selectionModel"
+    [values]="this.subList ? this.subReferentielData : this.datas" check="true">
+  </app-select-check-all> -->
+  <div *ngIf="!subList; else subListTemplate">
+    <mat-option *ngFor="let ref of datas" [value]="ref.id" class="myMatOptions">
+      <span [innerHTML]="(ref.renderHTML || ref.value) | sanitizeHtml"></span>
+    </mat-option>
+  </div>
+  <ng-template #subListTemplate>
+    <mat-option *ngFor="let ref of subReferentielData" [value]="ref.id">
+      <span [innerHTML]="ref.value | sanitizeHtml"></span>
+    </mat-option>
+  </ng-template>
+</mat-select>
+<p (click)="openDropDown(matSelect)" class="title">{{ title }} <ng-template [ngIf]="subTitleTemplate">
+    <ng-container *ngTemplateOutlet="subTitleTemplate" class="test"></ng-container>
+  </ng-template>
+</p>
+<div (click)="openDropDown(matSelect)">
+  <p class="bold-family value">{{ realValue || defaultRealValue }}</p>
+  <mat-icon>{{ icon }}</mat-icon>
 </div>

@@ -302,4 +302,5 @@
 </ng-template>
 
 <aj-comment-activities *ngIf="showComments && referentiel" class="animate__animated animate__bounceInLeft"
-  [type]="'activities_'+referentiel.code_import" (close)="showComments = false"></aj-comment-activities>
+  [type]="'activities_'+referentiel.id" [referentiel]="referentiel"
+  (close)="showComments = false"></aj-comment-activities>

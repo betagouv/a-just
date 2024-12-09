@@ -152,7 +152,8 @@
     <aj-template-analytics *ngIf="compareTemplates" [lines]="compareTemplates"></aj-template-analytics>
   </div>
 
-  <div class="black-opacity" *ngIf="showPicker===true" (click)="showPicker=!showPicker;"></div>
+  <div class="black-opacity" *ngIf="showPicker===true || dropdownExport===true"
+    (click)="showPicker=false;dropdownExport=false"></div>
 
   <!-- POPUP CHOIX COMPARAISON -->
   <aj-popup *ngIf="onEdit===true" [closeIcon]="true" (onClose)="onEdit = false" [removeShadow]="'noShadow'"
@@ -279,11 +280,12 @@
     <div (click)="dropdownExport=!dropdownExport;$event.stopPropagation();" class="arrow-zone"><i
         [class]="dropdownExport ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
   </button>
-  <div *ngIf="dropdownExport===true" class="drop-down save" (click)="$event.stopPropagation();">
+  <div *ngIf="dropdownExport===true" class="drop-down save" (click)="$event.stopPropagation(); dropdownExport=false;">
     <div class="primary light export" (click)="onExport()"><label><i class="ri-save-fill"></i>Enregistrer cet écran en
         pdf</label>
     </div>
-    <div (click)="promptRef = true;setDefaultRefName()"><i class="ri-file-download-fill"></i><label>Enregistrer ces
+    <div (click)="promptRef = true;setDefaultRefName();dropdownExport=false;"><i
+        class="ri-file-download-fill"></i><label>Enregistrer ces
         temps
         moyens comme
         référentiel</label></div>

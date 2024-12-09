@@ -9,6 +9,7 @@ import packageJSON from '../../../package.json';
  */
 export const environment = {
   production: false,
+  frontUrl: 'http://localhost:4200',
   serverUrl: 'http://localhost:8081/api/',
   nbDaysByMagistrat: 208,
   nbDaysByFonctionnaire: 229.57, // 1607 heures / an

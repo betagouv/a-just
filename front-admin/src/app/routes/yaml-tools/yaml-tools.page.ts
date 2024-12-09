@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
 import { parse, stringify } from 'yaml';
-import { SelectComponent } from '../../components/select/select.component';
+import { SelectSimpleComponent } from '../../components/select-simple/select-simple.component';
 import { CommonModule } from '@angular/common';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { FormsModule } from '@angular/forms';
@@ -33,14 +33,14 @@ interface elementToAdd {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, WrapperComponent, SelectComponent, FormsModule],
+  imports: [CommonModule, WrapperComponent, SelectSimpleComponent, FormsModule],
   templateUrl: './yaml-tools.page.html',
   styleUrls: ['./yaml-tools.page.scss'],
 })
 export class YamlToolsPage {
   @ViewChild('contentieuxSelect') contentieuxSelect:
     | undefined
-    | SelectComponent;
+    | SelectSimpleComponent;
   actionSelection = 0;
   existingNAC: string[] = [];
   distinctNAC: Array<string> = [];

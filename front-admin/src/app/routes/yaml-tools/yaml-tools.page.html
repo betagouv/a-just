@@ -28,15 +28,15 @@
 
         <div class="step-3">
           <p>Etape 2 : Choisir une NAC parmi celles existantes :</p>
-          <aj-select [rightsUser]="distinctNAC" (valueChange)="onSelectedChanged($event)"></aj-select>
+          <aj-select-simple [rightsUser]="distinctNAC" (valueChange)="onSelectedChanged($event)"></aj-select-simple>
           <code>NAC selectionnée(s): {{ selectedNACs | json }}</code>
         </div>
 
         <div class="step-4">
           <p>Etape 3 : Selectionner les valeurs que vous souhaitez supprimer :</p>
           <div class="textarea path">
-            <aj-select class="path" [rightsUser]="distinctPath" (valueChange)="onSelectedPathChanged($event)"
-              [path]="true"></aj-select>
+            <aj-select-simple class="path" [rightsUser]="distinctPath" (valueChange)="onSelectedPathChanged($event)"
+              [path]="true"></aj-select-simple>
             <button [ngClass]="{'disable':this.selectedPath.length===0}" (click)="validateRemoval()">Valider</button>
           </div>
           <code>Comptage avant modification: {{ countResult | json }}</code>
@@ -73,9 +73,9 @@
           <p>Etape 3 : Selectionner les contentieux dans lesquels vous souhaitez ajouter cette NAC</p>
           <div class="textarea path">
             <div [ngClass]="{'disable':this.goToStep4_addNac === true}">
-              <aj-select class="path" [rightsUser]="contentieuxLabelList"
-                (valueChange)="onSelectedContentieuxToAddNAC($event)" [path]="true" #contentieuxSelect >
-              </aj-select>
+              <aj-select-simple class="path" [rightsUser]="contentieuxLabelList"
+                (valueChange)="onSelectedContentieuxToAddNAC($event)" [path]="true" #contentieuxSelect>
+              </aj-select-simple>
             </div>
 
             <button [ngClass]="{'disable':this.selectedContentieuxTmp.length===0}"
@@ -83,13 +83,14 @@
               Valider
             </button>
 
-            <div  [ngClass]="{'disable':this.goToStep4_addNac === false || this.goToStep5_addNac === true}">
+            <div [ngClass]="{'disable':this.goToStep4_addNac === false || this.goToStep5_addNac === true}">
               <button [ngClass]="{'disable':this.selectedContentieux.length === 0}"
                 (click)="goToStep3_addNac=false; ; goToStep4_addNac=false">Ajouter une autre NAC ?</button>
               <button [ngClass]="{'disable':this.selectedContentieux.length === 0}"
-                (click)="goToStep4_addNac=true ; goToStep5_addNac=true; validateAdding()">Générer les nouvelles règles</button>
+                (click)="goToStep4_addNac=true ; goToStep5_addNac=true; validateAdding()">Générer les nouvelles
+                règles</button>
             </div>
-            
+
           </div>
         </div>
 
