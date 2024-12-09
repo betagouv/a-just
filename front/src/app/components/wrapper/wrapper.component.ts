@@ -184,7 +184,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * Récupération du numéro de version de l'app
    */
-  versionNumber: string = environment.version;
+  versionNumber: string = environment.version; //import.meta.env.NG_APP_VERSION;
   /**
    * Juridiction sélectionnée
    */

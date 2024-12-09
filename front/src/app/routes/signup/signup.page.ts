@@ -67,7 +67,7 @@ export class SignupPage {
   /**
    * SSO is activate to this env
    */
-  ssoIsActivate: boolean = environment.enableSSO;
+  ssoIsActivate: boolean = import.meta.env.NG_APP_ENABLE_SSO;
   /**
    * Can user SSO
    */

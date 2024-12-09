@@ -24,7 +24,7 @@ export class StatsPage {
   /**
    * Mapbox styling
    */
-  style = environment.mapboxStyle;
+  style = import.meta.env.NG_APP_MAPBOX_STYLE;
   /**
    * Center of mapbox
    */
@@ -37,6 +37,10 @@ export class StatsPage {
    * Liste juridictions
    */
   list: JuridictionInterface[] = [];
+  /**
+   * Mapbox Token
+   */
+  mapboxToken = import.meta.env.NG_APP_MAPBOX_TOKEN;
 
   /**
    * Constructeur
@@ -60,7 +64,7 @@ export class StatsPage {
   }
 
   updateMap() {
-    mapboxgl.accessToken = environment.mapboxToken;
+    mapboxgl.accessToken = this.mapboxToken;
     const map = new mapboxgl.Map({
       container: 'map-juridictions',
       style: this.style,

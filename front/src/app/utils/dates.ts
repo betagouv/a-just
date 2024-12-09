@@ -417,6 +417,8 @@ export function isDateBiggerThan(
 export function nbHourInMonth(date: Date = new Date()) {
   const dateStart = new Date(date.getFullYear(), date.getMonth());
   const dateStop = new Date(dateStart);
+  const nbHoursPerDayAndMagistrat = import.meta.env
+    .NG_APP_NB_HOURS_PER_DAY_AND_MAGISTRAT;
   dateStop.setMonth(dateStop.getMonth() + 1);
 
   let nbDay = 0;
@@ -428,7 +430,7 @@ export function nbHourInMonth(date: Date = new Date()) {
     dateStart.setDate(dateStart.getDate() + 1);
   } while (dateStart.getTime() < dateStop.getTime());
 
-  return nbDay * environment.nbHoursPerDayAndMagistrat;
+  return nbDay * nbHoursPerDayAndMagistrat;
 }
 
 /**
