@@ -8,7 +8,7 @@ import {
 } from '../utils/referentiel';
 import { categoryMappingName, categoryMappingColor } from '../utils/category';
 
-import { environment } from '../../environments/environment';
+//import { environment } from '../../environments/environment';
 import { fixDecimal } from '../utils/numbers';
 import {
   decimalToStringDate,
@@ -43,7 +43,7 @@ export class MainClass {
   /**
    * Config d'environment
    */
-  environment = environment;
+  //environment = environment;
   /**
    * Variable global de string magistrat
    */
