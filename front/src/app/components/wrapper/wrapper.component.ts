@@ -18,7 +18,7 @@ import { NewsComponent } from './news/news.component';
 import { MainClass } from '../../libs/main-class';
 import { DocumentationInterface } from '../../interfaces/documentation';
 import { DateSelectorinterface } from '../../interfaces/date';
-import { environment } from '../../../environments/environment';
+//import { environment } from '../../../environments/environment';
 import { BackupInterface } from '../../interfaces/backup';
 import {
   CALCULATE_DOWNLOAD_URL,
@@ -184,7 +184,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
   /**
    * Récupération du numéro de version de l'app
    */
-  versionNumber: string = environment.version; //import.meta.env.NG_APP_VERSION;
+  versionNumber: string = import.meta.env.NG_APP_VERSION;
   /**
    * Juridiction sélectionnée
    */
