@@ -911,6 +911,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
         button: { value: '' },
       },
     };
+    this.commentaire = '';
     this.contentieuId = null;
     this.simulatorService.contentieuOrSubContentieuId.next(null);
     this.subList = [];
