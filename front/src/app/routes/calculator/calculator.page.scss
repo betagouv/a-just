@@ -538,6 +538,10 @@
       height: 100%;
       position: relative;
 
+      label {
+        cursor: pointer;
+      }
+
       &.save {
         margin-right: 0px;
 
