@@ -324,6 +324,7 @@ export class PopinEditActivitiesComponent
     const updates = Object.values(this.updates);
     console.log('UPDATE TOTAL');
     console.log('upadtes.length=', updates.length);
+    console.log('upadtes', updates);
     if (updates.length) {
       this.total.in.value =
         this.total.in.value ??
@@ -371,7 +372,10 @@ export class PopinEditActivitiesComponent
 
         switch (elem.node) {
           case 'entrees':
+            console.log(' this.total.in.value BEFORE:', this.total.in.value);
+            console.log(' this.total.in.value:', delta);
             this.total.in.value = (this.total.in.value || 0) + delta;
+            console.log(' this.total.in.value AFTER:', this.total.in.value);
             if (
               updatedValue === null &&
               this.referentiel?.originalIn === null
@@ -381,7 +385,10 @@ export class PopinEditActivitiesComponent
             } else this.total.in.updated = true;
             break;
           case 'sorties':
+            console.log(' this.total.out.value BEFORE:', this.total.out.value);
+            console.log(' this.total.out.value:', delta);
             this.total.out.value = (this.total.out.value || 0) + delta;
+            console.log(' this.total.out.value AFTER:', this.total.out.value);
             if (
               updatedValue === null &&
               this.referentiel?.originalOut === null
