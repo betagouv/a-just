@@ -651,7 +651,7 @@ export class PopinEditActivitiesComponent
     }
     console.log('\n\n\n\nthis.updates 00:', this.updates);
     console.log('updateTotal:', updateTotal);
-    updateTotal && setTimeout(() => this.updateTotal(), 1000);
+    updateTotal && setTimeout(() => this.updateTotal(), 2000);
   }
 
   /**
