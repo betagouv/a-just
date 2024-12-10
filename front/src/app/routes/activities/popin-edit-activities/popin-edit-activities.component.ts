@@ -646,7 +646,7 @@ export class PopinEditActivitiesComponent
           newStock !== null ? (newStock > 0 ? newStock.toString() : '0') : '-';
       });
     }
-    console.log('this.updates 00:', this.updates);
+    console.log('\n\n\n\nthis.updates 00:', this.updates);
     console.log('updateTotal:', updateTotal);
     updateTotal && setTimeout(() => this.updateTotal(), 1000);
   }
