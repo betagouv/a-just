@@ -322,7 +322,7 @@ export class PopinEditActivitiesComponent
     this.total.out.value = this.referentiel?.out;
     this.total.stock.value = this.referentiel?.stock;
     const updates = Object.values(this.updates);
-
+    console.log('UPDATE TOTAL');
     if (updates.length) {
       this.total.in.value =
         this.total.in.value ??
@@ -447,6 +447,7 @@ export class PopinEditActivitiesComponent
       value = +newValue;
     }
 
+    console.log('NodeName:', nodeName);
     switch (nodeName) {
       case 'entrees':
         originalValue = isNumber(contentieux.originalIn)
@@ -499,7 +500,7 @@ export class PopinEditActivitiesComponent
     const stock = document.getElementById(
       `contentieux-${contentieux.id}-stock`
     ) as HTMLInputElement;
-
+    console.log('Stock:', stock);
     // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie
     // Dans ce cas on remet le stock à son état d'origine
     if (
@@ -625,6 +626,7 @@ export class PopinEditActivitiesComponent
       });
     }
     console.log('this.updates 00:', this.updates);
+    console.log('updateTotal:', updateTotal);
     updateTotal && setTimeout(() => this.updateTotal(), 1000);
   }
 
