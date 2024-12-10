@@ -26,8 +26,8 @@ export function referentielCAMappingIndex(name, rank) {
       return 4;
     case "Contentieux civil non spécialisé":
       return 5;
-    case "Contentieux civil JLD":
-      return 6;
+      case "Attributions du PP":
+        return 6;
     case "Contentieux des mineurs":
       return 7;
     case "Correctionnel":
@@ -38,8 +38,8 @@ export function referentielCAMappingIndex(name, rank) {
       return 10;
     case "Contentieux criminel":
       return 11;
-    case "Attributions du PP":
-      return 12;
+    case "Contentieux civil JLD": // à supprimer
+        return 12;
     case "Autres activités":
       return 13;
     case 'Indisponibilité':
