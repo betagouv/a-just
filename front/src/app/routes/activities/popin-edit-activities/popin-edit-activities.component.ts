@@ -323,6 +323,7 @@ export class PopinEditActivitiesComponent
     this.total.stock.value = this.referentiel?.stock;
     const updates = Object.values(this.updates);
     console.log('UPDATE TOTAL');
+    console.log('upadtes.length=', updates.length);
     if (updates.length) {
       this.total.in.value =
         this.total.in.value ??
@@ -390,17 +391,30 @@ export class PopinEditActivitiesComponent
             } else this.total.out.updated = true;
             break;
           case 'stock':
+            console.log(
+              ' this.total.stock.value BEFORE:',
+              this.total.stock.value
+            );
+            console.log(' this.total.stock.value:', delta);
             this.total.stock.value = (this.total.stock.value || 0) + delta;
+            console.log(
+              ' this.total.stock.value AFTER:',
+              this.total.stock.value
+            );
             if (
               updatedValue === null &&
               this.referentiel?.originalStock === null
             ) {
+              console.log("Setting total stock to 'null' value");
               this.total.stock.value = null;
               this.total.stock.updated = false;
             } else this.total.stock.updated = true;
             break;
         }
       });
+      console.log('this.total.in:', this.total.in.value);
+      console.log('this.total.out:', this.total.out.value);
+      console.log('this.total.stock:', this.total.stock.value);
       if (
         this.total.in.value !== null &&
         this.total.in.value !== undefined &&
