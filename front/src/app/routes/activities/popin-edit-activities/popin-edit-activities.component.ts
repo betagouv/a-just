@@ -613,7 +613,7 @@ export class PopinEditActivitiesComponent
       )
         stockValue = contentieux.originalStock ?? 0;
       else stockValue = contentieux.originalStock ?? contentieux.stock ?? 0; //Utile si pas de stock le mois n-1 (resp = null dans la suite)
-
+      console.time();
       this.getLastMonthStock(contentieux.id).then((resp) => {
         let newStock: number | null =
           (resp ?? stockValue ?? 0) + entreeValue - sortieValue;
@@ -644,6 +644,9 @@ export class PopinEditActivitiesComponent
         };
         stock.value =
           newStock !== null ? (newStock > 0 ? newStock.toString() : '0') : '-';
+
+        console.log('newStock:', newStock);
+        console.timeEnd();
       });
     }
     console.log('\n\n\n\nthis.updates 00:', this.updates);
