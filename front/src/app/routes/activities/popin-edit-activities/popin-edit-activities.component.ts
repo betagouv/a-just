@@ -454,7 +454,7 @@ export class PopinEditActivitiesComponent
    * @param nodeName
    * @param contentieux
    */
-  onUpdateValue(
+  async onUpdateValue(
     newValue: string,
     nodeName: string,
     contentieux: ContentieuReferentielInterface
@@ -614,7 +614,7 @@ export class PopinEditActivitiesComponent
         stockValue = contentieux.originalStock ?? 0;
       else stockValue = contentieux.originalStock ?? contentieux.stock ?? 0; //Utile si pas de stock le mois n-1 (resp = null dans la suite)
       console.time();
-      this.getLastMonthStock(contentieux.id).then((resp) => {
+      await this.getLastMonthStock(contentieux.id).then((resp) => {
         let newStock: number | null =
           (resp ?? stockValue ?? 0) + entreeValue - sortieValue;
         // condition spécifique pour envoyer une donnée au back dans le cas suivant: Entrée, Sortie et Stock ajusté puis supression du stock ajusté et ensuite suppression de l'entrée et/ou sortie ajusté.
@@ -651,7 +651,7 @@ export class PopinEditActivitiesComponent
     }
     console.log('\n\n\n\nthis.updates 00:', this.updates);
     console.log('updateTotal:', updateTotal);
-    updateTotal && setTimeout(() => this.updateTotal(), 2000);
+    updateTotal && setTimeout(() => this.updateTotal(), 1000);
   }
 
   /**
