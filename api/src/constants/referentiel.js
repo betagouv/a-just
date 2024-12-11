@@ -26,7 +26,7 @@ export function referentielCAMappingIndex(name, rank) {
       return 4;
     case "Contentieux civil non spécialisé":
       return 5;
-      case "Attributions du PP":
+    case "Attributions du PP":
         return 6;
     case "Contentieux des mineurs":
       return 7;
