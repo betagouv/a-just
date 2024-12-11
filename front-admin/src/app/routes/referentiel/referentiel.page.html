@@ -6,7 +6,7 @@
     <div class="select">Qualité des Sorties</div>
     <div class="select">Qualité du Stock</div>
     <div class="input">Url de l'aide</div>
-    <!-- <div class="select-big">Pour tous</div> -->
+    <div class="select-big">Pour tous</div>
   </div>
   <div *ngFor="let ref of referentiels">
     <ng-container *ngTemplateOutlet="
@@ -40,7 +40,7 @@
     </select>
     <input placeholder="Url d'aide" [ngModel]="items.helpUrl || ''"
       (ngModelChange)="onUpdateElement(items.id, 'helpUrl', $event)" />
-    <!-- <div class="select-big">
+    <div class="select-big">
       <div
         (click)="onUpdateElement(items.id, 'onlyToHrBackup', items.backups === null ? [] : null); items.backups = items.backups === null ? [] : null; items.onlyToHrBackup = []">
         <input type="checkbox" [checked]="items.backups !== null ? '': 'checked'" />
@@ -50,7 +50,7 @@
         <aj-select [datas]="backups" [value]="items.onlyToHrBackup || []"
           (valueChange)="onUpdateElement(items.id, 'onlyToHrBackup', $event)"></aj-select>
       </div>
-    </div> -->
+    </div>
   </div>
   <div class="list" *ngIf="items.childrens">
     <div *ngFor="let item of items.childrens">
