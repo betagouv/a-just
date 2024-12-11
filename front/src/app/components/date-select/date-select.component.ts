@@ -156,7 +156,7 @@ export class DateSelectComponent extends MainClass implements OnChanges {
    * @param event
    */
   onDateChanged(event: any) {
-    const date = new Date(event);
+    const date = event ? new Date(event) : null;
     this.value = date;
 
     this.valueChange.emit(this.value);
