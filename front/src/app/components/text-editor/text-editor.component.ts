@@ -151,6 +151,14 @@ export class TextEditorComponent extends MainClass {
   }
 
   /**
+   * Clean format of Quill render html
+   */
+  formatHTMLToRendering(html: string) {
+    html = html.replace(/a href="(?!http)/, 'a href="https://');
+    return html;
+  }
+
+  /**
    * Init Quill text editor
    */
   initQuillEditor() {
@@ -180,6 +188,7 @@ export class TextEditorComponent extends MainClass {
             this.value = !this.quillEditor.root.innerText.trim()
               ? ''
               : this.quillEditor.root.innerHTML;
+            this.value = this.formatHTMLToRendering(this.value);
             this.valueChange.emit(this.value);
           } else {
             this.ignoreUpdate = false;
