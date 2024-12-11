@@ -1968,7 +1968,8 @@ export class CalculatorPage
     this.contentieuxOptionsService.onSaveDatas(
       false,
       this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE',
-      this.defaultRefName
+      this.defaultRefName,
+      'Enregistré'
     );
 
     this.promptRef = false;
