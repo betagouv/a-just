@@ -19,7 +19,7 @@
           <p class="hard">Simulés</p>
           <p class="white">Variation</p>
         </div>
-        <div class="popin-raw">
+        <div class="popin-raw" *ngIf="canViewMagistrat">
           <div class="popin-title">
             <div _ngcontent-vmx-c83="" class="circle pink"></div>
             <b> Magistrats</b>
@@ -44,7 +44,7 @@
           </div>
         </div>
 
-        <div class="popin-raw">
+        <div class="popin-raw" *ngIf="canViewGreffier">
           <div class="popin-title">
             <div _ngcontent-vmx-c83="" class="circle light-pink"></div>
             <b>Agents</b> &nbsp;
@@ -70,7 +70,7 @@
           </div>
         </div>
 
-        <div class="popin-raw">
+        <div class="popin-raw" *ngIf="canViewContractuel">
           <div class="popin-title">
             <div class="circle light-pink"></div>
             <b>Autour du magistrat</b> &nbsp;

@@ -157,7 +157,14 @@ export class SelectComponent extends MainClass implements OnChanges {
 
     let tmpStr = '';
 
-    if (find && !this.subList && typeof this.value === 'number') {
+    if (
+      !this.subList &&
+      this.datas &&
+      this.value &&
+      Object.keys(this.value).length === this.datas.length
+    ) {
+      this.realValue = 'Tous';
+    } else if (find && !this.subList && typeof this.value === 'number') {
       this.datas.map((v) => {
         if (v.id === this.value) {
           tmpStr = tmpStr.concat(v.value, tmpStr);
