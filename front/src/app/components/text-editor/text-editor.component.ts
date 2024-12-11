@@ -131,6 +131,11 @@ export class TextEditorComponent extends MainClass {
       if (change['value']) {
         this.ignoreUpdate = true;
         this.quillEditor.root.innerHTML = this.value;
+        if (this.value) {
+          this.quillEditor.root.classList.add('hide-place-holder');
+        } else {
+          this.quillEditor.root.classList.remove('hide-place-holder');
+        }
       }
     }
   }
