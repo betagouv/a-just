@@ -285,7 +285,8 @@ export class ContentieuxOptionsService extends MainClass {
   async onSaveDatas(
     isCopy: boolean,
     type = 'SIEGE',
-    backupName: string | null = null
+    backupName: string | null = null,
+    backupStatus = 'Local'
   ) {
     if (isCopy) {
       backupName = prompt('Sous quel nom ?');
@@ -298,6 +299,7 @@ export class ContentieuxOptionsService extends MainClass {
         type,
         backupName: backupName ? backupName : null,
         juridictionId: this.humanResourceService.backupId.getValue(),
+        backupStatus,
       })
       .then((r) => {
         this.backupId.next(r.data);

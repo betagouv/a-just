@@ -101,8 +101,7 @@
     <label class="modify">{{backup.update ? (backup.update.date|dateAgo) : ''}}</label>
     <div class="status">
       <label class="tag"
-        [ngStyle]="{'background-color': backup.status==='Importé' ? '#c3fad5' : '#dee5fd', 'color': backup.status==='Importé'  ? '#00a95f':'#465f9d'}">{{backup.status==='Importé'
-        ?'Importé':'Local'}}
+        [ngStyle]="{'background-color': getBackgroundColor(backup.status), 'color': getColor(backup.status)}">{{backup.status}}
       </label>
     </div>
     <div class="actions">
