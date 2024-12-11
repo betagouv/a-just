@@ -199,7 +199,6 @@ export class PopinEditActivitiesComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('new ref', this.referentiel, changes);
     if (changes['referentiel']) {
       this.updateTotal();
     }
@@ -322,9 +321,6 @@ export class PopinEditActivitiesComponent
     this.total.out.value = this.referentiel?.out;
     this.total.stock.value = this.referentiel?.stock;
     const updates = Object.values(this.updates);
-    console.log('UPDATE TOTAL');
-    console.log('upadtes.length=', updates.length);
-    console.log('upadtes', updates);
     if (updates.length) {
       this.total.in.value =
         this.total.in.value ??
@@ -372,10 +368,7 @@ export class PopinEditActivitiesComponent
 
         switch (elem.node) {
           case 'entrees':
-            console.log(' this.total.in.value BEFORE:', this.total.in.value);
-            console.log(' this.total.in.value:', delta);
             this.total.in.value = (this.total.in.value || 0) + delta;
-            console.log(' this.total.in.value AFTER:', this.total.in.value);
             if (
               updatedValue === null &&
               this.referentiel?.originalIn === null
@@ -385,10 +378,7 @@ export class PopinEditActivitiesComponent
             } else this.total.in.updated = true;
             break;
           case 'sorties':
-            console.log(' this.total.out.value BEFORE:', this.total.out.value);
-            console.log(' this.total.out.value:', delta);
             this.total.out.value = (this.total.out.value || 0) + delta;
-            console.log(' this.total.out.value AFTER:', this.total.out.value);
             if (
               updatedValue === null &&
               this.referentiel?.originalOut === null
@@ -398,30 +388,17 @@ export class PopinEditActivitiesComponent
             } else this.total.out.updated = true;
             break;
           case 'stock':
-            console.log(
-              ' this.total.stock.value BEFORE:',
-              this.total.stock.value
-            );
-            console.log(' this.total.stock.value:', delta);
             this.total.stock.value = (this.total.stock.value || 0) + delta;
-            console.log(
-              ' this.total.stock.value AFTER:',
-              this.total.stock.value
-            );
             if (
               updatedValue === null &&
               this.referentiel?.originalStock === null
             ) {
-              console.log("Setting total stock to 'null' value");
               this.total.stock.value = null;
               this.total.stock.updated = false;
             } else this.total.stock.updated = true;
             break;
         }
       });
-      console.log('this.total.in:', this.total.in.value);
-      console.log('this.total.out:', this.total.out.value);
-      console.log('this.total.stock:', this.total.stock.value);
       if (
         this.total.in.value !== null &&
         this.total.in.value !== undefined &&
@@ -468,7 +445,6 @@ export class PopinEditActivitiesComponent
       value = +newValue;
     }
 
-    console.log('NodeName:', nodeName);
     switch (nodeName) {
       case 'entrees':
         originalValue = isNumber(contentieux.originalIn)
@@ -521,7 +497,6 @@ export class PopinEditActivitiesComponent
     const stock = document.getElementById(
       `contentieux-${contentieux.id}-stock`
     ) as HTMLInputElement;
-    console.log('Stock:', stock);
     // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie
     // Dans ce cas on remet le stock à son état d'origine
     if (
@@ -613,7 +588,6 @@ export class PopinEditActivitiesComponent
       )
         stockValue = contentieux.originalStock ?? 0;
       else stockValue = contentieux.originalStock ?? contentieux.stock ?? 0; //Utile si pas de stock le mois n-1 (resp = null dans la suite)
-      console.time();
       await this.getLastMonthStock(contentieux.id).then((resp) => {
         let newStock: number | null =
           (resp ?? stockValue ?? 0) + entreeValue - sortieValue;
@@ -644,14 +618,9 @@ export class PopinEditActivitiesComponent
         };
         stock.value =
           newStock !== null ? (newStock > 0 ? newStock.toString() : '0') : '-';
-
-        console.log('newStock:', newStock);
-        console.timeEnd();
       });
     }
-    console.log('\n\n\n\nthis.updates 00:', this.updates);
-    console.log('updateTotal:', updateTotal);
-    updateTotal && setTimeout(() => this.updateTotal(), 1000);
+    updateTotal && this.updateTotal();
   }
 
   /**
@@ -753,7 +722,6 @@ export class PopinEditActivitiesComponent
               options.stock = elem.value;
               break;
           }
-          console.log('OPTIONS:', options);
           await this.activitiesService.updateDatasAt(
             Number(cont),
             this.activityMonth,
@@ -955,52 +923,42 @@ export class PopinEditActivitiesComponent
       switch (node) {
         case 'entrees':
           if (level === 3) {
-            console.log('Entrées - TOTAL');
             url =
               'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/total-des-entrees';
           } else if (this.isValueUpdated({ cont, node })) {
-            console.log('Entrées - AJUSTE');
             url =
               'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees-a-justees';
           } else {
-            console.log('Entrées - NORMAL');
             url =
               'https://docs.a-just.beta.gouv.fr/tooltips-a-just/entrees/entrees';
           }
           break;
         case 'sorties':
           if (level === 3) {
-            console.log('Sorties - TOTAL');
             url =
               'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/total-des-sorties';
           } else if (this.isValueUpdated({ cont, node })) {
-            console.log('Sorties - AJUSTE');
             url =
               'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties-a-justees';
           } else {
-            console.log('Sorties - NORMAL');
             url =
               'https://docs.a-just.beta.gouv.fr/tooltips-a-just/sorties/sorties';
           }
           break;
         case 'stock':
           if (level === 3) {
-            console.log('Stock - TOTAL');
             url =
               'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-total';
           } else if (this.isValueUpdated({ cont, node })) {
             // WARNING: Pour le Stock au niveau 4, il esxiste 2 possibilités. (1) Le stock a été recalculé, (2) Le stock a été saisi (ajusté)
             if (!this.isStockCalculated(cont)) {
-              console.log('Stock - AJUSTE');
               url =
                 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-a-juste';
             } else {
-              console.log('Stock - CALCULE');
               url =
                 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock-calcule';
             }
           } else {
-            console.log('STOCK');
             url =
               'https://docs.a-just.beta.gouv.fr/tooltips-a-just/stocks/stock';
           }
