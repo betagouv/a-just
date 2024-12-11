@@ -14,7 +14,6 @@ import {
 import { FormGroup, FormsModule } from '@angular/forms';
 import { sumBy } from 'lodash';
 import { BackButtonComponent } from '../../../components/back-button/back-button.component';
-import { EtpPreviewComponent } from '../../../components/etp-preview/etp-preview.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
 import { MainClass } from '../../../libs/main-class';
@@ -39,7 +38,6 @@ import { BigEtpPreviewComponent } from '../big-etp-preview/big-etp-preview.compo
   imports: [
     CommonModule,
     BackButtonComponent,
-    EtpPreviewComponent,
     FormsModule,
     HelpButtonComponent,
     DateSelectComponent,
