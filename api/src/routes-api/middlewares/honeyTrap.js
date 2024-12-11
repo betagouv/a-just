@@ -23,7 +23,6 @@ const TRAPS = [
   'api/user/current',
   'api/w',
   'api/se',
-  'api/p',
   'PreAuth',
   '.file',
   'menus',
@@ -117,7 +116,6 @@ const TRAPS = [
   'nsversion',
   'Injection',
   '.gz',
-  '/tmp',
   'www',
   '.1tmhl',
   '/bin/',
@@ -138,10 +136,9 @@ export default async (ctx, next, models) => {
   const url = ctx.request.url
 
   if(config.useAgent) {
-    const useAgentSplited = (config.useAgent || '').toLowerCase().split(',')
+    const useAgentSplited = (config.useAgent || '').toLowerCase().split(',')
     const headerUserAgent = ctx.header['user-agent'];
     if(useAgentSplited.some(w => headerUserAgent.includes(w))) {
-      console.log('by pass')
       await next()
       return
     }
@@ -184,6 +181,6 @@ export default async (ctx, next, models) => {
 console.log(
   'TRAP',
   TRAPS.filter((t) => {
-    return '/inscription?email=gregory.david@justice.fr&firstName=Gr%C3%A9gory&lastName=DAVID&provider=justice-sso'.includes(t)
+    return '/api/public/tmp/update-referentiel.json'.includes(t)
   })
 )*/
