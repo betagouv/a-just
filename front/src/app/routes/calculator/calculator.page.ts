@@ -267,13 +267,13 @@ export class CalculatorPage
               introTooltip.classList.add('introjs-bottom-left-aligned');
               introTooltip.classList.remove('introjs-floating');
               introTooltip.style.left = '0px';
-              introTooltip.style.top = '170px';
+              introTooltip.style.top = '100px';
               introTooltip.style.marginLeft = '-150px';
               introTooltip.style.marginTop = '0';
               introTooltip.style.visibility = 'visible';
               introTooltip.style.height = '450px';
             }
-          }, 500);
+          }, 600);
         }
       },
     },
@@ -1968,7 +1968,8 @@ export class CalculatorPage
     this.contentieuxOptionsService.onSaveDatas(
       false,
       this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE',
-      this.defaultRefName
+      this.defaultRefName,
+      'Enregistré'
     );
 
     this.promptRef = false;

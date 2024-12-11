@@ -13,22 +13,22 @@ import { PopupComponent } from '../../../components/popup/popup.component';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
 import { CommonModule } from '@angular/common';
 import { WrapperComponent } from '../../../components/wrapper/wrapper.component';
-import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel';
 import {
   DATA_GITBOOK,
   NOMENCLATURE_DOWNLOAD_URL,
 } from '../../../constants/documentation';
-import { AppService } from '../../../services/app/app.service';
+import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel';
 import { ActivitiesService } from '../../../services/activities/activities.service';
-import { UserService } from '../../../services/user/user.service';
-import { OPACITY_20 } from '../../../constants/colors';
-import { VALUE_QUALITY_TO_VERIFY } from '../../../constants/referentiel';
+import { AppService } from '../../../services/app/app.service';
 import { copy } from '../../../utils';
 import { downloadFile } from '../../../utils/system';
+import { VALUE_QUALITY_TO_VERIFY } from '../../../constants/referentiel';
+import { UserService } from '../../../services/user/user.service';
+import { OPACITY_20 } from '../../../constants/colors';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { CommentActivitiesComponent } from '../comment-activities/comment-activities.component';
 import { RadioButtonComponent } from '../../../components/radio-button/radio-button.component';
+import { CommentActivitiesComponent } from '../comment-activities/comment-activities.component';
 
 /**
  * Composant page activité
@@ -75,6 +75,7 @@ export class PopinEditActivitiesComponent
     reload: boolean;
     month?: Date | undefined;
   }> = new EventEmitter();
+
   /**
    * Current updates
    */
@@ -130,6 +131,7 @@ export class PopinEditActivitiesComponent
    *  Vérifie que le mois prochain comporte des données d'activité
    */
   hasNextMonth: boolean = false;
+
   /**
    * Show comments
    */
@@ -379,6 +381,7 @@ export class PopinEditActivitiesComponent
             break;
           case 'sorties':
             this.total.out.value = (this.total.out.value || 0) + delta;
+
             if (
               updatedValue === null &&
               this.referentiel?.originalOut === null
@@ -389,6 +392,7 @@ export class PopinEditActivitiesComponent
             break;
           case 'stock':
             this.total.stock.value = (this.total.stock.value || 0) + delta;
+
             if (
               updatedValue === null &&
               this.referentiel?.originalStock === null
@@ -399,6 +403,7 @@ export class PopinEditActivitiesComponent
             break;
         }
       });
+
       if (
         this.total.in.value !== null &&
         this.total.in.value !== undefined &&
@@ -591,6 +596,7 @@ export class PopinEditActivitiesComponent
       await this.getLastMonthStock(contentieux.id).then((resp) => {
         let newStock: number | null =
           (resp ?? stockValue ?? 0) + entreeValue - sortieValue;
+
         // condition spécifique pour envoyer une donnée au back dans le cas suivant: Entrée, Sortie et Stock ajusté puis supression du stock ajusté et ensuite suppression de l'entrée et/ou sortie ajusté.
         // Sans cette condition, la suppression du stock n'est pas prise en compte car la donnée est recalculé (suite à la supression de l'entrée et/ou sortie) et on indique pas au back que l'on souhaite supprimer la valeur précédement entrés
         // (plus bas on met sendBack à false car uopdate[stock].value !== null)
@@ -684,6 +690,7 @@ export class PopinEditActivitiesComponent
         return elem;
       });
       let contentieux = groupBy(updates, (elem) => get(elem, 'contentieux.id'));
+
       contentieux = mapValues(contentieux, (group) =>
         group.map((elem) => {
           const initialValues = {
@@ -971,7 +978,10 @@ export class PopinEditActivitiesComponent
         path: url,
         subTitle: '',
         printSubTitle: false,
-        bgColor: this.referentielMappingColorActivity(this.referentiel.label),
+        bgColor: this.userService.referentielMappingColorActivityByInterface(
+          this.referentiel.label,
+          OPACITY_20
+        ),
         closeColor: 'black',
       });
     }

@@ -15,6 +15,10 @@
   p {
     font-size: 14px;
   }
+
+  &.hide-place-holder::before {
+    display: none;
+  }
 }
 
 .ql-editor.ql-blank::before {

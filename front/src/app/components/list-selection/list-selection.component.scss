@@ -167,6 +167,17 @@
   background-color: fColor(bgSelect);
   overflow: auto;
 
+  &:not(.multiple) {
+    .selected {
+      background-color: fColor(bgSelectSelected);
+      color: white;
+
+      p {
+        color: white;
+      }
+    }
+  }
+
   &.right {
     left: 100%;
     margin-top: 0;

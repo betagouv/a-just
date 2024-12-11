@@ -23,7 +23,6 @@ const TRAPS = [
   'api/user/current',
   'api/w',
   'api/se',
-  'api/p',
   'PreAuth',
   '.file',
   'menus',
@@ -117,7 +116,6 @@ const TRAPS = [
   'nsversion',
   'Injection',
   '.gz',
-  '/tmp',
   'www',
   '.1tmhl',
   '/bin/',
@@ -136,6 +134,15 @@ const IP_TRAPPED = []
 export default async (ctx, next, models) => {
   const ip = ctx.request.ip
   const url = ctx.request.url
+
+  if(config.useAgent) {
+    const useAgentSplited = (config.useAgent || '').toLowerCase().split(',')
+    const headerUserAgent = ctx.header['user-agent'];
+    if(useAgentSplited.some(w => headerUserAgent.includes(w))) {
+      await next()
+      return
+    }
+  }
 
   //console.log('ip', ip, config.ipFilter.whitelist.some(w => ip.includes(w)))
 
@@ -174,6 +181,6 @@ export default async (ctx, next, models) => {
 console.log(
   'TRAP',
   TRAPS.filter((t) => {
-    return '/api/juridictions-details/get-cle'.includes(t)
+    return '/api/public/tmp/update-referentiel.json'.includes(t)
   })
 )*/
