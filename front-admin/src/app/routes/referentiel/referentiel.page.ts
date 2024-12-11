@@ -30,6 +30,7 @@ export class ReferentielPage extends MainClass implements OnInit {
   referentiels: ContentieuReferentielWithBackupsInterface[] = [];
   QUALITY_LIST = QUALITY_LIST;
   backups: dataInterface[] = [];
+  isJirs: boolean = true;
 
   constructor() {
     super();
@@ -52,7 +53,7 @@ export class ReferentielPage extends MainClass implements OnInit {
 
   onLoad() {
     this.referentielService
-      .getReferentiels(true)
+      .getReferentiels(this.isJirs)
       .then((list: ContentieuReferentielInterface[]) => {
         this.referentiels = list
           .map((i) => ({
