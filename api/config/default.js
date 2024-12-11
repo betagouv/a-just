@@ -174,6 +174,8 @@ module.exports = {
     sameSite:
       null /** (string) session cookie sameSite options (default null, don't set it) */,
   },
+  // USER AGENT TO honey tracp
+  useAgent: process.env.AUTHORIZED_AGENTS, 
   // IP to block
   ipFilter: {
     whitelist: [

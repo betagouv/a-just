@@ -137,6 +137,16 @@ export default async (ctx, next, models) => {
   const ip = ctx.request.ip
   const url = ctx.request.url
 
+  if(config.useAgent) {
+    const useAgentSplited = (config.useAgent || '').toLowerCase().split(',')
+    const headerUserAgent = ctx.header['user-agent'];
+    if(useAgentSplited.some(w => headerUserAgent.includes(w))) {
+      console.log('by pass')
+      await next()
+      return
+    }
+  }
+
   //console.log('ip', ip, config.ipFilter.whitelist.some(w => ip.includes(w)))
 
   if(config.ipFilter.whitelist.some(w => ip.includes(w))) {
