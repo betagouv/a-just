@@ -29,7 +29,7 @@ export default class RouteContentieuxReferentiels extends Route {
   })
   async getReferentiels (ctx) {
     const { isJirs } = this.body(ctx)
-    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(null, isJirs, true))
+    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(null, isJirs))
   }
 
   /**

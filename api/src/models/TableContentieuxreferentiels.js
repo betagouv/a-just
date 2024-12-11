@@ -14,16 +14,21 @@ import config from "config";
 
 export default (sequelizeInstance, Model) => {
   /**
-   * Retourne la liste du référentiel et prend en cache si besoin
+   * Retourne la liste du référentiel
    * @param {*} isJirs
-   * @param {*} force
    * @returns
    */
   Model.getReferentiels = async (
     backupId = null,
-    isJirs = false,
-    force = false
+    isJirs = false
   ) => {
+    if(backupId) {
+      const juridiction = await Model.models.HRBackups.findById(backupId)
+      if(juridiction) {
+        isJirs = juridiction.jirs
+      }
+    }
+
     const formatToGraph = async (parentId = null, index = 0) => {
       const where = {};
       if (backupId) {

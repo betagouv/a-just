@@ -332,9 +332,7 @@ export default class RouteUsers extends Route {
   async getUserDatas (ctx) {
     const backups = await this.models.HRBackups.list(ctx.state.user.id)
     for (let i = 0; i < backups.length; i++) {
-      const isJirs = backups[i].jirs
-      const force = true
-      backups[i].referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backups[i].id, isJirs, force)
+      backups[i].referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backups[i].id)
     }
 
     const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)

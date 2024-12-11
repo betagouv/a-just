@@ -224,7 +224,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.findById = async (id) => {
     const find = await Model.findOne({
-      attributes: ['label'],
+      attributes: ['label', 'jirs'],
       where: { id },
       raw: true,
     })
