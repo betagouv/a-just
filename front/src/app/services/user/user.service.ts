@@ -94,7 +94,6 @@ export class UserService implements OnInit {
   async getInterfaceType() {
     return this.serverService.get('users/interface-type').then((data) => {
       this.interfaceType = [0, 1].includes(data.data) ? data.data : null;
-      console.log(this.interfaceType, data);
       return this.interfaceType !== null ? true : false;
     });
   }

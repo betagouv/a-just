@@ -23,13 +23,14 @@ export default class RouteContentieuxReferentiels extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
+      backupId: Types.number(),
       isJirs: Types.boolean(),
     }),
-    accesses: [Access.isAdmin],
+    accesses: [Access.isLogin],
   })
   async getReferentiels (ctx) {
-    const { isJirs } = this.body(ctx)
-    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(null, isJirs))
+    const { backupId, isJirs } = this.body(ctx)
+    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null))
   }
 
   /**
