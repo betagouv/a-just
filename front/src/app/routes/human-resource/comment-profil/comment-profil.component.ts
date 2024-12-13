@@ -51,10 +51,6 @@ export class CommentProfilComponent
    */
   commentUpdatedAt: Date | null = null;
   /**
-   * instance créé lors de la modification d'une fiche
-   */
-  timeoutUpdateComment: any = null;
-  /**
    * Utilisateur connecté
    */
   currentUser: any = {
@@ -167,27 +163,25 @@ export class CommentProfilComponent
    * Sauvegarde un nouveau commentaire
    */
   save() {
-    this.timeoutUpdateComment = setTimeout(() => {
-      if (this.currentHR) {
-        this.hRCommentService
-          .updateHRComment(
-            this.currentHR.id,
-            this.currentComment || '',
-            this.currentUser.userId,
-            this.currentUser.commentId
-          )
-          .then(() => {
-            this.comment = '';
-            this.currentComment = '';
-            this.commentUpdatedAt = null;
-            this.resetEditor = true;
-            this.isEditing = false;
-            this.hRCommentService.mainEditing.next(false);
-            this.changeDetectorRef.detectChanges();
-            this.onLoadComment();
-          });
-      }
-    }, 100);
+    if (this.currentHR) {
+      this.hRCommentService
+        .updateHRComment(
+          this.currentHR.id,
+          this.currentComment || '',
+          this.currentUser.userId,
+          this.currentUser.commentId
+        )
+        .then(() => {
+          this.comment = '';
+          this.currentComment = '';
+          this.commentUpdatedAt = null;
+          this.resetEditor = true;
+          this.isEditing = false;
+          this.hRCommentService.mainEditing.next(false);
+          this.changeDetectorRef.detectChanges();
+          this.onLoadComment();
+        });
+    }
   }
 
   /**
