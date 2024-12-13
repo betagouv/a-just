@@ -29,7 +29,7 @@
   </div>
   <div class="footer-panel" *ngIf="isEditing">
     <div class="back" (click)="back();$event.stopPropagation()">Annuler</div>
-    <div class="save" [ngClass]="{'disabled': !currentComment.length}" (click)="save()">
+    <div class="save" [ngClass]="{'disabled': !currentComment.length}" (click)="save(); $event.stopPropagation()">
       Enregistrer</div>
   </div>
 
