@@ -261,7 +261,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log('this.appService.previousUrl:', this.appService.previousUrl);
     this.routerLinkToGoBack = this.appService.previousUrl
       ? [this.appService.previousUrl]
       : ['/'];
@@ -700,8 +699,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   async onEditIndisponibility(action: ActionsInterface) {
-    const controlIndisponibilitiesError = this.onEditIndex === null; // if panel ediction do not control error
-
     switch (action.id) {
       case 'close':
         {
@@ -890,13 +887,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                   this.currentHR,
                   this.allIndisponibilities
                 );
-              if (controlIndisponibilitiesError && this.indisponibilityError) {
-                alert(this.indisponibilityError);
-                this.onAddIndispiniblity(this.updateIndisponiblity);
-                return false;
-              } else {
-                this.updateIndisponiblity = null;
-              }
+              this.updateIndisponiblity = null;
 
               if (!this.indisponibilityError) {
                 await this.updateHuman(
