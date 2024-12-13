@@ -22,6 +22,10 @@ export class IndispoProfilComponent extends MainClass {
    */
   @Input() indisponibilities: RHActivityInterface[] = [];
   /**
+   * Indispo en erreur si doublon d'indispo
+   */
+  @Input() indisponibilityError: string | null = null;
+  /**
    * Request to open help panel
    */
   @Output() onOpenHelpPanel = new EventEmitter();
