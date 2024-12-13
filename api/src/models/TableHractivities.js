@@ -1,3 +1,4 @@
+import { includes } from 'lodash'
 import { Op } from 'sequelize'
 
 /**
@@ -89,6 +90,51 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < oldNewHRList.length; i++) {
       await Model.destroyById(oldNewHRList[i])
     }
+  }
+
+  Model.syncAllActivitiesByContentieux = async (contentieuxId) => {
+    const listAllMainContentieux = await Model.findAll({
+      where: {
+        nac_id: {
+          [Op.gt]: 0
+        },
+        nac_id: contentieuxId
+      }
+    })
+
+    for(let i = 0; i < listAllMainContentieux.length; i++) {
+      // get juridiction id
+      const juridiction = await Model.models.HRBackups.findOne({
+        attributes: ['id'],
+        include: [{
+          //attributes: [],
+          model: Model.models.HumanResources,
+          include: [{
+            //attributes: [],
+            model: Model.models.HRSituations,
+            include: [{
+              //attributes: ['id'],
+              model: Model.models.HRActivities,
+              where:{
+                id: listAllMainContentieux[i].dataValues.id,
+              }
+            }]
+          }]
+        }],
+        raw: true
+      })
+
+      // TODO ne marche pas
+
+      console.log(juridiction)
+
+      // get ref id
+      // sum child
+      // save
+    }
+
+    //console.log(listAllMainContentieux)
+
   }
 
   return Model

@@ -18,14 +18,11 @@ export default (sequelizeInstance, Model) => {
    * @param {*} isJirs
    * @returns
    */
-  Model.getReferentiels = async (
-    backupId = null,
-    isJirs = false
-  ) => {
-    if(backupId) {
-      const juridiction = await Model.models.HRBackups.findById(backupId)
-      if(juridiction) {
-        isJirs = juridiction.jirs
+  Model.getReferentiels = async (backupId = null, isJirs = false) => {
+    if (backupId) {
+      const juridiction = await Model.models.HRBackups.findById(backupId);
+      if (juridiction) {
+        isJirs = juridiction.jirs;
       }
     }
 
@@ -408,6 +405,19 @@ export default (sequelizeInstance, Model) => {
     if (ref) {
       ref.set({ [camel_to_snake(node)]: value });
       await ref.save();
+
+      if (node === "onlyToHrBackup") {
+        const hasChild = await Model.findOne({
+          where: {
+            parent_id: ref.dataValues.id,
+          },
+          raw: true,
+        });
+        if(!hasChild) {
+          // synchronise by main contentieux
+          await Model.models.HRActivities.syncAllActivitiesByContentieux(ref.dataValues.parent_id)
+        }
+      }
     }
   };
 
