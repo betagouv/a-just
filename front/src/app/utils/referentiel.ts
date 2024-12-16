@@ -52,8 +52,6 @@ export function referentielCAMappingName(name: string): string {
       return 'Comm.'
     case 'Attributions du PP':
       return 'PP'
-    case 'Contentieux civil JLD':
-      return 'Jld Civil'
     case 'Contentieux des mineurs':
       return 'Mineurs'
     case 'Instruction et entraide':
