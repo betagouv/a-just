@@ -103,8 +103,6 @@ export function referentielCAMappingName(name) {
       return "Commercial";
     case "Attributions du PP":
       return "PP";
-    case "Contentieux civil JLD":
-      return "Jld Civil";
     case "Contentieux des mineurs":
       return "Mineurs";
     case "Instruction et entraide":
