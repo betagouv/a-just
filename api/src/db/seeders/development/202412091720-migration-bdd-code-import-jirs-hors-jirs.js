@@ -23,7 +23,7 @@ module.exports = {
       });
 
       if (findSixDeux) {
-        await findSixUn.update({
+        await findSixDeux.update({
           code_import: "12.8.",
         });
       }
@@ -35,7 +35,7 @@ module.exports = {
       });
 
       if (findSixQuatre) {
-        await findSixUn.update({
+        await findSixQuatre.update({
           code_import: "12.9.",
         });
       }
@@ -47,7 +47,7 @@ module.exports = {
       });
 
       if (findTroisQuatre) {
-        await findSixUn.update({
+        await findTroisQuatre.update({
           code_import: "4.7.",
         });
       }
