@@ -362,6 +362,25 @@ export class CalculatorPage
    * Placeholder referentiel name
    */
   defaultRefName: string = '';
+  /**
+   * Nombre de jours travaillé par magistrat
+   */
+  nbDaysByMagistrat: number = import.meta.env.NG_APP_NB_DAYS_BY_MAGISTRAT;
+  /**
+   * Nombre de jours travaillé par fonctionnaire
+   */
+  nbDaysByFonctionnaire: number = import.meta.env
+    .NG_APP_NB_DAYS_BY_FONCTIONNAIRE;
+  /**
+   * Nombre d'heures travaillé par jour par magistrat
+   */
+  nbHoursPerDayAndMagistrat: number = import.meta.env
+    .NG_APP_NB_HOURS_PER_DAY_AND_MAGISTRAT;
+  /**
+   * Nombre d'heures travaillé par jour par fonctionnaire
+   */
+  nbHoursPerDayAndFonctionnaire: number = import.meta.env
+    .NG_APP_NB_HOURS_PER_DAY_AND_FONCTIONNAIRE;
 
   /**
    * Constructeur
@@ -1647,12 +1666,12 @@ export class CalculatorPage
 
         const nbDayByMonth =
           this.categorySelected === MAGISTRATS
-            ? this.environment.nbDaysByMagistrat / 12
-            : this.environment.nbDaysByFonctionnaire / 12;
+            ? this.nbDaysByMagistrat / 12
+            : this.nbDaysByFonctionnaire / 12;
         const nbHoursPerDay =
           this.categorySelected === MAGISTRATS
-            ? this.environment.nbHoursPerDayAndMagistrat
-            : this.environment.nbHoursPerDayAndFonctionnaire;
+            ? this.nbHoursPerDayAndMagistrat
+            : this.nbHoursPerDayAndFonctionnaire;
         const valETPT =
           this.categorySelected === MAGISTRATS
             ? [...value1ETPTSiege]
