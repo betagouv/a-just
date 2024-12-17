@@ -19,16 +19,24 @@
     font-weight: bold;
   }
 
-  select, .select {
+  select,
+  .select {
     flex: 1;
     margin-right: 32px;
     width: 50px;
   }
 
-  input, .input {
+  input,
+  .input {
     flex: 1;
     margin-right: 32px;
     width: 50px;
+  }
+
+  .select-big {
+    flex: 2;
+    margin-right: 32px;
+    width: 100px;
   }
 
   input[type=checkbox] {

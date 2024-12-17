@@ -32,19 +32,19 @@
           <div>
             <label>Prénom</label>
             <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text"
-              (keyup.enter)="focusNext($event)" />
+              (keyup.enter)="focusNext($event)" autocomplete="off" />
           </div>
           <div>
             <label>NOM</label>
             <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text"
-              (keyup.enter)="focusNext($event)" />
+              (keyup.enter)="focusNext($event)" autocomplete="off" />
           </div>
         </div>
         <label>Courriel professionnel :</label>
         <label class="sub-label">Adresse nominative uniquement, ne pas utiliser de boîte générique ou
           structurelle</label>
         <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
-          (keyup.enter)="focusNext($event)" />
+          (keyup.enter)="focusNext($event)" autocomplete="off" />
 
         <ng-template [ngIf]="!paramsUrl?.provider">
           <div class="password-line">
@@ -56,7 +56,7 @@
           </div>
           <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"
             type="{{!form.controls['checkboxPassword'].value?'password':'text'}}" (keyup)="checkStrength($event)"
-            (keyup.enter)="focusNext($event)" />
+            (keyup.enter)="focusNext($event)" autocomplete="off" />
           <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>
           <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(0)}"><span
               [ngStyle]="{ 'background-color': getParamColor(0)}">i</span>
@@ -73,11 +73,12 @@
 
           <label>Confirmation de votre mot de passe :</label>
           <input #input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password"
-            (keyup.enter)="focusNext($event)" />
+            (keyup.enter)="focusNext($event)" autocomplete="off" />
         </ng-template>
 
         <div class="checkbox-container checkbox-row">
-          <input #checkbox class="large" type="checkbox" formControlName="checkbox" (keyup.enter)="focusNext($event)" />
+          <input #checkbox class="large" type="checkbox" formControlName="checkbox" (keyup.enter)="focusNext($event)"
+            autocomplete="off" />
           <p (click)="checkbox.click()">
             Je certifie avoir lu et accepté les
             <a [routerLink]="['/conditions-generales-d-utilisation', 'signUp']">Conditions générales d'utilisation</a>.
@@ -111,11 +112,13 @@
 
         <ng-container *ngIf="fctSelect.value==='Autre'">
           <label>Intitulé de ma fonction :</label>
-          <input class="ethics-ui" placeholder="Exemple" formControlName="fonctionAutre" type="text" />
+          <input class="ethics-ui" placeholder="Exemple" formControlName="fonctionAutre" type="text"
+            autocomplete="off" />
 
           <label>Mon responsable hiérarchique :</label>
           <label class="sub-label">Personne qui validera l'ouverture de mes droits</label>
-          <input class="ethics-ui" placeholder="prénom nom et fonction" formControlName="responsable" type="text" />
+          <input class="ethics-ui" placeholder="prénom nom et fonction" formControlName="responsable" type="text"
+            autocomplete="off" />
         </ng-container>
 
         <div>

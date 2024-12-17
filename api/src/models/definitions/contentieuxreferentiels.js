@@ -49,6 +49,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       },
+      only_to_hr_backup: { // null => for all // 1,2 => hr_backup id = 1 or 2
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

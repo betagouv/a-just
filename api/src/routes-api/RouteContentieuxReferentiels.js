@@ -23,13 +23,14 @@ export default class RouteContentieuxReferentiels extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
+      backupId: Types.number(),
       isJirs: Types.boolean(),
     }),
-    accesses: [Access.isAdmin],
+    accesses: [Access.isLogin],
   })
   async getReferentiels (ctx) {
-    const { isJirs } = this.body(ctx)
-    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(isJirs, true))
+    const { backupId, isJirs } = this.body(ctx)
+    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null))
   }
 
   /**
@@ -39,13 +40,13 @@ export default class RouteContentieuxReferentiels extends Route {
     bodyType: Types.object().keys({
       id: Types.number().required(),
       node: Types.string().required(),
-      value: Types.any().required(),
+      value: Types.any(),
     }),
     accesses: [Access.isAdmin],
   })
   async update (ctx) {
     const { id, node, value } = this.body(ctx)
-    await this.models.ContentieuxReferentiels.updateRef(id, node, value)
+    await this.models.ContentieuxReferentiels.updateRef(id, node, value || null)
 
     this.sendOk(ctx, 'Ok')
   }

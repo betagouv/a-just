@@ -24,7 +24,7 @@
     <mat-icon class="arrow-list">expand_more</mat-icon>
 </div>
 
-<div class="select-area" #selectArea [ngClass]="{right: title}"
+<div class="select-area" #selectArea [ngClass]="{right: title, multiple}"
     [ngStyle]="{'max-height': maxHeightDropdown ? maxHeightDropdown+'px' : null}" *ngIf="onOpenDropdown">
     <ng-template [ngIf]="!multiple">
         <div *ngFor="let item of list" [ngClass]="{selected: item.id === value }"

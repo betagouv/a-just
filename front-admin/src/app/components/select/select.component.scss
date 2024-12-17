@@ -1,27 +1,122 @@
+@import "../../styles/utils.scss";
+
+::ng-deep .mdc-list-item__primary-text {
+  font-size: 16px !important;
+  color: black !important;
+}
+
+//.myMatOptions{  position: absolute;  top: 30vh;  left: 30vw; }
+//::ng-deep .cdk-overlay-container{left: 30vw;}
+//::ng-deep .cdk-overlay-pane { left:0 !important; transform:none !important;}
+//::ng-deep .mat-select-panel{left: 0;}
+
 :host {
+  position: relative;
+  display: block;
+  height: 34px;
+  width: 170px;
+  border-radius: 4px;
+  background-color: fColor(bgSelect);
+  border: 1px solid fColor(borderSelect);
+  padding: 4px 8px;
+  cursor: pointer;
 
-    &.path {
-        mat-selection-list {
-            width: 500px;
-        }
+  &.new-fonction {
+    border-color: #dddddd;
+    display: flex;
+    height: 32px;
+    padding: 0;
+    border: solid 1px #ddd;
+    background-color: #fff;
+
+    p {
+      margin-right: 7px;
     }
 
-    mat-selection-list {
-        width: 170px;
-        height: 300px;
-        overflow: scroll;
-        /* Show scrollbars */
-
+    .title {
+      padding: 4px 4px 4px 8px;
+      color: #3a3a3a;
+      font-size: 14px;
     }
 
-    ::-webkit-scrollbar {
-        -webkit-appearance: none;
-        width: 7px;
+    .value {
+      display: none;
     }
 
-    ::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background-color: rgba(0, 0, 0, .5);
-        box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+    div {
+      position: relative;
+      left: 0px;
+      border-left: solid 1px #dddddd;
+
+      mat-icon {
+        margin-left: 0px;
+        color: #929292;
+        margin: 8px;
+      }
     }
+  }
+
+  &.large {
+    width: auto;
+  }
+
+  .bold-family {
+    font-weight: bold;
+  }
+
+  &.bg-white {
+    background-color: white;
+  }
+
+  &.dark-mode {
+    background-color: fColor(darkModeBgMenu);
+    border: 1px solid fColor(darkModeBgMenu);
+
+    p,
+    mat-icon {
+      color: white;
+    }
+
+    p.title {
+      color: fColor(headerColor);
+    }
+  }
+
+  p.title {
+    color: fColor(titleSelect);
+    white-space: nowrap;
+    font-size: 14px;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    left: -8px;
+
+    p {
+      padding-left: 16px;
+      white-space: nowrap;
+      flex: 1;
+      font-weight: bold;
+      height: 24px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-left: 8px;
+    }
+  }
+
+  mat-select {
+    //left: 35px;
+    //top: -10px;
+    position: relative;
+  }
+
 }

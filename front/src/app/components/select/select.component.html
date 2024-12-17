@@ -5,7 +5,7 @@
   </app-select-check-all>
   <div *ngIf="!subList; else subListTemplate">
     <mat-option *ngFor="let ref of datas" [value]="ref.id" class="myMatOptions">
-      <span [innerHTML]="(ref.renderHTML || ref.value) | sanitizeHtml"></span>
+      <span [innerHTML]="(ref.renderHTML || ref.value) | sanitizeHtml"></span>
     </mat-option>
   </div>
   <ng-template #subListTemplate>

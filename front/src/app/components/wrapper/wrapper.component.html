@@ -31,7 +31,7 @@
     </div>
 
     <div class="menu-scrollable">
-      <div class="menu-item" *ngFor="let item of menu" [class.selected]="isSelected(item)">
+      <div class="menu-item top" *ngFor="let item of menu" [class.selected]="isSelected(item)">
         <ng-container *ngIf="item.label === 'Extracteurs'; else other">
           <div class="menu-item tools" (click)="openTools = !openTools">
             <a>Outils</a>

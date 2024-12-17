@@ -75,6 +75,7 @@ export default (sequelizeInstance) => {
       foreignKey: 'id',
       sourceKey: 'human_id',
     })
+    Model.hasMany(models.HRActivities, { foreignKey: 'hr_situation_id', sourceKey: 'id' })
 
     return models
   }

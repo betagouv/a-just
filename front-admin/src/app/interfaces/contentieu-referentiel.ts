@@ -1,8 +1,8 @@
 export enum ValueQualityEnum {
-  ptional = "facultatif",
-  good = "good",
-  toComplete = "to_complete",
-  toVerify = "to_verify",
+  ptional = 'facultatif',
+  good = 'good',
+  toComplete = 'to_complete',
+  toVerify = 'to_verify',
 }
 
 export interface ContentieuReferentielInterface {
@@ -20,8 +20,9 @@ export interface ContentieuReferentielInterface {
   showOptionGroup?: boolean;
   averageProcessingTime: number | null;
   parent?: ContentieuReferentielInterface;
-  valueQualityIn?: ValueQualityEnum | null;
-  valueQualityOut?: ValueQualityEnum | null;
-  valueQualityStock?: ValueQualityEnum | null;
-  helpUrl?: string | null;
+  valueQualityIn?: ValueQualityEnum | null;
+  valueQualityOut?: ValueQualityEnum | null;
+  valueQualityStock?: ValueQualityEnum | null;
+  helpUrl?: string | null;
+  onlyToHrBackup: number[] | null;
 }

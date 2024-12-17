@@ -39,6 +39,17 @@ export default class RouteJuridictions extends Route {
   }
 
   /**
+   * Interface qui retourne toutes les HR Backups
+   */
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async getAllBackup (ctx) {
+    const list = await this.model.models.HRBackups.getAll()
+    this.sendOk(ctx, list)
+  }
+
+  /**
    * Modification d'une juridiction
    * @param {*} node
    * @param {*} juridictionId

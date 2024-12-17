@@ -267,13 +267,13 @@ export class CalculatorPage
               introTooltip.classList.add('introjs-bottom-left-aligned');
               introTooltip.classList.remove('introjs-floating');
               introTooltip.style.left = '0px';
-              introTooltip.style.top = '170px';
+              introTooltip.style.top = '100px';
               introTooltip.style.marginLeft = '-150px';
               introTooltip.style.marginTop = '0';
               introTooltip.style.visibility = 'visible';
               introTooltip.style.height = '450px';
             }
-          }, 500);
+          }, 600);
         }
       },
     },
@@ -706,6 +706,7 @@ export class CalculatorPage
                   this.selectedFonctionsIds
                 );
               }
+              console.log(this.referentiel);
               this.formatDatas(list);
               this.isLoading = false;
               this.lastCategorySelected = this.categorySelected;
@@ -1965,12 +1966,18 @@ export class CalculatorPage
 
     datas.map((y) => {
       list.push({
-        averageProcessingTime: y.magRealTimePerCase,
+        averageProcessingTime:
+          this.categorySelected === 'magistrats'
+            ? y.magRealTimePerCase
+            : y.fonRealTimePerCase,
         contentieux: { id: y.contentieux.id, label: y.contentieux.label },
       });
       y.childrens.map((z: any) => {
         list.push({
-          averageProcessingTime: z.magRealTimePerCase,
+          averageProcessingTime:
+            this.categorySelected === 'magistrats'
+              ? z.magRealTimePerCase
+              : z.fonRealTimePerCase,
           contentieux: { id: z.contentieux.id, label: z.contentieux.label },
         });
       });
@@ -1980,7 +1987,8 @@ export class CalculatorPage
     this.contentieuxOptionsService.onSaveDatas(
       false,
       this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE',
-      this.defaultRefName
+      this.defaultRefName,
+      'Enregistré'
     );
 
     this.promptRef = false;

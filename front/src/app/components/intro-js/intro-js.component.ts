@@ -154,6 +154,14 @@ export class IntroJSComponent implements AfterViewInit {
         const currentStep = allStep[this.intro.currentStep()];
         currentStep.element = document.querySelector(currentStep.target);
 
+        let interval = setInterval(() => {
+          const introTooltip: any = document.querySelector('.introjs-tooltip');
+          if (introTooltip) {
+            clearInterval(interval);
+            introTooltip.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }, 600);
+
         if (currentStep.beforeLoad) {
           await currentStep.beforeLoad(this.intro);
         }

@@ -4,8 +4,10 @@ import packageJSON from '../../../package.json';
 /**
  * Variables global avec url serveur différent ou matomo qui change
  */
+
 // export const environment = {
 //   production: true,
+//   frontUrl: 'https://sandbox.a-just.incubateur.net',
 //   serverUrl: '/api/',
 //   nbDaysByMagistrat: 208,
 //   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
