@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { JuridictionInterface } from '../../interfaces/juridiction';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
-import { environment } from '../../../environments/environment';
+//import { environment } from '../../../environments/environment';
 
 declare const mapboxgl: any;
 
@@ -33,6 +33,10 @@ export class JuridictionsInstalledPage {
    * Liste juridictions
    */
   list: JuridictionInterface[] = [];
+  /**
+   * Mapbox Token
+   */
+  mapboxToken = import.meta.env.NG_APP_MAPBOX_TOKEN;
 
   ngAfterViewInit() {
     this.juridictionsService.getAllVisible().then((l) => {
@@ -42,7 +46,7 @@ export class JuridictionsInstalledPage {
   }
 
   updateMap() {
-    mapboxgl.accessToken = environment.mapboxToken;
+    mapboxgl.accessToken = this.mapboxToken;
     const map = new mapboxgl.Map({
       container: 'map-juridictions',
       style: this.style,
