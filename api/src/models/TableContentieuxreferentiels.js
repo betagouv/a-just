@@ -98,20 +98,19 @@ export default (sequelizeInstance, Model) => {
       list.map((elem) => {
         elem.childrens.map((child) => {
           switch (child.label) {
-            case 'Contentieux collégial hors JIRS': //NEW CA
-              child.label = 'Contentieux collégial';
-              break; 
-              case 'Contentieux JIRS éco-fi':
-                elem.childrens = elem.childrens.filter(
-                  (elem) => elem.label !== 'Contentieux JIRS éco-fi'
-                );
-                break;
-              case 'Contentieux JIRS crim-org':
-                elem.childrens = elem.childrens.filter(
-                  (elem) => elem.label !== 'Contentieux JIRS crim-org'
-                );
-                break;
-                
+            case "Contentieux collégial hors JIRS": //NEW CA
+              child.label = "Contentieux collégial";
+              break;
+            case "Contentieux JIRS éco-fi":
+              elem.childrens = elem.childrens.filter(
+                (elem) => elem.label !== "Contentieux JIRS éco-fi"
+              );
+              break;
+            case "Contentieux JIRS crim-org":
+              elem.childrens = elem.childrens.filter(
+                (elem) => elem.label !== "Contentieux JIRS crim-org"
+              );
+              break;
 
             case "Collégiales hors JIRS":
               child.label = "Collégiales";
@@ -428,9 +427,11 @@ export default (sequelizeInstance, Model) => {
           },
           raw: true,
         });
-        if(!hasChild) {
+        if (!hasChild) {
           // synchronise by main contentieux
-          await Model.models.HRActivities.syncAllActivitiesByContentieux(ref.dataValues.parent_id)
+          await Model.models.HRActivities.syncAllActivitiesByContentieux(
+            ref.dataValues.parent_id
+          );
         }
       }
     }
