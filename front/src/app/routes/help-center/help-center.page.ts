@@ -15,7 +15,7 @@ import {
 import { UserService } from '../../services/user/user.service';
 import { ServerService } from '../../services/http-server/server.service';
 import { AppService } from '../../services/app/app.service';
-import { environment } from '../../../environments/environment';
+//import { environment } from '../../../environments/environment';
 import { downloadFile } from '../../utils/system';
 import { MatIconModule } from '@angular/material/icon';
 import { SanitizeResourceUrlPipe } from '../../pipes/sanitize-resource-url/sanitize-resource-url.pipe';
@@ -193,11 +193,17 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
    * Cle date pour usage unique
    */
   cleDate = '?date=' + new Date();
+
+  /**
+   * GITBOOK ID
+   */
+  gitbookId = import.meta.env.NG_APP_GITBOOK_ID;
+
   /**
    * Constructeur
    */
   constructor() {
-    this.gitToken = environment.gitbookToken;
+    this.gitToken = import.meta.env.NG_APP_GITBOOK_TOKEN;
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,
     });
@@ -374,14 +380,14 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   async loadWebinaires() {
     this.webinaires = new Array();
     const { data } = await this.gitbook.spaces.getPageByPath(
-      environment.gitbookId,
+      this.gitbookId,
       'accueil/'
     );
 
     await Promise.all(
       data.pages.map(async (page, index) => {
         const { data } = (await this.gitbook.spaces.getPageById(
-          environment.gitbookId,
+          this.gitbookId,
           page.id
         )) as any;
         try {
