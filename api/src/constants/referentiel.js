@@ -206,8 +206,8 @@ export function referentielCAMappingColor(name) {
       return '#1664c0'
     case "Contentieux civil non spécialisé":
       return '#283592'
-    case "Contentieux civil JLD":
-      return '#4526a0'
+      case "Attributions du PP":
+        return '#4526a0'
     case "Contentieux des mineurs":
       return "#691a9a";
     case "Correctionnel": //CHAC
@@ -218,10 +218,9 @@ export function referentielCAMappingColor(name) {
       return "#ef6c00"
     case "Contentieux criminel":
       return "#ef6c00";
-    case "Attributions du PP":
-      return '#fbca0c'
     case "Autres activités":
       return '#424242'
+      // couleur contentieux SPE à venir : '#fbca0c'
   }
 
   return ''
