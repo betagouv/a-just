@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+//import { environment } from '../../../environments/environment';
 import { HttpService } from './http.service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 export class ServerService {
   _http = inject(HttpService);
   userToken: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-  serverUrl: string = environment.serverUrl;
+  serverUrl: string = import.meta.env.NG_APP_SERVER_URL; //environment.serverUrl;
 
   getUrl(url: string): string {
     return this.serverUrl + url;
