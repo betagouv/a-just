@@ -6,7 +6,7 @@ import packageJSON from '../../../package.json';
  */
 // export const environment = {
 //   production: true,
-//   rontUrl: 'https://a-just.incubateur.net',
+//   frontUrl: 'https://a-just.incubateur.net',
 //   serverUrl: '/api/',
 //   nbDaysByMagistrat: 208,
 //   nbDaysByFonctionnaire: 229.57, // 1607 heures / an
