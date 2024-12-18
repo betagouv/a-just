@@ -38,7 +38,7 @@ export default (sequelizeInstance, Model) => {
           },
         ];
       }
-      // filter by referentiel only for parent
+      // filter by referentiel only for level 3
       if(filterReferentielsId && index === 2) {
         where.id = filterReferentielsId
       }
@@ -446,7 +446,7 @@ export default (sequelizeInstance, Model) => {
           //console.log('new value', value)
           //console.log('delta juridictions', hrBackupUpdated)
           // synchronise by main contentieux
-          
+
           // test 16s pour les ventilations
           await Model.models.HRActivities.syncAllVentilationByContentieux(
             ref.dataValues.parent_id
