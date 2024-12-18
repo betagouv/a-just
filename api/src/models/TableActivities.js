@@ -1180,5 +1180,64 @@ export default (sequelizeInstance, Model) => {
     return { to_warn }
   }
 
+  Model.syncAllActivitiesByContentieux = async (contentieuxId) => {
+    /*const listAllMainContentieux = await Model.findAll({
+      where: {
+        nac_id: {
+          [Op.gt]: 0,
+        },
+        nac_id: contentieuxId,
+      },
+    });
+
+    const refElements = {}
+    for (let i = 0; i < listAllMainContentieux.length; i++) {
+      // get juridiction id
+      const juridiction = await Model.models.HumanResources.findOne({
+        attributes: ["id", "backup_id"],
+        include: [
+          {
+            attributes: [],
+            model: Model.models.HRSituations,
+            include: [
+              {
+                attributes: ['id'],
+                model: Model.models.HRActivities,
+                where: {
+                  id: listAllMainContentieux[i].dataValues.id,
+                },
+              },
+            ],
+          },
+        ],
+        raw: true,
+      });
+    
+      if(juridiction && juridiction.backup_id) {
+        const juridictionId = juridiction.backup_id
+        if(!refElements[juridictionId]) {
+          refElements[juridictionId] = await Model.models.ContentieuxReferentiels.getReferentiels(juridictionId)
+        }
+
+        const referentiel = refElements[juridictionId]
+        const findRef = referentiel.find(r => r.id === contentieuxId)
+        if(findRef && findRef.childrens.length) {
+          const refIds = findRef.childrens.map(c => c.id)
+
+          const sum = await Model.sum('percent', {
+            where: {
+              hr_situation_id: listAllMainContentieux[i].dataValues.hr_situation_id,
+              nac_id: refIds
+            }
+          })
+
+          listAllMainContentieux[i].update({
+            percent: sum || 0
+          })
+        }
+      }
+    }*/
+  };
+
   return Model
 }

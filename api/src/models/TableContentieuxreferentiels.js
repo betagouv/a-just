@@ -429,7 +429,10 @@ export default (sequelizeInstance, Model) => {
         });
         if (!hasChild) {
           // synchronise by main contentieux
-          await Model.models.HRActivities.syncAllActivitiesByContentieux(
+          await Model.models.HRActivities.syncAllVentilationByContentieux(
+            ref.dataValues.parent_id
+          );
+          await Model.models.Activities.syncAllActivitiesByContentieux(
             ref.dataValues.parent_id
           );
         }
