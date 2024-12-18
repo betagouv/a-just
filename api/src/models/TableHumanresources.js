@@ -73,7 +73,7 @@ export default (sequelizeInstance, Model) => {
     if (config.preloadHumanResourcesDatas) {
       const allBackups = await Model.models.HRBackups.getAll()
       const categories = await Model.models.HRCategories.getAll()
-      /*dbInstance.options.logging = false
+      dbInstance.options.logging = false
       console.time('onPreload')
       for (let i = 0; i < allBackups.length; i++) {
         const agents = await Model.getCurrentHr(allBackups[i].id)
@@ -82,7 +82,7 @@ export default (sequelizeInstance, Model) => {
       console.timeEnd('onPreload')
       if (config.database.logging) {
         dbInstance.options.logging = true
-      }*/
+      }
     }
   }
 
@@ -126,9 +126,6 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getCache = async (backupId) => {
-    // TODO TEST OR REMOVE
-    return await Model.getCurrentHr(backupId)
-    
     if (!cacheJuridictionPeoples[backupId]) {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
     }

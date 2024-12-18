@@ -18,7 +18,11 @@ export default (sequelizeInstance, Model) => {
    * @param {*} isJirs
    * @returns
    */
-  Model.getReferentiels = async (backupId = null, isJirs = false, filterReferentielsId = null) => {
+  Model.getReferentiels = async (
+    backupId = null,
+    isJirs = false,
+    filterReferentielsId = null
+  ) => {
     if (backupId) {
       const juridiction = await Model.models.HRBackups.findById(backupId);
       if (juridiction) {
@@ -39,8 +43,8 @@ export default (sequelizeInstance, Model) => {
         ];
       }
       // filter by referentiel only for level 3
-      if(filterReferentielsId && index === 2) {
-        where.id = filterReferentielsId
+      if (filterReferentielsId && index === 2) {
+        where.id = filterReferentielsId;
       }
 
       let list = await Model.findAll({
@@ -421,7 +425,7 @@ export default (sequelizeInstance, Model) => {
     });
 
     if (ref) {
-      const oldValue = ref[camel_to_snake(node)]
+      const oldValue = ref[camel_to_snake(node)];
       ref.set({ [camel_to_snake(node)]: value });
       await ref.save();
 
@@ -433,14 +437,21 @@ export default (sequelizeInstance, Model) => {
           raw: true,
         });
         if (!hasChild) {
-          let hrBackupUpdated = []
-          let allJuridictions = (await Model.models.HRBackups.getAll()).map(h => h.id)
-          if(Array.isArray(oldValue) && Array.isArray(value)) {
-            hrBackupUpdated = [...oldValue.filter((e) => !value.includes(e)), ...value.filter((e) => !oldValue.includes(e))];
-          } else if(oldValue === null && Array.isArray(value)) {
+          let hrBackupUpdated = [];
+          let allJuridictions = (await Model.models.HRBackups.getAll()).map(
+            (h) => h.id
+          );
+          if (Array.isArray(oldValue) && Array.isArray(value)) {
+            hrBackupUpdated = [
+              ...oldValue.filter((e) => !value.includes(e)),
+              ...value.filter((e) => !oldValue.includes(e)),
+            ];
+          } else if (oldValue === null && Array.isArray(value)) {
             hrBackupUpdated = allJuridictions.filter((e) => !value.includes(e));
-          } else if(Array.isArray(oldValue) && value === null) {
-            hrBackupUpdated = allJuridictions.filter((e) => !oldValue.includes(e));
+          } else if (Array.isArray(oldValue) && value === null) {
+            hrBackupUpdated = allJuridictions.filter(
+              (e) => !oldValue.includes(e)
+            );
           }
           //console.log('old value', oldValue)
           //console.log('new value', value)
@@ -456,6 +467,8 @@ export default (sequelizeInstance, Model) => {
             ref.dataValues.parent_id,
             hrBackupUpdated
           );
+          // reload all agents environ 40s / juridictions (180 environ)
+          await Model.models.HumanResources.onPreload();
         }
       }
     }
