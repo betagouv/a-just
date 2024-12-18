@@ -7,10 +7,9 @@ import config from 'config'
 import { cloneDeep } from 'lodash'
 import { EXECUTE_CALCULATOR } from '../constants/log-codes'
 import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
-import { emptyCalulatorValues, getHRPositions, syncCalculatorDatas } from '../utils/calculator'
+import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { dbInstance } from './index'
 
 /**
  * Cache des juridicitions avec leurs magistrats
@@ -75,30 +74,10 @@ export default (sequelizeInstance, Model) => {
       const allBackups = await Model.models.HRBackups.getAll()
       const categories = await Model.models.HRCategories.getAll()
       /*dbInstance.options.logging = false
-      console.log('onPreload - start')
       console.time('onPreload')
       for (let i = 0; i < allBackups.length; i++) {
         const agents = await Model.getCurrentHr(allBackups[i].id)
         cacheJuridictionPeoples[allBackups[i].id] = cloneDeep(agents)
-
-        const lastMonthStock = await Model.models.Activities.getLastMonth(allBackups[i].id)
-
-        if (lastMonthStock) {
-          const dateStop = new Date(lastMonthStock)
-
-          const dateStart = new Date(dateStop)
-          dateStart.setMonth(dateStart.getMonth() - 11)
-
-          for (let y = 0; y < referentiels.length; y++) {
-            (referentiels[y].childrens || []).map((c) => {
-              // c.id
-              getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, c.id, dateStart, dateStop)
-            })
-
-            // referentiels[i].id
-            getHRPositions(Model.models, cacheJuridictionPeoples[allBackups[i].id], categories, referentiels[y].id, dateStart, dateStop)
-          }
-        }
       }
       console.timeEnd('onPreload')
       if (config.database.logging) {
@@ -147,6 +126,9 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getCache = async (backupId) => {
+    // TODO TEST OR REMOVE
+    return await Model.getCurrentHr(backupId)
+    
     if (!cacheJuridictionPeoples[backupId]) {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
     }
