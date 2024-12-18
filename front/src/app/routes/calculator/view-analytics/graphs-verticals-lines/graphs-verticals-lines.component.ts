@@ -1,9 +1,11 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
   HostBinding,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -11,12 +13,17 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
-} from '@angular/core'
-import { NgResizeObserver, ngResizeObserverProviders } from 'ng-resize-observer'
-import { BehaviorSubject, map, Observable } from 'rxjs'
-import { MainClass } from 'src/app/libs/main-class'
-import { CalculatorService } from 'src/app/services/calculator/calculator.service'
-import { UserService } from 'src/app/services/user/user.service'
+} from '@angular/core';
+import {
+  NgResizeObserver,
+  ngResizeObserverProviders,
+} from 'ng-resize-observer';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { MainClass } from '../../../../libs/main-class';
+import { UserService } from '../../../../services/user/user.service';
+import { CalculatorService } from '../../../../services/calculator/calculator.service';
+import { OPACITY_20 } from '../../../../constants/colors';
+import { getRandomInt } from '../../../../utils/numbers';
 
 /**
  * Composant de la page en vue analytique
@@ -24,6 +31,8 @@ import { UserService } from 'src/app/services/user/user.service'
 
 @Component({
   selector: 'aj-graphs-verticals-lines',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './graphs-verticals-lines.component.html',
   styleUrls: ['./graphs-verticals-lines.component.scss'],
   providers: [...ngResizeObserverProviders],
@@ -32,91 +41,98 @@ export class GraphsVerticalsLinesComponent
   extends MainClass
   implements OnInit, OnChanges, OnDestroy, AfterViewInit
 {
+  userService = inject(UserService);
+  resize$ = inject(NgResizeObserver);
+  calculatorService = inject(CalculatorService);
   /**
    * Canvas sur lequel on va dessiner
    */
-  @ViewChild('canvas') domCanvas: ElementRef | null = null
+  @ViewChild('canvas') domCanvas: ElementRef | null = null;
   /**
    * Canvas sur lequel on va dessiner
    */
-  @ViewChild('canvasMultiple') domCanvasMultiple: ElementRef | null = null
+  @ViewChild('canvasMultiple') domCanvasMultiple: ElementRef | null = null;
   /**
    * Default ref id
    */
-  @Input() referentielId: number | null = null
+  @Input() referentielId: number | null = null;
   /**
    * Default ref name
    */
-  @Input() referentielName: string = ''
+  @Input() referentielName: string = '';
   /**
    * Values
    */
-  @Input() values: number[] = []
+  @Input() values: number[] = [];
   /**
    * Values
    */
-  @Input() showLines: boolean = false
+  @Input() showLines: boolean = false;
   /**
    * Types values
    */
-  @Input() type: string | undefined | null = ''
+  @Input() type: string | undefined | null = '';
   /**
    * Types values
    */
   @Input() graphs: {
-    type: string
-    dateStart: Date
-    dateStop: Date
-    color: string
-  }[] = []
+    type: string;
+    dateStart: Date;
+    dateStop: Date;
+    color: string;
+  }[] = [];
   /**
    * Max values
    */
-  @Input() maxValue: number = 100
+  @Input() maxValue: number = 100;
   /**
    * Style background
    */
-  @HostBinding('style.background') background: string = ''
+  @HostBinding('style.background') background: string = '';
   /**
    * Out
    */
-  @Output() updateMax = new EventEmitter()
+  @Output() updateMax = new EventEmitter();
   /**
    * Degres of inclinaison
    */
-  percentDelta: number = 0
+  percentDelta: number = 0;
   /**
    * Variable d'écoute de la largeur dynamique
    */
   width$: Observable<number> = this.resize$.pipe(
     map((entry) => entry.contentRect.width)
-  )
+  );
   /**
    * Current width
    */
-  width: number = 0
+  width: number = 0;
   /**
    * Current height
    */
-  height: number = 138
+  height: number = 138;
   /**
    * Get line
    */
-  line: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([])
+  line: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
   /**
    * is multiple graph printed
    */
-  isMultipleGraphPrinted: boolean = false
+  isMultipleGraphPrinted: boolean = false;
+  /**
+   * Wait serveur loading
+   */
+  isLoading: boolean = false;
+  /**
+   * timeout
+   */
+  timeout: any;
 
   /**
    * Constructor
    */
-  constructor(
-    public userService: UserService,
-    private resize$: NgResizeObserver,
-    private calculatorService: CalculatorService
-  ) {
-    super()
+  constructor() {
+    super();
   }
 
   /**
@@ -125,34 +141,40 @@ export class GraphsVerticalsLinesComponent
   ngOnInit() {
     this.watch(
       this.width$.subscribe((w) => {
-        this.width = w
-        this.draw()
-        this.drawMultiple()
+        this.width = w;
+        this.draw();
+        //this.drawMultiple()
       })
+    );
+    this.watch(this.line.subscribe(() => this.draw()));
+    // Le composant est maintenant recharger complétement car il est détruit
+    /*this.watch(
+      this.calculatorService.dateStart.subscribe(() => this.clearDatas())
     )
-    this.watch(this.line.subscribe(() => this.draw()))
     this.watch(
-      this.calculatorService.dateStart.subscribe(() => this.refreshDatas())
+      this.calculatorService.dateStop.subscribe(() => this.clearDatas())
     )
     this.watch(
-      this.calculatorService.dateStop.subscribe(() => this.refreshDatas())
-    )
+      this.calculatorService.selectedFonctionsIds.subscribe(() =>
+        this.clearDatas()
+      )
+    )*/
   }
 
   ngAfterViewInit() {
-    this.drawMultiple()
+    //this.drawMultiple()
   }
 
   ngOnDestroy() {
-    this.watcherDestroy()
+    this.watcherDestroy();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.referentielName) {
       this.background = `linear-gradient(${this.userService.referentielMappingColorByInterface(
         this.referentielName,
-        0.5
-      )}, #ffffff)`
+        OPACITY_20
+      )}, #ffffff)`;
     }
 
     if (
@@ -160,7 +182,7 @@ export class GraphsVerticalsLinesComponent
       changes['referentielId'].currentValue !==
         changes['referentielId'].previousValue
     ) {
-      this.refreshDatas()
+      this.refreshDatas();
     }
 
     if (
@@ -170,95 +192,113 @@ export class GraphsVerticalsLinesComponent
       this.type &&
       this.line.getValue().length === 0
     ) {
-      this.calculatorService
-        .rangeValues(this.referentielId, this.type)
-        .then((lines) => {
-          this.line.next(lines)
-        })
+      this.startLoading();
     }
 
     if (changes['maxValue'] || changes['showLines']) {
-      this.draw()
+      this.draw();
     }
   }
 
   refreshDatas() {
-    this.line.next([])
+    this.line.next([]);
     if (this.showLines && this.referentielId && this.type) {
-      this.calculatorService
-        .rangeValues(this.referentielId, this.type)
-        .then((lines) => {
-          this.line.next(lines)
-        })
+      this.startLoading();
     }
   }
 
+  clearDatas() {
+    this.line.next([]);
+    this.draw();
+  }
+
+  startLoading() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+
+    this.timeout = setTimeout(() => {
+      if (this.referentielId && this.type && !this.isLoading) {
+        this.isLoading = true;
+        this.calculatorService
+          .rangeValues(this.referentielId, this.type)
+          .then((lines) => {
+            this.isLoading = false;
+            this.timeout = null;
+            this.line.next(lines);
+            this.draw();
+          });
+      }
+    }, getRandomInt(700));
+  }
+
   draw() {
-    const canvas = this.domCanvas?.nativeElement
+    const canvas = this.domCanvas?.nativeElement;
     if (canvas) {
-      canvas.width = this.width
-      canvas.height = this.height
-      const ctx = canvas.getContext('2d')
-      ctx.clearRect(0, 0, this.width * 200, this.height * 200)
+      canvas.width = this.width;
+      canvas.height = this.height;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, this.width * 200, this.height * 200);
 
       if (this.showLines) {
-        ctx.beginPath()
+        ctx.beginPath();
 
-        const line: number[] = this.line.getValue().map((v) => v || 0)
+        const line: number[] = this.line.getValue().map((v) => v || 0);
 
         if (this.showLines && line.length >= 2) {
-          this.updateMax.emit({ type: this.type, max: Math.max(...line) || 0 })
+          this.updateMax.emit({ type: this.type, max: Math.max(...line) || 0 });
 
           ctx.strokeStyle = this.userService.referentielMappingColorByInterface(
             this.referentielName
-          )
-          ctx.setLineDash([2])
-          ctx.lineWidth = 1
-          ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue))
+          );
+          ctx.setLineDash([2]);
+          ctx.lineWidth = 1;
+          ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue));
           for (let i = 1; i < line.length; i++) {
             ctx.lineTo(
               this.width * ((1 / (line.length - 1)) * i),
               this.height * (1 - line[i] / this.maxValue)
-            )
+            );
           }
-          ctx.stroke()
+          ctx.stroke();
 
           // Create path
-          let region = new Path2D()
-          region.moveTo(0, this.height * (1 - line[0] / this.maxValue))
+          let region = new Path2D();
+          region.moveTo(0, this.height * (1 - line[0] / this.maxValue));
           for (let i = 1; i < line.length; i++) {
             region.lineTo(
               this.width * ((1 / (line.length - 1)) * i),
               this.height * (1 - line[i] / this.maxValue)
-            )
+            );
           }
-          region.lineTo(this.width, this.height)
-          region.lineTo(0, this.height)
-          region.closePath()
+          region.lineTo(this.width, this.height);
+          region.lineTo(0, this.height);
+          region.closePath();
 
           // Fill path
           ctx.fillStyle = this.userService.referentielMappingColorByInterface(
             this.referentielName,
             0.6
-          )
-          ctx.fill(region, 'evenodd')
+          );
+          ctx.fill(region, 'evenodd');
         }
       }
     }
   }
 
   drawMultiple() {
-    const canvas = this.domCanvasMultiple?.nativeElement
+    const canvas = this.domCanvasMultiple?.nativeElement;
     if (canvas && !this.isMultipleGraphPrinted && this.width) {
-      this.isMultipleGraphPrinted = true
+      this.isMultipleGraphPrinted = true;
 
-      canvas.width = this.width
-      canvas.height = this.height
-      const ctx = canvas.getContext('2d')
-      ctx.clearRect(0, 0, this.width * 200, this.height * 200)
-      ctx.beginPath()
+      canvas.width = this.width;
+      canvas.height = this.height;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, this.width * 200, this.height * 200);
+      ctx.beginPath();
 
-      if (this.referentielId) {
+      if (this.referentielId && !this.isLoading) {
+        this.isLoading = true;
         this.graphs.map((g, index) => {
           this.calculatorService
             .rangeValues(
@@ -268,36 +308,37 @@ export class GraphsVerticalsLinesComponent
               g.dateStop
             )
             .then((line) => {
-              line = line.map((v: any) => +v || 0)
+              line = line.map((v: any) => +v || 0);
+              this.isLoading = false;
 
-              ctx.strokeStyle = g.color
-              ctx.lineWidth = 1
-              ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue))
+              ctx.strokeStyle = g.color;
+              ctx.lineWidth = 1;
+              ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue));
               for (let i = 1; i < line.length; i++) {
                 ctx.lineTo(
                   this.width * ((1 / (line.length - 1)) * i),
                   this.height * (1 - line[i] / this.maxValue)
-                )
+                );
               }
-              ctx.stroke()
+              ctx.stroke();
 
               for (let i = 1; i < line.length - 1; i++) {
-                ctx.beginPath()
-                ctx.fillStyle = index === 0 ? 'white' : g.color
+                ctx.beginPath();
+                ctx.fillStyle = index === 0 ? 'white' : g.color;
                 ctx.arc(
                   this.width * ((1 / (line.length - 1)) * i),
                   this.height * (1 - line[i] / this.maxValue),
                   2,
                   0,
                   2 * Math.PI
-                )
-                ctx.fill()
+                );
+                ctx.fill();
                 if (index === 0) {
-                  ctx.stroke()
+                  ctx.stroke();
                 }
               }
-            })
-        })
+            });
+        });
       }
 
       /*const line: number[] = this.line.getValue().map((v) => v || 0)

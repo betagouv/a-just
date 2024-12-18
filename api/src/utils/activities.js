@@ -75,7 +75,7 @@ export const compareGapBetweenData = (data1, data2, percentageThreshold, absolut
   const absoluteDiff = Math.abs(data1 - data2)
   const gap = (absoluteDiff / data2) * 100
 
-  if (gap >= percentageThreshold && absoluteDiff >= absoluteThreshold) {
+  if (gap >= percentageThreshold || absoluteDiff >= absoluteThreshold) {
     return {
       new: data1,
       last: data2,

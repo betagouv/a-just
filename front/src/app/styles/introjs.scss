@@ -87,4 +87,8 @@
   min-width: 500px;
   margin-top: 16px;
   height: auto !important;
+
+  &.small-video {
+    height: 250px !important;
+  }
 }

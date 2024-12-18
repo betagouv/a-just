@@ -1,4 +1,5 @@
 import { HONEY_IP_BLOCK_AGAIN, HONEY_IP_TRAPPED } from '../../constants/log-codes'
+import config from "config"
 
 const TRAPS = [
   'api/sn',
@@ -9,7 +10,6 @@ const TRAPS = [
   '.axd',
   '/api/cu',
   '/api/cu',
-  '/api/j',
   '/api/ti',
   '/api/l',
   '/api/su',
@@ -23,11 +23,9 @@ const TRAPS = [
   'api/user/current',
   'api/w',
   'api/se',
-  'api/p',
   'PreAuth',
   '.file',
   'menus',
-  'mail',
   'server_status',
   'whoami',
   'apis',
@@ -118,15 +116,11 @@ const TRAPS = [
   'nsversion',
   'Injection',
   '.gz',
-  'system',
-  '/tmp',
-  '/temp',
   'www',
   '.1tmhl',
   '/bin/',
   '.action',
   '.cfm',
-  '.html',
   '.rst',
   'passwd',
   '.vscode',
@@ -138,26 +132,55 @@ const IP_TRAPPED = []
  * Module de control des urls interdit
  */
 export default async (ctx, next, models) => {
-  //console.log('Client IP', ctx.request.ip, ctx.request.url)
-  if (IP_TRAPPED.indexOf(ctx.request.ip) !== -1) {
-    console.log('IP BLOCKED - ', ctx.request.ip)
-    models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url })
-    ctx.res.writeHead(500).end()
+  const ip = ctx.request.ip
+  const url = ctx.request.url
+
+  if(config.useAgent) {
+    const useAgentSplited = (config.useAgent || '').toLowerCase().split(',')
+    const headerUserAgent = ctx.header['user-agent'];
+    if(useAgentSplited.some(w => headerUserAgent.includes(w))) {
+      await next()
+      return
+    }
+  }
+
+  //console.log('ip', ip, config.ipFilter.whitelist.some(w => ip.includes(w)))
+
+  if(config.ipFilter.whitelist.some(w => ip.includes(w))) {
+    await next()
+    return
+  }
+
+  //console.log('Client IP', ip, url)
+
+  if (IP_TRAPPED.indexOf(ip) !== -1) {
+    console.log('IP BLOCKED - ', ip)
+    models.Logs.addLog(HONEY_IP_BLOCK_AGAIN, null, ip, { formatValue: false, datas2: url, logging: false })
+    ctx.res.writeHead(403).end()
     return
   }
 
   if (
+    url &&
     TRAPS.some((t) => {
-      const re = new RegExp(t)
-      return re.test(ctx.request.url)
+      return url.includes(t)
     })
   ) {
-    console.log('NEW IP BLOCKED - ', ctx.request.ip, ctx.request.url)
-    IP_TRAPPED.push(ctx.request.ip)
-    models.Logs.addLog(HONEY_IP_TRAPPED, null, ctx.request.ip, { formatValue: false, datas2: ctx.request.url })
-    ctx.res.writeHead(500).end()
+    console.log('NEW IP BLOCKED - ', ip, url)
+    IP_TRAPPED.push(ip)
+    models.Logs.addLog(HONEY_IP_TRAPPED, null, ip, { formatValue: false, datas2: url, logging: false })
+    ctx.res.writeHead(403).end()
     return
   }
 
   await next()
 }
+
+// /api/juridictions-details/get-cle
+/*
+console.log(
+  'TRAP',
+  TRAPS.filter((t) => {
+    return '/api/public/tmp/update-referentiel.json'.includes(t)
+  })
+)*/

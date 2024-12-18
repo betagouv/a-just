@@ -1,53 +1,80 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core'
-import { GitBookAPI } from '@gitbook/api'
-import { DocCardInterface } from 'src/app/components/doc-card/doc-card.component'
-import { CALCULATE_DOWNLOAD_URL, DATA_GITBOOK, DOCUMENTATION_URL, DOCUMENTATION_URL_CA, HELP_CENTER_GITBOOK, NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA } from 'src/app/constants/documentation'
-import { AppService } from 'src/app/services/app/app.service'
-import { ServerService } from 'src/app/services/http-server/server.service'
-import { UserService } from 'src/app/services/user/user.service'
-import { downloadFile } from 'src/app/utils/system'
-import { environment } from 'src/environments/environment'
+import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import { GitBookAPI } from '@gitbook/api';
+import { WrapperComponent } from '../../components/wrapper/wrapper.component';
+import { CommonModule } from '@angular/common';
+import { InputButtonComponent } from '../../components/input-button/input-button.component';
+import { DocCardInterface } from '../../components/doc-card/doc-card.component';
+import {
+  CALCULATE_DOWNLOAD_URL,
+  DATA_GITBOOK,
+  DOCUMENTATION_URL,
+  DOCUMENTATION_URL_CA,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+} from '../../constants/documentation';
+import { UserService } from '../../services/user/user.service';
+import { ServerService } from '../../services/http-server/server.service';
+import { AppService } from '../../services/app/app.service';
+//import { environment } from '../../../environments/environment';
+import { downloadFile } from '../../utils/system';
+import { MatIconModule } from '@angular/material/icon';
+import { SanitizeResourceUrlPipe } from '../../pipes/sanitize-resource-url/sanitize-resource-url.pipe';
+import { BackButtonComponent } from '../../components/back-button/back-button.component';
+import { FormsModule } from '@angular/forms';
 
 interface webinaire {
-  img: string
-  title: string
-  content: string
-  action: string[]
-  rank: number
+  img: string;
+  title: string;
+  content: string;
+  action: string[];
+  rank: number;
 }
 /**
  * Contact
  */
 
 @Component({
+  standalone: true,
+  imports: [
+    WrapperComponent,
+    CommonModule,
+    InputButtonComponent,
+    MatIconModule,
+    SanitizeResourceUrlPipe,
+    BackButtonComponent,
+    FormsModule,
+  ],
   templateUrl: './help-center.page.html',
   styleUrls: ['./help-center.page.scss'],
 })
 export class HelpCenterPage implements OnInit, AfterViewInit {
+  userService = inject(UserService);
+  serverService = inject(ServerService);
+  appService = inject(AppService);
   /**
    * Résultat de la recherche GitBook
    */
-  data: Array<any> = []
+  data: Array<any> = [];
   /**
    * Valeur de rechercher
    */
-  searchValue: string = ''
+  searchValue: string = '';
   /**
    * Gitbook API
    */
-  gitbook
+  gitbook;
   /**
    * Focus barre de recherche
    */
-  focusOn = false
+  focusOn = false;
   /**
    * URL de la nomenclature
    */
-  NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html'
+  NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html';
   /**
    * GitBook Token
    */
-  gitToken
+  gitToken;
   /** Carte guide utilisateur */
   userGuide = {
     tag: 'Documentation',
@@ -56,7 +83,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       'Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!',
     image: '/assets/images/avatar.svg',
     url: this.userService.isCa() ? DOCUMENTATION_URL_CA : DOCUMENTATION_URL,
-  }
+  };
   /** Carte data book */
   dataBook = {
     tag: 'Documentation',
@@ -65,7 +92,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       "Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d'activité».",
     image: '/assets/images/data-visualization.svg',
     url: DATA_GITBOOK,
-  }
+  };
   /** Carte nomenclature */
   nomenclature = {
     tag: 'Documentation',
@@ -73,10 +100,12 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     description:
       'Vous permet de visualiser globalement et en détail le contenu de chaque contentieux et sous-contentieux. Au civil, vous y retrouverez la liste des NAC prises en compte dans chaque rubrique.',
     image: '/assets/images/system.svg',
-    url: this.userService.isCa() ? NOMENCLATURE_DOWNLOAD_URL_CA : NOMENCLATURE_DOWNLOAD_URL,
+    url: this.userService.isCa()
+      ? NOMENCLATURE_DOWNLOAD_URL_CA
+      : NOMENCLATURE_DOWNLOAD_URL,
     localUrl: false,
     download: true,
-  }
+  };
   /**
    * Cards documentation
    */
@@ -84,7 +113,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     this.userGuide,
     this.dataBook,
     this.nomenclature,
-  ]
+  ];
   /**
    * Cards outils
    */
@@ -113,28 +142,28 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       url: '/dashboard',
       localUrl: true,
     },
-  ]
+  ];
   /**
    * webinaire
    */
-  webinaires: Array<webinaire> | null = null
+  webinaires: Array<webinaire> | null = null;
 
   /**
    * Ouverture d'un iframe gitbook embeded
    */
-  openSuggestionPanel = false
+  openSuggestionPanel = false;
   /**
    * Ouverture de popin d appel
    */
-  popinCall = false
+  popinCall = false;
   /**
    * Appel demandé
    */
-  callValidated = false
+  callValidated = false;
   /**
    * Doc à afficher dans une IFRAME
    */
-  openToIframe = { url: '', title: '' }
+  openToIframe = { url: '', title: '' };
   /**
    * Liens vers la doc
    */
@@ -142,54 +171,61 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     {
       url: 'https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/',
       title: "Tout savoir en un coup d'oeil",
+      color: 'blue',
     },
     {
-      url: 'https://docs.a-just.beta.gouv.fr/soulager-les-equipes/',
-      title: 'Soulager les équipes',
+      url: 'https://docs.a-just.beta.gouv.fr/prenez-en-main-votre-espace/',
+      title: 'Prenez en main votre espace',
+      color: 'green',
     },
     {
-      url: 'https://docs.a-just.beta.gouv.fr/gagner-du-temps/',
-      title: 'Gagner du temps',
+      url: 'https://docs.a-just.beta.gouv.fr/pilotez-votre-juridiction/',
+      title: 'Pilotez votre juridiction',
+      color: 'red',
     },
     {
-      url: 'https://docs.a-just.beta.gouv.fr/construire-le-futur/',
-      title: 'Construire le futur',
+      url: 'https://docs.a-just.beta.gouv.fr/cas-dusage/',
+      title: 'Cas d’usage',
+      color: 'yellow',
     },
-  ]
+  ];
   /**
    * Cle date pour usage unique
    */
-  cleDate = '?date=' + new Date()
+  cleDate = '?date=' + new Date();
+
+  /**
+   * GITBOOK ID
+   */
+  gitbookId = import.meta.env.NG_APP_GITBOOK_ID;
+
   /**
    * Constructeur
-   * @param title
    */
-  constructor(
-    public userService: UserService,
-    private serverService: ServerService,
-    private appService: AppService
-  ) {
-    this.gitToken = environment.gitbookToken
+  constructor() {
+    this.gitToken = import.meta.env.NG_APP_GITBOOK_TOKEN;
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,
-    })
-    this.sendLog()
+    });
+    this.sendLog();
   }
 
   ngOnInit() {
     if (this.userService.isCa())
-      this.docTools = [this.nomenclature,
-      {
-        tag: 'Les outils A-JUST',
-        title: 'La calculatrice de ventilation des ETPT',
-        description: '',
-        image: '/assets/images/coding.svg',
-        url: CALCULATE_DOWNLOAD_URL,
-      },]
-    this.loadWebinaires()
+      this.docTools = [
+        this.nomenclature,
+        {
+          tag: 'Les outils A-JUST',
+          title: 'La calculatrice de ventilation des ETPT',
+          description: '',
+          image: '/assets/images/coding.svg',
+          url: CALCULATE_DOWNLOAD_URL,
+        },
+      ];
+    this.loadWebinaires();
   }
   ngAfterViewInit(): void {
-    window.addEventListener('click', this.onClick.bind(this))
+    window.addEventListener('click', this.onClick.bind(this));
   }
 
   onClick(e: any) {
@@ -201,8 +237,8 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   async onSearchBy() {
     const { data } = await this.gitbook.search.searchContent({
       query: this.searchValue,
-    })
-    this.data = data.items
+    });
+    this.data = data.items;
   }
 
   getDocIcon(title: string) {
@@ -210,11 +246,11 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       //case "Guide d'utilisateur A-JUST CA":
       //return 'supervised_user_circle'
       case "Guide d'utilisateur A-JUST":
-        return 'supervised_user_circle'
+        return 'supervised_user_circle';
       case 'FAQ A-JUST':
-        return 'question_answer'
+        return 'question_answer';
       default:
-        return 'face'
+        return 'face';
     }
   }
 
@@ -224,36 +260,36 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
         value: researchRes.urls.app,
       })
       .then((r) => {
-        return r.data
-      })
+        return r.data;
+      });
     await this.serverService
       .post('centre-d-aide/log-documentation-recherche', {
         value: this.searchValue,
       })
       .then((r) => {
-        return r.data
-      })
+        return r.data;
+      });
 
     switch (title) {
       case "Guide d'utilisateur A-JUST CA":
         window.open(
           'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/' +
-          researchRes.path
-        )
-        break
+            researchRes.path
+        );
+        break;
       case "Guide d'utilisateur A-JUST":
         window.open(
           'https://docs.a-just.beta.gouv.fr/documentation-deploiement/' +
-          researchRes.path
-        )
-        break
+            researchRes.path
+        );
+        break;
       case 'Le data-book':
         window.open(
           'https://docs.a-just.beta.gouv.fr/le-data-book/' + researchRes.path
-        )
-        break
+        );
+        break;
       default:
-        break
+        break;
     }
   }
 
@@ -263,21 +299,20 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       switch (space) {
         case "Guide d'utilisateur A-JUST CA":
           //console.log('isValid OK')
-          return true
+          return true;
         default:
           //console.log('isValid NOT OK')
-          return false
+          return false;
       }
-    }
-    else {
+    } else {
       //console.log('NOT OK')
       switch (space) {
         case "Guide d'utilisateur A-JUST":
-          return true
+          return true;
         case 'Le data-book':
-          return true
+          return true;
         default:
-          return false
+          return false;
       }
     }
   }
@@ -287,8 +322,8 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
    */
   delay() {
     setTimeout(() => {
-      this.focusOn = false
-    }, 200)
+      this.focusOn = false;
+    }, 200);
   }
 
   /**
@@ -298,12 +333,12 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     await this.serverService
       .post('centre-d-aide/log-documentation')
       .then((r) => {
-        return r.data
-      })
+        return r.data;
+      });
   }
 
   async sendForm(phoneNumber: string) {
-    let userId = this.userService.user.getValue()?.id || null
+    let userId = this.userService.user.getValue()?.id || null;
     if (userId)
       await this.serverService
         .post('centre-d-aide/post-form-hubspot', {
@@ -311,8 +346,8 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
           phoneNumber,
         })
         .then((r) => {
-          return r.data
-        })
+          return r.data;
+        });
   }
 
   async goToLink(url: string, download = false) {
@@ -321,40 +356,40 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
         value: url,
       })
       .then((r) => {
-        return r.data
-      })
+        return r.data;
+      });
     if (CALCULATE_DOWNLOAD_URL === url)
       this.appService.alert.next({
         text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
-      })
+      });
 
-    if (url === '/dashboard') window.location.href = url
+    if (url === '/dashboard') window.location.href = url;
     else {
       if (download) {
-        downloadFile(url)
+        downloadFile(url);
       } else {
-        window.open(url)
+        window.open(url);
       }
     }
   }
 
   openLink(url: string) {
-    window.open(url, '_blank')
+    window.open(url, '_blank');
   }
 
   async loadWebinaires() {
-    this.webinaires = new Array()
+    this.webinaires = new Array();
     const { data } = await this.gitbook.spaces.getPageByPath(
-      environment.gitbookId,
+      this.gitbookId,
       'accueil/'
-    )
+    );
 
     await Promise.all(
       data.pages.map(async (page, index) => {
         const { data } = (await this.gitbook.spaces.getPageById(
-          environment.gitbookId,
+          this.gitbookId,
           page.id
-        )) as any
+        )) as any;
         try {
           let webinaire = {
             img: data.document?.nodes[0].data.url,
@@ -365,36 +400,39 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
               data.document.nodes[3]?.data.url || null,
             ],
             rank: index,
-          }
+          };
           if (data.title.includes('[CACHER]') === false)
-            this.webinaires?.push(webinaire)
+            this.webinaires?.push(webinaire);
         } catch (error) {
-          console.log("Le format du webinaire gitbook n'est pas conforme", data)
+          console.log(
+            "Le format du webinaire gitbook n'est pas conforme",
+            data
+          );
         }
       })
     ).then(() => {
-      this.webinaires?.sort((a, b) => a.rank - b.rank)
-      console.log(this.webinaires)
-    })
+      this.webinaires?.sort((a, b) => a.rank - b.rank);
+      console.log(this.webinaires);
+    });
   }
 
   validateNo(e: any) {
-    const charCode = e.which ? e.which : e.keyCode
-    if (charCode === 46) return true
+    const charCode = e.which ? e.which : e.keyCode;
+    if (charCode === 46) return true;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
   getIframeUrl() {
-    return this.openToIframe.url
+    return this.openToIframe.url;
   }
 
   reloadContent() {
-    this.openSuggestionPanel = !this.openSuggestionPanel
+    this.openSuggestionPanel = !this.openSuggestionPanel;
   }
   getDocKeys(): Array<any> {
-    return Object.keys(this.documentation)
+    return Object.keys(this.documentation);
   }
 }

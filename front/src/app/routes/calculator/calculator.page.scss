@@ -157,6 +157,10 @@
             height: 190px;
             overflow: auto;
 
+            @media screen and (max-height: 680px) {
+              height: 100px;
+            }
+
             .color-greffe {
               color: #a558a0;
             }
@@ -290,6 +294,7 @@
     #circle {
       width: 60px;
       height: 60px;
+      min-height: 60px;
       background: #ececfe;
       border-radius: 70px;
       margin: auto;
@@ -297,6 +302,15 @@
       align-items: center;
       justify-content: center;
       margin-bottom: 18px;
+
+      &.avg {
+        margin-bottom: 16px;
+      }
+
+
+      @media screen and (max-height: 680px) {
+        display: none;
+      }
 
       i {
         font-size: 24px;
@@ -314,6 +328,11 @@
       font-weight: bold;
       text-align: center;
 
+      &.avg {
+        margin-bottom: 16px;
+        font-size: 16px;
+      }
+
       label {
         padding: 0 8px;
         border-radius: 4px;
@@ -326,6 +345,10 @@
           color: #a558a0;
         }
       }
+    }
+
+    input {
+      width: 100%;
     }
   }
 
@@ -340,6 +363,37 @@
     background-color: #f5f5fe;
     display: flex;
     flex-direction: column;
+
+    &.save {
+      background-color: white;
+
+      margin-right: 2px;
+      width: 260px;
+      font-size: 14px;
+
+      .export {
+        border-bottom: solid 1px #ddd;
+      }
+
+      div {
+        display: flex;
+        min-height: 40px;
+        padding: 8px 16px;
+        align-items: center;
+
+        i {
+          font-size: 18px;
+          margin-right: 8px;
+        }
+
+        label {
+          i {
+            margin-right: 8px;
+            font-size: 18px;
+          }
+        }
+      }
+    }
 
     label {
       margin-right: inherit !important;
@@ -478,11 +532,31 @@
       color: #3a3a3a;
       line-height: 40px !important;
       font-size: 14px;
-      margin-right: 6px;
+      margin-right: 10px;
       display: flex;
       padding-right: initial;
       height: 100%;
       position: relative;
+
+      label {
+        cursor: pointer;
+      }
+
+      &.save {
+        margin-right: 0px;
+
+        div {
+          i {
+            color: #000091;
+          }
+        }
+
+        label {
+          color: #000091;
+          font-size: 14px;
+          font-weight: 500;
+        }
+      }
 
       &.selected {
         border: solid 1px fColor(cbluedark);
@@ -573,7 +647,7 @@
 
 .contentieux-header-calculator {
   display: flex;
-
+  font-weight: bold;
   min-height: 80px;
 
   .width-contentieux {

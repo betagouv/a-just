@@ -50,8 +50,10 @@
   <aj-popup *ngIf="newsToEdit" class="large"
     title="{{newsToEdit.id < 0 ? 'Ajout ' : 'Modification '}} d'une notification" [actions]="popupAction"
     (selectedAction)="onPopupDetailAction($event)">
-    <angular-editor [placeholder]="'Enter text here...'" [(ngModel)]="newsToEdit.html"
-      [config]="htmlEditorConfig"></angular-editor>
+    <div *ngIf="editor">
+      <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+      <ngx-editor [editor]="editor" [placeholder]="'Enter text here...'" [(ngModel)]="newsToEdit.html"></ngx-editor>
+    </div>
 
     <div class="grid-triple">
       <div>
@@ -97,9 +99,7 @@
       <div>
         <mat-form-field>
           <mat-label>Couleur du bouton</mat-label>
-          <input matInput [ngxMatColorPicker]="pickerButtonColor" [(ngModel)]="newsToEdit.actionButtonColor" />
-          <ngx-mat-color-toggle matSuffix [for]="pickerButtonColor"></ngx-mat-color-toggle>
-          <ngx-mat-color-picker #pickerButtonColor></ngx-mat-color-picker>
+          <input matInput [(colorPicker)]="newsToEdit.actionButtonColor" [(ngModel)]="newsToEdit.actionButtonColor" />
         </mat-form-field>
       </div>
     </div>
@@ -120,17 +120,13 @@
       <div>
         <mat-form-field>
           <mat-label>Couleur du texte</mat-label>
-          <input matInput [ngxMatColorPicker]="pickerTextColor" [(ngModel)]="newsToEdit.textColor" />
-          <ngx-mat-color-toggle matSuffix [for]="pickerTextColor"></ngx-mat-color-toggle>
-          <ngx-mat-color-picker #pickerTextColor></ngx-mat-color-picker>
+          <input matInput [(colorPicker)]="newsToEdit.textColor" [(ngModel)]="newsToEdit.textColor" />
         </mat-form-field>
       </div>
       <div>
         <mat-form-field>
           <mat-label>Couleur du fond</mat-label>
-          <input matInput [ngxMatColorPicker]="pickerBackgroundColor" [(ngModel)]="newsToEdit.backgroundColor" />
-          <ngx-mat-color-toggle matSuffix [for]="pickerBackgroundColor"></ngx-mat-color-toggle>
-          <ngx-mat-color-picker #pickerBackgroundColor></ngx-mat-color-picker>
+          <input matInput [(colorPicker)]="newsToEdit.backgroundColor" [(ngModel)]="newsToEdit.backgroundColor" />
         </mat-form-field>
       </div>
     </div>

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ContentieuReferentielInterface } from 'src/app/interfaces/contentieu-referentiel';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 import { ServerService } from '../http-server/server.service';
 import { BehaviorSubject } from 'rxjs';
+import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
 
 /**
  * Service de centralisation des traitements lié au référentiel
@@ -43,9 +43,9 @@ export class ReferentielService {
     private serverService: ServerService
   ) {}
 
-  async getReferentiels(isJirs? : boolean) {
+  async getReferentiels(isJirs?: boolean) {
     return this.serverService
-      .post('contentieux-referentiels/get-referentiels', {isJirs})
+      .post('contentieux-referentiels/get-referentiels', { isJirs })
       .then((res) => {
         this.humanResourceService.contentieuxReferentiel.next(res.data);
         return res.data;
@@ -53,10 +53,11 @@ export class ReferentielService {
   }
 
   update(id: number, node: string, value: string) {
-    return this.serverService.put(
-      'contentieux-referentiels/update',
-      { id, node, value }
-    );
+    return this.serverService.put('contentieux-referentiels/update', {
+      id,
+      node,
+      value,
+    });
   }
 
   /**

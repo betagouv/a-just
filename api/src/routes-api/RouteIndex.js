@@ -10,12 +10,15 @@ import config from 'config'
   routeBase: '',
 })
 class RouteIndex extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params })
+    super(params)
   }
 
   /**

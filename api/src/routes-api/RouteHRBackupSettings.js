@@ -6,12 +6,17 @@ import { Types } from '../utils/types'
  */
 
 export default class RouteHrBackupSettings extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HRBackupsSettings' })
+    super(params)
+
+    this.model = params.models.HRBackupsSettings
   }
 
   /**

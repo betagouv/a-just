@@ -14,4 +14,6 @@
     <p *ngIf="title" class="title"
         [style.color]="isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)">
         {{title}}</p>
+    <aj-tooltips *ngIf="title === 'N/R'" title="Donnée non renseignée" class="small"
+        content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
 </div>

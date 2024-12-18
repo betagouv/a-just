@@ -5,12 +5,12 @@
       <div class="categories-switch">
         <div class="magistrats" *ngIf="canViewMagistrat"
           [ngClass]="{'selected': categorySelected === MAGISTRATS, alone: !canViewGreffier}"
-          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS)">
+          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS);unselectTemplate();">
           <p>Siège</p>
         </div>
         <div class="fonctionnaires" *ngIf="canViewGreffier"
           [ngClass]="{'selected': categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat}" class="fonctionnaires"
-          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES)">
+          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES);unselectTemplate();">
           <p>Greffe</p>
         </div>
       </div>
@@ -22,11 +22,11 @@
 
       <div class="dates-selector">
         <aj-date-select title="de" [value]="dateStart" (valueChange)="updateReferentielSelected('dateStart', $event)"
-          class="bg-white calculator" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
-          [icon]="'chevron_left'" (isOpen)="lockLoader.next($event)">
+          class="bg-white calculator bottom-popin" [max]="dateStop" [dateClass]="dateClass" [dateType]="'month'"
+          [min]="minDateSelectable" [icon]="'chevron_left'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
         <aj-date-select title="à" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
-          class="bg-white calculator" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
+          class="bg-white calculator bottom-popin" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
           [icon]="'chevron_right'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
       </div>
@@ -34,12 +34,12 @@
 
       <div class="switch-tab">
         <div class="brut" [ngClass]="{'selected': tabSelected === 0 && !compareTemplates}"
-          (click)="tabSelected=0;unselectTemplate();$event.stopPropagation()">
+          (click)="tabSelected=0;unselectTemplate();documentation.path=docLinks[0];$event.stopPropagation()">
           <i class="ri-table-view no-print"></i>
           <p>Données brutes</p>
         </div>
         <div class="fonctionnaires" [ngClass]="{'selected': tabSelected === 1 && !compareTemplates}" class="analytique"
-          (click)="tabSelected=1;unselectTemplate();logChartView();$event.stopPropagation()">
+          (click)="tabSelected=1;unselectTemplate();logChartView();documentation.path=docLinks[1];$event.stopPropagation()">
           <i class="ri-bar-chart-box-line no-print"></i>
           <p>Graphiques</p>
         </div>
@@ -66,7 +66,7 @@
               <div class="flex-1"></div>
               <p>DTES<br />instantané</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonths'}"></i>
-              <aj-tooltips title="DTES instantané" class="medium"
+              <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium"
                 content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
                 footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
               </aj-tooltips>
@@ -76,7 +76,8 @@
               <div class="flex-1"></div>
               <p>Taux de<br />couverture</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realCoverage'}"></i>
-              <aj-tooltips title="Taux de couverture" content="SORTIES /ENTREES de la période en %">
+              <aj-tooltips title="TAUX DE CONVERTURE MOYEN SUR LA PÉRIODE"
+                content="SORTIES /ENTREES de la période en %">
               </aj-tooltips>
             </div>
             <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
@@ -104,7 +105,7 @@
               <p>ETPT <br />Siège</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
               <aj-tooltips class="medium" title="ETPT siège"
-                content="Total des ETP travaillés sur la période par les agents du siège affectés au contentieux">
+                content="Moyenne des ETPT travaillés sur la période par les agents du siège affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewGreffier" class="tooltip medium item" (click)="onSortBy('etpFon')"
@@ -113,7 +114,7 @@
               <p>ETPT<br />Greffe</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
               <aj-tooltips class="medium" title="ETPT greffe"
-                content="Total des ETP travaillés sur la période par les agents du greffe affectés au contentieux">
+                content="Moyenne des ETPT travaillés sur la période par les agents du greffe affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewContractuel" class="tooltip medium item" (click)="onSortBy('etpCont')"
@@ -121,8 +122,8 @@
               <div class="flex-1"></div>
               <p>ETPT<br />EAM</p>
               <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
-              <aj-tooltips class="medium" title="ETPT EAM"
-                content="Total des ETP travaillés sur la période par les agents autour du magistrat affectés au contentieux">
+              <aj-tooltips class="medium right" title="ETPT EAM"
+                content="Moyenne des ETPT travaillés sur la période par l'équipe autour du magistrat affectés au contentieux">
               </aj-tooltips>
             </div>
 
@@ -145,13 +146,14 @@
           </aj-referentiel-calculator>
         </div>
       </ng-template>
-      <aj-view-analytics *ngIf="tabSelected === 1" [datasFilted]="datasFilted"
-        [categorySelected]="categorySelected"></aj-view-analytics>
+      <aj-view-analytics *ngIf="tabSelected === 1 && !isLoading" [datasFilted]="datasFilted"
+        [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate"></aj-view-analytics>
     </ng-template>
     <aj-template-analytics *ngIf="compareTemplates" [lines]="compareTemplates"></aj-template-analytics>
   </div>
 
-  <div class="black-opacity" *ngIf="showPicker===true" (click)="showPicker=!showPicker;"></div>
+  <div class="black-opacity" *ngIf="showPicker===true || dropdownExport===true"
+    (click)="showPicker=false;dropdownExport=false"></div>
 
   <!-- POPUP CHOIX COMPARAISON -->
   <aj-popup *ngIf="onEdit===true" [closeIcon]="true" (onClose)="onEdit = false" [removeShadow]="'noShadow'"
@@ -178,14 +180,14 @@
               <aj-date-select
                 [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires'}"
                 title="de" [value]="optionDateStart" (valueChange)="optionDateStart = $event"
-                class="bg-white calculator popup" [max]="optionDateStop" [dateClass]="dateClass" [dateType]="'month'"
-                [icon]="'none'">
+                class="bg-white calculator popup bottom-popin" [max]="optionDateStop" [min]="minDateSelectable"
+                [dateClass]="dateClass" [dateType]="'month'" [icon]="'none'">
               </aj-date-select>
               <aj-date-select
                 [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires' }"
                 title="à" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
-                class="bg-white calculator popup" [dateClass]="dateClass" [dateType]="'month'" [min]="optionDateStart"
-                [icon]="'none'">
+                class="bg-white calculator popup bottom-popin" [dateClass]="dateClass" [dateType]="'month'"
+                [min]="optionDateStart" [icon]="'none'">
               </aj-date-select>
             </div>
           </div>
@@ -248,9 +250,10 @@
   <div class="flex-1"></div>
   <button class="compare" [ngClass]="{selected: compareTemplates}"
     (click)="showPicker=!showPicker;$event.stopPropagation();">
-    <i class="ri-a-b"></i>
-    <label>Comparer</label>
-    <div class="arrow-zone"><i [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
+    <i class="ri-a-b" (click)="showPicker=!showPicker;$event.stopPropagation();"></i>
+    <label (click)="showPicker=!showPicker;$event.stopPropagation();">Comparer</label>
+    <div (click)="showPicker=!showPicker;$event.stopPropagation();" class="arrow-zone"><i
+        [class]="showPicker ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
 
     <!-- DROP DOWN REFERENTIEL DE TEMPS -->
     <div *ngIf="showPicker===true" class="drop-down" (click)="$event.stopPropagation();">
@@ -267,14 +270,54 @@
           (click)="onRemoveSetting(ref.label);$event.stopPropagation();"></i>
       </div>
       <label class="footer"
-        (click)="onEdit = true; showPicker = false; filterBackupsByCategory(); $event.stopPropagation();">+
+        (click)="onEdit = true; showPicker = false; filterBackupsByCategory(); $event.stopPropagation();optionDateStart=null;optionDateStop=null;">+
         Personnaliser</label>
     </div>
   </button>
-  <button class="primary light export" (click)="onExport()">
-    <label><i class="ri-file-pdf-fill"></i>
-      Exporter en PDF</label>
+
+  <button class="compare save" (click)="dropdownExport=!dropdownExport;$event.stopPropagation();">
+    <label (click)="dropdownExport=!dropdownExport;$event.stopPropagation();">Enregistrer</label>
+    <div (click)="dropdownExport=!dropdownExport;$event.stopPropagation();" class="arrow-zone"><i
+        [class]="dropdownExport ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i></div>
   </button>
+  <div *ngIf="dropdownExport===true" class="drop-down save" (click)="$event.stopPropagation(); dropdownExport=false;">
+    <div class="primary light export" (click)="onExport()"><label><i class="ri-save-fill"></i>Enregistrer cet écran en
+        pdf</label>
+    </div>
+    <div (click)="promptRef = true;setDefaultRefName();dropdownExport=false;"><i
+        class="ri-file-download-fill"></i><label>Enregistrer ces
+        temps
+        moyens comme
+        référentiel</label></div>
+  </div>
+
+  <aj-popup *ngIf="promptRef===true" [removeShadow]="'noShadow'" class="border-radius width-400-custom" [actions]="[
+    { id: 'cancel', content: 'Annuler', fill: false },
+    { id: 'save', content: 'Enregistrer', fill: true }
+    ]" (selectedAction)="actionPopupFollow($event)">
+    <div id="circle" class="avg">
+      <i class="ri-ball-pen-line"></i>
+    </div>
+
+    <p class="title avg">Souhaitez-vous renommer ce référentiel ?</p>
+
+    <input type="text" [(ngModel)]="defaultRefName" />
+  </aj-popup>
+
+  <aj-popup *ngIf="displayRouterRef===true" [removeShadow]="'noShadow'" class="border-radius width-420-custom"
+    [actions]="[
+  { id: 'location', content: 'Voir les référentiels', fill: false },
+  { id: 'cancel', content: 'Poursuivre dans le cockpit', fill: true }
+  ]" (selectedAction)="actionPopupEnd($event)">
+    <div id="circle" class="avg">
+      <i class="ri-save-line"></i>
+    </div>
+
+    <p class="title avg">Votre référentiel a bien été enregistré.</p>
+
+    <p>Retrouvez-le depuis le menu ”Outils”<br /> rubrique “Référentiels de temps moyens”</p>
+  </aj-popup>
+
 </ng-template>
 
 <ng-template #subTitleTemplate><label class="grey">(option)</label></ng-template>

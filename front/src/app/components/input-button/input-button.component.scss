@@ -28,6 +28,23 @@
     background-color: fColor(darkModeBgMenu);
     border: 1px solid fColor(darkModeBgMenu);
 
+    &.search-bar {
+      .input {
+        .input-container {
+          input {
+            &::placeholder {
+              color: white;
+              opacity: 1;
+            }
+          }
+
+          img {
+            filter: brightness(0) invert(1);
+          }
+        }
+      }
+    }
+
     p,
     mat-icon,
     input {

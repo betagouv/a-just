@@ -11,11 +11,17 @@ import { HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
  * Route de la page réaffectateur
  */
 export default class RouteReaffectator extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
+   * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HumanResources' })
+    super(params)
+
+    this.model = params.models.HumanResources
   }
 
   /**
@@ -43,7 +49,7 @@ export default class RouteReaffectator extends Route {
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
-    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels()).filter((r) => r.label !== 'Indisponibilité')
+    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((r) => r.label !== 'Indisponibilité')
     if (referentielList && referentielList.length == referentiel.length) {
       referentielList = null
     }

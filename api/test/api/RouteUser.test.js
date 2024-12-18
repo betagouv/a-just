@@ -1,4 +1,3 @@
-import { assert } from 'chai'
 import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
 import { accessList } from '../../src/constants/access'
 import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi , onUpdateAccountApi} from '../routes/user'

@@ -8,8 +8,8 @@ import {
   USER_USER_LOGIN_CODE_INVALID,
   USER_USER_LOGIN_REQUEST_CODE,
   USER_USER_PASSWORD_CHANGED,
+  USER_USER_SIGN_IN,
 } from '../constants/log-codes'
-import * as Sentry from '@sentry/node'
 import { LOGIN_STATUS_GET_CODE } from '../constants/login'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'
@@ -21,12 +21,17 @@ import { Op } from 'sequelize'
  * Route des authentification
  */
 export default class RouteAuths extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
-  constructor(params) {
-    super({ ...params, model: 'Users' })
+  constructor (params) {
+    super(params)
+
+    this.model = params.models.Users
   }
 
   /**
@@ -41,7 +46,7 @@ export default class RouteAuths extends Route {
       remember: Types.number(),
     }),
   })
-  async login(ctx) {
+  async login (ctx) {
     const { password, remember } = this.body(ctx)
     let { email } = this.body(ctx)
     email = (email || '').toLowerCase()
@@ -55,7 +60,7 @@ export default class RouteAuths extends Route {
         now.setMonth(now.getMonth() - 1)
         const nbAuthBy2FAOffMonth = (
           await this.models.Logs.getLogs({
-            code_id: USER_AUTH_BY_2FA,
+            code_id: [USER_AUTH_BY_2FA, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN],
             user_id: tryUserCon.id,
             created_at: { [Op.gte]: now },
           })
@@ -114,7 +119,7 @@ export default class RouteAuths extends Route {
       code: Types.string().required(),
     }),
   })
-  async completeLogin(ctx) {
+  async completeLogin (ctx) {
     const { code } = this.body(ctx)
 
     if (!ctx.session || !ctx.session.loginControl) {
@@ -159,7 +164,7 @@ export default class RouteAuths extends Route {
       password: Types.string().required(),
     }),
   })
-  async loginAdmin(ctx) {
+  async loginAdmin (ctx) {
     const { password, email } = this.body(ctx)
 
     const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
@@ -232,24 +237,13 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est connecté
    */
   @Route.Get({})
-  async autoLogin(ctx) {
+  async autoLogin (ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
       await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, {
         userId: ctx.state.user.id,
       })
 
-      const transaction = Sentry.startTransaction({ name: 'Logingg' })
-      Sentry.getCurrentHub().configureScope((scope) => scope.setSpan(transaction))
-      const span = transaction.startChild({
-        data: {
-          res: '',
-        },
-        op: 'task',
-        description: 'auto loging',
-      })
-      span.finish() // Remember that only finished spans will be sent with the transaction
-      transaction.finish()
       this.sendOk(ctx)
     } else {
       ctx.throw(401)
@@ -260,7 +254,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est l'administrateur connecté
    */
   @Route.Get({})
-  async autoLoginAdmin(ctx) {
+  async autoLoginAdmin (ctx) {
     if (this.userId(ctx) && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1) {
       await super.addUserInfoInBody(ctx)
       this.sendOk(ctx)
@@ -273,7 +267,7 @@ export default class RouteAuths extends Route {
    * Suppression du token de l'utilisateur connecté
    */
   @Route.Get({})
-  async logout(ctx) {
+  async logout (ctx) {
     await ctx.logoutUser()
   }
 }
