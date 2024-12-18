@@ -94,7 +94,7 @@ export default (sequelizeInstance, Model) => {
     }
   };
 
-  Model.syncAllActivitiesByContentieux = async (contentieuxId) => {
+  Model.syncAllVentilationByContentieux = async (contentieuxId) => {
     const listAllMainContentieux = await Model.findAll({
       where: {
         nac_id: {
