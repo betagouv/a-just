@@ -55,27 +55,20 @@ export class ReferentielPage extends MainClass implements OnInit {
     this.referentielService
       .getReferentiels(this.isJirs)
       .then((list: ContentieuReferentielInterface[]) => {
-        this.referentiels = list
-          .map((i) => ({
-            ...i,
-            backups: i.onlyToHrBackup
+        this.referentiels = list.map((i) => ({
+          ...i,
+          backups:
+            i.onlyToHrBackup !== null
               ? this.backups.filter((b) => i.onlyToHrBackup?.includes(b.id))
               : null,
-            childrens: (i.childrens || []).map((c) => ({
-              ...c,
-              backups: i.onlyToHrBackup
+          childrens: (i.childrens || []).map((c) => ({
+            ...c,
+            backups:
+              c.onlyToHrBackup !== null
                 ? this.backups.filter((b) => c.onlyToHrBackup?.includes(b.id))
                 : null,
-            })),
-          }))
-          .map((i) => ({
-            ...i,
-            backups: i.backups && i.backups.length === 0 ? null : i.backups,
-            childrens: (i.childrens || []).map((c) => ({
-              ...c,
-              backups: c.backups && c.backups.length === 0 ? null : c.backups,
-            })),
-          }));
+          })),
+        }));
       });
   }
 
