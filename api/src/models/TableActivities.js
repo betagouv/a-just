@@ -656,7 +656,7 @@ export default (sequelizeInstance, Model) => {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
         },
-        nbComments: await Model.models.Comments.getNbConId(list[i]['ContentieuxReferentiel.id']),
+        nbComments: await Model.models.Comments.getNbConId(list[i]['ContentieuxReferentiel.id'], HrBackupId),
         updatedBy: details
           ? {
             entrees: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'entrees'),
