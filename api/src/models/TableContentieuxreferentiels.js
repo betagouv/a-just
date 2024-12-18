@@ -1,4 +1,4 @@
-import { orderBy } from "lodash";
+import { difference, orderBy } from "lodash";
 import { Op } from "sequelize";
 import {
   referentielCAMappingIndex,
@@ -18,7 +18,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} isJirs
    * @returns
    */
-  Model.getReferentiels = async (backupId = null, isJirs = false) => {
+  Model.getReferentiels = async (backupId = null, isJirs = false, filterReferentielsId = null) => {
     if (backupId) {
       const juridiction = await Model.models.HRBackups.findById(backupId);
       if (juridiction) {
@@ -37,6 +37,10 @@ export default (sequelizeInstance, Model) => {
             only_to_hr_backup: { [Op.contains]: [backupId] },
           },
         ];
+      }
+      // filter by referentiel only for parent
+      if(filterReferentielsId && index === 2) {
+        where.id = filterReferentielsId
       }
 
       let list = await Model.findAll({
@@ -417,6 +421,7 @@ export default (sequelizeInstance, Model) => {
     });
 
     if (ref) {
+      const oldValue = ref[camel_to_snake(node)]
       ref.set({ [camel_to_snake(node)]: value });
       await ref.save();
 
@@ -428,12 +433,28 @@ export default (sequelizeInstance, Model) => {
           raw: true,
         });
         if (!hasChild) {
+          let hrBackupUpdated = []
+          let allJuridictions = (await Model.models.HRBackups.getAll()).map(h => h.id)
+          if(Array.isArray(oldValue) && Array.isArray(value)) {
+            hrBackupUpdated = [...oldValue.filter((e) => !value.includes(e)), ...value.filter((e) => !oldValue.includes(e))];
+          } else if(oldValue === null && Array.isArray(value)) {
+            hrBackupUpdated = allJuridictions.filter((e) => !value.includes(e));
+          } else if(Array.isArray(oldValue) && value === null) {
+            hrBackupUpdated = allJuridictions.filter((e) => !oldValue.includes(e));
+          }
+          //console.log('old value', oldValue)
+          //console.log('new value', value)
+          //console.log('delta juridictions', hrBackupUpdated)
           // synchronise by main contentieux
+          
+          // test 16s pour les ventilations
           await Model.models.HRActivities.syncAllVentilationByContentieux(
             ref.dataValues.parent_id
           );
+          // test toutes les juridictions à 1,8min
           await Model.models.Activities.syncAllActivitiesByContentieux(
-            ref.dataValues.parent_id
+            ref.dataValues.parent_id,
+            hrBackupUpdated
           );
         }
       }
