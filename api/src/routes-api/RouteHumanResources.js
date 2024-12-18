@@ -15,12 +15,17 @@ import { etpLabel } from '../constants/referentiel'
  * Route des fiches
  */
 export default class RouteHumanResources extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'HumanResources' })
+    super(params)
+
+    this.model = params.models.HumanResources
   }
 
   /**
@@ -241,7 +246,7 @@ export default class RouteHumanResources extends Route {
     let listFiltered = [...list]
 
     const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
-    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels()
+    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
 
     const listFormated = categories
       .filter((c) => categoriesIds.indexOf(c.id) !== -1)

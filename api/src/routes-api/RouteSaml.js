@@ -9,12 +9,17 @@ import { USER_USER_LOGIN } from '../constants/log-codes'
  * Route des SAML2
  */
 export default class RouteSaml extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'Users' })
+    super(params)
+
+    this.model = params.models.Users
   }
 
   /**

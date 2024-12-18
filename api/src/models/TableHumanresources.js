@@ -73,7 +73,6 @@ export default (sequelizeInstance, Model) => {
   Model.onPreload = async () => {
     if (config.preloadHumanResourcesDatas) {
       const allBackups = await Model.models.HRBackups.getAll()
-      const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
       const categories = await Model.models.HRCategories.getAll()
       /*dbInstance.options.logging = false
       console.log('onPreload - start')
@@ -305,6 +304,19 @@ export default (sequelizeInstance, Model) => {
           } else situation.category_id = findCategory.id
         }
 
+        let findHRToDBByMatricule = await Model.findOne({
+          where: {
+            backup_id: backupId,
+            matricule: list[i].hmatricule,
+          },
+          logging: false,
+        })
+
+        if (list[i].hmatricule !== '' && findHRToDBByMatricule) {
+          importSituation.push(list[i].hmatricule + ' no add by matricule already existing')
+          continue
+        }
+
         switch (code) {
         case 'MHFJS':
           code = 'MHFJ'
@@ -397,7 +409,7 @@ export default (sequelizeInstance, Model) => {
         // prepare person
         const options = {
           first_name: list[i].prenom || '',
-          last_name: list[i].nom_usage || list[i].nom_marital || '',
+          last_name: list[i].nom_usage || list[i].nom_marital || list[i].nom || '',
           matricule: list[i].hmatricule || '',
           backup_id: backupId,
           registration_number: list[i].hRegMatricule,
@@ -709,7 +721,7 @@ export default (sequelizeInstance, Model) => {
     fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
 
     console.time('calculator-1')
-    const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels()).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
+    const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
     console.timeEnd('calculator-1')
 
     console.time('calculator-2')

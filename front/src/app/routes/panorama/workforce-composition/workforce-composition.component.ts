@@ -1,11 +1,13 @@
-import { Component, Input, OnChanges } from '@angular/core'
-import { MainClass } from 'src/app/libs/main-class'
-import { listFormatedInterface } from '../../workforce/workforce.page'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { ucFirst } from 'src/app/utils/string'
-import { fixDecimal } from 'src/app/utils/numbers'
-import { today } from 'src/app/utils/dates'
-import { ServerService } from 'src/app/services/http-server/server.service'
+import { Component, Input, OnChanges } from '@angular/core';
+import { listFormatedInterface } from '../../workforce/workforce.page';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MainClass } from '../../../libs/main-class';
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
+import { ServerService } from '../../../services/http-server/server.service';
+import { today } from '../../../utils/dates';
+import { ucFirst } from '../../../utils/string';
+import { fixDecimal } from '../../../utils/numbers';
 
 /**
  * Interface pour agencer la page
@@ -14,63 +16,70 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
   /**
    * Nombre d'agents de la categorie
    */
-  nbPerson?: number
+  nbPerson?: number;
   /**
    * Total ETPT de la categorie
    */
-  etpt?: number
+  etpt?: number;
   /**
    * Titre de la categorie
    */
-  headerLabel?: string
+  headerLabel?: string;
   /**
    * Poste
    */
-  poste?: { label: string; etpt: number; total: number }[]
+  poste?: { label: string; etpt: number; total: number }[];
 }
 
 interface cleInterface {
-  juridiction_id: number,
-  category_id: number,
-  value: number
+  juridiction_id: number;
+  category_id: number;
+  value: number;
 }
-
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
  */
 @Component({
   selector: 'workforce-composition',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './workforce-composition.component.html',
   styleUrls: ['./workforce-composition.component.scss'],
 })
 export class WorkforceCompositionComponent
   extends MainClass
-  implements OnChanges {
+  implements OnChanges
+{
   /**
    * Filter categories to view
    */
-  @Input() categoriesFiltered: number[] | null = null
+  @Input() categoriesFiltered: number[] | null = null;
   /**
    * List des categories
    */
-  @Input() backupId: number | null = null
+  @Input() backupId: number | null = null;
   /**
    * Liste filtré pour l'affichage
    */
-  listFormatedFiltered: listFormatedWithDatasInterface[] = []
+  listFormatedFiltered: listFormatedWithDatasInterface[] = [];
   /**
    * Cle
    */
-  cleByCategory: cleInterface[] | null = null
+  cleByCategory: cleInterface[] | null = null;
+  /**
+   * on add delay to time out
+   */
+  onTimeoutLoad: any[] = [null, null, null];
 
   /**
    * Constructor
    */
-  constructor(private humanResourceService: HumanResourceService,
+  constructor(
+    private humanResourceService: HumanResourceService,
     private serverService: ServerService
   ) {
-    super()
+    super();
   }
 
   /**
@@ -78,7 +87,7 @@ export class WorkforceCompositionComponent
    */
   ngOnChanges() {
     if (this.backupId) {
-      this.getAllCle()
+      this.getAllCle();
       this.humanResourceService
         .onFilterList(
           this.humanResourceService.backupId.getValue() || 0,
@@ -87,7 +96,7 @@ export class WorkforceCompositionComponent
           [1, 2, 3]
         )
         .then(({ list }) => {
-          const listReturn: listFormatedInterface[] = list
+          const listReturn: listFormatedInterface[] = list;
           this.listFormatedFiltered = listReturn
             .filter(
               (category: any) =>
@@ -96,34 +105,35 @@ export class WorkforceCompositionComponent
                   this.categoriesFiltered.indexOf(category.categoryId) !== -1)
             )
             .map((category: any) => {
-              const listAgent = category.hr || []
-              let etpt = 0
+              const listAgent = category.hr || [];
+              let etpt = 0;
               listAgent.map((a: any) => {
-                const etp = a.etp
-                const indispo = a.hasIndisponibility
+                const etp = a.etp;
+                const indispo = a.hasIndisponibility;
 
-                let etptAgent = etp - indispo
+                let etptAgent = etp - indispo;
                 if (etptAgent < 0) {
-                  etptAgent = 0
+                  etptAgent = 0;
                 }
 
-                etpt += etptAgent
-              })
+                etpt += etptAgent;
+              });
 
-              const poste: { label: string; etpt: number; total: number }[] = []
+              const poste: { label: string; etpt: number; total: number }[] =
+                [];
               if (category.categoryId <= 2) {
                 let subTotalEtp: {
-                  [key: string]: { etpt: number; total: number }
+                  [key: string]: { etpt: number; total: number };
                 } = this.humanResourceService.calculateSubCategories(
                   category?.hr || []
-                )
+                );
                 Object.entries(subTotalEtp).map((key) => {
                   poste.push({
                     label: ucFirst(key[1].total > 1 ? key[0] + 's' : key[0]),
                     etpt: key[1].etpt,
                     total: key[1].total,
-                  })
-                })
+                  });
+                });
               }
 
               return {
@@ -135,48 +145,65 @@ export class WorkforceCompositionComponent
                 nbPerson: listAgent.length,
                 etpt: fixDecimal(etpt),
                 poste,
-              }
-            })
-        })
+              };
+            });
+        });
     }
   }
 
-  saveCLE(value: EventTarget | null, category: listFormatedWithDatasInterface) {
+  saveCLE(
+    value: EventTarget | null,
+    category: listFormatedWithDatasInterface,
+    index: number
+  ) {
+    if (this.onTimeoutLoad && this.onTimeoutLoad[index]) {
+      clearTimeout(this.onTimeoutLoad[index]);
+    }
+
     if (value) {
-      const value = (document.getElementById("cle-" + category.categoryId) as HTMLInputElement).value
-      const res = this.serverService
-        .put('juridictions-details/update-cle',
-          {
+      const value = (
+        document.getElementById(
+          'cle-' + category.categoryId
+        ) as HTMLInputElement
+      ).value;
+      this.onTimeoutLoad[index] = setTimeout(() => {
+        this.onTimeoutLoad[index] = null;
+        const res = this.serverService
+          .put('juridictions-details/update-cle', {
             juridictionId: this.humanResourceService.backupId.getValue(),
             categoryId: category.categoryId,
-            value: ((document.getElementById("cle-" + category.categoryId) as HTMLInputElement).value)
+            value: (
+              document.getElementById(
+                'cle-' + category.categoryId
+              ) as HTMLInputElement
+            ).value,
           })
-        .then((r) => {
-          return r.data
-        })
+          .then((r) => {
+            return r.data;
+          });
+      }, 500);
     }
   }
 
   getCLE(category: listFormatedWithDatasInterface) {
     if (this.humanResourceService.backupId.getValue()) {
-      let res = null
-      this.cleByCategory?.map(x => {
-        if (x.category_id === category.categoryId) res = x.value
-      })
-      return res
+      let res = null;
+      this.cleByCategory?.map((x) => {
+        if (x.category_id === category.categoryId) res = x.value;
+      });
+      return res;
     }
 
-    return ''
+    return '';
   }
 
   async getAllCle() {
     this.cleByCategory = await this.serverService
-      .post('juridictions-details/get-cle',
-        {
-          juridictionId: this.humanResourceService.backupId.getValue(),
-        })
-      .then((r) => {
-        return r.data
+      .post('juridictions-details/get-cle', {
+        juridictionId: this.humanResourceService.backupId.getValue(),
       })
+      .then((r) => {
+        return r.data;
+      });
   }
 }

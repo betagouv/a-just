@@ -5,24 +5,29 @@ import Route, { Access } from './Route'
  * Route des juridictions
  */
 export default class RouteJuridictionsDetails extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
-  constructor(params) {
-    super({ ...params, model: 'TJDetails' })
+  constructor (params) {
+    super(params)
+
+    this.model = params.models.TJDetails
   }
 
   /**
-  * Interface qui retourne les CLEs concernant une juridiction
-  */
+   * Interface qui retourne les CLEs concernant une juridiction
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       juridictionId: Types.number().required(),
     }),
     accesses: [Access.isLogin],
   })
-  async getCle(ctx) {
+  async getCle (ctx) {
     let { juridictionId } = this.body(ctx)
     const list = await this.model.getCle(juridictionId)
     this.sendOk(ctx, list)
@@ -41,10 +46,9 @@ export default class RouteJuridictionsDetails extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async updateCle(ctx) {
+  async updateCle (ctx) {
     const { juridictionId, categoryId, value } = this.body(ctx)
     await this.model.updateCle(juridictionId, categoryId, value)
     this.sendOk(ctx, 'Ok')
   }
-
 }

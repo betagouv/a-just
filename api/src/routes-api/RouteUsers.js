@@ -20,12 +20,17 @@ import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
  * Route de la gestion des utilisateurs
  */
 export default class RouteUsers extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'Users' })
+    super(params)
+
+    this.model = params.models.Users
   }
 
   /**
@@ -326,22 +331,13 @@ export default class RouteUsers extends Route {
   })
   async getUserDatas (ctx) {
     const backups = await this.models.HRBackups.list(ctx.state.user.id)
-    for (let i = 0; i < backups.length; i++) {
-      const isJirs = backups[i].jirs
-      const force = true
-      backups[i].referentiels = await this.models.ContentieuxReferentiels.getReferentiels(isJirs, force)
-    }
-
-    const isJirs = backups.filter((backup) => backup.jirs).length > 0 ? true : false
     const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
     const fonctions = await this.models.HRFonctions.getAll()
-    const referentiel = await this.models.ContentieuxReferentiels.getReferentiels(isJirs)
 
     this.sendOk(ctx, {
       backups,
       categories,
       fonctions,
-      referentiel,
     })
   }
 }

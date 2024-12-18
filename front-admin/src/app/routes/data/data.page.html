@@ -4,12 +4,12 @@
     <h2>Importer toutes les activités</h2>
     <p>L'import doit contenir une liste de contentieux, stocks et nom de juridiction</p>
     <!-- <div class="form"> -->
-      <form #formAllActivities>
-        <div>
-          <label>Fichier à importer</label>
-          <input name="file" type="file" accept=".csv" />
-        </div>
-      </form>
+    <form #formAllActivities>
+      <div>
+        <label>Fichier à importer</label>
+        <input name="file" type="file" accept=".csv" />
+      </div>
+    </form>
     <!-- </div> -->
     <div class="action">
       <button (click)="onSendAllActivity(formAllActivities)">Envoyer</button>
@@ -47,7 +47,7 @@
         <label>Juridiction:</label>
         <select name="juridiction">
           <option *ngFor="let j of juridictionList" [value]="j.id">{{
-            j.label }}</option>
+            j.label }}</option>
         </select>
       </div>
       <div class="select-period">
@@ -69,7 +69,7 @@
         <label>Juridiction:</label>
         <select name="juridiction">
           <option *ngFor="let j of juridictionList" [value]="j.id">{{
-            j.label }}</option>
+            j.label }}</option>
         </select>
       </div>
       <div class="select-period">
@@ -87,7 +87,7 @@
 
   <div class="section" *ngIf="printDataImportIssues">
     <h2>Problèmes Import Data</h2>
-    <br/><br/>
+    <br /><br />
     <table>
       <thead>
         <tr>
@@ -104,7 +104,7 @@
         <tr *ngFor="let elem of dataIssues">
           <td>{{ elem.hr_backup_label }}</td>
           <td>{{ elem.contentieux_label }}</td>
-          <td>{{ elem.last  }}</td>
+          <td>{{ elem.last }}</td>
           <td>{{ elem.lastPeriode }}</td>
           <td>{{ elem.new }}</td>
           <td>{{ elem.newPeriode }}</td>
@@ -113,7 +113,8 @@
       </tbody>
     </table>
     <div class="action">
-      <button (click)="sendAll ? onSendAllActivity(formAllActivities, true) : onSendActivity(formActivities, true) ">Importer</button>
+      <button
+        (click)="sendAll ? onSendAllActivity(formAllActivities, true) : onSendActivity(formActivities, true) ">Importer</button>
       <button (click)="onCancelDataImport()">Annuler</button>
     </div>
   </div>

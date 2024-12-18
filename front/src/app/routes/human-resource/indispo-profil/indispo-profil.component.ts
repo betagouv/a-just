@@ -1,21 +1,9 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-} from '@angular/core'
-import { FormGroup } from '@angular/forms'
-import { sumBy } from 'lodash'
-import { HRCategoryInterface } from 'src/app/interfaces/hr-category'
-import { HRFonctionInterface } from 'src/app/interfaces/hr-fonction'
-import { HumanResourceInterface } from 'src/app/interfaces/human-resource-interface'
-import { RHActivityInterface } from 'src/app/interfaces/rh-activity'
-import { MainClass } from 'src/app/libs/main-class'
-import { HumanResourceService } from 'src/app/services/human-resource/human-resource.service'
-import { today } from 'src/app/utils/dates'
-import { fixDecimal } from 'src/app/utils/numbers'
-import { etpLabel } from 'src/app/utils/referentiel'
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
+import { MainClass } from '../../../libs/main-class';
+import { RHActivityInterface } from '../../../interfaces/rh-activity';
+import { MatIconModule } from '@angular/material/icon';
 
 /**
  * Panneau de présentation d'une fiche
@@ -23,6 +11,8 @@ import { etpLabel } from 'src/app/utils/referentiel'
 
 @Component({
   selector: 'indispo-profil',
+  standalone: true,
+  imports: [CommonModule, HelpButtonComponent, MatIconModule],
   templateUrl: './indispo-profil.component.html',
   styleUrls: ['./indispo-profil.component.scss'],
 })
@@ -30,22 +20,21 @@ export class IndispoProfilComponent extends MainClass {
   /**
    * Liste des indispo courrante
    */
-  @Input() indisponibilities: RHActivityInterface[] = []
+  @Input() indisponibilities: RHActivityInterface[] = [];
   /**
    * Request to open help panel
    */
-  @Output() onOpenHelpPanel = new EventEmitter()
+  @Output() onOpenHelpPanel = new EventEmitter();
   /**
    * Event lors du choix d'ajouter une indispo
    */
-  @Output() addIndispiniblity = new EventEmitter()
+  @Output() addIndispiniblity = new EventEmitter();
 
   /**
    * Constructeur
-   * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService) {
-    super()
+  constructor() {
+    super();
   }
 
   /**
@@ -53,6 +42,6 @@ export class IndispoProfilComponent extends MainClass {
    * @param type
    */
   openHelpPanel(type: string | undefined = undefined) {
-    this.onOpenHelpPanel.emit(type)
+    this.onOpenHelpPanel.emit(type);
   }
 }

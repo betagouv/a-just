@@ -5,6 +5,7 @@
   position: relative;
   height: 62px;
   width: 41px;
+  z-index: 0;
 
   &.dark-mode>div.white-background {
     visibility: visible;
@@ -18,6 +19,7 @@
 
   .ddg {
     opacity: 1 !important;
+    z-index: 1;
     transform: rotate(-45deg);
     position: absolute;
     left: -16px;

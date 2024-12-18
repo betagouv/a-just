@@ -274,7 +274,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.cleanActivities = async (HRBackupId, minPeriode, force = false) => {
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupId)
     //await Model.removeDuplicateDatas(HRBackupId) // TROUVER POURQUOI !
 
     console.log('MIN PERIODE', HRBackupId, minPeriode)
@@ -380,7 +380,7 @@ export default (sequelizeInstance, Model) => {
       else await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
     }
 
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId)
     const ref = referentiels.find((r) => (r.childrens || []).find((c) => c.id === contentieuxId))
 
     if (ref) {
@@ -396,7 +396,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.updateTotalAndFuturValue = async (mainContentieuxId, date, hrBackupId) => {
     date = new Date(date) // detach date reference
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId)
     const ref = referentiels.find((r) => r.id === mainContentieuxId)
 
     if (ref) {
@@ -656,6 +656,7 @@ export default (sequelizeInstance, Model) => {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
         },
+        nbComments: await Model.models.Comments.getNbConId(list[i]['ContentieuxReferentiel.id']),
         updatedBy: details
           ? {
             entrees: await Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(list[i].id, 'entrees'),
@@ -790,8 +791,8 @@ export default (sequelizeInstance, Model) => {
     dateStart = new Date(dateStart)
     dateEnd = new Date(dateEnd)
 
-    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels()) || []
-    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels()) || [])
+    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupId)) || []
+    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupId)) || [])
       .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
       .map((c) => {
         const childrens = (c.childrens || [])
@@ -1011,8 +1012,8 @@ export default (sequelizeInstance, Model) => {
         raw: true,
         logging: false,
       }).then(async (result) => {
-        const percentageThreshold = 25
-        const absoluteThreshold = 50
+        const percentageThreshold = 10 //25
+        const absoluteThreshold = 100 //50
         const newData = {
           in: to_create[i].original_entrees,
           out: to_create[i].original_sorties,
@@ -1144,8 +1145,8 @@ export default (sequelizeInstance, Model) => {
         raw: true,
         logging: false,
       }).then(async (result) => {
-        const percentageThreshold = 25
-        const absoluteThreshold = 50
+        const percentageThreshold = 10//25
+        const absoluteThreshold = 100 //50
         const newData = {
           in: to_create[i].original_entrees,
           out: to_create[i].original_sorties,
@@ -1178,6 +1179,65 @@ export default (sequelizeInstance, Model) => {
     console.timeEnd('step2')
     return { to_warn }
   }
+
+  Model.syncAllActivitiesByContentieux = async (contentieuxId) => {
+    /*const listAllMainContentieux = await Model.findAll({
+      where: {
+        nac_id: {
+          [Op.gt]: 0,
+        },
+        nac_id: contentieuxId,
+      },
+    });
+
+    const refElements = {}
+    for (let i = 0; i < listAllMainContentieux.length; i++) {
+      // get juridiction id
+      const juridiction = await Model.models.HumanResources.findOne({
+        attributes: ["id", "backup_id"],
+        include: [
+          {
+            attributes: [],
+            model: Model.models.HRSituations,
+            include: [
+              {
+                attributes: ['id'],
+                model: Model.models.HRActivities,
+                where: {
+                  id: listAllMainContentieux[i].dataValues.id,
+                },
+              },
+            ],
+          },
+        ],
+        raw: true,
+      });
+    
+      if(juridiction && juridiction.backup_id) {
+        const juridictionId = juridiction.backup_id
+        if(!refElements[juridictionId]) {
+          refElements[juridictionId] = await Model.models.ContentieuxReferentiels.getReferentiels(juridictionId)
+        }
+
+        const referentiel = refElements[juridictionId]
+        const findRef = referentiel.find(r => r.id === contentieuxId)
+        if(findRef && findRef.childrens.length) {
+          const refIds = findRef.childrens.map(c => c.id)
+
+          const sum = await Model.sum('percent', {
+            where: {
+              hr_situation_id: listAllMainContentieux[i].dataValues.hr_situation_id,
+              nac_id: refIds
+            }
+          })
+
+          listAllMainContentieux[i].update({
+            percent: sum || 0
+          })
+        }
+      }
+    }*/
+  };
 
   return Model
 }

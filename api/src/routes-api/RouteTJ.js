@@ -5,12 +5,17 @@ import { Types } from '../utils/types'
  * Route des juridictions
  */
 export default class RouteJuridictions extends Route {
+  // model de BDD
+  model
+
   /**
    * Constructeur
    * @param {*} params
    */
   constructor (params) {
-    super({ ...params, model: 'TJ' })
+    super(params)
+
+    this.model = params.models.TJ
   }
 
   /**
@@ -30,6 +35,17 @@ export default class RouteJuridictions extends Route {
   })
   async getAll (ctx) {
     const list = await this.model.getAll()
+    this.sendOk(ctx, list)
+  }
+
+  /**
+   * Interface qui retourne toutes les HR Backups
+   */
+  @Route.Get({
+    accesses: [Access.isAdmin],
+  })
+  async getAllBackup (ctx) {
+    const list = await this.model.models.HRBackups.getAll()
     this.sendOk(ctx, list)
   }
 

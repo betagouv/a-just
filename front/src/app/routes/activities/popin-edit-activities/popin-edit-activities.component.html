@@ -1,5 +1,5 @@
 <aj-popup class="medium no-padding-content no-title border-radius"
-  [ngClass]="{'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4, 'margin-left': this.wrapper?.panelHelper }">
+  [ngClass]="{'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4, 'margin-left': wrapper?.panelHelper || showComments }">
   <div id="header-popin">
     <div class="left-section">
       <div class="title-popin">
@@ -9,6 +9,11 @@
           <i *ngIf="referentiel && referentiel.helpUrl" class="ri-lightbulb-flash-line cursor-pointer blue"
             (click)="onShowHelpPanel({url: referentiel.helpUrl})"></i>
         </div>
+      </div>
+      <div class="switch-comments">
+        <p>Afficher les commentaires</p>
+        <aj-radio-button bgColor="#000091" [switchColor]="showComments ? 'white' : '#000091'" [value]="showComments"
+          (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
       </div>
       <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
         (valueChange)="selectMonth($event)">
@@ -295,3 +300,7 @@
     #light [id]="'tooltip-icon-' + contentieux.id +'-' + type "
     (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"></i>
 </ng-template>
+
+<aj-comment-activities *ngIf="showComments && referentiel" class="animate__animated animate__bounceInLeft"
+  [type]="'activities_'+referentiel.id" [referentiel]="referentiel"
+  (close)="showComments = false"></aj-comment-activities>

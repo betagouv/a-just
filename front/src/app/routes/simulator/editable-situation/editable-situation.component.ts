@@ -1,38 +1,52 @@
+import { Component, inject, Input, OnChanges } from '@angular/core';
 import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-} from '@angular/core'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
-import { map, pairwise, startWith } from 'rxjs'
-import { basicEtptData } from 'src/app/constants/etpt-calculation'
-import { SimulatorInterface } from 'src/app/interfaces/simulator'
-import { MainClass } from 'src/app/libs/main-class'
-import { SimulatorService } from 'src/app/services/simulator/simulator.service'
-import { decimalToStringDate, stringToDecimalDate } from 'src/app/utils/dates'
-import { fixDecimal } from 'src/app/utils/numbers'
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { map, pairwise, startWith } from 'rxjs';
+import { MainClass } from '../../../libs/main-class';
+import { TooltipsComponent } from '../../../components/tooltips/tooltips.component';
+import { CommonModule } from '@angular/common';
+import { SimulatorService } from '../../../services/simulator/simulator.service';
+import { fixDecimal } from '../../../utils/numbers';
+import { basicEtptData } from '../../../constants/etpt-calculation';
+import { decimalToStringDate } from '../../../utils/dates';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TimeSelectorComponent } from '../../../components/time-selector/time-selector.component';
 
-const etpMagFactor = (208 / 12) * 8
-const etpGreffeFactor = (229.57 / 12) * 7
+const etpMagFactor = (208 / 12) * 8;
+const etpGreffeFactor = (229.57 / 12) * 7;
 
 @Component({
   selector: 'aj-editable-situation',
+  standalone: true,
+  imports: [
+    TooltipsComponent,
+    FormsModule,
+    CommonModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+    TimeSelectorComponent,
+  ],
   templateUrl: './editable-situation.component.html',
   styleUrls: ['./editable-situation.component.scss'],
 })
 export class EditableSituationComponent extends MainClass implements OnChanges {
+  simulatorService = inject(SimulatorService);
+
   /**
    * Number of day to simulate
    */
-  nbOfDays: number = 0
+  nbOfDays: number = 0;
 
-  @Input() endDateToDisplay: string = ''
+  @Input() endDateToDisplay: string = '';
 
   @Input()
   set category(value: string | null) {
-    this._category = value
+    this._category = value;
     /**
     if (this._category === 'MAGISTRAT') {
       this.formWhiteSim.controls['etpMag'].enable()
@@ -45,14 +59,14 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     */
   }
   get category(): string | null {
-    return this._category
+    return this._category;
   }
-  private _category: string | null = null
+  private _category: string | null = null;
 
   /**
    * RegEx
    */
-  numberRegex = '^[0-9]*$'
+  numberRegex = '^[0-9]*$';
   /**
    * Formulaire de saisie
    */
@@ -94,7 +108,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       //Validators.required,
       //Validators.pattern(this.numberRegex),
     ]),
-  })
+  });
 
   endSituation = {
     totalIn: 0,
@@ -106,66 +120,66 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     realCoverage: 0,
     realDTESInMonths: 0,
     magRealTimePerCase: 0,
-  }
+  };
 
   endSituationDisplay = {
     realCoverage: '',
     realDTESInMonths: '',
     magRealTimePerCase: '',
-  }
+  };
   /**
    * Expression reguliaire number positiv only
    */
-  regex = '/^d+$/'
+  regex = '/^d+$/';
   /**
    * Objet regex
    */
-  regexObj = new RegExp('^[0-9]+$')
+  regexObj = new RegExp('^[0-9]+$');
   /**
    * Bool to check if beginning situation is validated
    */
-  isValidatedWhiteSimu: boolean = false
+  isValidatedWhiteSimu: boolean = false;
   /**
    * Afficher la situation de fin
    */
-  displayEndSituation: boolean = false
+  displayEndSituation: boolean = false;
 
-  lockedParams = new Array()
+  lockedParams = new Array();
 
-  pressedKey = false
+  pressedKey = false;
 
-  disabledTmd = false
+  disabledTmd = false;
 
-  defaultTmd = -1
+  defaultTmd = -1;
 
   /**
    * Constructor
    */
-  constructor(private simulatorService: SimulatorService) {
-    super()
+  constructor() {
+    super();
     this.formWhiteSim.valueChanges
       .pipe(startWith(this.formWhiteSim.value), pairwise())
       .subscribe(async (val) => {
-        await this.changeInRealTime(val)
-      })
+        await this.changeInRealTime(val);
+      });
     this.watch(
       this.simulatorService.whiteSimulatorNbOfDays.subscribe((nbDays) => {
-        this.nbOfDays = nbDays
+        this.nbOfDays = nbDays;
       })
-    )
+    );
   }
 
   async changeInRealTime(val: any) {
     if (this.pressedKey === true) {
-      this.pressedKey = false
-      let { actualSituation, input } = this.getUpdatedFormValue(val)
+      this.pressedKey = false;
+      let { actualSituation, input } = this.getUpdatedFormValue(val);
       if (input.value === -1 && this.checkIfEmptyCounter() !== 1) {
-        this.initFields()
-        return
+        this.initFields();
+        return;
       }
       const etpFactor =
-        this._category === 'MAGISTRAT' ? etpMagFactor : etpGreffeFactor
-      let eq = { field: '', value: -1 }
+        this._category === 'MAGISTRAT' ? etpMagFactor : etpGreffeFactor;
+      let eq = { field: '', value: -1 };
       if (input.field !== undefined) {
         switch (input.field) {
           case 'totalIn': {
@@ -178,7 +192,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   (actualSituation['totalOut'] / actualSituation['totalIn']) *
                   100,
-              }
+              };
             else if (
               this.lockedParams.includes('totalOut') &&
               actualSituation['realCoverage'] !== ''
@@ -188,25 +202,25 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   actualSituation['totalIn'] *
                   (actualSituation['realCoverage'] / 100),
-              }
+              };
             else if (actualSituation['totalOut'] !== '') {
               eq = {
                 field: 'realCoverage',
                 value:
                   (actualSituation['totalOut'] / actualSituation['totalIn']) *
                   100,
-              }
-              this.lockedParams.push('realCoverage')
+              };
+              this.lockedParams.push('realCoverage');
             } else if (actualSituation['realCoverage'] !== '') {
               eq = {
                 field: 'totalOut',
                 value:
                   actualSituation['totalIn'] *
                   (actualSituation['realCoverage'] / 100),
-              }
-              this.lockedParams.push('totalOut')
+              };
+              this.lockedParams.push('totalOut');
             }
-            break
+            break;
           }
           case 'totalOut': {
             if (
@@ -220,11 +234,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   (actualSituation['totalOut'] / actualSituation['totalIn']) *
                   100,
-              }
+              };
               actualSituation['realCoverage'] === ''
                 ? this.lockedParams.push('realCoverage')
-                : null
-              this.disableElement(eq)
+                : null;
+              this.disableElement(eq);
             }
             if (
               actualSituation['lastStock'] !== '' &&
@@ -236,11 +250,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 field: 'realDTESInMonths',
                 value:
                   actualSituation['totalOut'] / actualSituation['lastStock'],
-              }
+              };
               actualSituation['realDTESInMonths'] === ''
                 ? this.lockedParams.push('realDTESInMonths')
-                : null
-              this.disableElement(eq)
+                : null;
+              this.disableElement(eq);
             }
             if (
               actualSituation['etpMag'] !== '' &&
@@ -253,11 +267,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['totalOut'],
-              }
+              };
               actualSituation['magRealTimePerCase'] === ''
                 ? this.lockedParams.push('magRealTimePerCase')
-                : null
-              this.disableElement(eq)
+                : null;
+              this.disableElement(eq);
             }
             if (
               actualSituation['realCoverage'] !== '' &&
@@ -271,11 +285,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   actualSituation['totalOut'] /
                   actualSituation['realCoverage'] /
                   100,
-              }
+              };
               actualSituation['totalIn'] === ''
                 ? this.lockedParams.push('totalIn')
-                : null
-              this.disableElement(eq)
+                : null;
+              this.disableElement(eq);
             }
             if (
               actualSituation['realDTESInMonths'] !== '' &&
@@ -288,11 +302,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   actualSituation['realDTESInMonths'] *
                   actualSituation['totalOut'],
-              }
+              };
               actualSituation['lastStock'] === ''
                 ? this.lockedParams.push('lastStock')
-                : null
-              this.disableElement(eq)
+                : null;
+              this.disableElement(eq);
             }
             if (
               actualSituation['magRealTimePerCase'] !== '' &&
@@ -306,13 +320,13 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   (actualSituation['magRealTimePerCase'] *
                     actualSituation['totalOut']) /
                   (17.333 * 8),
-              }
+              };
               actualSituation['etpMag'] === ''
                 ? this.lockedParams.push('etpMag')
-                : null
-              this.disableElement(eq)
+                : null;
+              this.disableElement(eq);
             }
-            break
+            break;
           }
           case 'lastStock': {
             if (
@@ -323,7 +337,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 field: 'realDTESInMonths',
                 value:
                   actualSituation['lastStock'] / actualSituation['totalOut'],
-              }
+              };
             else if (
               this.lockedParams.includes('totalOut') &&
               actualSituation['realDTESInMonths'] !== ''
@@ -333,24 +347,24 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   actualSituation['lastStock'] /
                   actualSituation['realDTESInMonths'],
-              }
+              };
             else if (actualSituation['totalOut'] !== '') {
               eq = {
                 field: 'realDTESInMonths',
                 value:
                   actualSituation['lastStock'] / actualSituation['totalOut'],
-              }
-              this.lockedParams.push('realDTESInMonths')
+              };
+              this.lockedParams.push('realDTESInMonths');
             } else if (actualSituation['realDTESInMonths'] !== '') {
               eq = {
                 field: 'totalOut',
                 value:
                   actualSituation['lastStock'] /
                   actualSituation['realDTESInMonths'],
-              }
-              this.lockedParams.push('totalOut')
+              };
+              this.lockedParams.push('totalOut');
             }
-            break
+            break;
           }
           case 'etpMag': {
             if (
@@ -362,7 +376,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['totalOut'],
-              }
+              };
             if (
               this.lockedParams.includes('totalOut') &&
               actualSituation['magRealTimePerCase'] !== ''
@@ -372,25 +386,25 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['magRealTimePerCase'],
-              }
+              };
             else if (actualSituation['totalOut'] !== '') {
               eq = {
                 field: 'magRealTimePerCase',
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['totalOut'],
-              }
-              this.lockedParams.push('magRealTimePerCase')
+              };
+              this.lockedParams.push('magRealTimePerCase');
             } else if (actualSituation['magRealTimePerCase'] !== '') {
               eq = {
                 field: 'totalOut',
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['magRealTimePerCase'],
-              }
-              this.lockedParams.push('totalOut')
+              };
+              this.lockedParams.push('totalOut');
             }
-            break
+            break;
           }
           case 'realCoverage': {
             if (
@@ -402,7 +416,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   actualSituation['totalOut'] /
                   (actualSituation['realCoverage'] / 100),
-              }
+              };
             else if (
               this.lockedParams.includes('totalOut') &&
               actualSituation['totalIn'] !== ''
@@ -413,7 +427,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   (Number(actualSituation['totalIn']) *
                     Number(actualSituation['realCoverage'])) /
                   100,
-              }
+              };
             else if (actualSituation['totalOut'] !== '') {
               eq = {
                 field: 'totalIn',
@@ -421,18 +435,18 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   actualSituation['totalOut'] /
                   actualSituation['realCoverage'] /
                   100,
-              }
-              this.lockedParams.push('totalIn')
+              };
+              this.lockedParams.push('totalIn');
             } else if (actualSituation['totalIn'] !== '') {
               eq = {
                 field: 'totalOut',
                 value:
                   actualSituation['totalIn'] *
                   (actualSituation['realCoverage'] / 100),
-              }
-              this.lockedParams.push('totalOut')
+              };
+              this.lockedParams.push('totalOut');
             }
-            break
+            break;
           }
           case 'realDTESInMonths': {
             if (
@@ -444,7 +458,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   actualSituation['realDTESInMonths'] *
                   actualSituation['totalOut'],
-              }
+              };
             if (
               this.lockedParams.includes('totalOut') &&
               actualSituation['lastStock'] !== ''
@@ -454,25 +468,25 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   actualSituation['lastStock'] /
                   actualSituation['realDTESInMonths'],
-              }
+              };
             else if (actualSituation['totalOut'] !== '') {
               eq = {
                 field: 'lastStock',
                 value:
                   actualSituation['realDTESInMonths'] *
                   actualSituation['totalOut'],
-              }
-              this.lockedParams.push('lastStock')
+              };
+              this.lockedParams.push('lastStock');
             } else if (actualSituation['lastStock'] !== '') {
               eq = {
                 field: 'totalOut',
                 value:
                   actualSituation['lastStock'] /
                   actualSituation['realDTESInMonths'],
-              }
-              this.lockedParams.push('totalOut')
+              };
+              this.lockedParams.push('totalOut');
             }
-            break
+            break;
           }
           case 'magRealTimePerCase': {
             if (
@@ -485,7 +499,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   (actualSituation['magRealTimePerCase'] *
                     actualSituation['totalOut']) /
                   etpFactor,
-              }
+              };
             else if (
               this.lockedParams.includes('totalOut') &&
               actualSituation['etpMag'] !== ''
@@ -495,7 +509,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['magRealTimePerCase'],
-              }
+              };
             else if (actualSituation['totalOut'] !== '') {
               eq = {
                 field: 'etpMag',
@@ -503,24 +517,27 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   (actualSituation['magRealTimePerCase'] *
                     actualSituation['totalOut']) /
                   etpFactor,
-              }
-              this.lockedParams.push('etpMag')
+              };
+              this.lockedParams.push('etpMag');
             } else if (actualSituation['etpMag'] !== '') {
               eq = {
                 field: 'totalOut',
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['magRealTimePerCase'],
-              }
-              this.lockedParams.push('totalOut')
+              };
+              this.lockedParams.push('totalOut');
             }
-            break
+            break;
           }
         }
 
         if (eq.field && !isNaN(eq.value)) {
-          actualSituation = { ...actualSituation, [eq.field]: String(eq.value) }
-          this.disableElement(eq)
+          actualSituation = {
+            ...actualSituation,
+            [eq.field]: String(eq.value),
+          };
+          this.disableElement(eq);
           if (eq.field === 'totalOut') {
             Object.keys(this.formWhiteSim.controls).forEach((key) => {
               switch (key) {
@@ -538,11 +555,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                         (actualSituation['totalOut'] /
                           actualSituation['totalIn']) *
                         100,
-                    }
+                    };
                     actualSituation['realCoverage'] === ''
                       ? this.lockedParams.push('realCoverage')
-                      : null
-                    this.disableElement(eq)
+                      : null;
+                    this.disableElement(eq);
                   }
                   if (
                     actualSituation['lastStock'] !== '' &&
@@ -556,11 +573,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                       value:
                         actualSituation['lastStock'] /
                         actualSituation['totalOut'],
-                    }
+                    };
                     actualSituation['realDTESInMonths'] === ''
                       ? this.lockedParams.push('realDTESInMonths')
-                      : null
-                    this.disableElement(eq)
+                      : null;
+                    this.disableElement(eq);
                   }
                   if (
                     actualSituation['etpMag'] !== '' &&
@@ -574,11 +591,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                       value:
                         (etpFactor * actualSituation['etpMag']) /
                         actualSituation['totalOut'],
-                    }
+                    };
                     actualSituation['magRealTimePerCase'] === ''
                       ? this.lockedParams.push('magRealTimePerCase')
-                      : null
-                    this.disableElement(eq)
+                      : null;
+                    this.disableElement(eq);
                   }
                   if (
                     actualSituation['realCoverage'] !== '' &&
@@ -593,11 +610,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                         actualSituation['totalOut'] /
                         actualSituation['realCoverage'] /
                         100,
-                    }
+                    };
                     actualSituation['totalIn'] === ''
                       ? this.lockedParams.push('totalIn')
-                      : null
-                    this.disableElement(eq)
+                      : null;
+                    this.disableElement(eq);
                   }
                   if (
                     actualSituation['realDTESInMonths'] !== '' &&
@@ -611,11 +628,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                       value:
                         actualSituation['realDTESInMonths'] *
                         actualSituation['totalOut'],
-                    }
+                    };
                     actualSituation['lastStock'] === ''
                       ? this.lockedParams.push('lastStock')
-                      : null
-                    this.disableElement(eq)
+                      : null;
+                    this.disableElement(eq);
                   }
                   if (
                     actualSituation['magRealTimePerCase'] !== '' &&
@@ -630,15 +647,15 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                         (actualSituation['magRealTimePerCase'] *
                           actualSituation['totalOut']) /
                         (17.333 * 8),
-                    }
+                    };
                     actualSituation['etpMag'] === ''
                       ? this.lockedParams.push('etpMag')
-                      : null
-                    this.disableElement(eq)
+                      : null;
+                    this.disableElement(eq);
                   }
                 }
               }
-            })
+            });
           }
         }
       }
@@ -653,43 +670,43 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   getFiniteValue(val: string) {
     switch (val) {
       case 'realCoverage': {
-        if (this.formWhiteSim.controls[val].value?.includes('%')) return false
-        return !isFinite(Number(this.formWhiteSim.controls[val].value))
+        if (this.formWhiteSim.controls[val].value?.includes('%')) return false;
+        return !isFinite(Number(this.formWhiteSim.controls[val].value));
       }
       case 'realDTESInMonths':
-        return !isFinite(Number(this.formWhiteSim.controls[val].value))
+        return !isFinite(Number(this.formWhiteSim.controls[val].value));
       case 'magRealTimePerCase':
-        return !isFinite(Number(this.formWhiteSim.controls[val].value))
+        return !isFinite(Number(this.formWhiteSim.controls[val].value));
     }
-    return true
+    return true;
   }
 
   initFields() {
     Object.keys(this.formWhiteSim.controls).forEach((key) => {
-      this.formWhiteSim.patchValue({ [key]: '' })
+      this.formWhiteSim.patchValue({ [key]: '' });
       if (this.lockedParams.includes(key)) {
         const element = document.querySelector(
           "input[formControlName='" + key + "']"
-        )
+        );
         if (element?.classList.contains('grey-bg-disabled'))
-          element?.classList.remove('grey-bg-disabled')
-        element?.removeAttribute('disabled')
-        this.disabledTmd = false
+          element?.classList.remove('grey-bg-disabled');
+        element?.removeAttribute('disabled');
+        this.disabledTmd = false;
       }
-    })
-    this.defaultTmd = -1
-    this.lockedParams = new Array()
+    });
+    this.defaultTmd = -1;
+    this.lockedParams = new Array();
   }
   disableElement(eq: any) {
-    this.formWhiteSim.patchValue({ [eq.field]: String(eq.value) })
+    this.formWhiteSim.patchValue({ [eq.field]: String(eq.value) });
     if (this.lockedParams.includes(eq.field)) {
       const element = document.querySelector(
         "input[formControlName='" + eq.field + "']"
-      )
-      element?.classList.add('grey-bg-disabled')
-      element?.setAttribute('disabled', 'disabled')
+      );
+      element?.classList.add('grey-bg-disabled');
+      element?.setAttribute('disabled', 'disabled');
       if (this.lockedParams.includes('magRealTimePerCase')) {
-        this.disabledTmd = true
+        this.disabledTmd = true;
       }
     }
   }
@@ -703,7 +720,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   equation1() {  } */
 
   ngOnChanges(changes: any) {
-    if (this.isValidatedWhiteSimu) this.generateEndSituation()
+    if (this.isValidatedWhiteSimu) this.generateEndSituation();
   }
   /**
    * Validate beginning situation for white simulator
@@ -719,17 +736,19 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       realCoverage,
       realDTESInMonths,
       magRealTimePerCase,
-    } = this.formWhiteSim.value
+    } = this.formWhiteSim.value;
 
     if (
       ![totalIn, totalOut, lastStock].includes('') &&
       ![totalIn, totalOut].includes('0') &&
       (etpMag !== '' || etpFon !== '')
     ) {
-      this.generateEndSituation()
-      this.isValidatedWhiteSimu = true
-      this.displayEndSituation = true
-      this.simulatorService.isValidatedWhiteSimu.next(this.isValidatedWhiteSimu)
+      this.generateEndSituation();
+      this.isValidatedWhiteSimu = true;
+      this.displayEndSituation = true;
+      this.simulatorService.isValidatedWhiteSimu.next(
+        this.isValidatedWhiteSimu
+      );
     }
   }
   /**
@@ -738,77 +757,94 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
    * @returns
    */
   getUpdatedFormValue(value: any) {
-    const oldValues = value[0] as { [key: string]: any }
-    const newValues = value[1] as { [key: string]: any }
+    const oldValues = value[0] as { [key: string]: any };
+    const newValues = value[1] as { [key: string]: any };
     const keyChanged = Object.keys(value[0]).filter(
       (key) => oldValues[key] !== newValues[key]
-    )[0]
+    )[0];
+
+    Object.keys(newValues).map((key) => {
+      newValues[key] = newValues[key].replaceAll(',', '.');
+    });
+
     return {
       actualSituation: newValues,
       input: {
         field: keyChanged,
         value:
-          newValues[keyChanged] === '' ? -1 : Number(newValues[keyChanged]),
+          newValues[keyChanged] === ''
+            ? -1
+            : Number(newValues[keyChanged].replaceAll(',', '.')),
       },
-    }
+    };
   }
 
   editWhiteSimulator() {
-    this.isValidatedWhiteSimu = false
-    this.displayEndSituation = false
-    this.simulatorService.isValidatedWhiteSimu.next(false)
-    const coverage = this.formWhiteSim.controls['realCoverage'].value
+    this.isValidatedWhiteSimu = false;
+    this.displayEndSituation = false;
+    this.simulatorService.isValidatedWhiteSimu.next(false);
+    const coverage = this.formWhiteSim.controls['realCoverage'].value;
     if (coverage?.includes('%'))
       this.formWhiteSim.controls['realCoverage'].setValue(
         coverage.replace('%', '')
-      )
+      );
   }
   generateEndSituation() {
-    let newStock = Math.floor(
-      Number(this.formWhiteSim.controls['lastStock'].value) +
-        (this.nbOfDays / (365 / 12)) *
-          Number(this.formWhiteSim.controls['totalIn'].value) -
-        (this.nbOfDays / (365 / 12)) *
-          Number(this.formWhiteSim.controls['totalOut'].value)
-    )
-    newStock = newStock < 0 ? 0 : newStock
+    this.replaceSeparator();
 
-    const startTotalIn = Number(this.formWhiteSim.controls['totalIn'].value)
-    const startTotalOut = Number(this.formWhiteSim.controls['totalOut'].value)
-    const startLastStock = Number(this.formWhiteSim.controls['lastStock'].value)
+    const startTotalIn = fixDecimal(
+      Number(this.formWhiteSim.controls['totalIn'].value)
+    );
+    this.formWhiteSim.controls['totalIn'].setValue(startTotalIn + '');
+
+    const startTotalOut = fixDecimal(
+      Number(this.formWhiteSim.controls['totalOut'].value)
+    );
+    this.formWhiteSim.controls['totalOut'].setValue(startTotalOut + '');
+
+    const startLastStock = Math.floor(
+      Number(this.formWhiteSim.controls['lastStock'].value)
+    );
+    this.formWhiteSim.controls['lastStock'].setValue(startLastStock + '');
+
     const startetpMag = fixDecimal(
       Number(this.formWhiteSim.controls['etpMag'].value)
-    )
+    );
     const startetpFon = fixDecimal(
       Number(this.formWhiteSim.controls['etpMag'].value)
-    )
-    const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value)
+    );
+    const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value);
 
-    const coverage = Math.round((startTotalOut / startTotalIn) * 100)
-    this.formWhiteSim.controls['realCoverage'].setValue(String(coverage) + '%')
+    let coverage = Number(this.formWhiteSim.controls['realCoverage'].value);
+    if (this.lockedParams.includes('realCoverage')) {
+      coverage = Math.round((startTotalOut / startTotalIn) * 100);
+    }
+    this.formWhiteSim.controls['realCoverage'].setValue(String(coverage) + '%');
 
-    const dtes = fixDecimal(startLastStock / startTotalOut)
-    this.formWhiteSim.controls['realDTESInMonths'].setValue(String(dtes))
+    const dtes = fixDecimal(startLastStock / startTotalOut);
+    this.formWhiteSim.controls['realDTESInMonths'].setValue(String(dtes));
 
-    this.formWhiteSim.controls['etpMag'].setValue(String(startetpMag))
+    this.formWhiteSim.controls['etpMag'].setValue(
+      String(startetpMag).replaceAll('.', ',')
+    );
     const prefix1 =
       this.category === 'MAGISTRAT'
         ? 'nbDaysByMagistrat'
-        : 'nbDaysByFonctionnaire'
+        : 'nbDaysByFonctionnaire';
     const prefix2 =
       this.category === 'MAGISTRAT'
         ? 'nbHoursPerDayAndMagistrat'
-        : 'nbHoursPerDayAndFonctionnaire'
-    const etpToUse = this.category === 'MAGISTRAT' ? startetpMag : startetpFon
+        : 'nbHoursPerDayAndFonctionnaire';
+    const etpToUse = this.category === 'MAGISTRAT' ? startetpMag : startetpFon;
 
     let realTime = fixDecimal(
       (basicEtptData[prefix1] * basicEtptData[prefix2] * etpToUse) /
         (startTotalOut * 12),
       100
-    )
+    );
     const tmd =
       Math.trunc(realTime) +
-      Math.round((realTime - Math.trunc(realTime)) * 60) / 60
+      Math.round((realTime - Math.trunc(realTime)) * 60) / 60;
 
     this.simulatorService.situationActuelle.next({
       totalIn: startTotalIn,
@@ -831,13 +867,13 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         { name: 'Greffe', totalEtp: 0, rank: 2 },
         { name: 'Autour du magistrat', totalEtp: 0, rank: 3 },
       ],
-    })
+    });
 
     const endStock = Math.floor(
       startLastStock +
         (this.nbOfDays / (365 / 12)) * startTotalIn -
         (this.nbOfDays / (365 / 12)) * startTotalOut
-    )
+    );
 
     this.endSituation = {
       totalIn: startTotalIn,
@@ -849,10 +885,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       realCoverage: coverage,
       realDTESInMonths: fixDecimal(endStock / startTotalOut),
       magRealTimePerCase: tmd,
-    }
-    this.endSituationDisplay.realCoverage = fixDecimal(coverage) + '%'
+    };
+    this.endSituationDisplay.realCoverage = fixDecimal(coverage) + '%';
     this.endSituationDisplay.realDTESInMonths =
-      fixDecimal(endStock / startTotalOut) + '' //+ ' mois'
+      fixDecimal(endStock / startTotalOut) + ''; //+ ' mois'
     //this.endSituationDisplay.magRealTimePerCase = String(tmd) //decimalToStringDate(tmd, ':')
 
     this.simulatorService.situationProjected.next({
@@ -865,75 +901,108 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       magCalculateTimePerCase: null,
       nbMonth: 0,
       etpAffected: null,
-    })
+    });
   }
 
+  replaceSeparator() {
+    this.formWhiteSim.controls['lastStock'].setValue(
+      this.formWhiteSim.controls['lastStock'].value?.replaceAll(',', '.') || ''
+    );
+    this.formWhiteSim.controls['realCoverage'].setValue(
+      this.formWhiteSim.controls['realCoverage'].value?.replaceAll(',', '.') ||
+        ''
+    );
+    this.formWhiteSim.controls['totalIn'].setValue(
+      this.formWhiteSim.controls['totalIn'].value?.replaceAll(',', '.') || ''
+    );
+    this.formWhiteSim.controls['totalOut'].setValue(
+      this.formWhiteSim.controls['totalOut'].value?.replaceAll(',', '.') || ''
+    );
+    this.formWhiteSim.controls['etpMag'].setValue(
+      this.formWhiteSim.controls['etpMag'].value?.replaceAll(',', '.') || ''
+    );
+    this.formWhiteSim.controls['etpFon'].setValue(
+      this.formWhiteSim.controls['etpFon'].value?.replaceAll(',', '.') || ''
+    );
+    this.formWhiteSim.controls['realDTESInMonths'].setValue(
+      this.formWhiteSim.controls['realDTESInMonths'].value?.replaceAll(
+        ',',
+        '.'
+      ) || ''
+    );
+    this.formWhiteSim.controls['magRealTimePerCase'].setValue(
+      this.formWhiteSim.controls['magRealTimePerCase'].value?.replaceAll(
+        ',',
+        '.'
+      ) || ''
+    );
+  }
   validateNo(e: any) {
-    const charCode = e.which ? e.which : e.keyCode
-    this.pressedKey = true
-    if (charCode === 46 || charCode === 44) return true
+    const charCode = e.which ? e.which : e.keyCode;
+    this.pressedKey = true;
+    if (charCode === 46 || charCode === 44) return true;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false
+      return false;
     }
-    return true
+    return true;
   }
 
   onDeletePressed(e: any) {
-    const charCode = e.which ? e.which : e.keyCode
+    const charCode = e.which ? e.which : e.keyCode;
     if (charCode === 46 || charCode === 8) {
-      this.pressedKey = true
+      this.pressedKey = true;
     }
   }
 
   getStartTmd() {
-    return Number(this.formWhiteSim.controls['magRealTimePerCase'].value)
+    return Number(this.formWhiteSim.controls['magRealTimePerCase'].value);
   }
 
   updateTimeValue(value: Number) {
     if (value !== 0) {
-      this.pressedKey = true
-      this.formWhiteSim.get('magRealTimePerCase')?.setValue(String(value))
-      this.endSituationDisplay.magRealTimePerCase = String(value)
+      this.pressedKey = true;
+      this.formWhiteSim.get('magRealTimePerCase')?.setValue(String(value));
+      this.endSituationDisplay.magRealTimePerCase = String(value);
     }
     if (this.lockedParams.includes('magRealTimePerCase')) {
-      const element = document.querySelector('#magRealTimePerCase')
-      element?.classList.add('grey-bg-disabled')
-      element?.setAttribute('disabled', 'disabled')
-      this.disabledTmd = true
-      this.defaultTmd = -1
+      const element = document.querySelector('#magRealTimePerCase');
+      element?.classList.add('grey-bg-disabled');
+      element?.setAttribute('disabled', 'disabled');
+      this.disabledTmd = true;
+      this.defaultTmd = -1;
     }
   }
 
   checkIfEmptyValue() {
-    let counter = 0
-    let infiniteValue = false
+    let counter = 0;
+    let infiniteValue = false;
 
     for (const field in this.formWhiteSim.controls) {
       // 'field' is a string
-      const control = this.formWhiteSim.get(field)?.value // 'control' is a FormControl
+      const control = this.formWhiteSim.get(field)?.value; // 'control' is a FormControl
       if (['totalIn', 'totalOut'].includes(field) && control === '0')
-        infiniteValue = true
-      if (control === '') counter++
+        infiniteValue = true;
+      if (control === '') counter++;
     }
-    if (infiniteValue) return true
-    return counter <= 2 ? false : true
+    if (infiniteValue) return true;
+    return counter <= 2 ? false : true;
   }
 
   checkIfEmptyCounter() {
-    let counter = 0
+    let counter = 0;
     for (const field in this.formWhiteSim.controls) {
       // 'field' is a string
-      const control = this.formWhiteSim.get(field)?.value // 'control' is a FormControl
-      if (control !== '') counter++
+      const control = this.formWhiteSim.get(field)?.value; // 'control' is a FormControl
+      if (control !== '') counter++;
     }
-    return counter
+    return counter;
   }
 
   getTooltipText() {
-    return 'Dès que vous aurez saisi suffisamment de données pour que la situation de départ puisse être projetée, vous pourrez la valider afin d’effectuer une simulation. Veuillez saisir des données complémentaires pour que toutes les autres puissent être calculées automatiquement. Vous ne pouvez pas saisir de valeur égale à 0 pour les entrées ou les sorties.'
+    return 'Dès que vous aurez saisi suffisamment de données pour que la situation de départ puisse être projetée, vous pourrez la valider afin d’effectuer une simulation. Veuillez saisir des données complémentaires pour que toutes les autres puissent être calculées automatiquement. Vous ne pouvez pas saisir de valeur égale à 0 pour les entrées ou les sorties.';
   }
 
   getTmd() {
-    return decimalToStringDate(this.getStartTmd(), ':')
+    return decimalToStringDate(this.getStartTmd(), ':');
   }
 }
