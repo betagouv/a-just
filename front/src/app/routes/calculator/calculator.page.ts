@@ -273,7 +273,7 @@ export class CalculatorPage
               introTooltip.style.visibility = 'visible';
               introTooltip.style.height = '450px';
             }
-          }, 600);
+          }, 1000);
         }
       },
     },
