@@ -16,6 +16,23 @@ module.exports = {
         rank: findFunctionChef.rank,
       });
     }
+
+    const findFunction2 = await models.HRFonctions.findOne({
+      where: {
+        label: "ATTACHÉ DE JUSTICE",
+      },
+    });
+    const findFunctionChef2 = await models.HRFonctions.findOne({
+      where: {
+        label: "ASSISTANT DE JUSTICE",
+      },
+      raw: true,
+    });
+    if (findFunction2 && findFunctionChef2) {
+      await findFunction2.update({
+        rank: findFunctionChef2.rank,
+      });
+    }
   },
   down: (/*queryInterface , Sequelize*/) => {},
 };
