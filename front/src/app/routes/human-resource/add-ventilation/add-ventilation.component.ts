@@ -287,10 +287,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.onStart();
     }
     if (changes['indisponibilities']) {
-      this.indisponibilitiesFiltered = this.isBiggerThanArray(
-        this.indisponibilities,
-        'dateStop'
-      );
+      this.indisponibilitiesFiltered = [
+        ...this.indisponibilities.filter((i) => i.id < 0),
+        ...this.isBiggerThanArray(
+          this.indisponibilities.filter((i) => i.id >= 0),
+          'dateStop'
+        ),
+      ];
     }
   }
 
