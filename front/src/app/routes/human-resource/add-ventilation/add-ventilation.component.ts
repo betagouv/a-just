@@ -201,6 +201,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   sumPercentImported = 0;
   /**
+   * Liste des indispo courrante
+   */
+  indisponibilitiesFiltered: RHActivityInterface[] = [];
+
+  /**
    * Constructeur
    * @param hrFonctionService
    * @param hrCategoryService
@@ -280,6 +285,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['lastDateStart'] && changes['lastDateStart'].firstChange) {
       this.onStart();
+    }
+    if (changes['indisponibilities']) {
+      this.indisponibilitiesFiltered = this.isBiggerThanArray(
+        this.indisponibilities,
+        'dateStop'
+      );
     }
   }
 
