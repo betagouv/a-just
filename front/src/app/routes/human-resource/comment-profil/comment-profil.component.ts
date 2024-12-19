@@ -5,6 +5,7 @@ import {
   Input,
   OnChanges,
   OnInit,
+  SimpleChanges,
 } from '@angular/core';
 import { TextEditorComponent } from '../../../components/text-editor/text-editor.component';
 import { PassedCommentComponent } from './passed-comment/passed-comment.component';
@@ -126,8 +127,10 @@ export class CommentProfilComponent
   /**
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
-  ngOnChanges() {
-    if (this.currentComment === '') this.onLoadComment();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['currentHR'].firstChange && this.currentComment === '') {
+      this.onLoadComment();
+    }
   }
 
   /**

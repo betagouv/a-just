@@ -428,7 +428,10 @@ export class MainClass {
    */
   public isBiggerThanArray(array: any[], node: string): any[] {
     return array.filter(
-      (a) => !a[node] || !isDateBiggerThan(today(), today(a[node]))
+      (a) =>
+        !a[node] ||
+        today().getTime() === today(a[node]).getTime() ||
+        !isDateBiggerThan(today(), today(a[node]))
     );
   }
 }

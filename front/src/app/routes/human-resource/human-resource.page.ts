@@ -837,23 +837,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
             }
           }
 
-          // Verification that unavailability is not added while the agent has no ventilations provided.
-          const totalActivities = this.currentHR?.situations.map(
-            (elem: any) => elem.activities.length
-          );
-          if (
-            (this.addDomVentilation &&
-              sumBy(this.addDomVentilation.updatedReferentiels, 'percent') !==
-                100) ||
-            (!this.addDomVentilation && !sum(totalActivities))
-          ) {
-            this.appService.alert.next({
-              title: 'Attention',
-              text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
-            });
-            //this.updateIndisponiblity = null
-            //return false;
-          }
           if (this.updateIndisponiblity) {
             // force id to int with selector
             this.updateIndisponiblity.contentieux.id =
