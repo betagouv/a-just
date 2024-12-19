@@ -39,7 +39,11 @@ import {
   IMPORT_ETP_TEMPLATE,
   IMPORT_ETP_TEMPLATE_CA,
 } from '../../../constants/documentation';
-import { today } from '../../../utils/dates';
+import {
+  findRealValueCustom,
+  isDateBiggerThan,
+  today,
+} from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
@@ -443,6 +447,24 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     if (!fonct) {
       alert('Vous devez saisir une fonction !');
+      return;
+    }
+
+    if (
+      fonct.minDateAvalaible &&
+      !isDateBiggerThan(
+        today(activitiesStartDate),
+        today(fonct.minDateAvalaible)
+      )
+    ) {
+      alert(
+        `Date de début de situation à corriger ! La fonction ${
+          fonct.label
+        } n’entre en vigueur qu’à compter du ${findRealValueCustom(
+          fonct.minDateAvalaible,
+          false
+        )}.`
+      );
       return;
     }
 
