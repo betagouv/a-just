@@ -334,7 +334,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Génération des situations artificielle ou non
    */
   formatHRHistory() {
-    if (this.fonctions.length === 0 || !this.currentHR) {
+    if (
+      this.fonctions.length === 0 ||
+      !this.currentHR ||
+      this.onEditIndex !== null
+    ) {
       return;
     }
 
@@ -657,6 +661,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         top: 0,
       });
     }
+
+    this.formatHRHistory();
   }
 
   /**
@@ -699,7 +705,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   async onEditIndisponibility(action: ActionsInterface) {
-    const controlIndisponibilitiesError = this.onEditIndex === null; // if panel ediction do not control error
+    const controlIndisponibilitiesError = true; // alway //this.onEditIndex === null; // if panel ediction do not control error
 
     switch (action.id) {
       case 'close':
@@ -875,6 +881,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                 );
               if (controlIndisponibilitiesError && this.indisponibilityError) {
                 alert(this.indisponibilityError);
+                this.indisponibilityError = null; // only control by alert
                 return false;
               } else {
                 this.updateIndisponiblity = null;
