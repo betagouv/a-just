@@ -699,6 +699,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   async onEditIndisponibility(action: ActionsInterface) {
+    const controlIndisponibilitiesError = this.onEditIndex === null; // if panel ediction do not control error
+
     switch (action.id) {
       case 'close':
         {
@@ -869,14 +871,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
               return false;
             }
 
+            const cacheOldIndispo = [...this.allIndisponibilities];
             if (index !== -1) {
-              this.allIndisponibilities[index] = {
+              cacheOldIndispo[index] = {
                 ...this.allIndisponibilities[index],
                 ...this.updateIndisponiblity,
                 contentieux,
               };
             } else if (this.updateIndisponiblity) {
-              this.allIndisponibilities.push({
+              cacheOldIndispo.push({
                 ...this.updateIndisponiblity,
                 contentieux,
               });
@@ -885,9 +888,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
               this.indisponibilityError =
                 this.humanResourceService.controlIndisponibilities(
                   this.currentHR,
-                  this.allIndisponibilities
+                  cacheOldIndispo
                 );
-              this.updateIndisponiblity = null;
+              if (controlIndisponibilitiesError && this.indisponibilityError) {
+                alert(this.indisponibilityError);
+                return false;
+              } else {
+                this.updateIndisponiblity = null;
+                this.allIndisponibilities = [...cacheOldIndispo];
+              }
 
               if (!this.indisponibilityError) {
                 await this.updateHuman(
