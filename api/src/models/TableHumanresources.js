@@ -10,6 +10,7 @@ import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
+import { dbInstance } from './index'
 
 /**
  * Cache des juridicitions avec leurs magistrats
@@ -72,7 +73,6 @@ export default (sequelizeInstance, Model) => {
   Model.onPreload = async () => {
     if (config.preloadHumanResourcesDatas) {
       const allBackups = await Model.models.HRBackups.getAll()
-      const categories = await Model.models.HRCategories.getAll()
       dbInstance.options.logging = false
       console.time('onPreload')
       for (let i = 0; i < allBackups.length; i++) {
