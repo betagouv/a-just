@@ -73,7 +73,6 @@ export default (sequelizeInstance, Model) => {
   Model.onPreload = async () => {
     if (config.preloadHumanResourcesDatas) {
       const allBackups = await Model.models.HRBackups.getAll()
-      const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels()
       const categories = await Model.models.HRCategories.getAll()
       /*dbInstance.options.logging = false
       console.log('onPreload - start')
@@ -722,7 +721,7 @@ export default (sequelizeInstance, Model) => {
     fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
 
     console.time('calculator-1')
-    const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels()).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
+    const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
     console.timeEnd('calculator-1')
 
     console.time('calculator-2')

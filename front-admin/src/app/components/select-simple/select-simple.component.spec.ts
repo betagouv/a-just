@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SelectComponent } from './select.component';
+import { SelectComponent } from './select-simple.component';
 
 describe('SelectComponent', () => {
   let component: SelectComponent;
@@ -8,7 +8,7 @@ describe('SelectComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SelectComponent]
+      declarations: [SelectComponent],
     });
     fixture = TestBed.createComponent(SelectComponent);
     component = fixture.componentInstance;

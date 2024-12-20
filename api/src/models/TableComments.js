@@ -21,6 +21,7 @@ export default (sequelizeInstance, Model) => {
           model: Model.models.Users,
         }],
       raw: true,
+      order: [['created_at', 'desc']]
     })
 
     for (let i = 0; i < comments.length; i++) {
@@ -84,6 +85,17 @@ export default (sequelizeInstance, Model) => {
       await com.destroy()
     }
   }
+  /**
+   * Récupération du nombre de commentaire par contentieux
+   * @param {*} contId
+   * @returns
+   */
+  Model.getNbConId = async (contId) => 
+    await Model.count({
+      where: {
+        type: "activities_"+contId,
+      },
+    })
 
   return Model
 }

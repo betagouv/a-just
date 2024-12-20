@@ -10,11 +10,11 @@
             (click)="onShowHelpPanel({url: referentiel.helpUrl})"></i>
         </div>
       </div>
-      <div class="switch-comments">
+      <!-- <div class="switch-comments">
         <p>Afficher les commentaires</p>
         <aj-radio-button bgColor="#000091" [switchColor]="showComments ? 'white' : '#000091'" [value]="showComments"
           (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
-      </div>
+      </div> -->
       <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
         (valueChange)="selectMonth($event)">
       </aj-date-select>
@@ -302,4 +302,5 @@
 </ng-template>
 
 <aj-comment-activities *ngIf="showComments && referentiel" class="animate__animated animate__bounceInLeft"
-  [type]="'activities_'+referentiel.code_import" (close)="showComments = false"></aj-comment-activities>
+  [type]="'activities_'+referentiel.id" [referentiel]="referentiel"
+  (close)="showComments = false"></aj-comment-activities>

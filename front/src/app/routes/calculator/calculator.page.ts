@@ -246,36 +246,20 @@ export class CalculatorPage
       },
     },
     {
-      target: '.drop-down',
+      target: 'ddd', //.drop-down',
       title: 'Comparez votre juridiction',
       intro:
         '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>',
-      beforeLoad: async (intro: any) => {
+      /*beforeLoad: async (intro: any) => {
+        intro._introItems[4].position = '';
         const itemToClick: any = document.querySelector('button.compare');
         if (itemToClick) {
           itemToClick.click();
           await sleep(200);
-
-          const introTooltip: any = document.querySelector('.introjs-tooltip');
-          if (introTooltip) {
-            introTooltip.style.visibility = 'hidden';
-          }
-          setTimeout(() => {
-            const introTooltip: any =
-              document.querySelector('.introjs-tooltip');
-            if (introTooltip) {
-              introTooltip.classList.add('introjs-bottom-left-aligned');
-              introTooltip.classList.remove('introjs-floating');
-              introTooltip.style.left = '0px';
-              introTooltip.style.top = '170px';
-              introTooltip.style.marginLeft = '-150px';
-              introTooltip.style.marginTop = '0';
-              introTooltip.style.visibility = 'visible';
-              introTooltip.style.height = '450px';
-            }
-          }, 500);
+          intro.refresh();
+          console.log(intro);
         }
-      },
+      },*/
     },
   ];
   /**
@@ -1892,7 +1876,6 @@ export class CalculatorPage
   }
 
   filterReferentiels(referentiels: any[]) {
-    console.log(this.referentiel);
     let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(
@@ -1946,12 +1929,18 @@ export class CalculatorPage
 
     datas.map((y) => {
       list.push({
-        averageProcessingTime: y.magRealTimePerCase,
+        averageProcessingTime:
+          this.categorySelected === 'magistrats'
+            ? y.magRealTimePerCase
+            : y.fonRealTimePerCase,
         contentieux: { id: y.contentieux.id, label: y.contentieux.label },
       });
       y.childrens.map((z: any) => {
         list.push({
-          averageProcessingTime: z.magRealTimePerCase,
+          averageProcessingTime:
+            this.categorySelected === 'magistrats'
+              ? z.magRealTimePerCase
+              : z.fonRealTimePerCase,
           contentieux: { id: z.contentieux.id, label: z.contentieux.label },
         });
       });
@@ -1961,7 +1950,8 @@ export class CalculatorPage
     this.contentieuxOptionsService.onSaveDatas(
       false,
       this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE',
-      this.defaultRefName
+      this.defaultRefName,
+      'Enregistré'
     );
 
     this.promptRef = false;

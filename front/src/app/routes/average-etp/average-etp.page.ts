@@ -344,4 +344,38 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
   downloadAsset() {
     this.contentieuxOptionsService.downloadTemplate(true);
   }
+
+  /**
+   * Get status bg color
+   * @param status
+   * @returns
+   */
+  getBackgroundColor(status: string) {
+    switch (status) {
+      case 'Importé':
+        return '#c3fad5';
+      case 'Local':
+        return '#dee5fd';
+      case 'Enregistré':
+        return 'rgb(254, 246, 227)';
+    }
+    return '#c3fad5';
+  }
+
+  /**
+   * Get status bg color
+   * @param status
+   * @returns
+   */
+  getColor(status: string) {
+    switch (status) {
+      case 'Importé':
+        return '#00a95f';
+      case 'Local':
+        return '#465f9d';
+      case 'Enregistré':
+        return 'rgb(121, 104, 48)';
+    }
+    return '#c3fad5';
+  }
 }
