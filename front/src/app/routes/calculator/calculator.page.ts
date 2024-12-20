@@ -256,24 +256,19 @@ export class CalculatorPage
           itemToClick.click();
           await sleep(200);
 
-          const introTooltip: any = document.querySelector('.introjs-tooltip');
+          const introTooltip: any = document.querySelector(
+            '.introjs-tooltipReferenceLayer'
+          );
           if (introTooltip) {
-            introTooltip.style.visibility = 'hidden';
+            introTooltip.style.opacity = 0;
           }
           setTimeout(() => {
-            const introTooltip: any =
-              document.querySelector('.introjs-tooltip');
-            if (introTooltip) {
-              introTooltip.classList.add('introjs-bottom-left-aligned');
-              introTooltip.classList.remove('introjs-floating');
-              introTooltip.style.left = '0px';
-              introTooltip.style.top = '100px';
-              introTooltip.style.marginLeft = '-150px';
-              introTooltip.style.marginTop = '0';
-              introTooltip.style.visibility = 'visible';
-              introTooltip.style.height = '450px';
-            }
-          }, 1000);
+            const introTooltip: any = document.querySelector(
+              '.introjs-tooltipReferenceLayer'
+            );
+            introTooltip.style.top = '350px';
+            introTooltip.style.opacity = 1;
+          }, 700);
         }
       },
     },
