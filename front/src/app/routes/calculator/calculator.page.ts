@@ -255,6 +255,9 @@ export class CalculatorPage
         const itemToClick: any = document.querySelector('button.compare');
         if (itemToClick) {
           itemToClick.click();
+          await sleep(200);
+          intro.refresh();
+          console.log(intro);
         }
       },
     },
