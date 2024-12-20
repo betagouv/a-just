@@ -880,8 +880,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
                   cacheOldIndispo
                 );
               if (controlIndisponibilitiesError && this.indisponibilityError) {
+                const errorToShow = this.indisponibilityError;
                 this.indisponibilityError = null; // only control by alert
-                alert(this.indisponibilityError);
+                alert(errorToShow);
                 return false;
               } else {
                 this.updateIndisponiblity = null;
