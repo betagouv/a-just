@@ -8,6 +8,7 @@ import {
   USER_USER_LOGIN_CODE_INVALID,
   USER_USER_LOGIN_REQUEST_CODE,
   USER_USER_PASSWORD_CHANGED,
+  USER_USER_SIGN_IN,
 } from '../constants/log-codes'
 import * as Sentry from '@sentry/node'
 import { LOGIN_STATUS_GET_CODE } from '../constants/login'
@@ -60,7 +61,7 @@ export default class RouteAuths extends Route {
         now.setMonth(now.getMonth() - 1)
         const nbAuthBy2FAOffMonth = (
           await this.models.Logs.getLogs({
-            code_id: USER_AUTH_BY_2FA,
+            code_id: [USER_AUTH_BY_2FA, USER_USER_PASSWORD_CHANGED, USER_USER_SIGN_IN],
             user_id: tryUserCon.id,
             created_at: { [Op.gte]: now },
           })

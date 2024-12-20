@@ -13,6 +13,12 @@ export class JuridictionsService {
       .then((data) => data.data || []);
   }
 
+  async getAllBackup() {
+    return this.serverService
+      .get('juridictions/get-all-backup')
+      .then((data) => data.data || []);
+  }
+
   updateJuridiction(node: string, value: any, juridictionId: number) {
     return this.serverService.put('juridictions/update-juridiction', {
       node,

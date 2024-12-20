@@ -34,6 +34,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { TooltipsComponent } from '../../components/tooltips/tooltips.component';
 import { CompletionBarComponent } from '../../components/completion-bar/completion-bar.component';
+import { AppService } from '../../services/app/app.service';
 
 /**
  * Composant page activité
@@ -59,10 +60,17 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   route = inject(ActivatedRoute);
   userService = inject(UserService);
   kpiService = inject(KPIService);
+  appService = inject(AppService);
   /**
    * Dom du wrapper
    */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined;
+  /**
+   * Popin to edit contentieux
+   */
+  @ViewChild('editActivites') editActivites:
+    | PopinEditActivitiesComponent
+    | undefined;
   /**
    * Liste des activités
    */
@@ -284,6 +292,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.watch(
       this.activitiesService.activityMonth.subscribe((a) => {
         if (a !== null) {
+          this.appService.appLoading.next(true);
           this.activityMonth = a;
           this.onLoadMonthActivities();
         }
@@ -487,6 +496,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             newRef.originalStock = getActivity
               ? getActivity.originalStock
               : null;
+            newRef.nbComments = getActivity
+              ? getActivity.nbComments
+              : undefined;
 
             newRef.childrens = (newRef.childrens || []).map((c) => {
               if (!c.activityUpdated) {
@@ -692,6 +704,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         if (autoFocusId) {
           autoFocus(`#${autoFocusId}`);
         }
+      })
+      .finally(() => {
+        this.appService.appLoading.next(false);
       });
   }
 
@@ -963,5 +978,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     if (cont.showActivityGroup) {
       this.kpiService.register(ACTIVITIES_SHOW_LEVEL_4, cont.id + '');
     }
+  }
+
+  showContComment(cont: ContentieuReferentielActivitiesInterface) {
+    this.contentieuxToUpdate = cont;
+
+    setTimeout(() => {
+      if (this.editActivites) {
+        this.editActivites.showComments = true;
+      }
+    }, 500);
   }
 }

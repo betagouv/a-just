@@ -131,6 +131,11 @@ export class TextEditorComponent extends MainClass {
       if (change['value']) {
         this.ignoreUpdate = true;
         this.quillEditor.root.innerHTML = this.value;
+        if (this.value) {
+          this.quillEditor.root.classList.add('hide-place-holder');
+        } else {
+          this.quillEditor.root.classList.remove('hide-place-holder');
+        }
       }
     }
   }
@@ -143,6 +148,14 @@ export class TextEditorComponent extends MainClass {
       this.focusField.next(true);
       this.onFocus();
     }
+  }
+
+  /**
+   * Clean format of Quill render html
+   */
+  formatHTMLToRendering(html: string) {
+    html = html.replace(/a href="(?!http)/, 'a href="https://');
+    return html;
   }
 
   /**
@@ -175,6 +188,7 @@ export class TextEditorComponent extends MainClass {
             this.value = !this.quillEditor.root.innerText.trim()
               ? ''
               : this.quillEditor.root.innerHTML;
+            this.value = this.formatHTMLToRendering(this.value);
             this.valueChange.emit(this.value);
           } else {
             this.ignoreUpdate = false;

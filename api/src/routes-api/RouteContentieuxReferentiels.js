@@ -29,7 +29,7 @@ export default class RouteContentieuxReferentiels extends Route {
   })
   async getReferentiels (ctx) {
     const { isJirs } = this.body(ctx)
-    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(isJirs, true))
+    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(null, isJirs, true))
   }
 
   /**
@@ -39,13 +39,13 @@ export default class RouteContentieuxReferentiels extends Route {
     bodyType: Types.object().keys({
       id: Types.number().required(),
       node: Types.string().required(),
-      value: Types.any().required(),
+      value: Types.any(),
     }),
     accesses: [Access.isAdmin],
   })
   async update (ctx) {
     const { id, node, value } = this.body(ctx)
-    await this.models.ContentieuxReferentiels.updateRef(id, node, value)
+    await this.models.ContentieuxReferentiels.updateRef(id, node, value || null)
 
     this.sendOk(ctx, 'Ok')
   }

@@ -1,0 +1,17 @@
+@import '../../../styles/utils.scss';
+
+::ng-deep .mdc-form-field {
+  font-size: 16px;
+  color: black;
+
+  .mdc-label {
+    font-size: 16px !important;
+    color: black !important;
+    font-family: Marianne !important;
+  }
+
+}
+
+.mat-option {
+  margin-left: 5px;
+}

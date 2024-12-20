@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { ActivitiesService } from '../activities/activities.service';
@@ -12,6 +12,7 @@ import { HumanResourceInterface } from '../../interfaces/human-resource-interfac
 import { RHActivityInterface } from '../../interfaces/rh-activity';
 import { getShortMonthString, today } from '../../utils/dates';
 import { HRSituationInterface } from '../../interfaces/hr-situation';
+import { ReferentielService } from '../referentiel/referentiel.service';
 
 /**
  * Service de récupération des fiches +
@@ -21,6 +22,9 @@ import { HRSituationInterface } from '../../interfaces/hr-situation';
   providedIn: 'root',
 })
 export class HumanResourceService {
+  serverService = inject(ServerService);
+  activitiesService = inject(ActivitiesService);
+
   /**
    * Liste des contentieux + soutien + indispo
    */
@@ -103,13 +107,8 @@ export class HumanResourceService {
 
   /**
    * Constructeur qui lance le chargement d'une juridiction au chargement de la page
-   * @param serverService
-   * @param activitiesService
    */
-  constructor(
-    private serverService: ServerService,
-    private activitiesService: ActivitiesService
-  ) {
+  constructor() {
     if (localStorage.getItem('backupId')) {
       const backupId = localStorage.getItem('backupId') || 0;
       this.backupId.next(+backupId);
