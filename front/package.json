@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-e2e": "ng serve --host 0.0.0.0 --port 8081",
     "build": "ng build --configuration=${NODE_ENV}",
     "build:stats": "ng build --configuration=production --stats-json",
     "watch": "ng build --watch --configuration development",

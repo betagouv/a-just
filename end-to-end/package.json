@@ -1,0 +1,16 @@
+{
+  "name": "cypress",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "npx cypress run"
+  },
+  "private": true,
+  "dependencies": {
+    "@ngx-env/builder": "^19.0.4",
+    "cy-verify-downloads": "^0.2.6"
+  },
+  "devDependencies": {
+    "cypress": "^13.17.0",
+    "typescript": "~5.5.2"
+  }
+}
