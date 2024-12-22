@@ -1,0 +1,18 @@
+FROM node:16.15.1
+
+COPY ./end-to-end /home/end-to-end
+WORKDIR /home/end-to-end
+#COPY scripts/wait-for-it.sh /scripts/wait-for-it.sh
+RUN chmod +x scripts/wait-for-it.sh
+
+ENTRYPOINT ["/scripts/wait-for-it.sh", "api:8080", "--timeout=300", "--"]
+
+#RUN apt-get -y install iptables cron
+
+CMD npm install --include=dev && \
+    npm uninstall -D cypress -g  && \
+    npm install cypress --save-dev  && \
+    npx cypress install --force && \
+    npm start
+# Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
+#sleep infinity;
