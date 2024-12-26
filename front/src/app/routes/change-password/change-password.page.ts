@@ -42,6 +42,7 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
     code: new FormControl(),
     password: new FormControl(),
     passwordConf: new FormControl(),
+    checkboxPassword: new FormControl(),
   });
   /**
    * Mot de passe paramètres de validation
