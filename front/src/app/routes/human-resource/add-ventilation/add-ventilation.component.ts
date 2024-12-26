@@ -118,6 +118,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Id de situation
    */
   @Input() editId: number | null = null;
+  /**
+   * Parent form
+   */
   @Input() basicData: FormGroup | null = null;
   /**
    * Force to show sub contentieux
@@ -409,12 +412,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    console.log(
-      'ACT start date',
-      activitiesStartDate,
-      ' Start date',
-      this.human!.dateStart
-    );
     if (!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !');
       return;
@@ -478,6 +475,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           fonct.minDateAvalaible,
           false
         )}.`
+      );
+      return;
+    }
+
+    console.log(this.form.get('etp'));
+    if (this.form.get('etp')?.value === null) {
+      alert(
+        'Vous devez saisir un temps de travail pour valider la création de cette fiche !'
       );
       return;
     }
