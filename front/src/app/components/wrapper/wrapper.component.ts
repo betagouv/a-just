@@ -3,6 +3,7 @@ import {
   ElementRef,
   EventEmitter,
   HostBinding,
+  inject,
   Input,
   OnDestroy,
   Output,
@@ -27,6 +28,7 @@ import {
   IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
 } from '../../constants/documentation';
 import { UserService } from '../../services/user/user.service';
 import { HumanResourceService } from '../../services/human-resource/human-resource.service';
@@ -45,6 +47,7 @@ import { HelpButtonComponent } from '../help-button/help-button.component';
 import { DateSelectComponent } from '../date-select/date-select.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { BackButtonComponent } from '../back-button/back-button.component';
+import { ReferentielService } from '../../services/referentiel/referentiel.service';
 
 /**
  * Interface de génération d'un commentaire
@@ -93,6 +96,11 @@ interface ExportPDFInterface {
   styleUrls: ['./wrapper.component.scss'],
 })
 export class WrapperComponent extends MainClass implements OnDestroy {
+  /**
+   * Service to referentiel
+   */
+  referentielService = inject(ReferentielService);
+
   /**
    * DOM qui pointe sur le conteneur
    */
@@ -537,11 +545,17 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   async downloadAsset(type: string, download = false) {
     let url = null;
-    if (type === 'nomenclature')
-      url = this.userService.isCa()
-        ? NOMENCLATURE_DOWNLOAD_URL_CA
-        : NOMENCLATURE_DOWNLOAD_URL;
-    else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL;
+    if (type === 'nomenclature') {
+      if (this.userService.isCa()) {
+        url = NOMENCLATURE_DOWNLOAD_URL_CA;
+      } else {
+        if (this.referentielService.isDroitLocal()) {
+          url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
+        } else {
+          url = NOMENCLATURE_DOWNLOAD_URL;
+        }
+      }
+    } else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL;
     else if (type === 'fiche-agent')
       url = this.userService.isCa()
         ? IMPORT_ETP_TEMPLATE_CA
