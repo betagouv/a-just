@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { maxBy, minBy, orderBy, sumBy } from 'lodash';
+import { maxBy, minBy, orderBy } from 'lodash';
 import { debounceTime } from 'rxjs';
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component';
-import { sum } from 'lodash';
 import { HRSituationInterface } from '../../interfaces/hr-situation';
 import { RHActivityInterface } from '../../interfaces/rh-activity';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
@@ -31,7 +30,6 @@ import { HRCommentService } from '../../services/hr-comment/hr-comment.service';
 import { UserService } from '../../services/user/user.service';
 import { dateAddDays, isDateBiggerThan, today } from '../../utils/dates';
 import { copy } from '../../utils';
-import { DOCUMENTATION_VENTILATEUR_PERSON } from '../../constants/documentation';
 import { HelpButtonComponent } from '../../components/help-button/help-button.component';
 import { CommonModule } from '@angular/common';
 
