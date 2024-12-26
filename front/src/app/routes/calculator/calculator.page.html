@@ -322,4 +322,5 @@
 
 <ng-template #subTitleTemplate><label class="grey">(option)</label></ng-template>
 
-<aj-intro-js *ngIf="datasFilted && datasFilted.length" [steps]="introSteps" typeId="calculator"></aj-intro-js>
+<aj-intro-js *ngIf="datasFilted && datasFilted.length" [steps]="introSteps" typeId="calculator"
+  (close)="showPicker=false"></aj-intro-js>
