@@ -81,6 +81,10 @@ export default (sequelizeInstance, Model) => {
     let list = [];
     mainList.map((main) => {
       if (main.code_import) {
+        main.childrens = (main.childrens || []).map(m => {
+          delete m.childrens
+          return m
+        })
         list = list.concat(main);
       } else {
         if (main.childrens) {
