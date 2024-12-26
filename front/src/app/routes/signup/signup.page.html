@@ -60,7 +60,7 @@
           <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>
           <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(0)}"><span
               [ngStyle]="{ 'background-color': getParamColor(0)}">i</span>
-            &nbsp; 8 caractères minimum</label>
+            &nbsp; {{MIN_PASSWORD_LENGTH}} caractères minimum</label>
           <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(1)}"><span
               [ngStyle]="{ 'background-color': getParamColor(1)}">i</span>
             &nbsp; 1 caractère spécial</label>
