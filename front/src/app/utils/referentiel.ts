@@ -28,6 +28,8 @@ export function referentielMappingName(name: string): string {
       return 'Civil NS';
     case "Juges d'Instruction":
       return 'JI';
+    case 'Contentieux locaux spécifiques':
+      return 'CTX SPÉ.';
   }
 
   return name;
@@ -64,6 +66,8 @@ export function referentielCAMappingName(name: string): string {
       return 'CHAP';
     case 'Autres activités':
       return 'Autres';
+    case 'Contentieux locaux spécifiques':
+      return 'CTX SPÉ.';
   }
 
   return name;
@@ -106,6 +110,9 @@ export function referentielMappingColor(
         return `rgb(255, 235, 214)`;
       case 'JLD civil':
         return `rgb(217, 211, 237)`;
+      case 'Contentieux locaux spécifiques':
+      case 'CTX SPÉ.':
+        return `rgb(218, 212, 237)`;
     }
   } else {
     switch (name) {
@@ -135,6 +142,9 @@ export function referentielMappingColor(
         return `rgba(255, 145, 0, ${opacity})`;
       case 'JLD civil':
         return `rgba(69, 39, 161, ${opacity})`;
+      case 'Contentieux locaux spécifiques':
+      case 'CTX SPÉ.':
+        return `rgba(69, 38, 160, ${opacity})`;
     }
   }
 
@@ -180,6 +190,9 @@ export function referentielMappingColorActivity(
         return `rgb(217, 211, 237)`;
       case 'other':
         return '#d8dadc';
+      case 'Contentieux locaux spécifiques':
+      case 'CTX SPÉ.':
+        return '#DAD4ED';
     }
   } else {
     switch (name) {
@@ -211,6 +224,9 @@ export function referentielMappingColorActivity(
         return `rgba(69, 39, 161, ${opacity})`;
       case 'other':
         return '#d8dadc';
+      case 'Contentieux locaux spécifiques':
+      case 'CTX SPÉ.':
+        return `rgba(69, 38, 160, ${opacity})`;
     }
   }
 

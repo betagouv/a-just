@@ -17,7 +17,7 @@
     </div>
   </div>
 </div>
-<div class="activities-panel" [ngClass]="{ 'ca': getInterfaceType() }">
+<div class="activities-panel" [attr.style]="'--columns-count:'+referentiel.length">
   <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index">
     <progression-bar *ngIf="showPlaceHolder" [color]="PLACEHOLDER_COLOR" class="no-opacity-to-background">
     </progression-bar>

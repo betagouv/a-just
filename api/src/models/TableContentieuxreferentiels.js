@@ -80,12 +80,16 @@ export default (sequelizeInstance, Model) => {
     const mainList = await formatToGraph();
     let list = [];
     mainList.map((main) => {
-      if (main.childrens) {
-        main.childrens.map((subMain) => {
-          if (subMain.childrens) {
-            list = list.concat(subMain.childrens);
-          }
-        });
+      if (main.code_import) {
+        list = list.concat(main);
+      } else {
+        if (main.childrens) {
+          main.childrens.map((subMain) => {
+            if (subMain.childrens) {
+              list = list.concat(subMain.childrens);
+            }
+          });
+        }
       }
     });
 
