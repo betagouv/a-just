@@ -367,7 +367,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Control du formulaire lors de la sauvegarde
    * @returns
    */
-  async onSave(withoutPercentControl = false) {
+  async onSave(withoutPercentControl = false, saveETPT0 = false) {
     if (this.indisponibilityError) {
       alert(this.indisponibilityError);
       return;
@@ -479,12 +479,33 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    console.log(this.form.get('etp'));
+    console.log(this.form.get('etp')?.value, this.human);
     if (this.form.get('etp')?.value === null) {
       alert(
         'Vous devez saisir un temps de travail pour valider la création de cette fiche !'
       );
       return;
+    }
+
+    const nbSituationSetted = (this.human.situations || []).length;
+    if (this.form.get('etp')?.value === 0) {
+      if (nbSituationSetted === 0) {
+        alert(
+          'Vous devez saisir un temps  administratif de travail supérieur à 0 pour créer cette fiche !'
+        );
+        return;
+      } else {
+        if (!saveETPT0) {
+          this.appService.alert.next({
+            title: 'Attention',
+            text: `L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie.`,
+            callback: () => {
+              this.onSave(false, true);
+            },
+          });
+          return;
+        }
+      }
     }
 
     const situations = this.generateAllNewSituations(
