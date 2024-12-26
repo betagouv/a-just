@@ -5,6 +5,7 @@ import {
   Input,
   OnChanges,
   OnInit,
+  SimpleChanges,
 } from '@angular/core';
 import { TextEditorComponent } from '../../../components/text-editor/text-editor.component';
 import { PassedCommentComponent } from './passed-comment/passed-comment.component';
@@ -50,10 +51,6 @@ export class CommentProfilComponent
    * Date de mise à jours du commentaire
    */
   commentUpdatedAt: Date | null = null;
-  /**
-   * instance créé lors de la modification d'une fiche
-   */
-  timeoutUpdateComment: any = null;
   /**
    * Utilisateur connecté
    */
@@ -130,8 +127,10 @@ export class CommentProfilComponent
   /**
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
-  ngOnChanges() {
-    if (this.currentComment === '') this.onLoadComment();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['currentHR'].firstChange && this.currentComment === '') {
+      this.onLoadComment();
+    }
   }
 
   /**
@@ -167,27 +166,25 @@ export class CommentProfilComponent
    * Sauvegarde un nouveau commentaire
    */
   save() {
-    this.timeoutUpdateComment = setTimeout(() => {
-      if (this.currentHR) {
-        this.hRCommentService
-          .updateHRComment(
-            this.currentHR.id,
-            this.currentComment || '',
-            this.currentUser.userId,
-            this.currentUser.commentId
-          )
-          .then(() => {
-            this.comment = '';
-            this.currentComment = '';
-            this.commentUpdatedAt = null;
-            this.resetEditor = true;
-            this.isEditing = false;
-            this.hRCommentService.mainEditing.next(false);
-            this.changeDetectorRef.detectChanges();
-            this.onLoadComment();
-          });
-      }
-    }, 100);
+    if (this.currentHR) {
+      this.hRCommentService
+        .updateHRComment(
+          this.currentHR.id,
+          this.currentComment || '',
+          this.currentUser.userId,
+          this.currentUser.commentId
+        )
+        .then(() => {
+          this.comment = '';
+          this.currentComment = '';
+          this.commentUpdatedAt = null;
+          this.resetEditor = true;
+          this.isEditing = false;
+          this.hRCommentService.mainEditing.next(false);
+          this.changeDetectorRef.detectChanges();
+          this.onLoadComment();
+        });
+    }
   }
 
   /**

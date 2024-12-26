@@ -10,7 +10,7 @@
 </div>
 <div class="indispo-content">
   <p *ngIf="indisponibilities.length === 0" class="empty">Pas d'indisponibilité en cours</p>
-  <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
+  <div *ngFor="let indisp of indisponibilitiesFiltered" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
     <div class="icon">
       <mat-icon>event_busy</mat-icon>
     </div>

@@ -17,6 +17,7 @@ export const closeGuard: CanDeactivateFn<any> = (
   if (
     currentRoute.url[0].path === 'reaffectateur' ||
     currentRoute.url[0].path === 'simulateur' ||
+    currentRoute.url[0].path === 'simulateur-sans-donnees' ||
     currentRoute.url[0].path === 'referentiel-de-temps'
   ) {
     return component.canDeactivate(nextState.url);

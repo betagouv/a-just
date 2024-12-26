@@ -44,6 +44,8 @@ export function referentielCAMappingIndex(name, rank) {
     case "Contentieux locaux spécifiques":
     case "CTX SPÉ.":
       return 12;
+    case "Contentieux civil JLD": // à supprimer
+        return 12;
     case "Autres activités":
       return 13;
     case "Indisponibilité":
