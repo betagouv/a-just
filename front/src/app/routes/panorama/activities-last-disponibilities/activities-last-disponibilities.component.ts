@@ -6,6 +6,7 @@ import { HumanResourceService } from '../../../services/human-resource/human-res
 import { ActivitiesService } from '../../../services/activities/activities.service';
 import { BackupInterface } from '../../../interfaces/backup';
 import { month } from '../../../utils/dates';
+import { RouterLink } from '@angular/router';
 interface TagMonthInterface {
   month: Date;
   active: boolean;
@@ -18,7 +19,7 @@ interface TagMonthInterface {
 @Component({
   selector: 'activities-last-disponibilities',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './activities-last-disponibilities.component.html',
   styleUrls: ['./activities-last-disponibilities.component.scss'],
 })
