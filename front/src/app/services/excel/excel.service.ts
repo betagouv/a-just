@@ -129,7 +129,11 @@ export class ExcelService extends MainClass {
             this.dateStop.getValue()
           ).toLocaleDateString()}`,
         };
-        fetch('/assets/template4.xlsx')
+        fetch(
+          this.userService.isCa() === false
+            ? '/assets/template4.xlsx'
+            : '/assets/template4CA.xlsx'
+        )
           // 2. Get template as ArrayBuffer.
           .then((response) => response.arrayBuffer())
           // 3. Fill the template with data (generate a report).
