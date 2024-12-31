@@ -128,8 +128,10 @@ export default class RouteExtractor extends Route {
     console.timeEnd('extractor-7')
 
     console.time('extractor-8')
-    await onglet1.sort((a, b) => sortByCatAndFct(a, b))
-    await onglet2.sort((a, b) => sortByCatAndFct(a, b))
+    //await onglet1.sort((a, b) => sortByCatAndFct(a, b))
+    //await onglet2.sort((a, b) => sortByCatAndFct(a, b))
+    onglet1 =orderBy(onglet1, ['Catégorie','Nom','Prénom','Matricule'],['desc','asc','asc','asc'])
+    onglet2 =orderBy(onglet2, ['Catégorie','Nom','Prénom','Matricule'],['desc','asc','asc','asc'])
     const columnSize1 = await autofitColumns(onglet1, true)
     const columnSize2 = await autofitColumns(onglet2, true, 13)
     console.timeEnd('extractor-8')
