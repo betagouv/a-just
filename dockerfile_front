@@ -6,3 +6,4 @@ WORKDIR /home/front
 
 CMD   npm install --production=false && \
       npm run start-e2e
+EXPOSE 4200

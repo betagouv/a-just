@@ -2,12 +2,16 @@
   "name": "cypress",
   "version": "0.0.1",
   "scripts": {
-    "start": "npx cypress run"
+    "cy:run": "node -e \"require('dotenv').config(); console.log('BASE URL :::', process.env.CYPRESS_BASE_URL);\" && cypress run",
+    "cy:open": "cypress open"
   },
   "private": true,
   "dependencies": {
     "@ngx-env/builder": "^19.0.4",
-    "cy-verify-downloads": "^0.2.6"
+    "cy-verify-downloads": "^0.2.6",
+    "dotenv": "^16.4.7",
+    "install": "^0.13.0",
+    "npm": "^11.0.0"
   },
   "devDependencies": {
     "cypress": "^13.17.0",
