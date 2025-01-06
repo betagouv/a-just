@@ -19,6 +19,7 @@ export default defineConfig({
       ? process.env.CYPRESS_BASE_URL
       : "http://localhost:4200",
     supportFile: "support/e2e.ts",
-    video: false,
+    video: true,
+    defaultCommandTimeout: 10000,
   },
 });

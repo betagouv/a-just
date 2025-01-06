@@ -5,14 +5,11 @@ services:
       restart: always
       cpus: 2.0
       mem_limit: 4G
-      ports:
-         - "5450:5432"
       expose:
          - "5432"
       networks:
-         - ajust_e2e_network
-         # ajust_e2e_network:
-         #   ipv4_address: 173.0.0.50
+         ajust_e2e_network:
+            ipv4_address: 173.0.0.50
       environment:
          - POSTGRES_DB=ajust
          - POSTGRES_USER=ajust-user
@@ -58,9 +55,8 @@ services:
          context: .
          dockerfile: dockerfile_e2e_api
       networks:
-         - ajust_e2e_network
-         # ajust_e2e_network:
-         #   ipv4_address: 173.0.0.20
+         ajust_e2e_network:
+           ipv4_address: 173.0.0.20
       ports:
          - "8081:8081"
       expose:
@@ -74,39 +70,49 @@ services:
          - NODE_ENV=test
          - JSON_WEB_TOKEN=123456789
          - PORT=8081
+      healthcheck:
+         test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+         interval: 30s
+         timeout: 10s
+         retries: 5
 
    front:
       build:
          context: .
          dockerfile: dockerfile_front
       networks:
-         - ajust_e2e_network
-         # ajust_e2e_network:
-         #   ipv4_address: 173.0.0.30
+         ajust_e2e_network:
+           ipv4_address: 173.0.0.30
       ports:
-         - "4200:8081"
-      environment:
-         - NG_APP_SERVER_URL=http://api:8081/api
+         - "4200:4200"
+      expose:
+         - "4200"
+      healthcheck:
+         test: ["CMD", "curl", "-f", "http://localhost:4200"]
+         interval: 30s
+         timeout: 10s
+         retries: 5
 
    cypress:
-      image: cypress/included:12.7.0
+      image: cypress/included:12.15.0
       networks:
          - ajust_e2e_network
       depends_on:
          - api
          - db
          - front
-      entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npm install cypress && npx cypress install && npm run start"
+      entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npx cypress install && npm run cy:run"
       volumes:
          - ./end-to-end:/e2e
          - ./end-to-end/scripts:/scripts
       working_dir: /e2e
       environment:
-         - CYPRESS_BASE_URL=http://api:8081
+         - CYPRESS_BASE_URL=http://173.0.0.30:4200
+         - NG_APP_SERVER_URL=http://api:8081/api
 
 networks:
   ajust_e2e_network:
     driver: bridge
-   #  ipam:
-   #    config:
-   #      - subnet: 173.0.0.0/16
+    ipam:
+      config:
+        - subnet: 173.0.0.0/16

@@ -7,6 +7,7 @@
     "types": ["cypress", "node"],
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "baseUrl": "."
   },
   "include": ["**/*.ts", "**/*.json"],
 }
