@@ -84,7 +84,6 @@
 
 .activities-panel {
   display: grid;
-  grid-template-columns: repeat(var(--columns-count), 1fr);
 
   .sub-item {
     justify-content: center;
