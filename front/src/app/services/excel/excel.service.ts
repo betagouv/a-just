@@ -286,7 +286,7 @@ export class ExcelService extends MainClass {
       const indexCell = +(+index + 3);
 
       if (this.userService.isCa() === false) {
-        report.worksheets[2].getCell('EA' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -299,7 +299,7 @@ export class ExcelService extends MainClass {
             ',Table_Fonctions!C:F,4,FALSE)))',
           result: '0',
         };
-        report.worksheets[2].getCell('EB' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FB' + (+index + 3)).value = {
           formula:
             '=IFERROR(SUM(O' +
             indexCell +
@@ -316,7 +316,7 @@ export class ExcelService extends MainClass {
             '),"")',
           result: '0',
         };
-        report.worksheets[2].getCell('EC' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FC' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -333,7 +333,7 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        report.worksheets[2].getCell('ED' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FD' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -350,7 +350,7 @@ export class ExcelService extends MainClass {
             ',"OK","OK (contient des indisponibilités)"))',
           result: '0',
         };
-        report.worksheets[2].getCell('EE' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FE' + (+index + 3)).value = {
           formula:
             '=IF(ISERROR(DF' +
             indexCell +
@@ -391,7 +391,7 @@ export class ExcelService extends MainClass {
             ')',
           result: '0',
         };
-        report.worksheets[2].getCell('EF' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FF' + (+index + 3)).value = {
           formula:
             '=IF(ISERROR(M' +
             indexCell +
@@ -406,7 +406,7 @@ export class ExcelService extends MainClass {
         };
       } else {
         // VLOOKUP fct recodée
-        report.worksheets[2].getCell('EE' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -415,7 +415,7 @@ export class ExcelService extends MainClass {
             ',Table_Fonctions!C:F,4,FALSE))',
           result: '0',
         };
-        report.worksheets[2].getCell('EF' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FB' + (+index + 3)).value = {
           formula:
             '=IFERROR(SUM(O' +
             indexCell +
@@ -434,7 +434,7 @@ export class ExcelService extends MainClass {
             '),"")',
           result: '0',
         };
-        report.worksheets[2].getCell('EG' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FC' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -451,7 +451,7 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        report.worksheets[2].getCell('EH' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FD' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -464,7 +464,7 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        report.worksheets[2].getCell('EI' + (+index + 3)).value = {
+        report.worksheets[2].getCell('EE' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -479,7 +479,7 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        report.worksheets[2].getCell('EJ' + (+index + 3)).value = {
+        report.worksheets[2].getCell('EF' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
