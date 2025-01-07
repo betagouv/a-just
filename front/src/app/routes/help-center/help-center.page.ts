@@ -197,7 +197,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
    * Constructeur
    */
   constructor() {
-    this.gitToken = import.meta.env.NG_APP_GITBOOK_TOKEN;
+    this.gitToken = environment.gitbookToken;
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,
     });
