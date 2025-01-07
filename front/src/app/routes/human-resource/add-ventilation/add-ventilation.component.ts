@@ -47,6 +47,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
+import { ExcelService } from '../../../services/excel/excel.service';
 
 export interface importedVentillation {
   referentiel: ContentieuReferentielInterface;
@@ -222,7 +223,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private appService: AppService,
     private calculatriceService: CalculatriceService,
     private serverService: ServerService,
-    private userService: UserService
+    private userService: UserService,
+    private excelService: ExcelService
   ) {
     super();
   }
@@ -714,9 +716,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       .then((r) => {
         return r.data;
       });
-    window.open(
-      this.userService.isCa() ? IMPORT_ETP_TEMPLATE_CA : IMPORT_ETP_TEMPLATE
-    );
+    this.excelService.generateAgentFile();
   }
 
   /**
