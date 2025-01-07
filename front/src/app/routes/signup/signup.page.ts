@@ -19,8 +19,7 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user/user.service';
 import { ServerService } from '../../services/http-server/server.service';
 import { SSOService } from '../../services/sso/sso.service';
-
-const MIN_PASSWORD_LENGTH = 8;
+import { MIN_PASSWORD_LENGTH } from '../../utils/user';
 
 /**
  * Page d'inscription
@@ -44,6 +43,7 @@ export class SignupPage {
   serverService = inject(ServerService);
   route = inject(ActivatedRoute);
   ssoService = inject(SSOService);
+  MIN_PASSWORD_LENGTH = MIN_PASSWORD_LENGTH;
 
   @ViewChildren('input') inputs: QueryList<ElementRef> =
     new QueryList<ElementRef>();
@@ -258,7 +258,7 @@ export class SignupPage {
         !password.match(/[A-Z]/g)
       ) {
         alert(
-          'Vous devez saisir un mot de passe qui rempli les critères obligatoires'
+          'Vous devez saisir un mot de passe qui remplir les critères obligatoires'
         );
         return;
       }
@@ -297,7 +297,7 @@ export class SignupPage {
       this.passwordStrength.char = true;
     } else this.passwordStrength.char = false;
 
-    if (password && password.length > 6) {
+    if (password && password.length > MIN_PASSWORD_LENGTH) {
       this.passwordStrength.length = true;
     } else this.passwordStrength.length = false;
 

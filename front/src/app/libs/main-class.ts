@@ -14,6 +14,7 @@ import {
   decimalToStringDate,
   getMonthString,
   getShortMonthString,
+  isDateBiggerThan,
   month,
   today,
 } from '../utils/dates';
@@ -420,5 +421,17 @@ export class MainClass {
    */
   public floor(value: number) {
     return Math.floor(value);
+  }
+
+  /**
+   * Is bigger than
+   */
+  public isBiggerThanArray(array: any[], node: string): any[] {
+    return array.filter(
+      (a) =>
+        !a[node] ||
+        today().getTime() === today(a[node]).getTime() ||
+        !isDateBiggerThan(today(), today(a[node]))
+    );
   }
 }

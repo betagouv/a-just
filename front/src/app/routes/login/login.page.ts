@@ -66,6 +66,7 @@ export class LoginPage implements OnInit {
     email: new FormControl(),
     password: new FormControl(),
     remember: new FormControl(),
+    checkboxPassword: new FormControl(),
   });
   /**
    * Waiting screen to be ready

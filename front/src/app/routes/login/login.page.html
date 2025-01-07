@@ -32,10 +32,19 @@
     <label>Email</label>
     <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
       (keyup.enter)="focusNext($event)" />
-    <label>Mot de passe</label>
-    <input #input class="ethics-ui" placeholder="" formControlName="password" type="password"
-      (keyup.enter)="focusNext($event)" />
-    <span class="remember-me"><input type="checkbox" formControlName="remember" /><label>Se souvenir de
+    <div class="password-line">
+      <label>Nouveau mot de passe</label>
+      <div>
+        <span class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()"><input
+            (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"
+            formControlName="checkboxPassword" />
+          Afficher</span>
+      </div>
+    </div>
+    <input #input class="ethics-ui" placeholder="" formControlName="password"
+      [type]="form.get('checkboxPassword')?.value?'text':'password'" (keyup.enter)="focusNext($event)" />
+    <span class="remember-me"><input type="checkbox" formControlName="remember" class="remember-check" /><label>Se
+        souvenir de
         moi</label></span>
     <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     <div class="remember-row">
