@@ -624,11 +624,7 @@ export class ExcelService extends MainClass {
     };
     console.log(viewModel);
 
-    fetch(
-      this.userService.isCa() === false
-        ? '/assets/Feuille_de_temps_Modèle.xlsx'
-        : '/assets/Feuille_de_temps_Modèle_CA.xlsx'
-    ) //'/assets/classeurNouveau.xlsx'
+    fetch('/assets/Feuille_de_temps_Modèle.xlsx')
       // 2. Get template as ArrayBuffer.
       .then((response) => response.arrayBuffer())
       // 3. Fill the template with data (generate a report).
