@@ -277,15 +277,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
             this.dateSelector.value = lastMonth;
 
             const { month } = this.route.snapshot.queryParams;
-            if (
-              month &&
-              this.getMonth(month).getTime() <
-                this.getMonth(lastMonth).getTime()
-            ) {
+            if (month) {
               lastMonth = this.getMonth(month);
             }
 
-            this.activitiesService.activityMonth.next(lastMonth);
+            this.dateSelector.value = new Date(lastMonth);
+            this.activitiesService.activityMonth.next(new Date(lastMonth));
           });
         }
       })
@@ -448,6 +445,14 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.activitiesService
       .loadMonthActivities(this.activityMonth)
       .then((monthValues) => {
+        if (
+          this.getMonth(monthValues.date).getTime() !==
+          this.getMonth(this.activityMonth).getTime()
+        ) {
+          // fix double loading with different delay to rendering
+          return;
+        }
+
         this.isLoadedFirst = false;
         this.updatedBy = monthValues.lastUpdate;
         const activities: ActivityInterface[] = monthValues.list;

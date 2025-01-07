@@ -287,8 +287,8 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Documentation widget
    */
   documentation: DocumentationInterface = {
-    title: 'Simulateur à blanc A-JUST :',
-    path: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
+    title: 'Simulateur sans données pré-alimentées :',
+    path: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
     printSubTitle: true,
   };
 

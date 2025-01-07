@@ -17,12 +17,11 @@
     </div>
   </div>
 </div>
-<div class="activities-panel" [ngClass]="{ 'ca': getInterfaceType() }">
+<div class="activities-panel" [ngStyle]="{'grid-template-columns': 'repeat('+referentiel.length+', 1fr)'}">
   <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index">
     <progression-bar *ngIf="showPlaceHolder" [color]="PLACEHOLDER_COLOR" class="no-opacity-to-background">
     </progression-bar>
-    <progression-bar *ngIf="!showPlaceHolder" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percent"
-      [selected]="canSelectedTopReferentiel"
+    <progression-bar *ngIf="!showPlaceHolder" [percent]="ref.percent" [selected]="canSelectedTopReferentiel"
       [color]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label))"
       [colorOpacity]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label), OPACITY)"
       (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
@@ -38,6 +37,7 @@
   }">
   <div class="sub-item">
     <progression-bar [percent]="referentiel[refIndexSelected].percent"
+      [ddg]="isDdgContentieux(referentiel[refIndexSelected].label)"
       [lockedMessage]="selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1 ? 'Pour les “'+referentiel[refIndexSelected].label+'”, il est impératif de renseigner la ou les sous-rubriques . Le total se calcule automatiquement.' : null"
       [color]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label))"
       [colorOpacity]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label), OPACITY)"

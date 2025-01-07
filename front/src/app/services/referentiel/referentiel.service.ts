@@ -91,6 +91,14 @@ export class ReferentielService {
   }
 
   /**
+   * Check if referentiels as "droit local"
+   */
+  isDroitLocal() {
+    const ref = this.humanResourceService.contentieuxReferentiel.getValue();
+    return ref.find((r) => r.code_import === '13.') ? true : false;
+  }
+
+  /**
    * API Appel au serveur retourner une référentiel spécifique
    * @param backupId
    * @returns
