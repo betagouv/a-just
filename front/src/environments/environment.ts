@@ -23,7 +23,7 @@ export const environment = {
   mapboxToken:
     'pk.eyJ1IjoiZnhiZXRhIiwiYSI6ImNsZzZldHhvMTAzanEzc3BrYXJ5dXA1czYifQ.FlyDfsXjidTxi7XE50a07w',
   mapboxStyle: 'mapbox://styles/fxbeta/clm7xuvg4012d01pb1jc6887h',
-  gitbookToken: 'gb_api_rHt5wBv5WBzk2mjUuO2QymdKNpNujdBD8TLfYpsA',
+  gitbookToken: '',
   gitbookId: 'S99g6aJCtkSrC9hKXFqV',
   enableSSO: true,
   crisp: 'f0a0070f-d442-40f5-b614-499d668f4593',
