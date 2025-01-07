@@ -480,14 +480,14 @@ export default class App {
       }
       if (
         rule.filtres /* &&
-        list[rule["Code nomenclature"]].periode !== "202301" &&
+        list[rule["Code nomenclature"]].periode !== "202412" &&
         rule["Code nomenclature"] === "7.15."*/
       ) {
         const nodesToUse = ["entrees", "sorties", "stock"];
         for (let i = 0; i < nodesToUse.length; i++) {
           const node = nodesToUse[i];
           const newRules = rule.filtres[node];
-          // control il node exist
+          // control if node exist
           if (newRules && newRules !== "-") {
             let lines = monthValues;
 
@@ -543,7 +543,7 @@ export default class App {
     if (typeof nodeValues === "undefined") {
       return lines;
     }
-    // force to read array of string of number
+    // force to read array of string or number
     if (typeof nodeValues === "string" || typeof nodeValues === "number") {
       nodeValues = [nodeValues];
     }
@@ -552,7 +552,7 @@ export default class App {
       let label = value;
 
       if (label.startsWith("<>") === true) {
-        label = label.replace("<>", "").trim().slice(1, -1);
+        label = label.replace(/[<>"]/g, '').trim()
         include = false; // warning need to be alway same
       }
 
