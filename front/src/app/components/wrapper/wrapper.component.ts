@@ -48,6 +48,7 @@ import { DateSelectComponent } from '../date-select/date-select.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { BackButtonComponent } from '../back-button/back-button.component';
 import { ReferentielService } from '../../services/referentiel/referentiel.service';
+import { ExcelService } from '../../services/excel/excel.service';
 
 /**
  * Interface de génération d'un commentaire
@@ -253,7 +254,8 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     private appService: AppService,
     private titlePlatform: Title,
     private activitiesService: ActivitiesService,
-    private serverService: ServerService
+    private serverService: ServerService,
+    private excelService: ExcelService
   ) {
     super();
     this.appService.appLoading.next(true);
@@ -556,16 +558,19 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         }
       }
     } else if (type === 'calculatrice') url = this.CALCULATE_DOWNLOAD_URL;
-    else if (type === 'fiche-agent')
-      url = this.userService.isCa()
-        ? IMPORT_ETP_TEMPLATE_CA
-        : IMPORT_ETP_TEMPLATE;
-
-    await this.serverService.post('centre-d-aide/log-documentation-link', {
-      value: url,
-    });
+    else if (type === 'fiche-agent') {
+      this.excelService.generateAgentFile();
+      await this.serverService.post('centre-d-aide/log-documentation-link', {
+        value: this.userService.isCa()
+          ? IMPORT_ETP_TEMPLATE_CA
+          : IMPORT_ETP_TEMPLATE,
+      });
+    }
 
     if (url) {
+      await this.serverService.post('centre-d-aide/log-documentation-link', {
+        value: url,
+      });
       if (download) {
         downloadFile(url);
       } else {

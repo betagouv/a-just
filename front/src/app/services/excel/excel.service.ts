@@ -574,4 +574,172 @@ export class ExcelService extends MainClass {
 
     return report;
   }
+
+  /**
+   * Génère un model de donnée de référentiel
+   * @returns
+   */
+  generateModel() {
+    const referentiels =
+      this.humanResourceService.contentieuxReferentielOnly.getValue();
+
+    let referentiel = new Array();
+    let counter = 0;
+    let sumLists = new Array();
+
+    referentiels.map((r) => {
+      r.childrens?.map((c) => {
+        counter++;
+        referentiel.push({
+          code: c['code_import'],
+          label: c.label,
+          parent: '',
+          index: null,
+          sum: null,
+        });
+        sumLists.push('E' + (counter + 8));
+      });
+      counter++;
+      referentiel.push({
+        code: r['code_import'],
+        label: '',
+        parent: 'TOTAL ' + r.label,
+        index: 'E' + (counter + 8),
+        sum: sumLists,
+      });
+      sumLists = new Array();
+    });
+
+    console.log(referentiel);
+    return referentiel;
+  }
+
+  /**
+   * Génération d'un template de fiche agent
+   */
+  async generateAgentFile() {
+    let referentiel = this.generateModel();
+    const viewModel = {
+      referentiel,
+    };
+    console.log(viewModel);
+
+    fetch(
+      this.userService.isCa() === false
+        ? '/assets/Feuille_de_temps_Modèle.xlsx'
+        : '/assets/Feuille_de_temps_Modèle_CA.xlsx'
+    ) //'/assets/classeurNouveau.xlsx'
+      // 2. Get template as ArrayBuffer.
+      .then((response) => response.arrayBuffer())
+      // 3. Fill the template with data (generate a report).
+      .then((buffer) => {
+        return new Renderer().renderFromArrayBuffer(buffer, viewModel);
+      })
+      // 4. Get a report as buffer.
+      .then(async (report) => {
+        report = await this.setStyleXls(report, viewModel);
+        return report.xlsx.writeBuffer();
+      })
+      // 5. Use `saveAs` to download on browser site.
+      .then((buffer) => {
+        const filename = 'test';
+        return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION);
+      })
+      .catch((err) => console.log('Error writing excel export', err));
+  }
+
+  /**
+   * Set fiche agent template style
+   * @param report
+   * @param viewModel
+   * @returns
+   */
+  async setStyleXls(report: any, viewModel: any) {
+    const MAG = 'Magistrat';
+    const GREFFE = 'Greffe';
+    const ADM = 'Autour du magistrat';
+
+    // category picker
+    report.worksheets[0].getCell('C2').dataValidation = {
+      type: 'list',
+      allowBlank: true,
+      formulae: ['"MAGISTRAT,GREFFE,AUTOUR_DU_MAGISTRAT"'],
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      showErrorMessage: true,
+      showInputMessage: true,
+    };
+    // time picker
+    report.worksheets[0].getCell('C5').dataValidation = {
+      type: 'list',
+      allowBlank: true,
+      formulae: ['"Temps plein, Temps partiel"'],
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      showErrorMessage: true,
+      showInputMessage: true,
+    };
+
+    // functions by category
+    const findCategoryMag =
+      this.humanResourceService.categories
+        .getValue()
+        .find((c: HRCategoryInterface) => c.label === MAG) || null;
+    const findCategoryGreffe =
+      this.humanResourceService.categories
+        .getValue()
+        .find((c: HRCategoryInterface) => c.label === GREFFE) || null;
+    const findCategoryAdm =
+      this.humanResourceService.categories
+        .getValue()
+        .find((c: HRCategoryInterface) => c.label === ADM) || null;
+
+    const fonctionsMag = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === findCategoryMag?.id);
+    const fonctionsGreffe = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === findCategoryGreffe?.id);
+    const fonctionsAdm = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === findCategoryAdm?.id);
+
+    let lineIndex = 0;
+    for (let i = 0; i < fonctionsMag.length; i++) {
+      if (fonctionsMag[i].label) lineIndex++;
+      report.worksheets[1].getCell('A' + lineIndex).value =
+        fonctionsMag[i].label.toUpperCase();
+    }
+    lineIndex = 0;
+    for (let i = 0; i < fonctionsGreffe.length; i++) {
+      if (fonctionsGreffe[i].label) lineIndex++;
+      report.worksheets[1].getCell('B' + lineIndex).value =
+        fonctionsGreffe[i].label.toUpperCase();
+    }
+    lineIndex = 0;
+    for (let i = 0; i < fonctionsAdm.length; i++) {
+      if (fonctionsAdm[i].label) lineIndex++;
+      report.worksheets[1].getCell('C' + lineIndex).value =
+        fonctionsAdm[i].label.toUpperCase();
+    }
+
+    let globalSum = new Array();
+
+    // sum by parent
+    viewModel.referentiel.map((r: any) => {
+      if (r.sum !== null) {
+        report.worksheets[0].getCell(r.index).value = {
+          formula: '=SUM(' + r.sum.join(',') + ')',
+          result: '0',
+        };
+        globalSum.push(r.index);
+      }
+    });
+
+    // total sum
+    report.worksheets[0].getCell('E7').value = {
+      formula: '=SUM(' + globalSum.join(',') + ')/100',
+      result: '0',
+    };
+
+    return report;
+  }
 }
