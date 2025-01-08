@@ -1,5 +1,4 @@
 import { endOfMonth, startOfMonth } from 'date-fns';
-//import { environment } from '../../environments/environment';
 
 /**
  * Calcul du nombre de mois entre deux dates
