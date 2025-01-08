@@ -8,7 +8,6 @@ import {
 } from '../utils/referentiel';
 import { categoryMappingName, categoryMappingColor } from '../utils/category';
 
-//import { environment } from '../../environments/environment';
 import { fixDecimal } from '../utils/numbers';
 import {
   decimalToStringDate,
@@ -41,10 +40,6 @@ export class MainClass {
    * Liste des watch pour les détruires après
    */
   watcherList: Subscription[] = [];
-  /**
-   * Config d'environment
-   */
-  //environment = environment;
   /**
    * Variable global de string magistrat
    */

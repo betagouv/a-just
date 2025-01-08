@@ -15,7 +15,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
 import { CommonModule } from '@angular/common';
-//import { environment } from '../../../environments/environment';
 import { UserService } from '../../services/user/user.service';
 import { ServerService } from '../../services/http-server/server.service';
 import { SSOService } from '../../services/sso/sso.service';

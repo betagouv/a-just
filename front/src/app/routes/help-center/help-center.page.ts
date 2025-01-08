@@ -15,7 +15,6 @@ import {
 import { UserService } from '../../services/user/user.service';
 import { ServerService } from '../../services/http-server/server.service';
 import { AppService } from '../../services/app/app.service';
-//import { environment } from '../../../environments/environment';
 import { downloadFile } from '../../utils/system';
 import { MatIconModule } from '@angular/material/icon';
 import { SanitizeResourceUrlPipe } from '../../pipes/sanitize-resource-url/sanitize-resource-url.pipe';

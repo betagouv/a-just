@@ -7,7 +7,6 @@ import { ContentieuxOptionsService } from './services/contentieux-options/conten
 import { UserService } from './services/user/user.service';
 import { iIOS } from './utils/system';
 import { filter } from 'rxjs';
-//import { environment } from '../environments/environment';
 import { CommonModule } from '@angular/common';
 import { AlertComponent } from './components/alert/alert.component';
 import { BigLoaderComponent } from './components/big-loader/big-loader.component';
