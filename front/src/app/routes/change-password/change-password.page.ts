@@ -100,7 +100,7 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
       !password.match(/[A-Z]/g)
     ) {
       alert(
-        'Vous devez saisir un mot de passe qui remplir les critères obligatoires'
+        'Vous devez saisir un mot de passe qui remplit les critères obligatoires'
       );
       return;
     }
