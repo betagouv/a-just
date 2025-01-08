@@ -130,7 +130,7 @@ export class TextEditorComponent extends MainClass {
       }
       if (change['value']) {
         this.ignoreUpdate = true;
-        this.quillEditor.root.innerHTML = this.value;
+        this.quillEditor.root.innerHTML = this.cleanInputValue(this.value);
         if (this.value) {
           this.quillEditor.root.classList.add('hide-place-holder');
         } else {
@@ -174,7 +174,7 @@ export class TextEditorComponent extends MainClass {
 
     if (this.value) {
       //this.quillEditor.setText(this.value, 'api')
-      this.quillEditor.root.innerHTML = this.value;
+      this.quillEditor.root.innerHTML = this.cleanInputValue(this.value);
     }
 
     this.quillEditor.on(
@@ -257,6 +257,15 @@ export class TextEditorComponent extends MainClass {
   setValue(text: string) {
     this.value = text;
     this.ignoreUpdate = true;
-    this.quillEditor.root.innerHTML = this.value;
+    this.quillEditor.root.innerHTML = this.cleanInputValue(this.value);
+  }
+
+  /**
+   * Clean input new values
+   */
+  cleanInputValue(text: string) {
+    text = text.replace(/<ul>/, '<ol>');
+    text = text.replace(/<\/ul>/, '</ol>');
+    return text;
   }
 }
