@@ -375,7 +375,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    if (!withoutPercentControl) {
+    const indisponibilites = this.human?.indisponibilities || [];
+    const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some(
+      (c) => c.contentieux.checkVentilation === false
+    );
+
+    if (
+      !checkIfIndispoIgnoreControlPercentVentilation &&
+      !withoutPercentControl
+    ) {
       const totalAffected = fixDecimal(
         sumBy(this.updatedReferentiels, 'percent')
       );
@@ -481,7 +489,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    console.log(this.form.get('etp')?.value, this.human);
     if (this.form.get('etp')?.value === null) {
       alert(
         'Vous devez saisir un temps de travail pour valider la création de cette fiche !'
