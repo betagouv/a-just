@@ -26,8 +26,8 @@ export function referentielCAMappingIndex(name, rank) {
       return 4;
     case "Contentieux civil non spécialisé":
       return 5;
-    case "Contentieux civil JLD":
-      return 6;
+    case "Attributions du PP":
+        return 6;
     case "Contentieux des mineurs":
       return 7;
     case "Correctionnel":
@@ -38,8 +38,8 @@ export function referentielCAMappingIndex(name, rank) {
       return 10;
     case "Contentieux criminel":
       return 11;
-    case "Attributions du PP":
-      return 12;
+    case "Contentieux civil JLD": // à supprimer
+        return 12;
     case "Autres activités":
       return 13;
     case 'Indisponibilité':
@@ -103,8 +103,6 @@ export function referentielCAMappingName(name) {
       return "Commercial";
     case "Attributions du PP":
       return "PP";
-    case "Contentieux civil JLD":
-      return "Jld Civil";
     case "Contentieux des mineurs":
       return "Mineurs";
     case "Instruction et entraide":
@@ -208,8 +206,8 @@ export function referentielCAMappingColor(name) {
       return '#1664c0'
     case "Contentieux civil non spécialisé":
       return '#283592'
-    case "Contentieux civil JLD":
-      return '#4526a0'
+      case "Attributions du PP":
+        return '#4526a0'
     case "Contentieux des mineurs":
       return "#691a9a";
     case "Correctionnel": //CHAC
@@ -220,10 +218,9 @@ export function referentielCAMappingColor(name) {
       return "#ef6c00"
     case "Contentieux criminel":
       return "#ef6c00";
-    case "Attributions du PP":
-      return '#fbca0c'
     case "Autres activités":
       return '#424242'
+      // couleur contentieux SPE à venir : '#fbca0c'
   }
 
   return ''
@@ -255,3 +252,4 @@ export function etpLabel(value) {
  * ETP need to be updated
  */
 export const ETP_NEED_TO_BE_UPDATED = 0.000001
+

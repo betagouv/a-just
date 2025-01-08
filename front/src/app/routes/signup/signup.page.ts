@@ -257,7 +257,7 @@ export class SignupPage {
         !password.match(/[A-Z]/g)
       ) {
         alert(
-          'Vous devez saisir un mot de passe qui rempli les critères obligatoires'
+          'Vous devez saisir un mot de passe qui remplir les critères obligatoires'
         );
         return;
       }

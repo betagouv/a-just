@@ -39,7 +39,11 @@ import {
   IMPORT_ETP_TEMPLATE,
   IMPORT_ETP_TEMPLATE_CA,
 } from '../../../constants/documentation';
-import { today } from '../../../utils/dates';
+import {
+  findRealValueCustom,
+  isDateBiggerThan,
+  today,
+} from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
@@ -114,6 +118,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Id de situation
    */
   @Input() editId: number | null = null;
+  /**
+   * Parent form
+   */
   @Input() basicData: FormGroup | null = null;
   /**
    * Force to show sub contentieux
@@ -197,6 +204,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   sumPercentImported = 0;
   /**
+   * Liste des indispo courrante
+   */
+  indisponibilitiesFiltered: RHActivityInterface[] = [];
+
+  /**
    * Constructeur
    * @param hrFonctionService
    * @param hrCategoryService
@@ -277,6 +289,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     if (changes['lastDateStart'] && changes['lastDateStart'].firstChange) {
       this.onStart();
     }
+    if (changes['indisponibilities']) {
+      this.indisponibilitiesFiltered = [
+        ...this.indisponibilities.filter((i) => i.id < 0),
+        ...this.isBiggerThanArray(
+          this.indisponibilities.filter((i) => i.id >= 0),
+          'dateStop'
+        ),
+      ];
+    }
   }
 
   /**
@@ -346,7 +367,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Control du formulaire lors de la sauvegarde
    * @returns
    */
-  async onSave(withoutPercentControl = false) {
+  async onSave(withoutPercentControl = false, saveETPT0 = false) {
     if (this.indisponibilityError) {
       alert(this.indisponibilityError);
       return;
@@ -367,7 +388,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           title: 'Attention',
           text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doit constituer 100% de son temps de travail.<br/><br/>Il est également essentiel que, même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il soit affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           callback: () => {
-            this.onSave(true);
+            this.onSave(true, saveETPT0);
           },
         });
         return;
@@ -391,12 +412,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    console.log(
-      'ACT start date',
-      activitiesStartDate,
-      ' Start date',
-      this.human!.dateStart
-    );
     if (!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !');
       return;
@@ -444,6 +459,52 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     if (!fonct) {
       alert('Vous devez saisir une fonction !');
       return;
+    }
+
+    if (
+      fonct.minDateAvalaible &&
+      !isDateBiggerThan(
+        today(activitiesStartDate),
+        today(fonct.minDateAvalaible)
+      )
+    ) {
+      alert(
+        `Date de début de situation à corriger ! La fonction ${
+          fonct.label
+        } n’entre en vigueur qu’à compter du ${findRealValueCustom(
+          fonct.minDateAvalaible,
+          false
+        )}.`
+      );
+      return;
+    }
+
+    if (this.form.get('etp')?.value === null) {
+      alert(
+        'Vous devez saisir un temps de travail pour valider la création de cette fiche !'
+      );
+      return;
+    }
+
+    const nbSituationSetted = (this.human.situations || []).length;
+    if (this.form.get('etp')?.value === 0) {
+      if (nbSituationSetted === 0) {
+        alert(
+          'Vous devez saisir un temps  administratif de travail supérieur à 0 pour créer cette fiche !'
+        );
+        return;
+      } else {
+        if (!saveETPT0) {
+          this.appService.alert.next({
+            title: 'Attention',
+            text: `L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie.`,
+            callback: () => {
+              this.onSave(withoutPercentControl, true);
+            },
+          });
+          return;
+        }
+      }
     }
 
     const situations = this.generateAllNewSituations(
