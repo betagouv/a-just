@@ -288,7 +288,9 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur sans données pré-alimentées :',
-    path: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
+    path: this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
     printSubTitle: true,
   };
 
