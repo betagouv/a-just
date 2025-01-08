@@ -15,7 +15,6 @@ import { Title } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
 import { PopupComponent } from '../../components/popup/popup.component';
-import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
 import { SSOService } from '../../services/sso/sso.service';
@@ -50,7 +49,7 @@ export class LoginPage implements OnInit {
   /**
    * SSO is activate to this env
    */
-  ssoIsActivate: boolean = environment.enableSSO;
+  ssoIsActivate: boolean = import.meta.env.NG_APP_ENABLE_SSO;
   /**
    * Error connection message on login
    */
