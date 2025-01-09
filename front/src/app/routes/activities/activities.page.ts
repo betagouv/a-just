@@ -11,7 +11,11 @@ import {
 import { UserInterface } from '../../interfaces/user-interface';
 import { DateSelectorinterface } from '../../interfaces/date';
 import { MIN_DATE_SELECT } from '../../constants/activities';
-import { DATA_GITBOOK } from '../../constants/documentation';
+import {
+  DATA_GITBOOK,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+} from '../../constants/documentation';
 import { DocumentationInterface } from '../../interfaces/documentation';
 import { OPACITY_20 } from '../../constants/colors';
 import {
@@ -125,17 +129,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    */
   gitBook = DATA_GITBOOK;
   /**
-   * Lien vers la nomenclature a-just
-   */
-  nomenclature = '/assets/nomenclature-A-Just.html';
-  /**
    * Lien vers le data book
    */
   dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/';
   /**
    * Support GitBook
    */
-  supportGitBook = `mailto:${this.environment.supportEmail}?subject=[RETOUR DATA] Données d'activité&body=J’ai des interrogations/réactions sur les données d’activité de ma juridiction et n’ai pas trouvé de réponse dans le data-book.%0D %0D Ma question/réaction porte sur :%0D %0D %0D %0D %0D Je souhaite être recontacté : par téléphone/par mail %0D %0D Voici mes coordonnées :`;
+  supportGitBook = `mailto:${
+    import.meta.env.NG_APP_SUPPORT_EMAIL
+  }?subject=[RETOUR DATA] Données d'activité&body=J’ai des interrogations/réactions sur les données d’activité de ma juridiction et n’ai pas trouvé de réponse dans le data-book.%0D %0D Ma question/réaction porte sur :%0D %0D %0D %0D %0D Je souhaite être recontacté : par téléphone/par mail %0D %0D Voici mes coordonnées :`;
   /**
    * Boolean to need update
    */
@@ -784,8 +786,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   downloadAsset(type: string, download = false) {
     let url = null;
 
-    if (type === 'nomenclature') url = this.nomenclature;
-    else if (type === 'dataBook') url = this.dataBook;
+    if (type === 'nomenclature') {
+      url = this.userService.isCa()
+        ? NOMENCLATURE_DOWNLOAD_URL_CA
+        : NOMENCLATURE_DOWNLOAD_URL;
+    } else if (type === 'dataBook') url = this.dataBook;
 
     if (url) {
       if (download) {

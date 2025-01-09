@@ -7,7 +7,6 @@ import { ContentieuxOptionsService } from './services/contentieux-options/conten
 import { UserService } from './services/user/user.service';
 import { iIOS } from './utils/system';
 import { filter } from 'rxjs';
-import { environment } from '../environments/environment';
 import { CommonModule } from '@angular/common';
 import { AlertComponent } from './components/alert/alert.component';
 import { BigLoaderComponent } from './components/big-loader/big-loader.component';
@@ -40,6 +39,14 @@ export class AppComponent implements AfterViewInit {
    * loading
    */
   appLoading = false;
+  /**
+   * Matomo
+   */
+  matomo: number | null = import.meta.env.NG_APP_MATOMO;
+  /**
+   * MatomoTM
+   */
+  matomoTM: string | null = import.meta.env.NG_APP_MATOMO_TM;
 
   /**
    * Constructeur de control SSL + Matomo
@@ -85,14 +92,14 @@ export class AppComponent implements AfterViewInit {
 
     this.appService.appLoading.subscribe((a) => (this.appLoading = a));
 
-    if (environment.matomo !== null) {
+    if (this.matomo !== null) {
       var _paq = (window._paq = window._paq || []);
       _paq.push(['trackPageView']);
       _paq.push(['enableLinkTracking']);
-      (function () {
+      (() => {
         var u = 'https://stats.beta.gouv.fr/';
         _paq.push(['setTrackerUrl', u + 'piwik.php']);
-        _paq.push(['setSiteId', environment.matomo]);
+        _paq.push(['setSiteId', this.matomo]);
         var d = document,
           g = d.createElement('script'),
           s = d.getElementsByTagName('script')[0];
@@ -104,15 +111,15 @@ export class AppComponent implements AfterViewInit {
       })();
     }
 
-    if (environment.matomoTM !== null) {
+    if (this.matomoTM !== null) {
       var _mtm = (window._mtm = window._mtm || []);
       _mtm.push({ 'mtm.startTime': new Date().getTime(), event: 'mtm.Start' });
-      (function () {
+      (() => {
         var d = document,
           g = d.createElement('script'),
           s = d.getElementsByTagName('script')[0];
         g.async = true;
-        g.src = `https://stats.beta.gouv.fr/js/container_${environment.matomoTM}.js`;
+        g.src = `https://stats.beta.gouv.fr/js/container_${this.matomoTM}.js`;
         s.parentNode?.insertBefore(g, s);
       })();
     }
@@ -148,7 +155,7 @@ export class AppComponent implements AfterViewInit {
 
   crispChat() {
     window.$crisp = [];
-    window.CRISP_WEBSITE_ID = environment.crisp;
+    window.CRISP_WEBSITE_ID = import.meta.env.NG_APP_CRISP;
     const d = document;
     const s: any = d.createElement('script');
     s.src = 'https://client.crisp.chat/l.js';
