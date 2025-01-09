@@ -14,10 +14,11 @@ import {
   TAG_JURIDICTION_ID_COLUMN_NAME,
   TAG_JURIDICTION_VALUE_COLUMN_NAME,
 } from "./constants/SDSE-ref";
-import { groupBy, sumBy } from "lodash";
+import { get, groupBy, sumBy } from "lodash";
 import YAML from "yaml";
 import { XMLParser } from "fast-xml-parser";
 import { onGetIelstListApi } from "./api/juridiction/juridiciton.api";
+import { exit } from "process";
 
 export default class App {
   constructor() { }
@@ -42,17 +43,18 @@ export default class App {
     mkdirSync(outputAllFolder, { recursive: true });
 
     await onGetIelstListApi().then(async (response) => {
+      //console.log('Categories of rules', categoriesOfRules);
       if (response) {
         // CIVIL
-        await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
-        await this.formatAndGroupJuridiction(
-          tmpFolder,
-          outputFolder,
-          outputAllFolder,
-          categoriesOfRules,
-          referentiel,
-          response
-        );
+        // await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
+        // await this.formatAndGroupJuridiction(
+        //   tmpFolder,
+        //   outputFolder,
+        //   outputAllFolder,
+        //   categoriesOfRules,
+        //   referentiel,
+        //   response
+        // );
 
         // WIP datas pénal
         // await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
@@ -63,6 +65,10 @@ export default class App {
         //   categoriesOfRules,
         //   response
         // );
+
+
+        // Data Cheking
+        this.checkDataUsage(inputFolder, referentiel, categoriesOfRules)
       }
     });
 
@@ -391,10 +397,10 @@ export default class App {
             referentiel
           );
           //  -> Utile pour supprimer un mois spécifique sur les données
-          // const tmp = formatMonthDataFromRules.filter(elem => elem.periode !== '202412');
-          // list = list.concat(tmp);
+          const tmp = formatMonthDataFromRules.filter(elem => elem.periode !== '202412');
+          list = list.concat(tmp);
 
-          list = list.concat(formatMonthDataFromRules);
+          // list = list.concat(formatMonthDataFromRules);
         });
 
         // merge to existing list
@@ -556,6 +562,7 @@ export default class App {
       let label = value;
 
       if (label.startsWith("<>") === true) {
+        //label = label.replace("<>", "").trim().slice(1, -1);
         label = label.replace(/[<>"]/g, '').trim()
         include = false; // warning need to be alway same
       }
@@ -808,5 +815,111 @@ export default class App {
           .join("")
       );
     }
+  }
+
+  getKeysToConsider(rules) {
+    const keys = []
+    rules.map(rule => {
+      if (rule.filtres) {
+        Object.keys(rule.filtres).map(type => {
+          Object.keys(rule.filtres[type]).map(key => {
+            if (key !== 'TOTAL' && keys.indexOf(key) === -1) {
+              keys.push(key)
+            }
+          })
+        })
+      }
+    })
+
+    return keys
+  }
+
+  checkDataUsage(inputFolder, referentiel, categoriesOfRules) {
+    // Récupération des fichiers de données
+    const dataFiles = readdirSync(inputFolder).filter((f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1)
+
+    // Récupération de l'ensemble des règles
+    const rules = Object.values(categoriesOfRules).flat()
+
+    //On récupère seuelemnt les filtres qui nous inéressent pour gagner du temps sur la suite
+    const keysToConsider = this.getKeysToConsider(rules)
+
+    console.log('keysToConsider:', keysToConsider)
+
+    // console.log('rules:', rules)
+
+    if (dataFiles) {
+      //for (let i = 0; i < dataFiles.length; i++) {
+        const file = dataFiles[0];
+        console.log('\n\nFile:', file)
+        const parser = new XMLParser();
+        const xml = parser.parse(
+          readFileSync(`${inputFolder}/${file}`, { encoding: "utf8" })
+        );
+      
+        if (xml.ROWSET.ROW) {
+          xml.ROWSET.ROW.map(data => {
+            console.log('\n\n\n\nData:', data)
+            rules.map(rule => {
+              console.log('\nNew Rule')
+              if (rule.filtres) {
+                // type = entrees || sorties || stock
+                Object.keys(rule.filtres).map(type => {
+                  // On supprime la clé TOTAL qui ne nous intéresse pas
+                  if (rule.filtres[type].TOTAL) {
+                      delete rule.filtres[type].TOTAL
+                  }
+
+                  Object.keys(rule.filtres[type]).map(key => {
+                    //console.log('key:', key)
+                    if (key in data) {
+                      //console.log('data[key]:', data[key])
+                      
+                      const filter = Array.isArray(rule.filtres[type][key]) ? rule.filtres[type][key] : [rule.filtres[type][key]]
+                      
+                      // On récupère les codes correspondant aux libellés dans la nomenclature
+                      let codes = referentiel.filter(r => filter.includes(r.LIBELLE)).map(r => r.CODE)
+                     
+                      console.log('filter:', filter)
+                      console.log('codes:', codes)
+                    }
+                  })
+                })
+              }
+
+            })
+
+
+          //   Object.keys(data).map(dataKey => {
+          //     // On prend en compte uniquement les clés qui sont utilisées dans les règles
+          //     if (keysToConsider.indexOf(dataKey) !== -1) {
+          //       console.log('dataKey:', dataKey)
+          //       // On applique chaque règles à cette ligne de donnée pour voir si elle correspond à une règle ou plus
+          //       rules.map(rule => {
+          //         if (rule.filtres) {
+          //           // type = entrees || sorties || stock
+          //           Object.keys(rule.filtres).map(type => {
+          //             const filtres = rule.filtres[type]
+
+          //             if (rule.filtres[type].TOTAL) {
+          //                 delete rule.filtres[type].TOTAL
+          //             }
+
+          //             console.log('rule.filtres[type]:', rule.filtres[type])
+          //             Object.keys(rule.filtres[type]).map(key => {
+          //               if (key === dataKey){
+          //                 console.log('dataKey:', dataKey)
+          //                 console.log('key:', key)
+          //               }
+          //             })
+          //           })
+          //         }
+          //       })
+          //     }
+          // })
+        })
+     }
+    }
+
   }
 }
