@@ -462,7 +462,9 @@ export const computeExtractDdg = async (
         if (
           categoryName !== "pas de catégorie" ||
           fonctionName !== "pas de fonction"
-        )
+        ) {
+          if (human.juridiction && human.juridiction.length !== 0) human.juridiction = human.juridiction.replaceAll('TPR ','TPRX ')
+
           onglet2.push({
             ["Réf."]: String(human.id),
             Arrondissement: juridictionName.label,
@@ -495,6 +497,7 @@ export const computeExtractDdg = async (
             ["Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)"]:
               absenteisme,
           });
+        }
     })
   );
   console.timeEnd("extractor-7.1");
