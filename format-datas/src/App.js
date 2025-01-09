@@ -817,7 +817,7 @@ export default class App {
     }
   }
 
-  getKeysToConsider(rules) {
+  /*getKeysToConsider(rules) {
     const keys = []
     rules.map(rule => {
       if (rule.filtres) {
@@ -832,7 +832,7 @@ export default class App {
     })
 
     return keys
-  }
+  }*/
 
   checkDataUsage(inputFolder, referentiel, categoriesOfRules) {
     // Récupération des fichiers de données
@@ -842,9 +842,9 @@ export default class App {
     const rules = Object.values(categoriesOfRules).flat()
 
     //On récupère seuelemnt les filtres qui nous inéressent pour gagner du temps sur la suite
-    const keysToConsider = this.getKeysToConsider(rules)
+    //const keysToConsider = this.getKeysToConsider(rules)
 
-    console.log('keysToConsider:', keysToConsider)
+    //console.log('keysToConsider:', keysToConsider)
 
     // console.log('rules:', rules)
 
