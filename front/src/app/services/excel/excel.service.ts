@@ -247,12 +247,12 @@ export class ExcelService extends MainClass {
       });
 
       // DDG TJ
-      report.worksheets[11].getCell('D' + +5).value =
+      report.worksheets[10].getCell('D' + +5).value =
         viewModel.tgilist[0] || viewModel.uniqueJur[0];
       // DDG TPROX
-      report.worksheets[12].getCell('D' + +5).value =
+      report.worksheets[11].getCell('D' + +5).value =
         viewModel.tpxlist[0] || '';
-      report.worksheets[12].getCell('D' + +5).dataValidation = {
+      report.worksheets[11].getCell('D' + +5).dataValidation = {
         type: 'list',
         allowBlank: false,
         formulae: tpxlistExcel,
@@ -264,9 +264,9 @@ export class ExcelService extends MainClass {
         showInputMessage: true,
       };
       // DDG CPH
-      report.worksheets[13].getCell('D' + +5).value =
+      report.worksheets[12].getCell('D' + +5).value =
         viewModel.uniqueJur[0] || '';
-      report.worksheets[13].getCell('D' + +5).dataValidation = {
+      report.worksheets[12].getCell('D' + +5).dataValidation = {
         type: 'list',
         allowBlank: false,
         formulae: viewModel.tProximite,
