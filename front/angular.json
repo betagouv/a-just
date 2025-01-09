@@ -15,13 +15,13 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@ngx-env/builder:application",
           "options": {
             "allowedCommonJsDependencies": [
-              "moment", 
-              "file-saver", 
-              "lodash", 
-              "core-js/modules/es.promise.js", 
+              "moment",
+              "file-saver",
+              "lodash",
+              "core-js/modules/es.promise.js",
               "core-js/modules/es.string.match.js",
               "core-js/modules/es.string.replace.js",
               "core-js/modules/es.string.starts-with.js",
@@ -44,7 +44,9 @@
             "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -86,17 +88,11 @@
                   "maximumError": "50kb"
                 }
               ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
               "outputHashing": "all"
             },
-            "preproduction": {
+            "production-ca": {
               "index": {
-                "input": "src/index.production.html",
+                "input": "src/index.production-ca.html",
                 "output": "index.html"
               },
               "budgets": [
@@ -109,12 +105,6 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "25kb",
                   "maximumError": "50kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.preprod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -136,10 +126,23 @@
                   "maximumError": "50kb"
                 }
               ],
-              "fileReplacements": [
+              "outputHashing": "all"
+            },
+            "staging-ca": {
+              "index": {
+                "input": "src/index.staging-ca.html",
+                "output": "index.html"
+              },
+              "budgets": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.staging.ts"
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "6mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "25kb",
+                  "maximumError": "50kb"
                 }
               ],
               "outputHashing": "all"
@@ -161,10 +164,23 @@
                   "maximumError": "50kb"
                 }
               ],
-              "fileReplacements": [
+              "outputHashing": "all"
+            },
+            "sandbox-ca": {
+              "index": {
+                "input": "src/index.sandbox-ca.html",
+                "output": "index.html"
+              },
+              "budgets": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.sandbox.ts"
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "6mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "25kb",
+                  "maximumError": "50kb"
                 }
               ],
               "outputHashing": "all"
@@ -178,7 +194,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@ngx-env/builder:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "a-just-front:build:production"
@@ -196,13 +212,15 @@
               "buildTarget": "a-just-front:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {}
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n"
+          "builder": "@ngx-env/builder:extract-i18n",
+          "options": {}
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@ngx-env/builder:karma",
           "options": {
             "polyfills": [
               "zone.js",
@@ -220,7 +238,8 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "builderMode": "browser"
           }
         }
       }

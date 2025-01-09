@@ -130,7 +130,7 @@ export class TextEditorComponent extends MainClass {
       }
       if (change['value']) {
         this.ignoreUpdate = true;
-        this.quillEditor.root.innerHTML = this.value;
+        this.quillEditor.root.innerHTML = this.cleanInputValue(this.value);
         if (this.value) {
           this.quillEditor.root.classList.add('hide-place-holder');
         } else {
@@ -166,7 +166,16 @@ export class TextEditorComponent extends MainClass {
     this.quillEditor = new Quill(dom, {
       readOnly: this.defaultReadOnly,
       modules: {
-        toolbar: ['bold', 'italic', 'underline', 'strike', 'link'],
+        toolbar: [
+          'bold',
+          'italic',
+          'underline',
+          'strike',
+          'link',
+          { list: 'ordered' },
+          { list: 'bullet' },
+          { list: 'check' },
+        ],
       },
       placeholder: this.placeholder,
       theme: 'snow',
@@ -174,7 +183,7 @@ export class TextEditorComponent extends MainClass {
 
     if (this.value) {
       //this.quillEditor.setText(this.value, 'api')
-      this.quillEditor.root.innerHTML = this.value;
+      this.quillEditor.root.innerHTML = this.cleanInputValue(this.value);
     }
 
     this.quillEditor.on(
@@ -257,6 +266,18 @@ export class TextEditorComponent extends MainClass {
   setValue(text: string) {
     this.value = text;
     this.ignoreUpdate = true;
-    this.quillEditor.root.innerHTML = this.value;
+    this.quillEditor.root.innerHTML = this.cleanInputValue(this.value);
+  }
+
+  /**
+   * Clean input new values
+   */
+  cleanInputValue(text: string) {
+    if (text.includes('<ul>')) {
+      text = text.replace(/<ul>/gm, '<ol>');
+      text = text.replace(/<\/ul>/gm, '</ol>');
+      text = text.replace(/<li>/gm, '<li data-list="bullet">');
+    }
+    return text;
   }
 }

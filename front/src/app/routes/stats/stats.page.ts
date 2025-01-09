@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
 import { BackButtonComponent } from '../../components/back-button/back-button.component';
-import { environment } from '../../../environments/environment';
 import { JuridictionInterface } from '../../interfaces/juridiction';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
 import { UserService } from '../../services/user/user.service';
@@ -24,7 +23,7 @@ export class StatsPage {
   /**
    * Mapbox styling
    */
-  style = environment.mapboxStyle;
+  style = import.meta.env.NG_APP_MAPBOX_STYLE;
   /**
    * Center of mapbox
    */
@@ -37,6 +36,10 @@ export class StatsPage {
    * Liste juridictions
    */
   list: JuridictionInterface[] = [];
+  /**
+   * Mapbox Token
+   */
+  mapboxToken = import.meta.env.NG_APP_MAPBOX_TOKEN;
 
   /**
    * Constructeur
@@ -60,7 +63,7 @@ export class StatsPage {
   }
 
   updateMap() {
-    mapboxgl.accessToken = environment.mapboxToken;
+    mapboxgl.accessToken = this.mapboxToken;
     const map = new mapboxgl.Map({
       container: 'map-juridictions',
       style: this.style,
