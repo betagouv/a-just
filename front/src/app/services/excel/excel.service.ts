@@ -588,17 +588,19 @@ export class ExcelService extends MainClass {
     let sumLists = new Array();
 
     referentiels.map((r) => {
-      r.childrens?.map((c) => {
-        counter++;
-        referentiel.push({
-          code: c['code_import'],
-          label: c.label,
-          parent: '',
-          index: null,
-          sum: null,
+      if (r.childrens && r.childrens.length) {
+        r.childrens?.map((c) => {
+          counter++;
+          referentiel.push({
+            code: c['code_import'],
+            label: c.label,
+            parent: '',
+            index: null,
+            sum: null,
+          });
+          sumLists.push('E' + (counter + 8));
         });
-        sumLists.push('E' + (counter + 8));
-      });
+      }
       counter++;
       referentiel.push({
         code: r['code_import'],
