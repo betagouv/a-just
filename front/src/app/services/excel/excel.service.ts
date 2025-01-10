@@ -109,6 +109,7 @@ export class ExcelService extends MainClass {
         this.tabs = data.data;
         const viewModel = {
           ...this.tabs.viewModel,
+          //fonctions: data.data.fonctions,
           firstLink: {
             label: 'Consultez notre documentation en ligne ici.',
             url: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs',
@@ -515,6 +516,7 @@ export class ExcelService extends MainClass {
         showInputMessage: true,
       };
 
+      // Data validation pour menus déroulants
       const fonctionCellToCheck =
         (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) ||
         '';
