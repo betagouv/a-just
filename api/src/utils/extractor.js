@@ -9,6 +9,7 @@ import {
 } from "./date";
 import { findSituation } from "./human-resource";
 import { getHRVentilation } from "../utils/calculator";
+import { FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR } from "../constants/extractor";
 
 /**
  * Exception relevés par madame De Jong - statistitienne de Lyon
@@ -446,16 +447,31 @@ export const computeExtractDdg = async (
           }
         });
 
-        const isGone = dateStop > human.dateEnd
-        const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop
-        if (human.dateEnd && isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
-          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
-          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        const isGone = dateStop > human.dateEnd;
+        const hasArrived =
+          dateStart < human.dateStart && human.dateStart < dateStop;
+        if (
+          human.dateEnd &&
+          isGone &&
+          sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays") ===
+            1
+        ) {
+          let difCalculation =
+            (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0);
+          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation;
         } else if (hasArrived && dateStart) {
           reelEtp =
-            ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays')) * nbOfDays(human.dateStart, dateStop)) / nbOfDays(dateStart, dateStop) -
-            (refObj[key] || 0)
-        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+            ((sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+              nbOfDays(human.dateStart, dateStop)) /
+              nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0);
+        } else
+          reelEtp =
+            sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays") -
+            (refObj[key] || 0);
       }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
@@ -463,7 +479,8 @@ export const computeExtractDdg = async (
           categoryName !== "pas de catégorie" ||
           fonctionName !== "pas de fonction"
         ) {
-          if (human.juridiction && human.juridiction.length !== 0) human.juridiction = human.juridiction.replaceAll('TPR ','TPRX ')
+          if (human.juridiction && human.juridiction.length !== 0)
+            human.juridiction = human.juridiction.replaceAll("TPR ", "TPRX ");
 
           onglet2.push({
             ["Réf."]: String(human.id),
@@ -578,7 +595,6 @@ export const getViewModel = async (params) => {
   // remplacer : "12. TOTAL INDISPONIBILITÉ" => "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
   // remplacer : "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" => ""13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques"
 
-  console.log(agregat);
 
   return {
     tgilist,
@@ -768,16 +784,31 @@ export const computeExtract = async (
           }
         });
 
-        const isGone = dateStop > human.dateEnd
-        const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop
-        if (human.dateEnd && isGone && sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') === 1) {
-          let difCalculation = (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0)
-          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation
+        const isGone = dateStop > human.dateEnd;
+        const hasArrived =
+          dateStart < human.dateStart && human.dateStart < dateStop;
+        if (
+          human.dateEnd &&
+          isGone &&
+          sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays") ===
+            1
+        ) {
+          let difCalculation =
+            (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0);
+          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation;
         } else if (hasArrived && dateStart) {
           reelEtp =
-            ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays')) * nbOfDays(human.dateStart, dateStop)) / nbOfDays(dateStart, dateStop) -
-            (refObj[key] || 0)
-        } else reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - (refObj[key] || 0)
+            ((sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+              nbOfDays(human.dateStart, dateStop)) /
+              nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0);
+        } else
+          reelEtp =
+            sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays") -
+            (refObj[key] || 0);
       }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
@@ -811,4 +842,9 @@ export const computeExtract = async (
   console.timeEnd("extractor-6.0");
 
   return data;
+};
+
+export const formatFunctions = async (functionList) => {
+  let list = [...functionList, ...FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR];
+  return orderBy(list, ['category_label','rank'],['desc','asc'])
 };

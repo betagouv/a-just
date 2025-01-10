@@ -5,6 +5,7 @@ import {
   computeExtract,
   computeExtractDdg,
   flatListOfContentieuxAndSousContentieux,
+  formatFunctions,
   getExcelLabel,
   getViewModel,
   replaceIfZero,
@@ -76,6 +77,12 @@ export default class RouteExtractor extends Route {
     const categories = await this.models.HRCategories.getAll()
     console.timeEnd('extractor-4')
 
+    console.time('extractor-4.1')
+    const functionList = await this.models.HRFonctions.getAllFormatDdg()
+    const formatedFunctions = formatFunctions(functionList)
+    console.timeEnd('extractor-4;1')
+    console.log(formatedFunctions)
+    
     console.time('extractor-5')
     let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop)
     console.timeEnd('extractor-5')
@@ -162,6 +169,7 @@ export default class RouteExtractor extends Route {
       onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
       allJuridiction,
       viewModel,
+      fonctions:formatedFunctions
     })
   }
 
