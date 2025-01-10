@@ -464,7 +464,7 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        report.worksheets[2].getCell('EE' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FE' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -479,7 +479,7 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        report.worksheets[2].getCell('EF' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FF' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -540,9 +540,9 @@ export class ExcelService extends MainClass {
         report.worksheets[2].getCell('H' + (+index + 3)).dataValidation = {
           type: 'list',
           allowBlank: true,
-          formulae: [
-            '"JA Siège autres,JA Pôle Social,JA Parquet,JA JP,JA VIF"',
-          ],
+          formulae: this.userService.isCa()
+            ? ['"JA Chambres Sociales,JA Siège autres,JA Parquet Général"']
+            : ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP,JA VIF"'],
         };
       }
     });
