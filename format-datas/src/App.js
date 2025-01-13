@@ -737,6 +737,9 @@ export default class App {
               monthValues,
               rulesToApply
             );
+            //  -> Utile pour supprimer un mois spécifique sur les données
+            // const tmp = formatMonthDataFromRules.filter(elem => elem.periode !== '202412');
+            // list = list.concat(tmp);
             list = list.concat(formatMonthDataFromRules);
           }
         });
