@@ -79,9 +79,8 @@ export default class RouteExtractor extends Route {
 
     console.time('extractor-4.1')
     const functionList = await this.models.HRFonctions.getAllFormatDdg()
-    const formatedFunctions = formatFunctions(functionList)
+    const formatedFunctions = await formatFunctions(functionList)
     console.timeEnd('extractor-4;1')
-    console.log(formatedFunctions)
     
     console.time('extractor-5')
     let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop)
@@ -163,13 +162,13 @@ export default class RouteExtractor extends Route {
     })
 
     this.sendOk(ctx, {
+      fonctions: formatedFunctions,
       referentiels,
       tproxs,
       onglet1: { values: onglet1, columnSize: columnSize1 },
       onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
       allJuridiction,
       viewModel,
-      fonctions:formatedFunctions
     })
   }
 

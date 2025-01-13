@@ -115,7 +115,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "Fonctionnaire CTECH placé SUB",
   },
   {
-    category_label: "Autour du Juge",
+    category_label: "Autour du magistrat",
     label: "JURISTE ASSISTANT siège Autres",
     code: "JA Siège autres",
     position: "Contractuel",
@@ -123,7 +123,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "JURISTE AS siège Autres",
   },
   {
-    category_label: "Autour du Juge",
+    category_label: "Autour du magistrat",
     label: "JURISTE ASSISTANT Pôle social",
     code: "JA Pôle social",
     position: "Contractuel",
@@ -131,7 +131,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "JURISTE AS Pôle social",
   },
   {
-    category_label: "Autour du Juge",
+    category_label: "Autour du magistrat",
     label: "JURISTE ASSISTANT Parquet",
     code: "JA Parquet",
     position: "Contractuel",
@@ -139,7 +139,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "JURISTE AS Parquet",
   },
   {
-    category_label: "Autour du Juge",
+    category_label: "Autour du magistrat",
     label: "JURISTE ASSISTANT Vif",
     code: "JA VIF",
     position: "Contractuel",
@@ -147,7 +147,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "CONT A JP Autour du Juge",
   },
   {
-    category_label: "Autour du Juge",
+    category_label: "Autour du magistrat",
     label: "CONTRACTUEL A JUSTICE DE PROXIMITE",
     code: "JA JP",
     position: "Contractuel",
@@ -155,7 +155,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "CONT A JP Autour du Juge",
   },
   {
-    category_label: "Autour du Juge",
+    category_label: "Autour du magistrat",
     label: "CONTRACTUEL A JUSTICE DE PROXIMITE",
     code: "CONT A JP Autour du magistrat",
     position: "Contractuel",
@@ -163,7 +163,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "CONT A JP Autour du Juge",
   },
   {
-    category_label: "Autour du Juge",
+    category_label: "Autour du magistrat",
     label: "CONTRACTUEL B JUSTICE DE PROXIMITE",
     code: "CONT B JP Autour du magistrat",
     position: "Contractuel",
@@ -171,7 +171,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "",
   },
   {
-    category_label: "Autour du Juge",
+    category_label: "Autour du magistrat",
     label: "CONTRACTUEL C JUSTICE DE PROXIMITE",
     code: "CONT C JP Autour du magistrat",
     position: "Contractuel",

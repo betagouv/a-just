@@ -159,14 +159,17 @@ module.exports = {
         {
           code: "CONT A JP",
           recoded_function: "CONT A JP Greffe",
+          category: "Greffe",
         },
         {
           code: "CONT B JP",
           recoded_function: "Fonctionnaire A-B-CBUR",
+          category: "Greffe",
         },
         {
           code: "CONT C JP",
           recoded_function: "Fonctionnaire A-B-CBUR",
+          category: "Greffe",
         },
         {
           code: "AS",
@@ -187,15 +190,40 @@ module.exports = {
       ];
 
       for (let k = 0; k < functionsList.length; k++) {
-        const findFct = await models.HRFonctions.findOne({
-          where: {
-            code: functionsList[k].code,
-          },
-        });
-        if (findFct)
-          await findFct.update({
-            recoded_function: functionsList[k]["recoded_function"],
+        let findCat = null;
+        let findFct = null;
+
+        if (functionsList[k].category) {
+          findCat = await models.HRCategories.findOne({
+            where: {
+              label: functionsList[k].category,
+            },
           });
+          findFct = await models.HRFonctions.findOne({
+            where: {
+              code: functionsList[k].code,
+              category_id:findCat.id
+            },
+          });
+
+          if (findFct)
+            await findFct.update({
+              recoded_function: functionsList[k]["recoded_function"],
+            });
+        }
+
+        if (!functionsList[k].category) {
+          findFct = await models.HRFonctions.findOne({
+            where: {
+              code: functionsList[k].code,
+            },
+          });
+
+          if (findFct)
+            await findFct.update({
+              recoded_function: functionsList[k]["recoded_function"],
+            });
+        }
       }
     }
   },

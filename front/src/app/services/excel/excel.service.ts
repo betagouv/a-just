@@ -107,9 +107,10 @@ export class ExcelService extends MainClass {
       })
       .then(async (data) => {
         this.tabs = data.data;
+
         const viewModel = {
           ...this.tabs.viewModel,
-          //fonctions: data.data.fonctions,
+          fonctions: data.data.fonctions,
           firstLink: {
             label: 'Consultez notre documentation en ligne ici.',
             url: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs',
@@ -295,7 +296,7 @@ export class ExcelService extends MainClass {
             indexCell +
             '="CONT A JP",IF(G' +
             indexCell +
-            '="Autour du Juge","CONT A JP Autour du Juge","CONT A JP Greffe"),VLOOKUP(H' +
+            '="Autour du magistrat","CONT A JP Autour du Juge","CONT A JP Greffe"),VLOOKUP(H' +
             indexCell +
             ',Table_Fonctions!C:F,4,FALSE)))',
           result: '0',
@@ -614,7 +615,6 @@ export class ExcelService extends MainClass {
       sumLists = new Array();
     });
 
-    console.log(referentiel);
     return referentiel;
   }
 
@@ -626,7 +626,6 @@ export class ExcelService extends MainClass {
     const viewModel = {
       referentiel,
     };
-    console.log(viewModel);
 
     fetch('/assets/Feuille_de_temps_Modèle.xlsx')
       // 2. Get template as ArrayBuffer.
