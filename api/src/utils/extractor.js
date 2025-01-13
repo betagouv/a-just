@@ -9,7 +9,7 @@ import {
 } from "./date";
 import { findSituation } from "./human-resource";
 import { getHRVentilation } from "../utils/calculator";
-import { FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR } from "../constants/extractor";
+import { FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR, FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA } from "../constants/extractor";
 
 /**
  * Exception relevés par madame De Jong - statistitienne de Lyon
@@ -845,6 +845,6 @@ export const computeExtract = async (
 };
 
 export const formatFunctions = async (functionList) => {
-  let list = [...functionList, ...FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR];
+  let list = [...functionList, ...(Number(process.env.TYPE_ID)===1? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA:FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR)];
   return orderBy(list, ['category_label','rank'],['desc','asc'])
 };

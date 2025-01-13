@@ -179,3 +179,122 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     recodedFunction: "",
   },
 ];
+
+
+/**
+ * Fonction recodée non affiché dans A-JUST pour le TJ
+ */
+export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
+  {
+      "category_label": "Greffe",
+      "label": "A PLACÉ",
+      "code": "A PLACÉ ADDITIONNEL",
+      "position": "Placé",
+      "category_detail": "F-PLAC-ADD",
+      "recodedFunction": "Fonctionnaire A-B-CBUR placé ADD"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "A PLACÉ",
+      "code": "A PLACÉ SUBSTITUTION",
+      "position": "Placé",
+      "category_detail": "F-PLAC-SUB",
+      "recodedFunction": "Fonctionnaire A-B-CBUR placé SUB"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "B GREFFIER PLACÉ",
+      "code": "B GREF PLACÉ ADDITIONNEL",
+      "position": "Placé",
+      "category_detail": "F-PLAC-ADD",
+      "recodedFunction": "Fonctionnaire A-B-CBUR placé ADD"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "B GREFFIER PLACÉ",
+      "code": "B GREF PLACÉ SUBSTITUTION",
+      "position": "Placé",
+      "category_detail": "F-PLAC-SUB",
+      "recodedFunction": "Fonctionnaire A-B-CBUR placé SUB"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "B PLACÉ",
+      "code": "B PLACÉ ADDITIONNEL",
+      "position": "Placé",
+      "category_detail": "F-PLAC-ADD",
+      "recodedFunction": "Fonctionnaire A-B-CBUR placé ADD"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "B PLACÉ",
+      "code": "B PLACÉ SUBSTITUTION",
+      "position": "Placé",
+      "category_detail": "F-PLAC-SUB",
+      "recodedFunction": "Fonctionnaire A-B-CBUR placé SUB"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "CB PLACÉ",
+      "code": "CB PLACÉ ADDITIONNEL",
+      "position": "Placé",
+      "category_detail": "F-PLAC-ADD",
+      "recodedFunction": "Fonctionnaire A-B-CBUR placé ADD"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "CB PLACÉ",
+      "code": "CB PLACÉ SUBSTITUTION",
+      "position": "Placé",
+      "category_detail": "F-PLAC-SUB",
+      "recodedFunction": "Fonctionnaire A-B-CBUR placé SUB"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "CT PLACÉ",
+      "code": "CT PLACÉ ADDITIONNEL",
+      "position": "Placé",
+      "category_detail": "F-PLAC-ADD",
+      "recodedFunction": "Fonctionnaire CTECH placé ADD"
+  },
+  {
+      "category_label": "Greffe",
+      "label": "CT PLACÉ",
+      "code": "CT PLACÉ SUBSTITUTION",
+      "position": "Placé",
+      "category_detail": "F-PLAC-SUB",
+      "recodedFunction": "Fonctionnaire CTECH placé SUB"
+  },
+  {
+      "category_label": "Autour du magistrat",
+      "label": "Juriste assistant",
+      "code": "JA Chambres Sociales",
+      "position": "Titulaire",
+      "category_detail": "C",
+      "recodedFunction": "JURISTE AS chambres sociales"
+  },
+  {
+      "category_label": "Autour du magistrat",
+      "label": "Juriste assistant",
+      "code": "JA Siège Autres",
+      "position": "Titulaire",
+      "category_detail": "C",
+      "recodedFunction": "JURISTE AS siège Autres"
+  },
+  {
+      "category_label": "Autour du magistrat",
+      "label": "Juriste assistant",
+      "code": "JA Parquet Général",
+      "position": "Titulaire",
+      "category_detail": "C",
+      "recodedFunction": "JURISTE AS parquet général"
+  },
+  {
+      "category_label": "Autour du magistrat",
+      "label": "Juriste assistant",
+      "code": "JA Siège autres",
+      "position": "Titulaire",
+      "category_detail": "C",
+      "recodedFunction": "JURISTE AS siège Autres"
+  }
+]
