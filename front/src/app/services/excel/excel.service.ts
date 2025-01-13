@@ -107,7 +107,6 @@ export class ExcelService extends MainClass {
       })
       .then(async (data) => {
         this.tabs = data.data;
-
         const viewModel = {
           ...this.tabs.viewModel,
           fonctions: data.data.fonctions,
@@ -144,6 +143,7 @@ export class ExcelService extends MainClass {
           })
           // 4. Get a report as buffer.
           .then(async (report) => {
+            console.log(viewModel);
             report = await this.getReport(report, viewModel);
             if (this.tabs.onglet1.values.length === 0) {
               alert(

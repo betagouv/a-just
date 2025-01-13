@@ -89,7 +89,7 @@ export default class RouteExtractor extends Route {
     console.time('extractor-6')
     let onglet1 = await computeExtract(this.models, cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
-
+    console.log("hihi",onglet1)
     const absenteismeList = []
 
     console.time('extractor-6.1')
