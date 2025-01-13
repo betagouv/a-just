@@ -27,9 +27,9 @@ export default class App {
     console.log("--- START ---");
 
     //await this.formatDatas();
-
+    console.time("Time Check Data");
     await this.checkDatas();
-
+    console.timeEnd("Time Check Data");
     this.done();
   }
 
@@ -909,10 +909,11 @@ export default class App {
     // Récupération des fichiers de données
     const dataFiles = readdirSync(inputFolder)
       .filter(
-        (f) => f.endsWith(".xml") && f.toLowerCase().indexOf("nomenc") === -1
+        (f) => (f.endsWith(".xml") || f.endsWith(".csv")) && f.toLowerCase().indexOf("nomenc") === -1
       )
       .filter((f) => {
-        const regex = new RegExp("(_RGC-(.*?)_)|(_MINTI_(.*?).xml)", "g");
+        const regex =new RegExp("(export_(.*?).csv)|((_RGC-(.*?)_)|(_MINTI_(.*?).xml))", "g")
+
         return regex.exec(f);
       });
     writeFileSync(
@@ -953,21 +954,20 @@ export default class App {
             newRow,
             referentiel,
             categoriesOfRules,
-            outputAllFolder
+            outputAllFolder,
+            file
           );
           totalLine++;
         } else if (nbLine > 2) {
           newRow[tag.toLowerCase()] = this.getTagValue(lineFormated);
         }
-
         nbLine++;
       }
     }
   }
 
-  checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder) {
-    //console.log(line);
-    const checkControl = this.checkFromRules(line, rules, referentiel);
+  checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder, fileName) {
+    const checkControl = this.checkFromRules(line, rules, referentiel, fileName);
 
     if (checkControl) {
       appendFileSync(
@@ -977,7 +977,7 @@ export default class App {
     }
   }
 
-  checkFromRules(data, rules, referentiel = []) {
+  checkFromRules(data, rules, referentiel = [], fileName) {
     data = {
       ...data,
       nbaff: data.nbaff ? parseInt(data.nbaff) : null,
@@ -991,10 +991,11 @@ export default class App {
       const node = nodesToUse[i];
       returnValues[node] = [];
       rules.map((rule) => {
-        const newRules = rule.filtres[node];
+        const newRules = rule.filtres ? rule.filtres[node] : null;
         // control if node exist
         if (newRules && newRules !== "-") {
           let lines = [data];
+          let isCorrectFile = true
 
           // TODO Ajouter la contrainte 'fichier: intr_ajust'
 
@@ -1009,8 +1010,10 @@ export default class App {
                 referentiel
               );
             });
-
-          if (lines.length) {
+            if (rule.fichier && !fileName.includes(rule.fichier)){
+              isCorrectFile = false
+            }
+          if (lines.length && isCorrectFile) {
             console.log("node", node);
             console.log("rule", rule);
             console.log("lines", lines);
