@@ -597,7 +597,9 @@ export class ExcelService extends MainClass {
           referentiel.push({
             code: c['code_import'],
             label: c.label,
-            parent: '',
+            parent: this.userService.isCa()
+              ? this.referentielCAMappingName(r.label)
+              : this.referentielMappingName(r.label),
             index: null,
             sum: null,
           });
