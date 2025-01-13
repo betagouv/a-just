@@ -591,7 +591,7 @@ export class ExcelService extends MainClass {
     let sumLists = new Array();
 
     referentiels.map((r) => {
-      if (r.childrens && r.childrens.length) {
+      if (r.childrens && r.childrens.length > 0) {
         r.childrens?.map((c) => {
           counter++;
           referentiel.push({
