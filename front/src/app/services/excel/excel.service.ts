@@ -724,10 +724,11 @@ export class ExcelService extends MainClass {
     // sum by parent
     viewModel.referentiel.map((r: any) => {
       if (r.sum !== null) {
-        report.worksheets[0].getCell(r.index).value = {
-          formula: '=SUM(' + r.sum.join(',') + ')',
-          result: '0',
-        };
+        if (r.sum.length > 0)
+          report.worksheets[0].getCell(r.index).value = {
+            formula: '=SUM(' + r.sum.join(',') + ')',
+            result: '0',
+          };
         globalSum.push(r.index);
       }
     });
