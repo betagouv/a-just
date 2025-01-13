@@ -285,6 +285,7 @@ export class ExcelService extends MainClass {
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
       const indexCell = +(+index + 3);
 
+      // TJ
       if (this.userService.isCa() === false) {
         report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
@@ -404,7 +405,45 @@ export class ExcelService extends MainClass {
             ')',
           result: '0',
         };
+
+        /**
+        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+          formula:
+            '=IFERROR(INDEX(A:FF,ROW(),MATCH(LEFT("6. TOTAL JUGES DES ENFANTS",3),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',3),0))-(INDEX(A:FF,ROW(),MATCH(LEFT("6.1.",4),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',4),0))+ INDEX(A:FF,ROW(),MATCH(LEFT("6.2.",4),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',4),0))),"")',
+        };
+ */
+
+        // ECART JE
+        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+          formula:
+            '=BK' + indexCell + '-(BL' + indexCell + '+BM' + indexCell + ')',
+        };
+        report.worksheets[2].getCell('FH' + (+index + 3)).value = {
+          formula:
+            '=BG' +
+            indexCell +
+            '-(BH' +
+            indexCell +
+            '+BI' +
+            indexCell +
+            '+BJ' +
+            indexCell +
+            ')',
+        };
       } else {
+        //CA
         // VLOOKUP fct recodée
         report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
