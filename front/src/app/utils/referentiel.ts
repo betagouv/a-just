@@ -112,7 +112,7 @@ export function referentielMappingColor(
         return `rgb(217, 211, 237)`;
       case 'Contentieux locaux spécifiques':
       case 'CTX SPÉ.':
-        return `rgb(218, 212, 237)`;
+        return `rgb(255, 248, 213)`;
     }
   } else {
     switch (name) {
@@ -144,7 +144,7 @@ export function referentielMappingColor(
         return `rgba(69, 39, 161, ${opacity})`;
       case 'Contentieux locaux spécifiques':
       case 'CTX SPÉ.':
-        return `rgba(69, 38, 160, ${opacity})`;
+        return `rgba(251, 202, 12, ${opacity})`;
     }
   }
 
@@ -192,7 +192,7 @@ export function referentielMappingColorActivity(
         return '#d8dadc';
       case 'Contentieux locaux spécifiques':
       case 'CTX SPÉ.':
-        return '#DAD4ED';
+        return `rgb(255, 248, 213)`;
     }
   } else {
     switch (name) {
@@ -226,7 +226,7 @@ export function referentielMappingColorActivity(
         return '#d8dadc';
       case 'Contentieux locaux spécifiques':
       case 'CTX SPÉ.':
-        return `rgba(69, 38, 160, ${opacity})`;
+        return `rgba(251, 202, 12, ${opacity})`;
     }
   }
 
