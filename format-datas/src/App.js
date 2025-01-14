@@ -8,6 +8,7 @@ import {
   readFileSync,
   rmSync,
   writeFileSync,
+  createReadStream,
 } from "fs";
 import { csvToArrayJson } from "../utils/csv";
 import {
@@ -19,6 +20,7 @@ import YAML from "yaml";
 import { XMLParser } from "fast-xml-parser";
 import { onGetIelstListApi } from "./api/juridiction/juridiciton.api";
 import { exit } from "process";
+import { parse } from "csv-parse";
 
 export default class App {
   constructor() {}
@@ -909,10 +911,15 @@ export default class App {
     // Récupération des fichiers de données
     const dataFiles = readdirSync(inputFolder)
       .filter(
-        (f) => (f.endsWith(".xml") || f.endsWith(".csv")) && f.toLowerCase().indexOf("nomenc") === -1
+        (f) =>
+          (f.endsWith(".xml") || f.endsWith(".csv")) &&
+          f.toLowerCase().indexOf("nomenc") === -1
       )
       .filter((f) => {
-        const regex =new RegExp("(export_(.*?).csv)|((_RGC-(.*?)_)|(_MINTI_(.*?).xml))", "g")
+        const regex = new RegExp(
+          "(export_(.*?).csv)|((_RGC-(.*?)_)|(_MINTI_(.*?).xml))",
+          "g"
+        );
 
         return regex.exec(f);
       });
@@ -932,47 +939,77 @@ export default class App {
       const file = dataFiles[i];
       // attention on est obligé de faire ligne par ligne
 
-      // complete file
-      const liner = new lineByLine(`${inputFolder}/${file}`);
-      let newRow = {}; // create empty raw
-      let totalLine = 0;
-      let nbLine = 0;
-      let line;
-      let secondTag = "";
+      if (file.endsWith(".xml")) {
+        // complete file
+        const liner = new lineByLine(`${inputFolder}/${file}`);
+        let newRow = {}; // create empty raw
+        let totalLine = 0;
+        let nbLine = 0;
+        let line;
+        let secondTag = "";
 
-      while ((line = liner.next()) !== false) {
-        const lineFormated = line.toString("ascii").trim();
-        const tag = this.getTagName(lineFormated);
+        while ((line = liner.next()) !== false) {
+          const lineFormated = line.toString("ascii").trim();
+          const tag = this.getTagName(lineFormated);
 
-        if (nbLine === 2) {
-          secondTag = this.getTagName(lineFormated);
-        } else if (tag === secondTag) {
-          secondTag = this.getTagName(lineFormated);
-          newRow = {}; // create empty map
-        } else if (`</${secondTag}>` === lineFormated) {
-          this.checkDataUsageToOneRow(
-            newRow,
-            referentiel,
-            categoriesOfRules,
-            outputAllFolder,
-            file
-          );
-          totalLine++;
-        } else if (nbLine > 2) {
-          newRow[tag.toLowerCase()] = this.getTagValue(lineFormated);
+          if (nbLine === 2) {
+            secondTag = this.getTagName(lineFormated);
+          } else if (tag === secondTag) {
+            secondTag = this.getTagName(lineFormated);
+            newRow = {}; // create empty map
+          } else if (`</${secondTag}>` === lineFormated) {
+            this.checkDataUsageToOneRow(
+              newRow,
+              referentiel,
+              categoriesOfRules,
+              outputAllFolder,
+              file
+            );
+            totalLine++;
+          } else if (nbLine > 2) {
+            newRow[tag.toLowerCase()] = this.getTagValue(lineFormated);
+          }
+          nbLine++;
         }
-        nbLine++;
+      } else if (file.endsWith(".csv")) {
+        let header = null;
+
+        createReadStream(`${inputFolder}/${file}`)
+          .pipe(parse({ delimiter: ";" }))
+          .on("data", (csvrow) => {
+            if (!header) {
+              header = {};
+              csvrow.map((r) => (header[r.toLowerCase()] = ""));
+            } else {
+              const row = { ...header };
+              //csvrow.map(r => row[r.toLowerCase()] = '')
+
+              /*this.checkDataUsageToOneRow(
+              row,
+              referentiel,
+              categoriesOfRules,
+              outputAllFolder,
+              file
+            );*/
+            }
+            console.log(csvrow);
+          });
       }
     }
   }
 
   checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder, fileName) {
-    const checkControl = this.checkFromRules(line, rules, referentiel, fileName);
+    const checkControl = this.checkFromRules(
+      line,
+      rules,
+      referentiel,
+      fileName
+    );
 
     if (checkControl) {
       appendFileSync(
         `${outputAllFolder}/check-datas.csv`,
-        `${JSON.stringify(line).replace(/,/g, ' ')},${(checkControl.entrees || []).length},${JSON.stringify(checkControl.entrees).replace(/,/g, ' ')},${(checkControl.sorties || []).length},${JSON.stringify(checkControl.sorties).replace(/,/g, ' ')},${(checkControl.stock || []).length},${JSON.stringify(checkControl.stock).replace(/,/g, ' ')},\n`
+        `${JSON.stringify(line).replace(/,/g, " ")},${(checkControl.entrees || []).length},${JSON.stringify(checkControl.entrees).replace(/,/g, " ")},${(checkControl.sorties || []).length},${JSON.stringify(checkControl.sorties).replace(/,/g, " ")},${(checkControl.stock || []).length},${JSON.stringify(checkControl.stock).replace(/,/g, " ")},\n`
       );
     }
   }
@@ -995,7 +1032,7 @@ export default class App {
         // control if node exist
         if (newRules && newRules !== "-") {
           let lines = [data];
-          let isCorrectFile = true
+          let isCorrectFile = true;
 
           // TODO Ajouter la contrainte 'fichier: intr_ajust'
 
@@ -1010,9 +1047,9 @@ export default class App {
                 referentiel
               );
             });
-            if (rule.fichier && !fileName.includes(rule.fichier)){
-              isCorrectFile = false
-            }
+          if (rule.fichier && !fileName.includes(rule.fichier)) {
+            isCorrectFile = false;
+          }
           if (lines.length && isCorrectFile) {
             console.log("node", node);
             console.log("rule", rule);
