@@ -17,7 +17,8 @@
 
         <div *ngIf="hr.comment" class="tooltip">
           <mat-icon>message</mat-icon>
-          <span class="tooltiptext global-tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
+          <aj-text-editor class="tooltiptext global-tooltiptext" [value]="hr.comment"
+            [defaultReadOnly]="true"></aj-text-editor>
         </div>
       </div>
       <div class="tags">
@@ -35,7 +36,7 @@
     </a>
     <div class="read-etp">
       <p class="label" [ngClass]="{red: hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED}">ETP Travaillé :</p>
-      <etp-preview [width]="56" [height]="56" [realETP]="hr.currentSituation?.etp"
+      <etp-preview [width]="56" [height]="56" [realETP]="hr.currentSituation?.etp" [forceAlert]="true"
         [etp]="(hr.etp || 0) - hr.hasIndisponibility" [indisponibility]="hr.hasIndisponibility">
       </etp-preview>
       <p class="unavailable" *ngIf="hr.hasIndisponibility">
