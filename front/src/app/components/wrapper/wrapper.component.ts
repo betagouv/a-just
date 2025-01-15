@@ -19,7 +19,6 @@ import { NewsComponent } from './news/news.component';
 import { MainClass } from '../../libs/main-class';
 import { DocumentationInterface } from '../../interfaces/documentation';
 import { DateSelectorinterface } from '../../interfaces/date';
-//import { environment } from '../../../environments/environment';
 import { BackupInterface } from '../../interfaces/backup';
 import {
   CALCULATE_DOWNLOAD_URL,
