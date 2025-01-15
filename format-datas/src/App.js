@@ -8,7 +8,6 @@ import {
   readFileSync,
   rmSync,
   writeFileSync,
-  createReadStream,
 } from "fs";
 import { csvToArrayJson } from "../utils/csv";
 import {
@@ -19,10 +18,10 @@ import { get, groupBy, sumBy } from "lodash";
 import YAML from "yaml";
 import { XMLParser } from "fast-xml-parser";
 import { onGetIelstListApi } from "./api/juridiction/juridiciton.api";
-import { exit } from "process";
-import { parse } from "csv-parse";
 
 export default class App {
+  nbLine = 0
+
   constructor() {}
 
   async start() {
@@ -923,9 +922,10 @@ export default class App {
 
         return regex.exec(f);
       });
+    console.log(dataFiles)
     writeFileSync(
       `${outputAllFolder}/check-datas.csv`,
-      "datas,nb entrees,entrees,nb sorties,sorties,nb stock,stock,\n"
+      "fichier,datas,nb entrees,entrees,nb sorties,sorties,nb stock,stock,\n"
     );
 
     //On récupère seuelemnt les filtres qui nous inéressent pour gagner du temps sur la suite
@@ -973,32 +973,38 @@ export default class App {
         }
       } else if (file.endsWith(".csv")) {
         let header = null;
+        let headerTab = [];
 
-        createReadStream(`${inputFolder}/${file}`)
-          .pipe(parse({ delimiter: ";" }))
-          .on("data", (csvrow) => {
-            if (!header) {
-              header = {};
-              csvrow.map((r) => (header[r.toLowerCase()] = ""));
-            } else {
-              const row = { ...header };
-              //csvrow.map(r => row[r.toLowerCase()] = '')
+        const liner = new lineByLine(`${inputFolder}/${file}`);
+        let line;
 
-              /*this.checkDataUsageToOneRow(
+        while ((line = liner.next()) !== false) {
+          const lineFormated = line.toString("ascii").trim().split(";");
+          if (!header) {
+            header = {};
+            lineFormated.map((r) => (header[r.toLowerCase()] = ""));
+            headerTab = [...lineFormated.map((l) => l.toLowerCase())];
+          } else {
+            const row = { ...header };
+            lineFormated.map((r, index) => {
+              row[headerTab[index]] = r;
+            });
+            this.checkDataUsageToOneRow(
               row,
               referentiel,
               categoriesOfRules,
               outputAllFolder,
               file
-            );*/
-            }
-            console.log(csvrow);
-          });
+            );
+          }
+        }
       }
     }
   }
 
   checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder, fileName) {
+    this.nbLine ++
+    console.log(this.nbLine)
     const checkControl = this.checkFromRules(
       line,
       rules,
@@ -1009,16 +1015,20 @@ export default class App {
     if (checkControl) {
       appendFileSync(
         `${outputAllFolder}/check-datas.csv`,
-        `${JSON.stringify(line).replace(/,/g, " ")},${(checkControl.entrees || []).length},${JSON.stringify(checkControl.entrees).replace(/,/g, " ")},${(checkControl.sorties || []).length},${JSON.stringify(checkControl.sorties).replace(/,/g, " ")},${(checkControl.stock || []).length},${JSON.stringify(checkControl.stock).replace(/,/g, " ")},\n`
+        `${fileName},${JSON.stringify(line).replace(/,/g, " ")},${(checkControl.entrees || []).length},${JSON.stringify(checkControl.entrees).replace(/,/g, " ")},${(checkControl.sorties || []).length},${JSON.stringify(checkControl.sorties).replace(/,/g, " ")},${(checkControl.stock || []).length},${JSON.stringify(checkControl.stock).replace(/,/g, " ")},\n`
       );
     }
   }
 
   checkFromRules(data, rules, referentiel = [], fileName) {
+    const nbAffName = data.nbaff ? "nbaff" : data.nb_aff ? "nb_aff" : null;
     data = {
       ...data,
-      nbaff: data.nbaff ? parseInt(data.nbaff) : null,
+      nbaff: data[nbAffName] ? parseInt(data[nbAffName]) : null,
       nbaffdur: data.nbaffdur ? parseInt(data.nbaffdur) : null,
+      nbaffnouv: data.nb_aff_nouv ? parseInt(data.nbaffnouv) : null,
+      nbaffend: data.nb_aff_end ? parseInt(data.nbaffend) : null,
+      nbaffold: data.nb_aff_old ? parseInt(data.nbaffold) : null,
     };
 
     const returnValues = {};
@@ -1034,8 +1044,6 @@ export default class App {
           let lines = [data];
           let isCorrectFile = true;
 
-          // TODO Ajouter la contrainte 'fichier: intr_ajust'
-
           // EXCLUDES INCLUDES QUERIES
           Object.keys(newRules)
             .filter((r) => r !== "TOTAL")
@@ -1047,13 +1055,14 @@ export default class App {
                 referentiel
               );
             });
+
           if (rule.fichier && !fileName.includes(rule.fichier)) {
             isCorrectFile = false;
           }
           if (lines.length && isCorrectFile) {
-            console.log("node", node);
-            console.log("rule", rule);
-            console.log("lines", lines);
+            // console.log("node", node);
+            // console.log("rule", rule);
+            // console.log("lines", lines);
 
             returnValues[node].push({
               node,
