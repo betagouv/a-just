@@ -831,24 +831,29 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
     if (item) {
       if (
-        Object.values(quality).some((value) => value.quality === 'facultatif')
-      )
+        Object.values(quality).some((elem) => elem.quality === 'facultatif')
+      ) {
         return 'Compléter';
-      else if (
-        Object.values(quality).some((value) => value.quality === 'to_complete')
+      } else if (
+        Object.values(quality).some(
+          (elem) =>
+            elem.quality === 'to_complete' &&
+            elem.value === null &&
+            elem.original === null
+        )
       ) {
         const obj: any = Object.values(quality).filter(
-          (value) => value.quality === 'to_complete'
+          (elem) => elem.quality === 'to_complete'
         );
         for (let elem of obj) {
           if (elem.value === null && elem.original === null)
             return 'A compléter';
         }
       } else if (
-        Object.values(quality).some((value) => value.quality === 'to_verify')
+        Object.values(quality).some((elem) => elem.quality === 'to_verify')
       ) {
         const obj: any = Object.values(quality).filter(
-          (value) => value.quality === 'to_verify'
+          (elem) => elem.quality === 'to_verify'
         );
         for (let elem of obj) {
           if (elem.value === null) return 'A vérifier';
