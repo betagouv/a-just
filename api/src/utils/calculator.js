@@ -317,10 +317,17 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
 
     if (activitesStart.length) {
       const lastActivities = activitesStart[activitesStart.length - 1]
-      if (lastActivities.stock !== null && isSameMonthAndYear(lastActivities.periode, endBf)) {
-        lastStockBf = lastActivities.stock
-        totalInBf = lastActivities.entrees
-        totalOutBf = lastActivities.sorties
+      if (isSameMonthAndYear(lastActivities.periode, endBf)) {
+        if(lastActivities.stock !== null) {
+          lastStockBf = lastActivities.stock
+        }
+        if(lastActivities.entrees !== null) {
+          totalInBf = lastActivities.entrees
+        }
+
+        if(lastActivities.sorties !== null) {
+          totalOutBf = lastActivities.sorties
+        }
       }
     }
   }
