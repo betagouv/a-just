@@ -58,7 +58,7 @@ export class DashboardPage extends MainClass {
    * Constructor
    */
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private excelService: ExcelService
   ) {
     super();

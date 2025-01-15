@@ -53,6 +53,11 @@ export default (sequelizeInstance) => {
         type: Sequelize.ARRAY(Sequelize.INTEGER),
         allowNull: true,
       },
+      check_ventilation: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -11,7 +11,11 @@ import {
 import { UserInterface } from '../../interfaces/user-interface';
 import { DateSelectorinterface } from '../../interfaces/date';
 import { MIN_DATE_SELECT } from '../../constants/activities';
-import { DATA_GITBOOK } from '../../constants/documentation';
+import {
+  DATA_GITBOOK,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+} from '../../constants/documentation';
 import { DocumentationInterface } from '../../interfaces/documentation';
 import { OPACITY_20 } from '../../constants/colors';
 import {
@@ -124,10 +128,6 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
    * Lien du guide de la donnée
    */
   gitBook = DATA_GITBOOK;
-  /**
-   * Lien vers la nomenclature a-just
-   */
-  nomenclature = '/assets/nomenclature-A-Just.html';
   /**
    * Lien vers le data book
    */
@@ -791,8 +791,11 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   downloadAsset(type: string, download = false) {
     let url = null;
 
-    if (type === 'nomenclature') url = this.nomenclature;
-    else if (type === 'dataBook') url = this.dataBook;
+    if (type === 'nomenclature') {
+      url = this.userService.isCa()
+        ? NOMENCLATURE_DOWNLOAD_URL_CA
+        : NOMENCLATURE_DOWNLOAD_URL;
+    } else if (type === 'dataBook') url = this.dataBook;
 
     if (url) {
       if (download) {
@@ -828,24 +831,29 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
 
     if (item) {
       if (
-        Object.values(quality).some((value) => value.quality === 'facultatif')
-      )
+        Object.values(quality).some((elem) => elem.quality === 'facultatif')
+      ) {
         return 'Compléter';
-      else if (
-        Object.values(quality).some((value) => value.quality === 'to_complete')
+      } else if (
+        Object.values(quality).some(
+          (elem) =>
+            elem.quality === 'to_complete' &&
+            elem.value === null &&
+            elem.original === null
+        )
       ) {
         const obj: any = Object.values(quality).filter(
-          (value) => value.quality === 'to_complete'
+          (elem) => elem.quality === 'to_complete'
         );
         for (let elem of obj) {
           if (elem.value === null && elem.original === null)
             return 'A compléter';
         }
       } else if (
-        Object.values(quality).some((value) => value.quality === 'to_verify')
+        Object.values(quality).some((elem) => elem.quality === 'to_verify')
       ) {
         const obj: any = Object.values(quality).filter(
-          (value) => value.quality === 'to_verify'
+          (elem) => elem.quality === 'to_verify'
         );
         for (let elem of obj) {
           if (elem.value === null) return 'A vérifier';

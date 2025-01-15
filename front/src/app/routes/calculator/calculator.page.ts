@@ -246,7 +246,7 @@ export class CalculatorPage
       },
     },
     {
-      target: 'ddd', //.drop-down',
+      target: '.compare', //.drop-down',
       title: 'Comparez votre juridiction',
       intro:
         '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>',
