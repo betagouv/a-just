@@ -20,7 +20,7 @@ import { XMLParser } from "fast-xml-parser";
 import { onGetIelstListApi } from "./api/juridiction/juridiciton.api";
 
 export default class App {
-  nbLine = 0
+  nbLine = 0;
 
   constructor() {}
 
@@ -925,10 +925,10 @@ export default class App {
 
         return regex.exec(f);
       });
-    console.log(dataFiles)
+    console.log(dataFiles);
     writeFileSync(
       `${outputAllFolder}/check-datas.csv`,
-      "fichier,datas,nb entrees,entrees,nb sorties,sorties,nb stock,stock,\n"
+      "fichier,datas,type,quantité,trouvé dans,\n"
     );
 
     //On récupère seuelemnt les filtres qui nous inéressent pour gagner du temps sur la suite
@@ -1006,8 +1006,8 @@ export default class App {
   }
 
   checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder, fileName) {
-    this.nbLine ++
-    console.log(this.nbLine)
+    this.nbLine++;
+    console.log(this.nbLine);
     const checkControl = this.checkFromRules(
       line,
       rules,
@@ -1015,10 +1015,16 @@ export default class App {
       fileName
     );
 
-    if (checkControl) {
+    if (checkControl.length) {
+      //type,quantité,trouvé dans
       appendFileSync(
         `${outputAllFolder}/check-datas.csv`,
-        `${fileName},${JSON.stringify(line).replace(/,/g, " ")},${(checkControl.entrees || []).length},${JSON.stringify(checkControl.entrees).replace(/,/g, " ")},${(checkControl.sorties || []).length},${JSON.stringify(checkControl.sorties).replace(/,/g, " ")},${(checkControl.stock || []).length},${JSON.stringify(checkControl.stock).replace(/,/g, " ")},\n`
+        `${fileName},${JSON.stringify(line).replace(/,/g, " ")},${checkControl[0].node},${checkControl.length},${checkControl.map((c) => c.rule).join(" -- ")},\n`
+      );
+    } else {
+      appendFileSync(
+        `${outputAllFolder}/check-datas.csv`,
+        `${fileName},${JSON.stringify(line).replace(/,/g, " ")},,0,,\n`
       );
     }
   }
@@ -1034,10 +1040,10 @@ export default class App {
       nbaffold: data.nb_aff_old ? parseInt(data.nbaffold) : null,
     };
 
-    const returnValues = {};
+    let returnValues = [];
     const nodesToUse = ["entrees", "sorties", "stock"];
 
-    for (let i = 0; i < nodesToUse.length; i++) {
+    for (let i = 0; i < nodesToUse.length && !returnValues.length; i++) {
       const node = nodesToUse[i];
       returnValues[node] = [];
       rules.map((rule) => {
@@ -1067,7 +1073,7 @@ export default class App {
             // console.log("rule", rule);
             // console.log("lines", lines);
 
-            returnValues[node].push({
+            returnValues.push({
               node,
               rule: rule.label,
               //line: data,
