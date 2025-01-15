@@ -398,7 +398,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           title: 'Attention',
           text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doit constituer 100% de son temps de travail.<br/><br/>Il est également essentiel que, même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il soit affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           callback: () => {
-            this.onSave(true);
+            this.onSave(true, saveETPT0);
           },
         });
         return;
@@ -509,7 +509,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             title: 'Attention',
             text: `L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie.`,
             callback: () => {
-              this.onSave(false, true);
+              this.onSave(withoutPercentControl, true);
             },
           });
           return;
