@@ -109,6 +109,7 @@ export class ExcelService extends MainClass {
         this.tabs = data.data;
         const viewModel = {
           ...this.tabs.viewModel,
+          fonctions: data.data.fonctions,
           firstLink: {
             label: 'Consultez notre documentation en ligne ici.',
             url: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs',
@@ -142,6 +143,7 @@ export class ExcelService extends MainClass {
           })
           // 4. Get a report as buffer.
           .then(async (report) => {
+            console.log(viewModel);
             report = await this.getReport(report, viewModel);
             if (this.tabs.onglet1.values.length === 0) {
               alert(
@@ -247,12 +249,12 @@ export class ExcelService extends MainClass {
       });
 
       // DDG TJ
-      report.worksheets[11].getCell('D' + +5).value =
+      report.worksheets[10].getCell('D' + +5).value =
         viewModel.tgilist[0] || viewModel.uniqueJur[0];
       // DDG TPROX
-      report.worksheets[12].getCell('D' + +5).value =
+      report.worksheets[11].getCell('D' + +5).value =
         viewModel.tpxlist[0] || '';
-      report.worksheets[12].getCell('D' + +5).dataValidation = {
+      report.worksheets[11].getCell('D' + +5).dataValidation = {
         type: 'list',
         allowBlank: false,
         formulae: tpxlistExcel,
@@ -264,9 +266,9 @@ export class ExcelService extends MainClass {
         showInputMessage: true,
       };
       // DDG CPH
-      report.worksheets[13].getCell('D' + +5).value =
+      report.worksheets[12].getCell('D' + +5).value =
         viewModel.uniqueJur[0] || '';
-      report.worksheets[13].getCell('D' + +5).dataValidation = {
+      report.worksheets[12].getCell('D' + +5).dataValidation = {
         type: 'list',
         allowBlank: false,
         formulae: viewModel.tProximite,
@@ -285,6 +287,7 @@ export class ExcelService extends MainClass {
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
       const indexCell = +(+index + 3);
 
+      // TJ
       if (this.userService.isCa() === false) {
         report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
@@ -294,7 +297,7 @@ export class ExcelService extends MainClass {
             indexCell +
             '="CONT A JP",IF(G' +
             indexCell +
-            '="Autour du Juge","CONT A JP Autour du Juge","CONT A JP Greffe"),VLOOKUP(H' +
+            '="Autour du magistrat","CONT A JP Autour du Juge","CONT A JP Greffe"),VLOOKUP(H' +
             indexCell +
             ',Table_Fonctions!C:F,4,FALSE)))',
           result: '0',
@@ -404,7 +407,45 @@ export class ExcelService extends MainClass {
             ')',
           result: '0',
         };
+
+        /**
+        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+          formula:
+            '=IFERROR(INDEX(A:FF,ROW(),MATCH(LEFT("6. TOTAL JUGES DES ENFANTS",3),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',3),0))-(INDEX(A:FF,ROW(),MATCH(LEFT("6.1.",4),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',4),0))+ INDEX(A:FF,ROW(),MATCH(LEFT("6.2.",4),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',4),0))),"")',
+        };
+ */
+
+        // ECART JE
+        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+          formula:
+            '=BK' + indexCell + '-(BL' + indexCell + '+BM' + indexCell + ')',
+        };
+        report.worksheets[2].getCell('FH' + (+index + 3)).value = {
+          formula:
+            '=BG' +
+            indexCell +
+            '-(BH' +
+            indexCell +
+            '+BI' +
+            indexCell +
+            '+BJ' +
+            indexCell +
+            ')',
+        };
       } else {
+        //CA
         // VLOOKUP fct recodée
         report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
@@ -464,7 +505,7 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        report.worksheets[2].getCell('EE' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FE' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -479,7 +520,7 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        report.worksheets[2].getCell('EF' + (+index + 3)).value = {
+        report.worksheets[2].getCell('FF' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -515,6 +556,7 @@ export class ExcelService extends MainClass {
         showInputMessage: true,
       };
 
+      // Data validation pour menus déroulants
       const fonctionCellToCheck =
         (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) ||
         '';
@@ -540,9 +582,9 @@ export class ExcelService extends MainClass {
         report.worksheets[2].getCell('H' + (+index + 3)).dataValidation = {
           type: 'list',
           allowBlank: true,
-          formulae: [
-            '"JA Siège autres,JA Pôle Social,JA Parquet,JA JP,JA VIF"',
-          ],
+          formulae: this.userService.isCa()
+            ? ['"JA Chambres Sociales,JA Siège autres,JA Parquet Général"']
+            : ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP,JA VIF"'],
         };
       }
     });
@@ -588,17 +630,21 @@ export class ExcelService extends MainClass {
     let sumLists = new Array();
 
     referentiels.map((r) => {
-      r.childrens?.map((c) => {
-        counter++;
-        referentiel.push({
-          code: c['code_import'],
-          label: c.label,
-          parent: '',
-          index: null,
-          sum: null,
+      if (r.childrens && r.childrens.length > 0) {
+        r.childrens?.map((c) => {
+          counter++;
+          referentiel.push({
+            code: c['code_import'],
+            label: c.label,
+            parent: this.userService.isCa()
+              ? this.referentielCAMappingName(r.label)
+              : this.referentielMappingName(r.label),
+            index: null,
+            sum: null,
+          });
+          sumLists.push('E' + (counter + 8));
         });
-        sumLists.push('E' + (counter + 8));
-      });
+      }
       counter++;
       referentiel.push({
         code: r['code_import'],
@@ -610,7 +656,6 @@ export class ExcelService extends MainClass {
       sumLists = new Array();
     });
 
-    console.log(referentiel);
     return referentiel;
   }
 
@@ -622,7 +667,6 @@ export class ExcelService extends MainClass {
     const viewModel = {
       referentiel,
     };
-    console.log(viewModel);
 
     fetch('/assets/Feuille_de_temps_Modèle.xlsx')
       // 2. Get template as ArrayBuffer.
@@ -722,10 +766,11 @@ export class ExcelService extends MainClass {
     // sum by parent
     viewModel.referentiel.map((r: any) => {
       if (r.sum !== null) {
-        report.worksheets[0].getCell(r.index).value = {
-          formula: '=SUM(' + r.sum.join(',') + ')',
-          result: '0',
-        };
+        if (r.sum.length > 0)
+          report.worksheets[0].getCell(r.index).value = {
+            formula: '=SUM(' + r.sum.join(',') + ')',
+            result: '0',
+          };
         globalSum.push(r.index);
       }
     });

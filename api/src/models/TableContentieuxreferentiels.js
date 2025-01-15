@@ -59,6 +59,7 @@ export default (sequelizeInstance, Model) => {
           ["help_url", "helpUrl"],
           "compter",
           ["only_to_hr_backup", "onlyToHrBackup"],
+          ["check_ventilation", "checkVentilation"],
         ],
         where: {
           parent_id: parentId,

@@ -1,4 +1,4 @@
 <aj-wrapper title="Extracteur" [isLoading]="isLoading">
-  <aj-extractor-ventilation *ngIf="canViewVentilateur"></aj-extractor-ventilation>
+  <aj-extractor-ventilation *ngIf="canViewVentilateur && userService.isCa()===false"></aj-extractor-ventilation>
   <aj-extractor-activity *ngIf="canViewActivities"></aj-extractor-activity>
 </aj-wrapper>
