@@ -5,6 +5,7 @@ import {
   computeExtract,
   computeExtractDdg,
   flatListOfContentieuxAndSousContentieux,
+  formatFunctions,
   getExcelLabel,
   getViewModel,
   replaceIfZero,
@@ -76,6 +77,11 @@ export default class RouteExtractor extends Route {
     const categories = await this.models.HRCategories.getAll()
     console.timeEnd('extractor-4')
 
+    console.time('extractor-4.1')
+    const functionList = await this.models.HRFonctions.getAllFormatDdg()
+    const formatedFunctions = await formatFunctions(functionList)
+    console.timeEnd('extractor-4;1')
+    
     console.time('extractor-5')
     let allHuman = await getHumanRessourceList(hr, undefined, undefined, dateStart, dateStop)
     console.timeEnd('extractor-5')
@@ -83,7 +89,7 @@ export default class RouteExtractor extends Route {
     console.time('extractor-6')
     let onglet1 = await computeExtract(this.models, cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
-
+    console.log("hihi",onglet1)
     const absenteismeList = []
 
     console.time('extractor-6.1')
@@ -156,6 +162,7 @@ export default class RouteExtractor extends Route {
     })
 
     this.sendOk(ctx, {
+      fonctions: formatedFunctions,
       referentiels,
       tproxs,
       onglet1: { values: onglet1, columnSize: columnSize1 },

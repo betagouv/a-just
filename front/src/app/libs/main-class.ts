@@ -41,6 +41,10 @@ export class MainClass {
    */
   watcherList: Subscription[] = [];
   /**
+   * Config d'environment
+   */
+  //environment = environment;
+  /**
    * Variable global de string magistrat
    */
   MAGISTRATS = MAGISTRATS;
