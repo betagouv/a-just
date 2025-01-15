@@ -2,7 +2,11 @@
   "name": "a-just-format-datas",
   "version": "0.0.1",
   "scripts": {
-    "start": "TZ='Europe/Paris' nodemon --watch src --exec babel-node src/index.js"
+    "start": "TZ='Europe/Paris' nodemon --watch src --exec babel-node src/index.js",
+    "build": "npm run rm-build-prod && npm run build-prod && npm run create-exe",
+    "build-prod": "babel src --out-dir dist --copy-files && babel config --out-dir dist/config --copy-files",
+    "rm-build-prod": "rm -rf dist",
+    "create-exe": "nexe -t x86-8.0.0 dist/index.js -r ./dist -o format.exe"
   },
   "dependencies": {
     "@babel/cli": "^7.25.9",
@@ -31,6 +35,7 @@
     "@babel/preset-stage-3": "^7.8.3",
     "@babel/register": "^7.25.9",
     "eslint": "^9.13.0",
+    "nexe": "^4.0.0-rc.6",
     "nodemon": "^3.1.7",
     "prettier-eslint": "^16.3.0"
   }

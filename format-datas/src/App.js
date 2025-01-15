@@ -910,6 +910,7 @@ export default class App {
   }*/
 
   checkDataUsage(inputFolder, outputAllFolder, referentiel, categoriesOfRules) {
+      console.time("Time 1000 rows");
     // Récupération des fichiers de données
     const dataFiles = readdirSync(inputFolder)
       .filter(
@@ -937,6 +938,9 @@ export default class App {
     //console.log('keysToConsider:', keysToConsider)
 
     // console.log('rules:', rules)
+
+    console.log(new Date(), 0);
+    console.time("Time for 1000 rows");
 
     for (let i = 0; i < dataFiles.length; i++) {
       const file = dataFiles[i];
@@ -1007,7 +1011,11 @@ export default class App {
 
   checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder, fileName) {
     this.nbLine++;
-    console.log(this.nbLine);
+    if (this.nbLine % 1000 === 0) {
+      console.log(new Date(), this.nbLine);
+      console.timeEnd("Time for 1000 rows");
+      console.time("Time for 1000 rows");
+    }
     const checkControl = this.checkFromRules(
       line,
       rules,
