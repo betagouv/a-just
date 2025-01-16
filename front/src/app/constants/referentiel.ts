@@ -1,7 +1,11 @@
 /**
  * Liste des réferentiels que l'on ne peut pas modifier
  */
-export const REFERENTIELS_CANT_UPDATED = ['Autres activités'];
+export const REFERENTIELS_CANT_UPDATED = [
+  'Autres activités',
+  "Juges d'Instruction",
+  'Juges des Enfants',
+];
 
 /**
  * ETP need to be updated
