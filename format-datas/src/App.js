@@ -909,6 +909,40 @@ export default class App {
     return keys
   }*/
 
+
+  catchXMLFileHeader(liner) {
+    const header = []
+    let line = null;
+    let nbLine = 0;
+    
+    while((line = liner.next()) !== false) {
+      let lineFormated = line.toString("ascii").trim();
+      
+      if (nbLine === 2) {
+        const firstTag = this.getTagName(lineFormated)
+        let currentTag = null 
+               
+
+        while (true) {
+          line = liner.next();
+          
+          if (line === false) 
+            break
+
+          lineFormated = line.toString("ascii").trim();
+          currentTag = this.getTagName(lineFormated);
+
+          if (currentTag == `/${firstTag}` )
+            break            
+          header.push(currentTag); 
+        }
+        break
+      }
+      nbLine++
+    }
+    return header
+  }
+
   checkDataUsage(inputFolder, outputAllFolder, referentiel, categoriesOfRules) {
       console.time("Time 1000 rows");
     // Récupération des fichiers de données
@@ -927,17 +961,7 @@ export default class App {
         return regex.exec(f);
       });
     console.log(dataFiles);
-    writeFileSync(
-      `${outputAllFolder}/check-datas.csv`,
-      "fichier,datas,type,quantité,trouvé dans,\n"
-    );
 
-    //On récupère seuelemnt les filtres qui nous inéressent pour gagner du temps sur la suite
-    //const keysToConsider = this.getKeysToConsider(rules)
-
-    //console.log('keysToConsider:', keysToConsider)
-
-    // console.log('rules:', rules)
 
     console.log(new Date(), 0);
     console.time("Time for 1000 rows");
@@ -947,13 +971,22 @@ export default class App {
       // attention on est obligé de faire ligne par ligne
 
       if (file.endsWith(".xml")) {
+        const outputFileName = `check-datas-${file.replace(".xml", '')}.csv`;
         // complete file
         const liner = new lineByLine(`${inputFolder}/${file}`);
+        const linerTmp = new lineByLine(`${inputFolder}/${file}`);
         let newRow = {}; // create empty raw
         let totalLine = 0;
         let nbLine = 0;
         let line;
         let secondTag = "";
+
+        const header = this.catchXMLFileHeader(linerTmp);
+
+        writeFileSync(
+          `${outputAllFolder}/${outputFileName}`,
+          `fichier,${header},type,quantité,trouvé dans,\n`
+        );
 
         while ((line = liner.next()) !== false) {
           const lineFormated = line.toString("ascii").trim();
@@ -970,6 +1003,7 @@ export default class App {
               referentiel,
               categoriesOfRules,
               outputAllFolder,
+              outputFileName,
               file
             );
             totalLine++;
@@ -979,6 +1013,7 @@ export default class App {
           nbLine++;
         }
       } else if (file.endsWith(".csv")) {
+        const outputFileName = `check-datas-${file.replace(".csv", '')}.csv`;
         let header = null;
         let headerTab = [];
 
@@ -991,6 +1026,12 @@ export default class App {
             header = {};
             lineFormated.map((r) => (header[r.toLowerCase()] = ""));
             headerTab = [...lineFormated.map((l) => l.toLowerCase())];
+
+            const tmp = Object.keys(header);
+            writeFileSync(
+              `${outputAllFolder}/${outputFileName}`,
+              `fichier,${tmp},type,quantité,trouvé dans,\n`
+            );
           } else {
             const row = { ...header };
             lineFormated.map((r, index) => {
@@ -1001,7 +1042,8 @@ export default class App {
               referentiel,
               categoriesOfRules,
               outputAllFolder,
-              file
+              outputFileName,
+              file,
             );
           }
         }
@@ -1009,7 +1051,7 @@ export default class App {
     }
   }
 
-  checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder, fileName) {
+  checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder, outputFileName, fileName) {
     this.nbLine++;
     if (this.nbLine % 1000 === 0) {
       console.log(new Date(), this.nbLine);
@@ -1023,16 +1065,17 @@ export default class App {
       fileName
     );
 
+    const tmpLine = Object.values(line) 
     if (checkControl.length) {
       //type,quantité,trouvé dans
       appendFileSync(
-        `${outputAllFolder}/check-datas.csv`,
-        `${fileName},${JSON.stringify(line).replace(/,/g, " ")},${checkControl[0].node},${checkControl.length},${checkControl.map((c) => c.rule).join(" -- ")},\n`
+        `${outputAllFolder}/${outputFileName}`,
+        `${fileName},${tmpLine},${checkControl[0].node},${checkControl.length},${checkControl.map((c) => c.rule).join(" -- ")},\n`
       );
     } else {
       appendFileSync(
-        `${outputAllFolder}/check-datas.csv`,
-        `${fileName},${JSON.stringify(line).replace(/,/g, " ")},,0,,\n`
+        `${outputAllFolder}/${outputFileName}`,
+        `${fileName},${tmpLine},,0,,\n`
       );
     }
   }
