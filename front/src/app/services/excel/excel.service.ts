@@ -408,33 +408,31 @@ export class ExcelService extends MainClass {
           result: '0',
         };
 
-        /**
+        // FONCTION AGREGAT
         report.worksheets[2].getCell('FG' + (+index + 3)).value = {
           formula:
-            '=IFERROR(INDEX(A:FF,ROW(),MATCH(LEFT("6. TOTAL JUGES DES ENFANTS",3),LEFT(' +
+            '=IFERROR(VLOOKUP(H' +
             indexCell +
-            ':' +
+            ',Table_Fonctions!C:E,3,FALSE),I' +
             indexCell +
-            ',3),0))-(INDEX(A:FF,ROW(),MATCH(LEFT("6.1.",4),LEFT(' +
-            indexCell +
-            ':' +
-            indexCell +
-            ',4),0))+ INDEX(A:FF,ROW(),MATCH(LEFT("6.2.",4),LEFT(' +
-            indexCell +
-            ':' +
-            indexCell +
-            ',4),0))),"")',
+            ')',
+          result: '',
         };
- */
 
         // ECART JE
-        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
-          formula:
-            '=BK' + indexCell + '-(BL' + indexCell + '+BM' + indexCell + ')',
-        };
         report.worksheets[2].getCell('FH' + (+index + 3)).value = {
           formula:
-            '=BG' +
+            '=ROUND(BK' +
+            indexCell +
+            '-(BL' +
+            indexCell +
+            '+BM' +
+            indexCell +
+            '),3)',
+        };
+        report.worksheets[2].getCell('FI' + (+index + 3)).value = {
+          formula:
+            '=ROUND(BG' +
             indexCell +
             '-(BH' +
             indexCell +
@@ -442,7 +440,7 @@ export class ExcelService extends MainClass {
             indexCell +
             '+BJ' +
             indexCell +
-            ')',
+            '),3)',
         };
       } else {
         //CA
@@ -560,7 +558,12 @@ export class ExcelService extends MainClass {
       const fonctionCellToCheck =
         (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) ||
         '';
-      if (fonctionCellToCheck.includes('PLACÉ')) {
+
+      if (
+        fonctionCellToCheck.includes('PLACÉ') ||
+        (this.userService.isCa() &&
+          (fonctionCellToCheck === 'VPP' || fonctionCellToCheck === 'JP'))
+      ) {
         report.worksheets[2].getCell('H' + (+index + 3)).dataValidation = {
           type: 'list',
           allowBlank: true,
