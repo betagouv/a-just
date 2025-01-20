@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { GraphsVerticalsLinesComponent } from '../view-analytics/graphs-verticals-lines/graphs-verticals-lines.component';
 import { GraphsNumbersComponent } from '../view-analytics/graphs-numbers/graphs-numbers.component';
 import { MainClass } from '../../../libs/main-class';
@@ -10,10 +10,12 @@ import { ReferentielService } from '../../../services/referentiel/referentiel.se
 import { UserService } from '../../../services/user/user.service';
 import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe';
 import { GraphsProgressComponent } from '../view-analytics/graphs-progress/graphs-progress.component';
+import { CalculatorService } from '../../../services/calculator/calculator.service';
 
 export interface AnalyticsLine {
   title: string;
   description?: string;
+  dataType: string;
   type: string;
   values?: any[][];
   lineMax: number;
@@ -57,6 +59,10 @@ export class TemplateAnalyticsComponent
   extends MainClass
   implements OnInit, OnDestroy
 {
+  calculatorService = inject(CalculatorService);
+  private humanResourceService = inject(HumanResourceService);
+  private referentielService = inject(ReferentielService);
+  public userService = inject(UserService);
   /**
    * Référentiel
    */
@@ -73,11 +79,7 @@ export class TemplateAnalyticsComponent
   /**
    * Constructor
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
-    public userService: UserService
-  ) {
+  constructor() {
     super();
   }
 
