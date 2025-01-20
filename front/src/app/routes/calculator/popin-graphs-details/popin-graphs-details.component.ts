@@ -64,7 +64,7 @@ export class PopinGraphsDetailsComponent extends MainClass {
     this.onLoadDatas();
   }
 
-  onLoadDatas() {
+  async onLoadDatas() {
     console.log(
       this.dateStart,
       this.dateStop,
@@ -73,5 +73,26 @@ export class PopinGraphsDetailsComponent extends MainClass {
       this.optionDateStart,
       this.optionDateStop
     );
+
+    if (
+      this.calculatorService.selectedRefGraphDetail &&
+      this.calculatorService.showGraphDetailType
+    ) {
+      const firstValues = await this.calculatorService.rangeValues(
+        +this.calculatorService.selectedRefGraphDetail,
+        this.calculatorService.showGraphDetailType
+      );
+
+      const secondValues = await this.calculatorService.rangeValues(
+        +this.calculatorService.selectedRefGraphDetail,
+        this.calculatorService.showGraphDetailType,
+        this.optionDateStart,
+        this.optionDateStop
+      );
+
+      // Attention, je n'ai pas encore faire le DTES et le temps moyen mais les autres c'est bon
+
+      console.log(firstValues, secondValues);
+    }
   }
 }

@@ -94,9 +94,9 @@ export default class RouteCalculator extends Route {
           if (activites.length) {
             const acti = activites[0]
             if (acti.entrees !== null) {
-              list.push(acti.entrees)
+              list.push({value: acti.entrees, date: new Date(dateStart)})
             } else if (acti.originalEntrees !== null) {
-              list.push(acti.originalEntrees)
+              list.push({value: acti.originalEntrees, date: new Date(dateStart)})
             } else {
               list.push(null)
             }
@@ -109,9 +109,9 @@ export default class RouteCalculator extends Route {
           if (activites.length) {
             const acti = activites[0]
             if (acti.sorties !== null) {
-              list.push(acti.sorties)
+              list.push({value: acti.sorties, date: new Date(dateStart)})
             } else if (acti.ori !== null) {
-              list.push(acti.originalSorties)
+              list.push({value: acti.originalSorties, date: new Date(dateStart)})
             } else {
               list.push(null)
             }
@@ -125,9 +125,9 @@ export default class RouteCalculator extends Route {
           if (activites && activites.length) {
             const acti = activites[0]
             if (acti.stock !== null) {
-              list.push(acti.stock)
+              list.push({value: acti.stock, date: new Date(dateStart)})
             } else if (acti.originalStock !== null) {
-              list.push(acti.originalStock)
+              list.push({value: acti.originalStock, date: new Date(dateStart)})
             } else {
               list.push(null)
             }
@@ -159,9 +159,15 @@ export default class RouteCalculator extends Route {
               totalAffected += (timeAffected / 100) * realETP
             }
           })
-          list.push(totalAffected)
+          list.push({value: totalAffected, date: new Date(dateStart)})
         }
         break
+      case 'dtes': {
+        // TODO
+      } break;
+      case 'temps-moyen': {
+        // TODO
+      } break;
       default:
         {
           console.log('type', type)
