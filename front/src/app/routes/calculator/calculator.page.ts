@@ -1478,7 +1478,7 @@ export class CalculatorPage
           );
           list.push({
             title: 'ETPT Siège',
-            dataType: 'etpt-siege',
+            dataType: 'ETPTSiege',
             type: 'verticals-lines',
             description: 'moyens sur la période',
             lineMax:
@@ -1531,7 +1531,7 @@ export class CalculatorPage
           );
           list.push({
             title: 'ETPT Greffe',
-            dataType: 'etpt-greffe',
+            dataType: 'ETPTGreffe',
             type: 'verticals-lines',
             description: 'moyens sur la période',
             lineMax:
@@ -1581,7 +1581,7 @@ export class CalculatorPage
           const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam);
           list.push({
             title: 'ETPT EAM',
-            dataType: 'etpt-eam',
+            dataType: 'ETPTEam',
             type: 'verticals-lines',
             description: 'moyens sur la période',
             lineMax:

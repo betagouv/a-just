@@ -225,7 +225,7 @@ export class GraphsVerticalsLinesComponent
           .then((lines) => {
             this.isLoading = false;
             this.timeout = null;
-            this.line.next(lines);
+            this.line.next(lines.map((v: any) => +v.value || 0));
             this.draw();
           });
       }
@@ -308,7 +308,7 @@ export class GraphsVerticalsLinesComponent
               g.dateStop
             )
             .then((line) => {
-              line = line.map((v: any) => +v || 0);
+              line = line.map((v: any) => +v.value || 0);
               this.isLoading = false;
 
               ctx.strokeStyle = g.color;
