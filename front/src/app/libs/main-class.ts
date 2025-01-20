@@ -214,8 +214,22 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getShortMonthString(date: Date | undefined): string {
+  public getShortMonthString(date: Date | undefined | null): string {
     return date ? getShortMonthString(date) : '';
+  }
+
+  /**
+   * Récupération du diminutif du mois à partir d'une date
+   * @param date
+   * @returns
+   */
+  public getYearMonthString(date: Date | undefined | null): string {
+    if (!date) {
+      return '';
+    }
+
+    date = new Date(date);
+    return date.getFullYear() + '';
   }
 
   /**
