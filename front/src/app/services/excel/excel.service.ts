@@ -717,7 +717,7 @@ export class ExcelService extends MainClass {
     report.worksheets[0].getCell('C2').dataValidation = {
       type: 'list',
       allowBlank: true,
-      formulae: ['"MAGISTRAT,GREFFE,AUTOUR_DU_MAGISTRAT"'],
+      formulae: ['"MAGISTRAT,GREFFE,AUTOUR DU MAGISTRAT"'],
       error: 'Veuillez selectionner une valeur dans le menu déroulant',
       showErrorMessage: true,
       showInputMessage: true,
