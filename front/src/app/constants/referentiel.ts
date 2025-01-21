@@ -52,6 +52,8 @@ export const getReferentielCADetail = (label: string) => {
     //return "Si vous le souhaitez, vous avez la possibilité d'isoler ici l'ensemble des activités relatives au suivi des expertises"
     //case "Médiation (suivi et listes)":
     //return "Si vous le souhaitez, vous avez la possibilité d'isoler ici les activités relatives à la médiation"
+    case 'Médiation / conciliation (suivi et listes)':
+      return 'Ces activités peuvent être englobées forfaitairement dans la rubrique soutien ou être distinguées ici, à votre convenance. Elles seront additionnées dans la rubrique "soutien" pour les dialogues de gestion.';
     case 'Expertises (suivi et listes)':
       return 'Ces activités peuvent être englobées forfaitairement dans la rubrique soutien ou être distinguées ici, à votre convenance. Elles seront additionnées dans la rubrique "soutien" pour les dialogues de gestion.';
     case 'Activités extérieures et partenariats':
