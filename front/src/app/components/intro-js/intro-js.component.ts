@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   Component,
+  EventEmitter,
   HostListener,
   inject,
   Input,
+  Output,
 } from '@angular/core';
 import { KPIService } from '../../services/kpi/kpi.service';
 import {
@@ -59,6 +61,10 @@ export class IntroJSComponent implements AfterViewInit {
    * Rejouer systématiquement
    */
   @Input() playEachTime: boolean = false;
+  /**
+   * Event de fin du tour
+   */
+  @Output() close = new EventEmitter();
   /**
    * has complete form
    */
@@ -178,6 +184,9 @@ export class IntroJSComponent implements AfterViewInit {
         listFunctions = [];
       });
       this.intro.onexit(() => {
+        console.log('on close');
+        this.close.emit();
+
         if (log) {
           this.kpiService.register(
             HELP_STOP,

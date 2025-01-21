@@ -80,4 +80,30 @@ export default class RouteJuridictions extends Route {
     const list = await this.model.getAllIelst()
     this.sendOk(ctx, list)
   }
+
+    /**
+   * Interface de résultat de simulation de la page de simulation
+   * @param {*} backupId
+   * @param {*} params
+   * @param {*} simulation
+   * @param {*} dateStart
+   * @param {*} dateStop
+   * @param {*} selectedCategoryId
+   */
+    @Route.Post({
+      bodyType: Types.object().keys({
+        juridictionName: Types.string().required(),
+        backupId: Types.number().required(),
+      }),
+      accesses: [Access.isAdmin],
+    })
+    async duplicateJuridiction (ctx) {
+      const { juridictionName, backupId } = this.body(ctx)
+  
+      await models.HRBackups.duplicateBackup(backupId,juridictionName)
+
+      this.sendOk(ctx, "OK")
+    }
+
+    
 }

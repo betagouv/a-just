@@ -9,7 +9,7 @@ import { MainClass } from '../../../libs/main-class';
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
 import { UserService } from '../../../services/user/user.service';
 import { MatIconModule } from '@angular/material/icon';
-import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pipe';
+import { TextEditorComponent } from '../../../components/text-editor/text-editor.component';
 
 /**
  * Paneau d'une fiche magistrat / fonctionnaire / contractuel
@@ -23,7 +23,7 @@ import { SanitizeHtmlPipe } from '../../../pipes/sanitize-html/sanitize-html.pip
     EtpPreviewComponent,
     PanelActivitiesComponent,
     MatIconModule,
-    SanitizeHtmlPipe,
+    TextEditorComponent,
   ],
   templateUrl: './person-preview.component.html',
   styleUrls: ['./person-preview.component.scss'],

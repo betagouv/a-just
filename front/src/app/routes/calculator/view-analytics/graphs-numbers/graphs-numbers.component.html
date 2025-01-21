@@ -13,7 +13,11 @@
         {{subTitle}}</p>
     <p *ngIf="title" class="title"
         [style.color]="isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)">
-        {{title}}</p>
-    <aj-tooltips *ngIf="title === 'N/R'" title="Donnée non renseignée" class="small"
-        content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+        {{title}}
+        <aj-tooltips *ngIf="title === 'N/R'" title="Donnée non renseignée" class="small"
+            content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+        <aj-tooltips *ngIf="title === 'N/A'" title="Pourcentage non calculable"
+            content="L'une des données de référence étant égale à 0, la variation ne peut être calculée"
+            class="small"></aj-tooltips>
+    </p>
 </div>

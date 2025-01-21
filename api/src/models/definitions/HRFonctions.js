@@ -33,6 +33,14 @@ export default (sequelizeInstance) => {
         type: Sequelize.STRING(255),
         allowNull: true,
       },
+      min_date_avalaible: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      recoded_function: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -69,6 +77,7 @@ export default (sequelizeInstance) => {
   )
 
   Model.associate = function (models) {
+    Model.hasOne(models.HRCategories, { foreignKey: 'id', sourceKey: 'category_id' })
     return models
   }
 

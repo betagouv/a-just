@@ -77,15 +77,13 @@
     }
 
     .unsave {
-      border: solid 1px #dddddd;
-      color: #dddddd;
+      border: solid 1px fColor(primary);
+      color: fColor(primary);
       margin-right: 16px;
       height: 32px;
       padding: 4px 12px;
       font-size: 14px;
       line-height: 24px;
-      color: #929292;
-      border-color: #929292;
       cursor: pointer;
       pointer-events: initial;
     }

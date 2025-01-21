@@ -19,7 +19,7 @@
   <aj-text-editor #editor placeholder="Écrivez un commentaire" (valueChange)="commentContent = $event">
   </aj-text-editor>
   <div class="footer-panel">
-    <div class="back" *ngIf="commentContent.length">Annuler</div>
+    <div class="back" *ngIf="commentContent.length" (click)="editor.setValue('')">Annuler</div>
     <div class="save" [ngClass]="{disabled: !commentContent.length}"
       (click)="onSentComment(commentContent, null, editor)">
       Enregistrer</div>

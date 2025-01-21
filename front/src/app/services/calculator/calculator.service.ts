@@ -48,6 +48,18 @@ export class CalculatorService extends MainClass {
   categorySelected: BehaviorSubject<string | null> = new BehaviorSubject<
     string | null
   >(null);
+  /**
+   * Show hide calculator graph detail
+   */
+  showGraphDetailType: string | null = null;
+  /**
+   * Detail the title selected
+   */
+  showGraphDetailTypeLineTitle: string | null = null;
+  /**
+   * refSelected
+   */
+  selectedRefGraphDetail: number | string | null = null;
 
   /**
    * Constructeur
