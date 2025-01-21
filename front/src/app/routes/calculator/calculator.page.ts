@@ -66,6 +66,7 @@ import {
 import { MAGISTRATS } from '../../constants/category';
 import { fixDecimal } from '../../utils/numbers';
 import { ViewAnalyticsComponent } from './view-analytics/view-analytics.component';
+import { PopinGraphsDetailsComponent } from './popin-graphs-details/popin-graphs-details.component';
 
 /**
  * Page du calculateur
@@ -85,6 +86,7 @@ import { ViewAnalyticsComponent } from './view-analytics/view-analytics.componen
     FormsModule,
     IntroJSComponent,
     ViewAnalyticsComponent,
+    PopinGraphsDetailsComponent,
   ],
   templateUrl: './calculator.page.html',
   styleUrls: ['./calculator.page.scss'],
@@ -246,36 +248,20 @@ export class CalculatorPage
       },
     },
     {
-      target: '.drop-down',
+      target: '.compare', //.drop-down',
       title: 'Comparez votre juridiction',
       intro:
         '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>',
-      beforeLoad: async (intro: any) => {
+      /*beforeLoad: async (intro: any) => {
+        intro._introItems[4].position = '';
         const itemToClick: any = document.querySelector('button.compare');
         if (itemToClick) {
           itemToClick.click();
           await sleep(200);
-
-          const introTooltip: any = document.querySelector('.introjs-tooltip');
-          if (introTooltip) {
-            introTooltip.style.visibility = 'hidden';
-          }
-          setTimeout(() => {
-            const introTooltip: any =
-              document.querySelector('.introjs-tooltip');
-            if (introTooltip) {
-              introTooltip.classList.add('introjs-bottom-left-aligned');
-              introTooltip.classList.remove('introjs-floating');
-              introTooltip.style.left = '0px';
-              introTooltip.style.top = '100px';
-              introTooltip.style.marginLeft = '-150px';
-              introTooltip.style.marginTop = '0';
-              introTooltip.style.visibility = 'visible';
-              introTooltip.style.height = '450px';
-            }
-          }, 600);
+          intro.refresh();
+          console.log(intro);
         }
-      },
+      },*/
     },
   ];
   /**
@@ -706,7 +692,6 @@ export class CalculatorPage
                   this.selectedFonctionsIds
                 );
               }
-              console.log(this.referentiel);
               this.formatDatas(list);
               this.isLoading = false;
               this.lastCategorySelected = this.categorySelected;
@@ -1259,6 +1244,7 @@ export class CalculatorPage
           const variationsDTES = getVariations(value2DTES, value1DTES);
           list.push({
             title: 'DTES',
+            dataType: 'dtes',
             type: 'verticals-lines',
             description:
               'de la période<br/>(calculé sur les 12 mois précédents)',
@@ -1307,6 +1293,7 @@ export class CalculatorPage
           );
           list.push({
             title: 'Temps moyen',
+            dataType: 'temps-moyen',
             type: 'verticals-lines',
             description: 'sur la période',
             lineMax:
@@ -1350,6 +1337,7 @@ export class CalculatorPage
           );
           list.push({
             title: 'Taux de couverture',
+            dataType: 'taux-couverture',
             type: 'progress',
             description: 'moyen sur la période',
             lineMax: 0,
@@ -1387,6 +1375,7 @@ export class CalculatorPage
           const variationsStock = getVariations(value2Stock, value1Stock);
           list.push({
             title: 'Stock',
+            dataType: 'stock',
             type: 'verticals-lines',
             description: 'en fin de période',
             lineMax:
@@ -1420,6 +1409,7 @@ export class CalculatorPage
           const variationsEntrees = getVariations(value2Entrees, value1Entrees);
           list.push({
             title: 'Entrées',
+            dataType: 'entrees',
             type: 'verticals-lines',
             description: 'moyennes<br/>sur la période',
             lineMax:
@@ -1453,6 +1443,7 @@ export class CalculatorPage
           const variationsSorties = getVariations(value2Sorties, value1Sorties);
           list.push({
             title: 'Sorties',
+            dataType: 'sorties',
             type: 'verticals-lines',
             description: 'moyennes<br/>sur la période',
             lineMax:
@@ -1487,6 +1478,7 @@ export class CalculatorPage
           );
           list.push({
             title: 'ETPT Siège',
+            dataType: 'ETPTSiege',
             type: 'verticals-lines',
             description: 'moyens sur la période',
             lineMax:
@@ -1539,6 +1531,7 @@ export class CalculatorPage
           );
           list.push({
             title: 'ETPT Greffe',
+            dataType: 'ETPTGreffe',
             type: 'verticals-lines',
             description: 'moyens sur la période',
             lineMax:
@@ -1588,6 +1581,7 @@ export class CalculatorPage
           const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam);
           list.push({
             title: 'ETPT EAM',
+            dataType: 'ETPTEam',
             type: 'verticals-lines',
             description: 'moyens sur la période',
             lineMax:
@@ -1694,6 +1688,7 @@ export class CalculatorPage
 
         list.push({
           title: 'Temps moyen',
+          dataType: 'temps-moyen',
           type: 'verticals-lines',
           description: 'de la période<br/>v/s<br/>temps moyen de référence',
           lineMax:
@@ -1742,6 +1737,7 @@ export class CalculatorPage
         const variationsDTES = getVariations(value2DTES, value1DTES);
         list.push({
           title: 'DTES',
+          dataType: 'dtes',
           type: 'verticals-lines',
           description:
             'de la période<br/>v/s<br/>DTES possible<br/><br/>(calculé sur les 12 mois précédents)',
@@ -1791,6 +1787,7 @@ export class CalculatorPage
         );
         list.push({
           title: 'Taux de couverture',
+          dataType: 'taux-couverture',
           type: 'progress',
           description: 'de la période<br/>v/s<br/>taux de couverture possible',
           lineMax: 0,
@@ -1822,6 +1819,7 @@ export class CalculatorPage
         const variationsSorties = getVariations(value2Sorties, value1Sorties);
         list.push({
           title: 'Sorties',
+          dataType: 'sorties',
           type: 'verticals-lines',
           description: 'de la période<br/>v/s<br/>sorties mensuelles possibles',
           lineMax:
@@ -1912,7 +1910,6 @@ export class CalculatorPage
   }
 
   filterReferentiels(referentiels: any[]) {
-    console.log(this.referentiel);
     let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
         const bup = this.backups.find(

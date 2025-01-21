@@ -1,7 +1,11 @@
 /**
  * Liste des réferentiels que l'on ne peut pas modifier
  */
-export const REFERENTIELS_CANT_UPDATED = ['Autres activités'];
+export const REFERENTIELS_CANT_UPDATED = [
+  'Autres activités',
+  "Juges d'Instruction",
+  'Juges des Enfants',
+];
 
 /**
  * ETP need to be updated
@@ -83,14 +87,24 @@ export const getReferentielCADetail = (label: string) => {
  * Liste des réferentiels devant être saisi pour les DDG
  */
 export const DDG_REFERENTIELS_MAG_CA = [
-  'ASSISES JIRS',
-  'CONTENTIEUX JIRS',
-  'CONTENTIEUX DE LA DÉTENTION JIRS',
-  'CONTENTIEUX DU CONTRÔLE JUDICIAIRE JIRS',
-  'CONTENTIEUX DE FOND JIRS',
-  'ASSISES HORS JIRS',
-  'COUR CRIMINELLE DÉPARTEMENTALE',
-  'SOUTIEN (HORS FORMATIONS SUIVIES)',
+  'Assises hors JIRS'.toUpperCase(),
+  'Assises JIRS'.toUpperCase(),
+  'Cour criminelle départementale'.toUpperCase(),
+  'Soutien (autres)'.toUpperCase(),
+  'Formations suivies'.toUpperCase(),
+  'Formations dispensées'.toUpperCase(),
+  'CSM'.toUpperCase(), // mag only
+  'Accès au droit et à la Justice'.toUpperCase(),
+  //'Accueil du justiciable'.toUpperCase(),//greffe et eam only
+  //'Fonctionnaires / JA affectés aux activités civiles et commerciales du parquet général'.toUpperCase(),//greffe et eam only
+  'Activité civile'.toUpperCase(),
+  'Activité pénale'.toUpperCase(),
+  'Contentieux JIRS crim-org'.toUpperCase(),
+  'Contentieux JIRS éco-fi'.toUpperCase(),
+  'Contentieux de la détention JIRS'.toUpperCase(),
+  'Contentieux du contrôle judiciaire JIRS'.toUpperCase(),
+  'Contentieux de fond JIRS'.toUpperCase(),
+  'Contentieux social'.toUpperCase(),
 ];
 /**
  * Liste des réferentiels devant être saisi pour les DDG
@@ -162,14 +176,23 @@ export const DDG_REFERENTIELS_GREFFE = [
 ];
 
 export const DDG_REFERENTIELS_GREFFE_CA = [
-  'ASSISES JIRS',
-  'CONTENTIEUX JIRS',
-  'CONTENTIEUX DE LA DÉTENTION JIRS',
-  'CONTENTIEUX DU CONTRÔLE JUDICIAIRE JIRS',
-  'CONTENTIEUX DE FOND JIRS',
-  'ASSISES HORS JIRS',
-  'COUR CRIMINELLE DÉPARTEMENTALE',
-  'SOUTIEN (HORS FORMATIONS SUIVIES)',
+  'Assises hors JIRS'.toUpperCase(),
+  'Assises JIRS'.toUpperCase(),
+  'Cour criminelle départementale'.toUpperCase(),
+  'Soutien (autres)'.toUpperCase(),
+  'Formations suivies'.toUpperCase(),
+  'Formations dispensées'.toUpperCase(),
+  'Accès au droit et à la Justice'.toUpperCase(),
+  'Accueil du justiciable'.toUpperCase(), //greffe et eam only
+  'Fonctionnaires / JA affectés aux activités civiles et commerciales du parquet général'.toUpperCase(), //greffe et eam only
+  'Activité civile'.toUpperCase(),
+  'Activité pénale'.toUpperCase(),
+  'Contentieux JIRS crim-org'.toUpperCase(),
+  'Contentieux JIRS éco-fi'.toUpperCase(),
+  'Contentieux de la détention JIRS'.toUpperCase(),
+  'Contentieux du contrôle judiciaire JIRS'.toUpperCase(),
+  'Contentieux de fond JIRS'.toUpperCase(),
+  'Contentieux social'.toUpperCase(),
 ];
 
 export const DDG_REFERENTIELS_EAM = [
@@ -181,21 +204,23 @@ export const DDG_REFERENTIELS_EAM = [
 ];
 
 export const DDG_REFERENTIELS_EAM_CA = [
-  'SOUTIEN (HORS FORMATIONS SUIVIES)',
-  'FORMATIONS SUIVIES',
-  'FORMATIONS DISPENSÉES',
-  'ACCÈS AU DROIT ET À LA JUSTICE',
-  'ASSISES JIRS',
-  'CONTENTIEUX JIRS',
-  'CONTENTIEUX DE LA DÉTENTION JIRS',
-  'CONTENTIEUX DU CONTRÔLE JUDICIAIRE JIRS',
-  'CONTENTIEUX DE FOND JIRS',
-  'ASSISES HORS JIRS',
-  'COUR CRIMINELLE DÉPARTEMENTALE',
-  'SOUTIEN (HORS FORMATIONS SUIVIES)',
-  'FONCTIONNAIRES / JA AFFECTÉS AUX ACTIVITÉS CIVILES ET COMMERCIALES DU PARQUET GÉNÉRAL',
-  'ACCUEIL DU JUSTICIABLE',
-  'AUTRES FONCTIONNAIRES / JA AFFECTÉS AU PARQUET GÉNÉRAL',
+  'Assises hors JIRS'.toUpperCase(),
+  'Assises JIRS'.toUpperCase(),
+  'Cour criminelle départementale'.toUpperCase(),
+  'Soutien (autres)'.toUpperCase(),
+  'Formations suivies'.toUpperCase(),
+  'Formations dispensées'.toUpperCase(),
+  'Accès au droit et à la Justice'.toUpperCase(),
+  'Accueil du justiciable'.toUpperCase(), //greffe et eam only
+  'Fonctionnaires / JA affectés aux activités civiles et commerciales du parquet général'.toUpperCase(), //greffe et eam only
+  'Activité civile'.toUpperCase(),
+  'Activité pénale'.toUpperCase(),
+  'Contentieux JIRS crim-org'.toUpperCase(),
+  'Contentieux JIRS éco-fi'.toUpperCase(),
+  'Contentieux de la détention JIRS'.toUpperCase(),
+  'Contentieux du contrôle judiciaire JIRS'.toUpperCase(),
+  'Contentieux de fond JIRS'.toUpperCase(),
+  'Contentieux social'.toUpperCase(),
 ];
 export const VALUE_QUALITY_OPTION = 'facultatif';
 export const VALUE_QUALITY_GOOD = 'good';

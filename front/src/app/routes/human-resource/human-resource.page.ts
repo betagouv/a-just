@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { maxBy, minBy, orderBy, sumBy } from 'lodash';
+import { maxBy, minBy, orderBy } from 'lodash';
 import { debounceTime } from 'rxjs';
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component';
-import { sum } from 'lodash';
 import { HRSituationInterface } from '../../interfaces/hr-situation';
 import { RHActivityInterface } from '../../interfaces/rh-activity';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
@@ -31,7 +30,6 @@ import { HRCommentService } from '../../services/hr-comment/hr-comment.service';
 import { UserService } from '../../services/user/user.service';
 import { dateAddDays, isDateBiggerThan, today } from '../../utils/dates';
 import { copy } from '../../utils';
-import { DOCUMENTATION_VENTILATEUR_PERSON } from '../../constants/documentation';
 import { HelpButtonComponent } from '../../components/help-button/help-button.component';
 import { CommonModule } from '@angular/common';
 
@@ -261,7 +259,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log('this.appService.previousUrl:', this.appService.previousUrl);
     this.routerLinkToGoBack = this.appService.previousUrl
       ? [this.appService.previousUrl]
       : ['/'];
@@ -335,7 +332,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Génération des situations artificielle ou non
    */
   formatHRHistory() {
-    if (this.fonctions.length === 0 || !this.currentHR) {
+    if (
+      this.fonctions.length === 0 ||
+      !this.currentHR ||
+      this.onEditIndex !== null
+    ) {
       return;
     }
 
@@ -658,6 +659,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         top: 0,
       });
     }
+
+    this.formatHRHistory();
   }
 
   /**
@@ -700,7 +703,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   async onEditIndisponibility(action: ActionsInterface) {
-    const controlIndisponibilitiesError = this.onEditIndex === null; // if panel ediction do not control error
+    const controlIndisponibilitiesError = true; // alway //this.onEditIndex === null; // if panel ediction do not control error
 
     switch (action.id) {
       case 'close':
@@ -838,23 +841,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
             }
           }
 
-          // Verification that unavailability is not added while the agent has no ventilations provided.
-          const totalActivities = this.currentHR?.situations.map(
-            (elem: any) => elem.activities.length
-          );
-          if (
-            (this.addDomVentilation &&
-              sumBy(this.addDomVentilation.updatedReferentiels, 'percent') !==
-                100) ||
-            (!this.addDomVentilation && !sum(totalActivities))
-          ) {
-            this.appService.alert.next({
-              title: 'Attention',
-              text: `Même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il doit être affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Nous vous recommandons de procéder à la ventilation de ses temps par activité.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
-            });
-            //this.updateIndisponiblity = null
-            //return false;
-          }
           if (this.updateIndisponiblity) {
             // force id to int with selector
             this.updateIndisponiblity.contentieux.id =
@@ -872,14 +858,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
               return false;
             }
 
+            const cacheOldIndispo = [...this.allIndisponibilities];
             if (index !== -1) {
-              this.allIndisponibilities[index] = {
+              cacheOldIndispo[index] = {
                 ...this.allIndisponibilities[index],
                 ...this.updateIndisponiblity,
                 contentieux,
               };
             } else if (this.updateIndisponiblity) {
-              this.allIndisponibilities.push({
+              cacheOldIndispo.push({
                 ...this.updateIndisponiblity,
                 contentieux,
               });
@@ -888,14 +875,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
               this.indisponibilityError =
                 this.humanResourceService.controlIndisponibilities(
                   this.currentHR,
-                  this.allIndisponibilities
+                  cacheOldIndispo
                 );
               if (controlIndisponibilitiesError && this.indisponibilityError) {
-                alert(this.indisponibilityError);
-                this.onAddIndispiniblity(this.updateIndisponiblity);
+                const errorToShow = this.indisponibilityError;
+                this.indisponibilityError = null; // only control by alert
+                alert(errorToShow);
                 return false;
               } else {
                 this.updateIndisponiblity = null;
+                this.allIndisponibilities = [...cacheOldIndispo];
               }
 
               if (!this.indisponibilityError) {

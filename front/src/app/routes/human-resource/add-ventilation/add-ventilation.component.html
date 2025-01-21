@@ -180,7 +180,8 @@
           </button>
         </div>
         <div class="indispo-content" *ngIf="indisponibilities.length">
-          <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
+          <div *ngFor="let indisp of indisponibilitiesFiltered" class="cursor-pointer"
+            (click)="addIndispiniblity.emit(indisp)">
             <div class="icon">
               <mat-icon>event_busy</mat-icon>
             </div>
