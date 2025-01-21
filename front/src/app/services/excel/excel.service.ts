@@ -528,7 +528,7 @@ export class ExcelService extends MainClass {
             indexCell +
             '+CV' +
             indexCell +
-            '+CL' +
+            '+DL' +
             indexCell +
             '))',
           result: '0',
