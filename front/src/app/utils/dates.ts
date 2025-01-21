@@ -1,5 +1,4 @@
 import { endOfMonth, startOfMonth } from 'date-fns';
-//import { environment } from '../../environments/environment';
 
 /**
  * Calcul du nombre de mois entre deux dates
@@ -238,12 +237,17 @@ export function findRealValue(date: Date) {
  * @param date
  * @returns
  */
-export function findRealValueCustom(date: Date) {
+export function findRealValueCustom(
+  date: Date | string | null | undefined,
+  isTodayString = true
+) {
+  date = new Date(date || '');
   const today = new Date();
   if (
     today.getDate() === date.getDate() &&
     today.getMonth() === date.getMonth() &&
-    today.getFullYear() === date.getFullYear()
+    today.getFullYear() === date.getFullYear() &&
+    isTodayString
   ) {
     return "Aujourd'hui";
   } else if (date && typeof date.getMonth === 'function') {

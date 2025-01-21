@@ -109,6 +109,7 @@ export class ExcelService extends MainClass {
         this.tabs = data.data;
         const viewModel = {
           ...this.tabs.viewModel,
+          fonctions: data.data.fonctions,
           firstLink: {
             label: 'Consultez notre documentation en ligne ici.',
             url: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs',
@@ -129,7 +130,11 @@ export class ExcelService extends MainClass {
             this.dateStop.getValue()
           ).toLocaleDateString()}`,
         };
-        fetch('/assets/template4.xlsx')
+        fetch(
+          this.userService.isCa() === false
+            ? '/assets/template4.xlsx'
+            : '/assets/template4CA.xlsx'
+        )
           // 2. Get template as ArrayBuffer.
           .then((response) => response.arrayBuffer())
           // 3. Fill the template with data (generate a report).
@@ -138,6 +143,7 @@ export class ExcelService extends MainClass {
           })
           // 4. Get a report as buffer.
           .then(async (report) => {
+            console.log(viewModel);
             report = await this.getReport(report, viewModel);
             if (this.tabs.onglet1.values.length === 0) {
               alert(
@@ -227,48 +233,51 @@ export class ExcelService extends MainClass {
       });
     }
 
-    // ONGLET JURIDICTION
-    viewModel.tgilist.map((value: any, index: any) => {
-      report.worksheets[5].getCell('B' + (+index + 1)).value = value;
-    });
-    viewModel.tpxlist.map((value: any, index: any) => {
-      report.worksheets[5].getCell('E' + (+index + 1)).value = value;
-    });
-    viewModel.cphlist.map((value: any, index: any) => {
-      report.worksheets[5].getCell('H' + (+index + 1)).value = value;
-    });
-    viewModel.isolatedCPH.map((value: any, index: any) => {
-      report.worksheets[5].getCell('J' + (+index + 1)).value = value;
-    });
+    if (this.userService.isCa() === false) {
+      // ONGLET JURIDICTION
+      viewModel.tgilist.map((value: any, index: any) => {
+        report.worksheets[5].getCell('B' + (+index + 1)).value = value;
+      });
+      viewModel.tpxlist.map((value: any, index: any) => {
+        report.worksheets[5].getCell('E' + (+index + 1)).value = value;
+      });
+      viewModel.cphlist.map((value: any, index: any) => {
+        report.worksheets[5].getCell('H' + (+index + 1)).value = value;
+      });
+      viewModel.isolatedCPH.map((value: any, index: any) => {
+        report.worksheets[5].getCell('J' + (+index + 1)).value = value;
+      });
 
-    // DDG TJ
-    report.worksheets[11].getCell('D' + +5).value =
-      viewModel.tgilist[0] || viewModel.uniqueJur[0];
-    // DDG TPROX
-    report.worksheets[12].getCell('D' + +5).value = viewModel.tpxlist[0] || '';
-    report.worksheets[12].getCell('D' + +5).dataValidation = {
-      type: 'list',
-      allowBlank: false,
-      formulae: tpxlistExcel,
-      error: 'Veuillez selectionner une valeur dans le menu déroulant',
-      prompt: viewModel.tpxlist.length
-        ? 'Selectionner un TPROX'
-        : "Aucun TPROX n'est disponible pour cette juridiction",
-      showErrorMessage: true,
-      showInputMessage: true,
-    };
-    // DDG CPH
-    report.worksheets[13].getCell('D' + +5).value =
-      viewModel.uniqueJur[0] || '';
-    report.worksheets[13].getCell('D' + +5).dataValidation = {
-      type: 'list',
-      allowBlank: false,
-      formulae: viewModel.tProximite,
-      error: 'Veuillez selectionner une valeur dans le menu déroulant',
-      prompt: 'Selectionner une juridiction',
-      showErrorMessage: true,
-      showInputMessage: true,
-    };
+      // DDG TJ
+      report.worksheets[10].getCell('D' + +5).value =
+        viewModel.tgilist[0] || viewModel.uniqueJur[0];
+      // DDG TPROX
+      report.worksheets[11].getCell('D' + +5).value =
+        viewModel.tpxlist[0] || '';
+      report.worksheets[11].getCell('D' + +5).dataValidation = {
+        type: 'list',
+        allowBlank: false,
+        formulae: tpxlistExcel,
+        error: 'Veuillez selectionner une valeur dans le menu déroulant',
+        prompt: viewModel.tpxlist.length
+          ? 'Selectionner un TPROX'
+          : "Aucun TPROX n'est disponible pour cette juridiction",
+        showErrorMessage: true,
+        showInputMessage: true,
+      };
+      // DDG CPH
+      report.worksheets[12].getCell('D' + +5).value =
+        viewModel.uniqueJur[0] || '';
+      report.worksheets[12].getCell('D' + +5).dataValidation = {
+        type: 'list',
+        allowBlank: false,
+        formulae: viewModel.tProximite,
+        error: 'Veuillez selectionner une valeur dans le menu déroulant',
+        prompt: 'Selectionner une juridiction',
+        showErrorMessage: true,
+        showInputMessage: true,
+      };
+    }
 
     // ONGLET ETPT DDG
     report.worksheets[2].columns = [...this.tabs.onglet2.columnSize];
@@ -278,124 +287,265 @@ export class ExcelService extends MainClass {
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
       const indexCell = +(+index + 3);
 
-      report.worksheets[2].getCell('EA' + (+index + 3)).value = {
-        formula:
-          '=IF(H' +
-          indexCell +
-          '="","",IF(H' +
-          indexCell +
-          '="CONT A JP",IF(G' +
-          indexCell +
-          '="Autour du Juge","CONT A JP Autour du Juge","CONT A JP Greffe"),VLOOKUP(H' +
-          indexCell +
-          ',Table_Fonctions!C:F,4,FALSE)))',
-        result: '0',
-      };
-      report.worksheets[2].getCell('EB' + (+index + 3)).value = {
-        formula:
-          '=IFERROR(SUM(O' +
-          indexCell +
-          ',T' +
-          indexCell +
-          ',AD' +
-          indexCell +
-          ',AM' +
-          indexCell +
-          ',BG' +
-          indexCell +
-          ',BL' +
-          indexCell +
-          '),"")',
-        result: '0',
-      };
-      report.worksheets[2].getCell('EC' + (+index + 3)).value = {
-        formula:
-          '=IF(H' +
-          indexCell +
-          '="","",SUM(BM' +
-          indexCell +
-          ',BN' +
-          indexCell +
-          ',CE' +
-          indexCell +
-          ',CK' +
-          indexCell +
-          ',CP' +
-          indexCell +
-          '))',
-        result: '0',
-      };
-      report.worksheets[2].getCell('ED' + (+index + 3)).value = {
-        formula:
-          '=IF(H' +
-          indexCell +
-          '="","",IF(EC' +
-          indexCell +
-          '+EB' +
-          indexCell +
-          '+CS' +
-          indexCell +
-          '+EE' +
-          indexCell +
-          '=M' +
-          indexCell +
-          ',"OK","OK (contient des indisponibilités)"))',
-        result: '0',
-      };
-      report.worksheets[2].getCell('EE' + (+index + 3)).value = {
-        formula:
-          '=IF(ISERROR(DF' +
-          indexCell +
-          '+DH' +
-          indexCell +
-          '+DK' +
-          indexCell +
-          '+DL' +
-          indexCell +
-          '+DM' +
-          indexCell +
-          '+DO' +
-          indexCell +
-          '+DP' +
-          indexCell +
-          '+DQ' +
-          indexCell +
-          '+DR' +
-          indexCell +
-          '),"",DF' +
-          indexCell +
-          '+DH' +
-          indexCell +
-          '+DK' +
-          indexCell +
-          '+DL' +
-          indexCell +
-          '+DM' +
-          indexCell +
-          '+DO' +
-          indexCell +
-          '+DP' +
-          indexCell +
-          '+DQ' +
-          indexCell +
-          '+DR' +
-          indexCell +
-          ')',
-        result: '0',
-      };
-      report.worksheets[2].getCell('EF' + (+index + 3)).value = {
-        formula:
-          '=IF(ISERROR(M' +
-          indexCell +
-          '+DE' +
-          indexCell +
-          '),"",M' +
-          indexCell +
-          '+DE' +
-          indexCell +
-          ')',
-        result: '0',
-      };
+      // TJ
+      if (this.userService.isCa() === false) {
+        report.worksheets[2].getCell('FA' + (+index + 3)).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",IF(H' +
+            indexCell +
+            '="CONT A JP",IF(G' +
+            indexCell +
+            '="Autour du magistrat","CONT A JP Autour du Juge","CONT A JP Greffe"),VLOOKUP(H' +
+            indexCell +
+            ',Table_Fonctions!C:F,4,FALSE)))',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FB' + (+index + 3)).value = {
+          formula:
+            '=IFERROR(SUM(O' +
+            indexCell +
+            ',T' +
+            indexCell +
+            ',AD' +
+            indexCell +
+            ',AM' +
+            indexCell +
+            ',BG' +
+            indexCell +
+            ',BL' +
+            indexCell +
+            '),"")',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FC' + (+index + 3)).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",SUM(BM' +
+            indexCell +
+            ',BN' +
+            indexCell +
+            ',CE' +
+            indexCell +
+            ',CK' +
+            indexCell +
+            ',CP' +
+            indexCell +
+            '))',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FD' + (+index + 3)).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",IF(EC' +
+            indexCell +
+            '+EB' +
+            indexCell +
+            '+CS' +
+            indexCell +
+            '+EE' +
+            indexCell +
+            '=M' +
+            indexCell +
+            ',"OK","OK (contient des indisponibilités)"))',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FE' + (+index + 3)).value = {
+          formula:
+            '=IF(ISERROR(DF' +
+            indexCell +
+            '+DH' +
+            indexCell +
+            '+DK' +
+            indexCell +
+            '+DL' +
+            indexCell +
+            '+DM' +
+            indexCell +
+            '+DO' +
+            indexCell +
+            '+DP' +
+            indexCell +
+            '+DQ' +
+            indexCell +
+            '+DR' +
+            indexCell +
+            '),"",DF' +
+            indexCell +
+            '+DH' +
+            indexCell +
+            '+DK' +
+            indexCell +
+            '+DL' +
+            indexCell +
+            '+DM' +
+            indexCell +
+            '+DO' +
+            indexCell +
+            '+DP' +
+            indexCell +
+            '+DQ' +
+            indexCell +
+            '+DR' +
+            indexCell +
+            ')',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FF' + (+index + 3)).value = {
+          formula:
+            '=IF(ISERROR(M' +
+            indexCell +
+            '+DE' +
+            indexCell +
+            '),"",M' +
+            indexCell +
+            '+DE' +
+            indexCell +
+            ')',
+          result: '0',
+        };
+
+        /**
+        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+          formula:
+            '=IFERROR(INDEX(A:FF,ROW(),MATCH(LEFT("6. TOTAL JUGES DES ENFANTS",3),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',3),0))-(INDEX(A:FF,ROW(),MATCH(LEFT("6.1.",4),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',4),0))+ INDEX(A:FF,ROW(),MATCH(LEFT("6.2.",4),LEFT(' +
+            indexCell +
+            ':' +
+            indexCell +
+            ',4),0))),"")',
+        };
+ */
+
+        // ECART JE
+        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+          formula:
+            '=BK' + indexCell + '-(BL' + indexCell + '+BM' + indexCell + ')',
+        };
+        report.worksheets[2].getCell('FH' + (+index + 3)).value = {
+          formula:
+            '=BG' +
+            indexCell +
+            '-(BH' +
+            indexCell +
+            '+BI' +
+            indexCell +
+            '+BJ' +
+            indexCell +
+            ')',
+        };
+      } else {
+        //CA
+        // VLOOKUP fct recodée
+        report.worksheets[2].getCell('FA' + (+index + 3)).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",VLOOKUP(H' +
+            indexCell +
+            ',Table_Fonctions!C:F,4,FALSE))',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FB' + (+index + 3)).value = {
+          formula:
+            '=IFERROR(SUM(O' +
+            indexCell +
+            ',T' +
+            indexCell +
+            ',AD' +
+            indexCell +
+            ',AI' +
+            indexCell +
+            ',AQ' +
+            indexCell +
+            ',BM' +
+            indexCell +
+            ',BB' +
+            indexCell +
+            '),"")',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FC' + (+index + 3)).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",SUM(BN' +
+            indexCell +
+            ',BO' +
+            indexCell +
+            ',BY' +
+            indexCell +
+            ',CJ' +
+            indexCell +
+            ',CP' +
+            indexCell +
+            '))',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FD' + (+index + 3)).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",SUM(EF' +
+            indexCell +
+            '+EG' +
+            indexCell +
+            '+CT' +
+            indexCell +
+            '))',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FE' + (+index + 3)).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",SUM(EF' +
+            indexCell +
+            '+EG' +
+            indexCell +
+            '+CT' +
+            indexCell +
+            '+DJ' +
+            indexCell +
+            '))',
+          result: '0',
+        };
+        report.worksheets[2].getCell('FF' + (+index + 3)).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",SUM(CW' +
+            indexCell +
+            '+CZ' +
+            indexCell +
+            '+CX' +
+            indexCell +
+            '+DE' +
+            indexCell +
+            '+DI' +
+            indexCell +
+            '+DF' +
+            indexCell +
+            '+DB' +
+            indexCell +
+            '+DA' +
+            indexCell +
+            '+DD' +
+            indexCell +
+            '))',
+          result: '0',
+        };
+      }
 
       report.worksheets[2].getCell('C' + (+index + 3)).dataValidation = {
         type: 'list',
@@ -406,6 +556,7 @@ export class ExcelService extends MainClass {
         showInputMessage: true,
       };
 
+      // Data validation pour menus déroulants
       const fonctionCellToCheck =
         (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) ||
         '';
@@ -431,12 +582,20 @@ export class ExcelService extends MainClass {
         report.worksheets[2].getCell('H' + (+index + 3)).dataValidation = {
           type: 'list',
           allowBlank: true,
-          formulae: [
-            '"JA Siège autres,JA Pôle Social,JA Parquet,JA JP,JA VIF"',
-          ],
+          formulae: this.userService.isCa()
+            ? ['"JA Chambres Sociales,JA Siège autres,JA Parquet Général"']
+            : ['"JA Siège autres,JA Pôle Social,JA Parquet,JA JP,JA VIF"'],
         };
       }
     });
+
+    if (this.userService.isCa() === true) {
+      // DDG TJ
+      report.worksheets[7].getCell('D' + +5).value =
+        viewModel.tgilist[0] || viewModel.uniqueJur[0];
+      report.worksheets[8].getCell('D' + +5).value =
+        viewModel.tgilist[0] || viewModel.uniqueJur[0];
+    }
 
     //ONGLET ETPT AJUST
     report.worksheets[1].columns = [...this.tabs.onglet1.columnSize];
@@ -453,6 +612,173 @@ export class ExcelService extends MainClass {
         'Selectionner une juridiction pour mettre à jour le tableau de synthèse ci-après',
       showErrorMessage: true,
       showInputMessage: true,
+    };
+
+    return report;
+  }
+
+  /**
+   * Génère un model de donnée de référentiel
+   * @returns
+   */
+  generateModel() {
+    const referentiels =
+      this.humanResourceService.contentieuxReferentielOnly.getValue();
+
+    let referentiel = new Array();
+    let counter = 0;
+    let sumLists = new Array();
+
+    referentiels.map((r) => {
+      if (r.childrens && r.childrens.length > 0) {
+        r.childrens?.map((c) => {
+          counter++;
+          referentiel.push({
+            code: c['code_import'],
+            label: c.label,
+            parent: this.userService.isCa()
+              ? this.referentielCAMappingName(r.label)
+              : this.referentielMappingName(r.label),
+            index: null,
+            sum: null,
+          });
+          sumLists.push('E' + (counter + 8));
+        });
+      }
+      counter++;
+      referentiel.push({
+        code: r['code_import'],
+        label: '',
+        parent: 'TOTAL ' + r.label,
+        index: 'E' + (counter + 8),
+        sum: sumLists,
+      });
+      sumLists = new Array();
+    });
+
+    return referentiel;
+  }
+
+  /**
+   * Génération d'un template de fiche agent
+   */
+  async generateAgentFile() {
+    let referentiel = this.generateModel();
+    const viewModel = {
+      referentiel,
+    };
+
+    fetch('/assets/Feuille_de_temps_Modèle.xlsx')
+      // 2. Get template as ArrayBuffer.
+      .then((response) => response.arrayBuffer())
+      // 3. Fill the template with data (generate a report).
+      .then((buffer) => {
+        return new Renderer().renderFromArrayBuffer(buffer, viewModel);
+      })
+      // 4. Get a report as buffer.
+      .then(async (report) => {
+        report = await this.setStyleXls(report, viewModel);
+        return report.xlsx.writeBuffer();
+      })
+      // 5. Use `saveAs` to download on browser site.
+      .then((buffer) => {
+        const filename = 'test';
+        return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION);
+      })
+      .catch((err) => console.log('Error writing excel export', err));
+  }
+
+  /**
+   * Set fiche agent template style
+   * @param report
+   * @param viewModel
+   * @returns
+   */
+  async setStyleXls(report: any, viewModel: any) {
+    const MAG = 'Magistrat';
+    const GREFFE = 'Greffe';
+    const ADM = 'Autour du magistrat';
+
+    // category picker
+    report.worksheets[0].getCell('C2').dataValidation = {
+      type: 'list',
+      allowBlank: true,
+      formulae: ['"MAGISTRAT,GREFFE,AUTOUR_DU_MAGISTRAT"'],
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      showErrorMessage: true,
+      showInputMessage: true,
+    };
+    // time picker
+    report.worksheets[0].getCell('C5').dataValidation = {
+      type: 'list',
+      allowBlank: true,
+      formulae: ['"Temps plein, Temps partiel"'],
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      showErrorMessage: true,
+      showInputMessage: true,
+    };
+
+    // functions by category
+    const findCategoryMag =
+      this.humanResourceService.categories
+        .getValue()
+        .find((c: HRCategoryInterface) => c.label === MAG) || null;
+    const findCategoryGreffe =
+      this.humanResourceService.categories
+        .getValue()
+        .find((c: HRCategoryInterface) => c.label === GREFFE) || null;
+    const findCategoryAdm =
+      this.humanResourceService.categories
+        .getValue()
+        .find((c: HRCategoryInterface) => c.label === ADM) || null;
+
+    const fonctionsMag = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === findCategoryMag?.id);
+    const fonctionsGreffe = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === findCategoryGreffe?.id);
+    const fonctionsAdm = this.humanResourceService.fonctions
+      .getValue()
+      .filter((v) => v.categoryId === findCategoryAdm?.id);
+
+    let lineIndex = 0;
+    for (let i = 0; i < fonctionsMag.length; i++) {
+      if (fonctionsMag[i].label) lineIndex++;
+      report.worksheets[1].getCell('A' + lineIndex).value =
+        fonctionsMag[i].label.toUpperCase();
+    }
+    lineIndex = 0;
+    for (let i = 0; i < fonctionsGreffe.length; i++) {
+      if (fonctionsGreffe[i].label) lineIndex++;
+      report.worksheets[1].getCell('B' + lineIndex).value =
+        fonctionsGreffe[i].label.toUpperCase();
+    }
+    lineIndex = 0;
+    for (let i = 0; i < fonctionsAdm.length; i++) {
+      if (fonctionsAdm[i].label) lineIndex++;
+      report.worksheets[1].getCell('C' + lineIndex).value =
+        fonctionsAdm[i].label.toUpperCase();
+    }
+
+    let globalSum = new Array();
+
+    // sum by parent
+    viewModel.referentiel.map((r: any) => {
+      if (r.sum !== null) {
+        if (r.sum.length > 0)
+          report.worksheets[0].getCell(r.index).value = {
+            formula: '=SUM(' + r.sum.join(',') + ')',
+            result: '0',
+          };
+        globalSum.push(r.index);
+      }
+    });
+
+    // total sum
+    report.worksheets[0].getCell('E7').value = {
+      formula: '=SUM(' + globalSum.join(',') + ')/100',
+      result: '0',
     };
 
     return report;

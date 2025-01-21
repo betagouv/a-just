@@ -322,4 +322,9 @@
 
 <ng-template #subTitleTemplate><label class="grey">(option)</label></ng-template>
 
-<aj-intro-js *ngIf="datasFilted && datasFilted.length" [steps]="introSteps" typeId="calculator"></aj-intro-js>
+<aj-intro-js *ngIf="datasFilted && datasFilted.length" [steps]="introSteps" typeId="calculator"
+  (close)="showPicker=false"></aj-intro-js>
+
+<aj-popin-graphs-details *ngIf="calculatorService.showGraphDetailType && compareOption === 1"
+  [compareAtString]="compareAtString" [dateStart]="dateStart" [dateStop]="dateStop" [optionDateStart]="optionDateStart"
+  [optionDateStop]="optionDateStop"></aj-popin-graphs-details>

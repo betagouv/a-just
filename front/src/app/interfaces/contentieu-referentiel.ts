@@ -32,6 +32,10 @@ export interface ContentieuReferentielInterface {
    */
   code_import?: string;
   /**
+   * Boolean qui permet de voir si on calcul des ventilations en rapport des indispo
+   */
+  checkVentilation?: boolean;
+  /**
    * Element à compter ou non dans le calcul de complétion des données
    */
   compter?: boolean;

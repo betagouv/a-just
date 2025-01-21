@@ -1,5 +1,6 @@
 import { Op } from 'sequelize'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
+import { orderBy } from 'lodash'
 
 /**
  * Liste des juridctions auquels ont accès les utilisateur
@@ -74,6 +75,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (backup) {
+      // Creation d'un BACKUP
       delete backup.id
       const backupCreated = await Model.create({
         ...backup,
@@ -81,33 +83,108 @@ export default (sequelizeInstance, Model) => {
       })
       const newBackupId = backupCreated.dataValues.id
 
-      const hrList = await Model.models.HumanResources.findAll({
+      // Création d'un TJ ou CA IELST
+      await models.TJ.create({
+        i_elst: 0,
+        label: backupName,
+        latitude: 0,
+        longitude: 0,
+        population: 0,
+        enabled: true,
+        type: 'TGI'
+      })
+
+      // Recherche de HR
+      let hrList = await Model.models.HumanResources.findAll({
         where: {
           backup_id: backupId,
         },
         raw: true,
       })
+
+      hrList =orderBy(hrList, 'last_name')
+
       for (let x = 0; x < hrList.length; x++) {
+        // Pour chaque HR
         const hrId = hrList[x].id
         delete hrList[x].id
+        delete hrList[x]['first_name']
+        delete hrList[x]['last_name']
+
+        // Création de HR
         const newHR = await Model.models.HumanResources.create({
           ...hrList[x],
+          first_name: '',
+          last_name: x,
           backup_id: newBackupId,
         })
 
-        const ventilationsList = await Model.models.HRVentilations.findAll({
+        // Recherche de situation pour chaque HR
+        const situationList = await Model.models.HRSituations.findAll({
           where: {
-            backup_id: backupId,
-            rh_id: hrId,
+            human_id: hrId,
           },
           raw: true,
         })
-        for (let x = 0; x < ventilationsList.length; x++) {
-          delete ventilationsList[x].id
-          await Model.models.HRVentilations.create({
-            ...ventilationsList[x],
-            backup_id: newBackupId,
-            rh_id: newHR.dataValues.id,
+
+        for (let y = 0; y < situationList.length; y++) {
+          // Pour chaque situation
+          const situationId = situationList[y].id
+          delete situationList[y].id
+
+          let category =  await models.HRCategories.findOne({
+            where: {
+              id: situationList[y]['category_id']
+            },
+          })
+
+          // Renommer la HR si pas magistrat
+          if(category)
+            newHR.update({first_name: category.dataValues.label})
+
+          // Création d'une situation
+          const newSituation = await Model.models.HRSituations.create({
+            ...situationList[y],
+            human_id: newHR.dataValues.id,
+          })
+
+          // Recherche de ventilation dans chaque situation
+          const ventilationList = await Model.models.HRActivities.findAll({
+            where: {
+              hr_situation_id: situationId
+            },
+            raw: true,
+          })
+
+          for (let z = 0; z < ventilationList.length; z++) {
+            // Pour chaque ventilation
+            delete ventilationList[z].id
+
+            // Création d'une ventilation
+            await Model.models.HRActivities.create({
+              ...ventilationList[z],
+              hr_situation_id: newSituation.dataValues.id,
+            })
+          }
+
+        }
+
+        // Recherche d'indispo
+        const indispoList = await Model.models.HRIndisponibilities.findAll({
+          where: {
+            hr_id: hrId,
+          },
+          raw: true,
+        })
+
+        for (let y = 0; y < indispoList.length; y++) {
+          // Pour chaque indispo
+          delete indispoList[y].id
+          
+          // Création d'une indispo
+          await Model.models.HRIndisponibilities.create({
+            ...indispoList[y],
+            hr_id: newHR.dataValues.id,
           })
         }
       }

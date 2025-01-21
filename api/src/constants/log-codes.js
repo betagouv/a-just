@@ -54,6 +54,8 @@ export const ACTIVITIES_SHOW_LEVEL_4 = 502
 export const HONEY_IP_TRAPPED = 10001
 export const HONEY_IP_BLOCK_AGAIN = 10002
 
+export const REFERENCE_REQUEST_URL = 10003
+
 export const CODES = {
   [USER_USER_SIGN_IN]: '[UTILISATEUR] Inscription utilisateur ${email}',
   [USER_USER_FORGOT_PASSWORD]: '[UTILISATEUR] Mot de passe oublié utilisateur ${email}',

@@ -42,6 +42,10 @@ export class EtpPreviewComponent implements OnChanges {
    */
   @Input() height: number = 40;
   /**
+   * Force to red alert if not ETPT
+   */
+  @Input() forceAlert: boolean = false;
+  /**
    * Dom HTML du canvas pour dessiner
    */
   @ViewChild('canvas') domCanvas: ElementRef | null = null;
@@ -68,6 +72,9 @@ export class EtpPreviewComponent implements OnChanges {
    */
   ngOnChanges() {
     this.needToBeUpdated = ETP_NEED_TO_BE_UPDATED === this.realETP;
+    if (this.realETP === 0 && this.forceAlert) {
+      this.needToBeUpdated = true;
+    }
 
     const fixDec = fixDecimal(this.etp);
     this.etp = fixDec < 0 ? 0 : fixDec;
