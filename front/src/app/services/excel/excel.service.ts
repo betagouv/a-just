@@ -464,91 +464,97 @@ export class ExcelService extends MainClass {
             ',Table_Fonctions!C:F,4,FALSE))',
           result: '0',
         };
+        // SOCIAUX CIVILS ET COMMERCIAUX
         report.worksheets[2].getCell('FB' + (+index + 3)).value = {
+          //Q+V+AF+AK+AS+BO+BD
           formula:
-            '=IFERROR(SUM(O' +
+            '=IFERROR(SUM(Q' +
             indexCell +
-            ',T' +
+            ',V' +
             indexCell +
-            ',AD' +
+            ',AF' +
             indexCell +
-            ',AI' +
+            ',AK' +
             indexCell +
-            ',AQ' +
+            ',AS' +
             indexCell +
-            ',BM' +
+            ',BO' +
             indexCell +
-            ',BB' +
+            ',BD' +
             indexCell +
             '),"")',
           result: '0',
         };
+        // PENAL
         report.worksheets[2].getCell('FC' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
-            '="","",SUM(BN' +
+            '="","",SUM(BP' +
             indexCell +
-            ',BO' +
+            ',BQ' +
             indexCell +
-            ',BY' +
+            ',CA' +
             indexCell +
-            ',CJ' +
+            ',CL' +
             indexCell +
-            ',CP' +
+            ',CR' +
             indexCell +
             '))',
           result: '0',
         };
+        // Ventillation hors indispo
         report.worksheets[2].getCell('FD' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
-            '="","",SUM(EF' +
+            '="","",SUM(FB' +
             indexCell +
-            '+EG' +
+            '+FC' +
             indexCell +
-            '+CT' +
+            '+CV' +
             indexCell +
             '))',
           result: '0',
         };
+        // Ventillation comprenant indispo
         report.worksheets[2].getCell('FE' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
-            '="","",SUM(EF' +
+            '="","",SUM(FB' +
             indexCell +
-            '+EG' +
+            '+FC' +
             indexCell +
-            '+CT' +
+            '+CV' +
             indexCell +
-            '+DJ' +
+            '+CL' +
             indexCell +
             '))',
           result: '0',
         };
+        // Soutien
         report.worksheets[2].getCell('FF' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
             '="","",SUM(CW' +
             indexCell +
-            '+CZ' +
-            indexCell +
-            '+CX' +
-            indexCell +
-            '+DE' +
-            indexCell +
-            '+DI' +
-            indexCell +
-            '+DF' +
-            indexCell +
             '+DB' +
             indexCell +
-            '+DA' +
+            '+CZ' +
+            indexCell +
+            '+DG' +
+            indexCell +
+            '+DK' +
+            indexCell +
+            '+DH' +
             indexCell +
             '+DD' +
+            indexCell +
+            '+DC' +
+            indexCell +
+            '+DF' +
             indexCell +
             '))',
           result: '0',
