@@ -508,6 +508,8 @@ export const computeExtractDdg = async (
             ["Temps ventilés sur la période"]: totalEtpt,
             ["Ecart -> à contrôler"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
+              ["Ecart JE ->"]:null,
+              ["Ecart JI ->"]:null,
             ...refObj,
             ["CET > 30 jours"]: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,

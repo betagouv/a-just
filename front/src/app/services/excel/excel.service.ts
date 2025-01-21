@@ -289,6 +289,7 @@ export class ExcelService extends MainClass {
 
       // TJ
       if (this.userService.isCa() === false) {
+        // FONCTION RECODEE
         report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
             '=IF(H' +
@@ -302,107 +303,116 @@ export class ExcelService extends MainClass {
             ',Table_Fonctions!C:F,4,FALSE)))',
           result: '0',
         };
+        // TEMPS VENTILE CIVILS ET SOCIAUX
         report.worksheets[2].getCell('FB' + (+index + 3)).value = {
           formula:
-            '=IFERROR(SUM(O' +
+            '=IFERROR(SUM(Q' +
             indexCell +
-            ',T' +
+            ',V' +
             indexCell +
-            ',AD' +
+            ',AF' +
             indexCell +
-            ',AM' +
+            ',AO' +
             indexCell +
-            ',BG' +
+            ',BI' +
             indexCell +
-            ',BL' +
+            ',BN' +
             indexCell +
             '),"")',
           result: '0',
         };
+        // PENAL
         report.worksheets[2].getCell('FC' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
-            '="","",SUM(BM' +
+            '="","",SUM(BO' +
             indexCell +
-            ',BN' +
+            ',BP' +
             indexCell +
-            ',CE' +
+            ',CG' +
             indexCell +
-            ',CK' +
+            ',CM' +
             indexCell +
-            ',CP' +
+            ',CR' +
             indexCell +
             '))',
           result: '0',
         };
+        // VERIF ABS
         report.worksheets[2].getCell('FD' + (+index + 3)).value = {
           formula:
             '=IF(H' +
             indexCell +
-            '="","",IF(EC' +
+            '="","",IF(CU' +
             indexCell +
-            '+EB' +
+            '+FB' +
             indexCell +
-            '+CS' +
+            '+FC' +
             indexCell +
-            '+EE' +
+            '+FE' +
             indexCell +
             '=M' +
             indexCell +
-            ',"OK","OK (contient des indisponibilités)"))',
+            ',"OK","OK (contient de l action 99)"))',
           result: '0',
         };
+        // ACTION 99
         report.worksheets[2].getCell('FE' + (+index + 3)).value = {
           formula:
-            '=IF(ISERROR(DF' +
+            '=IF(ISERROR(DH' +
             indexCell +
-            '+DH' +
-            indexCell +
-            '+DK' +
-            indexCell +
-            '+DL' +
+            '+DJ' +
             indexCell +
             '+DM' +
             indexCell +
-            '+DO' +
+            '+DN' +
             indexCell +
-            '+DP' +
+            '+DO' +
             indexCell +
             '+DQ' +
             indexCell +
             '+DR' +
             indexCell +
-            '),"",DF' +
+            '+DS' +
             indexCell +
-            '+DH' +
+            '+DT' +
             indexCell +
-            '+DK' +
+            '+DU' +
             indexCell +
-            '+DL' +
+            '),"",DH' +
+            indexCell +
+            '+DJ' +
             indexCell +
             '+DM' +
             indexCell +
-            '+DO' +
+            '+DN' +
             indexCell +
-            '+DP' +
+            '+DO' +
             indexCell +
             '+DQ' +
             indexCell +
             '+DR' +
+            indexCell +
+            '+DS' +
+            indexCell +
+            '+DT' +
+            indexCell +
+            '+DU' +
             indexCell +
             ')',
           result: '0',
         };
+        // TEMPS VENTILE DONT INDISPO
         report.worksheets[2].getCell('FF' + (+index + 3)).value = {
           formula:
             '=IF(ISERROR(M' +
             indexCell +
-            '+DE' +
+            '+DG' +
             indexCell +
             '),"",M' +
             indexCell +
-            '+DE' +
+            '+DG' +
             indexCell +
             ')',
           result: '0',
@@ -420,25 +430,25 @@ export class ExcelService extends MainClass {
         };
 
         // ECART JE
-        report.worksheets[2].getCell('FH' + (+index + 3)).value = {
+        report.worksheets[2].getCell('O' + (+index + 3)).value = {
           formula:
-            '=ROUND(BK' +
+            '=ROUND(BM' +
             indexCell +
-            '-(BL' +
+            '-(BN' +
             indexCell +
-            '+BM' +
+            '+BO' +
             indexCell +
             '),3)',
         };
-        report.worksheets[2].getCell('FI' + (+index + 3)).value = {
+        report.worksheets[2].getCell('P' + (+index + 3)).value = {
           formula:
-            '=ROUND(BG' +
+            '=ROUND(BI' +
             indexCell +
-            '-(BH' +
+            '-(BJ' +
             indexCell +
-            '+BI' +
+            '+BK' +
             indexCell +
-            '+BJ' +
+            '+BL' +
             indexCell +
             '),3)',
         };
@@ -545,6 +555,7 @@ export class ExcelService extends MainClass {
         };
       }
 
+      // Data validation juridiction TPRX TJ
       report.worksheets[2].getCell('C' + (+index + 3)).dataValidation = {
         type: 'list',
         allowBlank: true,
@@ -593,7 +604,7 @@ export class ExcelService extends MainClass {
     });
 
     if (this.userService.isCa() === true) {
-      // DDG TJ
+      // DDG CA
       report.worksheets[7].getCell('D' + +5).value =
         viewModel.tgilist[0] || viewModel.uniqueJur[0];
       report.worksheets[8].getCell('D' + +5).value =
