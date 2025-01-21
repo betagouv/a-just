@@ -434,7 +434,7 @@ export class PanoramaPage
               today(elem.dateStop).getTime() <= fifteenDaysLater.getTime())
         );
         if (list.length && !this.listUnavailabilities.includes(hr)) {
-          this.listUnavailabilities.push(hr);
+          this.listUnavailabilities.push({ ...hr, indisponibilities: list });
         }
       }
 

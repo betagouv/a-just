@@ -1,4 +1,4 @@
-import { orderBy } from "lodash";
+import { difference, orderBy } from "lodash";
 import { Op } from "sequelize";
 import {
   referentielCAMappingIndex,
@@ -18,7 +18,11 @@ export default (sequelizeInstance, Model) => {
    * @param {*} isJirs
    * @returns
    */
-  Model.getReferentiels = async (backupId = null, isJirs = false) => {
+  Model.getReferentiels = async (
+    backupId = null,
+    isJirs = false,
+    filterReferentielsId = null
+  ) => {
     if (backupId) {
       const juridiction = await Model.models.HRBackups.findById(backupId);
       if (juridiction) {
@@ -38,6 +42,10 @@ export default (sequelizeInstance, Model) => {
           },
         ];
       }
+      // filter by referentiel only for level 3
+      if (filterReferentielsId && index === 2) {
+        where.id = filterReferentielsId;
+      }
 
       let list = await Model.findAll({
         attributes: [
@@ -51,6 +59,7 @@ export default (sequelizeInstance, Model) => {
           ["help_url", "helpUrl"],
           "compter",
           ["only_to_hr_backup", "onlyToHrBackup"],
+          ["check_ventilation", "checkVentilation"],
         ],
         where: {
           parent_id: parentId,
@@ -72,12 +81,20 @@ export default (sequelizeInstance, Model) => {
     const mainList = await formatToGraph();
     let list = [];
     mainList.map((main) => {
-      if (main.childrens) {
-        main.childrens.map((subMain) => {
-          if (subMain.childrens) {
-            list = list.concat(subMain.childrens);
-          }
-        });
+      if (main.code_import) {
+        main.childrens = (main.childrens || []).map(m => {
+          delete m.childrens
+          return m
+        })
+        list = list.concat(main);
+      } else {
+        if (main.childrens) {
+          main.childrens.map((subMain) => {
+            if (subMain.childrens) {
+              list = list.concat(subMain.childrens);
+            }
+          });
+        }
       }
     });
 
@@ -417,6 +434,7 @@ export default (sequelizeInstance, Model) => {
     });
 
     if (ref) {
+      const oldValue = ref[camel_to_snake(node)];
       ref.set({ [camel_to_snake(node)]: value });
       await ref.save();
 
@@ -428,13 +446,38 @@ export default (sequelizeInstance, Model) => {
           raw: true,
         });
         if (!hasChild) {
+          let hrBackupUpdated = [];
+          let allJuridictions = (await Model.models.HRBackups.getAll()).map(
+            (h) => h.id
+          );
+          if (Array.isArray(oldValue) && Array.isArray(value)) {
+            hrBackupUpdated = [
+              ...oldValue.filter((e) => !value.includes(e)),
+              ...value.filter((e) => !oldValue.includes(e)),
+            ];
+          } else if (oldValue === null && Array.isArray(value)) {
+            hrBackupUpdated = allJuridictions.filter((e) => !value.includes(e));
+          } else if (Array.isArray(oldValue) && value === null) {
+            hrBackupUpdated = allJuridictions.filter(
+              (e) => !oldValue.includes(e)
+            );
+          }
+          //console.log('old value', oldValue)
+          //console.log('new value', value)
+          //console.log('delta juridictions', hrBackupUpdated)
           // synchronise by main contentieux
+
+          // test 16s pour les ventilations
           await Model.models.HRActivities.syncAllVentilationByContentieux(
             ref.dataValues.parent_id
           );
+          // test toutes les juridictions à 1,8min
           await Model.models.Activities.syncAllActivitiesByContentieux(
-            ref.dataValues.parent_id
+            ref.dataValues.parent_id,
+            hrBackupUpdated
           );
+          // reload all agents environ 40s / juridictions (180 environ)
+          await Model.models.HumanResources.onPreload();
         }
       }
     }

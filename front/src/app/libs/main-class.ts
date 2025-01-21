@@ -8,12 +8,12 @@ import {
 } from '../utils/referentiel';
 import { categoryMappingName, categoryMappingColor } from '../utils/category';
 
-//import { environment } from '../../environments/environment';
 import { fixDecimal } from '../utils/numbers';
 import {
   decimalToStringDate,
   getMonthString,
   getShortMonthString,
+  isDateBiggerThan,
   month,
   today,
 } from '../utils/dates';
@@ -214,8 +214,22 @@ export class MainClass {
    * @param date
    * @returns
    */
-  public getShortMonthString(date: Date | undefined): string {
+  public getShortMonthString(date: Date | undefined | null): string {
     return date ? getShortMonthString(date) : '';
+  }
+
+  /**
+   * Récupération du diminutif du mois à partir d'une date
+   * @param date
+   * @returns
+   */
+  public getYearMonthString(date: Date | undefined | null): string {
+    if (!date) {
+      return '';
+    }
+
+    date = new Date(date);
+    return date.getFullYear() + '';
   }
 
   /**
@@ -420,5 +434,17 @@ export class MainClass {
    */
   public floor(value: number) {
     return Math.floor(value);
+  }
+
+  /**
+   * Is bigger than
+   */
+  public isBiggerThanArray(array: any[], node: string): any[] {
+    return array.filter(
+      (a) =>
+        !a[node] ||
+        today().getTime() === today(a[node]).getTime() ||
+        !isDateBiggerThan(today(), today(a[node]))
+    );
   }
 }

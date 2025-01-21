@@ -455,7 +455,7 @@ export async function getCSActivities (referentielId, allActivities) {
 
     const dateStop = filteredByContentieux.reduce((a, b) => {
       return a.periode > b.periode ? a.periode : b.periode
-    })
+    }, new Date())
     const dateStart = month(new Date(dateStop), -11)
 
     const lastActivities = orderBy(

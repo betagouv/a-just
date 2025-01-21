@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { JuridictionInterface } from '../../interfaces/juridiction';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
-//import { environment } from '../../../environments/environment';
 
 declare const mapboxgl: any;
 

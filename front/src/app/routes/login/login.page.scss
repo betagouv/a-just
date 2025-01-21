@@ -51,7 +51,7 @@
     color: fColor(primary);
   }
 
-  input[type=checkbox] {
+  .remember-check {
     width: 24px;
     height: 24px;
     margin-right: 8px;
@@ -116,7 +116,7 @@
     border-color: fColor(cblack);
     color: fColor(cblack);
   }
-  
+
   img {
     align-self: stretch;
     margin-right: 16px;
@@ -156,5 +156,27 @@
 
   input {
     margin-bottom: 0;
+  }
+}
+
+.password-line {
+  display: flex;
+
+  div {
+    &:last-child {
+      display: flex;
+      justify-content: flex-end;
+
+      span {
+        font-size: 14px;
+
+        input {
+          position: relative;
+          top: 1px;
+        }
+      }
+    }
+
+    flex: 1;
   }
 }
