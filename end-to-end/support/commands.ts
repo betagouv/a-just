@@ -1,4 +1,4 @@
-import user from '../fixtures/user.json'
+import user from "../fixtures/user.json";
 
 /// <reference types="cypress" />
 // ***********************************************
@@ -30,7 +30,7 @@ import user from '../fixtures/user.json'
 declare global {
   namespace Cypress {
     interface Chainable {
-      login(email: string, password: string): Chainable<void>
+      login(email: string, password: string): Chainable<void>;
       // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
@@ -38,18 +38,16 @@ declare global {
   }
 }
 
-Cypress.Commands.add('login', () => {
-    cy.clearLocalStorage()
-    cy.clearAllSessionStorage()
-    cy.visit('/connexion')
-    cy.get('input[type=email]').type(user.email)
-    cy.get('input[type=password]').type(user.password)
-    cy.get('form').submit();
-    cy.url().should('contain', '/panorama')
+Cypress.Commands.add("login", () => {
+  cy.clearLocalStorage();
+  cy.clearAllSessionStorage();
+  cy.visit("/connexion");
+  cy.get("input[type=email]").type(user.email);
+  cy.get("input[type=password]").type(user.password);
+  cy.get("form").submit();
+  cy.url().should("contain", "/panorama");
 
-    // Close popup
-    cy.get('.introjs-tooltip-header')
-        .get('.introjs-skipbutton')
-        .click()
-    //storage = cy.getAllSessionStorage()
-})
+  // Close popup
+  cy.get(".introjs-tooltip-header").get(".introjs-skipbutton").click();
+  //storage = cy.getAllSessionStorage()
+});
