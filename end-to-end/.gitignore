@@ -43,3 +43,7 @@ Thumbs.db
 
 # Environment
 .env
+
+# Cypress screenshots and videos
+/cypress/videos
+/cypress/screenshots

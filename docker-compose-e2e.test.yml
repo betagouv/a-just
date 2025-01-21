@@ -71,7 +71,7 @@ services:
          - JSON_WEB_TOKEN=123456789
          - PORT=8081
       healthcheck:
-         test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+         test: ["CMD", "curl", "-f", "http://173.0.0.20:8081/api"]
          interval: 30s
          timeout: 10s
          retries: 5
@@ -87,8 +87,11 @@ services:
          - "4200:4200"
       expose:
          - "4200"
+      environment:
+         - NG_APP_SERVER_URL=http://173.0.0.20:8081/api/
+         - NG_APP_NODE_ENV='test'
       healthcheck:
-         test: ["CMD", "curl", "-f", "http://localhost:4200"]
+         test: ["CMD", "curl", "-f", "http://173.0.0.30:4200"]
          interval: 30s
          timeout: 10s
          retries: 5
@@ -101,14 +104,14 @@ services:
          - api
          - db
          - front
-      entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npx cypress install && npm run cy:run"
       volumes:
          - ./end-to-end:/e2e
          - ./end-to-end/scripts:/scripts
       working_dir: /e2e
+      entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
       environment:
          - CYPRESS_BASE_URL=http://173.0.0.30:4200
-         - NG_APP_SERVER_URL=http://api:8081/api
+         - NG_APP_SERVER_URL=http://173.0.0.20:8081/api
 
 networks:
   ajust_e2e_network:
