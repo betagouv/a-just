@@ -506,10 +506,10 @@ export const computeExtractDdg = async (
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
             ["ETPT sur la période hors indisponibilités"]: reelEtp,
             ["Temps ventilés sur la période"]: totalEtpt,
-            ["Ecart -> à contrôler"]:
+            ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
-              ["Ecart JE ->"]:null,
-              ["Ecart JI ->"]:null,
+              ["Ecart JE → détails manquants, à rajouter dans A-JUST"]:null,
+              ["Ecart JI → détails manquants, à rajouter dans A-JUST"]:null,
             ...refObj,
             ["CET > 30 jours"]: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
