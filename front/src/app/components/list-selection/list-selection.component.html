@@ -26,7 +26,7 @@
     </mat-icon>
 </div>
 
-<div class="select-area" #selectArea [ngClass]="{right: title, multiple}"
+<div class="select-area right" #selectArea [ngClass]="{ multiple }"
     [ngStyle]="{'max-height': maxHeightDropdown ? maxHeightDropdown+'px' : null}" *ngIf="onOpenDropdown">
     <ng-template [ngIf]="!multiple">
         <div *ngFor="let item of list" [ngClass]="{selected: item.id === value }"
