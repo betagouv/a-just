@@ -59,19 +59,21 @@ export default (sequelizeInstance, Model) => {
     });
 
     if (backup) {
-      // Recherche de HR
       let hrList = await Model.models.HumanResources.findAll({
         where: {
           backup_id: backupId,
         },
         raw: true,
       });
-      // Pour chaque HR
+
       for (let x = 0; x < hrList.length; x++) {
         const hrId = hrList[x].id;
-        // Recherche de situation pour chaque HR
         await Model.models.HRSituations.destroy({
           where: { human_id: hrId },
+        });
+
+        await Model.models.HRIndisponibilities.destroy({
+          where: { hr_id: hrId },
         });
       }
 
@@ -86,7 +88,7 @@ export default (sequelizeInstance, Model) => {
           hr_backup_id: backupId,
         },
       });
-      
+
       await Model.models.UserVentilations.destroy({
         where: {
           hr_backup_id: backupId,
@@ -97,7 +99,7 @@ export default (sequelizeInstance, Model) => {
         where: {
           id: backupId,
         },
-      });      
+      });
     }
   };
 
@@ -107,7 +109,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupName
    * @returns
    */
-  Model.duplicateBackup = async (backupId, backupName,copyAct=false) => {
+  Model.duplicateBackup = async (backupId, backupName, copyAct = false) => {
     const backup = await Model.findOne({
       where: {
         id: backupId,
@@ -227,7 +229,7 @@ export default (sequelizeInstance, Model) => {
         }
       }
 
-      if(copyAct){
+      if (copyAct) {
         const activities = await Model.models.Activities.findAll({
           where: {
             hr_backup_id: backupId,
