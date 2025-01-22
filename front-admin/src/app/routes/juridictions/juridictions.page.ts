@@ -91,7 +91,8 @@ export class JuridictionsPage extends MainClass implements OnInit {
       this.juridictionsService.duplicateJuridiction(
         backupName,
         backupId,
-        juridiction !== null ? juridiction.label : ''
+        juridiction !== null ? juridiction.label : '',
+        form.copyActivity.checked
       );
     }
   }
