@@ -559,6 +559,17 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
+
+        // FONCTION AGREGAT
+        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+          formula:
+            '=IFERROR(VLOOKUP(H' +
+            indexCell +
+            ',Table_Fonctions!C:E,3,FALSE),I' +
+            indexCell +
+            ')',
+          result: '',
+        };
       }
 
       // Data validation juridiction TPRX TJ
