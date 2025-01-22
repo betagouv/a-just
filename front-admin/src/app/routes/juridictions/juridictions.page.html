@@ -64,6 +64,8 @@
           <option *ngFor="let j of juridictionList" [value]="j.id">{{
             j.label }}</option>
         </select>
+        <label>, Copier également les données d'activité</label>
+        <input class="copy-activity" name="copyActivity" type="checkbox">
       </form>
       <button class="cursor-pointer" (click)="duplicate(formExtract)">Dupliquer</button>
     </div>
