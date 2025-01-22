@@ -52,7 +52,7 @@
     display: flex;
 
     .text {
-      flex: 1;
+      width: 270px;
       padding: 8px 24px 8px 24px;
       display: flex;
       flex-direction: column;
@@ -60,7 +60,7 @@
       text-decoration: none;
 
       &.ca {
-        width: 182px;
+        width: 182px !important;
         flex: none;
       }
 
@@ -72,6 +72,8 @@
           font-weight: bold;
           //color: fColor(titleSelect);
           flex: 1;
+          overflow: hidden;
+          word-wrap: break-word;
           color: #161616;
         }
 
