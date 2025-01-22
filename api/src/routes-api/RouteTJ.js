@@ -100,9 +100,9 @@ export default class RouteJuridictions extends Route {
     async duplicateJuridiction (ctx) {
       const { juridictionName, backupId } = this.body(ctx)
   
-      await models.HRBackups.duplicateBackup(backupId,juridictionName)
+      models.HRBackups.duplicateBackup(backupId,juridictionName)
 
-      this.sendOk(ctx, "OK")
+      this.sendOk(ctx, "En cours")
     }
 
     
