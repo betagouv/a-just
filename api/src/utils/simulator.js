@@ -342,7 +342,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
  * @param {*} totalIn entrées
  * @returns taux de couverture en %
  */
-function computeCoverage (totalOut, totalIn) {
+export function computeCoverage (totalOut, totalIn) {
   return fixDecimal(totalOut / totalIn, 100)
 }
 
@@ -352,7 +352,7 @@ function computeCoverage (totalOut, totalIn) {
  * @param {*} totalOut sorties
  * @returns le délai nécessaire pour écolouer la totalité des stocks en mois
  */
-function computeDTES (lastStock, totalOut) {
+export function computeDTES (lastStock, totalOut) {
   return lastStock !== null && totalOut !== null ? fixDecimal(lastStock / totalOut, 100) : null
 }
 
