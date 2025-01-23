@@ -283,7 +283,6 @@ export class ExcelService extends MainClass {
     report.worksheets[2].columns = [...this.tabs.onglet2.columnSize];
     report.worksheets[2].columns[0].width = 16;
     report.worksheets[2].columns[8].width = 0;
-
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
       const indexCell = +(+index + 3);
 
@@ -643,6 +642,15 @@ export class ExcelService extends MainClass {
         'Selectionner une juridiction pour mettre à jour le tableau de synthèse ci-après',
       showErrorMessage: true,
       showInputMessage: true,
+    };
+
+    // ONGLET AGGREGAT MESSAGE SI ECART
+    report.worksheets[3]['_rows'][6].height = 30;
+    report.worksheets[3].getCell('F7').value = {
+      formula:
+        "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne N de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période\")",
+      result:
+        '"Temps ventilés sur la période : Des ventilations sont incomplètes,",CHAR(10),"se référer à la colonne N de l’onglet ETPT format DDG"',
     };
 
     return report;
