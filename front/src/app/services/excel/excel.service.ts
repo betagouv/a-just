@@ -208,13 +208,11 @@ export class ExcelService extends MainClass {
   }
 
   /**
-   * Mise en forme du ficher DDG
-   * @param report
+   * Formate Excel juridiction list
    * @param viewModel
-   * @returns
    */
-  async getReport(report: any, viewModel: any) {
-    const tpxlistExcel = [
+  async formatListTpx(viewModel: any) {
+    return [
       '"' +
         (await [...viewModel.tpxlist, ...viewModel.isolatedCPH]
           .join(',')
@@ -223,8 +221,19 @@ export class ExcelService extends MainClass {
           .replaceAll(')', '')) +
         '"',
     ];
+  }
 
-    report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o');
+  /**
+   * Mise en forme du ficher DDG
+   * @param report
+   * @param viewModel
+   * @returns
+   */
+  async getReport(report: any, viewModel: any) {
+    const tpxlistExcel = await this.formatListTpx(viewModel);
+
+    // ONGLET CODE TRIBUNAL POUR MENU DEROULANT AGGREGAT
+    //report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o');
 
     if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
       viewModel.tProximite = viewModel.tProximite.map((value: string) => {
@@ -233,7 +242,7 @@ export class ExcelService extends MainClass {
       });
     }
 
-    if (this.userService.isCa() === false) {
+    if (this.userService.isTJ()) {
       // ONGLET JURIDICTION
       viewModel.tgilist.map((value: any, index: any) => {
         report.worksheets[5].getCell('B' + (+index + 1)).value = value;
@@ -248,6 +257,7 @@ export class ExcelService extends MainClass {
         report.worksheets[5].getCell('J' + (+index + 1)).value = value;
       });
 
+      // JURIDICTION PICKER
       // DDG TJ
       report.worksheets[10].getCell('D' + +5).value =
         viewModel.tgilist[0] || viewModel.uniqueJur[0];
@@ -287,7 +297,7 @@ export class ExcelService extends MainClass {
       const indexCell = +(+index + 3);
 
       // TJ
-      if (this.userService.isCa() === false) {
+      if (this.userService.isTJ()) {
         // FONCTION RECODEE
         report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
