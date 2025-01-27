@@ -29,9 +29,10 @@
         </div>
         <div class="container-elements">
             <div *ngFor="let ref of referentiel; let refIndex = index" class="flex-1">
-                <aj-graphs-verticals-lines *ngIf="line.type === 'verticals-lines'" [referentielName]="ref.label"
-                    [referentielId]="ref.id" [values]="line.values ? line.values[refIndex] : []"
-                    [maxValue]="line.lineMax || 0" [graphs]="getGraphs(line)"
+                <aj-graphs-verticals-lines *ngIf="line.type === 'verticals-lines'" class="cursor-pointer"
+                    [referentielName]="ref.label" [referentielId]="ref.id"
+                    [values]="line.values ? line.values[refIndex] : []" [maxValue]="line.lineMax || 0"
+                    [graphs]="getGraphs(line)"
                     (click)="calculatorService.selectedRefGraphDetail = ref.id; calculatorService.showGraphDetailTypeLineTitle = line.title; calculatorService.showGraphDetailType = line.dataType"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="line.type === 'progress'">
                     <div class="flex-1"></div>
