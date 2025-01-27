@@ -3,6 +3,7 @@ import user from '../../fixtures/user.json'
 describe('Login Page', () => {
 
     beforeEach(() => {
+      cy.clearAllLocalStorage()
       cy.visit(`/connexion`)
     })
 

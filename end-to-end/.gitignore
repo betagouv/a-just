@@ -47,3 +47,4 @@ Thumbs.db
 # Cypress screenshots and videos
 /cypress/videos
 /cypress/screenshots
+/cypress/downloads
