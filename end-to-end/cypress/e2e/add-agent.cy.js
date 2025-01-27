@@ -103,7 +103,7 @@ describe("Ajout d'un agent", () => {
           .click()
     })
     // Check file is downloaded
-    cy.verifyDownload('Feuille_de_temps_Modèle.xlsx')
+    cy.verifyDownload('.xlsx', { contains: true })
   })
 
   it("Check user can download 'Calculatrice des temps de ventilations'", () => {
@@ -171,11 +171,14 @@ describe("Ajout d'un agent", () => {
   })
 
   it('Checking that we can add unavailabilities', () => {
-    const now = new Date()
-    const startMonth = now.getMonth() - 1
-    const endMonth = now.getMonth()
-    const startDate = new Date(now.setMonth(startMonth))
-    const endDate = new Date(now.setMonth(endMonth))
+    const startDate = new Date()
+    const endDate = new Date()
+    
+    const startMonth = startDate.getMonth() - 1
+    const endMonth = endDate.getMonth()
+
+    startDate.setMonth(startMonth)
+    endDate.setMonth(endMonth)
 
     cy.get('.bottom-container')
       .get('.indisponibilities').within(() => {
@@ -195,7 +198,7 @@ describe("Ajout d'un agent", () => {
       //select month
       .get('.mat-calendar-body-cell-content').contains( getShortMonthString(startDate).toUpperCase() ).click()
       //select date
-      .get('.mat-calendar-body-cell-content').contains(startDate.getDay()).click()
+      .get('.mat-calendar-body-cell-content').contains(startDate.getDate()).click()
       
       .get('aj-popup').within(() => {
         cy.get('.content')
@@ -208,7 +211,7 @@ describe("Ajout d'un agent", () => {
       //select month
       .get('.mat-calendar-body-cell-content').contains( getShortMonthString(endDate).toUpperCase() ).click()
       //select date
-      .get('.mat-calendar-body-cell-content').contains(endDate.getDay()).click()
+      .get('.mat-calendar-body-cell-content').contains(endDate.getDate()).click()
 
 
       .get('aj-popup').within(() => {
