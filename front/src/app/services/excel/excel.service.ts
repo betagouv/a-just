@@ -579,6 +579,19 @@ export class ExcelService extends MainClass {
             ')',
           result: '',
         };
+
+        // ECART CTX MINEURS
+        report.worksheets[2].getCell('O' + (+index + 3)).value = {
+          formula:
+            '=ROUND(BN' +
+            indexCell +
+            '-(BO' +
+            indexCell +
+            '+BP' +
+            indexCell +
+            '),3)',
+        };
+        report.worksheets[2].columns[15].width = 0;
       }
 
       // Data validation juridiction TPRX TJ
