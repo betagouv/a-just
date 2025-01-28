@@ -27,10 +27,10 @@ export default class App {
   async start() {
     console.log("--- START ---");
 
-    //await this.formatDatas();
-    console.time("Time Check Data");
+    // await this.formatDatas();
+    // console.time("Time Check Data");
     await this.checkDatas();
-    console.timeEnd("Time Check Data");
+    // console.timeEnd("Time Check Data");
     this.done();
   }
 
@@ -1021,7 +1021,7 @@ export default class App {
         let line;
 
         while ((line = liner.next()) !== false) {
-          const lineFormated = line.toString("ascii").trim().split(";");
+          const lineFormated = line.toString("ascii").trim().split(/[,;]/);
           if (!header) {
             header = {};
             lineFormated.map((r) => (header[r.toLowerCase()] = ""));

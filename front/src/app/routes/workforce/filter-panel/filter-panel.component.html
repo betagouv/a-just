@@ -12,14 +12,14 @@
   <aj-list-selection labelPreviewText="Tous" #filterContentieuxSelection icon="filter-2-line" title="Contentieux"
     [multiple]="true" [list]="contentieuxFilterList" [values]="referentielIds!"
     (valuesChanged)="referentielIds=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close();"></aj-list-selection>
+    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close()"></aj-list-selection>
   <aj-list-selection #filterSelection icon="filter-2-line" title="Fonctions" [multiple]="true" [list]="filterList"
     [values]="filterValues!" (valuesChanged)="filterValues=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterContentieuxSelection.close();"></aj-list-selection>
+    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterContentieuxSelection.close(); displaySelection.close()"></aj-list-selection>
   <aj-list-selection #filterIndispoSelection icon="filter-2-line" title="Indisponibilités" [multiple]="true"
     [list]="allIndisponibilityReferentiel" [values]="filterIndispoValues!"
     (valuesChanged)="filterIndispoValues=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterContentieuxSelection.close(); filterSelection.close();"></aj-list-selection>
+    (onOpen)="sortSelection.close(); orderSelection.close(); filterContentieuxSelection.close(); filterSelection.close(); displaySelection.close()"></aj-list-selection>
 
   <p class="filter-group">Trier par :</p>
   <aj-list-selection #sortSelection title="Critère" [list]="sortList" [value]="sortValue"
@@ -36,7 +36,7 @@
   <p class="filter-group">Afficher par :</p>
   <aj-list-selection #displaySelection title="Affichage" [list]="displayList" [value]="displayValue"
     (valueChanged)="displayValue = $event; updateParams()" (onOpen)="
-      sortSelection.close(); orderSelection.close(); filterSelection.close()
+      sortSelection.close(); orderSelection.close(); filterSelection.close(); filterIndispoSelection.close(); filterContentieuxSelection.close();
     ">
   </aj-list-selection>
 

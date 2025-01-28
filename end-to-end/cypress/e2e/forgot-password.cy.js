@@ -7,6 +7,7 @@ describe('Forgot Password Page', () => {
     // })
 
     it("should verify existence of forgotten password button and its navigation", () => {
+        cy.clearAllLocalStorage()
         cy.visit(`/connexion`)
         cy.get('form > .remember-row > a')
             .should('contain.text', 'Mot de passe oublié')

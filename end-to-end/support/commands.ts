@@ -39,7 +39,7 @@ declare global {
 }
 
 Cypress.Commands.add("login", () => {
-  cy.clearLocalStorage();
+  cy.clearAllLocalStorage();
   cy.clearAllSessionStorage();
   cy.visit("/connexion");
   cy.get("input[type=email]").type(user.email);
