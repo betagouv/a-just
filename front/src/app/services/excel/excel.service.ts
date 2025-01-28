@@ -491,23 +491,22 @@ export class ExcelService extends MainClass {
           )
         ).value = {
           formula:
-            '=IFERROR(SUM(Q' +
-            indexCell +
-            ',V' +
-            indexCell +
-            ',AF' +
-            indexCell +
-            ',AK' +
-            indexCell +
-            ',AS' +
-            indexCell +
-            ',BO' +
-            indexCell +
-            ',BD' +
-            indexCell +
+            '=IFERROR(SUM(' +
+            this.getExcelFormulaFormat(
+              ['1. ', '2. ', '3. ', '4. ', '5. ', '12. ', '7.1. '],
+              indexCell,
+              viewModel.days1
+            ) +
             '),"")',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Temps ventilés sur la période (contentieux sociaux civils et commerciaux)'
+          )
+        ].width = 30;
+
         // PENAL  ONGLET DDG
         report.worksheets[2].getCell(
           this.getExcelFormulaFormat(
@@ -519,19 +518,21 @@ export class ExcelService extends MainClass {
           formula:
             '=IF(H' +
             indexCell +
-            '="","",SUM(BP' +
-            indexCell +
-            ',BQ' +
-            indexCell +
-            ',CA' +
-            indexCell +
-            ',CL' +
-            indexCell +
-            ',CR' +
-            indexCell +
+            '="","",SUM(' +
+            this.getExcelFormulaFormat(
+              ['7.2. ', '8. ', '9. ', '10. ', '11. '],
+              indexCell,
+              viewModel.days1
+            ) +
             '))',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Temps ventilés sur la période (service pénal)'
+          )
+        ].width = 30;
 
         // Ventillation hors indispo  ONGLET DDG
         report.worksheets[2].getCell(
@@ -557,6 +558,12 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Temps ventilés sur la période (hors indisponibilité'
+          )
+        ].width = 30;
 
         // Ventillation comprenant indispo  ONGLET DDG
         report.worksheets[2].getCell(
@@ -584,6 +591,12 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Temps ventilés sur la période (y.c. indisponibilité)'
+          )
+        ].width = 30;
 
         // Soutien  ONGLET DDG
         report.worksheets[2].getCell(
@@ -615,6 +628,12 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Soutien (Hors accueil du justiciable)'
+          )
+        ].width = 30;
 
         // ECART CTX MINEURS  ONGLET DDG
         report.worksheets[2].getCell(
@@ -625,12 +644,19 @@ export class ExcelService extends MainClass {
           )
         ).value = {
           formula:
-            '=ROUND(BN' +
-            indexCell +
-            '-(BO' +
-            indexCell +
-            '+BP' +
-            indexCell +
+            '=ROUND(' +
+            this.getExcelFormulaFormat(
+              ['7. TOTAL CONTENTIEUX DES MINEURS'],
+              indexCell,
+              viewModel.days1
+            ) +
+            '-(' +
+            this.getExcelFormulaFormat(
+              ['7.1. ACTIVITÉ CIVILE', '7.2. ACTIVITÉ PÉNALE'],
+              indexCell,
+              viewModel.days1,
+              '+'
+            ) +
             '),3)',
         };
         report.worksheets[2].columns[15].width = 0;
