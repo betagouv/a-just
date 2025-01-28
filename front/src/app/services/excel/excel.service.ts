@@ -232,32 +232,8 @@ export class ExcelService extends MainClass {
   async getReport(report: any, viewModel: any) {
     const tpxlistExcel = await this.formatListTpx(viewModel);
 
-    // ONGLET CODE TRIBUNAL POUR MENU DEROULANT AGGREGAT
-    //report.worksheets[4].insertRows(1, viewModel.uniqueJurIndex, 'o');
-
-    if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
-      viewModel.tProximite = viewModel.tProximite.map((value: string) => {
-        if (value.includes('DOLONNE')) return value.replaceAll('DOL', "D'OL");
-        return value;
-      });
-    }
-
+    // JURIDICTION PICKER
     if (this.userService.isTJ()) {
-      // ONGLET JURIDICTION
-      viewModel.tgilist.map((value: any, index: any) => {
-        report.worksheets[5].getCell('B' + (+index + 1)).value = value;
-      });
-      viewModel.tpxlist.map((value: any, index: any) => {
-        report.worksheets[5].getCell('E' + (+index + 1)).value = value;
-      });
-      viewModel.cphlist.map((value: any, index: any) => {
-        report.worksheets[5].getCell('H' + (+index + 1)).value = value;
-      });
-      viewModel.isolatedCPH.map((value: any, index: any) => {
-        report.worksheets[5].getCell('J' + (+index + 1)).value = value;
-      });
-
-      // JURIDICTION PICKER
       // DDG TJ
       report.worksheets[10].getCell('D' + +5).value =
         viewModel.tgilist[0] || viewModel.uniqueJur[0];
@@ -298,7 +274,7 @@ export class ExcelService extends MainClass {
 
       // TJ
       if (this.userService.isTJ()) {
-        // FONCTION RECODEE
+        // FONCTION RECODEE ONGLET DDG => AUTOMATISER PLUS TARD
         report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
             '=IF(H' +
@@ -312,123 +288,9 @@ export class ExcelService extends MainClass {
             ',Table_Fonctions!C:F,4,FALSE)))',
           result: '0',
         };
-        // TEMPS VENTILE CIVILS ET SOCIAUX
-        report.worksheets[2].getCell('FB' + (+index + 3)).value = {
-          formula:
-            '=IFERROR(SUM(Q' +
-            indexCell +
-            ',V' +
-            indexCell +
-            ',AF' +
-            indexCell +
-            ',AO' +
-            indexCell +
-            ',BI' +
-            indexCell +
-            ',BN' +
-            indexCell +
-            '),"")',
-          result: '0',
-        };
-        // PENAL
-        report.worksheets[2].getCell('FC' + (+index + 3)).value = {
-          formula:
-            '=IF(H' +
-            indexCell +
-            '="","",SUM(BO' +
-            indexCell +
-            ',BP' +
-            indexCell +
-            ',CG' +
-            indexCell +
-            ',CM' +
-            indexCell +
-            ',CR' +
-            indexCell +
-            '))',
-          result: '0',
-        };
-        // VERIF ABS
-        report.worksheets[2].getCell('FD' + (+index + 3)).value = {
-          formula:
-            '=IF(H' +
-            indexCell +
-            '="","",IF(CU' +
-            indexCell +
-            '+FB' +
-            indexCell +
-            '+FC' +
-            indexCell +
-            '+FE' +
-            indexCell +
-            '=M' +
-            indexCell +
-            ',"OK","OK (contient de l action 99)"))',
-          result: '0',
-        };
-        // ACTION 99
-        report.worksheets[2].getCell('FE' + (+index + 3)).value = {
-          formula:
-            '=IF(ISERROR(DH' +
-            indexCell +
-            '+DJ' +
-            indexCell +
-            '+DM' +
-            indexCell +
-            '+DN' +
-            indexCell +
-            '+DO' +
-            indexCell +
-            '+DQ' +
-            indexCell +
-            '+DR' +
-            indexCell +
-            '+DS' +
-            indexCell +
-            '+DT' +
-            indexCell +
-            '+DU' +
-            indexCell +
-            '),"",DH' +
-            indexCell +
-            '+DJ' +
-            indexCell +
-            '+DM' +
-            indexCell +
-            '+DN' +
-            indexCell +
-            '+DO' +
-            indexCell +
-            '+DQ' +
-            indexCell +
-            '+DR' +
-            indexCell +
-            '+DS' +
-            indexCell +
-            '+DT' +
-            indexCell +
-            '+DU' +
-            indexCell +
-            ')',
-          result: '0',
-        };
-        // TEMPS VENTILE DONT INDISPO
-        report.worksheets[2].getCell('FF' + (+index + 3)).value = {
-          formula:
-            '=IF(ISERROR(M' +
-            indexCell +
-            '+DG' +
-            indexCell +
-            '),"",M' +
-            indexCell +
-            '+DG' +
-            indexCell +
-            ')',
-          result: '0',
-        };
 
-        // FONCTION AGREGAT
-        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+        // FONCTION AGREGAT ONGLET DDG => AUTOMATISER PLUS TARD
+        report.worksheets[2].getCell('FB' + (+index + 3)).value = {
           formula:
             '=IFERROR(VLOOKUP(H' +
             indexCell +
@@ -438,32 +300,165 @@ export class ExcelService extends MainClass {
           result: '',
         };
 
-        // ECART JE
-        report.worksheets[2].getCell('O' + (+index + 3)).value = {
+        // TEMPS VENTILE CIVILS ET SOCIAUX ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Temps ventilés sur la période (contentieux civils et sociaux)'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
           formula:
-            '=ROUND(BM' +
+            '=IFERROR(SUM(' +
+            this.getExcelFormulaFormat(
+              ['1. ', '2. ', '3. ', '4. ', '5. ', '6.1. '],
+              indexCell,
+              viewModel.days1
+            ) +
+            '),"")',
+          result: '0',
+        };
+
+        // PENAL ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Temps ventilés sur la période (affaires pénales)'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
+          formula:
+            '=IF(H' +
             indexCell +
-            '-(BN' +
+            '="","",SUM(' +
+            this.getExcelFormulaFormat(
+              ['6.2. ', '7. ', '8. ', '9. ', '10. '],
+              indexCell,
+              viewModel.days1
+            ) +
+            '))',
+          result: '0',
+        };
+
+        // VERIF ABS ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            [
+              'Vérif adéquation "temps ventilé sur la période" et somme (temps ventilés civils + pénals + autres activités + indisponibilité)',
+            ],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
+          formula:
+            '=IF(H' +
             indexCell +
-            '+BO' +
-            indexCell +
+            '="","",IF(' +
+            this.getExcelFormulaFormat(
+              [
+                'Temps ventilés sur la période (contentieux civils et sociaux)',
+                'Temps ventilés sur la période (affaires pénales)',
+                '11. TOTAL AUTRES ACTIVITÉS',
+                "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+              ],
+              indexCell,
+              viewModel.days1,
+              '+'
+            ) +
+            '=' +
+            this.getExcelFormulaFormat(
+              ['Temps ventilés sur la période'],
+              indexCell,
+              viewModel.days1
+            ) +
+            ',"OK","OK (contient de l action 99)"))',
+          result: '0',
+        };
+
+        // TEMPS VENTILE DONT INDISPO ONGLET DDG
+        let tmpIncludingIndispo = this.getExcelFormulaFormat(
+          [
+            'Temps ventilés sur la période',
+            "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+          ],
+          indexCell,
+          viewModel.days1,
+          '+'
+        );
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Temps ventilé sur la période (y.c. indisponibilité)'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
+          formula:
+            '=IF(ISERROR(' +
+            tmpIncludingIndispo +
+            '),"",' +
+            tmpIncludingIndispo +
+            ')',
+          result: '0',
+        };
+
+        // ECART JE ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Ecart JE → détails manquants, à rajouter dans A-JUST'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
+          formula:
+            '=ROUND(' +
+            this.getExcelFormulaFormat(
+              ['6. TOTAL JUGES DES ENFANTS'],
+              indexCell,
+              viewModel.days1
+            ) +
+            '-(' +
+            this.getExcelFormulaFormat(
+              ['6.1. ACTIVITÉ CIVILE', '6.2. ACTIVITÉ PÉNALE'],
+              indexCell,
+              viewModel.days1,
+              '+'
+            ) +
             '),3)',
         };
-        report.worksheets[2].getCell('P' + (+index + 3)).value = {
+        // ECART JI ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Ecart JI → détails manquants, à rajouter dans A-JUST'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
           formula:
-            '=ROUND(BI' +
-            indexCell +
-            '-(BJ' +
-            indexCell +
-            '+BK' +
-            indexCell +
-            '+BL' +
-            indexCell +
+            '=ROUND(' +
+            this.getExcelFormulaFormat(
+              ["8. TOTAL JUGES D'INSTRUCTION"],
+              indexCell,
+              viewModel.days1
+            ) +
+            '-(' +
+            this.getExcelFormulaFormat(
+              [
+                '8.1. SERVICE GÉNÉRAL',
+                '8.11. ECO-FI HORS JIRS',
+                '8.2. JIRS ÉCO-FI',
+                '8.3. JIRS CRIM-ORG',
+                '8.4. AUTRES SECTIONS SPÉCIALISÉES',
+              ],
+              indexCell,
+              viewModel.days1,
+              '+'
+            ) +
             '),3)',
         };
-      } else {
-        //CA
-        // VLOOKUP fct recodée
+      }
+
+      if (this.userService.isCa()) {
+        // FONCTION RECODEE ONGLET DDG => AUTOMATISER PLUS TARD
         report.worksheets[2].getCell('FA' + (+index + 3)).value = {
           formula:
             '=IF(H' +
@@ -473,9 +468,28 @@ export class ExcelService extends MainClass {
             ',Table_Fonctions!C:F,4,FALSE))',
           result: '0',
         };
-        // SOCIAUX CIVILS ET COMMERCIAUX
+
+        // FONCTION AGREGAT ONGLET DDG => AUTOMATISER PLUS TARD
         report.worksheets[2].getCell('FB' + (+index + 3)).value = {
-          //Q+V+AF+AK+AS+BO+BD
+          formula:
+            '=IFERROR(VLOOKUP(H' +
+            indexCell +
+            ',Table_Fonctions!C:E,3,FALSE),I' +
+            indexCell +
+            ')',
+          result: '',
+        };
+
+        // SOCIAUX CIVILS ET COMMERCIAUX  ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            [
+              'Temps ventilés sur la période (contentieux sociaux civils et commerciaux)',
+            ],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
           formula:
             '=IFERROR(SUM(Q' +
             indexCell +
@@ -494,8 +508,14 @@ export class ExcelService extends MainClass {
             '),"")',
           result: '0',
         };
-        // PENAL
-        report.worksheets[2].getCell('FC' + (+index + 3)).value = {
+        // PENAL  ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Temps ventilés sur la période (service pénal)'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
           formula:
             '=IF(H' +
             indexCell +
@@ -512,76 +532,98 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
-        // Ventillation hors indispo
-        report.worksheets[2].getCell('FD' + (+index + 3)).value = {
+
+        // Ventillation hors indispo  ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Temps ventilés sur la période (hors indisponibilité)'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
           formula:
             '=IF(H' +
             indexCell +
-            '="","",SUM(FB' +
-            indexCell +
-            '+FC' +
-            indexCell +
-            '+CV' +
-            indexCell +
-            '))',
-          result: '0',
-        };
-        // Ventillation comprenant indispo
-        report.worksheets[2].getCell('FE' + (+index + 3)).value = {
-          formula:
-            '=IF(H' +
-            indexCell +
-            '="","",SUM(FB' +
-            indexCell +
-            '+FC' +
-            indexCell +
-            '+CV' +
-            indexCell +
-            '+DL' +
-            indexCell +
-            '))',
-          result: '0',
-        };
-        // Soutien
-        report.worksheets[2].getCell('FF' + (+index + 3)).value = {
-          formula:
-            '=IF(H' +
-            indexCell +
-            '="","",SUM(CW' +
-            indexCell +
-            '+DB' +
-            indexCell +
-            '+CZ' +
-            indexCell +
-            '+DG' +
-            indexCell +
-            '+DK' +
-            indexCell +
-            '+DH' +
-            indexCell +
-            '+DD' +
-            indexCell +
-            '+DC' +
-            indexCell +
-            '+DF' +
-            indexCell +
+            '="","",SUM(' +
+            this.getExcelFormulaFormat(
+              [
+                'Temps ventilés sur la période (contentieux sociaux civils et commerciaux)',
+                'Temps ventilés sur la période (service pénal)',
+                '13. TOTAL AUTRES ACTIVITÉS',
+              ],
+              indexCell,
+              viewModel.days1
+            ) +
             '))',
           result: '0',
         };
 
-        // FONCTION AGREGAT
-        report.worksheets[2].getCell('FG' + (+index + 3)).value = {
+        // Ventillation comprenant indispo  ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Temps ventilés sur la période (y.c. indisponibilité)'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
           formula:
-            '=IFERROR(VLOOKUP(H' +
+            '=IF(H' +
             indexCell +
-            ',Table_Fonctions!C:E,3,FALSE),I' +
-            indexCell +
-            ')',
-          result: '',
+            '="","",SUM(' +
+            this.getExcelFormulaFormat(
+              [
+                'Temps ventilés sur la période (contentieux sociaux civils et commerciaux)',
+                'Temps ventilés sur la période (service pénal)',
+                '13. TOTAL AUTRES ACTIVITÉS',
+                "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+              ],
+              indexCell,
+              viewModel.days1,
+              '+'
+            ) +
+            '))',
+          result: '0',
         };
 
-        // ECART CTX MINEURS
-        report.worksheets[2].getCell('O' + (+index + 3)).value = {
+        // Soutien  ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Soutien (Hors accueil du justiciable)'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
+          formula:
+            '=IF(H' +
+            indexCell +
+            '="","",SUM(' +
+            this.getExcelFormulaFormat(
+              [
+                '13.1. SOUTIEN (AUTRES)',
+                '13.2. FORMATIONS SUIVIES',
+                '13.5. EXPERTISES (SUIVI ET LISTES)',
+                '13.6. MÉDIATION / CONCILIATION (SUIVI ET LISTES)',
+                '13.11. ACTIVITÉS EXTÉRIEURES ET PARTENARIATS',
+                '13.12. ÉQUIPEMENT',
+                '13.13. COMMUNICATION',
+                '13.14. POLITIQUE ASSOCIATIVE ET AIDE AUX VICTIMES',
+                '13.15. AUTRES ACTIVITÉS NON JURIDICTIONNELLES',
+              ],
+              indexCell,
+              viewModel.days1
+            ) +
+            '))',
+          result: '0',
+        };
+
+        // ECART CTX MINEURS  ONGLET DDG
+        report.worksheets[2].getCell(
+          this.getExcelFormulaFormat(
+            ['Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST'],
+            indexCell,
+            viewModel.days1
+          )
+        ).value = {
           formula:
             '=ROUND(BN' +
             indexCell +
@@ -594,7 +636,7 @@ export class ExcelService extends MainClass {
         report.worksheets[2].columns[15].width = 0;
       }
 
-      // Data validation juridiction TPRX TJ
+      // CHOIX juridiction TPRX TJ onglet ETPT DDG
       report.worksheets[2].getCell('C' + (+index + 3)).dataValidation = {
         type: 'list',
         allowBlank: true,
@@ -604,6 +646,7 @@ export class ExcelService extends MainClass {
         showInputMessage: true,
       };
 
+      // CHOIX PLACE ADD OU SUB ONGLET DDG
       // Data validation pour menus déroulants
       const fonctionCellToCheck =
         (report.worksheets[2].getCell('H' + (+index + 3)).value! as string) ||
@@ -629,6 +672,8 @@ export class ExcelService extends MainClass {
           report.worksheets[2].getCell('H' + (+index + 3)).value
         } ADDITIONNEL`;
       }
+
+      // CHOIX JA ONGLET DDG
       if (report.worksheets[2].getCell('H' + (+index + 3)).value === 'JA') {
         report.worksheets[2].getCell('H' + (+index + 3)).value =
           'JA Siège autres';
@@ -641,9 +686,9 @@ export class ExcelService extends MainClass {
         };
       }
     });
+    // FIN FOREACH
 
     if (this.userService.isCa() === true) {
-      // DDG CA
       report.worksheets[7].getCell('D' + +5).value =
         viewModel.tgilist[0] || viewModel.uniqueJur[0];
       report.worksheets[8].getCell('D' + +5).value =
@@ -675,6 +720,13 @@ export class ExcelService extends MainClass {
       result:
         '"Temps ventilés sur la période : Des ventilations sont incomplètes,",CHAR(10),"se référer à la colonne N de l’onglet ETPT format DDG"',
     };
+
+    if (viewModel.arrondissement === "TJ LES SABLES D'OLONNE") {
+      viewModel.tProximite = viewModel.tProximite.map((value: string) => {
+        if (value.includes('DOLONNE')) return value.replaceAll('DOL', "D'OL");
+        return value;
+      });
+    }
 
     return report;
   }
@@ -844,5 +896,50 @@ export class ExcelService extends MainClass {
     };
 
     return report;
+  }
+
+  numberToExcelColumn(num: number): string {
+    if (num <= 0) {
+      throw new Error('Le nombre doit être supérieur à 0.');
+    }
+    let column = '';
+    while (num > 0) {
+      const remainder = (num - 1) % 26;
+      column = String.fromCharCode(65 + remainder) + column;
+      num = Math.floor((num - 1) / 26);
+    }
+    return column;
+  }
+
+  findIndexByPrefix(array: string[], prefix: string): number {
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].startsWith(prefix)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  getExcelFormulaFormat(
+    array: string[],
+    index: number,
+    referentiel: string[],
+    separator = ','
+  ) {
+    let str = '';
+    for (let i = 0; i < array.length; i++) {
+      let value = this.numberToExcelColumn(
+        this.findIndexByPrefix(referentiel, array[i]) + 1
+      );
+      if (value && value.length) str += value + index + separator;
+    }
+    return this.removeLastSeparator(str, separator);
+  }
+
+  removeLastSeparator(input: string, separator = ','): string {
+    if (input.endsWith(separator)) {
+      return input.slice(0, -1);
+    }
+    return input;
   }
 }
