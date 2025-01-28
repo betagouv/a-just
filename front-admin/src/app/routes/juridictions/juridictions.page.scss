@@ -29,5 +29,20 @@ h3 {
   .content {
     display: flex;
     gap: 10px;
+    align-items: center;
+    flex-direction: row;
+
+    label {
+      align-items: center;
+      display: flex;
+    }
+
+    form {
+      display: flex;
+
+      .copy-activity {
+        margin: 8px;
+      }
+    }
   }
 }

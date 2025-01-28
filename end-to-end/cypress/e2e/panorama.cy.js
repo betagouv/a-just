@@ -35,11 +35,16 @@ describe('Panorama page', () => {
 
     it("Check that we have three sections on 'Effectifs' = 'Composition des effectifs' + 'Actualisation des fiches' + 'changement dans les effectifs' ", () => {
       cy.get('.container-panorama')
-        .get('.workforce-panel')
-        .should('contain.text', 'Composition des effectifs')
-        .should('contain.text', 'Actualisation des fiches')
+        .get('.workforce-panel').within(() => {
+          cy.get('h3')
+            .first()
+            .contains('Composition des effectifs')
+          cy.get('h3')
+            .eq(1)
+            .contains('Actualisation des fiches')
+        })
         .get('.workforce-change')
-        .should('contain.text', 'changement dans les effectifs')
+        .contains(/changement(s)? dans les effectifs/)
     })
 
     it("Check that we have three sections inside 'Les données d’activité' = 'Dernières modifications' + 'Dernières données disponibles' + 'Les données d'activité à compléter' ", () => {
