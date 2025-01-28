@@ -247,9 +247,6 @@ module.exports = {
       "194.5.173.",
       "195.42.231.",
       "83.118.200.21", // wifi du lab
-      "173.0.0.50", // Utile pour les tests
-      "173.0.0.20", // Utile pour les tests
-      "173.0.0.30", // Utile pour les tests
     ],
   },
 };
