@@ -86,14 +86,14 @@ export class PopinGraphsDetailsComponent
   }
 
   async onLoadDatas() {
-    console.log(
+    /*console.log(
       this.dateStart,
       this.dateStop,
       this.calculatorService.selectedRefGraphDetail,
       this.calculatorService.showGraphDetailType,
       this.optionDateStart,
       this.optionDateStop
-    );
+    );*/
 
     let firstValues: { value: number | null; date: Date }[] = [];
     let secondValues: { value: number | null; date: Date }[] = [];
@@ -122,7 +122,6 @@ export class PopinGraphsDetailsComponent
     console.log(firstValues, secondValues);
 
     if (!this.myChart && this.canvas) {
-      console.log(this.canvas.nativeElement);
       const data = {
         labels: [],
         datasets: [],
@@ -161,8 +160,6 @@ export class PopinGraphsDetailsComponent
       max *= 1.2;
     }
 
-    console.log(this.myChart, min, max);
-
     const getOrCreateTooltip = (chart: any) => {
       let tooltipEl = chart.canvas.parentNode.querySelector('div');
 
@@ -170,12 +167,12 @@ export class PopinGraphsDetailsComponent
         tooltipEl = document.createElement('div');
         tooltipEl.style.background = '#FFF';
         tooltipEl.style.borderRadius = '4px';
+        tooltipEl.style.padding = '4px 8px 0 8px';
         tooltipEl.style.boxShadow = '0px 2px 6px 0px rgba(0, 0, 18, 0.16)';
         tooltipEl.style.color = '#000';
-        tooltipEl.style.fontSize = '12px';
         tooltipEl.style.opacity = 1;
-        tooltipEl.style.pointerEvents = 'none';
         tooltipEl.style.position = 'absolute';
+        tooltipEl.style.marginTop = '14px';
         tooltipEl.style.transform = 'translate(-50%, 0)';
         tooltipEl.style.transition = 'all .1s ease';
 
@@ -200,53 +197,70 @@ export class PopinGraphsDetailsComponent
         return;
       }
 
-      console.log(tooltip, tooltip.body);
-
       // Set Text
       if (tooltip.body) {
-        /*const titleLines = tooltip.title || [];
-        const bodyLines = tooltip.body.map((b: any) => b.lines);
-
-        const tableHead = document.createElement('thead');
-
-        titleLines.forEach((title: any) => {
-          const tr = document.createElement('tr');
-          // @ts-ignore
-          tr.style.borderWidth = 0;
-
-          const th = document.createElement('th');
-          // @ts-ignore
-          th.style.borderWidth = 0;
-          const text = document.createTextNode(title);
-
-          th.appendChild(text);
-          tr.appendChild(th);
-          tableHead.appendChild(tr);
-        });
-
-        const tableBody = document.createElement('tbody');
-        bodyLines.forEach((body: any, i: any) => {
-          const colors = tooltip.labelColors[i];
-
-          console.log('colors', colors);
-        });
-
-        const tableRoot = tooltipEl.querySelector('table');
-
-        // Add new children
-        tableRoot.appendChild(tableHead);
-        tableRoot.appendChild(tableBody);*/
-
         const title = document.createElement('p');
         title.innerHTML =
           this.calculatorService.showGraphDetailTypeLineTitle || '';
+        title.style.paddingBottom = '4px';
+        title.style.marginBottom = '4px';
+        title.style.fontSize = '12px';
+        title.style.borderBottom = '1px solid #DDD';
 
         const divInside = tooltipEl.querySelector('.inner-tooltip');
+        divInside.style.position = 'relative';
+        divInside.style.top = '2px';
         // Remove old children
         while (divInside.firstChild) {
           divInside.firstChild.remove();
         }
+
         divInside.appendChild(title);
+
+        tooltip.body.forEach((body: any, i: number) => {
+          let style = 'grey';
+          if (tooltip.labelColors[i].borderColor === '#6A6AF4') {
+            style = 'blue';
+          } else if (tooltip.labelColors[i].borderColor === '#E4794A') {
+            style = 'red';
+          }
+
+          const bodyContainer = document.createElement('div');
+          bodyContainer.style.display = 'flex';
+          bodyContainer.style.justifyContent = 'space-between';
+          bodyContainer.style.alignItems = 'center';
+          bodyContainer.style.lineHeight = '20px';
+          bodyContainer.style.height = '20px';
+          bodyContainer.style.marginBottom = '4px';
+          bodyContainer.style.gap = '4px';
+
+          const imageLine = document.createElement('img');
+          imageLine.src =
+            style === 'blue'
+              ? '/assets/icons/point-graph-blue.svg'
+              : style === 'red'
+              ? '/assets/icons/point-graph-red.svg'
+              : '/assets/icons/point-graph-grey.svg';
+
+          const bodyLine = document.createElement('p');
+          bodyLine.style.margin = '0';
+          bodyLine.style.padding = '0';
+          bodyLine.style.color = '#000';
+          bodyLine.style.fontSize = '12px';
+          bodyLine.innerHTML = body.lines[0];
+
+          const dateLine = document.createElement('p');
+          dateLine.style.margin = '0';
+          dateLine.style.padding = '0';
+          dateLine.style.color = '#666';
+          dateLine.style.fontSize = '12px';
+          dateLine.innerHTML = tooltip.title[0];
+
+          bodyContainer.appendChild(imageLine);
+          bodyContainer.appendChild(bodyLine);
+          bodyContainer.appendChild(dateLine);
+          divInside.appendChild(bodyContainer);
+        });
       }
 
       const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
@@ -290,6 +304,14 @@ export class PopinGraphsDetailsComponent
             minRotation: 0,
             fontSize: 12,
             color: 'rgba(0, 0, 0, 0.70)',
+            callback: function (value: any, index: any, ticks: any) {
+              /*now.getMonth() === 0 || now.getMonth() === 11
+            ? [this.getShortMonthString(now), (now.getFullYear() + '').slice(2)]
+            : this.getShortMonthString(now)
+        */
+              console.log(value, index, ticks);
+              return value;
+            },
           },
         },
       },
@@ -356,11 +378,7 @@ export class PopinGraphsDetailsComponent
     if (getFirstDate && getLastDate) {
       const now = this.getMonth(getFirstDate);
       do {
-        labels.push(
-          now.getMonth() === 0 || now.getMonth() === 11
-            ? [this.getShortMonthString(now), (now.getFullYear() + '').slice(2)]
-            : this.getShortMonthString(now)
-        );
+        labels.push(new Date(now));
 
         const value = firstValues.find(
           (v) => this.getMonth(v.date).getTime() === now.getTime()
