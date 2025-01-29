@@ -14,8 +14,8 @@ import { UserService } from '../../../services/user/user.service';
 import { PopupComponent } from '../../../components/popup/popup.component';
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
 import { CalculatorService } from '../../../services/calculator/calculator.service';
-import { Chart, ChartItem } from 'chart.js/auto';
-import { maxBy, minBy } from 'lodash';
+import { Chart, ChartItem, plugins } from 'chart.js/auto';
+import { findLastIndex, maxBy, minBy } from 'lodash';
 import { today } from '../../../utils/dates';
 
 /**
@@ -68,6 +68,14 @@ export class PopinGraphsDetailsComponent
    * Object Chart.js
    */
   myChart: any = null;
+  /**
+   * All labels
+   */
+  allLabels: Date[] = [];
+  /**
+   * All values
+   */
+  allValues: { first: number | null; second: number | null }[] = [];
 
   /**
    * Constructor
@@ -97,6 +105,7 @@ export class PopinGraphsDetailsComponent
 
     let firstValues: { value: number | null; date: Date }[] = [];
     let secondValues: { value: number | null; date: Date }[] = [];
+    let middleValues: { value: number | null; date: Date }[] = [];
 
     if (
       this.calculatorService.selectedRefGraphDetail &&
@@ -117,14 +126,104 @@ export class PopinGraphsDetailsComponent
           this.optionDateStop
         )
       ).filter((v: any) => v);
-    }
 
-    console.log(firstValues, secondValues);
+      if (
+        this.calculatorService.dateStop.getValue() &&
+        this.optionDateStart &&
+        this.getMonth(this.calculatorService.dateStop.getValue()).getTime() <
+          this.getMonth(this.optionDateStart).getTime()
+      ) {
+        middleValues = (
+          await this.calculatorService.rangeValues(
+            +this.calculatorService.selectedRefGraphDetail,
+            this.calculatorService.showGraphDetailType,
+            this.getMonth(this.calculatorService.dateStop.getValue()),
+            this.getMonth(this.optionDateStart)
+          )
+        ).filter((v: any) => v);
+      }
+
+      if (
+        this.optionDateStop &&
+        this.calculatorService.dateStart.getValue() &&
+        this.getMonth(this.optionDateStop).getTime() <
+          this.getMonth(this.calculatorService.dateStart.getValue()).getTime()
+      ) {
+        middleValues = (
+          await this.calculatorService.rangeValues(
+            +this.calculatorService.selectedRefGraphDetail,
+            this.calculatorService.showGraphDetailType,
+            this.getMonth(this.optionDateStop),
+            this.getMonth(this.calculatorService.dateStart.getValue())
+          )
+        ).filter((v: any) => v);
+      }
+    }
 
     if (!this.myChart && this.canvas) {
       const data = {
         labels: [],
         datasets: [],
+      };
+
+      const backgroundChartArea = {
+        id: 'backgroundChartArea',
+        beforeDatasetsDraw: (chart: any, args: any, options: any) => {
+          const {
+            ctx,
+            chartArea: { top, left, right, height },
+          } = chart;
+
+          if (this.allValues.length) {
+            const widthOneItem = (right - left) / this.allValues.length;
+
+            // check initials values
+            const firstIndexOfFirstValues = this.allValues.findIndex(
+              (a) => a.first !== null
+            );
+            const firstIndexOfLastValues = findLastIndex(
+              this.allValues,
+              (a) => a.first !== null
+            );
+
+            if (
+              firstIndexOfFirstValues !== -1 &&
+              firstIndexOfLastValues !== -1
+            ) {
+              ctx.fillStyle = 'rgba(106, 106, 244, 0.2)';
+              ctx.fillRect(
+                left + firstIndexOfFirstValues * widthOneItem,
+                top,
+                (firstIndexOfLastValues - firstIndexOfFirstValues + 1) *
+                  widthOneItem,
+                height
+              );
+            }
+
+            // check compare values
+            const secondIndexOfFirstValues = this.allValues.findIndex(
+              (a) => a.second !== null
+            );
+            const secondIndexOfLastValues = findLastIndex(
+              this.allValues,
+              (a) => a.second !== null
+            );
+
+            if (
+              secondIndexOfFirstValues !== -1 &&
+              secondIndexOfLastValues !== -1
+            ) {
+              ctx.fillStyle = 'rgba(228, 121, 74, 0.2)';
+              ctx.fillRect(
+                left + secondIndexOfFirstValues * widthOneItem,
+                top,
+                (secondIndexOfLastValues - secondIndexOfFirstValues + 1) *
+                  widthOneItem,
+                height
+              );
+            }
+          }
+        },
       };
 
       const config: any = {
@@ -137,6 +236,7 @@ export class PopinGraphsDetailsComponent
             title: false,
           },
         },
+        plugins: [backgroundChartArea],
       };
       this.myChart = new Chart(this.canvas.nativeElement as ChartItem, config);
     }
@@ -151,13 +251,13 @@ export class PopinGraphsDetailsComponent
     let min = Math.min(...mergeTabValues);
     let max = Math.max(...mergeTabValues);
     if (min) {
-      min *= 0.8;
+      min *= 0.7;
       if (min < 10) {
         min = 0;
       }
     }
     if (max) {
-      max *= 1.2;
+      max *= 1.3;
     }
 
     const getOrCreateTooltip = (chart: any) => {
@@ -225,41 +325,53 @@ export class PopinGraphsDetailsComponent
             style = 'red';
           }
 
-          const bodyContainer = document.createElement('div');
-          bodyContainer.style.display = 'flex';
-          bodyContainer.style.justifyContent = 'space-between';
-          bodyContainer.style.alignItems = 'center';
-          bodyContainer.style.lineHeight = '20px';
-          bodyContainer.style.height = '20px';
-          bodyContainer.style.marginBottom = '4px';
-          bodyContainer.style.gap = '4px';
+          let byPass = false;
+          if (style === 'grey' && tooltip.body.length > 1) {
+            byPass = true;
+          }
 
-          const imageLine = document.createElement('img');
-          imageLine.src =
-            style === 'blue'
-              ? '/assets/icons/point-graph-blue.svg'
-              : style === 'red'
-              ? '/assets/icons/point-graph-red.svg'
-              : '/assets/icons/point-graph-grey.svg';
+          if (!byPass) {
+            const bodyContainer = document.createElement('div');
+            bodyContainer.style.display = 'flex';
+            bodyContainer.style.justifyContent = 'space-between';
+            bodyContainer.style.alignItems = 'center';
+            bodyContainer.style.lineHeight = '20px';
+            bodyContainer.style.height = '20px';
+            bodyContainer.style.marginBottom = '4px';
+            bodyContainer.style.gap = '4px';
 
-          const bodyLine = document.createElement('p');
-          bodyLine.style.margin = '0';
-          bodyLine.style.padding = '0';
-          bodyLine.style.color = '#000';
-          bodyLine.style.fontSize = '12px';
-          bodyLine.innerHTML = body.lines[0];
+            const imageLine = document.createElement('img');
+            imageLine.src =
+              style === 'blue'
+                ? '/assets/icons/point-graph-blue.svg'
+                : style === 'red'
+                ? '/assets/icons/point-graph-red.svg'
+                : '/assets/icons/point-graph-grey.svg';
 
-          const dateLine = document.createElement('p');
-          dateLine.style.margin = '0';
-          dateLine.style.padding = '0';
-          dateLine.style.color = '#666';
-          dateLine.style.fontSize = '12px';
-          dateLine.innerHTML = tooltip.title[0];
+            const bodyLine = document.createElement('p');
+            bodyLine.style.margin = '0';
+            bodyLine.style.padding = '0';
+            bodyLine.style.color = '#000';
+            bodyLine.style.fontSize = '12px';
+            bodyLine.innerHTML = body.lines[0];
 
-          bodyContainer.appendChild(imageLine);
-          bodyContainer.appendChild(bodyLine);
-          bodyContainer.appendChild(dateLine);
-          divInside.appendChild(bodyContainer);
+            bodyContainer.appendChild(imageLine);
+            bodyContainer.appendChild(bodyLine);
+
+            if (tooltip.dataPoints[i].dataIndex < this.allLabels.length) {
+              const month = this.allLabels[tooltip.dataPoints[i].dataIndex];
+              const dateLine = document.createElement('p');
+              dateLine.style.margin = '0';
+              dateLine.style.padding = '0';
+              dateLine.style.color = '#666';
+              dateLine.style.fontSize = '12px';
+              dateLine.innerHTML =
+                this.getMonthString(month) + ' ' + month.getFullYear();
+              bodyContainer.appendChild(dateLine);
+            }
+
+            divInside.appendChild(bodyContainer);
+          }
         });
       }
 
@@ -304,14 +416,6 @@ export class PopinGraphsDetailsComponent
             minRotation: 0,
             fontSize: 12,
             color: 'rgba(0, 0, 0, 0.70)',
-            callback: function (value: any, index: any, ticks: any) {
-              /*now.getMonth() === 0 || now.getMonth() === 11
-            ? [this.getShortMonthString(now), (now.getFullYear() + '').slice(2)]
-            : this.getShortMonthString(now)
-        */
-              console.log(value, index, ticks);
-              return value;
-            },
           },
         },
       },
@@ -348,16 +452,16 @@ export class PopinGraphsDetailsComponent
         borderColor: '#6A6AF4',
       },
       {
-        // datas in the middle
-        ...defaultDataset,
-        data: [],
-        borderColor: '#929292',
-      },
-      {
         // datas to compare
         ...defaultDataset,
         data: [],
         borderColor: '#E4794A',
+      },
+      {
+        // datas in the middle
+        ...defaultDataset,
+        data: [],
+        borderColor: '#929292',
       },
     ];
 
@@ -377,13 +481,22 @@ export class PopinGraphsDetailsComponent
     });
     if (getFirstDate && getLastDate) {
       const now = this.getMonth(getFirstDate);
+      this.allLabels = [];
+      this.allValues = [];
       do {
-        labels.push(new Date(now));
+        this.allValues.push({ first: null, second: null });
+        labels.push(
+          now.getMonth() === 0 || now.getMonth() === 11
+            ? [this.getShortMonthString(now), (now.getFullYear() + '').slice(2)]
+            : this.getShortMonthString(now)
+        );
+        this.allLabels.push(new Date(now));
 
         const value = firstValues.find(
           (v) => this.getMonth(v.date).getTime() === now.getTime()
         );
         if (value) {
+          this.allValues[this.allValues.length - 1].first = value.value || 0;
           datasets[0].data.push(value.value || 0);
         } else {
           datasets[0].data.push(NaN);
@@ -393,7 +506,17 @@ export class PopinGraphsDetailsComponent
           (v) => this.getMonth(v.date).getTime() === now.getTime()
         );
         if (value2) {
-          datasets[2].data.push(value2.value || 0);
+          this.allValues[this.allValues.length - 1].second = value2.value || 0;
+          datasets[1].data.push(value2.value || 0);
+        } else {
+          datasets[1].data.push(NaN);
+        }
+
+        const value1 = middleValues.find(
+          (v) => this.getMonth(v.date).getTime() === now.getTime()
+        );
+        if (value1) {
+          datasets[2].data.push(value1.value || 0);
         } else {
           datasets[2].data.push(NaN);
         }
@@ -402,10 +525,10 @@ export class PopinGraphsDetailsComponent
       } while (now.getTime() < getLastDate.getTime());
     }
 
-    console.log({
+    /*console.log({
       labels,
       datasets,
-    });
+    });*/
     this.myChart.config.data = {
       labels,
       datasets,
