@@ -102,13 +102,13 @@ export function referentielCAMappingName(name) {
     case "Contentieux de la protection":
       return "Protection";
     case "Contentieux civil":
-      return "Civil Ns";
+      return "Civil NS";
     case "Contentieux de la protection":
-      return "Civil Ns";
+      return "Civil NS";
     case "Contentieux commercial":
       return "Commercial";
     case "Attributions du PP":
-      return "PP";
+      return "Attributions PP";
     case "Contentieux des mineurs":
       return "Mineurs";
     case "Instruction et entraide":
@@ -116,11 +116,11 @@ export function referentielCAMappingName(name) {
     case "Correctionnel":
       return "Correctionnel";
     case "Contentieux criminel":
-      return "Crim.";
+      return "Criminel";
     case "Application des peines":
       return "Application des peines";
     case "Autres activités":
-      return "Autres";
+      return "Autres activités";
     case "Contentieux locaux spécifiques":
       return "CTX SPÉ.";
   }
@@ -220,11 +220,11 @@ export function referentielCAMappingColor(name) {
       return "#4526a0";
     case "Contentieux des mineurs":
       return "#691a9a";
-    case "Correctionnel": //CHAC
+    case "Correctionnel":
       return "#c52928";
     case "Instruction et entraide": //CHINS
       return "#d74215";
-    case "Application des peines": //CHAP
+    case "Application des peines":
       return "#ef6c00";
     case "Contentieux criminel":
       return "#ef6c00";

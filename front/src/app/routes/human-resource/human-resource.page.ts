@@ -667,6 +667,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       await this.updateHuman('indisponibilities', []);
     }
 
+    console.log('on cancel');
+
     this.onEditIndex = null;
 
     const findElement = document.getElementById('content');
@@ -678,6 +680,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.formatHRHistory();
+
+    if (this.histories.length === 0) {
+      this.onEditIndex = null;
+    }
   }
 
   /**

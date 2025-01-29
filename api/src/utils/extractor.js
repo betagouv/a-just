@@ -9,7 +9,11 @@ import {
 } from "./date";
 import { findSituation } from "./human-resource";
 import { getHRVentilation } from "../utils/calculator";
-import { FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR, FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA } from "../constants/extractor";
+import {
+  FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR,
+  FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA,
+} from "../constants/extractor";
+import { isCa } from "./ca";
 
 /**
  * Exception relevés par madame De Jong - statistitienne de Lyon
@@ -482,6 +486,18 @@ export const computeExtractDdg = async (
           if (human.juridiction && human.juridiction.length !== 0)
             human.juridiction = human.juridiction.replaceAll("TPR ", "TPRX ");
 
+          let gaps = null;
+          if (isCa()) {
+            gaps = {
+              ["Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST"]: null,
+              ["_"]: null,
+            };
+          } else {
+            gaps = {
+              ["Ecart JE → détails manquants, à rajouter dans A-JUST"]: null,
+              ["Ecart JI → détails manquants, à rajouter dans A-JUST"]: null,
+            };
+          }
           onglet2.push({
             ["Réf."]: String(human.id),
             Arrondissement: juridictionName.label,
@@ -506,8 +522,9 @@ export const computeExtractDdg = async (
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
             ["ETPT sur la période hors indisponibilités"]: reelEtp,
             ["Temps ventilés sur la période"]: totalEtpt,
-            ["Ecart -> à contrôler"]:
+            ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
+            ...gaps,
             ...refObj,
             ["CET > 30 jours"]: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
@@ -526,10 +543,38 @@ export const getViewModel = async (params) => {
     params.onglet1.values != null && params.onglet1.values.length
       ? Object.keys(params.onglet1.values[0])
       : [];
-  const keys2 =
+  let keys2 =
     params.onglet2.values != null && params.onglet2.values.length
       ? Object.keys(params.onglet2.values[0])
       : [];
+
+  if (isCa()) {
+    keys2.push(
+      "Temps ventilés sur la période (contentieux sociaux civils et commerciaux)"
+    );
+    keys2.push("Temps ventilés sur la période (service pénal)");
+    keys2.push("Temps ventilés sur la période (hors indisponibilité)");
+    keys2.push("Temps ventilés sur la période (y.c. indisponibilité)");
+    keys2.push("Soutien (Hors accueil du justiciable)");
+    keys2 = keys2.map((x) =>
+      x === "14. TOTAL INDISPONIBILITÉ"
+        ? "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
+        : x
+    );
+  } else {
+    keys2.push("Temps ventilés sur la période (contentieux civils et sociaux)");
+    keys2.push("Temps ventilés sur la période (affaires pénales)");
+    keys2.push(
+      'Vérif adéquation "temps ventilé sur la période" et somme (temps ventilés civils + pénals + autres activités + indisponibilité)'
+    );
+    keys2.push("Temps ventilé sur la période (y.c. indisponibilité)");
+    keys2 = keys2.map((x) =>
+      x === "12. TOTAL INDISPONIBILITÉ"
+        ? "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
+        : x
+    );
+  }
+
   const tgilist = [...params.allJuridiction]
     .filter((x) => x.type === "TGI")
     .map((x) => x.tprox);
@@ -594,7 +639,6 @@ export const getViewModel = async (params) => {
   // remplacer : "ETPT sur la période hors indisponibilités" => "ETPT sur la période, hors indisponibilités relevant de l'action 99 (absentéisme non déduit)""
   // remplacer : "12. TOTAL INDISPONIBILITÉ" => "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
   // remplacer : "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" => ""13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques"
-
 
   return {
     tgilist,
@@ -845,6 +889,11 @@ export const computeExtract = async (
 };
 
 export const formatFunctions = async (functionList) => {
-  let list = [...functionList, ...(Number(process.env.TYPE_ID)===1? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA:FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR)];
-  return orderBy(list, ['category_label','rank'],['desc','asc'])
+  let list = [
+    ...functionList,
+    ...(Number(process.env.TYPE_ID) === 1
+      ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA
+      : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR),
+  ];
+  return orderBy(list, ["category_label", "rank"], ["desc", "asc"]);
 };

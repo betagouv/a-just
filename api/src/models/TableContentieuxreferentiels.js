@@ -21,14 +21,16 @@ export default (sequelizeInstance, Model) => {
   Model.getReferentiels = async (
     backupId = null,
     isJirs = false,
-    filterReferentielsId = null
+    filterReferentielsId = null,
+    displayAll = false
   ) => {
     if (backupId) {
       const juridiction = await Model.models.HRBackups.findById(backupId);
-      if (juridiction) {
+      if (juridiction && !displayAll) {
         isJirs = juridiction.jirs;
       }
     }
+    if(displayAll===true) {isJirs=true}
 
     const formatToGraph = async (parentId = null, index = 0) => {
       const where = {};
