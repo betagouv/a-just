@@ -10,9 +10,12 @@ import {
   ElementRef,
   Renderer2,
   OnInit,
+  input,
+  signal,
+  Signal,
 } from '@angular/core';
 import { FormGroup, FormsModule } from '@angular/forms';
-import { sumBy } from 'lodash';
+import { isNumber, sumBy } from 'lodash';
 import { BackButtonComponent } from '../../../components/back-button/back-button.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
@@ -70,7 +73,7 @@ export class CoverProfilDetailsComponent
   /**
    * Affiche l'ETP calculé
    */
-  @Input() etp: number = 0;
+  @Input() etp: Signal<number | null> = signal(null);
   /**
    * Fonction courante
    */
@@ -187,7 +190,9 @@ export class CoverProfilDetailsComponent
           this.category = this.currentHR.situations[0].category;
         }
       } else {
-        this.timeWorked = etpLabel(this.etp);
+        if (this.getEtpValue()) {
+          this.timeWorked = etpLabel(this.getEtpValue());
+        }
       }
     }
   }
@@ -344,5 +349,16 @@ export class CoverProfilDetailsComponent
     this.renderer.removeChild(document.body, span);
 
     return width + 20;
+  }
+  /**
+   * Rerourne la valeur de l'ETP
+   * @returns
+   */
+  getEtpValue(): number {
+    const etp = this.etp();
+    if (etp !== null && isNumber(etp)) {
+      return etp;
+    }
+    return 0;
   }
 }

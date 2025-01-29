@@ -5,6 +5,7 @@ import {
   Input,
   ViewChild,
   OnChanges,
+  input,
 } from '@angular/core';
 import { ETP_NEED_TO_BE_UPDATED } from '../../../constants/referentiel';
 import { fixDecimal } from '../../../utils/numbers';
@@ -41,7 +42,7 @@ export class BigEtpPreviewComponent implements OnChanges {
   /**
    * Valeur de l'ETP réélement
    */
-  @Input() realETP: number = 0;
+  realETP = input<number | null>(null);
   /**
    * Dom HTML du canvas pour dessiner
    */
@@ -68,7 +69,7 @@ export class BigEtpPreviewComponent implements OnChanges {
    * Détection du changement de variable pour rédessiner
    */
   ngOnChanges() {
-    this.warningETP = this.realETP <= 0;
+    this.warningETP = !this.realETP(); //<= 0;
 
     const fixDec = fixDecimal(this.etp);
     this.etp = fixDec < 0 ? 0 : fixDec;
