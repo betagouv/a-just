@@ -495,20 +495,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         }
       },
     },
-    {
-      target: '.categories-switch',
-      title: 'Configurez votre hypothèse',
-      intro:
-        '<p>Choisissez la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe</p>',
-      beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('#on-button-continue');
-        if (itemToClick) {
-          // @ts-ignore
-          itemToClick.click();
-          await sleep(200);
-        }
-      },
-    },
+  ];
+  /**
+   * Intro JS Steps par défaut
+   */
+  introStepsToCompleteDefault: IntroJSStep[] = [
     {
       target: '.action-simulator-bar',
       title: 'Configurez votre hypothèse',

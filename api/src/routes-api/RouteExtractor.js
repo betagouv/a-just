@@ -58,11 +58,11 @@ export default class RouteExtractor extends Route {
     }
 
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'effectif' })
-
+    
     const juridictionName = await this.models.HRBackups.findById(backupId)
 
     console.time('extractor-1')
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId,undefined,undefined,true)
     console.timeEnd('extractor-1')
 
     console.time('extractor-2')
@@ -89,7 +89,7 @@ export default class RouteExtractor extends Route {
     console.time('extractor-6')
     let onglet1 = await computeExtract(this.models, cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop)
     console.timeEnd('extractor-6')
-    console.log("hihi",onglet1)
+
     const absenteismeList = []
 
     console.time('extractor-6.1')
