@@ -17,6 +17,8 @@ import { CalculatorService } from '../../../services/calculator/calculator.servi
 import { Chart, ChartItem, plugins } from 'chart.js/auto';
 import { findLastIndex, maxBy, minBy } from 'lodash';
 import { today } from '../../../utils/dates';
+import { KPIService } from '../../../services/kpi/kpi.service';
+import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS } from '../../../constants/log-codes';
 
 /**
  * Composant de la popin qui affiche en gros les détails les données d'une comparaison
@@ -36,6 +38,7 @@ export class PopinGraphsDetailsComponent
   userService = inject(UserService);
   humanResourceService = inject(HumanResourceService);
   calculatorService = inject(CalculatorService);
+  kpiService = inject(KPIService);
   /**
    * Canvas html dom
    */
@@ -94,6 +97,17 @@ export class PopinGraphsDetailsComponent
   }
 
   async onLoadDatas() {
+    if (this.calculatorService.selectedRefGraphDetail) {
+      const ref = this.humanResourceService.contentieuxReferentiel
+        .getValue()
+        .find((c) => c.id === this.calculatorService.selectedRefGraphDetail);
+      if (ref) {
+        this.kpiService.register(
+          CALCULATOR_OPEN_POPIN_GRAPH_DETAILS,
+          this.calculatorService.showGraphDetailType + ' - ' + ref.label
+        );
+      }
+    }
     /*console.log(
       this.dateStart,
       this.dateStop,
