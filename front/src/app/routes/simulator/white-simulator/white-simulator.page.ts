@@ -530,8 +530,11 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
     {
       target: 'body',
       title: 'En savoir plus :',
-      intro:
-        '<p>Consultez notre vidéo de présentation pour découvrir comment réaliser vos premières simulations ! À vous de jouer 😉</p><video controls class="intro-js-video small-video"><source src="/assets/videos/a-just-la-simulation-sans-donnees-pre-alimentees-mp4-source.mp4" type="video/mp4" /></video>',
+      intro: `<p>Consultez notre vidéo de présentation pour découvrir comment réaliser vos premières simulations ! À vous de jouer 😉</p><video controls class="intro-js-video small-video"><source src="${
+        this.isTJ()
+          ? '/assets/videos/a-just-la-simulation-sans-donnees-pre-alimentees-mp4-source.mp4'
+          : '/assets/videos/a-just-ca-simulateur-a-blanc.mp4'
+      }" type="video/mp4" /></video>`,
     },
   ];
 

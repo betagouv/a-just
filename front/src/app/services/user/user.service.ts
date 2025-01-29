@@ -102,6 +102,9 @@ export class UserService implements OnInit {
     return this.interfaceType === 1;
   }
 
+  isTJ() {
+    return this.interfaceType === 0;
+  }
   /**
    * Mapping de la couleur du référentiel selon l'interface
    * @param label
