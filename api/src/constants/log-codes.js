@@ -25,6 +25,7 @@ export const CALCULATOR_OPEN_CONMPARAISON_RANGE = 3014
 export const CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL = 3015
 export const CALCULATOR_OPEN_CHARTS_VIEW = 3016
 export const CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW = 3017
+export const CALCULATOR_OPEN_POPIN_GRAPH_DETAILS = 3018
 
 export const EXECUTE_SIMULATION = 302
 export const EXECUTE_LAUNCH_SIMULATOR = 310
@@ -76,6 +77,7 @@ export const CODES = {
   [CALCULATOR_OPEN_CONMPARAISON_REFERENTIEL]: "[UTILISATEUR] Un utilisateur vient d'effectuer une comparaison avec un référentiel de temps via le cockpit",
   [CALCULATOR_OPEN_CHARTS_VIEW]: "[UTILISATEUR] Un utilisateur vient d'ouvrir la vue graphique dans le cockpit",
   [CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW]: "[UTILISATEUR] Un utilisateur vient d'afficher les détails dans la vue graphique du cockpit",
+  [CALCULATOR_OPEN_POPIN_GRAPH_DETAILS]: "[UTILISATEUR] Un utilisateur vient d'ouvrir la popin des détails du graphique dans le cockpit",
 
   [EXECUTE_SIMULATION]: '[UTILISATEUR] Un utilisateur vient d ouvrir le simulateur',
   [EXECUTE_REAFFECTATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une réaffectation',
