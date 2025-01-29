@@ -132,6 +132,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   @Input() indexSituation: number | null = null;
   /**
+   * Fonction pour mettre à jour l'ETP (lors de la création d'un nouvel agent)
+   */
+  @Input() setValueEtp: (val: number) => void = () => {};
+  /**
    * Event lors de la sauvegarde
    */
   @Output() onSaveConfirm = new EventEmitter();
@@ -278,6 +282,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             );
           }
           this.form.get('etp')?.setValue(value, { emitEvent: false });
+          this.setValueEtp(value);
+        } else {
+          // Remise à 0 de l'ETP si la valeur est null (ex: user efface la valeur précédement entrée) pour remtrre l'ETP du composant big-et-preview à null
+          this.setValueEtp(0);
         }
       })
     );

@@ -12,7 +12,8 @@
   </div>
 
   <div class="disk-etp">
-    <big-etp-preview [etp]="etp - indisponibility" [realETP]="etp" [indisponibility]="indisponibility">
+    <big-etp-preview [etp]="getEtpValue() ? getEtpValue() - indisponibility : 0"
+      [realETP]="getEtpValue() ? getEtpValue() : 0" [indisponibility]="indisponibility">
     </big-etp-preview>
   </div>
 </div>
