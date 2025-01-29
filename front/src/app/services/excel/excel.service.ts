@@ -318,6 +318,12 @@ export class ExcelService extends MainClass {
             '),"")',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Temps ventilés sur la période (contentieux civils et sociaux)'
+          )
+        ].width = 30;
 
         // PENAL ONGLET DDG
         report.worksheets[2].getCell(
@@ -339,6 +345,12 @@ export class ExcelService extends MainClass {
             '))',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Temps ventilés sur la période (affaires pénales)'
+          )
+        ].width = 30;
 
         // VERIF ABS ONGLET DDG
         report.worksheets[2].getCell(
@@ -374,6 +386,12 @@ export class ExcelService extends MainClass {
             ',"OK","OK (contient de l action 99)"))',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Vérif adéquation "temps ventilé sur la période" et somme (temps ventilés civils + pénals + autres activités + indisponibilité)'
+          )
+        ].width = 30;
 
         // TEMPS VENTILE DONT INDISPO ONGLET DDG
         let tmpIncludingIndispo = this.getExcelFormulaFormat(
@@ -400,6 +418,12 @@ export class ExcelService extends MainClass {
             ')',
           result: '0',
         };
+        report.worksheets[2].columns[
+          this.findIndexByPrefix(
+            viewModel.days1,
+            'Temps ventilé sur la période (y.c. indisponibilité)'
+          )
+        ].width = 30;
 
         // ECART JE ONGLET DDG
         report.worksheets[2].getCell(
