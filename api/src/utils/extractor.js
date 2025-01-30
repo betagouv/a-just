@@ -520,8 +520,8 @@ export const computeExtractDdg = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période hors indisponibilités"]: reelEtp,
-            ["Temps ventilés sur la période"]: totalEtpt,
+            ["ETPT sur la période, hors action 99 (absentéisme non déduit)"]: reelEtp,
+            ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
             ...gaps,
@@ -553,8 +553,8 @@ export const getViewModel = async (params) => {
       "Temps ventilés sur la période (contentieux sociaux civils et commerciaux)"
     );
     keys2.push("Temps ventilés sur la période (service pénal)");
-    keys2.push("Temps ventilés sur la période (hors indisponibilité)");
-    keys2.push("Temps ventilés sur la période (y.c. indisponibilité)");
+    keys2.push("Temps ventilés sur la période (hors indisponibilités relevant de l'action 99)");
+    keys2.push("Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)");
     keys2.push("Soutien (Hors accueil du justiciable)");
     keys2 = keys2.map((x) =>
       x === "14. TOTAL INDISPONIBILITÉ"
@@ -567,7 +567,7 @@ export const getViewModel = async (params) => {
     keys2.push(
       'Vérif adéquation "temps ventilé sur la période" et somme (temps ventilés civils + pénals + autres activités + indisponibilité)'
     );
-    keys2.push("Temps ventilé sur la période (y.c. indisponibilité)");
+    keys2.push("Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)");
     keys2 = keys2.map((x) =>
       x === "12. TOTAL INDISPONIBILITÉ"
         ? "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
@@ -613,7 +613,7 @@ export const getViewModel = async (params) => {
     if (x.sub === "ETPT sur la période hors indisponibilités")
       return {
         ...x,
-        sub1: "ETPT sur la période, hors indisponibilités relevant de l'action 99 (absentéisme non déduit)",
+        sub1: "ETPT sur la période, hors action 99 (absentéisme non déduit)",
         global1: x.global,
       };
 
@@ -876,8 +876,8 @@ export const computeExtract = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période hors indisponibilités"]: reelEtp,
-            ["Temps ventilés sur la période"]: totalEtpt,
+            ["ETPT sur la période, hors action 99 (absentéisme non déduit)"]: reelEtp,
+            ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ...refObj,
           });
     })
