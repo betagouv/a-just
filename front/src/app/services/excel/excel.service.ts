@@ -267,8 +267,16 @@ export class ExcelService extends MainClass {
 
     // ONGLET ETPT DDG
     report.worksheets[2].columns = [...this.tabs.onglet2.columnSize];
-    report.worksheets[2].columns[0].width = 16;
     report.worksheets[2].columns[8].width = 0;
+    report.worksheets[2].columns[0].width = 0;
+    report.worksheets[2].columns[1].width = 0;
+
+    let index = 0;
+    do {
+      report.worksheets[2].columns[11 + index].width = 26;
+      index++;
+    } while (index < 4);
+
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
       const indexCell = +(+index + 3);
 
@@ -299,6 +307,8 @@ export class ExcelService extends MainClass {
             ')',
           result: '',
         };
+        report.worksheets[2].columns[156].width = 0; // hide fct recodée
+        report.worksheets[2].columns[157].width = 0; // hide fct agrégat
 
         // TEMPS VENTILE CIVILS ET SOCIAUX ONGLET DDG
         report.worksheets[2].getCell(
@@ -323,7 +333,7 @@ export class ExcelService extends MainClass {
             viewModel.days1,
             'Temps ventilés sur la période (contentieux civils et sociaux)'
           )
-        ].width = 30;
+        ].width = 0;
 
         // PENAL ONGLET DDG
         report.worksheets[2].getCell(
@@ -350,7 +360,7 @@ export class ExcelService extends MainClass {
             viewModel.days1,
             'Temps ventilés sur la période (affaires pénales)'
           )
-        ].width = 30;
+        ].width = 0;
 
         // VERIF ABS ONGLET DDG
         report.worksheets[2].getCell(
@@ -379,7 +389,7 @@ export class ExcelService extends MainClass {
             ) +
             '=' +
             this.getExcelFormulaFormat(
-              ['Temps ventilés sur la période'],
+              ['Temps ventilés sur la période (hors action 99)'],
               indexCell,
               viewModel.days1
             ) +
@@ -391,12 +401,12 @@ export class ExcelService extends MainClass {
             viewModel.days1,
             'Vérif adéquation "temps ventilé sur la période" et somme (temps ventilés civils + pénals + autres activités + indisponibilité)'
           )
-        ].width = 30;
+        ].width = 0;
 
         // TEMPS VENTILE DONT INDISPO ONGLET DDG
         let tmpIncludingIndispo = this.getExcelFormulaFormat(
           [
-            'Temps ventilés sur la période',
+            'Temps ventilés sur la période (hors action 99)',
             "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
           ],
           indexCell,
@@ -405,7 +415,9 @@ export class ExcelService extends MainClass {
         );
         report.worksheets[2].getCell(
           this.getExcelFormulaFormat(
-            ['Temps ventilé sur la période (y.c. indisponibilité)'],
+            [
+              "Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)",
+            ],
             indexCell,
             viewModel.days1
           )
@@ -421,9 +433,9 @@ export class ExcelService extends MainClass {
         report.worksheets[2].columns[
           this.findIndexByPrefix(
             viewModel.days1,
-            'Temps ventilé sur la période (y.c. indisponibilité)'
+            "Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)"
           )
-        ].width = 30;
+        ].width = 0;
 
         // ECART JE ONGLET DDG
         report.worksheets[2].getCell(
@@ -561,7 +573,9 @@ export class ExcelService extends MainClass {
         // Ventillation hors indispo  ONGLET DDG
         report.worksheets[2].getCell(
           this.getExcelFormulaFormat(
-            ['Temps ventilés sur la période (hors indisponibilité)'],
+            [
+              "Temps ventilés sur la période (hors indisponibilités relevant de l'action 99)",
+            ],
             indexCell,
             viewModel.days1
           )
@@ -585,14 +599,16 @@ export class ExcelService extends MainClass {
         report.worksheets[2].columns[
           this.findIndexByPrefix(
             viewModel.days1,
-            'Temps ventilés sur la période (hors indisponibilité'
+            "Temps ventilés sur la période (hors indisponibilités relevant de l'action 99)"
           )
         ].width = 30;
 
         // Ventillation comprenant indispo  ONGLET DDG
         report.worksheets[2].getCell(
           this.getExcelFormulaFormat(
-            ['Temps ventilés sur la période (y.c. indisponibilité)'],
+            [
+              "Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)",
+            ],
             indexCell,
             viewModel.days1
           )
@@ -618,7 +634,7 @@ export class ExcelService extends MainClass {
         report.worksheets[2].columns[
           this.findIndexByPrefix(
             viewModel.days1,
-            'Temps ventilés sur la période (y.c. indisponibilité)'
+            "Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)"
           )
         ].width = 30;
 

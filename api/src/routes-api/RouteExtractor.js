@@ -108,8 +108,8 @@ export default class RouteExtractor extends Route {
 
     console.time('extractor-6.2')
     const excelRef = [
-      { global: null, sub: 'ETPT sur la période hors indisponibilités' },
-      { global: null, sub: 'Temps ventilés sur la période' },
+      { global: null, sub: 'ETPT sur la période, hors indisponibilités relevant de l\'action 99 (absentéisme non déduit)' },
+      { global: null, sub: 'Temps ventilés sur la période (hors action 99)' },
       ...formatedExcelList,
       { global: null, sub: 'CET > 30 jours' },
       { global: 'Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)', sub: null },
