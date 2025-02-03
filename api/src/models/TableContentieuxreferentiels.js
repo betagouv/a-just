@@ -494,5 +494,17 @@ export default (sequelizeInstance, Model) => {
     return ref ? ref : null;
   };
 
+  /**
+   * Indique si une juridiction est JIRS ou NON JIRS
+   * @param {*} backupId 
+   * @returns 
+   */
+  Model.isJirs = async (backupId) => {
+    let isJirs = false
+    const juridiction = await Model.models.HRBackups.findById(backupId);
+    if (juridiction) isJirs = juridiction.jirs;
+    return isJirs
+  };
+
   return Model;
 };

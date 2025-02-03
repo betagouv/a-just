@@ -559,13 +559,15 @@ export class ExcelService extends MainClass {
     report.worksheets[2].columns = [...this.tabs.onglet2.columnSize];
     report.worksheets[2].columns[0].width = 0;
     report.worksheets[2].columns[1].width = 0;
-    report.worksheets[2].columns[8].width = 0;
+    report.worksheets[2].columns[2].width = 0;
+
     report.worksheets[2].columns[9].width = 0;
     report.worksheets[2].columns[10].width = 0;
-    report.worksheets[2].columns[7].width = 20;
+    report.worksheets[2].columns[11].width = 0;
+    report.worksheets[2].columns[8].width = 20;
     let index = 0;
     do {
-      report.worksheets[2].columns[11 + index].width = 26;
+      report.worksheets[2].columns[12 + index].width = 26;
       index++;
     } while (index < 4);
 
@@ -932,7 +934,9 @@ export class ExcelService extends MainClass {
    */
   setJuridictionPickerByAgent(report: any, indexCell: number, viewModel: any) {
     // CHOIX juridiction TPRX TJ onglet ETPT DDG
-    report.worksheets[2].getCell('C' + indexCell).dataValidation = {
+    report.worksheets[2].getCell(
+      this.getExcelFormulaFormat(['Juridiction'], indexCell, viewModel.days1)
+    ).dataValidation = {
       type: 'list',
       allowBlank: true,
       formulae: viewModel.tProximite,
@@ -1125,12 +1129,12 @@ export class ExcelService extends MainClass {
     };
 
     // ONGLET AGGREGAT MESSAGE SI ECART
-    report.worksheets[3]['_rows'][6].height = 30;
+    report.worksheets[3]['_rows'][6].height = 40;
     report.worksheets[3].getCell('F7').value = {
       formula:
-        "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne N de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période\")",
+        "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne N de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
       result:
-        '"Temps ventilés sur la période : Des ventilations sont incomplètes,",CHAR(10),"se référer à la colonne N de l’onglet ETPT format DDG"',
+        '"Temps ventilés sur la période (hors action 99) : Des ventilations sont incomplètes,",CHAR(10),"se référer à la colonne N de l’onglet ETPT format DDG"',
     };
     return report;
   }
