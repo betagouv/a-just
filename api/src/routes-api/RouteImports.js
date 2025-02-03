@@ -30,7 +30,7 @@ export default class RouteImports extends Route {
     bodyType: Types.object().keys({
       file: Types.string(),
     }),
-    accesses: [Access.isAdmin],
+    accesses: [Access.isSuperAdmin],
   })
   async importHr (ctx) {
     const { file } = this.body(ctx)
@@ -49,7 +49,7 @@ export default class RouteImports extends Route {
     bodyType: Types.object().keys({
       file: Types.string(),
     }),
-    accesses: [Access.isAdmin],
+    accesses: [Access.isSuperAdmin],
   })
   async importReferentiel (ctx) {
     const { file } = this.body(ctx)
