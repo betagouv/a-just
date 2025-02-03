@@ -10,6 +10,7 @@ export const CET_LABEL = "Compte épargne temps"; //'Décharge syndicale' //'CON
 export const ABSENTEISME_LABELS = [
   "Congé maladie ordinaire",
   "Congé maternité/paternité/adoption",
+  "Autre absentéisme"
 ];
 
 /**

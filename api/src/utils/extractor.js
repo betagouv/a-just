@@ -278,7 +278,8 @@ export const computeExtractDdg = async (
   categoryFilter,
   juridictionName,
   dateStart,
-  dateStop
+  dateStop,
+  isJirs
 ) => {
   let onglet2 = [];
 
@@ -497,6 +498,7 @@ export const computeExtractDdg = async (
           onglet2.push({
             ["Réf."]: String(human.id),
             Arrondissement: juridictionName.label,
+            Jirs: isJirs? 'x':'',
             Juridiction: (
               human.juridiction || juridictionName.label
             ).toUpperCase(),
@@ -516,7 +518,7 @@ export const computeExtractDdg = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période, hors action 99 (absentéisme non déduit)"]: reelEtp,
+            ["ETPT sur la période absentéisme non déduit (hors action 99)"]: reelEtp,
             ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
@@ -608,16 +610,11 @@ export const getViewModel = async (params) => {
     (x) => x.sub !== "12.2. COMPTE ÉPARGNE TEMPS"
   );
   agregat = agregat.map((x) => {
-    if (x.sub === "ETPT sur la période hors indisponibilités")
-      return {
-        ...x,
-        sub1: "ETPT sur la période, hors action 99 (absentéisme non déduit)",
-        global1: x.global,
-      };
 
     if (x.global === "12. TOTAL INDISPONIBILITÉ")
       return {
         ...x,
+        global: "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
         global1: "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
         sub1: x.sub,
       };
@@ -874,7 +871,7 @@ export const computeExtract = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période, hors action 99 (absentéisme non déduit)"]: reelEtp,
+            ["ETPT sur la période absentéisme non déduit (hors action 99)"]: reelEtp,
             ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ...refObj,
           });

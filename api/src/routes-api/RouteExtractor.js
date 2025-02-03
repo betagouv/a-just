@@ -61,6 +61,7 @@ export default class RouteExtractor extends Route {
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'effectif' })
     
     const juridictionName = await this.models.HRBackups.findById(backupId)
+    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
 
     console.time('extractor-1')
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId,undefined,undefined,true)
@@ -109,7 +110,7 @@ export default class RouteExtractor extends Route {
 
     console.time('extractor-6.2')
     const excelRef = [
-      { global: null, sub: 'ETPT sur la période, hors indisponibilités relevant de l\'action 99 (absentéisme non déduit)' },
+      { global: null, sub: 'ETPT sur la période absentéisme non déduit (hors action 99)' },
       { global: null, sub: 'Temps ventilés sur la période (hors action 99)' },
       ...formatedExcelList,
       { global: null, sub: 'CET > 30 jours' },
@@ -130,13 +131,12 @@ export default class RouteExtractor extends Route {
       categoryFilter,
       juridictionName,
       dateStart,
-      dateStop
+      dateStop,
+      isJirs
     )
     console.timeEnd('extractor-7')
 
     console.time('extractor-8')
-    //await onglet1.sort((a, b) => sortByCatAndFct(a, b))
-    //await onglet2.sort((a, b) => sortByCatAndFct(a, b))
     onglet1 =orderBy(onglet1, ['Catégorie','Nom','Prénom','Matricule'],['desc','asc','asc','asc'])
     onglet2 =orderBy(onglet2, ['Catégorie','Nom','Prénom','Matricule'],['desc','asc','asc','asc'])
     const columnSize1 = await autofitColumns(onglet1, true)
