@@ -245,6 +245,10 @@ export class ExcelService extends MainClass {
         ? this.setExcelFunctionsTj(report, indexCell, viewModel)
         : this.setExcelFunctionsCa(report, indexCell, viewModel);
 
+      report = this.userService.isTJ()
+        ? this.setGapsJEJI(report, indexCell, viewModel)
+        : this.setGapsMineurs(report, indexCell, viewModel);
+
       report = this.setJuridictionPickerByAgent(report, indexCell, viewModel);
 
       const indexFctCol = this.getFonctionCellByAgent(indexCell, viewModel);
@@ -595,7 +599,7 @@ export class ExcelService extends MainClass {
       viewModel.days1,
       '&'
     );
-    // FONCTION RECODEE ONGLET DDG => AUTOMATISER PLUS TARD
+    // FONCTION RECODEE ONGLET DDG
     report.worksheets[2].getCell(
       this.getExcelFormulaFormat(
         ['Fonction recodée'],
@@ -608,7 +612,7 @@ export class ExcelService extends MainClass {
       result: '0',
     };
 
-    // FONCTION AGREGAT ONGLET DDG => AUTOMATISER PLUS TARD
+    // FONCTION AGREGAT ONGLET DDG
     report.worksheets[2].getCell(
       this.getExcelFormulaFormat(
         ['Fonction agrégat'],
@@ -629,6 +633,50 @@ export class ExcelService extends MainClass {
       result: '',
     };
 
+    return report;
+  }
+
+  /**
+   * Calcul l'écart L3 L4 pour le contentieux Mineurs CA
+   * @param report
+   * @param indexCell
+   * @param viewModel
+   */
+  setGapsMineurs(report: any, indexCell: number, viewModel: any) {
+    // ECART CTX MINEURS  ONGLET DDG
+    report.worksheets[2].getCell(
+      this.getExcelFormulaFormat(
+        ['Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST'],
+        indexCell,
+        viewModel.days1
+      )
+    ).value = {
+      formula:
+        '=ROUND(' +
+        this.getExcelFormulaFormat(
+          ['7. TOTAL CONTENTIEUX DES MINEURS'],
+          indexCell,
+          viewModel.days1
+        ) +
+        '-(' +
+        this.getExcelFormulaFormat(
+          ['7.1. ACTIVITÉ CIVILE', '7.2. ACTIVITÉ PÉNALE'],
+          indexCell,
+          viewModel.days1,
+          '+'
+        ) +
+        '),3)',
+    };
+    return report;
+  }
+  /**
+   * Calcul l'écart L3 L4 pour le contentieux JE et JI
+   * @param report
+   * @param indexCell
+   * @param viewModel
+   * @returns
+   */
+  setGapsJEJI(report: any, indexCell: number, viewModel: any) {
     // ECART JE ONGLET DDG
     report.worksheets[2].getCell(
       this.getExcelFormulaFormat(
@@ -875,30 +923,6 @@ export class ExcelService extends MainClass {
       )
     ].width = 30;
 
-    // ECART CTX MINEURS  ONGLET DDG
-    report.worksheets[2].getCell(
-      this.getExcelFormulaFormat(
-        ['Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST'],
-        indexCell,
-        viewModel.days1
-      )
-    ).value = {
-      formula:
-        '=ROUND(' +
-        this.getExcelFormulaFormat(
-          ['7. TOTAL CONTENTIEUX DES MINEURS'],
-          indexCell,
-          viewModel.days1
-        ) +
-        '-(' +
-        this.getExcelFormulaFormat(
-          ['7.1. ACTIVITÉ CIVILE', '7.2. ACTIVITÉ PÉNALE'],
-          indexCell,
-          viewModel.days1,
-          '+'
-        ) +
-        '),3)',
-    };
     report.worksheets[2].columns[15].width = 0;
     return report;
   }
