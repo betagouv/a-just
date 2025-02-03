@@ -16,10 +16,6 @@ import {
 import { isCa } from "./ca";
 
 /**
- * Exception relevés par madame De Jong - statistitienne de Lyon
- */
-export const exceptionMadameDeJong = ["CONT A JP", "CONT B JP", "CONT C JP"];
-/**
  * Tri par catégorie et par fonction
  * @param {*} a
  * @param {*} b
@@ -508,10 +504,10 @@ export const computeExtractDdg = async (
             Prénom: human.firstName,
             Matricule: human.matricule,
             Catégorie: categoryName,
-            Fonction: exceptionMadameDeJong.includes(fonctionName)
-              ? fonctionName + " " + categoryName
-              : fonctionName,
-            ["Code fonction"]: fonctionCategory,
+            Fonction: fonctionName,
+            ["Fonction recodée"]: null,
+            ["Code fonction par défaut"]: fonctionCategory,
+            ["Fonction agrégat"]:null,
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -562,12 +558,14 @@ export const getViewModel = async (params) => {
         : x
     );
   } else {
+    /**
     keys2.push("Temps ventilés sur la période (contentieux civils et sociaux)");
     keys2.push("Temps ventilés sur la période (affaires pénales)");
     keys2.push(
       'Vérif adéquation "temps ventilé sur la période" et somme (temps ventilés civils + pénals + autres activités + indisponibilité)'
     );
     keys2.push("Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)");
+     */
     keys2 = keys2.map((x) =>
       x === "12. TOTAL INDISPONIBILITÉ"
         ? "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
@@ -891,9 +889,20 @@ export const computeExtract = async (
 export const formatFunctions = async (functionList) => {
   let list = [
     ...functionList,
-    ...(Number(process.env.TYPE_ID) === 1
-      ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA
-      : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR),
+    ...isCa() ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA
+      : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR
   ];
-  return orderBy(list, ["category_label", "rank"], ["desc", "asc"]);
+  list = list.map((fct)=>{
+  return {CONCAT: fct['category_label']+fct['code'],...fct}
+  })
+
+  return orderBy(list, ["category_label", "rank","code"], ["desc", "asc","asc"]);
 };
+
+export const getObjectKeys = async (array) => {
+  if (array.length === 0) return []; 
+  console.log(Object.keys(array[0]))
+
+  return Object.keys(array[0]); 
+}
+

@@ -7,6 +7,7 @@ import {
   flatListOfContentieuxAndSousContentieux,
   formatFunctions,
   getExcelLabel,
+  getObjectKeys,
   getViewModel,
   replaceIfZero,
   sortByCatAndFct,
