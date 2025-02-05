@@ -113,12 +113,9 @@ export default (sequelizeInstance, Model) => {
       ["rank"]
     );
 
-    console.log('\n\n\nJuridiction:', backupId)
-    console.log('IS_JIRS:', isJirs)
     if (!isJirs) {
       list.map((elem) => {
         elem.childrens.map((child) => {
-          console.log('CHILD_NAME=', child.label)
           switch (child.label) {
             case "Contentieux collégial hors JIRS": //NEW CA
               child.label = "Contentieux collégial";
@@ -150,9 +147,8 @@ export default (sequelizeInstance, Model) => {
                 (elem) => elem.label !== "Collégiales JIRS crim-org"
               );
               break;
-            case "Collégiales JIRS eco-fi":
-              console.log('HEY I AM HERE')
-              child.label = "Collégiales eco-fi";
+            case "Collégiales JIRS éco-fi":
+              child.label = "Collégiales éco-fi";
               break;
             case "Eco-fi hors JIRS":
               child.label = "Eco-fi";
@@ -220,7 +216,6 @@ export default (sequelizeInstance, Model) => {
         });
       });
     }
-    console.log('LIST:', list.filter(l => l.label == 'Siège Pénal').map(elem => elem.childrens))
     return list;
   };
 
