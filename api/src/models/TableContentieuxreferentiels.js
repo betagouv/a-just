@@ -118,6 +118,7 @@ export default (sequelizeInstance, Model) => {
     if (!isJirs) {
       list.map((elem) => {
         elem.childrens.map((child) => {
+          console.log('CHILD_NAME=', child.label)
           switch (child.label) {
             case "Contentieux collégial hors JIRS": //NEW CA
               child.label = "Contentieux collégial";
@@ -150,6 +151,7 @@ export default (sequelizeInstance, Model) => {
               );
               break;
             case "Collégiales JIRS eco-fi":
+              console.log('HEY I AM HERE')
               child.label = "Collégiales eco-fi";
               break;
             case "Eco-fi hors JIRS":
