@@ -111,7 +111,6 @@ export class LoginPage implements OnInit {
     });
 
     this.ssoService.getSSOStatus().then((s) => {
-      console.log(s);
       this.isReady = true;
       if (s.token) {
         this.router.navigate([this.userService.getUserPageUrl(s.user)]);
