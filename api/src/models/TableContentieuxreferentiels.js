@@ -218,7 +218,7 @@ export default (sequelizeInstance, Model) => {
         });
       });
     }
-
+    console.log('LIST:', list.filter(l => l.label == 'Siège Pénal').map(elem => elem.childrens))
     return list;
   };
 
