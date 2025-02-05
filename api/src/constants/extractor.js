@@ -316,23 +316,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     category_detail: "C",
     recodedFunction: "CONT A Autres",
     rank:13
-  },
-  {
-    category_label: "Autour du magistrat",
-    label: "CONTRACTUEL B JUSTICE DE PROXIMITE",
-    code: "CONT B JP Autour du magistrat",
-    position: "Contractuel",
-    category_detail: "C",
-    recodedFunction: "",
-  },
-  {
-    category_label: "Autour du magistrat",
-    label: "CONTRACTUEL C JUSTICE DE PROXIMITE",
-    code: "CONT C JP Autour du magistrat",
-    position: "Contractuel",
-    category_detail: "C",
-    recodedFunction: "",
-  },
+  }
 ];
 
 
