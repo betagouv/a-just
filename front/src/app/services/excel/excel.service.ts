@@ -230,6 +230,8 @@ export class ExcelService extends MainClass {
    * @returns
    */
   async getReport(report: any, viewModel: any) {
+    report = this.setJuridictionTab(report, viewModel);
+
     report = this.userService.isTJ()
       ? await this.setJuridictionPickers(report, viewModel)
       : this.setMatriceJuridiction(report, viewModel);
@@ -1176,5 +1178,29 @@ export class ExcelService extends MainClass {
       });
     }
     return viewModel;
+  }
+
+  /**
+   * Documente l'onglet Juridiction dans le ficher DDG
+   * @param report
+   * @param viewModel
+   * @returns
+   */
+  setJuridictionTab(report: any, viewModel: any) {
+    // ONGLET JURIDICTION
+    viewModel.tgilist.map((value: any, index: any) => {
+      report.worksheets[5].getCell('B' + (+index + 1)).value = value;
+    });
+    viewModel.tpxlist.map((value: any, index: any) => {
+      report.worksheets[5].getCell('E' + (+index + 1)).value = value;
+    });
+    viewModel.cphlist.map((value: any, index: any) => {
+      report.worksheets[5].getCell('H' + (+index + 1)).value = value;
+    });
+    const TJCPH = [...viewModel.tgilist, ...viewModel.isolatedCPH];
+    TJCPH.map((value: any, index: any) => {
+      report.worksheets[5].getCell('J' + (+index + 1)).value = value;
+    });
+    return report;
   }
 }
