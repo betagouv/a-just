@@ -113,6 +113,8 @@ export default (sequelizeInstance, Model) => {
       ["rank"]
     );
 
+    console.log('\n\n\nJuridiction:', backupId)
+    console.log('IS_JIRS:', isJirs)
     if (!isJirs) {
       list.map((elem) => {
         elem.childrens.map((child) => {
