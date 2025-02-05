@@ -987,6 +987,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       // force to not show on boarding after delete last situation
       this.onLoad(returnValue);
     }
+
+    if (this.histories.length === 0) {
+      this.onEditIndex = null;
+    }
   }
 
   /**

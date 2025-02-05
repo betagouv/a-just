@@ -312,7 +312,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
-    path: this.documentationUrl.main,
+    path: this.userService.isCa()
+      ? this.documentationUrl.whiteSimulator
+      : this.documentationUrl.main,
     printSubTitle: true,
   };
 
@@ -500,6 +502,19 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Intro JS Steps par défaut
    */
   introStepsToCompleteDefault: IntroJSStep[] = [
+    {
+      target: '.date-bar-container',
+      title: 'Configurez votre hypothèse :',
+      intro:
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à laquelle vous souhaitez vous projeter (ex : atteindre un stock de X dossier dans 12 mois).</p>',
+      beforeLoad: async (intro: any) => {
+        if (this.periodSelector) {
+          const now = today();
+          now.setMonth(now.getMonth() + 12);
+          this.periodSelector.updateDateSelected('dateStop', now, false);
+        }
+      },
+    },
     {
       target: '.action-simulator-bar',
       title: 'Configurez votre hypothèse',
