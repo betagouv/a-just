@@ -314,7 +314,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     code: "CONT A Autres",
     position: "Contractuel",
     category_detail: "C",
-    recodedFunction: "CONT A Autres",
+    recodedFunction: "Fonctionnaire A-B-CBUR",
     rank:13
   }
 ];
