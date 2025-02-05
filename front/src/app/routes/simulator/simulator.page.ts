@@ -64,6 +64,12 @@ import {
   userCanViewMagistrat,
   userCanViewWhiteSimulator,
 } from '../../utils/user';
+import { ChooseSimulatorComponent } from './choose-simulator/choose-simulator.component';
+import {
+  REAFFECTATOR,
+  SIMULATOR_DONNEES,
+  SIMULATOR_OTHER_ACTIVITY,
+} from '../../constants/simulator';
 
 /**
  * Variable ETP magistrat field name
@@ -120,6 +126,7 @@ export const etpFonToDefine = '[un volume moyen de]';
     MatTooltipModule,
     BackButtonComponent,
     MatProgressBarModule,
+    ChooseSimulatorComponent,
   ],
   styleUrls: ['./simulator.page.scss'],
   animations: [
@@ -2509,5 +2516,23 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   changePage() {
     window.location.href = 'simulateur-sans-donnees';
+  }
+
+  /**
+   * On select screen
+   */
+  onShooseScreen(type: string) {
+    if (type === SIMULATOR_DONNEES) {
+      this.whiteSimulator = false;
+      this.chooseScreen = false;
+      this.logOpenSimulator();
+      this.setDocUrl(this.documentationUrl.main);
+    } else if (type === SIMULATOR_OTHER_ACTIVITY) {
+      this.dateStop = null;
+      this.logOpenWhiteSimulator();
+      this.changePage();
+    } else if (type === REAFFECTATOR) {
+      this.router.navigate(['/reaffectateur']);
+    }
   }
 }
