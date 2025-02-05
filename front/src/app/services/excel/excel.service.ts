@@ -584,6 +584,8 @@ export class ExcelService extends MainClass {
     // ONGLET AGREGAT
     report.worksheets[3].columns[0].width = 20;
 
+    // ONGLET fonction recodée
+    report.worksheets[6].columns[0].width = 0;
     return report;
   }
 
