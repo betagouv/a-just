@@ -47,25 +47,25 @@ export function referentielCAMappingName(name: string): string {
     case 'Contentieux de la famille':
       return 'Famille';
     case 'Contentieux de la protection':
-      return 'Protection';
+      return 'JCP';
     case 'Contentieux civil non spécialisé':
       return 'Civil NS';
     case 'Contentieux commercial':
-      return 'Commercial';
+      return 'Comm.';
     case 'Attributions du PP':
-      return 'Attributions PP';
+      return 'PP';
     case 'Contentieux des mineurs':
       return 'Mineurs';
     case 'Instruction et entraide':
-      return 'Instruction - entraide';
+      return 'CHINS';
     case 'Correctionnel':
-      return 'Correctionnel';
+      return 'CHAC';
     case 'Contentieux criminel':
-      return 'Criminel';
+      return 'Crim.';
     case 'Application des peines':
-      return 'Application des peines';
+      return 'CHAP';
     case 'Autres activités':
-      return 'Autres activités';
+      return 'Autres';
     case 'Contentieux locaux spécifiques':
       return 'CTX SPÉ.';
   }
@@ -250,25 +250,25 @@ export function referentielMappingColorCAActivity(
         return `rgb(212, 231, 232)`;
       case 'Famille':
         return `rgba(210, 227, 243, 1)`;
-      case 'Protection':
+      case 'JCP':
         return `rgba(198, 219, 242, 1)`;
       case 'Civil NS':
         return `rgba(208, 213, 248, 1)`;
-      case 'Commercial':
+      case 'Comm.':
         return `rgba(222, 237, 239, 1)`;
-      case 'Attributions PP':
+      case 'PP':
         return `rgb(218, 212, 237)`;
       case 'Mineurs':
         return `rgb(228, 211, 237)`;
-      case 'Instruction - entraide': //CHINS
+      case 'CHINS': //CHINS
         return `rgb(249, 219, 211)`;
-      case 'Correctionnel':
+      case 'CHAC':
         return `rgb(245, 214, 213)`;
-      case 'Criminel':
+      case 'Crim.':
         return `rgb(255, 234, 213)`;
-      case 'Application des peines':
+      case 'CHAP':
         return `rgb(253, 226, 211)`;
-      case 'Autres activités':
+      case 'Autres':
         return `rgb(216, 218, 220)`;
     }
   } else {
@@ -277,25 +277,25 @@ export function referentielMappingColorCAActivity(
         return `rgba(3, 131, 143, ${opacity})`;
       case 'Famille':
         return `rgba(4, 134, 213, ${opacity})`;
-      case 'Protection':
+      case 'JCP':
         return `rgba(5, 89, 189, ${opacity})`;
       case 'Civil NS':
         return `rgba(40, 53, 146, ${opacity})`;
-      case 'Commercial':
+      case 'Comm.':
         return `rgba(3, 167, 184, ${opacity})`;
-      case 'Attributions PP':
+      case 'PP':
         return `rgba(69, 38, 160, ${opacity})`;
       case 'Mineurs':
         return `rgba(105, 26, 154, ${opacity})`;
-      case 'Instruction - entraide': //CHINS
+      case 'CHINS': //CHINS
         return `rgba(215, 66, 21, ${opacity})`;
-      case 'Correctionnel':
+      case 'CHAC':
         return `rgba(197, 41, 40, ${opacity})`;
-      case 'Criminel':
+      case 'Crim.':
         return `rgba(255, 143, 0, ${opacity})`;
-      case 'Application des peines':
+      case 'CHAP':
         return `rgba(239, 108, 0, ${opacity})`;
-      case 'Autres activités':
+      case 'Autres':
         return `rgba(66, 66, 66, ${opacity})`;
     }
   }
