@@ -444,6 +444,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               (a) => this.referentielService.idsIndispo.indexOf(a.id) === -1
             )
             .map((r) => ({ ...r, selected: true }));
+          console.log('REFERENTIEL:', this.referentiel);
           this.formReferentiel = this.referentiel.map((r) => ({
             id: r.id,
             value: this.userService.referentielMappingNameByInterface(r.label),

@@ -30,6 +30,9 @@ export default class RouteContentieuxReferentiels extends Route {
   })
   async getReferentiels (ctx) {
     const { backupId, isJirs } = this.body(ctx)
+    let RES = await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null)
+    RES = RES.filter((r) => r.label === 'Siège Pénal')
+    RES.map((r) => console.log('CHILD: ', r.childrens))
     this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null))
   }
 
