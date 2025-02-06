@@ -230,6 +230,7 @@ export class ExcelService extends MainClass {
    * @returns
    */
   async getReport(report: any, viewModel: any) {
+    console.log(await this.humanResourceService.contentieuxReferentiel);
     report = this.setJuridictionTab(report, viewModel);
 
     report = this.userService.isTJ()
