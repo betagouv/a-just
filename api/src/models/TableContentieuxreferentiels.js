@@ -150,8 +150,8 @@ export default (sequelizeInstance, Model) => {
                 (elem) => elem.label !== "Collégiales JIRS crim-org"
               );
               break;
-            case "Collégiales JIRS eco-fi":
-              child.label = "Collégiales eco-fi";
+            case "Collégiales JIRS éco-fi":
+              child.label = "Collégiales éco-fi";
               break;
             case "Eco-fi hors JIRS":
               child.label = "Eco-fi";
@@ -219,7 +219,6 @@ export default (sequelizeInstance, Model) => {
         });
       });
     }
-
     return list;
   };
 
