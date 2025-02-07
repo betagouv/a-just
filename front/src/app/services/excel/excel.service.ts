@@ -230,7 +230,6 @@ export class ExcelService extends MainClass {
    * @returns
    */
   async getReport(report: any, viewModel: any) {
-    console.log(await this.humanResourceService.contentieuxReferentiel);
     report = this.setJuridictionTab(report, viewModel);
 
     report = this.userService.isTJ()
@@ -634,6 +633,15 @@ export class ExcelService extends MainClass {
     const fctIndex =
       this.findIndexByName(report.worksheets, 'Table_Fonctions') || 0;
     report.worksheets[fctIndex].columns[0].width = 0;
+
+    if (this.userService.isCa()) {
+      report.worksheets[fctIndex].columns[6].width = 25;
+      report.worksheets[fctIndex].columns[5].width = 38;
+      report.worksheets[fctIndex].columns[4].width = 28;
+      report.worksheets[fctIndex].columns[3].width = 15;
+      report.worksheets[fctIndex].columns[2].width = 55;
+      report.worksheets[fctIndex].columns[1].width = 21;
+    }
 
     return report;
   }
