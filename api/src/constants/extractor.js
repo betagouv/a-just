@@ -533,6 +533,15 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
     recodedFunction: "CONT A VIF Parquet",
     rank:17
   },
+  { 
+    category_label: "Greffe",
+    label: "CONTRACTUEL A",
+    code: "CONT A Autres",
+    position: "Contractuel",
+    category_detail: "C",
+    recodedFunction: "Fonctionnaire A-B-CBUR",
+    rank:17
+  },
   // Att. Justice
   { 
     category_label: "Autour du magistrat",
