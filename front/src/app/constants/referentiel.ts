@@ -5,6 +5,7 @@ export const REFERENTIELS_CANT_UPDATED = [
   'Autres activités',
   "Juges d'Instruction",
   'Juges des Enfants',
+  'Contentieux des mineurs',
 ];
 
 /**
