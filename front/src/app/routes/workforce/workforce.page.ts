@@ -757,7 +757,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Filtre liste RH
    */
-  onFilterList(memorizeScroolPosition = false) {
+  onFilterList(memorizeScroolPosition = false, keepEmptyVentilation = true) {
     if (
       !this.categoriesFilterList.length ||
       !this.referentiel.length ||
@@ -789,23 +789,42 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         selectedReferentielIds,
         this.humanResourceService.categoriesFilterListIds
       )
-      .then(({ list, allPersons }) => {
-        this.listFormated = list;
-        this.allPersons = allPersons;
+      .then(
+        ({
+          list,
+          allPersons,
+        }: {
+          list: listFormatedInterface[];
+          allPersons: HumanResourceIsInInterface[];
+        }) => {
+          this.listFormated = list;
+          this.allPersons = allPersons;
 
-        this.orderListWithFiltersParams();
-        this.isLoading = false;
-        console.log('this.listFormated', this.listFormated);
+          this.orderListWithFiltersParams();
+          if (
+            !keepEmptyVentilation &&
+            this.selectedReferentielIds.length < this.referentiel.length
+          ) {
+            this.listFormated = this.listFormated.map((list) => {
+              list.hrFiltered = list.hrFiltered.filter(
+                (h) => h.currentActivities.length > 0
+              );
+              return list;
+            });
+          }
 
-        const domContent = document.getElementById('container-list');
-        if (domContent) {
-          if (scrollPosition !== null) {
-            domContent.scrollTop = scrollPosition;
-          } else {
-            domContent.scrollTop = 0;
+          this.isLoading = false;
+
+          const domContent = document.getElementById('container-list');
+          if (domContent) {
+            if (scrollPosition !== null) {
+              domContent.scrollTop = scrollPosition;
+            } else {
+              domContent.scrollTop = 0;
+            }
           }
         }
-      });
+      );
 
     if (this.route.snapshot.fragment) {
       this.onGoTo(+this.route.snapshot.fragment);
@@ -943,7 +962,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       return cat;
     });
 
-    this.onFilterList(true);
+    this.onFilterList(true, false);
   }
 
   /**
