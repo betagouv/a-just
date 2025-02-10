@@ -403,8 +403,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         return;
       } else if (totalAffected < 100) {
         this.appService.alert.next({
-          title: 'Attention',
-          text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doit constituer 100% de son temps de travail.<br/><br/>Il est également essentiel que, même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il soit affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
+          title: 'La ventilation de cet agent est incomplète',
+          text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${
+            100 - totalAffected
+          }% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           callback: () => {
             this.onSave(true, saveETPT0);
           },
