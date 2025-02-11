@@ -1,8 +1,9 @@
-import user from '../fixtures/user.json'
+import user from '../../fixtures/user.json'
 
 describe('Signup Page', () => {
 
   beforeEach(() => {
+    cy.clearAllLocalStorage();
     cy.visit(`/connexion`)
     cy.get('.signup')
       .should('contain.text', 'Rejoindre A-JUST')
