@@ -207,17 +207,13 @@ export default (sequelizeInstance, Model) => {
     })
     const list = []
     for (let i = 0; i < listAll.length; i++) {
-      if (await Model.models.TJ.isVisible(listAll[i].label)) {
-        list.push({
-          id: listAll[i].id,
-          label: listAll[i].label,
-          date: listAll[i].date,
-        })
-      }
+      list.push({
+        id: listAll[i].id,
+        label: listAll[i].label,
+        date: listAll[i].date,
+        groups: await Model.models.HRBackupsGroupsIds.getGroupsByBackupId(listAll[i].id),
+      })
     }
-    //console.log('\n\n\n\n\n\n\n\n\n\n\n\nLIST:', list)
-    //list.map((elem) => console.log('id:', elem.id, ' | label:', elem.label))
-    //console.log('\n\n\n\n\n\n\n\n\n\n\n\n')
     return list
   }
 
