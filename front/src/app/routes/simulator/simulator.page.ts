@@ -503,10 +503,10 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   introStepsToCompleteDefault: IntroJSStep[] = [
     {
-      target: '.date-bar-container',
+      target: '.categories-switch',
       title: 'Configurez votre hypothèse :',
       intro:
-        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario. Ensuite, déterminez <b>une date de début et de fin de période</b>, c’est à dire la date future à laquelle vous souhaitez vous projeter (ex : atteindre un stock de X dossier dans 12 mois).</p>',
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou fonctionnaires de greffe.</p>',
       beforeLoad: async (intro: any) => {
         if (this.periodSelector) {
           const now = today();
