@@ -7,6 +7,7 @@ import {
 import { extractCodeFromLabelImported } from "../utils/referentiel";
 import { camel_to_snake } from "../utils/utils";
 import config from "config";
+import { isTj } from "../utils/ca";
 
 /**
  * Scripts intermediaires des contentieux
@@ -272,7 +273,7 @@ export default (sequelizeInstance, Model) => {
                   code_import: extract.code,
                   parent_id: parentId,
                   category:
-                    extract.code.startsWith("12.") && extract.code.length > 3
+                    extract.code.startsWith(isTj()?"12.":"14.") && extract.code.length > 3
                       ? ref["niveau_" + (i + 1)]
                       : null,
                 },
@@ -289,7 +290,7 @@ export default (sequelizeInstance, Model) => {
               });
             } else {
               if (
-                extract.code.startsWith("12.") &&
+                extract.code.startsWith(isTj()?"12.":"14.") &&
                 extract.code.length > 3 &&
                 findInDb.dataValues.category !== ref["niveau_" + (i + 1)]
               ) {

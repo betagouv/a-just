@@ -1,5 +1,9 @@
 import { orderBy, sortBy, sumBy } from "lodash";
-import { ABSENTEISME_LABELS, CET_LABEL } from "../constants/referentiel";
+import {
+  ABSENTEISME_LABELS,
+  CET_LABEL,
+  DELEGATION_TJ,
+} from "../constants/referentiel";
 import {
   nbOfDays,
   nbWorkingDays,
@@ -313,7 +317,6 @@ export const computeExtractDdg = async (
       let absenteisme = 0;
       let totalDaysGone = 0;
       let totalDays = 0;
-
       let indispoArray = new Array([]);
       let { allIndispRefIds, refIndispo } =
         getIndispoDetails(flatReferentielsList);
@@ -475,6 +478,13 @@ export const computeExtractDdg = async (
             (refObj[key] || 0);
       }
 
+      if (isCa()) {
+        Object.keys(refObj).map((k) => {
+          console.log(k)
+          if (k.includes(DELEGATION_TJ.toUpperCase())) refObj[key] = refObj[key] - refObj[k];
+        });
+      }
+
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (
           categoryName !== "pas de catégorie" ||
@@ -486,7 +496,8 @@ export const computeExtractDdg = async (
           let gaps = null;
           if (isCa()) {
             gaps = {
-              ["Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST"]: null,
+              ["Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST"]:
+                null,
               ["_"]: null,
             };
           } else {
@@ -498,7 +509,7 @@ export const computeExtractDdg = async (
           onglet2.push({
             ["Réf."]: String(human.id),
             Arrondissement: juridictionName.label,
-            Jirs: isJirs? 'x':'',
+            Jirs: isJirs ? "x" : "",
             Juridiction: (
               human.juridiction || juridictionName.label
             ).toUpperCase(),
@@ -509,7 +520,7 @@ export const computeExtractDdg = async (
             Fonction: fonctionName,
             ["Fonction recodée"]: null,
             ["Code fonction par défaut"]: fonctionCategory,
-            ["Fonction agrégat"]:null,
+            ["Fonction agrégat"]: null,
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -518,7 +529,8 @@ export const computeExtractDdg = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période absentéisme non déduit (hors action 99)"]: reelEtp,
+            ["ETPT sur la période absentéisme non déduit (hors action 99)"]:
+              reelEtp,
             ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
@@ -551,8 +563,12 @@ export const getViewModel = async (params) => {
       "Temps ventilés sur la période (contentieux sociaux civils et commerciaux)"
     );
     keys2.push("Temps ventilés sur la période (service pénal)");
-    keys2.push("Temps ventilés sur la période (hors indisponibilités relevant de l'action 99)");
-    keys2.push("Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)");
+    keys2.push(
+      "Temps ventilés sur la période (hors indisponibilités relevant de l'action 99)"
+    );
+    keys2.push(
+      "Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)"
+    );
     keys2.push("Soutien (Hors accueil du justiciable)");
     keys2 = keys2.map((x) =>
       x === "14. TOTAL INDISPONIBILITÉ"
@@ -610,7 +626,6 @@ export const getViewModel = async (params) => {
     (x) => x.sub !== "12.2. COMPTE ÉPARGNE TEMPS"
   );
   agregat = agregat.map((x) => {
-
     if (x.global === "12. TOTAL INDISPONIBILITÉ")
       return {
         ...x,
@@ -850,6 +865,13 @@ export const computeExtract = async (
             (refObj[key] || 0);
       }
 
+      if (isCa()) {
+        Object.keys(refObj).map((k) => {
+          console.log(k)
+          if (k.includes(DELEGATION_TJ.toUpperCase())) refObj[key] = refObj[key] - refObj[k];
+        });
+      }
+
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (
           categoryName !== "pas de catégorie" ||
@@ -871,7 +893,8 @@ export const computeExtract = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période absentéisme non déduit (hors action 99)"]: reelEtp,
+            ["ETPT sur la période absentéisme non déduit (hors action 99)"]:
+              reelEtp,
             ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ...refObj,
           });
@@ -886,20 +909,24 @@ export const computeExtract = async (
 export const formatFunctions = async (functionList) => {
   let list = [
     ...functionList,
-    ...isCa() ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA
-      : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR
+    ...(isCa()
+      ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA
+      : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR),
   ];
-  list = list.map((fct)=>{
-  return {CONCAT: fct['category_label']+fct['code'],...fct}
-  })
+  list = list.map((fct) => {
+    return { CONCAT: fct["category_label"] + fct["code"], ...fct };
+  });
 
-  return orderBy(list, ["category_label", "rank","code"], ["desc", "asc","asc"]);
+  return orderBy(
+    list,
+    ["category_label", "rank", "code"],
+    ["desc", "asc", "asc"]
+  );
 };
 
 export const getObjectKeys = async (array) => {
-  if (array.length === 0) return []; 
-  console.log(Object.keys(array[0]))
+  if (array.length === 0) return [];
+  console.log(Object.keys(array[0]));
 
-  return Object.keys(array[0]); 
-}
-
+  return Object.keys(array[0]);
+};
