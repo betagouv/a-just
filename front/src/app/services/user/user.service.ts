@@ -382,8 +382,7 @@ export class UserService implements OnInit {
       user &&
       user.access &&
       user.access.indexOf(USER_ACCESS_SIMULATOR) === -1 &&
-      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 &&
-      this.isCa() === false
+      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1
     ) {
       menu.push({
         label: 'Simulateur',
