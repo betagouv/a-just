@@ -14,6 +14,11 @@ export const ABSENTEISME_LABELS = [
 ];
 
 /**
+ * Categorie utilisée dans l'extracteur qui ne comptabilise ni de l'action 99 ni de l'absentéisme
+ */
+export const DELEGATION_TJ = "Délégation TJ";
+
+/**
  * Conversion d'un nom de référentiel en index de position
  * @param {*} name
  * @returns
