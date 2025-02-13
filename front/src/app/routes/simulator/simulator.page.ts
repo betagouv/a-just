@@ -506,7 +506,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       target: '.categories-switch',
       title: 'Configurez votre hypothèse :',
       intro:
-        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou fonctionnaires de greffe.</p>',
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les fonctionnaires de greffe.</p>',
       beforeLoad: async (intro: any) => {
         if (this.periodSelector) {
           const now = today();
