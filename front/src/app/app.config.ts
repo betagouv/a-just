@@ -1,6 +1,5 @@
 import {
   ApplicationConfig,
-  CSP_NONCE,
   LOCALE_ID,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -34,9 +33,5 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     { provide: LOCALE_ID, useValue: 'fr' },
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults },
-    {
-      provide: CSP_NONCE,
-      useValue: 'myRandomNonceValue',
-    },
   ],
 };
