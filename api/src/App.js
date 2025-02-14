@@ -187,7 +187,7 @@ export default class App extends AppBase {
               'https://settings.crisp.chat',
             ],
             'default-src': ["'none'"],
-            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`, ]), 'cdnjs.cloudflare.com', "'sha256-Ks+4bfA56EzWbsVt5/a+A7rCibdXWRQVb7y2dkDLIZM='", "'sha256-MKASWYfd3dGFQes9nQT5XnslE3xYlnUb4cHpxhk4fag='", "'sha256-eK2nDKvEyw7RbvnsAc4UTeSvLsouV8qnHxl0X48dCbs='", 'https://client.crisp.chat'],
+            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`, ]), 'cdnjs.cloudflare.com', "'sha256-Ks+4bfA56EzWbsVt5/a+A7rCibdXWRQVb7y2dkDLIZM='", "'sha256-MKASWYfd3dGFQes9nQT5XnslE3xYlnUb4cHpxhk4fag='", "'sha256-eK2nDKvEyw7RbvnsAc4UTeSvLsouV8qnHxl0X48dCbs='", 'https://client.crisp.chat', "'sha256-7Vo533bZB5hNdpZy9SiCUDc3JcgD9jqDXEc9aVAk5nY='", "'sha256-UP0QZg7irvSMvOBz9mH2PIIE28+57UiavRfeVea0l3g='", "'sha256-Mj/pDR/CuVebTo+8zwX6PU1+MXNnrzFL+dgRa0Q0JF0='", "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='"],
             'worker-src': ['blob:'],
             'frame-src': [
               'https://app.videas.fr/',
