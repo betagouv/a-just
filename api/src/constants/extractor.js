@@ -327,7 +327,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
 export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
   {
     category_label: "Magistrat",
-    label: "Vice-Président placé",
+    label: "VICE-PRÉSIDENT PLACÉ ADDITIONNEL",
     code: "VPP ADDITIONNEL",
     position: "Placé",
     category_detail: "M-PLAC-ADD",
@@ -336,7 +336,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
   },
   {
     category_label: "Magistrat",
-    label: "Vice-Président placé",
+    label: "VICE-PRÉSIDENT PLACÉ DE SUBSTITUTION",
     code: "VPP SUBSTITUTION",
     position: "Placé",
     category_detail: "M-PLAC-SUB",
@@ -345,7 +345,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
   },
   {
     category_label: "Magistrat",
-    label: "Juge placé",
+    label: "JUGE PLACÉ",
     code: "JP ADDITIONNEL",
     position: "Placé",
     category_detail: "M-PLAC-ADD",
@@ -354,7 +354,7 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
   },
   {
     category_label: "Magistrat",
-    label: "Juge placé",
+    label: "JUGE PLACÉ",
     code: "JP SUBSTITUTION",
     position: "Placé",
     category_detail: "M-PLAC-SUB",

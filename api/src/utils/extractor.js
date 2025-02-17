@@ -17,7 +17,7 @@ import {
   FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR,
   FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA,
 } from "../constants/extractor";
-import { isCa } from "./ca";
+import { isCa, isTj } from "./ca";
 
 /**
  * Tri par catégorie et par fonction
@@ -559,31 +559,12 @@ export const getViewModel = async (params) => {
       : [];
 
   if (isCa()) {
-    keys2.push(
-      "Temps ventilés sur la période (contentieux sociaux civils et commerciaux)"
-    );
-    keys2.push("Temps ventilés sur la période (service pénal)");
-    keys2.push(
-      "Temps ventilés sur la période (hors indisponibilités relevant de l'action 99)"
-    );
-    keys2.push(
-      "Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)"
-    );
-    keys2.push("Soutien (Hors accueil du justiciable)");
     keys2 = keys2.map((x) =>
       x === "14. TOTAL INDISPONIBILITÉ"
         ? "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
         : x
     );
   } else {
-    /**
-    keys2.push("Temps ventilés sur la période (contentieux civils et sociaux)");
-    keys2.push("Temps ventilés sur la période (affaires pénales)");
-    keys2.push(
-      'Vérif adéquation "temps ventilé sur la période" et somme (temps ventilés civils + pénals + autres activités + indisponibilité)'
-    );
-    keys2.push("Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)");
-     */
     keys2 = keys2.map((x) =>
       x === "12. TOTAL INDISPONIBILITÉ"
         ? "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
@@ -626,7 +607,7 @@ export const getViewModel = async (params) => {
     (x) => x.sub !== "12.2. COMPTE ÉPARGNE TEMPS"
   );
   agregat = agregat.map((x) => {
-    if (x.global === "12. TOTAL INDISPONIBILITÉ")
+    if (x.global === "12. TOTAL INDISPONIBILITÉ" && isTj())
       return {
         ...x,
         global: "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
@@ -634,15 +615,33 @@ export const getViewModel = async (params) => {
         sub1: x.sub,
       };
 
+      if (x.global === "14. TOTAL INDISPONIBILITÉ" && isCa())
+      return {
+        ...x,
+        global: "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+        global1: "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+        sub1: x.sub,
+      };
+
     if (
-      x.sub === "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)"
+      x.global === "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" && isTj()
     )
       return {
         ...x,
         global1:
-          "13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques",
+          "13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
         sub1: x.sub,
       };
+
+      if (
+        x.global === "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" && isCa()
+      )
+        return {
+          ...x,
+          global1:
+            "15. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
+          sub1: x.sub,
+        };
 
     return { ...x, sub1: x.sub, global1: x.global };
   });
@@ -885,6 +884,7 @@ export const computeExtract = async (
             Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
+            ['Fonction recodée']:null,
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -893,9 +893,9 @@ export const computeExtract = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période absentéisme non déduit (hors action 99)"]:
+            ["ETPT sur la période (absentéisme et action 99 déduits)"]:
               reelEtp,
-            ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
+            ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]: totalEtpt,
             ...refObj,
           });
     })
