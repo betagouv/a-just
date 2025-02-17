@@ -248,20 +248,21 @@ export class ExcelService extends MainClass {
 
       report.worksheets[indexTab].getCell('ZZ' + indexCell).value = ''; // TO SET ALL PREVIOUS COL
 
-      report = this.userService.isTJ()
-        ? this.setExcelFunctionsTj(report, indexCell, viewModel)
-        : this.setExcelFunctionsCa(report, indexCell, viewModel);
+      report = this.setExcelFunctionsBinding(report, indexCell, viewModel);
 
       report = this.userService.isTJ()
         ? this.setGapsJEJI(report, indexCell, viewModel)
         : this.setGapsMineurs(report, indexCell, viewModel);
 
-      report = this.setJuridictionPickerByAgent(
-        report,
-        indexCell,
-        viewModel,
-        indexTab
-      );
+      report = this.userService.isTJ()
+        ? this.setJuridictionPickerByAgent(
+            report,
+            indexCell,
+            viewModel,
+            indexTab
+          )
+        : this.addRecodedFonctionCA(report, indexCell, viewModel, indexFctCol);
+
       report = this.setDopDownPlaceByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownJAByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownAttJByAgent(report, indexFctCol, indexTab);
@@ -609,15 +610,20 @@ export class ExcelService extends MainClass {
     report.worksheets[etptDDGIndex].columns[0].width = 0;
     report.worksheets[etptDDGIndex].columns[1].width = 0;
     report.worksheets[etptDDGIndex].columns[2].width = 0;
+    report.worksheets[etptDDGIndex].columns[8].width = 20;
     report.worksheets[etptDDGIndex].columns[9].width = 0;
     report.worksheets[etptDDGIndex].columns[10].width = 0;
     report.worksheets[etptDDGIndex].columns[11].width = 0;
-    report.worksheets[etptDDGIndex].columns[8].width = 20;
+
     let index = 0;
     do {
       report.worksheets[etptDDGIndex].columns[12 + index].width = 26;
       index++;
     } while (index < 4);
+
+    if (this.userService.isCa()) {
+      report.worksheets[etptDDGIndex].columns[18].width = 0;
+    }
 
     const etptAjustIndex =
       this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0;
@@ -625,6 +631,10 @@ export class ExcelService extends MainClass {
       ...this.tabs.onglet1.columnSize,
     ];
     report.worksheets[etptAjustIndex].columns[0].width = 16;
+    if (this.userService.isCa()) {
+      report.worksheets[etptAjustIndex].columns[7].width = 0;
+      report.worksheets[etptAjustIndex].columns[10].width = 26;
+    }
 
     const agregatIndex =
       this.findIndexByName(report.worksheets, 'Agrégats DDG') || 0;
@@ -653,7 +663,7 @@ export class ExcelService extends MainClass {
    * @param viewModel
    * @returns
    */
-  setExcelFunctionsTj(report: any, indexCell: number, viewModel: any) {
+  setExcelFunctionsBinding(report: any, indexCell: number, viewModel: any) {
     const etptDDGIndex =
       this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
 
@@ -707,8 +717,11 @@ export class ExcelService extends MainClass {
    * @param viewModel
    */
   setGapsMineurs(report: any, indexCell: number, viewModel: any) {
+    const etptDDGIndex =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+
     // ECART CTX MINEURS  ONGLET DDG
-    report.worksheets[2].getCell(
+    report.worksheets[etptDDGIndex].getCell(
       this.getExcelFormulaFormat(
         ['Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST'],
         indexCell,
@@ -809,8 +822,18 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setExcelFunctionsCa(report: any, indexCell: number, viewModel: any) {
+    const etptDDGIndex =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+
+    let concatFct = this.getExcelFormulaFormat(
+      ['Catégorie', 'Fonction'],
+      indexCell,
+      viewModel.days1,
+      '&'
+    );
+
     // FONCTION RECODEE ONGLET DDG => AUTOMATISER PLUS TARD
-    report.worksheets[2].getCell('FA' + indexCell).value = {
+    report.worksheets[etptDDGIndex].getCell('FA' + indexCell).value = {
       formula:
         '=IF(H' +
         indexCell +
@@ -821,7 +844,7 @@ export class ExcelService extends MainClass {
     };
 
     // FONCTION AGREGAT ONGLET DDG => AUTOMATISER PLUS TARD
-    report.worksheets[2].getCell('FB' + indexCell).value = {
+    report.worksheets[etptDDGIndex].getCell('FB' + indexCell).value = {
       formula:
         '=IFERROR(VLOOKUP(H' +
         indexCell +
@@ -830,7 +853,7 @@ export class ExcelService extends MainClass {
         ')',
       result: '',
     };
-
+    /**
     // SOCIAUX CIVILS ET COMMERCIAUX  ONGLET DDG
     report.worksheets[2].getCell(
       this.getExcelFormulaFormat(
@@ -991,6 +1014,8 @@ export class ExcelService extends MainClass {
     ].width = 30;
 
     report.worksheets[2].columns[15].width = 0;
+
+    */
     return report;
   }
 
@@ -1117,7 +1142,7 @@ export class ExcelService extends MainClass {
         type: 'list',
         allowBlank: true,
         formulae: this.userService.isCa()
-          ? ['"JA Chambres Sociales,JA Siège autres,JA Parquet Général"']
+          ? ['"JA Social,JA Siège autres,JA Parquet"']
           : [
               '"JA Social,JA Siège autres,JA Parquet,JA JAP,JA JE,JA JI,JA JLD"',
             ],
@@ -1133,10 +1158,7 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setDopDownAttJByAgent(report: any, indexFctCol: string, indexTab: number) {
-    if (
-      report.worksheets[indexTab].getCell(indexFctCol).value === 'Att. J' &&
-      this.userService.isTJ()
-    ) {
+    if (report.worksheets[indexTab].getCell(indexFctCol).value === 'Att. J') {
       report.worksheets[indexTab].getCell(indexFctCol).value =
         'Att. J Siège autres';
       report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
@@ -1158,8 +1180,7 @@ export class ExcelService extends MainClass {
    */
   setDopDownContAJPByAgent(report: any, indexFctCol: string, indexTab: number) {
     if (
-      report.worksheets[indexTab].getCell(indexFctCol).value === 'CONT A JP' &&
-      this.userService.isTJ()
+      report.worksheets[indexTab].getCell(indexFctCol).value === 'CONT A JP'
     ) {
       report.worksheets[indexTab].getCell(indexFctCol).value =
         'CONT A JP Siège';
@@ -1186,8 +1207,7 @@ export class ExcelService extends MainClass {
   ) {
     if (
       report.worksheets[indexTab].getCell(indexCat).value === 'Greffe' &&
-      report.worksheets[indexTab].getCell(indexFctCol).value === 'CONT A' &&
-      this.userService.isTJ()
+      report.worksheets[indexTab].getCell(indexFctCol).value === 'CONT A'
     ) {
       report.worksheets[indexTab].getCell(indexFctCol).value = 'CONT A Autres';
       report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
@@ -1233,7 +1253,7 @@ export class ExcelService extends MainClass {
     };
 
     // ONGLET AGGREGAT MESSAGE SI ECART
-    report.worksheets[3]['_rows'][6].height = 40;
+    report.worksheets[3]['_rows'][6].height = 50;
     report.worksheets[3].getCell('F7').value = {
       formula:
         "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne N de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
@@ -1285,6 +1305,40 @@ export class ExcelService extends MainClass {
       report.worksheets[juridictionIndex].getCell('J' + (+index + 1)).value =
         value;
     });
+    return report;
+  }
+  /**
+   * @param report
+   * @param indexCell
+   * @param viewModel
+   * @param indexFctCol
+   */
+  addRecodedFonctionCA(
+    report: any,
+    indexCell: number,
+    viewModel: any,
+    indexFctCol: string
+  ) {
+    const indexTab =
+      this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0;
+
+    report.worksheets[indexTab].getCell(
+      this.getExcelFormulaFormat(
+        ['Fonction recodée'],
+        indexCell,
+        viewModel.days
+      )
+    ).value = {
+      formula:
+        "='ETPT Format DDG'!" +
+        this.getExcelFormulaFormat(
+          ['Fonction recodée'],
+          indexCell,
+          viewModel.days1
+        ),
+      result: '',
+    };
+
     return report;
   }
 }
