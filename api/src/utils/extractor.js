@@ -480,10 +480,20 @@ export const computeExtractDdg = async (
 
       if (isCa()) {
         Object.keys(refObj).map((k) => {
-          console.log(k)
-          if (k.includes(DELEGATION_TJ.toUpperCase())) refObj[key] = refObj[key] - refObj[k];
+          if (k.includes(DELEGATION_TJ.toUpperCase()))
+            refObj[key] = refObj[key] - refObj[k];
         });
       }
+
+      ["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].forEach(
+        (cle) => {
+          if (refObj.hasOwnProperty(cle)) {
+            delete refObj[cle];
+          }
+        }
+      );
+
+      refObj = deplacerClefALaFin(refObj, "14.13. DÉLÉGATION TJ");
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (
@@ -500,7 +510,8 @@ export const computeExtractDdg = async (
                 null,
               ["_"]: null,
             };
-          } else {
+          }
+          if (isTj()) {
             gaps = {
               ["Ecart JE → détails manquants, à rajouter dans A-JUST"]: null,
               ["Ecart JI → détails manquants, à rajouter dans A-JUST"]: null,
@@ -564,6 +575,13 @@ export const getViewModel = async (params) => {
         ? "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
         : x
     );
+
+    keys2 = keys2.filter(
+      (x) =>
+        !["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].includes(
+          x
+        )
+    );
   } else {
     keys2 = keys2.map((x) =>
       x === "12. TOTAL INDISPONIBILITÉ"
@@ -604,9 +622,23 @@ export const getViewModel = async (params) => {
       '"',
   ];
   let agregat = params.onglet2.excelRef.filter(
-    (x) => x.sub !== "12.2. COMPTE ÉPARGNE TEMPS"
+    (x) =>
+      !["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].includes(
+        x.sub
+      )
   );
+
   agregat = agregat.map((x) => {
+    if (x.sub === "14.13. DÉLÉGATION TJ" && isCa()) {
+      return {
+        ...x,
+        global: "14.13. DÉLÉGATION TJ",
+        global1: "DÉLÉGATION TJ",
+        sub: null,
+        sub1: null,
+      };
+    }
+
     if (x.global === "12. TOTAL INDISPONIBILITÉ" && isTj())
       return {
         ...x,
@@ -615,7 +647,7 @@ export const getViewModel = async (params) => {
         sub1: x.sub,
       };
 
-      if (x.global === "14. TOTAL INDISPONIBILITÉ" && isCa())
+    if (x.global === "14. TOTAL INDISPONIBILITÉ" && isCa())
       return {
         ...x,
         global: "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
@@ -624,7 +656,9 @@ export const getViewModel = async (params) => {
       };
 
     if (
-      x.global === "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" && isTj()
+      x.global ===
+        "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" &&
+      isTj()
     )
       return {
         ...x,
@@ -633,21 +667,29 @@ export const getViewModel = async (params) => {
         sub1: x.sub,
       };
 
-      if (
-        x.global === "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" && isCa()
-      )
-        return {
-          ...x,
-          global1:
-            "15. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
-          sub1: x.sub,
-        };
+    if (
+      x.global ===
+        "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" &&
+      isCa()
+    )
+      return {
+        ...x,
+        global1:
+          "15. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
+        sub1: x.sub,
+      };
 
     return { ...x, sub1: x.sub, global1: x.global };
   });
-  // remplacer : "ETPT sur la période hors indisponibilités" => "ETPT sur la période, hors indisponibilités relevant de l'action 99 (absentéisme non déduit)""
-  // remplacer : "12. TOTAL INDISPONIBILITÉ" => "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
-  // remplacer : "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" => ""13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques"
+
+  const index = agregat.findIndex(
+    (item) => item.global === "14.13. DÉLÉGATION TJ"
+  );
+
+  if (index !== -1) {
+    const [element] = agregat.splice(index, 1); // Retire l'élément du tableau
+    agregat.push(element); // Ajoute l'élément à la fin
+  }
 
   return {
     tgilist,
@@ -866,8 +908,8 @@ export const computeExtract = async (
 
       if (isCa()) {
         Object.keys(refObj).map((k) => {
-          console.log(k)
-          if (k.includes(DELEGATION_TJ.toUpperCase())) refObj[key] = refObj[key] - refObj[k];
+          if (k.includes(DELEGATION_TJ.toUpperCase()))
+            refObj[key] = refObj[key] - refObj[k];
         });
       }
 
@@ -884,7 +926,7 @@ export const computeExtract = async (
             Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
-            ['Fonction recodée']:null,
+            ["Fonction recodée"]: null,
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -893,9 +935,9 @@ export const computeExtract = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période (absentéisme et action 99 déduits)"]:
-              reelEtp,
-            ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]: totalEtpt,
+            ["ETPT sur la période (absentéisme et action 99 déduits)"]: reelEtp,
+            ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]:
+              totalEtpt,
             ...refObj,
           });
     })
@@ -926,7 +968,14 @@ export const formatFunctions = async (functionList) => {
 
 export const getObjectKeys = async (array) => {
   if (array.length === 0) return [];
-  console.log(Object.keys(array[0]));
-
   return Object.keys(array[0]);
+};
+
+export const deplacerClefALaFin = (obj, clef) => {
+  if (obj.hasOwnProperty(clef)) {
+    const valeur = obj[clef]; // Sauvegarde la valeur
+    delete obj[clef]; // Supprime la clé
+    obj[clef] = valeur; // Réinsère la clé à la fin
+  }
+  return obj;
 };
