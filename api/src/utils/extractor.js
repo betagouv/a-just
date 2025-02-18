@@ -471,11 +471,12 @@ export const computeExtractDdg = async (
               nbOfDays(human.dateStart, dateStop)) /
               nbOfDays(dateStart, dateStop) -
             (refObj[key] || 0);
-        } else
+        } else {
           reelEtp =
             sumBy(reelEtpObject, "etp") /
               sumBy(reelEtpObject, "countNbOfDays") -
             (refObj[key] || 0);
+        }
       }
 
       if (isCa()) {
@@ -541,7 +542,7 @@ export const computeExtractDdg = async (
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
             ["ETPT sur la période absentéisme non déduit (hors action 99)"]:
-              reelEtp,
+              reelEtp < 0 ? 0 : reelEtp,
             ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
@@ -935,7 +936,8 @@ export const computeExtract = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période (absentéisme et action 99 déduits)"]: reelEtp,
+            ["ETPT sur la période (absentéisme et action 99 déduits)"]:
+              reelEtp < 0 ? 0 : reelEtp,
             ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]:
               totalEtpt,
             ...refObj,
