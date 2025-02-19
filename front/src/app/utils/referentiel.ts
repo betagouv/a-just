@@ -11,7 +11,7 @@ import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel';
 export function referentielMappingName(name: string): string {
   switch (name) {
     case 'Autres activités':
-      return 'Autres activités';
+      return 'Autres';
     case 'Indisponibilité':
       return 'Indisp.';
     case 'Siège Pénal':
@@ -84,7 +84,7 @@ export function referentielMappingColor(
 ): string {
   if (opacity === OPACITY_20) {
     switch (name) {
-      case 'Autres activités':
+      case 'Autres':
         return `rgb(215, 217, 219)`;
       case 'Indisp.':
         return `rgb(55, 71, 79)`;
@@ -116,7 +116,7 @@ export function referentielMappingColor(
     }
   } else {
     switch (name) {
-      case 'Autres activités':
+      case 'Autres':
         return `rgba(66, 66, 66, ${opacity})`;
       case 'Indisp.':
         return `rgba(55, 71, 79, ${opacity})`;
@@ -162,7 +162,7 @@ export function referentielMappingColorActivity(
 ): string {
   if (opacity === OPACITY_20) {
     switch (name) {
-      case 'Autres activités':
+      case 'Autres':
         return `rgb(215, 217, 219)`;
       case 'Indisp.':
         return `rgb(55, 71, 79)`;
@@ -196,7 +196,7 @@ export function referentielMappingColorActivity(
     }
   } else {
     switch (name) {
-      case 'Autres activités':
+      case 'Autres':
         return `rgba(66, 66, 66, ${opacity})`;
       case 'Indisp.':
         return `rgba(55, 71, 79, ${opacity})`;
