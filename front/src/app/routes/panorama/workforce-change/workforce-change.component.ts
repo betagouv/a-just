@@ -73,7 +73,7 @@ export class WorkforceChangeComponent
       isReverse: false,
     },
     {
-      label: 'assignement',
+      label: 'assignment',
       isReverse: false,
     },
     {
@@ -172,7 +172,7 @@ export class WorkforceChangeComponent
           ]);
         }
         break;
-      case 'assignement':
+      case 'assignment':
         if (button) {
           this.listToPrint.hr = sortBy(this.listToPrint.hr, [
             (h: HumanResourceSelectedInterface) => {
