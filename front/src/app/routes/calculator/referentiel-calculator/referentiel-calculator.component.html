@@ -8,7 +8,8 @@
             'chevron_right' }}
         </mat-icon>
 
-        <p>{{calculator.contentieux.label}}</p>
+        <p>{{userService.isCa()?calculator.contentieux.label:userService.referentielMappingNameByInterface(calculator.contentieux.label)}}
+        </p>
     </div>
 
     <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }" class="item dtes">
