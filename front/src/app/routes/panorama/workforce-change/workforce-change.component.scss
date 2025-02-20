@@ -95,7 +95,7 @@
         padding-left: 48px;
       }
 
-      .assignement {
+      .assignment {
         width: 50%;
         margin-left: 3px;
       }
@@ -110,8 +110,10 @@
 
     .agent {
       display: flex;
+      align-items: center;
       background-color: #fff;
-      min-height: 60.9px;
+      // min-height: 60.9px;
+      padding: 12px 24px;
 
       border: 1px solid #dddddd;
 
@@ -158,17 +160,39 @@
         }
       }
 
-      .assignements-section {
+      .assignments-section {
         display: flex;
         margin-left: 3px;
         width: 50%;
-        align-items: flex-end;
+        align-items: center;
+
+
+        .assignments-percentage {
+          display: flex;
+          justify-content: space-between;
+          width: 10%;
+
+          .total {
+            font-weight: bold;
+            background-color: #f6f6f6;
+            border-radius: 4px;
+            text-align: center;
+            color: #929292;
+            padding: 3px 4px;
+          }
+
+          .light-arrow {
+            color: #0063cb;
+            align-self: center;
+          }
+        }
 
         .activities {
           display: flex;
           flex-wrap: wrap;
           align-items: center;
-          width: 100%;
+          width: 90%;
+          margin-left: 8px;
 
           .activity {
             display: flex;
@@ -176,7 +200,7 @@
             font-size: 14px;
             font-weight: bold;
             color: #929292;
-            margin-bottom: 8px;
+            //margin-bottom: 8px;
             margin-right: 8px;
             min-width: 18%;
 
@@ -191,28 +215,6 @@
             }
           }
         }
-
-        .total {
-          font-weight: bold;
-          background-color: #f6f6f6;
-          border-radius: 4px;
-          text-align: center;
-          color: #929292;
-          margin: 0.2px 0 0;
-          padding: 3px 4px;
-          align-self: center;
-          margin-bottom: 8px;
-          height: 25.6px;
-        }
-
-        .light-arrow {
-          color: #0063cb;
-          margin-right: 4px;
-          align-self: center;
-          margin-bottom: 8px;
-        }
-
-
       }
 
       .date-section {
