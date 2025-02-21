@@ -108,7 +108,7 @@ export class ExcelService extends MainClass {
       .then(async (data) => {
         this.tabs = data.data;
 
-        const viewModel = {
+        let viewModel = {
           ...this.tabs.viewModel,
           fonctions: data.data.fonctions,
           firstLink: {
@@ -130,6 +130,10 @@ export class ExcelService extends MainClass {
           ).toLocaleDateString()} au ${new Date(
             this.dateStop.getValue()
           ).toLocaleDateString()}`,
+        };
+        viewModel = {
+          ...viewModel,
+          subtitles1: viewModel.subtitles1.slice(11),
         };
         fetch(
           this.userService.isCa() === false
@@ -1142,9 +1146,9 @@ export class ExcelService extends MainClass {
         type: 'list',
         allowBlank: true,
         formulae: this.userService.isCa()
-          ? ['"JA Social,JA Siège autres,JA Parquet"']
+          ? ['"JA Siège autres,JA Social,JA Parquet"']
           : [
-              '"JA Social,JA Siège autres,JA Parquet,JA JAP,JA JE,JA JI,JA JLD"',
+              '"JA Siège autres,JA Social,JA Parquet,JA JAP,JA JE,JA JI,JA JLD"',
             ],
       };
     }
