@@ -587,7 +587,7 @@ export class ExcelService extends MainClass {
     };
     // DDG CONT
     const contIndex =
-      this.findIndexByName(report.worksheets, 'ETPT_ATTACHES_JUSTICE_DDG') || 0;
+      this.findIndexByName(report.worksheets, 'ETPT_JUR_ASS_DDG') || 0;
     report.worksheets[contIndex].getCell('D' + +5).value =
       viewModel.uniqueJur[0] || '';
     report.worksheets[contIndex].getCell('D' + +5).dataValidation = {
