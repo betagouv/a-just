@@ -1035,6 +1035,7 @@ export class ExcelService extends MainClass {
   setRedGapConditionnalFormating(report: any, viewModel: any) {
     const etptDDGIndex =
       this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+      
     report.worksheets[etptDDGIndex].conditionalFormattings[0].ref =
       'A3:' +
       this.numberToExcelColumn(Object.keys(viewModel.days1).length) +
