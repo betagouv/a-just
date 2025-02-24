@@ -277,6 +277,8 @@ export class ExcelService extends MainClass {
         indexCat,
         indexTab
       );
+
+      report = this.setTJCPHCol(report, indexCell, viewModel, indexTab);
     });
 
     report = this.setAgregatAffichage(report, viewModel);
@@ -618,15 +620,16 @@ export class ExcelService extends MainClass {
     report.worksheets[etptDDGIndex].columns[9].width = 0;
     report.worksheets[etptDDGIndex].columns[10].width = 0;
     report.worksheets[etptDDGIndex].columns[11].width = 0;
+    report.worksheets[etptDDGIndex].columns[12].width = 0;
 
     let index = 0;
     do {
-      report.worksheets[etptDDGIndex].columns[12 + index].width = 26;
+      report.worksheets[etptDDGIndex].columns[13 + index].width = 26;
       index++;
     } while (index < 4);
 
     if (this.userService.isCa()) {
-      report.worksheets[etptDDGIndex].columns[18].width = 0;
+      report.worksheets[etptDDGIndex].columns[19].width = 0;
     }
 
     const etptAjustIndex =
@@ -1340,6 +1343,42 @@ export class ExcelService extends MainClass {
           indexCell,
           viewModel.days1
         ),
+      result: '',
+    };
+
+    return report;
+  }
+
+  /**
+   * Ajoute une colonne auxiliaire afin de savoir si l'agent appartient au TJ ou à un CPH détaché
+   * @param report
+   * @param indexCell
+   * @param viewModel
+   */
+  setTJCPHCol(
+    report: any,
+    indexCell: number,
+    viewModel: any,
+    indexTab: number
+  ) {
+    const indexJuridiction = this.getExcelFormulaFormat(
+      ['Juridiction'],
+      indexCell,
+      viewModel.days1
+    );
+    const indexTJCPH = this.getExcelFormulaFormat(
+      ['TJCPH'],
+      indexCell,
+      viewModel.days1
+    );
+
+    report.worksheets[indexTab].getCell(indexTJCPH).value = {
+      formula:
+        '=IF(OR(LEFT(' +
+        indexJuridiction +
+        ', 3)="TJ ", LEFT(' +
+        indexJuridiction +
+        ', 4)="CPH "), "OUI", "NON")',
       result: '',
     };
 

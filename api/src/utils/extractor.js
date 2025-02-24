@@ -533,6 +533,7 @@ export const computeExtractDdg = async (
             ["Fonction recodée"]: null,
             ["Code fonction par défaut"]: fonctionCategory,
             ["Fonction agrégat"]: null,
+            ["TJCPH"]:null,
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
