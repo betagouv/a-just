@@ -166,11 +166,10 @@
         width: 50%;
         align-items: center;
 
-
         .assignments-percentage {
           display: flex;
           justify-content: space-between;
-          width: 10%;
+          min-width: 15%;
 
           .total {
             font-weight: bold;
@@ -179,11 +178,13 @@
             text-align: center;
             color: #929292;
             padding: 3px 4px;
+            width: 60px;
           }
 
           .light-arrow {
             color: #0063cb;
             align-self: center;
+            width: 16px;
           }
         }
 
@@ -191,7 +192,6 @@
           display: flex;
           flex-wrap: wrap;
           align-items: center;
-          width: 90%;
           margin-left: 8px;
 
           .activity {
