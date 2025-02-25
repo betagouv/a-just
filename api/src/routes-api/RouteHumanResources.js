@@ -321,7 +321,7 @@ export default class RouteHumanResources extends Route {
           }
         }),
         ['categoryRank', 'fonctionRank', 'lastName']
-      ),
+      ).filter(a => a.sitations.length),
     })
   }
 
