@@ -763,8 +763,10 @@ export class PopinEditActivitiesComponent
    * @param date
    */
   async selectMonth(date: any) {
+    this.appService.appLoading.next(true);
     await this.controlBeforeChange().then(() => {
       this.activitiesService.loadMonthActivities(date).then((list: any) => {
+        this.appService.appLoading.next(false);
         this.activityMonth = new Date(date);
         this.checkIfNextMonthHasValue();
         this.hasValuesToShow = list.list.length !== 0;
