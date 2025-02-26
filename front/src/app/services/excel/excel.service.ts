@@ -452,6 +452,41 @@ export class ExcelService extends MainClass {
       result: '0',
     };
 
+    // Calculatrice
+    const indexTabMag =
+      this.findIndexByName(report.worksheets, 'Calculatrice magistrats') || 0;
+    const indexTabFon =
+      this.findIndexByName(report.worksheets, 'Calculatrice fonctionnaires') ||
+      0;
+    [indexTabMag, indexTabFon].map((tab) => {
+      ['F9', 'F14'].map((cel) => {
+        report.worksheets[tab].getCell(cel).value = 'unités';
+        report.worksheets[tab].getCell(cel).dataValidation = {
+          type: 'list',
+          formulae: ['"jours,demi-journées,heures"'],
+          error: 'Veuillez selectionner une valeur dans le menu déroulant',
+        };
+      });
+
+      ['G9', 'F16'].map((cel) => {
+        report.worksheets[tab].getCell(cel).value = 'fréquence';
+        report.worksheets[tab].getCell(cel).dataValidation = {
+          type: 'list',
+          formulae: ['"par jour,par semaine,par mois,par an"'],
+          error: 'Veuillez selectionner une valeur dans le menu déroulant',
+        };
+      });
+    });
+
+    const indexTabReconvert =
+      this.findIndexByName(report.worksheets, "Reconvertir % d'ETPT") || 0;
+    report.worksheets[indexTabReconvert].getCell('D3').value = 'MAGISTRAT';
+    report.worksheets[indexTabReconvert].getCell('D3').dataValidation = {
+      type: 'list',
+      formulae: ['"MAGISTRAT,FONCTIONNAIRE"'],
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+    };
+
     return report;
   }
 
@@ -1035,7 +1070,7 @@ export class ExcelService extends MainClass {
   setRedGapConditionnalFormating(report: any, viewModel: any) {
     const etptDDGIndex =
       this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
-      
+
     report.worksheets[etptDDGIndex].conditionalFormattings[0].ref =
       'A3:' +
       this.numberToExcelColumn(Object.keys(viewModel.days1).length) +
