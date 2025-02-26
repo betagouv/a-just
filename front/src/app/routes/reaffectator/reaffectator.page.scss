@@ -12,7 +12,7 @@
     display: flex;
     width: 369px;
 
-    > .label-container {
+    >.label-container {
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -27,7 +27,7 @@
       .buttons-row {
         display: flex;
 
-        > *:first-child {
+        >*:first-child {
           margin-right: 8px;
         }
       }
@@ -62,10 +62,15 @@
         color: fColor(darkModeTitle);
         padding: 4px 12px;
         cursor: pointer;
+
+        &.selected {
+          background-color: fColor(darkModeTitle);
+          color: white;
+        }
       }
     }
 
-    > .contentieux-label {
+    >.contentieux-label {
       width: 125px;
       padding-right: 8px;
 
@@ -76,7 +81,7 @@
         white-space: nowrap;
       }
 
-      > div {
+      >div {
         flex: 1;
         display: flex;
         width: 100%;
@@ -111,7 +116,7 @@
     flex: 1;
     margin-top: 3px;
 
-    > .sub-item {
+    >.sub-item {
       flex: 1;
       margin-right: 3px;
       cursor: pointer;
@@ -128,7 +133,7 @@
         }
       }
 
-      > .label {
+      >.label {
         flex: 1;
         display: flex;
         align-items: flex-end;
@@ -145,7 +150,7 @@
         }
       }
 
-      > .etp {
+      >.etp {
         height: 23px;
         border-radius: 4px;
         background-color: fColor(darkModeBgMenu);
@@ -194,11 +199,11 @@
     align-items: stretch;
     width: 369px;
 
-    > .label-container {
+    >.label-container {
       flex: 1;
       padding: 0px 16px;
 
-      > div {
+      >div {
         display: flex;
 
         i {
@@ -233,13 +238,13 @@
       }
     }
 
-    > .contentieux-label {
+    >.contentieux-label {
       align-self: stretch;
       display: flex;
       width: 125px;
       height: 100%;
 
-      > .text {
+      >.text {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -254,7 +259,7 @@
           white-space: nowrap;
         }
 
-        > div {
+        >div {
           display: flex;
           align-items: center;
 
@@ -286,13 +291,13 @@
     display: flex;
     flex: 1;
 
-    > .sub-item {
+    >.sub-item {
       flex: 1;
       align-self: stretch;
       display: flex;
       flex-direction: column;
 
-      > div {
+      >div {
         margin-right: 3px;
 
         &.taux-row {
@@ -308,7 +313,7 @@
           height: 23px;
           margin-top: 4px;
 
-          > input {
+          >input {
             text-align: center;
             border: none;
             width: 100%;
@@ -320,14 +325,14 @@
           margin-bottom: 11px;
           height: 20px;
 
-          > p {
+          >p {
             text-align: center;
             font-weight: bold;
             color: fColor(headerNumberColor);
           }
         }
 
-        > div.taux {
+        >div.taux {
           background-color: fColor(darkModeBgMenu);
           border-radius: 3.7px;
           display: flex;
@@ -335,7 +340,7 @@
           justify-content: center;
           height: 100%;
 
-          > aj-speedometer {
+          >aj-speedometer {
             width: 48px;
           }
 
@@ -344,7 +349,7 @@
           }
         }
 
-        > div.dtes {
+        >div.dtes {
           background-color: fColor(darkModeBgMenu);
           border-radius: 4px;
           height: 100%;
@@ -413,7 +418,7 @@
     display: flex;
     padding-right: 16px;
 
-    > .flex-1 {
+    >.flex-1 {
       min-height: 16px;
     }
   }
@@ -513,7 +518,7 @@
       .tags {
         margin-bottom: 8px;
 
-        > p {
+        >p {
           display: inline-block;
           height: 24px;
           padding: 2px 8px;

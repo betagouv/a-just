@@ -114,7 +114,7 @@
                   </p>
                 </div>
                 <div class="buttons-row" *ngIf="!duringPrint">
-                  <p class="btn" (click)="onToogleIsolation()">Isoler</p>
+                  <p class="btn" (click)="onToogleIsolation()" [class.selected]="this.isolatePersons">Isoler</p>
                   <p class="btn" (click)="onInitList(list)">Réinitialiser</p>
                 </div>
               </div>
