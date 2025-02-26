@@ -337,8 +337,14 @@ export default class RouteExtractor extends Route {
 
     sumTab = sumTab.filter((x) => x.contentieux.code_import !== null);
 
+    let GroupedList = groupBy(activities, "periode");
+   
+    GroupedList =  Object.keys(GroupedList).map((l) => {
+      return GroupedList[l].filter((x) => x.contentieux.code_import !== null);
+    });
+
     this.sendOk(ctx, {
-      list: groupBy(activities, "periode"),
+      list: GroupedList,
       sumTab,
       lastUpdate,
     });
