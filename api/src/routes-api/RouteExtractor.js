@@ -115,7 +115,8 @@ export default class RouteExtractor extends Route {
       categoryFilter,
       juridictionName,
       dateStart,
-      dateStop
+      dateStop,
+      isJirs
     );
     console.timeEnd("extractor-6");
 
@@ -148,7 +149,7 @@ export default class RouteExtractor extends Route {
       { global: null, sub: "CET > 30 jours" },
       {
         global:
-          "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)",
+          "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)",
         sub: null,
       },
       { global: null, sub: "CET < 30 jours" },

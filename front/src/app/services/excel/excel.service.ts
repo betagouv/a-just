@@ -249,6 +249,8 @@ export class ExcelService extends MainClass {
       const indexCat = this.getCategoryCellByAgent(indexCell, viewModel);
       const indexTab =
         this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+      const indexTabAjust =
+        this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0;
 
       report.worksheets[indexTab].getCell('ZZ' + indexCell).value = ''; // TO SET ALL PREVIOUS COL
 
@@ -265,7 +267,14 @@ export class ExcelService extends MainClass {
             viewModel,
             indexTab
           )
-        : this.addRecodedFonctionCA(report, indexCell, viewModel, indexFctCol);
+        : report;
+
+      report = this.addRecodedFonction(
+        report,
+        indexCell,
+        viewModel,
+        indexFctCol
+      );
 
       report = this.setDopDownPlaceByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownJAByAgent(report, indexFctCol, indexTab);
@@ -278,7 +287,13 @@ export class ExcelService extends MainClass {
         indexTab
       );
 
-      report = this.setTJCPHCol(report, indexCell, viewModel, indexTab);
+      report = this.setTJCPHCol(
+        report,
+        indexCell,
+        viewModel,
+        indexTab,
+        indexTabAjust
+      );
     });
 
     report = this.setAgregatAffichage(report, viewModel);
@@ -676,6 +691,11 @@ export class ExcelService extends MainClass {
     if (this.userService.isCa()) {
       report.worksheets[etptAjustIndex].columns[7].width = 0;
       report.worksheets[etptAjustIndex].columns[10].width = 26;
+    }
+    if (this.userService.isTJ()) {
+      report.worksheets[etptAjustIndex].columns[7].width = 0;
+      report.worksheets[etptAjustIndex].columns[8].width = 0;
+      report.worksheets[etptAjustIndex].columns[9].width = 0;
     }
 
     const agregatIndex =
@@ -1356,7 +1376,7 @@ export class ExcelService extends MainClass {
    * @param viewModel
    * @param indexFctCol
    */
-  addRecodedFonctionCA(
+  addRecodedFonction(
     report: any,
     indexCell: number,
     viewModel: any,
@@ -1395,7 +1415,8 @@ export class ExcelService extends MainClass {
     report: any,
     indexCell: number,
     viewModel: any,
-    indexTab: number
+    indexTab: number,
+    indexTabAjust: number
   ) {
     const indexJuridiction = this.getExcelFormulaFormat(
       ['Juridiction'],
@@ -1415,6 +1436,19 @@ export class ExcelService extends MainClass {
         ', 3)="TJ ", LEFT(' +
         indexJuridiction +
         ', 4)="CPH "), "OUI", "NON")',
+      result: '',
+    };
+
+    const indexTJCPHAjust = this.getExcelFormulaFormat(
+      ['TJCPH'],
+      indexCell,
+      viewModel.days
+    );
+
+    report.worksheets[indexTabAjust].getCell(indexTJCPHAjust).value = {
+      formula:
+        "='ETPT Format DDG'!" +
+        this.getExcelFormulaFormat(['TJCPH'], indexCell, viewModel.days1),
       result: '',
     };
 
