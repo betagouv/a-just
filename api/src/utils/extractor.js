@@ -494,7 +494,10 @@ export const computeExtractDdg = async (
         }
       );
 
+      let absenteismeDetails = null
       refObj = deplacerClefALaFin(refObj, "14.13. DÉLÉGATION TJ");
+      ({refObj, absenteismeDetails} = getAndDeleteAbsenteisme(refObj, ["12.31. CONGÉ MALADIE ORDINAIRE"	,"12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION"	,"12.8. AUTRE ABSENTÉISME"]))
+
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (
@@ -551,7 +554,8 @@ export const computeExtractDdg = async (
             ...refObj,
             ["CET > 30 jours"]: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
-            ["Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)"]:
+            ...absenteismeDetails,
+            ["TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)"]:
               absenteisme,
           });
         }
@@ -659,7 +663,7 @@ export const getViewModel = async (params) => {
 
     if (
       x.global ===
-        "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" &&
+        "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)" &&
       isTj()
     )
       return {
@@ -671,7 +675,7 @@ export const getViewModel = async (params) => {
 
     if (
       x.global ===
-        "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" &&
+        "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)" &&
       isCa()
     )
       return {
@@ -738,7 +742,8 @@ export const computeExtract = async (
   categoryFilter,
   juridictionName,
   dateStart,
-  dateStop
+  dateStop,
+  isJirs
 ) => {
   let data = [];
 
@@ -929,6 +934,8 @@ export const computeExtract = async (
             Catégorie: categoryName,
             Fonction: fonctionName,
             ["Fonction recodée"]: null,
+            ["TJCPH"]:null,
+            Jirs: isJirs ? "x" : "",
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -982,3 +989,15 @@ export const deplacerClefALaFin = (obj, clef) => {
   }
   return obj;
 };
+
+export const getAndDeleteAbsenteisme = (obj, labels) => {
+  let absDetails = {}
+  labels.map(label=>{
+  if (obj.hasOwnProperty(label)) {
+    const valeur = obj[label]; // Sauvegarde la valeur
+    delete obj[label]; // Supprime la clé
+    absDetails[label] = valeur; 
+  }
+  })  
+return {refObj:obj, absenteismeDetails:absDetails}
+}
