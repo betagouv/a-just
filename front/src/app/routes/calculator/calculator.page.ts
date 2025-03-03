@@ -162,16 +162,24 @@ export class CalculatorPage
    */
   documentation: DocumentationInterface = {
     title: 'Cockpit',
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
+    path: this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-donnees-brutes'
+      : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
     printSubTitle: true,
   };
   /**
    * Documentation list
    */
   docLinks: string[] = [
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-donnees-brutes'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-vues-graphiques'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/comparer-son-activite'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
   ];
   /**
    * Mémorisation de la dernière categorie
