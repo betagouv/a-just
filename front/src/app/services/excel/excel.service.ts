@@ -696,6 +696,7 @@ export class ExcelService extends MainClass {
       report.worksheets[etptAjustIndex].columns[7].width = 0;
       report.worksheets[etptAjustIndex].columns[8].width = 0;
       report.worksheets[etptAjustIndex].columns[9].width = 0;
+      report.worksheets[etptAjustIndex].columns[10].width = 0;
     }
 
     const agregatIndex =
@@ -1449,6 +1450,19 @@ export class ExcelService extends MainClass {
       formula:
         "='ETPT Format DDG'!" +
         this.getExcelFormulaFormat(['TJCPH'], indexCell, viewModel.days1),
+      result: '',
+    };
+
+    const indexJuridictionAjust = this.getExcelFormulaFormat(
+      ['Juridiction'],
+      indexCell,
+      viewModel.days
+    );
+
+    report.worksheets[indexTabAjust].getCell(indexJuridictionAjust).value = {
+      formula:
+        "='ETPT Format DDG'!" +
+        this.getExcelFormulaFormat(['Juridiction'], indexCell, viewModel.days1),
       result: '',
     };
 

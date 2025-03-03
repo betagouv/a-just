@@ -935,6 +935,7 @@ export const computeExtract = async (
             Fonction: fonctionName,
             ["Fonction recodée"]: null,
             ["TJCPH"]:null,
+            ["Juridiction"]:null,
             Jirs: isJirs ? "x" : "",
             ["Date d'arrivée"]:
               human.dateStart === null
