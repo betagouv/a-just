@@ -133,7 +133,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   /**
    * Lien vers le data book
    */
-  dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/';
+  dataBook = this.userService.isCa()?'https://docs.a-just.beta.gouv.fr/le-data-book-des-ca':'https://docs.a-just.beta.gouv.fr/le-data-book/';
   /**
    * Support GitBook
    */
