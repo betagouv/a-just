@@ -6,6 +6,7 @@ import {
   ViewChild,
   OnDestroy,
   inject,
+  AfterViewInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PeriodSelectorComponent } from '../period-selector/period-selector.component';
@@ -108,7 +109,10 @@ import { AppService } from '../../../services/app/app.service';
     ]),
   ],
 })
-export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
+export class WhiteSimulatorPage
+  extends MainClass
+  implements OnInit, OnDestroy, AfterViewInit
+{
   humanResourceService = inject(HumanResourceService);
   referentielService = inject(ReferentielService);
   simulatorService = inject(SimulatorService);
@@ -621,6 +625,11 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon);
   }
 
+  ngAfterViewInit(): void {
+    this.dateStop = this.getNextYear();
+    this.simulatorService.dateStop.next(this.dateStop);
+    this.stopRealValue = findRealValue(this.dateStop);
+  }
   /**
    * Detect is TJ
    * @returns
@@ -930,11 +939,13 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.projectedSituationData = null;
     this.dateStart = new Date();
     this.simulatorService.dateStart.next(this.dateStart);
-    this.simulatorService.dateStop.next(new Date());
+    this.dateStop = this.getNextYear();
+    this.simulatorService.dateStop.next(this.dateStop);
+    this.stopRealValue = findRealValue(this.dateStop);
     this.simulatorService.situationProjected.next(null);
-    this.dateStop = null;
+    this.firstSituationData = null;
     this.startRealValue = '';
-    this.stopRealValue = '';
+    //this.stopRealValue = '';
     this.mooveClass = '';
     this.toDisplaySimulation = false;
     //this.simulatorService.situationSimulated.next(null)
@@ -1500,7 +1511,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
       x.classList.remove('disable');
     });
     if (this.valuesToReinit) this.valuesToReinit = null;
-    //this.simulatorService.isValidatedWhiteSimu.next(false)
+    this.simulatorService.isValidatedWhiteSimu.next(false);
   }
 
   /**
@@ -2342,5 +2353,15 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   setDocUrl(docUrl: string) {
     this.documentation.path = docUrl;
+  }
+
+  /**
+   * Retourne une date a N+1
+   * @returns
+   */
+  getNextYear() {
+    let now = new Date();
+    now.setFullYear(now.getFullYear() + 1);
+    return now;
   }
 }
