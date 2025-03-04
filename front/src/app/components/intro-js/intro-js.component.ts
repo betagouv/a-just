@@ -68,7 +68,7 @@ export class IntroJSComponent implements AfterViewInit {
   /**
    * has complete form
    */
-  hasCompleteForm: boolean = false;
+  hasCompleteForm: boolean = true;
   /**
    * Intro JS instance
    */
