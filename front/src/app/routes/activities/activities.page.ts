@@ -15,6 +15,7 @@ import {
   DATA_GITBOOK,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
 } from '../../constants/documentation';
 import { DocumentationInterface } from '../../interfaces/documentation';
 import { OPACITY_20 } from '../../constants/colors';
@@ -796,9 +797,15 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     let url = null;
 
     if (type === 'nomenclature') {
-      url = this.userService.isCa()
-        ? NOMENCLATURE_DOWNLOAD_URL_CA
-        : NOMENCLATURE_DOWNLOAD_URL;
+      if (this.userService.isCa()) {
+        url = NOMENCLATURE_DOWNLOAD_URL_CA;
+      } else {
+        if (this.referentielService.isDroitLocal()) {
+          url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
+        } else {
+          url = NOMENCLATURE_DOWNLOAD_URL;
+        }
+      }
     } else if (type === 'dataBook') url = this.dataBook;
 
     if (url) {
