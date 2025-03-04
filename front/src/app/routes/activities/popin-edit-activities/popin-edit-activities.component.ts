@@ -594,8 +594,13 @@ export class PopinEditActivitiesComponent
         stockValue = contentieux.originalStock ?? 0;
       else stockValue = contentieux.originalStock ?? contentieux.stock ?? 0; //Utile si pas de stock le mois n-1 (resp = null dans la suite)
       await this.getLastMonthStock(contentieux.id).then((resp) => {
-        let newStock: number | null =
-          (resp ?? stockValue ?? 0) + entreeValue - sortieValue;
+        const { value, isOriginalStock } = resp;
+        let newStock: number | null = null;
+        if (isOriginalStock === false) {
+          newStock = (value ?? stockValue ?? 0) + entreeValue - sortieValue;
+        } else {
+          newStock = (stockValue ?? 0) + entreeValue - sortieValue;
+        }
 
         // condition spécifique pour envoyer une donnée au back dans le cas suivant: Entrée, Sortie et Stock ajusté puis supression du stock ajusté et ensuite suppression de l'entrée et/ou sortie ajusté.
         // Sans cette condition, la suppression du stock n'est pas prise en compte car la donnée est recalculé (suite à la supression de l'entrée et/ou sortie) et on indique pas au back que l'on souhaite supprimer la valeur précédement entrés
@@ -634,7 +639,9 @@ export class PopinEditActivitiesComponent
    * @param contentieuxId
    * @returns
    */
-  async getLastMonthStock(contentieuxId: number) {
+  async getLastMonthStock(
+    contentieuxId: number
+  ): Promise<{ value: number | null; isOriginalStock: boolean | null }> {
     let date: Date = new Date(this.activityMonth);
     date.setMonth(this.activityMonth.getMonth() - 1);
     return this.activitiesService.loadMonthActivities(date).then((resp) => {
@@ -642,9 +649,12 @@ export class PopinEditActivitiesComponent
       const tmp = resp.list.find((elem: any) => {
         if (elem.contentieux.id === contentieuxId) return elem;
       });
-
-      if (tmp) stock = tmp.stock ?? tmp.originalStock ?? null;
-      return stock;
+      if (tmp) {
+        return {
+          isOriginalStock: tmp.stock !== null ? false : true,
+          value: tmp.stock ?? tmp.originalStock ?? null,
+        };
+      } else return { value: null, isOriginalStock: null };
     });
   }
 
