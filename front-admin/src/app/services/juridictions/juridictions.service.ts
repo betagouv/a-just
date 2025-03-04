@@ -26,4 +26,24 @@ export class JuridictionsService {
       juridictionId,
     });
   }
+
+  duplicateJuridiction(
+    juridictionName: string,
+    backupId: number,
+    label: string
+  ) {
+    return this.serverService
+      .post('juridictions/duplicate-juridiction', {
+        juridictionName,
+        backupId,
+      })
+      .then((r) => {
+        alert(
+          'La juridiction que vous venez de créer reprend les agents, les ventillations et les indisponibilités de ' +
+            label +
+            ' avec des données anonymisées.'
+        );
+        window.location.reload();
+      });
+  }
 }

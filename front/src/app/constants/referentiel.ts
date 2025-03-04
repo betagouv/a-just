@@ -1,7 +1,12 @@
 /**
  * Liste des réferentiels que l'on ne peut pas modifier
  */
-export const REFERENTIELS_CANT_UPDATED = ['Autres activités'];
+export const REFERENTIELS_CANT_UPDATED = [
+  'Autres activités',
+  "Juges d'Instruction",
+  'Juges des Enfants',
+  'Contentieux des mineurs',
+];
 
 /**
  * ETP need to be updated
@@ -48,7 +53,10 @@ export const getReferentielCADetail = (label: string) => {
     //return "Si vous le souhaitez, vous avez la possibilité d'isoler ici l'ensemble des activités relatives au suivi des expertises"
     //case "Médiation (suivi et listes)":
     //return "Si vous le souhaitez, vous avez la possibilité d'isoler ici les activités relatives à la médiation"
-
+    case 'Médiation / conciliation (suivi et listes)':
+      return 'Ces activités peuvent être englobées forfaitairement dans la rubrique soutien ou être distinguées ici, à votre convenance. Elles seront additionnées dans la rubrique "soutien" pour les dialogues de gestion.';
+    case 'Expertises (suivi et listes)':
+      return 'Ces activités peuvent être englobées forfaitairement dans la rubrique soutien ou être distinguées ici, à votre convenance. Elles seront additionnées dans la rubrique "soutien" pour les dialogues de gestion.';
     case 'Activités extérieures et partenariats':
       return 'Ces activités peuvent être englobées forfaitairement dans la rubrique soutien ou être distinguées ici, à votre convenance. Elles seront additionnées dans la rubrique "soutien" pour les dialogues de gestion.';
     case 'Communication':
@@ -134,6 +142,7 @@ export const DDG_REFERENTIELS_MAG = [
   'FORMATIONS DISPENSÉES',
   'ACCUEIL DU JUSTICIABLE (DONT SAUJ)',
   'ACCÈS AU DROIT ET À LA JUSTICE',
+  'CONTENTIEUX LOCAUX SPÉCIFIQUES',
 ];
 
 export const DDG_REFERENTIELS_GREFFE = [
@@ -169,6 +178,7 @@ export const DDG_REFERENTIELS_GREFFE = [
   'AUTRES FONCTIONNAIRES AFFECTÉS AU PARQUET',
   'FONCTIONNAIRES / JA AFFECTÉS AUX ACTIVITÉS CIVILES ET COMMERCIALES DU PARQUET GÉNÉRAL',
   'AUTRES FONCTIONNAIRES / JA AFFECTÉS AU PARQUET GÉNÉRAL',
+  'CONTENTIEUX LOCAUX SPÉCIFIQUES',
 ];
 
 export const DDG_REFERENTIELS_GREFFE_CA = [
@@ -197,6 +207,7 @@ export const DDG_REFERENTIELS_EAM = [
   'COLLÉGIALES JIRS ECO-FI',
   'JIRS ÉCO-FI',
   'JIRS CRIM-ORG',
+  'CONTENTIEUX LOCAUX SPÉCIFIQUES',
 ];
 
 export const DDG_REFERENTIELS_EAM_CA = [

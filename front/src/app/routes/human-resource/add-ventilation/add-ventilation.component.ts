@@ -47,6 +47,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
+import { ExcelService } from '../../../services/excel/excel.service';
 
 export interface importedVentillation {
   referentiel: ContentieuReferentielInterface;
@@ -222,7 +223,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private appService: AppService,
     private calculatriceService: CalculatriceService,
     private serverService: ServerService,
-    private userService: UserService
+    private userService: UserService,
+    private excelService: ExcelService
   ) {
     super();
   }
@@ -373,7 +375,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    if (!withoutPercentControl) {
+    const indisponibilites = this.human?.indisponibilities || [];
+    const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some(
+      (c) => c.contentieux.checkVentilation === false
+    );
+
+    if (
+      !checkIfIndispoIgnoreControlPercentVentilation &&
+      !withoutPercentControl
+    ) {
       const totalAffected = fixDecimal(
         sumBy(this.updatedReferentiels, 'percent')
       );
@@ -713,9 +723,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       .then((r) => {
         return r.data;
       });
-    window.open(
-      this.userService.isCa() ? IMPORT_ETP_TEMPLATE_CA : IMPORT_ETP_TEMPLATE
-    );
+    this.excelService.generateAgentFile();
   }
 
   /**
@@ -760,23 +768,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       const workbook = xlsx.read(bstr, { type: 'binary', cellDates: true });
       const first_sheet_name = workbook.SheetNames[0];
       const second_sheet_name = workbook.SheetNames[1];
-
-      if (second_sheet_name === 'Fonction' && this.userService.isCa()) {
-        alert(
-          "Le fichier que vous essayez d'importer est un fichier pour A-JUST TJ !"
-        );
-        event.target.value = '';
-        return;
-      } else if (
-        second_sheet_name === 'Fonction_CA' &&
-        !this.userService.isCa()
-      ) {
-        alert(
-          "Le fichier que vous essayez d'importer est un fichier pour A-JUST CA !"
-        );
-        event.target.value = '';
-        return;
-      }
 
       if (
         !(

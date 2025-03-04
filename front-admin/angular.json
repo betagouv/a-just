@@ -132,8 +132,7 @@
           "options": {}
         },
         "extract-i18n": {
-          "builder": "@ngx-env/builder:extract-i18n",
-          "options": {}
+          "builder": "@ngx-env/builder:extract-i18n"
         },
         "test": {
           "builder": "@ngx-env/builder:karma",

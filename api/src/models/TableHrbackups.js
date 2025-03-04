@@ -1,5 +1,11 @@
-import { Op } from 'sequelize'
-import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN, USER_ROLE_TEAM } from '../constants/roles'
+import { Op } from "sequelize";
+import {
+  USER_ROLE_ADMIN,
+  USER_ROLE_SUPER_ADMIN,
+  USER_ROLE_TEAM,
+} from "../constants/roles";
+import { orderBy } from "lodash";
+import { isTj } from "../utils/ca";
 
 /**
  * Liste des juridctions auquels ont accès les utilisateur
@@ -13,20 +19,20 @@ export default (sequelizeInstance, Model) => {
    */
   Model.list = async (userId) => {
     const listAll = await Model.findAll({
-      attributes: ['id', 'label', ['updated_at', 'date'], 'jirs'],
+      attributes: ["id", "label", ["updated_at", "date"], "jirs"],
       include: [
         {
-          attributes: ['id'],
+          attributes: ["id"],
           model: Model.models.UserVentilations,
           where: {
             user_id: userId,
           },
         },
       ],
-      order: [['label', 'asc']],
+      order: [["label", "asc"]],
       raw: true,
-    })
-    const list = []
+    });
+    const list = [];
 
     for (let i = 0; i < listAll.length; i++) {
       if (await Model.models.TJ.isVisible(listAll[i].label)) {
@@ -35,11 +41,11 @@ export default (sequelizeInstance, Model) => {
           label: listAll[i].label,
           date: listAll[i].date,
           jirs: listAll[i].jirs,
-        })
+        });
       }
     }
-    return list
-  }
+    return list;
+  };
 
   /**
    * Suppression d'une juridiction
@@ -50,14 +56,14 @@ export default (sequelizeInstance, Model) => {
       where: {
         id: backupId,
       },
-    })
+    });
 
     await Model.models.HumanResources.destroy({
       where: {
         backup_id: backupId,
       },
-    })
-  }
+    });
+  };
 
   /**
    * Copie d'un juridicition
@@ -71,52 +77,164 @@ export default (sequelizeInstance, Model) => {
         id: backupId,
       },
       raw: true,
-    })
+    });
 
     if (backup) {
-      delete backup.id
+      // Creation d'un BACKUP
+      delete backup.id;
       const backupCreated = await Model.create({
         ...backup,
         label: backupName,
-      })
-      const newBackupId = backupCreated.dataValues.id
+      });
+      const newBackupId = backupCreated.dataValues.id;
 
-      const hrList = await Model.models.HumanResources.findAll({
+      // Création d'un TJ ou CA IELST
+      const tjCreated = await models.TJ.create({
+        i_elst: 0,
+        label: backupName,
+        latitude: 0,
+        longitude: 0,
+        population: 0,
+        enabled: true,
+        type: "TGI",
+      });
+      const newTJId = tjCreated.dataValues.id;
+
+      if (isTj()) {
+        let subJuridictions = null
+        let tj = null
+        const attributes = ["id", "i_elst", "label", "type", "parent_id"];
+        tj = await models.TJ.findOne({
+          attributes,
+          where: {
+            label: backup.label,
+          },
+          raw: true,
+        });
+
+        if (tj) {
+          subJuridictions = await models.TJ.findAll({
+            attributes,
+            where: {
+              parent_id: tj.id,
+            },
+            raw: true,
+          });
+
+          for (let i = 0; i < subJuridictions.length; i++) {
+            await models.TJ.create({
+              i_elst: 0,
+              label: subJuridictions[i]["type"] + " " + i,
+              latitude: 0,
+              longitude: 0,
+              population: 0,
+              enabled: false,
+              type: subJuridictions[i]["type"],
+              parent_id: newTJId,
+            });
+          }
+        }
+      }
+
+      // Recherche de HR
+      let hrList = await Model.models.HumanResources.findAll({
         where: {
           backup_id: backupId,
         },
         raw: true,
-      })
+      });
+
+      hrList = orderBy(hrList, "last_name");
+
       for (let x = 0; x < hrList.length; x++) {
-        const hrId = hrList[x].id
-        delete hrList[x].id
+        // Pour chaque HR
+        const hrId = hrList[x].id;
+        delete hrList[x].id;
+        delete hrList[x]["first_name"];
+        delete hrList[x]["last_name"];
+        delete hrList[x]["juridiction"];
+
+        // Création de HR
         const newHR = await Model.models.HumanResources.create({
           ...hrList[x],
+          first_name: "",
+          last_name: x,
           backup_id: newBackupId,
-        })
+        });
 
-        const ventilationsList = await Model.models.HRVentilations.findAll({
+        // Recherche de situation pour chaque HR
+        const situationList = await Model.models.HRSituations.findAll({
           where: {
-            backup_id: backupId,
-            rh_id: hrId,
+            human_id: hrId,
           },
           raw: true,
-        })
-        for (let x = 0; x < ventilationsList.length; x++) {
-          delete ventilationsList[x].id
-          await Model.models.HRVentilations.create({
-            ...ventilationsList[x],
-            backup_id: newBackupId,
-            rh_id: newHR.dataValues.id,
-          })
+        });
+
+        for (let y = 0; y < situationList.length; y++) {
+          // Pour chaque situation
+          const situationId = situationList[y].id;
+          delete situationList[y].id;
+
+          let category = await models.HRCategories.findOne({
+            where: {
+              id: situationList[y]["category_id"],
+            },
+          });
+
+          // Renommer la HR si pas magistrat
+          if (category) newHR.update({ first_name: category.dataValues.label });
+
+          // Création d'une situation
+          const newSituation = await Model.models.HRSituations.create({
+            ...situationList[y],
+            human_id: newHR.dataValues.id,
+          });
+
+          // Recherche de ventilation dans chaque situation
+          const ventilationList = await Model.models.HRActivities.findAll({
+            where: {
+              hr_situation_id: situationId,
+            },
+            raw: true,
+          });
+
+          for (let z = 0; z < ventilationList.length; z++) {
+            // Pour chaque ventilation
+            delete ventilationList[z].id;
+
+            // Création d'une ventilation
+            await Model.models.HRActivities.create({
+              ...ventilationList[z],
+              hr_situation_id: newSituation.dataValues.id,
+            });
+          }
+        }
+
+        // Recherche d'indispo
+        const indispoList = await Model.models.HRIndisponibilities.findAll({
+          where: {
+            hr_id: hrId,
+          },
+          raw: true,
+        });
+
+        for (let y = 0; y < indispoList.length; y++) {
+          // Pour chaque indispo
+          delete indispoList[y].id;
+
+          // Création d'une indispo
+          await Model.models.HRIndisponibilities.create({
+            ...indispoList[y],
+            hr_id: newHR.dataValues.id,
+          });
         }
       }
 
-      return newBackupId
+      return newBackupId;
     } else {
-      return null
+      return null;
     }
-  }
+  };
 
   /**
    * Liste des juridictions
@@ -124,25 +242,23 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async () => {
     const listAll = await Model.findAll({
-      attributes: ['id', 'label', ['created_at', 'date']],
-      order: [['label', 'asc']],
+      attributes: ["id", "label", ["created_at", "date"]],
+      order: [["label", "asc"]],
       raw: true,
-    })
-    const list = []
+    });
+    const list = [];
     for (let i = 0; i < listAll.length; i++) {
-      if (await Model.models.TJ.isVisible(listAll[i].label)) {
-        list.push({
-          id: listAll[i].id,
-          label: listAll[i].label,
-          date: listAll[i].date,
-        })
-      }
+      list.push({
+        id: listAll[i].id,
+        label: listAll[i].label,
+        date: listAll[i].date,
+        groups: await Model.models.HRBackupsGroupsIds.getGroupsByBackupId(
+          listAll[i].id
+        ),
+      });
     }
-    //console.log('\n\n\n\n\n\n\n\n\n\n\n\nLIST:', list)
-    //list.map((elem) => console.log('id:', elem.id, ' | label:', elem.label))
-    //console.log('\n\n\n\n\n\n\n\n\n\n\n\n')
-    return list
-  }
+    return list;
+  };
 
   /**
    * Control pour savoir si un utilisateur a accès à une juridiction id
@@ -155,10 +271,10 @@ export default (sequelizeInstance, Model) => {
       where: {
         id,
       },
-      attributes: ['id', 'label'],
+      attributes: ["id", "label"],
       include: [
         {
-          attributes: ['id'],
+          attributes: ["id"],
           model: Model.models.UserVentilations,
           required: true,
           where: {
@@ -167,10 +283,10 @@ export default (sequelizeInstance, Model) => {
         },
       ],
       raw: true,
-    })
+    });
 
-    return hr && (await Model.models.TJ.isVisible(hr.label)) ? true : false
-  }
+    return hr && (await Model.models.TJ.isVisible(hr.label)) ? true : false;
+  };
 
   /**
    * Création ou récupération d'une juridiction par son nom
@@ -179,22 +295,22 @@ export default (sequelizeInstance, Model) => {
    */
   Model.findOrCreateLabel = async (juridictionName) => {
     const find = await Model.findOne({
-      attributes: ['id'],
+      attributes: ["id"],
       where: {
         label: juridictionName,
       },
       raw: true,
-    })
+    });
 
     if (!find) {
       const newElement = await Model.create({
         label: juridictionName,
-      })
-      return newElement.dataValues.id
+      });
+      return newElement.dataValues.id;
     }
 
-    return find.id
-  }
+    return find.id;
+  };
 
   /**
    * Récupération d'une juridiction par son nom
@@ -203,19 +319,19 @@ export default (sequelizeInstance, Model) => {
    */
   Model.findByLabel = async (juridictionName) => {
     const find = await Model.findOne({
-      attributes: ['id'],
+      attributes: ["id"],
       where: {
         label: juridictionName,
       },
       raw: true,
-    })
+    });
 
     if (!find) {
-      return null
+      return null;
     }
 
-    return find.id
-  }
+    return find.id;
+  };
 
   /**
    * Récupération d'une juridiction par son id
@@ -224,17 +340,17 @@ export default (sequelizeInstance, Model) => {
    */
   Model.findById = async (id) => {
     const find = await Model.findOne({
-      attributes: ['label'],
+      attributes: ["label", "jirs"],
       where: { id },
       raw: true,
-    })
+    });
 
     if (!find) {
-      return null
+      return null;
     }
 
-    return find.label
-  }
+    return find.label;
+  };
 
   /**
    * Ajouter les accès aux membres de l'équipe à la juridiction lors de la création d'une juridiction
@@ -248,7 +364,7 @@ export default (sequelizeInstance, Model) => {
         },
         raw: true,
       })
-    ).map((s) => s.user_id)
+    ).map((s) => s.user_id);
 
     const users = await Model.models.Users.findAll({
       where: {
@@ -258,12 +374,15 @@ export default (sequelizeInstance, Model) => {
         },
       },
       raw: true,
-    })
+    });
 
     for (let i = 0; i < users.length; i++) {
-      await Model.models.UserVentilations.pushVentilation(users[i].id, juridicitionId)
+      await Model.models.UserVentilations.pushVentilation(
+        users[i].id,
+        juridicitionId
+      );
     }
-  }
+  };
 
-  return Model
-}
+  return Model;
+};

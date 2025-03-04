@@ -32,9 +32,17 @@ export interface ContentieuReferentielInterface {
    */
   code_import?: string;
   /**
+   * Boolean qui permet de voir si on calcul des ventilations en rapport des indispo
+   */
+  checkVentilation?: boolean;
+  /**
    * Element à compter ou non dans le calcul de complétion des données
    */
   compter?: boolean;
+  /**
+   * Element permettant de spécifier un niveau de détail pour les indisponibilités
+   */
+  category?: boolean;
   /**
    * Somme des ETP du contentieux
    */

@@ -6,6 +6,7 @@ import { JuridictionsService } from '../../services/juridictions/juridictions.se
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { PopupComponent } from '../../components/popup/popup.component';
 import { CommonModule } from '@angular/common';
+import { HumanResourceService } from '../../services/human-resource/human-resource.service';
 
 @Component({
   standalone: true,
@@ -15,9 +16,11 @@ import { CommonModule } from '@angular/common';
 })
 export class JuridictionsPage extends MainClass implements OnInit {
   juridictionsService = inject(JuridictionsService);
+  humanResourceService = inject(HumanResourceService);
   datas: JuridictionInterface[] = [];
   datasSource: JuridictionInterface[] = [];
   selectedJuridiction: JuridictionInterface | null = null;
+  juridictionList: JuridictionInterface[] = [];
 
   constructor() {
     super();
@@ -28,6 +31,11 @@ export class JuridictionsPage extends MainClass implements OnInit {
   }
 
   onLoad() {
+    this.humanResourceService.getBackupList().then((datas: any) => {
+      datas.map((elem: JuridictionInterface) =>
+        this.juridictionList.push(elem)
+      );
+    });
     this.juridictionsService.getAll().then((datas) => {
       this.datas = datas;
       this.datasSource = this.datas.slice();
@@ -65,5 +73,26 @@ export class JuridictionsPage extends MainClass implements OnInit {
       // @ts-ignore
       return compare(a[sort.active], b[sort.active], isAsc);
     });
+  }
+
+  duplicate(form: any) {
+    if (!form.juridiction.value) {
+      return alert('Veuillez sélectionner une juridiction');
+    }
+    const backupId = Number(form.juridiction.value);
+
+    const backupName = prompt(
+      'Quel nom souhaitez-vous donner à cette nouvelle juridiction ?'
+    );
+
+    if (backupName && backupName.length > 0) {
+      const juridiction =
+        this.juridictionList.find((j) => j.id === backupId) || null;
+      this.juridictionsService.duplicateJuridiction(
+        backupName,
+        backupId,
+        juridiction !== null ? juridiction.label : ''
+      );
+    }
   }
 }

@@ -162,16 +162,24 @@ export class CalculatorPage
    */
   documentation: DocumentationInterface = {
     title: 'Cockpit',
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
+    path: this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-donnees-brutes'
+      : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
     printSubTitle: true,
   };
   /**
    * Documentation list
    */
   docLinks: string[] = [
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-donnees-brutes'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-vues-graphiques'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/comparer-son-activite'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
   ];
   /**
    * Mémorisation de la dernière categorie
@@ -246,7 +254,7 @@ export class CalculatorPage
       },
     },
     {
-      target: 'ddd', //.drop-down',
+      target: '.compare', //.drop-down',
       title: 'Comparez votre juridiction',
       intro:
         '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>',
@@ -347,6 +355,10 @@ export class CalculatorPage
    */
   defaultRefName: string = '';
   /**
+   * Indique si un référentiel vient d'être créé par sauvegarde des temps affichés
+   */
+  createSaveReferentiel: boolean = false;
+  /**
    * Nombre de jours travaillé par magistrat
    */
   nbDaysByMagistrat: number = import.meta.env.NG_APP_NB_DAYS_BY_MAGISTRAT;
@@ -405,7 +417,9 @@ export class CalculatorPage
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
-        this.onLoad();
+        if (this.createSaveReferentiel) {
+          this.createSaveReferentiel = false;
+        } else this.onLoad();
       })
     );
     this.watch(
@@ -1946,6 +1960,8 @@ export class CalculatorPage
 
     let list = new Array();
 
+    this.createSaveReferentiel = true;
+
     datas.map((y) => {
       list.push({
         averageProcessingTime:
@@ -1986,7 +2002,6 @@ export class CalculatorPage
     if (event.id === 'save') {
       this.saveCurrentAvgTime();
       this.displayRouterRef = true;
-      console.log(this.defaultRefName);
     }
   }
 

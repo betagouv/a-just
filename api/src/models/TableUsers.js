@@ -2,7 +2,7 @@ import { roleToString } from '../constants/roles'
 import { accessToString } from '../constants/access'
 import { snakeToCamelObject } from '../utils/utils'
 import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
-import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA } from '../constants/email'
+import { TEMPLATE_CRON_USERS_NOT_CONNECTED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_AGAIN, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_AGAIN_CA, TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA } from '../constants/email'
 import { USER_AUTO_LOGIN } from '../constants/log-codes'
 import config from 'config'
 import { getNbDay, humanDate, today } from '../utils/date'
@@ -226,7 +226,9 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (user) {
+      const oldAccess = (await Model.models.UsersAccess.getUserAccess(userId)).sort()
       await Model.models.UsersAccess.updateAccess(userId, access)
+      const newAccess = (await Model.models.UsersAccess.getUserAccess(userId)).sort()
       await Model.updateById(user.id, {
         updated_at: new Date(),
       })
@@ -237,17 +239,32 @@ export default (sequelizeInstance, Model) => {
         sentEmailSendinblueUserList(user, true)
 
         const newVentilationList = ventilationsList.map((v) => v.id).sort()
-        if (JSON.stringify(newVentilationList) !== JSON.stringify(oldVentilations)) {
-          await sentEmail(
-            {
-              email: user.email,
-            },
-            Number(config.juridictionType) === 1 ? TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA : TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
-            {
-              user: `${user.first_name} ${user.last_name}`,
-              juridictionsList: ventilationsList.map((v) => v.label).join(', '),
-            }
-          )
+        if (JSON.stringify(newVentilationList) !== JSON.stringify(oldVentilations) || JSON.stringify(newAccess) !== JSON.stringify(oldAccess)) {
+          if(oldAccess.length === 0) {
+            // is new ventilation
+            await sentEmail(
+              {
+                email: user.email,
+              },
+              Number(config.juridictionType) === 1 ? TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_CA : TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED,
+              {
+                user: `${user.first_name} ${user.last_name}`,
+                juridictionsList: ventilationsList.map((v) => v.label).join(', '),
+              }
+            )
+          } else {
+            // update existing ventilation
+            await sentEmail(
+              {
+                email: user.email,
+              },
+              Number(config.juridictionType) === 1 ? TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_AGAIN_CA : TEMPLATE_USER_JURIDICTION_RIGHT_CHANGED_AGAIN,
+              {
+                user: `${user.first_name} ${user.last_name}`,
+                juridictionsList: ventilationsList.map((v) => v.label).join(', '),
+              }
+            )
+          }
         }
       } else {
         sentEmailSendinblueUserList(user, false)

@@ -1,4 +1,4 @@
-import { orderBy } from "lodash";
+import { difference, orderBy } from "lodash";
 import { Op } from "sequelize";
 import {
   referentielCAMappingIndex,
@@ -7,6 +7,7 @@ import {
 import { extractCodeFromLabelImported } from "../utils/referentiel";
 import { camel_to_snake } from "../utils/utils";
 import config from "config";
+import { isTj } from "../utils/ca";
 
 /**
  * Scripts intermediaires des contentieux
@@ -14,16 +15,26 @@ import config from "config";
 
 export default (sequelizeInstance, Model) => {
   /**
-   * Retourne la liste du référentiel et prend en cache si besoin
+   * Retourne la liste du référentiel
    * @param {*} isJirs
-   * @param {*} force
    * @returns
    */
   Model.getReferentiels = async (
     backupId = null,
     isJirs = false,
-    force = false
+    filterReferentielsId = null,
+    displayAll = false
   ) => {
+    if (backupId) {
+      const juridiction = await Model.models.HRBackups.findById(backupId);
+      if (juridiction && !displayAll) {
+        isJirs = juridiction.jirs;
+      }
+    }
+    if (displayAll === true) {
+      isJirs = true;
+    }
+
     const formatToGraph = async (parentId = null, index = 0) => {
       const where = {};
       if (backupId) {
@@ -35,6 +46,10 @@ export default (sequelizeInstance, Model) => {
             only_to_hr_backup: { [Op.contains]: [backupId] },
           },
         ];
+      }
+      // filter by referentiel only for level 3
+      if (filterReferentielsId && index === 2) {
+        where.id = filterReferentielsId;
       }
 
       let list = await Model.findAll({
@@ -48,7 +63,9 @@ export default (sequelizeInstance, Model) => {
           ["value_quality_stock", "valueQualityStock"],
           ["help_url", "helpUrl"],
           "compter",
+          "category",
           ["only_to_hr_backup", "onlyToHrBackup"],
+          ["check_ventilation", "checkVentilation"],
         ],
         where: {
           parent_id: parentId,
@@ -70,12 +87,20 @@ export default (sequelizeInstance, Model) => {
     const mainList = await formatToGraph();
     let list = [];
     mainList.map((main) => {
-      if (main.childrens) {
-        main.childrens.map((subMain) => {
-          if (subMain.childrens) {
-            list = list.concat(subMain.childrens);
-          }
+      if (main.code_import) {
+        main.childrens = (main.childrens || []).map((m) => {
+          delete m.childrens;
+          return m;
         });
+        list = list.concat(main);
+      } else {
+        if (main.childrens) {
+          main.childrens.map((subMain) => {
+            if (subMain.childrens) {
+              list = list.concat(subMain.childrens);
+            }
+          });
+        }
       }
     });
 
@@ -96,6 +121,20 @@ export default (sequelizeInstance, Model) => {
       list.map((elem) => {
         elem.childrens.map((child) => {
           switch (child.label) {
+            case "Contentieux collégial hors JIRS": //NEW CA
+              child.label = "Contentieux collégial";
+              break;
+            case "Contentieux JIRS éco-fi":
+              elem.childrens = elem.childrens.filter(
+                (elem) => elem.label !== "Contentieux JIRS éco-fi"
+              );
+              break;
+            case "Contentieux JIRS crim-org":
+              elem.childrens = elem.childrens.filter(
+                (elem) => elem.label !== "Contentieux JIRS crim-org"
+              );
+              break;
+
             case "Collégiales hors JIRS":
               child.label = "Collégiales";
               break;
@@ -112,8 +151,8 @@ export default (sequelizeInstance, Model) => {
                 (elem) => elem.label !== "Collégiales JIRS crim-org"
               );
               break;
-            case "Collégiales JIRS eco-fi":
-              child.label = "Collégiales eco-fi";
+            case "Collégiales JIRS éco-fi":
+              child.label = "Collégiales éco-fi";
               break;
             case "Eco-fi hors JIRS":
               child.label = "Eco-fi";
@@ -181,7 +220,6 @@ export default (sequelizeInstance, Model) => {
         });
       });
     }
-
     return list;
   };
 
@@ -234,6 +272,10 @@ export default (sequelizeInstance, Model) => {
                   label: extract.label,
                   code_import: extract.code,
                   parent_id: parentId,
+                  category:
+                    extract.code.startsWith(isTj()?"12.":"14.") && extract.code.length > 3
+                      ? ref["niveau_" + (i + 1)]
+                      : null,
                 },
                 {
                   logging: false,
@@ -247,6 +289,21 @@ export default (sequelizeInstance, Model) => {
                 label: extract.label,
               });
             } else {
+              if (
+                extract.code.startsWith(isTj()?"12.":"14.") &&
+                extract.code.length > 3 &&
+                findInDb.dataValues.category !== ref["niveau_" + (i + 1)]
+              ) {
+                deltaToUpdate.push({
+                  type: "UPDATE",
+                  oldCategory: findInDb.dataValues.category,
+                  id: findInDb.dataValues.id,
+                  category: ref["niveau_" + (i + 1)] || null,
+                });
+
+                await findInDb.update({ category: ref["niveau_" + (i + 1)] });
+              }
+
               if (extract.label !== findInDb.dataValues.label) {
                 deltaToUpdate.push({
                   type: "UPDATE",
@@ -401,8 +458,52 @@ export default (sequelizeInstance, Model) => {
     });
 
     if (ref) {
+      const oldValue = ref[camel_to_snake(node)];
       ref.set({ [camel_to_snake(node)]: value });
       await ref.save();
+
+      if (node === "onlyToHrBackup") {
+        const hasChild = await Model.findOne({
+          where: {
+            parent_id: ref.dataValues.id,
+          },
+          raw: true,
+        });
+        if (!hasChild) {
+          let hrBackupUpdated = [];
+          let allJuridictions = (await Model.models.HRBackups.getAll()).map(
+            (h) => h.id
+          );
+          if (Array.isArray(oldValue) && Array.isArray(value)) {
+            hrBackupUpdated = [
+              ...oldValue.filter((e) => !value.includes(e)),
+              ...value.filter((e) => !oldValue.includes(e)),
+            ];
+          } else if (oldValue === null && Array.isArray(value)) {
+            hrBackupUpdated = allJuridictions.filter((e) => !value.includes(e));
+          } else if (Array.isArray(oldValue) && value === null) {
+            hrBackupUpdated = allJuridictions.filter(
+              (e) => !oldValue.includes(e)
+            );
+          }
+          //console.log('old value', oldValue)
+          //console.log('new value', value)
+          //console.log('delta juridictions', hrBackupUpdated)
+          // synchronise by main contentieux
+
+          // test 16s pour les ventilations
+          await Model.models.HRActivities.syncAllVentilationByContentieux(
+            ref.dataValues.parent_id
+          );
+          // test toutes les juridictions à 1,8min
+          await Model.models.Activities.syncAllActivitiesByContentieux(
+            ref.dataValues.parent_id,
+            hrBackupUpdated
+          );
+          // reload all agents environ 40s / juridictions (180 environ)
+          await Model.models.HumanResources.onPreload();
+        }
+      }
     }
   };
 
@@ -413,6 +514,18 @@ export default (sequelizeInstance, Model) => {
       },
     });
     return ref ? ref : null;
+  };
+
+  /**
+   * Indique si une juridiction est JIRS ou NON JIRS
+   * @param {*} backupId
+   * @returns
+   */
+  Model.isJirs = async (backupId) => {
+    let isJirs = false;
+    const juridiction = await Model.models.HRBackups.findById(backupId);
+    if (juridiction) isJirs = juridiction.jirs;
+    return isJirs;
   };
 
   return Model;
