@@ -113,7 +113,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     title: "Données d'activité A-JUST :",
     path: this.userService.isCa()
       ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/quest-ce-que-cest'
-      : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/donnees-dactivite/quest-ce-que-cest',
     printSubTitle: true,
   };
   /**
