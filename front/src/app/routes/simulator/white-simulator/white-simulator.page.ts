@@ -287,8 +287,10 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Documentation widget
    */
   documentation: DocumentationInterface = {
-    title: 'Simulateur à blanc A-JUST :',
-    path: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
+    title: 'Simulateur sans données pré-alimentées :',
+    path: this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/simulateur-sans-donnees-pre-alimentees/quest-ce-que-cest',
     printSubTitle: true,
   };
 
@@ -524,6 +526,15 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
       options: {
         position: 'bottom',
       },
+    },
+    {
+      target: 'body',
+      title: 'En savoir plus :',
+      intro: `<p>Consultez notre vidéo de présentation pour découvrir comment réaliser vos premières simulations ! À vous de jouer 😉</p><video controls class="intro-js-video small-video"><source src="${
+        this.isTJ()
+          ? '/assets/videos/a-just-la-simulation-sans-donnees-pre-alimentees-mp4-source.mp4'
+          : '/assets/videos/a-just-ca-simulateur-a-blanc.mp4'
+      }" type="video/mp4" /></video>`,
     },
   ];
 

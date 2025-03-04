@@ -38,6 +38,7 @@ export default (sequelizeInstance, Model) => {
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
+          checkVentilation: list[i]['ContentieuxReferentiel.check_ventilation'],
         },
       }
     }

@@ -49,10 +49,10 @@
         <ng-template [ngIf]="!paramsUrl?.provider">
           <div class="password-line">
             <div><label>Créer un mot de passe :</label></div>
-            <div>
-              <span><input type="checkbox" formControlName="checkboxPassword" />
-                Afficher</span>
-            </div>
+            <span class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()"><input
+                (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"
+                formControlName="checkboxPassword" />
+              Afficher</span>
           </div>
           <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"
             type="{{!form.controls['checkboxPassword'].value?'password':'text'}}" (keyup)="checkStrength($event)"
@@ -60,7 +60,7 @@
           <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>
           <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(0)}"><span
               [ngStyle]="{ 'background-color': getParamColor(0)}">i</span>
-            &nbsp; 8 caractères minimum</label>
+            &nbsp; {{MIN_PASSWORD_LENGTH}} caractères minimum</label>
           <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(1)}"><span
               [ngStyle]="{ 'background-color': getParamColor(1)}">i</span>
             &nbsp; 1 caractère spécial</label>

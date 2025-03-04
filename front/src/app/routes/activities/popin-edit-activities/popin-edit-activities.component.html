@@ -10,11 +10,14 @@
             (click)="onShowHelpPanel({url: referentiel.helpUrl})"></i>
         </div>
       </div>
-      <!-- <div class="switch-comments">
-        <p>Afficher les commentaires</p>
+      <div class="switch-comments">
+        <p *ngIf="(referentiel?.nbComments || 0) > 1">Afficher les <b>{{referentiel?.nbComments}}</b> commentaires</p>
+        <p *ngIf="(referentiel?.nbComments || 0) === 1">Afficher le commentaire</p>
+        <p *ngIf="(referentiel?.nbComments || 0) === 0">Rédiger un
+          commentaire</p>
         <aj-radio-button bgColor="#000091" [switchColor]="showComments ? 'white' : '#000091'" [value]="showComments"
           (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
-      </div> -->
+      </div>
       <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
         (valueChange)="selectMonth($event)">
       </aj-date-select>

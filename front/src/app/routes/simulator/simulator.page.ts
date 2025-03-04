@@ -312,7 +312,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
-    path: this.documentationUrl.main,
+    path: this.userService.isCa()
+      ? this.documentationUrl.whiteSimulator
+      : this.documentationUrl.main,
     printSubTitle: true,
   };
 
@@ -463,7 +465,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       target: '#wrapper-contener',
       title: 'Comment simuler votre trajectoire avec A-JUST ?',
       intro:
-        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.<br/><video controls class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
+        'Cette fonctionnalité vous permet de déterminer l’impact d’une modification, choisie ou subie, de l’un des paramètres (effectifs, volumétrie de dossiers à traiter ou temps moyen passé sur chaque dossier) sur chacun des autres.<br/><br/>Elle est disponible pour les magistrats du siège comme pour les fonctionnaires et permet de se projeter dans le futur et de jouer des scénarios.',
       beforeLoad: async (intro: any) => {
         const itemToClick = document.querySelector('aj-back-button a');
         if (itemToClick) {
@@ -495,17 +497,21 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         }
       },
     },
+  ];
+  /**
+   * Intro JS Steps par défaut
+   */
+  introStepsToCompleteDefault: IntroJSStep[] = [
     {
       target: '.categories-switch',
-      title: 'Configurez votre hypothèse',
+      title: 'Configurez votre hypothèse :',
       intro:
-        '<p>Choisissez la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe</p>',
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les fonctionnaires de greffe.</p>',
       beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('#on-button-continue');
-        if (itemToClick) {
-          // @ts-ignore
-          itemToClick.click();
-          await sleep(200);
+        if (this.periodSelector) {
+          const now = today();
+          now.setMonth(now.getMonth() + 12);
+          this.periodSelector.updateDateSelected('dateStop', now, false);
         }
       },
     },
@@ -580,6 +586,12 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       options: {
         position: 'bottom',
       },
+    },
+    {
+      target: 'body',
+      title: 'En savoir plus :',
+      intro:
+        '<p>Consultez notre vidéo de présentation pour découvrir comment réaliser vos premières simulations ! À vous de jouer 😉</p><video controls class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
     },
   ];
   /**
@@ -670,6 +682,12 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       options: {
         position: 'bottom',
       },
+    },
+    {
+      target: 'body',
+      title: 'En savoir plus :',
+      intro:
+        '<p>Consultez notre vidéo de présentation pour découvrir comment réaliser vos premières simulations ! À vous de jouer 😉</p><video controls class="intro-js-video small-video"><source src="/assets/videos/a-just-la-simulation-sans-donnees-pre-alimentees-mp4-source.mp4" type="video/mp4" /></video>',
     },
   ];
 

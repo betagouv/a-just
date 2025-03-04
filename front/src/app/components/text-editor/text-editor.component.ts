@@ -267,6 +267,7 @@ export class TextEditorComponent extends MainClass {
     this.value = text;
     this.ignoreUpdate = true;
     this.quillEditor.root.innerHTML = this.cleanInputValue(this.value);
+    this.valueChange.emit(this.value);
   }
 
   /**

@@ -927,4 +927,6 @@
   </div>
 </ng-template>
 
-<aj-intro-js [steps]="whiteSimulator ? introStepsWhiteSimulator : introStepsDefault" typeId="simulator"></aj-intro-js>
+<aj-intro-js
+  [steps]="whiteSimulator ? introStepsWhiteSimulator : (chooseScreen ? introStepsDefault : introStepsToCompleteDefault)"
+  typeId="simulator"></aj-intro-js>

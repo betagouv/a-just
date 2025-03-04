@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HumanResourceService } from '../human-resource/human-resource.service';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
+import { ServerService } from '../http-server/server.service';
 
 /**
  * Service de centralisation des traitements lié au référentiel
@@ -9,6 +10,7 @@ import { ContentieuReferentielInterface } from '../../interfaces/contentieu-refe
   providedIn: 'root',
 })
 export class ReferentielService {
+  serverService = inject(ServerService);
   humanResourceService = inject(HumanResourceService);
   /**
    * Ids du référentiels des indispo
@@ -31,9 +33,10 @@ export class ReferentielService {
    * Constructor
    */
   constructor() {
-    this.humanResourceService.hrBackup.subscribe((backup) => {
-      if (backup && backup.referentiels) {
-        this.formatDatas(backup.referentiels);
+    this.humanResourceService.hrBackup.subscribe(async (backup) => {
+      if (backup) {
+        const referentiels = await this.onGetReferentiel(backup.id);
+        this.formatDatas(referentiels);
       }
     });
   }
@@ -85,5 +88,28 @@ export class ReferentielService {
     this.humanResourceService.contentieuxReferentielOnly.next(
       list.filter((r) => idsIndispo.indexOf(r.id) === -1)
     );
+  }
+
+  /**
+   * Check if referentiels as "droit local"
+   */
+  isDroitLocal() {
+    const ref = this.humanResourceService.contentieuxReferentiel.getValue();
+    return ref.find((r) => r.code_import === '13.') ? true : false;
+  }
+
+  /**
+   * API Appel au serveur retourner une référentiel spécifique
+   * @param backupId
+   * @returns
+   */
+  async onGetReferentiel(backupId: number) {
+    return this.serverService
+      .post(`contentieux-referentiels/get-referentiels`, {
+        backupId,
+      })
+      .then((data) => {
+        return data.data;
+      });
   }
 }

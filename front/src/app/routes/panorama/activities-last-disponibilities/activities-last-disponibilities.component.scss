@@ -2,7 +2,7 @@
 
 :host {
   display: block;
-  border-bottom: solid 1px fColor(lightBorder);  
+  border-bottom: solid 1px fColor(lightBorder);
   padding: 24px;
 
   h3 {
@@ -15,7 +15,9 @@
     display: flex;
     flex-wrap: wrap;
 
-    > span {
+    >a {
+      display: inline-block;
+      text-decoration: none;
       height: 20px;
       border-radius: 4px;
       background-color: fColor(bgSelect);

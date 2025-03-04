@@ -10,7 +10,6 @@ import {
   USER_USER_PASSWORD_CHANGED,
   USER_USER_SIGN_IN,
 } from '../constants/log-codes'
-import * as Sentry from '@sentry/node'
 import { LOGIN_STATUS_GET_CODE } from '../constants/login'
 import { crypt } from '../utils'
 import { sentEmail } from '../utils/email'

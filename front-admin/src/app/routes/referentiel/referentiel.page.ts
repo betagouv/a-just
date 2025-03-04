@@ -11,11 +11,16 @@ import {
   SelectComponent,
 } from '../../components/select/select.component';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
-import { BackupInterface } from '../../interfaces/backup';
+import { BackupGroupInterface, BackupInterface } from '../../interfaces/backup';
+import { difference } from 'lodash';
 
 interface ContentieuReferentielWithBackupsInterface
   extends ContentieuReferentielInterface {
   backups: dataInterface[] | null;
+}
+
+interface customDataInterface extends dataInterface {
+  groups?: BackupGroupInterface[];
 }
 
 @Component({
@@ -29,7 +34,8 @@ export class ReferentielPage extends MainClass implements OnInit {
   juridictionsService = inject(JuridictionsService);
   referentiels: ContentieuReferentielWithBackupsInterface[] = [];
   QUALITY_LIST = QUALITY_LIST;
-  backups: dataInterface[] = [];
+  backups: customDataInterface[] = [];
+  isJirs: boolean = true;
 
   constructor() {
     super();
@@ -41,10 +47,18 @@ export class ReferentielPage extends MainClass implements OnInit {
 
   onLoadJuridicitons() {
     this.juridictionsService.getAllBackup().then((datas) => {
-      this.backups = datas.map((d: BackupInterface) => ({
+      const allBackups = datas.map((d: BackupInterface) => ({
         id: d.id,
-        value: d.label,
+        value:
+          (d.groups && d.groups.length ? d.groups[0].label + ' - ' : '') +
+          d.label,
+        groups: d.groups,
       }));
+
+      this.backups = [
+        ...allBackups.filter((a: any) => a.groups && a.groups.length),
+        ...allBackups.filter((a: any) => !a.groups || !a.groups.length),
+      ];
 
       this.onLoad();
     });
@@ -52,33 +66,74 @@ export class ReferentielPage extends MainClass implements OnInit {
 
   onLoad() {
     this.referentielService
-      .getReferentiels(true)
+      .getReferentiels(this.isJirs)
       .then((list: ContentieuReferentielInterface[]) => {
-        this.referentiels = list
-          .map((i) => ({
-            ...i,
-            backups: i.onlyToHrBackup
+        this.referentiels = list.map((i) => ({
+          ...i,
+          backups:
+            i.onlyToHrBackup !== null
               ? this.backups.filter((b) => i.onlyToHrBackup?.includes(b.id))
               : null,
-            childrens: (i.childrens || []).map((c) => ({
-              ...c,
-              backups: i.onlyToHrBackup
+          childrens: (i.childrens || []).map((c) => ({
+            ...c,
+            backups:
+              c.onlyToHrBackup !== null
                 ? this.backups.filter((b) => c.onlyToHrBackup?.includes(b.id))
                 : null,
-            })),
-          }))
-          .map((i) => ({
-            ...i,
-            backups: i.backups && i.backups.length === 0 ? null : i.backups,
-            childrens: (i.childrens || []).map((c) => ({
-              ...c,
-              backups: c.backups && c.backups.length === 0 ? null : c.backups,
-            })),
-          }));
+          })),
+        }));
       });
   }
 
-  onUpdateElement(id: number, node: string, value: any) {
-    this.referentielService.update(id, node, value);
+  onUpdateElement(
+    item: ContentieuReferentielWithBackupsInterface,
+    node: string,
+    value: any
+  ) {
+    if (node === 'onlyToHrBackup' && Array.isArray(value)) {
+      let isOnAdd = null;
+      let deltaToUpdate = difference(value, item.onlyToHrBackup || []);
+      if (deltaToUpdate.length) {
+        isOnAdd = true;
+      }
+
+      if (isOnAdd === null) {
+        deltaToUpdate = difference(item.onlyToHrBackup || [], value);
+        if (deltaToUpdate.length) {
+          isOnAdd = false;
+        }
+      }
+
+      if (isOnAdd !== null) {
+        const backupElements = this.backups.filter((b) =>
+          deltaToUpdate.includes(b.id)
+        );
+        backupElements.map((backupElements) => {
+          const groups = backupElements.groups || [];
+          if (groups.length) {
+            groups.map((group) => {
+              const allids = this.backups
+                .filter((b) => (b.groups || []).some((g) => g.id === group.id))
+                .map((b) => b.id);
+              allids.map((id) => {
+                if (isOnAdd) {
+                  if (!value.includes(id)) {
+                    value.push(id);
+                  }
+                } else {
+                  if (value.includes(id)) {
+                    value = value.filter((v: number) => v !== id);
+                  }
+                }
+              });
+            });
+          }
+        });
+      }
+
+      item.onlyToHrBackup = [...value];
+    }
+
+    this.referentielService.update(item.id, node, value);
   }
 }
