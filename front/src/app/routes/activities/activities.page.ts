@@ -112,7 +112,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   documentation: DocumentationInterface = {
     title: "Données d'activité A-JUST :",
     path: this.userService.isCa()
-      ? 'https://docs.a-just.beta.gouv.fr/le-data-book-des-ca'
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/quest-ce-que-cest'
       : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
     printSubTitle: true,
   };
@@ -133,7 +133,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
   /**
    * Lien vers le data book
    */
-  dataBook = this.userService.isCa()?'https://docs.a-just.beta.gouv.fr/le-data-book-des-ca':'https://docs.a-just.beta.gouv.fr/le-data-book/';
+  dataBook = this.userService.isCa()
+    ? 'https://docs.a-just.beta.gouv.fr/le-data-book-des-ca'
+    : 'https://docs.a-just.beta.gouv.fr/le-data-book/';
   /**
    * Support GitBook
    */
