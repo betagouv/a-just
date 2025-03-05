@@ -71,10 +71,10 @@
         font-size: 14px;
         font-weight: bold;
         color: #3a3a3a;
-        padding-right: 16px;
+        padding-right: 8px;
 
         text-align: left;
-        margin: 4px 0 4px 24px;
+        margin: 4px 0 4px 8px;
         flex: 1;
       }
     }
@@ -90,7 +90,7 @@
       }
 
       &.coverage {
-        min-width: 130px;
+        min-width: 85px;
       }
 
       &.dtes {
@@ -98,11 +98,11 @@
         //padding: 0 24px;
         border-left: solid 1px #f6f6f6 !important;
 
-        min-width: 130px;
+        min-width: 85px;
 
         div {
           .ref-nr {
-            justify-content: flex-end!important;
+            justify-content: flex-end !important;
             padding: 0;
           }
         }
@@ -125,8 +125,9 @@
           &.selected {
             background-color: initial;
           }
+
           .ref-nr {
-            justify-content: flex-end!important;
+            justify-content: flex-end !important;
             padding: 0;
           }
         }

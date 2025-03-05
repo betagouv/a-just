@@ -94,10 +94,8 @@ export default (sequelizeInstance, Model) => {
   Model.removeCacheByUser = async (humanId, backupId) => {
     Model.removeCacheAgent(humanId)
 
-    const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === humanId)
-
-    if (cacheJuridictionPeoples[backupId] && index !== -1) {
-      cacheJuridictionPeoples[backupId].splice(index, 1)
+    if(cacheJuridictionPeoples[backupId]) {
+      delete cacheJuridictionPeoples[backupId]
     }
   }
 
@@ -552,6 +550,7 @@ export default (sequelizeInstance, Model) => {
     if (hrFromDB) {
       const camelCaseReturn = snakeToCamelObject(hrFromDB)
       // control if have existing situations
+
       const situations = await Model.models.HRSituations.getListByHumanId(hrId)
       if (situations.length) {
         return false

@@ -1,4 +1,4 @@
-<mat-select [multiple]="multiple" #matSelect class="hide-visualisation" [ngModel]="value"
+<mat-select #select [multiple]="multiple" #matSelect class="hide-visualisation" [ngModel]="value"
   (ngModelChange)="onSelectedChanged($event)" #selectionModel="ngModel">
   <!-- <app-select-check-all *ngIf="multiple" [model]="selectionModel"
     [values]="this.subList ? this.subReferentielData : this.datas" check="true">

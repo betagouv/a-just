@@ -1,5 +1,9 @@
 import { orderBy, sortBy, sumBy } from "lodash";
-import { ABSENTEISME_LABELS, CET_LABEL } from "../constants/referentiel";
+import {
+  ABSENTEISME_LABELS,
+  CET_LABEL,
+  DELEGATION_TJ,
+} from "../constants/referentiel";
 import {
   nbOfDays,
   nbWorkingDays,
@@ -13,7 +17,7 @@ import {
   FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR,
   FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA,
 } from "../constants/extractor";
-import { isCa } from "./ca";
+import { isCa, isTj } from "./ca";
 
 /**
  * Tri par catégorie et par fonction
@@ -313,7 +317,6 @@ export const computeExtractDdg = async (
       let absenteisme = 0;
       let totalDaysGone = 0;
       let totalDays = 0;
-
       let indispoArray = new Array([]);
       let { allIndispRefIds, refIndispo } =
         getIndispoDetails(flatReferentielsList);
@@ -468,12 +471,33 @@ export const computeExtractDdg = async (
               nbOfDays(human.dateStart, dateStop)) /
               nbOfDays(dateStart, dateStop) -
             (refObj[key] || 0);
-        } else
+        } else {
           reelEtp =
             sumBy(reelEtpObject, "etp") /
               sumBy(reelEtpObject, "countNbOfDays") -
             (refObj[key] || 0);
+        }
       }
+
+      if (isCa()) {
+        Object.keys(refObj).map((k) => {
+          if (k.includes(DELEGATION_TJ.toUpperCase()))
+            refObj[key] = refObj[key] - refObj[k];
+        });
+      }
+
+      ["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].forEach(
+        (cle) => {
+          if (refObj.hasOwnProperty(cle)) {
+            delete refObj[cle];
+          }
+        }
+      );
+
+      let absenteismeDetails = null
+      refObj = deplacerClefALaFin(refObj, "14.13. DÉLÉGATION TJ");
+      ({refObj, absenteismeDetails} = getAndDeleteAbsenteisme(refObj, ["12.31. CONGÉ MALADIE ORDINAIRE"	,"12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION"	,"12.8. AUTRE ABSENTÉISME"]))
+
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (
@@ -486,10 +510,12 @@ export const computeExtractDdg = async (
           let gaps = null;
           if (isCa()) {
             gaps = {
-              ["Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST"]: null,
+              ["Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST"]:
+                null,
               ["_"]: null,
             };
-          } else {
+          }
+          if (isTj()) {
             gaps = {
               ["Ecart JE → détails manquants, à rajouter dans A-JUST"]: null,
               ["Ecart JI → détails manquants, à rajouter dans A-JUST"]: null,
@@ -498,7 +524,7 @@ export const computeExtractDdg = async (
           onglet2.push({
             ["Réf."]: String(human.id),
             Arrondissement: juridictionName.label,
-            Jirs: isJirs? 'x':'',
+            Jirs: isJirs ? "x" : "",
             Juridiction: (
               human.juridiction || juridictionName.label
             ).toUpperCase(),
@@ -509,7 +535,8 @@ export const computeExtractDdg = async (
             Fonction: fonctionName,
             ["Fonction recodée"]: null,
             ["Code fonction par défaut"]: fonctionCategory,
-            ["Fonction agrégat"]:null,
+            ["Fonction agrégat"]: null,
+            ["TJCPH"]:null,
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -518,7 +545,8 @@ export const computeExtractDdg = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période absentéisme non déduit (hors action 99)"]: reelEtp,
+            ["ETPT sur la période absentéisme non déduit (hors action 99)"]:
+              reelEtp < 0 ? 0 : reelEtp,
             ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
@@ -526,7 +554,8 @@ export const computeExtractDdg = async (
             ...refObj,
             ["CET > 30 jours"]: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
-            ["Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)"]:
+            ...absenteismeDetails,
+            ["TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)"]:
               absenteisme,
           });
         }
@@ -547,27 +576,19 @@ export const getViewModel = async (params) => {
       : [];
 
   if (isCa()) {
-    keys2.push(
-      "Temps ventilés sur la période (contentieux sociaux civils et commerciaux)"
-    );
-    keys2.push("Temps ventilés sur la période (service pénal)");
-    keys2.push("Temps ventilés sur la période (hors indisponibilités relevant de l'action 99)");
-    keys2.push("Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)");
-    keys2.push("Soutien (Hors accueil du justiciable)");
     keys2 = keys2.map((x) =>
       x === "14. TOTAL INDISPONIBILITÉ"
         ? "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
         : x
     );
-  } else {
-    /**
-    keys2.push("Temps ventilés sur la période (contentieux civils et sociaux)");
-    keys2.push("Temps ventilés sur la période (affaires pénales)");
-    keys2.push(
-      'Vérif adéquation "temps ventilé sur la période" et somme (temps ventilés civils + pénals + autres activités + indisponibilité)'
+
+    keys2 = keys2.filter(
+      (x) =>
+        !["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].includes(
+          x
+        )
     );
-    keys2.push("Temps ventilés sur la période (y.c. indisponibilités relevant de l'action 99)");
-     */
+  } else {
     keys2 = keys2.map((x) =>
       x === "12. TOTAL INDISPONIBILITÉ"
         ? "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
@@ -607,11 +628,24 @@ export const getViewModel = async (params) => {
       '"',
   ];
   let agregat = params.onglet2.excelRef.filter(
-    (x) => x.sub !== "12.2. COMPTE ÉPARGNE TEMPS"
+    (x) =>
+      !["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].includes(
+        x.sub
+      )
   );
-  agregat = agregat.map((x) => {
 
-    if (x.global === "12. TOTAL INDISPONIBILITÉ")
+  agregat = agregat.map((x) => {
+    if (x.sub === "14.13. DÉLÉGATION TJ" && isCa()) {
+      return {
+        ...x,
+        global: "14.13. DÉLÉGATION TJ",
+        global1: "DÉLÉGATION TJ",
+        sub: null,
+        sub1: null,
+      };
+    }
+
+    if (x.global === "12. TOTAL INDISPONIBILITÉ" && isTj())
       return {
         ...x,
         global: "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
@@ -619,21 +653,49 @@ export const getViewModel = async (params) => {
         sub1: x.sub,
       };
 
+    if (x.global === "14. TOTAL INDISPONIBILITÉ" && isCa())
+      return {
+        ...x,
+        global: "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+        global1: "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+        sub1: x.sub,
+      };
+
     if (
-      x.sub === "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)"
+      x.global ===
+        "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)" &&
+      isTj()
     )
       return {
         ...x,
         global1:
-          "13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques",
+          "13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
+        sub1: x.sub,
+      };
+
+    if (
+      x.global ===
+        "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)" &&
+      isCa()
+    )
+      return {
+        ...x,
+        global1:
+          "15. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
         sub1: x.sub,
       };
 
     return { ...x, sub1: x.sub, global1: x.global };
   });
-  // remplacer : "ETPT sur la période hors indisponibilités" => "ETPT sur la période, hors indisponibilités relevant de l'action 99 (absentéisme non déduit)""
-  // remplacer : "12. TOTAL INDISPONIBILITÉ" => "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
-  // remplacer : "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" => ""13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques"
+
+  const index = agregat.findIndex(
+    (item) => item.global === "14.13. DÉLÉGATION TJ"
+  );
+
+  if (index !== -1) {
+    const [element] = agregat.splice(index, 1); // Retire l'élément du tableau
+    agregat.push(element); // Ajoute l'élément à la fin
+  }
 
   return {
     tgilist,
@@ -680,7 +742,8 @@ export const computeExtract = async (
   categoryFilter,
   juridictionName,
   dateStart,
-  dateStop
+  dateStop,
+  isJirs
 ) => {
   let data = [];
 
@@ -850,6 +913,13 @@ export const computeExtract = async (
             (refObj[key] || 0);
       }
 
+      if (isCa()) {
+        Object.keys(refObj).map((k) => {
+          if (k.includes(DELEGATION_TJ.toUpperCase()))
+            refObj[key] = refObj[key] - refObj[k];
+        });
+      }
+
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (
           categoryName !== "pas de catégorie" ||
@@ -863,6 +933,10 @@ export const computeExtract = async (
             Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
+            ["Fonction recodée"]: null,
+            ["TJCPH"]:null,
+            ["Juridiction"]:null,
+            Jirs: isJirs ? "x" : "",
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -871,8 +945,10 @@ export const computeExtract = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période absentéisme non déduit (hors action 99)"]: reelEtp,
-            ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
+            ["ETPT sur la période (absentéisme et action 99 déduits)"]:
+              reelEtp < 0 ? 0 : reelEtp,
+            ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]:
+              totalEtpt,
             ...refObj,
           });
     })
@@ -886,20 +962,43 @@ export const computeExtract = async (
 export const formatFunctions = async (functionList) => {
   let list = [
     ...functionList,
-    ...isCa() ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA
-      : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR
+    ...(isCa()
+      ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA
+      : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR),
   ];
-  list = list.map((fct)=>{
-  return {CONCAT: fct['category_label']+fct['code'],...fct}
-  })
+  list = list.map((fct) => {
+    return { CONCAT: fct["category_label"] + fct["code"], ...fct };
+  });
 
-  return orderBy(list, ["category_label", "rank","code"], ["desc", "asc","asc"]);
+  return orderBy(
+    list,
+    ["category_label", "rank", "code"],
+    ["desc", "asc", "asc"]
+  );
 };
 
 export const getObjectKeys = async (array) => {
-  if (array.length === 0) return []; 
-  console.log(Object.keys(array[0]))
+  if (array.length === 0) return [];
+  return Object.keys(array[0]);
+};
 
-  return Object.keys(array[0]); 
+export const deplacerClefALaFin = (obj, clef) => {
+  if (obj.hasOwnProperty(clef)) {
+    const valeur = obj[clef]; // Sauvegarde la valeur
+    delete obj[clef]; // Supprime la clé
+    obj[clef] = valeur; // Réinsère la clé à la fin
+  }
+  return obj;
+};
+
+export const getAndDeleteAbsenteisme = (obj, labels) => {
+  let absDetails = {}
+  labels.map(label=>{
+  if (obj.hasOwnProperty(label)) {
+    const valeur = obj[label]; // Sauvegarde la valeur
+    delete obj[label]; // Supprime la clé
+    absDetails[label] = valeur; 
+  }
+  })  
+return {refObj:obj, absenteismeDetails:absDetails}
 }
-

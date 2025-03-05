@@ -40,6 +40,10 @@ export interface ContentieuReferentielInterface {
    */
   compter?: boolean;
   /**
+   * Element permettant de spécifier un niveau de détail pour les indisponibilités
+   */
+  category?: boolean;
+  /**
    * Somme des ETP du contentieux
    */
   totalAffected?: number;

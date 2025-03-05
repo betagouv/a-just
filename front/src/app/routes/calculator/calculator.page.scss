@@ -484,7 +484,8 @@
       margin: 4px 8px 4px 0;
       font-size: 12px;
       line-height: 19px;
-      display: inline;
+      display: inline-flex;
+      flex-wrap: nowrap;
       height: 24px;
       padding: 2px 8px;
       border-radius: 12px;
@@ -679,7 +680,7 @@
 
     &.dtes,
     &.coverage {
-      min-width: 130px;
+      min-width: 85px;
     }
 
     &.tmd {
