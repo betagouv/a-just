@@ -114,11 +114,11 @@
       'disabled-label': !canViewGreffier || categorySelected !== 'GREFFE'
     }"></aj-legend-label>
 
-  <div class="space"></div>
-  <aj-legend-label [title]="'projectedCont'" [label]="'EAM (projeté)'" [dotColor]="'#fdbfb7'" [bgColor]="'#fcd7d3'"
-    (value)="display($event)" [disabledEl]="!canViewContractuel" [ngClass]="{
+  <div class="space" *ngIf="canViewContractuel"></div>
+  <aj-legend-label *ngIf="canViewContractuel" [title]="'projectedCont'" [label]="'EAM (projeté)'" [dotColor]="'#fdbfb7'"
+    [bgColor]="'#fcd7d3'" (value)="display($event)" [disabledEl]="!canViewContractuel" [ngClass]="{
       'disabled-label': !canViewContractuel }"></aj-legend-label>
 
-  <aj-legend-label [title]="'simulatedCont'" [label]="'EAM (simulé)'" [dotColor]="'#fcd7d3'" [bgColor]="'#eba89f'"
-    (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
+  <aj-legend-label *ngIf="canViewContractuel" [title]="'simulatedCont'" [label]="'EAM (simulé)'" [dotColor]="'#fcd7d3'"
+    [bgColor]="'#eba89f'" (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
 </div>

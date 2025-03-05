@@ -5,6 +5,7 @@ import {
   Output,
   EventEmitter,
   TemplateRef,
+  ViewChild,
 } from '@angular/core';
 //import { SelectCheckAllComponent } from './select-check-all/select-check-all.component';
 import { MainClass } from '../../libs/main-class';
@@ -80,6 +81,10 @@ export interface childrenInterface {
   styleUrls: ['./select.component.scss'],
 })
 export class SelectComponent extends MainClass implements OnChanges {
+  /**
+   * Material select DOM element
+   */
+  @ViewChild('select') select: any = null;
   /**
    * Titre du bouton
    */
@@ -222,6 +227,7 @@ export class SelectComponent extends MainClass implements OnChanges {
    * @returns void
    */
   onSelectedChanged(list: number[] | number) {
+    console.log('o change ', list);
     if (typeof list === 'number') this.value = [list];
     else this.value = list;
 
