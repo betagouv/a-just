@@ -241,6 +241,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   selectedReferentielIds: number[] = [];
   /**
+   * Identifiants des sous contentieux selectionnés
+   */
+  selectedSubReferentielIds: number[] = [];
+  /**
    * Valeur du champs recherche
    */
   searchValue: string = '';
@@ -444,15 +448,24 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               (a) => this.referentielService.idsIndispo.indexOf(a.id) === -1
             )
             .map((r) => ({ ...r, selected: true }));
+
           this.formReferentiel = this.referentiel.map((r) => ({
             id: r.id,
             value: this.userService.referentielMappingNameByInterface(r.label),
+            childrens: (r.childrens || []).map((c) => ({
+              id: c.id,
+              value: this.userService.referentielMappingNameByInterface(
+                c.label
+              ),
+            })),
           }));
 
           this.selectedReferentielIds =
             this.humanResourceService.selectedReferentielIds;
+          this.selectedSubReferentielIds =
+            this.humanResourceService.selectedSubReferentielIds;
 
-          this.onFilterList();
+          this.onFilterList(false, true, true);
         }
       )
     );
@@ -519,7 +532,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     );
     this.route.queryParams.pipe(debounceTime(300)).subscribe((params) => {
       const { c: categoryId } = params;
-      console.log('params', params);
 
       if (categoryId) {
         this.categoriesFilterList = this.categoriesFilterList.map((c) => {
@@ -757,7 +769,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Filtre liste RH
    */
-  onFilterList(memorizeScroolPosition = false, keepEmptyVentilation = true) {
+  onFilterList(
+    memorizeScroolPosition = false,
+    keepEmptyVentilation = true,
+    isFirstLoad = false
+  ) {
     if (
       !this.categoriesFilterList.length ||
       !this.referentiel.length ||
@@ -774,6 +790,30 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     if (this.formReferentiel.length !== this.selectedReferentielIds.length) {
       selectedReferentielIds = this.selectedReferentielIds;
     }
+
+    let selectedSubReferentielIds: number[] | null = [];
+    this.formReferentiel.map((cont) => {
+      if (
+        !this.selectedReferentielIds ||
+        (this.selectedReferentielIds || []).find((refId) => refId === cont.id)
+      ) {
+        selectedSubReferentielIds = [
+          ...(selectedSubReferentielIds || []),
+          ...(cont.childrens || []).map((c) => c.id),
+        ];
+      }
+    });
+    if (
+      isFirstLoad ||
+      (selectedSubReferentielIds &&
+        selectedSubReferentielIds.length ===
+          this.selectedSubReferentielIds.length)
+    ) {
+      selectedSubReferentielIds = null;
+    } else {
+      selectedSubReferentielIds = this.selectedSubReferentielIds;
+    }
+
     if (memorizeScroolPosition) {
       const domContent = document.getElementById('container-list');
       if (domContent) {
@@ -781,12 +821,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }
     }
 
+    console.log('selectedSubReferentielIds', selectedSubReferentielIds);
+
     this.isLoading = true;
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         selectedReferentielIds,
+        selectedSubReferentielIds,
         this.humanResourceService.categoriesFilterListIds
       )
       .then(
@@ -952,10 +995,22 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Contentieux ids selectionnés
    */
-  onSelectedReferentielIdsChanged(list: any) {
+  onSelectedReferentielIdsChanged({
+    list = [],
+    subList = [],
+  }: {
+    list: number[];
+    subList: number[];
+  }) {
+    console.log(list, subList);
     this.selectedReferentielIds = list;
     this.humanResourceService.selectedReferentielIds =
       this.selectedReferentielIds;
+
+    this.selectedSubReferentielIds = subList;
+    this.humanResourceService.selectedSubReferentielIds =
+      this.selectedReferentielIds;
+
     this.referentiel = this.referentiel.map((cat) => {
       cat.selected = list.indexOf(cat.id) !== -1;
 
@@ -1253,6 +1308,22 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   clearFilterReferentiel() {
     this.selectedReferentielIds = this.formReferentiel.map((r) => r.id);
-    this.onSelectedReferentielIdsChanged(this.selectedReferentielIds);
+    this.selectedSubReferentielIds = [];
+    this.formReferentiel.map((cont) => {
+      if (
+        !this.selectedReferentielIds ||
+        (this.selectedReferentielIds || []).find((refId) => refId === cont.id)
+      ) {
+        this.selectedSubReferentielIds = [
+          ...this.selectedSubReferentielIds,
+          ...(cont.childrens || []).map((c) => c.id),
+        ];
+      }
+    });
+
+    this.onSelectedReferentielIdsChanged({
+      list: this.selectedReferentielIds,
+      subList: this.selectedSubReferentielIds,
+    });
   }
 }

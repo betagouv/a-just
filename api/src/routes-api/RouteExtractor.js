@@ -101,6 +101,7 @@ export default class RouteExtractor extends Route {
       hr,
       undefined,
       undefined,
+      undefined,
       dateStart,
       dateStop
     );

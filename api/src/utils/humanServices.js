@@ -7,12 +7,13 @@ import { today } from './date'
 export async function getHumanRessourceList (
   preformatedAllHumanResource,
   contentieuxIds = undefined,
+  subContentieuxIds = undefined,
   categoriesIds,
   date,
   endPeriodToCheck = undefined,
   acceptAgentWithoutVentilation = false
 ) {
-  const list = preformatedAllHumanResource.filter((hr) => {
+  let list = preformatedAllHumanResource.filter((hr) => {
     let isOk = true
 
     if (hr.category && categoriesIds && categoriesIds.indexOf(hr.category.id) === -1) {
@@ -36,22 +37,42 @@ export async function getHumanRessourceList (
     return isOk
   })
 
-  if (!contentieuxIds) return list
-
-  return list.filter((h) => {
-    const idsOfactivities = h.currentActivities.map((a) => (a.contentieux && a.contentieux.id) || 0)
-    if (acceptAgentWithoutVentilation && idsOfactivities.length === 0) {
-      return true
-    }
-
-    for (let i = 0; i < idsOfactivities.length; i++) {
-      if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
+  if(subContentieuxIds) {
+    console.log(subContentieuxIds)
+    list = list.filter((h) => {
+      const idsOfactivities = h.currentActivities.map((a) => (a.contentieux && a.contentieux.id) || 0)
+      if (acceptAgentWithoutVentilation && idsOfactivities.length === 0) {
         return true
       }
-    }
+  
+      for (let i = 0; i < idsOfactivities.length; i++) {
+        if (subContentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
+          return true
+        }
+      }
+  
+      return false
+    })
+  }
 
-    return false
-  })
+  if(contentieuxIds) {
+    list = list.filter((h) => {
+      const idsOfactivities = h.currentActivities.map((a) => (a.contentieux && a.contentieux.id) || 0)
+      if (acceptAgentWithoutVentilation && idsOfactivities.length === 0) {
+        return true
+      }
+  
+      for (let i = 0; i < idsOfactivities.length; i++) {
+        if (contentieuxIds.indexOf(idsOfactivities[i]) !== -1) {
+          return true
+        }
+      }
+  
+      return false
+    })
+  }
+
+  return list
 }
 
 /**
