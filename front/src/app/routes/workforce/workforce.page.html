@@ -14,8 +14,8 @@
           [categories]="humanResourceService.categoriesFilterListIds"
           [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = false"
           [filterIndispoValues]="(filterParams && filterParams.filterIndispoValues) || null"
-          [referentielIds]="selectedReferentielIds" [referentiels]="formReferentiel"
-          (updateReferentielIds)="onSelectedReferentielIdsChanged($event)">
+          [referentielIds]="selectedReferentielIds" [subReferentielIds]="selectedSubReferentielIds"
+          [referentiels]="formReferentiel" (updateReferentielIds)="onSelectedReferentielIdsChanged($event)">
         </filter-panel>
       </div>
       <div class="flex-1"></div>

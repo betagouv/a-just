@@ -11,25 +11,29 @@
   <p class="filter-group">Filtrer par :</p>
   <aj-list-selection labelPreviewText="Tous" #filterContentieuxSelection icon="filter-2-line" title="Contentieux"
     [multiple]="true" [list]="contentieuxFilterList" [values]="referentielIds!"
-    (valuesChanged)="referentielIds=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close()"></aj-list-selection>
+    (valuesChanged)="referentielIds=$event;updateSubcontentieux();updateParams()"
+    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close(); filterSubContentieuxSelection.close()"></aj-list-selection>
+  <aj-list-selection labelPreviewText="Tous" #filterSubContentieuxSelection icon="filter-2-line"
+    title="Sous-contentieux" [multiple]="true" [list]="subContentieuxFilterList" [values]="subReferentielIds!"
+    (valuesChanged)="subReferentielIds=$event;updateParams()"
+    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close(); filterContentieuxSelection.close()"></aj-list-selection>
   <aj-list-selection #filterSelection icon="filter-2-line" title="Fonctions" [multiple]="true" [list]="filterList"
     [values]="filterValues!" (valuesChanged)="filterValues=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterContentieuxSelection.close(); displaySelection.close()"></aj-list-selection>
+    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterContentieuxSelection.close(); displaySelection.close(); filterSubContentieuxSelection.close()"></aj-list-selection>
   <aj-list-selection #filterIndispoSelection icon="filter-2-line" title="Indisponibilités" [multiple]="true"
     [list]="allIndisponibilityReferentiel" [values]="filterIndispoValues!"
     (valuesChanged)="filterIndispoValues=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterContentieuxSelection.close(); filterSelection.close(); displaySelection.close()"></aj-list-selection>
+    (onOpen)="sortSelection.close(); orderSelection.close(); filterContentieuxSelection.close(); filterSelection.close(); displaySelection.close(); filterSubContentieuxSelection.close()"></aj-list-selection>
 
   <p class="filter-group">Trier par :</p>
   <aj-list-selection #sortSelection title="Critère" [list]="sortList" [value]="sortValue"
     (valueChanged)="sortValue = $event; updateParams()" (onOpen)="
-      filterSelection.close(); orderSelection.close(); displaySelection.close(); filterContentieuxSelection.close(); filterIndispoSelection.close();
+      filterSelection.close(); orderSelection.close(); displaySelection.close(); filterContentieuxSelection.close(); filterIndispoSelection.close(); filterSubContentieuxSelection.close()
     ">
   </aj-list-selection>
   <aj-list-selection #orderSelection [list]="orderList" [value]="orderValue"
     (valueChanged)="orderValue = $event; updateParams()" (onOpen)="
-      filterSelection.close(); sortSelection.close(); displaySelection.close(); filterContentieuxSelection.close(); filterIndispoSelection.close();
+      filterSelection.close(); sortSelection.close(); displaySelection.close(); filterContentieuxSelection.close(); filterIndispoSelection.close(); filterSubContentieuxSelection.close()
     ">
   </aj-list-selection>
 
