@@ -41,6 +41,11 @@ export const DOCUMENTATION_VENTILATEUR_PERSON =
  */
 export const DATA_GITBOOK = 'https://docs.a-just.beta.gouv.fr/le-data-book/';
 /**
+ * Lien pour le guide de la donnée de CA
+ */
+export const DATA_GITBOOK_CA =
+  'https://docs.a-just.beta.gouv.fr/le-data-book-des-ca/';
+/**
  * Lien pour le centre d aide gitbook
  */
 export const HELP_CENTER_GITBOOK =
