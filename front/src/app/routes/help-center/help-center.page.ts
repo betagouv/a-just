@@ -7,6 +7,7 @@ import { DocCardInterface } from '../../components/doc-card/doc-card.component';
 import {
   CALCULATE_DOWNLOAD_URL,
   DATA_GITBOOK,
+  DATA_GITBOOK_CA,
   DOCUMENTATION_URL,
   DOCUMENTATION_URL_CA,
   NOMENCLATURE_DOWNLOAD_URL,
@@ -90,7 +91,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     description:
       "Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d'activité».",
     image: '/assets/images/data-visualization.svg',
-    url: DATA_GITBOOK,
+    url: this.userService.isCa() ? DATA_GITBOOK_CA : DATA_GITBOOK,
   };
   /** Carte nomenclature */
   nomenclature = {
