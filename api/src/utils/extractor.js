@@ -495,7 +495,11 @@ export const computeExtractDdg = async (
       );
 
       let absenteismeDetails = null
-      refObj = deplacerClefALaFin(refObj, "14.13. DÉLÉGATION TJ");
+      let delegation = null
+      if (isCa()){
+        ({refObj, delegation} = getAndDeleteAbsenteisme(refObj, ["14.13. DÉLÉGATION TJ"],true))
+      }
+
       ({refObj, absenteismeDetails} = getAndDeleteAbsenteisme(refObj, ["12.31. CONGÉ MALADIE ORDINAIRE"	,"12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION"	,"12.8. AUTRE ABSENTÉISME"]))
 
 
@@ -557,6 +561,7 @@ export const computeExtractDdg = async (
             ...absenteismeDetails,
             ["TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)"]:
               absenteisme,
+              ...(isCa() ? delegation : {})
           });
         }
     })
@@ -991,7 +996,7 @@ export const deplacerClefALaFin = (obj, clef) => {
   return obj;
 };
 
-export const getAndDeleteAbsenteisme = (obj, labels) => {
+export const getAndDeleteAbsenteisme = (obj, labels,delegation=false) => {
   let absDetails = {}
   labels.map(label=>{
   if (obj.hasOwnProperty(label)) {
@@ -1000,5 +1005,7 @@ export const getAndDeleteAbsenteisme = (obj, labels) => {
     absDetails[label] = valeur; 
   }
   })  
-return {refObj:obj, absenteismeDetails:absDetails}
+
+  if (delegation === true)  return { refObj: obj, delegation: absDetails };
+  else return { refObj: obj, absenteismeDetails: absDetails };
 }
