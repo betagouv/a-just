@@ -3,7 +3,7 @@
 </div>
 <div class="exportateur-container">
   <aj-date-select class="extend" title="Pour la période de" dateType="month" [value]="dateStart"
-    (valueChange)="selectDate('start', $event)" [max]="dateStop|| lastDataDate">
+    (valueChange)="selectDate('start', $event)" [min]="minDate" [max]="dateStop|| lastDataDate">
   </aj-date-select>
   <aj-date-select class="extend" title="À" dateType="month" [value]="dateStop"
     (valueChange)="selectDate('stop', $event)" [min]="dateStart" [max]="lastDataDate">
