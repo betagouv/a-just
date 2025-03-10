@@ -265,7 +265,7 @@ export default (sequelizeInstance, Model) => {
               }
             )
           }
-        } 
+        }
       } else {
         sentEmailSendinblueUserList(user, false)
       }

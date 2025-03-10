@@ -356,6 +356,7 @@ export class PanoramaPage
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         null,
+        null,
         [1, 2, 3]
       )
       .then(({ allPersons, list }) => {

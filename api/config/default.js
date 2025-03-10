@@ -30,8 +30,8 @@ module.exports = {
    */
   database: {
     url: process.env.DATABASE_URL,
-    logging: (msg) => console.log(msg),
-    //logging: false,
+    //logging: (msg) => console.log(msg),
+    logging: false,
   },
   /**
    * Code du cryptage JWT
@@ -247,6 +247,7 @@ module.exports = {
       "194.5.173.",
       "195.42.231.",
       "83.118.200.21", // wifi du lab
+      "86.234.115.218", // IP de Andrée
     ],
   },
 };

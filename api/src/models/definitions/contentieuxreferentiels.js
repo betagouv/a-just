@@ -53,6 +53,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.ARRAY(Sequelize.INTEGER),
         allowNull: true,
       },
+      category: {
+        type: Sequelize.STRING(255),
+        allowNull: true,
+      },
       check_ventilation: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
