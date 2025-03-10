@@ -10,7 +10,10 @@ import {
 } from '../../interfaces/contentieu-referentiel';
 import { UserInterface } from '../../interfaces/user-interface';
 import { DateSelectorinterface } from '../../interfaces/date';
-import { MIN_DATE_SELECT } from '../../constants/activities';
+import {
+  MIN_DATE_SELECT_TJ,
+  MIN_DATE_SELECT_CA,
+} from '../../constants/activities';
 import {
   DATA_GITBOOK,
   NOMENCLATURE_DOWNLOAD_URL,
@@ -121,7 +124,7 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     title: 'Voir les données de',
     dateType: 'month',
     value: null,
-    minDate: new Date(MIN_DATE_SELECT),
+    minDate: new Date(),
     showArrow: true,
   };
   /**
@@ -297,6 +300,10 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
         }
       })
     );
+
+    this.userService.isCa()
+      ? (this.dateSelector.minDate = MIN_DATE_SELECT_CA)
+      : (this.dateSelector.minDate = MIN_DATE_SELECT_TJ);
   }
 
   /**
