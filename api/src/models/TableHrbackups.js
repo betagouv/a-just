@@ -5,6 +5,7 @@ import {
   USER_ROLE_TEAM,
 } from "../constants/roles";
 import { orderBy } from "lodash";
+import { isTj } from "../utils/ca";
 
 /**
  * Liste des juridctions auquels ont accès les utilisateur
@@ -101,6 +102,7 @@ export default (sequelizeInstance, Model) => {
         },
       });
     }
+
   };
 
   /**
@@ -127,7 +129,7 @@ export default (sequelizeInstance, Model) => {
       const newBackupId = backupCreated.dataValues.id;
 
       // Création d'un TJ ou CA IELST
-      await models.TJ.create({
+      const tjCreated = await models.TJ.create({
         i_elst: 0,
         label: backupName,
         latitude: 0,
@@ -136,6 +138,44 @@ export default (sequelizeInstance, Model) => {
         enabled: true,
         type: "TGI",
       });
+
+      const newTJId = tjCreated.dataValues.id;
+
+      if (isTj()) {
+        let subJuridictions = null
+        let tj = null
+        const attributes = ["id", "i_elst", "label", "type", "parent_id"];
+        tj = await models.TJ.findOne({
+          attributes,
+          where: {
+            label: backup.label,
+          },
+          raw: true,
+        });
+
+        if (tj) {
+          subJuridictions = await models.TJ.findAll({
+            attributes,
+            where: {
+              parent_id: tj.id,
+            },
+            raw: true,
+          });
+
+          for (let i = 0; i < subJuridictions.length; i++) {
+            await models.TJ.create({
+              i_elst: 0,
+              label: subJuridictions[i]["type"] + " " + i,
+              latitude: 0,
+              longitude: 0,
+              population: 0,
+              enabled: false,
+              type: subJuridictions[i]["type"],
+              parent_id: newTJId,
+            });
+          }
+        }
+      }
 
       // Recherche de HR
       let hrList = await Model.models.HumanResources.findAll({
@@ -153,6 +193,7 @@ export default (sequelizeInstance, Model) => {
         delete hrList[x].id;
         delete hrList[x]["first_name"];
         delete hrList[x]["last_name"];
+        delete hrList[x]["juridiction"];
 
         // Création de HR
         const newHR = await Model.models.HumanResources.create({
@@ -263,17 +304,15 @@ export default (sequelizeInstance, Model) => {
     });
     const list = [];
     for (let i = 0; i < listAll.length; i++) {
-      if (await Model.models.TJ.isVisible(listAll[i].label)) {
-        list.push({
-          id: listAll[i].id,
-          label: listAll[i].label,
-          date: listAll[i].date,
-        });
-      }
+      list.push({
+        id: listAll[i].id,
+        label: listAll[i].label,
+        date: listAll[i].date,
+        groups: await Model.models.HRBackupsGroupsIds.getGroupsByBackupId(
+          listAll[i].id
+        ),
+      });
     }
-    //console.log('\n\n\n\n\n\n\n\n\n\n\n\nLIST:', list)
-    //list.map((elem) => console.log('id:', elem.id, ' | label:', elem.label))
-    //console.log('\n\n\n\n\n\n\n\n\n\n\n\n')
     return list;
   };
 

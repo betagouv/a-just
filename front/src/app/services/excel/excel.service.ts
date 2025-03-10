@@ -108,7 +108,7 @@ export class ExcelService extends MainClass {
       .then(async (data) => {
         this.tabs = data.data;
 
-        const viewModel = {
+        let viewModel = {
           ...this.tabs.viewModel,
           fonctions: data.data.fonctions,
           firstLink: {
@@ -130,6 +130,10 @@ export class ExcelService extends MainClass {
           ).toLocaleDateString()} au ${new Date(
             this.dateStop.getValue()
           ).toLocaleDateString()}`,
+        };
+        viewModel = {
+          ...viewModel,
+          subtitles1: viewModel.subtitles1.slice(11),
         };
         fetch(
           this.userService.isCa() === false
@@ -241,26 +245,55 @@ export class ExcelService extends MainClass {
 
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
       const indexCell = +(+index + 3);
-      report.worksheets[2].getCell('FA' + indexCell).value = ''; // TO SET ALL PREVIOUS COL
+      const indexFctCol = this.getFonctionCellByAgent(indexCell, viewModel);
+      const indexCat = this.getCategoryCellByAgent(indexCell, viewModel);
+      const indexTab =
+        this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+      const indexTabAjust =
+        this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0;
 
-      report = this.userService.isTJ()
-        ? this.setExcelFunctionsTj(report, indexCell, viewModel)
-        : this.setExcelFunctionsCa(report, indexCell, viewModel);
+      report.worksheets[indexTab].getCell('ZZ' + indexCell).value = ''; // TO SET ALL PREVIOUS COL
+
+      report = this.setExcelFunctionsBinding(report, indexCell, viewModel);
 
       report = this.userService.isTJ()
         ? this.setGapsJEJI(report, indexCell, viewModel)
         : this.setGapsMineurs(report, indexCell, viewModel);
 
-      report = this.setJuridictionPickerByAgent(report, indexCell, viewModel);
+      report = this.userService.isTJ()
+        ? this.setJuridictionPickerByAgent(
+            report,
+            indexCell,
+            viewModel,
+            indexTab
+          )
+        : report;
 
-      const indexFctCol = this.getFonctionCellByAgent(indexCell, viewModel);
-      const indexCat = this.getCategoryCellByAgent(indexCell, viewModel);
+      report = this.addRecodedFonction(
+        report,
+        indexCell,
+        viewModel,
+        indexFctCol
+      );
 
-      report = this.setDopDownPlaceByAgent(report, indexFctCol);
-      report = this.setDopDownJAByAgent(report, indexFctCol);
-      report = this.setDopDownAttJByAgent(report, indexFctCol);
-      report = this.setDopDownContAJPByAgent(report, indexFctCol);
-      report = this.setDopDownContAGreffeByAgent(report, indexFctCol, indexCat);
+      report = this.setDopDownPlaceByAgent(report, indexFctCol, indexTab);
+      report = this.setDopDownJAByAgent(report, indexFctCol, indexTab);
+      report = this.setDopDownAttJByAgent(report, indexFctCol, indexTab);
+      report = this.setDopDownContAJPByAgent(report, indexFctCol, indexTab);
+      report = this.setDopDownContAGreffeByAgent(
+        report,
+        indexFctCol,
+        indexCat,
+        indexTab
+      );
+
+      report = this.setTJCPHCol(
+        report,
+        indexCell,
+        viewModel,
+        indexTab,
+        indexTabAjust
+      );
     });
 
     report = this.setAgregatAffichage(report, viewModel);
@@ -434,6 +467,41 @@ export class ExcelService extends MainClass {
       result: '0',
     };
 
+    // Calculatrice
+    const indexTabMag =
+      this.findIndexByName(report.worksheets, 'Calculatrice magistrats') || 0;
+    const indexTabFon =
+      this.findIndexByName(report.worksheets, 'Calculatrice fonctionnaires') ||
+      0;
+    [indexTabMag, indexTabFon].map((tab) => {
+      ['F9', 'F14'].map((cel) => {
+        report.worksheets[tab].getCell(cel).value = 'unités';
+        report.worksheets[tab].getCell(cel).dataValidation = {
+          type: 'list',
+          formulae: ['"jours,demi-journées,heures"'],
+          error: 'Veuillez selectionner une valeur dans le menu déroulant',
+        };
+      });
+
+      ['G9', 'F16'].map((cel) => {
+        report.worksheets[tab].getCell(cel).value = 'fréquence';
+        report.worksheets[tab].getCell(cel).dataValidation = {
+          type: 'list',
+          formulae: ['"par jour,par semaine,par mois,par an"'],
+          error: 'Veuillez selectionner une valeur dans le menu déroulant',
+        };
+      });
+    });
+
+    const indexTabReconvert =
+      this.findIndexByName(report.worksheets, "Reconvertir % d'ETPT") || 0;
+    report.worksheets[indexTabReconvert].getCell('D3').value = 'MAGISTRAT';
+    report.worksheets[indexTabReconvert].getCell('D3').dataValidation = {
+      type: 'list',
+      formulae: ['"MAGISTRAT,FONCTIONNAIRE"'],
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+    };
+
     return report;
   }
 
@@ -517,6 +585,17 @@ export class ExcelService extends MainClass {
   }
 
   /**
+   * Renvoi l'indice de l'element s'il existe
+   * @param items
+   * @param targetName
+   * @returns
+   */
+  findIndexByName(items: any[], targetName: string): number | null {
+    const index = items.findIndex((item) => item.name === targetName);
+    return index !== -1 ? index : null;
+  }
+
+  /**
    * Initie les selecteur de juridiction
    * @param report
    * @param viewModel
@@ -525,11 +604,15 @@ export class ExcelService extends MainClass {
   async setJuridictionPickers(report: any, viewModel: any) {
     const tpxlistExcel = await this.formatListTpx(viewModel);
     // DDG TJ
-    report.worksheets[10].getCell('D' + +5).value =
+    const tjIndex = this.findIndexByName(report.worksheets, 'ETPT_TJ_DDG') || 0;
+    report.worksheets[tjIndex].getCell('D' + +5).value =
       viewModel.tgilist[0] || viewModel.uniqueJur[0];
     // DDG TPROX
-    report.worksheets[11].getCell('D' + +5).value = viewModel.tpxlist[0] || '';
-    report.worksheets[11].getCell('D' + +5).dataValidation = {
+    const tprIndex =
+      this.findIndexByName(report.worksheets, 'ETPT_TPRX_DDG') || 0;
+    report.worksheets[tprIndex].getCell('D' + +5).value =
+      viewModel.tpxlist[0] || '';
+    report.worksheets[tprIndex].getCell('D' + +5).dataValidation = {
       type: 'list',
       allowBlank: false,
       formulae: tpxlistExcel,
@@ -541,9 +624,25 @@ export class ExcelService extends MainClass {
       showInputMessage: true,
     };
     // DDG CPH
-    report.worksheets[12].getCell('D' + +5).value =
+    const cphIndex =
+      this.findIndexByName(report.worksheets, 'ETPT_CPH_DDG') || 0;
+    report.worksheets[cphIndex].getCell('D' + +5).value =
       viewModel.uniqueJur[0] || '';
-    report.worksheets[12].getCell('D' + +5).dataValidation = {
+    report.worksheets[cphIndex].getCell('D' + +5).dataValidation = {
+      type: 'list',
+      allowBlank: false,
+      formulae: viewModel.tProximite,
+      error: 'Veuillez selectionner une valeur dans le menu déroulant',
+      prompt: 'Selectionner une juridiction',
+      showErrorMessage: true,
+      showInputMessage: true,
+    };
+    // DDG CONT
+    const contIndex =
+      this.findIndexByName(report.worksheets, 'ETPT_JUR_ASS_DDG') || 0;
+    report.worksheets[contIndex].getCell('D' + +5).value =
+      viewModel.uniqueJur[0] || '';
+    report.worksheets[contIndex].getCell('D' + +5).dataValidation = {
       type: 'list',
       allowBlank: false,
       formulae: viewModel.tProximite,
@@ -561,28 +660,61 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setColWidth(report: any) {
-    // ONGLET ETPT DDG
-    report.worksheets[2].columns = [...this.tabs.onglet2.columnSize];
-    report.worksheets[2].columns[0].width = 0;
-    report.worksheets[2].columns[1].width = 0;
-    report.worksheets[2].columns[2].width = 0;
+    const etptDDGIndex =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+    report.worksheets[etptDDGIndex].columns = [...this.tabs.onglet2.columnSize];
+    report.worksheets[etptDDGIndex].columns[0].width = 0;
+    report.worksheets[etptDDGIndex].columns[1].width = 0;
+    report.worksheets[etptDDGIndex].columns[2].width = 0;
+    report.worksheets[etptDDGIndex].columns[8].width = 20;
+    report.worksheets[etptDDGIndex].columns[9].width = 0;
+    report.worksheets[etptDDGIndex].columns[10].width = 0;
+    report.worksheets[etptDDGIndex].columns[11].width = 0;
+    report.worksheets[etptDDGIndex].columns[12].width = 0;
 
-    report.worksheets[2].columns[9].width = 0;
-    report.worksheets[2].columns[10].width = 0;
-    report.worksheets[2].columns[11].width = 0;
-    report.worksheets[2].columns[8].width = 20;
     let index = 0;
     do {
-      report.worksheets[2].columns[12 + index].width = 26;
+      report.worksheets[etptDDGIndex].columns[13 + index].width = 26;
       index++;
     } while (index < 4);
 
-    //ONGLET ETPT AJUST
-    report.worksheets[1].columns = [...this.tabs.onglet1.columnSize];
-    report.worksheets[1].columns[0].width = 16;
+    if (this.userService.isCa()) {
+      report.worksheets[etptDDGIndex].columns[19].width = 0;
+    }
 
-    // ONGLET AGREGAT
-    report.worksheets[3].columns[0].width = 20;
+    const etptAjustIndex =
+      this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0;
+    report.worksheets[etptAjustIndex].columns = [
+      ...this.tabs.onglet1.columnSize,
+    ];
+    report.worksheets[etptAjustIndex].columns[0].width = 16;
+    if (this.userService.isCa()) {
+      report.worksheets[etptAjustIndex].columns[7].width = 0;
+      report.worksheets[etptAjustIndex].columns[10].width = 26;
+    }
+    if (this.userService.isTJ()) {
+      report.worksheets[etptAjustIndex].columns[7].width = 0;
+      report.worksheets[etptAjustIndex].columns[8].width = 0;
+      report.worksheets[etptAjustIndex].columns[9].width = 0;
+      report.worksheets[etptAjustIndex].columns[10].width = 0;
+    }
+
+    const agregatIndex =
+      this.findIndexByName(report.worksheets, 'Agrégats DDG') || 0;
+    report.worksheets[agregatIndex].columns[0].width = 20;
+
+    const fctIndex =
+      this.findIndexByName(report.worksheets, 'Table_Fonctions') || 0;
+    report.worksheets[fctIndex].columns[0].width = 0;
+
+    if (this.userService.isCa()) {
+      report.worksheets[fctIndex].columns[6].width = 25;
+      report.worksheets[fctIndex].columns[5].width = 38;
+      report.worksheets[fctIndex].columns[4].width = 28;
+      report.worksheets[fctIndex].columns[3].width = 15;
+      report.worksheets[fctIndex].columns[2].width = 55;
+      report.worksheets[fctIndex].columns[1].width = 21;
+    }
 
     return report;
   }
@@ -594,7 +726,10 @@ export class ExcelService extends MainClass {
    * @param viewModel
    * @returns
    */
-  setExcelFunctionsTj(report: any, indexCell: number, viewModel: any) {
+  setExcelFunctionsBinding(report: any, indexCell: number, viewModel: any) {
+    const etptDDGIndex =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+
     let concatFct = this.getExcelFormulaFormat(
       ['Catégorie', 'Fonction'],
       indexCell,
@@ -602,7 +737,7 @@ export class ExcelService extends MainClass {
       '&'
     );
     // FONCTION RECODEE ONGLET DDG
-    report.worksheets[2].getCell(
+    report.worksheets[etptDDGIndex].getCell(
       this.getExcelFormulaFormat(
         ['Fonction recodée'],
         indexCell,
@@ -615,7 +750,7 @@ export class ExcelService extends MainClass {
     };
 
     // FONCTION AGREGAT ONGLET DDG
-    report.worksheets[2].getCell(
+    report.worksheets[etptDDGIndex].getCell(
       this.getExcelFormulaFormat(
         ['Fonction agrégat'],
         indexCell,
@@ -645,8 +780,11 @@ export class ExcelService extends MainClass {
    * @param viewModel
    */
   setGapsMineurs(report: any, indexCell: number, viewModel: any) {
+    const etptDDGIndex =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+
     // ECART CTX MINEURS  ONGLET DDG
-    report.worksheets[2].getCell(
+    report.worksheets[etptDDGIndex].getCell(
       this.getExcelFormulaFormat(
         ['Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST'],
         indexCell,
@@ -679,8 +817,11 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setGapsJEJI(report: any, indexCell: number, viewModel: any) {
+    const etptDDGIndex =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+
     // ECART JE ONGLET DDG
-    report.worksheets[2].getCell(
+    report.worksheets[etptDDGIndex].getCell(
       this.getExcelFormulaFormat(
         ['Ecart JE → détails manquants, à rajouter dans A-JUST'],
         indexCell,
@@ -704,7 +845,7 @@ export class ExcelService extends MainClass {
         '),3)',
     };
     // ECART JI ONGLET DDG
-    report.worksheets[2].getCell(
+    report.worksheets[etptDDGIndex].getCell(
       this.getExcelFormulaFormat(
         ['Ecart JI → détails manquants, à rajouter dans A-JUST'],
         indexCell,
@@ -744,8 +885,18 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setExcelFunctionsCa(report: any, indexCell: number, viewModel: any) {
+    const etptDDGIndex =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+
+    let concatFct = this.getExcelFormulaFormat(
+      ['Catégorie', 'Fonction'],
+      indexCell,
+      viewModel.days1,
+      '&'
+    );
+
     // FONCTION RECODEE ONGLET DDG => AUTOMATISER PLUS TARD
-    report.worksheets[2].getCell('FA' + indexCell).value = {
+    report.worksheets[etptDDGIndex].getCell('FA' + indexCell).value = {
       formula:
         '=IF(H' +
         indexCell +
@@ -756,7 +907,7 @@ export class ExcelService extends MainClass {
     };
 
     // FONCTION AGREGAT ONGLET DDG => AUTOMATISER PLUS TARD
-    report.worksheets[2].getCell('FB' + indexCell).value = {
+    report.worksheets[etptDDGIndex].getCell('FB' + indexCell).value = {
       formula:
         '=IFERROR(VLOOKUP(H' +
         indexCell +
@@ -765,7 +916,7 @@ export class ExcelService extends MainClass {
         ')',
       result: '',
     };
-
+    /**
     // SOCIAUX CIVILS ET COMMERCIAUX  ONGLET DDG
     report.worksheets[2].getCell(
       this.getExcelFormulaFormat(
@@ -926,6 +1077,8 @@ export class ExcelService extends MainClass {
     ].width = 30;
 
     report.worksheets[2].columns[15].width = 0;
+
+    */
     return report;
   }
 
@@ -936,13 +1089,16 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setRedGapConditionnalFormating(report: any, viewModel: any) {
-    report.worksheets[2].conditionalFormattings[0].ref =
+    const etptDDGIndex =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+
+    report.worksheets[etptDDGIndex].conditionalFormattings[0].ref =
       'A3:' +
       this.numberToExcelColumn(Object.keys(viewModel.days1).length) +
       Object.keys(viewModel.stats1).length +
       ' A2:EZ2 A1:G1 I1:EY1';
 
-    report.worksheets[2].conditionalFormattings[0].rules.ref =
+    report.worksheets[etptDDGIndex].conditionalFormattings[0].rules.ref =
       'A3:' +
       this.numberToExcelColumn(Object.keys(viewModel.days1).length) +
       Object.keys(viewModel.stats1).length +
@@ -958,9 +1114,14 @@ export class ExcelService extends MainClass {
    * @param viewModel
    * @returns
    */
-  setJuridictionPickerByAgent(report: any, indexCell: number, viewModel: any) {
+  setJuridictionPickerByAgent(
+    report: any,
+    indexCell: number,
+    viewModel: any,
+    indexTab: number
+  ) {
     // CHOIX juridiction TPRX TJ onglet ETPT DDG
-    report.worksheets[2].getCell(
+    report.worksheets[indexTab].getCell(
       this.getExcelFormulaFormat(['Juridiction'], indexCell, viewModel.days1)
     ).dataValidation = {
       type: 'list',
@@ -1003,27 +1164,29 @@ export class ExcelService extends MainClass {
    * @param indexFctCol
    * @returns
    */
-  setDopDownPlaceByAgent(report: any, indexFctCol: string) {
+  setDopDownPlaceByAgent(report: any, indexFctCol: string, indexTab: number) {
     // CHOIX PLACE ADD OU SUB ONGLET DDG
     const fonctionCellToCheck =
-      (report.worksheets[2].getCell(indexFctCol).value! as string) || '';
+      (report.worksheets[indexTab].getCell(indexFctCol).value! as string) || '';
 
     if (
       fonctionCellToCheck.includes('PLACÉ') ||
       (this.userService.isCa() &&
         (fonctionCellToCheck === 'VPP' || fonctionCellToCheck === 'JP'))
     ) {
-      report.worksheets[2].getCell(indexFctCol).dataValidation = {
+      report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
         formulae: [
-          `"${report.worksheets[2].getCell(indexFctCol).value} ADDITIONNEL,${
-            report.worksheets[2].getCell(indexFctCol).value
+          `"${
+            report.worksheets[indexTab].getCell(indexFctCol).value
+          } ADDITIONNEL,${
+            report.worksheets[indexTab].getCell(indexFctCol).value
           } SUBSTITUTION"`,
         ],
       };
-      report.worksheets[2].getCell(indexFctCol).value = `${
-        report.worksheets[2].getCell(indexFctCol).value
+      report.worksheets[indexTab].getCell(indexFctCol).value = `${
+        report.worksheets[indexTab].getCell(indexFctCol).value
       } ADDITIONNEL`;
     }
 
@@ -1035,16 +1198,17 @@ export class ExcelService extends MainClass {
    * @param report
    * @param indexFctCol
    */
-  setDopDownJAByAgent(report: any, indexFctCol: string) {
-    if (report.worksheets[2].getCell(indexFctCol).value === 'JA') {
-      report.worksheets[2].getCell(indexFctCol).value = 'JA Siège autres';
-      report.worksheets[2].getCell(indexFctCol).dataValidation = {
+  setDopDownJAByAgent(report: any, indexFctCol: string, indexTab: number) {
+    if (report.worksheets[indexTab].getCell(indexFctCol).value === 'JA') {
+      report.worksheets[indexTab].getCell(indexFctCol).value =
+        'JA Siège autres';
+      report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
         formulae: this.userService.isCa()
-          ? ['"JA Chambres Sociales,JA Siège autres,JA Parquet Général"']
+          ? ['"JA Siège autres,JA Social,JA Parquet"']
           : [
-              '"JA Social,JA Siège autres,JA Parquet,JA JAP,JA JE,JA JI,JA JLD"',
+              '"JA Siège autres,JA Social,JA Parquet,JA JAP,JA JE,JA JI,JA JLD"',
             ],
       };
     }
@@ -1057,13 +1221,11 @@ export class ExcelService extends MainClass {
    * @param indexFctCol
    * @returns
    */
-  setDopDownAttJByAgent(report: any, indexFctCol: string) {
-    if (
-      report.worksheets[2].getCell(indexFctCol).value === 'Att. J' &&
-      this.userService.isTJ()
-    ) {
-      report.worksheets[2].getCell(indexFctCol).value = 'Att. J Siège autres';
-      report.worksheets[2].getCell(indexFctCol).dataValidation = {
+  setDopDownAttJByAgent(report: any, indexFctCol: string, indexTab: number) {
+    if (report.worksheets[indexTab].getCell(indexFctCol).value === 'Att. J') {
+      report.worksheets[indexTab].getCell(indexFctCol).value =
+        'Att. J Siège autres';
+      report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
         formulae: [
@@ -1080,13 +1242,13 @@ export class ExcelService extends MainClass {
    * @param indexFctCol
    * @returns
    */
-  setDopDownContAJPByAgent(report: any, indexFctCol: string) {
+  setDopDownContAJPByAgent(report: any, indexFctCol: string, indexTab: number) {
     if (
-      report.worksheets[2].getCell(indexFctCol).value === 'CONT A JP' &&
-      this.userService.isTJ()
+      report.worksheets[indexTab].getCell(indexFctCol).value === 'CONT A JP'
     ) {
-      report.worksheets[2].getCell(indexFctCol).value = 'CONT A JP Siège';
-      report.worksheets[2].getCell(indexFctCol).dataValidation = {
+      report.worksheets[indexTab].getCell(indexFctCol).value =
+        'CONT A JP Siège';
+      report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
         formulae: ['"CONT A JP Siège,CONT A JP Parquet"'],
@@ -1104,15 +1266,15 @@ export class ExcelService extends MainClass {
   setDopDownContAGreffeByAgent(
     report: any,
     indexFctCol: string,
-    indexCat: string
+    indexCat: string,
+    indexTab: number
   ) {
     if (
-      report.worksheets[2].getCell(indexCat).value === 'Greffe' &&
-      report.worksheets[2].getCell(indexFctCol).value === 'CONT A' &&
-      this.userService.isTJ()
+      report.worksheets[indexTab].getCell(indexCat).value === 'Greffe' &&
+      report.worksheets[indexTab].getCell(indexFctCol).value === 'CONT A'
     ) {
-      report.worksheets[2].getCell(indexFctCol).value = 'CONT A Autres';
-      report.worksheets[2].getCell(indexFctCol).dataValidation = {
+      report.worksheets[indexTab].getCell(indexFctCol).value = 'CONT A Autres';
+      report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
         type: 'list',
         allowBlank: true,
         formulae: ['"CONT A VIF Siège,CONT A VIF Parquet,CONT A Autres"'],
@@ -1155,7 +1317,7 @@ export class ExcelService extends MainClass {
     };
 
     // ONGLET AGGREGAT MESSAGE SI ECART
-    report.worksheets[3]['_rows'][6].height = 40;
+    report.worksheets[3]['_rows'][6].height = 50;
     report.worksheets[3].getCell('F7').value = {
       formula:
         "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne N de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
@@ -1187,20 +1349,123 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setJuridictionTab(report: any, viewModel: any) {
+    const juridictionIndex =
+      this.findIndexByName(report.worksheets, 'Juridictions') || 0;
     // ONGLET JURIDICTION
     viewModel.tgilist.map((value: any, index: any) => {
-      report.worksheets[5].getCell('B' + (+index + 1)).value = value;
+      report.worksheets[juridictionIndex].getCell('B' + (+index + 1)).value =
+        value;
     });
     viewModel.tpxlist.map((value: any, index: any) => {
-      report.worksheets[5].getCell('E' + (+index + 1)).value = value;
+      report.worksheets[juridictionIndex].getCell('E' + (+index + 1)).value =
+        value;
     });
     viewModel.cphlist.map((value: any, index: any) => {
-      report.worksheets[5].getCell('H' + (+index + 1)).value = value;
+      report.worksheets[juridictionIndex].getCell('H' + (+index + 1)).value =
+        value;
     });
     const TJCPH = [...viewModel.tgilist, ...viewModel.isolatedCPH];
     TJCPH.map((value: any, index: any) => {
-      report.worksheets[5].getCell('J' + (+index + 1)).value = value;
+      report.worksheets[juridictionIndex].getCell('J' + (+index + 1)).value =
+        value;
     });
+    return report;
+  }
+  /**
+   * @param report
+   * @param indexCell
+   * @param viewModel
+   * @param indexFctCol
+   */
+  addRecodedFonction(
+    report: any,
+    indexCell: number,
+    viewModel: any,
+    indexFctCol: string
+  ) {
+    const indexTab =
+      this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0;
+
+    report.worksheets[indexTab].getCell(
+      this.getExcelFormulaFormat(
+        ['Fonction recodée'],
+        indexCell,
+        viewModel.days
+      )
+    ).value = {
+      formula:
+        "='ETPT Format DDG'!" +
+        this.getExcelFormulaFormat(
+          ['Fonction recodée'],
+          indexCell,
+          viewModel.days1
+        ),
+      result: '',
+    };
+
+    return report;
+  }
+
+  /**
+   * Ajoute une colonne auxiliaire afin de savoir si l'agent appartient au TJ ou à un CPH détaché
+   * @param report
+   * @param indexCell
+   * @param viewModel
+   */
+  setTJCPHCol(
+    report: any,
+    indexCell: number,
+    viewModel: any,
+    indexTab: number,
+    indexTabAjust: number
+  ) {
+    const indexJuridiction = this.getExcelFormulaFormat(
+      ['Juridiction'],
+      indexCell,
+      viewModel.days1
+    );
+    const indexTJCPH = this.getExcelFormulaFormat(
+      ['TJCPH'],
+      indexCell,
+      viewModel.days1
+    );
+
+    report.worksheets[indexTab].getCell(indexTJCPH).value = {
+      formula:
+        '=IF(OR(LEFT(' +
+        indexJuridiction +
+        ', 3)="TJ ", LEFT(' +
+        indexJuridiction +
+        ', 4)="CPH "), "OUI", "NON")',
+      result: '',
+    };
+
+    const indexTJCPHAjust = this.getExcelFormulaFormat(
+      ['TJCPH'],
+      indexCell,
+      viewModel.days
+    );
+
+    report.worksheets[indexTabAjust].getCell(indexTJCPHAjust).value = {
+      formula:
+        "='ETPT Format DDG'!" +
+        this.getExcelFormulaFormat(['TJCPH'], indexCell, viewModel.days1),
+      result: '',
+    };
+
+    const indexJuridictionAjust = this.getExcelFormulaFormat(
+      ['Juridiction'],
+      indexCell,
+      viewModel.days
+    );
+
+    report.worksheets[indexTabAjust].getCell(indexJuridictionAjust).value = {
+      formula:
+        "='ETPT Format DDG'!" +
+        this.getExcelFormulaFormat(['Juridiction'], indexCell, viewModel.days1),
+      result: '',
+    };
+
     return report;
   }
 }

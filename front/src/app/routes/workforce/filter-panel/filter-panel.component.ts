@@ -93,7 +93,8 @@ export class FilterPanelComponent
   /**
    * Event qui informate quand la liste des referentiels changes
    */
-  @Output() updateReferentielIds: EventEmitter<any> = new EventEmitter();
+  @Output() updateReferentielIds: EventEmitter<{ list: any; subList: any }> =
+    new EventEmitter();
   /**
    * Liste complète des tris possibles
    */
@@ -205,6 +206,10 @@ export class FilterPanelComponent
    */
   @Input() referentielIds: (string | number)[] | null = null;
   /**
+   * Liste des sous contentieux selectionnées
+   */
+  @Input() subReferentielIds: (string | number)[] | null = null;
+  /**
    * Referentiels
    */
   @Input() referentiels: dataInterface[] = [];
@@ -225,9 +230,13 @@ export class FilterPanelComponent
    */
   filterList: ItemInterface[] = [];
   /**
-   * List des filtres de contentieux possibles
+   * List des filtres des contentieux possibles
    */
   contentieuxFilterList: ItemInterface[] = [];
+  /**
+   * List des filtres des sous contentieux possibles
+   */
+  subContentieuxFilterList: ItemInterface[] = [];
   /**
    * Valeur par défaut de filtre
    */
@@ -434,7 +443,10 @@ export class FilterPanelComponent
       filterNames,
     });
 
-    this.updateReferentielIds.emit(this.referentielIds);
+    this.updateReferentielIds.emit({
+      list: this.referentielIds,
+      subList: this.subReferentielIds,
+    });
   }
 
   formatReferentielList() {
@@ -442,5 +454,25 @@ export class FilterPanelComponent
       id: r.id,
       label: r.value,
     }));
+
+    this.updateSubcontentieux();
+  }
+
+  updateSubcontentieux() {
+    let list: ItemInterface[] = [];
+    this.referentiels.map((cont) => {
+      if (
+        !this.referentielIds ||
+        (this.referentielIds || []).find((refId) => refId === cont.id)
+      ) {
+        list = [
+          ...list,
+          ...(cont.childrens || []).map((c) => ({ id: c.id, label: c.value })),
+        ];
+      }
+    });
+
+    this.subContentieuxFilterList = [...list];
+    this.subReferentielIds = list.map((l) => l.id);
   }
 }
