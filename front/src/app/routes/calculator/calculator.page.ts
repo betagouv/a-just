@@ -335,7 +335,7 @@ export class CalculatorPage
   /**
    * Date minimum selectionnable
    */
-  minDateSelectable: Date = new Date(2021, 0, 1);
+  minDateSelectable: Date = new Date();
   /**
    * Detect if last month is loading
    */
@@ -391,6 +391,10 @@ export class CalculatorPage
         this.onLoad();
       })
     );
+
+    this.minDateSelectable = this.userService.isCa()
+      ? new Date(2022, 0, 1)
+      : new Date(2021, 0, 1);
   }
 
   /**

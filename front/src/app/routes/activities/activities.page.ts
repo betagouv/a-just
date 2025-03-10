@@ -187,8 +187,9 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     {
       target: '.date-selector',
       title: 'Le calendrier',
-      intro:
-        "Vous permet de visualiser les <b>données d'activité par mois</b> depuis 2021.<br/><b>Le taux de complétude global</b> vous indique <b>le pourcentage de données d'activité disponibles</b> sur l'ensemble des contentieux du mois sélectionné.",
+      intro: `Vous permet de visualiser les <b>données d'activité par mois</b> depuis ${
+        this.userService.isCa() ? '2022' : '2021'
+      }.<br/><b>Le taux de complétude global</b> vous indique <b>le pourcentage de données d'activité disponibles</b> sur l'ensemble des contentieux du mois sélectionné.`,
     },
     {
       target:
