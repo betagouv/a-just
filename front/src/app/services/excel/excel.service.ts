@@ -1470,4 +1470,41 @@ export class ExcelService extends MainClass {
 
     return report;
   }
+
+  /**
+   *
+   * @param report
+   * @param indexCell
+   * @param viewModel
+   * @param indexTab
+   * @param indexTabAjust
+   */
+  setJuridictionAjust(
+    report: any,
+    indexCell: number,
+    viewModel: any,
+    indexTab: number,
+    indexTabAjust: number
+  ) {
+    const indexJuridiction = this.getExcelFormulaFormat(
+      ['Juridiction'],
+      indexCell,
+      viewModel.days1
+    );
+
+    const indexJuridictionAjust = this.getExcelFormulaFormat(
+      ['Juridiction'],
+      indexCell,
+      viewModel.days
+    );
+
+    report.worksheets[indexTabAjust].getCell(indexJuridictionAjust).value = {
+      formula:
+        "='ETPT Format DDG'!" +
+        this.getExcelFormulaFormat(['Juridiction'], indexCell, viewModel.days1),
+      result: '',
+    };
+
+    return report;
+  }
 }
