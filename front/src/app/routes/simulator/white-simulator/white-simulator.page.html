@@ -298,11 +298,11 @@
           [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator}">
           <p>Stock</p>
         </div>
-        <div *ngIf="canViewMagistrat" class="item">
+        <div *ngIf="canViewMagistrat && categorySelected === 'MAGISTRAT'" class="item">
           <p>ETPT siège</p>
         </div>
-        <div *ngIf="canViewGreffier" class="item blue-bg"
-          [ngClass]="{'display-none': whiteSimulator && categorySelected !== 'GREFFE' && !whiteSimulator, 'pink-bg': categorySelected === 'GREFFE','no-bg':whiteSimulator}">
+        <div *ngIf="canViewGreffier && categorySelected === 'GREFFE'" class="item blue-bg"
+          [ngClass]="{'no-bg':whiteSimulator}">
           <p>ETPT greffe</p>
         </div>
         <div *ngIf="canViewContractuel" class="item" [ngClass]="{'display-none': whiteSimulator}">
@@ -393,8 +393,7 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewMagistrat" class="line-item"
-          [style.visibility]="categorySelected==='GREFFE'?'hidden':'visible'">
+        <div *ngIf="canViewMagistrat && categorySelected==='MAGISTRAT'" class="line-item">
           <input [value]="getFieldValue('etpMag',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -414,8 +413,7 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewGreffier" class="line-item"
-          [style.visibility]="categorySelected!=='GREFFE'?'hidden':'visible'">
+        <div *ngIf="canViewGreffier && categorySelected==='GREFFE'" class="line-item">
           <input [value]="getFieldValue('etpFon',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -528,7 +526,7 @@
     </div>
 
     <aj-dtes-chart></aj-dtes-chart>
-    <aj-etp-chart [categorySelected]="categorySelected||'MAGISTRAT'" [canViewMagistrat]="categorySelected==='MAGISTRAT'"
+    <aj-etp-chart [whiteSimulator]="true" [categorySelected]="categorySelected||'MAGISTRAT'" [canViewMagistrat]="categorySelected==='MAGISTRAT'"
       [canViewGreffier]="categorySelected!=='MAGISTRAT'" [canViewContractuel]="false"></aj-etp-chart>
     <aj-in-out-chart></aj-in-out-chart>
 
