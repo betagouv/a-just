@@ -36,7 +36,7 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Lien de la doc
    */
   documentation: DocumentationInterface = {
-    title: "Données d'activité A-JUST :",
+    title: 'Référentiels de temps moyens :',
     path: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/gerer-ses-referentiels-de-temps-moyens',
     printSubTitle: true,
   };
