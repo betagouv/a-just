@@ -76,27 +76,28 @@ export class NewsPage extends MainClass implements OnInit, OnDestroy {
 
   onLoad() {
     this.newsService.getAll().then((datas) => {
-      this.dataSource.data = datas.map((d: NewsInterface) => {
-        const textColorHex =
-          d.textColor && typeof d.textColor === 'string'
-            ? hexToRgb(d.textColor)
-            : null;
-        const backgroundColorHex =
-          d.backgroundColor && typeof d.backgroundColor === 'string'
-            ? hexToRgb(d.backgroundColor)
-            : null;
-        const actionButtonColorHex =
-          d.actionButtonColor && typeof d.actionButtonColor === 'string'
-            ? hexToRgb(d.actionButtonColor)
-            : null;
+      this.dataSource.data = datas;
+      // this.dataSource.data = datas.map((d: NewsInterface) => {
+      //   const textColorHex =
+      //     d.textColor && typeof d.textColor === 'string'
+      //       ? hexToRgb(d.textColor)
+      //       : null;
+      //   const backgroundColorHex =
+      //     d.backgroundColor && typeof d.backgroundColor === 'string'
+      //       ? hexToRgb(d.backgroundColor)
+      //       : null;
+      //   const actionButtonColorHex =
+      //     d.actionButtonColor && typeof d.actionButtonColor === 'string'
+      //       ? hexToRgb(d.actionButtonColor)
+      //       : null;
 
-        return {
-          ...d,
-          textColor: textColorHex || '',
-          backgroundColor: backgroundColorHex || '',
-          actionButtonColor: actionButtonColorHex || '',
-        };
-      });
+      //   return {
+      //     ...d,
+      //     textColor: textColorHex || '',
+      //     backgroundColor: backgroundColorHex || '',
+      //     actionButtonColor: actionButtonColorHex || '',
+      //   };
+      // });
     });
   }
 
