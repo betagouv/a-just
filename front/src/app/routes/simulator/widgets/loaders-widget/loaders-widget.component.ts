@@ -37,6 +37,8 @@ export class LoadersWidgetComponent implements OnChanges {
    */
   @Input() valueSimulated: string = '';
   /** Valeur par défaut bar 1 */
+  valueBar0 = 100;
+  /** Valeur par défaut bar 1 */
   valueBar1 = 100;
   /** Valeur par défaut bar 2 */
   valueBar2 = 100;
@@ -50,21 +52,21 @@ export class LoadersWidgetComponent implements OnChanges {
    * Ecoute la valeur de la simulation afin d'augmenter/diminuer la jauge
    */
   ngOnChanges(): void {
-    if (this.valueAt !== '') {
-      const delta =
-        ((parseFloat(this.valueAt.split(' ')[0]) -
-          parseFloat(this.valueProjected.split(' ')[0])) /
-          parseFloat(this.valueAt.split(' ')[0])) *
-        100;
-      this.valueBar1 = delta <= 100 && delta >= 0 ? delta : 0;
-    }
-    if (this.valueSimulated !== '') {
-      const delta =
-        ((parseFloat(this.valueAt.split(' ')[0]) -
-          parseFloat(this.valueSimulated.split(' ')[0])) /
-          parseFloat(this.valueAt.split(' ')[0])) *
-        100;
-      this.valueBar2 = delta <= 100 && delta >= 0 ? delta : 0;
+    const at = parseFloat(this.valueAt.split(' ')[0]);
+    const projected = parseFloat(this.valueProjected.split(' ')[0]);
+    const simulated = parseFloat(this.valueSimulated.split(' ')[0]);
+
+    const values = [at, projected, simulated];
+    const max = Math.max(...values);
+
+    if (max > 0) {
+      this.valueBar0 = 100 - (at / max) * 100;
+      this.valueBar1 = 100 - (projected / max) * 100;
+      this.valueBar2 = 100 - (simulated / max) * 100;
+    } else {
+      this.valueBar0 = 0;
+      this.valueBar1 = 0;
+      this.valueBar2 = 0;
     }
   }
 }
