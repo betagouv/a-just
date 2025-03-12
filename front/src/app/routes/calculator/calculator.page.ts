@@ -165,7 +165,7 @@ export class CalculatorPage
   documentation: DocumentationInterface = {
     title: 'Cockpit',
     path: this.userService.isCa()
-      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-donnees-brutes'
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/quest-ce-que-cest-1'
       : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
     printSubTitle: true,
   };
