@@ -514,16 +514,19 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         );
         return;
       } else {
-        if (!saveETPT0) {
+        alert(
+          "L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie."
+        );
+        /*if (!saveETPT0) {
           this.appService.alert.next({
             title: 'Attention',
             text: `L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie.`,
             callback: () => {
               this.onSave(withoutPercentControl, true);
             },
-          });
-          return;
-        }
+          });*/
+        return;
+        //}
       }
     }
 
