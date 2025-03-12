@@ -277,9 +277,11 @@ export class ExcelService extends MainClass {
         indexFctCol
       );
 
+      report = this.userService.isTJ()
+        ? this.setDopDownAttJByAgentTJ(report, indexFctCol, indexTab)
+        : this.setDopDownAttJByAgentCA(report, indexFctCol, indexTab);
       report = this.setDopDownPlaceByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownJAByAgent(report, indexFctCol, indexTab);
-      report = this.setDopDownAttJByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownContAJPByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownContAGreffeByAgent(
         report,
@@ -1213,12 +1215,12 @@ export class ExcelService extends MainClass {
   }
 
   /**
-   * Initie le menu Att. justice
+   * Initie le menu Att. justice pour le TJ
    * @param report
    * @param indexFctCol
    * @returns
    */
-  setDopDownAttJByAgent(report: any, indexFctCol: string, indexTab: number) {
+  setDopDownAttJByAgentTJ(report: any, indexFctCol: string, indexTab: number) {
     if (report.worksheets[indexTab].getCell(indexFctCol).value === 'Att. J') {
       report.worksheets[indexTab].getCell(indexFctCol).value =
         'Att. J Siège autres';
@@ -1226,8 +1228,27 @@ export class ExcelService extends MainClass {
         type: 'list',
         allowBlank: true,
         formulae: [
-          '"Att. J Social,Att. J Siège autres,Att. J Parquet,Att. J JAP,Att. J JE,Att. J JI,Att. J JLD"',
+          '"Att. J Siège autres,Att. J Social,Att. J Parquet,Att. J JAP,Att. J JE,Att. J JI,Att. J JLD"',
         ],
+      };
+    }
+    return report;
+  }
+
+  /**
+   * Initie le menu Att. justice pour la CA
+   * @param report
+   * @param indexFctCol
+   * @returns
+   */
+  setDopDownAttJByAgentCA(report: any, indexFctCol: string, indexTab: number) {
+    if (report.worksheets[indexTab].getCell(indexFctCol).value === 'Att. J') {
+      report.worksheets[indexTab].getCell(indexFctCol).value =
+        'Att. J Siège autres';
+      report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: ['"Att. J Siège autres,Att. J Parquet,Att. J Social"'],
       };
     }
     return report;
