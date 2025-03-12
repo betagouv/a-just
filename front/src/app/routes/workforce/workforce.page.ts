@@ -243,7 +243,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Identifiants des sous contentieux selectionnés
    */
-  selectedSubReferentielIds: number[] = [];
+  selectedSubReferentielIds: number[] | null = null;
   /**
    * Valeur du champs recherche
    */
@@ -803,8 +803,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         ];
       }
     });
+    console.log(
+      this.selectedSubReferentielIds,
+      this.formReferentiel,
+      selectedSubReferentielIds
+    );
     if (
       isFirstLoad ||
+      !this.selectedSubReferentielIds ||
       (selectedSubReferentielIds &&
         selectedSubReferentielIds.length ===
           this.selectedSubReferentielIds.length)
@@ -1315,7 +1321,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         (this.selectedReferentielIds || []).find((refId) => refId === cont.id)
       ) {
         this.selectedSubReferentielIds = [
-          ...this.selectedSubReferentielIds,
+          ...(this.selectedSubReferentielIds || []),
           ...(cont.childrens || []).map((c) => c.id),
         ];
       }
