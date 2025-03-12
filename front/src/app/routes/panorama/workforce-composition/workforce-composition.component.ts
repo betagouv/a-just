@@ -148,8 +148,6 @@ export class WorkforceCompositionComponent
                 poste,
               };
             });
-
-          console.log(this.listFormatedFiltered);
         });
     }
   }
