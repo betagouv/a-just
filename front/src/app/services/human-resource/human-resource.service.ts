@@ -105,7 +105,7 @@ export class HumanResourceService {
   /**
    * Liste des sous référentiels sélectionnée dans l'écran du ventilateur en cache
    */
-  selectedSubReferentielIds: number[] = [];
+  selectedSubReferentielIds: number[] | null = null;
   /**
    * Last backup Id
    */
