@@ -11,7 +11,9 @@
     </p>
     <div class="space"></div>
     <label class="loader-value">{{ valueAt }}</label>
-    <div class="loader-bar"></div>
+    <div class="loader-bar">
+      <div class="bar" [style.height]="valueBar0 + '%'"></div>
+    </div>
   </div>
   <div class="loader" [ngClass]="{'print-shadow': print}">
     <p class="loader-title">Situation projetée <br />au {{ dateStop }}</p>

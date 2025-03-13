@@ -93,6 +93,7 @@ export class WorkforceCompositionComponent
           this.humanResourceService.backupId.getValue() || 0,
           today(),
           null,
+          null,
           [1, 2, 3]
         )
         .then(({ list }) => {

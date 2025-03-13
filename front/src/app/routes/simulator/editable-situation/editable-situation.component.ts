@@ -167,6 +167,16 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         this.nbOfDays = nbDays;
       })
     );
+
+    this.watch(
+      this.simulatorService.situationProjected.subscribe((d) => {
+        if (d === null) {
+          this.displayEndSituation = false;
+          this.initFields();
+          this.editWhiteSimulator();
+        }
+      })
+    );
   }
 
   async changeInRealTime(val: any) {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { orderBy, sortBy } from 'lodash';
+import { orderBy } from 'lodash';
 import * as FileSaver from 'file-saver';
 import * as xlsx from 'xlsx';
 import { JuridictionInterface } from '../../interfaces/juridiction';
@@ -600,14 +600,43 @@ export class DataPage {
     this.sendAll = true;
 
     if (!file) {
-      alert('Vous devez saisir une fichier !');
+      alert('Vous devez importer une fichier !');
       return;
     }
 
     const fileToString = await exportFileToString(file);
+    const splittedFile = fileToString.split('\n');
+    const header = splittedFile[0];
+    const TJ_DONE = [];
 
-    if (!force) {
-      if (!confirm('Vérifier avant import ?'))
+    for (const tj of this.HRBackupList) {
+      const elem = splittedFile.filter((line) => line.includes(tj.label));
+
+      if (elem.length > 0) {
+        elem.unshift(header);
+        const file = elem.join('\n');
+
+        try {
+          await this.importService
+            .importActivities({
+              file: file,
+              backupId: tj.id,
+            })
+            .then(() => {
+              TJ_DONE.push(tj.label);
+            });
+        } catch (error) {
+          console.error(`Erreur lors de l'import de ${tj.label}:`, error);
+          return;
+        }
+      }
+    }
+    alert('OK !\n' + TJ_DONE.length + ' tj importés');
+    form.reset();
+    this.onCancelDataImport();
+
+    //if (!force) {
+    /*if (!confirm('Vérifier avant import ?'))
         this.onSendAllActivity(form, true);
       else {
         this.importService
@@ -642,16 +671,16 @@ export class DataPage {
             }
           })
           .catch((err) => console.log('Error:', err));
-      }
-    } else {
-      this.importService
+      }*/
+    //} else {
+    /*this.importService
         .importAllActivities({ file: fileToString })
         .then(() => {
           alert('OK !');
           form.reset();
           this.onCancelDataImport();
-        });
-    }
+        });*/
+    //}
   }
 
   async onSendActivity(form: any, force: boolean = false) {

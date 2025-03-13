@@ -481,6 +481,10 @@ export class PopinEditActivitiesComponent
         break;
     }
 
+    if (newValue.length === 0) {
+      delete this.updates[`${contentieux.id}-${nodeName}`];
+      updateTotal = true;
+    }
     if (newValue.length !== 0 && newValue === null) {
       delete this.updates[`${contentieux.id}-${nodeName}`];
       updateTotal = true;
@@ -509,35 +513,43 @@ export class PopinEditActivitiesComponent
     const stock = document.getElementById(
       `contentieux-${contentieux.id}-stock`
     ) as HTMLInputElement;
-    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie
+
+    const lastMonthData = await this.getLastMonthData(contentieux.id).then(
+      (resp) => {
+        return resp;
+      }
+    );
+
+    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie ou bien modifié les mois précédents
     // Dans ce cas on remet le stock à son état d'origine
+    const isStockNotSet =
+      this.updates[`${contentieux.id}-stock`]?.value == null &&
+      (contentieux.activityUpdated?.stock?.value == null ||
+        contentieux.activityUpdated?.stock?.value == undefined);
+
+    const areInAndOutDataNotSet =
+      this.updates[`${contentieux.id}-entrees`]?.value == null &&
+      this.updates[`${contentieux.id}-sorties`]?.value == null;
+
+    const isStockNotRecalculatedFromLastMonths =
+      lastMonthData &&
+      lastMonthData.stock === null &&
+      (lastMonthData.activityUpdated?.stock?.value === null ||
+        lastMonthData.activityUpdated?.stock?.value == undefined);
+
     if (
-      ((this.updates[`${contentieux.id}-entrees`] &&
-        this.updates[`${contentieux.id}-entrees`].value === null &&
-        this.updates[`${contentieux.id}-sorties`] &&
-        this.updates[`${contentieux.id}-sorties`].value === null) ||
-        (this.updates[`${contentieux.id}-entrees`] &&
-          this.updates[`${contentieux.id}-entrees`].value === null &&
-          !this.updates[`${contentieux.id}-sorties`] &&
-          contentieux.out === null) ||
-        (this.updates[`${contentieux.id}-sorties`] &&
-          this.updates[`${contentieux.id}-sorties`].value === null &&
-          !this.updates[`${contentieux.id}-entrees`] &&
-          contentieux.in === null)) &&
-      contentieux.stock === null &&
-      (!this.updates[`${contentieux.id}-stock`] ||
-        (this.updates[`${contentieux.id}-stock`] &&
-          this.updates[`${contentieux.id}-stock`].value === null)) /*|| 
-        (contentieux.stock !== null && (!contentieux.activityUpdated || (contentieux.activityUpdated && (contentieux.activityUpdated.stock === null || contentieux.activityUpdated.stock.value === null ))))*/
+      isStockNotSet &&
+      areInAndOutDataNotSet &&
+      isStockNotRecalculatedFromLastMonths
     ) {
       updateTotal = true;
       this.updates[`${contentieux.id}-stock`] = {
-        value: contentieux.originalStock,
+        value: null,
         node: 'stock',
         contentieux,
         calculated: false,
-        setted: false,
-        sendBack: true, //false
+        setted: true,
+        sendBack: true,
       };
       stock.value = contentieux.originalStock
         ? contentieux.originalStock.toString()
@@ -601,8 +613,13 @@ export class PopinEditActivitiesComponent
         stockValue = contentieux.originalStock ?? 0;
       else stockValue = contentieux.originalStock ?? contentieux.stock ?? 0; //Utile si pas de stock le mois n-1 (resp = null dans la suite)
       await this.getLastMonthStock(contentieux.id).then((resp) => {
-        let newStock: number | null =
-          (resp ?? stockValue ?? 0) + entreeValue - sortieValue;
+        const { value, isOriginalStock } = resp;
+        let newStock: number | null = null;
+        if (isOriginalStock === false) {
+          newStock = (value ?? stockValue ?? 0) + entreeValue - sortieValue;
+        } else {
+          newStock = (stockValue ?? 0) + entreeValue - sortieValue;
+        }
 
         // condition spécifique pour envoyer une donnée au back dans le cas suivant: Entrée, Sortie et Stock ajusté puis supression du stock ajusté et ensuite suppression de l'entrée et/ou sortie ajusté.
         // Sans cette condition, la suppression du stock n'est pas prise en compte car la donnée est recalculé (suite à la supression de l'entrée et/ou sortie) et on indique pas au back que l'on souhaite supprimer la valeur précédement entrés
@@ -641,7 +658,9 @@ export class PopinEditActivitiesComponent
    * @param contentieuxId
    * @returns
    */
-  async getLastMonthStock(contentieuxId: number) {
+  async getLastMonthStock(
+    contentieuxId: number
+  ): Promise<{ value: number | null; isOriginalStock: boolean | null }> {
     let date: Date = new Date(this.activityMonth);
     date.setMonth(this.activityMonth.getMonth() - 1);
     return this.activitiesService.loadMonthActivities(date).then((resp) => {
@@ -649,9 +668,29 @@ export class PopinEditActivitiesComponent
       const tmp = resp.list.find((elem: any) => {
         if (elem.contentieux.id === contentieuxId) return elem;
       });
+      if (tmp) {
+        return {
+          isOriginalStock: tmp.stock !== null ? false : true,
+          value: tmp.stock ?? tmp.originalStock ?? null,
+        };
+      } else return { value: null, isOriginalStock: null };
+    });
+  }
 
-      if (tmp) stock = tmp.stock ?? tmp.originalStock ?? null;
-      return stock;
+  /**
+   * Obtention des datas du mois N-1
+   * @param contentieuxId
+   * @returns
+   */
+  async getLastMonthData(
+    contentieuxId: number
+  ): Promise<ContentieuReferentielInterface> {
+    let date: Date = new Date(this.activityMonth);
+    date.setMonth(this.activityMonth.getMonth() - 1);
+    return this.activitiesService.loadMonthActivities(date).then((resp) => {
+      return resp.list.find((elem: any) => {
+        if (elem.contentieux.id === contentieuxId) return elem;
+      });
     });
   }
 
@@ -1093,21 +1132,33 @@ export class PopinEditActivitiesComponent
     switch (node) {
       case 'entrees':
         if (level === 3) {
-          if (this.total.in.updated || this.isValueUpdated({ cont, node }))
+          if (
+            (this.total.in.updated || this.isValueUpdated({ cont, node })) &&
+            this.CheckIfChildrenAreUpdated(cont, node)
+          ) {
             return true;
+          }
           return false;
         } else if (this.isValueUpdated({ cont, node })) return true;
         break;
       case 'sorties':
         if (level === 3) {
-          if (this.total.out.updated || this.isValueUpdated({ cont, node }))
+          if (
+            (this.total.out.updated || this.isValueUpdated({ cont, node })) &&
+            this.CheckIfChildrenAreUpdated(cont, node)
+          )
             return true;
+          return false;
         } else if (this.isValueUpdated({ cont, node })) return true;
         break;
       case 'stock':
         if (level === 3) {
-          if (this.total.stock.updated || this.isValueUpdated({ cont, node }))
+          if (
+            (this.total.stock.updated || this.isValueUpdated({ cont, node })) &&
+            this.CheckIfChildrenAreUpdated(cont, node)
+          )
             return true;
+          return false;
         } else if (this.isValueUpdated({ cont, node })) {
           // Si l'entree et/ou la sortie sont de type 'A vérifier' est que l'une ou les deux ont été confirmées, et si le stock et bien calculé et que suite à un
           // recalcul de stock on obtient la meme valeur que la valeur logiciel), on imprime la valeur en bleue
@@ -1145,6 +1196,37 @@ export class PopinEditActivitiesComponent
           return true;
         }
         break;
+    }
+    return false;
+  }
+
+  /**
+   * Permet de vérifier si des contentiueux niveau 4 d'un contentieux niveau 3 ont été modifié
+   * @param cont
+   * @param node
+   * @returns
+   */
+  CheckIfChildrenAreUpdated(
+    cont: ContentieuReferentielInterface,
+    node: string
+  ) {
+    if (cont.childrens) {
+      return cont.childrens.some((elem) => {
+        switch (node) {
+          case 'entrees':
+            if (this.isValueUpdated({ cont: elem, node: 'entrees' }))
+              return true;
+            break;
+          case 'sorties':
+            if (this.isValueUpdated({ cont: elem, node: 'sorties' }))
+              return true;
+            break;
+          case 'stock':
+            if (this.isValueUpdated({ cont: elem, node: 'stock' })) return true;
+            break;
+        }
+        return false;
+      });
     }
     return false;
   }

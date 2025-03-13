@@ -1,0 +1,82 @@
+@import '../../../styles/utils.scss';
+
+.popin-graphs-details {
+    .header-popin {
+        display: grid;
+        margin-bottom: 16px;
+        gap: 4px;
+
+        >div {
+            flex: 1;
+            white-space: nowrap;
+            border-radius: 4px;
+            text-align: center;
+            padding: 0 4px;
+            font-size: 11px;
+            height: 20px;
+            line-height: 20px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    }
+
+    .compare-header-popin {
+        display: flex;
+        margin-bottom: 16px;
+        gap: 8px;
+
+        >div {
+            display: flex;
+            padding: 8px;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            border-radius: 4px;
+
+            &:first-child {
+                background-color: #E8EDFF;
+
+                p {
+                    &:last-child {
+                        color: rgba(0, 99, 203, 1);
+                    }
+                }
+            }
+
+            &:last-child {
+                background-color: #FEF4F2;
+
+                p {
+                    &:last-child {
+                        color: rgba(228, 121, 74, 1)
+                    }
+                }
+            }
+
+            p {
+                font-size: 12px;
+                font-weight: 400;
+
+                &:first-child {
+                    color: fColor(cblack);
+                }
+            }
+        }
+    }
+}
+
+.title-popin {
+    display: flex;
+    gap: 8px;
+
+    p {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 32px;
+    }
+}
+
+canvas {
+    height: 250px;
+    width: 100%;
+}

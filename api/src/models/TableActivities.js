@@ -536,7 +536,6 @@ export default (sequelizeInstance, Model) => {
               date,
               hrBackupId
             );
-
             if (previousStockValue !== null) {
               if (
                 findAllChild[i].entrees !== null ||
@@ -551,12 +550,17 @@ export default (sequelizeInstance, Model) => {
                   [findAllChild[i]],
                   ["sorties", "original_sorties"]
                 );
-                currentStock =
-                  previousStockValue.stock + (entrees || 0) - (sorties || 0);
+
+                const stock = previousStockValue.type === "calculate" ? previousStockValue.stock : preformatActivitiesArray(
+                  [findAllChild[i]],
+                  ["original_stock"]
+                );
+                currentStock = stock + (entrees || 0) - (sorties || 0);
               } else {
                 currentStock = findAllChild[i].original_stock;
               }
             } else {
+
               currentStock = findAllChild[i].original_stock;
 
               if (findAllChild[i].entrees !== null) {

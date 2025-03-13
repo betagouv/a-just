@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { DateSelectBlueComponent } from '../../../components/date-select-blue/date-select-blue.component';
 import { CommonModule } from '@angular/common';
 import { MainClass } from '../../../libs/main-class';
@@ -18,7 +18,10 @@ import {
   templateUrl: './period-selector.component.html',
   styleUrls: ['./period-selector.component.scss'],
 })
-export class PeriodSelectorComponent extends MainClass implements OnChanges {
+export class PeriodSelectorComponent
+  extends MainClass
+  implements OnChanges, OnInit
+{
   /**
    * Mode de simulation
    */
@@ -74,6 +77,12 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
         if (ids === null) {
           this.mooveClass = '';
           this.dateStop = null;
+
+          if (this.whiteSimulator === true) {
+            let now = new Date();
+            now.setFullYear(now.getFullYear() + 1);
+            this.dateStop = now;
+          }
           this.dateStart = new Date();
         }
       })
@@ -103,6 +112,15 @@ export class PeriodSelectorComponent extends MainClass implements OnChanges {
         }
       })
     );
+  }
+
+  ngOnInit(): void {
+    if (this.whiteSimulator === true) {
+      let now = new Date();
+      now.setFullYear(now.getFullYear() + 1);
+      this.dateStop = now;
+      console.log(this.dateStop);
+    }
   }
 
   ngOnChanges(change: any) {

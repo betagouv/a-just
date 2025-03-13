@@ -68,7 +68,7 @@ export class ReferentielService {
     this.idsIndispo = idsIndispo;
 
     const refSoutien = list.find((r) => r.label === 'Autres activités');
-    const idsSoutien = [];
+    const idsSoutien: number[] = [];
     if (refSoutien) {
       idsSoutien.push(refSoutien.id);
       (refSoutien.childrens || []).map((c) => {
@@ -83,6 +83,13 @@ export class ReferentielService {
       .filter((r) => r.label !== 'Indisponibilité')
       .filter((a) => idsIndispo.indexOf(a.id) === -1)
       .map((r) => r.id);
+
+    this.humanResourceService.mainContentieuxReferentiel.set(
+      list
+        .filter((r) => r.label !== 'Indisponibilité')
+        .filter((a) => idsIndispo.indexOf(a.id) === -1)
+        .filter((a) => idsSoutien.indexOf(a.id) === -1)
+    );
 
     this.humanResourceService.contentieuxReferentiel.next(list);
     this.humanResourceService.contentieuxReferentielOnly.next(

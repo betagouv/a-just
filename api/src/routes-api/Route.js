@@ -264,6 +264,7 @@ function canVewWhiteSimulation (ctx) {
 export const Access = {
   isLogin,
   isAdmin,
+  isSuperAdmin,
   canVewHR,
   canVewCalculator,
   canVewActivities,

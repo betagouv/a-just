@@ -2,7 +2,9 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -183,6 +185,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * showActuelPanel
    */
   showActuelPanel: boolean = false;
+  /**
+   * Initial etp
+   */
+  initialETP: number | null = null;
+  /**
+   * Current etp
+   */
+  currentETP: WritableSignal<number | null> = signal(null);
 
   /**
    * Constructeur
@@ -546,6 +556,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         ((dateStop && dateStop.getTime() >= today().getTime()) || !dateStop)
       ) {
         this.indexOfTheFuture = index;
+        this.currentETP.set(h.etp);
+        this.initialETP = this.currentETP();
       }
     });
 
@@ -1123,6 +1135,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Fonction de mise à jours de l'etp courant pour la création d'un nouvel agent uniquement
+   * @param etp
+   */
+  updateETP(etp: number) {
+    if (!this.initialETP) {
+      this.currentETP.set(etp);
+    }
+  }
   groupIndispoByCategory(): any {
     const grouped = _.groupBy(
       this.allIndisponibilityReferentiel,
