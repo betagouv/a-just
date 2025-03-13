@@ -13,7 +13,7 @@
     [multiple]="true" [list]="contentieuxFilterList" [values]="referentielIds!"
     (valuesChanged)="referentielIds=$event;updateSubcontentieux();updateParams()"
     (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close(); filterSubContentieuxSelection.close()"></aj-list-selection>
-  <aj-list-selection labelPreviewText="Tous" #filterSubContentieuxSelection icon="filter-2-line"
+  <aj-list-selection labelPreviewText="Tous" #filterSubContentieuxSelection icon="filter-2-line" class="large-drop"
     title="Sous-contentieux" [multiple]="true" [list]="subContentieuxFilterList" [values]="subReferentielIds!"
     (valuesChanged)="subReferentielIds=$event;updateParams()"
     (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close(); filterContentieuxSelection.close()"></aj-list-selection>
