@@ -494,10 +494,29 @@ export const computeExtractDdg = async (
         }
       );
 
-      let absenteismeDetails = null
-      refObj = deplacerClefALaFin(refObj, "14.13. DÉLÉGATION TJ");
-      ({refObj, absenteismeDetails} = getAndDeleteAbsenteisme(refObj, ["12.31. CONGÉ MALADIE ORDINAIRE"	,"12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION"	,"12.8. AUTRE ABSENTÉISME"]))
+      let absenteismeDetails = null;
+      let delegation = null;
+      if (isCa()) {
+        ({ refObj, delegation } = getAndDeleteAbsenteisme(
+          refObj,
+          ["14.13. DÉLÉGATION TJ"],
+          true
+        ));
 
+        ({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
+          "14.4. CONGÉ MALADIE ORDINAIRE",
+          "14.5. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
+          "14.14. AUTRE ABSENTÉISME",
+        ]));
+
+      }
+      if (isTj()) {
+      ({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
+        "12.31. CONGÉ MALADIE ORDINAIRE",
+        "12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
+        "12.8. AUTRE ABSENTÉISME",
+      ]));
+    }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (
@@ -512,7 +531,7 @@ export const computeExtractDdg = async (
             gaps = {
               ["Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST"]:
                 null,
-              ["_"]: null,
+              ["___"]: null,
             };
           }
           if (isTj()) {
@@ -536,7 +555,7 @@ export const computeExtractDdg = async (
             ["Fonction recodée"]: null,
             ["Code fonction par défaut"]: fonctionCategory,
             ["Fonction agrégat"]: null,
-            ["TJCPH"]:null,
+            ["TJCPH"]: null,
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -556,7 +575,8 @@ export const computeExtractDdg = async (
             ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
             ...absenteismeDetails,
             ["TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)"]:
-              absenteisme,
+            absenteisme,
+            ...(isCa() ? delegation : {})
           });
         }
     })
@@ -913,11 +933,38 @@ export const computeExtract = async (
             (refObj[key] || 0);
       }
 
+      let delegation = null;
+
       if (isCa()) {
         Object.keys(refObj).map((k) => {
           if (k.includes(DELEGATION_TJ.toUpperCase()))
             refObj[key] = refObj[key] - refObj[k];
         });
+
+        ({ refObj, delegation } = getAndDeleteAbsenteisme(
+          refObj,
+          ["14.13. DÉLÉGATION TJ"],
+          true
+        ));
+
+      
+        const newKey = "14.13. DÉLÉGATION TJ";
+        const targetKey = '14. TOTAL INDISPONIBILITÉ';
+        
+        let result = {};
+        
+        // Parcourir les paires clé-valeur de l'objet original
+        for (const [key, value] of Object.entries(refObj)) {
+          if (key === targetKey) {
+            // Insérer le nouvel élément avant le target
+            result= {...result, ...delegation}
+          }
+          result[key] = value;
+        } 
+        
+        refObj = result
+
+        
       }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
@@ -927,15 +974,17 @@ export const computeExtract = async (
         )
           data.push({
             ["Réf."]: String(human.id),
-            Arrondissement: juridictionName.label,
+            ...(isCa()
+              ? { Juridiction: juridictionName.label }
+              : { Arrondissement: juridictionName.label }),
             Nom: human.lastName,
             Prénom: human.firstName,
             Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
             ["Fonction recodée"]: null,
-            ["TJCPH"]:null,
-            ["Juridiction"]:null,
+            ...(isCa() ? { ["_"]: null } : { ["TJCPH"]: null }),
+            ...(isCa() ? { ["__"]: null } : { ["Juridiction"]: null }),
             Jirs: isJirs ? "x" : "",
             ["Date d'arrivée"]:
               human.dateStart === null
@@ -950,6 +999,7 @@ export const computeExtract = async (
             ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]:
               totalEtpt,
             ...refObj,
+            ...(isCa() ? delegation : {}),
           });
     })
   );
@@ -991,14 +1041,16 @@ export const deplacerClefALaFin = (obj, clef) => {
   return obj;
 };
 
-export const getAndDeleteAbsenteisme = (obj, labels) => {
-  let absDetails = {}
-  labels.map(label=>{
-  if (obj.hasOwnProperty(label)) {
-    const valeur = obj[label]; // Sauvegarde la valeur
-    delete obj[label]; // Supprime la clé
-    absDetails[label] = valeur; 
-  }
-  })  
-return {refObj:obj, absenteismeDetails:absDetails}
-}
+export const getAndDeleteAbsenteisme = (obj, labels, delegation = false) => {
+  let absDetails = {};
+  labels.map((label) => {
+    if (obj.hasOwnProperty(label)) {
+      const valeur = obj[label]; // Sauvegarde la valeur
+      delete obj[label]; // Supprime la clé
+      absDetails[label] = valeur;
+    }
+  });
+
+  if (delegation === true) return { refObj: obj, delegation: absDetails };
+  else return { refObj: obj, absenteismeDetails: absDetails };
+};

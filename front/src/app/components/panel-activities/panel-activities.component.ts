@@ -389,22 +389,15 @@ export class PanelActivitiesComponent
   isDdgContentieux(label: string) {
     if (this.category?.label === 'Magistrat')
       if (this.userService.isCa())
-        return [...DDG_REFERENTIELS_MAG, ...DDG_REFERENTIELS_MAG_CA].includes(
-          label.toUpperCase()
-        );
+        return DDG_REFERENTIELS_MAG_CA.includes(label.toUpperCase());
       else return DDG_REFERENTIELS_MAG.includes(label.toUpperCase());
     if (this.category?.label === 'Greffe')
       if (this.userService.isCa())
-        return [
-          ...DDG_REFERENTIELS_GREFFE,
-          ...DDG_REFERENTIELS_GREFFE_CA,
-        ].includes(label.toUpperCase());
+        return DDG_REFERENTIELS_GREFFE_CA.includes(label.toUpperCase());
       else return DDG_REFERENTIELS_GREFFE.includes(label.toUpperCase());
     if (this.category?.label === 'Autour du magistrat')
       if (this.userService.isCa())
-        return [...DDG_REFERENTIELS_EAM, ...DDG_REFERENTIELS_EAM_CA].includes(
-          label.toUpperCase()
-        );
+        return DDG_REFERENTIELS_EAM_CA.includes(label.toUpperCase());
       else return DDG_REFERENTIELS_EAM.includes(label.toUpperCase());
     return false;
   }

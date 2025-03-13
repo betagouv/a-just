@@ -12,6 +12,7 @@ import {
   DOCUMENTATION_URL_CA,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
 } from '../../constants/documentation';
 import { UserService } from '../../services/user/user.service';
 import { ServerService } from '../../services/http-server/server.service';
@@ -21,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SanitizeResourceUrlPipe } from '../../pipes/sanitize-resource-url/sanitize-resource-url.pipe';
 import { BackButtonComponent } from '../../components/back-button/back-button.component';
 import { FormsModule } from '@angular/forms';
+import { ReferentielService } from '../../services/referentiel/referentiel.service';
 
 interface webinaire {
   img: string;
@@ -51,6 +53,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   userService = inject(UserService);
   serverService = inject(ServerService);
   appService = inject(AppService);
+  referentielService = inject(ReferentielService);
   /**
    * Résultat de la recherche GitBook
    */
@@ -102,6 +105,8 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     image: '/assets/images/system.svg',
     url: this.userService.isCa()
       ? NOMENCLATURE_DOWNLOAD_URL_CA
+      : this.referentielService.isDroitLocal()
+      ? NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL
       : NOMENCLATURE_DOWNLOAD_URL,
     localUrl: false,
     download: true,
