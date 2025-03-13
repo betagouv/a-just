@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
@@ -16,6 +17,7 @@ import { WrapperComponent } from '../../../components/wrapper/wrapper.component'
 import {
   DATA_GITBOOK,
   NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
 } from '../../../constants/documentation';
 import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel';
 import { ActivitiesService } from '../../../services/activities/activities.service';
@@ -29,6 +31,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { RadioButtonComponent } from '../../../components/radio-button/radio-button.component';
 import { CommentActivitiesComponent } from '../comment-activities/comment-activities.component';
+import { ReferentielService } from '../../../services/referentiel/referentiel.service';
 
 /**
  * Composant page activité
@@ -52,6 +55,10 @@ export class PopinEditActivitiesComponent
   extends MainClass
   implements OnChanges, AfterViewInit
 {
+  /**
+   * Referentiel service
+   */
+  referentielService = inject(ReferentielService);
   /**
    * Dom du wrapper
    */
@@ -1232,8 +1239,14 @@ export class PopinEditActivitiesComponent
   downloadAsset(type: string, download = false) {
     let url = null;
 
-    if (type === 'nomenclature') url = this.nomenclature;
-    else if (type === 'dataBook') url = this.dataBook;
+    if (type === 'nomenclature') {
+      url = this.nomenclature;
+      if (this.referentielService.isDroitLocal()) {
+        url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
+      } else {
+        url = NOMENCLATURE_DOWNLOAD_URL;
+      }
+    } else if (type === 'dataBook') url = this.dataBook;
 
     if (url) {
       if (download) {

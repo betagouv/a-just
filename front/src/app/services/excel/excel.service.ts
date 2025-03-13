@@ -113,17 +113,23 @@ export class ExcelService extends MainClass {
           fonctions: data.data.fonctions,
           firstLink: {
             label: 'Consultez notre documentation en ligne ici.',
-            url: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs',
+            url: this.userService.isTJ()
+              ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs'
+              : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs',
           },
           secondLink: {
             label:
               'Pour une présentation de la méthodologie à suivre, consultez la documentation ici.',
-            url: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
+            url: this.userService.isTJ()
+              ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes'
+              : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
           },
           thirdLink: {
             label:
               'Pour une présentation détaillée de la méthodologie à suivre, consultez la documentation en ligne, disponible ici.',
-            url: 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
+            url: this.userService.isTJ()
+              ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes'
+              : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
           },
           daydate: `- du ${new Date(
             this.dateStart.getValue()
@@ -236,6 +242,11 @@ export class ExcelService extends MainClass {
   async getReport(report: any, viewModel: any) {
     report = this.setJuridictionTab(report, viewModel);
 
+    const indexTab =
+      this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
+    const indexTabAjust =
+      this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0;
+
     report = this.userService.isTJ()
       ? await this.setJuridictionPickers(report, viewModel)
       : this.setMatriceJuridiction(report, viewModel);
@@ -247,10 +258,6 @@ export class ExcelService extends MainClass {
       const indexCell = +(+index + 3);
       const indexFctCol = this.getFonctionCellByAgent(indexCell, viewModel);
       const indexCat = this.getCategoryCellByAgent(indexCell, viewModel);
-      const indexTab =
-        this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0;
-      const indexTabAjust =
-        this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0;
 
       report.worksheets[indexTab].getCell('ZZ' + indexCell).value = ''; // TO SET ALL PREVIOUS COL
 
@@ -276,9 +283,11 @@ export class ExcelService extends MainClass {
         indexFctCol
       );
 
+      report = this.userService.isTJ()
+        ? this.setDopDownAttJByAgentTJ(report, indexFctCol, indexTab)
+        : this.setDopDownAttJByAgentCA(report, indexFctCol, indexTab);
       report = this.setDopDownPlaceByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownJAByAgent(report, indexFctCol, indexTab);
-      report = this.setDopDownAttJByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownContAJPByAgent(report, indexFctCol, indexTab);
       report = this.setDopDownContAGreffeByAgent(
         report,
@@ -287,13 +296,15 @@ export class ExcelService extends MainClass {
         indexTab
       );
 
-      report = this.setTJCPHCol(
-        report,
-        indexCell,
-        viewModel,
-        indexTab,
-        indexTabAjust
-      );
+      report = this.userService.isTJ()
+        ? this.setTJCPHCol(
+            report,
+            indexCell,
+            viewModel,
+            indexTab,
+            indexTabAjust
+          )
+        : report;
     });
 
     report = this.setAgregatAffichage(report, viewModel);
@@ -688,16 +699,10 @@ export class ExcelService extends MainClass {
       ...this.tabs.onglet1.columnSize,
     ];
     report.worksheets[etptAjustIndex].columns[0].width = 16;
-    if (this.userService.isCa()) {
-      report.worksheets[etptAjustIndex].columns[7].width = 0;
-      report.worksheets[etptAjustIndex].columns[10].width = 26;
-    }
-    if (this.userService.isTJ()) {
-      report.worksheets[etptAjustIndex].columns[7].width = 0;
-      report.worksheets[etptAjustIndex].columns[8].width = 0;
-      report.worksheets[etptAjustIndex].columns[9].width = 0;
-      report.worksheets[etptAjustIndex].columns[10].width = 0;
-    }
+    report.worksheets[etptAjustIndex].columns[7].width = 0;
+    report.worksheets[etptAjustIndex].columns[8].width = 0;
+    report.worksheets[etptAjustIndex].columns[9].width = 0;
+    report.worksheets[etptAjustIndex].columns[10].width = 0;
 
     const agregatIndex =
       this.findIndexByName(report.worksheets, 'Agrégats DDG') || 0;
@@ -1095,13 +1100,13 @@ export class ExcelService extends MainClass {
     report.worksheets[etptDDGIndex].conditionalFormattings[0].ref =
       'A3:' +
       this.numberToExcelColumn(Object.keys(viewModel.days1).length) +
-      Object.keys(viewModel.stats1).length +
+      (Object.keys(viewModel.stats1).length + 3) +
       ' A2:EZ2 A1:G1 I1:EY1';
 
     report.worksheets[etptDDGIndex].conditionalFormattings[0].rules.ref =
       'A3:' +
       this.numberToExcelColumn(Object.keys(viewModel.days1).length) +
-      Object.keys(viewModel.stats1).length +
+      (Object.keys(viewModel.stats1).length + 3) +
       ' A2:EZ2 A1:G1 I1:EY1';
 
     return report;
@@ -1216,12 +1221,12 @@ export class ExcelService extends MainClass {
   }
 
   /**
-   * Initie le menu Att. justice
+   * Initie le menu Att. justice pour le TJ
    * @param report
    * @param indexFctCol
    * @returns
    */
-  setDopDownAttJByAgent(report: any, indexFctCol: string, indexTab: number) {
+  setDopDownAttJByAgentTJ(report: any, indexFctCol: string, indexTab: number) {
     if (report.worksheets[indexTab].getCell(indexFctCol).value === 'Att. J') {
       report.worksheets[indexTab].getCell(indexFctCol).value =
         'Att. J Siège autres';
@@ -1229,8 +1234,27 @@ export class ExcelService extends MainClass {
         type: 'list',
         allowBlank: true,
         formulae: [
-          '"Att. J Social,Att. J Siège autres,Att. J Parquet,Att. J JAP,Att. J JE,Att. J JI,Att. J JLD"',
+          '"Att. J Siège autres,Att. J Social,Att. J Parquet,Att. J JAP,Att. J JE,Att. J JI,Att. J JLD"',
         ],
+      };
+    }
+    return report;
+  }
+
+  /**
+   * Initie le menu Att. justice pour la CA
+   * @param report
+   * @param indexFctCol
+   * @returns
+   */
+  setDopDownAttJByAgentCA(report: any, indexFctCol: string, indexTab: number) {
+    if (report.worksheets[indexTab].getCell(indexFctCol).value === 'Att. J') {
+      report.worksheets[indexTab].getCell(indexFctCol).value =
+        'Att. J Siège autres';
+      report.worksheets[indexTab].getCell(indexFctCol).dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: ['"Att. J Siège autres,Att. J Parquet,Att. J Social"'],
       };
     }
     return report;
@@ -1290,9 +1314,14 @@ export class ExcelService extends MainClass {
    * @returns
    */
   setMatriceJuridiction(report: any, viewModel: any) {
-    report.worksheets[7].getCell('D' + +5).value =
+    const indexTabCa =
+      this.findIndexByName(report.worksheets, 'ETPT_CA_JUR_DDG') || 0;
+    const indexTabAssJu =
+      this.findIndexByName(report.worksheets, 'ETPT_ATTACHES_JUSTICE_DDG') || 0;
+
+    report.worksheets[indexTabCa].getCell('D' + +3).value =
       viewModel.tgilist[0] || viewModel.uniqueJur[0];
-    report.worksheets[8].getCell('D' + +5).value =
+    report.worksheets[indexTabAssJu].getCell('A' + +3).value =
       viewModel.tgilist[0] || viewModel.uniqueJur[0];
     return report;
   }
@@ -1452,6 +1481,43 @@ export class ExcelService extends MainClass {
         this.getExcelFormulaFormat(['TJCPH'], indexCell, viewModel.days1),
       result: '',
     };
+
+    const indexJuridictionAjust = this.getExcelFormulaFormat(
+      ['Juridiction'],
+      indexCell,
+      viewModel.days
+    );
+
+    report.worksheets[indexTabAjust].getCell(indexJuridictionAjust).value = {
+      formula:
+        "='ETPT Format DDG'!" +
+        this.getExcelFormulaFormat(['Juridiction'], indexCell, viewModel.days1),
+      result: '',
+    };
+
+    return report;
+  }
+
+  /**
+   *
+   * @param report
+   * @param indexCell
+   * @param viewModel
+   * @param indexTab
+   * @param indexTabAjust
+   */
+  setJuridictionAjust(
+    report: any,
+    indexCell: number,
+    viewModel: any,
+    indexTab: number,
+    indexTabAjust: number
+  ) {
+    const indexJuridiction = this.getExcelFormulaFormat(
+      ['Juridiction'],
+      indexCell,
+      viewModel.days1
+    );
 
     const indexJuridictionAjust = this.getExcelFormulaFormat(
       ['Juridiction'],
