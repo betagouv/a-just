@@ -506,55 +506,43 @@ export class PopinEditActivitiesComponent
     const stock = document.getElementById(
       `contentieux-${contentieux.id}-stock`
     ) as HTMLInputElement;
-    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie
-    // Dans ce cas on remet le stock à son état d'origine
-    /*const isStockNotSet =
-      this.updates[`${contentieux.id}-stock`]?.value == null &&
-      contentieux.activityUpdated?.stock?.value == null;
 
-    const areEntriesAndExitsNotSet =
+    const lastMonthData = await this.getLastMonthData(contentieux.id).then(
+      (resp) => {
+        return resp;
+      }
+    );
+
+    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie ou bien modifié les mois précédents
+    // Dans ce cas on remet le stock à son état d'origine
+    const isStockNotSet =
+      this.updates[`${contentieux.id}-stock`]?.value == null &&
+      (contentieux.activityUpdated?.stock?.value == null ||
+        contentieux.activityUpdated?.stock?.value == undefined);
+
+    const areInAndOutDataNotSet =
       this.updates[`${contentieux.id}-entrees`]?.value == null &&
       this.updates[`${contentieux.id}-sorties`]?.value == null;
 
-    const isStockNotRecalculated =
-      contentieux.activityUpdated?.stock?.value == null &&
-      contentieux.stock == null &&
-      areEntriesAndExitsNotSet;
-
-    console.log('isStockNotSet:', isStockNotSet);
-    console.log('areEntriesAndExitsNotSet:', areEntriesAndExitsNotSet);
-    console.log('isStockNotRecalculated:', isStockNotRecalculated);*/
-    // if (isStockNotSet && areEntriesAndExitsNotSet && isStockNotRecalculated) {
-    //     return contentieux.originalStock ? contentieux.originalStock.toString() : '-';
-    // }
+    const isStockNotRecalculatedFromLastMonths =
+      lastMonthData &&
+      lastMonthData.stock === null &&
+      (lastMonthData.activityUpdated?.stock?.value === null ||
+        lastMonthData.activityUpdated?.stock?.value == undefined);
 
     if (
-      ((this.updates[`${contentieux.id}-entrees`] &&
-        this.updates[`${contentieux.id}-entrees`].value === null &&
-        this.updates[`${contentieux.id}-sorties`] &&
-        this.updates[`${contentieux.id}-sorties`].value === null) ||
-        (this.updates[`${contentieux.id}-entrees`] &&
-          this.updates[`${contentieux.id}-entrees`].value === null &&
-          !this.updates[`${contentieux.id}-sorties`] &&
-          contentieux.out === null) ||
-        (this.updates[`${contentieux.id}-sorties`] &&
-          this.updates[`${contentieux.id}-sorties`].value === null &&
-          !this.updates[`${contentieux.id}-entrees`] &&
-          contentieux.in === null)) &&
-      contentieux.stock === null &&
-      (!this.updates[`${contentieux.id}-stock`] ||
-        (this.updates[`${contentieux.id}-stock`] &&
-          this.updates[`${contentieux.id}-stock`].value === null)) /*|| 
-        (contentieux.stock !== null && (!contentieux.activityUpdated || (contentieux.activityUpdated && (contentieux.activityUpdated.stock === null || contentieux.activityUpdated.stock.value === null ))))*/
+      isStockNotSet &&
+      areInAndOutDataNotSet &&
+      isStockNotRecalculatedFromLastMonths
     ) {
       updateTotal = true;
       this.updates[`${contentieux.id}-stock`] = {
-        value: contentieux.originalStock,
+        value: null,
         node: 'stock',
         contentieux,
         calculated: false,
-        setted: false,
-        sendBack: true, //false
+        setted: true,
+        sendBack: true,
       };
       stock.value = contentieux.originalStock
         ? contentieux.originalStock.toString()
@@ -679,6 +667,23 @@ export class PopinEditActivitiesComponent
           value: tmp.stock ?? tmp.originalStock ?? null,
         };
       } else return { value: null, isOriginalStock: null };
+    });
+  }
+
+  /**
+   * Obtention des datas du mois N-1
+   * @param contentieuxId
+   * @returns
+   */
+  async getLastMonthData(
+    contentieuxId: number
+  ): Promise<ContentieuReferentielInterface> {
+    let date: Date = new Date(this.activityMonth);
+    date.setMonth(this.activityMonth.getMonth() - 1);
+    return this.activitiesService.loadMonthActivities(date).then((resp) => {
+      return resp.list.find((elem: any) => {
+        if (elem.contentieux.id === contentieuxId) return elem;
+      });
     });
   }
 
