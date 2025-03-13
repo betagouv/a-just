@@ -474,6 +474,10 @@ export class PopinEditActivitiesComponent
         break;
     }
 
+    if (newValue.length === 0) {
+      delete this.updates[`${contentieux.id}-${nodeName}`];
+      updateTotal = true;
+    }
     if (newValue.length !== 0 && newValue === null) {
       delete this.updates[`${contentieux.id}-${nodeName}`];
       updateTotal = true;
@@ -504,6 +508,26 @@ export class PopinEditActivitiesComponent
     ) as HTMLInputElement;
     // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie
     // Dans ce cas on remet le stock à son état d'origine
+    /*const isStockNotSet =
+      this.updates[`${contentieux.id}-stock`]?.value == null &&
+      contentieux.activityUpdated?.stock?.value == null;
+
+    const areEntriesAndExitsNotSet =
+      this.updates[`${contentieux.id}-entrees`]?.value == null &&
+      this.updates[`${contentieux.id}-sorties`]?.value == null;
+
+    const isStockNotRecalculated =
+      contentieux.activityUpdated?.stock?.value == null &&
+      contentieux.stock == null &&
+      areEntriesAndExitsNotSet;
+
+    console.log('isStockNotSet:', isStockNotSet);
+    console.log('areEntriesAndExitsNotSet:', areEntriesAndExitsNotSet);
+    console.log('isStockNotRecalculated:', isStockNotRecalculated);*/
+    // if (isStockNotSet && areEntriesAndExitsNotSet && isStockNotRecalculated) {
+    //     return contentieux.originalStock ? contentieux.originalStock.toString() : '-';
+    // }
+
     if (
       ((this.updates[`${contentieux.id}-entrees`] &&
         this.updates[`${contentieux.id}-entrees`].value === null &&
@@ -1096,21 +1120,33 @@ export class PopinEditActivitiesComponent
     switch (node) {
       case 'entrees':
         if (level === 3) {
-          if (this.total.in.updated || this.isValueUpdated({ cont, node }))
+          if (
+            (this.total.in.updated || this.isValueUpdated({ cont, node })) &&
+            this.CheckIfChildrenAreUpdated(cont, node)
+          ) {
             return true;
+          }
           return false;
         } else if (this.isValueUpdated({ cont, node })) return true;
         break;
       case 'sorties':
         if (level === 3) {
-          if (this.total.out.updated || this.isValueUpdated({ cont, node }))
+          if (
+            (this.total.out.updated || this.isValueUpdated({ cont, node })) &&
+            this.CheckIfChildrenAreUpdated(cont, node)
+          )
             return true;
+          return false;
         } else if (this.isValueUpdated({ cont, node })) return true;
         break;
       case 'stock':
         if (level === 3) {
-          if (this.total.stock.updated || this.isValueUpdated({ cont, node }))
+          if (
+            (this.total.stock.updated || this.isValueUpdated({ cont, node })) &&
+            this.CheckIfChildrenAreUpdated(cont, node)
+          )
             return true;
+          return false;
         } else if (this.isValueUpdated({ cont, node })) {
           // Si l'entree et/ou la sortie sont de type 'A vérifier' est que l'une ou les deux ont été confirmées, et si le stock et bien calculé et que suite à un
           // recalcul de stock on obtient la meme valeur que la valeur logiciel), on imprime la valeur en bleue
@@ -1148,6 +1184,37 @@ export class PopinEditActivitiesComponent
           return true;
         }
         break;
+    }
+    return false;
+  }
+
+  /**
+   * Permet de vérifier si des contentiueux niveau 4 d'un contentieux niveau 3 ont été modifié
+   * @param cont
+   * @param node
+   * @returns
+   */
+  CheckIfChildrenAreUpdated(
+    cont: ContentieuReferentielInterface,
+    node: string
+  ) {
+    if (cont.childrens) {
+      return cont.childrens.some((elem) => {
+        switch (node) {
+          case 'entrees':
+            if (this.isValueUpdated({ cont: elem, node: 'entrees' }))
+              return true;
+            break;
+          case 'sorties':
+            if (this.isValueUpdated({ cont: elem, node: 'sorties' }))
+              return true;
+            break;
+          case 'stock':
+            if (this.isValueUpdated({ cont: elem, node: 'stock' })) return true;
+            break;
+        }
+        return false;
+      });
     }
     return false;
   }
