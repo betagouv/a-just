@@ -52,17 +52,57 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    */
   Model.removeBackup = async (backupId) => {
-    await Model.destroy({
+    const backup = await Model.findOne({
       where: {
         id: backupId,
       },
+      raw: true,
     });
 
-    await Model.models.HumanResources.destroy({
-      where: {
-        backup_id: backupId,
-      },
-    });
+    if (backup) {
+      let hrList = await Model.models.HumanResources.findAll({
+        where: {
+          backup_id: backupId,
+        },
+        raw: true,
+      });
+
+      for (let x = 0; x < hrList.length; x++) {
+        const hrId = hrList[x].id;
+        await Model.models.HRSituations.destroy({
+          where: { human_id: hrId },
+        });
+
+        await Model.models.HRIndisponibilities.destroy({
+          where: { hr_id: hrId },
+        });
+      }
+
+      await Model.models.HumanResources.destroy({
+        where: {
+          backup_id: backupId,
+        },
+      });
+
+      await Model.models.Activities.destroy({
+        where: {
+          hr_backup_id: backupId,
+        },
+      });
+
+      await Model.models.UserVentilations.destroy({
+        where: {
+          hr_backup_id: backupId,
+        },
+      });
+
+      await Model.destroy({
+        where: {
+          id: backupId,
+        },
+      });
+    }
+
   };
 
   /**
@@ -71,7 +111,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupName
    * @returns
    */
-  Model.duplicateBackup = async (backupId, backupName) => {
+  Model.duplicateBackup = async (backupId, backupName, copyAct = false) => {
     const backup = await Model.findOne({
       where: {
         id: backupId,
@@ -98,6 +138,7 @@ export default (sequelizeInstance, Model) => {
         enabled: true,
         type: "TGI",
       });
+
       const newTJId = tjCreated.dataValues.id;
 
       if (isTj()) {
@@ -209,7 +250,6 @@ export default (sequelizeInstance, Model) => {
             });
           }
         }
-
         // Recherche d'indispo
         const indispoList = await Model.models.HRIndisponibilities.findAll({
           where: {
@@ -226,6 +266,22 @@ export default (sequelizeInstance, Model) => {
           await Model.models.HRIndisponibilities.create({
             ...indispoList[y],
             hr_id: newHR.dataValues.id,
+          });
+        }
+      }
+
+      if (copyAct) {
+        const activities = await Model.models.Activities.findAll({
+          where: {
+            hr_backup_id: backupId,
+          },
+          raw: true,
+        });
+        for (let w = 0; w < activities.length; w++) {
+          delete activities[w].id;
+          await Model.models.Activities.create({
+            ...activities[w],
+            hr_backup_id: newBackupId,
           });
         }
       }

@@ -99,7 +99,8 @@
       <div>
         <mat-form-field>
           <mat-label>Couleur du bouton</mat-label>
-          <input matInput [(colorPicker)]="newsToEdit.actionButtonColor" [(ngModel)]="newsToEdit.actionButtonColor" />
+          <input matInput [style.background]="newsToEdit.actionButtonColor ? newsToEdit.actionButtonColor : ''"
+            [(colorPicker)]="newsToEdit.actionButtonColor" [(ngModel)]="newsToEdit.actionButtonColor" />
         </mat-form-field>
       </div>
     </div>
@@ -120,13 +121,15 @@
       <div>
         <mat-form-field>
           <mat-label>Couleur du texte</mat-label>
-          <input matInput [(colorPicker)]="newsToEdit.textColor" [(ngModel)]="newsToEdit.textColor" />
+          <input matInput [style.background]="newsToEdit.textColor ? newsToEdit.textColor : ''"
+            [(colorPicker)]="newsToEdit.textColor" [(ngModel)]="newsToEdit.textColor" />
         </mat-form-field>
       </div>
       <div>
         <mat-form-field>
-          <mat-label>Couleur du fond</mat-label>
-          <input matInput [(colorPicker)]="newsToEdit.backgroundColor" [(ngModel)]="newsToEdit.backgroundColor" />
+          <mat-label>Couleur du fond </mat-label>
+          <input matInput [style.background]="newsToEdit.backgroundColor ? newsToEdit.backgroundColor : ''"
+            [(colorPicker)]="newsToEdit.backgroundColor" [(ngModel)]="newsToEdit.backgroundColor" />
         </mat-form-field>
       </div>
     </div>

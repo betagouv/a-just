@@ -1,0 +1,37 @@
+<aj-popup [titleTemplate]="titleTemplate" class="light-background" [closeIcon]="true"
+    (onClose)="calculatorService.showGraphDetailType = null">
+    <div class="popin-graphs-details">
+        <div class="header-popin"
+            [ngStyle]="{'grid-template-columns': 'repeat('+humanResourceService.mainContentieuxReferentiel().length+', 1fr)'}">
+            <div *ngFor="let ref of humanResourceService.mainContentieuxReferentiel()" class="flex-1"
+                [style.color]="calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id ? 'rgba(246, 246, 246, 1)' : userService.referentielMappingColorByInterface(ref.label)"
+                [style.background-color]="calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id ? userService.referentielMappingColorByInterface(ref.label) :  'rgba(246, 246, 246, 1)'"
+                (click)="selectReferentiel(ref)">
+                {{ referentielMappingName(ref.label) }}
+            </div>
+        </div>
+        <div class="compare-header-popin">
+            <div>
+                <p>sur la période de</p>
+                <img src="/assets/icons/point-graph-blue.svg" alt="point-graph">
+                <p>{{getShortMonthString(dateStart)}} {{getYearMonthString(dateStart)}} -
+                    {{getShortMonthString(dateStop)}} {{getYearMonthString(dateStop)}}</p>
+            </div>
+            <div>
+                <p>comparée à</p>
+                <img src="/assets/icons/point-graph-red.svg" alt="point-graph">
+                <p>{{compareAtString}}</p>
+            </div>
+        </div>
+        <div>
+            <canvas #canvas></canvas>
+        </div>
+    </div>
+</aj-popup>
+
+<ng-template #titleTemplate>
+    <div class="title-popin">
+        <img src="/assets/icons/icon-graph.svg">
+        <p>Evolution des {{calculatorService.showGraphDetailTypeLineTitle}}</p>
+    </div>
+</ng-template>

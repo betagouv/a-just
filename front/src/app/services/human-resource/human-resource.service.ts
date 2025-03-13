@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { ActivitiesService } from '../activities/activities.service';
@@ -12,7 +12,6 @@ import { HumanResourceInterface } from '../../interfaces/human-resource-interfac
 import { RHActivityInterface } from '../../interfaces/rh-activity';
 import { getShortMonthString, today } from '../../utils/dates';
 import { HRSituationInterface } from '../../interfaces/hr-situation';
-import { ReferentielService } from '../referentiel/referentiel.service';
 
 /**
  * Service de récupération des fiches +
@@ -24,7 +23,10 @@ import { ReferentielService } from '../referentiel/referentiel.service';
 export class HumanResourceService {
   serverService = inject(ServerService);
   activitiesService = inject(ActivitiesService);
-
+  /**
+   * Liste des contentieux sans soutien et indispo
+   */
+  mainContentieuxReferentiel = signal<ContentieuReferentielInterface[]>([]);
   /**
    * Liste des contentieux + soutien + indispo
    */
@@ -100,6 +102,10 @@ export class HumanResourceService {
    * Liste des référentiels sélectionnée dans l'écran du ventilateur en cache
    */
   selectedReferentielIds: number[] = [];
+  /**
+   * Liste des sous référentiels sélectionnée dans l'écran du ventilateur en cache
+   */
+  selectedSubReferentielIds: number[] | null = null;
   /**
    * Last backup Id
    */
@@ -659,10 +665,11 @@ export class HumanResourceService {
    * @param extractor
    * @returns
    */
-  onFilterList(
+  async onFilterList(
     backupId: number,
     date: Date,
     contentieuxIds: number[] | null,
+    subContentieuxIds: number[] | null,
     categoriesIds: number[],
     endPeriodToCheck?: Date,
     extractor?: boolean
@@ -673,6 +680,7 @@ export class HumanResourceService {
         date,
         contentieuxIds,
         categoriesIds,
+        subContentieuxIds,
         extractor: extractor ? extractor : false,
         endPeriodToCheck,
       })

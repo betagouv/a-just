@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
-import { ReferentielService } from '../referentiel/referentiel.service';
 import { UserInterface } from '../../interfaces/user-interface';
 import { HRCategoryInterface } from '../../interfaces/hr-category';
 import { BackupInterface } from '../../interfaces/backup';
@@ -16,8 +15,7 @@ export class UserService {
 
   constructor(
     private serverService: ServerService,
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private humanResourceService: HumanResourceService
   ) {}
 
   setUser(user: UserInterface | null) {

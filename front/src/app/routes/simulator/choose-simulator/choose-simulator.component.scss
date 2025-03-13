@@ -1,0 +1,241 @@
+@import '../../../styles/utils.scss';
+
+:host {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 64px);
+}
+
+.top {
+    display: block;
+    padding: 24px;
+    gap: 32px;
+    align-self: stretch;
+    border-radius: 8px;
+    border: 1px solid #DDD;
+    margin: 26px auto;
+    background-color: white;
+    max-width: 850px;
+
+    @media screen and (max-width: 1150px) {
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    h3 {
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 28px;
+        margin-bottom: 32px;
+    }
+
+    >div {
+        display: flex;
+        gap: 32px;
+
+        >div {
+            flex: 1;
+            border: 1px solid #DDD;
+            align-self: flex-start;
+            transition: border-color 0.75s ease, box-shadow 0.75s ease;
+
+            &:hover {
+                border-color: fColor(primary);
+
+                .cursor-tooltip {
+                    opacity: 1;
+                }
+            }
+
+            &.simulator {
+                .header {
+                    img {
+                        width: 209px;
+                        position: absolute;
+                        bottom: -8px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                    }
+                }
+
+                .title {
+                    padding-top: 8px;
+
+                    p.circle:hover {
+                        background-color: #F5F5FE;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            &.reaffectator {
+                cursor: pointer;
+
+                .header {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: flex-end;
+
+                    img {
+                        width: 255px;
+                        margin-right: 6px;
+                        margin-bottom: 4px;
+                    }
+                }
+
+                .title {
+                    padding-top: 8px;
+                    padding-bottom: 8px;
+                    transition: background-color 0.75s ease;
+
+                    &:hover {
+                        background-color: #F5F5FE;
+                    }
+                }
+            }
+
+            &.selected {
+                box-shadow: 0px 6px 18px 0px rgba(0, 0, 18, 0.16);
+                border-color: fColor(primary);
+            }
+
+            .header {
+                background-color: #F5F5FE;
+                height: 216px;
+                position: relative;
+            }
+
+            .title {
+                display: flex;
+                flex-direction: column;
+
+                p {
+                    font-size: 18px;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 28px;
+                    position: relative;
+                    color: fColor(primary);
+                    transition: background-color 0.75s ease;
+                    padding-top: 14px;
+                    padding-bottom: 14px;
+                    padding-left: 32px;
+                    padding-right: 32px;
+
+                    &:first-child {
+                        font-size: 22px;
+                    }
+
+                    &.circle-disable {
+                        padding-left: 52px;
+                        color: #929292;
+
+                        &:before {
+                            content: " ";
+                            position: absolute;
+                            width: 24px;
+                            height: 24px;
+                            border-radius: 24px;
+                            border: 1px solid #929292;
+                            background-color: #F6F6F6;
+                            left: 17px;
+                            top: 16px;
+                        }
+
+                        span {
+                            border-radius: 4px;
+                            background: #EDEDED;
+                            padding: 0 8px;
+                            line-height: 24px;
+                            height: 24px;
+                            margin-top: 6px;
+                        }
+                    }
+
+                    &.circle {
+                        padding-left: 52px;
+
+                        &:before {
+                            content: " ";
+                            position: absolute;
+                            width: 24px;
+                            height: 24px;
+                            border-radius: 24px;
+                            border: 1px solid fColor(primary);
+                            left: 17px;
+                            top: 16px;
+                        }
+
+                        &.selected:after {
+                            content: " ";
+                            position: absolute;
+                            width: 14px;
+                            height: 14px;
+                            border-radius: 16px;
+                            background-color: fColor(primary);
+                            left: 23px;
+                            top: 22px;
+                        }
+                    }
+                }
+            }
+
+            .samples {
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                border-top: 1px solid #DDD;
+
+                >p {
+                    font-weight: 500;
+                }
+
+                >div {
+                    display: flex;
+                    gap: 8px;
+                    align-items: center;
+
+                    >p {
+                        flex: 1;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.bottom {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 40px;
+    border-top: 1px solid #DDD;
+    background: #FFF;
+    position: sticky;
+    bottom: 0;
+
+    button {
+        background: #E5E5E5;
+        color: #929292;
+        margin-right: 60px;
+
+        &.active {
+            background: fColor(primary);
+            color: white;
+        }
+    }
+}
+
+.cursor-tooltip {
+    position: absolute;
+    padding: 8px;
+    border-radius: 4px;
+    background: fColor(primary);
+    color: white;
+    transform: translate(-50%, 50%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 100;
+}

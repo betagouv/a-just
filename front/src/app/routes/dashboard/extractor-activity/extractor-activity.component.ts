@@ -99,6 +99,10 @@ export class ExtractorActivityComponent extends MainClass {
    * Somme des données à extraire
    */
   sumTab: any = undefined;
+  /**
+   * Date de début minimum
+   */
+  minDate: Date | null = null;
 
   /**
    * Constructeur
@@ -121,6 +125,10 @@ export class ExtractorActivityComponent extends MainClass {
     this.activityService.getLastMonthActivities().then((data) => {
       this.lastDataDate = new Date(data);
     });
+
+    this.minDate = this.userService.isCa()
+      ? new Date('2022-01-01')
+      : new Date('2021-01-01');
   }
 
   /**

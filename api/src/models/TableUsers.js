@@ -9,7 +9,6 @@ import { getNbDay, humanDate, today } from '../utils/date'
 import { comparePasswords, cryptPassword } from '../utils/password/password'
 import { differenceInMinutes } from 'date-fns'
 import { Op } from 'sequelize'
-import { groupBy } from 'lodash'
 
 /**
  * Table des utilisateurs
@@ -237,6 +236,7 @@ export default (sequelizeInstance, Model) => {
 
       if (ventilationsList.length) {
         sentEmailSendinblueUserList(user, true)
+        console.log(oldAccess)
 
         const newVentilationList = ventilationsList.map((v) => v.id).sort()
         if (JSON.stringify(newVentilationList) !== JSON.stringify(oldVentilations) || JSON.stringify(newAccess) !== JSON.stringify(oldAccess)) {

@@ -70,5 +70,20 @@
     </div>
   </aj-popup>
 
+  <div class="duplicata">
+    <p class="title">Dupliquer une juridiction (agents, ventillations et indisponibilités) :</p>
+    <div class="content">
+      <label>Sélectionner une juridiction à dupliquer =></label>
+      <form #formExtract>
+        <select class="cursor-pointer" name="juridiction">
+          <option *ngFor="let j of juridictionList" [value]="j.id">{{
+            j.label }}</option>
+        </select>
+        <label>, Copier également les données d'activité</label>
+        <input class="copy-activity" name="copyActivity" type="checkbox">
+      </form>
+      <button class="cursor-pointer" (click)="duplicate(formExtract)">Dupliquer</button>
+    </div>
+  </div>
 
 </aj-wrapper>

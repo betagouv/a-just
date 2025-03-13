@@ -30,12 +30,14 @@ export class JuridictionsService {
   duplicateJuridiction(
     juridictionName: string,
     backupId: number,
-    label: string
+    label: string,
+    copyAct: boolean
   ) {
     return this.serverService
       .post('juridictions/duplicate-juridiction', {
         juridictionName,
         backupId,
+        copyAct,
       })
       .then((r) => {
         alert(

@@ -5,6 +5,14 @@
 }
 
 :host {
+  &.light-background .popup {
+    background-color: rgba(22, 22, 22, 0.55);
+
+    >div {
+      box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.05);
+    }
+  }
+
   &.fit-content .popup>div {
     width: inherit;
     height: inherit;
@@ -325,7 +333,7 @@
     color: fColor(cblack);
     font-weight: 500;
     display: flex;
-    margin: 20px 32px;
+    margin: 16px;
     font-weight: bold;
 
     .close {
@@ -358,7 +366,7 @@
     overflow-x: visible;
     display: flex;
     flex-direction: column;
-    padding: 16px 32px;
+    padding: 0 16px 16px 16px;
     min-width: 480px;
   }
 
