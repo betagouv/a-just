@@ -12,34 +12,138 @@
         <div class="section-one">
             <div class="title-area">
                 <img src="/assets/images/community.svg" alt="a-just" />
-                <!--
+
                 <p class="sub-title">Saisissez votre question ci-dessous</p>
                 <div class="research-area"></div>
                 <aj-input-button class="full-width" placeholder="Que recherchez vous ?"
-                    (valueChange)="searchValue = $event; onSearchBy()" [ngModel]="searchValue" (search)="onSearchBy()"
-                    ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
+                    (valueChange)="searchValue = $event;lockPrompt = false" [ngModel]="searchValue"
+                    (search)="onSearchBy()" ngDefaultControl icon="" (focusin)="focusOn=true" (focusout)="delay()">
+                    <div class="validate-prompt" (click)="onSearchBy();lockPrompt = true"><i
+                            class="ri-arrow-right-circle-fill"
+                            [ngStyle]="{ 'color': searchValue.length >0 && !lockPrompt? '#3a3a3a': 'lightgray'}"></i>
+                    </div>
                 </aj-input-button>
-                <div class="result-area" *ngIf="focusOn===true && searchValue.length>0">
-                    <p *ngIf="this.data.length===0">Aucun résultat trouvé</p>
-                    <div *ngFor="let res of this.data">
-                        <p class="spaces" *ngIf="res.pages.length && isValid(res.title)">
-                            <mat-icon>{{getDocIcon(res.title)}}</mat-icon>
-                            {{res.title}}
-                        </p>
-                        <div *ngFor="let page of res.pages">
-                            <p class="pages" (click)="goTo(page,res.title)" *ngIf="isValid(res.title)">
-                                <mat-icon>insert_drive_file</mat-icon>
-                                {{page.title}}
-                            </p>
-                            <div *ngFor="let section of page.sections">
-                                <p class="sections" (click)="goTo(section,res.title)" *ngIf="isValid(res.title)">
-                                    <mat-icon>subdirectory_arrow_right</mat-icon>
-                                    {{section.body}}
+                <div class="result-area">
+                    <!--<p *ngIf="this.data===null">Aucun résultat trouvé</p>-->
+
+
+                    <div *ngIf="data?.answer" class="gitbook-response">
+                        <!-- Réponse Principale -->
+                        <div *ngIf="data.answer.answer?.document?.nodes">
+                            <h2>Réponse</h2>
+                            <ng-container *ngFor="let node of data.answer.answer.document.nodes">
+                                <p *ngIf="node.type === 'paragraph'">
+                                    <ng-container *ngFor="let textNode of node.nodes">
+                                        <ng-container *ngFor="let leaf of textNode.leaves">
+                                            <p
+                                                [ngClass]="{'bold': isBold(leaf), 'italic': isItalic(leaf), 'underline': isUnderline(leaf)}">
+                                                {{ leaf.text }}
+                                            </p>
+                                        </ng-container>
+                                    </ng-container>
                                 </p>
-                            </div>
+
+                                <ul *ngIf="node.type === 'list-unordered'">
+                                    <li *ngFor="let item of node.nodes">
+                                        <ng-container *ngFor="let textNode of item.nodes">
+                                            <ng-container *ngFor="let leaf of textNode.leaves">
+                                                {{ leaf.text }}
+                                            </ng-container>
+                                        </ng-container>
+                                    </li>
+                                </ul>
+                                <!---->
+
+
+                                <ol *ngIf="node.type === 'list-ordered'">
+                                    <li *ngFor="let item of node.nodes">
+                                        <ng-container *ngFor="let  itemList  of item.nodes">
+                                            <p *ngIf=" itemList.type==='paragraph'">
+                                                <ng-container *ngFor=" let textNode of itemList.nodes">
+                                                    <ng-container *ngFor="let leaf of textNode.leaves">
+                                                        <span class="ordered-list-title"
+                                                            [ngClass]="{'bold': isBold(leaf)}">{{ leaf.text }} </span>
+                                                    </ng-container>
+                                                </ng-container>
+                                            </p>
+                                            <ng-container *ngIf=" itemList.type === 'list-unordered'">
+                                                <ng-container *ngFor="let subItemList of  itemList.nodes">
+                                                    <ng-container *ngFor="let subNodes of subItemList.nodes">
+
+
+                                                        <ng-container *ngFor="let textNode of  subNodes.nodes">
+                                                            <ng-container *ngFor="let leaf of textNode.leaves">
+                                                                <span [ngClass]="{'bold': isBold(leaf)}">{{ leaf.text
+                                                                    }}</span>
+                                                            </ng-container>
+                                                        </ng-container>
+
+
+
+                                                    </ng-container>
+                                                </ng-container>
+                                            </ng-container>
+                                        </ng-container>
+                                    </li>
+                                </ol>
+
+
+
+                                <!---->
+                                <h1 *ngIf="node.type === 'heading' && node.level === 1">{{
+                                    node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h1>
+                                <h2 *ngIf="node.type === 'heading' && node.level === 2">{{
+                                    node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h2>
+                                <h3 *ngIf="node.type === 'heading' && node.level === 3">{{
+                                    node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h3>
+
+                                <blockquote *ngIf="node.type === 'quote'">
+                                    <ng-container *ngFor="let textNode of node.nodes">
+                                        <ng-container *ngFor="let leaf of textNode.leaves">
+                                            <p>{{ leaf.text }}</p>
+                                        </ng-container>
+                                    </ng-container>
+                                </blockquote>
+
+                                <pre *ngIf="node.type === 'code'">
+                                    <code>
+                                        <ng-container *ngFor="let textNode of node.nodes">
+                                            <ng-container *ngFor="let leaf of textNode.leaves">
+                                                {{ leaf.text }}
+                                            </ng-container>
+                                        </ng-container>
+                                    </code>
+                                </pre>
+                            </ng-container>
+                        </div>
+
+                        <!-- Questions de Suivi -->
+                        <div *ngIf="data.answer.followupQuestions?.length" class="separator">
+                            <h2>Questions de Suivi</h2>
+                            <ul>
+                                <li class="following" *ngFor="let question of data.answer.followupQuestions">
+                                    <p (click)="this.searchValue=question">{{ question }}</p>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Sources -->
+                        <div *ngIf="data.answer.sources?.length" class="source-container">
+                            <h2>Sources</h2>
+                            <ul>
+                                <li *ngFor="let source of data.answer.sources">
+                                    <p><span>Espace:</span> {{ source.space }}</p>
+                                    <p><span>Page:</span> {{ source.page }}</p>
+                                    <p><span>Révision:</span> {{ source.revision }}</p>
+                                    <p><span>Raison:</span> {{ source.reason }}</p>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                </div>-->
+
+
+
+                </div>
 
 
             </div>
@@ -54,7 +158,8 @@
                     <p class="title">{{dataBook.title}}</p>
                 </div>
                 <div class="blue" (click)="popinCall=true; $event.stopPropagation()"
-                    [ngClass]="{'validated':callValidated}"> <img src="/assets/images/call-center.png" alt="a-just" />
+                    [ngClass]="{'validated':callValidated}">
+                    <img src="/assets/images/call-center.png" alt="a-just" />
                     <p class="title">{{callValidated===false? 'Être recontacté':'Votre demande de contact est bien prise
                         en compte !'}}</p>
                     <div *ngIf="popinCall===true" class="popin-call">
