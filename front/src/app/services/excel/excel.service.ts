@@ -1349,9 +1349,9 @@ export class ExcelService extends MainClass {
     report.worksheets[3]['_rows'][6].height = 50;
     report.worksheets[3].getCell('F7').value = {
       formula:
-        "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne N de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
+        "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne R de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
       result:
-        '"Temps ventilés sur la période (hors action 99) : Des ventilations sont incomplètes,",CHAR(10),"se référer à la colonne N de l’onglet ETPT format DDG"',
+        '"Temps ventilés sur la période (hors action 99) : Des ventilations sont incomplètes,",CHAR(10),"se référer à la colonne R de l’onglet ETPT format DDG"',
     };
     return report;
   }
