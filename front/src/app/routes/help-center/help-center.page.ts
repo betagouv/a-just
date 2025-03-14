@@ -57,7 +57,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   /**
    * Résultat de la recherche GitBook
    */
-  data: Array<any> = [];
+  data: any = null;
   /**
    * Valeur de rechercher
    */
@@ -203,7 +203,10 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
    * GITBOOK ID
    */
   gitbookId = import.meta.env.NG_APP_GITBOOK_ID;
-
+  /**
+   * Bloqueur pour le prompteur en cas de valeur vide dans la barre de recherche
+   */
+  lockPrompt = true;
   /**
    * Constructeur
    */
@@ -240,10 +243,25 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   }
 
   async onSearchBy() {
-    const { data } = await this.gitbook.search.searchContent({
+    const { data } = await this.gitbook.orgs.askInOrganization(
+      'ERPUa4pw8EhQDGz6MqrT',
+      { query: this.searchValue }
+    );
+
+    console.log(data);
+    this.data = data;
+
+    /**
+    const { data } = await this.gitbook.orgs.getOrganizationById(
+      'ERPUa4pw8EhQDGz6MqrT'
+    );
+    */
+    /**
+    search.searchContent({
       query: this.searchValue,
     });
     this.data = data.items;
+     */
   }
 
   getDocIcon(title: string) {
@@ -440,4 +458,25 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   getDocKeys(): Array<any> {
     return Object.keys(this.documentation);
   }
+
+  isBold(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) => mark.type === 'bold');
+  }
+
+  isItalic(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) => mark.type === 'itcalic');
+  }
+
+  isUnderline(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) => mark.type === 'underlined');
+  }
+
+  getUnorderedListNodes(item: any) {
+    return item.nodes?.find((n:any) => n.type === 'list-unordered')?.nodes || [];
+  }
+
+  hasUnorderedList(item: any): boolean {
+    return item.nodes?.some((n: any) => n.type === 'list-unordered');
+}
+
 }
