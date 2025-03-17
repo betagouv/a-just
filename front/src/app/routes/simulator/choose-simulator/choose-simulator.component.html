@@ -9,10 +9,9 @@
       </div>
       <div class="title">
         <p>Projetez une situation future</p>
-        <p *ngIf="userService.isTJ()" class="circle" [class.selected]="selectedSimulator === SIMULATOR_DONNEES"
+        <p class="circle" [class.selected]="selectedSimulator === SIMULATOR_DONNEES"
           (click)="selectedSimulator = SIMULATOR_DONNEES">avec les données d’A-JUST</p>
-        <p *ngIf="userService.isCa()" class="circle-disable">avec les données d’A-JUST <span>BIENTÔT DISPONIBLE</span>
-        </p>
+
         <p class="circle" [class.selected]="selectedSimulator === SIMULATOR_OTHER_ACTIVITY"
           (click)="selectedSimulator = SIMULATOR_OTHER_ACTIVITY">pour une autre activité</p>
       </div>
