@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MainClass } from '../../libs/main-class';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +23,10 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./input-button.component.scss'],
 })
 export class InputButtonComponent extends MainClass {
+  /**
+   * Input field
+   */
+  @ViewChild('inputElement') inputElement!: ElementRef;
   /**
    * Titre du bouton
    */
@@ -40,6 +51,10 @@ export class InputButtonComponent extends MainClass {
    * Clique sur l'icone pour rechercher
    */
   @Output() search = new EventEmitter();
+  /**
+   * Blur
+   */
+  @Output() blur = new EventEmitter<FocusEvent>();
 
   /**
    * Constructeur
@@ -60,5 +75,10 @@ export class InputButtonComponent extends MainClass {
    */
   onChange() {
     this.valueChange.emit(this.value);
+  }
+
+  // Méthode publique pour retirer le focus
+  public triggerBlur() {
+    this.inputElement.nativeElement.blur();
   }
 }
