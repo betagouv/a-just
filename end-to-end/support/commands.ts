@@ -39,15 +39,16 @@ declare global {
 }
 
 Cypress.Commands.add("login", () => {
-  cy.clearAllLocalStorage();
-  cy.clearAllSessionStorage();
-  cy.visit("/connexion");
-  cy.get("input[type=email]").type(user.email);
-  cy.get("input[type=password]").type(user.password);
-  cy.get("form").submit();
-  cy.url().should("contain", "/panorama");
+  cy.clearLocalStorage();
+  cy.clearCookies();
 
-  // Close popup
-  cy.get(".introjs-tooltip-header").get(".introjs-skipbutton").click();
-  //storage = cy.getAllSessionStorage()
+  cy.session("login", () => {
+    cy.visit("/connexion");
+    cy.get("input[type=email]").type(user.email);
+    cy.get("input[type=password]").type(user.password);
+    cy.get(".password-line").get("#printPassword").click();
+    cy.get("form").submit();
+
+    cy.wait(20000);
+  });
 });

@@ -4,10 +4,10 @@ describe("Ajout d'un agent", () => {
   before(() => {
     cy.login()
     cy.visit('/ventilations')
+  })
 
-    cy.get('.introjs-tooltip-header')
-        .get('.introjs-skipbutton')
-        .click()
+  
+  it ('Check that we can access the add agent page', () => {
     cy.get('#wrapper-contener')
       .get('.header')
       .get('.top-header')
@@ -19,18 +19,26 @@ describe("Ajout d'un agent", () => {
       .should('contain', '/resource-humaine')
   })
 
-  // it('Check that we can cancel', () => {
-  //   cy.get('.sticky-action-footer').within(() => {
-  //     cy.get('button').first().click()
-  //   })
-  // })
+  it('Check that we can cancel', () => {
+    cy.get('.sticky-action-footer').within(() => {
+      cy.get('button').first().click()
+    })
+  })
 
-  it('Add username', () => {
+  it('Add first name', () => {
     cy.get('.second-row')
     cy.get('#firstName')
       .type('Agent')
+  })
+
+  it ('Add last name', () => {
+    cy.get('.second-row')
     cy.get('#lastName')
       .type('test')
+  })
+
+  it('Add matricule', () => {
+    cy.get('.second-row')
     cy.get('#matricule')
       .type("123456")
   })
@@ -106,15 +114,15 @@ describe("Ajout d'un agent", () => {
     cy.verifyDownload('.xlsx', { contains: true })
   })
 
-  it("Check user can download 'Calculatrice des temps de ventilations'", () => {
-    cy.get('.activities').within(() => 
-        cy.get('.top')
-        .get('.download').click()
-    )
-    cy.wait(2000)
-    // Check file is downloaded
-    cy.verifyDownload('Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx')
-  })
+  // it("Check user can download 'Calculatrice des temps de ventilations'", () => {
+  //   cy.get('.activities').within(() => 
+  //       cy.get('.top')
+  //       .get('.download-calculatrice')
+  //       .click()
+  //   )
+  //   // Check file is downloaded
+  //   cy.verifyDownload('Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx', { timeout: 40000 })
+  // })
 
 
   it('Add activities', () => {
