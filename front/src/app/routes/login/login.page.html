@@ -35,7 +35,7 @@
     <div class="password-line">
       <label>Nouveau mot de passe</label>
       <div>
-        <span class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()"><input
+        <span id="printPassword" class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()"><input
             (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"
             formControlName="checkboxPassword" />
           Afficher</span>

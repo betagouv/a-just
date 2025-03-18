@@ -1,4 +1,4 @@
-import { accessList } from '../../../constants/access'
+const { model } = require("mongoose")
 
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
@@ -9,19 +9,16 @@ module.exports = {
         },
     })
 
-    const hrBackups = await models.HRBackups.findAll()
+    const backups = await models.HRBackups.getAll()
 
-    if (!hrBackups && !user) 
-        return
-    
-    for (let i = 0; i < accessList.length; i++) {
-      await models.UsersAccess.create({
+    if (!backups.length  && !user) 
+      return
+    for (let i = 0; i < backups.length; i++) {
+      await  models.UserVentilations.create({
         user_id: user.dataValues.id,
-        access_id: accessList[i].id,
+        hr_backup_id: backups[i].id,
       })
     }
-
-
   },
   down: (/*queryInterface , Sequelize*/) => {},
 }

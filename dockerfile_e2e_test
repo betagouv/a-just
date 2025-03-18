@@ -1,18 +1,12 @@
-FROM node:22.9.0
+FROM cypress/base
 
-COPY ./end-to-end /home/end-to-end
-WORKDIR /home/end-to-end
-#COPY scripts/wait-for-it.sh /scripts/wait-for-it.sh
-RUN chmod +x ./scripts/wait-for-it.sh
-RUN chmod +x ./scripts/entrypoint.sh
+COPY ./end-to-end /e2e
+COPY ./end-to-end/scripts /scripts
+WORKDIR /e2e
 
-ENTRYPOINT ["./scripts/entrypoint.sh"]
-#RUN apt-get -y install iptables cron
 
-# CMD npm install --include=dev && \
-#     npm uninstall -D cypress -g  && \
-#     npm install cypress --save-dev  && \
-#     npx cypress install --force && \
-#     npm start
+CMD ./scripts/wait-for-it.sh api:8081 --timeout=300 && \
+     ./scripts/wait-for-it.sh front:4200 --timeout=300 && \ 
+     npm install && npx cypress install && npm run cy:run
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
 #sleep infinity;

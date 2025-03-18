@@ -1,22 +1,24 @@
 version: "3.3"
 services:
    db:
-      image: postgres:15.10
+      image: postgres:15.11
       restart: always
       cpus: 2.0
       mem_limit: 4G
-      expose:
-         - "5432"
       networks:
          ajust_e2e_network:
             ipv4_address: 173.0.0.50
+      ports:
+         - "5435:5432"
+      expose:
+         - "5432"
       environment:
          - POSTGRES_DB=ajust
          - POSTGRES_USER=ajust-user
          - POSTGRES_PASSWORD=ajust-pass
          - TZ=Europe/Paris
       volumes:
-         - ./api/test/db:/docker-entrypoint-initdb.d
+         - ./api/test/db/full_backup.sql:/docker-entrypoint-initdb.d/init.sql
       command:
          - "postgres"
          - "-c"
@@ -70,6 +72,7 @@ services:
          - NODE_ENV=test
          - JSON_WEB_TOKEN=123456789
          - PORT=8081
+         - TYPE_ID=0
       healthcheck:
          test: ["CMD", "curl", "-f", "http://173.0.0.20:8081/api"]
          interval: 30s
@@ -89,7 +92,7 @@ services:
          - "4200"
       environment:
          - NG_APP_SERVER_URL=http://173.0.0.20:8081/api/
-         - NG_APP_NODE_ENV='test'
+         - NG_APP_NODE_ENV=test
       healthcheck:
          test: ["CMD", "curl", "-f", "http://173.0.0.30:4200"]
          interval: 30s
@@ -97,7 +100,9 @@ services:
          retries: 5
 
    cypress:
-      image: cypress/included:12.15.0
+      build:   
+         context: .
+         dockerfile: dockerfile_e2e_test
       networks:
          - ajust_e2e_network
       depends_on:
@@ -107,8 +112,8 @@ services:
       volumes:
          - ./end-to-end:/e2e
          - ./end-to-end/scripts:/scripts
-      working_dir: /e2e
-      entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
+      # working_dir: /e2e
+      # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
       environment:
          - CYPRESS_BASE_URL=http://173.0.0.30:4200
          - NG_APP_SERVER_URL=http://173.0.0.20:8081/api
