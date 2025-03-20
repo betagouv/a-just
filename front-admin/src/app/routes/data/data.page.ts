@@ -597,7 +597,7 @@ export class DataPage {
 
   async onSendAllActivity(form: any, force: boolean = false) {
     const file = form.file.files[0];
-    this.sendAll = true;
+    //this.sendAll = true;
 
     if (!file) {
       alert('Vous devez importer une fichier !');
@@ -621,7 +621,7 @@ export class DataPage {
     });
     console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT.length);
     setInterval(() => {
-      if (index < this.HRBackupList.length) {
+      if (index < TJ_TO_IMPORT.length) {
         this.importService.importActivities({
           file: TJ_TO_IMPORT[index].data,
           backupId: TJ_TO_IMPORT[index].tj.id,
@@ -656,13 +656,17 @@ export class DataPage {
 
           if (to_warn.length === 0) {
             if (confirm('Aucun Problème détecté ! Importer ?')) {
-              this.importService
-                .importActivities({ file: fileToString, backupId })
-                .then(() => {
-                  alert('OK !');
-                  form.reset();
-                  this.onCancelDataImport();
-                });
+              this.importService.importActivities({
+                file: fileToString,
+                backupId,
+              });
+              // .then(() => {
+              //   alert('OK !');
+              //   form.reset();
+              //   this.onCancelDataImport();
+              // });
+              form.reset();
+              this.onCancelDataImport();
             }
           } else {
             const tmp = to_warn.map((elem: any) => {
@@ -679,13 +683,14 @@ export class DataPage {
           }
         });
     } else {
-      this.importService
-        .importActivities({ file: fileToString, backupId })
-        .then(() => {
-          alert('OK !');
-          form.reset();
-          this.onCancelDataImport();
-        });
+      this.importService.importActivities({ file: fileToString, backupId });
+      // .then(() => {
+      //   alert('OK !');
+      //   form.reset();
+      //   this.onCancelDataImport();
+      // });
+      form.reset();
+      this.onCancelDataImport();
     }
   }
 
