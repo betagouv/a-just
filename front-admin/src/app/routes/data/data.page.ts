@@ -607,28 +607,33 @@ export class DataPage {
     const fileToString = await exportFileToString(file);
     const splittedFile = fileToString.split('\n');
     const header = splittedFile[0];
-    const TJ_DONE = [];
+    const TJ_TO_IMPORT: any = [];
     let index = 0;
 
+    this.HRBackupList.map((tj) => {
+      const elem = splittedFile.filter((line) => line.includes(tj.label));
+
+      if (elem.length > 0) {
+        elem.unshift(header);
+        const file = elem.join('\n');
+        TJ_TO_IMPORT.push({ tj: { id: tj.id, label: tj.label }, data: file });
+      }
+    });
+    console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT.length);
     setInterval(() => {
       if (index < this.HRBackupList.length) {
-        const tj = this.HRBackupList[index];
-        const elem = splittedFile.filter((line) => line.includes(tj.label));
-
-        if (elem.length > 0) {
-          elem.unshift(header);
-          const file = elem.join('\n');
-          console.info(`Import de ${tj.label}...`);
-          this.importService.importActivities({
-            file: file,
-            backupId: tj.id,
-          });
-        }
-        index++;
+        this.importService.importActivities({
+          file: TJ_TO_IMPORT[index].data,
+          backupId: TJ_TO_IMPORT[index].tj.id,
+        });
+        console.log('Importing ' + TJ_TO_IMPORT[index].tj.label + '...');
       }
-    }, 60 * 1000);
-    form.reset();
-    this.onCancelDataImport();
+      index++;
+    }, 20 * 1000);
+    if (index === this.HRBackupList.length) {
+      form.reset();
+      this.onCancelDataImport();
+    }
   }
 
   async onSendActivity(form: any, force: boolean = false) {
