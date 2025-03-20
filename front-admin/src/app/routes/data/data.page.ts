@@ -629,7 +629,7 @@ export class DataPage {
         console.log('Importing ' + TJ_TO_IMPORT[index].tj.label + '...');
       }
       index++;
-    }, 20 * 1000);
+    }, 60 * 1000);
     if (index === this.HRBackupList.length) {
       form.reset();
       this.onCancelDataImport();
