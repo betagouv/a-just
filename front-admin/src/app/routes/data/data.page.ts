@@ -627,7 +627,7 @@ export class DataPage {
             });
         } catch (error) {
           console.error(`Erreur lors de l'import de ${tj.label}:`, error);
-          return;
+          //return;
         }
       }
     }
