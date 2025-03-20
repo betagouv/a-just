@@ -617,6 +617,7 @@ export class DataPage {
         const file = elem.join('\n');
 
         try {
+          console.info(`Import de ${tj.label}...`);
           await this.importService
             .importActivities({
               file: file,
