@@ -18,7 +18,7 @@ export class ImportService {
   }
 
   importActivities(params: any) {
-    this.serverService.post('imports/import-activities', params);
+    return this.serverService.post('imports/import-activities', params);
   }
 
   importAllActivities(params: any) {
