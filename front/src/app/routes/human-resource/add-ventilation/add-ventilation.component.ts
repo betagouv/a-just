@@ -42,6 +42,7 @@ import {
 import {
   findRealValueCustom,
   isDateBiggerThan,
+  setTimeToMidDay,
   today,
 } from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
@@ -441,7 +442,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       alert("Vous devez saisir une date d'arrivée !");
       return;
     }
-    activitiesStartDate = today(activitiesStartDate);
+    activitiesStartDate =
+      setTimeToMidDay(today(activitiesStartDate)) || today(activitiesStartDate);
     if (this.human && this.human.dateEnd && activitiesStartDate) {
       const dateEnd = new Date(this.human.dateEnd);
 
