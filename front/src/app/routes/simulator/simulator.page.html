@@ -8,10 +8,7 @@
   <app-choose-simulator *ngIf="chooseScreen" (selectedSimulatorType)="onShooseScreen($event)"></app-choose-simulator>
 
   <!-- SIMULATEUR STD - SELECTEUR CONTENTIEUX, SS CONTENTIEUX, FCT-->
-  <aj-header-selectors *ngIf="whiteSimulator===false && !chooseScreen"></aj-header-selectors>
-
-  <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
-  <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true, 'display-none': chooseScreen}">
+  <aj-header-selectors *ngIf="whiteSimulator===false && !chooseScreen">
     <div class="categories-switch">
       <div *ngIf="canViewMagistrat" class="magistrats {{disabled}}"
         [ngClass]="{'selected': categorySelected === 'MAGISTRAT',  alone: !canViewGreffier}"
@@ -27,6 +24,11 @@
         <p>Greffe</p>
       </div>
     </div>
+  </aj-header-selectors>
+
+  <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
+  <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true, 'display-none': chooseScreen}">
+
 
     <aj-period-selector #periodSelector [whiteSimulator]="whiteSimulator"></aj-period-selector>
   </div>
