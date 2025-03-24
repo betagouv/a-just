@@ -341,6 +341,10 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       { id: 'cancel', content: 'Annuler' },
       { id: 'export', content: 'Exporter en PDF', fill: true },
     ],
+    backBeforeSimulate: [
+      { id: 'leave', content: 'Quitter' },
+      { id: 'close', content: 'Continuer', fill: true },
+    ],
   };
 
   /**
@@ -711,6 +715,23 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         this.disabled = disabled;
       })
     );
+
+    this.watch(
+      this.simulatorService.contentieuOrSubContentieuId.subscribe((d) => {
+        const now = today();
+        now.setMonth(now.getMonth() + 12);
+
+        if (
+          (this.dateStop === null || this.compareDates(this.dateStop, now)) &&
+          d !== null
+        ) {
+          this.periodSelector?.updateDateSelected('dateStop', now, false);
+          this.dateStop = now;
+          this.stopRealValue = findRealValue(this.dateStop);
+        }
+      })
+    );
+
     this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups;
@@ -846,7 +867,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
-        //console.log('Situation actuelle : ', d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue();
       })
@@ -854,7 +874,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
-        //console.log('Situation proj : ', d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue();
       })
@@ -862,7 +881,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
         if (d !== null) {
-          //console.log('Situation simu : ', d)
           this.simulatedSationData = d;
           const findTitle = document.getElementsByClassName('simulation-title');
           const findElement = document.getElementById('content');
@@ -2268,6 +2286,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
   onReturn() {
     if (this.toDisplaySimulation) {
       this.onUserActionClick(this.action.return);
+    } else if (this.projectedSituationData) {
+      this.onUserActionClick(this.action.return);
     } else {
       this.chooseScreen = true;
       this.resetParams();
@@ -2310,6 +2330,16 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           }
           break;
       }
+    } else {
+      this.printPopup = true;
+      switch (button) {
+        case this.action.return:
+          {
+            this.popupActionToUse = this.popupAction.backBeforeSimulate;
+            this.userAction.isComingBack = true;
+          }
+          break;
+      }
     }
     return;
   }
@@ -2344,6 +2374,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
               this.forceDeactivate = false;
               this.chooseScreen = true;
             });
+          }
+          break;
+        case 'close':
+          {
+            this.printPopup = false;
           }
           break;
       }
@@ -2534,5 +2569,29 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     } else if (type === REAFFECTATOR) {
       this.router.navigate(['/reaffectateur']);
     }
+  }
+
+  /**
+   * Comparaison de deux dates
+   * @param date1
+   * @param date2
+   * @returns
+   */
+  compareDates(date1: Date, date2: Date): boolean {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
+  /**
+   * Comparaison de 2 objet json
+   * @param obj1
+   * @param obj2
+   * @returns
+   */
+  isEqualJSON(obj1: any, obj2: any) {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 }
