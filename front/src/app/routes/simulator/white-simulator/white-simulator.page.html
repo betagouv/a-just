@@ -579,8 +579,8 @@
 </aj-wrapper>
 
 <ng-template #actionsLeft>
-  <aj-back-button *ngIf="canViewSimulator && !userService.isCa()" routerLink="/simulateur" class="back-button-menu" />
-  <aj-back-button *ngIf="userService.isCa()" routerLink="/simulateurs" class="back-button-menu" />
+  <aj-back-button *ngIf="canViewSimulator && !userService.isCa()" (click)="onReturn()" class="back-button-menu" />
+  <aj-back-button *ngIf="userService.isCa()" (click)="onReturn()" class="back-button-menu" />
 
 </ng-template>
 

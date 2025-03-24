@@ -314,6 +314,10 @@ export class WhiteSimulatorPage
       { id: 'cancel', content: 'Annuler' },
       { id: 'export', content: 'Exporter en PDF', fill: true },
     ],
+    backBeforeSimulate: [
+      { id: 'leave', content: 'Quitter' },
+      { id: 'close', content: 'Continuer', fill: true },
+    ],
   };
 
   /**
@@ -2143,8 +2147,31 @@ export class WhiteSimulatorPage
           }
           break;
       }
+    } else {
+      this.printPopup = true;
+      switch (button) {
+        case this.action.return:
+          {
+            this.popupActionToUse = this.popupAction.backBeforeSimulate;
+            this.userAction.isComingBack = true;
+          }
+          break;
+      }
     }
     return;
+  }
+
+  onReturn() {
+    if (this.toDisplaySimulation) {
+      this.onUserActionClick(this.action.return);
+    } else if (this.projectedSituationData) {
+      this.onUserActionClick(this.action.return);
+      console.log('JE SUIS ICI');
+    } else {
+      this.chooseScreen = true;
+      this.router.navigate(['/simulateur']);
+      this.resetParams();
+    }
   }
 
   onResetUserAction() {
@@ -2165,6 +2192,7 @@ export class WhiteSimulatorPage
             this.resetParams();
             this.forceDeactivate = false;
             this.chooseScreen = true;
+            this.router.navigate(['/simulateur']);
           }
           break;
         case 'export':
@@ -2177,6 +2205,11 @@ export class WhiteSimulatorPage
               this.forceDeactivate = false;
               this.chooseScreen = true;
             });
+          }
+          break;
+        case 'close':
+          {
+            this.printPopup = false;
           }
           break;
       }
@@ -2363,5 +2396,15 @@ export class WhiteSimulatorPage
     let now = new Date();
     now.setFullYear(now.getFullYear() + 1);
     return now;
+  }
+
+  /**
+   * Comparaison de 2 objet json
+   * @param obj1
+   * @param obj2
+   * @returns
+   */
+  isEqualJSON(obj1: any, obj2: any) {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 }
