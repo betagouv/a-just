@@ -235,8 +235,8 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
       if (date && dateStart.getTime() <= date.getTime()) {
         if (hra.dateStop) {
           const dateStop = today(hra.dateStop)
-          if (dateStop.getTime() >= date.getTime()) {
-            //if (hr.id === 2608) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
+          if (isDateGreaterOrEqual(dateStop,date)) {
+            if (hr.id === 22474) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
             if (!ddgFilter) return true
             else if (absLabels.includes(hra.contentieux.label) === false) return true
           }

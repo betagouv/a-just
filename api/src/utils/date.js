@@ -346,6 +346,11 @@ export function monthDiffList (dateFrom, dateTo) {
   else return []
 }
 
+/**
+ * Met l'heure à midi
+ * @param {*} date 
+ * @returns 
+ */
 export function setTimeToMidDay (date) {
   if (date === undefined || date === null) return undefined
   date.setHours(12)
@@ -357,4 +362,17 @@ export function setTimeToMidDay (date) {
   date.setUTCSeconds(0)
   date.setUTCMilliseconds(0)
   return date
+}
+
+/**
+ * Compare 2 dates and return true if the first is greater than the second
+ * @param {*} date1 
+ * @param {*} date2 
+ * @returns 
+ */
+export function isDateGreaterOrEqual(date1, date2) {
+  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+
+  return d1 >= d2;
 }
