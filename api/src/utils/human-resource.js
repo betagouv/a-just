@@ -250,12 +250,12 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
       return false
     })
   }
-  /**if (hr.id === 2609)
+  if (hr.id === 22474)
     console.log(
       '=>',
       absLabels,
       indisponibilities.map((x) => x.contentieux.label)
-    )*/
+    )
 
   return indisponibilities
 }

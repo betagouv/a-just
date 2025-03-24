@@ -349,9 +349,9 @@ export const computeExtractDdg = async (
                 return indisponibility.contentieux.id === referentiel.id;
               })
             ) {
-              if (human.id === 22474) {
-              console.log(human)
-            }
+              //if (human.id === 22474) {
+              //console.log(human)
+            //}
               const etpAffected = await getHRVentilation(
                 models,
                 human,
@@ -472,6 +472,7 @@ export const computeExtractDdg = async (
               nbOfDays(dateStart, human.dateEnd)) /
               nbOfDays(dateStart, dateStop) -
             (refObj[key] || 0);
+            /**
           if (human.id === 22474) {
             console.log({
               dateStart, 
@@ -485,8 +486,8 @@ export const computeExtractDdg = async (
               periodTotalExtraction: nbOfDays(dateStart, dateStop),
               indispo: refObj[key],
               reelEtp
-            });
-          }
+            }); 
+          }*/
         } else if (hasArrived && dateStart) {
           reelEtp =
             ((sumBy(reelEtpObject, "etp") /
