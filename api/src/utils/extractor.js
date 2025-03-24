@@ -349,6 +349,9 @@ export const computeExtractDdg = async (
                 return indisponibility.contentieux.id === referentiel.id;
               })
             ) {
+              if (human.id === 22474) {
+              console.log(human)
+            }
               const etpAffected = await getHRVentilation(
                 models,
                 human,
@@ -455,21 +458,35 @@ export const computeExtractDdg = async (
         const hasArrived =
           dateStart < human.dateStart && human.dateStart < dateStop;
 
-        if(human.dateEnd && isGone && hasArrived && dateStart){
+        if (human.dateEnd && isGone && hasArrived && dateStart) {
           reelEtp =
-          ((sumBy(reelEtpObject, "etp") /
-            sumBy(reelEtpObject, "countNbOfDays")) *
-            nbOfDays(human.dateStart,human.dateEnd)) /
-            nbOfDays(dateStart, dateStop) -
-          (refObj[key] || 0);
-        }
-          else if ( human.dateEnd && isGone) {
+            ((sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+              nbOfDays(human.dateStart, human.dateEnd)) /
+              nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0);
+        } else if (human.dateEnd && isGone) {
           reelEtp =
-          ((sumBy(reelEtpObject, "etp") /
-            sumBy(reelEtpObject, "countNbOfDays")) *
-            nbOfDays(dateStart, human.dateEnd)) /
-            nbOfDays(dateStart, dateStop) -
-          (refObj[key] || 0);
+            ((sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+              nbOfDays(dateStart, human.dateEnd)) /
+              nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0);
+          if (human.id === 22474) {
+            console.log({
+              dateStart, 
+              depart:human.dateEnd,
+              etp: sumBy(reelEtpObject, "etp"),
+              countNbOfDays: sumBy(reelEtpObject, "countNbOfDays"),
+              division:
+                sumBy(reelEtpObject, "etp") /
+                sumBy(reelEtpObject, "countNbOfDays"),
+              countUntilLeave: nbOfDays(dateStart, human.dateEnd),
+              periodTotalExtraction: nbOfDays(dateStart, dateStop),
+              indispo: refObj[key],
+              reelEtp
+            });
+          }
         } else if (hasArrived && dateStart) {
           reelEtp =
             ((sumBy(reelEtpObject, "etp") /
@@ -483,7 +500,6 @@ export const computeExtractDdg = async (
               sumBy(reelEtpObject, "countNbOfDays") -
             (refObj[key] || 0);
         }
-
       }
 
       if (isCa()) {
@@ -515,15 +531,14 @@ export const computeExtractDdg = async (
           "14.5. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
           "14.14. AUTRE ABSENTÉISME",
         ]));
-
       }
       if (isTj()) {
-      ({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
-        "12.31. CONGÉ MALADIE ORDINAIRE",
-        "12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
-        "12.8. AUTRE ABSENTÉISME",
-      ]));
-    }
+        ({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
+          "12.31. CONGÉ MALADIE ORDINAIRE",
+          "12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
+          "12.8. AUTRE ABSENTÉISME",
+        ]));
+      }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (
@@ -582,8 +597,8 @@ export const computeExtractDdg = async (
             ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
             ...absenteismeDetails,
             ["TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)"]:
-            absenteisme,
-            ...(isCa() ? delegation : {})
+              absenteisme,
+            ...(isCa() ? delegation : {}),
           });
         }
     })
@@ -917,21 +932,20 @@ export const computeExtract = async (
         const hasArrived =
           dateStart < human.dateStart && human.dateStart < dateStop;
 
-        if(human.dateEnd && isGone && hasArrived && dateStart){
+        if (human.dateEnd && isGone && hasArrived && dateStart) {
           reelEtp =
-          ((sumBy(reelEtpObject, "etp") /
-            sumBy(reelEtpObject, "countNbOfDays")) *
-            nbOfDays(human.dateStart,human.dateEnd)) /
-            nbOfDays(dateStart, dateStop) -
-          (refObj[key] || 0);
-        }
-          else if ( human.dateEnd && isGone) {
+            ((sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+              nbOfDays(human.dateStart, human.dateEnd)) /
+              nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0);
+        } else if (human.dateEnd && isGone) {
           reelEtp =
-          ((sumBy(reelEtpObject, "etp") /
-            sumBy(reelEtpObject, "countNbOfDays")) *
-            nbOfDays(dateStart, human.dateEnd)) /
-            nbOfDays(dateStart, dateStop) -
-          (refObj[key] || 0);
+            ((sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+              nbOfDays(dateStart, human.dateEnd)) /
+              nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0);
         } else if (hasArrived && dateStart) {
           reelEtp =
             ((sumBy(reelEtpObject, "etp") /
@@ -945,7 +959,6 @@ export const computeExtract = async (
               sumBy(reelEtpObject, "countNbOfDays") -
             (refObj[key] || 0);
         }
-        
       }
 
       let delegation = null;
@@ -962,24 +975,21 @@ export const computeExtract = async (
           true
         ));
 
-      
         const newKey = "14.13. DÉLÉGATION TJ";
-        const targetKey = '14. TOTAL INDISPONIBILITÉ';
-        
+        const targetKey = "14. TOTAL INDISPONIBILITÉ";
+
         let result = {};
-        
+
         // Parcourir les paires clé-valeur de l'objet original
         for (const [key, value] of Object.entries(refObj)) {
           if (key === targetKey) {
             // Insérer le nouvel élément avant le target
-            result= {...result, ...delegation}
+            result = { ...result, ...delegation };
           }
           result[key] = value;
-        } 
-        
-        refObj = result
+        }
 
-        
+        refObj = result;
       }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
