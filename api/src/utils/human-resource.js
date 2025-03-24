@@ -1,5 +1,5 @@
 import { minBy, orderBy, sumBy } from 'lodash'
-import { today } from '../utils/date'
+import { isDateGreaterOrEqual, today } from '../utils/date'
 
 /**
  * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines
@@ -236,7 +236,7 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
         if (hra.dateStop) {
           const dateStop = today(hra.dateStop)
           if (isDateGreaterOrEqual(dateStop,date)) {
-            if (hr.id === 22474) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
+            //if (hr.id === 22474) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
             if (!ddgFilter) return true
             else if (absLabels.includes(hra.contentieux.label) === false) return true
           }
