@@ -1116,7 +1116,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.projectedSituationData = null;
     this.dateStart = new Date();
     this.simulatorService.dateStart.next(this.dateStart);
-    this.simulatorService.dateStop.next(new Date());
+    const now = today();
+    now.setMonth(now.getMonth() + 12);
+    this.simulatorService.dateStop.next(now);
     this.simulatorService.situationProjected.next(null);
     this.dateStop = null;
     this.startRealValue = '';
