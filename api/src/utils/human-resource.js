@@ -238,6 +238,8 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
           if (isDateGreaterOrEqual(dateStop,date)) {
             const d1 = new Date(2024, 8, 20); 
             if (hr.id === 22474 && isDateGreaterOrEqual(date,d1)) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
+            if (hr.id === 22474 && isDateGreaterOrEqual(date,d1)) console.log('indisp 2', hra.contentieux.label, hra.contentieux, date)
+
             if (!ddgFilter) return true
             else if (absLabels.includes(hra.contentieux.label) === false) return true
           }
@@ -251,12 +253,13 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
       return false
     })
   }
+  /**
   if (hr.id === 22474)
     console.log(
       '=>',
       absLabels,
       indisponibilities.map((x) => x.contentieux.label)
     )
-
+ */
   return indisponibilities
 }

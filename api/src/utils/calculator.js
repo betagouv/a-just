@@ -510,8 +510,10 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
 
       // quick move to the next date
       now = new Date(nextDateFinded)
+      console.log('date if',now)
     } else {
       now.setDate(now.getDate() + 1)
+      console.log('date else',now)
     }
   } while (now.getTime() <= dateStop.getTime())
 
