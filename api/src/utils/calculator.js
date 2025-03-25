@@ -510,10 +510,14 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
 
       // quick move to the next date
       now = new Date(nextDateFinded)
-      console.log('date if',now)
+      if (hr.id === 22474) {
+        console.log('date if',now)
+      }
     } else {
       now.setDate(now.getDate() + 1)
-      console.log('date else',now)
+      if (hr.id === 22474) {
+        console.log('date else',now)
+      }
     }
   } while (now.getTime() <= dateStop.getTime())
 
@@ -528,6 +532,9 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     list[property].reelEtp = list[property].reelEtp / nbDay
     list[property].nbDaysGone = nbDaysGone
     list[property].nbDay = nbDay
+  }
+  if (hr.id === 22474) {
+    console.log('liste nbDays',nbDay,list)
   }
 
   models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
