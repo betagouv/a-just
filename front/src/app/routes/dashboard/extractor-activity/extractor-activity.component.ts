@@ -13,6 +13,7 @@ import { UserService } from '../../../services/user/user.service';
 import { ReferentielService } from '../../../services/referentiel/referentiel.service';
 import { generalizeTimeZone, getShortMonthString } from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
+import { Renderer } from 'xlsx-renderer';
 
 /**
  * Excel file details
@@ -304,6 +305,7 @@ export class ExtractorActivityComponent extends MainClass {
         dateStop: generalizeTimeZone(this.dateStop || this.today),
       })
       .then((data) => {
+        console.log(data);
         this.data = data.data.list;
         this.sumTab = data.data.sumTab;
 
@@ -364,6 +366,8 @@ export class ExtractorActivityComponent extends MainClass {
           ); */
         });
 
+        console.log(this.generateWorkSheet(headersSum, this.sumTab));
+        console.log(this.sumTab);
         /**
         const excelBuffer: any = xlsx.write(workbook, {
           bookType: 'xlsx',
@@ -373,6 +377,31 @@ export class ExtractorActivityComponent extends MainClass {
         const dataSaved: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE });
         FileSaver.saveAs(dataSaved, this.getExportFileName() + EXCEL_EXTENSION);
          */
+
+        const viewModel = {};
+
+        fetch('/assets/modele_act.xlsx')
+          // 2. Get template as ArrayBuffer.
+          .then((response) => response.arrayBuffer())
+          // 3. Fill the template with data (generate a report).
+          .then((buffer) => {
+            return new Renderer().renderFromArrayBuffer(buffer, viewModel);
+          })
+          // 4. Get a report as buffer.
+          .then(async (report) => {
+            //report = await this.getReport(report, viewModel);
+            console.log(report);
+            return report.xlsx.writeBuffer();
+          })
+          // 5. Use `saveAs` to download on browser site.
+          .then((buffer) => {
+            const filename = this.getExportFileName() + EXCEL_EXTENSION;
+            return FileSaver.saveAs(
+              new Blob([buffer]),
+              filename + EXCEL_EXTENSION
+            );
+          })
+          .catch((err) => console.log('Error writing excel export', err));
       });
   }
 }
