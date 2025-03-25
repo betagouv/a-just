@@ -528,9 +528,17 @@ export class PopinEditActivitiesComponent
       (contentieux.activityUpdated?.stock?.value == null ||
         contentieux.activityUpdated?.stock?.value == undefined);
 
-    const areInAndOutDataNotSet =
-      this.updates[`${contentieux.id}-entrees`]?.value == null &&
-      this.updates[`${contentieux.id}-sorties`]?.value == null;
+    const isEntreesNotSet =
+      this.updates[`${contentieux.id}-entrees`]?.value === null ||
+      (this.updates[`${contentieux.id}-entrees`]?.value === undefined &&
+        contentieux.activityUpdated?.entrees?.value === undefined);
+
+    const isSortiesNotSet =
+      this.updates[`${contentieux.id}-sorties`]?.value === null ||
+      (this.updates[`${contentieux.id}-sorties`]?.value === undefined &&
+        contentieux.activityUpdated?.sorties?.value === undefined);
+
+    const areInAndOutDataNotSet = isEntreesNotSet && isSortiesNotSet;
 
     const isStockNotRecalculatedFromLastMonths =
       lastMonthData &&
