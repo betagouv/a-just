@@ -35,6 +35,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/remixicon/fonts/remixicon.css",
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/app/styles/styles.scss"
             ],
