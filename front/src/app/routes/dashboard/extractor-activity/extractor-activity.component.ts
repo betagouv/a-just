@@ -309,10 +309,6 @@ export class ExtractorActivityComponent extends MainClass {
 
         let monthTabName = '';
         const workbook = xlsx.utils.book_new();
-        /*const backupLabel = localStorage.getItem('backupLabel')
-
-        if (backupLabel) 
-          this.sumTab = filterReferentielActivityExtractor(this.sumTab, backupLabel)*/
 
         this.sumTab = this.sumTab
           .map((act: any) => {
@@ -333,11 +329,14 @@ export class ExtractorActivityComponent extends MainClass {
           );
 
         this.sumTab = this.sortByCodeImport(this.sumTab);
+
+        /**
+
         xlsx.utils.book_append_sheet(
           workbook,
           this.generateWorkSheet(headersSum, this.sumTab),
           'Total sur la période'
-        );
+        ); */
 
         this.data = Object.keys(this.data).map((key: any) => {
           /*if (backupLabel) 
@@ -356,13 +355,16 @@ export class ExtractorActivityComponent extends MainClass {
             );
 
           this.data[key] = this.sortByCodeImport(this.data[key]);
+
+          /**
           xlsx.utils.book_append_sheet(
             workbook,
             this.generateWorkSheet(headers, this.data[key]),
             monthTabName
-          );
+          ); */
         });
 
+        /**
         const excelBuffer: any = xlsx.write(workbook, {
           bookType: 'xlsx',
           type: 'array',
@@ -370,6 +372,7 @@ export class ExtractorActivityComponent extends MainClass {
 
         const dataSaved: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE });
         FileSaver.saveAs(dataSaved, this.getExportFileName() + EXCEL_EXTENSION);
+         */
       });
   }
 }
