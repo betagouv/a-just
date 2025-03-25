@@ -97,8 +97,10 @@ export const monthName = (date) => {
  * @returns date
  */
 export function today (date = new Date()) {
+  date = setTimeToMidDay(date)
   const now = new Date(date)
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  let newRef = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  return  setTimeToMidDay(newRef)
 }
 
 /**
@@ -375,4 +377,17 @@ export function isDateGreaterOrEqual (date1, date2) {
   const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
 
   return d1 >= d2;
+}
+
+/**
+ * Compare 2 dates and return true if the first is greater than the second
+ * @param {*} date1 
+ * @param {*} date2 
+ * @returns 
+ */
+export function isDateEqual (date1, date2) {
+  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+
+  return d1 === d2;
 }

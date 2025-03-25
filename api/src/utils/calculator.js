@@ -459,7 +459,7 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
         nextDeltaDate = cache.nextDeltaDate
         reelEtp = cache.reelEtp
       } else {*/
-      const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
+ const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
       /*models.HumanResources.updateCacheAgent(
           hr.id,
           `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`,
@@ -510,14 +510,8 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
 
       // quick move to the next date
       now = new Date(nextDateFinded)
-      if (hr.id === 22474) {
-        console.log('date if',now)
-      }
     } else {
       now.setDate(now.getDate() + 1)
-      if (hr.id === 22474) {
-        console.log('date else',now)
-      }
     }
   } while (now.getTime() <= dateStop.getTime())
 
@@ -532,9 +526,6 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     list[property].reelEtp = list[property].reelEtp / nbDay
     list[property].nbDaysGone = nbDaysGone
     list[property].nbDay = nbDay
-  }
-  if (hr.id === 22474) {
-    console.log('liste nbDays',nbDay,list)
   }
 
   models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
