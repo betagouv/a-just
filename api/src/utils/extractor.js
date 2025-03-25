@@ -327,6 +327,9 @@ export const computeExtractDdg = async (
       let nbCETDays = 0;
       let absLabels = [...ABSENTEISME_LABELS];
 
+      dateStart = setTimeToMidDay(dateStart);
+      dateStop = setTimeToMidDay(dateStop);
+
       nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop);
       nbGlobalDaysCET = nbCETDays;
 
@@ -349,9 +352,6 @@ export const computeExtractDdg = async (
                 return indisponibility.contentieux.id === referentiel.id;
               })
             ) {
-              //if (human.id === 22474) {
-              //console.log(human)
-            //}
               const etpAffected = await getHRVentilation(
                 models,
                 human,
@@ -420,9 +420,6 @@ export const computeExtractDdg = async (
       refObj[key] = sumBy(indispoArray, "indispo");
 
       if (reelEtp === 0) {
-        dateStart = setTimeToMidDay(dateStart);
-        dateStop = setTimeToMidDay(dateStop);
-
         let reelEtpObject = [];
 
         sortBy(human.situations, "dateStart", "asc").map((situation, index) => {
@@ -472,22 +469,6 @@ export const computeExtractDdg = async (
               nbOfDays(dateStart, human.dateEnd)) /
               nbOfDays(dateStart, dateStop) -
             (refObj[key] || 0);
-            /**
-          if (human.id === 22474) {
-            console.log({
-              dateStart, 
-              depart:human.dateEnd,
-              etp: sumBy(reelEtpObject, "etp"),
-              countNbOfDays: sumBy(reelEtpObject, "countNbOfDays"),
-              division:
-                sumBy(reelEtpObject, "etp") /
-                sumBy(reelEtpObject, "countNbOfDays"),
-              countUntilLeave: nbOfDays(dateStart, human.dateEnd),
-              periodTotalExtraction: nbOfDays(dateStart, dateStop),
-              indispo: refObj[key],
-              reelEtp
-            }); 
-          }*/
         } else if (hasArrived && dateStart) {
           reelEtp =
             ((sumBy(reelEtpObject, "etp") /
