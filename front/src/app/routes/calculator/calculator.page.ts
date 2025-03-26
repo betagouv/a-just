@@ -138,7 +138,7 @@ export class CalculatorPage
   /**
    * Tri ou non
    */
-  sortBy: string = '';
+  sortBy: { type: string; up: boolean | null } = { type: '', up: null };
   /**
    * Liste des lignes du calculateurs venant du back
    */
@@ -829,12 +829,12 @@ export class CalculatorPage
   /**
    * Trier les datas en fonction d'un trie
    */
-  filtredDatas(up: boolean = false) {
+  filtredDatas(up: boolean | null = null) {
     let list = this.datas;
     if (this.sortBy) {
-      let sort = this.sortBy.replace(/(Up|Down)$/, '');
+      let sort = this.sortBy.type;
       if (
-        this.sortBy.includes('magRealTimePerCase') &&
+        this.sortBy.type === 'magRealTimePerCase' &&
         this.categorySelected !== 'magistrats'
       ) {
         sort = 'fonRealTimePerCase';
@@ -850,7 +850,7 @@ export class CalculatorPage
         [up ? 'asc' : 'desc']
       );
     }
-    console.log('list:', list);
+
     this.datasFilted = list;
   }
 
@@ -891,16 +891,16 @@ export class CalculatorPage
    * Demande de trie en fonction d'une colonne
    * @param type
    */
-  onSortBy(type: string, up = false) {
-    console.log('Type:', type);
-    if (this.sortBy === type) {
-      this.sortBy = '';
+  onSortBy(type: string) {
+    if (this.sortBy.type === '' || this.sortBy.up === true) {
+      this.sortBy.type = type;
+      this.sortBy.up = this.sortBy.up === null ? true : false;
     } else {
-      this.sortBy = type;
+      this.sortBy.type = '';
+      this.sortBy.up = null;
     }
-    console.log('this.sortBy:', this.sortBy);
 
-    this.filtredDatas(up);
+    this.filtredDatas(this.sortBy.up);
   }
 
   /**
