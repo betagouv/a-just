@@ -2404,7 +2404,7 @@ export class WhiteSimulatorPage
    * @param obj2
    * @returns
    */
-  isEqualJSON(obj1: any, obj2: any) {
+  public isEqualJSON(obj1: any, obj2: any): boolean {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 }
