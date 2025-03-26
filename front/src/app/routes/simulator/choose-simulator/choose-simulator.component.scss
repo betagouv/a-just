@@ -2,8 +2,8 @@
 
 :host {
     display: flex;
-    flex-direction: column;
-    height: calc(100vh - 64px);
+    align-items: center;
+    justify-content: center;
 }
 
 .top {
@@ -13,7 +13,7 @@
     align-self: stretch;
     border-radius: 8px;
     border: 1px solid #DDD;
-    margin: 26px auto;
+    margin: 26px 0;
     background-color: white;
     max-width: 850px;
 
@@ -203,27 +203,6 @@
                     }
                 }
             }
-        }
-    }
-}
-
-.bottom {
-    display: flex;
-    justify-content: flex-end;
-    padding: 16px 40px;
-    border-top: 1px solid #DDD;
-    background: #FFF;
-    position: sticky;
-    bottom: 0;
-
-    button {
-        background: #E5E5E5;
-        color: #929292;
-        margin-right: 60px;
-
-        &.active {
-            background: fColor(primary);
-            color: white;
         }
     }
 }
