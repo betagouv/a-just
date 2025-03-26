@@ -374,7 +374,7 @@ export class UserService implements OnInit {
       user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
     ) {
       menu.push({
-        label: 'Simulateur',
+        label: 'Simulateurs',
         path: 'simulateur',
       });
     }

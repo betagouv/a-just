@@ -296,6 +296,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * A la destruction du composant supprimer les watcher
    */
   ngOnDestroy() {
+    this.appService.scrollPosition.set(0);
     this.watcherDestroy();
   }
 
@@ -603,5 +604,13 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   refreshHeight(elem: any) {
     elem.style['padding-top'] = '0px';
+  }
+
+  /**
+   * Save scroll position
+   * @param event
+   */
+  onScroll(event: any) {
+    this.appService.scrollPosition.set(event.target.scrollTop);
   }
 }
