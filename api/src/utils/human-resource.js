@@ -1,5 +1,5 @@
 import { minBy, orderBy, sumBy } from 'lodash'
-import { today } from '../utils/date'
+import { isDateGreaterOrEqual, today } from '../utils/date'
 
 /**
  * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines
@@ -9,7 +9,7 @@ import { today } from '../utils/date'
  * @returns objet d'ETP détaillé
  */
 export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false, absLabels = null) {
-  if (hr.dateEnd && today(hr.dateEnd) <= today(date)) {
+  if (hr.dateEnd && today(hr.dateEnd) < today(date)) {
     return {
       etp: null,
       situation: null,
@@ -235,8 +235,9 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
       if (date && dateStart.getTime() <= date.getTime()) {
         if (hra.dateStop) {
           const dateStop = today(hra.dateStop)
-          if (dateStop.getTime() >= date.getTime()) {
-            //if (hr.id === 2608) console.log('indisp 1', hra.contentieux.label, hra.contentieux, date)
+          if (isDateGreaterOrEqual(dateStop,date)) {
+            const d1 = new Date(2024, 8, 20); 
+
             if (!ddgFilter) return true
             else if (absLabels.includes(hra.contentieux.label) === false) return true
           }
@@ -250,12 +251,5 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
       return false
     })
   }
-  /**if (hr.id === 2609)
-    console.log(
-      '=>',
-      absLabels,
-      indisponibilities.map((x) => x.contentieux.label)
-    )*/
-
   return indisponibilities
 }

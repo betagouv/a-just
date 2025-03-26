@@ -71,6 +71,7 @@
     .filters {
       display: flex;
       background-color: #f6f6f6;
+      padding: 12px 24px;
 
       button {
         display: flex;
@@ -105,6 +106,11 @@
         justify-content: space-between;
         width: 18%;
         margin-left: 8px;
+
+        button {
+          width: 125px;
+          padding: 0;
+        }
       }
     }
 
@@ -114,7 +120,6 @@
       background-color: #fff;
       // min-height: 60.9px;
       padding: 12px 24px;
-
       border: 1px solid #dddddd;
 
       .identity-section {
@@ -232,7 +237,7 @@
           background-color: #f6f6f6;
           padding: 3px 4px 2.6px 7px;
           border-radius: 4px;
-          width: 95px;
+          width: 125px;
           text-align: center;
           white-space: nowrap;
         }

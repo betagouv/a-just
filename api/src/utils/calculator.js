@@ -1,5 +1,5 @@
 import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
-import { isSameMonthAndYear, month, nbWorkingDays, workingDay } from './date'
+import { isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPerson } from './human-resource'
@@ -432,7 +432,7 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     })
   })
 
-  let now = new Date(dateStart)
+  let now = today(dateStart)
   let nbDay = 0
   let nbDaysGone = 0
   do {
@@ -444,6 +444,7 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     if (workingDay(now)) {
       let sumByInd = 0
       if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
+      if (hr.dateStart && hr.dateStart.getTime() >= dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
       nbDay++
 
       let etp = null

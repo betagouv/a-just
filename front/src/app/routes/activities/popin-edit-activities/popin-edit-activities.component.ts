@@ -523,13 +523,22 @@ export class PopinEditActivitiesComponent
     // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie ou bien modifié les mois précédents
     // Dans ce cas on remet le stock à son état d'origine
     const isStockNotSet =
-      this.updates[`${contentieux.id}-stock`]?.value == null &&
+      (this.updates[`${contentieux.id}-stock`]?.value == null ||
+        this.updates[`${contentieux.id}-stock`]?.calculated == true) &&
       (contentieux.activityUpdated?.stock?.value == null ||
         contentieux.activityUpdated?.stock?.value == undefined);
 
-    const areInAndOutDataNotSet =
-      this.updates[`${contentieux.id}-entrees`]?.value == null &&
-      this.updates[`${contentieux.id}-sorties`]?.value == null;
+    const isEntreesNotSet =
+      this.updates[`${contentieux.id}-entrees`]?.value === null ||
+      (this.updates[`${contentieux.id}-entrees`]?.value === undefined &&
+        contentieux.activityUpdated?.entrees?.value === undefined);
+
+    const isSortiesNotSet =
+      this.updates[`${contentieux.id}-sorties`]?.value === null ||
+      (this.updates[`${contentieux.id}-sorties`]?.value === undefined &&
+        contentieux.activityUpdated?.sorties?.value === undefined);
+
+    const areInAndOutDataNotSet = isEntreesNotSet && isSortiesNotSet;
 
     const isStockNotRecalculatedFromLastMonths =
       lastMonthData &&
