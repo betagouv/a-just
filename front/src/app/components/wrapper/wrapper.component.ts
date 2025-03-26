@@ -25,6 +25,7 @@ import {
   DATA_GITBOOK,
   DATA_GITBOOK_CA,
   DOCUMENTATION_URL,
+  DOCUMENTATION_URL_CA,
   IMPORT_ETP_TEMPLATE,
   IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
@@ -548,7 +549,9 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   async downloadAsset(type: string, download = false) {
     let url = null;
-    if (type === 'data-book') {
+    if (type === 'guide-utilisateur') {
+      url = this.userService.isCa() ? DOCUMENTATION_URL_CA : DOCUMENTATION_URL;
+    } else if (type === 'data-book') {
       if (this.userService.isCa()) {
         url = DATA_GITBOOK_CA;
       } else {

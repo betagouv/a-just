@@ -4,10 +4,11 @@
   </p>
   <div class="input-container">
     <img src="/assets/icons/search-line.svg" />
-    <input [ngClass]="{ 'restrict-width': title === 'Rechercher un agent' }" [placeholder]="placeholder"
+    <input #inputElement [ngClass]="{ 'restrict-width': title === 'Rechercher un agent' }" [placeholder]="placeholder"
       [(ngModel)]="value" (ngModelChange)="onChange()" />
   </div>
 </div>
 <div *ngIf="icon" class="button" (click)="onSearch()">
   <mat-icon>{{ icon }}</mat-icon>
 </div>
+<ng-content></ng-content>

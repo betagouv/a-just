@@ -30,6 +30,49 @@
     top: 26px;
     font-size: 14px;
   }
+
+  .right-panel {
+    width: auto;
+    padding: 4px 8px;
+
+    h2 {
+      font-size: 1em;
+      margin: 0;
+      padding: 0;
+      line-height: normal;
+      font-weight: bold;
+      color: fColor(cblack);
+    }
+
+    p {
+      color: fColor(primary);
+      border-bottom: 2px solid fColor(primary);
+      font-size: 0.875em;
+    }
+
+    .elements {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      color: fColor(cbluedark);
+    }
+
+    .element {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      position: relative;
+
+      .mat-icon {
+        padding: 4px;
+        font-size: 0.875em;
+      }
+    }
+
+    .element :hover {
+      cursor: pointer;
+    }
+  }
 }
 
 .group-first-row {

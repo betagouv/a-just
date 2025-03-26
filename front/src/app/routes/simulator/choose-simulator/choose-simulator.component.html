@@ -30,8 +30,9 @@
           <i class="ri-check-line"></i>
         </div>
       </div>
-      <div class="cursor-tooltip" [style.left.px]="mouseX - MENU_WIDTH" [style.top.px]="mouseY - MENU_HEIGHT">
-        Selectionnez une option
+      <div class="cursor-tooltip" *ngIf="!selectedSimulator" [style.left.px]="mouseX - MENU_WIDTH"
+        [style.top.px]="mouseY - MENU_HEIGHT">
+        Sélectionnez une option
       </div>
     </div>
     <div *ngIf="canViewReaffectator" class="reaffectator" [class.selected]="selectedSimulator === REAFFECTATOR">
@@ -57,8 +58,9 @@
           <i class="ri-check-line"></i>
         </div>
       </div>
-      <div class="cursor-tooltip" [style.left.px]="mouseX - MENU_WIDTH" [style.top.px]="mouseY - MENU_HEIGHT">
-        Selectionnez une option
+      <div class="cursor-tooltip" *ngIf="!selectedSimulator" [style.left.px]="mouseX - MENU_WIDTH"
+        [style.top.px]="mouseY - MENU_HEIGHT">
+        Sélectionnez une option
       </div>
     </div>
   </div>

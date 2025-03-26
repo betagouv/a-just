@@ -607,80 +607,33 @@ export class DataPage {
     const fileToString = await exportFileToString(file);
     const splittedFile = fileToString.split('\n');
     const header = splittedFile[0];
-    const TJ_DONE = [];
+    const TJ_TO_IMPORT: any = [];
+    let index = 0;
 
-    for (const tj of this.HRBackupList) {
+    this.HRBackupList.map((tj) => {
       const elem = splittedFile.filter((line) => line.includes(tj.label));
 
       if (elem.length > 0) {
         elem.unshift(header);
         const file = elem.join('\n');
-
-        try {
-          await this.importService
-            .importActivities({
-              file: file,
-              backupId: tj.id,
-            })
-            .then(() => {
-              TJ_DONE.push(tj.label);
-            });
-        } catch (error) {
-          console.error(`Erreur lors de l'import de ${tj.label}:`, error);
-          return;
-        }
+        TJ_TO_IMPORT.push({ tj: { id: tj.id, label: tj.label }, data: file });
       }
+    });
+    console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT.length);
+    setInterval(() => {
+      if (index < TJ_TO_IMPORT.length) {
+        this.importService.importActivities({
+          file: TJ_TO_IMPORT[index].data,
+          backupId: TJ_TO_IMPORT[index].tj.id,
+        });
+        console.log('Importing ' + TJ_TO_IMPORT[index].tj.label + '...');
+      }
+      index++;
+    }, 60 * 1000);
+    if (index === this.HRBackupList.length) {
+      form.reset();
+      this.onCancelDataImport();
     }
-    alert('OK !\n' + TJ_DONE.length + ' tj importés');
-    form.reset();
-    this.onCancelDataImport();
-
-    //if (!force) {
-    /*if (!confirm('Vérifier avant import ?'))
-        this.onSendAllActivity(form, true);
-      else {
-        this.importService
-          .checkDataBeforeImportAll({ file: fileToString })
-          .then((response: any) => {
-            const tmp = response.data.to_warn;
-            let to_warn = [];
-            to_warn = sortBy(tmp, 'hr_backup_label');
-
-            if (to_warn.length === 0) {
-              if (confirm('Aucun Problème détecté ! Importer ?')) {
-                this.importService
-                  .importAllActivities({ file: fileToString })
-                  .then(() => {
-                    alert('OK !');
-                    form.reset();
-                    this.onCancelDataImport();
-                  });
-              }
-            } else {
-              const tmp = to_warn.map((elem: any) => {
-                return {
-                  ...elem,
-                  lastPeriode: getMonthAndYear(elem.lastPeriode),
-                  newPeriode: getMonthAndYear(elem.newPeriode),
-                };
-              });
-              to_warn = tmp;
-              alert('Problèmes détectés !');
-              this.dataIssues = to_warn;
-              this.printDataImportIssues = true;
-            }
-          })
-          .catch((err) => console.log('Error:', err));
-      }*/
-    //} else {
-    /*this.importService
-        .importAllActivities({ file: fileToString })
-        .then(() => {
-          alert('OK !');
-          form.reset();
-          this.onCancelDataImport();
-        });*/
-    //}
   }
 
   async onSendActivity(form: any, force: boolean = false) {

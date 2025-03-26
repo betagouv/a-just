@@ -35,7 +35,12 @@ import { HRCategoryService } from '../../services/hr-category/hr-category.servic
 import { AppService } from '../../services/app/app.service';
 import { HRCommentService } from '../../services/hr-comment/hr-comment.service';
 import { UserService } from '../../services/user/user.service';
-import { dateAddDays, isDateBiggerThan, today } from '../../utils/dates';
+import {
+  dateAddDays,
+  isDateBiggerThan,
+  setTimeToMidDay,
+  today,
+} from '../../utils/dates';
 import { copy } from '../../utils';
 import { HelpButtonComponent } from '../../components/help-button/help-button.component';
 import { CommonModule } from '@angular/common';
@@ -824,7 +829,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
           // control date stop
           if (this.currentHR && this.currentHR.dateEnd) {
-            const hrDateStop = new Date(this.currentHR.dateEnd);
+            let hrDateStop = new Date(this.currentHR.dateEnd);
+            hrDateStop = setTimeToMidDay(hrDateStop) || hrDateStop;
 
             if (
               this.updateIndisponiblity &&
@@ -1150,5 +1156,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       (indispo) => indispo.category
     );
     return grouped;
+  }
+
+  setToMidDay(elem: Date) {
+    return setTimeToMidDay(elem);
   }
 }

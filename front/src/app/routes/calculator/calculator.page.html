@@ -61,77 +61,118 @@
             <div class="width-contentieux">
               <p>Contentieux</p>
             </div>
-            <div class="item dtes" (click)="onSortBy('realDTESInMonths')"
-              [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
+            <div class="item dtes">
               <div class="flex-1"></div>
               <p>DTES<br />instantané</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonths'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'realDTESInMonthsUp'}"
+                  (click)="onSortBy('realDTESInMonthsUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonthsDown'}"
+                  (click)="onSortBy('realDTESInMonthsDown')"></i>
+              </div>
               <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium"
                 content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
                 footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
               </aj-tooltips>
             </div>
-            <div class="item coverage" (click)="onSortBy('realCoverage')"
-              [ngClass]="{'selected': sortBy === 'realCoverage'}">
+            <div class="item coverage">
               <div class="flex-1"></div>
               <p>Taux de<br />couverture</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realCoverage'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'realCoverageUp'}"
+                  (click)="onSortBy('realCoverageUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realCoverageDown'}"
+                  (click)="onSortBy('realCoverageDown')"></i>
+              </div>
               <aj-tooltips title="TAUX DE CONVERTURE MOYEN SUR LA PÉRIODE"
                 content="SORTIES /ENTREES de la période en %">
               </aj-tooltips>
             </div>
-            <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
+            <div class="item">
               <div class="flex-1"></div>
               <p>Stock</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'lastStock'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'lastStockUp'}"
+                  (click)="onSortBy('lastStockUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'lastStockDown'}"
+                  (click)="onSortBy('lastStockDown')"></i>
+              </div>
               <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
             </div>
-            <div class="item" (click)="onSortBy('totalIn')" [ngClass]="{'selected': sortBy === 'totalIn'}">
+            <div class="item">
               <div class="flex-1"></div>
               <p>Entrées</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalIn'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'totalInUp'}"
+                  (click)="onSortBy('totalInUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalInDown'}"
+                  (click)="onSortBy('totalInDown')"></i>
+              </div>
               <aj-tooltips title="Entrées" content="Entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
             </div>
-            <div class="item" (click)="onSortBy('totalOut')" [ngClass]="{'selected': sortBy === 'totalOut'}">
+            <div class="item">
               <div class="flex-1"></div>
               <p>Sorties</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalOut'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'totalOutUp'}"
+                  (click)="onSortBy('totalOutUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalOutDown'}"
+                  (click)="onSortBy('totalOutDown')"></i>
+              </div>
               <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
             </div>
-            <div *ngIf="canViewMagistrat" class="tooltip medium item" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag',
+            <div *ngIf="canViewMagistrat" class="tooltip medium item" [ngClass]="{
                 'bg-magistrats': categorySelected === MAGISTRATS
               }">
               <div class="flex-1"></div>
               <p>ETPT <br />Siège</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'etpMagUp'}"
+                  (click)="onSortBy('etpMagUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMagDown'}"
+                  (click)="onSortBy('etpMagDown')"></i>
+              </div>
               <aj-tooltips class="medium" title="ETPT siège"
                 content="Moyenne des ETPT travaillés sur la période par les agents du siège affectés au contentieux">
               </aj-tooltips>
             </div>
-            <div *ngIf="canViewGreffier" class="tooltip medium item" (click)="onSortBy('etpFon')"
-              [ngClass]="{'selected': sortBy === 'etpFon', 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES}">
+            <div *ngIf="canViewGreffier" class="tooltip medium item"
+              [ngClass]="{'bg-fonctionnaires': categorySelected === FONCTIONNAIRES}">
               <div class="flex-1"></div>
               <p>ETPT<br />Greffe</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'etpFonUp'}"
+                  (click)="onSortBy('etpFonUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFonDown'}"
+                  (click)="onSortBy('etpFonDown')"></i>
+              </div>
               <aj-tooltips class="medium" title="ETPT greffe"
                 content="Moyenne des ETPT travaillés sur la période par les agents du greffe affectés au contentieux">
               </aj-tooltips>
             </div>
-            <div *ngIf="canViewContractuel" class="tooltip medium item" (click)="onSortBy('etpCont')"
-              [ngClass]="{'selected': sortBy === 'etpCont'}">
+            <div *ngIf="canViewContractuel" class="tooltip medium item">
               <div class="flex-1"></div>
               <p>ETPT<br />EAM</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'etpContUp'}"
+                  (click)="onSortBy('etpContUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpContDown'}"
+                  (click)="onSortBy('etpContDown')"></i>
+              </div>
               <aj-tooltips class="medium right" title="ETPT EAM"
                 content="Moyenne des ETPT travaillés sur la période par l'équipe autour du magistrat affectés au contentieux">
               </aj-tooltips>
             </div>
 
-            <div class="tooltip large item tmd" (click)="onSortBy('magRealTimePerCase')"
-              [ngClass]="{'selected': sortBy === 'magRealTimePerCase'}">
+            <div class="tooltip large item tmd">
               <div class="flex-1"></div>
               <p>Temps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier observé</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCase'}"></i>
+              <div class="sort-icons">
+                <i class="ri-sort-asc" [ngClass]="{selected: sortBy === 'magRealTimePerCaseUp'}"
+                  (click)="onSortBy('magRealTimePerCaseUp', true)"></i>
+                <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCaseDown'}"
+                  (click)="onSortBy('magRealTimePerCaseDown')"></i>
+              </div>
               <aj-tooltips title="Temps moyen par dossier observé" class="large left"
                 content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur les 12 mois précédents."
                 footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>">

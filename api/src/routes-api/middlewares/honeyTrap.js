@@ -94,7 +94,6 @@ const TRAPS = [
   'api/no',
   'api/sav',
   'localhost',
-  '/admin',
   '/api/ 200',
   'api/clients',
   '/ap 2',
