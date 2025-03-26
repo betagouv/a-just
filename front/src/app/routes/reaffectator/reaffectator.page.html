@@ -143,7 +143,10 @@
                     "0.2-2"}}</p>
                 </div>
                 <div class="filter">
-                  <i [ngClass]="{ 'ri-sort-asc' : filterSelected.up, 'ri-sort-desc' : !filterSelected.up  }"></i>
+                  <i [ngClass]="{
+                    'ri-sort-asc': filterSelected.up === true && filterSelected.filter?.id === ref.id,
+                    'ri-sort-desc': !(filterSelected.up === true && filterSelected.filter?.id === ref.id)
+                  }"></i>
                 </div>
               </div>
             </div>

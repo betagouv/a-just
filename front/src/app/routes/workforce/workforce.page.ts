@@ -273,8 +273,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   filterSelected: {
     filter: ContentieuReferentielInterface | null;
-    up: boolean;
-  } = { filter: null, up: false };
+    up: boolean | null;
+  } = { filter: null, up: null };
   /**
    * Affichage du panneau de selection de filtre
    */
@@ -886,7 +886,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Ordonner une liste de RH
    */
-  orderListWithFiltersParams(up: boolean = false) {
+  orderListWithFiltersParams(up: boolean | null = null) {
     this.listFormated = this.listFormated.map((list) => {
       let listFiltered = [...list.hr];
       if (this.filterParams) {
@@ -1043,16 +1043,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Filtrer par contentieux
    * @param ref
    */
-  onFilterBy(ref: ContentieuReferentielInterface, up: boolean = false) {
-    if (!this.filterSelected || this.filterSelected.filter?.id !== ref.id) {
+  onFilterBy(ref: ContentieuReferentielInterface) {
+    console.log('this.filterSelected:', this.filterSelected);
+    if (
+      !this.filterSelected.filter ||
+      this.filterSelected.filter?.id !== ref.id ||
+      this.filterSelected.up === true
+    ) {
       this.filterSelected.filter = ref;
-      this.filterSelected.up = up;
+      this.filterSelected.up = this.filterSelected.up === null ? true : false;
     } else {
       this.filterSelected.filter = null;
-      this.filterSelected.up = false;
+      this.filterSelected.up = null;
     }
 
-    this.orderListWithFiltersParams(up);
+    this.orderListWithFiltersParams(this.filterSelected.up);
   }
 
   /**
