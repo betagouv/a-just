@@ -700,20 +700,13 @@
       }
     }
 
-    .sort-icons {
-      display: flex;
-      justify-content: space-between;
-      width: auto;
+    i {
       margin-top: 8px;
       margin-bottom: 8px;
+      color: fColor(headerColor);
 
-      i {
-        margin: 0 4px;
-        color: fColor(headerColor);
-
-        &.selected {
-          color: fColor(bgSelectSelected);
-        }
+      &.selected {
+        color: fColor(bgSelectSelected);
       }
     }
 
