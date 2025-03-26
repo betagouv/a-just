@@ -700,15 +700,32 @@
       }
     }
 
-    i {
+    .sort-icons {
+      display: flex;
+      justify-content: space-between;
+      width: auto;
       margin-top: 8px;
       margin-bottom: 8px;
-      color: fColor(headerColor);
 
-      &.selected {
-        color: fColor(bgSelectSelected);
+      i {
+        margin: 0 4px;
+        color: fColor(headerColor);
+
+        &.selected {
+          color: fColor(bgSelectSelected);
+        }
       }
     }
+
+    // i {
+    //   margin-top: 8px;
+    //   margin-bottom: 8px;
+    //   color: fColor(headerColor);
+
+    //   &.selected {
+    //     color: fColor(bgSelectSelected);
+    //   }
+    // }
 
     p {
       text-align: center;

@@ -829,12 +829,14 @@ export class CalculatorPage
   /**
    * Trier les datas en fonction d'un trie
    */
-  filtredDatas() {
+  filtredDatas(up: boolean = false) {
     let list = this.datas;
     if (this.sortBy) {
-      let sort = this.sortBy;
+      let sort = this.sortBy.replace(/(Up|Down)$/, '');
+      console.log('sort:', sort);
+      console.log('up:', up);
       if (
-        this.sortBy === 'magRealTimePerCase' &&
+        this.sortBy.includes('magRealTimePerCase') &&
         this.categorySelected !== 'magistrats'
       ) {
         sort = 'fonRealTimePerCase';
@@ -847,10 +849,10 @@ export class CalculatorPage
             return o[sort] || 0;
           },
         ],
-        ['desc']
+        [up ? 'asc' : 'desc']
       );
     }
-
+    console.log('list:', list);
     this.datasFilted = list;
   }
 
@@ -891,14 +893,16 @@ export class CalculatorPage
    * Demande de trie en fonction d'une colonne
    * @param type
    */
-  onSortBy(type: string) {
+  onSortBy(type: string, up = false) {
+    console.log('Type:', type);
     if (this.sortBy === type) {
       this.sortBy = '';
     } else {
       this.sortBy = type;
     }
+    console.log('this.sortBy:', this.sortBy);
 
-    this.filtredDatas();
+    this.filtredDatas(up);
   }
 
   /**
