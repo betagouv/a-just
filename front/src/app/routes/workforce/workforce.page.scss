@@ -133,10 +133,6 @@
         }
 
         .filter {
-          display: flex;
-          justify-content: space-between;
-          width: auto;
-
           p {
             color: fColor(headerColor);
           }
@@ -150,7 +146,6 @@
           }
 
           i {
-            margin: 0 4px;
             color: fColor(headerColor);
 
             &.selected {
