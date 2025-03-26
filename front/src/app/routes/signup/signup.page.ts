@@ -234,9 +234,7 @@ export class SignupPage {
       email.includes('.gouv.fr') === false &&
       email.includes('@a-just.fr') === false
     ) {
-      alert(
-        'Vous devez saisir une adresse e-mail nominative @justice.fr ou terminant par .gouv.fr'
-      );
+      alert('Vous devez saisir une adresse e-mail professionnelle');
       return;
     }
 
