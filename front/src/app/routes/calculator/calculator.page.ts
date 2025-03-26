@@ -833,8 +833,6 @@ export class CalculatorPage
     let list = this.datas;
     if (this.sortBy) {
       let sort = this.sortBy.replace(/(Up|Down)$/, '');
-      console.log('sort:', sort);
-      console.log('up:', up);
       if (
         this.sortBy.includes('magRealTimePerCase') &&
         this.categorySelected !== 'magistrats'

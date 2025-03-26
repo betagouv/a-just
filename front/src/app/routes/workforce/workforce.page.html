@@ -111,8 +111,8 @@
             </div>
           </div>
           <div class="activities">
-            <div class="sub-item" *ngFor="let ref of list.referentiel" (click)="onFilterBy(ref)"
-              [class.selected]="filterSelected && filterSelected.id === ref.id">
+            <div class="sub-item" *ngFor="let ref of list.referentiel"
+              [class.selected]="filterSelected.filter && filterSelected.filter.id === ref.id">
               <div class="text">
                 <div class="label">
                   <p><b>{{ userService.referentielMappingNameByInterface(ref.label) }}</b></p>
@@ -121,8 +121,10 @@
                   <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
                 </div>
                 <div class="filter">
-                  <i
-                    class="{{ filterSelected && filterSelected.id === ref.id ? 'ri-sort-desc selected' : 'ri-sort-desc' }}"></i>
+                  <i class="{{ filterSelected.filter && filterSelected.filter.id === ref.id && filterSelected.up  ? 'ri-sort-asc selected' : 'ri-sort-asc' }}"
+                    (click)="onFilterBy(ref, true)"></i>
+                  <i class="{{ filterSelected.filter && filterSelected.filter.id === ref.id && !filterSelected.up ? 'ri-sort-desc selected' : 'ri-sort-desc' }}"
+                    (click)="onFilterBy(ref)"></i>
                 </div>
               </div>
               <div class="color"

@@ -271,7 +271,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Liste des filtres selectionnés
    */
-  filterSelected: ContentieuReferentielInterface | null = null;
+  filterSelected: {
+    filter: ContentieuReferentielInterface | null;
+    up: boolean;
+  } = { filter: null, up: false };
   /**
    * Affichage du panneau de selection de filtre
    */
@@ -883,7 +886,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Ordonner une liste de RH
    */
-  orderListWithFiltersParams() {
+  orderListWithFiltersParams(up: boolean = false) {
     this.listFormated = this.listFormated.map((list) => {
       let listFiltered = [...list.hr];
       if (this.filterParams) {
@@ -920,11 +923,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           list.hrFiltered,
           (h) => {
             const acti = (h.currentActivities || []).find(
-              (a) => a.contentieux?.id === this.filterSelected?.id
+              (a) => a.contentieux?.id === this.filterSelected.filter?.id
             );
             return acti ? acti.percent || 0 : 0;
           },
-          ['desc']
+          [up ? 'asc' : 'desc']
         );
       }
 
@@ -1040,14 +1043,16 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Filtrer par contentieux
    * @param ref
    */
-  onFilterBy(ref: ContentieuReferentielInterface) {
-    if (!this.filterSelected || this.filterSelected.id !== ref.id) {
-      this.filterSelected = ref;
+  onFilterBy(ref: ContentieuReferentielInterface, up: boolean = false) {
+    if (!this.filterSelected || this.filterSelected.filter?.id !== ref.id) {
+      this.filterSelected.filter = ref;
+      this.filterSelected.up = up;
     } else {
-      this.filterSelected = null;
+      this.filterSelected.filter = null;
+      this.filterSelected.up = false;
     }
 
-    this.orderListWithFiltersParams();
+    this.orderListWithFiltersParams(up);
   }
 
   /**
