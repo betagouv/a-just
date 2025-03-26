@@ -435,18 +435,24 @@ export const computeExtractDdg = async (
               ? middleDate
               : dateStop;
           let countNbOfDays = undefined;
+          let countNbOfDaysGone = 0
           if (nextDateStart && nextEndDate)
             countNbOfDays = nbWorkingDays(
               new Date(nextDateStart),
               new Date(nextEndDate)
+            );
+          if (human.dateEnd<nextEndDate)
+            countNbOfDaysGone = nbWorkingDays(
+              today(human.dateEnd),
+              today(nextEndDate)
             );
           if (
             typeof countNbOfDays === "number" &&
             nextDateStart <= nextEndDate
           ) {
             reelEtpObject.push({
-              etp: situation.etp * countNbOfDays,
-              countNbOfDays: countNbOfDays,
+              etp: situation.etp * (countNbOfDays-countNbOfDaysGone),
+              countNbOfDays: countNbOfDays-countNbOfDaysGone,
             });
           }
         });
@@ -457,30 +463,32 @@ export const computeExtractDdg = async (
 
         if (human.dateEnd && isGone && hasArrived && dateStart) {
           reelEtp =
-            ((sumBy(reelEtpObject, "etp") /
-              sumBy(reelEtpObject, "countNbOfDays")) *
-              nbOfDays(human.dateStart, human.dateEnd)) /
-              nbOfDays(dateStart, dateStop) -
-            (refObj[key] || 0);
+            (sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays")
+            - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  
+            *
+            nbOfDays(human.dateStart, human.dateEnd) /
+            nbOfDays(dateStart, dateStop)
         } else if (human.dateEnd && isGone) {
           reelEtp =
-            ((sumBy(reelEtpObject, "etp") /
-              sumBy(reelEtpObject, "countNbOfDays")) *
-              nbOfDays(dateStart, human.dateEnd)) /
-              nbOfDays(dateStart, dateStop) -
-            (refObj[key] || 0);
+            (sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays")
+            - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  
+            *
+              nbOfDays(dateStart, human.dateEnd) /
+              nbOfDays(dateStart, dateStop) 
         } else if (hasArrived && dateStart) {
           reelEtp =
-            ((sumBy(reelEtpObject, "etp") /
-              sumBy(reelEtpObject, "countNbOfDays")) *
-              nbOfDays(human.dateStart, dateStop)) /
-              nbOfDays(dateStart, dateStop) -
-            (refObj[key] || 0);
+          (sumBy(reelEtpObject, "etp") /
+          sumBy(reelEtpObject, "countNbOfDays")
+          - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  *
+              nbOfDays(human.dateStart, dateStop) /
+              nbOfDays(dateStart, dateStop) 
         } else {
           reelEtp =
-            sumBy(reelEtpObject, "etp") /
-              sumBy(reelEtpObject, "countNbOfDays") -
-            (refObj[key] || 0);
+          (sumBy(reelEtpObject, "etp") /
+          sumBy(reelEtpObject, "countNbOfDays")
+          - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays")) ;
         }
       }
 

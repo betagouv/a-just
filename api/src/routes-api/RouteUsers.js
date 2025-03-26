@@ -84,7 +84,7 @@ export default class RouteUsers extends Route {
       !email.includes('.gouv.fr') &&
       !email.includes('@a-just.fr')
     ) {
-      ctx.throw(401, 'Vous devez saisir une adresse e-mail nominative @justice.fr ou terminant par .gouv.fr')
+      ctx.throw(401, 'Vous devez saisir une adresse e-mail professionnelle')
       return
     }
 
