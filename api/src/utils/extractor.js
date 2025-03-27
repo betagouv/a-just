@@ -490,6 +490,8 @@ export const computeExtractDdg = async (
           sumBy(reelEtpObject, "countNbOfDays")
           - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays")) ;
         }
+
+
       }
 
       if (isCa()) {
@@ -950,6 +952,7 @@ export const computeExtract = async (
             (refObj[key] || 0);
         }
       }
+
 
       let delegation = null;
 
