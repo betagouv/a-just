@@ -68,6 +68,10 @@
           <p>{{getOptionAffichageReferentielString()}}</p>
           <i class="ri-close-line"></i>
         </div>
+        <div class="tag" *ngIf="getOptionAffichageSubReferentielString()" (click)="clearFilterSubReferentiel()">
+          <p>{{getOptionAffichageSubReferentielString()}}</p>
+          <i class="ri-close-line"></i>
+        </div>
         <div class="tag" *ngIf="filterParams && filterParams.filterNames" (click)="clearFilterFilter()">
           <i class="ri-filter-3-line"></i>
           <p>{{filterParams.filterNames}}</p>

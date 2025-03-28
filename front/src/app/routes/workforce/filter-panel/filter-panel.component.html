@@ -11,7 +11,7 @@
   <p class="filter-group">Filtrer par :</p>
   <aj-list-selection labelPreviewText="Tous" #filterContentieuxSelection icon="filter-2-line" title="Contentieux"
     [multiple]="true" [list]="contentieuxFilterList" [values]="referentielIds!"
-    (valuesChanged)="referentielIds=$event;updateSubcontentieux();updateParams()"
+    (valuesChanged)="referentielIds=$event;updateSubcontentieux(true);updateParams()"
     (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close(); filterSubContentieuxSelection.close()"></aj-list-selection>
   <aj-list-selection labelPreviewText="Tous" #filterSubContentieuxSelection icon="filter-2-line" class="large-drop"
     title="Sous-contentieux" [multiple]="true" [list]="subContentieuxFilterList" [values]="subReferentielIds!"

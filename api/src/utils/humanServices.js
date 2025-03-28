@@ -38,7 +38,6 @@ export async function getHumanRessourceList (
   })
 
   if(subContentieuxIds) {
-    console.log(subContentieuxIds)
     list = list.filter((h) => {
       const idsOfactivities = h.currentActivities.map((a) => (a.contentieux && a.contentieux.id) || 0)
       if (acceptAgentWithoutVentilation && idsOfactivities.length === 0) {
