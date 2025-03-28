@@ -273,6 +273,9 @@ export class PopinGraphsDetailsComponent
     if (max) {
       max *= 1.3;
     }
+    if (max === 0) {
+      max = 1;
+    }
 
     const getOrCreateTooltip = (chart: any) => {
       let tooltipEl = chart.canvas.parentNode.querySelector('div');
