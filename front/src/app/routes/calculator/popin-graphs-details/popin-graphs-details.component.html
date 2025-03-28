@@ -7,7 +7,7 @@
                 [style.color]="calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id ? 'rgba(246, 246, 246, 1)' : userService.referentielMappingColorByInterface(ref.label)"
                 [style.background-color]="calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id ? userService.referentielMappingColorByInterface(ref.label) :  'rgba(246, 246, 246, 1)'"
                 (click)="selectReferentiel(ref)">
-                {{ referentielMappingName(ref.label) }}
+                {{ userService.referentielMappingNameByInterface(ref.label) }}
             </div>
         </div>
         <div class="compare-header-popin">

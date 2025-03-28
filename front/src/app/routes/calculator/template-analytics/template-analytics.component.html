@@ -12,7 +12,9 @@
 
 <div class="scroll-container" *ngIf="lines && lines.length">
     <div *ngFor="let line of lines">
-        <div class="container-colum">
+        <div class="container-colum cursor-pointer" (click)=" calculatorService.selectedRefGraphDetail=referentiel[0].id;
+            calculatorService.showGraphDetailTypeLineTitle=line.title;
+            calculatorService.showGraphDetailType=line.dataType">
             <p *ngIf="line.title" class="title-section">{{line.title}}</p>
             <p *ngIf="line.description" class="description-section" [innerHTML]="line.description | sanitizeHtml"></p>
             <div class="flex-1"></div>
