@@ -235,7 +235,7 @@ export default class RouteHumanResources extends Route {
     let hr = await this.model.getCache(backupId)
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
 
-    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, subContentieuxIds, categoriesIds, date, endPeriodToCheck, true)
+    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, subContentieuxIds, categoriesIds, date, endPeriodToCheck)
 
     const allCategories = await this.models.HRCategories.getAll()
 
