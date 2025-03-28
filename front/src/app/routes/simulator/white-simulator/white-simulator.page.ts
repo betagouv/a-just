@@ -1511,7 +1511,7 @@ export class WhiteSimulatorPage
       x.classList.remove('disable');
     });
     if (this.valuesToReinit) this.valuesToReinit = null;
-    this.simulatorService.isValidatedWhiteSimu.next(false);
+    //this.simulatorService.isValidatedWhiteSimu.next(false);
   }
 
   /**
