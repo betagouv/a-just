@@ -29,7 +29,7 @@ export default class App {
 
     // await this.formatDatas();
     // console.time("Time Check Data");
-    await this.checkDatas();
+    // await this.checkDatas();
     // console.timeEnd("Time Check Data");
     this.done();
   }
@@ -55,7 +55,7 @@ export default class App {
       //console.log('Categories of rules', categoriesOfRules);
       if (response) {
         // CIVIL
-        // await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
+        await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
         // await this.formatAndGroupJuridiction(
         //   tmpFolder,
         //   outputFolder,
