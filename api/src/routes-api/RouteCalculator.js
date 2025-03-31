@@ -130,7 +130,7 @@ export default class RouteCalculator extends Route {
               const acti = activites[0];
               if (acti.sorties !== null) {
                 list.push({ value: acti.sorties, date: new Date(dateStart) });
-              } else if (acti.ori !== null) {
+              } else if (acti.originalSorties !== null) {
                 list.push({
                   value: acti.originalSorties,
                   date: new Date(dateStart),
@@ -285,6 +285,29 @@ export default class RouteCalculator extends Route {
             }
           }
           break;
+        case "taux-couverture":
+           {
+            const activites = await this.models.Activities.getByMonth(
+              dateStart,
+              backupId,
+              contentieuxId,
+              false
+            );
+            if (activites.length) {
+              const acti = activites[0];
+              if (acti.entrees !== null && acti.sorties !== null) {
+                list.push({ value: acti.sorties / acti.entrees, date: new Date(dateStart) });
+              } else if (acti.originalEntrees !== null && acti.originalSorties !== null) {
+                list.push({
+                  value: acti.originalSorties / acti.originalEntrees,
+                  date: new Date(dateStart),
+                });
+              } else {
+                list.push(null);
+              }
+            }
+           }
+           break;
         default:
           {
             console.log("type", type);
