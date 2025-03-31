@@ -74,11 +74,11 @@ export default class RouteCalculator extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      backupId: Types.number().required(),
-      dateStart: Types.date().required(),
-      dateStop: Types.date().required(),
-      contentieuxId: Types.number().required(),
-      type: Types.string().required(),
+      backupId: Types.number(),
+      dateStart: Types.date(),
+      dateStop: Types.date(),
+      contentieuxId: Types.number(),
+      type: Types.string(),
       fonctionsIds: Types.array(),
     }),
     accesses: [Access.canVewCalculator],
