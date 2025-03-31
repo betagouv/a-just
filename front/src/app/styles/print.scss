@@ -1,11 +1,12 @@
 @media print {
+
   .no-print,
   .no-print * {
     display: none !important;
   }
 
   * {
-    -webkit-print-color-adjust: exact; 
+    -webkit-print-color-adjust: exact;
   }
 
   aj-wrapper {
@@ -14,6 +15,7 @@
 }
 
 body.on-print {
+
   .no-print,
   .no-print * {
     display: none !important;
@@ -21,7 +23,10 @@ body.on-print {
 }
 
 
-.p-with-child-Helvetica p {
+.p-with-child-Helvetica p,
+li,
+ul,
+ol {
   font-size: 10px;
   font-family: 'Helvetica';
 }
