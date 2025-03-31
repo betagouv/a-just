@@ -13,4 +13,3 @@ output.pdf
 src/public/tmp
 .output
 .error.log
-test/db/*

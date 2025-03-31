@@ -33,5 +33,6 @@ describe('Signup Page', () => {
       cy.contains('label', 'Ma fonction :').should('be.visible');
       cy.get('select').eq(1).select(1);
       cy.get('input[type=submit]').click()
+      cy.location('pathname').should('eq', '/bienvenue')
   })  
 })
