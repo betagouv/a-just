@@ -178,7 +178,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
     etp: new FormControl<number | null>(null, [
-      Validators.required,
       Validators.min(0),
       Validators.max(1),
     ]),
@@ -320,7 +319,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.lastDateStart ? this.lastDateStart : undefined
     );
 
-    let etp = (situation && situation.etp) || 0;
+    let etp = (situation && situation.etp) || null;
     if (etp === this.ETP_NEED_TO_BE_UPDATED) {
       etp = 0;
     }
@@ -328,7 +327,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.form
       .get('activitiesStartDate')
       ?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null);
-    this.form.get('etp')?.setValue(fixDecimal(etp));
+    this.form.get('etp')?.setValue(etp === null ? null : fixDecimal(etp));
     this.form
       .get('categoryId')
       ?.setValue(
@@ -497,13 +496,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           fonct.minDateAvalaible,
           false
         )}.`
-      );
-      return;
-    }
-
-    if (this.form.get('etp')?.value === null) {
-      alert(
-        'Vous devez saisir un temps de travail pour valider la création de cette fiche !'
       );
       return;
     }
