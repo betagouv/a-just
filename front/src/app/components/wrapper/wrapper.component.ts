@@ -443,8 +443,17 @@ export class WrapperComponent extends MainClass implements OnDestroy {
           commentDom.style.textAlign = 'left';
           commentDom.style.fontFamily = 'Helvetica';
           commentDom.classList.add('p-with-child-Helvetica');
-          commentDom.innerHTML = comment || '';
-          console.log('comment', comment);
+          comment = comment || '';
+          if (comment.includes('<ol>')) {
+            comment = comment.replace(/<ol>/gm, '<ul>');
+            comment = comment.replace(/<\/ol>/gm, '</ul>');
+            comment = comment.replace(
+              /<li data-list="bullet">/gm,
+              '<li>&nbsp;&nbsp;&nbsp; • '
+            );
+          }
+          commentDom.innerHTML = comment;
+          //console.log('comment', comment, commentDom.innerHTML);
 
           htmlContainer.appendChild(logo);
           htmlContainer.appendChild(title);
