@@ -56,6 +56,7 @@ export class NewsPage extends MainClass implements OnInit, OnDestroy {
     ['underline', 'strike'],
     ['code', 'blockquote'],
     ['ordered_list', 'bullet_list'],
+    ['text_color'],
     ['align_left', 'align_center', 'align_right', 'align_justify'],
     ['undo', 'redo'],
   ];

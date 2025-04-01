@@ -69,10 +69,6 @@ export class NewsComponent extends MainClass implements OnInit {
   loadNews() {
     this.newsService.getLast().then((n) => {
       this.news = n;
-      this.news.html = n.html.replace(
-        /<(\w+)([^>]*)>/,
-        `<$1$2 style="color: ${n.textColor};">`
-      );
     });
   }
 
