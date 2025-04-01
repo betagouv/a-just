@@ -1329,11 +1329,7 @@ export class CalculatorPage
             type: 'verticals-lines',
             description:
               'de la période<br/>(calculé sur les 12 mois précédents)',
-            lineMax:
-              Math.max(
-                ...value1DTES.map((m) => m || 0),
-                ...value2DTES.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1DTES.map((v, index) => [
               value2DTES[index] || 0,
               v || 0,
@@ -1377,11 +1373,7 @@ export class CalculatorPage
             dataType: 'temps-moyen',
             type: 'verticals-lines',
             description: 'sur la période',
-            lineMax:
-              Math.max(
-                ...value1TempsMoyen.map((m) => m || 0),
-                ...value2TempsMoyen.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1TempsMoyen.map((v, index) => [
               value2TempsMoyen[index] || 0,
               v || 0,
