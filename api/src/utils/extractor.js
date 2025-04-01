@@ -477,6 +477,8 @@ export const computeExtractDdg = async (
               console.log('nbDays on period',nbOfDays(dateStart, dateStop))
               console.log('extract dates', dateStart, dateStop)
               console.log('extract dates', human.dateStart, human.dateEnd)
+              console.log('days gone and total nb of days',  sumBy(reelEtpObject, "countNbOfDays"), totalDaysGone)
+
             }
         } else if (human.dateEnd && isGone) {
           reelEtp =
