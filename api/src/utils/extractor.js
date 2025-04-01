@@ -290,6 +290,11 @@ export const computeExtractDdg = async (
   console.time("extractor-7.1");
   await Promise.all(
     allHuman.map(async (human) => {
+      if (human.id===36732){
+        console.log(human)
+      }
+      
+
       const { currentSituation } = findSituation(human);
 
       let categoryName =
