@@ -1,6 +1,6 @@
 import { isFirstDayOfMonth } from 'date-fns'
 import { groupBy, map, meanBy, orderBy, sortBy, sumBy } from 'lodash'
-import { checkIfDateIsNotToday, decimalToStringDate, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, today, workingDay } from './date'
+import { checkIfDateIsNotToday, decimalToStringDate, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPersonSimu } from './human-resource'
@@ -264,7 +264,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
       DTES = computeDTES(lastStock, totalOut)
     }
     if (dateStop) {
-      const nbDayCalendarProjected = nbOfDays(new Date(dateStart), new Date(dateStop))
+      const nbDayCalendarProjected = nbDays
 
       // Compute projected etp at stop date (specific date) to display
       const projectedEtpAffected = await getHRPositions(hr, referentielId, categories, dateStop)
@@ -751,6 +751,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
     }
   })
 
+  const nbDays = nbOfDays(today(dateStart), today(dateStop))
+
   if (params.lockedParams.param1.label !== '' && simulation[params.lockedParams.param1.label] !== undefined)
     //@ts-ignore
     simulation[params.lockedParams.param1.label] =
@@ -780,7 +782,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
       if (x === 'totalIn') {
         if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalIn = Math.floor(
-            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) / (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) / (nbDays / (262 / 12)) +
               Math.floor(simulation.totalOut)
           )
         } else if (simulation.totalOut && simulation.realCoverage) {
@@ -793,14 +795,25 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
             simulation.totalOut = Math.floor(
               Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
             )
-          } else
-            simulation.totalOut = Math.floor(
+          } else {
+            console.log('by greffe out',Math.floor(
               Math.floor(simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
-            )
+            ))
+            console.log( 'out other compute',  simulation.etpFon, environment['nbHoursPerDayAnd' + sufix], environment['nbDaysPerMonth' + sufix], simulation.magRealTimePerCase  )
+
+            simulation.totalOut = 
+              simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix] / simulation.magRealTimePerCase
+            
+          }
+          console.log('numerateur',Math.floor(
+            Math.floor(simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix])))
+
+            console.log('dénominateur',simulation.magRealTimePerCase)
+          console.log('mag et realTime', [...params.toDisplay, ...params.toCalculate].includes('etpMag'),simulation.etpFon,simulation.magRealTimePerCase, environment['nbHoursPerDayAnd' + sufix],environment['nbDaysPerMonth' + sufix])
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalOut = Math.floor(
             Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) /
-              (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) +
+              (nbDays / (365 / 12)) +
               simulation.totalIn
           )
         } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)) {
@@ -809,10 +822,11 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
           simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn)
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalIn) {
           simulation.totalOut = Math.floor(
-            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))) /
-              (simulation.realDTESInMonths + nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))
+            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbDays / (365 / 12))) /
+              (simulation.realDTESInMonths + nbDays / (365 / 12))
           )
         }
+        console.log('out',simulation.totalOut)
       }
 
       if (x === 'lastStock') {
@@ -820,15 +834,21 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
           simulation.lastStock = 0
         } else if (simulation.totalIn && simulation.totalOut) {
           simulation.lastStock =
-            Math.floor(params.beginSituation.lastStock) +
-            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalIn) -
-            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalOut)
+            Math.floor(params.beginSituation.lastStock +
+            (nbDays / (365 / 12)) * simulation.totalIn -
+           (nbDays / (365 / 12)) * simulation.totalOut)
+
+            console.log('in out',nbDays)
+
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalOut) {
           simulation.lastStock = Math.floor(simulation.realDTESInMonths * simulation.totalOut)
+          console.log('dtes out')
         }
         if (simulation.lastStock && simulation.lastStock < 0) {
           simulation.lastStock = 0
         }
+
+        console.log( simulation.lastStock)
       }
       if (x === 'realCoverage') {
         if (simulation.totalOut && simulation.totalIn) {

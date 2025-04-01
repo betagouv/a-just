@@ -35,6 +35,8 @@ import {
   decimalToStringDate,
   findRealValue,
   monthDiffList,
+  nbOfDays,
+  nbOfWorkingDays,
   stringToDecimalDate,
   today,
 } from '../../../utils/dates';
@@ -628,6 +630,9 @@ export class WhiteSimulatorPage
   ngAfterViewInit(): void {
     this.dateStop = this.getNextYear();
     this.simulatorService.dateStop.next(this.dateStop);
+    this.simulatorService.whiteSimulatorNbOfDays.next(
+      nbOfWorkingDays(this.dateStart, this.dateStop)
+    );
     this.stopRealValue = findRealValue(this.dateStop);
   }
   /**

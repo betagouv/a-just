@@ -202,6 +202,7 @@ export class SimulatorService extends MainClass {
           selectedCategoryId: this.selectedCategory.getValue()?.id,
         })
         .then((data) => {
+          console.log(this.selectedCategory.getValue()?.id);
           console.log('simu', data.data);
           this.situationSimulated.next(data.data);
           this.isLoading.next(false);
