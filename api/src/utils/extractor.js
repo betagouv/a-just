@@ -469,6 +469,15 @@ export const computeExtractDdg = async (
             *
             nbOfDays(human.dateStart, human.dateEnd) /
             nbOfDays(dateStart, dateStop)
+
+            if (human.id===36732){
+              console.log('etp', sumBy(reelEtpObject, "etp") /sumBy(reelEtpObject, "countNbOfDays"))
+              console.log('indispo', (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))
+              console.log('nbofPresentDays',nbOfDays(human.dateStart, human.dateEnd))
+              console.log('nbDays on period',nbOfDays(dateStart, dateStop))
+              console.log('extract dates', dateStart, dateStop)
+              console.log('extract dates', human.dateStart, human.dateEnd)
+            }
         } else if (human.dateEnd && isGone) {
           reelEtp =
             (sumBy(reelEtpObject, "etp") /
