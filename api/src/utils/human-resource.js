@@ -11,7 +11,7 @@ import { isDateGreaterOrEqual, today } from '../utils/date'
 export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false, absLabels = null) {
   if (hr.dateEnd && today(hr.dateEnd) < today(date)) {
     if (hr.id===36732){
-      console.log(date,'return null for this date')
+      //console.log(date,'return null for this date')
     }
     return {
       etp: null,
@@ -241,7 +241,7 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
           if (isDateGreaterOrEqual(dateStop,date)) {
             const d1 = new Date(2024, 8, 20); 
             if (hr.id===36732){
-              console.log('date passed for indispo count',date,'end indispo date',dateStop)
+              //console.log('date passed for indispo count',date,'end indispo date',dateStop)
             }
             
             if (!ddgFilter) return true
