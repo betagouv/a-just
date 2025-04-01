@@ -127,7 +127,7 @@ export class SpeedometerComponent extends MainClass implements OnInit {
       this.percent === null || isNaN(this.percent)
         ? 'N/R'
         : Math.floor(this.percent) + '%';
-
+    console.log(this.percent, typeof this.percent, this.percentString);
     this.onDraw();
   }
 
