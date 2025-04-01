@@ -448,12 +448,27 @@ export class WrapperComponent extends MainClass implements OnDestroy {
             comment = comment.replace(/<ol>/gm, '<ul>');
             comment = comment.replace(/<\/ol>/gm, '</ul>');
             comment = comment.replace(
+              /<span class="ql-ui" contenteditable="false"><\/span>/gm,
+              ''
+            );
+            comment = comment.replace(
               /<li data-list="bullet">/gm,
               '<li>&nbsp;&nbsp;&nbsp; • '
             );
+            for (let i = 1; i < 10; i++) {
+              const newCheck = new RegExp(
+                `<li([^>]*)ql-indent-${i}([^>]*)>`,
+                'gm'
+              );
+              const nbspList = '&nbsp;'.repeat(i * 3);
+              comment = comment.replace(
+                newCheck,
+                `<li style="margin-left:${i * 30}px">${nbspList} • `
+              );
+            }
           }
           commentDom.innerHTML = comment;
-          //console.log('comment', comment, commentDom.innerHTML);
+          //console.log('comment', comment);
 
           htmlContainer.appendChild(logo);
           htmlContainer.appendChild(title);
