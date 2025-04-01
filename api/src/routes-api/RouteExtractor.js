@@ -212,6 +212,7 @@ export default class RouteExtractor extends Route {
       allJuridiction,
     });
 
+    console.log('EXTRACTION')
     this.sendOk(ctx, {
       fonctions: formatedFunctions,
       referentiels,
