@@ -61,8 +61,12 @@ export class NewsComponent extends MainClass implements OnInit {
    */
   ngAfterViewInit() {
     requestAnimationFrame(() => {
-      const elem = this.el.nativeElement.querySelector('p');
-      elem.style.transform = 'translateZ(0)'; //on force le repain de la notification pour appliquer la couleur des textes
+      const elem = this.el.nativeElement.querySelectorAll('p *');
+      elem.forEach((el: HTMLElement) => {
+        const currentColor = el.style.color;
+        el.style.color = '';
+        el.style.color = currentColor;
+      });
     });
   }
 
