@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cypress-video
-          path: ./cypress/videos
+          path: ./end-to-end/cypress/videos
 
       - name: List all files
         run: ls -laR
