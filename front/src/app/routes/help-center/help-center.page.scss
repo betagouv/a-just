@@ -164,6 +164,7 @@
             }
 
             .result-area {
+                /** 
                 margin: 0 24px;
                 z-index: 1;
                 position: absolute;
@@ -247,6 +248,13 @@
                         }
                     }
                 }
+**/
+
+
+
+
+
+
             }
         }
 
@@ -580,6 +588,170 @@
             //margin: -148px 8px 8px 8px;
             border: none;
             width: 100%;
+        }
+    }
+
+    /* Style général du composant */
+    .gitbook-response {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        padding: 24px;
+        max-width: 800px;
+        margin: 20px auto;
+        border: 1px solid #e0e0e0;
+        position: relative;
+
+        .ri-close-line {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+        }
+    }
+
+    p {
+        text-align: justify;
+    }
+
+    /* Titres */
+    .gitbook-response h2 {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 12px;
+    }
+
+    /* Paragraphe de réponse */
+    .gitbook-response p {
+        font-size: 16px;
+        color: #555;
+        line-height: 1.6;
+        margin-top: 8px;
+        margin-bottom: 8px;
+
+        text-align: justify;
+
+    }
+
+
+    .gitbook-response span {
+        &.ordered-list-title {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 8px;
+            margin-bottom: 8px;
+
+            text-align: justify;
+        }
+    }
+
+
+    /* Mise en gras */
+    .gitbook-response .bold {
+        font-weight: bold;
+    }
+
+    /* Code block */
+    .gitbook-response pre {
+        background-color: #f5f5f5;
+        padding: 12px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin-bottom: 12px;
+        border: 1px solid #ddd;
+    }
+
+    .gitbook-response code {
+        color: #d6336c;
+        font-size: 14px;
+    }
+
+    /* Liste des questions de suivi */
+    .gitbook-response ul {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 15px;
+    }
+
+    .gitbook-response ul li {
+        position: relative;
+        padding-left: 24px;
+        margin-bottom: 8px;
+        font-size: 15px;
+        color: #444;
+    }
+
+    .gitbook-response ul li::before {
+        content: '\25A0';
+        position: absolute;
+        left: 0;
+        top: 2px;
+        color: #888;
+        font-size: 12px;
+    }
+
+    .gitbook-response .close-tab {
+        cursor: pointer;
+    }
+
+    /* Sources */
+    .gitbook-response .source-container {
+        //background: #f9f9f9;
+        border-top: 1px solid #e0e0e0;
+        padding-top: 12px;
+        margin-top: 16px;
+    }
+
+    .gitbook-response .source-container p {
+        font-size: 14px;
+        color: #666;
+        margin: 4px 0;
+    }
+
+    .gitbook-response .source-container span {
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Séparation */
+    .gitbook-response .separator {
+        border-top: 1px solid #e0e0e0;
+        margin-top: 16px;
+        padding-top: 16px;
+    }
+
+
+    .validate-prompt {
+        align-self: center;
+        margin-right: 16px;
+
+        i {
+            font-size: 24px;
+        }
+    }
+
+    .loader {
+        background-size: 100% auto;
+        align-self: center;
+        margin-right: 16px;
+        background-image: url('/assets/icons/infinite-spinner.svg');
+        background-repeat: no-repeat;
+        width: 26px;
+        height: 12px;
+    }
+
+    .following {
+        background-color: white;
+        border-radius: 4px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        padding: 12px 8px 12px 16px;
+
+        &:hover {
+            background-color: lightgray;
+
+            border: 1px solid gray;
         }
     }
 }

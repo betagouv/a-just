@@ -49,9 +49,18 @@
       </div>
 
       <div *ngIf="openTools" class="sub-tools">
+        <p (click)="downloadAsset('guide-utilisateur')">
+          Le guide utilisateur
+          <i class="ri-external-link-line"
+            (click)="$event.stopPropagation(); downloadAsset('guide-utilisateur', true)"></i>
+        </p>
         <p (click)="downloadAsset('nomenclature')">
           La nomenclature
           <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('nomenclature', true)"></i>
+        </p>
+        <p (click)="downloadAsset('data-book')">
+          Le data-book
+          <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('data-book', true)"></i>
         </p>
         <p (click)="downloadAsset('calculatrice')">La calculatrice <i class="ri-download-line"></i></p>
         <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">

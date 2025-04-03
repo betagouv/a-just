@@ -64,6 +64,12 @@ import {
   userCanViewMagistrat,
   userCanViewWhiteSimulator,
 } from '../../utils/user';
+import { ChooseSimulatorComponent } from './choose-simulator/choose-simulator.component';
+import {
+  REAFFECTATOR,
+  SIMULATOR_DONNEES,
+  SIMULATOR_OTHER_ACTIVITY,
+} from '../../constants/simulator';
 
 /**
  * Variable ETP magistrat field name
@@ -120,6 +126,7 @@ export const etpFonToDefine = '[un volume moyen de]';
     MatTooltipModule,
     BackButtonComponent,
     MatProgressBarModule,
+    ChooseSimulatorComponent,
   ],
   styleUrls: ['./simulator.page.scss'],
   animations: [
@@ -312,7 +319,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   documentation: DocumentationInterface = {
     title: 'Simulateur A-JUST :',
-    path: this.documentationUrl.main,
+    path: this.userService.isCa()
+      ? this.documentationUrl.whiteSimulator
+      : this.documentationUrl.main,
     printSubTitle: true,
   };
 
@@ -331,6 +340,10 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     closeTab: [
       { id: 'cancel', content: 'Annuler' },
       { id: 'export', content: 'Exporter en PDF', fill: true },
+    ],
+    backBeforeSimulate: [
+      { id: 'leave', content: 'Quitter' },
+      { id: 'close', content: 'Continuer', fill: true },
     ],
   };
 
@@ -495,17 +508,21 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         }
       },
     },
+  ];
+  /**
+   * Intro JS Steps par défaut
+   */
+  introStepsToCompleteDefault: IntroJSStep[] = [
     {
       target: '.categories-switch',
-      title: 'Configurez votre hypothèse',
+      title: 'Configurez votre hypothèse :',
       intro:
-        '<p>Choisissez la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe</p>',
+        '<p>Commencez par choisir la catégorie <b>d’effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les fonctionnaires de greffe.</p>',
       beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('#on-button-continue');
-        if (itemToClick) {
-          // @ts-ignore
-          itemToClick.click();
-          await sleep(200);
+        if (this.periodSelector) {
+          const now = today();
+          now.setMonth(now.getMonth() + 12);
+          this.periodSelector.updateDateSelected('dateStop', now, false);
         }
       },
     },
@@ -698,6 +715,23 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         this.disabled = disabled;
       })
     );
+
+    this.watch(
+      this.simulatorService.contentieuOrSubContentieuId.subscribe((d) => {
+        const now = today();
+        now.setMonth(now.getMonth() + 12);
+
+        if (
+          (this.dateStop === null || this.compareDates(this.dateStop, now)) &&
+          d !== null
+        ) {
+          this.periodSelector?.updateDateSelected('dateStop', now, false);
+          this.dateStop = now;
+          this.stopRealValue = findRealValue(this.dateStop);
+        }
+      })
+    );
+
     this.watch(
       this.humanResourceService.backups.subscribe((backups) => {
         this.hrBackups = backups;
@@ -833,7 +867,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
     this.watch(
       this.simulatorService.situationActuelle.subscribe((d) => {
-        //console.log('Situation actuelle : ', d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue();
       })
@@ -841,7 +874,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
-        //console.log('Situation proj : ', d)
         this.projectedSituationData =
           this.simulatorService.situationProjected.getValue();
       })
@@ -849,7 +881,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.simulatorService.situationSimulated.subscribe((d) => {
         if (d !== null) {
-          //console.log('Situation simu : ', d)
           this.simulatedSationData = d;
           const findTitle = document.getElementsByClassName('simulation-title');
           const findElement = document.getElementById('content');
@@ -1085,7 +1116,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.projectedSituationData = null;
     this.dateStart = new Date();
     this.simulatorService.dateStart.next(this.dateStart);
-    this.simulatorService.dateStop.next(new Date());
+    const now = today();
+    now.setMonth(now.getMonth() + 12);
+    this.simulatorService.dateStop.next(now);
     this.simulatorService.situationProjected.next(null);
     this.dateStop = null;
     this.startRealValue = '';
@@ -2255,6 +2288,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
   onReturn() {
     if (this.toDisplaySimulation) {
       this.onUserActionClick(this.action.return);
+    } else if (this.projectedSituationData) {
+      this.onUserActionClick(this.action.return);
     } else {
       this.chooseScreen = true;
       this.resetParams();
@@ -2297,6 +2332,16 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           }
           break;
       }
+    } else {
+      this.printPopup = true;
+      switch (button) {
+        case this.action.return:
+          {
+            this.popupActionToUse = this.popupAction.backBeforeSimulate;
+            this.userAction.isComingBack = true;
+          }
+          break;
+      }
     }
     return;
   }
@@ -2331,6 +2376,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
               this.forceDeactivate = false;
               this.chooseScreen = true;
             });
+          }
+          break;
+        case 'close':
+          {
+            this.printPopup = false;
           }
           break;
       }
@@ -2503,5 +2553,47 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   changePage() {
     window.location.href = 'simulateur-sans-donnees';
+  }
+
+  /**
+   * On select screen
+   */
+  onShooseScreen(type: string) {
+    if (type === SIMULATOR_DONNEES) {
+      this.whiteSimulator = false;
+      this.chooseScreen = false;
+      this.logOpenSimulator();
+      this.setDocUrl(this.documentationUrl.main);
+    } else if (type === SIMULATOR_OTHER_ACTIVITY) {
+      this.dateStop = null;
+      this.logOpenWhiteSimulator();
+      this.changePage();
+    } else if (type === REAFFECTATOR) {
+      this.router.navigate(['/reaffectateur']);
+    }
+  }
+
+  /**
+   * Comparaison de deux dates
+   * @param date1
+   * @param date2
+   * @returns
+   */
+  compareDates(date1: Date, date2: Date): boolean {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
+  /**
+   * Comparaison de 2 objet json
+   * @param obj1
+   * @param obj2
+   * @returns
+   */
+  public isEqualJSON(obj1: any, obj2: any): boolean {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 }

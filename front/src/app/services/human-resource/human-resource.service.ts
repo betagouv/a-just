@@ -103,6 +103,10 @@ export class HumanResourceService {
    */
   selectedReferentielIds: number[] = [];
   /**
+   * Liste des sous référentiels sélectionnée dans l'écran du ventilateur en cache
+   */
+  selectedSubReferentielIds: number[] | null = null;
+  /**
    * Last backup Id
    */
   lastBackupId: number | null = null;
@@ -661,10 +665,11 @@ export class HumanResourceService {
    * @param extractor
    * @returns
    */
-  onFilterList(
+  async onFilterList(
     backupId: number,
     date: Date,
     contentieuxIds: number[] | null,
+    subContentieuxIds: number[] | null,
     categoriesIds: number[],
     endPeriodToCheck?: Date,
     extractor?: boolean
@@ -675,6 +680,7 @@ export class HumanResourceService {
         date,
         contentieuxIds,
         categoriesIds,
+        subContentieuxIds,
         extractor: extractor ? extractor : false,
         endPeriodToCheck,
       })

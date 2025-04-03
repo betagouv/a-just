@@ -167,6 +167,16 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         this.nbOfDays = nbDays;
       })
     );
+
+    this.watch(
+      this.simulatorService.situationProjected.subscribe((d) => {
+        if (d === null) {
+          this.displayEndSituation = false;
+          this.initFields();
+          this.editWhiteSimulator();
+        }
+      })
+    );
   }
 
   async changeInRealTime(val: any) {
@@ -283,8 +293,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 field: 'totalIn',
                 value:
                   actualSituation['totalOut'] /
-                  actualSituation['realCoverage'] /
-                  100,
+                  (actualSituation['realCoverage'] / 100),
               };
               actualSituation['totalIn'] === ''
                 ? this.lockedParams.push('totalIn')
@@ -424,9 +433,8 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
               eq = {
                 field: 'totalOut',
                 value:
-                  (Number(actualSituation['totalIn']) *
-                    Number(actualSituation['realCoverage'])) /
-                  100,
+                  Number(actualSituation['totalIn']) *
+                  (Number(actualSituation['realCoverage']) / 100),
               };
             else if (actualSituation['totalOut'] !== '') {
               eq = {
@@ -607,8 +615,8 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                     eq = {
                       field: 'totalIn',
                       value:
-                        actualSituation['totalOut'] /
-                        actualSituation['realCoverage'] /
+                        (actualSituation['totalOut'] /
+                          actualSituation['realCoverage']) *
                         100,
                     };
                     actualSituation['totalIn'] === ''

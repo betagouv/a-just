@@ -103,7 +103,7 @@ export default class RouteJuridictions extends Route {
   
       await models.HRBackups.duplicateBackup(backupId,juridictionName,copyAct)
 
-      this.sendOk(ctx, "OK")
+      this.sendOk(ctx, "En cours")
     }
 
     

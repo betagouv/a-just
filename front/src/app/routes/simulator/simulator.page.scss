@@ -42,127 +42,6 @@
     margin: 16px 24px 0 24px;
   }
 
-  .intro-simulateur {
-    margin-top: 24px;
-
-    .first-pan {
-      padding: 36px 32px;
-      width: 620px;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-      border: solid 1px #ddd;
-      margin: auto;
-      background-color: white;
-      position: relative;
-
-      .intro-title {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 16px;
-        display: flex;
-
-        img {
-          color: black;
-          margin-right: 8px;
-        }
-      }
-
-      .intro-desc {
-        font-size: 14px;
-        line-height: 1.71;
-        color: #3a3a3a;
-      }
-    }
-
-
-    .second-pan {
-      padding: 24px 32px;
-      width: 620px;
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
-      border: solid 1px #ddd;
-      border-top: none;
-      margin: auto;
-      background-color: white;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-
-      .locked {
-        pointer-events: none;
-        background: var(--light-decisions-background-background-alt-grey, #F6F6F6);
-        color: var(--light-decisions-text-text-mention-grey, #666) !important;
-        opacity: 0.3;
-      }
-
-      .blue-pan {
-        padding: 16px 24px;
-        border-radius: 4px;
-        border: solid 1px #0063cb;
-        background-color: #f5f5fe;
-
-        .intro-blue-title {
-          font-size: 16px;
-          font-weight: bold;
-          color: #3a3a3a;
-          margin-bottom: 8px;
-
-          span {
-            width: 103px;
-            height: 20px;
-            padding: 0 6px;
-            border-radius: 4px;
-            background-color: #e8edff;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            color: #0063cb;
-          }
-        }
-
-        .intro-blue-desc {
-          font-size: 14px;
-          color: #3a3a3a;
-          display: flex;
-          flex-direction: column;
-
-          .button-sim {
-            align-self: flex-end;
-            width: 111px;
-            height: 40px;
-            color: white;
-            text-align: center;
-            margin-top: 16px;
-            padding: 8px 0;
-            background-color: #000091;
-            cursor: pointer;
-          }
-        }
-      }
-
-      .intro-second-title {
-        padding: 16px 24px 0 24px;
-        font-size: 16px;
-        color: #000091;
-        cursor: pointer;
-        margin-top: 16px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-      }
-
-      .intro-second-desc {
-        padding: 0 24px 16px 24px;
-        font-size: 14px;
-        color: #3a3a3a;
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
-        margin-bottom: 8px;
-      }
-
-    }
-
-  }
-
   .editable-sim-name {
     margin: 0 4px 0 8px;
     font-size: 20px;
@@ -316,6 +195,7 @@
     width: 100%;
     background-color: white;
     align-items: center;
+    padding-left: 24px;
 
     aj-period-selector {
       flex: 1
@@ -336,58 +216,55 @@
           0 20px 25px -5px rgba(0, 0, 0, 0.1);
       }
     }
+  }
 
-    .categories-switch {
-      margin-left: 24px;
+  .categories-switch {
+    display: flex;
+    align-items: stretch;
+    height: 55px;
+    z-index: 0;
+    margin-right: 24px;
+    top: 6px;
+
+    >div {
       display: flex;
-      align-items: stretch;
-      height: 55px;
-      z-index: 0;
-      margin-right: 56px;
-      top: 6px;
-      position: relative;
+      align-items: center;
+      padding: 0 16px;
+      cursor: pointer;
+      border: solid 1px fColor(cgraylightv3);
 
-      >div {
-        display: flex;
-        align-items: center;
-        padding: 0 16px;
-        cursor: pointer;
-        border: solid 1px fColor(cgraylightv3);
-
-        &.alone {
-          border-radius: 4px;
-        }
-
-        p {
-          font-size: 16px;
-          line-height: 1.5;
-          margin-left: 8px;
-          color: fColor(colorTag);
-        }
+      &.alone {
+        border-radius: 4px;
       }
 
-      >.magistrats {
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
-
-        &.selected {
-          border: solid 1px fColor(cbluedark);
-          background-color: fColor(cbluemiddle);
-        }
+      p {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-left: 8px;
+        color: fColor(colorTag);
       }
+    }
 
-      >.fonctionnaires {
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
+    >.magistrats {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
 
-        &.selected {
-          border: solid 1px fColor(cpink);
-          background-color: fColor(cpinkmiddle);
-        }
+      &.selected {
+        border: solid 1px fColor(cbluedark);
+        background-color: fColor(cbluemiddle);
+      }
+    }
+
+    >.fonctionnaires {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+
+      &.selected {
+        border: solid 1px fColor(cpink);
+        background-color: fColor(cpinkmiddle);
       }
     }
   }
-
 
 
   .progress-bar {

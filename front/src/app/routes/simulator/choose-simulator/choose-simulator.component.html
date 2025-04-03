@@ -1,0 +1,71 @@
+<div class="flex-1"></div>
+<div class="top">
+  <h3>Sélectionnez la simulation que vous souhaitez effectuer puis cliquez sur "poursuivre" :</h3>
+  <div>
+    <div class="simulator"
+      [class.selected]="selectedSimulator === SIMULATOR_DONNEES || selectedSimulator === SIMULATOR_OTHER_ACTIVITY">
+      <div class="header">
+        <img src="/assets/simulator/rocket-moon.svg" alt="rocket-moon" />
+      </div>
+      <div class="title">
+        <p>Projetez une situation future</p>
+        <p class="circle" [class.selected]="selectedSimulator === SIMULATOR_DONNEES"
+          (click)="selectedSimulator = SIMULATOR_DONNEES">avec les données d’A-JUST</p>
+
+        <p class="circle" [class.selected]="selectedSimulator === SIMULATOR_OTHER_ACTIVITY"
+          (click)="selectedSimulator = SIMULATOR_OTHER_ACTIVITY">pour une autre activité</p>
+      </div>
+      <div class="samples">
+        <p>Par exemple :</p>
+        <div>
+          <p>Evaluez les effectifs nécessaires pour réduire vos stocks ou vos délais</p>
+          <i class="ri-check-line"></i>
+        </div>
+        <div>
+          <p>Justifiez une demande de placé ou un contrat d'objectifs</p>
+          <i class="ri-check-line"></i>
+        </div>
+        <div>
+          <p>Visualisez l'impact d'un départ, d’une arrivée ou d'une absence</p>
+          <i class="ri-check-line"></i>
+        </div>
+      </div>
+      <div class="cursor-tooltip" *ngIf="!selectedSimulator" [style.left.px]="mouseX - MENU_WIDTH"
+        [style.top.px]="mouseY - MENU_HEIGHT">
+        Sélectionnez une option
+      </div>
+    </div>
+    <div *ngIf="canViewReaffectator" class="reaffectator" [class.selected]="selectedSimulator === REAFFECTATOR">
+      <div class="header">
+        <img src="/assets/simulator/reaffectator.svg" alt="reaffectator" />
+      </div>
+      <div class="title" (click)="selectedSimulator = REAFFECTATOR">
+        <p class="circle" [class.selected]="selectedSimulator === REAFFECTATOR">Réorganisez votre équipe à moyens
+          constants</p>
+      </div>
+      <div class="samples">
+        <p>Par exemple :</p>
+        <div>
+          <p>Projetez l'impact de changements d'affectation</p>
+          <i class="ri-check-line"></i>
+        </div>
+        <div>
+          <p>Renforcez un service sans mettre les autres en difficulté</p>
+          <i class="ri-check-line"></i>
+        </div>
+        <div>
+          <p>Atteignez vos objectifs sans renfort</p>
+          <i class="ri-check-line"></i>
+        </div>
+      </div>
+      <div class="cursor-tooltip" *ngIf="!selectedSimulator" [style.left.px]="mouseX - MENU_WIDTH"
+        [style.top.px]="mouseY - MENU_HEIGHT">
+        Sélectionnez une option
+      </div>
+    </div>
+  </div>
+</div>
+<div class="flex-1"></div>
+<div class="bottom">
+  <button class="small cursor-pointer" [class.active]="selectedSimulator" (click)="onSelect()">Poursuivre</button>
+</div>

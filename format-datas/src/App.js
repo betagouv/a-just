@@ -27,7 +27,7 @@ export default class App {
   async start() {
     console.log("--- START ---");
 
-    // await this.formatDatas();
+    await this.formatDatas();
     // console.time("Time Check Data");
     // await this.checkDatas();
     // console.timeEnd("Time Check Data");
@@ -52,7 +52,6 @@ export default class App {
     mkdirSync(outputAllFolder, { recursive: true });
 
     await onGetIelstListApi().then(async (response) => {
-      //console.log('Categories of rules', categoriesOfRules);
       if (response) {
         // CIVIL
         await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
@@ -63,7 +62,7 @@ export default class App {
         //   categoriesOfRules,
         //   referentiel,
         //   response
-        // );
+        //);
         // WIP datas pénal
         // await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
         // await this.formatAndGroupJuridictionPenal(
@@ -449,12 +448,12 @@ export default class App {
             referentiel
           );
           //  -> Utile pour supprimer un mois spécifique sur les données
-          const tmp = formatMonthDataFromRules.filter(
-            (elem) => elem.periode !== "202412"
-          );
-          list = list.concat(tmp);
+          // const tmp = formatMonthDataFromRules.filter(
+          //   (elem) => elem.periode !== "202412"
+          // );
+          // list = list.concat(tmp);
 
-          // list = list.concat(formatMonthDataFromRules);
+          list = list.concat(formatMonthDataFromRules);
         });
 
         // merge to existing list
@@ -631,7 +630,7 @@ export default class App {
         // if no code finded then find by label
         codeList = [label];
       }
-
+      codeList = codeList.map((c) => ("" + c).trim());
       listCodeToFind = listCodeToFind.concat(codeList);
     });
     if (include) {

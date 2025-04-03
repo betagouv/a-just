@@ -22,7 +22,10 @@ import { DateSelectorinterface } from '../../interfaces/date';
 import { BackupInterface } from '../../interfaces/backup';
 import {
   CALCULATE_DOWNLOAD_URL,
+  DATA_GITBOOK,
+  DATA_GITBOOK_CA,
   DOCUMENTATION_URL,
+  DOCUMENTATION_URL_CA,
   IMPORT_ETP_TEMPLATE,
   IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
@@ -546,7 +549,15 @@ export class WrapperComponent extends MainClass implements OnDestroy {
 
   async downloadAsset(type: string, download = false) {
     let url = null;
-    if (type === 'nomenclature') {
+    if (type === 'guide-utilisateur') {
+      url = this.userService.isCa() ? DOCUMENTATION_URL_CA : DOCUMENTATION_URL;
+    } else if (type === 'data-book') {
+      if (this.userService.isCa()) {
+        url = DATA_GITBOOK_CA;
+      } else {
+        url = DATA_GITBOOK;
+      }
+    } else if (type === 'nomenclature') {
       if (this.userService.isCa()) {
         url = NOMENCLATURE_DOWNLOAD_URL_CA;
       } else {

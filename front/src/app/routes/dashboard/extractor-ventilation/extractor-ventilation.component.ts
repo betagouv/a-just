@@ -130,16 +130,13 @@ export class ExtractorVentilationComponent extends MainClass {
    * @param event évenement click
    */
   updateCategory(event: any) {
-    console.log(event);
     const category = new Array();
     if (event !== null)
       event.map((x: any) => {
         category.push(this.categories.find((category) => category.id === x));
       });
-    console.log(category);
     this.selectedCategorieId = category?.map((x) => x.label.toLowerCase());
 
-    console.log(this.selectedCategorieId);
     this.checkValidity();
     if (this.selectedCategorieId.length) {
       this.excelService.selectedCategory.next(this.selectedCategorieId);

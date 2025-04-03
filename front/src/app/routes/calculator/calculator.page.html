@@ -62,76 +62,103 @@
               <p>Contentieux</p>
             </div>
             <div class="item dtes" (click)="onSortBy('realDTESInMonths')"
-              [ngClass]="{'selected': sortBy === 'realDTESInMonths'}">
+              [ngClass]="{'selected': sortBy.type === 'realDTESInMonths'}">
               <div class="flex-1"></div>
               <p>DTES<br />instantané</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realDTESInMonths'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realDTESInMonths')
+              }"></i>
               <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium"
                 content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
                 footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>">
               </aj-tooltips>
             </div>
             <div class="item coverage" (click)="onSortBy('realCoverage')"
-              [ngClass]="{'selected': sortBy === 'realCoverage'}">
+              [ngClass]="{'selected': sortBy.type === 'realCoverage'}">
               <div class="flex-1"></div>
               <p>Taux de<br />couverture</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'realCoverage'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realCoverage')
+              }"></i>
               <aj-tooltips title="TAUX DE CONVERTURE MOYEN SUR LA PÉRIODE"
                 content="SORTIES /ENTREES de la période en %">
               </aj-tooltips>
             </div>
-            <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy === 'lastStock'}">
+            <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{'selected': sortBy.type === 'lastStock'}">
               <div class="flex-1"></div>
               <p>Stock</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'lastStock'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'lastStock')
+              }"></i>
               <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
             </div>
-            <div class="item" (click)="onSortBy('totalIn')" [ngClass]="{'selected': sortBy === 'totalIn'}">
+            <div class="item" (click)="onSortBy('totalIn')" [ngClass]="{'selected': sortBy.type === 'totalIn'}">
               <div class="flex-1"></div>
               <p>Entrées</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalIn'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'totalIn')
+              }"></i>
               <aj-tooltips title="Entrées" content="Entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
             </div>
-            <div class="item" (click)="onSortBy('totalOut')" [ngClass]="{'selected': sortBy === 'totalOut'}">
+            <div class="item" (click)="onSortBy('totalOut')" [ngClass]="{'selected': sortBy.type === 'totalOut'}">
               <div class="flex-1"></div>
               <p>Sorties</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'totalOut'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'totalOut')
+              }"></i>
               <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
             </div>
-            <div *ngIf="canViewMagistrat" class="tooltip medium item" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy === 'etpMag',
+            <div *ngIf="canViewMagistrat" class="tooltip medium item" (click)="onSortBy('etpMag')" [ngClass]="{'selected': sortBy.type === 'etpMag',
                 'bg-magistrats': categorySelected === MAGISTRATS
               }">
               <div class="flex-1"></div>
               <p>ETPT <br />Siège</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpMag'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'etpMag')
+              }"></i>
               <aj-tooltips class="medium" title="ETPT siège"
                 content="Moyenne des ETPT travaillés sur la période par les agents du siège affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewGreffier" class="tooltip medium item" (click)="onSortBy('etpFon')"
-              [ngClass]="{'selected': sortBy === 'etpFon', 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES}">
+              [ngClass]="{'selected': sortBy.type === 'etpFon', 'bg-fonctionnaires': categorySelected === FONCTIONNAIRES}">
               <div class="flex-1"></div>
               <p>ETPT<br />Greffe</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpFon'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'etpFon')
+              }"></i>
               <aj-tooltips class="medium" title="ETPT greffe"
                 content="Moyenne des ETPT travaillés sur la période par les agents du greffe affectés au contentieux">
               </aj-tooltips>
             </div>
             <div *ngIf="canViewContractuel" class="tooltip medium item" (click)="onSortBy('etpCont')"
-              [ngClass]="{'selected': sortBy === 'etpCont'}">
+              [ngClass]="{'selected': sortBy.type === 'etpCont'}">
               <div class="flex-1"></div>
               <p>ETPT<br />EAM</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'etpCont'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'etpCont')
+              }"></i>
               <aj-tooltips class="medium right" title="ETPT EAM"
                 content="Moyenne des ETPT travaillés sur la période par l'équipe autour du magistrat affectés au contentieux">
               </aj-tooltips>
             </div>
 
             <div class="tooltip large item tmd" (click)="onSortBy('magRealTimePerCase')"
-              [ngClass]="{'selected': sortBy === 'magRealTimePerCase'}">
+              [ngClass]="{'selected': sortBy.type === 'magRealTimePerCase'}">
               <div class="flex-1"></div>
               <p>Temps moyen {{ categorySelected === 'magistrats' ? 'siège':'greffe' }}<br />/ dossier observé</p>
-              <i class="ri-sort-desc" [ngClass]="{selected: sortBy === 'magRealTimePerCase'}"></i>
+              <i [ngClass]="{
+                'ri-sort-asc': sortBy.up === true,
+                'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'magRealTimePerCase')
+              }"></i>
               <aj-tooltips title="Temps moyen par dossier observé" class="large left"
                 content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur les 12 mois précédents."
                 footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>">
@@ -142,7 +169,7 @@
         </div>
         <div class="content-list">
           <aj-referentiel-calculator *ngFor="let r of datasFilted; trackBy: trackByCont" [calculator]="r"
-            [sortBy]="sortBy" [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate">
+            [sortBy]="sortBy.type" [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate">
           </aj-referentiel-calculator>
         </div>
       </ng-template>

@@ -1,5 +1,9 @@
 import { orderBy, sortBy, sumBy } from "lodash";
-import { ABSENTEISME_LABELS, CET_LABEL } from "../constants/referentiel";
+import {
+  ABSENTEISME_LABELS,
+  CET_LABEL,
+  DELEGATION_TJ,
+} from "../constants/referentiel";
 import {
   nbOfDays,
   nbWorkingDays,
@@ -9,12 +13,12 @@ import {
 } from "./date";
 import { findSituation } from "./human-resource";
 import { getHRVentilation } from "../utils/calculator";
-import { FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR, FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA } from "../constants/extractor";
+import {
+  FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR,
+  FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA,
+} from "../constants/extractor";
+import { isCa, isTj } from "./ca";
 
-/**
- * Exception relevés par madame De Jong - statistitienne de Lyon
- */
-export const exceptionMadameDeJong = ["CONT A JP", "CONT B JP", "CONT C JP"];
 /**
  * Tri par catégorie et par fonction
  * @param {*} a
@@ -278,7 +282,8 @@ export const computeExtractDdg = async (
   categoryFilter,
   juridictionName,
   dateStart,
-  dateStop
+  dateStop,
+  isJirs
 ) => {
   let onglet2 = [];
 
@@ -312,7 +317,6 @@ export const computeExtractDdg = async (
       let absenteisme = 0;
       let totalDaysGone = 0;
       let totalDays = 0;
-
       let indispoArray = new Array([]);
       let { allIndispRefIds, refIndispo } =
         getIndispoDetails(flatReferentielsList);
@@ -322,6 +326,9 @@ export const computeExtractDdg = async (
 
       let nbCETDays = 0;
       let absLabels = [...ABSENTEISME_LABELS];
+
+      dateStart = setTimeToMidDay(dateStart);
+      dateStop = setTimeToMidDay(dateStop);
 
       nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop);
       nbGlobalDaysCET = nbCETDays;
@@ -413,9 +420,6 @@ export const computeExtractDdg = async (
       refObj[key] = sumBy(indispoArray, "indispo");
 
       if (reelEtp === 0) {
-        dateStart = setTimeToMidDay(dateStart);
-        dateStop = setTimeToMidDay(dateStop);
-
         let reelEtpObject = [];
 
         sortBy(human.situations, "dateStart", "asc").map((situation, index) => {
@@ -431,47 +435,99 @@ export const computeExtractDdg = async (
               ? middleDate
               : dateStop;
           let countNbOfDays = undefined;
+          let countNbOfDaysGone = 0
           if (nextDateStart && nextEndDate)
             countNbOfDays = nbWorkingDays(
               new Date(nextDateStart),
               new Date(nextEndDate)
+            );
+          if (human.dateEnd<nextEndDate)
+            countNbOfDaysGone = nbWorkingDays(
+              today(human.dateEnd),
+              today(nextEndDate)
             );
           if (
             typeof countNbOfDays === "number" &&
             nextDateStart <= nextEndDate
           ) {
             reelEtpObject.push({
-              etp: situation.etp * countNbOfDays,
-              countNbOfDays: countNbOfDays,
+              etp: situation.etp * (countNbOfDays-countNbOfDaysGone),
+              countNbOfDays: countNbOfDays-countNbOfDaysGone,
             });
           }
         });
 
-        const isGone = dateStop > human.dateEnd;
+        const isGone = dateStop > human.dateEnd && human.dateEnd > dateStart;
         const hasArrived =
           dateStart < human.dateStart && human.dateStart < dateStop;
-        if (
-          human.dateEnd &&
-          isGone &&
-          sumBy(reelEtpObject, "etp") /
-            sumBy(reelEtpObject, "countNbOfDays") ===
-            1
-        ) {
-          let difCalculation =
-            (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0);
-          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation;
+
+        if (human.dateEnd && isGone && hasArrived && dateStart) {
+          reelEtp =
+            (sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays")
+            - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  
+            *
+            nbOfDays(human.dateStart, human.dateEnd) /
+            nbOfDays(dateStart, dateStop)
+        } else if (human.dateEnd && isGone) {
+          reelEtp =
+            (sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays")
+            - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  
+            *
+              nbOfDays(dateStart, human.dateEnd) /
+              nbOfDays(dateStart, dateStop) 
         } else if (hasArrived && dateStart) {
           reelEtp =
-            ((sumBy(reelEtpObject, "etp") /
-              sumBy(reelEtpObject, "countNbOfDays")) *
-              nbOfDays(human.dateStart, dateStop)) /
-              nbOfDays(dateStart, dateStop) -
-            (refObj[key] || 0);
-        } else
+          (sumBy(reelEtpObject, "etp") /
+          sumBy(reelEtpObject, "countNbOfDays")
+          - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  *
+              nbOfDays(human.dateStart, dateStop) /
+              nbOfDays(dateStart, dateStop) 
+        } else {
           reelEtp =
-            sumBy(reelEtpObject, "etp") /
-              sumBy(reelEtpObject, "countNbOfDays") -
-            (refObj[key] || 0);
+          (sumBy(reelEtpObject, "etp") /
+          sumBy(reelEtpObject, "countNbOfDays")
+          - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays")) ;
+        }
+      }
+
+      if (isCa()) {
+        Object.keys(refObj).map((k) => {
+          if (k.includes(DELEGATION_TJ.toUpperCase()))
+            refObj[key] = refObj[key] - refObj[k];
+        });
+      }
+
+      ["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].forEach(
+        (cle) => {
+          if (refObj.hasOwnProperty(cle)) {
+            delete refObj[cle];
+          }
+        }
+      );
+
+      let absenteismeDetails = null;
+      let delegation = null;
+      if (isCa()) {
+        ({ refObj, delegation } = getAndDeleteAbsenteisme(
+          refObj,
+          ["14.13. DÉLÉGATION TJ"],
+          true
+        ));
+
+        ({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
+          "14.4. CONGÉ MALADIE ORDINAIRE",
+          "14.5. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
+          "14.14. AUTRE ABSENTÉISME",
+        ]));
+      }
+      if (isTj()) {
+        ({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
+          "12.31. CONGÉ MALADIE ORDINAIRE",
+          "12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
+          "12.8. AUTRE ABSENTÉISME",
+        ]));
       }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
@@ -482,9 +538,24 @@ export const computeExtractDdg = async (
           if (human.juridiction && human.juridiction.length !== 0)
             human.juridiction = human.juridiction.replaceAll("TPR ", "TPRX ");
 
+          let gaps = null;
+          if (isCa()) {
+            gaps = {
+              ["Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST"]:
+                null,
+              ["___"]: null,
+            };
+          }
+          if (isTj()) {
+            gaps = {
+              ["Ecart JE → détails manquants, à rajouter dans A-JUST"]: null,
+              ["Ecart JI → détails manquants, à rajouter dans A-JUST"]: null,
+            };
+          }
           onglet2.push({
             ["Réf."]: String(human.id),
             Arrondissement: juridictionName.label,
+            Jirs: isJirs ? "x" : "",
             Juridiction: (
               human.juridiction || juridictionName.label
             ).toUpperCase(),
@@ -492,10 +563,11 @@ export const computeExtractDdg = async (
             Prénom: human.firstName,
             Matricule: human.matricule,
             Catégorie: categoryName,
-            Fonction: exceptionMadameDeJong.includes(fonctionName)
-              ? fonctionName + " " + categoryName
-              : fonctionName,
-            ["Code fonction"]: fonctionCategory,
+            Fonction: fonctionName,
+            ["Fonction recodée"]: null,
+            ["Code fonction par défaut"]: fonctionCategory,
+            ["Fonction agrégat"]: null,
+            ["TJCPH"]: null,
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -504,15 +576,19 @@ export const computeExtractDdg = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période hors indisponibilités"]: reelEtp,
-            ["Temps ventilés sur la période"]: totalEtpt,
-            ["Ecart -> à contrôler"]:
+            ["ETPT sur la période absentéisme non déduit (hors action 99)"]:
+              reelEtp < 0 ? 0 : reelEtp,
+            ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
+            ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
+            ...gaps,
             ...refObj,
             ["CET > 30 jours"]: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
             ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
-            ["Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)"]:
+            ...absenteismeDetails,
+            ["TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)"]:
               absenteisme,
+            ...(isCa() ? delegation : {}),
           });
         }
     })
@@ -526,10 +602,32 @@ export const getViewModel = async (params) => {
     params.onglet1.values != null && params.onglet1.values.length
       ? Object.keys(params.onglet1.values[0])
       : [];
-  const keys2 =
+  let keys2 =
     params.onglet2.values != null && params.onglet2.values.length
       ? Object.keys(params.onglet2.values[0])
       : [];
+
+  if (isCa()) {
+    keys2 = keys2.map((x) =>
+      x === "14. TOTAL INDISPONIBILITÉ"
+        ? "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
+        : x
+    );
+
+    keys2 = keys2.filter(
+      (x) =>
+        !["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].includes(
+          x
+        )
+    );
+  } else {
+    keys2 = keys2.map((x) =>
+      x === "12. TOTAL INDISPONIBILITÉ"
+        ? "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
+        : x
+    );
+  }
+
   const tgilist = [...params.allJuridiction]
     .filter((x) => x.type === "TGI")
     .map((x) => x.tprox);
@@ -562,39 +660,74 @@ export const getViewModel = async (params) => {
       '"',
   ];
   let agregat = params.onglet2.excelRef.filter(
-    (x) => x.sub !== "12.2. COMPTE ÉPARGNE TEMPS"
+    (x) =>
+      !["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].includes(
+        x.sub
+      )
   );
-  agregat = agregat.map((x) => {
-    if (x.sub === "ETPT sur la période hors indisponibilités")
-      return {
-        ...x,
-        sub1: "ETPT sur la période, hors indisponibilités relevant de l'action 99 (absentéisme non déduit)",
-        global1: x.global,
-      };
 
-    if (x.global === "12. TOTAL INDISPONIBILITÉ")
+  agregat = agregat.map((x) => {
+    if (x.sub === "14.13. DÉLÉGATION TJ" && isCa()) {
       return {
         ...x,
+        global: "14.13. DÉLÉGATION TJ",
+        global1: "DÉLÉGATION TJ",
+        sub: null,
+        sub1: null,
+      };
+    }
+
+    if (x.global === "12. TOTAL INDISPONIBILITÉ" && isTj())
+      return {
+        ...x,
+        global: "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
         global1: "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
         sub1: x.sub,
       };
 
+    if (x.global === "14. TOTAL INDISPONIBILITÉ" && isCa())
+      return {
+        ...x,
+        global: "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+        global1: "14. TOTAL des INDISPONIBILITÉS relevant de l'action 99",
+        sub1: x.sub,
+      };
+
     if (
-      x.sub === "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)"
+      x.global ===
+        "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)" &&
+      isTj()
     )
       return {
         ...x,
         global1:
-          "13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques",
+          "13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
+        sub1: x.sub,
+      };
+
+    if (
+      x.global ===
+        "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)" &&
+      isCa()
+    )
+      return {
+        ...x,
+        global1:
+          "15. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques)",
         sub1: x.sub,
       };
 
     return { ...x, sub1: x.sub, global1: x.global };
   });
-  // remplacer : "ETPT sur la période hors indisponibilités" => "ETPT sur la période, hors indisponibilités relevant de l'action 99 (absentéisme non déduit)""
-  // remplacer : "12. TOTAL INDISPONIBILITÉ" => "12. TOTAL des INDISPONIBILITÉS relevant de l'action 99"
-  // remplacer : "Absentéisme réintégré (CMO + Congé maternité + CET < 30 jours)" => ""13. TOTAL des INDISPONIBILITÉS relevant de l'absentéisme (réintégrés dans les valeurs des rubriques et sous-rubriques"
 
+  const index = agregat.findIndex(
+    (item) => item.global === "14.13. DÉLÉGATION TJ"
+  );
+
+  if (index !== -1) {
+    const [element] = agregat.splice(index, 1); // Retire l'élément du tableau
+    agregat.push(element); // Ajoute l'élément à la fin
+  }
 
   return {
     tgilist,
@@ -641,7 +774,8 @@ export const computeExtract = async (
   categoryFilter,
   juridictionName,
   dateStart,
-  dateStop
+  dateStop,
+  isJirs
 ) => {
   let data = [];
 
@@ -784,19 +918,24 @@ export const computeExtract = async (
           }
         });
 
-        const isGone = dateStop > human.dateEnd;
+        const isGone = dateStop > human.dateEnd && human.dateEnd > dateStart;
         const hasArrived =
           dateStart < human.dateStart && human.dateStart < dateStop;
-        if (
-          human.dateEnd &&
-          isGone &&
-          sumBy(reelEtpObject, "etp") /
-            sumBy(reelEtpObject, "countNbOfDays") ===
-            1
-        ) {
-          let difCalculation =
-            (totalDays - totalDaysGone) / totalDays - (refObj[key] || 0);
-          reelEtp = difCalculation < 0.00001 ? 0 : difCalculation;
+
+        if (human.dateEnd && isGone && hasArrived && dateStart) {
+          reelEtp =
+            ((sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+              nbOfDays(human.dateStart, human.dateEnd)) /
+              nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0);
+        } else if (human.dateEnd && isGone) {
+          reelEtp =
+            ((sumBy(reelEtpObject, "etp") /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+              nbOfDays(dateStart, human.dateEnd)) /
+              nbOfDays(dateStart, dateStop) -
+            (refObj[key] || 0);
         } else if (hasArrived && dateStart) {
           reelEtp =
             ((sumBy(reelEtpObject, "etp") /
@@ -804,11 +943,43 @@ export const computeExtract = async (
               nbOfDays(human.dateStart, dateStop)) /
               nbOfDays(dateStart, dateStop) -
             (refObj[key] || 0);
-        } else
+        } else {
           reelEtp =
             sumBy(reelEtpObject, "etp") /
               sumBy(reelEtpObject, "countNbOfDays") -
             (refObj[key] || 0);
+        }
+      }
+
+      let delegation = null;
+
+      if (isCa()) {
+        Object.keys(refObj).map((k) => {
+          if (k.includes(DELEGATION_TJ.toUpperCase()))
+            refObj[key] = refObj[key] - refObj[k];
+        });
+
+        ({ refObj, delegation } = getAndDeleteAbsenteisme(
+          refObj,
+          ["14.13. DÉLÉGATION TJ"],
+          true
+        ));
+
+        const newKey = "14.13. DÉLÉGATION TJ";
+        const targetKey = "14. TOTAL INDISPONIBILITÉ";
+
+        let result = {};
+
+        // Parcourir les paires clé-valeur de l'objet original
+        for (const [key, value] of Object.entries(refObj)) {
+          if (key === targetKey) {
+            // Insérer le nouvel élément avant le target
+            result = { ...result, ...delegation };
+          }
+          result[key] = value;
+        }
+
+        refObj = result;
       }
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
@@ -818,12 +989,18 @@ export const computeExtract = async (
         )
           data.push({
             ["Réf."]: String(human.id),
-            Arrondissement: juridictionName.label,
+            ...(isCa()
+              ? { Juridiction: juridictionName.label }
+              : { Arrondissement: juridictionName.label }),
             Nom: human.lastName,
             Prénom: human.firstName,
             Matricule: human.matricule,
             Catégorie: categoryName,
             Fonction: fonctionName,
+            ["Fonction recodée"]: null,
+            ...(isCa() ? { ["_"]: null } : { ["TJCPH"]: null }),
+            ...(isCa() ? { ["__"]: null } : { ["Juridiction"]: null }),
+            Jirs: isJirs ? "x" : "",
             ["Date d'arrivée"]:
               human.dateStart === null
                 ? null
@@ -832,9 +1009,12 @@ export const computeExtract = async (
               human.dateEnd === null
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
-            ["ETPT sur la période hors indisponibilités"]: reelEtp,
-            ["Temps ventilés sur la période"]: totalEtpt,
+            ["ETPT sur la période (absentéisme et action 99 déduits)"]:
+              reelEtp < 0 ? 0 : reelEtp,
+            ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]:
+              totalEtpt,
             ...refObj,
+            ...(isCa() ? delegation : {}),
           });
     })
   );
@@ -845,6 +1025,47 @@ export const computeExtract = async (
 };
 
 export const formatFunctions = async (functionList) => {
-  let list = [...functionList, ...(Number(process.env.TYPE_ID)===1? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA:FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR)];
-  return orderBy(list, ['category_label','rank'],['desc','asc'])
+  let list = [
+    ...functionList,
+    ...(isCa()
+      ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA
+      : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR),
+  ];
+  list = list.map((fct) => {
+    return { CONCAT: fct["category_label"] + fct["code"], ...fct };
+  });
+
+  return orderBy(
+    list,
+    ["category_label", "rank", "code"],
+    ["desc", "asc", "asc"]
+  );
+};
+
+export const getObjectKeys = async (array) => {
+  if (array.length === 0) return [];
+  return Object.keys(array[0]);
+};
+
+export const deplacerClefALaFin = (obj, clef) => {
+  if (obj.hasOwnProperty(clef)) {
+    const valeur = obj[clef]; // Sauvegarde la valeur
+    delete obj[clef]; // Supprime la clé
+    obj[clef] = valeur; // Réinsère la clé à la fin
+  }
+  return obj;
+};
+
+export const getAndDeleteAbsenteisme = (obj, labels, delegation = false) => {
+  let absDetails = {};
+  labels.map((label) => {
+    if (obj.hasOwnProperty(label)) {
+      const valeur = obj[label]; // Sauvegarde la valeur
+      delete obj[label]; // Supprime la clé
+      absDetails[label] = valeur;
+    }
+  });
+
+  if (delegation === true) return { refObj: obj, delegation: absDetails };
+  else return { refObj: obj, absenteismeDetails: absDetails };
 };

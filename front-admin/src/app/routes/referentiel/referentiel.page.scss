@@ -34,7 +34,7 @@
   }
 
   .select-big {
-    flex: 2;
+    flex: 4;
     margin-right: 32px;
     width: 100px;
   }
@@ -53,4 +53,8 @@
   p {
     font-weight: normal;
   }
+}
+
+aj-select {
+  width: 100%;
 }

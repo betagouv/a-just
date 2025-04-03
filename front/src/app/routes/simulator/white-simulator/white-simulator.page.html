@@ -298,11 +298,11 @@
           [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator}">
           <p>Stock</p>
         </div>
-        <div *ngIf="canViewMagistrat" class="item">
+        <div *ngIf="canViewMagistrat && categorySelected === 'MAGISTRAT'" class="item">
           <p>ETPT siège</p>
         </div>
-        <div *ngIf="canViewGreffier" class="item blue-bg"
-          [ngClass]="{'display-none': whiteSimulator && categorySelected !== 'GREFFE' && !whiteSimulator, 'pink-bg': categorySelected === 'GREFFE','no-bg':whiteSimulator}">
+        <div *ngIf="canViewGreffier && categorySelected === 'GREFFE'" class="item blue-bg"
+          [ngClass]="{'no-bg':whiteSimulator}">
           <p>ETPT greffe</p>
         </div>
         <div *ngIf="canViewContractuel" class="item" [ngClass]="{'display-none': whiteSimulator}">
@@ -393,8 +393,7 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewMagistrat" class="line-item"
-          [style.visibility]="categorySelected==='GREFFE'?'hidden':'visible'">
+        <div *ngIf="canViewMagistrat && categorySelected==='MAGISTRAT'" class="line-item">
           <input [value]="getFieldValue('etpMag',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -414,8 +413,7 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewGreffier" class="line-item"
-          [style.visibility]="categorySelected!=='GREFFE'?'hidden':'visible'">
+        <div *ngIf="canViewGreffier && categorySelected==='GREFFE'" class="line-item">
           <input [value]="getFieldValue('etpFon',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -528,8 +526,9 @@
     </div>
 
     <aj-dtes-chart></aj-dtes-chart>
-    <aj-etp-chart [categorySelected]="categorySelected||'MAGISTRAT'" [canViewMagistrat]="categorySelected==='MAGISTRAT'"
-      [canViewGreffier]="categorySelected!=='MAGISTRAT'" [canViewContractuel]="false"></aj-etp-chart>
+    <aj-etp-chart [whiteSimulator]="true" [categorySelected]="categorySelected||'MAGISTRAT'"
+      [canViewMagistrat]="categorySelected==='MAGISTRAT'" [canViewGreffier]="categorySelected!=='MAGISTRAT'"
+      [canViewContractuel]="false"></aj-etp-chart>
     <aj-in-out-chart></aj-in-out-chart>
 
     <!-- WIDGETS -->
@@ -567,21 +566,24 @@
   </div>
 
   <aj-popup *ngIf="printPopup" class="small" [closeIcon]="true"
-    (onClose)="printPopup = false;nextState = null;onResetUserAction()" title="Conserver cette simulation ?"
+    (onClose)="printPopup = false;nextState = null;onResetUserAction()"
+    title="{{isEqualJSON(popupActionToUse,popupAction.backBeforeSimulate)?'Poursuivre cette simulation ?':'Conserver cette simulation ?'}}"
     [actions]="popupActionToUse" (selectedAction)="onPopupDetailAction($event)" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
+        {{isEqualJSON(popupActionToUse,popupAction.backBeforeSimulate)?"Attention ! Les modifications en cours ne seront
+        pas sauvegardées. Voulez-vous vraiment quitter cette page ?":"
         Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez
         conserver cette projection, exportez-la en PDF afin de l'enregistrer sur
-        votre ordinateur.
+        votre ordinateur."}}
       </p>
     </div>
   </aj-popup>
 </aj-wrapper>
 
 <ng-template #actionsLeft>
-  <aj-back-button *ngIf="canViewSimulator && !userService.isCa()" routerLink="/simulateur" class="back-button-menu" />
-  <aj-back-button *ngIf="userService.isCa()" routerLink="/simulateurs" class="back-button-menu" />
+  <aj-back-button *ngIf="canViewSimulator && !userService.isCa()" (click)="onReturn()" class="back-button-menu" />
+  <aj-back-button *ngIf="userService.isCa()" (click)="onReturn()" class="back-button-menu" />
 
 </ng-template>
 

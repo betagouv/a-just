@@ -3,14 +3,13 @@
 :host {
   position: relative;
 
-  > div {
+  >div {
     padding: 12px 80px;
-    background-color: #e8edff;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    .content-news { 
+    .content-news {
       max-width: 800px;
       display: flex;
       align-items: center;

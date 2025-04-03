@@ -192,6 +192,7 @@ export default class RouteCalculator extends Route {
             let hList = await getHumanRessourceList(
               preformatedAllHumanResource,
               [contentieuxId],
+              undefined,
               [catId],
               dateStart
             );
