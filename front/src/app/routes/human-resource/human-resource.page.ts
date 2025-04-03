@@ -1145,7 +1145,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Fonction de mise à jours de l'etp courant pour la création d'un nouvel agent uniquement
    * @param etp
    */
-  updateETP(etp: number) {
+  updateETP(etp: number | null) {
     if (!this.initialETP) {
       this.currentETP.set(etp);
     }
