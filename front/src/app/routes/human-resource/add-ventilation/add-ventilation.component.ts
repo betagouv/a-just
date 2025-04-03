@@ -31,13 +31,11 @@ import { HumanResourceService } from '../../../services/human-resource/human-res
 import { AppService } from '../../../services/app/app.service';
 import { CalculatriceService } from '../../../services/calculatrice/calculatrice.service';
 import { ServerService } from '../../../services/http-server/server.service';
-import { UserService } from '../../../services/user/user.service';
 import { fixDecimal } from '../../../utils/numbers';
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_VENTILATEUR_PERSON,
   IMPORT_ETP_TEMPLATE,
-  IMPORT_ETP_TEMPLATE_CA,
 } from '../../../constants/documentation';
 import {
   findRealValueCustom,
@@ -135,7 +133,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   /**
    * Fonction pour mettre à jour l'ETP (lors de la création d'un nouvel agent)
    */
-  @Input() setValueEtp: (val: number) => void = () => {};
+  @Input() setValueEtp: (val: number | null) => void = () => {};
   /**
    * Event lors de la sauvegarde
    */
@@ -269,6 +267,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.watch(
       this.form.get('etp')?.valueChanges.subscribe((value) => {
+        console.log('value', value);
         if (value) {
           if (value > 1) value = 1;
           else if (value < 0) value = 0;
@@ -284,7 +283,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           this.setValueEtp(value);
         } else {
           // Remise à 0 de l'ETP si la valeur est null (ex: user efface la valeur précédement entrée) pour remtrre l'ETP du composant big-et-preview à null
-          this.setValueEtp(0);
+          this.setValueEtp(value);
         }
       })
     );
