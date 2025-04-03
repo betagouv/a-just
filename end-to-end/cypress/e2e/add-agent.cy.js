@@ -12,8 +12,8 @@ describe("Ajout d'un agent", () => {
       .should('be.visible')
       .should('contain.text', 'Ajouter un agent')
       .click()
-
-    cy.location('pathname', { timeout: 10000 })
+    cy.wait(10000)
+    cy.location('pathname')
       .should('include', '/resource-humaine');
   })
 

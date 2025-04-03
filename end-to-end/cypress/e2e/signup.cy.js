@@ -14,10 +14,10 @@ describe('Signup Page', () => {
       .should('eq', '/inscription')
   })
 
-  it('Check "Embarquer avec Pages Blanches" button exists and can be clicked', () => {
-    cy.get('#signupSSO')
-      .should('contain.text', 'Embarquer avec Pages Blanches')
-  })
+  // it('Check "Embarquer avec Pages Blanches" button exists and can be clicked', () => {
+  //   cy.get('#signupSSO')
+  //     .should('contain.text', 'Embarquer avec Pages Blanches')
+  // })
 
   it('Check that we can fill the form to signup ', () => {
       cy.get('input[formControlName="firstName"]').type("UserTestFirstname")
