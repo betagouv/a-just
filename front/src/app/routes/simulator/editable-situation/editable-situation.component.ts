@@ -188,7 +188,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         return;
       }
 
-      console.log('actual situ', actualSituation);
+      //console.log('actual situ', actualSituation);
       const etpFactor =
         this._category === 'MAGISTRAT' ? etpMagFactor : etpGreffeFactor;
       let eq = { field: '', value: -1 };
@@ -407,6 +407,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   actualSituation['totalOut'],
               };
               this.lockedParams.push('magRealTimePerCase');
+              /**
               console.log(
                 'TMDDDD',
                 (etpFactor * actualSituation['etpMag']) /
@@ -414,7 +415,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                 etpFactor,
                 actualSituation['etpMag'],
                 actualSituation['totalOut']
-              );
+              ); */
             } else if (actualSituation['magRealTimePerCase'] !== '') {
               eq = {
                 field: 'totalOut',
@@ -862,13 +863,15 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       100
     );
 
+    /**
     console.log(
       'tmd values',
       basicEtptData[prefix1],
       basicEtptData[prefix2],
       etpToUse,
       startTotalOut * 12
-    );
+    ); */
+    
     const tmd =
       Math.trunc(realTime) +
       Math.round((realTime - Math.trunc(realTime)) * 60) / 60;
@@ -896,12 +899,21 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       ],
     });
 
-    const endStock = Math.floor(
-      startLastStock +
-        (this.nbOfDays / (262 / 12)) * startTotalIn -
-        (this.nbOfDays / (262 / 12)) * startTotalOut
-    );
+    const endStock =
+      Math.floor(startLastStock) +
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn) -
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut);
 
+    /**
+    console.log(
+      'stock',
+      Math.floor(startLastStock),
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn),
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut),
+      Math.floor(startLastStock) +
+        Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn) -
+        Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut)
+    );
     console.log(Math.floor(Math.floor(etpToUse * 7 * 19.1308) / tmd), tmd);
     console.log(Math.floor(etpToUse * 7 * 19.1308) / tmd);
     console.log(
@@ -919,6 +931,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       Math.floor(Math.floor(etpToUse * 7 * 19.1308) / tmd),
       Math.floor(etpToUse * 7 * 19.1308) / tmd
     );
+     */
     this.endSituation = {
       totalIn: startTotalIn,
       totalOut: startTotalOut,
