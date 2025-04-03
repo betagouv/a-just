@@ -509,8 +509,11 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
         list[lastSituationId].etpt += nbDayBetween * lastEtpAdded
       }
 
+      console.log('added etp by date ',now, etp)
+
       // quick move to the next date
       now = new Date(nextDateFinded)
+
     } else {
       now.setDate(now.getDate() + 1)
     }

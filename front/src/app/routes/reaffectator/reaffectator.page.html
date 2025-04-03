@@ -70,20 +70,19 @@
                   <aj-speedometer class="with-auto small-text"
                     [classTextBlue]="!showReelValues && ref.totalAffected !== ref.etpUseToday ? true : false"
                     [classDarkMode]="true"
-                    [percent]="showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage">
+                    [percent]="isNaN(ref.coverage) ? null : (showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage)">
                   </aj-speedometer>
                 </div>
               </ng-template>
             </div>
             <div class="dtes-row">
               <ng-template [ngIf]="referentiel.length > index + 1">
+
                 <div class="dtes"
                   [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
-                  <p
-                    *ngIf="isNaN(showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage)">
+                  <p *ngIf="isNaN(ref.coverage)">
                     N/R</p>
-                  <p
-                    *ngIf="!isNaN(showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage)">
+                  <p *ngIf="!isNaN(ref.coverage)">
                     {{((showReelValues ?
                     ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
                 </div>
