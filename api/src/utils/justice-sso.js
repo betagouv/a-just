@@ -3,7 +3,7 @@ import config from 'config'
 
 var sp_options = {
   entity_id: `${config.serverUrl}/saml/metadata.xml`,
-  private_key: config.sso.privateKey, //     private_key: fs.readFileSync("key-file.pem").toString(),
+  private_key: config.sso.privateKey, //     private_key: fs.readFileSync("key-file.key").toString(),
   certificate: config.sso.publicKey, //     certificate: fs.readFileSync("cert-file.crt").toString(),
   assert_endpoint: `${config.serverUrl}/saml/assert-return`,
   force_authn: true,

@@ -25,33 +25,33 @@
   <div class="item">
     <p>({{items.code_import}}) {{items.label}}</p>
     <input type="checkbox" id="compter" name="compter" [(ngModel)]="items.compter"
-      (ngModelChange)="onUpdateElement(items.id, 'compter', $event.target?.checked ? $event.target?.checked : items.compter)" />
-    <select #selectIn (change)="onUpdateElement(items.id, 'valueQualityIn', selectIn.value)">
+      (ngModelChange)="onUpdateElement(items, 'compter', $event.target?.checked ? $event.target?.checked : items.compter)" />
+    <select #selectIn (change)="onUpdateElement(items, 'valueQualityIn', selectIn.value)">
       <option value="" selected>-</option>
       <option *ngFor="let i of QUALITY_LIST" [selected]="i.key === items.valueQualityIn" [value]="i.key">{{i.label}}
       </option>
     </select>
-    <select #selectOut (change)="onUpdateElement(items.id, 'valueQualityOut', selectOut.value)">
+    <select #selectOut (change)="onUpdateElement(items, 'valueQualityOut', selectOut.value)">
       <option value="" selected>-</option>
       <option *ngFor="let i of QUALITY_LIST" [selected]="i.key === items.valueQualityOut" [value]="i.key">{{i.label}}
       </option>
     </select>
-    <select #selectStock (change)="onUpdateElement(items.id, 'valueQualityStock', selectStock.value)">
+    <select #selectStock (change)="onUpdateElement(items, 'valueQualityStock', selectStock.value)">
       <option value="" selected>-</option>
       <option *ngFor="let i of QUALITY_LIST" [selected]="i.key === items.valueQualityStock" [value]="i.key">{{i.label}}
       </option>
     </select>
     <input placeholder="Url d'aide" [ngModel]="items.helpUrl || ''"
-      (ngModelChange)="onUpdateElement(items.id, 'helpUrl', $event)" />
+      (ngModelChange)="onUpdateElement(items, 'helpUrl', $event)" />
     <div class="select-big">
       <div
-        (click)="onUpdateElement(items.id, 'onlyToHrBackup', items.backups === null ? [] : null); items.backups = items.backups === null ? [] : null; items.onlyToHrBackup = []">
+        (click)="onUpdateElement(items, 'onlyToHrBackup', items.backups === null ? [] : null); items.backups = items.backups === null ? [] : null; items.onlyToHrBackup = []">
         <input type="checkbox" [checked]="items.backups !== null ? '': 'checked'" />
         Pour tous
       </div>
       <div *ngIf="items.backups !== null">
-        <aj-select [datas]="backups" [value]="items.onlyToHrBackup || []"
-          (valueChange)="onUpdateElement(items.id, 'onlyToHrBackup', $event)"></aj-select>
+        <aj-select [datas]="backups" [value]="items.onlyToHrBackup || []"
+          (valueChange)="onUpdateElement(items, 'onlyToHrBackup', $event)"></aj-select>
       </div>
     </div>
   </div>

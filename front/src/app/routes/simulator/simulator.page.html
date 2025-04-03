@@ -5,61 +5,10 @@
   </div>
 
   <!-- ECRAN DE CHOIX SIMULATEUR -->
-  <div class="intro-simulateur" [ngClass]="{'display-none': !chooseScreen}">
-    <div class="first-pan">
-      <p class="intro-title">
-        <img src="/assets/icons/calculatrice-black.svg" /> Le simulateur
-      </p>
-      <div class="intro-desc">
-        Visualisez l&apos;impact d&apos;une modification, subie ou choisie, sur
-        une période donnée. Jouez des scénarios pour anticiper un changement (de
-        volume d&apos;ETPT ou d&apos;affaires nouvelles, d’organisation...) ou
-        rechercher la manière d’atteindre au mieux vos objectifs (réduction de
-        stock, de délai, taux de couverture...). <br />
-        <b>Deux options s&apos;offrent à vous :</b>
-      </div>
-    </div>
-    <div class="second-pan">
-      <div class="blue-pan">
-        <p class="intro-blue-title">
-          Utiliser les données enregistrées dans l’outil <span>RECOMMANDÉ</span>
-        </p>
-        <div class="intro-blue-desc">
-          Choisissez un contentieux et/ou un sous-contentieux référencé dans
-          A-JUST : les situations de début et de fin de période de simulation
-          (entrées moyennes mensuelles, sorties possibles, stock, DTES, taux de
-          couverture, temps moyen par dossier) sont calculées automatiquement à
-          partir des données d'ETPT et d'activité enregistrées à ce jour dans
-          l'outil.
-          <br />
-          <br />Vous n'avez plus qu'à choisir les scénarios que vous voulez
-          jouer !
-          <div id="on-button-continue" class="button-sim"
-            (click)="whiteSimulator=false;chooseScreen=false;logOpenSimulator();setDocUrl(documentationUrl.main)">
-            Continuer
-          </div>
-        </div>
-      </div>
-
-      <div id="panel-empty-simulator">
-        <p class="intro-second-title" [ngClass]="{'locked': !canViewWhiteSimulator}"
-          (click)="dateStop=null;logOpenWhiteSimulator();changePage()">
-          <u>Effectuer une simulation sans données pré-alimentées par A-JUST</u>
-        </p>
-        <p class="intro-second-desc" [ngClass]="{'locked': !canViewWhiteSimulator}">
-          Renseignez librement les données (d&apos;activité, d&apos;ETPT ou de
-          temps moyen par dossier) pour effectuer des projections sur
-          l&apos;activité (y compris non juridictionnelle) de votre choix.
-        </p>
-      </div>
-    </div>
-  </div>
+  <app-choose-simulator *ngIf="chooseScreen" (selectedSimulatorType)="onShooseScreen($event)"></app-choose-simulator>
 
   <!-- SIMULATEUR STD - SELECTEUR CONTENTIEUX, SS CONTENTIEUX, FCT-->
-  <aj-header-selectors *ngIf="whiteSimulator===false && !chooseScreen"></aj-header-selectors>
-
-  <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
-  <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true, 'display-none': chooseScreen}">
+  <aj-header-selectors *ngIf="whiteSimulator===false && !chooseScreen">
     <div class="categories-switch">
       <div *ngIf="canViewMagistrat" class="magistrats {{disabled}}"
         [ngClass]="{'selected': categorySelected === 'MAGISTRAT',  alone: !canViewGreffier}"
@@ -75,6 +24,11 @@
         <p>Greffe</p>
       </div>
     </div>
+  </aj-header-selectors>
+
+  <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
+  <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true, 'display-none': chooseScreen}">
+
 
     <aj-period-selector #periodSelector [whiteSimulator]="whiteSimulator"></aj-period-selector>
   </div>
@@ -896,13 +850,16 @@
   </div>
 
   <aj-popup *ngIf="printPopup" class="small" [closeIcon]="true"
-    (onClose)="printPopup = false;nextState = null;onResetUserAction()" title="Conserver cette simulation ?"
+    (onClose)="printPopup = false;nextState = null;onResetUserAction()"
+    title="{{isEqualJSON(popupActionToUse,popupAction.backBeforeSimulate)?'Poursuivre cette simulation ?':'Conserver cette simulation ?'}}"
     [actions]="popupActionToUse" (selectedAction)="onPopupDetailAction($event)" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
+        {{isEqualJSON(popupActionToUse,popupAction.backBeforeSimulate)?"Attention ! Les modifications en cours ne seront
+        pas sauvegardées. Voulez-vous vraiment quitter cette page ?":"
         Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez
         conserver cette projection, exportez-la en PDF afin de l'enregistrer sur
-        votre ordinateur.
+        votre ordinateur."}}
       </p>
     </div>
   </aj-popup>
@@ -927,4 +884,6 @@
   </div>
 </ng-template>
 
-<aj-intro-js [steps]="whiteSimulator ? introStepsWhiteSimulator : introStepsDefault" typeId="simulator"></aj-intro-js>
+<aj-intro-js
+  [steps]="whiteSimulator ? introStepsWhiteSimulator : (chooseScreen ? introStepsDefault : introStepsToCompleteDefault)"
+  typeId="simulator"></aj-intro-js>

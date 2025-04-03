@@ -6,6 +6,7 @@ import {
   ViewChild,
   OnDestroy,
   inject,
+  AfterViewInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PeriodSelectorComponent } from '../period-selector/period-selector.component';
@@ -108,7 +109,10 @@ import { AppService } from '../../../services/app/app.service';
     ]),
   ],
 })
-export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
+export class WhiteSimulatorPage
+  extends MainClass
+  implements OnInit, OnDestroy, AfterViewInit
+{
   humanResourceService = inject(HumanResourceService);
   referentielService = inject(ReferentielService);
   simulatorService = inject(SimulatorService);
@@ -309,6 +313,10 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
     closeTab: [
       { id: 'cancel', content: 'Annuler' },
       { id: 'export', content: 'Exporter en PDF', fill: true },
+    ],
+    backBeforeSimulate: [
+      { id: 'leave', content: 'Quitter' },
+      { id: 'close', content: 'Continuer', fill: true },
     ],
   };
 
@@ -530,8 +538,11 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
     {
       target: 'body',
       title: 'En savoir plus :',
-      intro:
-        '<p>Consultez notre vidéo de présentation pour découvrir comment réaliser vos premières simulations ! À vous de jouer 😉</p><video controls class="intro-js-video small-video"><source src="/assets/videos/a-just-la-simulation-sans-donnees-pre-alimentees-mp4-source.mp4" type="video/mp4" /></video>',
+      intro: `<p>Consultez notre vidéo de présentation pour découvrir comment réaliser vos premières simulations ! À vous de jouer 😉</p><video controls class="intro-js-video small-video"><source src="${
+        this.isTJ()
+          ? '/assets/videos/a-just-la-simulation-sans-donnees-pre-alimentees-mp4-source.mp4'
+          : '/assets/videos/a-just-ca-simulateur-a-blanc.mp4'
+      }" type="video/mp4" /></video>`,
     },
   ];
 
@@ -618,6 +629,11 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
     updatedMsg = this.replaceAll(updatedMsg, etpMag, etpFon);
   }
 
+  ngAfterViewInit(): void {
+    this.dateStop = this.getNextYear();
+    this.simulatorService.dateStop.next(this.dateStop);
+    this.stopRealValue = findRealValue(this.dateStop);
+  }
   /**
    * Detect is TJ
    * @returns
@@ -927,11 +943,13 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.projectedSituationData = null;
     this.dateStart = new Date();
     this.simulatorService.dateStart.next(this.dateStart);
-    this.simulatorService.dateStop.next(new Date());
+    this.dateStop = this.getNextYear();
+    this.simulatorService.dateStop.next(this.dateStop);
+    this.stopRealValue = findRealValue(this.dateStop);
     this.simulatorService.situationProjected.next(null);
-    this.dateStop = null;
+    this.firstSituationData = null;
     this.startRealValue = '';
-    this.stopRealValue = '';
+    //this.stopRealValue = '';
     this.mooveClass = '';
     this.toDisplaySimulation = false;
     //this.simulatorService.situationSimulated.next(null)
@@ -1497,7 +1515,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
       x.classList.remove('disable');
     });
     if (this.valuesToReinit) this.valuesToReinit = null;
-    //this.simulatorService.isValidatedWhiteSimu.next(false)
+    this.simulatorService.isValidatedWhiteSimu.next(false);
   }
 
   /**
@@ -2129,8 +2147,31 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
           }
           break;
       }
+    } else {
+      this.printPopup = true;
+      switch (button) {
+        case this.action.return:
+          {
+            this.popupActionToUse = this.popupAction.backBeforeSimulate;
+            this.userAction.isComingBack = true;
+          }
+          break;
+      }
     }
     return;
+  }
+
+  onReturn() {
+    if (this.toDisplaySimulation) {
+      this.onUserActionClick(this.action.return);
+    } else if (this.projectedSituationData) {
+      this.onUserActionClick(this.action.return);
+      console.log('JE SUIS ICI');
+    } else {
+      this.chooseScreen = true;
+      this.router.navigate(['/simulateur']);
+      this.resetParams();
+    }
   }
 
   onResetUserAction() {
@@ -2151,6 +2192,7 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
             this.resetParams();
             this.forceDeactivate = false;
             this.chooseScreen = true;
+            this.router.navigate(['/simulateur']);
           }
           break;
         case 'export':
@@ -2163,6 +2205,11 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
               this.forceDeactivate = false;
               this.chooseScreen = true;
             });
+          }
+          break;
+        case 'close':
+          {
+            this.printPopup = false;
           }
           break;
       }
@@ -2339,5 +2386,25 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   setDocUrl(docUrl: string) {
     this.documentation.path = docUrl;
+  }
+
+  /**
+   * Retourne une date a N+1
+   * @returns
+   */
+  getNextYear() {
+    let now = new Date();
+    now.setFullYear(now.getFullYear() + 1);
+    return now;
+  }
+
+  /**
+   * Comparaison de 2 objet json
+   * @param obj1
+   * @param obj2
+   * @returns
+   */
+  public isEqualJSON(obj1: any, obj2: any): boolean {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 }

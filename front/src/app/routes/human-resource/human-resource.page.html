@@ -2,8 +2,7 @@
   <div class="wrapper-content" *ngIf="contentieuxReferentiel.length">
     <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? ''+currentHR.id : undefined"
-      [onEditIndex]="onEditIndex"
-      [etp]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].etp : 0"
+      [onEditIndex]="onEditIndex" [etp]="currentETP"
       [indisponibilities]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].indisponibilities : []"
       [fonction]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null"
       [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null"
@@ -51,7 +50,7 @@
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
       [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
       (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
-      [class.empty-user]="histories.length === 0">
+      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)">
     </add-ventilation>
 
     <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">
@@ -113,20 +112,22 @@
     "Nouvelle indisponibilité" }}
   </p>
   <div class="form">
-    <div>
+    <div class="first-bloc">
       <div class="label-aj">Motif d'indisponibilité</div>
-      <select [(ngModel)]="updateIndisponiblity.contentieux.id">
-        <option *ngFor="let cat of allIndisponibilityReferentiel" [value]="cat.id">
-          {{ cat.label }}
-        </option>
-      </select>
+      <mat-form-field>
+        <select matNativeControl [(ngModel)]="updateIndisponiblity.contentieux.id">
+          <optgroup *ngFor="let category of groupedIndispo | keyvalue" label="{{category.key}}">
+            <option *ngFor="let item of category.value" [value]="item.id">{{item.label}}</option>
+          </optgroup>
+        </select>
+      </mat-form-field>
     </div>
     <div class="grid-double">
       <aj-date-select title="Date de début" [showToday]="false" [value]="updateIndisponiblity.dateStart"
-        (valueChange)="updateIndisponiblity.dateStart = $event">
+        (valueChange)="updateIndisponiblity.dateStart = setToMidDay($event)">
       </aj-date-select>
       <aj-date-select title="Date de fin" [showToday]="false" [value]="updateIndisponiblity.dateStop"
-        (valueChange)="updateIndisponiblity.dateStop = $event" [clearable]="true">
+        (valueChange)="updateIndisponiblity.dateStop = setToMidDay($event)" [clearable]="true">
       </aj-date-select>
     </div>
     <div>

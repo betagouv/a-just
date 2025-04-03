@@ -218,13 +218,14 @@ export default class RouteHumanResources extends Route {
       backupId: Types.number().required(),
       date: Types.date().required(),
       contentieuxIds: Types.array(),
+      subContentieuxIds: Types.array(),
       categoriesIds: Types.array().required(),
       endPeriodToCheck: Types.date(),
     }),
     accesses: [Access.canVewHR],
   })
   async filterList (ctx) {
-    let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds } = this.body(ctx)
+    let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds, subContentieuxIds } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
@@ -234,7 +235,7 @@ export default class RouteHumanResources extends Route {
     let hr = await this.model.getCache(backupId)
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
 
-    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, categoriesIds, date, endPeriodToCheck, true)
+    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, subContentieuxIds, categoriesIds, date, endPeriodToCheck, true)
 
     const allCategories = await this.models.HRCategories.getAll()
 

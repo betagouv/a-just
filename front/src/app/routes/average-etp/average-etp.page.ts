@@ -36,8 +36,8 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
    * Lien de la doc
    */
   documentation: DocumentationInterface = {
-    title: "Données d'activité A-JUST :",
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/donnees-dactivite/quest-ce-que-cest',
+    title: 'Référentiels de temps moyens :',
+    path: '',
     printSubTitle: true,
   };
   /**
@@ -128,6 +128,12 @@ export class AverageEtpPage extends MainClass implements AfterViewInit {
         this.backups.map(() => this.checkList.push(false));
       })
     );
+
+    this.userService.isCa()
+      ? (this.documentation.path =
+          'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/gerer-ses-referentiels-de-temps-moyens')
+      : (this.documentation.path =
+          'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/gerer-ses-referentiels-de-temps-moyens');
   }
 
   ngAfterViewInit() {

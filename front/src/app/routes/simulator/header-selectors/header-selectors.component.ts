@@ -179,7 +179,7 @@ export class HeaderSelectorsComponent extends MainClass {
           this.contentieuId as number,
         ]);
         this.disabled = '';
-        this.simulatorService.disabled.next('');
+        this.simulatorService.disabled.next(this.disabled);
       } else {
         alert(
           "Vos droits ne vous permettent pas d'exécuter une simulation, veuillez contacter un administrateur."

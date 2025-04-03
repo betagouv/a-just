@@ -7,6 +7,7 @@ import {
 import { extractCodeFromLabelImported } from "../utils/referentiel";
 import { camel_to_snake } from "../utils/utils";
 import config from "config";
+import { isTj } from "../utils/ca";
 
 /**
  * Scripts intermediaires des contentieux
@@ -21,13 +22,17 @@ export default (sequelizeInstance, Model) => {
   Model.getReferentiels = async (
     backupId = null,
     isJirs = false,
-    filterReferentielsId = null
+    filterReferentielsId = null,
+    displayAll = false
   ) => {
     if (backupId) {
       const juridiction = await Model.models.HRBackups.findById(backupId);
-      if (juridiction) {
+      if (juridiction && !displayAll) {
         isJirs = juridiction.jirs;
       }
+    }
+    if (displayAll === true) {
+      isJirs = true;
     }
 
     const formatToGraph = async (parentId = null, index = 0) => {
@@ -58,6 +63,7 @@ export default (sequelizeInstance, Model) => {
           ["value_quality_stock", "valueQualityStock"],
           ["help_url", "helpUrl"],
           "compter",
+          "category",
           ["only_to_hr_backup", "onlyToHrBackup"],
           ["check_ventilation", "checkVentilation"],
         ],
@@ -82,10 +88,10 @@ export default (sequelizeInstance, Model) => {
     let list = [];
     mainList.map((main) => {
       if (main.code_import) {
-        main.childrens = (main.childrens || []).map(m => {
-          delete m.childrens
-          return m
-        })
+        main.childrens = (main.childrens || []).map((m) => {
+          delete m.childrens;
+          return m;
+        });
         list = list.concat(main);
       } else {
         if (main.childrens) {
@@ -145,8 +151,8 @@ export default (sequelizeInstance, Model) => {
                 (elem) => elem.label !== "Collégiales JIRS crim-org"
               );
               break;
-            case "Collégiales JIRS eco-fi":
-              child.label = "Collégiales eco-fi";
+            case "Collégiales JIRS éco-fi":
+              child.label = "Collégiales éco-fi";
               break;
             case "Eco-fi hors JIRS":
               child.label = "Eco-fi";
@@ -214,7 +220,6 @@ export default (sequelizeInstance, Model) => {
         });
       });
     }
-
     return list;
   };
 
@@ -267,6 +272,10 @@ export default (sequelizeInstance, Model) => {
                   label: extract.label,
                   code_import: extract.code,
                   parent_id: parentId,
+                  category:
+                    extract.code.startsWith(isTj()?"12.":"14.") && extract.code.length > 3
+                      ? ref["niveau_" + (i + 1)]
+                      : null,
                 },
                 {
                   logging: false,
@@ -280,6 +289,21 @@ export default (sequelizeInstance, Model) => {
                 label: extract.label,
               });
             } else {
+              if (
+                extract.code.startsWith(isTj()?"12.":"14.") &&
+                extract.code.length > 3 &&
+                findInDb.dataValues.category !== ref["niveau_" + (i + 1)]
+              ) {
+                deltaToUpdate.push({
+                  type: "UPDATE",
+                  oldCategory: findInDb.dataValues.category,
+                  id: findInDb.dataValues.id,
+                  category: ref["niveau_" + (i + 1)] || null,
+                });
+
+                await findInDb.update({ category: ref["niveau_" + (i + 1)] });
+              }
+
               if (extract.label !== findInDb.dataValues.label) {
                 deltaToUpdate.push({
                   type: "UPDATE",
@@ -490,6 +514,18 @@ export default (sequelizeInstance, Model) => {
       },
     });
     return ref ? ref : null;
+  };
+
+  /**
+   * Indique si une juridiction est JIRS ou NON JIRS
+   * @param {*} backupId
+   * @returns
+   */
+  Model.isJirs = async (backupId) => {
+    let isJirs = false;
+    const juridiction = await Model.models.HRBackups.findById(backupId);
+    if (juridiction) isJirs = juridiction.jirs;
+    return isJirs;
   };
 
   return Model;

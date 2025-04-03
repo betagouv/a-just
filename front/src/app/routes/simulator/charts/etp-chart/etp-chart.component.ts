@@ -69,6 +69,10 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * Peux voir l'interface contractuel
    */
   @Input() canViewContractuel: boolean = false;
+    /**
+   * Peux voir l'interface contractuel
+   */
+    @Input() whiteSimulator: boolean = false;
   /**
    * Labels sur l'axe des abscisse
    */

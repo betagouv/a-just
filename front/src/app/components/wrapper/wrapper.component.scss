@@ -370,6 +370,7 @@
 
   .menu-item {
     display: block;
+    padding: 13px 4px 13px 13px;
 
     &.top {
       cursor: pointer;
@@ -377,11 +378,6 @@
 
       &:hover {
         background-color: rgba(fColor(bgSelectSelected), 0.2);
-      }
-
-      >a {
-        padding: 13px 4px 13px 13px;
-        display: block;
       }
     }
 
@@ -397,10 +393,6 @@
         display: flex;
         justify-content: center;
       }
-    }
-
-    .menu-item {
-      padding: 13px 4px 13px 13px;
     }
 
     a {

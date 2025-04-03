@@ -5,7 +5,7 @@
         <div *ngFor="let ref of referentiel" class="flex-1"
             [style.color]="userService.referentielMappingColorByInterface(ref.label)"
             [style.background-color]="userService.referentielMappingColorByInterface(ref.label, OPACITY)">
-            {{ referentielMappingName(ref.label) }}
+            {{ userService.referentielMappingNameByInterface(ref.label) }}
         </div>
     </div>
 </div>
@@ -44,10 +44,11 @@
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="variant.values[refIndex] === null ? 'N/R' : variant.values[refIndex]+''"
                         [subTitle]="variant.subTitle"
-                        [ngClass]="{'no-border-bottom': variantIndex < getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1, 'no-border-top': variantIndex > 0 && getOptionsToShow(line).length !== 1}"
+                        [ngClass]="{'no-border-bottom': variantIndex < getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1, 'no-border-top': variantIndex > 0 && getOptionsToShow(line).length !== 1, 'cursor-pointer': true}"
                         [isWhite]="variantIndex === getOptionsToShow(line).length - 1"
                         [showArrow]="variant.showArrow === true" [type]="line.title"
-                        [isTransparent]="variant.showArrow === true"></aj-graphs-numbers>
+                        [isTransparent]="variant.showArrow === true"
+                        (click)="calculatorService.selectedRefGraphDetail = ref.id; calculatorService.showGraphDetailTypeLineTitle = line.title; calculatorService.showGraphDetailType = line.dataType"></aj-graphs-numbers>
                 </ng-template>
             </div>
         </div>

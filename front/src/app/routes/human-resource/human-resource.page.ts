@@ -1,7 +1,14 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { maxBy, minBy, orderBy } from 'lodash';
+import _, { maxBy, minBy, orderBy } from 'lodash';
 import { debounceTime } from 'rxjs';
 import { AddVentilationComponent } from './add-ventilation/add-ventilation.component';
 import { HRSituationInterface } from '../../interfaces/hr-situation';
@@ -28,10 +35,18 @@ import { HRCategoryService } from '../../services/hr-category/hr-category.servic
 import { AppService } from '../../services/app/app.service';
 import { HRCommentService } from '../../services/hr-comment/hr-comment.service';
 import { UserService } from '../../services/user/user.service';
-import { dateAddDays, isDateBiggerThan, today } from '../../utils/dates';
+import {
+  dateAddDays,
+  isDateBiggerThan,
+  setTimeToMidDay,
+  today,
+} from '../../utils/dates';
 import { copy } from '../../utils';
 import { HelpButtonComponent } from '../../components/help-button/help-button.component';
 import { CommonModule } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 /**
  * Interface d'une situation
@@ -70,6 +85,9 @@ export interface HistoryInterface extends HRSituationInterface {
     HelpButtonComponent,
     CommonModule,
     FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
   ],
   templateUrl: './human-resource.page.html',
   styleUrls: ['./human-resource.page.scss'],
@@ -133,6 +151,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
   /**
+   * Référentiel des indispo groupedByCategory
+   */
+  groupedIndispo: any[] = [];
+  /**
    * Indispos en error (chevauchement de date ou plus de 100%)
    */
   indisponibilityError: string | null = null;
@@ -168,6 +190,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * showActuelPanel
    */
   showActuelPanel: boolean = false;
+  /**
+   * Initial etp
+   */
+  initialETP: number | null = null;
+  /**
+   * Current etp
+   */
+  currentETP: WritableSignal<number | null> = signal(null);
 
   /**
    * Constructeur
@@ -245,6 +275,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.contentieuxReferentiel = list;
         this.allIndisponibilityReferentiel =
           this.humanResourceService.allIndisponibilityReferentiel.slice(1);
+        this.groupedIndispo = this.groupIndispoByCategory();
       })
     );
 
@@ -530,6 +561,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         ((dateStop && dateStop.getTime() >= today().getTime()) || !dateStop)
       ) {
         this.indexOfTheFuture = index;
+        this.currentETP.set(h.etp);
+        this.initialETP = this.currentETP();
       }
     });
 
@@ -650,6 +683,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       await this.updateHuman('indisponibilities', []);
     }
 
+    console.log('on cancel');
+
     this.onEditIndex = null;
 
     const findElement = document.getElementById('content');
@@ -661,6 +696,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.formatHRHistory();
+
+    if (this.histories.length === 0) {
+      this.onEditIndex = null;
+    }
   }
 
   /**
@@ -790,7 +829,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
           // control date stop
           if (this.currentHR && this.currentHR.dateEnd) {
-            const hrDateStop = new Date(this.currentHR.dateEnd);
+            let hrDateStop = new Date(this.currentHR.dateEnd);
+            hrDateStop = setTimeToMidDay(hrDateStop) || hrDateStop;
 
             if (
               this.updateIndisponiblity &&
@@ -981,6 +1021,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       // force to not show on boarding after delete last situation
       this.onLoad(returnValue);
     }
+
+    if (this.histories.length === 0) {
+      this.onEditIndex = null;
+    }
   }
 
   /**
@@ -1095,5 +1139,26 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (findIndex !== -1) {
       this.onSelectSituationToEdit(this.histories[findIndex]);
     }
+  }
+
+  /**
+   * Fonction de mise à jours de l'etp courant pour la création d'un nouvel agent uniquement
+   * @param etp
+   */
+  updateETP(etp: number) {
+    if (!this.initialETP) {
+      this.currentETP.set(etp);
+    }
+  }
+  groupIndispoByCategory(): any {
+    const grouped = _.groupBy(
+      this.allIndisponibilityReferentiel,
+      (indispo) => indispo.category
+    );
+    return grouped;
+  }
+
+  setToMidDay(elem: Date) {
+    return setTimeToMidDay(elem);
   }
 }

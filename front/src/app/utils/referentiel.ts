@@ -11,7 +11,7 @@ import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel';
 export function referentielMappingName(name: string): string {
   switch (name) {
     case 'Autres activités':
-      return 'Autres activités';
+      return 'Autres';
     case 'Indisponibilité':
       return 'Indisp.';
     case 'Siège Pénal':
@@ -47,9 +47,9 @@ export function referentielCAMappingName(name: string): string {
     case 'Contentieux de la famille':
       return 'Famille';
     case 'Contentieux de la protection':
-      return 'CTX JCP';
+      return 'JCP';
     case 'Contentieux civil non spécialisé':
-      return 'Civil Ns';
+      return 'Civil NS';
     case 'Contentieux commercial':
       return 'Comm.';
     case 'Attributions du PP':
@@ -84,7 +84,7 @@ export function referentielMappingColor(
 ): string {
   if (opacity === OPACITY_20) {
     switch (name) {
-      case 'Autres activités':
+      case 'Autres':
         return `rgb(215, 217, 219)`;
       case 'Indisp.':
         return `rgb(55, 71, 79)`;
@@ -116,7 +116,7 @@ export function referentielMappingColor(
     }
   } else {
     switch (name) {
-      case 'Autres activités':
+      case 'Autres':
         return `rgba(66, 66, 66, ${opacity})`;
       case 'Indisp.':
         return `rgba(55, 71, 79, ${opacity})`;
@@ -162,7 +162,7 @@ export function referentielMappingColorActivity(
 ): string {
   if (opacity === OPACITY_20) {
     switch (name) {
-      case 'Autres activités':
+      case 'Autres':
         return `rgb(215, 217, 219)`;
       case 'Indisp.':
         return `rgb(55, 71, 79)`;
@@ -196,7 +196,7 @@ export function referentielMappingColorActivity(
     }
   } else {
     switch (name) {
-      case 'Autres activités':
+      case 'Autres':
         return `rgba(66, 66, 66, ${opacity})`;
       case 'Indisp.':
         return `rgba(55, 71, 79, ${opacity})`;
@@ -250,9 +250,9 @@ export function referentielMappingColorCAActivity(
         return `rgb(212, 231, 232)`;
       case 'Famille':
         return `rgba(210, 227, 243, 1)`;
-      case 'CTX JCP':
+      case 'JCP':
         return `rgba(198, 219, 242, 1)`;
-      case 'Civil Ns':
+      case 'Civil NS':
         return `rgba(208, 213, 248, 1)`;
       case 'Comm.':
         return `rgba(222, 237, 239, 1)`;
@@ -263,10 +263,10 @@ export function referentielMappingColorCAActivity(
       case 'CHINS': //CHINS
         return `rgb(249, 219, 211)`;
       case 'CHAC':
-        return `rgb(245, 214, 213)`; //CHAC
+        return `rgb(245, 214, 213)`;
       case 'Crim.':
         return `rgb(255, 234, 213)`;
-      case 'CHAP': //CHAP
+      case 'CHAP':
         return `rgb(253, 226, 211)`;
       case 'Autres':
         return `rgb(216, 218, 220)`;
@@ -277,9 +277,9 @@ export function referentielMappingColorCAActivity(
         return `rgba(3, 131, 143, ${opacity})`;
       case 'Famille':
         return `rgba(4, 134, 213, ${opacity})`;
-      case 'CTX JCP': // Protection
+      case 'JCP':
         return `rgba(5, 89, 189, ${opacity})`;
-      case 'Civil Ns':
+      case 'Civil NS':
         return `rgba(40, 53, 146, ${opacity})`;
       case 'Comm.':
         return `rgba(3, 167, 184, ${opacity})`;
@@ -290,10 +290,10 @@ export function referentielMappingColorCAActivity(
       case 'CHINS': //CHINS
         return `rgba(215, 66, 21, ${opacity})`;
       case 'CHAC':
-        return `rgba(197, 41, 40, ${opacity})`; //CHAC
+        return `rgba(197, 41, 40, ${opacity})`;
       case 'Crim.':
         return `rgba(255, 143, 0, ${opacity})`;
-      case 'CHAP': //CHAP
+      case 'CHAP':
         return `rgba(239, 108, 0, ${opacity})`;
       case 'Autres':
         return `rgba(66, 66, 66, ${opacity})`;

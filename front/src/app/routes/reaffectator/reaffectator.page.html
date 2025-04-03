@@ -114,7 +114,7 @@
                   </p>
                 </div>
                 <div class="buttons-row" *ngIf="!duringPrint">
-                  <p class="btn" (click)="onToogleIsolation()">Isoler</p>
+                  <p class="btn" (click)="onToogleIsolation()" [class.selected]="this.isolatePersons">Isoler</p>
                   <p class="btn" (click)="onInitList(list)">Réinitialiser</p>
                 </div>
               </div>
@@ -132,7 +132,8 @@
             </div>
             <div class="activities">
               <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
-                [class.selected]="filterSelected && filterSelected.id === ref.id" (click)="onFilterBy(ref)">
+                [class.selected]="filterSelected.filter && filterSelected.filter.id === ref.id && (filterSelected.up === true || filterSelected.up === false)"
+                (click)="onFilterBy(ref)">
                 <div class="label">
                   <p>{{ referentielMappingNameByInterface(ref.label) }}</p>
                 </div>
@@ -142,7 +143,10 @@
                     "0.2-2"}}</p>
                 </div>
                 <div class="filter">
-                  <i class="ri-sort-desc"></i>
+                  <i [ngClass]="{
+                    'ri-sort-asc': filterSelected.up === true && filterSelected.filter?.id === ref.id,
+                    'ri-sort-desc': !(filterSelected.up === true && filterSelected.filter?.id === ref.id)
+                  }"></i>
                 </div>
               </div>
             </div>

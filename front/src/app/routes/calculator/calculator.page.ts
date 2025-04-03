@@ -138,7 +138,7 @@ export class CalculatorPage
   /**
    * Tri ou non
    */
-  sortBy: string = '';
+  sortBy: { type: string; up: boolean | null } = { type: '', up: null };
   /**
    * Liste des lignes du calculateurs venant du back
    */
@@ -164,16 +164,24 @@ export class CalculatorPage
    */
   documentation: DocumentationInterface = {
     title: 'Cockpit',
-    path: 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
+    path: this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/quest-ce-que-cest-1'
+      : 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/calculateur/quest-ce-que-cest',
     printSubTitle: true,
   };
   /**
    * Documentation list
    */
   docLinks: string[] = [
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
-    'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-donnees-brutes'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-donnees-brutes',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/les-vues-graphiques'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/les-vues-graphiques',
+    this.userService.isCa()
+      ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/comparer-son-activite'
+      : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/cockpit/comparer-son-activite',
   ];
   /**
    * Mémorisation de la dernière categorie
@@ -206,53 +214,56 @@ export class CalculatorPage
   /**
    * Intro JS Steps
    */
-  introSteps: IntroJSStep[] = [
-    {
-      target: '#wrapper-contener',
-      title: 'À quoi sert le cockpit ?',
-      intro:
-        '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit.mp4" type="video/mp4" /></video>',
-    },
-    {
-      target: '.sub-main-header',
-      title: 'Affinez votre sélection',
-      intro:
-        "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.</p>",
-    },
-    {
-      target: '.switch-tab .brut',
-      title: 'Les données brutes',
-      intro:
-        '<p>Cette section permet de visualiser deux indicateurs simples, sur la période, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p><ul><li>le taux de couverture moyen</li><li>et le DTES (Délai Théorique d’Écoulement du Stock) à la date de fin de période.</li></ul><p>Vous retrouvez également :</p><ul><li>Les <b>entrées et sorties</b> moyennes mensuelles</li><li>Le <b>stock</b> à la fin de la période choisie</li><li>Les <b>ETPT</b> affectés à chaque contentieux</li><li><b>Les temps moyens par dossier</b> (siège ou greffe selon votre sélection), clé théorique de projection dans le futur calculée à la fin de la période sur les 12 mois précédents.</li></ul>',
-      beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('.switch-tab .brut');
-        if (itemToClick) {
-          // @ts-ignore
-          itemToClick.click();
-          await sleep(200);
-        }
-      },
-    },
-    {
-      target: '.switch-tab .analytique',
-      title: 'Les graphiques',
-      intro:
-        '<p>Pour chaque contentieux, une représentation visuelle des indicateurs, comprenant le détail des données et leurs évolutions entre le début et la fin de la période.</p>',
-      beforeLoad: async (intro: any) => {
-        const itemToClick = document.querySelector('.switch-tab .analytique');
-        if (itemToClick) {
-          // @ts-ignore
-          itemToClick.click();
-          await sleep(200);
-        }
-      },
-    },
-    {
-      target: '.compare', //.drop-down',
-      title: 'Comparez votre juridiction',
-      intro:
-        '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>',
-      /*beforeLoad: async (intro: any) => {
+  introSteps: IntroJSStep[] = this.userService.isTJ()
+    ? [
+        {
+          target: '#wrapper-contener',
+          title: 'À quoi sert le cockpit ?',
+          intro:
+            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit.mp4" type="video/mp4" /></video>',
+        },
+        {
+          target: '.sub-main-header',
+          title: 'Affinez votre sélection',
+          intro:
+            "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.</p>",
+        },
+        {
+          target: '.switch-tab .brut',
+          title: 'Les données brutes',
+          intro:
+            '<p>Cette section permet de visualiser deux indicateurs simples, sur la période, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p><ul><li>le taux de couverture moyen</li><li>et le DTES (Délai Théorique d’Écoulement du Stock) à la date de fin de période.</li></ul><p>Vous retrouvez également :</p><ul><li>Les <b>entrées et sorties</b> moyennes mensuelles</li><li>Le <b>stock</b> à la fin de la période choisie</li><li>Les <b>ETPT</b> affectés à chaque contentieux</li><li><b>Les temps moyens par dossier</b> (siège ou greffe selon votre sélection), clé théorique de projection dans le futur calculée à la fin de la période sur les 12 mois précédents.</li></ul>',
+          beforeLoad: async (intro: any) => {
+            const itemToClick = document.querySelector('.switch-tab .brut');
+            if (itemToClick) {
+              // @ts-ignore
+              itemToClick.click();
+              await sleep(200);
+            }
+          },
+        },
+        {
+          target: '.switch-tab .analytique',
+          title: 'Les graphiques',
+          intro:
+            '<p>Pour chaque contentieux, une représentation visuelle des indicateurs, comprenant le détail des données et leurs évolutions entre le début et la fin de la période.</p>',
+          beforeLoad: async (intro: any) => {
+            const itemToClick = document.querySelector(
+              '.switch-tab .analytique'
+            );
+            if (itemToClick) {
+              // @ts-ignore
+              itemToClick.click();
+              await sleep(200);
+            }
+          },
+        },
+        {
+          target: '.compare', //.drop-down',
+          title: 'Comparez votre juridiction',
+          intro:
+            '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonctionnalites-de-comparaison-dans-le-cockpit.mp4" type="video/mp4" /></video>',
+          /*beforeLoad: async (intro: any) => {
         intro._introItems[4].position = '';
         const itemToClick: any = document.querySelector('button.compare');
         if (itemToClick) {
@@ -262,8 +273,68 @@ export class CalculatorPage
           console.log(intro);
         }
       },*/
-    },
-  ];
+        },
+      ]
+    : [
+        {
+          target: '#wrapper-contener',
+          title: 'À quoi sert le cockpit ?',
+          intro:
+            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p>',
+        },
+        {
+          target: '.sub-main-header',
+          title: 'Affinez votre sélection',
+          intro:
+            "<p>Vous pouvez sélectionner la <b>catégorie d'agents</b> souhaitée, restreindre si besoin les calculs à <b>une ou plusieurs fonctions</b> et exporter ces restitutions en PDF pour les enregistrer et/ou les partager.</p><p>Vous pouvez choisir la période, certaines données affichées étant des <b>valeurs moyennes</b>, elles seront d’autant plus représentatives que la période sélectionnée sera longue.</p>",
+        },
+        {
+          target: '.switch-tab .brut',
+          title: 'Les données brutes',
+          intro:
+            '<p>Cette section permet de visualiser deux indicateurs simples, sur la période, calculés pour chaque contentieux et sous contentieux, à partir des données renseignées dans A-JUST :</p><ul><li>le taux de couverture moyen</li><li>et le DTES (Délai Théorique d’Écoulement du Stock) à la date de fin de période.</li></ul><p>Vous retrouvez également :</p><ul><li>Les <b>entrées et sorties</b> moyennes mensuelles</li><li>Le <b>stock</b> à la fin de la période choisie</li><li>Les <b>ETPT</b> affectés à chaque contentieux</li><li><b>Les temps moyens par dossier</b> (siège ou greffe selon votre sélection), clé théorique de projection dans le futur calculée à la fin de la période sur les 12 mois précédents.</li></ul>',
+          beforeLoad: async (intro: any) => {
+            const itemToClick = document.querySelector('.switch-tab .brut');
+            if (itemToClick) {
+              // @ts-ignore
+              itemToClick.click();
+              await sleep(200);
+            }
+          },
+        },
+        {
+          target: '.switch-tab .analytique',
+          title: 'Les graphiques',
+          intro:
+            '<p>Pour chaque contentieux, une représentation visuelle des indicateurs, comprenant le détail des données et leurs évolutions entre le début et la fin de la période.</p>',
+          beforeLoad: async (intro: any) => {
+            const itemToClick = document.querySelector(
+              '.switch-tab .analytique'
+            );
+            if (itemToClick) {
+              // @ts-ignore
+              itemToClick.click();
+              await sleep(200);
+            }
+          },
+        },
+        {
+          target: '.compare', //.drop-down',
+          title: 'Comparez votre juridiction',
+          intro:
+            '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
+          /*beforeLoad: async (intro: any) => {
+        intro._introItems[4].position = '';
+        const itemToClick: any = document.querySelector('button.compare');
+        if (itemToClick) {
+          itemToClick.click();
+          await sleep(200);
+          intro.refresh();
+          console.log(intro);
+        }
+      },*/
+        },
+      ];
   /**
    * Labels of fct selected
    */
@@ -327,7 +398,7 @@ export class CalculatorPage
   /**
    * Date minimum selectionnable
    */
-  minDateSelectable: Date = new Date(2021, 0, 1);
+  minDateSelectable: Date = new Date();
   /**
    * Detect if last month is loading
    */
@@ -348,6 +419,10 @@ export class CalculatorPage
    * Placeholder referentiel name
    */
   defaultRefName: string = '';
+  /**
+   * Indique si un référentiel vient d'être créé par sauvegarde des temps affichés
+   */
+  createSaveReferentiel: boolean = false;
   /**
    * Nombre de jours travaillé par magistrat
    */
@@ -379,6 +454,10 @@ export class CalculatorPage
         this.onLoad();
       })
     );
+
+    this.minDateSelectable = this.userService.isCa()
+      ? new Date(2022, 0, 1)
+      : new Date(2021, 0, 1);
   }
 
   /**
@@ -407,7 +486,9 @@ export class CalculatorPage
 
     this.watch(
       this.contentieuxOptionsService.backupId.subscribe(() => {
-        this.onLoad();
+        if (this.createSaveReferentiel) {
+          this.createSaveReferentiel = false;
+        } else this.onLoad();
       })
     );
     this.watch(
@@ -701,7 +782,7 @@ export class CalculatorPage
                 this.location.path() === '/cockpit'
               ) {
                 this.appService.notification(
-                  'Les données du cockpit ont été mis à jour !'
+                  'Les données du cockpit ont été mises à jour !'
                 );
               }
               this.firstLoading = false;
@@ -748,12 +829,12 @@ export class CalculatorPage
   /**
    * Trier les datas en fonction d'un trie
    */
-  filtredDatas() {
+  filtredDatas(up: boolean | null = null) {
     let list = this.datas;
     if (this.sortBy) {
-      let sort = this.sortBy;
+      let sort = this.sortBy.type;
       if (
-        this.sortBy === 'magRealTimePerCase' &&
+        this.sortBy.type === 'magRealTimePerCase' &&
         this.categorySelected !== 'magistrats'
       ) {
         sort = 'fonRealTimePerCase';
@@ -766,7 +847,7 @@ export class CalculatorPage
             return o[sort] || 0;
           },
         ],
-        ['desc']
+        [up ? 'asc' : 'desc']
       );
     }
 
@@ -811,13 +892,15 @@ export class CalculatorPage
    * @param type
    */
   onSortBy(type: string) {
-    if (this.sortBy === type) {
-      this.sortBy = '';
+    if (this.sortBy.type === '' || this.sortBy.up === true) {
+      this.sortBy.type = type;
+      this.sortBy.up = this.sortBy.up === null ? true : false;
     } else {
-      this.sortBy = type;
+      this.sortBy.type = '';
+      this.sortBy.up = null;
     }
 
-    this.filtredDatas();
+    this.filtredDatas(this.sortBy.up);
   }
 
   /**
@@ -1847,7 +1930,9 @@ export class CalculatorPage
       this.compareTemplates = list;
       this.documentation.path = this.docLinks[2];
     }
-    this.appService.notification('Les données du cockpit ont été mis à jour !');
+    this.appService.notification(
+      'Les données du cockpit ont été mises à jour !'
+    );
   }
 
   getHours(value: number) {
@@ -1961,6 +2046,8 @@ export class CalculatorPage
 
     let list = new Array();
 
+    this.createSaveReferentiel = true;
+
     datas.map((y) => {
       list.push({
         averageProcessingTime:
@@ -2001,7 +2088,6 @@ export class CalculatorPage
     if (event.id === 'save') {
       this.saveCurrentAvgTime();
       this.displayRouterRef = true;
-      console.log(this.defaultRefName);
     }
   }
 

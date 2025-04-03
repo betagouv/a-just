@@ -79,6 +79,15 @@ export default class RouteUsers extends Route {
 
     email = (email || '').toLowerCase() // force to lower case email
 
+    if(
+      !email.includes('@justice.fr') &&
+      !email.includes('.gouv.fr') &&
+      !email.includes('@a-just.fr')
+    ) {
+      ctx.throw(401, 'Vous devez saisir une adresse e-mail professionnelle')
+      return
+    }
+
     try {
       const user = await this.model.createAccount({ ...this.body(ctx), email })
       await sentEmail(

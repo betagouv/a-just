@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { GitBookAPI } from '@gitbook/api';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { CommonModule } from '@angular/common';
@@ -7,10 +15,12 @@ import { DocCardInterface } from '../../components/doc-card/doc-card.component';
 import {
   CALCULATE_DOWNLOAD_URL,
   DATA_GITBOOK,
+  DATA_GITBOOK_CA,
   DOCUMENTATION_URL,
   DOCUMENTATION_URL_CA,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
 } from '../../constants/documentation';
 import { UserService } from '../../services/user/user.service';
 import { ServerService } from '../../services/http-server/server.service';
@@ -20,6 +30,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { SanitizeResourceUrlPipe } from '../../pipes/sanitize-resource-url/sanitize-resource-url.pipe';
 import { BackButtonComponent } from '../../components/back-button/back-button.component';
 import { FormsModule } from '@angular/forms';
+import { ReferentielService } from '../../services/referentiel/referentiel.service';
+import { MainClass } from '../../libs/main-class';
 
 interface webinaire {
   img: string;
@@ -46,14 +58,16 @@ interface webinaire {
   templateUrl: './help-center.page.html',
   styleUrls: ['./help-center.page.scss'],
 })
-export class HelpCenterPage implements OnInit, AfterViewInit {
+export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
+  @ViewChild('searchInput') searchInput!: any;
   userService = inject(UserService);
   serverService = inject(ServerService);
   appService = inject(AppService);
+  referentielService = inject(ReferentielService);
   /**
    * Résultat de la recherche GitBook
    */
-  data: Array<any> = [];
+  data: any = null;
   /**
    * Valeur de rechercher
    */
@@ -90,7 +104,7 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     description:
       "Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d'activité».",
     image: '/assets/images/data-visualization.svg',
-    url: DATA_GITBOOK,
+    url: this.userService.isCa() ? DATA_GITBOOK_CA : DATA_GITBOOK,
   };
   /** Carte nomenclature */
   nomenclature = {
@@ -101,6 +115,8 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     image: '/assets/images/system.svg',
     url: this.userService.isCa()
       ? NOMENCLATURE_DOWNLOAD_URL_CA
+      : this.referentielService.isDroitLocal()
+      ? NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL
       : NOMENCLATURE_DOWNLOAD_URL,
     localUrl: false,
     download: true,
@@ -197,11 +213,23 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
    * GITBOOK ID
    */
   gitbookId = import.meta.env.NG_APP_GITBOOK_ID;
-
+  /**
+   * Bloqueur pour le prompteur en cas de valeur vide dans la barre de recherche
+   */
+  lockPrompt = true;
+  /**
+   * Affichage du résultat d'une question posée
+   */
+  displayResult = false;
+  /**
+   * Affichage du loader
+   */
+  displayLoader = false;
   /**
    * Constructeur
    */
-  constructor() {
+  constructor(private renderer: Renderer2) {
+    super();
     this.gitToken = import.meta.env.NG_APP_GITBOOK_TOKEN;
     this.gitbook = new GitBookAPI({
       authToken: this.gitToken,
@@ -227,6 +255,10 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     window.addEventListener('click', this.onClick.bind(this));
   }
 
+  loseFocus() {
+    console.log(this.searchInput);
+    this.searchInput.triggerBlur();
+  }
   onClick(e: any) {
     if (document.getElementById('help-center')?.contains(e.target)) {
       this.popinCall = false;
@@ -234,10 +266,27 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
   }
 
   async onSearchBy() {
-    const { data } = await this.gitbook.search.searchContent({
+    this.displayLoader = true;
+    const { data } = await this.gitbook.orgs.askInOrganization(
+      'ERPUa4pw8EhQDGz6MqrT',
+      { query: this.searchValue }
+    );
+    console.log(this.gitbook);
+    console.log(data);
+    this.data = data;
+    this.displayLoader = false;
+
+    /**
+    const { data } = await this.gitbook.orgs.getOrganizationById(
+      'ERPUa4pw8EhQDGz6MqrT'
+    );
+    */
+    /**
+    search.searchContent({
       query: this.searchValue,
     });
     this.data = data.items;
+     */
   }
 
   getDocIcon(title: string) {
@@ -336,6 +385,10 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
       });
   }
 
+  /**
+   * Envoie d'un formulaire
+   * @param phoneNumber
+   */
   async sendForm(phoneNumber: string) {
     let userId = this.userService.user.getValue()?.id || null;
     if (userId)
@@ -349,6 +402,11 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
         });
   }
 
+  /**
+   * Aller vers une page donnée
+   * @param url
+   * @param download
+   */
   async goToLink(url: string, download = false) {
     await this.serverService
       .post('centre-d-aide/log-documentation-link', {
@@ -372,10 +430,17 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Ouvrir un lien dans une autre page
+   * @param url
+   */
   openLink(url: string) {
     window.open(url, '_blank');
   }
 
+  /**
+   * Chargement des webinaires
+   */
   async loadWebinaires() {
     this.webinaires = new Array();
     const { data } = await this.gitbook.spaces.getPageByPath(
@@ -415,6 +480,11 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Validation de saisie
+   * @param e
+   * @returns
+   */
   validateNo(e: any) {
     const charCode = e.which ? e.which : e.keyCode;
     if (charCode === 46) return true;
@@ -424,14 +494,81 @@ export class HelpCenterPage implements OnInit, AfterViewInit {
     return true;
   }
 
+  /**
+   * Recupère une iframe
+   * @returns
+   */
   getIframeUrl() {
     return this.openToIframe.url;
   }
 
+  /**
+   * Recharge le contenu d'une page
+   */
   reloadContent() {
     this.openSuggestionPanel = !this.openSuggestionPanel;
   }
+  /**
+   * Recupere la clef de doc
+   * @returns
+   */
   getDocKeys(): Array<any> {
     return Object.keys(this.documentation);
+  }
+
+  /**
+   * Mise en forme gras
+   * @param leaf
+   * @returns
+   */
+  isBold(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) => mark.type === 'bold');
+  }
+  /**
+   * Mise en forme italic
+   * @param leaf
+   * @returns
+   */
+  isItalic(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) => mark.type === 'itcalic');
+  }
+  /**
+   * Mise en forme souligné
+   * @param leaf
+   * @returns
+   */
+  isUnderline(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) => mark.type === 'underlined');
+  }
+  /**
+   * recupère les sous éléments d'une liste non ordronnée
+   * @param item
+   * @returns
+   */
+  getUnorderedListNodes(item: any) {
+    return (
+      item.nodes?.find((n: any) => n.type === 'list-unordered')?.nodes || []
+    );
+  }
+  /**
+   * recupère les éléments d'une liste non ordronnée
+   * @param item
+   * @returns
+   */
+  hasUnorderedList(item: any): boolean {
+    return item.nodes?.some((n: any) => n.type === 'list-unordered');
+  }
+
+  /**
+   * En cas de validation par le bouton entrer
+   */
+  onKeyDown() {
+    if (this.lockPrompt === false) {
+      this.data = null;
+      this.onSearchBy();
+      this.lockPrompt = true;
+      this.displayResult = true;
+      this.loseFocus();
+    }
   }
 }

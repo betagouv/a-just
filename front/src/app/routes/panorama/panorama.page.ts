@@ -36,6 +36,7 @@ import {
 import { BackupInterface } from '../../interfaces/backup';
 import { CommonModule } from '@angular/common';
 import { ActivitiesToCompleteComponent } from './activities-to-complete/activities-to-complete.component';
+import { RHActivityInterface } from '../../interfaces/rh-activity';
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -355,6 +356,7 @@ export class PanoramaPage
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         null,
+        null,
         [1, 2, 3]
       )
       .then(({ allPersons, list }) => {
@@ -425,16 +427,40 @@ export class PanoramaPage
       // @ts-ignore
       if (hr.indisponibilities.length > 0) {
         // @ts-ignore
-        const list = hr.indisponibilities.filter(
-          (elem) =>
-            (today(elem.dateStart).getTime() >= fifteenDaysBefore.getTime() &&
-              today(elem.dateStart).getTime() <= fifteenDaysLater.getTime()) ||
-            (elem.dateStop !== null &&
-              today(elem.dateStop).getTime() >= fifteenDaysBefore.getTime() &&
-              today(elem.dateStop).getTime() <= fifteenDaysLater.getTime())
+        const list = hr.indisponibilities.filter((elem) => {
+          const dateStart = today(elem.dateStart).getTime();
+          const dateStop = elem.dateStop
+            ? today(elem.dateStop).getTime()
+            : null;
+
+          return (
+            (dateStart >= fifteenDaysBefore.getTime() &&
+              dateStart <= fifteenDaysLater.getTime()) ||
+            (dateStop !== null &&
+              dateStop >= fifteenDaysBefore.getTime() &&
+              dateStop <= fifteenDaysLater.getTime())
+          );
+        });
+
+        const finalList = list.reduce(
+          (elem: RHActivityInterface | null, current) => {
+            const currentDiff = Math.abs(
+              today(current.dateStart).getTime() - today().getTime()
+            );
+            const elemDiff = elem
+              ? Math.abs(today(elem.dateStart).getTime() - today().getTime())
+              : Infinity;
+
+            return currentDiff < elemDiff ? current : elem;
+          },
+          null
         );
-        if (list.length && !this.listUnavailabilities.includes(hr)) {
-          this.listUnavailabilities.push({ ...hr, indisponibilities: list });
+
+        if (finalList && !this.listUnavailabilities.includes(hr)) {
+          this.listUnavailabilities.push({
+            ...hr,
+            indisponibilities: [finalList],
+          });
         }
       }
 

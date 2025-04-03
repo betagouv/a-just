@@ -1,5 +1,5 @@
 import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
-import { isSameMonthAndYear, month, nbWorkingDays, workingDay } from './date'
+import { isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPerson } from './human-resource'
@@ -276,10 +276,18 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
 
   if (activitesEnd.length) {
     const lastActivities = activitesEnd[activitesEnd.length - 1]
-    if (lastActivities.stock !== null && isSameMonthAndYear(lastActivities.periode, endCs)) {
-      lastStockCs = lastActivities.stock
-      totalInCs = lastActivities.entrees
-      totalOutCs = lastActivities.sorties
+    if (isSameMonthAndYear(lastActivities.periode, endCs)) {
+      if(lastActivities.stock !== null) {
+        lastStockCs = lastActivities.stock
+      }
+
+      if(lastActivities.entrees !== null) {
+        totalInCs = lastActivities.entrees
+      }
+
+      if(lastActivities.sorties !== null) {
+        totalOutCs = lastActivities.sorties
+      }
     }
   }
 
@@ -321,6 +329,7 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
         if(lastActivities.stock !== null) {
           lastStockBf = lastActivities.stock
         }
+
         if(lastActivities.entrees !== null) {
           totalInBf = lastActivities.entrees
         }
@@ -331,6 +340,7 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
       }
     }
   }
+
   return {
     meanOutCs,
     etpMagCs,
@@ -422,7 +432,7 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     })
   })
 
-  let now = new Date(dateStart)
+  let now = today(dateStart)
   let nbDay = 0
   let nbDaysGone = 0
   do {
@@ -434,6 +444,7 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     if (workingDay(now)) {
       let sumByInd = 0
       if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
+      if (hr.dateStart && hr.dateStart.getTime() >= dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
       nbDay++
 
       let etp = null

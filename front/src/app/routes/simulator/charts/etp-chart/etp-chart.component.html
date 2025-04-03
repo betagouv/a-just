@@ -90,35 +90,37 @@
   </div>
 </div>
 <div class="right-side">
-  <aj-legend-label [title]="'projectedMag'" [label]="'Siège (projeté)'" [dotColor]="'#e07dd8'" [bgColor]="'#fdc0f8'"
-    [disabledEl]="!canViewMagistrat" [ngClass]="{
+  <aj-legend-label *ngIf="!whiteSimulator || categorySelected === 'MAGISTRAT'" [title]="'projectedMag'"
+    [label]="'Siège (projeté)'" [dotColor]="'#e07dd8'" [bgColor]="'#fdc0f8'" [disabledEl]="!canViewMagistrat" [ngClass]="{
       'disabled-label': !canViewMagistrat
     }" (value)="display($event)"></aj-legend-label>
 
-  <aj-legend-label [title]="'simulatedMag'" [label]="'Siège (simulé)'" [dotColor]="'#fdc0f8'" [bgColor]="'#e07dd8'"
-    (value)="display($event)" [disabledEl]="
+  <aj-legend-label *ngIf="!whiteSimulator || categorySelected === 'MAGISTRAT'" [title]="'simulatedMag'"
+    [label]="'Siège (simulé)'" [dotColor]="'#fdc0f8'" [bgColor]="'#e07dd8'" (value)="display($event)" [disabledEl]="
       !canViewMagistrat || categorySelected !== 'MAGISTRAT' ? true : false
     " [ngClass]="{
       'disabled-label': !canViewMagistrat || categorySelected !== 'MAGISTRAT'
     }"></aj-legend-label>
   <div class="space"></div>
-  <aj-legend-label [title]="'projectedGref'" [label]="'Greffe (projeté)'" [dotColor]="'#f083a0'" [bgColor]="'#ffcade'"
-    (value)="display($event)" [disabledEl]="!canViewGreffier" [ngClass]="{
+
+  <aj-legend-label *ngIf="!whiteSimulator || categorySelected === 'GREFFE'" [title]="'projectedGref'"
+    [label]="'Greffe (projeté)'" [dotColor]="'#f083a0'" [bgColor]="'#ffcade'" (value)="display($event)"
+    [disabledEl]="!canViewGreffier" [ngClass]="{
       'disabled-label': !canViewGreffier
     }"></aj-legend-label>
 
-  <aj-legend-label [title]="'simulatedGref'" [label]="'Greffe (simulé)'" [dotColor]="'#ffcade'" [bgColor]="'#f083a0'"
-    (value)="display($event)" [disabledEl]="
+  <aj-legend-label *ngIf="!whiteSimulator || categorySelected === 'GREFFE'" [title]="'simulatedGref'"
+    [label]="'Greffe (simulé)'" [dotColor]="'#ffcade'" [bgColor]="'#f083a0'" (value)="display($event)" [disabledEl]="
       !canViewGreffier || categorySelected !== 'GREFFE' ? true : false
     " [ngClass]="{
       'disabled-label': !canViewGreffier || categorySelected !== 'GREFFE'
     }"></aj-legend-label>
 
-  <div class="space"></div>
-  <aj-legend-label [title]="'projectedCont'" [label]="'EAM (projeté)'" [dotColor]="'#fdbfb7'" [bgColor]="'#fcd7d3'"
-    (value)="display($event)" [disabledEl]="!canViewContractuel" [ngClass]="{
+  <div class="space" *ngIf="canViewContractuel"></div>
+  <aj-legend-label *ngIf="canViewContractuel" [title]="'projectedCont'" [label]="'EAM (projeté)'" [dotColor]="'#fdbfb7'"
+    [bgColor]="'#fcd7d3'" (value)="display($event)" [disabledEl]="!canViewContractuel" [ngClass]="{
       'disabled-label': !canViewContractuel }"></aj-legend-label>
 
-  <aj-legend-label [title]="'simulatedCont'" [label]="'EAM (simulé)'" [dotColor]="'#fcd7d3'" [bgColor]="'#eba89f'"
-    (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
+  <aj-legend-label *ngIf="canViewContractuel" [title]="'simulatedCont'" [label]="'EAM (simulé)'" [dotColor]="'#fcd7d3'"
+    [bgColor]="'#eba89f'" (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
 </div>

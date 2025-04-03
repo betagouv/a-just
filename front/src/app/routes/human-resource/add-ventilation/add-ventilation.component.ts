@@ -42,6 +42,7 @@ import {
 import {
   findRealValueCustom,
   isDateBiggerThan,
+  setTimeToMidDay,
   today,
 } from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
@@ -131,6 +132,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Indice de la situation édité
    */
   @Input() indexSituation: number | null = null;
+  /**
+   * Fonction pour mettre à jour l'ETP (lors de la création d'un nouvel agent)
+   */
+  @Input() setValueEtp: (val: number) => void = () => {};
   /**
    * Event lors de la sauvegarde
    */
@@ -278,6 +283,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             );
           }
           this.form.get('etp')?.setValue(value, { emitEvent: false });
+          this.setValueEtp(value);
+        } else {
+          // Remise à 0 de l'ETP si la valeur est null (ex: user efface la valeur précédement entrée) pour remtrre l'ETP du composant big-et-preview à null
+          this.setValueEtp(0);
         }
       })
     );
@@ -395,8 +404,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         return;
       } else if (totalAffected < 100) {
         this.appService.alert.next({
-          title: 'Attention',
-          text: `Cet agent n’est affecté qu'à ${totalAffected} %, ce qui signifie qu’il a encore du temps de travail disponible. Même en cas de temps partiel, l’ensemble de ses activités doit constituer 100% de son temps de travail.<br/><br/>Il est également essentiel que, même lorsque l’agent est totalement indisponible (en cas de congé maladie ou maternité/paternité/adoption par exemple), il soit affecté aux activités qu’il aurait eu à traiter s’il avait été présent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
+          title: 'La ventilation de cet agent est incomplète',
+          text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${
+            100 - totalAffected
+          }% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           callback: () => {
             this.onSave(true, saveETPT0);
           },
@@ -431,7 +442,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       alert("Vous devez saisir une date d'arrivée !");
       return;
     }
-    activitiesStartDate = today(activitiesStartDate);
+    activitiesStartDate =
+      setTimeToMidDay(today(activitiesStartDate)) || today(activitiesStartDate);
     if (this.human && this.human.dateEnd && activitiesStartDate) {
       const dateEnd = new Date(this.human.dateEnd);
 
@@ -504,16 +516,19 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         );
         return;
       } else {
-        if (!saveETPT0) {
+        alert(
+          "L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie."
+        );
+        /*if (!saveETPT0) {
           this.appService.alert.next({
             title: 'Attention',
             text: `L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie.`,
             callback: () => {
               this.onSave(withoutPercentControl, true);
             },
-          });
-          return;
-        }
+          });*/
+        return;
+        //}
       }
     }
 

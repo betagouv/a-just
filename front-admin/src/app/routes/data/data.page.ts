@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { orderBy, sortBy } from 'lodash';
+import { orderBy } from 'lodash';
 import * as FileSaver from 'file-saver';
 import * as xlsx from 'xlsx';
 import { JuridictionInterface } from '../../interfaces/juridiction';
@@ -600,57 +600,39 @@ export class DataPage {
     this.sendAll = true;
 
     if (!file) {
-      alert('Vous devez saisir une fichier !');
+      alert('Vous devez importer une fichier !');
       return;
     }
 
     const fileToString = await exportFileToString(file);
+    const splittedFile = fileToString.split('\n');
+    const header = splittedFile[0];
+    const TJ_TO_IMPORT: any = [];
+    let index = 0;
 
-    if (!force) {
-      if (!confirm('Vérifier avant import ?'))
-        this.onSendAllActivity(form, true);
-      else {
-        this.importService
-          .checkDataBeforeImportAll({ file: fileToString })
-          .then((response: any) => {
-            const tmp = response.data.to_warn;
-            let to_warn = [];
-            to_warn = sortBy(tmp, 'hr_backup_label');
+    this.HRBackupList.map((tj) => {
+      const elem = splittedFile.filter((line) => line.includes(tj.label));
 
-            if (to_warn.length === 0) {
-              if (confirm('Aucun Problème détecté ! Importer ?')) {
-                this.importService
-                  .importAllActivities({ file: fileToString })
-                  .then(() => {
-                    alert('OK !');
-                    form.reset();
-                    this.onCancelDataImport();
-                  });
-              }
-            } else {
-              const tmp = to_warn.map((elem: any) => {
-                return {
-                  ...elem,
-                  lastPeriode: getMonthAndYear(elem.lastPeriode),
-                  newPeriode: getMonthAndYear(elem.newPeriode),
-                };
-              });
-              to_warn = tmp;
-              alert('Problèmes détectés !');
-              this.dataIssues = to_warn;
-              this.printDataImportIssues = true;
-            }
-          })
-          .catch((err) => console.log('Error:', err));
+      if (elem.length > 0) {
+        elem.unshift(header);
+        const file = elem.join('\n');
+        TJ_TO_IMPORT.push({ tj: { id: tj.id, label: tj.label }, data: file });
       }
-    } else {
-      this.importService
-        .importAllActivities({ file: fileToString })
-        .then(() => {
-          alert('OK !');
-          form.reset();
-          this.onCancelDataImport();
+    });
+    console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT.length);
+    setInterval(() => {
+      if (index < TJ_TO_IMPORT.length) {
+        this.importService.importActivities({
+          file: TJ_TO_IMPORT[index].data,
+          backupId: TJ_TO_IMPORT[index].tj.id,
         });
+        console.log('Importing ' + TJ_TO_IMPORT[index].tj.label + '...');
+      }
+      index++;
+    }, 60 * 1000);
+    if (index === this.HRBackupList.length) {
+      form.reset();
+      this.onCancelDataImport();
     }
   }
 

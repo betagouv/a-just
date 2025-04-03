@@ -5,6 +5,18 @@
       <aj-back-button [routerLink]="backUrl" [fragment]="backAnchor" />
     </div>
 
+    <div class="right-panel">
+      <h2>Ressources :</h2>
+      <div class="elements">
+        <div class="element" (click)="downloadAsset()">
+          <p>
+            La nomenclature
+          </p>
+          <mat-icon inline=true>open_in_new</mat-icon>
+        </div>
+      </div>
+    </div>
+
     <button class="primary light small no-print" (click)="onExport()">
       <mat-icon>save</mat-icon>
       Exporter en PDF
@@ -12,7 +24,8 @@
   </div>
 
   <div class="disk-etp">
-    <big-etp-preview [etp]="etp - indisponibility" [realETP]="etp" [indisponibility]="indisponibility">
+    <big-etp-preview [etp]="getEtpValue() ? getEtpValue() - indisponibility : 0"
+      [realETP]="getEtpValue() ? getEtpValue() : 0" [indisponibility]="indisponibility">
     </big-etp-preview>
   </div>
 </div>

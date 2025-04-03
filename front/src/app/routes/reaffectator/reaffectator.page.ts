@@ -282,7 +282,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Contentieux avec les calculs
    */
-  filterSelected: ContentieuReferentielCalculateInterface | null = null;
+  filterSelected: {
+    filter: ContentieuReferentielCalculateInterface | null;
+    up: boolean | null;
+  } = { filter: null, up: null };
   /**
    * Position de la dernière recherche
    */
@@ -590,7 +593,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * Trie de la liste retournée
    * @param onSearch
    */
-  orderListWithFiltersParams(onSearch: boolean = true) {
+  orderListWithFiltersParams(
+    onSearch: boolean = true,
+    up: boolean | null = null
+  ) {
     this.listFormated = this.listFormated.map((list) => {
       list.hrFiltered = orderBy(list.hrFiltered, ['fonction.rank'], ['asc']);
 
@@ -599,11 +605,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           list.hrFiltered,
           (h) => {
             const acti = (h.orignalCurrentActivities || []).find(
-              (a) => a.contentieux?.id === this.filterSelected?.id
+              (a) => a.contentieux?.id === this.filterSelected.filter?.id
             );
             return acti ? acti.percent || 0 : 0;
           },
-          ['desc']
+          [up ? 'asc' : 'desc']
         );
       }
 
@@ -748,13 +754,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param ref
    */
   onFilterBy(ref: ContentieuReferentielCalculateInterface) {
-    if (!this.filterSelected || this.filterSelected.id !== ref.id) {
-      this.filterSelected = ref;
+    if (
+      !this.filterSelected.filter ||
+      this.filterSelected.filter?.id !== ref.id ||
+      this.filterSelected.up === true
+    ) {
+      this.filterSelected.filter = ref;
+      this.filterSelected.up = this.filterSelected.up === null ? true : false;
     } else {
-      this.filterSelected = null;
+      this.filterSelected.filter = null;
+      this.filterSelected.up = null;
     }
 
-    this.orderListWithFiltersParams();
+    this.orderListWithFiltersParams(false, this.filterSelected.up);
   }
 
   /**

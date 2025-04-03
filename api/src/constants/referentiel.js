@@ -10,7 +10,13 @@ export const CET_LABEL = "Compte épargne temps"; //'Décharge syndicale' //'CON
 export const ABSENTEISME_LABELS = [
   "Congé maladie ordinaire",
   "Congé maternité/paternité/adoption",
+  "Autre absentéisme"
 ];
+
+/**
+ * Categorie utilisée dans l'extracteur qui ne comptabilise ni de l'action 99 ni de l'absentéisme
+ */
+export const DELEGATION_TJ = "Délégation TJ";
 
 /**
  * Conversion d'un nom de référentiel en index de position
@@ -100,27 +106,25 @@ export function referentielCAMappingName(name) {
     case "Contentieux de la famille":
       return "Famille";
     case "Contentieux de la protection":
-      return "Protection";
+      return "JCP";
     case "Contentieux civil":
-      return "Civil Ns";
-    case "Contentieux de la protection":
-      return "Civil Ns";
+      return "Civil NS";
     case "Contentieux commercial":
-      return "Commercial";
+      return "Comm.";
     case "Attributions du PP":
       return "PP";
     case "Contentieux des mineurs":
       return "Mineurs";
     case "Instruction et entraide":
-      return "Instruction / Entraide";
+      return "CHINS";
     case "Correctionnel":
-      return "Correctionnel";
+      return "CHAC";
     case "Contentieux criminel":
       return "Crim.";
     case "Application des peines":
-      return "Application des peines";
+      return "CHAP";
     case "Autres activités":
-      return "Autres";
+      return "Autres activités";
     case "Contentieux locaux spécifiques":
       return "CTX SPÉ.";
   }
@@ -216,15 +220,15 @@ export function referentielCAMappingColor(name) {
       return "#1664c0";
     case "Contentieux civil non spécialisé":
       return "#283592";
-    case "Attributions du PP":
+    case "PP":
       return "#4526a0";
     case "Contentieux des mineurs":
       return "#691a9a";
-    case "Correctionnel": //CHAC
+    case "Correctionnel":
       return "#c52928";
     case "Instruction et entraide": //CHINS
       return "#d74215";
-    case "Application des peines": //CHAP
+    case "Application des peines":
       return "#ef6c00";
     case "Contentieux criminel":
       return "#ef6c00";
