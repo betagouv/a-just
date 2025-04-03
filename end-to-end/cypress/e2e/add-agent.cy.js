@@ -8,16 +8,13 @@ describe("Ajout d'un agent", () => {
 
   
   it ('Check that we can access the add agent page', () => {
-    cy.get('#wrapper-contener')
-      .get('.header')
-      .get('.top-header')
-      .get('.actions')
-      .find('button.add-collaborator')
+    cy.get('button.add-collaborator')
+      .should('be.visible')
       .should('contain.text', 'Ajouter un agent')
       .click()
-    cy.wait(10000)
-      .location('pathname')
-      .should('contain', '/resource-humaine')
+
+    cy.location('pathname', { timeout: 10000 })
+      .should('include', '/resource-humaine');
   })
 
   it('Check that we can cancel', () => {
