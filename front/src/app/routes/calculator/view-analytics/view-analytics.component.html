@@ -109,8 +109,8 @@
                         class="text-center" [isWhite]="true"></aj-graphs-numbers></ng-template>
                 <ng-template [ngIf]="showDetailStock">
                     <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
-                        [maxValue]="stockMax" type="stocks" (updateMax)="onUpdateMax($event)"
-                        [showLines]="true"></aj-graphs-verticals-lines>
+                        [values]="[datasFilted[index].lastStock || 0]" [maxValue]="stockMax" type="stocks"
+                        (updateMax)="onUpdateMax($event)" [showLines]="true"></aj-graphs-verticals-lines>
                     <aj-graphs-numbers [referentielName]="ref.label"
                         [title]="datasFilted[index].lastStockBf === null ? 'N/R' : '' + (datasFilted[index].lastStockBf || 0)"
                         class="text-center no-border-bottom"></aj-graphs-numbers>

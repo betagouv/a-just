@@ -31,13 +31,11 @@ import { HumanResourceService } from '../../../services/human-resource/human-res
 import { AppService } from '../../../services/app/app.service';
 import { CalculatriceService } from '../../../services/calculatrice/calculatrice.service';
 import { ServerService } from '../../../services/http-server/server.service';
-import { UserService } from '../../../services/user/user.service';
 import { fixDecimal } from '../../../utils/numbers';
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_VENTILATEUR_PERSON,
   IMPORT_ETP_TEMPLATE,
-  IMPORT_ETP_TEMPLATE_CA,
 } from '../../../constants/documentation';
 import {
   findRealValueCustom,
@@ -135,7 +133,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   /**
    * Fonction pour mettre à jour l'ETP (lors de la création d'un nouvel agent)
    */
-  @Input() setValueEtp: (val: number) => void = () => {};
+  @Input() setValueEtp: (val: number | null) => void = () => {};
   /**
    * Event lors de la sauvegarde
    */
@@ -227,7 +225,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private appService: AppService,
     private calculatriceService: CalculatriceService,
     private serverService: ServerService,
-    private userService: UserService,
     private excelService: ExcelService
   ) {
     super();
@@ -270,6 +267,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     this.watch(
       this.form.get('etp')?.valueChanges.subscribe((value) => {
+        console.log('value', value);
         if (value) {
           if (value > 1) value = 1;
           else if (value < 0) value = 0;
@@ -285,7 +283,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           this.setValueEtp(value);
         } else {
           // Remise à 0 de l'ETP si la valeur est null (ex: user efface la valeur précédement entrée) pour remtrre l'ETP du composant big-et-preview à null
-          this.setValueEtp(0);
+          this.setValueEtp(value);
         }
       })
     );
@@ -319,7 +317,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.lastDateStart ? this.lastDateStart : undefined
     );
 
-    let etp = (situation && situation.etp) || null;
+    let etp = situation && situation.etp !== undefined ? situation.etp : null;
     if (etp === this.ETP_NEED_TO_BE_UPDATED) {
       etp = 0;
     }
@@ -500,39 +498,43 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
+    const etp = this.form.get('etp')?.value;
+    if (etp === null) {
+      alert('Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)');
+      return;
+    }
+
     const nbSituationSetted = (this.human.situations || []).length;
-    if (this.form.get('etp')?.value === 0) {
+    if (etp === 0) {
       if (nbSituationSetted === 0) {
         alert(
           'Vous devez saisir un temps  administratif de travail supérieur à 0 pour créer cette fiche !'
         );
         return;
       } else {
-        alert(
-          "L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie."
-        );
-        /*if (!saveETPT0) {
+        if (!saveETPT0) {
           this.appService.alert.next({
-            title: 'Attention',
-            text: `L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie.`,
+            title: 'L’ETPT saisi est de 0 :',
+            text: `- si cet agent fait toujours partie de vos effectifs mais est absent temporairement, indiquez son temps de travail théorique et enregistrez un motif d’indisponibilité<br/><br/>- s’il a quitté la juridiction, renseignez une date de sortie.<br/><br/>L’ETPT à 0 est réservé à quelques cas particuliers où l’agent continue à faire  administrativement partie de la juridiction sans décompter d’ETPT (ex. congé parental supérieur à 6 mois, CLD, détachement… pour plus de détails cliquez <a href="https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/ventiler-ses-effectifs/focus-sur-les-changements-de-situation-administrative/indisponibilites-particulieres" target="_blank">ici</a>)`,
+            secondaryText: 'Je modifie',
+            callbackSecondary: () => {},
+            okText: 'Je confirme',
             callback: () => {
               this.onSave(withoutPercentControl, true);
             },
-          });*/
-        return;
-        //}
+          });
+          return;
+        }
       }
     }
 
     const situations = this.generateAllNewSituations(
       this.updatedReferentiels,
       activitiesStartDate,
-      this.form.value,
+      { ...this.form.value, etp },
       cat,
       fonct
     );
-
-    console.log(this.updatedReferentiels, situations);
 
     if (this.human) {
       if (
@@ -584,17 +586,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           });
       });
 
-    console.log(
-      'activities',
-      JSON.stringify(
-        activities.map((a) => ({
-          percent: a.percent,
-          cid: a.contentieux.id,
-          clabel: a.contentieux.label,
-        }))
-      )
-    );
-
     // find if situation is in same date
     const isSameDate = situations.findIndex((s) => {
       const day = today(s.dateStart);
@@ -611,8 +602,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     };
 
     if (isSameDate !== -1) {
-      console.log(situations[isSameDate]);
-
       situations[isSameDate] = {
         ...situations[isSameDate],
         ...options,
@@ -635,8 +624,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         dateStart: activitiesStartDate,
       });
     }
-
-    console.log(isSameDate, situations, this.editId);
 
     return situations;
   }

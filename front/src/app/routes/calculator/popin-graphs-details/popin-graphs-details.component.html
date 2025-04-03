@@ -32,6 +32,9 @@
 <ng-template #titleTemplate>
     <div class="title-popin">
         <img src="/assets/icons/icon-graph.svg">
-        <p>Evolution des {{calculatorService.showGraphDetailTypeLineTitle}}</p>
+        <p>Evolution des
+            {{calculatorService.showGraphDetailTypeLineTitle}}{{calculatorService.showGraphDetailTypeLineTitle ===
+            'Stock' || calculatorService.showGraphDetailTypeLineTitle ===
+            'Temps moyen' ? 's' : ''}}</p>
     </div>
 </ng-template>
