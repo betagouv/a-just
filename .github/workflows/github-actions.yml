@@ -28,11 +28,3 @@ jobs:
         with:
           name: cypress-video
           path: ./end-to-end/cypress/videos
-
-      - name: List all files
-        run: ls -laR
-
-      - name: Chercher les specs Cypress
-        run: find . -name "*.cy.ts"
-
-
