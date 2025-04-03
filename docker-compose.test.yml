@@ -55,7 +55,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: dockerfile-api-test
+      dockerfile: dockerfile_api_test
     networks:
       ajust_network:
         ipv4_address: 173.0.0.20

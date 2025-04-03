@@ -110,6 +110,19 @@ module.exports = function () {
         assert.strictEqual(error.response.status, 400)
       }
     })
+    it('Bad email, not @justice.gouv or @*.gouv.fr should return 400', async () => {
+      try {
+        await axios.post(`${config.serverUrl}/users/create-account`, {
+          email: 'test@mail.fr',
+          password: USER_TEST_PASSWORD,
+          firstName: USER_TEST_FIRSTNAME,
+          lastName: USER_TEST_LASTNAME,
+          fonction: USER_TEST_FONCTION,
+        })
+      } catch (error) {
+        assert.strictEqual(error.response.status, 400)
+      }
+    })
     it('Sign up - Missing email and password, should return 400', async () => {
       try {
         await axios.post(`${config.serverUrl}/users/create-account`, {
