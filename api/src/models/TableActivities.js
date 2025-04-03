@@ -536,26 +536,28 @@ export default (sequelizeInstance, Model) => {
               date,
               hrBackupId
             );
+
+            
             if (previousStockValue !== null) {
+              // Si il y a un stock sur le mois précédent:
+              // Si c'est une donnée calculé -> stock N calculé = stock N-1 ajusté + entrees N ajusté - sorties N ajusté(où N = mois en cours)
+              // Sinon -> stock N calculé = stock N logiciel (original) + (entrees N ajusté - entrées N logiciel) - (sorties N ajusté - sorties N logiciel)
               if (
                 findAllChild[i].entrees !== null ||
                 findAllChild[i].sorties !== null ||
                 previousStockValue.type === "calculate"
               ) {
-                const entrees = preformatActivitiesArray(
-                  [findAllChild[i]],
-                  ["entrees", "original_entrees"]
-                );
-                const sorties = preformatActivitiesArray(
-                  [findAllChild[i]],
-                  ["sorties", "original_sorties"]
-                );
+                const entrees = preformatActivitiesArray([findAllChild[i]],["entrees", "original_entrees"]);
+                const sorties = preformatActivitiesArray([findAllChild[i]],["sorties", "original_sorties"]);
 
-                const stock = previousStockValue.type === "calculate" ? previousStockValue.stock : preformatActivitiesArray(
-                  [findAllChild[i]],
-                  ["original_stock"]
-                );
-                currentStock = stock + (entrees || 0) - (sorties || 0);
+                if (previousStockValue.type === "calculate") {
+                  const stock = previousStockValue.stock ?? 0
+                  currentStock = (stock ?? 0) + (entrees ?? 0) - (sorties ?? 0);
+                }
+                else {
+                  const stock = preformatActivitiesArray([findAllChild[i]],["original_stock"])
+                  currentStock = (stock ?? 0) + ( entrees - (findAllChild[i].original_entrees ?? 0)) - (sorties - (findAllChild[i].original_sorties ?? 0));
+                }
               } else {
                 currentStock = findAllChild[i].original_stock;
               }

@@ -438,6 +438,50 @@ export class PopinEditActivitiesComponent
   }
 
   /**
+   * Fonction pour obtenir la valeur finale à utiliser selon le type ('entrees' ou 'sorties'
+   * @param type
+   * @returns
+   */
+  getValueInOrOut(
+    type: 'entrees' | 'sorties',
+    contentieux: ContentieuReferentielInterface
+  ) {
+    const key = `${contentieux.id}-${type}`;
+    const update = this.updates[key];
+
+    // Vérifie si la qualité de la donnée est de type "A vérifier"
+    const isToVerify =
+      type === 'entrees'
+        ? contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY
+        : contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY;
+
+    // Récupère la valeur d'origine (celle du logiciel avant saisie), selon le type
+    const originalValue =
+      type === 'entrees' ? contentieux.originalIn : contentieux.originalOut;
+    // Récupère la valeur actuelle de la donnée (modifée auparavant ou null)
+    const currentValue = type === 'entrees' ? contentieux.in : contentieux.out;
+
+    // Si une mise à jour est présente ET que sa valeur est différente de null
+    // ET que soit la donnée n'est pas "à vérifier", soit elle l'est mais la saisie diffère de la valeur originale,
+    // alors on considère la saisie utilisateur comme valable
+    if (
+      update &&
+      update.value !== null &&
+      (!isToVerify || (isToVerify && update.value !== originalValue))
+    ) {
+      return update.value;
+    }
+
+    // Sinon, si la valeur saisie est explicitement null (donc supprimée), ou qu'il n'y a pas de valeur modifié auparavant
+    // alors on retourne la valeur d'origine du logiciel (ou 0 si elle est elle aussi absente)
+    if ((update && update.value === null) || currentValue === null) {
+      return originalValue ?? 0;
+    }
+
+    return currentValue ?? 0;
+  }
+
+  /**
    * Mise à jours d'une donnée
    * @param newValue
    * @param nodeName
@@ -573,91 +617,56 @@ export class PopinEditActivitiesComponent
         this.updates[`${contentieux.id}-sorties`])
     ) {
       updateTotal = true;
-      let entreeValue = 0;
-      let sortieValue = 0;
-      let stockValue = 0;
 
-      if (
-        this.updates[`${contentieux.id}-entrees`] &&
-        this.updates[`${contentieux.id}-entrees`].value !== null &&
-        (contentieux.valueQualityIn !== VALUE_QUALITY_TO_VERIFY ||
-          (contentieux.valueQualityIn === VALUE_QUALITY_TO_VERIFY &&
-            this.updates[`${contentieux.id}-entrees`].value !==
-              contentieux.originalIn))
-      )
-        entreeValue = this.updates[`${contentieux.id}-entrees`].value;
-      else {
-        if (
-          (this.updates[`${contentieux.id}-entrees`] &&
-            this.updates[`${contentieux.id}-entrees`].value === null) ||
-          contentieux.in === null
-        ) {
-          entreeValue = contentieux.originalIn ?? 0;
-        } else entreeValue = contentieux.in ?? 0;
-      }
+      const entreeValue = this.getValueInOrOut('entrees', contentieux);
+      const sortieValue = this.getValueInOrOut('sorties', contentieux);
+      const stockValue = contentieux.stock ?? contentieux.originalStock ?? 0;
 
-      if (
-        this.updates[`${contentieux.id}-sorties`] &&
-        this.updates[`${contentieux.id}-sorties`].value !== null &&
-        (contentieux.valueQualityOut !== VALUE_QUALITY_TO_VERIFY ||
-          (contentieux.valueQualityOut === VALUE_QUALITY_TO_VERIFY &&
-            this.updates[`${contentieux.id}-sorties`].value !==
-              contentieux.originalOut))
-      )
-        sortieValue = this.updates[`${contentieux.id}-sorties`].value;
-      else {
-        if (
-          (this.updates[`${contentieux.id}-sorties`] &&
-            this.updates[`${contentieux.id}-sorties`].value === null) ||
-          contentieux.out === null
-        ) {
-          sortieValue = contentieux.originalOut ?? 0;
-        } else sortieValue = contentieux.out ?? 0;
-      }
+      const originalEntrees = contentieux.originalIn ?? 0;
+      const originalSorties = contentieux.originalOut ?? 0;
 
-      if (
-        this.updates[`${contentieux.id}-stock`] &&
-        this.updates[`${contentieux.id}-stock`].value === null
-      )
-        stockValue = contentieux.originalStock ?? 0;
-      else stockValue = contentieux.originalStock ?? contentieux.stock ?? 0; //Utile si pas de stock le mois n-1 (resp = null dans la suite)
+      let newStock = 0;
+
       await this.getLastMonthStock(contentieux.id).then((resp) => {
-        const { value, isOriginalStock } = resp;
-        let newStock: number | null = null;
-        if (isOriginalStock === false) {
-          newStock = (value ?? stockValue ?? 0) + entreeValue - sortieValue;
+        const lastStock = resp.value;
+
+        if (lastStock !== null && !resp.isOriginalStock) {
+          newStock = lastStock + entreeValue - sortieValue;
         } else {
-          newStock = (stockValue ?? 0) + entreeValue - sortieValue;
+          newStock =
+            stockValue +
+            (entreeValue - originalEntrees) -
+            (sortieValue - originalSorties);
         }
-
-        // condition spécifique pour envoyer une donnée au back dans le cas suivant: Entrée, Sortie et Stock ajusté puis supression du stock ajusté et ensuite suppression de l'entrée et/ou sortie ajusté.
-        // Sans cette condition, la suppression du stock n'est pas prise en compte car la donnée est recalculé (suite à la supression de l'entrée et/ou sortie) et on indique pas au back que l'on souhaite supprimer la valeur précédement entrés
-        // (plus bas on met sendBack à false car uopdate[stock].value !== null)
-        const checkIfSendBack =
-          this.updates[`${contentieux.id}-stock`] &&
-          this.updates[`${contentieux.id}-stock`].calculated &&
-          (this.updates[`${contentieux.id}-entrees`] ||
-            this.updates[`${contentieux.id}-sorties`])
-            ? true
-            : false;
-
-        this.updates[`${contentieux.id}-stock`] = {
-          value: newStock !== null ? (newStock > 0 ? newStock : 0) : null,
-          node: 'stock',
-          contentieux,
-          calculated: true,
-          setted: false,
-          // Envoie au back si suppression d'une valeur de stock précédement ajusté
-          sendBack:
-            this.updates[`${contentieux.id}-stock`] &&
-            (this.updates[`${contentieux.id}-stock`].value === null ||
-              checkIfSendBack)
-              ? true
-              : false,
-        };
-        stock.value =
-          newStock !== null ? (newStock > 0 ? newStock.toString() : '0') : '-';
       });
+
+      // condition spécifique pour envoyer une donnée au back dans le cas suivant: Entrée, Sortie et Stock ajusté puis supression du stock ajusté et ensuite suppression de l'entrée et/ou sortie ajusté.
+      // Sans cette condition, la suppression du stock n'est pas prise en compte car la donnée est recalculé (suite à la supression de l'entrée et/ou sortie) et on indique pas au back que l'on souhaite supprimer la valeur précédement entrés
+      // (plus bas on met sendBack à false car uopdate[stock].value !== null)
+      const checkIfSendBack =
+        this.updates[`${contentieux.id}-stock`] &&
+        this.updates[`${contentieux.id}-stock`].calculated &&
+        (this.updates[`${contentieux.id}-entrees`] ||
+          this.updates[`${contentieux.id}-sorties`])
+          ? true
+          : false;
+
+      this.updates[`${contentieux.id}-stock`] = {
+        value: newStock !== null ? (newStock > 0 ? newStock : 0) : null,
+        node: 'stock',
+        contentieux,
+        calculated: true,
+        setted: false,
+        // Envoie au back si suppression d'une valeur de stock précédement ajusté
+        sendBack:
+          this.updates[`${contentieux.id}-stock`] &&
+          (this.updates[`${contentieux.id}-stock`].value === null ||
+            checkIfSendBack)
+            ? true
+            : false,
+      };
+      stock.value =
+        newStock !== null ? (newStock > 0 ? newStock.toString() : '0') : '-';
     }
     updateTotal && this.updateTotal();
   }
