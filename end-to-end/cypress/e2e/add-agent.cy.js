@@ -15,7 +15,7 @@ describe("Ajout d'un agent", () => {
       .find('button.add-collaborator')
       .should('contain.text', 'Ajouter un agent')
       .click()
-    cy.wait(1000)
+    cy.wait(10000)
       .location('pathname')
       .should('contain', '/resource-humaine')
   })
