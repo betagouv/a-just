@@ -20,6 +20,7 @@ export default defineConfig({
       : "http://localhost:4200",
     supportFile: "support/e2e.ts",
     video: true,
+    videosFolder: "cypress/videos",
     defaultCommandTimeout: 10000,
   },
 });

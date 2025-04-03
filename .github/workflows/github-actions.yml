@@ -29,5 +29,10 @@ jobs:
           name: cypress-video
           path: ./cypress/videos
 
-      - name: List all Cypress files
-        run: ls -laR cypress
+      - name: List all files
+        run: ls -laR
+
+      - name: Chercher les specs Cypress
+        run: find . -name "*.cy.ts"
+
+
