@@ -296,10 +296,10 @@ export default class RouteCalculator extends Route {
             if (activites.length) {
               const acti = activites[0];
               if (acti.entrees !== null && acti.sorties !== null) {
-                list.push({ value: acti.sorties / acti.entrees, date: new Date(dateStart) });
+                list.push({ value: 100 * (acti.sorties / acti.entrees), date: new Date(dateStart) });
               } else if (acti.originalEntrees !== null && acti.originalSorties !== null) {
                 list.push({
-                  value: acti.originalSorties / acti.originalEntrees,
+                  value: 100 * (acti.originalSorties / acti.originalEntrees),
                   date: new Date(dateStart),
                 });
               } else {
