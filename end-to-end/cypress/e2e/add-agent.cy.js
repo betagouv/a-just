@@ -14,9 +14,11 @@ describe("Ajout d'un agent", () => {
       .get('.actions')
       .find('button.add-collaborator')
       .should('contain.text', 'Ajouter un agent')
-      .click()
-      .location('pathname')
-      .should('contain', '/resource-humaine')
+      .click().then(() => {
+        cy.url().should('contain', '/resource-humaine')
+      })
+      // .location('pathname')
+      // .should('contain', '/resource-humaine')
   })
 
   it('Check that we can cancel', () => {
