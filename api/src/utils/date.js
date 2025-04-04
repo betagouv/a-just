@@ -288,14 +288,14 @@ export function nbOfDays (startDate, endDate) {
 export function nbWorkingDays (startDate, endDate) {
   startDate = today(startDate)
   endDate = today(endDate)
-  const start = new Date(startDate)
+  const start = today(startDate)
   let nbOfDay = 0
   do {
     if (workingDay(start)) {
       nbOfDay++
     }
     start.setDate(start.getDate() + 1)
-  } while (start.getTime() <= endDate.getTime())
+  } while (isDateGreaterOrEqual(endDate,start))
   return nbOfDay
 }
 
@@ -390,4 +390,13 @@ export function isDateEqual (date1, date2) {
   const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
 
   return d1 === d2;
+}
+
+/**
+ * Retourne le jour suivant une date
+ */
+export function getNextDay(date) {
+  const nextDay = today(date);
+  nextDay.setDate(date.getDate() + 1);
+  return nextDay;
 }

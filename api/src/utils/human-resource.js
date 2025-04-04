@@ -257,5 +257,9 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
       return false
     })
   }
+
+  if (hr.id===36429 && indisponibilities.length){
+    console.log('date indisp', date,indisponibilities[0].percent)
+  }
   return indisponibilities
 }
