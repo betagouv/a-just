@@ -258,6 +258,7 @@ export class PopinGraphsDetailsComponent
     const mergeTab: { value: number | null; date: Date }[] = [
       ...firstValues.filter((v) => v && v.value !== null),
       ...secondValues.filter((v) => v && v.value !== null),
+      ...middleValues.filter((v) => v && v.value !== null),
     ];
     const mergeTabDate: Date[] = mergeTab.map((v) => this.getMonth(v.date));
     const mergeTabValues: number[] = mergeTab.map((v) => +(v.value || 0));
@@ -271,7 +272,7 @@ export class PopinGraphsDetailsComponent
       }
     }
     if (max) {
-      max *= 1.3;
+      max *= 1.2;
     }
     if (max === 0) {
       max = 1;
@@ -370,7 +371,14 @@ export class PopinGraphsDetailsComponent
             bodyLine.style.padding = '0';
             bodyLine.style.color = '#000';
             bodyLine.style.fontSize = '12px';
-            bodyLine.innerHTML = body.lines[0];
+            if (
+              this.calculatorService.showGraphDetailTypeLineTitle ===
+              'Temps moyen'
+            ) {
+              bodyLine.innerHTML = this.decimalToStringDate(body.lines[0]);
+            } else {
+              bodyLine.innerHTML = body.lines[0];
+            }
 
             bodyContainer.appendChild(imageLine);
             bodyContainer.appendChild(bodyLine);
@@ -425,6 +433,17 @@ export class PopinGraphsDetailsComponent
           ticks: {
             fontSize: 12,
             color: 'rgba(0, 0, 0, 0.70)',
+            callback: (value: any, index: number, values: any[]): any => {
+              // Customize the label format
+              if (
+                this.calculatorService.showGraphDetailTypeLineTitle ===
+                'Temps moyen'
+              ) {
+                return this.decimalToStringDate(value);
+              }
+
+              return value;
+            },
           },
         },
         x: {
