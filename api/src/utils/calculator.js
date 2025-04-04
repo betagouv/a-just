@@ -443,8 +443,8 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     // only working day
     if (workingDay(now)) {
       let sumByInd = 0
-      if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
-      if (hr.dateStart && hr.dateStart.getTime() >= dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
+      if (hr.dateEnd && hr.dateEnd.getTime() < dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
+      if (hr.dateStart && hr.dateStart.getTime() > dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
       nbDay++
 
       let etp = null
@@ -509,8 +509,6 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
         list[lastSituationId].etpt += nbDayBetween * lastEtpAdded
       }
 
-      console.log('added etp by date ',now, etp)
-
       // quick move to the next date
       now = new Date(nextDateFinded)
 
@@ -531,6 +529,8 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     list[property].nbDaysGone = nbDaysGone
     list[property].nbDay = nbDay
   }
+
+
 
   models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
   return list
