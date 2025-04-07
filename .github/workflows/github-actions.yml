@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: npm i
       
+      - name: Ensure download folder exists
+        run: mkdir -p ./end-to-end/cypress/downloads
+        
       - name: Run tests
         run: npm run test
 
@@ -31,7 +34,7 @@ jobs:
       
       - name: Fix permissions for download folder
         run: sudo chmod -R 777 ./end-to-end/cypress/downloads || echo "Folder not found"
-        
+
       - name: Upload downloaded files
         if: always()
         uses: actions/upload-artifact@v4
