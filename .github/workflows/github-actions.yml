@@ -28,3 +28,10 @@ jobs:
         with:
           name: cypress-video
           path: ./end-to-end/cypress/videos
+      
+      - name: Upload downloaded files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-downloads
+          path: ./end-to-end/cypress/downloads
