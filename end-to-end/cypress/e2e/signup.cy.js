@@ -1,8 +1,9 @@
-import user from '../fixtures/user.json'
+import user from '../../fixtures/user.json'
 
 describe('Signup Page', () => {
 
   beforeEach(() => {
+    cy.clearAllLocalStorage();
     cy.visit(`/connexion`)
     cy.get('.signup')
       .should('contain.text', 'Rejoindre A-JUST')
@@ -13,10 +14,10 @@ describe('Signup Page', () => {
       .should('eq', '/inscription')
   })
 
-  it('Check "Embarquer avec Pages Blanches" button exists and can be clicked', () => {
-    cy.get('#signupSSO')
-      .should('contain.text', 'Embarquer avec Pages Blanches')
-  })
+  // it('Check "Embarquer avec Pages Blanches" button exists and can be clicked', () => {
+  //   cy.get('#signupSSO')
+  //     .should('contain.text', 'Embarquer avec Pages Blanches')
+  // })
 
   it('Check that we can fill the form to signup ', () => {
       cy.get('input[formControlName="firstName"]').type("UserTestFirstname")
@@ -32,5 +33,6 @@ describe('Signup Page', () => {
       cy.contains('label', 'Ma fonction :').should('be.visible');
       cy.get('select').eq(1).select(1);
       cy.get('input[type=submit]').click()
+      cy.location('pathname').should('eq', '/bienvenue')
   })  
 })

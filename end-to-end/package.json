@@ -1,0 +1,22 @@
+{
+  "name": "cypress",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "npm run cy:open",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open"
+  },
+  "private": true,
+  "dependencies": {
+    "@cypress/xvfb": "^1.2.4",
+    "@ngx-env/builder": "^19.0.4",
+    "cy-verify-downloads": "^0.2.6",
+    "dotenv": "^16.4.7",
+    "install": "^0.13.0",
+    "npm": "^11.0.0"
+  },
+  "devDependencies": {
+    "cypress": "^13.17.0",
+    "typescript": "~5.5.2"
+  }
+}

@@ -54,7 +54,7 @@ export default class App {
     await onGetIelstListApi().then(async (response) => {
       if (response) {
         // CIVIL
-        // await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
+        await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
         // await this.formatAndGroupJuridiction(
         //   tmpFolder,
         //   outputFolder,
