@@ -355,17 +355,24 @@ export default class RouteCalculator extends Route {
             );
             if (activites.length) {
               const acti = activites[0];
-              if (acti.entrees !== null && acti.sorties !== null) {
+
+              let sorties = null;
+              if (acti.sorties !== null) {
+                sorties = acti.sorties;
+              } else if (acti.originalSorties !== null) {
+                sorties = acti.originalSorties;
+              }
+
+              let entrees = null;
+              if (acti.entrees !== null) {
+                entrees = acti.entrees;
+              } else if (acti.originalEntrees !== null) {
+                entrees = acti.originalEntrees;
+              }
+
+              if (sorties !== null && entrees !== null) {
                 list.push({
-                  value: 100 * (acti.sorties / acti.entrees),
-                  date: new Date(dateStart),
-                });
-              } else if (
-                acti.originalEntrees !== null &&
-                acti.originalSorties !== null
-              ) {
-                list.push({
-                  value: 100 * (acti.originalSorties / acti.originalEntrees),
+                  value: 100 * (sorties / entrees),
                   date: new Date(dateStart),
                 });
               } else {
