@@ -21,7 +21,7 @@ export default defineConfig({
     supportFile: "support/e2e.ts",
     video: true,
     videosFolder: "cypress/videos",
-    downloadsFolder: "e2e/cypress/downloads",
+    downloadsFolder: "cypress/downloads",
     defaultCommandTimeout: 10000,
   },
 });
