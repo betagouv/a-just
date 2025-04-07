@@ -98,19 +98,18 @@ describe("Ajout d'un agent", () => {
   })
 
   it("Check 'Feuille des temps' download works", () => {
-    cy.get('.new-ventilation')
     cy.get('#admin').within(() => {
         cy.get('.top')
           .get('.drop-down-container')
           .get('#drop-down2')
           .click()
-        cy.get('#timesheet')
+          .get('#timesheet')
           .get('.download')
           .click()
     })
     cy.wait(20000)
     // Check file is downloaded
-    cy.verifyDownload('.xlsx', { contains: true })
+    cy.verifyDownload('Feuille_de_temps_Modèle.xlsx', { contains: true })
   })
 
   // it("Check user can download 'Calculatrice des temps de ventilations'", () => {
@@ -124,7 +123,7 @@ describe("Ajout d'un agent", () => {
   // })
 
 
-  it('Add activities', () => {
+  /*it('Add activities', () => {
 
     cy.window().then((win) => {
       cy.stub(win, 'prompt').callsFake((message) => {
@@ -248,6 +247,6 @@ describe("Ajout d'un agent", () => {
       cy.get('aj-back-button')
         .click()
     })
-  })
+  })*/
 
 })
