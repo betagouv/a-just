@@ -108,6 +108,7 @@ describe("Ajout d'un agent", () => {
           .get('.download')
           .click()
     })
+    cy.wait(20000)
     // Check file is downloaded
     cy.verifyDownload('.xlsx', { contains: true })
   })
