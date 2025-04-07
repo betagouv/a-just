@@ -103,7 +103,7 @@ describe("Ajout d'un agent", () => {
           .get('.drop-down-container')
           .get('#drop-down2')
           .click()
-          .get('#timesheet')
+        cy.get('#timesheet')
           .get('.download')
           .click()
     })
@@ -123,7 +123,7 @@ describe("Ajout d'un agent", () => {
   // })
 
 
-  /*it('Add activities', () => {
+  it('Add activities', () => {
 
     cy.window().then((win) => {
       cy.stub(win, 'prompt').callsFake((message) => {
@@ -247,6 +247,6 @@ describe("Ajout d'un agent", () => {
       cy.get('aj-back-button')
         .click()
     })
-  })*/
+  })
 
 })
