@@ -29,6 +29,9 @@ jobs:
           name: cypress-video
           path: ./end-to-end/cypress/videos
       
+      - name: Fix permissions for download folder
+        run: sudo chmod -R 777 ./end-to-end/cypress/downloads || echo "Folder not found"
+        
       - name: Upload downloaded files
         if: always()
         uses: actions/upload-artifact@v4
