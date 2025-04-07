@@ -34,7 +34,7 @@ export class JuridictionsService {
     copyAct: boolean
   ) {
     return this.serverService
-      .post('juridictions/duplicate-juridiction', {
+      .postWithoutError('juridictions/duplicate-juridiction', {
         juridictionName,
         backupId,
         copyAct,

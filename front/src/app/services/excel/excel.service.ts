@@ -99,7 +99,7 @@ export class ExcelService extends MainClass {
    */
   exportExcel() {
     return this.serverService
-      .post(`extractor/filter-list`, {
+      .postWithoutError(`extractor/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
         dateStart: setTimeToMidDay(this.dateStart.getValue()),
         dateStop: setTimeToMidDay(this.dateStop.getValue()),
