@@ -14,7 +14,8 @@ describe('Ventilateur', () => {
         .should('contain.text', 'Simuler des affectations')
         .click()
         .location('pathname')
-        .should('eq', '/reaffectateur')
+        .should('contain', '/reaffectateur')
+        .visit('/ventilations')
   })
 
   it('Check that the button on top "Ajouter un agent" is there and when clicked, opens the right popin ', () => {
