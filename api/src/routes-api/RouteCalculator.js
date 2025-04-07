@@ -5,6 +5,8 @@ import { preformatHumanResources } from "../utils/ventilator";
 import { getHumanRessourceList } from "../utils/humanServices";
 import { sumBy } from "lodash";
 import { computeCoverage, computeDTES } from "../utils/simulator";
+import { fixDecimal } from "../utils/number";
+import config from "config";
 
 /**
  * Route des calculs de la page calcule
@@ -80,12 +82,20 @@ export default class RouteCalculator extends Route {
       contentieuxId: Types.number(),
       type: Types.string(),
       fonctionsIds: Types.array(),
+      categorySelected: Types.string(),
     }),
     accesses: [Access.canVewCalculator],
   })
   async rangeValues(ctx) {
-    let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds } =
-      this.body(ctx);
+    let {
+      backupId,
+      dateStart,
+      dateStop,
+      contentieuxId,
+      type,
+      fonctionsIds,
+      categorySelected,
+    } = this.body(ctx);
     console.log("body", this.body(ctx));
     dateStart = month(dateStart);
     dateStop = month(dateStop);
@@ -251,42 +261,92 @@ export default class RouteCalculator extends Route {
           break;
         case "temps-moyen":
           {
+            const catId = categorySelected === "magistrats" ? 1 : 2;
+            const fonctions = (await this.models.HRFonctions.getAll()).filter(
+              (v) => v.categoryId === catId
+            );
+            let newFonctions = fonctionsIds;
+            if (
+              (newFonctions || []).every(
+                (fonctionId) => !fonctions.find((f) => f.id === fonctionId)
+              )
+            ) {
+              newFonctions = null;
+            }
+
+            // calcul etpt
+            const preformatedAllHumanResource = preformatHumanResources(
+              hrList,
+              dateStart,
+              null,
+              newFonctions
+            );
+            let hList = await getHumanRessourceList(
+              preformatedAllHumanResource,
+              [contentieuxId],
+              undefined,
+              [catId],
+              dateStart
+            );
+            let totalAffected = 0;
+            hList.map((agent) => {
+              const activities = (agent.currentActivities || []).filter(
+                (r) => r.contentieux && r.contentieux.id === contentieuxId
+              );
+              const timeAffected = sumBy(activities, "percent");
+              if (timeAffected) {
+                let realETP = (agent.etp || 0) - agent.hasIndisponibility;
+                if (realETP < 0) {
+                  realETP = 0;
+                }
+                totalAffected += (timeAffected / 100) * realETP;
+              }
+            });
+
+            // calcul stock
             const activites = await this.models.Activities.getByMonth(
               dateStart,
               backupId,
               contentieuxId,
               false
             );
+            let stock = null;
             if (activites && activites.length) {
               const acti = activites[0];
-              let entrees = null;
-              let sorties = null;
 
-              if (acti.entrees !== null) {
-                entrees = acti.entrees;
-              } else if (acti.originalEntrees !== null) {
-                entrees = acti.originalEntrees;
-              }
-
-              if (acti.sorties !== null) {
-                sorties = acti.sorties;
-              } else if (acti.originalSorties !== null) {
-                sorties = acti.originalSorties;
-              }
-
-              if (entrees !== null && sorties !== null) {
-                list.push({
-                  value: computeCoverage(sorties, entrees),
-                  date: new Date(dateStart),
-                });
-              } else {
-                list.push(null);
+              if (acti.stock !== null) {
+                stock = acti.stock;
+              } else if (acti.originalStock !== null) {
+                stock = acti.originalStock;
               }
             }
+
+            const etpCs = totalAffected;
+
+            if (stock !== null) {
+              console.log(dateStart, "stock", stock, "etpCs", etpCs);
+
+              const partA =
+                catId === 1
+                  ? (config.nbDaysByMagistrat / 12) *
+                    config.nbHoursPerDayAndMagistrat
+                  : (config.nbDaysByFonctionnaire / 12) *
+                    config.nbHoursPerDayAndFonctionnaire;
+
+              list.push({
+                value: fixDecimal(partA / (stock / etpCs), 100),
+                date: new Date(dateStart),
+              });
+            } else {
+              list.push(null);
+            }
+
+            // const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (meanOutCs / etpMagCs), 100)
+            //   const fonRealTimePerCase = fixDecimal(((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (meanOutCs / etpFonCs), 100)
           }
           break;
         case "taux-couverture":
-           {
+          {
             const activites = await this.models.Activities.getByMonth(
               dateStart,
               backupId,
@@ -296,8 +356,14 @@ export default class RouteCalculator extends Route {
             if (activites.length) {
               const acti = activites[0];
               if (acti.entrees !== null && acti.sorties !== null) {
-                list.push({ value: 100 * (acti.sorties / acti.entrees), date: new Date(dateStart) });
-              } else if (acti.originalEntrees !== null && acti.originalSorties !== null) {
+                list.push({
+                  value: 100 * (acti.sorties / acti.entrees),
+                  date: new Date(dateStart),
+                });
+              } else if (
+                acti.originalEntrees !== null &&
+                acti.originalSorties !== null
+              ) {
                 list.push({
                   value: 100 * (acti.originalSorties / acti.originalEntrees),
                   date: new Date(dateStart),
@@ -306,8 +372,8 @@ export default class RouteCalculator extends Route {
                 list.push(null);
               }
             }
-           }
-           break;
+          }
+          break;
         default:
           {
             console.log("type", type);
