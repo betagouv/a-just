@@ -190,5 +190,5 @@
     }
   ]" [closeIcon]="true" (onClose)="onActionComment({ id: 'close', content: 'Annuler' })"
   (selectedAction)="onActionComment($event, editor.value)" title="Export en PDF">
-  <aj-text-editor title="Souhaitez-vous ajouter un commentaire ?" #editor></aj-text-editor>
+  <aj-text-editor title="Souhaitez-vous ajouter un commentaire ?" #editor [acceptLink]="false"></aj-text-editor>
 </aj-popup>
