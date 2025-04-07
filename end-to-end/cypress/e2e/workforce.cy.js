@@ -3,6 +3,7 @@ describe('Ventilateur', () => {
   beforeEach(() => {
     cy.login()
     cy.visit('/ventilations')
+    cy.wait(10000)
   })
 
   it('Check that the button on top "Simuler des affectations" is there and when clicked, redirect to the right page ', () => {
