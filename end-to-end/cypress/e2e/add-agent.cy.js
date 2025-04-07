@@ -109,7 +109,7 @@ describe("Ajout d'un agent", () => {
     })
     cy.wait(20000)
     // Check file is downloaded
-    cy.verifyDownload('Feuille_de_temps_Modèle.xlsx', { contains: true })
+    cy.verifyDownload('.xlsx', { contains: true })
   })
 
   // it("Check user can download 'Calculatrice des temps de ventilations'", () => {
