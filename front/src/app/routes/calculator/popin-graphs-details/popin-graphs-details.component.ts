@@ -376,6 +376,12 @@ export class PopinGraphsDetailsComponent
               'Temps moyen'
             ) {
               bodyLine.innerHTML = this.decimalToStringDate(body.lines[0]);
+            } else if (
+              this.calculatorService.showGraphDetailTypeLineTitle ===
+              'Taux de couverture'
+            ) {
+              bodyLine.innerHTML =
+                Math.round(Number(body.lines[0].replace(',', '.'))) + '%';
             } else {
               bodyLine.innerHTML = body.lines[0];
             }
@@ -440,6 +446,13 @@ export class PopinGraphsDetailsComponent
                 'Temps moyen'
               ) {
                 return this.decimalToStringDate(value);
+              }
+
+              if (
+                this.calculatorService.showGraphDetailTypeLineTitle ===
+                'Taux de couverture'
+              ) {
+                return Math.round(value) + '%';
               }
 
               return value;
