@@ -206,8 +206,8 @@ export class GraphsVerticalsLinesComponent
     }
   }
 
-  updateLocalMaxValue() {
-    if (this.maxValue !== null) {
+  updateLocalMaxValue(force = false) {
+    if (this.maxValue !== null && !force) {
       this.localMaxValue = this.maxValue;
     } else {
       const allValues: number[] = [...this.values, ...this.line.getValue()];
@@ -240,7 +240,10 @@ export class GraphsVerticalsLinesComponent
           .then((lines) => {
             this.isLoading = false;
             this.timeout = null;
-            this.line.next(lines.map((v: any) => +v.value || 0));
+            this.line.next(
+              lines.map((v: any) => (v && v.value ? +v.value : 0))
+            );
+            this.updateLocalMaxValue(true);
             this.draw();
           });
       }
@@ -324,6 +327,7 @@ export class GraphsVerticalsLinesComponent
             )
             .then((line) => {
               line = line.map((v: any) => +v.value || 0);
+              this.updateLocalMaxValue(true);
               this.isLoading = false;
 
               ctx.strokeStyle = g.color;
