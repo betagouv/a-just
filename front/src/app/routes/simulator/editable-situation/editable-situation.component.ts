@@ -701,6 +701,16 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     return true;
   }
 
+  /**
+   * Indique si une valeur est finit ou si c'est une division par 0
+   * @param val
+   * @returns
+   */
+  getDTESValue(val: string) {
+    if (Number(val)) return '0';
+    else return val;
+  }
+
   initFields() {
     Object.keys(this.formWhiteSim.controls).forEach((key) => {
       this.formWhiteSim.patchValue({ [key]: '' });
@@ -871,7 +881,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       etpToUse,
       startTotalOut * 12
     ); */
-    
+
     const tmd =
       Math.trunc(realTime) +
       Math.round((realTime - Math.trunc(realTime)) * 60) / 60;
