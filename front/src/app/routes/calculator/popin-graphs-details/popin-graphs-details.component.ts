@@ -19,6 +19,7 @@ import { findLastIndex, maxBy, minBy } from 'lodash';
 import { today } from '../../../utils/dates';
 import { KPIService } from '../../../services/kpi/kpi.service';
 import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS } from '../../../constants/log-codes';
+import { fixDecimal } from '../../../utils/numbers';
 
 /**
  * Composant de la popin qui affiche en gros les détails les données d'une comparaison
@@ -382,6 +383,11 @@ export class PopinGraphsDetailsComponent
             ) {
               bodyLine.innerHTML =
                 Math.round(Number(body.lines[0].replace(',', '.'))) + '%';
+            } else if (
+              this.calculatorService.showGraphDetailTypeLineTitle === 'DTES'
+            ) {
+              bodyLine.innerHTML =
+                '' + fixDecimal(Number(body.lines[0].replace(',', '.')), 10);
             } else {
               bodyLine.innerHTML = body.lines[0];
             }
@@ -446,6 +452,12 @@ export class PopinGraphsDetailsComponent
                 'Temps moyen'
               ) {
                 return this.decimalToStringDate(value);
+              }
+
+              if (
+                this.calculatorService.showGraphDetailTypeLineTitle === 'DTES'
+              ) {
+                return this.fixDecimal(value, 10);
               }
 
               if (
