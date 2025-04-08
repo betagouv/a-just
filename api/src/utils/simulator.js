@@ -414,7 +414,7 @@ function computeTotalOut (magRealTimePerCase, etp, sufix) {
  * @param {*} sufix catégorie
  * @returns le temps moyen par dossier sur les 12 derniers mois
  */
-function computeRealTimePerCase (totalOut, etp, sufix) {
+export function computeRealTimePerCase (totalOut, etp, sufix) {
   console.log('[simulator.js][line 420] totalOut:', totalOut)
   console.log('[simulator.js][line 421] nbDays:', environment['nbDays' + sufix])
   console.log('[simulator.js][line 422] nbHoursPerDay:', environment['nbHoursPerDayAnd' + sufix])
