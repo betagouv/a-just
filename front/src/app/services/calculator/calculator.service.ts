@@ -129,7 +129,7 @@ export class CalculatorService extends MainClass {
     dateStart: Date | null = this.dateStart.getValue(),
     dateStop: Date | null = this.dateStop.getValue(),
     fonctionsIds: number[] = this.selectedFonctionsIds.getValue(),
-    categoryId: string | null = this.categorySelected.getValue()
+    categorySelected: string | null = this.categorySelected.getValue()
   ) {
     if (!dateStart || !dateStop) {
       return new Promise((resolve) => resolve([]));
@@ -142,7 +142,7 @@ export class CalculatorService extends MainClass {
         contentieuxId,
         type,
         fonctionsIds: fonctionsIds.length ? fonctionsIds : null,
-        categoryId,
+        categorySelected,
       })
       .then((data) => data.data || []);
   }
