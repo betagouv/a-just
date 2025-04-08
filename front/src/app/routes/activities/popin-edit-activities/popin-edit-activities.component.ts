@@ -564,7 +564,7 @@ export class PopinEditActivitiesComponent
       }
     );
 
-    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie ou bien modifié les mois précédents
+    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie ou bien modifié les mois précédents OU que la donnée de stock est null
     // Dans ce cas on remet le stock à son état d'origine
     const isStockNotSet =
       (this.updates[`${contentieux.id}-stock`]?.value == null ||
@@ -608,16 +608,17 @@ export class PopinEditActivitiesComponent
         ? contentieux.originalStock.toString()
         : '-';
     }
-    //Pas de recalcul de stock si un stock a été saisi manuellement et qu'une valeur d'entrée et sortie de type "A vérifier" a été confirmer
+    //Pas de recalcul de stock si un stock a été saisi manuellement OU que la donnée logiciel est null ET qu'une valeur d'entrée et sortie de type "A vérifier" a été confirmer
     else if (
       (this.isStockCalculated(contentieux) ||
-        (this.updates[`${contentieux.id}-stock`] &&
-          this.updates[`${contentieux.id}-stock`].value === null)) &&
+        (((this.updates[`${contentieux.id}-stock`] &&
+          this.updates[`${contentieux.id}-stock`].value === null) ||
+          !this.updates[`${contentieux.id}-stock`]) &&
+          contentieux.originalStock !== null)) &&
       (this.updates[`${contentieux.id}-entrees`] ||
         this.updates[`${contentieux.id}-sorties`])
     ) {
       updateTotal = true;
-
       const entreeValue = this.getValueInOrOut('entrees', contentieux);
       const sortieValue = this.getValueInOrOut('sorties', contentieux);
       const stockValue = contentieux.stock ?? contentieux.originalStock ?? 0;
@@ -916,13 +917,13 @@ export class PopinEditActivitiesComponent
     if (this.updates[`${cont.id}-stock`]) {
       return this.updates[`${cont.id}-stock`].calculated;
     } else if (
-      (cont.stock !== null &&
-        (!cont.activityUpdated ||
-          (cont.activityUpdated && !cont.activityUpdated.stock) ||
-          (cont.activityUpdated &&
-            cont.activityUpdated.stock &&
-            cont.activityUpdated.stock.value === null))) ||
-      cont.stock === null
+      cont.stock !== null &&
+      (!cont.activityUpdated ||
+        (cont.activityUpdated && !cont.activityUpdated.stock) ||
+        (cont.activityUpdated &&
+          cont.activityUpdated.stock &&
+          cont.activityUpdated.stock.value === null)) /*||
+      cont.stock === null*/
     ) {
       return true;
     }
