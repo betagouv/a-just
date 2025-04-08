@@ -647,7 +647,7 @@ export class WhiteSimulatorPage
    */
   @HostListener('window:beforeunload', ['$event'])
   unloadHandler(event: Event) {
-    if (this.toDisplaySimulation) {
+    if (this.toDisplaySimulation || this.projectedSituationData) {
       this.onUserActionClick(this.action.closeTab);
       event.preventDefault();
     }
@@ -746,8 +746,6 @@ export class WhiteSimulatorPage
 
     this.watch(
       this.simulatorService.dateStop.subscribe((date) => {
-        console.log('CHANGE', this.dateStop, date);
-
         if (date !== undefined && date !== null) {
           if (
             !(
@@ -758,7 +756,6 @@ export class WhiteSimulatorPage
           ) {
             this.dateStop = date;
             this.stopRealValue = findRealValue(this.dateStop);
-            console.log('CHANGE', this.dateStop);
           }
         }
       })
@@ -769,7 +766,6 @@ export class WhiteSimulatorPage
 
     this.loadFunctions();
     this.isLoading = false;
-    console.log(this.dateStop);
   }
 
   /**
@@ -2103,7 +2099,7 @@ export class WhiteSimulatorPage
   }
 
   canDeactivate(nextState: string) {
-    if (this.toDisplaySimulation) {
+    if (this.toDisplaySimulation || this.projectedSituationData) {
       this.userAction.isLeaving = true;
       this.nextState = nextState;
       return this.forceDeactivate;
@@ -2156,6 +2152,12 @@ export class WhiteSimulatorPage
             this.userAction.isComingBack = true;
           }
           break;
+        case this.action.leave:
+          {
+            this.popupActionToUse = this.popupAction.leaving;
+            this.userAction.isLeaving = true;
+          }
+          break;
       }
     }
     return;
@@ -2166,7 +2168,6 @@ export class WhiteSimulatorPage
       this.onUserActionClick(this.action.return);
     } else if (this.projectedSituationData) {
       this.onUserActionClick(this.action.return);
-      console.log('JE SUIS ICI');
     } else {
       this.chooseScreen = true;
       this.router.navigate(['/simulateur']);
@@ -2353,7 +2354,7 @@ export class WhiteSimulatorPage
    * Demande de rechargement de la page
    */
   reloadPage() {
-    if (this.toDisplaySimulation) {
+    if (this.toDisplaySimulation || this.projectedSituationData) {
       this.onUserActionClick(this.action.leave);
       this.onReloadAction = true;
     } else {
