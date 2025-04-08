@@ -621,7 +621,7 @@ export class PopinEditActivitiesComponent
       updateTotal = true;
       const entreeValue = this.getValueInOrOut('entrees', contentieux);
       const sortieValue = this.getValueInOrOut('sorties', contentieux);
-      const stockValue = contentieux.stock ?? contentieux.originalStock ?? 0;
+      const stockValue = contentieux.originalStock ?? 0;
 
       const originalEntrees = contentieux.originalIn ?? 0;
       const originalSorties = contentieux.originalOut ?? 0;

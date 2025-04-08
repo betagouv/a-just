@@ -1,10 +1,14 @@
 import Route, { Access } from "./Route";
 import { Types } from "../utils/types";
-import { month } from "../utils/date";
+import { month, today } from "../utils/date";
 import { preformatHumanResources } from "../utils/ventilator";
 import { getHumanRessourceList } from "../utils/humanServices";
 import { sumBy } from "lodash";
-import { computeCoverage, computeDTES } from "../utils/simulator";
+import {
+  computeCoverage,
+  computeDTES,
+  computeRealTimePerCase,
+} from "../utils/simulator";
 import { fixDecimal } from "../utils/number";
 import config from "config";
 
@@ -104,6 +108,10 @@ export default class RouteCalculator extends Route {
     const list = [];
 
     do {
+      const endOfTheMonth = today(dateStart);
+      endOfTheMonth.setMonth(endOfTheMonth.getMonth() + 1);
+      endOfTheMonth.setDate(endOfTheMonth.getDate() - 1);
+
       switch (type) {
         case "entrees":
           {
@@ -204,7 +212,8 @@ export default class RouteCalculator extends Route {
               [contentieuxId],
               undefined,
               [catId],
-              dateStart
+              dateStart,
+              endOfTheMonth
             );
             let totalAffected = 0;
             hList.map((agent) => {
@@ -225,124 +234,40 @@ export default class RouteCalculator extends Route {
           break;
         case "dtes":
           {
-            const activites = await this.models.Activities.getByMonth(
-              dateStart,
+            const catId = categorySelected === "magistrats" ? 1 : 2;
+            const datas = await this.model.onCalculate({
               backupId,
-              contentieuxId,
-              false
-            );
-            if (activites && activites.length) {
-              const acti = activites[0];
-              let stock = null;
-              let sorties = null;
+              dateStart,
+              dateStop: endOfTheMonth,
+              contentieuxIds: [contentieuxId],
+              categorySelected: catId,
+              selectedFonctionsIds: fonctionsIds,
+              loadChildrens: false,
+            }, ctx.state.user, false);
 
-              if (acti.stock !== null) {
-                stock = acti.stock;
-              } else if (acti.originalStock !== null) {
-                stock = acti.originalStock;
-              }
-
-              if (acti.sorties !== null) {
-                sorties = acti.sorties;
-              } else if (acti.originalSorties !== null) {
-                sorties = acti.originalSorties;
-              }
-
-              if (stock !== null && sorties !== null) {
-                list.push({
-                  value: computeDTES(stock, sorties),
-                  date: new Date(dateStart),
-                });
-              } else {
-                list.push(null);
-              }
-            }
+            list.push({
+              value: datas.list[0].realDTESInMonths,
+              date: new Date(dateStart),
+            });
           }
           break;
         case "temps-moyen":
           {
             const catId = categorySelected === "magistrats" ? 1 : 2;
-            const fonctions = (await this.models.HRFonctions.getAll()).filter(
-              (v) => v.categoryId === catId
-            );
-            let newFonctions = fonctionsIds;
-            if (
-              (newFonctions || []).every(
-                (fonctionId) => !fonctions.find((f) => f.id === fonctionId)
-              )
-            ) {
-              newFonctions = null;
-            }
-
-            // calcul etpt
-            const preformatedAllHumanResource = preformatHumanResources(
-              hrList,
-              dateStart,
-              null,
-              newFonctions
-            );
-            let hList = await getHumanRessourceList(
-              preformatedAllHumanResource,
-              [contentieuxId],
-              undefined,
-              [catId],
-              dateStart
-            );
-            let totalAffected = 0;
-            hList.map((agent) => {
-              const activities = (agent.currentActivities || []).filter(
-                (r) => r.contentieux && r.contentieux.id === contentieuxId
-              );
-              const timeAffected = sumBy(activities, "percent");
-              if (timeAffected) {
-                let realETP = (agent.etp || 0) - agent.hasIndisponibility;
-                if (realETP < 0) {
-                  realETP = 0;
-                }
-                totalAffected += (timeAffected / 100) * realETP;
-              }
-            });
-
-            // calcul stock
-            const activites = await this.models.Activities.getByMonth(
-              dateStart,
+            const datas = await this.model.onCalculate({
               backupId,
-              contentieuxId,
-              false
-            );
-            let stock = null;
-            if (activites && activites.length) {
-              const acti = activites[0];
+              dateStart,
+              dateStop: endOfTheMonth,
+              contentieuxIds: [contentieuxId],
+              categorySelected: catId,
+              selectedFonctionsIds: fonctionsIds,
+              loadChildrens: false,
+            }, ctx.state.user, false);
 
-              if (acti.stock !== null) {
-                stock = acti.stock;
-              } else if (acti.originalStock !== null) {
-                stock = acti.originalStock;
-              }
-            }
-
-            const etpCs = totalAffected;
-
-            if (stock !== null) {
-              console.log(dateStart, "stock", stock, "etpCs", etpCs);
-
-              const partA =
-                catId === 1
-                  ? (config.nbDaysByMagistrat / 12) *
-                    config.nbHoursPerDayAndMagistrat
-                  : (config.nbDaysByFonctionnaire / 12) *
-                    config.nbHoursPerDayAndFonctionnaire;
-
-              list.push({
-                value: fixDecimal(partA / (stock / etpCs), 100),
-                date: new Date(dateStart),
-              });
-            } else {
-              list.push(null);
-            }
-
-            // const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (meanOutCs / etpMagCs), 100)
-            //   const fonRealTimePerCase = fixDecimal(((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (meanOutCs / etpFonCs), 100)
+            list.push({
+              value: catId === 1 ? datas.list[0].magRealTimePerCase : datas.list[0].fonRealTimePerCase,
+              date: new Date(dateStart),
+            });
           }
           break;
         case "taux-couverture":
