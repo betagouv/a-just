@@ -293,6 +293,46 @@ export default class RouteUsers extends Route {
     ctx.throw(401, ctx.state.__('Information de contact non valide!'))
   }
 
+
+    /**
+   * Interface pour générer une demande d'un mail pour changer de mot de passe (TEST ONLY)
+   * @param {*} email
+   * @returns
+   */
+    @Route.Post({
+      bodyType: Types.object().keys({
+        email: Types.string().required(),
+      }),
+    })
+    async forgotPasswordTest (ctx) {
+      if (process.env.NODE_ENV !== 'test') {
+        ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+        return
+      }
+      let { email } = this.body(ctx)
+      email = (email || '').trim().toLowerCase()
+  
+      if (validateEmail(email)) {
+        // send message by email
+        const user = await this.model.findOne({ where: { email } })
+        if (user) {
+          const key = crypt.generateRandomNumber(6)
+          await user.update({ new_password_token: key })
+  
+          this.sendOk(
+            ctx,
+            {
+              code: key,
+              msg: "Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d'ici quelques minutes, un e-mail de réinitialisation à l'adresse correspondant à votre compte d'inscription."
+            }
+          )
+          return
+        }
+      }
+  
+      ctx.throw(401, ctx.state.__('Information de contact non valide!'))
+    }
+
   /**
    * Interface pour changer le mot de passe à la suite à une demande de changement de mot passe
    * @param {*} email
