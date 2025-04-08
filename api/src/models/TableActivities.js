@@ -561,8 +561,8 @@ export default (sequelizeInstance, Model) => {
               } else {
                 currentStock = findAllChild[i].original_stock;
               }
-            } else {
-
+            } else if (findAllChild[i].original_stock !== null) {
+              // Update stock with original stock ONLY IF not null
               currentStock = findAllChild[i].original_stock;
 
               if (findAllChild[i].entrees !== null) {
