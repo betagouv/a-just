@@ -292,7 +292,8 @@ export class SimulatorService extends MainClass {
         if (data?.lastStock === null) {
           return 'N/R';
         }
-        if (data?.lastStock && data?.lastStock >= 0) {
+        if (data?.lastStock) {
+          //&& data?.lastStock >= 0) {
           return data?.lastStock;
         } else return '0';
       }
@@ -321,6 +322,8 @@ export class SimulatorService extends MainClass {
       case 'realDTESInMonths':
         if (data?.realDTESInMonths === null) {
           return 'N/R';
+        } else if (data?.realDTESInMonths && data?.realDTESInMonths <= 0) {
+          return '0';
         }
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
           if (data?.realDTESInMonths <= 0) {

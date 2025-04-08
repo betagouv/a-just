@@ -807,7 +807,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
               (nbDays / (365 / 12)) +
               simulation.totalIn
           )
-        } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)) {
+        } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths !== 0)) {
           simulation.totalOut = Math.floor(simulation.lastStock / simulation.realDTESInMonths)
         } else if (simulation.realCoverage && simulation.totalIn) {
           simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn)
@@ -817,26 +817,22 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
               (simulation.realDTESInMonths + nbDays / (365 / 12))
           )
         }
-        //console.log('out',simulation.totalOut)
       }
 
       if (x === 'lastStock') {
-        if (simulation.realDTESInMonths === 0) {
-          simulation.lastStock = 0
-        } else if (simulation.totalIn && simulation.totalOut) {
+        //if (simulation.realDTESInMonths === 0) {
+          //simulation.lastStock = 0
+        //} else 
+        if (simulation.totalIn && simulation.totalOut) {
           simulation.lastStock =
           Math.floor(params.beginSituation.lastStock) +
           Math.floor((nbDays / (365 / 12)) * simulation.totalIn) -
           Math.floor((nbDays / (365 / 12)) * simulation.totalOut)
-
-            //console.log('in out',nbDays, 'out',(nbDays / (365 / 12)) * simulation.totalOut,'in',(nbDays / (365 / 12)) * simulation.totalIn,Math.floor(params.beginSituation.lastStock),params.beginSituation.lastStock)
-            //console.log('dates', today(dateStart), today(dateStop))
-
-        } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalOut) {
+        } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths !== 0) && simulation.totalOut) {
           simulation.lastStock = Math.floor(simulation.realDTESInMonths * simulation.totalOut)
         }
         if (simulation.lastStock && simulation.lastStock < 0) {
-          simulation.lastStock = 0
+          //simulation.lastStock = 0
         }
       }
       if (x === 'realCoverage') {
