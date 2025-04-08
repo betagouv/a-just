@@ -393,7 +393,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
       (countOfCalandarDays / (365 / 12)) * totalIn
   )
 
-  return stock < 0 ? 0 : stock
+  return stock
 }
 
 /**
