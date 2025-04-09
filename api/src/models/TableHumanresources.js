@@ -750,7 +750,6 @@ export default (sequelizeInstance, Model) => {
 
     console.time('calculator-8')
     list = syncCalculatorDatas(Model.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
-    console.log(list.filter(i => i.contentieux.id === 447))
 
     const cleanDataToSent = (item) => ({
       ...item,

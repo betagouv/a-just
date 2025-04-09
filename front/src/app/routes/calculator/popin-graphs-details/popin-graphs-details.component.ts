@@ -20,6 +20,7 @@ import { today } from '../../../utils/dates';
 import { KPIService } from '../../../services/kpi/kpi.service';
 import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS } from '../../../constants/log-codes';
 import { fixDecimal } from '../../../utils/numbers';
+import { AppService } from '../../../services/app/app.service';
 
 /**
  * Composant de la popin qui affiche en gros les détails les données d'une comparaison
@@ -40,6 +41,7 @@ export class PopinGraphsDetailsComponent
   humanResourceService = inject(HumanResourceService);
   calculatorService = inject(CalculatorService);
   kpiService = inject(KPIService);
+  appService = inject(AppService);
   /**
    * Canvas html dom
    */
@@ -98,6 +100,7 @@ export class PopinGraphsDetailsComponent
   }
 
   async onLoadDatas() {
+    this.appService.appLoading.next(true);
     if (this.calculatorService.selectedRefGraphDetail) {
       const ref = this.humanResourceService.contentieuxReferentiel
         .getValue()
@@ -384,12 +387,21 @@ export class PopinGraphsDetailsComponent
               bodyLine.innerHTML =
                 Math.round(Number(body.lines[0].replace(',', '.'))) + '%';
             } else if (
-              this.calculatorService.showGraphDetailTypeLineTitle === 'DTES'
+              this.calculatorService.showGraphDetailTypeLineTitle === 'Stock'
             ) {
               bodyLine.innerHTML =
-                '' + fixDecimal(Number(body.lines[0].replace(',', '.')), 10);
+                '' +
+                fixDecimal(
+                  Number(body.lines[0].replace(/\s/g, '').replace(',', '.')),
+                  1
+                );
             } else {
-              bodyLine.innerHTML = body.lines[0];
+              bodyLine.innerHTML =
+                '' +
+                fixDecimal(
+                  Number(body.lines[0].replace(/\s/g, '').replace(',', '.')),
+                  10
+                );
             }
 
             bodyContainer.appendChild(imageLine);
@@ -455,19 +467,19 @@ export class PopinGraphsDetailsComponent
               }
 
               if (
-                this.calculatorService.showGraphDetailTypeLineTitle === 'DTES'
-              ) {
-                return this.fixDecimal(value, 10);
-              }
-
-              if (
                 this.calculatorService.showGraphDetailTypeLineTitle ===
                 'Taux de couverture'
               ) {
                 return Math.round(value) + '%';
               }
 
-              return value;
+              if (
+                this.calculatorService.showGraphDetailTypeLineTitle === 'Stock'
+              ) {
+                return fixDecimal(value, 1);
+              }
+
+              return this.fixDecimal(value, 10);
             },
           },
         },
@@ -595,5 +607,6 @@ export class PopinGraphsDetailsComponent
       datasets,
     };
     this.myChart.update();
+    this.appService.appLoading.next(false);
   }
 }
