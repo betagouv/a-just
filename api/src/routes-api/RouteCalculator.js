@@ -100,7 +100,6 @@ export default class RouteCalculator extends Route {
       fonctionsIds,
       categorySelected,
     } = this.body(ctx);
-    console.log("body", this.body(ctx));
     dateStart = month(dateStart);
     dateStop = month(dateStop);
     const hrList = await this.model.getCache(backupId);
