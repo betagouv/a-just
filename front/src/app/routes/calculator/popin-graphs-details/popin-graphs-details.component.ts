@@ -368,8 +368,9 @@ export class PopinGraphsDetailsComponent
             bodyContainer.style.display = 'flex';
             bodyContainer.style.justifyContent = 'space-between';
             bodyContainer.style.alignItems = 'center';
-            bodyContainer.style.lineHeight = '20px';
-            bodyContainer.style.height = '20px';
+            bodyContainer.style.paddingTop = '2px';
+            bodyContainer.style.paddingBottom = '2px';
+            bodyContainer.style.minHeight = '20px';
             bodyContainer.style.marginBottom = '4px';
             bodyContainer.style.gap = '4px';
 
