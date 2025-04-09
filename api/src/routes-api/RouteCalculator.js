@@ -103,11 +103,12 @@ export default class RouteCalculator extends Route {
     dateStart = month(dateStart);
     dateStop = month(dateStop);
     const hrList = await this.model.getCache(backupId);
+    let endOfTheMonth = dateStart;
 
     const list = [];
 
     do {
-      const endOfTheMonth = today(dateStart);
+      endOfTheMonth = today(dateStart);
       endOfTheMonth.setMonth(endOfTheMonth.getMonth() + 1);
       endOfTheMonth.setDate(endOfTheMonth.getDate() - 1);
 
@@ -314,7 +315,7 @@ export default class RouteCalculator extends Route {
       //console.log(dateStart)
 
       dateStart.setMonth(dateStart.getMonth() + 1);
-    } while (dateStart.getTime() <= dateStop.getTime());
+    } while (endOfTheMonth.getTime() <= dateStop.getTime());
 
     this.sendOk(ctx, list);
   }
