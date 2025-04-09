@@ -112,9 +112,9 @@ export function today (date = new Date()) {
  */
 export function month (date = new Date(), monthToAdd, lastDay) {
   if (lastDay) {
-    date = endOfMonth(date)
+    date = today(endOfMonth(date))
   } else {
-    date = startOfMonth(date)
+    date = today(startOfMonth(date))
   }
 
   if (monthToAdd && monthToAdd !== 0) {
@@ -133,7 +133,7 @@ export function month (date = new Date(), monthToAdd, lastDay) {
 export function getNbMonth (dateStart, dateStop) {
   let totalMonth = 0
 
-  const now = new Date(dateStart)
+  const now = today(dateStart)
   do {
     totalMonth++
     now.setMonth(now.getMonth() + 1)
@@ -155,7 +155,7 @@ export function getNbMonth (dateStart, dateStop) {
 export function getNbDay (dateStart, dateStop) {
   let totalMonth = 0
 
-  const now = new Date(dateStart)
+  const now = today(dateStart)
   do {
     totalMonth++
     now.setDate(now.getDate() + 1)
@@ -175,8 +175,8 @@ export function getNbDay (dateStart, dateStop) {
  * @returns
  */
 export function isSameMonthAndYear (date1, date2) {
-  date1 = new Date(date1)
-  date2 = new Date(date2)
+  date1 = today(date1)
+  date2 = today(date2)
 
   return date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()
 }
@@ -197,8 +197,8 @@ export function workingDay (date) {
  * @returns boolean
  */
 export function isDateBiggerThan (firstDate, secondDate) {
-  firstDate = new Date(firstDate)
-  secondDate = new Date(secondDate)
+  firstDate = today(firstDate)
+  secondDate = today(secondDate)
 
   return firstDate.getTime() >= secondDate.getTime()
 }
@@ -208,7 +208,7 @@ export function isDateBiggerThan (firstDate, secondDate) {
  */
 export function getRangeOfMonthsAsObject (startDate, endDate, asObject = false) {
   const dates = new Array()
-  const dateCounter = new Date(startDate)
+  const dateCounter = today(startDate)
   let monthlyL = {}
 
   dateCounter.setDate(1)
@@ -238,7 +238,7 @@ export function getRangeOfMonthsAsObject (startDate, endDate, asObject = false) 
  */
 export function getShortMonthString (date) {
   if (typeof date === 'string') {
-    date = new Date(date)
+    date = today(date)
   }
   return ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai.', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'][date.getMonth()]
 }
@@ -268,8 +268,8 @@ const convertMsToDays = (ms) => {
  * @returns nb de jour
  */
 export function nbOfDays (startDate, endDate) {
-  startDate = new Date(startDate)
-  endDate = new Date(endDate)
+  startDate = today(startDate)
+  endDate = today(endDate)
   let differenceInMs = startDate.getTime() - endDate.getTime()
 
   if (differenceInMs < 0) {
@@ -305,7 +305,7 @@ export function nbWorkingDays (startDate, endDate) {
  * @returns boolean
  */
 export function checkIfDateIsNotToday (date) {
-  const today = new Date()
+  const today = today(new Date())
   return date && (date.getDate() !== today.getDate() || date.getMonth() !== today.getMonth() || date.getFullYear() !== today.getFullYear())
 }
 

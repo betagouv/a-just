@@ -100,17 +100,19 @@ export default class RouteCalculator extends Route {
       fonctionsIds,
       categorySelected,
     } = this.body(ctx);
-    dateStart = month(dateStart);
-    dateStop = month(dateStop);
+    
+    dateStart = today(dateStart);
+    dateStop = today(dateStop);
+
     const hrList = await this.model.getCache(backupId);
     let endOfTheMonth = dateStart;
 
     const list = [];
 
     do {
-      endOfTheMonth = today(dateStart);
-      endOfTheMonth.setMonth(endOfTheMonth.getMonth() + 1);
-      endOfTheMonth.setDate(endOfTheMonth.getDate() - 1);
+
+      let endOfTheMonth = today(dateStart);
+      endOfTheMonth= month(endOfTheMonth,0,'lastday')
 
       switch (type) {
         case "entrees":
@@ -312,10 +314,10 @@ export default class RouteCalculator extends Route {
           }
           break;
       }
-      //console.log(dateStart)
 
-      dateStart.setMonth(dateStart.getMonth() + 1);
-    } while (endOfTheMonth.getTime() <= dateStop.getTime());
+      dateStart = month(dateStart,1)
+} while (dateStart.getTime() <= dateStop.getTime());
+
 
     this.sendOk(ctx, list);
   }
