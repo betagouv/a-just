@@ -19,8 +19,9 @@ import { findLastIndex, maxBy, minBy } from 'lodash';
 import { today } from '../../../utils/dates';
 import { KPIService } from '../../../services/kpi/kpi.service';
 import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS } from '../../../constants/log-codes';
-import { fixDecimal } from '../../../utils/numbers';
+import { calculerEchelleMax, fixDecimal } from '../../../utils/numbers';
 import { AppService } from '../../../services/app/app.service';
+import { RouterModule } from '@angular/router';
 
 /**
  * Composant de la popin qui affiche en gros les détails les données d'une comparaison
@@ -28,7 +29,7 @@ import { AppService } from '../../../services/app/app.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, PopupComponent],
+  imports: [CommonModule, PopupComponent, RouterModule],
   selector: 'aj-popin-graphs-details',
   templateUrl: './popin-graphs-details.component.html',
   styleUrls: ['./popin-graphs-details.component.scss'],
@@ -82,6 +83,10 @@ export class PopinGraphsDetailsComponent
    * All values
    */
   allValues: { first: number | null; second: number | null }[] = [];
+  /**
+   * Show hide error
+   */
+  showError = false;
 
   /**
    * Constructor
@@ -266,17 +271,23 @@ export class PopinGraphsDetailsComponent
     ];
     const mergeTabDate: Date[] = mergeTab.map((v) => this.getMonth(v.date));
     const mergeTabValues: number[] = mergeTab.map((v) => +(v.value || 0));
+    // min max date
+    const minDate = Math.min(...mergeTabDate.map((v) => v.getTime()));
+    const maxDate = Math.max(...mergeTabDate.map((v) => v.getTime()));
+
     // get min max
     let min = Math.min(...mergeTabValues);
-    let max = Math.max(...mergeTabValues);
+    let max = Math.max(...mergeTabValues) || 0;
     if (min) {
-      min *= 0.7;
+      min *= 0.9;
       if (min < 10) {
         min = 0;
       }
     }
+    this.showError =
+      mergeTab.filter((v) => v && v.value !== null).length === 0 ? true : false;
     if (max) {
-      max *= 1.2;
+      max = calculerEchelleMax(max * 1.1);
     }
     if (max === 0) {
       max = 1;
@@ -400,7 +411,7 @@ export class PopinGraphsDetailsComponent
                 '' +
                 fixDecimal(
                   Number(body.lines[0].replace(/\s/g, '').replace(',', '.')),
-                  10
+                  1000
                 );
             }
 
@@ -458,6 +469,10 @@ export class PopinGraphsDetailsComponent
             fontSize: 12,
             color: 'rgba(0, 0, 0, 0.70)',
             callback: (value: any, index: number, values: any[]): any => {
+              if (index === 0 || index === values.length - 1) {
+                return '';
+              }
+
               // Customize the label format
               if (
                 this.calculatorService.showGraphDetailTypeLineTitle ===
@@ -568,7 +583,7 @@ export class PopinGraphsDetailsComponent
         const value = firstValues.find(
           (v) => this.getMonth(v.date).getTime() === now.getTime()
         );
-        if (value) {
+        if (value && value.value !== null) {
           this.allValues[this.allValues.length - 1].first = value.value || 0;
           datasets[0].data.push(value.value || 0);
         } else {
@@ -578,7 +593,7 @@ export class PopinGraphsDetailsComponent
         const value2 = secondValues.find(
           (v) => this.getMonth(v.date).getTime() === now.getTime()
         );
-        if (value2) {
+        if (value2 && value2.value !== null) {
           this.allValues[this.allValues.length - 1].second = value2.value || 0;
           datasets[1].data.push(value2.value || 0);
         } else {
@@ -588,7 +603,7 @@ export class PopinGraphsDetailsComponent
         const value1 = middleValues.find(
           (v) => this.getMonth(v.date).getTime() === now.getTime()
         );
-        if (value1) {
+        if (value1 && value1.value !== null) {
           datasets[2].data.push(value1.value || 0);
         } else {
           datasets[2].data.push(NaN);
