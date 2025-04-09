@@ -274,6 +274,9 @@ export default (sequelizeInstance, Model) => {
             case 'CONT C VIF JP':
               code = 'CONT C JP'
               break
+            case 'CONT C VIF JP':
+              code = 'CONT C JP'
+              break
             default:
               code = list[i].grade
               break
@@ -294,20 +297,29 @@ export default (sequelizeInstance, Model) => {
           continue
         }
 
-        switch (code) {
-        case 'MHFJS':
-          code = 'MHFJ'
-          break
-        case 'ATT A':
-          code = 'CHCAB'
-          break
-        case 'JA JP':
-          code = 'JA'
-          break
-        case 'CONT B IFPA':
-          code = 'CONT B'
-          break
-        }
+        if(code.startsWith('SA ')) code = 'SA'
+        else
+          switch (code) {
+          case 'MHFJS':
+            code = 'MHFJ'
+            break
+          case 'ATT A':
+            code = 'CHCAB'
+            break
+          case 'ATT-A':
+            if(list[i].fonction==='C CAB CC') code = 'CHCAB'
+            break
+          case 'JA JP':
+            code = 'JA'
+            break
+          case 'CONT B IFPA':
+            code = 'CONT B'
+            break
+          case 'G PR':
+          case 'GR':
+            code = 'B'
+            break
+          }
 
         if (list[i].categorie == 'CB') {
           switch (list[i].grade) {
