@@ -405,6 +405,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${
             100 - totalAffected
           }% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
+          secondaryText: 'Compléter la situation',
+          callbackSecondary: () => {},
+          okText: "Enregistrer en l'état",
           callback: () => {
             this.onSave(true, saveETPT0);
           },
