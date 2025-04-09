@@ -1,7 +1,7 @@
 <p (click)="onClick()" class="title-select">{{ title }}</p>
 <div>
   <mat-icon *ngIf="onShowLeftArrow()" class="left cursor-pointer" (click)="onChangeDate(-1)">chevron_left</mat-icon>
-  <p (click)="onClick()">{{ realValue }}</p>
+  <p (click)="onClick()">{{ realValue ? realValue : '-' }}</p>
   <mat-icon *ngIf="value && clearable && !readOnly" (click)="
       onDateChanged(null); $event.preventDefault(); $event.stopPropagation()
     " class="cursor-pointer">
