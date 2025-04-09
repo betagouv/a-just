@@ -177,7 +177,7 @@ export default class RouteHumanResources extends Route {
     const { situationId } = ctx.params
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
-      if (await this.models.HRSituations.destroyById(situationId)) {
+      if (await this.models.HRSituations.destroySituationId(situationId)) {
         this.sendOk(ctx, await this.model.getHr(hrId))
       }
     }
