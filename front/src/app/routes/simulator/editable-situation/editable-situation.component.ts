@@ -707,7 +707,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
    * @returns
    */
   getDTESValue(val: string) {
-    if (Number(val)) return '0';
+    if (Number(val) < 0) return '0';
     else return val;
   }
 
