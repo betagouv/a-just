@@ -133,7 +133,10 @@ export default class RouteCalculator extends Route {
                   date: new Date(dateStart),
                 });
               } else {
-                list.push(null);
+                list.push({
+                  value: null,
+                  date: new Date(dateStart),
+                });
               }
             }
           }
@@ -156,7 +159,10 @@ export default class RouteCalculator extends Route {
                   date: new Date(dateStart),
                 });
               } else {
-                list.push(null);
+                list.push({
+                  value: null,
+                  date: new Date(dateStart),
+                });
               }
             }
           }
@@ -180,7 +186,10 @@ export default class RouteCalculator extends Route {
                   date: new Date(dateStart),
                 });
               } else {
-                list.push(null);
+                list.push({
+                  value: null,
+                  date: new Date(dateStart),
+                });
               }
             }
           }
@@ -237,15 +246,19 @@ export default class RouteCalculator extends Route {
         case "dtes":
           {
             const catId = categorySelected === "magistrats" ? 1 : 2;
-            const datas = await this.model.onCalculate({
-              backupId,
-              dateStart,
-              dateStop: endOfTheMonth,
-              contentieuxIds: [contentieuxId],
-              categorySelected: catId,
-              selectedFonctionsIds: fonctionsIds,
-              loadChildrens: false,
-            }, ctx.state.user, false);
+            const datas = await this.model.onCalculate(
+              {
+                backupId,
+                dateStart,
+                dateStop: endOfTheMonth,
+                contentieuxIds: [contentieuxId],
+                categorySelected: catId,
+                selectedFonctionsIds: fonctionsIds,
+                loadChildrens: false,
+              },
+              ctx.state.user,
+              false
+            );
 
             list.push({
               value: datas.list[0].realDTESInMonths,
@@ -256,18 +269,25 @@ export default class RouteCalculator extends Route {
         case "temps-moyen":
           {
             const catId = categorySelected === "magistrats" ? 1 : 2;
-            const datas = await this.model.onCalculate({
-              backupId,
-              dateStart,
-              dateStop: endOfTheMonth,
-              contentieuxIds: [contentieuxId],
-              categorySelected: catId,
-              selectedFonctionsIds: fonctionsIds,
-              loadChildrens: false,
-            }, ctx.state.user, false);
+            const datas = await this.model.onCalculate(
+              {
+                backupId,
+                dateStart,
+                dateStop: endOfTheMonth,
+                contentieuxIds: [contentieuxId],
+                categorySelected: catId,
+                selectedFonctionsIds: fonctionsIds,
+                loadChildrens: false,
+              },
+              ctx.state.user,
+              false
+            );
 
             list.push({
-              value: catId === 1 ? datas.list[0].magRealTimePerCase : datas.list[0].fonRealTimePerCase,
+              value:
+                catId === 1
+                  ? datas.list[0].magRealTimePerCase
+                  : datas.list[0].fonRealTimePerCase,
               date: new Date(dateStart),
             });
           }
@@ -303,7 +323,10 @@ export default class RouteCalculator extends Route {
                   date: new Date(dateStart),
                 });
               } else {
-                list.push(null);
+                list.push({
+                  value: null,
+                  date: new Date(dateStart),
+                });
               }
             }
           }
