@@ -512,7 +512,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           text: `- si cet agent fait toujours partie de vos effectifs mais est absent temporairement, indiquez son temps de travail théorique et enregistrez un motif d’indisponibilité<br/><br/>- s’il a quitté la juridiction, renseignez une date de sortie.<br/><br/>L’ETPT à 0 est réservé à quelques cas particuliers où l’agent continue à faire  administrativement partie de la juridiction sans décompter d’ETPT (ex. congé parental supérieur à 6 mois, CLD, détachement… pour plus de détails cliquez <a href="https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/ventiler-ses-effectifs/focus-sur-les-changements-de-situation-administrative/indisponibilites-particulieres" target="_blank">ici</a>)`,
           secondaryText: 'Modifier l’ETPT',
           callbackSecondary: () => {},
-          okText: 'Ignorer l’alerte',
+          okText: "Confirmer l'ETPT à 0",
           callback: () => {
             this.onSave(withoutPercentControl, true);
           },
