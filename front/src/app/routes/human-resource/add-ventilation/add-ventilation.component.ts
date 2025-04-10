@@ -402,9 +402,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       } else if (totalAffected < 100) {
         this.appService.alert.next({
           title: 'La ventilation de cet agent est incomplète',
-          text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${
+          text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${fixDecimal(
             100 - totalAffected
-          }% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
+          )}% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           secondaryText: 'Compléter la situation',
           callbackSecondary: () => {},
           okText: "Enregistrer en l'état",
