@@ -532,7 +532,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         fonction: firstSituationExistant
           ? firstSituationExistant.fonction
           : null,
-        etp: 1,
+        etp: null,
         indisponibilities: [],
         activities: [],
         dateStart: today(this.currentHR.dateStart),

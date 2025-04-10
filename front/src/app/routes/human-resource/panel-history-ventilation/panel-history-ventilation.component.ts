@@ -61,7 +61,7 @@ export class PanelHistoryVentilationComponent
   /**
    * ETP de la situation
    */
-  @Input() etp: number = 0;
+  @Input() etp: number | null = 0;
   /**
    * Liste des indisponibilités
    */
@@ -142,7 +142,7 @@ export class PanelHistoryVentilationComponent
     ) {
       this.timeWorked = 'Sortie';
     } else {
-      this.timeWorked = etpLabel(this.etp);
+      this.timeWorked = etpLabel(this.etp || 0);
     }
   }
 
