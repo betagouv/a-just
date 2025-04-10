@@ -499,7 +499,10 @@ export class PopinGraphsDetailsComponent
               }
 
               if (
-                this.calculatorService.showGraphDetailTypeLineTitle === 'Stock'
+                this.calculatorService.showGraphDetailTypeLineTitle ===
+                  'Stock' &&
+                fixDecimal(value, 1) !== 1 &&
+                fixDecimal(value, 1) !== 0
               ) {
                 return fixDecimal(value, 1);
               }

@@ -174,7 +174,6 @@ export class GraphsVerticalsLinesComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('changes', changes);
     this.updateLocalMaxValue();
 
     if (this.referentielName) {
