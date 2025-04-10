@@ -87,6 +87,10 @@ export class PopinGraphsDetailsComponent
    * Show hide error
    */
   showError = false;
+  /**
+   * Have missing datas
+   */
+  haveMissingDatas = false;
 
   /**
    * Constructor
@@ -181,6 +185,15 @@ export class PopinGraphsDetailsComponent
           )
         ).filter((v: any) => v);
       }
+    }
+
+    if (
+      firstValues.find((v) => v.value === null) ||
+      secondValues.find((v) => v.value === null)
+    ) {
+      this.haveMissingDatas = true;
+    } else {
+      this.haveMissingDatas = false;
     }
 
     if (!this.myChart && this.canvas) {
