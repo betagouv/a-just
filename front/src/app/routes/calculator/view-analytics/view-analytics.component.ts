@@ -237,9 +237,8 @@ export class ViewAnalyticsComponent
   }
 
   onUpdateMax({ type, max }: { type: string; max: number }) {
-    max = max * 1.1;
     switch (type) {
-      case 'stock': {
+      case 'stocks': {
         if (this.stockMax < max) {
           this.stockMax = max;
         }
