@@ -28,16 +28,21 @@ import { HRFonctionInterface } from '../../../interfaces/hr-fonction';
 import { HRFonctionService } from '../../../services/hr-fonction/hr-function.service';
 import { HRCategoryService } from '../../../services/hr-category/hr-category.service';
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
+import { ReferentielService } from '../../../services/referentiel/referentiel.service';
 import { AppService } from '../../../services/app/app.service';
 import { CalculatriceService } from '../../../services/calculatrice/calculatrice.service';
 import { ServerService } from '../../../services/http-server/server.service';
 import { UserService } from '../../../services/user/user.service';
 import { fixDecimal } from '../../../utils/numbers';
+import { downloadFile } from '../../../utils/system';
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_VENTILATEUR_PERSON,
   IMPORT_ETP_TEMPLATE,
   IMPORT_ETP_TEMPLATE_CA,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
 } from '../../../constants/documentation';
 import {
   findRealValueCustom,
@@ -229,7 +234,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private calculatriceService: CalculatriceService,
     private serverService: ServerService,
     private userService: UserService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private referentielService: ReferentielService
   ) {
     super();
   }
@@ -728,6 +734,39 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         return r.data;
       });
     window.open(CALCULATE_DOWNLOAD_URL);
+  }
+
+  async downloadAsset(type: string, download = false) {
+    let url = null;
+    console.log('Type:', type);
+    if (type === 'nomencalture') {
+      if (this.userService.isCa()) {
+        url = NOMENCLATURE_DOWNLOAD_URL_CA;
+      } else {
+        if (this.referentielService.isDroitLocal()) {
+          url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
+        } else {
+          url = NOMENCLATURE_DOWNLOAD_URL;
+        }
+      }
+    } else if (type === 'calculator') {
+      await this.serverService
+        .post('centre-d-aide/log-documentation-link', {
+          value: CALCULATE_DOWNLOAD_URL,
+        })
+        .then((r) => {
+          return r.data;
+        });
+      window.open(CALCULATE_DOWNLOAD_URL);
+    }
+
+    if (url) {
+      if (download) {
+        downloadFile(url);
+      } else {
+        window.open(url);
+      }
+    }
   }
 
   async downloadEtpTemplate() {

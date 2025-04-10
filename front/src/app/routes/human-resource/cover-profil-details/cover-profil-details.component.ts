@@ -372,22 +372,4 @@ export class CoverProfilDetailsComponent
     }
     return 0;
   }
-
-  downloadAsset() {
-    let url = null;
-
-    if (this.userService.isCa()) {
-      url = NOMENCLATURE_DOWNLOAD_URL_CA;
-    } else {
-      if (this.referentielService.isDroitLocal()) {
-        url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
-      } else {
-        url = NOMENCLATURE_DOWNLOAD_URL;
-      }
-    }
-
-    if (url) {
-      window.open(url);
-    }
-  }
 }
