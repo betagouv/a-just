@@ -421,12 +421,7 @@ export class PopinGraphsDetailsComponent
                   1
                 );
             } else {
-              bodyLine.innerHTML =
-                '' +
-                fixDecimal(
-                  Number(body.lines[0].replace(/\s/g, '').replace(',', '.')),
-                  1000
-                );
+              bodyLine.innerHTML = body.lines[0];
             }
 
             bodyContainer.appendChild(imageLine);
@@ -480,6 +475,7 @@ export class PopinGraphsDetailsComponent
           min,
           max,
           ticks: {
+            stepSize: (max - min) / 5,
             fontSize: 12,
             color: 'rgba(0, 0, 0, 0.70)',
             callback: (value: any, index: number, values: any[]): any => {
