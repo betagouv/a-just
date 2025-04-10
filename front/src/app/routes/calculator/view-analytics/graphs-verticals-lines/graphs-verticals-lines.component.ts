@@ -174,6 +174,7 @@ export class GraphsVerticalsLinesComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log('changes', changes);
     this.updateLocalMaxValue();
 
     if (this.referentielName) {
@@ -207,11 +208,16 @@ export class GraphsVerticalsLinesComponent
   }
 
   updateLocalMaxValue(force = false) {
-    if (this.maxValue !== null && !force) {
-      this.localMaxValue = this.maxValue;
+    if (
+      (this.maxValue !== null && !force) ||
+      this.localMaxValue < (this.maxValue || 0)
+    ) {
+      this.localMaxValue = this.maxValue || 0;
     } else {
       const allValues: number[] = [...this.values, ...this.line.getValue()];
       this.localMaxValue = Math.max(...allValues) * 1.4;
+      console.log(this.localMaxValue);
+      this.updateMax.emit({ type: this.type, max: this.localMaxValue });
     }
   }
 
