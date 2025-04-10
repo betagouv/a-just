@@ -23,6 +23,8 @@
                 <p>{{compareAtString}}</p>
             </div>
         </div>
+        <p *ngIf="haveMissingDatas" class="have-missing-datas">Certaines données sont manquantes sur les périodes
+            sélectionner</p>
         <div class="canvas-zone">
             <p class="error" *ngIf="showError">Aucune donnée d’activité n’est enregistrée sur cette période pour ce
                 contentieux : vous pouvez les compléter dans l'écran de <a routerLink="/donnees-d-activite">données
