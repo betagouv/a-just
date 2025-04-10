@@ -55,7 +55,7 @@ export class ActualPanelSituationComponent
   /**
    * Affiche l'ETP calculé
    */
-  @Input() etp: number = 0;
+  @Input() etp: number | null = 0;
   /**
    * Liste des indispo courrante
    */

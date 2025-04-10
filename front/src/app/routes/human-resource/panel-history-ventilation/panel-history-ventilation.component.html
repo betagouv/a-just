@@ -30,7 +30,7 @@
   </div>
   <div [ngClass]="{alert: warningETP}" class="etpt">
     <p>ETPTravaillé :</p>
-    <etp-preview [etp]="etp - indisponibility" [realETP]="etp" [indisponibility]="indisponibility"></etp-preview>
+    <etp-preview [etp]="(etp || 0) - indisponibility" [realETP]="etp" [indisponibility]="indisponibility"></etp-preview>
   </div>
 </div>
 
@@ -67,7 +67,7 @@
 </div>
 
 <div class="activities-panel">
-  <panel-activities [category]="category" [etp]="etp - indisponibility" [activities]="activities"
+  <panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
     [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
 </div>
 
