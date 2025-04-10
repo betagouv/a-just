@@ -19,7 +19,7 @@ import { findLastIndex, maxBy, minBy } from 'lodash';
 import { today } from '../../../utils/dates';
 import { KPIService } from '../../../services/kpi/kpi.service';
 import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS } from '../../../constants/log-codes';
-import { calculerEchelleMax, fixDecimal } from '../../../utils/numbers';
+import { fixDecimal } from '../../../utils/numbers';
 import { AppService } from '../../../services/app/app.service';
 import { RouterModule } from '@angular/router';
 
@@ -300,7 +300,7 @@ export class PopinGraphsDetailsComponent
     this.showError =
       mergeTab.filter((v) => v && v.value !== null).length === 0 ? true : false;
     if (max) {
-      max = calculerEchelleMax(max * 1.1);
+      max = max * 1.1;
     }
     if (max === 0) {
       max = 1;
