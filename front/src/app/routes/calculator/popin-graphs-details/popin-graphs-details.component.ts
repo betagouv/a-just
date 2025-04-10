@@ -292,7 +292,7 @@ export class PopinGraphsDetailsComponent
     let min = Math.min(...mergeTabValues);
     let max = Math.max(...mergeTabValues) || 0;
     if (min) {
-      min *= 0.9;
+      min *= 0.7;
       if (min < 10) {
         min = 0;
       }
