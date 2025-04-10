@@ -260,27 +260,39 @@ input[type="file"] {
         font-weight: bold;
         color: fColor(cblack);
       }
+    }
+
+    >.ressources {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      gap: 8px;
+      border-bottom: 1px solid #ddd;
+
+      >p {
+        font-size: 12px;
+      }
 
       >.download {
         padding: 0;
         display: inline-flex;
         align-items: center;
-        border-bottom: 1px solid #000091;
-        color: #000091;
-        margin-left: 24px;
-        font-size: 14px;
+        gap: 4px;
+        border-radius: 4px;
+        background-color: #F5F5FE;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: 700;
         cursor: pointer;
 
-        img {
-          width: 14px;
-          top: 1px;
+        mat-icon {
           position: relative;
-          margin-left: 8px;
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
         }
       }
     }
-
-
   }
 
   .bottom-container {
