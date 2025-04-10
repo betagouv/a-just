@@ -215,9 +215,12 @@ export class GraphsVerticalsLinesComponent
       this.localMaxValue = this.maxValue || 0;
     } else {
       const allValues: number[] = [...this.values, ...this.line.getValue()];
-      this.localMaxValue = Math.max(...allValues) * 1.4;
-      console.log(this.localMaxValue);
+      this.localMaxValue = Math.max(...allValues) * 1.1;
       this.updateMax.emit({ type: this.type, max: this.localMaxValue });
+    }
+
+    if (this.localMaxValue < (this.maxValue || 0)) {
+      this.localMaxValue = this.maxValue || 0;
     }
   }
 

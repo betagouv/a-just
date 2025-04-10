@@ -256,6 +256,24 @@ export class ViewAnalyticsComponent
         }
         return;
       }
+      case 'ETPTSiege': {
+        if (this.siegeMax < max) {
+          this.siegeMax = max;
+        }
+        return;
+      }
+      case 'ETPTGreffe': {
+        if (this.greffeMax < max) {
+          this.greffeMax = max;
+        }
+        return;
+      }
+      case 'ETPTEam': {
+        if (this.eamMax < max) {
+          this.eamMax = max;
+        }
+        return;
+      }
     }
   }
 
