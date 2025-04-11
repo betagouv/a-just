@@ -305,8 +305,8 @@ export function nbWorkingDays (startDate, endDate) {
  * @returns boolean
  */
 export function checkIfDateIsNotToday (date) {
-  const today = today(new Date())
-  return date && (date.getDate() !== today.getDate() || date.getMonth() !== today.getMonth() || date.getFullYear() !== today.getFullYear())
+  const ty = today()
+  return date && (date.getDate() !== ty.getDate() || date.getMonth() !== ty.getMonth() || date.getFullYear() !== ty.getFullYear())
 }
 
 /**
