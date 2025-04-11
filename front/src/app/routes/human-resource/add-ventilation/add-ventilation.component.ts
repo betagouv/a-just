@@ -603,7 +603,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       };
 
       situations = situations.filter((s) => s.id !== this.editId);
-    } else if (this.editId !== -1) {
+    } else if (this.editId !== -1 && this.editId !== null) {
       const index = situations.findIndex((s) => s.id === this.editId);
       if (index !== -1) {
         situations[index] = {
