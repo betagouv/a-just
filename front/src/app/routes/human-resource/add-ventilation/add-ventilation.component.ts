@@ -507,7 +507,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    const nbSituationSetted = (this.human.situations || []).length;
     if (etp === 0) {
       if (!saveETPT0) {
         this.appService.alert.next({
@@ -604,7 +603,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       };
 
       situations = situations.filter((s) => s.id !== this.editId);
-    } else if (this.editId) {
+    } else if (this.editId !== -1) {
       const index = situations.findIndex((s) => s.id === this.editId);
       if (index !== -1) {
         situations[index] = {
