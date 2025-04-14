@@ -2,9 +2,9 @@
   <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index"
     [ngStyle]="{ 'border-right': header ? '1px solid rgba(0, 0, 0, 0.1)' : '0px'}">
     <div class="header" *ngIf="header">
-      <p>
-        {{ userService.referentielMappingNameByInterface(ref.label)
-        }}
+      <p [ngStyle]="{
+        'text-transform' : ref.label.toLowerCase().includes('autres') ? 'uppercase' : '',}">
+        {{ userService.referentielMappingNameByInterface(ref.label)}}
       </p>
       <p class="etp">{{ ref.totalAffected | number: '0.2-2' }}</p>
     </div>
