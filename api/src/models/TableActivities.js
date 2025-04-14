@@ -522,14 +522,10 @@ export default (sequelizeInstance, Model) => {
               findAllChild[i].contentieux_id
             );
           // do not update if updated by user
-          // or if 'entrees' and/or 'sorties' have updates and
-          // their values are equal to originals and their data qualities are 'to_verify'
+          // or if stock is 'A_verifier'
           if (
-            !getUserUpdateStock ||
-            getUserUpdateStock.value === null /*&&
-               !isValueToVerifySetted( findAllChild[i].entrees ? findAllChild[i].entrees : null, findAllChild[i], "entrees", contentieuxRef.dataValues) && 
-               !isValueToVerifySetted( findAllChild[i].sorties ? findAllChild[i].sorties : null, findAllChild[i], "sorties", contentieuxRef.dataValues) &&
-               contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY*/
+            (!getUserUpdateStock ||
+            getUserUpdateStock.value === null) && contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY
           ) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(
               findAllChild[i].contentieux_id,
