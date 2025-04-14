@@ -614,7 +614,8 @@ export class PopinEditActivitiesComponent
         (this.updates[`${contentieux.id}-stock`] &&
           this.updates[`${contentieux.id}-stock`].value === null)) &&
       (this.updates[`${contentieux.id}-entrees`] ||
-        this.updates[`${contentieux.id}-sorties`])
+        this.updates[`${contentieux.id}-sorties`]) &&
+      contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
     ) {
       updateTotal = true;
 
