@@ -13,6 +13,7 @@ import {
   input,
   signal,
   Signal,
+  inject,
 } from '@angular/core';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { isNumber, sumBy } from 'lodash';
@@ -25,11 +26,19 @@ import { HRFonctionInterface } from '../../../interfaces/hr-fonction';
 import { HRCategoryInterface } from '../../../interfaces/hr-category';
 import { RHActivityInterface } from '../../../interfaces/rh-activity';
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
+import { UserService } from '../../../services/user/user.service';
+import { ReferentielService } from '../../../services/referentiel/referentiel.service';
 import { fixDecimal } from '../../../utils/numbers';
 import { today } from '../../../utils/dates';
 import { etpLabel } from '../../../utils/referentiel';
+import { downloadFile } from '../../../utils/system';
 import { MatIconModule } from '@angular/material/icon';
 import { BigEtpPreviewComponent } from '../big-etp-preview/big-etp-preview.component';
+import {
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
+} from '../../../constants/documentation';
 
 /**
  * Panneau de présentation d'une fiche
@@ -58,6 +67,8 @@ export class CoverProfilDetailsComponent
     new QueryList<ElementRef>();
   @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>;
 
+  userService = inject(UserService);
+  referentielService = inject(ReferentielService);
   /**
    * Fiche courante
    */

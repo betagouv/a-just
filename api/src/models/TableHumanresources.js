@@ -289,7 +289,7 @@ export default (sequelizeInstance, Model) => {
           logging: false,
         })
 
-        if (list[i].hmatricule !== '' && findHRToDBByMatricule) {
+        if (list[i].hmatricule !== '' && list[i].hmatricule !== '0' && findHRToDBByMatricule) {
           importSituation.push(list[i].hmatricule + ' no add by matricule already existing')
           continue
         }

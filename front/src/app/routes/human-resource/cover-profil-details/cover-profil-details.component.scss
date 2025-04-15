@@ -30,6 +30,49 @@
     top: 26px;
     font-size: 14px;
   }
+
+  .right-panel {
+    width: auto;
+    padding: 4px 8px;
+
+    h2 {
+      font-size: 1em;
+      margin: 0;
+      padding: 0;
+      line-height: normal;
+      font-weight: bold;
+      color: fColor(cblack);
+    }
+
+    p {
+      color: fColor(primary);
+      border-bottom: 2px solid fColor(primary);
+      font-size: 0.875em;
+    }
+
+    .elements {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      color: fColor(cbluedark);
+    }
+
+    .element {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      position: relative;
+
+      .mat-icon {
+        padding: 4px;
+        font-size: 0.875em;
+      }
+    }
+
+    .element :hover {
+      cursor: pointer;
+    }
+  }
 }
 
 .group-first-row {
@@ -50,7 +93,8 @@
 }
 
 .second-row {
-  padding: 0 24px 14px 24px;
+  padding: 16px 24px;
+  //padding: 8px 24px 14px 24px;
   display: flex;
   justify-content: space-between;
   align-items: stretch;
@@ -58,10 +102,7 @@
   >div {
     display: flex;
     flex-direction: column;
-
-    &.right-second-row {
-      align-items: flex-end;
-    }
+    gap: 4px;
 
     &.left-second-row {
       display: flex;
@@ -72,42 +113,21 @@
 
 
   .user-name,
-  .matricule {
+  .last-row {
 
     input {
       border: none;
-      font-size: 20px;
       font-weight: bold;
       white-space: wrap;
       outline: none;
       color: fColor(cblack);
-      padding: 4px;
       background: none;
       box-sizing: border-box;
-      //overflow: hidden;
-      height: 30px;
+      height: auto;
       width: inherit;
-      min-width: 110px;
+      min-width: 180px;
       overflow: hidden;
 
-      /**
-      position: relative;
-      top: 0;
-      left: 0;
-      min-width: 120px;
-
-      appearance: none;
-      box-sizing: border-box;
-      font-size: 20px;
-      padding: 0px 0px 6px;
-      //border: 0;
-      //background: linear-gradient(to right, gray 50%, transparent 50%), linear-gradient(to right, gray 50%, transparent 50%), linear-gradient(to bottom, gray 50%, transparent 50%), linear-gradient(to bottom, gray 50%, transparent 50%);
-      background-size: 8px 1px, 8px 1px, 1px 8px, 1px 8px;
-      background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-      background-position: 0px 0px, 0px 1em, 0px 0px, 100% 0px;
-      box-shadow: inset 0px -10px 0px white;
-      outline: none;
-*/
       &::placeholder {
         color: #aeaeae;
       }
@@ -119,43 +139,42 @@
       }
     }
 
-    ;
+    .input-wrapper {
+      min-width: 200px;
+      position: relative;
+      box-sizing: border-box;
+      line-height: 1em;
+      padding: 4px 8px;
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      border: 1px solid #DDD;
+      border-radius: 4px;
+      background-color: #F6F6F6;
+    }
   }
 
   .user-name {
     display: flex;
     align-items: center;
+    gap: 8px;
 
     width: 100%;
     flex-wrap: wrap;
 
-    .input-wrapper:first-child {
-      margin-right: 6px;
+    input {
+      font-size: 14px;
     }
 
-    .input-wrapper {
-      min-width: 120px;
-      position: relative;
-      box-sizing: border-box;
-      line-height: 1em;
-      padding: 4px 4px 4px 1px;
-      display: inline-block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
+  }
 
+  .last-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 
-    mat-icon {
-      width: 12px;
-      height: 12px;
+    input {
       font-size: 12px;
-      margin-left: 10px;
-      margin-top: 4px;
-      align-self: center;
-    }
-
-    aj-help-button {
-      margin-left: 22px;
     }
   }
 
@@ -172,31 +191,6 @@
     min-width: 2px;
     user-select: none;
     vertical-align: top;
-  }
-
-  .matricule {
-    display: flex;
-    align-items: center;
-    margin-right: 14px;
-    padding-left: 1px;
-
-    mat-icon {
-      width: 7px;
-      height: 7px;
-      font-size: 7px;
-      margin-left: 5px;
-      margin-top: 1px;
-    }
-
-    input {
-      font-size: 12px !important;
-      /**
-      position: relative;
-      padding-bottom: 0;
-      height: 30px;
-      overflow: hidden;
-*/
-    }
   }
 
   .tags {
@@ -223,9 +217,10 @@
 
   .dates {
     display: flex;
+    gap: 8px;
 
     aj-date-select {
-      margin-left: 8px;
+      padding: 2px 8px;
       width: 150px;
     }
   }

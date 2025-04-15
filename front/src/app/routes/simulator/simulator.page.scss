@@ -195,6 +195,7 @@
     width: 100%;
     background-color: white;
     align-items: center;
+    padding-left: 24px;
 
     aj-period-selector {
       flex: 1
@@ -215,58 +216,55 @@
           0 20px 25px -5px rgba(0, 0, 0, 0.1);
       }
     }
+  }
 
-    .categories-switch {
-      margin-left: 24px;
+  .categories-switch {
+    display: flex;
+    align-items: stretch;
+    height: 55px;
+    z-index: 0;
+    margin-right: 24px;
+    top: 6px;
+
+    >div {
       display: flex;
-      align-items: stretch;
-      height: 55px;
-      z-index: 0;
-      margin-right: 56px;
-      top: 6px;
-      position: relative;
+      align-items: center;
+      padding: 0 16px;
+      cursor: pointer;
+      border: solid 1px fColor(cgraylightv3);
 
-      >div {
-        display: flex;
-        align-items: center;
-        padding: 0 16px;
-        cursor: pointer;
-        border: solid 1px fColor(cgraylightv3);
-
-        &.alone {
-          border-radius: 4px;
-        }
-
-        p {
-          font-size: 16px;
-          line-height: 1.5;
-          margin-left: 8px;
-          color: fColor(colorTag);
-        }
+      &.alone {
+        border-radius: 4px;
       }
 
-      >.magistrats {
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
-
-        &.selected {
-          border: solid 1px fColor(cbluedark);
-          background-color: fColor(cbluemiddle);
-        }
+      p {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-left: 8px;
+        color: fColor(colorTag);
       }
+    }
 
-      >.fonctionnaires {
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
+    >.magistrats {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
 
-        &.selected {
-          border: solid 1px fColor(cpink);
-          background-color: fColor(cpinkmiddle);
-        }
+      &.selected {
+        border: solid 1px fColor(cbluedark);
+        background-color: fColor(cbluemiddle);
+      }
+    }
+
+    >.fonctionnaires {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+
+      &.selected {
+        border: solid 1px fColor(cpink);
+        background-color: fColor(cpinkmiddle);
       }
     }
   }
-
 
 
   .progress-bar {

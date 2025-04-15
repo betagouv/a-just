@@ -274,7 +274,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Liste des filtres selectionnés
    */
-  filterSelected: ContentieuReferentielInterface | null = null;
+  filterSelected: {
+    filter: ContentieuReferentielInterface | null;
+    up: boolean | null;
+  } = { filter: null, up: null };
   /**
    * Affichage du panneau de selection de filtre
    */
@@ -868,7 +871,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Ordonner une liste de RH
    */
-  orderListWithFiltersParams() {
+  orderListWithFiltersParams(up: boolean | null = null) {
     this.listFormated = this.listFormated.map((list) => {
       let listFiltered = [...list.hr];
       if (this.filterParams) {
@@ -905,11 +908,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           list.hrFiltered,
           (h) => {
             const acti = (h.currentActivities || []).find(
-              (a) => a.contentieux?.id === this.filterSelected?.id
+              (a) => a.contentieux?.id === this.filterSelected.filter?.id
             );
             return acti ? acti.percent || 0 : 0;
           },
-          ['desc']
+          [up ? 'asc' : 'desc']
         );
       }
 
@@ -1027,13 +1030,20 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @param ref
    */
   onFilterBy(ref: ContentieuReferentielInterface) {
-    if (!this.filterSelected || this.filterSelected.id !== ref.id) {
-      this.filterSelected = ref;
+    console.log('this.filterSelected:', this.filterSelected);
+    if (
+      !this.filterSelected.filter ||
+      this.filterSelected.filter?.id !== ref.id ||
+      this.filterSelected.up === true
+    ) {
+      this.filterSelected.filter = ref;
+      this.filterSelected.up = this.filterSelected.up === null ? true : false;
     } else {
-      this.filterSelected = null;
+      this.filterSelected.filter = null;
+      this.filterSelected.up = null;
     }
 
-    this.orderListWithFiltersParams();
+    this.orderListWithFiltersParams(this.filterSelected.up);
   }
 
   /**
