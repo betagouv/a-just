@@ -21,6 +21,7 @@ declare interface Env {
   NG_APP_GITBOOK_ORG_ID: string;
   NG_APP_ENABLE_SSO: boolean;
   NG_APP_CRISP: string;
+  NG_APP_NODE_ENV: string;
   [key: string]: any;
 }
 

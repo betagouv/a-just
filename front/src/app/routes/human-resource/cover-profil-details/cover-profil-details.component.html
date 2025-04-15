@@ -30,18 +30,13 @@
           (ngModelChange)="completeFormWithDomObject('lastName', $event)" (keydown)="preventSubmit($event)"
           (keyup.enter)="focusNext($event)" (input)="adjustInputWidth($event, 'lastName')" />
       </div>
-      <mat-icon class="iconPen no-print cursor-pointer"
-        (click)="onFocus(firstNameDom)">drive_file_rename_outline</mat-icon>
-
       <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
         class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
     </div>
     <div class="last-row">
-      <div class="matricule">
+      <div class="matricule input-wrapper">
         <input id="matricule" #matriculeDom [placeholder]="'Matricule (facultatif)'" [ngModel]="currentHR?.matricule"
           (ngModelChange)="completeFormWithDomObject('matricule', $event)" (keydown)="keyPress($event);" />
-        <mat-icon class="iconPenSmall no-print cursor-pointer"
-          (click)="onFocus(matriculeDom)">drive_file_rename_outline</mat-icon>
       </div>
       <div class="tags">
         <p *ngIf="fonction" class="fonction"
@@ -60,8 +55,6 @@
   </div>
 
   <div class="right-second-row">
-
-    <div class="flex-1"></div>
     <div class="dates">
       <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart"
         (valueChange)="updateHuman('dateStart', $event)">

@@ -138,7 +138,7 @@ export class CalculatorPage
   /**
    * Tri ou non
    */
-  sortBy: string = '';
+  sortBy: { type: string; up: boolean | null } = { type: '', up: null };
   /**
    * Liste des lignes du calculateurs venant du back
    */
@@ -829,12 +829,12 @@ export class CalculatorPage
   /**
    * Trier les datas en fonction d'un trie
    */
-  filtredDatas() {
+  filtredDatas(up: boolean | null = null) {
     let list = this.datas;
     if (this.sortBy) {
-      let sort = this.sortBy;
+      let sort = this.sortBy.type;
       if (
-        this.sortBy === 'magRealTimePerCase' &&
+        this.sortBy.type === 'magRealTimePerCase' &&
         this.categorySelected !== 'magistrats'
       ) {
         sort = 'fonRealTimePerCase';
@@ -847,7 +847,7 @@ export class CalculatorPage
             return o[sort] || 0;
           },
         ],
-        ['desc']
+        [up ? 'asc' : 'desc']
       );
     }
 
@@ -892,13 +892,15 @@ export class CalculatorPage
    * @param type
    */
   onSortBy(type: string) {
-    if (this.sortBy === type) {
-      this.sortBy = '';
+    if (this.sortBy.type === '' || this.sortBy.up === true) {
+      this.sortBy.type = type;
+      this.sortBy.up = this.sortBy.up === null ? true : false;
     } else {
-      this.sortBy = type;
+      this.sortBy.type = '';
+      this.sortBy.up = null;
     }
 
-    this.filtredDatas();
+    this.filtredDatas(this.sortBy.up);
   }
 
   /**

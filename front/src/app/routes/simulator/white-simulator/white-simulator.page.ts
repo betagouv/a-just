@@ -316,6 +316,10 @@ export class WhiteSimulatorPage
       { id: 'cancel', content: 'Annuler' },
       { id: 'export', content: 'Exporter en PDF', fill: true },
     ],
+    backBeforeSimulate: [
+      { id: 'leave', content: 'Quitter' },
+      { id: 'close', content: 'Continuer', fill: true },
+    ],
   };
 
   /**
@@ -650,7 +654,7 @@ export class WhiteSimulatorPage
    */
   @HostListener('window:beforeunload', ['$event'])
   unloadHandler(event: Event) {
-    if (this.toDisplaySimulation) {
+    if (this.toDisplaySimulation || this.projectedSituationData) {
       this.onUserActionClick(this.action.closeTab);
       event.preventDefault();
     }
@@ -749,8 +753,6 @@ export class WhiteSimulatorPage
 
     this.watch(
       this.simulatorService.dateStop.subscribe((date) => {
-        console.log('CHANGE', this.dateStop, date);
-
         if (date !== undefined && date !== null) {
           if (
             !(
@@ -761,7 +763,6 @@ export class WhiteSimulatorPage
           ) {
             this.dateStop = date;
             this.stopRealValue = findRealValue(this.dateStop);
-            console.log('CHANGE', this.dateStop);
           }
         }
       })
@@ -772,7 +773,6 @@ export class WhiteSimulatorPage
 
     this.loadFunctions();
     this.isLoading = false;
-    console.log(this.dateStop);
   }
 
   /**
@@ -2106,7 +2106,7 @@ export class WhiteSimulatorPage
   }
 
   canDeactivate(nextState: string) {
-    if (this.toDisplaySimulation) {
+    if (this.toDisplaySimulation || this.projectedSituationData) {
       this.userAction.isLeaving = true;
       this.nextState = nextState;
       return this.forceDeactivate;
@@ -2150,8 +2150,36 @@ export class WhiteSimulatorPage
           }
           break;
       }
+    } else {
+      this.printPopup = true;
+      switch (button) {
+        case this.action.return:
+          {
+            this.popupActionToUse = this.popupAction.backBeforeSimulate;
+            this.userAction.isComingBack = true;
+          }
+          break;
+        case this.action.leave:
+          {
+            this.popupActionToUse = this.popupAction.leaving;
+            this.userAction.isLeaving = true;
+          }
+          break;
+      }
     }
     return;
+  }
+
+  onReturn() {
+    if (this.toDisplaySimulation) {
+      this.onUserActionClick(this.action.return);
+    } else if (this.projectedSituationData) {
+      this.onUserActionClick(this.action.return);
+    } else {
+      this.chooseScreen = true;
+      this.router.navigate(['/simulateur']);
+      this.resetParams();
+    }
   }
 
   onResetUserAction() {
@@ -2172,6 +2200,7 @@ export class WhiteSimulatorPage
             this.resetParams();
             this.forceDeactivate = false;
             this.chooseScreen = true;
+            this.router.navigate(['/simulateur']);
           }
           break;
         case 'export':
@@ -2184,6 +2213,11 @@ export class WhiteSimulatorPage
               this.forceDeactivate = false;
               this.chooseScreen = true;
             });
+          }
+          break;
+        case 'close':
+          {
+            this.printPopup = false;
           }
           break;
       }
@@ -2327,7 +2361,7 @@ export class WhiteSimulatorPage
    * Demande de rechargement de la page
    */
   reloadPage() {
-    if (this.toDisplaySimulation) {
+    if (this.toDisplaySimulation || this.projectedSituationData) {
       this.onUserActionClick(this.action.leave);
       this.onReloadAction = true;
     } else {
@@ -2370,5 +2404,15 @@ export class WhiteSimulatorPage
     let now = new Date();
     now.setFullYear(now.getFullYear() + 1);
     return now;
+  }
+
+  /**
+   * Comparaison de 2 objet json
+   * @param obj1
+   * @param obj2
+   * @returns
+   */
+  public isEqualJSON(obj1: any, obj2: any): boolean {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 }

@@ -1,46 +1,60 @@
 <div class="header-panel">
-  <p>Répartition actuelle du temps disponible par activité</p>
-  <div>
-    <div class="tags">
-      <p *ngIf="dateStart" class="date">
-        <mat-icon>calendar_today</mat-icon>
-        <ng-template [ngIf]="dateStart.getTime() !== getToday().getTime()">
-          {{
-          dateStart && dateStart.getTime() > getToday().getTime()
-          ? 'À partir du'
-          : 'Depuis le'
-          }}
-          {{ dateStart | date : 'dd' }} {{ getShortMonthString(dateStart) }}
-          {{ dateStart.getFullYear() }}
-        </ng-template>
-        <ng-template [ngIf]="dateStart.getTime() === getToday().getTime()">
-          {{
-          dateStart && dateStart.getTime() > getToday().getTime()
-          ? "À partir d'Aujourd'hui"
-          : "Depuis Aujourd'hui"
-          }}
-        </ng-template>
-      </p>
-      <p *ngIf="dateStop" class="date">
-        <mat-icon>calendar_today</mat-icon>
-        <ng-template [ngIf]="dateStop.getTime() !== getToday().getTime()">Jusqu'au {{ dateStop | date : 'dd' }}
-          {{ getShortMonthString(dateStop) }}
-          {{ dateStop.getFullYear() }}
-        </ng-template>
-        <ng-template [ngIf]="dateStop.getTime() === getToday().getTime()">Jusqu'à Aujourd'hui
-        </ng-template>
-      </p>
-      <div class="flex-1"></div>
-      <ng-template [ngIf]="canEdit">
-        <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">
-          Corriger
-        </button>
-        <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="light small outline red no-print">
-          Supprimer la situation
-        </button>
-      </ng-template>
+  <div class="left-panel">
+    <p>Répartition actuelle des activités</p>
+    <div>
+      <div class="tags">
+        <p *ngIf="dateStart" class="date">
+          <mat-icon>calendar_today</mat-icon>
+          <ng-template [ngIf]="dateStart.getTime() !== getToday().getTime()">
+            {{
+            dateStart && dateStart.getTime() > getToday().getTime()
+            ? 'À partir du'
+            : 'Depuis le'
+            }}
+            {{ dateStart | date : 'dd' }} {{ getShortMonthString(dateStart) }}
+            {{ dateStart.getFullYear() }}
+          </ng-template>
+          <ng-template [ngIf]="dateStart.getTime() === getToday().getTime()">
+            {{
+            dateStart && dateStart.getTime() > getToday().getTime()
+            ? "À partir d'Aujourd'hui"
+            : "Depuis Aujourd'hui"
+            }}
+          </ng-template>
+        </p>
+        <p *ngIf="dateStop" class="date">
+          <mat-icon>calendar_today</mat-icon>
+          <ng-template [ngIf]="dateStop.getTime() !== getToday().getTime()">Jusqu'au {{ dateStop | date : 'dd' }}
+            {{ getShortMonthString(dateStop) }}
+            {{ dateStop.getFullYear() }}
+          </ng-template>
+          <ng-template [ngIf]="dateStop.getTime() === getToday().getTime()">Jusqu'à Aujourd'hui
+          </ng-template>
+        </p>
+      </div>
     </div>
   </div>
+  <div class="right-panel">
+    <ng-template [ngIf]="canEdit">
+      <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">
+        Corriger
+      </button>
+      <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="light small outline red no-print">
+        Supprimer
+      </button>
+    </ng-template>
+  </div>
+</div>
+<div class="ressources">
+  <p>Ressources :</p>
+  <a (click)="downloadAsset('nomencalture')" class="download">
+    La nomenclature
+    <mat-icon>launch</mat-icon>
+  </a>
+  <a (click)="downloadAsset('calculator')" class="download">
+    Télécharger la calculatrice de ventilations
+    <mat-icon>download</mat-icon>
+  </a>
 </div>
 
 <panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"

@@ -1,5 +1,6 @@
 <!-- SIMULATEUR STD - SELECTEUR CONTENTIEUX, SS CONTENTIEUX, FCT-->
 <div class="action-simulator-bar">
+    <ng-content></ng-content>
     <aj-select title="Contentieux (obligatoire)" class="contentieux {{this.disabled}}"
         [defaultRealValue]="'Sélectionner un contentieux'" [value]="contentieuId" [datas]="formReferentiel"
         (valueChange)="updateReferentielSelected('referentiel', $event)" [multiple]="false">

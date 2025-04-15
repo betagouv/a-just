@@ -189,6 +189,11 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "test": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -210,6 +215,9 @@
             },
             "development": {
               "buildTarget": "a-just-front:build:development"
+            },
+            "test": {
+              "buildTarget": "a-just-front:build:test"
             }
           },
           "defaultConfiguration": "development",

@@ -616,15 +616,18 @@ export class PopinEditActivitiesComponent
           !this.updates[`${contentieux.id}-stock`]) &&
           contentieux.originalStock !== null)) &&
       (this.updates[`${contentieux.id}-entrees`] ||
-        this.updates[`${contentieux.id}-sorties`])
+        this.updates[`${contentieux.id}-sorties`]) &&
+      contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
     ) {
       updateTotal = true;
+
       const entreeValue = this.getValueInOrOut('entrees', contentieux);
       const sortieValue = this.getValueInOrOut('sorties', contentieux);
-      const stockValue = contentieux.originalStock ?? 0;
+      const stockValue = contentieux.stock ?? contentieux.originalStock ?? 0;
 
       const originalEntrees = contentieux.originalIn ?? 0;
       const originalSorties = contentieux.originalOut ?? 0;
+
 
       let newStock = 0;
 

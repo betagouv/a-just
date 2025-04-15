@@ -47,11 +47,20 @@ export class ForgotPassword {
    */
   onSubmit() {
     let { email } = this.form.value;
-    this.userService.forgotPassword({ email }).then((msg) => {
-      if (msg) {
-        this.openPopin = true;
-      }
-    });
+
+    if (import.meta.env.NG_APP_NODE_ENV === 'test') {
+      this.userService.forgotPasswordTest({ email }).then((res) => {
+        if (res.msg) {
+          this.openPopin = true;
+        }
+      });
+    } else {
+      this.userService.forgotPassword({ email }).then((msg) => {
+        if (msg) {
+          this.openPopin = true;
+        }
+      });
+    }
   }
 
   /**

@@ -8,10 +8,7 @@
   <app-choose-simulator *ngIf="chooseScreen" (selectedSimulatorType)="onShooseScreen($event)"></app-choose-simulator>
 
   <!-- SIMULATEUR STD - SELECTEUR CONTENTIEUX, SS CONTENTIEUX, FCT-->
-  <aj-header-selectors *ngIf="whiteSimulator===false && !chooseScreen"></aj-header-selectors>
-
-  <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
-  <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true, 'display-none': chooseScreen}">
+  <aj-header-selectors *ngIf="whiteSimulator===false && !chooseScreen">
     <div class="categories-switch">
       <div *ngIf="canViewMagistrat" class="magistrats {{disabled}}"
         [ngClass]="{'selected': categorySelected === 'MAGISTRAT',  alone: !canViewGreffier}"
@@ -27,6 +24,11 @@
         <p>Greffe</p>
       </div>
     </div>
+  </aj-header-selectors>
+
+  <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
+  <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true, 'display-none': chooseScreen}">
+
 
     <aj-period-selector #periodSelector [whiteSimulator]="whiteSimulator"></aj-period-selector>
   </div>
@@ -848,13 +850,16 @@
   </div>
 
   <aj-popup *ngIf="printPopup" class="small" [closeIcon]="true"
-    (onClose)="printPopup = false;nextState = null;onResetUserAction()" title="Conserver cette simulation ?"
+    (onClose)="printPopup = false;nextState = null;onResetUserAction()"
+    title="{{isEqualJSON(popupActionToUse,popupAction.backBeforeSimulate)?'Poursuivre cette simulation ?':'Conserver cette simulation ?'}}"
     [actions]="popupActionToUse" (selectedAction)="onPopupDetailAction($event)" [removeShadow]="'noShadow'">
     <div>
       <p class="content">
+        {{isEqualJSON(popupActionToUse,popupAction.backBeforeSimulate)?"Attention ! Les modifications en cours ne seront
+        pas sauvegardées. Voulez-vous vraiment quitter cette page ?":"
         Les simulations ne sont pas enregistrées dans A-JUST : si vous souhaitez
         conserver cette projection, exportez-la en PDF afin de l'enregistrer sur
-        votre ordinateur.
+        votre ordinateur."}}
       </p>
     </div>
   </aj-popup>
