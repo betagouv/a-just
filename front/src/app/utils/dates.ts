@@ -295,11 +295,13 @@ export function stringToDecimalDate(str: string, sep = 'h') {
  * @returns
  */
 export function decimalToStringDate(
-  decimal: number | null | undefined,
+  decimal: number | string | null | undefined,
   sep = 'h'
 ) {
   if (decimal != null) {
-    const strArray = String(decimal).split('.');
+    const decimalString = ('' + decimal).replace(',', '.');
+    decimal = +decimalString;
+    const strArray = decimalString.split('.');
     const dMin = decimal - parseInt(strArray[0]);
     let minute = strArray[1] ? String(Math.round(dMin * 60)) : '00';
     minute = minute.length === 1 ? '0' + minute : minute;

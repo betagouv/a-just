@@ -27,7 +27,10 @@ import {
   IntroJSStep,
 } from '../../components/intro-js/intro-js.component';
 import { MainClass } from '../../libs/main-class';
-import { dataInterface } from '../../components/select/select.component';
+import {
+  childrenInterface,
+  dataInterface,
+} from '../../components/select/select.component';
 import { BackupInterface } from '../../interfaces/backup';
 import { DocumentationInterface } from '../../interfaces/documentation';
 import { OPACITY_20 } from '../../constants/colors';
@@ -806,11 +809,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         ];
       }
     });
-    console.log(
-      this.selectedSubReferentielIds,
-      this.formReferentiel,
-      selectedSubReferentielIds
-    );
     if (
       isFirstLoad ||
       !this.selectedSubReferentielIds ||
@@ -829,8 +827,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         scrollPosition = domContent?.scrollTop;
       }
     }
-
-    console.log('selectedSubReferentielIds', selectedSubReferentielIds);
 
     this.isLoading = true;
     this.humanResourceService
@@ -853,17 +849,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           this.allPersons = allPersons;
 
           this.orderListWithFiltersParams();
-          if (
-            !keepEmptyVentilation &&
-            this.selectedReferentielIds.length < this.referentiel.length
-          ) {
-            this.listFormated = this.listFormated.map((list) => {
-              list.hrFiltered = list.hrFiltered.filter(
-                (h) => h.currentActivities.length > 0
-              );
-              return list;
-            });
-          }
 
           this.isLoading = false;
 
@@ -1011,14 +996,15 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     list: number[];
     subList: number[];
   }) {
-    console.log(list, subList);
     this.selectedReferentielIds = list;
     this.humanResourceService.selectedReferentielIds =
       this.selectedReferentielIds;
 
-    this.selectedSubReferentielIds = subList;
+    console.log('subList', subList);
+
+    this.selectedSubReferentielIds = [...subList];
     this.humanResourceService.selectedSubReferentielIds =
-      this.selectedReferentielIds;
+      this.selectedSubReferentielIds;
 
     this.referentiel = this.referentiel.map((cat) => {
       cat.selected = list.indexOf(cat.id) !== -1;
@@ -1243,6 +1229,22 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       list.push(this.getOptionAffichageReferentielString());
     }
 
+    if (this.selectedSubReferentielIds) {
+      let count = 0;
+      this.formReferentiel.map((cont) => {
+        if (
+          !this.selectedReferentielIds ||
+          (this.selectedReferentielIds || []).find((refId) => refId === cont.id)
+        ) {
+          count += (cont.childrens || []).length;
+        }
+      });
+
+      if (this.selectedSubReferentielIds.length !== count) {
+        list.push(this.getOptionAffichageSubReferentielString());
+      }
+    }
+
     if (
       this.filterParams &&
       this.filterParams.orderIcon &&
@@ -1280,6 +1282,40 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }
 
       return text;
+    }
+
+    return null;
+  }
+
+  /**
+   * Retour une string qui affiche les options des sous contentieux
+   */
+  getOptionAffichageSubReferentielString() {
+    if (this.selectedSubReferentielIds) {
+      let allSubRefs: childrenInterface[] = [];
+      this.formReferentiel.map((cont) => {
+        if (
+          !this.selectedReferentielIds ||
+          (this.selectedReferentielIds || []).find((refId) => refId === cont.id)
+        ) {
+          allSubRefs = [...allSubRefs, ...(cont.childrens || [])];
+        }
+      });
+
+      if (this.selectedSubReferentielIds.length !== allSubRefs.length) {
+        const labels = this.selectedSubReferentielIds.map((id) => {
+          const ref = allSubRefs.find((formRef) => formRef.id === id);
+          return ref?.value;
+        });
+
+        let text = labels.slice(0, 3).join(', ');
+
+        if (labels.length > 3) {
+          text += ' et ' + (labels.length - 3) + ' de plus';
+        }
+
+        return text;
+      }
     }
 
     return null;
@@ -1324,6 +1360,29 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   clearFilterReferentiel() {
     this.selectedReferentielIds = this.formReferentiel.map((r) => r.id);
+    this.selectedSubReferentielIds = [];
+    this.formReferentiel.map((cont) => {
+      if (
+        !this.selectedReferentielIds ||
+        (this.selectedReferentielIds || []).find((refId) => refId === cont.id)
+      ) {
+        this.selectedSubReferentielIds = [
+          ...(this.selectedSubReferentielIds || []),
+          ...(cont.childrens || []).map((c) => c.id),
+        ];
+      }
+    });
+
+    this.onSelectedReferentielIdsChanged({
+      list: this.selectedReferentielIds,
+      subList: this.selectedSubReferentielIds,
+    });
+  }
+
+  /**
+   * Supprimer le filtre des sous contentieux
+   */
+  clearFilterSubReferentiel() {
     this.selectedSubReferentielIds = [];
     this.formReferentiel.map((cont) => {
       if (

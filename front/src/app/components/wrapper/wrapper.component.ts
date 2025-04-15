@@ -296,6 +296,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * A la destruction du composant supprimer les watcher
    */
   ngOnDestroy() {
+    this.appService.scrollPosition.set(0);
     this.watcherDestroy();
   }
 
@@ -442,8 +443,32 @@ export class WrapperComponent extends MainClass implements OnDestroy {
           commentDom.style.textAlign = 'left';
           commentDom.style.fontFamily = 'Helvetica';
           commentDom.classList.add('p-with-child-Helvetica');
-          commentDom.innerHTML = comment || '';
-          console.log('comment', comment);
+          comment = comment || '';
+          if (comment.includes('<ol>')) {
+            comment = comment.replace(/<ol>/gm, '<ul>');
+            comment = comment.replace(/<\/ol>/gm, '</ul>');
+            comment = comment.replace(
+              /<span class="ql-ui" contenteditable="false"><\/span>/gm,
+              ''
+            );
+            comment = comment.replace(
+              /<li data-list="bullet">/gm,
+              '<li>&nbsp;&nbsp;&nbsp; • '
+            );
+            for (let i = 1; i < 10; i++) {
+              const newCheck = new RegExp(
+                `<li([^>]*)ql-indent-${i}([^>]*)>`,
+                'gm'
+              );
+              const nbspList = '&nbsp;'.repeat(i * 3);
+              comment = comment.replace(
+                newCheck,
+                `<li style="margin-left:${i * 30}px">${nbspList} • `
+              );
+            }
+          }
+          commentDom.innerHTML = comment;
+          //console.log('comment', comment);
 
           htmlContainer.appendChild(logo);
           htmlContainer.appendChild(title);
@@ -603,5 +628,13 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   refreshHeight(elem: any) {
     elem.style['padding-top'] = '0px';
+  }
+
+  /**
+   * Save scroll position
+   * @param event
+   */
+  onScroll(event: any) {
+    this.appService.scrollPosition.set(event.target.scrollTop);
   }
 }

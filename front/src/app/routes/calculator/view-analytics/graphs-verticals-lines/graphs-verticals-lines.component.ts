@@ -84,7 +84,7 @@ export class GraphsVerticalsLinesComponent
   /**
    * Max values
    */
-  @Input() maxValue: number = 100;
+  @Input() maxValue: number | null = null;
   /**
    * Style background
    */
@@ -127,6 +127,10 @@ export class GraphsVerticalsLinesComponent
    * timeout
    */
   timeout: any;
+  /**
+   * Local max value
+   */
+  localMaxValue: number = 100;
 
   /**
    * Constructor
@@ -170,6 +174,8 @@ export class GraphsVerticalsLinesComponent
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    this.updateLocalMaxValue();
+
     if (this.referentielName) {
       this.background = `linear-gradient(${this.userService.referentielMappingColorByInterface(
         this.referentielName,
@@ -200,6 +206,23 @@ export class GraphsVerticalsLinesComponent
     }
   }
 
+  updateLocalMaxValue(force = false) {
+    if (
+      (this.maxValue !== null && !force) ||
+      this.localMaxValue < (this.maxValue || 0)
+    ) {
+      this.localMaxValue = this.maxValue || 0;
+    } else {
+      const allValues: number[] = [...this.values, ...this.line.getValue()];
+      this.localMaxValue = Math.max(...allValues) * 1.1;
+      this.updateMax.emit({ type: this.type, max: this.localMaxValue });
+    }
+
+    if (this.localMaxValue < (this.maxValue || 0)) {
+      this.localMaxValue = this.maxValue || 0;
+    }
+  }
+
   refreshDatas() {
     this.line.next([]);
     if (this.showLines && this.referentielId && this.type) {
@@ -225,7 +248,10 @@ export class GraphsVerticalsLinesComponent
           .then((lines) => {
             this.isLoading = false;
             this.timeout = null;
-            this.line.next(lines.map((v: any) => +v.value || 0));
+            this.line.next(
+              lines.map((v: any) => (v && v.value ? +v.value : 0))
+            );
+            this.updateLocalMaxValue(true);
             this.draw();
           });
       }
@@ -253,22 +279,22 @@ export class GraphsVerticalsLinesComponent
           );
           ctx.setLineDash([2]);
           ctx.lineWidth = 1;
-          ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue));
+          ctx.moveTo(0, this.height * (1 - line[0] / this.localMaxValue));
           for (let i = 1; i < line.length; i++) {
             ctx.lineTo(
               this.width * ((1 / (line.length - 1)) * i),
-              this.height * (1 - line[i] / this.maxValue)
+              this.height * (1 - line[i] / this.localMaxValue)
             );
           }
           ctx.stroke();
 
           // Create path
           let region = new Path2D();
-          region.moveTo(0, this.height * (1 - line[0] / this.maxValue));
+          region.moveTo(0, this.height * (1 - line[0] / this.localMaxValue));
           for (let i = 1; i < line.length; i++) {
             region.lineTo(
               this.width * ((1 / (line.length - 1)) * i),
-              this.height * (1 - line[i] / this.maxValue)
+              this.height * (1 - line[i] / this.localMaxValue)
             );
           }
           region.lineTo(this.width, this.height);
@@ -309,15 +335,16 @@ export class GraphsVerticalsLinesComponent
             )
             .then((line) => {
               line = line.map((v: any) => +v.value || 0);
+              this.updateLocalMaxValue(true);
               this.isLoading = false;
 
               ctx.strokeStyle = g.color;
               ctx.lineWidth = 1;
-              ctx.moveTo(0, this.height * (1 - line[0] / this.maxValue));
+              ctx.moveTo(0, this.height * (1 - line[0] / this.localMaxValue));
               for (let i = 1; i < line.length; i++) {
                 ctx.lineTo(
                   this.width * ((1 / (line.length - 1)) * i),
-                  this.height * (1 - line[i] / this.maxValue)
+                  this.height * (1 - line[i] / this.localMaxValue)
                 );
               }
               ctx.stroke();
@@ -327,7 +354,7 @@ export class GraphsVerticalsLinesComponent
                 ctx.fillStyle = index === 0 ? 'white' : g.color;
                 ctx.arc(
                   this.width * ((1 / (line.length - 1)) * i),
-                  this.height * (1 - line[i] / this.maxValue),
+                  this.height * (1 - line[i] / this.localMaxValue),
                   2,
                   0,
                   2 * Math.PI

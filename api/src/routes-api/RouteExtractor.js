@@ -14,7 +14,7 @@ import {
 } from "../utils/extractor";
 import { getHumanRessourceList } from "../utils/humanServices";
 import { cloneDeep, groupBy, last, orderBy, sumBy } from "lodash";
-import { month } from "../utils/date";
+import { isDateGreaterOrEqual, month, today } from "../utils/date";
 import { ABSENTEISME_LABELS } from "../constants/referentiel";
 import { EXECUTE_EXTRACTOR } from "../constants/log-codes";
 
@@ -280,7 +280,6 @@ export default class RouteExtractor extends Route {
         ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
       }
     }
-
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
       type: "activité",
     });
@@ -295,12 +294,12 @@ export default class RouteExtractor extends Route {
     let activities = await this.models.Activities.getAllDetails(backupId);
     activities = orderBy(activities, "periode", ["asc"])
       .filter(
-        (act) => act.periode >= month(dateStart, 0) && act.periode <= dateStop
+        (act) => isDateGreaterOrEqual(act.periode, month(dateStart, 0)) && isDateGreaterOrEqual(month(dateStop,0,'lastday'),act.periode)
       )
       .map((x) => {
         return {
           ...x,
-          periode: new Date(x.periode.setHours(12, 0, 0, 0)).setDate(1),
+          periode: today(x.periode).setDate(1),
         };
       });
 

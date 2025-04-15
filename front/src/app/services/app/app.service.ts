@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AlertInterface } from '../../interfaces/alert';
 
@@ -35,6 +35,10 @@ export class AppService {
    * Mettre un grand loader
    */
   appLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  /**
+   * Main scroll position
+   */
+  scrollPosition = signal<number>(0);
 
   constructor() {
     this.initToastrConfig();

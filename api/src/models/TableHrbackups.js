@@ -223,7 +223,7 @@ export default (sequelizeInstance, Model) => {
           });
 
           // Renommer la HR si pas magistrat
-          if (category) newHR.update({ first_name: category.dataValues.label });
+          if (category) await newHR.update({ first_name: category.dataValues.label });
 
           // Création d'une situation
           const newSituation = await Model.models.HRSituations.create({

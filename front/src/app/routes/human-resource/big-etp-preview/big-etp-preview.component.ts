@@ -69,7 +69,9 @@ export class BigEtpPreviewComponent implements OnChanges {
    * Détection du changement de variable pour rédessiner
    */
   ngOnChanges() {
-    this.warningETP = !this.realETP(); //<= 0;
+    console.log(this.realETP());
+    this.warningETP =
+      this.realETP() === ETP_NEED_TO_BE_UPDATED || this.realETP() === null;
 
     const fixDec = fixDecimal(this.etp);
     this.etp = fixDec < 0 ? 0 : fixDec;

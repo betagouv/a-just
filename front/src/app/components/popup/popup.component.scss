@@ -303,6 +303,11 @@
     width: 100%;
     transition: margin-left 1s;
   }
+
+  &.no-scroll .popup .content {
+    overflow-y: inherit;
+    overflow-x: inherit;
+  }
 }
 
 .popup {

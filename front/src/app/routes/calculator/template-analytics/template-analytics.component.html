@@ -1,4 +1,4 @@
-<div class="header-refs">
+<div class="header-refs window-scrool-width-margin">
     <div>
     </div>
     <div>
@@ -12,7 +12,9 @@
 
 <div class="scroll-container" *ngIf="lines && lines.length">
     <div *ngFor="let line of lines">
-        <div class="container-colum">
+        <div class="container-colum cursor-pointer" (click)=" calculatorService.selectedRefGraphDetail=referentiel[0].id;
+            calculatorService.showGraphDetailTypeLineTitle=line.title;
+            calculatorService.showGraphDetailType=line.dataType">
             <p *ngIf="line.title" class="title-section">{{line.title}}</p>
             <p *ngIf="line.description" class="description-section" [innerHTML]="line.description | sanitizeHtml"></p>
             <div class="flex-1"></div>
@@ -31,7 +33,7 @@
             <div *ngFor="let ref of referentiel; let refIndex = index" class="flex-1">
                 <aj-graphs-verticals-lines *ngIf="line.type === 'verticals-lines'" class="cursor-pointer"
                     [referentielName]="ref.label" [referentielId]="ref.id"
-                    [values]="line.values ? line.values[refIndex] : []" [maxValue]="line.lineMax || 0"
+                    [values]="line.values ? line.values[refIndex] : []" [maxValue]="line.lineMax || null"
                     [graphs]="getGraphs(line)"
                     (click)="calculatorService.selectedRefGraphDetail = ref.id; calculatorService.showGraphDetailTypeLineTitle = line.title; calculatorService.showGraphDetailType = line.dataType"></aj-graphs-verticals-lines>
                 <ng-template [ngIf]="line.type === 'progress'">

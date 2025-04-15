@@ -24,7 +24,7 @@ export class EtpPreviewComponent implements OnChanges {
   /**
    * Valeure réel de l'ETP
    */
-  @Input() realETP: number | undefined;
+  @Input() realETP: number | undefined | null;
   /**
    * Valeure d'ETP
    */
@@ -72,7 +72,7 @@ export class EtpPreviewComponent implements OnChanges {
    */
   ngOnChanges() {
     this.needToBeUpdated = ETP_NEED_TO_BE_UPDATED === this.realETP;
-    if (this.realETP === 0 && this.forceAlert) {
+    if ((this.realETP === 0 && this.forceAlert) || this.realETP === null) {
       this.needToBeUpdated = true;
     }
 

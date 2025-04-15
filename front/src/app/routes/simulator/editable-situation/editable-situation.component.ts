@@ -187,6 +187,8 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         this.initFields();
         return;
       }
+
+      //console.log('actual situ', actualSituation);
       const etpFactor =
         this._category === 'MAGISTRAT' ? etpMagFactor : etpGreffeFactor;
       let eq = { field: '', value: -1 };
@@ -379,24 +381,25 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
             if (
               this.lockedParams.includes('magRealTimePerCase') &&
               actualSituation['totalOut'] !== ''
-            )
+            ) {
               eq = {
                 field: 'magRealTimePerCase',
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['totalOut'],
               };
+            }
             if (
               this.lockedParams.includes('totalOut') &&
               actualSituation['magRealTimePerCase'] !== ''
-            )
+            ) {
               eq = {
                 field: 'totalOut',
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['magRealTimePerCase'],
               };
-            else if (actualSituation['totalOut'] !== '') {
+            } else if (actualSituation['totalOut'] !== '') {
               eq = {
                 field: 'magRealTimePerCase',
                 value:
@@ -404,6 +407,15 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   actualSituation['totalOut'],
               };
               this.lockedParams.push('magRealTimePerCase');
+              /**
+              console.log(
+                'TMDDDD',
+                (etpFactor * actualSituation['etpMag']) /
+                  actualSituation['totalOut'],
+                etpFactor,
+                actualSituation['etpMag'],
+                actualSituation['totalOut']
+              ); */
             } else if (actualSituation['magRealTimePerCase'] !== '') {
               eq = {
                 field: 'totalOut',
@@ -689,6 +701,16 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     return true;
   }
 
+  /**
+   * Indique si une valeur est finit ou si c'est une division par 0
+   * @param val
+   * @returns
+   */
+  getDTESValue(val: string) {
+    if (Number(val) < 0) return '0';
+    else return val;
+  }
+
   initFields() {
     Object.keys(this.formWhiteSim.controls).forEach((key) => {
       this.formWhiteSim.patchValue({ [key]: '' });
@@ -850,6 +872,16 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         (startTotalOut * 12),
       100
     );
+
+    /**
+    console.log(
+      'tmd values',
+      basicEtptData[prefix1],
+      basicEtptData[prefix2],
+      etpToUse,
+      startTotalOut * 12
+    ); */
+
     const tmd =
       Math.trunc(realTime) +
       Math.round((realTime - Math.trunc(realTime)) * 60) / 60;
@@ -877,12 +909,39 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       ],
     });
 
-    const endStock = Math.floor(
-      startLastStock +
-        (this.nbOfDays / (365 / 12)) * startTotalIn -
-        (this.nbOfDays / (365 / 12)) * startTotalOut
+    const endStock =
+      Math.floor(startLastStock) +
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn) -
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut);
+
+    /**
+    console.log(
+      'stock',
+      Math.floor(startLastStock),
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn),
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut),
+      Math.floor(startLastStock) +
+        Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn) -
+        Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut)
+    );
+    console.log(Math.floor(Math.floor(etpToUse * 7 * 19.1308) / tmd), tmd);
+    console.log(Math.floor(etpToUse * 7 * 19.1308) / tmd);
+    console.log(
+      'nbdays',
+      this.nbOfDays,
+      startTotalIn,
+      startTotalOut,
+      startLastStock
     );
 
+    console.log(
+      'comparatif',
+      endStock,
+      startTotalOut,
+      Math.floor(Math.floor(etpToUse * 7 * 19.1308) / tmd),
+      Math.floor(etpToUse * 7 * 19.1308) / tmd
+    );
+     */
     this.endSituation = {
       totalIn: startTotalIn,
       totalOut: startTotalOut,

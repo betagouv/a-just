@@ -11,7 +11,11 @@ import { ActivitiesService } from '../../../services/activities/activities.servi
 import { AppService } from '../../../services/app/app.service';
 import { UserService } from '../../../services/user/user.service';
 import { ReferentielService } from '../../../services/referentiel/referentiel.service';
-import { generalizeTimeZone, getShortMonthString } from '../../../utils/dates';
+import {
+  generalizeTimeZone,
+  getShortMonthString,
+  setTimeToMidDay,
+} from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
 
 /**
@@ -300,13 +304,12 @@ export class ExtractorActivityComponent extends MainClass {
     return this.serverService
       .post(`extractor/filter-list-act`, {
         backupId: this.humanResourceService.backupId.getValue(),
-        dateStart: generalizeTimeZone(this.dateStart || this.today),
-        dateStop: generalizeTimeZone(this.dateStop || this.today),
+        dateStart: setTimeToMidDay(this.dateStart || this.today),
+        dateStop: setTimeToMidDay(this.dateStop || this.today),
       })
       .then((data) => {
         this.data = data.data.list;
         this.sumTab = data.data.sumTab;
-
         let monthTabName = '';
         const workbook = xlsx.utils.book_new();
         /*const backupLabel = localStorage.getItem('backupLabel')

@@ -14,6 +14,7 @@ import {
   SIMULATOR_OTHER_ACTIVITY,
 } from '../../../constants/simulator';
 import { MENU_HEIGHT, MENU_WIDTH } from '../../../constants/menu';
+import { AppService } from '../../../services/app/app.service';
 
 /**
  * Composant de choix du simulateur
@@ -27,6 +28,7 @@ import { MENU_HEIGHT, MENU_WIDTH } from '../../../constants/menu';
 })
 export class ChooseSimulatorComponent extends MainClass {
   userService = inject(UserService);
+  appService = inject(AppService);
   @Output() selectedSimulatorType: EventEmitter<string> = new EventEmitter();
   /**
    * Simulateur sélectionné

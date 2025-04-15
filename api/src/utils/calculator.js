@@ -190,8 +190,8 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
   let etpFonAf = null
   let etpContAf = null
 
-  let oneMonthAfterStart = month(new Date(dateStart), 0, 'lastday')
-  let oneMonthBeforeEnd = new Date(dateStop)
+  let oneMonthAfterStart = month(today(dateStart), 0, 'lastday')
+  let oneMonthBeforeEnd = today(dateStop)
   oneMonthBeforeEnd.setDate(1)
 
   if (loadDetails === true) {
@@ -260,12 +260,12 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
    */
 
   // Date: 12 mois avant date de fin selectionnée dans calculateur (début du mois)
-  const startCs = month(new Date(dateStop), -11)
+  const startCs = month(today(dateStop), -11)
   startCs.setDate(startCs.getDate() + 1)
   startCs.setMinutes(startCs.getMinutes() + 1)
 
   // Date: fin de période selecitonnée dans calculateur (fin du mois)
-  const endCs = month(new Date(dateStop), 0, 'lastday')
+  const endCs = month(today(dateStop), 0, 'lastday')
   let lastStockCs = null
   let totalInCs = null
   let totalOutCs = null
@@ -307,10 +307,10 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
      * Calcul sur les 12 derniers mois avant date de début
      */
     // Date début de période selecitonnée dans le calculateur (fin du mois)
-    const endBf = month(new Date(dateStart), 0, 'lastday')
+    const endBf = month(today(dateStart), 0, 'lastday')
 
     // Date 12 mois avant la date de début selectionnée dans le calculateur (début du mois)
-    const startBf = month(new Date(endBf), -11)
+    const startBf = month(today(endBf), -11)
     startBf.setDate(startBf.getDate() + 1)
     startBf.setMinutes(startBf.getMinutes() + 1)
 
@@ -443,8 +443,8 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     // only working day
     if (workingDay(now)) {
       let sumByInd = 0
-      if (hr.dateEnd && hr.dateEnd.getTime() <= dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
-      if (hr.dateStart && hr.dateStart.getTime() >= dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
+      if (hr.dateEnd && hr.dateEnd.getTime() < dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
+      if (hr.dateStart && hr.dateStart.getTime() > dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
       nbDay++
 
       let etp = null
@@ -474,7 +474,7 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
       //}
 
       if (nextDeltaDate) {
-        nextDateFinded = new Date(nextDeltaDate)
+        nextDateFinded = today(nextDeltaDate)
       }
 
       const categoryId = situation && situation.category && situation.category.id ? '' + situation.category.id : null
@@ -498,7 +498,7 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     //
     if (nextDateFinded) {
       if (nextDateFinded.getTime() > dateStop.getTime()) {
-        nextDateFinded = new Date(dateStop)
+        nextDateFinded = today(dateStop)
         nextDateFinded.setDate(nextDateFinded.getDate() + 1)
       }
 
@@ -510,7 +510,8 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
       }
 
       // quick move to the next date
-      now = new Date(nextDateFinded)
+      now = today(nextDateFinded)
+
     } else {
       now.setDate(now.getDate() + 1)
     }
@@ -528,6 +529,8 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     list[property].nbDaysGone = nbDaysGone
     list[property].nbDay = nbDay
   }
+
+
 
   models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
   return list
