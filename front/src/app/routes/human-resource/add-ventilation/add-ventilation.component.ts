@@ -42,7 +42,6 @@ import {
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
   NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
-
 } from '../../../constants/documentation';
 import {
   findRealValueCustom,
@@ -54,6 +53,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
 import { ExcelService } from '../../../services/excel/excel.service';
+import { UserService } from '../../../services/user/user.service';
 
 export interface importedVentillation {
   referentiel: ContentieuReferentielInterface;
