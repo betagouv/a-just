@@ -10,7 +10,7 @@
         <p>Projetez une situation future</p>
 
         <p class="circle" [class.selected]="selectedSimulator === SIMULATOR_DONNEES"
-          (click)="selectedSimulator = SIMULATOR_DONNEES">avec les données d’A-JUST</p>
+          (click)="selectedSimulator = SIMULATOR_DONNEES; onSelect()">avec les données d’A-JUST</p>
 
 
         <p class="circle" [class.selected]="selectedSimulator === SIMULATOR_OTHER_ACTIVITY"

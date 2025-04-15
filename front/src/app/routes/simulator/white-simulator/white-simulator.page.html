@@ -583,7 +583,7 @@
 
 <ng-template #actionsLeft>
 
-  <aj-back-button *ngIf="canViewSimulator" routerLink="/simulateur" class="back-button-menu" />
+  <aj-back-button *ngIf="canViewSimulator" (click)="onReturn()" class="back-button-menu" />
 
 </ng-template>
 
