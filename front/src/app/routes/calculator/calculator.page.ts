@@ -280,7 +280,7 @@ export class CalculatorPage
           target: '#wrapper-contener',
           title: 'À quoi sert le cockpit ?',
           intro:
-            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p>',
+            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit-a-just-ca-mp4-480p.mp4" type="video/mp4" /></video>',
         },
         {
           target: '.sub-main-header',
@@ -322,7 +322,7 @@ export class CalculatorPage
           target: '.compare', //.drop-down',
           title: 'Comparez votre juridiction',
           intro:
-            '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
+            '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonction-de-comparaison-du-cockpit-3-mp4-480p.mp4" type="video/mp4" /></video>',
           /*beforeLoad: async (intro: any) => {
         intro._introItems[4].position = '';
         const itemToClick: any = document.querySelector('button.compare');
