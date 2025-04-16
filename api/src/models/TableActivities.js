@@ -533,7 +533,11 @@ export default (sequelizeInstance, Model) => {
               hrBackupId
             );
 
+            
             if (previousStockValue !== null) {
+              // Si il y a un stock sur le mois précédent:
+              // Si c'est une donnée calculé -> stock N calculé = stock N-1 ajusté + entrees N ajusté - sorties N ajusté(où N = mois en cours)
+              // Sinon -> stock N calculé = stock N logiciel (original) + (entrees N ajusté - entrées N logiciel) - (sorties N ajusté - sorties N logiciel)
               if (
                 findAllChild[i].entrees !== null ||
                 findAllChild[i].sorties !== null ||
@@ -553,8 +557,8 @@ export default (sequelizeInstance, Model) => {
               } else {
                 currentStock = findAllChild[i].original_stock;
               }
-            } else {
-
+            } else if (findAllChild[i].original_stock !== null) {
+              // Update stock with original stock ONLY IF not null
               currentStock = findAllChild[i].original_stock;
 
               if (findAllChild[i].entrees !== null) {
