@@ -164,6 +164,7 @@
 
     input {
       font-size: 14px;
+      line-height: 24px;
     }
 
   }
@@ -175,6 +176,7 @@
 
     input {
       font-size: 12px;
+      line-height: 20px;
     }
   }
 
@@ -196,13 +198,15 @@
   .tags {
     display: flex;
     align-items: center;
+    gap: 4px;
 
     p {
+      display: flex;
+      padding: 4px 12px;
       font-size: 14px;
       color: fColor(cblackdark);
       background-color: fColor(cgrayDefault);
-      margin-right: 8px;
-      padding: 2px 8px;
+      // padding: 2px 8px;
       border-radius: 40px;
       white-space: nowrap;
     }
