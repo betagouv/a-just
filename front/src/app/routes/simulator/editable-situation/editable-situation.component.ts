@@ -1022,6 +1022,13 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   }
 
   getStartTmd() {
+    /**
+    console.log(
+      'getTmd',
+      this.formWhiteSim.controls['magRealTimePerCase'].value,
+      Number(this.formWhiteSim.controls['magRealTimePerCase'].value),
+      this.formWhiteSim
+    ); */
     return Number(this.formWhiteSim.controls['magRealTimePerCase'].value);
   }
 
