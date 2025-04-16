@@ -78,6 +78,7 @@ $colors: (
 	popupWhiteTitle: #ffffff,
 	popupDarkBgButton: #8585f6,
 	popupDarkBgFillTextButton: #000091,
+	popupLightBg: #f6f6f6,
 	activityGuideSubTitle: #666,
 	activityGuideBg: #f5f5fe,
 	activityGuideBorder: #33569e,
@@ -118,6 +119,7 @@ $colors: (
 	dataToVerifyBtn: #c3992a,
 	dataGeyBg: #dddddd,
 	dataHoverBg: #F6F6F6,
+	ventilationCurrentSituationBg: #f6f6f6,
 );
 
 @function fColor($key: "cprimary") {
