@@ -709,6 +709,7 @@ export class WhiteSimulatorPage
         //console.log('Situation actuelle : ', d)
         this.firstSituationData =
           this.simulatorService.situationActuelle.getValue();
+        console.log('WHITE', this.firstSituationData);
       })
     );
 
@@ -1627,6 +1628,7 @@ export class WhiteSimulatorPage
    * @param allButton liste de tous les boutons clickables
    */
   simulate(allButton: any): void {
+    //console.log('POOOO', this.firstSituationData);
     this.paramsToLock = {
       param1: { label: '', value: '' },
       param2: { label: '', value: '' },

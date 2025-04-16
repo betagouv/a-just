@@ -192,6 +192,7 @@ export class SimulatorService extends MainClass {
     console.log(params);
     console.log(this.userService.user);
     if (white === true) {
+      //console.log(params, simulation);
       this.serverService
         .post(`simulator/to-simulate-white`, {
           backupId: this.humanResourceService.backupId.getValue(),
@@ -337,6 +338,10 @@ export class SimulatorService extends MainClass {
         }
         if (initialValue) return data?.magRealTimePerCase || '0';
         else {
+          //console.log(
+          //decimalToStringDate(data?.magRealTimePerCase, ':'),
+          //data?.magRealTimePerCase
+          //);
           return decimalToStringDate(data?.magRealTimePerCase, ':') || '0';
         }
     }
