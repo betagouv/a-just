@@ -338,10 +338,6 @@ export class SimulatorService extends MainClass {
         }
         if (initialValue) return data?.magRealTimePerCase || '0';
         else {
-          //console.log(
-          //decimalToStringDate(data?.magRealTimePerCase, ':'),
-          //data?.magRealTimePerCase
-          //);
           return decimalToStringDate(data?.magRealTimePerCase, ':') || '0';
         }
     }

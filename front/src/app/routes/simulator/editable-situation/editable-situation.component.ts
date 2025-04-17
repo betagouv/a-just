@@ -867,20 +867,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         : 'nbHoursPerDayAndFonctionnaire';
     const etpToUse = this.category === 'MAGISTRAT' ? startetpMag : startetpFon;
 
-    let realTime = fixDecimal(
+    let realTime =
       (basicEtptData[prefix1] * basicEtptData[prefix2] * etpToUse) /
-        (startTotalOut * 12),
-      100
-    );
+      (startTotalOut * 12);
 
-    /**
-    console.log(
-      'tmd values',
-      basicEtptData[prefix1],
-      basicEtptData[prefix2],
-      etpToUse,
-      startTotalOut * 12
-    ); */
 
     const tmd =
       Math.trunc(realTime) +
@@ -997,6 +987,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         '.'
       ) || ''
     );
+
     this.formWhiteSim.controls['magRealTimePerCase'].setValue(
       this.formWhiteSim.controls['magRealTimePerCase'].value?.replaceAll(
         ',',
@@ -1029,7 +1020,9 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       Number(this.formWhiteSim.controls['magRealTimePerCase'].value),
       this.formWhiteSim
     ); */
-    return Number(this.formWhiteSim.controls['magRealTimePerCase'].value);
+    return parseFloat(
+      this.formWhiteSim.controls['magRealTimePerCase'].value || '0'
+    );
   }
 
   updateTimeValue(value: Number) {
