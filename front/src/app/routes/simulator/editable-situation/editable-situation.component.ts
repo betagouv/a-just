@@ -871,11 +871,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       (basicEtptData[prefix1] * basicEtptData[prefix2] * etpToUse) /
       (startTotalOut * 12);
 
+    const tmd = realTime;
+    /**   Math.trunc(realTime) +
+      Math.round((realTime - Math.trunc(realTime)) * 60) / 60;*/
 
-    const tmd =
-      Math.trunc(realTime) +
-      Math.round((realTime - Math.trunc(realTime)) * 60) / 60;
-
+    console.log('LE TMD', realTime, tmd);
     this.simulatorService.situationActuelle.next({
       totalIn: startTotalIn,
       totalOut: startTotalOut,
