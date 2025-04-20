@@ -784,18 +784,21 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
       if (x === 'totalIn') {
         if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalIn = Math.floor(
-            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) / (nbDays / (262 / 12)) +
-              Math.floor(simulation.totalOut)
+            (simulation.lastStock - params.beginSituation.lastStock) / (nbDays / (365 / 12)) +
+              simulation.totalOut
           )
         } else if (simulation.totalOut && simulation.realCoverage) {
-          simulation.totalIn = Math.floor(Math.floor(simulation.totalOut) / simulation.realCoverage)
+          simulation.totalIn = Math.floor(simulation.totalOut / simulation.realCoverage)
         }
       }
       if (x === 'totalOut') {
         if ((simulation.etpMag || simulation.etpFon) && simulation.magRealTimePerCase) {
           if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
+            //console.log('compute 1.1', Math.floor(
+              //simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix] / simulation.magRealTimePerCase
+            //),Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]), simulation.etpMag,environment['nbHoursPerDayAnd' + sufix],environment['nbDaysPerMonth' + sufix],simulation.magRealTimePerCase)
             simulation.totalOut = Math.floor(
-              Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
+              simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix] / simulation.magRealTimePerCase
             )
           } else {
             simulation.totalOut = Math.floor(
@@ -803,7 +806,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
           }
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalOut = Math.floor(
-            Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) /
+            (params.beginSituation.lastStock - simulation.lastStock) /
               (nbDays / (365 / 12)) +
               simulation.totalIn
           )
@@ -813,7 +816,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
           simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn)
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalIn) {
           simulation.totalOut = Math.floor(
-            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbDays / (365 / 12))) /
+            (params.beginSituation.lastStock + simulation.totalIn * (nbDays / (365 / 12))) /
               (simulation.realDTESInMonths + nbDays / (365 / 12))
           )
         }
@@ -825,9 +828,9 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
         //} else 
         if (simulation.totalIn && simulation.totalOut) {
           simulation.lastStock =
-          Math.floor(params.beginSituation.lastStock) +
-          Math.floor((nbDays / (365 / 12)) * simulation.totalIn) -
-          Math.floor((nbDays / (365 / 12)) * simulation.totalOut)
+          Math.floor(params.beginSituation.lastStock +
+          (nbDays / (365 / 12)) * simulation.totalIn -
+          (nbDays / (365 / 12)) * simulation.totalOut)
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths !== 0) && simulation.totalOut) {
           simulation.lastStock = Math.floor(simulation.realDTESInMonths * simulation.totalOut)
         }
@@ -842,19 +845,19 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
       }
       if (x === 'realDTESInMonths') {
         simulation.realDTESInMonths =
-          Math.round((Math.floor(simulation.lastStock || 0) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100) / 100
+          Math.round(((simulation.lastStock || 0) / (simulation.totalOut || params.endSituation.totalOut)) * 100) / 100
       }
 
       if (x === 'magRealTimePerCase') {
         if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
           simulation.magRealTimePerCase =
             Math.round(
-              ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100
+              ((environment['nbDaysPerMonthByMagistrat']* 8 * (simulation.etpMag || params.beginSituation.etpMag)) / (simulation.totalOut || params.endSituation.totalOut)) * 100
             ) / 100
         } else {
           simulation.magRealTimePerCase =
             Math.round(
-              (((229.57 / 12) * 7 * (simulation.etpFon || params.beginSituation.etpFon)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
+              (((environment['nbDaysPerMonthByGreffe']) * 7 * (simulation.etpFon || params.beginSituation.etpFon)) / (simulation.totalOut || params.endSituation.totalOut)) *
                 100
             ) / 100
         }
@@ -864,8 +867,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
         simulation.etpFon = params.endSituation.etpFon
         simulation.etpMag =
           Math.round(
-            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
-              (17.333 * 8)) *
+            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * (simulation.totalOut || params.endSituation.totalOut)) /
+              (environment['nbDaysPerMonthByMagistrat'] * 8)) *
               100
           ) / 100
       }
@@ -873,8 +876,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
         simulation.etpMag = params.endSituation.etpMag
         simulation.etpFon =
           Math.round(
-            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
-              ((229.57 / 12) * 7)) *
+            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * (simulation.totalOut || params.endSituation.totalOut)) /
+              ((environment['nbDaysPerMonthByGreffe'] / 12) * 7)) *
               100
           ) / 100
       }
