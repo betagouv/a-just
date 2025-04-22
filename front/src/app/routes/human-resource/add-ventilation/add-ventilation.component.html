@@ -172,7 +172,7 @@
               compléter'}}</label>
           </div>
 
-          <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
+          <aj-date-select title="A compter du" [value]="isEdit ? form.get('activitiesStartDate')?.value : null"
             (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
           </aj-date-select>
         </div>
