@@ -57,5 +57,5 @@
   </a>
 </div>
 
-<panel-activities [category]="category" [etp]="etp - indisponibility" [activities]="activities"
+<panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
   [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>

@@ -21,7 +21,7 @@
       [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
       [canEdit]="!duringPrint && indexOfTheFuture !== null"
       [canRemoveSituation]="!duringPrint && indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
-      [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
+      [etp]="indexOfTheFuture !== null ? (histories[indexOfTheFuture].etp || 0) : 0"
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
       (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"

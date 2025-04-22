@@ -35,6 +35,8 @@ import {
   decimalToStringDate,
   findRealValue,
   monthDiffList,
+  nbOfDays,
+  setTimeToMidDay,
   stringToDecimalDate,
   today,
 } from '../../../utils/dates';
@@ -632,6 +634,11 @@ export class WhiteSimulatorPage
   ngAfterViewInit(): void {
     this.dateStop = this.getNextYear();
     this.simulatorService.dateStop.next(this.dateStop);
+    this.dateStart = setTimeToMidDay(this.dateStart) || this.dateStart;
+    this.dateStop = setTimeToMidDay(this.dateStop) || this.dateStop;
+    this.simulatorService.whiteSimulatorNbOfDays.next(
+      nbOfDays(this.dateStart, this.dateStop)
+    );
     this.stopRealValue = findRealValue(this.dateStop);
   }
   /**
@@ -1511,7 +1518,7 @@ export class WhiteSimulatorPage
       x.classList.remove('disable');
     });
     if (this.valuesToReinit) this.valuesToReinit = null;
-    this.simulatorService.isValidatedWhiteSimu.next(false);
+    //this.simulatorService.isValidatedWhiteSimu.next(false);
   }
 
   /**

@@ -628,6 +628,7 @@ export class PopinEditActivitiesComponent
       const originalEntrees = contentieux.originalIn ?? 0;
       const originalSorties = contentieux.originalOut ?? 0;
 
+
       let newStock = 0;
 
       await this.getLastMonthStock(contentieux.id).then((resp) => {
@@ -924,7 +925,8 @@ export class PopinEditActivitiesComponent
         (cont.activityUpdated && !cont.activityUpdated.stock) ||
         (cont.activityUpdated &&
           cont.activityUpdated.stock &&
-          cont.activityUpdated.stock.value === null))
+          cont.activityUpdated.stock.value === null)) /*||
+      cont.stock === null*/
     ) {
       return true;
     }

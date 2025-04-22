@@ -458,7 +458,7 @@ export class FilterPanelComponent
     this.updateSubcontentieux();
   }
 
-  updateSubcontentieux() {
+  updateSubcontentieux(forceSub = false) {
     let list: ItemInterface[] = [];
     this.referentiels.map((cont) => {
       if (
@@ -473,6 +473,8 @@ export class FilterPanelComponent
     });
 
     this.subContentieuxFilterList = [...list];
-    this.subReferentielIds = list.map((l) => l.id);
+    if (this.subReferentielIds === null || forceSub) {
+      this.subReferentielIds = list.map((l) => l.id);
+    }
   }
 }

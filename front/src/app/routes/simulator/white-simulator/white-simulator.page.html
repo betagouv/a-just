@@ -289,10 +289,10 @@
       <div class="items">
         <div class="item blue-bg"
           [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator}">
-          <p>Entrées mensuelles</p>
+          <p>Entrées moyennes <br />mensuelles</p>
         </div>
         <div class="item">
-          <p>Sorties mensuelles</p>
+          <p>Sorties mensuelles <br />possibles</p>
         </div>
         <div class="item blue-bg"
           [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator}">
@@ -310,14 +310,14 @@
         </div>
         <div class="item blue-bg"
           [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator }">
-          <p>Taux de couverture</p>
+          <p>Taux de couverture en %</p>
         </div>
         <div class="item">
-          <p>DTES</p>
+          <p>DTES en mois</p>
         </div>
         <div class="item blue-bg"
           [ngClass]="{'pink-bg': categorySelected === 'GREFFE' && !whiteSimulator,'no-bg':whiteSimulator }">
-          <p>Temps moyen / dossier</p>
+          <p>Temps moyen / dossier en hh:mm</p>
         </div>
       </div>
     </div>
@@ -582,8 +582,8 @@
 </aj-wrapper>
 
 <ng-template #actionsLeft>
-  <aj-back-button *ngIf="canViewSimulator && !userService.isCa()" (click)="onReturn()" class="back-button-menu" />
-  <aj-back-button *ngIf="userService.isCa()" (click)="onReturn()" class="back-button-menu" />
+
+  <aj-back-button *ngIf="canViewSimulator" (click)="onReturn()" class="back-button-menu" />
 
 </ng-template>
 

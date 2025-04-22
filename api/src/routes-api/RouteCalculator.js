@@ -1,10 +1,16 @@
 import Route, { Access } from "./Route";
 import { Types } from "../utils/types";
-import { month } from "../utils/date";
+import { month, today } from "../utils/date";
 import { preformatHumanResources } from "../utils/ventilator";
 import { getHumanRessourceList } from "../utils/humanServices";
 import { sumBy } from "lodash";
-import { computeCoverage, computeDTES } from "../utils/simulator";
+import {
+  computeCoverage,
+  computeDTES,
+  computeRealTimePerCase,
+} from "../utils/simulator";
+import { fixDecimal } from "../utils/number";
+import config from "config";
 
 /**
  * Route des calculs de la page calcule
@@ -74,26 +80,40 @@ export default class RouteCalculator extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      backupId: Types.number().required(),
-      dateStart: Types.date().required(),
-      dateStop: Types.date().required(),
-      contentieuxId: Types.number().required(),
-      type: Types.string().required(),
+      backupId: Types.number(),
+      dateStart: Types.date(),
+      dateStop: Types.date(),
+      contentieuxId: Types.number(),
+      type: Types.string(),
       fonctionsIds: Types.array(),
+      categorySelected: Types.string(),
     }),
     accesses: [Access.canVewCalculator],
   })
   async rangeValues(ctx) {
-    let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds } =
-      this.body(ctx);
-    console.log("body", this.body(ctx));
-    dateStart = month(dateStart);
-    dateStop = month(dateStop);
+    let {
+      backupId,
+      dateStart,
+      dateStop,
+      contentieuxId,
+      type,
+      fonctionsIds,
+      categorySelected,
+    } = this.body(ctx);
+    
+    dateStart = today(dateStart);
+    dateStop = today(dateStop);
+
     const hrList = await this.model.getCache(backupId);
+    let endOfTheMonth = dateStart;
 
     const list = [];
 
     do {
+
+      let endOfTheMonth = today(dateStart);
+      endOfTheMonth= month(endOfTheMonth,0,'lastday')
+
       switch (type) {
         case "entrees":
           {
@@ -113,7 +133,10 @@ export default class RouteCalculator extends Route {
                   date: new Date(dateStart),
                 });
               } else {
-                list.push(null);
+                list.push({
+                  value: null,
+                  date: new Date(dateStart),
+                });
               }
             }
           }
@@ -130,13 +153,16 @@ export default class RouteCalculator extends Route {
               const acti = activites[0];
               if (acti.sorties !== null) {
                 list.push({ value: acti.sorties, date: new Date(dateStart) });
-              } else if (acti.ori !== null) {
+              } else if (acti.originalSorties !== null) {
                 list.push({
                   value: acti.originalSorties,
                   date: new Date(dateStart),
                 });
               } else {
-                list.push(null);
+                list.push({
+                  value: null,
+                  date: new Date(dateStart),
+                });
               }
             }
           }
@@ -160,7 +186,10 @@ export default class RouteCalculator extends Route {
                   date: new Date(dateStart),
                 });
               } else {
-                list.push(null);
+                list.push({
+                  value: null,
+                  date: new Date(dateStart),
+                });
               }
             }
           }
@@ -194,7 +223,8 @@ export default class RouteCalculator extends Route {
               [contentieuxId],
               undefined,
               [catId],
-              dateStart
+              dateStart,
+              endOfTheMonth
             );
             let totalAffected = 0;
             hList.map((agent) => {
@@ -215,41 +245,54 @@ export default class RouteCalculator extends Route {
           break;
         case "dtes":
           {
-            const activites = await this.models.Activities.getByMonth(
-              dateStart,
-              backupId,
-              contentieuxId,
+            const catId = categorySelected === "magistrats" ? 1 : 2;
+            const datas = await this.model.onCalculate(
+              {
+                backupId,
+                dateStart,
+                dateStop: endOfTheMonth,
+                contentieuxIds: [contentieuxId],
+                categorySelected: catId,
+                selectedFonctionsIds: fonctionsIds,
+                loadChildrens: false,
+              },
+              ctx.state.user,
               false
             );
-            if (activites && activites.length) {
-              const acti = activites[0];
-              let stock = null;
-              let sorties = null;
 
-              if (acti.stock !== null) {
-                stock = acti.stock;
-              } else if (acti.originalStock !== null) {
-                stock = acti.originalStock;
-              }
-
-              if (acti.sorties !== null) {
-                sorties = acti.sorties;
-              } else if (acti.originalSorties !== null) {
-                sorties = acti.originalSorties;
-              }
-
-              if (stock !== null && sorties !== null) {
-                list.push({
-                  value: computeDTES(stock, sorties),
-                  date: new Date(dateStart),
-                });
-              } else {
-                list.push(null);
-              }
-            }
+            list.push({
+              value: datas.list[0].realDTESInMonths,
+              date: new Date(dateStart),
+            });
           }
           break;
         case "temps-moyen":
+          {
+            const catId = categorySelected === "magistrats" ? 1 : 2;
+            const datas = await this.model.onCalculate(
+              {
+                backupId,
+                dateStart,
+                dateStop: endOfTheMonth,
+                contentieuxIds: [contentieuxId],
+                categorySelected: catId,
+                selectedFonctionsIds: fonctionsIds,
+                loadChildrens: false,
+              },
+              ctx.state.user,
+              false
+            );
+
+            list.push({
+              value:
+                catId === 1
+                  ? datas.list[0].magRealTimePerCase
+                  : datas.list[0].fonRealTimePerCase,
+              date: new Date(dateStart),
+            });
+          }
+          break;
+        case "taux-couverture":
           {
             const activites = await this.models.Activities.getByMonth(
               dateStart,
@@ -257,30 +300,33 @@ export default class RouteCalculator extends Route {
               contentieuxId,
               false
             );
-            if (activites && activites.length) {
+            if (activites.length) {
               const acti = activites[0];
-              let entrees = null;
+
               let sorties = null;
-
-              if (acti.entrees !== null) {
-                entrees = acti.entrees;
-              } else if (acti.originalEntrees !== null) {
-                entrees = acti.originalEntrees;
-              }
-
               if (acti.sorties !== null) {
                 sorties = acti.sorties;
               } else if (acti.originalSorties !== null) {
                 sorties = acti.originalSorties;
               }
 
-              if (entrees !== null && sorties !== null) {
+              let entrees = null;
+              if (acti.entrees !== null) {
+                entrees = acti.entrees;
+              } else if (acti.originalEntrees !== null) {
+                entrees = acti.originalEntrees;
+              }
+
+              if (sorties !== null && entrees !== null) {
                 list.push({
-                  value: computeCoverage(sorties, entrees),
+                  value: 100 * (sorties / entrees),
                   date: new Date(dateStart),
                 });
               } else {
-                list.push(null);
+                list.push({
+                  value: null,
+                  date: new Date(dateStart),
+                });
               }
             }
           }
@@ -291,10 +337,10 @@ export default class RouteCalculator extends Route {
           }
           break;
       }
-      //console.log(dateStart)
 
-      dateStart.setMonth(dateStart.getMonth() + 1);
-    } while (dateStart.getTime() <= dateStop.getTime());
+      dateStart = month(dateStart,1)
+} while (dateStart.getTime() <= dateStop.getTime());
+
 
     this.sendOk(ctx, list);
   }
