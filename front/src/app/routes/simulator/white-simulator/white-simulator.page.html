@@ -353,7 +353,9 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : '+ trunc('totalOut',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('totalOut',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -373,7 +375,9 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte de stock utilisée dans les calculs : '+ trunc('lastStock',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('lastStock',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -393,7 +397,9 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewMagistrat && categorySelected==='MAGISTRAT'" class="line-item">
+        <div *ngIf="canViewMagistrat && categorySelected==='MAGISTRAT'" class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte d\'etp utilisée dans les calculs : '+ trunc('etpMag',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('etpMag',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -413,7 +419,9 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div *ngIf="canViewGreffier && categorySelected==='GREFFE'" class="line-item">
+        <div *ngIf="canViewGreffier && categorySelected==='GREFFE'" class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte d\'etp utilisée dans les calculs : '+ trunc('etpFon',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('etpFon',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -455,7 +463,9 @@
           </div>
         </div>
 
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte de taux de couverture utilisée dans les calculs : '+ trunc('realCoverage',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('realCoverage',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -481,7 +491,9 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte de DTES utilisée dans les calculs : '+ trunc('realDTESInMonths',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('realDTESInMonths',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"
@@ -502,7 +514,9 @@
             <div class="triangle simulated blue"></div>
           </div>
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="'Valeur exacte de temps moyen en heure décimale utilisée dans les calculs : '+ trunc('magRealTimePerCase',simulatedSationData,false,true)"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input [value]="getFieldValue('magRealTimePerCase',simulatedSationData)" disabled />
           <div class="modified-label simulated" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-orange':true}" matTooltipPosition="left" matTooltipShowDelay="0"

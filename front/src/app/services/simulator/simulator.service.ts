@@ -10,6 +10,7 @@ import { SimulationInterface } from '../../interfaces/simulation';
 import { HRCategoryInterface } from '../../interfaces/hr-category';
 import { ChartAnnotationBoxInterface } from '../../interfaces/chart-annotation-box';
 import { decimalToStringDate, setTimeToMidDay } from '../../utils/dates';
+import { fixDecimal } from '../../utils/numbers';
 
 /**
  * Service de la page du simulateur
@@ -203,7 +204,6 @@ export class SimulatorService extends MainClass {
           selectedCategoryId: this.selectedCategory.getValue()?.id,
         })
         .then((data) => {
-          console.log(this.selectedCategory.getValue()?.id);
           console.log('simu', data.data);
           this.situationSimulated.next(data.data);
           this.isLoading.next(false);
@@ -272,13 +272,13 @@ export class SimulatorService extends MainClass {
         if (data?.etpMag === null) {
           return 'N/R';
         }
-        return data?.etpMag || '0';
+        return toCompute ? data?.etpMag : fixDecimal(data?.etpMag || 0) || '0';
       case 'totalOut': {
         if (data?.totalOut === null) {
           return 'N/R';
         }
         if (data?.totalOut && data?.totalOut >= 0) {
-          return data?.totalOut;
+          return toCompute ? data?.totalOut : Math.floor(data?.totalOut);
         } else return '0';
       }
       case 'totalIn': {
@@ -286,7 +286,7 @@ export class SimulatorService extends MainClass {
           return 'N/R';
         }
         if (data?.totalIn && data?.totalIn >= 0) {
-          return toCompute === true ? data?.totalIn : Math.floor(data?.totalIn);
+          return toCompute ? data?.totalIn : Math.floor(data?.totalIn);
         } else return '0';
       }
       case 'lastStock': {
@@ -295,7 +295,7 @@ export class SimulatorService extends MainClass {
         }
         if (data?.lastStock) {
           //&& data?.lastStock >= 0) {
-          return data?.lastStock;
+          return toCompute ? data?.lastStock : Math.floor(data?.lastStock);
         } else return '0';
       }
       case 'etpCont':
@@ -313,7 +313,7 @@ export class SimulatorService extends MainClass {
           return 'N/R';
         }
         if (data?.realCoverage && toCompute === true) {
-          return Math.round(data?.realCoverage) || '0';
+          return data?.realCoverage || '0';
         } else if (data?.realCoverage && initialValue === true)
           return Math.round(data?.realCoverage) + '%' || '0';
         else if (data?.realCoverage)
@@ -329,16 +329,20 @@ export class SimulatorService extends MainClass {
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
           if (data?.realDTESInMonths <= 0) {
             return '0';
-          } else return data?.realDTESInMonths + ' mois' || '0';
+          } else if (toCompute) return data?.realDTESInMonths;
+          else return fixDecimal(data?.realDTESInMonths) + ' mois' || '0';
         }
         return '0';
       case 'magRealTimePerCase':
         if (data?.magRealTimePerCase === null) {
           return 'N/R';
         }
-        if (initialValue) return data?.magRealTimePerCase || '0';
+        if (initialValue)
+          return fixDecimal(data?.magRealTimePerCase || 0) || '0';
         else {
-          return decimalToStringDate(data?.magRealTimePerCase, ':') || '0';
+          return toCompute
+            ? data?.magRealTimePerCase
+            : decimalToStringDate(data?.magRealTimePerCase, ':') || '0';
         }
     }
     return '';
