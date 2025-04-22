@@ -533,6 +533,7 @@ export default (sequelizeInstance, Model) => {
               hrBackupId
             );
 
+            
             if (previousStockValue !== null) {
               // Si il y a un stock sur le mois précédent:
               // Si c'est une donnée calculé -> stock N calculé = stock N-1 ajusté + entrees N ajusté - sorties N ajusté(où N = mois en cours)

@@ -3,6 +3,12 @@
 :host {
   display: block;
 
+  p {
+    font-size: 14px;
+    color: fColor(cblack);
+    font-weight: bold;
+    line-height: 24px;
+  }
 
   &.existing-agent {
     max-width: 894px;
@@ -10,28 +16,14 @@
 
     form {
       .new-ventilation {
+        display: flex;
+        flex-direction: column;
         border: solid 1px fColor(cgrayDefault);
-        background-color: #f6f6f6;
+        background-color: fColor(popupLightBg);
         border-radius: 8px;
-
-        >.administration {
-          margin: 8px 15px 8px 15px !important;
-        }
-
-        >.activities {
-          margin: 8px 15px 0px 15px !important;
-        }
-
-        .bottom-container {
-          >.date-start {
-            margin: 8px 4px 8px 15px !important;
-          }
-
-          >.indisponibilities {
-            margin: 8px 15px 8px 4px !important;
-          }
-        }
+        gap: 8px !important;
       }
+
     }
   }
 
@@ -53,16 +45,16 @@
     p {
       font-size: 18px;
       font-weight: bold;
-      color: #3a3a3a;
+      color: fColor(cblack);
     }
   }
 }
 
 .import-confirmation {
   border-radius: 14px;
-  border: solid 1px #ddd;
+  border: solid 1px fColor(lightBorder);
   padding: 0 12px 3px 6px;
-  font-size: 16px;
+  font-size: 14px;
   color: #18753c;
   background-color: #b8fec9;
   margin-left: 12px;
@@ -81,15 +73,18 @@ input[type="number"] {
 }
 
 .drop-down {
-  display: inline-block;
+  display: flex;
   border-radius: 4px;
   border: 1px solid fColor(lightBorder);
   background-color: white;
-  padding: 8px 14px 8px 16px;
-  font-size: 16px;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 4px;
+  font-size: 14px;
   font-weight: bold;
   font-stretch: normal;
-  height: 40px;
+  line-height: 24px;
 
   mat-icon {
     position: relative;
@@ -102,7 +97,6 @@ input[type="number"] {
 
 .drop-down-container {
   position: relative;
-  height: 40px;
 
 
   .drop-down-content {
@@ -121,7 +115,7 @@ input[type="number"] {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 16px;
+      font-size: 14px;
       width: max-content;
       cursor: pointer;
       padding: 14px 16px 16px 16px;
@@ -135,10 +129,11 @@ input[type="number"] {
       cursor: pointer;
       width: max-content;
       height: 40px;
+      font-size: 14px;
     }
 
     img {
-      width: 16px;
+      width: 14px;
       position: relative;
       top: 3px;
       margin-right: 8px;
@@ -152,15 +147,16 @@ input[type="number"] {
 
 
   >.header {
-    padding: 0 15px;
     height: 68px;
     display: flex;
     align-items: center;
+    padding: 8px 16px;
+    gap: 10px;
     background-color: fColor(bgSelect);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 
-    border-bottom: solid 1px #ddd;
+    border-bottom: solid 1px fColor(lightBorder);
 
     pre {
       flex: 1;
@@ -169,7 +165,7 @@ input[type="number"] {
     p {
       font-weight: bold;
       font-size: 20px;
-      color: #3a3a3a !important;
+      color: fColor(cblack) !important;
     }
 
     .tags {
@@ -189,111 +185,111 @@ input[type="number"] {
     }
   }
 
-  >.administration {
-    //margin: 8px 15px 8px 15px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    border: solid 1px #ddd;
-    background-color: #fff;
+  >.middle {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
-    >div {
-      display: flex;
-      margin: 16px 16px;
+    .administration {
+      border-radius: 8px;
+      border: solid 1px fColor(lightBorder);
+      background-color: #fff;
 
       >div {
-        flex: 1;
+        display: flex;
+        margin: 16px;
 
-        &.drop-down-container {
-          flex: none;
+        >div {
+          flex: 1;
+
+          &.drop-down-container {
+            flex: none;
+          }
+
+          .label-aj {
+            white-space: nowrap;
+          }
         }
-
-        .label-aj {
-          white-space: nowrap;
-        }
-      }
-    }
-
-    >.top {
-      border-bottom: 1px solid #ddd;
-      height: 48px;
-      margin: initial;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-
-      >p {
-        height: fit-content;
-        font-weight: bold;
-        color: fColor(cblack);
-      }
-    }
-
-    .admin-element {
-      border-radius: 8px;
-      padding: 4px 2px 6px 2px;
-
-      &.error {
-        background-color: #fef5e8;
-        border: solid 1px #f4be30;
-      }
-    }
-
-  }
-
-  >.activities {
-    //margin: 8px 15px 8px 15px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    border: solid 1px #ddd;
-    background-color: #fff;
-
-    >panel-activities {
-      padding: 16px 16px;
-    }
-
-    >.top {
-      border-bottom: 1px solid #ddd;
-      height: 48px;
-      margin: initial;
-      padding: 16px 16px;
-      display: flex;
-      align-items: center;
-
-      >p {
-        height: fit-content;
-        font-weight: bold;
-        color: fColor(cblack);
-      }
-    }
-
-    >.ressources {
-      display: flex;
-      align-items: center;
-      padding: 4px 8px;
-      gap: 8px;
-      border-bottom: 1px solid #ddd;
-
-      >p {
-        font-size: 12px;
       }
 
-      >.download {
-        padding: 0;
-        display: inline-flex;
+      >.top {
+        border-bottom: 1px solid fColor(lightBorder);
+        height: 48px;
+        margin: initial;
+        padding: 8px 16px;
+        display: flex;
         align-items: center;
-        gap: 4px;
-        border-radius: 4px;
-        background-color: #F5F5FE;
-        padding: 4px 8px;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
 
-        mat-icon {
-          position: relative;
-          font-size: 14px;
-          width: 14px;
-          height: 14px;
+        >p {
+          height: fit-content;
+        }
+      }
+
+      .admin-element {
+        border-radius: 8px;
+        padding: 4px 2px 6px 2px;
+
+        &.error {
+          background-color: #fef5e8;
+          border: solid 1px #f4be30;
+        }
+      }
+
+    }
+
+    >.activities {
+      border-radius: 8px;
+      border: solid 1px fColor(lightBorder);
+      background-color: #fff;
+
+
+      >panel-activities {
+        padding: 16px 16px;
+      }
+
+      >.top {
+        border-bottom: 1px solid fColor(lightBorder);
+        // height: 48px;
+        margin: initial;
+        padding: 4px 16px;
+        display: flex;
+        align-items: center;
+
+        >p {
+          height: fit-content;
+          line-height: 24px;
+        }
+      }
+
+      >.ressources {
+        display: flex;
+        align-items: center;
+        padding: 4px 8px;
+        gap: 8px;
+        border-bottom: 1px solid fColor(lightBorder);
+
+        >p {
+          font-size: 12px;
+        }
+
+        >.download {
+          padding: 0;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          border-radius: 4px;
+          background-color: #F5F5FE;
+          padding: 4px 8px;
+          font-size: 12px;
+          font-weight: 700;
+          cursor: pointer;
+
+          mat-icon {
+            position: relative;
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+          }
         }
       }
     }
@@ -301,32 +297,29 @@ input[type="number"] {
 
   .bottom-container {
     display: flex;
+    gap: 8px;
 
     >.date-start {
       min-width: 400px;
       flex: 1;
       height: fit-content;
-      margin: 8px 8px 8px 0;
-      //margin-bottom: 8px;
-      padding: 0px 0 16px 0;
+      padding: 0 0 16px 0;
       border-radius: 8px;
-      border: solid 1px #ddd;
+      border: solid 1px fColor(lightBorder);
       background-color: #fff;
 
       .header {
-        padding-left: 16px;
-        padding-right: 16px;
         height: 48px;
         display: flex;
         align-items: center;
+        padding: 8px 16px;
+        gap: 10px;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
-
-        border-bottom: solid 1px #ddd;
+        border-bottom: solid 1px fColor(lightBorder);
       }
 
       p {
-        font-weight: bold;
         color: fColor(cblackdark);
       }
 
@@ -337,11 +330,14 @@ input[type="number"] {
       }
     }
 
+    >.error {
+      background-color: #fef5e8;
+      border: solid 1px #f4be30;
+    }
+
     >.indisponibilities {
-      margin: 8px 0 8px 8px;
-      //padding: 0px 0px 16px 0px;
       border-radius: 8px;
-      border: solid 1px #ddd;
+      border: solid 1px fColor(lightBorder);
       background-color: #fff;
       flex: 1;
 
@@ -350,19 +346,18 @@ input[type="number"] {
       }
 
       .indispo-header {
-        padding-left: 16px;
-        padding-right: 16px;
         height: 48px;
         display: flex;
         align-items: center;
+        padding: 8px 16px;
+        gap: 4px;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
-        border-bottom: solid 1px #ddd;
+        border-bottom: solid 1px fColor(lightBorder);
 
 
         p {
-          font-weight: bold;
-          color: #3a3a3a !important;
+          color: fColor(cblack) !important;
         }
 
         label {
@@ -375,8 +370,9 @@ input[type="number"] {
           align-items: center;
           justify-content: center;
           padding: 4px 8px;
+          gap: 4px;
           border-radius: 4px;
-          border: solid 1px #ddd;
+          border: solid 1px fColor(lightBorder);
           background-color: #fff;
           color: fColor(cblackdark);
           font-size: 14px;
@@ -399,12 +395,16 @@ input[type="number"] {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
 
     >button {
-      margin: 0 8px;
-      line-height: normal;
+      display: flex;
+      padding: 8px 16px;
+      justify-content: center;
+      align-items: center;
+      line-height: 24px;
       height: 40px;
       font-size: 16px;
     }
@@ -427,14 +427,14 @@ input[type="number"] {
     height: 40px;
     margin-right: 6px;
     padding: 8px 12px 8px 16px;
-    border: solid 1px #000091;
+    border: solid 1px fColor(cbluedark);
     text-align: center;
-    color: #000091;
+    color: fColor(cbluedark);
     align-items: center;
     justify-content: center;
 
     svg {
-      fill: #000091;
+      fill: fColor(cbluedark);
       height: 18px;
       width: 18px;
       margin-left: 8px;
