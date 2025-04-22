@@ -5,7 +5,8 @@
   flex-direction: column;
   flex: 1 0 0;
   padding: 0 16px 16px 16px;
-  padding: 8px 8px 0 8px;
+  padding: 0px 8px;
+  margin-top: 8px;
   gap: 8px;
   overflow: auto;
 }
@@ -20,32 +21,25 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
-  // margin: 32px auto;
-  // display: grid;
-  // grid-template-columns: repeat(2, 1fr);
-  //max-width: 300px;
-  // grid-gap: 16px 8px;
-
-  // aj-help-button {
-  //margin-top: 3px;
-  // }
 }
 
-.panel-hsitory-group {
+.panel-history-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   background-color: white;
   border-radius: 8px;
   padding-bottom: 8px;
   border: 1px solid fColor(lightBorder);
 
   &.futur {
-    background-color: fColor(cgrayDefault);
 
     .title-history {
       color: fColor(cgray);
     }
 
     panel-history-ventilation {
-      background-color: fColor(bgProgressBar);
+      background-color: #ededed;
       box-shadow: none;
     }
   }
@@ -64,7 +58,7 @@
   }
 
   panel-history-ventilation {
-    margin: 16px;
+    //margin: 16px;
   }
 }
 
@@ -118,7 +112,6 @@ add-ventilation {
   display: flex;
   position: relative;
   align-items: stretch;
-  margin: 8px 0;
 
   >indispo-profil {
     width: 438px;
