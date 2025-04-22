@@ -1,6 +1,6 @@
 import { isFirstDayOfMonth } from 'date-fns'
 import { groupBy, map, meanBy, orderBy, sortBy, sumBy } from 'lodash'
-import { checkIfDateIsNotToday, decimalToStringDate, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, today, workingDay } from './date'
+import { checkIfDateIsNotToday, decimalToStringDate, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPersonSimu } from './human-resource'
@@ -208,7 +208,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
-    console.log('Data to calculate TMD', totalOut, etpMagToCompute)
+    //console.log('Data to calculate TMD', totalOut, etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
 
@@ -367,6 +367,7 @@ export function computeDTES (lastStock, totalOut) {
  * @returns stock calculé
  */
 function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
+  /** 
   console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
@@ -382,6 +383,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
         (countOfCalandarDays / (365 / 12)) * totalIn
     ),
   })
+*/
 
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
@@ -391,7 +393,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
       (countOfCalandarDays / (365 / 12)) * totalIn
   )
 
-  return stock < 0 ? 0 : stock
+  return stock
 }
 
 /**
@@ -412,7 +414,7 @@ function computeTotalOut (magRealTimePerCase, etp, sufix) {
  * @param {*} sufix catégorie
  * @returns le temps moyen par dossier sur les 12 derniers mois
  */
-function computeRealTimePerCase (totalOut, etp, sufix) {
+export function computeRealTimePerCase (totalOut, etp, sufix) {
   console.log('[simulator.js][line 420] totalOut:', totalOut)
   console.log('[simulator.js][line 421] nbDays:', environment['nbDays' + sufix])
   console.log('[simulator.js][line 422] nbHoursPerDay:', environment['nbHoursPerDayAnd' + sufix])
@@ -751,6 +753,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
     }
   })
 
+  const nbDays = nbOfDays(today(dateStart), today(dateStop))
+
   if (params.lockedParams.param1.label !== '' && simulation[params.lockedParams.param1.label] !== undefined)
     //@ts-ignore
     simulation[params.lockedParams.param1.label] =
@@ -780,7 +784,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
       if (x === 'totalIn') {
         if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalIn = Math.floor(
-            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) / (nbOfDays(dateStart, dateStop) / (365 / 12)) +
+            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) / (nbDays / (262 / 12)) +
               Math.floor(simulation.totalOut)
           )
         } else if (simulation.totalOut && simulation.realCoverage) {
@@ -793,41 +797,42 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
             simulation.totalOut = Math.floor(
               Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
             )
-          } else
+          } else {
             simulation.totalOut = Math.floor(
-              Math.floor(simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
-            )
+              (simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase)
+          }
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
           simulation.totalOut = Math.floor(
             Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) /
-              (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) +
+              (nbDays / (365 / 12)) +
               simulation.totalIn
           )
-        } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)) {
+        } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths !== 0)) {
           simulation.totalOut = Math.floor(simulation.lastStock / simulation.realDTESInMonths)
         } else if (simulation.realCoverage && simulation.totalIn) {
           simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn)
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalIn) {
           simulation.totalOut = Math.floor(
-            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))) /
-              (simulation.realDTESInMonths + nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))
+            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbDays / (365 / 12))) /
+              (simulation.realDTESInMonths + nbDays / (365 / 12))
           )
         }
       }
 
       if (x === 'lastStock') {
-        if (simulation.realDTESInMonths === 0) {
-          simulation.lastStock = 0
-        } else if (simulation.totalIn && simulation.totalOut) {
+        //if (simulation.realDTESInMonths === 0) {
+          //simulation.lastStock = 0
+        //} else 
+        if (simulation.totalIn && simulation.totalOut) {
           simulation.lastStock =
-            Math.floor(params.beginSituation.lastStock) +
-            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalIn) -
-            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalOut)
-        } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalOut) {
+          Math.floor(params.beginSituation.lastStock) +
+          Math.floor((nbDays / (365 / 12)) * simulation.totalIn) -
+          Math.floor((nbDays / (365 / 12)) * simulation.totalOut)
+        } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths !== 0) && simulation.totalOut) {
           simulation.lastStock = Math.floor(simulation.realDTESInMonths * simulation.totalOut)
         }
         if (simulation.lastStock && simulation.lastStock < 0) {
-          simulation.lastStock = 0
+          //simulation.lastStock = 0
         }
       }
       if (x === 'realCoverage') {

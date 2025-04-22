@@ -5,6 +5,7 @@ import {
   DELEGATION_TJ,
 } from "../constants/referentiel";
 import {
+  getNextDay,
   nbOfDays,
   nbWorkingDays,
   setTimeToMidDay,
@@ -286,10 +287,13 @@ export const computeExtractDdg = async (
   isJirs
 ) => {
   let onglet2 = [];
+  dateStart = setTimeToMidDay(dateStart)
+  dateStop = setTimeToMidDay(dateStop)
 
   console.time("extractor-7.1");
   await Promise.all(
     allHuman.map(async (human) => {
+      
       const { currentSituation } = findSituation(human);
 
       let categoryName =
@@ -428,7 +432,7 @@ export const computeExtractDdg = async (
           nextDateStart = nextDateStart <= dateStop ? nextDateStart : null;
           const middleDate =
             human.situations[index].dateStart <= dateStop
-              ? new Date(human.situations[index].dateStart)
+              ? today(human.situations[index].dateStart)
               : null;
           const nextEndDate =
             middleDate && index < human.situations.length - 1
@@ -436,16 +440,18 @@ export const computeExtractDdg = async (
               : dateStop;
           let countNbOfDays = undefined;
           let countNbOfDaysGone = 0
-          if (nextDateStart && nextEndDate)
+          if (nextDateStart && nextEndDate && today(nextDateStart)<today(nextEndDate)){
             countNbOfDays = nbWorkingDays(
-              new Date(nextDateStart),
-              new Date(nextEndDate)
-            );
-          if (human.dateEnd<nextEndDate)
-            countNbOfDaysGone = nbWorkingDays(
-              today(human.dateEnd),
+              today(nextDateStart),
               today(nextEndDate)
             );
+          }
+          if (human.dateEnd && getNextDay(human.dateEnd)<=nextEndDate){
+            countNbOfDaysGone = nbWorkingDays(
+              today(getNextDay(human.dateEnd)),
+              today(nextEndDate)
+            );
+            }
           if (
             typeof countNbOfDays === "number" &&
             nextDateStart <= nextEndDate
@@ -462,10 +468,12 @@ export const computeExtractDdg = async (
           dateStart < human.dateStart && human.dateStart < dateStop;
 
         if (human.dateEnd && isGone && hasArrived && dateStart) {
+
+
           reelEtp =
             (sumBy(reelEtpObject, "etp") /
             sumBy(reelEtpObject, "countNbOfDays")
-            - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  
+            - (refObj[key] || 0)*totalDays/sumBy(reelEtpObject, "countNbOfDays"))  
             *
             nbOfDays(human.dateStart, human.dateEnd) /
             nbOfDays(dateStart, dateStop)
@@ -473,7 +481,7 @@ export const computeExtractDdg = async (
           reelEtp =
             (sumBy(reelEtpObject, "etp") /
             sumBy(reelEtpObject, "countNbOfDays")
-            - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  
+            - (refObj[key] || 0)*totalDays/sumBy(reelEtpObject, "countNbOfDays"))  
             *
               nbOfDays(dateStart, human.dateEnd) /
               nbOfDays(dateStart, dateStop) 
@@ -481,15 +489,17 @@ export const computeExtractDdg = async (
           reelEtp =
           (sumBy(reelEtpObject, "etp") /
           sumBy(reelEtpObject, "countNbOfDays")
-          - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays"))  *
+          - (refObj[key] || 0)*totalDays/sumBy(reelEtpObject, "countNbOfDays"))  *
               nbOfDays(human.dateStart, dateStop) /
               nbOfDays(dateStart, dateStop) 
         } else {
           reelEtp =
           (sumBy(reelEtpObject, "etp") /
           sumBy(reelEtpObject, "countNbOfDays")
-          - (refObj[key] || 0)*(sumBy(reelEtpObject, "countNbOfDays")+totalDaysGone)/sumBy(reelEtpObject, "countNbOfDays")) ;
+          - (refObj[key] || 0)*totalDays/sumBy(reelEtpObject, "countNbOfDays")) ;
         }
+
+
       }
 
       if (isCa()) {
@@ -577,7 +587,7 @@ export const computeExtractDdg = async (
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
             ["ETPT sur la période absentéisme non déduit (hors action 99)"]:
-              reelEtp < 0 ? 0 : reelEtp,
+              reelEtp < 0.0001 ? 0 : reelEtp,
             ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
             ["Ecart → ventilations manquantes dans A-JUST"]:
               reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
@@ -951,6 +961,7 @@ export const computeExtract = async (
         }
       }
 
+
       let delegation = null;
 
       if (isCa()) {
@@ -1010,7 +1021,7 @@ export const computeExtract = async (
                 ? null
                 : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
             ["ETPT sur la période (absentéisme et action 99 déduits)"]:
-              reelEtp < 0 ? 0 : reelEtp,
+              reelEtp < 0.0001 ? 0 : reelEtp,
             ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]:
               totalEtpt,
             ...refObj,

@@ -280,7 +280,7 @@ export class CalculatorPage
           target: '#wrapper-contener',
           title: 'À quoi sert le cockpit ?',
           intro:
-            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p>',
+            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p></p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit-a-just-ca-mp4-480p.mp4" type="video/mp4" /></video>',
         },
         {
           target: '.sub-main-header',
@@ -322,7 +322,7 @@ export class CalculatorPage
           target: '.compare', //.drop-down',
           title: 'Comparez votre juridiction',
           intro:
-            '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p>',
+            '<p>Vous pouvez choisir de mettre en perspective les indicateurs de la période choisie avec ceux d’une autre période ou d’un référentiel de temps afin de visualiser les évolutions ou les taux de couverture et DTES de votre juridiction  susceptibles de résulter de temps moyens de comparaison renseignés.</p><p>Cliquez ici pour <b>créer ou importer un référentiel de temps moyen dans A-JUST</b>.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/fonction-de-comparaison-du-cockpit-3-mp4-480p.mp4" type="video/mp4" /></video>',
           /*beforeLoad: async (intro: any) => {
         intro._introItems[4].position = '';
         const itemToClick: any = document.querySelector('button.compare');
@@ -1331,11 +1331,7 @@ export class CalculatorPage
             type: 'verticals-lines',
             description:
               'de la période<br/>(calculé sur les 12 mois précédents)',
-            lineMax:
-              Math.max(
-                ...value1DTES.map((m) => m || 0),
-                ...value2DTES.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1DTES.map((v, index) => [
               value2DTES[index] || 0,
               v || 0,
@@ -1379,11 +1375,7 @@ export class CalculatorPage
             dataType: 'temps-moyen',
             type: 'verticals-lines',
             description: 'sur la période',
-            lineMax:
-              Math.max(
-                ...value1TempsMoyen.map((m) => m || 0),
-                ...value2TempsMoyen.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1TempsMoyen.map((v, index) => [
               value2TempsMoyen[index] || 0,
               v || 0,
@@ -1461,11 +1453,7 @@ export class CalculatorPage
             dataType: 'stock',
             type: 'verticals-lines',
             description: 'en fin de période',
-            lineMax:
-              Math.max(
-                ...value1Stock.map((m) => m || 0),
-                ...value2Stock.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1Stock.map((v, index) => [
               value2Stock[index] || 0,
               v || 0,
@@ -1495,11 +1483,7 @@ export class CalculatorPage
             dataType: 'entrees',
             type: 'verticals-lines',
             description: 'moyennes<br/>sur la période',
-            lineMax:
-              Math.max(
-                ...value1Entrees.map((m) => m || 0),
-                ...value2Entrees.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1Entrees.map((v, index) => [
               value2Entrees[index] || 0,
               v || 0,
@@ -1529,11 +1513,7 @@ export class CalculatorPage
             dataType: 'sorties',
             type: 'verticals-lines',
             description: 'moyennes<br/>sur la période',
-            lineMax:
-              Math.max(
-                ...value1Sorties.map((m) => m || 0),
-                ...value2Sorties.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1Sorties.map((v, index) => [
               value2Sorties[index] || 0,
               v || 0,
@@ -1564,11 +1544,7 @@ export class CalculatorPage
             dataType: 'ETPTSiege',
             type: 'verticals-lines',
             description: 'moyens sur la période',
-            lineMax:
-              Math.max(
-                ...value1ETPTSiege.map((m) => m || 0),
-                ...value2ETPTSiege.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1ETPTSiege.map((v, index) => [
               value2ETPTSiege[index] || 0,
               v || 0,
@@ -1617,11 +1593,7 @@ export class CalculatorPage
             dataType: 'ETPTGreffe',
             type: 'verticals-lines',
             description: 'moyens sur la période',
-            lineMax:
-              Math.max(
-                ...value1ETPTGreffe.map((m) => m || 0),
-                ...value2ETPTGreffe.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1ETPTGreffe.map((v, index) => [
               value2ETPTGreffe[index] || 0,
               v || 0,
@@ -1667,11 +1639,7 @@ export class CalculatorPage
             dataType: 'ETPTEam',
             type: 'verticals-lines',
             description: 'moyens sur la période',
-            lineMax:
-              Math.max(
-                ...value1ETPTEam.map((m) => m || 0),
-                ...value2ETPTEam.map((m) => m || 0)
-              ) * 1.1,
+            lineMax: null,
             values: value1ETPTEam.map((v, index) => [
               value2ETPTEam[index] || 0,
               v || 0,

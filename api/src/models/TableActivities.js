@@ -5,7 +5,7 @@ import {
   compareGapBetweenData,
   preformatActivitiesArray,
 } from "../utils/activities";
-import { month } from "../utils/date";
+import { month, today } from "../utils/date";
 import { maxBy } from "lodash";
 import {
   VALUE_QUALITY_OPTION,
@@ -728,7 +728,7 @@ export default (sequelizeInstance, Model) => {
     details = true
   ) => {
     const whereList = {};
-    date = new Date(date);
+    date = today(date);
 
     if (contentieuxId) {
       whereList.contentieux_id = contentieuxId;

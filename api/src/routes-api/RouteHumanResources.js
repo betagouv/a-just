@@ -177,7 +177,7 @@ export default class RouteHumanResources extends Route {
     const { situationId } = ctx.params
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
-      if (await this.models.HRSituations.destroyById(situationId)) {
+      if (await this.models.HRSituations.destroySituationId(situationId)) {
         this.sendOk(ctx, await this.model.getHr(hrId))
       }
     }
@@ -235,7 +235,7 @@ export default class RouteHumanResources extends Route {
     let hr = await this.model.getCache(backupId)
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
 
-    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, subContentieuxIds, categoriesIds, date, endPeriodToCheck, true)
+    let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, subContentieuxIds, categoriesIds, date, endPeriodToCheck)
 
     const allCategories = await this.models.HRCategories.getAll()
 

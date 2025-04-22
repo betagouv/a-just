@@ -202,6 +202,7 @@ export class SimulatorService extends MainClass {
           selectedCategoryId: this.selectedCategory.getValue()?.id,
         })
         .then((data) => {
+          console.log(this.selectedCategory.getValue()?.id);
           console.log('simu', data.data);
           this.situationSimulated.next(data.data);
           this.isLoading.next(false);
@@ -291,7 +292,8 @@ export class SimulatorService extends MainClass {
         if (data?.lastStock === null) {
           return 'N/R';
         }
-        if (data?.lastStock && data?.lastStock >= 0) {
+        if (data?.lastStock) {
+          //&& data?.lastStock >= 0) {
           return data?.lastStock;
         } else return '0';
       }
@@ -320,6 +322,8 @@ export class SimulatorService extends MainClass {
       case 'realDTESInMonths':
         if (data?.realDTESInMonths === null) {
           return 'N/R';
+        } else if (data?.realDTESInMonths && data?.realDTESInMonths <= 0) {
+          return '0';
         }
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
           if (data?.realDTESInMonths <= 0) {

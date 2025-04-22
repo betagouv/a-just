@@ -237,9 +237,8 @@ export class ViewAnalyticsComponent
   }
 
   onUpdateMax({ type, max }: { type: string; max: number }) {
-    max = max * 1.1;
     switch (type) {
-      case 'stock': {
+      case 'stocks': {
         if (this.stockMax < max) {
           this.stockMax = max;
         }
@@ -254,6 +253,24 @@ export class ViewAnalyticsComponent
       case 'sorties': {
         if (this.sortiesMax < max) {
           this.sortiesMax = max;
+        }
+        return;
+      }
+      case 'ETPTSiege': {
+        if (this.siegeMax < max) {
+          this.siegeMax = max;
+        }
+        return;
+      }
+      case 'ETPTGreffe': {
+        if (this.greffeMax < max) {
+          this.greffeMax = max;
+        }
+        return;
+      }
+      case 'ETPTEam': {
+        if (this.eamMax < max) {
+          this.eamMax = max;
         }
         return;
       }

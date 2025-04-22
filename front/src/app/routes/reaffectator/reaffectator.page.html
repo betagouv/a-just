@@ -1,5 +1,5 @@
 <aj-wrapper #wrapper title="Simulation d’affectations" [actionTemplate]="actions"
-  class="content-margin-null header-border-none" backUrl="/ventilations" [isDarkScreen]="true">
+  class="content-margin-null header-border-none" backUrl="back" [isDarkScreen]="true">
   <div class="container" [ngClass]="{print: duringPrint}">
     <div class="title">
       <aj-date-select title="A la date d'" class="dark-mode" [value]="dateSelected"
@@ -70,16 +70,21 @@
                   <aj-speedometer class="with-auto small-text"
                     [classTextBlue]="!showReelValues && ref.totalAffected !== ref.etpUseToday ? true : false"
                     [classDarkMode]="true"
-                    [percent]="showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage">
+                    [percent]="isNaN(ref.coverage) ? null : (showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage)">
                   </aj-speedometer>
                 </div>
               </ng-template>
             </div>
             <div class="dtes-row">
               <ng-template [ngIf]="referentiel.length > index + 1">
+
                 <div class="dtes"
                   [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
-                  <p>{{((showReelValues ? ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
+                  <p *ngIf="isNaN(ref.coverage)">
+                    N/R</p>
+                  <p *ngIf="!isNaN(ref.coverage)">
+                    {{((showReelValues ?
+                    ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
                 </div>
               </ng-template>
             </div>
