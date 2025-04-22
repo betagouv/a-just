@@ -218,6 +218,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Liste des indispo courrante
    */
   indisponibilitiesFiltered: RHActivityInterface[] = [];
+  /**
+   * Afficher erreur date de début
+   */
+  printErrorDateStart: boolean = false;
 
   /**
    * Constructeur
@@ -441,6 +445,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     if (!activitiesStartDate) {
       alert('Vous devez saisir une date de début de situation !');
+      this.printErrorDateStart = true;
       return;
     }
 
