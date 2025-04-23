@@ -193,10 +193,12 @@
               compléter'}}</label>
           </div>
 
-          <aj-date-select title="A compter du" [value]="isEdit ? form.get('activitiesStartDate')?.value : null"
-            (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false"
-            [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
-          </aj-date-select>
+          <div class="date-start-content">
+            <aj-date-select title="A compter du" [value]="isEdit ? form.get('activitiesStartDate')?.value : null"
+              (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false"
+              [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
+            </aj-date-select>
+          </div>
           <div *ngIf="alertList.includes('activitiesStartDate')" class="alert">
             <mat-icon class="close-icon" (click)="removeAlertItem(alertList.indexOf('activitiesStartDate'))">close
             </mat-icon>
