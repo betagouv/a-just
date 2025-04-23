@@ -1,5 +1,6 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
-  <div class="wrapper-content" *ngIf="contentieuxReferentiel.length">
+  <div class="wrapper-content" *ngIf="contentieuxReferentiel.length"
+    [ngStyle]="{'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px'}">
     <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? ''+currentHR.id : undefined"
       [onEditIndex]="onEditIndex" [etp]="currentETP"
