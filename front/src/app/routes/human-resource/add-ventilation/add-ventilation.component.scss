@@ -48,6 +48,48 @@
       color: fColor(cblack);
     }
   }
+
+  // .error-to-complete {
+  //   border: 1px solid #0063CB;
+  //   background-color: #F5F5FE !important;
+  // }
+
+  // .error {
+  //   background-color: #fef5e8 !important;
+  //   border: solid 1px #f4be30 !important;
+  // }
+
+  .alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    position: absolute;
+    top: 105%;
+    left: 0;
+    z-index: 100;
+    padding: 16px;
+    border: 2px solid #CE0500;
+    border-radius: 8px;
+    background-color: white;
+    color: #CE0500;
+    width: 300px;
+    font-size: 14px;
+    line-height: 24px;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 18, 0.16);
+
+    .close-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #FDDEDE;
+    }
+  }
+
 }
 
 .import-confirmation {
@@ -226,6 +268,7 @@ input[type="number"] {
       }
 
       .admin-element {
+        position: relative;
         border-radius: 8px;
         padding: 4px 2px 6px 2px;
 
@@ -234,7 +277,6 @@ input[type="number"] {
           border: solid 1px #f4be30;
         }
       }
-
     }
 
     >.activities {
@@ -300,6 +342,7 @@ input[type="number"] {
     gap: 8px;
 
     >.date-start {
+      position: relative;
       min-width: 400px;
       flex: 1;
       height: fit-content;
@@ -328,11 +371,16 @@ input[type="number"] {
         margin-left: 16px;
         margin-top: 16px;
       }
-    }
 
-    >.error {
-      background-color: #fef5e8;
-      border: solid 1px #f4be30;
+      >.error {
+        background-color: #fef5e8;
+        border: solid 1px #f4be30;
+      }
+
+      >.alert {
+        top: 25%;
+        left: 30%;
+      }
     }
 
     >.indisponibilities {

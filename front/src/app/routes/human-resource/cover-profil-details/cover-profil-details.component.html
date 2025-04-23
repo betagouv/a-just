@@ -20,15 +20,31 @@
 <div id="second-row" class="second-row">
   <div class="left-second-row">
     <div class="user-name">
-      <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['firstName'] + 'px' }">
-        <input id="firstName" #firstNameDom #input [placeholder]="'Prénom'" [ngModel]="currentHR?.firstName"
-          (ngModelChange)="completeFormWithDomObject('firstName', $event)" (keydown)="preventSubmit($event)"
-          (keyup.enter)="focusNext($event)" (input)="adjustInputWidth($event, 'firstName')" />
+      <div class="firstname">
+        <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['firstName'] + 'px' }"
+          [ngClass]="{'error': alertList.includes('firstName')}">
+          <input id="firstName" #firstNameDom #input [placeholder]="'Prénom'" [ngModel]="currentHR?.firstName"
+            (ngModelChange)="completeFormWithDomObject('firstName', $event)" (keydown)="preventSubmit($event)"
+            (keyup.enter)="focusNext($event)" (input)="adjustInputWidth($event, 'firstName')" />
+        </div>
+        <div *ngIf="alertList.includes('firstName')" class="alert">
+          <mat-icon class="close-icon" (click)="removeAlertItem(alertList.indexOf('firstName'))">close
+          </mat-icon>
+          Vous devez saisir un prénom pour valider la création !
+        </div>
       </div>
-      <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['lastName'] + 'px' }">
-        <input id="lastName" #input [placeholder]="'Nom'" [ngModel]="currentHR?.lastName"
-          (ngModelChange)="completeFormWithDomObject('lastName', $event)" (keydown)="preventSubmit($event)"
-          (keyup.enter)="focusNext($event)" (input)="adjustInputWidth($event, 'lastName')" />
+      <div class="lastname">
+        <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['lastName'] + 'px' }"
+          [ngClass]="{'error': alertList.includes('lastName')}">
+          <input id="lastName" #input [placeholder]="'Nom'" [ngModel]="currentHR?.lastName"
+            (ngModelChange)="completeFormWithDomObject('lastName', $event)" (keydown)="preventSubmit($event)"
+            (keyup.enter)="focusNext($event)" (input)="adjustInputWidth($event, 'lastName')" />
+        </div>
+        <div *ngIf="alertList.includes('lastName')" class="alert">
+          <mat-icon class="close-icon" (click)="removeAlertItem(alertList.indexOf('lastName'))">close
+          </mat-icon>
+          Vous devez saisir un nom pour valider la création !
+        </div>
       </div>
       <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
         class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
@@ -56,8 +72,13 @@
 
   <div class="right-second-row">
     <div class="dates">
+      <div *ngIf="alertList.includes('startDate')" class="alert">
+        <mat-icon class="close-icon" (click)="removeAlertItem(alertList.indexOf('startDate'))">close
+        </mat-icon>
+        Vous devez saisir une date d'arrivée !
+      </div>
       <aj-date-select title="Date d'arrivée" [value]="currentHR && currentHR.dateStart"
-        (valueChange)="updateHuman('dateStart', $event)">
+        (valueChange)="updateHuman('dateStart', $event)" [ngClass]="{'error': alertList.includes('startDate')}">
       </aj-date-select>
       <aj-date-select title="Date de départ" [value]="currentHR && currentHR.dateEnd"
         (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true">

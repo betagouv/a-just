@@ -7,7 +7,8 @@
       [fonction]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null"
       [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null"
       [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
-      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
+      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)" [alertList]="alertList"
+      (alertSet)="onAlertsUpdated($event)"></cover-profil-details>
 
     <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
       <div id="top-scroll-anchor" class="anchor"></div>
@@ -50,7 +51,8 @@
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
       [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
       (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
-      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)">
+      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)" [alertList]="alertList"
+      (alertSet)="onAlertsUpdated($event)">
     </add-ventilation>
 
     <div *ngIf="historiesOfTheFutur.length" class="panel-history-group futur">
@@ -67,7 +69,7 @@
       </panel-history-ventilation>
     </div>
 
-    <div *ngIf="historiesOfThePast.length" class="panel-history-group">
+    <div *ngIf="historiesOfThePast.length" class="panel-history-group past">
       <p class="title-history">
         Situation{{historiesOfThePast.length > 1 ? 's' : ''}}
         antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} <!-- {{

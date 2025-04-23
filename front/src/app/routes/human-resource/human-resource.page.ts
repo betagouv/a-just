@@ -198,6 +198,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Current etp
    */
   currentETP: WritableSignal<number | null> = signal(null);
+  /**
+   * Liste des alertes à afficher
+   */
+  alertList: string[] = [];
 
   /**
    * Constructeur
@@ -1160,5 +1164,24 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   setToMidDay(elem: Date) {
     return setTimeToMidDay(elem);
+  }
+
+  /**
+   * Fonction de mise à jour des alertes
+   * @param updatedList
+   */
+  onAlertsUpdated({
+    updatedList,
+    index,
+  }: {
+    updatedList?: string[];
+    index?: number;
+  }) {
+    if (updatedList !== undefined) {
+      this.alertList = updatedList;
+    }
+    if (index !== undefined) {
+      this.alertList.splice(index, 1);
+    }
   }
 }

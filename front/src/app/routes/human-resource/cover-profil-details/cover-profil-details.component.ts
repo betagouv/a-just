@@ -110,6 +110,10 @@ export class CoverProfilDetailsComponent
    */
   @Input() dateStart: Date | null = null;
   /**
+   * Liste des alertes
+   */
+  @Input() alertList: string[] = [];
+  /**
    * Request an PDF export
    */
   @Output() exportPDF = new EventEmitter();
@@ -121,6 +125,13 @@ export class CoverProfilDetailsComponent
    * Request to to update screen
    */
   @Output() ficheIsUpdated = new EventEmitter();
+  /**
+   * Event pour afficher les alertes au niveau du formulaire
+   */
+  @Output() alertSet = new EventEmitter<{
+    updatedList?: string[];
+    index?: number;
+  }>();
   /**
    * Temps de travail en text
    */
@@ -371,5 +382,11 @@ export class CoverProfilDetailsComponent
       return etp;
     }
     return 0;
+  }
+
+  removeAlertItem(index: number) {
+    this.alertSet.emit({ index: index });
+    // this.alertList.splice(index, 1);
+    // console.log('this.alertList', this.alertList);
   }
 }

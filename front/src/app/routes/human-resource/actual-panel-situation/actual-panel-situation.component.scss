@@ -59,7 +59,10 @@
   gap: 8px;
   align-items: center;
 
-
+  button {
+    border-width: 2px;
+    font-weight: 400;
+  }
 }
 
 .tags {

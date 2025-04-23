@@ -87,4 +87,9 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+
+  button {
+    border-width: 2px;
+    font-weight: 400;
+  }
 }
