@@ -285,6 +285,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           this.form.get('fonctionId')?.setValue(fct?.id || null);
           if (fct)
             this.calculatriceIsActive = fct.calculatrice_is_active || false;
+
+          // Suprpession de l'alerte
+          let index = -1;
+          index = this.alertList.indexOf('category');
+          if (index !== -1) {
+            this.alertSet.emit({ index: index });
+          }
+          index = this.alertList.indexOf('fonction');
+          if (index !== -1) {
+            this.alertSet.emit({ index: index });
+          }
         });
       })
     );
@@ -308,6 +319,24 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         } else {
           // Remise à 0 de l'ETP si la valeur est null (ex: user efface la valeur précédement entrée) pour remtrre l'ETP du composant big-et-preview à null
           this.setValueEtp(value);
+        }
+        // Suppression de l'alert
+        let index = -1;
+        index = this.alertList.indexOf('etp');
+        if (index !== -1) {
+          this.alertSet.emit({ index: index });
+        }
+      })
+    );
+
+    this.watch(
+      this.form.get('activitiesStartDate')?.valueChanges.subscribe((value) => {
+        if (value) {
+          let index = -1;
+          index = this.alertList.indexOf('activitiesStartDate');
+          if (index !== -1) {
+            this.alertSet.emit({ index: index });
+          }
         }
       })
     );

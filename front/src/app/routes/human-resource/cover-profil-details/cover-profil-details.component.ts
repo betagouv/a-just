@@ -246,6 +246,16 @@ export class CoverProfilDetailsComponent
       this.basicHrInfo.get(node)?.setValue(object);
       //this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
     }
+
+    let index = -1;
+    if (node === 'firstName') {
+      index = this.alertList.indexOf('firstName');
+    } else if (node === 'lastName') {
+      index = this.alertList.indexOf('lastName');
+    }
+    if (index !== -1) {
+      this.alertSet.emit({ index: index });
+    }
   }
 
   /**
@@ -283,6 +293,12 @@ export class CoverProfilDetailsComponent
           [nodeName]: value,
         }
       );
+      if (nodeName === 'dateStart' && value) {
+        const index = this.alertList.indexOf('startDate');
+        if (index !== -1) {
+          this.alertSet.emit({ index: index });
+        }
+      }
       this.ficheIsUpdated.emit(newHR);
     }
   }
