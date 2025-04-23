@@ -5,6 +5,8 @@ import {
   Output,
   EventEmitter,
   SimpleChanges,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import {
   FormControl,
@@ -89,6 +91,8 @@ export interface importedSituation {
   styleUrls: ['./add-ventilation.component.scss'],
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
+  @ViewChild('bottomContainerTarget') bottomContainerTargetRef!: ElementRef;
+
   /**
    * Fiche
    */
@@ -1051,5 +1055,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
   removeAlertItem(index: number) {
     this.alertSet.emit({ index: index });
+  }
+
+  scrollToBottomElement() {
+    this.bottomContainerTargetRef.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+    });
   }
 }
