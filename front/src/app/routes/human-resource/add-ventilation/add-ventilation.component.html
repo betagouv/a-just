@@ -74,7 +74,8 @@
               </label>
             </div>
           </div>
-          <label class="import-confirmation" *ngIf="displayImportLabels"
+          <label class="import-confirmation"
+            *ngIf="displayImportLabels || alertList.includes('fonction') || alertList.includes('category') || alertList.includes('etp')"
             [ngStyle]="{'color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null ||  form.get('etp')?.value === null?'#c3992a': '#18753c',
               'background-color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null ||  form.get('etp')?.value === null?'#feebd0':'#b8fec9'}"><i
               class="ri-checkbox-circle-fill"></i>{{form.get('categoryId')?.value === null ||
@@ -85,25 +86,38 @@
 
         <div class="grid-triple">
           <div class="admin-element"
-            [ngClass]="{'error': form.get('categoryId')?.value === null && displayImportLabels === true}">
+            [ngClass]="{'error': form.get('categoryId')?.value === null && displayImportLabels === true}"
+            [ngClass]="{'error': alertList.includes('category')}">
             <div class="label-aj">Catégorie :</div>
             <select formControlName="categoryId">
               <option *ngFor="let cat of categories" [value]="cat.id">
                 {{ cat.label }}
               </option>
             </select>
+            <div *ngIf="alertList.includes('category')" class="alert">
+              <mat-icon class="close-icon" (click)="removeAlertItem(alertList.indexOf('category'))">close
+              </mat-icon>
+              Vous devez saisir une catégorie !
+            </div>
           </div>
           <div class="admin-element"
-            [ngClass]="{'error': form.get('fonctionId')?.value === null && displayImportLabels === true}">
+            [ngClass]="{'error': form.get('fonctionId')?.value === null && displayImportLabels === true}"
+            [ngClass]="{'error': alertList.includes('fonction')}">
             <div class="label-aj">Fonction :</div>
             <select formControlName="fonctionId" (change)="setFonc($event.target)">
               <option *ngFor="let fonc of fonctions" [value]="fonc.id">
                 {{ fonc.label }}
               </option>
             </select>
+            <div *ngIf="alertList.includes('fonction')" class="alert">
+              <mat-icon class="close-icon" (click)="removeAlertItem(alertList.indexOf('fonction'))">close
+              </mat-icon>
+              Vous devez saisir une fonction !
+            </div>
           </div>
           <div class="admin-element"
-            [ngClass]="{'error': form.get('etp')?.value === null && displayImportLabels === true}">
+            [ngClass]="{'error': form.get('etp')?.value === null && displayImportLabels === true}"
+            [ngClass]="{'error': alertList.includes('etp')}">
             <div class="label-aj">
               Temps de travail (en ETPT) :
             </div>
@@ -117,6 +131,11 @@
                 </svg>
               </div>
               <input type="number" formControlName="etp" min="0" max="1" step="0.01" (ngModelChange)="etp = $event" />
+            </div>
+            <div *ngIf="alertList.includes('etp')" class="alert">
+              <mat-icon class="close-icon" (click)="removeAlertItem(alertList.indexOf('etp'))">close
+              </mat-icon>
+              Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)
             </div>
           </div>
         </div>
@@ -161,22 +180,29 @@
       </div>
       <div class="bottom-container">
         <div class="date-start"
-          [ngClass]="{'error': form.get('activitiesStartDate')?.value === null && printErrorDateStart}">
+          [ngClass]="{'error': form.get('activitiesStartDate')?.value === null && displayImportLabels}">
           <div class="header">
             <p *ngIf="isEdit">Modification de la situation </p>
             <p *ngIf="!isEdit">Situation à prendre en compte </p>
             <div class="flex-1"></div>
-            <label class="import-confirmation" *ngIf="displayImportLabels ||  printErrorDateStart" [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
+            <label class="import-confirmation"
+              *ngIf="displayImportLabels && form.get('activitiesStartDate')?.value === null || alertList.includes('activitiesStartDate') "
+              [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
               'background-color' : form.get('activitiesStartDate')?.value === null ?'#feebd0':'#b8fec9'}"><i
                 class="ri-checkbox-circle-fill"></i>{{form.get('activitiesStartDate')?.value !== null ?'importé':'à
               compléter'}}</label>
           </div>
 
           <aj-date-select title="A compter du" [value]="isEdit ? form.get('activitiesStartDate')?.value : null"
-            (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
+            (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false"
+            [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
           </aj-date-select>
+          <div *ngIf="alertList.includes('activitiesStartDate')" class="alert">
+            <mat-icon class="close-icon" (click)="removeAlertItem(alertList.indexOf('activitiesStartDate'))">close
+            </mat-icon>
+            Vous devez saisir une date de début de situation !
+          </div>
         </div>
-
         <div class="indisponibilities">
           <div class="indispo-header">
             <p>Indisponibilités </p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"

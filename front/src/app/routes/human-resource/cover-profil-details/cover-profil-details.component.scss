@@ -6,8 +6,45 @@
   top: 0;
   z-index: 100;
   border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   background-color: white;
+
+  .error {
+    // border: 1px solid #0063CB;
+    // background-color: #F5F5FE !important;
+    background-color: #fef5e8 !important;
+    border: solid 1px #f4be30 !important;
+  }
+
+  .alert {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    position: absolute;
+    top: 105%;
+    left: 0;
+    z-index: 100;
+    padding: 16px;
+    border: 2px solid #CE0500;
+    border-radius: 8px;
+    background-color: white;
+    color: #CE0500;
+    width: 300px;
+    font-size: 14px;
+    line-height: 24px;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 18, 0.16);
+
+    .close-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #FDDEDE;
+    }
+  }
 }
 
 .first-row {
@@ -113,6 +150,7 @@
 
   .user-name,
   .last-row {
+    position: relative;
 
     input {
       border: none;
@@ -136,11 +174,12 @@
         background-color: #ededed;
         color: fColor(cblack);
       }
+
     }
 
     .input-wrapper {
-      min-width: 200px;
       position: relative;
+      min-width: 200px;
       box-sizing: border-box;
       line-height: 1em;
       padding: 4px 8px;
@@ -219,6 +258,7 @@
   }
 
   .dates {
+    position: relative;
     display: flex;
     gap: 8px;
 
@@ -230,5 +270,16 @@
 
   .last-row {
     display: flex;
+  }
+
+  .firstname,
+  .lastname {
+    position: relative;
+  }
+
+  .lastname {
+    .alert {
+      left: 25%;
+    }
   }
 }

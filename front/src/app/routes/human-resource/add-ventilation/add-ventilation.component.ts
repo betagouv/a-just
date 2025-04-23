@@ -142,6 +142,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   @Input() setValueEtp: (val: number | null) => void = () => {};
   /**
+   * Liste des alertes
+   */
+  @Input() alertList: string[] = [];
+  /**
    * Event lors de la sauvegarde
    */
   @Output() onSaveConfirm = new EventEmitter();
@@ -157,6 +161,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour ouvrir le paneau d'aide
    */
   @Output() onOpenHelpPanel = new EventEmitter();
+  /**
+   * Event pour afficher les alertes au niveau du formulaire
+   */
+  @Output() alertSet = new EventEmitter<{
+    updatedList?: string[];
+    index?: number;
+  }>();
   /**
    * Réferentiel des indispo
    */
@@ -389,15 +400,91 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @returns
    */
   async onSave(withoutPercentControl = false, saveETPT0 = false) {
-    if (this.indisponibilityError) {
-      alert(this.indisponibilityError);
-      return;
-    }
+    let { activitiesStartDate, categoryId, fonctionId } = this.form.value;
+    const categories = this.humanResourceService.categories.getValue();
+    const fonctions = this.humanResourceService.fonctions.getValue();
+    const cat = categories.find((c) => categoryId && c.id == categoryId);
+    const fonct = fonctions.find((c) => c.id == fonctionId);
 
     const indisponibilites = this.human?.indisponibilities || [];
     const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some(
       (c) => c.contentieux.checkVentilation === false
     );
+
+    this.alertList = [];
+
+    if (
+      this.basicData!.controls['firstName'].value === '' ||
+      this.basicData!.controls['firstName'].value === 'Prénom'
+    ) {
+      this.alertList.push('firstName');
+    }
+
+    if (
+      this.basicData!.controls['lastName'].value === '' ||
+      this.basicData!.controls['lastName'].value === 'Nom'
+    ) {
+      this.alertList.push('lastName');
+    }
+
+    if (!(this.human && this.human.dateStart)) {
+      this.alertList.push('startDate');
+    }
+
+    if (!cat) {
+      this.alertList.push('category');
+    }
+
+    if (!fonct) {
+      this.alertList.push('fonction');
+    }
+
+    const etp = this.form.get('etp')?.value;
+    if (etp === null) {
+      this.alertList.push('etp');
+    }
+
+    if (!activitiesStartDate) {
+      this.alertList.push('activitiesStartDate');
+      this.printErrorDateStart = true;
+    }
+    if (this.alertList.length > 0) {
+      console.log('AlertList:', this.alertList);
+
+      this.alertSet.emit({ updatedList: this.alertList });
+      return;
+    }
+
+    activitiesStartDate =
+      setTimeToMidDay(today(activitiesStartDate)) || today(activitiesStartDate);
+
+    if (this.human && this.human.dateStart && activitiesStartDate) {
+      const dateStart = today(this.human.dateStart);
+      // check activity date
+      if (activitiesStartDate.getTime() < dateStart.getTime()) {
+        alert(
+          "Vous ne pouvez pas saisir une situation antérieure à la date d'arrivée !"
+        );
+        return;
+      }
+    }
+
+    if (this.human && this.human.dateEnd && activitiesStartDate) {
+      const dateEnd = new Date(this.human.dateEnd);
+
+      // check activity date
+      if (activitiesStartDate.getTime() > dateEnd.getTime()) {
+        alert(
+          'Vous ne pouvez pas saisir une situation postérieure à la date de départ !'
+        );
+        return;
+      }
+    }
+
+    if (this.indisponibilityError) {
+      alert(this.indisponibilityError);
+      return;
+    }
 
     if (
       !checkIfIndispoIgnoreControlPercentVentilation &&
@@ -429,73 +516,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       }
     }
 
-    let { activitiesStartDate, categoryId, fonctionId } = this.form.value;
-
-    if (
-      this.basicData!.controls['lastName'].value === '' ||
-      this.basicData!.controls['lastName'].value === 'Nom'
-    ) {
-      alert('Vous devez saisir un nom pour valider la création !');
-      return;
-    }
-    if (
-      this.basicData!.controls['firstName'].value === '' ||
-      this.basicData!.controls['firstName'].value === 'Prénom'
-    ) {
-      alert('Vous devez saisir un prénom pour valider la création !');
-      return;
-    }
-
-    if (!activitiesStartDate) {
-      alert('Vous devez saisir une date de début de situation !');
-      this.printErrorDateStart = true;
-      return;
-    }
-
-    if (!(this.human && this.human.dateStart)) {
-      alert("Vous devez saisir une date d'arrivée !");
-      return;
-    }
-    activitiesStartDate =
-      setTimeToMidDay(today(activitiesStartDate)) || today(activitiesStartDate);
-    if (this.human && this.human.dateEnd && activitiesStartDate) {
-      const dateEnd = new Date(this.human.dateEnd);
-
-      // check activity date
-      if (activitiesStartDate.getTime() > dateEnd.getTime()) {
-        alert(
-          'Vous ne pouvez pas saisir une situation postérieure à la date de départ !'
-        );
-        return;
-      }
-    }
-
-    if (this.human && this.human.dateStart && activitiesStartDate) {
-      const dateStart = today(this.human.dateStart);
-
-      // check activity date
-      if (activitiesStartDate.getTime() < dateStart.getTime()) {
-        alert(
-          "Vous ne pouvez pas saisir une situation antérieure à la date d'arrivée !"
-        );
-        return;
-      }
-    }
-
-    const categories = this.humanResourceService.categories.getValue();
-    const fonctions = this.humanResourceService.fonctions.getValue();
-    const cat = categories.find((c) => categoryId && c.id == categoryId);
-    const fonct = fonctions.find((c) => c.id == fonctionId);
-
-    if (!cat) {
-      alert('Vous devez saisir une catégorie !');
-      return;
-    }
-
-    if (!fonct) {
-      alert('Vous devez saisir une fonction !');
-      return;
-    }
+    if (!fonct || !cat) return;
 
     if (
       fonct.minDateAvalaible &&
@@ -512,12 +533,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           false
         )}.`
       );
-      return;
-    }
-
-    const etp = this.form.get('etp')?.value;
-    if (etp === null) {
-      alert('Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)');
       return;
     }
 
@@ -1003,5 +1018,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       // Clicked outside the box
       if (!this.isEdit && !this.saveActions) this.toggleDropDown = false;
     }
+  }
+
+  removeAlertItem(index: number) {
+    this.alertSet.emit({ index: index });
   }
 }

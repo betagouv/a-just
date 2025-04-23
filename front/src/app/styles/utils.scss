@@ -120,6 +120,8 @@ $colors: (
 	dataGeyBg: #dddddd,
 	dataHoverBg: #F6F6F6,
 	ventilationCurrentSituationBg: #f6f6f6,
+	ventilationSituationToCome: #F5F5FE,
+	ventilationPastSituation: #EDEDED,
 );
 
 @function fColor($key: "cprimary") {
