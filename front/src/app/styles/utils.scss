@@ -122,6 +122,8 @@ $colors: (
 	ventilationCurrentSituationBg: #f6f6f6,
 	ventilationSituationToCome: #F5F5FE,
 	ventilationPastSituation: #EDEDED,
+	ventilationDefaultGreyBg: #EDEDED,
+
 );
 
 @function fColor($key: "cprimary") {
