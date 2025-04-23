@@ -68,12 +68,12 @@
       background-color: fColor(bgSelect);
       border-bottom: solid 1px fColor(lightBorder);
       padding: 0 16px;
+      gap: 10px;
       border-top-left-radius: 8px;
       border-top-right-radius: 8px;
 
       i {
-        color: fColor(bgSelectSelected);
-        margin-right: 9px;
+        color: fColor(cblack);
         font-size: 24px;
       }
 

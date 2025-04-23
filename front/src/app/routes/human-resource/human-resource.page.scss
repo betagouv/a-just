@@ -120,10 +120,10 @@ add-ventilation {
   display: flex;
   position: relative;
   align-items: stretch;
+  gap: 8px;
 
   >indispo-profil {
     width: 438px;
-    margin-right: 8px;
   }
 
   >comment-profil {
