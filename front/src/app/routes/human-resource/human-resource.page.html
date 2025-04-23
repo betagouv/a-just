@@ -53,7 +53,7 @@
       [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)">
     </add-ventilation>
 
-    <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">
+    <div *ngIf="historiesOfTheFutur.length" class="panel-history-group futur">
       <p class="title-history">
         Situation{{historiesOfTheFutur.length >= 1 ? 's' : ''}} à venir
         pré-renseignée{{historiesOfTheFutur.length >= 1 ? 's' : ''}}
@@ -67,11 +67,11 @@
       </panel-history-ventilation>
     </div>
 
-    <div *ngIf="historiesOfThePast.length" class="panel-hsitory-group">
+    <div *ngIf="historiesOfThePast.length" class="panel-history-group">
       <p class="title-history">
         Situation{{historiesOfThePast.length > 1 ? 's' : ''}}
-        antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} {{
-        categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }}
+        antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} <!-- {{
+        categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }} -->
       </p>
       <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [category]="h.category"
         [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"

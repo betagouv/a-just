@@ -1,8 +1,13 @@
 @import '../../styles/utils.scss';
 
 .wrapper-content {
-  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
   padding: 0 16px 16px 16px;
+  padding: 0px 8px;
+  margin-top: 8px;
+  gap: 8px;
   overflow: auto;
 }
 
@@ -12,53 +17,55 @@
 }
 
 .new-action {
-  margin: 32px auto;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  max-width: 300px;
-  grid-gap: 16px 8px;
-
-  aj-help-button {
-    margin-top: 3px;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
-.panel-hsitory-group {
-  margin: 16px auto;
+.panel-history-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   background-color: white;
   border-radius: 8px;
   padding-bottom: 8px;
+  border: 1px solid fColor(lightBorder);
 
   &.futur {
-    background-color: fColor(cgrayDefault);
 
     .title-history {
-      color: fColor(grayRow);
+      color: fColor(cgray);
     }
 
     panel-history-ventilation {
-      background-color: fColor(bgProgressBar);
+      background-color: #ededed;
       box-shadow: none;
     }
   }
 
   .title-history {
-    padding: 20px 40px;
-    font-size: 20px;
+    height: 40px;
+    padding: 8px 16px;
+    font-size: 16px;
     font-weight: bold;
     color: fColor(cblack);
-    background-color: fColor(cgrayDefault);
+    line-height: 24px;
+    background-color: fColor(ventilationCurrentSituationBg);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+    border-bottom: 1px solid fColor(lightBorder);
   }
 
   panel-history-ventilation {
-    margin: 16px;
+    //margin: 16px;
   }
 }
 
 add-ventilation {
-  margin: 24px auto 60px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 
   &:not(.empty-user) {
     position: fixed;
@@ -107,7 +114,6 @@ add-ventilation {
   display: flex;
   position: relative;
   align-items: stretch;
-  margin: 8px 0;
 
   >indispo-profil {
     width: 438px;

@@ -58,7 +58,7 @@ button {
 
   &.red {
     color: white;
-    background-color: fColor(cred);
+    background-color: fColor(creddark);
   }
 
   &.blue-light {
@@ -72,13 +72,13 @@ button {
     &.primary {
       color: fColor(primary);
       border: 1px solid fColor(primary);
-      background-color: white;
+      background-color: transparent; // white;
     }
 
     &.red {
-      color: fColor(cred);
-      border: 1px solid fColor(cred);
-      background-color: white;
+      color: fColor(creddark);
+      border: 1px solid fColor(creddark);
+      background-color: transparent;
     }
 
     &.blue-light {
@@ -90,13 +90,13 @@ button {
     &.white {
       color: fColor(cbluedark);
       border: 1px solid fColor(cbluedark);
-      background-color: white;
+      background-color: transparent;
     }
 
     &.gray {
       color: fColor(grayRow);
       border: 1px solid fColor(grayRow);
-      background-color: white;
+      background-color: transparent;
     }
   }
 
@@ -114,14 +114,13 @@ button {
 
 /* INDISPONIBILITIES STYLING */
 .indispo-content {
-  margin-top: 16px;
+
 
   >div {
     min-height: 56px;
     border-radius: 4px;
-    border: solid 1px fColor(cred);
+    border: solid 1px fColor(creddark);
     background-color: fColor(credlight);
-    margin-bottom: 8px;
     margin-right: 16px;
     display: inline-flex;
     position: relative;

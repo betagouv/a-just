@@ -623,7 +623,7 @@ export class PopinEditActivitiesComponent
 
       const entreeValue = this.getValueInOrOut('entrees', contentieux);
       const sortieValue = this.getValueInOrOut('sorties', contentieux);
-      const stockValue = contentieux.stock ?? contentieux.originalStock ?? 0;
+      const stockValue = contentieux.originalStock ?? 0;
 
       const originalEntrees = contentieux.originalIn ?? 0;
       const originalSorties = contentieux.originalOut ?? 0;
@@ -1182,9 +1182,12 @@ export class PopinEditActivitiesComponent
             return true;
           return false;
         } else if (this.isValueUpdated({ cont, node })) {
+          /*
+           * A supprimer après validation des modifications
+           */
           // Si l'entree et/ou la sortie sont de type 'A vérifier' est que l'une ou les deux ont été confirmées, et si le stock et bien calculé et que suite à un
           // recalcul de stock on obtient la meme valeur que la valeur logiciel), on imprime la valeur en bleue
-          if (
+          /*if (
             (this.isValueToVerifySetted({
               value: this.updates[`${cont.id}-entrees`]
                 ? this.updates[`${cont.id}-entrees`].value
@@ -1207,7 +1210,7 @@ export class PopinEditActivitiesComponent
             return true;
           //Si il y a une mise à jours du stock et que sa valeur est la même que celle initial (logiciel),
           // Et que ce n'est pas une valeur de stock saisie (càd: je saisie une valeur de stock égale à la valeur logiciel. Dans ce cas on doit imprimer la valeur en bleu)
-          else if (
+          else */ if (
             this.updates[`${cont.id}-stock`] &&
             this.updates[`${cont.id}-stock`].value === cont.originalStock &&
             !this.updates[`${cont.id}-stock`].setted
