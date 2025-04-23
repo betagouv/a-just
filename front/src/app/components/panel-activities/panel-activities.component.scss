@@ -1,7 +1,9 @@
 @import '../../styles/utils.scss';
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 
   &.dark-mode {
     p {

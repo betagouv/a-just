@@ -146,11 +146,12 @@ describe("Ajout d'un agent", () => {
       integers.push(randInt)
       
      let pos = integers[integers.length - 1]
+
      cy.get('.items').within(() => {
       cy.get('.activity-bar')
         .eq(pos)
         .click()
-    })
+      })
       cy.get('.sub-panel-activites')
         .get('.group-sub-item').within(() => {
           cy.get('.sub-item')

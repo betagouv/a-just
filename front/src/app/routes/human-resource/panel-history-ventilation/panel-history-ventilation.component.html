@@ -1,36 +1,46 @@
 <div class="header-panel">
-  <div class="tags">
-    <ng-template [ngIf]="isPast">
-      <p *ngIf="dateStart" class="date">
-        Du {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
-        {{ getFullYear(dateStart) }}
-      </p>
-      <p *ngIf="dateStop" class="date">
-        Au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
-        {{ getFullYear(dateStop) }}
-      </p>
-    </ng-template>
+  <div class="left-side">
+    <div class="tags" [ngClass]="{ 'past-tag': isPast }">
+      <ng-template [ngIf]="isPast">
+        <p *ngIf="dateStart" class="date">
+          Du {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+          {{ getFullYear(dateStart) }}
+        </p>
+        <p *ngIf="dateStop" class="date">
+          Au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
+          {{ getFullYear(dateStop) }}
+        </p>
+      </ng-template>
 
-    <ng-template [ngIf]="!isPast">
-      <p *ngIf="dateStart" class="date">
-        {{
-        dateStart && dateStart.getTime() > getToday().getTime()
-        ? 'À partir du'
-        : 'Depuis le'
-        }} {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
-        {{ getFullYear(dateStart) }}
-      </p>
-      <p *ngIf="dateStop" class="date">
-        Jusqu'au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
-        {{ getFullYear(dateStop) }}
-      </p>
-    </ng-template>
-    <p *ngIf="fonction" class="fonction">{{ fonction.code }}</p>
-    <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+      <ng-template [ngIf]="!isPast">
+        <p *ngIf="dateStart" class="date">
+          {{
+          dateStart && dateStart.getTime() > getToday().getTime()
+          ? 'À partir du'
+          : 'Depuis le'
+          }} {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+          {{ getFullYear(dateStart) }}
+        </p>
+        <p *ngIf="dateStop" class="date">
+          Jusqu'au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
+          {{ getFullYear(dateStop) }}
+        </p>
+      </ng-template>
+      <p *ngIf="fonction" class="fonction">{{ fonction.code }}</p>
+      <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+    </div>
+    <div [ngClass]="{alert: warningETP}" class="etpt">
+      <p>ETPTravaillé :</p>
+      <etp-preview [etp]="etp - indisponibility" [realETP]="etp" [indisponibility]="indisponibility"></etp-preview>
+    </div>
   </div>
-  <div [ngClass]="{alert: warningETP}" class="etpt">
-    <p>ETPTravaillé :</p>
-    <etp-preview [etp]="(etp || 0) - indisponibility" [realETP]="etp" [indisponibility]="indisponibility"></etp-preview>
+  <div class="actions-panel">
+    <button *ngIf="canEditSituation" (click)="onEditSituation()" class="outline small primary">
+      Corriger cette situation
+    </button>
+    <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="outline small red">
+      Supprimer la situation
+    </button>
   </div>
 </div>
 
@@ -69,13 +79,4 @@
 <div class="activities-panel">
   <panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
     [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
-</div>
-
-<div class="actions-panel">
-  <button *ngIf="canEditSituation" (click)="onEditSituation()" class="outline small primary">
-    Corriger cette situation
-  </button>
-  <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="outline small red">
-    Supprimer la situation
-  </button>
 </div>
