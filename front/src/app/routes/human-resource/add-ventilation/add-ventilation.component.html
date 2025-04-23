@@ -178,7 +178,7 @@
           [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit">
         </panel-activities>
       </div>
-      <div class="bottom-container">
+      <div class="bottom-container" id="bottom-container" #bottomContainerTarget>
         <div class="date-start"
           [ngClass]="{'error': form.get('activitiesStartDate')?.value === null && displayImportLabels}">
           <div class="header">
