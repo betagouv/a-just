@@ -284,6 +284,16 @@ export default class RouteExtractor extends Route {
       type: "activité",
     });
 
+    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId);
+
+    const referentiels =
+      await this.models.ContentieuxReferentiels.getReferentiels(
+        backupId,
+        isJirs,
+        undefined,
+        undefined
+      );
+
     const list = await this.models.Activities.getByMonth(dateStart, backupId);
 
     const lastUpdate =
@@ -336,14 +346,20 @@ export default class RouteExtractor extends Route {
       });
     });
 
-    sumTab = sumTab.filter((x) => x.contentieux.code_import !== null);
+    const flatReferentiels = await flatListOfContentieuxAndSousContentieux([
+      ...referentiels,
+    ]);
+    const labels = flatReferentiels.map(item => item.label);
+
+    sumTab = sumTab.filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
 
     let GroupedList = groupBy(activities, "periode");
-   
+
     GroupedList =  Object.keys(GroupedList).map((l) => {
-      return GroupedList[l].filter((x) => x.contentieux.code_import !== null);
+      return GroupedList[l].filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
     });
 
+    console.log(labels)
     this.sendOk(ctx, {
       list: GroupedList,
       sumTab,
