@@ -198,6 +198,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Current etp
    */
   currentETP: WritableSignal<number | null> = signal(null);
+  /**
+   * Liste des alertes à afficher
+   */
+  alertList: string[] = [];
 
   /**
    * Constructeur
@@ -532,7 +536,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         fonction: firstSituationExistant
           ? firstSituationExistant.fonction
           : null,
-        etp: 1,
+        etp: null,
         indisponibilities: [],
         activities: [],
         dateStart: today(this.currentHR.dateStart),
@@ -1145,7 +1149,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Fonction de mise à jours de l'etp courant pour la création d'un nouvel agent uniquement
    * @param etp
    */
-  updateETP(etp: number) {
+  updateETP(etp: number | null) {
     if (!this.initialETP) {
       this.currentETP.set(etp);
     }
@@ -1160,5 +1164,34 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   setToMidDay(elem: Date) {
     return setTimeToMidDay(elem);
+  }
+
+  /**
+   * Fonction de mise à jour des alertes
+   * @param updatedList
+   */
+  onAlertsUpdated({
+    updatedList,
+    index,
+  }: {
+    updatedList?: string[];
+    index?: number;
+  }) {
+    if (updatedList !== undefined) {
+      this.alertList = updatedList;
+
+      // Scroll to the "Start Date" selector if it's the last element to complete.
+      // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
+      if (
+        this.alertList.length === 1 &&
+        this.alertList[0] === 'activitiesStartDate'
+      ) {
+        if (this.addDomVentilation)
+          this.addDomVentilation.scrollToBottomElement();
+      }
+    }
+    if (index !== undefined) {
+      this.alertList.splice(index, 1);
+    }
   }
 }

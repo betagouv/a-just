@@ -4,7 +4,11 @@ import { CommonModule } from '@angular/common';
 import { MainClass } from '../../../libs/main-class';
 import { SimulatorService } from '../../../services/simulator/simulator.service';
 import { KPIService } from '../../../services/kpi/kpi.service';
-import { monthDiffList, nbOfDays } from '../../../utils/dates';
+import {
+  monthDiffList,
+  nbOfDays,
+  setTimeToMidDay,
+} from '../../../utils/dates';
 import {
   DATE_WHITE_SIMULATOR,
   END_DATE_SIMULATOR,
@@ -184,6 +188,8 @@ export class PeriodSelectorComponent
         this.simulatorService.disabled.next(this.disabled);
         this.dateStop = new Date(event);
         this.simulatorService.dateStop.next(this.dateStop);
+        this.dateStart = setTimeToMidDay(this.dateStart) || this.dateStart;
+        this.dateStop = setTimeToMidDay(this.dateStop) || this.dateStop;
         this.simulatorService.whiteSimulatorNbOfDays.next(
           nbOfDays(this.dateStart, this.dateStop)
         );

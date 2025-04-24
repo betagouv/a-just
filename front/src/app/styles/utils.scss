@@ -17,7 +17,7 @@ $colors: (
 	cgreenstrong: #00a95f,
 	cgreenlight: #e3fdeb,
 	cred: #ff5655,
-	creddark: #ce0500,
+	creddark: #E1000F,
 	credlight: #ffe9e9,
 	cpink: #a558a0,
 	cpinkmiddle: #fee7fc,
@@ -62,7 +62,7 @@ $colors: (
 	darkModeBgLight: #1b1b35,
 	tagBg: #dee5fd,
 	tagText: #6e445a,
-	bgHelper: #33569e,
+	bgHelper: #000091,
 	titleInput: #666666,
 	bgReadETPDark: #ececfe,
 	lightBorder: #dddddd,
@@ -78,6 +78,7 @@ $colors: (
 	popupWhiteTitle: #ffffff,
 	popupDarkBgButton: #8585f6,
 	popupDarkBgFillTextButton: #000091,
+	popupLightBg: #f6f6f6,
 	activityGuideSubTitle: #666,
 	activityGuideBg: #f5f5fe,
 	activityGuideBorder: #33569e,
@@ -118,7 +119,13 @@ $colors: (
 	dataToVerifyBtn: #c3992a,
 	dataGeyBg: #dddddd,
 	dataHoverBg: #F6F6F6,
+	ventilationCurrentSituationBg: #f6f6f6,
+	ventilationSituationToCome: #F5F5FE,
+	ventilationPastSituation: #EDEDED,
+	ventilationDefaultGreyBg: #EDEDED,
+
 );
+
 @function fColor($key: "cprimary") {
 	@return map-get($colors, $key);
 }

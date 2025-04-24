@@ -619,6 +619,7 @@ export class DataPage {
         TJ_TO_IMPORT.push({ tj: { id: tj.id, label: tj.label }, data: file });
       }
     });
+    console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT);
     console.log('TJ_TO_IMPORT:', TJ_TO_IMPORT.length);
     setInterval(() => {
       if (index < TJ_TO_IMPORT.length) {

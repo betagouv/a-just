@@ -62,6 +62,10 @@ export class TextEditorComponent extends MainClass {
    */
   @Input() defaultReadOnly: boolean = false;
   /**
+   * Link to editor
+   */
+  @Input() acceptLink: boolean = true;
+  /**
    * Emit value
    */
   @Output() resetField = new EventEmitter();
@@ -162,20 +166,17 @@ export class TextEditorComponent extends MainClass {
    * Init Quill text editor
    */
   initQuillEditor() {
+    const toolbar: any[] = ['bold', 'italic', 'underline', 'strike'];
+    if (this.acceptLink) {
+      toolbar.push('link');
+    }
+    toolbar.push({ list: 'bullet' });
+
     const dom = this.contener?.nativeElement;
     this.quillEditor = new Quill(dom, {
       readOnly: this.defaultReadOnly,
       modules: {
-        toolbar: [
-          'bold',
-          'italic',
-          'underline',
-          'strike',
-          'link',
-          { list: 'ordered' },
-          { list: 'bullet' },
-          { list: 'check' },
-        ],
+        toolbar,
       },
       placeholder: this.placeholder,
       theme: 'snow',

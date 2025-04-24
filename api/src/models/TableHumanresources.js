@@ -289,7 +289,7 @@ export default (sequelizeInstance, Model) => {
           logging: false,
         })
 
-        if (list[i].hmatricule !== '' && findHRToDBByMatricule) {
+        if (list[i].hmatricule !== '' && list[i].hmatricule !== '0' && findHRToDBByMatricule) {
           importSituation.push(list[i].hmatricule + ' no add by matricule already existing')
           continue
         }
@@ -675,9 +675,9 @@ export default (sequelizeInstance, Model) => {
 
   Model.onCalculate = async (
     { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds, loadChildrens },
-    user
+    user, log = true
   ) => {
-    if (!selectedFonctionsIds && user) {
+    if (!selectedFonctionsIds && user && log === true) {
       // memorize first execution by user
       await Model.models.Logs.addLog(EXECUTE_CALCULATOR, user.id)
     }

@@ -10,7 +10,6 @@
     position: relative;
     display: block;
     border-radius: 8px;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     border: solid 1px fColor(lightBorder);
     background-color: #fff;
 
@@ -69,12 +68,12 @@
       background-color: fColor(bgSelect);
       border-bottom: solid 1px fColor(lightBorder);
       padding: 0 16px;
+      gap: 10px;
       border-top-left-radius: 8px;
       border-top-right-radius: 8px;
 
       i {
-        color: fColor(bgSelectSelected);
-        margin-right: 9px;
+        color: fColor(cblack);
         font-size: 24px;
       }
 

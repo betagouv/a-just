@@ -187,6 +187,8 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         this.initFields();
         return;
       }
+
+      //console.log('actual situ', actualSituation);
       const etpFactor =
         this._category === 'MAGISTRAT' ? etpMagFactor : etpGreffeFactor;
       let eq = { field: '', value: -1 };
@@ -379,24 +381,25 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
             if (
               this.lockedParams.includes('magRealTimePerCase') &&
               actualSituation['totalOut'] !== ''
-            )
+            ) {
               eq = {
                 field: 'magRealTimePerCase',
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['totalOut'],
               };
+            }
             if (
               this.lockedParams.includes('totalOut') &&
               actualSituation['magRealTimePerCase'] !== ''
-            )
+            ) {
               eq = {
                 field: 'totalOut',
                 value:
                   (etpFactor * actualSituation['etpMag']) /
                   actualSituation['magRealTimePerCase'],
               };
-            else if (actualSituation['totalOut'] !== '') {
+            } else if (actualSituation['totalOut'] !== '') {
               eq = {
                 field: 'magRealTimePerCase',
                 value:
@@ -404,6 +407,15 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
                   actualSituation['totalOut'],
               };
               this.lockedParams.push('magRealTimePerCase');
+              /**
+              console.log(
+                'TMDDDD',
+                (etpFactor * actualSituation['etpMag']) /
+                  actualSituation['totalOut'],
+                etpFactor,
+                actualSituation['etpMag'],
+                actualSituation['totalOut']
+              ); */
             } else if (actualSituation['magRealTimePerCase'] !== '') {
               eq = {
                 field: 'totalOut',
@@ -689,6 +701,16 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     return true;
   }
 
+  /**
+   * Indique si une valeur est finit ou si c'est une division par 0
+   * @param val
+   * @returns
+   */
+  getDTESValue(val: string) {
+    if (Number(val) < 0) return '0';
+    else return val;
+  }
+
   initFields() {
     Object.keys(this.formWhiteSim.controls).forEach((key) => {
       this.formWhiteSim.patchValue({ [key]: '' });
@@ -800,40 +822,53 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   generateEndSituation() {
     this.replaceSeparator();
 
-    const startTotalIn = fixDecimal(
-      Number(this.formWhiteSim.controls['totalIn'].value)
+    const startTotalIn = parseFloat(
+      this.formWhiteSim.controls['totalIn'].value || '0'
     );
-    this.formWhiteSim.controls['totalIn'].setValue(startTotalIn + '');
 
-    const startTotalOut = fixDecimal(
-      Number(this.formWhiteSim.controls['totalOut'].value)
+    this.formWhiteSim.controls['totalIn'].setValue(
+      fixDecimal(startTotalIn) + ''
     );
-    this.formWhiteSim.controls['totalOut'].setValue(startTotalOut + '');
 
-    const startLastStock = Math.floor(
-      Number(this.formWhiteSim.controls['lastStock'].value)
+    const startTotalOut = parseFloat(
+      this.formWhiteSim.controls['totalOut'].value || '0'
     );
-    this.formWhiteSim.controls['lastStock'].setValue(startLastStock + '');
 
-    const startetpMag = fixDecimal(
-      Number(this.formWhiteSim.controls['etpMag'].value)
+    this.formWhiteSim.controls['totalOut'].setValue(
+      fixDecimal(startTotalOut) + ''
     );
-    const startetpFon = fixDecimal(
-      Number(this.formWhiteSim.controls['etpMag'].value)
+
+    const startLastStock = parseFloat(
+      this.formWhiteSim.controls['lastStock'].value || '0'
+    );
+
+    this.formWhiteSim.controls['lastStock'].setValue(
+      Math.floor(startLastStock) + ''
+    );
+
+    const startetpMag = parseFloat(
+      this.formWhiteSim.controls['etpMag'].value || '0'
+    );
+    const startetpFon = parseFloat(
+      this.formWhiteSim.controls['etpMag'].value || '0'
     );
     const startetpCont = Number(this.formWhiteSim.controls['etpCont'].value);
 
     let coverage = Number(this.formWhiteSim.controls['realCoverage'].value);
     if (this.lockedParams.includes('realCoverage')) {
-      coverage = Math.round((startTotalOut / startTotalIn) * 100);
+      coverage = (startTotalOut / startTotalIn) * 100;
     }
-    this.formWhiteSim.controls['realCoverage'].setValue(String(coverage) + '%');
+    this.formWhiteSim.controls['realCoverage'].setValue(
+      String(Math.round(coverage)) + '%'
+    );
 
-    const dtes = fixDecimal(startLastStock / startTotalOut);
-    this.formWhiteSim.controls['realDTESInMonths'].setValue(String(dtes));
+    const dtes = startLastStock / startTotalOut;
+    this.formWhiteSim.controls['realDTESInMonths'].setValue(
+      String(fixDecimal(dtes))
+    );
 
     this.formWhiteSim.controls['etpMag'].setValue(
-      String(startetpMag).replaceAll('.', ',')
+      String(fixDecimal(startetpMag)).replaceAll('.', ',')
     );
     const prefix1 =
       this.category === 'MAGISTRAT'
@@ -845,14 +880,13 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         : 'nbHoursPerDayAndFonctionnaire';
     const etpToUse = this.category === 'MAGISTRAT' ? startetpMag : startetpFon;
 
-    let realTime = fixDecimal(
+    let realTime =
       (basicEtptData[prefix1] * basicEtptData[prefix2] * etpToUse) /
-        (startTotalOut * 12),
-      100
-    );
-    const tmd =
-      Math.trunc(realTime) +
-      Math.round((realTime - Math.trunc(realTime)) * 60) / 60;
+      (startTotalOut * 12);
+
+    const tmd = realTime;
+    /**   Math.trunc(realTime) +
+      Math.round((realTime - Math.trunc(realTime)) * 60) / 60;*/
 
     this.simulatorService.situationActuelle.next({
       totalIn: startTotalIn,
@@ -877,24 +911,51 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       ],
     });
 
-    const endStock = Math.floor(
+    const endStock =
       startLastStock +
-        (this.nbOfDays / (365 / 12)) * startTotalIn -
-        (this.nbOfDays / (365 / 12)) * startTotalOut
+      (this.nbOfDays / (365 / 12)) * startTotalIn -
+      (this.nbOfDays / (365 / 12)) * startTotalOut;
+
+    /**
+    console.log(
+      'stock',
+      Math.floor(startLastStock),
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn),
+      Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut),
+      Math.floor(startLastStock) +
+        Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn) -
+        Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut)
+    );
+    console.log(Math.floor(Math.floor(etpToUse * 7 * 19.1308) / tmd), tmd);
+    console.log(Math.floor(etpToUse * 7 * 19.1308) / tmd);
+    console.log(
+      'nbdays',
+      this.nbOfDays,
+      startTotalIn,
+      startTotalOut,
+      startLastStock
     );
 
+    console.log(
+      'comparatif',
+      endStock,
+      startTotalOut,
+      Math.floor(Math.floor(etpToUse * 7 * 19.1308) / tmd),
+      Math.floor(etpToUse * 7 * 19.1308) / tmd
+    );
+     */
     this.endSituation = {
-      totalIn: startTotalIn,
-      totalOut: startTotalOut,
-      lastStock: endStock,
-      etpMag: this.category === 'MAGISTRAT' ? startetpMag : 0,
-      etpFon: this.category !== 'MAGISTRAT' ? startetpFon : 0,
+      totalIn: fixDecimal(startTotalIn),
+      totalOut: fixDecimal(startTotalOut),
+      lastStock: Math.floor(endStock),
+      etpMag: this.category === 'MAGISTRAT' ? fixDecimal(startetpMag) : 0,
+      etpFon: this.category !== 'MAGISTRAT' ? fixDecimal(startetpFon) : 0,
       etpCont: null,
-      realCoverage: coverage,
+      realCoverage: Math.round(coverage),
       realDTESInMonths: fixDecimal(endStock / startTotalOut),
       magRealTimePerCase: tmd,
     };
-    this.endSituationDisplay.realCoverage = fixDecimal(coverage) + '%';
+    this.endSituationDisplay.realCoverage = Math.round(coverage) + '%';
     this.endSituationDisplay.realDTESInMonths =
       fixDecimal(endStock / startTotalOut) + ''; //+ ' mois'
     //this.endSituationDisplay.magRealTimePerCase = String(tmd) //decimalToStringDate(tmd, ':')
@@ -938,6 +999,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
         '.'
       ) || ''
     );
+
     this.formWhiteSim.controls['magRealTimePerCase'].setValue(
       this.formWhiteSim.controls['magRealTimePerCase'].value?.replaceAll(
         ',',
@@ -963,7 +1025,16 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
   }
 
   getStartTmd() {
-    return Number(this.formWhiteSim.controls['magRealTimePerCase'].value);
+    /**
+    console.log(
+      'getTmd',
+      this.formWhiteSim.controls['magRealTimePerCase'].value,
+      Number(this.formWhiteSim.controls['magRealTimePerCase'].value),
+      this.formWhiteSim
+    ); */
+    return parseFloat(
+      this.formWhiteSim.controls['magRealTimePerCase'].value || '0'
+    );
   }
 
   updateTimeValue(value: Number) {
@@ -1012,5 +1083,12 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
 
   getTmd() {
     return decimalToStringDate(this.getStartTmd(), ':');
+  }
+
+  /**
+   * Troncage valeur numérique
+   */
+  trunc(val: string) {
+    return Math.trunc(parseFloat(val) * 100000) / 100000;
   }
 }

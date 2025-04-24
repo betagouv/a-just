@@ -5,7 +5,7 @@ import {
   compareGapBetweenData,
   preformatActivitiesArray,
 } from "../utils/activities";
-import { month } from "../utils/date";
+import { month, today } from "../utils/date";
 import { maxBy } from "lodash";
 import {
   VALUE_QUALITY_OPTION,
@@ -522,14 +522,10 @@ export default (sequelizeInstance, Model) => {
               findAllChild[i].contentieux_id
             );
           // do not update if updated by user
-          // or if 'entrees' and/or 'sorties' have updates and
-          // their values are equal to originals and their data qualities are 'to_verify'
+          // or if stock is 'A_verifier'
           if (
-            !getUserUpdateStock ||
-            getUserUpdateStock.value === null /*&&
-               !isValueToVerifySetted( findAllChild[i].entrees ? findAllChild[i].entrees : null, findAllChild[i], "entrees", contentieuxRef.dataValues) && 
-               !isValueToVerifySetted( findAllChild[i].sorties ? findAllChild[i].sorties : null, findAllChild[i], "sorties", contentieuxRef.dataValues) &&
-               contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY*/
+            (!getUserUpdateStock ||
+            getUserUpdateStock.value === null) && contentieuxRef.dataValues.value_quality_stock !== VALUE_QUALITY_TO_VERIFY
           ) {
             const previousStockValue = await Model.checkAndUpdatePreviousStock(
               findAllChild[i].contentieux_id,
@@ -537,7 +533,11 @@ export default (sequelizeInstance, Model) => {
               hrBackupId
             );
 
+            
             if (previousStockValue !== null) {
+              // Si il y a un stock sur le mois précédent:
+              // Si c'est une donnée calculé -> stock N calculé = stock N-1 ajusté + entrees N ajusté - sorties N ajusté(où N = mois en cours)
+              // Sinon -> stock N calculé = stock N logiciel (original) + (entrees N ajusté - entrées N logiciel) - (sorties N ajusté - sorties N logiciel)
               if (
                 findAllChild[i].entrees !== null ||
                 findAllChild[i].sorties !== null ||
@@ -557,8 +557,8 @@ export default (sequelizeInstance, Model) => {
               } else {
                 currentStock = findAllChild[i].original_stock;
               }
-            } else {
-
+            } else if (findAllChild[i].original_stock !== null) {
+              // Update stock with original stock ONLY IF not null
               currentStock = findAllChild[i].original_stock;
 
               if (findAllChild[i].entrees !== null) {
@@ -728,7 +728,7 @@ export default (sequelizeInstance, Model) => {
     details = true
   ) => {
     const whereList = {};
-    date = new Date(date);
+    date = today(date);
 
     if (contentieuxId) {
       whereList.contentieux_id = contentieuxId;

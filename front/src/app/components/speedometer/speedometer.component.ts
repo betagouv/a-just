@@ -124,8 +124,9 @@ export class SpeedometerComponent extends MainClass implements OnInit {
    */
   ngOnChanges() {
     this.percentString =
-      this.percent === null ? 'N/R' : Math.floor(this.percent) + '%';
-
+      this.percent === null || isNaN(this.percent)
+        ? 'N/R'
+        : Math.floor(this.percent) + '%';
     this.onDraw();
   }
 

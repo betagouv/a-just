@@ -564,7 +564,7 @@ export class PopinEditActivitiesComponent
       }
     );
 
-    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie ou bien modifié les mois précédents
+    // Remise du stock à son état d'origine si l'entréer et/ou la sortie précédement ajusté ont été mis à null ET qu'il n'y ai pas de donnée de stock saisie ou bien modifié les mois précédents OU que la donnée de stock est null
     // Dans ce cas on remet le stock à son état d'origine
     const isStockNotSet =
       (this.updates[`${contentieux.id}-stock`]?.value == null ||
@@ -608,22 +608,26 @@ export class PopinEditActivitiesComponent
         ? contentieux.originalStock.toString()
         : '-';
     }
-    //Pas de recalcul de stock si un stock a été saisi manuellement et qu'une valeur d'entrée et sortie de type "A vérifier" a été confirmer
+    //Pas de recalcul de stock si un stock a été saisi manuellement OU que la donnée logiciel est null ET qu'une valeur d'entrée et sortie de type "A vérifier" a été confirmer
     else if (
       (this.isStockCalculated(contentieux) ||
-        (this.updates[`${contentieux.id}-stock`] &&
-          this.updates[`${contentieux.id}-stock`].value === null)) &&
+        (((this.updates[`${contentieux.id}-stock`] &&
+          this.updates[`${contentieux.id}-stock`].value === null) ||
+          !this.updates[`${contentieux.id}-stock`]) &&
+          contentieux.originalStock !== null)) &&
       (this.updates[`${contentieux.id}-entrees`] ||
-        this.updates[`${contentieux.id}-sorties`])
+        this.updates[`${contentieux.id}-sorties`]) &&
+      contentieux.valueQualityStock !== VALUE_QUALITY_TO_VERIFY
     ) {
       updateTotal = true;
 
       const entreeValue = this.getValueInOrOut('entrees', contentieux);
       const sortieValue = this.getValueInOrOut('sorties', contentieux);
-      const stockValue = contentieux.stock ?? contentieux.originalStock ?? 0;
+      const stockValue = contentieux.originalStock ?? 0;
 
       const originalEntrees = contentieux.originalIn ?? 0;
       const originalSorties = contentieux.originalOut ?? 0;
+
 
       let newStock = 0;
 
@@ -916,13 +920,13 @@ export class PopinEditActivitiesComponent
     if (this.updates[`${cont.id}-stock`]) {
       return this.updates[`${cont.id}-stock`].calculated;
     } else if (
-      (cont.stock !== null &&
-        (!cont.activityUpdated ||
-          (cont.activityUpdated && !cont.activityUpdated.stock) ||
-          (cont.activityUpdated &&
-            cont.activityUpdated.stock &&
-            cont.activityUpdated.stock.value === null))) ||
-      cont.stock === null
+      cont.stock !== null &&
+      (!cont.activityUpdated ||
+        (cont.activityUpdated && !cont.activityUpdated.stock) ||
+        (cont.activityUpdated &&
+          cont.activityUpdated.stock &&
+          cont.activityUpdated.stock.value === null)) /*||
+      cont.stock === null*/
     ) {
       return true;
     }
@@ -1178,9 +1182,12 @@ export class PopinEditActivitiesComponent
             return true;
           return false;
         } else if (this.isValueUpdated({ cont, node })) {
+          /*
+           * A supprimer après validation des modifications
+           */
           // Si l'entree et/ou la sortie sont de type 'A vérifier' est que l'une ou les deux ont été confirmées, et si le stock et bien calculé et que suite à un
           // recalcul de stock on obtient la meme valeur que la valeur logiciel), on imprime la valeur en bleue
-          if (
+          /*if (
             (this.isValueToVerifySetted({
               value: this.updates[`${cont.id}-entrees`]
                 ? this.updates[`${cont.id}-entrees`].value
@@ -1203,7 +1210,7 @@ export class PopinEditActivitiesComponent
             return true;
           //Si il y a une mise à jours du stock et que sa valeur est la même que celle initial (logiciel),
           // Et que ce n'est pas une valeur de stock saisie (càd: je saisie une valeur de stock égale à la valeur logiciel. Dans ce cas on doit imprimer la valeur en bleu)
-          else if (
+          else */ if (
             this.updates[`${cont.id}-stock`] &&
             this.updates[`${cont.id}-stock`].value === cont.originalStock &&
             !this.updates[`${cont.id}-stock`].setted

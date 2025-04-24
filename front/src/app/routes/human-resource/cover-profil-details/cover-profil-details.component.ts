@@ -110,6 +110,10 @@ export class CoverProfilDetailsComponent
    */
   @Input() dateStart: Date | null = null;
   /**
+   * Liste des alertes
+   */
+  @Input() alertList: string[] = [];
+  /**
    * Request an PDF export
    */
   @Output() exportPDF = new EventEmitter();
@@ -121,6 +125,13 @@ export class CoverProfilDetailsComponent
    * Request to to update screen
    */
   @Output() ficheIsUpdated = new EventEmitter();
+  /**
+   * Event pour afficher les alertes au niveau du formulaire
+   */
+  @Output() alertSet = new EventEmitter<{
+    updatedList?: string[];
+    index?: number;
+  }>();
   /**
    * Temps de travail en text
    */
@@ -235,6 +246,16 @@ export class CoverProfilDetailsComponent
       this.basicHrInfo.get(node)?.setValue(object);
       //this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
     }
+
+    let index = -1;
+    if (node === 'firstName') {
+      index = this.alertList.indexOf('firstName');
+    } else if (node === 'lastName') {
+      index = this.alertList.indexOf('lastName');
+    }
+    if (index !== -1) {
+      this.alertSet.emit({ index: index });
+    }
   }
 
   /**
@@ -272,6 +293,12 @@ export class CoverProfilDetailsComponent
           [nodeName]: value,
         }
       );
+      if (nodeName === 'dateStart' && value) {
+        const index = this.alertList.indexOf('startDate');
+        if (index !== -1) {
+          this.alertSet.emit({ index: index });
+        }
+      }
       this.ficheIsUpdated.emit(newHR);
     }
   }
@@ -373,21 +400,9 @@ export class CoverProfilDetailsComponent
     return 0;
   }
 
-  downloadAsset() {
-    let url = null;
-
-    if (this.userService.isCa()) {
-      url = NOMENCLATURE_DOWNLOAD_URL_CA;
-    } else {
-      if (this.referentielService.isDroitLocal()) {
-        url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
-      } else {
-        url = NOMENCLATURE_DOWNLOAD_URL;
-      }
-    }
-
-    if (url) {
-      window.open(url);
-    }
+  removeAlertItem(index: number) {
+    this.alertSet.emit({ index: index });
+    // this.alertList.splice(index, 1);
+    // console.log('this.alertList', this.alertList);
   }
 }

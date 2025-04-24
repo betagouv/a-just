@@ -227,6 +227,17 @@ export class UserService implements OnInit {
   }
 
   /**
+   * API demande de nouveau mot de passe
+   * @param params
+   * @returns
+   */
+  forgotPasswordTest(params = {}): Promise<any> {
+    return this.serverService
+      .post('users/forgot-password-test', params)
+      .then((data) => data.data || null);
+  }
+
+  /**
    * API changement du mot de passe avec code
    * @param params
    * @returns
@@ -374,7 +385,7 @@ export class UserService implements OnInit {
       user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
     ) {
       menu.push({
-        label: 'Simulateur',
+        label: 'Simulateurs',
         path: 'simulateur',
       });
     }

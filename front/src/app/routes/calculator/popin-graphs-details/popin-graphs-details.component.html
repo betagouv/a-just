@@ -1,4 +1,4 @@
-<aj-popup [titleTemplate]="titleTemplate" class="light-background" [closeIcon]="true"
+<aj-popup [titleTemplate]="titleTemplate" class="light-background no-scroll" [closeIcon]="true"
     (onClose)="calculatorService.showGraphDetailType = null">
     <div class="popin-graphs-details">
         <div class="header-popin"
@@ -7,7 +7,7 @@
                 [style.color]="calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id ? 'rgba(246, 246, 246, 1)' : userService.referentielMappingColorByInterface(ref.label)"
                 [style.background-color]="calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id ? userService.referentielMappingColorByInterface(ref.label) :  'rgba(246, 246, 246, 1)'"
                 (click)="selectReferentiel(ref)">
-                {{ referentielMappingName(ref.label) }}
+                {{ userService.referentielMappingNameByInterface(ref.label) }}
             </div>
         </div>
         <div class="compare-header-popin">
@@ -23,7 +23,12 @@
                 <p>{{compareAtString}}</p>
             </div>
         </div>
-        <div>
+        <p *ngIf="haveMissingDatas" class="have-missing-datas">Certaines données sont manquantes sur les périodes
+            sélectionnées</p>
+        <div class="canvas-zone">
+            <p class="error" *ngIf="showError">Aucune donnée d’activité n’est enregistrée sur cette période pour ce
+                contentieux : vous pouvez les compléter dans l'écran de <a routerLink="/donnees-d-activite">données
+                    d’activité</a></p>
             <canvas #canvas></canvas>
         </div>
     </div>
@@ -32,6 +37,9 @@
 <ng-template #titleTemplate>
     <div class="title-popin">
         <img src="/assets/icons/icon-graph.svg">
-        <p>Evolution des {{calculatorService.showGraphDetailTypeLineTitle}}</p>
+        <p>Evolution des
+            {{calculatorService.showGraphDetailTypeLineTitle}}{{calculatorService.showGraphDetailTypeLineTitle ===
+            'Stock' || calculatorService.showGraphDetailTypeLineTitle ===
+            'Temps moyen' ? 's' : ''}}</p>
     </div>
 </ng-template>

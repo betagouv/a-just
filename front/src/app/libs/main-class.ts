@@ -59,6 +59,7 @@ export class MainClass {
   VALUE_QUALITY_TO_COMPLETE = VALUE_QUALITY_TO_COMPLETE;
   VALUE_QUALITY_TO_VERIFY = VALUE_QUALITY_TO_VERIFY;
   OPACITY_20 = OPACITY_20;
+  isNaN = isNaN;
 
   /**
    * Methode d'arrondi
