@@ -19,7 +19,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.list = async (userId) => {
     const listAll = await Model.findAll({
-      attributes: ["id", "label", ["updated_at", "date"], "jirs"],
+      attributes: ["id", "label", ["updated_at", "date"], "jirs", "stat_exclusion"],
       include: [
         {
           attributes: ["id"],
@@ -41,6 +41,7 @@ export default (sequelizeInstance, Model) => {
           label: listAll[i].label,
           date: listAll[i].date,
           jirs: listAll[i].jirs,
+          stat_exclusion: listAll[i].stat_exclusion
         });
       }
     }
@@ -111,7 +112,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupName
    * @returns
    */
-  Model.duplicateBackup = async (backupId, backupName, copyAct = false) => {
+  Model.duplicateBackup = async (backupId, backupName, copyAct = false, statExclusion = false) => {
     const backup = await Model.findOne({
       where: {
         id: backupId,
@@ -125,6 +126,7 @@ export default (sequelizeInstance, Model) => {
       const backupCreated = await Model.create({
         ...backup,
         label: backupName,
+        stat_exclusion: statExclusion
       });
       const newBackupId = backupCreated.dataValues.id;
 
