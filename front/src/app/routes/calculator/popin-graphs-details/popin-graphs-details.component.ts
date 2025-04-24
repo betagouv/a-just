@@ -19,6 +19,9 @@ import { findLastIndex, maxBy, minBy } from 'lodash';
 import { today } from '../../../utils/dates';
 import { KPIService } from '../../../services/kpi/kpi.service';
 import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS } from '../../../constants/log-codes';
+import { fixDecimal } from '../../../utils/numbers';
+import { AppService } from '../../../services/app/app.service';
+import { RouterModule } from '@angular/router';
 
 /**
  * Composant de la popin qui affiche en gros les détails les données d'une comparaison
@@ -26,7 +29,7 @@ import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS } from '../../../constants/log-code
 
 @Component({
   standalone: true,
-  imports: [CommonModule, PopupComponent],
+  imports: [CommonModule, PopupComponent, RouterModule],
   selector: 'aj-popin-graphs-details',
   templateUrl: './popin-graphs-details.component.html',
   styleUrls: ['./popin-graphs-details.component.scss'],
@@ -39,6 +42,7 @@ export class PopinGraphsDetailsComponent
   humanResourceService = inject(HumanResourceService);
   calculatorService = inject(CalculatorService);
   kpiService = inject(KPIService);
+  appService = inject(AppService);
   /**
    * Canvas html dom
    */
@@ -79,6 +83,14 @@ export class PopinGraphsDetailsComponent
    * All values
    */
   allValues: { first: number | null; second: number | null }[] = [];
+  /**
+   * Show hide error
+   */
+  showError = false;
+  /**
+   * Have missing datas
+   */
+  haveMissingDatas = false;
 
   /**
    * Constructor
@@ -97,6 +109,7 @@ export class PopinGraphsDetailsComponent
   }
 
   async onLoadDatas() {
+    this.appService.appLoading.next(true);
     if (this.calculatorService.selectedRefGraphDetail) {
       const ref = this.humanResourceService.contentieuxReferentiel
         .getValue()
@@ -172,6 +185,15 @@ export class PopinGraphsDetailsComponent
           )
         ).filter((v: any) => v);
       }
+    }
+
+    if (
+      firstValues.find((v) => v.value === null) ||
+      secondValues.find((v) => v.value === null)
+    ) {
+      this.haveMissingDatas = true;
+    } else {
+      this.haveMissingDatas = false;
     }
 
     if (!this.myChart && this.canvas) {
@@ -258,20 +280,30 @@ export class PopinGraphsDetailsComponent
     const mergeTab: { value: number | null; date: Date }[] = [
       ...firstValues.filter((v) => v && v.value !== null),
       ...secondValues.filter((v) => v && v.value !== null),
+      ...middleValues.filter((v) => v && v.value !== null),
     ];
     const mergeTabDate: Date[] = mergeTab.map((v) => this.getMonth(v.date));
     const mergeTabValues: number[] = mergeTab.map((v) => +(v.value || 0));
+    // min max date
+    const minDate = Math.min(...mergeTabDate.map((v) => v.getTime()));
+    const maxDate = Math.max(...mergeTabDate.map((v) => v.getTime()));
+
     // get min max
     let min = Math.min(...mergeTabValues);
-    let max = Math.max(...mergeTabValues);
+    let max = Math.max(...mergeTabValues) || 0;
     if (min) {
       min *= 0.7;
       if (min < 10) {
         min = 0;
       }
     }
+    this.showError =
+      mergeTab.filter((v) => v && v.value !== null).length === 0 ? true : false;
     if (max) {
-      max *= 1.3;
+      max = max * 1.1;
+    }
+    if (max === 0) {
+      max = 1;
     }
 
     const getOrCreateTooltip = (chart: any) => {
@@ -349,8 +381,9 @@ export class PopinGraphsDetailsComponent
             bodyContainer.style.display = 'flex';
             bodyContainer.style.justifyContent = 'space-between';
             bodyContainer.style.alignItems = 'center';
-            bodyContainer.style.lineHeight = '20px';
-            bodyContainer.style.height = '20px';
+            bodyContainer.style.paddingTop = '2px';
+            bodyContainer.style.paddingBottom = '2px';
+            bodyContainer.style.minHeight = '20px';
             bodyContainer.style.marginBottom = '4px';
             bodyContainer.style.gap = '4px';
 
@@ -367,7 +400,29 @@ export class PopinGraphsDetailsComponent
             bodyLine.style.padding = '0';
             bodyLine.style.color = '#000';
             bodyLine.style.fontSize = '12px';
-            bodyLine.innerHTML = body.lines[0];
+            if (
+              this.calculatorService.showGraphDetailTypeLineTitle ===
+              'Temps moyen'
+            ) {
+              bodyLine.innerHTML = this.decimalToStringDate(body.lines[0]);
+            } else if (
+              this.calculatorService.showGraphDetailTypeLineTitle ===
+              'Taux de couverture'
+            ) {
+              bodyLine.innerHTML =
+                Math.round(Number(body.lines[0].replace(',', '.'))) + '%';
+            } else if (
+              this.calculatorService.showGraphDetailTypeLineTitle === 'Stock'
+            ) {
+              bodyLine.innerHTML =
+                '' +
+                fixDecimal(
+                  Number(body.lines[0].replace(/\s/g, '').replace(',', '.')),
+                  1
+                );
+            } else {
+              bodyLine.innerHTML = body.lines[0];
+            }
 
             bodyContainer.appendChild(imageLine);
             bodyContainer.appendChild(bodyLine);
@@ -420,8 +475,40 @@ export class PopinGraphsDetailsComponent
           min,
           max,
           ticks: {
+            stepSize: (max - min) / 5,
             fontSize: 12,
             color: 'rgba(0, 0, 0, 0.70)',
+            callback: (value: any, index: number, values: any[]): any => {
+              if (index === 0 || index === values.length - 1) {
+                return '';
+              }
+
+              // Customize the label format
+              if (
+                this.calculatorService.showGraphDetailTypeLineTitle ===
+                'Temps moyen'
+              ) {
+                return this.decimalToStringDate(value);
+              }
+
+              if (
+                this.calculatorService.showGraphDetailTypeLineTitle ===
+                'Taux de couverture'
+              ) {
+                return Math.round(value) + '%';
+              }
+
+              if (
+                this.calculatorService.showGraphDetailTypeLineTitle ===
+                  'Stock' &&
+                fixDecimal(value, 1) !== 1 &&
+                fixDecimal(value, 1) !== 0
+              ) {
+                return fixDecimal(value, 1);
+              }
+
+              return this.fixDecimal(value, 10);
+            },
           },
         },
         x: {
@@ -509,7 +596,7 @@ export class PopinGraphsDetailsComponent
         const value = firstValues.find(
           (v) => this.getMonth(v.date).getTime() === now.getTime()
         );
-        if (value) {
+        if (value && value.value !== null) {
           this.allValues[this.allValues.length - 1].first = value.value || 0;
           datasets[0].data.push(value.value || 0);
         } else {
@@ -519,7 +606,7 @@ export class PopinGraphsDetailsComponent
         const value2 = secondValues.find(
           (v) => this.getMonth(v.date).getTime() === now.getTime()
         );
-        if (value2) {
+        if (value2 && value2.value !== null) {
           this.allValues[this.allValues.length - 1].second = value2.value || 0;
           datasets[1].data.push(value2.value || 0);
         } else {
@@ -529,7 +616,7 @@ export class PopinGraphsDetailsComponent
         const value1 = middleValues.find(
           (v) => this.getMonth(v.date).getTime() === now.getTime()
         );
-        if (value1) {
+        if (value1 && value1.value !== null) {
           datasets[2].data.push(value1.value || 0);
         } else {
           datasets[2].data.push(NaN);
@@ -548,5 +635,6 @@ export class PopinGraphsDetailsComponent
       datasets,
     };
     this.myChart.update();
+    this.appService.appLoading.next(false);
   }
 }

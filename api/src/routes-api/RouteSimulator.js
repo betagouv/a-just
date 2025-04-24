@@ -152,6 +152,7 @@ export default class RouteSimulator extends Route {
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
+    console.log(sufix)
     await this.models.Logs.addLog(EXECUTE_SIMULATOR_PARAM, ctx.state.user.id, params)
 
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)

@@ -214,6 +214,10 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    */
   gitbookId = import.meta.env.NG_APP_GITBOOK_ID;
   /**
+   * Organisation ID gitbook
+   */
+  organisationId = import.meta.env.NG_APP_GITBOOK_ORG_ID;
+  /**
    * Bloqueur pour le prompteur en cas de valeur vide dans la barre de recherche
    */
   lockPrompt = true;
@@ -268,7 +272,7 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
   async onSearchBy() {
     this.displayLoader = true;
     const { data } = await this.gitbook.orgs.askInOrganization(
-      'ERPUa4pw8EhQDGz6MqrT',
+      this.organisationId,
       { query: this.searchValue }
     );
     console.log(this.gitbook);

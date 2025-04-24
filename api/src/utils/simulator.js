@@ -1,6 +1,6 @@
 import { isFirstDayOfMonth } from 'date-fns'
 import { groupBy, map, meanBy, orderBy, sortBy, sumBy } from 'lodash'
-import { checkIfDateIsNotToday, decimalToStringDate, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, today, workingDay } from './date'
+import { checkIfDateIsNotToday, decimalToStringDate, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPersonSimu } from './human-resource'
@@ -208,7 +208,7 @@ export async function getSituation (referentielId, hr, allActivities, categories
 
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
-    console.log('Data to calculate TMD', totalOut, etpMagToCompute)
+    //console.log('Data to calculate TMD', totalOut, etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
     realTimePerCase = computeRealTimePerCase(totalOut, selectedCategoryId === 1 ? etpMagToCompute : etpFonToCompute, sufix)
 
@@ -367,6 +367,7 @@ export function computeDTES (lastStock, totalOut) {
  * @returns stock calculé
  */
 function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
+  /** 
   console.log('Calcul des stocks', {
     lastStock,
     countOfCalandarDays,
@@ -382,16 +383,17 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
         (countOfCalandarDays / (365 / 12)) * totalIn
     ),
   })
+*/
 
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
-  let stock = Math.floor(
+  let stock = 
     lastStock -
       (countOfCalandarDays / (365 / 12)) * environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
       (countOfCalandarDays / (365 / 12)) * totalIn
-  )
+  
 
-  return stock < 0 ? 0 : stock
+  return stock
 }
 
 /**
@@ -402,7 +404,7 @@ function computeLastStock (lastStock, countOfCalandarDays, futurEtp, magRealTime
  * @returns nombre de dossier sorties
  */
 function computeTotalOut (magRealTimePerCase, etp, sufix) {
-  return Math.floor((etp * environment['nbHoursPerDayAnd' + sufix] * (environment['nbDays' + sufix] / 12)) / magRealTimePerCase)
+  return ((etp * environment['nbHoursPerDayAnd' + sufix] * (environment['nbDays' + sufix] / 12)) / magRealTimePerCase)
 }
 
 /**
@@ -412,7 +414,7 @@ function computeTotalOut (magRealTimePerCase, etp, sufix) {
  * @param {*} sufix catégorie
  * @returns le temps moyen par dossier sur les 12 derniers mois
  */
-function computeRealTimePerCase (totalOut, etp, sufix) {
+export function computeRealTimePerCase (totalOut, etp, sufix) {
   console.log('[simulator.js][line 420] totalOut:', totalOut)
   console.log('[simulator.js][line 421] nbDays:', environment['nbDays' + sufix])
   console.log('[simulator.js][line 422] nbHoursPerDay:', environment['nbHoursPerDayAnd' + sufix])
@@ -751,6 +753,8 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
     }
   })
 
+  const nbDays = nbOfDays(today(dateStart), today(dateStop))
+
   if (params.lockedParams.param1.label !== '' && simulation[params.lockedParams.param1.label] !== undefined)
     //@ts-ignore
     simulation[params.lockedParams.param1.label] =
@@ -779,55 +783,59 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
     params.toCalculate.map((x) => {
       if (x === 'totalIn') {
         if (simulation.totalOut && (simulation.lastStock || simulation.lastStock === 0)) {
-          simulation.totalIn = Math.floor(
-            (Math.floor(simulation.lastStock) - Math.floor(params.beginSituation.lastStock)) / (nbOfDays(dateStart, dateStop) / (365 / 12)) +
-              Math.floor(simulation.totalOut)
+          simulation.totalIn = (
+            (simulation.lastStock - params.beginSituation.lastStock) / (nbDays / (365 / 12)) +
+              simulation.totalOut
           )
         } else if (simulation.totalOut && simulation.realCoverage) {
-          simulation.totalIn = Math.floor(Math.floor(simulation.totalOut) / simulation.realCoverage)
+          simulation.totalIn = (simulation.totalOut / simulation.realCoverage)
         }
       }
       if (x === 'totalOut') {
         if ((simulation.etpMag || simulation.etpFon) && simulation.magRealTimePerCase) {
           if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
-            simulation.totalOut = Math.floor(
-              Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
+            //console.log('compute 1.1', Math.floor(
+              //simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix] / simulation.magRealTimePerCase
+            //),Math.floor(simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]), simulation.etpMag,environment['nbHoursPerDayAnd' + sufix],environment['nbDaysPerMonth' + sufix],simulation.magRealTimePerCase)
+            simulation.totalOut = (
+              simulation.etpMag * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix] / simulation.magRealTimePerCase
             )
-          } else
-            simulation.totalOut = Math.floor(
-              Math.floor(simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase
-            )
+          } else {
+            simulation.totalOut = (
+              (simulation.etpFon * environment['nbHoursPerDayAnd' + sufix] * environment['nbDaysPerMonth' + sufix]) / simulation.magRealTimePerCase)
+          }
         } else if (simulation.totalIn && (simulation.lastStock || simulation.lastStock === 0)) {
-          simulation.totalOut = Math.floor(
-            Math.floor(Math.floor(params.beginSituation.lastStock) - Math.floor(simulation.lastStock)) /
-              (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) +
+          simulation.totalOut = (
+            (params.beginSituation.lastStock - simulation.lastStock) /
+              (nbDays / (365 / 12)) +
               simulation.totalIn
           )
-        } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths === 0)) {
-          simulation.totalOut = Math.floor(simulation.lastStock / simulation.realDTESInMonths)
+        } else if (simulation.lastStock && (simulation.realDTESInMonths || simulation.realDTESInMonths !== 0)) {
+          simulation.totalOut = (simulation.lastStock / simulation.realDTESInMonths)
         } else if (simulation.realCoverage && simulation.totalIn) {
-          simulation.totalOut = Math.floor(simulation.realCoverage * simulation.totalIn)
+          simulation.totalOut = (simulation.realCoverage * simulation.totalIn)
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalIn) {
-          simulation.totalOut = Math.floor(
-            (Math.floor(params.beginSituation.lastStock) + simulation.totalIn * (nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))) /
-              (simulation.realDTESInMonths + nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12))
+          simulation.totalOut = (
+            (params.beginSituation.lastStock + simulation.totalIn * (nbDays / (365 / 12))) /
+              (simulation.realDTESInMonths + nbDays / (365 / 12))
           )
         }
       }
 
       if (x === 'lastStock') {
-        if (simulation.realDTESInMonths === 0) {
-          simulation.lastStock = 0
-        } else if (simulation.totalIn && simulation.totalOut) {
+        //if (simulation.realDTESInMonths === 0) {
+          //simulation.lastStock = 0
+        //} else 
+        if (simulation.totalIn && simulation.totalOut) {
           simulation.lastStock =
-            Math.floor(params.beginSituation.lastStock) +
-            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalIn) -
-            Math.floor((nbOfDays(new Date(dateStart), new Date(dateStop)) / (365 / 12)) * simulation.totalOut)
-        } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths === 0) && simulation.totalOut) {
-          simulation.lastStock = Math.floor(simulation.realDTESInMonths * simulation.totalOut)
+          (params.beginSituation.lastStock +
+          (nbDays / (365 / 12)) * simulation.totalIn -
+          (nbDays / (365 / 12)) * simulation.totalOut)
+        } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths !== 0) && simulation.totalOut) {
+          simulation.lastStock = (simulation.realDTESInMonths * simulation.totalOut)
         }
         if (simulation.lastStock && simulation.lastStock < 0) {
-          simulation.lastStock = 0
+          //simulation.lastStock = 0
         }
       }
       if (x === 'realCoverage') {
@@ -837,41 +845,30 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
       }
       if (x === 'realDTESInMonths') {
         simulation.realDTESInMonths =
-          Math.round((Math.floor(simulation.lastStock || 0) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100) / 100
+          ((simulation.lastStock || 0) / (simulation.totalOut || params.endSituation.totalOut))
       }
 
       if (x === 'magRealTimePerCase') {
         if ([...params.toDisplay, ...params.toCalculate].includes('etpMag')) {
           simulation.magRealTimePerCase =
-            Math.round(
-              ((17.333 * 8 * (simulation.etpMag || params.beginSituation.etpMag)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) * 100
-            ) / 100
+              ((environment['nbDaysPerMonthByMagistrat']* 8 * (simulation.etpMag || params.beginSituation.etpMag)) / (simulation.totalOut || params.endSituation.totalOut)) 
         } else {
           simulation.magRealTimePerCase =
-            Math.round(
-              (((229.57 / 12) * 7 * (simulation.etpFon || params.beginSituation.etpFon)) / Math.floor(simulation.totalOut || params.endSituation.totalOut)) *
-                100
-            ) / 100
+              (((environment['nbDaysPerMonthByGreffe']) * 7 * (simulation.etpFon || params.beginSituation.etpFon)) / (simulation.totalOut || params.endSituation.totalOut)) 
         }
       }
 
       if (x === 'etpMag') {
         simulation.etpFon = params.endSituation.etpFon
         simulation.etpMag =
-          Math.round(
-            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
-              (17.333 * 8)) *
-              100
-          ) / 100
+            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * (simulation.totalOut || params.endSituation.totalOut)) /
+              (environment['nbDaysPerMonthByMagistrat'] * 8)) 
       }
       if (x === 'etpFon') {
         simulation.etpMag = params.endSituation.etpMag
         simulation.etpFon =
-          Math.round(
-            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * Math.floor(simulation.totalOut || params.endSituation.totalOut)) /
-              ((229.57 / 12) * 7)) *
-              100
-          ) / 100
+            (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * (simulation.totalOut || params.endSituation.totalOut)) /
+              ((environment['nbDaysPerMonthByGreffe'] / 12) * 7)) 
       }
     })
     if (counterExit >= 5) {

@@ -18,7 +18,7 @@ export interface AnalyticsLine {
   dataType: string;
   type: string;
   values?: any[][];
-  lineMax: number;
+  lineMax: number | null;
   variations: {
     label: string;
     isOption?: boolean;

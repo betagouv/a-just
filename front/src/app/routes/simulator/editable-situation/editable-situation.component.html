@@ -1,10 +1,10 @@
 <div class="white-begin-situation">
   <div class="items before-after">
     <div class="item blue-bg">
-      <p>Entrées moyennes mensuelles</p>
+      <p>Entrées moyennes <br />mensuelles</p>
     </div>
     <div class="item">
-      <p>Sorties mensuelles</p>
+      <p>Sorties moyennes <br />mensuelles</p>
     </div>
     <div class="item blue-bg">
       <p>Stock</p>
@@ -14,16 +14,16 @@
     </div>
     <div class="item blue-bg">
       <p>Taux de couverture en %</p>
-      <aj-tooltips title="Taux de couverture" content="SORTIES / ENTREES en %."></aj-tooltips>
+      <aj-tooltips class="medium" title="Taux de couverture" content="SORTIES / ENTREES en %."></aj-tooltips>
     </div>
     <div class="item">
       <p>DTES en mois</p>
-      <aj-tooltips title="DTES"
+      <aj-tooltips class="medium" title="DTES"
         content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties enregistrées pour la période antérieure (STOCK / SORTIES en mois)"></aj-tooltips>
     </div>
     <div class="item blue-bg">
       <p>Temps moyen / dossier en hh:mm</p>
-      <aj-tooltips title="Temps moyen / dossier"
+      <aj-tooltips class="medium" title="Temps moyen / dossier"
         content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés à ce contentieux (NOMBRE HEURES TRAVAILLEES PAR MOIS PAR ETPT x ETPT / SORTIES)."></aj-tooltips>
     </div>
     <div class="item end-item">
@@ -39,41 +39,55 @@
         </p>
       </div>
       <form class="editable-line" [formGroup]="formWhiteSim">
-        <div class="line-item orange-bg">
+        <div class="line-item orange-bg" #tooltip="matTooltip"
+          [matTooltip]="this.lockedParams.includes('totalIn')===true && this.simulatorService.situationActuelle!.getValue()?.totalIn!==null ?'Valeur exacte d\'entrées utilisée dans les calculs : '+  this.simulatorService.situationActuelle!.getValue()?.totalIn:''"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input formControlName="totalIn" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
             (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="this.lockedParams.includes('totalOut')===true && this.simulatorService.situationActuelle!.getValue()?.totalOut!==null ?'Valeur exacte de sorties utilisée dans les calculs : '+  this.simulatorService.situationActuelle!.getValue()?.totalOut:''"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input formControlName="totalOut" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
             (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
-        <div class="line-item orange-bg">
+        <div class="line-item orange-bg" #tooltip="matTooltip"
+          [matTooltip]="this.lockedParams.includes('lastStock')===true && this.simulatorService.situationActuelle!.getValue()?.lastStock!==null ?'Valeur exacte de stock utilisée dans les calculs : '+  this.simulatorService.situationActuelle!.getValue()?.lastStock:''"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input formControlName="lastStock" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
             (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="this.lockedParams.includes('etpMag')===true && this.simulatorService.situationActuelle!.getValue()?.etpMag!==null ?'Valeur exacte d\'etp utilisée dans les calculs : '+  this.simulatorService.situationActuelle!.getValue()?.etpMag:''"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <input formControlName="etpMag" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
             (keyup)="onDeletePressed($event)" type="text"
             [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="this.lockedParams.includes('realCoverage')===true && this.simulatorService.situationActuelle!.getValue()?.realCoverage!==null ?'Valeur exacte de taux de couverture utilisée dans les calculs : '+  this.simulatorService.situationActuelle!.getValue()?.realCoverage:''"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <ng-container *ngIf="!getFiniteValue('realCoverage');else naTemplate">
             <input formControlName="realCoverage" (keypress)="validateNo($event)" (keydown)="onDeletePressed($event)"
               (keyup)="onDeletePressed($event)" type="text"
               [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
           </ng-container>
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="this.lockedParams.includes('realDTESInMonths')===true && this.simulatorService.situationActuelle!.getValue()?.realDTESInMonths!==null ?'Valeur exacte de DTES utilisée dans les calculs : '+  this.simulatorService.situationActuelle!.getValue()?.realDTESInMonths:''"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <ng-container *ngIf="!getFiniteValue('realDTESInMonths');else naTemplate">
             <input formControlName="realDTESInMonths" (keypress)="validateNo($event)"
               (keydown)="onDeletePressed($event)" (keyup)="onDeletePressed($event)" type="text"
               [ngClass]="{'disabled-field': isValidatedWhiteSimu === true}" />
           </ng-container>
         </div>
-        <div class="line-item">
+        <div class="line-item" #tooltip="matTooltip"
+          [matTooltip]="this.lockedParams.includes('magRealTimePerCase')===true?'Valeur exacte de temps moyen en heure décimale utilisée dans les calculs : '+ this.formWhiteSim.get('magRealTimePerCase')?.value:''"
+          matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
           <ng-container *ngIf="!getFiniteValue('magRealTimePerCase');else naTemplate">
             <app-time-selector class="white-bg" id="magRealTimePerCase" [value]="getStartTmd()"
               [defaultValue]="defaultTmd" (valueChange)="updateTimeValue($event)" [disabled]="disabledTmd"
@@ -127,7 +141,7 @@
           <input [value]="endSituationDisplay.realCoverage" type="text" class="disabled" />
         </div>
         <div class="line-item">
-          <input [value]="endSituationDisplay.realDTESInMonths" type="text" class="disabled" />
+          <input [value]="getDTESValue(endSituationDisplay.realDTESInMonths)" type="text" class="disabled" />
         </div>
         <div class="line-item grey-bg">
           <input [value]="getTmd()" type="text" class="disabled" />

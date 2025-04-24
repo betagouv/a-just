@@ -74,6 +74,8 @@ export class IntroJSComponent implements AfterViewInit {
    */
   intro: any;
 
+  nodeEnv = import.meta.env.NG_APP_NODE_ENV;
+
   @HostListener('window:popstate', ['$event'])
   onPopState() {
     if (this.intro) {
@@ -82,7 +84,7 @@ export class IntroJSComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (this.steps) {
+    if (this.steps && this.nodeEnv !== 'test') {
       let canStartPlayer = true;
       if (this.typeId && this.playEachTime === false) {
         const idUsed = localStorage.getItem('INTRO_JS_' + this.typeId);

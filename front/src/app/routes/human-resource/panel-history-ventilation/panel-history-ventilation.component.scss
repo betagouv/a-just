@@ -1,84 +1,95 @@
 @import "../../../styles/utils.scss";
 
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   background-color: fColor(bgSelect);
+  padding: 0 8px 8px 8px;
+  margin: 0 8px;
+  gap: 10px;
 }
 
 .header-panel {
   display: flex;
-  height: 52px;
+  justify-content: space-between;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  margin-bottom: 1px;
 
-  >.tags {
-    flex: 1;
+  .left-side {
     display: flex;
-    align-items: center;
-    padding-left: 26px;
+    gap: 8px;
 
-    p {
-      margin-right: 8px;
-      font-size: 14px;
-      line-height: 32px;
-      height: 32px;
-      padding: 0 16px;
-      border-radius: 29px;
-      background-color: fColor(cgrayDefault);
-      color: fColor(cgray);
-
-      &.fonction,
-      &.time-worked {
-        color: fColor(cbluedark);
-        background-color: fColor(cbluemiddle);
-      }
-    }
-  }
-
-  >.etpt {
-    padding: 0 40px 0 26px;
-    background-color: fColor(cgreenlight);
-    display: flex;
-    align-items: center;
-
-    &.alert {
-      background-color: rgba(fColor(cred), 0.2);
+    .tags {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
 
       p {
-        color: fColor(cred);
+        display: flex;
+        padding: 2px 8px;
+        justify-content: center;
+        align-items: center;
+        gap: 2px;
+        font-size: 12px;
+        line-height: 20px;
+        border-radius: 12px;
+        background-color: white;
+
+        &.fonction,
+        &.time-worked {
+          color: fColor(cbluedark);
+          background-color: fColor(cbluemiddle);
+        }
       }
     }
 
-    p {
-      font-size: 12px;
-      color: fColor(cgreen);
-      margin-right: 10px;
+    .past-tag {
+      p {
+        background-color: #DFDFDF;
+      }
+    }
+
+
+    >.etpt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 16px;
+      //border: 1px solid #00A95F;
+      //border-radius: 12px;
+      background-color: fColor(cgreenlight);
+
+      &.alert {
+        background-color: rgba(fColor(cred), 0.2);
+
+        p {
+          color: fColor(cred);
+        }
+      }
+
+      p {
+        font-size: 12px;
+        color: fColor(cgreen);
+        // margin-right: 10px;
+      }
     }
   }
 }
 
-.indisponibility-panel {
-  margin-bottom: 1px;
-  padding: 16px 24px 8px 24px;
-  margin-top: 0px;
-}
 
-.activities-panel {
-  padding: 0 12px 0 12px;
-}
 
 .actions-panel {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  padding: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 
   button {
-    margin: 0 4px;
+    border-width: 2px;
+    font-weight: 400;
   }
 }

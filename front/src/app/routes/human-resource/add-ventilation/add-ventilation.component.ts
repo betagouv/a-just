@@ -5,6 +5,8 @@ import {
   Output,
   EventEmitter,
   SimpleChanges,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import {
   FormControl,
@@ -28,16 +30,20 @@ import { HRFonctionInterface } from '../../../interfaces/hr-fonction';
 import { HRFonctionService } from '../../../services/hr-fonction/hr-function.service';
 import { HRCategoryService } from '../../../services/hr-category/hr-category.service';
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
+import { ReferentielService } from '../../../services/referentiel/referentiel.service';
 import { AppService } from '../../../services/app/app.service';
 import { CalculatriceService } from '../../../services/calculatrice/calculatrice.service';
 import { ServerService } from '../../../services/http-server/server.service';
-import { UserService } from '../../../services/user/user.service';
 import { fixDecimal } from '../../../utils/numbers';
+import { downloadFile } from '../../../utils/system';
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_VENTILATEUR_PERSON,
   IMPORT_ETP_TEMPLATE,
   IMPORT_ETP_TEMPLATE_CA,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
 } from '../../../constants/documentation';
 import {
   findRealValueCustom,
@@ -49,6 +55,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
 import { ExcelService } from '../../../services/excel/excel.service';
+import { UserService } from '../../../services/user/user.service';
 
 export interface importedVentillation {
   referentiel: ContentieuReferentielInterface;
@@ -84,6 +91,8 @@ export interface importedSituation {
   styleUrls: ['./add-ventilation.component.scss'],
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
+  @ViewChild('bottomContainerTarget') bottomContainerTargetRef!: ElementRef;
+
   /**
    * Fiche
    */
@@ -135,7 +144,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   /**
    * Fonction pour mettre à jour l'ETP (lors de la création d'un nouvel agent)
    */
-  @Input() setValueEtp: (val: number) => void = () => {};
+  @Input() setValueEtp: (val: number | null) => void = () => {};
+  /**
+   * Liste des alertes
+   */
+  @Input() alertList: string[] = [];
   /**
    * Event lors de la sauvegarde
    */
@@ -152,6 +165,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour ouvrir le paneau d'aide
    */
   @Output() onOpenHelpPanel = new EventEmitter();
+  /**
+   * Event pour afficher les alertes au niveau du formulaire
+   */
+  @Output() alertSet = new EventEmitter<{
+    updatedList?: string[];
+    index?: number;
+  }>();
   /**
    * Réferentiel des indispo
    */
@@ -178,7 +198,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   form = new FormGroup({
     activitiesStartDate: new FormControl(new Date(), [Validators.required]),
     etp: new FormControl<number | null>(null, [
-      Validators.required,
       Validators.min(0),
       Validators.max(1),
     ]),
@@ -213,6 +232,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Liste des indispo courrante
    */
   indisponibilitiesFiltered: RHActivityInterface[] = [];
+  /**
+   * Afficher erreur date de début
+   */
+  printErrorDateStart: boolean = false;
 
   /**
    * Constructeur
@@ -229,7 +252,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private calculatriceService: CalculatriceService,
     private serverService: ServerService,
     private userService: UserService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private referentielService: ReferentielService
   ) {
     super();
   }
@@ -265,12 +289,24 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           this.form.get('fonctionId')?.setValue(fct?.id || null);
           if (fct)
             this.calculatriceIsActive = fct.calculatrice_is_active || false;
+
+          // Suprpession de l'alerte
+          let index = -1;
+          index = this.alertList.indexOf('category');
+          if (index !== -1) {
+            this.alertSet.emit({ index: index });
+          }
+          index = this.alertList.indexOf('fonction');
+          if (index !== -1) {
+            this.alertSet.emit({ index: index });
+          }
         });
       })
     );
 
     this.watch(
       this.form.get('etp')?.valueChanges.subscribe((value) => {
+        console.log('value', value);
         if (value) {
           if (value > 1) value = 1;
           else if (value < 0) value = 0;
@@ -286,7 +322,25 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           this.setValueEtp(value);
         } else {
           // Remise à 0 de l'ETP si la valeur est null (ex: user efface la valeur précédement entrée) pour remtrre l'ETP du composant big-et-preview à null
-          this.setValueEtp(0);
+          this.setValueEtp(value);
+        }
+        // Suppression de l'alert
+        let index = -1;
+        index = this.alertList.indexOf('etp');
+        if (index !== -1) {
+          this.alertSet.emit({ index: index });
+        }
+      })
+    );
+
+    this.watch(
+      this.form.get('activitiesStartDate')?.valueChanges.subscribe((value) => {
+        if (value) {
+          let index = -1;
+          index = this.alertList.indexOf('activitiesStartDate');
+          if (index !== -1) {
+            this.alertSet.emit({ index: index });
+          }
         }
       })
     );
@@ -320,7 +374,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.lastDateStart ? this.lastDateStart : undefined
     );
 
-    let etp = (situation && situation.etp) || 0;
+    let etp = situation && situation.etp !== undefined ? situation.etp : null;
     if (etp === this.ETP_NEED_TO_BE_UPDATED) {
       etp = 0;
     }
@@ -328,7 +382,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.form
       .get('activitiesStartDate')
       ?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null);
-    this.form.get('etp')?.setValue(fixDecimal(etp));
+    this.form.get('etp')?.setValue(etp === null ? null : fixDecimal(etp));
     this.form
       .get('categoryId')
       ?.setValue(
@@ -379,15 +433,91 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @returns
    */
   async onSave(withoutPercentControl = false, saveETPT0 = false) {
-    if (this.indisponibilityError) {
-      alert(this.indisponibilityError);
-      return;
-    }
+    let { activitiesStartDate, categoryId, fonctionId } = this.form.value;
+    const categories = this.humanResourceService.categories.getValue();
+    const fonctions = this.humanResourceService.fonctions.getValue();
+    const cat = categories.find((c) => categoryId && c.id == categoryId);
+    const fonct = fonctions.find((c) => c.id == fonctionId);
 
     const indisponibilites = this.human?.indisponibilities || [];
     const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some(
       (c) => c.contentieux.checkVentilation === false
     );
+
+    this.alertList = [];
+
+    if (
+      this.basicData!.controls['firstName'].value === '' ||
+      this.basicData!.controls['firstName'].value === 'Prénom'
+    ) {
+      this.alertList.push('firstName');
+    }
+
+    if (
+      this.basicData!.controls['lastName'].value === '' ||
+      this.basicData!.controls['lastName'].value === 'Nom'
+    ) {
+      this.alertList.push('lastName');
+    }
+
+    if (!(this.human && this.human.dateStart)) {
+      this.alertList.push('startDate');
+    }
+
+    if (!cat) {
+      this.alertList.push('category');
+    }
+
+    if (!fonct) {
+      this.alertList.push('fonction');
+    }
+
+    const etp = this.form.get('etp')?.value;
+    if (etp === null) {
+      this.alertList.push('etp');
+    }
+
+    if (!activitiesStartDate) {
+      this.alertList.push('activitiesStartDate');
+      this.printErrorDateStart = true;
+    }
+    if (this.alertList.length > 0) {
+      console.log('AlertList:', this.alertList);
+
+      this.alertSet.emit({ updatedList: this.alertList });
+      return;
+    }
+
+    activitiesStartDate =
+      setTimeToMidDay(today(activitiesStartDate)) || today(activitiesStartDate);
+
+    if (this.human && this.human.dateStart && activitiesStartDate) {
+      const dateStart = today(this.human.dateStart);
+      // check activity date
+      if (activitiesStartDate.getTime() < dateStart.getTime()) {
+        alert(
+          "Vous ne pouvez pas saisir une situation antérieure à la date d'arrivée !"
+        );
+        return;
+      }
+    }
+
+    if (this.human && this.human.dateEnd && activitiesStartDate) {
+      const dateEnd = new Date(this.human.dateEnd);
+
+      // check activity date
+      if (activitiesStartDate.getTime() > dateEnd.getTime()) {
+        alert(
+          'Vous ne pouvez pas saisir une situation postérieure à la date de départ !'
+        );
+        return;
+      }
+    }
+
+    if (this.indisponibilityError) {
+      alert(this.indisponibilityError);
+      return;
+    }
 
     if (
       !checkIfIndispoIgnoreControlPercentVentilation &&
@@ -405,9 +535,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       } else if (totalAffected < 100) {
         this.appService.alert.next({
           title: 'La ventilation de cet agent est incomplète',
-          text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${
+          text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${fixDecimal(
             100 - totalAffected
-          }% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
+          )}% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
+          secondaryText: 'Compléter la situation',
+          callbackSecondary: () => {},
+          okText: "Enregistrer en l'état",
           callback: () => {
             this.onSave(true, saveETPT0);
           },
@@ -416,72 +549,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       }
     }
 
-    let { activitiesStartDate, categoryId, fonctionId } = this.form.value;
-
-    if (
-      this.basicData!.controls['lastName'].value === '' ||
-      this.basicData!.controls['lastName'].value === 'Nom'
-    ) {
-      alert('Vous devez saisir un nom pour valider la création !');
-      return;
-    }
-    if (
-      this.basicData!.controls['firstName'].value === '' ||
-      this.basicData!.controls['firstName'].value === 'Prénom'
-    ) {
-      alert('Vous devez saisir un prénom pour valider la création !');
-      return;
-    }
-
-    if (!activitiesStartDate) {
-      alert('Vous devez saisir une date de début de situation !');
-      return;
-    }
-
-    if (!(this.human && this.human.dateStart)) {
-      alert("Vous devez saisir une date d'arrivée !");
-      return;
-    }
-    activitiesStartDate =
-      setTimeToMidDay(today(activitiesStartDate)) || today(activitiesStartDate);
-    if (this.human && this.human.dateEnd && activitiesStartDate) {
-      const dateEnd = new Date(this.human.dateEnd);
-
-      // check activity date
-      if (activitiesStartDate.getTime() > dateEnd.getTime()) {
-        alert(
-          'Vous ne pouvez pas saisir une situation postérieure à la date de départ !'
-        );
-        return;
-      }
-    }
-
-    if (this.human && this.human.dateStart && activitiesStartDate) {
-      const dateStart = today(this.human.dateStart);
-
-      // check activity date
-      if (activitiesStartDate.getTime() < dateStart.getTime()) {
-        alert(
-          "Vous ne pouvez pas saisir une situation antérieure à la date d'arrivée !"
-        );
-        return;
-      }
-    }
-
-    const categories = this.humanResourceService.categories.getValue();
-    const fonctions = this.humanResourceService.fonctions.getValue();
-    const cat = categories.find((c) => categoryId && c.id == categoryId);
-    const fonct = fonctions.find((c) => c.id == fonctionId);
-
-    if (!cat) {
-      alert('Vous devez saisir une catégorie !');
-      return;
-    }
-
-    if (!fonct) {
-      alert('Vous devez saisir une fonction !');
-      return;
-    }
+    if (!fonct || !cat) return;
 
     if (
       fonct.minDateAvalaible &&
@@ -501,46 +569,29 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return;
     }
 
-    if (this.form.get('etp')?.value === null) {
-      alert(
-        'Vous devez saisir un temps de travail pour valider la création de cette fiche !'
-      );
-      return;
-    }
-
-    const nbSituationSetted = (this.human.situations || []).length;
-    if (this.form.get('etp')?.value === 0) {
-      if (nbSituationSetted === 0) {
-        alert(
-          'Vous devez saisir un temps  administratif de travail supérieur à 0 pour créer cette fiche !'
-        );
+    if (etp === 0) {
+      if (!saveETPT0) {
+        this.appService.alert.next({
+          title: 'L’ETPT saisi est de 0 :',
+          text: `- si cet agent fait toujours partie de vos effectifs mais est absent temporairement, indiquez son temps de travail théorique et enregistrez un motif d’indisponibilité<br/><br/>- s’il a quitté la juridiction, renseignez une date de sortie.<br/><br/>L’ETPT à 0 est réservé à quelques cas particuliers où l’agent continue à faire  administrativement partie de la juridiction sans décompter d’ETPT (ex. congé parental supérieur à 6 mois, CLD, détachement… pour plus de détails cliquez <a href="https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/ventiler-ses-effectifs/focus-sur-les-changements-de-situation-administrative/indisponibilites-particulieres" target="_blank">ici</a>)`,
+          secondaryText: 'Modifier l’ETPT',
+          callbackSecondary: () => {},
+          okText: "Confirmer l'ETPT à 0",
+          callback: () => {
+            this.onSave(withoutPercentControl, true);
+          },
+        });
         return;
-      } else {
-        alert(
-          "L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie."
-        );
-        /*if (!saveETPT0) {
-          this.appService.alert.next({
-            title: 'Attention',
-            text: `L'ETPT de cet agent est à 0 : s'il fait toujours partie de vos effectifs mais ne travaille pas actuellement, indiquez son temps de travail théorique et renseignez une indisponibilité. S'il a quitté la juridiction, renseignez une date de sortie.`,
-            callback: () => {
-              this.onSave(withoutPercentControl, true);
-            },
-          });*/
-        return;
-        //}
       }
     }
 
     const situations = this.generateAllNewSituations(
       this.updatedReferentiels,
       activitiesStartDate,
-      this.form.value,
+      { ...this.form.value, etp },
       cat,
       fonct
     );
-
-    console.log(this.updatedReferentiels, situations);
 
     if (this.human) {
       if (
@@ -592,17 +643,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           });
       });
 
-    console.log(
-      'activities',
-      JSON.stringify(
-        activities.map((a) => ({
-          percent: a.percent,
-          cid: a.contentieux.id,
-          clabel: a.contentieux.label,
-        }))
-      )
-    );
-
     // find if situation is in same date
     const isSameDate = situations.findIndex((s) => {
       const day = today(s.dateStart);
@@ -619,15 +659,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     };
 
     if (isSameDate !== -1) {
-      console.log(situations[isSameDate]);
-
       situations[isSameDate] = {
         ...situations[isSameDate],
         ...options,
       };
 
       situations = situations.filter((s) => s.id !== this.editId);
-    } else if (this.editId) {
+    } else if (this.editId !== -1 && this.editId !== null) {
       const index = situations.findIndex((s) => s.id === this.editId);
       if (index !== -1) {
         situations[index] = {
@@ -643,8 +681,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         dateStart: activitiesStartDate,
       });
     }
-
-    console.log(isSameDate, situations, this.editId);
 
     return situations;
   }
@@ -728,6 +764,39 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         return r.data;
       });
     window.open(CALCULATE_DOWNLOAD_URL);
+  }
+
+  async downloadAsset(type: string, download = false) {
+    let url = null;
+    console.log('Type:', type);
+    if (type === 'nomencalture') {
+      if (this.userService.isCa()) {
+        url = NOMENCLATURE_DOWNLOAD_URL_CA;
+      } else {
+        if (this.referentielService.isDroitLocal()) {
+          url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
+        } else {
+          url = NOMENCLATURE_DOWNLOAD_URL;
+        }
+      }
+    } else if (type === 'calculator') {
+      await this.serverService
+        .post('centre-d-aide/log-documentation-link', {
+          value: CALCULATE_DOWNLOAD_URL,
+        })
+        .then((r) => {
+          return r.data;
+        });
+      window.open(CALCULATE_DOWNLOAD_URL);
+    }
+
+    if (url) {
+      if (download) {
+        downloadFile(url);
+      } else {
+        window.open(url);
+      }
+    }
   }
 
   async downloadEtpTemplate() {
@@ -982,5 +1051,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       // Clicked outside the box
       if (!this.isEdit && !this.saveActions) this.toggleDropDown = false;
     }
+  }
+
+  removeAlertItem(index: number) {
+    this.alertSet.emit({ index: index });
+  }
+
+  scrollToBottomElement() {
+    this.bottomContainerTargetRef.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+    });
   }
 }

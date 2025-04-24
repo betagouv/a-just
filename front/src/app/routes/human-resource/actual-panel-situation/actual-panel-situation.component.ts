@@ -13,8 +13,18 @@ import { HumanResourceInterface } from '../../../interfaces/human-resource-inter
 import { RHActivityInterface } from '../../../interfaces/rh-activity';
 import { HRCategoryInterface } from '../../../interfaces/hr-category';
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
+import { UserService } from '../../../services/user/user.service';
+import { ReferentielService } from '../../../services/referentiel/referentiel.service';
+import { ServerService } from '../../../services/http-server/server.service';
 import { today } from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
+import { downloadFile } from '../../../utils/system';
+import {
+  CALCULATE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
+} from '../../../constants/documentation';
 
 /**
  * Panneau de la situation actuelle
@@ -32,6 +42,9 @@ export class ActualPanelSituationComponent
   implements OnChanges
 {
   humanResourceService = inject(HumanResourceService);
+  userService = inject(UserService);
+  referentielService = inject(ReferentielService);
+  serverService = inject(ServerService);
   /**
    * Fiche courante
    */
@@ -55,7 +68,7 @@ export class ActualPanelSituationComponent
   /**
    * Affiche l'ETP calculé
    */
-  @Input() etp: number = 0;
+  @Input() etp: number | null = 0;
   /**
    * Liste des indispo courrante
    */
@@ -106,5 +119,38 @@ export class ActualPanelSituationComponent
     );
     // @ts-ignore
     this.activities = (findSituation && findSituation.activities) || [];
+  }
+
+  async downloadAsset(type: string, download = false) {
+    let url = null;
+    console.log('Type:', type);
+    if (type === 'nomencalture') {
+      if (this.userService.isCa()) {
+        url = NOMENCLATURE_DOWNLOAD_URL_CA;
+      } else {
+        if (this.referentielService.isDroitLocal()) {
+          url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
+        } else {
+          url = NOMENCLATURE_DOWNLOAD_URL;
+        }
+      }
+    } else if (type === 'calculator') {
+      await this.serverService
+        .post('centre-d-aide/log-documentation-link', {
+          value: CALCULATE_DOWNLOAD_URL,
+        })
+        .then((r) => {
+          return r.data;
+        });
+      window.open(CALCULATE_DOWNLOAD_URL);
+    }
+
+    if (url) {
+      if (download) {
+        downloadFile(url);
+      } else {
+        window.open(url);
+      }
+    }
   }
 }

@@ -1,5 +1,6 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
-  <div class="wrapper-content" *ngIf="contentieuxReferentiel.length">
+  <div class="wrapper-content" *ngIf="contentieuxReferentiel.length"
+    [ngStyle]="{'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px'}">
     <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? ''+currentHR.id : undefined"
       [onEditIndex]="onEditIndex" [etp]="currentETP"
@@ -7,7 +8,8 @@
       [fonction]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null"
       [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null"
       [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
-      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"></cover-profil-details>
+      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)" [alertList]="alertList"
+      (alertSet)="onAlertsUpdated($event)"></cover-profil-details>
 
     <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
       <div id="top-scroll-anchor" class="anchor"></div>
@@ -21,7 +23,7 @@
       [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
       [canEdit]="!duringPrint && indexOfTheFuture !== null"
       [canRemoveSituation]="!duringPrint && indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
-      [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp : 0"
+      [etp]="indexOfTheFuture !== null ? (histories[indexOfTheFuture].etp || 0) : 0"
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
       (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
@@ -50,10 +52,11 @@
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
       [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
       (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
-      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)">
+      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)" [alertList]="alertList"
+      (alertSet)="onAlertsUpdated($event)">
     </add-ventilation>
 
-    <div *ngIf="historiesOfTheFutur.length" class="panel-hsitory-group futur">
+    <div *ngIf="historiesOfTheFutur.length" class="panel-history-group futur">
       <p class="title-history">
         Situation{{historiesOfTheFutur.length >= 1 ? 's' : ''}} à venir
         pré-renseignée{{historiesOfTheFutur.length >= 1 ? 's' : ''}}
@@ -67,11 +70,11 @@
       </panel-history-ventilation>
     </div>
 
-    <div *ngIf="historiesOfThePast.length" class="panel-hsitory-group">
+    <div *ngIf="historiesOfThePast.length" class="panel-history-group past">
       <p class="title-history">
         Situation{{historiesOfThePast.length > 1 ? 's' : ''}}
-        antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} {{
-        categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }}
+        antérieure{{historiesOfThePast.length > 1 ? 's' : ''}} <!-- {{
+        categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }} -->
       </p>
       <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [category]="h.category"
         [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
