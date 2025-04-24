@@ -92,7 +92,8 @@ export class JuridictionsPage extends MainClass implements OnInit {
         backupName,
         backupId,
         juridiction !== null ? juridiction.label : '',
-        form.copyActivity.checked
+        form.copyActivity.checked,
+        form.excludeJuridiction.checked
       );
     }
   }
