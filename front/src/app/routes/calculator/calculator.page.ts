@@ -892,14 +892,15 @@ export class CalculatorPage
    * @param type
    */
   onSortBy(type: string) {
-    if (this.sortBy.type === '' || this.sortBy.up === true) {
+    if (this.sortBy.type !== type) {
+      this.sortBy.up = true;
       this.sortBy.type = type;
-      this.sortBy.up = this.sortBy.up === null ? true : false;
-    } else {
-      this.sortBy.type = '';
+    } else if (this.sortBy.up) {
+      this.sortBy.up = false;
+    } else if (this.sortBy.up === false) {
       this.sortBy.up = null;
+      this.sortBy.type = '';
     }
-
     this.filtredDatas(this.sortBy.up);
   }
 
