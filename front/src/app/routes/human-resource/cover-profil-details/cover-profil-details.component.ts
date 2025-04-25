@@ -7,19 +7,20 @@ import {
   Output,
   ViewChildren,
   QueryList,
-  ElementRef,
   Renderer2,
   OnInit,
-  input,
   signal,
   Signal,
   inject,
+  ElementRef,
 } from '@angular/core';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { isNumber, sumBy } from 'lodash';
 import { BackButtonComponent } from '../../../components/back-button/back-button.component';
 import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
 import { DateSelectComponent } from '../../../components/date-select/date-select.component';
+import { BigEtpPreviewComponent } from '../big-etp-preview/big-etp-preview.component';
+import { AlertSmallComponent } from '../../../components/alert-small/alert-small.component';
 import { MainClass } from '../../../libs/main-class';
 import { HumanResourceInterface } from '../../../interfaces/human-resource-interface';
 import { HRFonctionInterface } from '../../../interfaces/hr-fonction';
@@ -33,7 +34,6 @@ import { today } from '../../../utils/dates';
 import { etpLabel } from '../../../utils/referentiel';
 import { downloadFile } from '../../../utils/system';
 import { MatIconModule } from '@angular/material/icon';
-import { BigEtpPreviewComponent } from '../big-etp-preview/big-etp-preview.component';
 import {
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
@@ -55,6 +55,7 @@ import {
     DateSelectComponent,
     MatIconModule,
     BigEtpPreviewComponent,
+    AlertSmallComponent,
   ],
   templateUrl: './cover-profil-details.component.html',
   styleUrls: ['./cover-profil-details.component.scss'],
@@ -63,8 +64,8 @@ export class CoverProfilDetailsComponent
   extends MainClass
   implements OnChanges, OnInit
 {
-  @ViewChildren('input') inputs: QueryList<ElementRef> =
-    new QueryList<ElementRef>();
+  @ViewChildren('input')
+  inputs: QueryList<ElementRef> = new QueryList<ElementRef>();
   @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>;
 
   userService = inject(UserService);
@@ -113,6 +114,13 @@ export class CoverProfilDetailsComponent
    * Liste des alertes
    */
   @Input() alertList: string[] = [];
+  /**
+   * Envoie un event au parent pour le focus sur le prochain input
+   */
+  @Output() focusNext = new EventEmitter<{
+    event: any;
+    calendarType: string | null;
+  }>();
   /**
    * Request an PDF export
    */
@@ -299,6 +307,9 @@ export class CoverProfilDetailsComponent
           this.alertSet.emit({ index: index });
         }
       }
+      if (nodeName === 'dateStart' || nodeName === 'dateEnd') {
+        this.onFocusNext(null, nodeName);
+      }
       this.ficheIsUpdated.emit(newHR);
     }
   }
@@ -321,20 +332,9 @@ export class CoverProfilDetailsComponent
    * Permet à l'utilisateur de passer d'un input à un autre avec la touche "Entrée"
    * @param event
    */
-  focusNext(event: any) {
-    event.preventDefault();
-    const inputsArray = this.inputs.toArray();
-    if (event.target.id !== 'lastName') {
-      const currentIndex = inputsArray.findIndex(
-        (input) => input.nativeElement === event.target
-      );
-      if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
-        inputsArray[currentIndex + 1].nativeElement.focus();
-      }
-    } else {
-      inputsArray.map((elem) => elem.nativeElement.blur());
-      this.calendar.first.onClick();
-    }
+  onFocusNext(event: any, calendarType?: string) {
+    console.log("'focusNext', event, isCalendar);");
+    this.focusNext.emit({ event: event, calendarType: calendarType ?? null });
   }
 
   /**
@@ -400,9 +400,24 @@ export class CoverProfilDetailsComponent
     return 0;
   }
 
+  /**
+   * Permet de suppimer une alerte sur un des champs du formulaire
+   */
   removeAlertItem(index: number) {
     this.alertSet.emit({ index: index });
-    // this.alertList.splice(index, 1);
-    // console.log('this.alertList', this.alertList);
+  }
+
+  /**
+   *  Permet d'obtenir les calendriers de la page
+   */
+  getCalendars(): DateSelectComponent[] {
+    return this.calendar.toArray();
+  }
+
+  /**
+   *  Permet d'obtenir les inputs de la page
+   */
+  getInputs(): ElementRef[] {
+    return this.inputs.toArray();
   }
 }
