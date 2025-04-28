@@ -1,5 +1,8 @@
 import { Component, inject, Input, OnChanges } from '@angular/core';
-import { listFormatedInterface } from '../../workforce/workforce.page';
+import {
+  listFormatedInterface,
+  HumanResourceSelectedInterface,
+} from '../../workforce/workforce.page';
 import { sumBy } from 'lodash';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -49,6 +52,10 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
    */
   @Input() listFormated: listFormatedWithDatasInterface[] = [];
   /**
+   * All agents list
+   */
+  @Input() allPersons: HumanResourceSelectedInterface[] = [];
+  /**
    * Liste filtré pour l'affichage
    */
   listFormatedFiltered: listFormatedWithDatasInterface[] = [];
@@ -68,6 +75,7 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
       .getValue()
       .map((c) => c.id);
 
+    // console.log('listFormated', this.listFormated);
     this.listFormatedFiltered = this.listFormated
       .filter(
         (category) =>
@@ -112,5 +120,27 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges {
             : undefined,
         };
       });
+
+    // On filtre les agents par catégorie et on récupère la date de dernière mise à jour pour chaque catégorie
+    const mag = this.allPersons.filter((hr) => hr.category?.id === 1);
+    const greff = this.allPersons.filter((hr) => hr.category?.id === 2);
+    const eam = this.allPersons.filter((hr) => hr.category?.id === 3);
+
+    const lastUpdatedMag = mag.length
+      ? new Date(Math.max(...mag.map((hr) => today(hr.updatedAt).getTime())))
+      : undefined;
+    const lastUpdatedGreffe = greff.length
+      ? new Date(Math.max(...greff.map((hr) => today(hr.updatedAt).getTime())))
+      : undefined;
+    const lastUpdatedEAM = eam.length
+      ? new Date(Math.max(...eam.map((hr) => today(hr.updatedAt).getTime())))
+      : undefined;
+
+    if (this.listFormatedFiltered[0])
+      this.listFormatedFiltered[0].lastUpdated = lastUpdatedMag;
+    if (this.listFormatedFiltered[1])
+      this.listFormatedFiltered[1].lastUpdated = lastUpdatedGreffe;
+    if (this.listFormatedFiltered[2])
+      this.listFormatedFiltered[2].lastUpdated = lastUpdatedEAM;
   }
 }
