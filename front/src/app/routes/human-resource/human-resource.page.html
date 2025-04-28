@@ -9,7 +9,7 @@
       [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null"
       [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
       (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)" [alertList]="alertList"
-      (alertSet)="onAlertsUpdated($event)"></cover-profil-details>
+      (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"></cover-profil-details>
 
     <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
       <div id="top-scroll-anchor" class="anchor"></div>
