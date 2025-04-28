@@ -4,6 +4,9 @@ import {
   OnInit,
   signal,
   ViewChild,
+  ViewChildren,
+  ElementRef,
+  QueryList,
   WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
@@ -102,6 +105,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   @ViewChild('addDomVentilation')
   addDomVentilation: AddVentilationComponent | null = null;
+
+  /**
+   *
+   */
+  @ViewChild(CoverProfilDetailsComponent)
+  coverDetails!: CoverProfilDetailsComponent;
+
   /**
    * Liste des catégories existantes
    */
@@ -203,6 +213,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   alertList: string[] = [];
 
+  hasInitCalendars = false;
+  hasInitInputs = false;
+  calendarsOpened: number[] = [];
+
   /**
    * Constructeur
    * @param humanResourceService
@@ -297,6 +311,13 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.routerLinkToGoBack = this.appService.previousUrl
       ? [this.appService.previousUrl]
       : ['/'];
+  }
+
+  ngAfterViewChecked() {
+    if (!this.hasInitCalendars && !this.hasInitInputs && this.coverDetails) {
+      this.hasInitCalendars = true;
+      this.hasInitInputs = true;
+    }
   }
 
   /**
@@ -1192,6 +1213,49 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
     if (index !== undefined) {
       this.alertList.splice(index, 1);
+    }
+  }
+
+  /**
+   * Permet à l'utilisateur de passer d'un input à un autre avec la touche "Entrée"
+   * @param event
+   */
+  focusNext({
+    event,
+    calendarType,
+  }: {
+    event: any;
+    calendarType: string | null;
+  }) {
+    console.log('event:', event);
+    console.log('calendarType:', calendarType);
+    if (
+      (event && event.key === 'Tab') ||
+      (event && event.key === 'Enter') ||
+      calendarType
+    ) {
+      const inputsArray = this.coverDetails.getInputs();
+      if (!calendarType && event.target.id !== 'matricule') {
+        event.preventDefault();
+        const currentIndex = inputsArray.findIndex(
+          (input: ElementRef) => input.nativeElement === event.target
+        );
+        if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
+          inputsArray[currentIndex + 1].nativeElement.focus();
+        }
+      } else {
+        inputsArray.map((elem: ElementRef) => elem.nativeElement.blur());
+
+        if (this.coverDetails) {
+          const calendars = this.coverDetails.getCalendars();
+          console.log('calendars', calendarType);
+          if (event && event.target.id === 'matricule') {
+            calendars[0].onClick();
+          } else if (calendarType && calendarType === 'dateStart') {
+            calendars[1].onClick();
+          }
+        }
+      }
     }
   }
 }
