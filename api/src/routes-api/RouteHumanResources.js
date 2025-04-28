@@ -319,6 +319,7 @@ export default class RouteHumanResources extends Route {
             fonctionRank: sitations.length && sitations[0].fonction ? sitations[0].fonction.rank : null,
             fonction: sitations.length && sitations[0].fonction ? sitations[0].fonction : null,
             indisponibilities: person.indisponibilities,
+            updatedAt: person.updatedAt,
           }
         }),
         ['categoryRank', 'fonctionRank', 'lastName']
