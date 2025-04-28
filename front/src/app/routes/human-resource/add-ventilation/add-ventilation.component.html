@@ -193,11 +193,12 @@
               (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false"
               [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
             </aj-date-select>
+            <aj-alert-small *ngIf="alertList.includes('activitiesStartDate')"
+              alertMessage='Vous devez saisir une date de début de situation !'
+              (onClose)="removeAlertItem(alertList.indexOf('activitiesStartDate'))">
+            </aj-alert-small>
           </div>
-          <aj-alert-small *ngIf="alertList.includes('activitiesStartDate')"
-            alertMessage='Vous devez saisir une date de début de situation !'
-            (onClose)="removeAlertItem(alertList.indexOf('activitiesStartDate'))">
-          </aj-alert-small>
+
         </div>
         <div class="indisponibilities">
           <div class="indispo-header">
