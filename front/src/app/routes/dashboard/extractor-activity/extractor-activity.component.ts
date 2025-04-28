@@ -17,6 +17,7 @@ import {
   setTimeToMidDay,
 } from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
+import { Renderer } from 'xlsx-renderer';
 
 /**
  * Excel file details
@@ -311,12 +312,8 @@ export class ExtractorActivityComponent extends MainClass {
         this.data = data.data.list;
         this.sumTab = data.data.sumTab;
         let monthTabName = '';
-        const workbook = xlsx.utils.book_new();
-        /*const backupLabel = localStorage.getItem('backupLabel')
 
-        if (backupLabel) 
-          this.sumTab = filterReferentielActivityExtractor(this.sumTab, backupLabel)*/
-
+        // FORMAT SUM TAB
         this.sumTab = this.sumTab
           .map((act: any) => {
             return this.generateFormatedDataMonth(
@@ -334,45 +331,155 @@ export class ExtractorActivityComponent extends MainClass {
                 -1 &&
               this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
           );
-
         this.sumTab = this.sortByCodeImport(this.sumTab);
-        xlsx.utils.book_append_sheet(
-          workbook,
-          this.generateWorkSheet(headersSum, this.sumTab),
-          'Total sur la période'
+
+        const viewModel = { sumTab: this.sumTab, data: this.data };
+
+        fetch('/assets/emptyTemplate_.xlsx')
+          // 2. Get template as ArrayBuffer.
+          .then((response) => response.arrayBuffer())
+          // 3. Fill the template with data (generate a report).
+          .then((buffer) => {
+            return new Renderer().renderFromArrayBuffer(buffer, viewModel);
+          })
+          // 4. Get a report as buffer.
+          .then(async (report) => {
+            report = await this.getReport(report, viewModel);
+            if (this.sumTab.length === 0) {
+              alert(
+                'Une erreur est survenue lors de la génération de votre fichier.'
+              );
+              throw 'no values';
+            }
+            return report.xlsx.writeBuffer();
+          })
+          // 5. Use `saveAs` to download on browser site.
+          .then((buffer) => {
+            const filename = this.getExportFileName() + EXCEL_EXTENSION;
+            return FileSaver.saveAs(
+              new Blob([buffer]),
+              filename + EXCEL_EXTENSION
+            );
+          })
+          .catch((err) => console.log('Error writing excel export', err));
+      });
+  }
+
+  async getReport(report: any, viewModel: any) {
+    report = this.setWidthForAllTabs(report, viewModel.data.length + 1);
+    report = this.hideEmptyTabs(report, viewModel.data.length + 1);
+    report.worksheets[0].name = 'Total sur la période';
+    report = this.setHeaderText(report, 0, 2, report.worksheets[0].name, true);
+    console.log(report, viewModel);
+
+    // FORMAT DATA TABS
+    this.data = Object.keys(this.data).map((key: any, index) => {
+      let monthTabName = '';
+      this.data[key] = this.data[key]
+        .map((act: any) => {
+          monthTabName = this.getMonthTabName(act);
+          report.worksheets[index + 1].name = monthTabName;
+          report = this.setHeaderText(report, index + 1, 2, monthTabName);
+          return this.generateFormatedDataMonth(act, monthTabName);
+        })
+        .filter(
+          (r: any) =>
+            this.referentielService.idsIndispo.indexOf(r.idReferentiel) ===
+              -1 &&
+            this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
         );
 
-        this.data = Object.keys(this.data).map((key: any) => {
-          /*if (backupLabel) 
-            this.data[key] =  filterReferentielActivityExtractor(this.data[key], backupLabel)*/
-          this.data[key] = this.data[key]
-            .map((act: any) => {
-              monthTabName = this.getMonthTabName(act);
-              return this.generateFormatedDataMonth(act, monthTabName);
-            })
-            .filter(
-              (r: any) =>
-                this.referentielService.idsIndispo.indexOf(r.idReferentiel) ===
-                  -1 &&
-                this.referentielService.idsSoutien.indexOf(r.idReferentiel) ===
-                  -1
-            );
+      this.data[key] = this.sortByCodeImport(this.data[key]);
+      report = this.populateTab(report, this.data[key], index);
+    });
 
-          this.data[key] = this.sortByCodeImport(this.data[key]);
-          xlsx.utils.book_append_sheet(
-            workbook,
-            this.generateWorkSheet(headers, this.data[key]),
-            monthTabName
-          );
-        });
+    return report;
+  }
 
-        const excelBuffer: any = xlsx.write(workbook, {
-          bookType: 'xlsx',
-          type: 'array',
-        });
+  populateTab(report: any, data: any[], indexTab: number) {
+    data.map((row: any, index: number) => {
+      const columnLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
-        const dataSaved: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE });
-        FileSaver.saveAs(dataSaved, this.getExportFileName() + EXCEL_EXTENSION);
+      columnLetters.forEach((col, colIndex) => {
+        const keys = Object.keys(row);
+        if (keys[colIndex])
+          report.worksheets[indexTab + 1].getCell(`${col}${index + 3}`).value =
+            row[keys[colIndex]];
       });
+    });
+
+    return report;
+  }
+
+  hideEmptyTabs(report: any, tabIndex: number) {
+    let index = tabIndex;
+    do {
+      report.worksheets[index].state = 'hidden';
+      index++;
+    } while (index < 50);
+    return report;
+  }
+  setHeaderText(
+    report: any,
+    tabIndex: number,
+    headerIndex: number,
+    sufix = '',
+    sumTab = false
+  ) {
+    const headers = [
+      'Contentieux',
+      'Période',
+      'Total entrées logiciel',
+      'Total entrées après A-JUSTements',
+      'Total sorties logiciel',
+      'Total sorties après A-JUSTements',
+      'Stock logiciel',
+      'Stock après A-JUSTements',
+    ];
+
+    let tabTitle =
+      (sumTab ? '                    ' : '') +
+      "Extraction de données d'activité : ";
+    report.worksheets[tabIndex].getCell('A1').value = tabTitle + sufix;
+
+    report.worksheets[tabIndex].autoFilter =
+      'A' + headerIndex + ':H' + headerIndex;
+    headers.map((elem, index) => {
+      report.worksheets[tabIndex].getCell(
+        this.getExcelColumnLetter(index) + headerIndex
+      ).value = elem;
+    });
+
+    return report;
+  }
+
+  getExcelColumnLetter(index: number): string {
+    let letter = '';
+    while (index >= 0) {
+      letter = String.fromCharCode((index % 26) + 65) + letter;
+      index = Math.floor(index / 26) - 1;
+    }
+    return letter;
+  }
+
+  setTabName(report: any, name: string) {}
+
+  setWidthForAllTabs(report: any, loopIndex: number) {
+    loopIndex--;
+    do {
+      let index = 0;
+      report.worksheets[loopIndex].getCell('I' + 1).value = ''; // TO SET ALL PREVIOUS COL
+
+      do {
+        if (index === 0) report.worksheets[loopIndex].columns[index].width = 40;
+        if (index === 1) report.worksheets[loopIndex].columns[index].width = 16;
+        else report.worksheets[loopIndex].columns[index].width = 34;
+        index++;
+      } while (index < 8);
+
+      loopIndex--;
+    } while (loopIndex >= 0);
+
+    return report;
   }
 }
