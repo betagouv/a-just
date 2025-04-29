@@ -4,7 +4,7 @@ import {
   referentielCAMappingIndex,
   referentielMappingIndex,
 } from "../constants/referentiel";
-import { extractCodeFromLabelImported } from "../utils/referentiel";
+import { extractCodeFromLabelImported, jirsRules } from "../utils/referentiel";
 import { camel_to_snake } from "../utils/utils";
 import config from "config";
 import { isTj } from "../utils/ca";
@@ -117,109 +117,8 @@ export default (sequelizeInstance, Model) => {
       ["rank"]
     );
 
-    if (!isJirs) {
-      list.map((elem) => {
-        elem.childrens.map((child) => {
-          switch (child.label) {
-            case "Contentieux collégial hors JIRS": //NEW CA
-              child.label = "Contentieux collégial";
-              break;
-            case "Contentieux JIRS éco-fi":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "Contentieux JIRS éco-fi"
-              );
-              break;
-            case "Contentieux JIRS crim-org":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "Contentieux JIRS crim-org"
-              );
-              break;
+    list = jirsRules(list,isJirs)
 
-            case "Collégiales hors JIRS":
-              child.label = "Collégiales";
-              break;
-            case "Cour d'assises hors JIRS":
-              child.label = "Cour d'assises";
-              break;
-            case "Cour d'assises JIRS":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "Cour d'assises JIRS"
-              );
-              break;
-            case "Collégiales JIRS crim-org":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "Collégiales JIRS crim-org"
-              );
-              break;
-            case "Collégiales JIRS éco-fi":
-              child.label = "Collégiales éco-fi";
-              break;
-            case "Eco-fi hors JIRS":
-              child.label = "Eco-fi";
-              break;
-            case "JIRS éco-fi":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "JIRS éco-fi"
-              );
-              break;
-            case "JIRS crim-org":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "JIRS crim-org"
-              );
-              break;
-            case "JIRS":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "JIRS"
-              );
-              break;
-            case "Assises JIRS":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "Assises JIRS"
-              );
-              break;
-            case "Contentieux JIRS":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "Contentieux JIRS"
-              );
-              break;
-            case "Contentieux de la détention JIRS":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "Contentieux de la détention JIRS"
-              );
-              break;
-            case "Contentieux du contrôle judiciaire JIRS":
-              elem.childrens = elem.childrens.filter(
-                (elem) =>
-                  elem.label !== "Contentieux du contrôle judiciaire JIRS"
-              );
-              break;
-            case "Contentieux de fond JIRS":
-              elem.childrens = elem.childrens.filter(
-                (elem) => elem.label !== "Contentieux de fond JIRS"
-              );
-              break;
-            case "Contentieux général hors JIRS":
-              child.label = "Contentieux général";
-              break;
-            case "Contentieux spécialisés hors JIRS":
-              child.label = "Contentieux spécialisés";
-              break;
-            case "Contentieux de la détention hors JIRS":
-              child.label = "Contentieux de la détention";
-              break;
-            case "Contentieux du contrôle judiciaire hors JIRS":
-              child.label = "Contentieux du contrôle judiciaire";
-              break;
-            case "Contentieux de fond hors JIRS":
-              child.label = "Contentieux de fond";
-              break;
-            case "Assises hors JIRS":
-              child.label = "Assises";
-              break;
-          }
-        });
-      });
-    }
     return list;
   };
 
