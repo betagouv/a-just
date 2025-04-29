@@ -22,6 +22,7 @@ import { CommonModule } from '@angular/common';
 import { PopupComponent } from '../../../components/popup/popup.component';
 import { CalculatriceComponent } from '../../../components/calculatrice/calculatrice.component';
 import { PanelActivitiesComponent } from '../../../components/panel-activities/panel-activities.component';
+import { AlertSmallComponent } from '../../../components/alert-small/alert-small.component';
 import { MainClass } from '../../../libs/main-class';
 import { HumanResourceInterface } from '../../../interfaces/human-resource-interface';
 import { RHActivityInterface } from '../../../interfaces/rh-activity';
@@ -86,6 +87,7 @@ export interface importedSituation {
     ReactiveFormsModule,
     DateSelectComponent,
     HelpButtonComponent,
+    AlertSmallComponent,
   ],
   templateUrl: './add-ventilation.component.html',
   styleUrls: ['./add-ventilation.component.scss'],
