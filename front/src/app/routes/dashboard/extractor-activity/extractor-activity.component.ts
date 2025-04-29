@@ -368,8 +368,14 @@ export class ExtractorActivityComponent extends MainClass {
   async getReport(report: any, viewModel: any) {
     report = this.setWidthForAllTabs(report, viewModel.data.length + 1);
     report = this.hideEmptyTabs(report, viewModel.data.length + 1);
-    report.worksheets[0].name = 'Total sur la période';
-    report = this.setHeaderText(report, 0, 2, report.worksheets[0].name, true);
+    report.worksheets[0].name = 'total sur la période ';
+    report = this.setHeaderText(
+      report,
+      0,
+      2,
+      this.lowercaseFirstLetter(this.sumTab[0]['Période']) || '',
+      true
+    );
     console.log(report, viewModel);
 
     // FORMAT DATA TABS
@@ -439,9 +445,12 @@ export class ExtractorActivityComponent extends MainClass {
 
     let tabTitle =
       (sumTab ? '                    ' : '') +
-      "Extraction de données d'activité : ";
+      "Extraction de données d'activité " +
+      (this.userService.isTJ() ? 'du ' : 'de la ') +
+      this.humanResourceService.hrBackup.getValue()?.label;
     report.worksheets[tabIndex].getCell('A1').value = tabTitle + sufix;
 
+    console.log(this.humanResourceService.hrBackup.getValue()?.label);
     report.worksheets[tabIndex].autoFilter =
       'A' + headerIndex + ':H' + headerIndex;
     headers.map((elem, index) => {
@@ -472,7 +481,7 @@ export class ExtractorActivityComponent extends MainClass {
 
       do {
         if (index === 0) report.worksheets[loopIndex].columns[index].width = 40;
-        if (index === 1) report.worksheets[loopIndex].columns[index].width = 16;
+        if (index === 1) report.worksheets[loopIndex].columns[index].width = 21;
         else report.worksheets[loopIndex].columns[index].width = 34;
         index++;
       } while (index < 8);
@@ -481,5 +490,10 @@ export class ExtractorActivityComponent extends MainClass {
     } while (loopIndex >= 0);
 
     return report;
+  }
+
+  lowercaseFirstLetter(str: string): string {
+    if (!str) return '';
+    return str.charAt(0).toLowerCase() + str.slice(1);
   }
 }
