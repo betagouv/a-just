@@ -212,7 +212,9 @@ export class ExtractorActivityComponent extends MainClass {
         : false;
     return {
       [' ']:
-        ref === true ? 'Total ' + act.contentieux.label : act.contentieux.label, //act.contentieux.code_import + ' ' +
+        ref === true
+          ? 'Total ' + act.contentieux.label
+          : '          ' + act.contentieux.label, //act.contentieux.code_import + ' ' +
       ['codeUnit']: sortCodeArray[0] || 0,
       ['codeCent']: sortCodeArray[1] * 10 || -1,
       ['idReferentiel']: act.idReferentiel,
@@ -446,7 +448,7 @@ export class ExtractorActivityComponent extends MainClass {
     let tabTitle =
       (sumTab ? '                    ' : '') +
       "Extraction de données d'activité " +
-      (this.userService.isTJ() ? 'du ' : 'de la ') +
+      (this.userService.isTJ() ? ' du ' : ' de la ') +
       this.humanResourceService.hrBackup.getValue()?.label;
     report.worksheets[tabIndex].getCell('A1').value = tabTitle + sufix;
 

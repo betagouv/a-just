@@ -298,8 +298,8 @@ export default class RouteExtractor extends Route {
       )
       .map((x) => {
         return {
-          ...x,
           periode: today(x.periode).setDate(1),
+          ...x,
         };
       });
 
