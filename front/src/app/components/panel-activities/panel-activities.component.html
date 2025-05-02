@@ -4,7 +4,7 @@
     <div class="header" *ngIf="header">
       <p [ngStyle]="{
         'text-transform' : ref.label.toLowerCase().includes('autres') ? 'uppercase' : '',}">
-        {{ userService.referentielMappingNameByInterface(ref.label)}}
+        {{ userService.referentielMappingNameByInterface(ref.label).toUpperCase() }}
       </p>
       <p class="etp">{{ ref.totalAffected | number: '0.2-2' }}</p>
     </div>
