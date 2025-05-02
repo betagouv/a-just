@@ -179,9 +179,9 @@ export class ExtractorActivityComponent extends MainClass {
    * @param dateStop
    * @returns
    */
-  getTotalPeriodeLabel(dateStart: Date, dateStop: Date) {
+  getTotalPeriodeLabel(dateStart: Date, dateStop: Date, lowerStart = false) {
     return (
-      'De ' +
+      (lowerStart ? 'de ' : 'De ') +
       (getShortMonthString(new Date(dateStart)) +
         ' ' +
         new Date(dateStart).getFullYear()) +
@@ -211,14 +211,14 @@ export class ExtractorActivityComponent extends MainClass {
         ? true
         : false;
     return {
-      [' ']:
-        ref === true
-          ? 'Total ' + act.contentieux.label
-          : '          ' + act.contentieux.label, //act.contentieux.code_import + ' ' +
       ['codeUnit']: sortCodeArray[0] || 0,
       ['codeCent']: sortCodeArray[1] * 10 || -1,
       ['idReferentiel']: act.idReferentiel,
       Période: monthTabName,
+      [' ']:
+        ref === true
+          ? 'Total ' + act.contentieux.label
+          : '          ' + act.contentieux.label, //act.contentieux.code_import + ' ' +
       [total === true ? 'Total entrées logiciel' : 'Entrées logiciel']:
         act.originalEntrees,
       [total === true
@@ -274,14 +274,13 @@ export class ExtractorActivityComponent extends MainClass {
    * @returns
    */
   getExportFileName() {
-    return `Extraction_Données_D_Activité_${this.getTotalPeriodeLabel(
+    return `Extraction_données_d_activité_${
+      this.humanResourceService.hrBackup.getValue()?.label
+    }_${this.getTotalPeriodeLabel(
       this.dateStart || new Date(),
-      this.dateStop || new Date()
-    )}_par ${
-      this.userService.user.getValue()!.firstName
-    }_${this.userService.user.getValue()!.lastName!}_le ${new Date()
-      .toJSON()
-      .slice(0, 10)}`;
+      this.dateStop || new Date(),
+      true
+    )}_fait_le_${new Date().toJSON().slice(0, 10)}`;
   }
 
   /**
@@ -352,6 +351,11 @@ export class ExtractorActivityComponent extends MainClass {
                 'Une erreur est survenue lors de la génération de votre fichier.'
               );
               throw 'no values';
+            } else if (viewModel.data && viewModel.data.length > 49) {
+              alert(
+                'Vous ne pouvez pas extraire plus de 4 années sur une même extraction.'
+              );
+              throw 'no values';
             }
             return report.xlsx.writeBuffer();
           })
@@ -370,24 +374,38 @@ export class ExtractorActivityComponent extends MainClass {
   async getReport(report: any, viewModel: any) {
     report = this.setWidthForAllTabs(report, viewModel.data.length + 1);
     report = this.hideEmptyTabs(report, viewModel.data.length + 1);
-    report.worksheets[0].name = 'total sur la période ';
+    report.worksheets[0].name = 'Total sur la période ';
     report = this.setHeaderText(
       report,
       0,
       2,
-      this.lowercaseFirstLetter(this.sumTab[0]['Période']) || '',
+      ' ' + this.lowercaseFirstLetter(this.sumTab[0]['Période']) || '',
       true
     );
     console.log(report, viewModel);
+
+    let conditionnalFormating = report.worksheets[0].conditionalFormattings;
+    let views = report.worksheets[0].views;
 
     // FORMAT DATA TABS
     this.data = Object.keys(this.data).map((key: any, index) => {
       let monthTabName = '';
       this.data[key] = this.data[key]
         .map((act: any) => {
+          report.worksheets[index + 1].conditionalFormattings =
+            conditionnalFormating;
+
+          report.worksheets[index + 1].views = views;
+
+          report.worksheets[index + 1]._rows[0].height = 80;
           monthTabName = this.getMonthTabName(act);
           report.worksheets[index + 1].name = monthTabName;
-          report = this.setHeaderText(report, index + 1, 2, monthTabName);
+          report = this.setHeaderText(
+            report,
+            index + 1,
+            2,
+            ' sur ' + monthTabName
+          );
           return this.generateFormatedDataMonth(act, monthTabName);
         })
         .filter(
@@ -435,8 +453,8 @@ export class ExtractorActivityComponent extends MainClass {
     sumTab = false
   ) {
     const headers = [
-      'Contentieux',
       'Période',
+      'Contentieux',
       'Total entrées logiciel',
       'Total entrées après A-JUSTements',
       'Total sorties logiciel',
@@ -446,12 +464,13 @@ export class ExtractorActivityComponent extends MainClass {
     ];
 
     let tabTitle =
-      (sumTab ? '                    ' : '') +
+      (sumTab ? '                    ' : '     ') +
       "Extraction de données d'activité " +
       (this.userService.isTJ() ? ' du ' : ' de la ') +
       this.humanResourceService.hrBackup.getValue()?.label;
     report.worksheets[tabIndex].getCell('A1').value = tabTitle + sufix;
 
+    report.worksheets[tabIndex]._rows[headerIndex - 1].height = 80;
     console.log(this.humanResourceService.hrBackup.getValue()?.label);
     report.worksheets[tabIndex].autoFilter =
       'A' + headerIndex + ':H' + headerIndex;
@@ -475,16 +494,19 @@ export class ExtractorActivityComponent extends MainClass {
 
   setTabName(report: any, name: string) {}
 
-  setWidthForAllTabs(report: any, loopIndex: number) {
+  setWidthForAllTabs(report: any, loopIndex: number, sumTab = true) {
     loopIndex--;
     do {
       let index = 0;
       report.worksheets[loopIndex].getCell('I' + 1).value = ''; // TO SET ALL PREVIOUS COL
 
       do {
-        if (index === 0) report.worksheets[loopIndex].columns[index].width = 40;
-        if (index === 1) report.worksheets[loopIndex].columns[index].width = 21;
-        else report.worksheets[loopIndex].columns[index].width = 34;
+        if (index === 0)
+          report.worksheets[loopIndex].columns[index].width =
+            loopIndex === 0 ? 25 : 15;
+        else if (index === 1)
+          report.worksheets[loopIndex].columns[index].width = 45;
+        else report.worksheets[loopIndex].columns[index].width = 17.1;
         index++;
       } while (index < 8);
 
