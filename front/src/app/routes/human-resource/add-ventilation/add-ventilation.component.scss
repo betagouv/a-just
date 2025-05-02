@@ -374,6 +374,12 @@ input[type="number"] {
         width: 180px;
       }
 
+      aj-alert-small {
+        position: absolute;
+        top: 35%;
+        left: 30%;
+      }
+
       >.error {
         background-color: #fef5e8;
         border: solid 1px #f4be30;
