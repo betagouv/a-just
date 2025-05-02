@@ -357,6 +357,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           }
         }*/
         },
+        {
+          target: '#wrapper-contener',
+          title: 'Découvrir la fonctionnalité',
+          intro:
+            '<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l\'écran des données d’activité.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/ca-activite.mp4" type="video/mp4" /></video>',
+        },
       ];
 
   /**

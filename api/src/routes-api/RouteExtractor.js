@@ -17,6 +17,7 @@ import { cloneDeep, groupBy, last, orderBy, sumBy } from "lodash";
 import { isDateGreaterOrEqual, month, today } from "../utils/date";
 import { ABSENTEISME_LABELS } from "../constants/referentiel";
 import { EXECUTE_EXTRACTOR } from "../constants/log-codes";
+import { updateLabels } from "../utils/referentiel";
 
 /**
  * Route de la page extrateur
@@ -284,6 +285,16 @@ export default class RouteExtractor extends Route {
       type: "activité",
     });
 
+    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId);
+
+    const referentiels =
+      await this.models.ContentieuxReferentiels.getReferentiels(
+        backupId,
+        isJirs,
+        undefined,
+        undefined
+      );
+
     const list = await this.models.Activities.getByMonth(dateStart, backupId);
 
     const lastUpdate =
@@ -303,6 +314,10 @@ export default class RouteExtractor extends Route {
         };
       });
 
+    activities = updateLabels(activities,referentiels)
+
+    //activities.map(x=>console.log(x.contentieux))
+    referentiels.map(x=>console.log(x))
     let sum = cloneDeep(activities);
 
     sum = sum.map((x) => {
@@ -336,14 +351,24 @@ export default class RouteExtractor extends Route {
       });
     });
 
-    sumTab = sumTab.filter((x) => x.contentieux.code_import !== null);
+    /** 
+    const flatReferentiels = await flatListOfContentieuxAndSousContentieux([
+      ...referentiels,
+    ]);
+    const labels = flatReferentiels.map(item => item.label);
+
+    sumTab = sumTab.filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
+
+
+    GroupedList =  Object.keys(GroupedList).map((l) => {
+      return GroupedList[l].filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
+    });
+        */
 
     let GroupedList = groupBy(activities, "periode");
-   
-    GroupedList =  Object.keys(GroupedList).map((l) => {
-      return GroupedList[l].filter((x) => x.contentieux.code_import !== null);
-    });
 
+    console.log(isJirs)
+    //console.log(labels)
     this.sendOk(ctx, {
       list: GroupedList,
       sumTab,

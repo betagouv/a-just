@@ -95,13 +95,14 @@ export default class RouteJuridictions extends Route {
         juridictionName: Types.string().required(),
         backupId: Types.number().required(),
         copyAct:Types.boolean().required(),
+        statExclusion:Types.boolean().required()
       }),
       accesses: [Access.isAdmin],
     })
     async duplicateJuridiction (ctx) {
-      const { juridictionName, backupId, copyAct } = this.body(ctx)
+      const { juridictionName, backupId, copyAct, statExclusion } = this.body(ctx)
   
-      await models.HRBackups.duplicateBackup(backupId,juridictionName,copyAct)
+      await models.HRBackups.duplicateBackup(backupId,juridictionName,copyAct,statExclusion)
 
       this.sendOk(ctx, "En cours")
     }
