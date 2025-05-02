@@ -568,9 +568,9 @@ export class WhiteSimulatorPage
         this.hrBackup = this.hrBackups.find(
           (b) => b.id === this.humanResourceService.backupId.getValue()
         );
-        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
-          .toJSON()
-          .slice(0, 10)}`;
+        this.printTitle = `Simulation ${
+          this.userService.isCa() ? 'de la' : 'du'
+        } ${this.hrBackup?.label} du ${new Date().toJSON().slice(0, 10)}`;
       })
     );
 
@@ -578,9 +578,9 @@ export class WhiteSimulatorPage
       this.humanResourceService.backupId.subscribe((backupId) => {
         this.hrBackups = this.humanResourceService.backups.getValue();
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId);
-        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
-          .toJSON()
-          .slice(0, 10)}`;
+        this.printTitle = `Simulation ${
+          this.userService.isCa() ? 'de la' : 'du'
+        } ${this.hrBackup?.label} du ${new Date().toJSON().slice(0, 10)}`;
       })
     );
 
