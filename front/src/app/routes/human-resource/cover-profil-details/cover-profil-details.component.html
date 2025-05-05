@@ -25,8 +25,7 @@
           [ngClass]="{'error': alertList.includes('firstName')}">
           <input id="firstName" #firstNameDom #input [placeholder]="'Prénom'" [ngModel]="currentHR?.firstName"
             (ngModelChange)="completeFormWithDomObject('firstName', $event)" (keydown)="preventSubmit($event)"
-            (keyup.enter)="onFocusNext($event)" (keydown)="onFocusNext($event)"
-            (input)="adjustInputWidth($event, 'firstName')" />
+            (keyup)="onFocusNext($event)" (input)="adjustInputWidth($event, 'firstName')" />
         </div>
         <aj-alert-small *ngIf="alertList.includes('firstName')"
           alertMessage='Vous devez saisir un prénom pour valider la création !'
@@ -38,8 +37,7 @@
           [ngClass]="{'error': alertList.includes('lastName')}">
           <input id="lastName" #input [placeholder]="'Nom'" [ngModel]="currentHR?.lastName"
             (ngModelChange)="completeFormWithDomObject('lastName', $event)" (keydown)="preventSubmit($event)"
-            (keyup.enter)="onFocusNext($event)" (keydown)="onFocusNext($event)"
-            (input)="adjustInputWidth($event, 'lastName')" />
+            (keyup)="onFocusNext($event)" (input)="adjustInputWidth($event, 'lastName')" />
         </div>
         <aj-alert-small *ngIf="alertList.includes('lastName')"
           alertMessage='Vous devez saisir un nom pour valider la création !'
@@ -53,7 +51,7 @@
       <div class="matricule input-wrapper">
         <input id="matricule" #input #matriculeDom [placeholder]="'Matricule (facultatif)'"
           [ngModel]="currentHR?.matricule" (ngModelChange)="completeFormWithDomObject('matricule', $event)"
-          (keydown)="keyPress($event)" (keyup.enter)="onFocusNext($event)" (keydown)="onFocusNext($event)" />
+          (keydown)="keyPress($event)" (keyup)="onFocusNext($event)" />
       </div>
       <div class="tags">
         <p *ngIf="fonction" class="fonction"

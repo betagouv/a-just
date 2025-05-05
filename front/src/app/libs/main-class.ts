@@ -411,6 +411,9 @@ export class MainClass {
     const findElement = dom ? dom : document.getElementById('content');
     const findIdElement = document.getElementById(id);
 
+    console.log('findElement', findElement);
+    console.log('findIdElement', findIdElement);
+
     if (findElement && findIdElement) {
       const findTopElement = document.getElementById('top');
       let deltaToRemove = 0;
@@ -418,6 +421,13 @@ export class MainClass {
       if (findTopElement) {
         deltaToRemove = findTopElement.getBoundingClientRect().height;
       }
+
+      console.log(
+        findElement.scrollTop,
+        findIdElement.getBoundingClientRect().top,
+        deltaToRemove,
+        detalScrollY || 0
+      );
 
       findElement.scrollTo({
         behavior: 'smooth',
