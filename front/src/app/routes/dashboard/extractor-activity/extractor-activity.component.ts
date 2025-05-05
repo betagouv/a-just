@@ -372,8 +372,11 @@ export class ExtractorActivityComponent extends MainClass {
   }
 
   async getReport(report: any, viewModel: any) {
-    report = this.setWidthForAllTabs(report, viewModel.data.length + 1);
-    report = this.hideEmptyTabs(report, viewModel.data.length + 1);
+    report = this.setWidthForAllTabs(
+      report,
+      Object.keys(viewModel.data).length + 1
+    );
+    report = this.hideEmptyTabs(report, Object.keys(viewModel.data).length + 1);
     report.worksheets[0].name = 'Total sur la période ';
     report = this.setHeaderText(
       report,
@@ -382,7 +385,6 @@ export class ExtractorActivityComponent extends MainClass {
       ' ' + this.lowercaseFirstLetter(this.sumTab[0]['Période']) || '',
       true
     );
-    console.log(report, viewModel);
 
     let conditionnalFormating = report.worksheets[0].conditionalFormattings;
     let views = report.worksheets[0].views;
@@ -471,7 +473,6 @@ export class ExtractorActivityComponent extends MainClass {
     report.worksheets[tabIndex].getCell('A1').value = tabTitle + sufix;
 
     report.worksheets[tabIndex]._rows[headerIndex - 1].height = 80;
-    console.log(this.humanResourceService.hrBackup.getValue()?.label);
     report.worksheets[tabIndex].autoFilter =
       'A' + headerIndex + ':H' + headerIndex;
     headers.map((elem, index) => {
