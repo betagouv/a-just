@@ -302,38 +302,39 @@ input[type="number"] {
           height: fit-content;
           line-height: 24px;
         }
-      }
 
-      >.ressources {
-        display: flex;
-        align-items: center;
-        padding: 4px 8px;
-        gap: 8px;
-        border-bottom: 1px solid fColor(lightBorder);
-
-        >p {
-          font-size: 12px;
-        }
-
-        >.download {
-          padding: 0;
-          display: inline-flex;
+        >.ressources {
+          display: flex;
           align-items: center;
-          gap: 4px;
-          border-radius: 4px;
-          background-color: #F5F5FE;
           padding: 4px 8px;
-          font-size: 12px;
-          font-weight: 700;
-          cursor: pointer;
+          gap: 8px;
 
-          mat-icon {
-            position: relative;
-            font-size: 14px;
-            width: 14px;
-            height: 14px;
+          >p {
+            font-size: 12px;
+          }
+
+          >.download {
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border-radius: 4px;
+            background-color: #F5F5FE;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+
+            mat-icon {
+              position: relative;
+              font-size: 14px;
+              width: 14px;
+              height: 14px;
+            }
           }
         }
+
+
       }
     }
   }

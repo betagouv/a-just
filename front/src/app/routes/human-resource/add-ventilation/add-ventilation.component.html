@@ -158,18 +158,20 @@
             'background-color' : sumPercentImported !==100?'#feebd0':'#b8fec9'}"><i
               class="ri-checkbox-circle-fill"></i>{{sumPercentImported !==100?'à
             compléter':'importé'}}</label>
+
+          <div class="ressources">
+            <p>Ressources :</p>
+            <a (click)="downloadAsset('nomencalture')" class="download">
+              La nomenclature
+              <mat-icon>launch</mat-icon>
+            </a>
+            <a (click)="downloadAsset('calculator')" class="download">
+              Calculatrice de ventilations
+              <mat-icon>download</mat-icon>
+            </a>
+          </div>
         </div>
-        <div class="ressources">
-          <p>Ressources :</p>
-          <a (click)="downloadAsset('nomencalture')" class="download">
-            La nomenclature
-            <mat-icon>launch</mat-icon>
-          </a>
-          <a (click)="downloadAsset('calculator')" class="download">
-            Calculatrice de ventilations
-            <mat-icon>download</mat-icon>
-          </a>
-        </div>
+
         <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
           [indexSituation]="indexSituation" (referentielChange)="onNewReferentiel($event)" #panelActivities
           [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit">
