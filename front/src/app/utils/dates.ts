@@ -295,19 +295,17 @@ export function stringToDecimalDate(str: string, sep = 'h') {
  * @returns
  */
 export function decimalToStringDate(
-  decimal: number | string | null | undefined,
-  sep = 'h'
+  d: number | string | null | undefined,
+  s = 'h'
 ) {
-  if (decimal != null) {
-    const decimalString = ('' + decimal).replace(',', '.');
-    decimal = +decimalString;
-    const strArray = decimalString.split('.');
-    const dMin = decimal - parseInt(strArray[0]);
-    let minute = strArray[1] ? String(Math.round(dMin * 60)) : '00';
-    minute = minute.length === 1 ? '0' + minute : minute;
-    return strArray[0] + sep + minute;
+  if (d == null || isNaN((d = +('' + d).replace(',', '.')))) return '0';
+  let h = Math.floor(d),
+    m = Math.round((d - h) * 60);
+  if (m === 60) {
+    h++;
+    m = 0;
   }
-  return '0';
+  return h + s + (m < 10 ? '0' : '') + m;
 }
 
 /**
