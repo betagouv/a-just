@@ -194,7 +194,7 @@
           person.lastName}}
         </p>
 
-        <div *ngIf="person.dateStart && isArriving(person.dateStart)" class="agent-status"
+        <div *ngIf="person.dateStart && isArriving(person.dateStart) && !hasLeft(person.dateEnd)" class="agent-status"
           [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
           <i class="ri-user-received-line" [ngStyle]="{
               color: getCategoryColor(person.categoryName),
@@ -202,7 +202,7 @@
           </i>
           <p>Arrivée prévue</p>
         </div>
-        <div *ngIf="person.dateStart && !isArriving(person.dateStart)" class="agent-status"
+        <div *ngIf="person.dateEnd && hasLeft(person.dateEnd)" class="agent-status"
           [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
           <i class="ri-user-shared-line" [ngStyle]="{
               color: getCategoryColor(person.categoryName),

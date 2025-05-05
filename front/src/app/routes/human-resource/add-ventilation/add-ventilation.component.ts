@@ -198,7 +198,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Formulaire de saisie
    */
   form = new FormGroup({
-    activitiesStartDate: new FormControl(new Date(), [Validators.required]),
+    activitiesStartDate: new FormControl<Date | null>(null, [
+      Validators.required,
+    ]),
     etp: new FormControl<number | null>(null, [
       Validators.min(0),
       Validators.max(1),
@@ -383,7 +385,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.etp = etp;
     this.form
       .get('activitiesStartDate')
-      ?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null);
+      ?.setValue(
+        this.isEdit && this.lastDateStart ? new Date(this.lastDateStart) : null
+      );
     this.form.get('etp')?.setValue(etp === null ? null : fixDecimal(etp));
     this.form
       .get('categoryId')
@@ -436,6 +440,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   async onSave(withoutPercentControl = false, saveETPT0 = false) {
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value;
+    console.log('activitiesStartDate', activitiesStartDate);
     const categories = this.humanResourceService.categories.getValue();
     const fonctions = this.humanResourceService.fonctions.getValue();
     const cat = categories.find((c) => categoryId && c.id == categoryId);

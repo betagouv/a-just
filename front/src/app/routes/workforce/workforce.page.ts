@@ -732,7 +732,24 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
 
     const diff = sortDates(date, now, false);
 
-    return diff > 0 ? true : false;
+    return diff < 0 ? true : false;
+  }
+
+  /**
+   * Vérifie si un agent arrive bientôt ou est déjà parti de la juridiction
+   * @param date
+   * @returns
+   */
+  hasLeft(date: Date | undefined): boolean {
+    if (date === undefined || date === null) {
+      return false;
+    }
+
+    const now = new Date(this.dateSelected);
+
+    const diff = sortDates(date, now, false);
+
+    return diff < 0 ? true : false;
   }
 
   /**

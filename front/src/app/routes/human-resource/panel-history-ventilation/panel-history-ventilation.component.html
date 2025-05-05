@@ -31,7 +31,7 @@
     </div>
     <div [ngClass]="{alert: warningETP}" class="etpt">
       <p>ETPTravaillé :</p>
-      <etp-preview *ngIf="etp !== null" [etp]="etp - indisponibility" [realETP]="etp"
+      <etp-preview [etp]="(etp || 0) - indisponibility" [realETP]="etp"
         [indisponibility]="indisponibility"></etp-preview>
     </div>
   </div>
