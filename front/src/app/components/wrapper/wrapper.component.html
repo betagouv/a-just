@@ -1,5 +1,5 @@
 <aj-news #news (isClosed)="refreshHeight(container)"></aj-news>
-<div #container [style.padding-top.px]="news.offsetHeight">
+<div #container [style.padding-top.px]="news.offsetHeight" [class.duringPrint]="duringPrint">
   <div id="side-menu-bar" class="menu no-print" title="">
     <div class="images">
       <div class="logo white-mode block-marque-white"></div>
@@ -87,7 +87,7 @@
     </div>
   </div>
 
-  <div class="contener" #contener title="" id="wrapper-contener">
+  <div class="contener" #contener title="" id="wrapper-contener" [class.duringPrint]="duringPrint">
     <div class="header">
       <div class="top-header" id="top">
         <div class="top-header-back-title">
@@ -143,7 +143,7 @@
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
     </div>
-    <div class="content" #content id="content" (scroll)="onScroll($event)">
+    <div class="content" #content id="content" (scroll)="onScroll($event)" [class.duringPrint]="duringPrint">
       <ng-content></ng-content>
     </div>
   </div>

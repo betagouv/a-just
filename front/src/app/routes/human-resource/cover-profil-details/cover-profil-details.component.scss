@@ -8,6 +8,10 @@
   border-radius: 8px;
   background-color: white;
 
+  &.duringPrint {
+    position: relative;
+  }
+
   .error {
     // border: 1px solid #0063CB;
     // background-color: #F5F5FE !important;

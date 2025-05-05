@@ -6,6 +6,7 @@
 
         <div class="tags">
           <p *ngIf="lastDateStart">
+            A partir du
             {{ lastDateStart | date : 'dd' }}
             {{ getShortMonthString(lastDateStart) }}
             {{ lastDateStart.getFullYear() }}
@@ -15,6 +16,7 @@
               lastDateStart &&
               lastDateStart.getTime() !== dateStop.getTime()
             ">
+            Jusqu'au
             {{ dateStop | date : 'dd' }}
             {{ getShortMonthString(dateStop) }}
             {{ dateStop.getFullYear() }}
