@@ -266,6 +266,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Au chargement charger les catégories et fonctions
    */
   ngOnInit() {
+    console.log('editId', this.editId);
     window.addEventListener('click', this.onclick.bind(this));
     window.addEventListener('click', this.onclick2.bind(this));
     this.watch(
@@ -440,7 +441,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   async onSave(withoutPercentControl = false, saveETPT0 = false) {
     let { activitiesStartDate, categoryId, fonctionId } = this.form.value;
-    console.log('activitiesStartDate', activitiesStartDate);
     const categories = this.humanResourceService.categories.getValue();
     const fonctions = this.humanResourceService.fonctions.getValue();
     const cat = categories.find((c) => categoryId && c.id == categoryId);
@@ -632,6 +632,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     fonct: HRFonctionInterface
   ) {
     let situations = this.human?.situations || [];
+
+    console.log(
+      'Situations:',
+      situations,
+      newReferentiel,
+      activitiesStartDate,
+      this.editId
+    );
+
     const activities: any[] = [];
     newReferentiel
       .filter((r) => r.percent && r.percent > 0)
@@ -657,6 +666,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
       );
     });
+    console.log('isSameDate:', isSameDate);
 
     const options = {
       etp: profil.etp,
