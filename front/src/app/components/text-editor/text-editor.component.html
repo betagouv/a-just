@@ -1,6 +1,6 @@
 <div class="title-editor" *ngIf="title">
   <p>{{ title }}</p>
 </div>
-<div class="content-editor">
+<div class="content-editor" [class.hideToolbar]="defaultReadOnly">
   <div #editor></div>
 </div>

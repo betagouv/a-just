@@ -112,7 +112,7 @@
           </div>
           <div class="admin-element"
             [ngClass]="{'error': form.get('etp')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': alertList.includes('etp')}">
+            [ngClass]="{'error': alertList.includes('etp')}" id="etpForm">
             <div class="label-aj">
               Temps de travail (en ETPT) :
             </div>
@@ -196,7 +196,7 @@
             </aj-date-select>
             <aj-alert-small *ngIf="alertList.includes('activitiesStartDate')"
               alertMessage='Vous devez saisir une date de début de situation !'
-              (onClose)="removeAlertItem(alertList.indexOf('activitiesStartDate'))">
+              (onClose)="removeAlertItem(alertList.indexOf('activitiesStartDate'))" class="fix-width">
             </aj-alert-small>
           </div>
 
