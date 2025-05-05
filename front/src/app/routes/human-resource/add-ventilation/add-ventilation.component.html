@@ -189,10 +189,10 @@
               compléter'}}</label>
           </div>
 
-          <div class="date-start-content">
+          <div class="date-start-content"
+            [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
             <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
-              (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false"
-              [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
+              (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
             </aj-date-select>
             <aj-alert-small *ngIf="alertList.includes('activitiesStartDate')"
               alertMessage='Vous devez saisir une date de début de situation !'
