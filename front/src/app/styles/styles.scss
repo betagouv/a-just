@@ -19,7 +19,7 @@ body {
 	background-color: white;
 
 	&.remove-height {
-		height: fit-content;
+		height: inherit;
 	}
 }
 

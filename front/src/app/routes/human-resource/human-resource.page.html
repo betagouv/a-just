@@ -1,6 +1,7 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
   <div class="wrapper-content" *ngIf="contentieuxReferentiel.length"
-    [ngStyle]="{'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px'}">
+    [ngStyle]="{'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px'}"
+    [class.duringPrint]="duringPrint">
     <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? ''+currentHR.id : undefined"
       [onEditIndex]="onEditIndex" [etp]="currentETP"
@@ -9,7 +10,8 @@
       [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null"
       [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
       (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)" [alertList]="alertList"
-      (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"></cover-profil-details>
+      (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"
+      [class.duringPrint]="duringPrint"></cover-profil-details>
 
     <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
       <div id="top-scroll-anchor" class="anchor"></div>

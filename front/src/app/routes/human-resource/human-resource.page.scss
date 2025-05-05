@@ -9,6 +9,10 @@
   margin-top: 8px;
   gap: 8px;
   overflow: auto;
+
+  &.duringPrint {
+    overflow: inherit;
+  }
 }
 
 .anchor {
