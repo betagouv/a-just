@@ -546,7 +546,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             100 - totalAffected
           )}% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           secondaryText: 'Compléter la situation',
-          callbackSecondary: () => {},
+          callbackSecondary: () => {
+            this.scrollToBottomElement();
+          },
           okText: "Enregistrer en l'état",
           callback: () => {
             this.onSave(true, saveETPT0);
