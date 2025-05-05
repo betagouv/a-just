@@ -24,7 +24,7 @@
     <actual-panel-situation *ngIf="currentHR && histories.length && showActuelPanel" [currentHR]="currentHR"
       [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
       [canEdit]="!duringPrint && indexOfTheFuture !== null"
-      [canRemoveSituation]="!duringPrint && indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
+      [canRemoveSituation]="!duringPrint && indexOfTheFuture !== null && histories[indexOfTheFuture].id !== -1 ? histories[indexOfTheFuture].situationForTheFirstTime : false"
       [etp]="indexOfTheFuture !== null ? (histories[indexOfTheFuture].etp || 0) : 0"
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
@@ -66,9 +66,10 @@
       <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [category]="h.category" [id]="h.id"
         [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
         [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-        [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
-        [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
-        (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint" [isPast]="false">
+        [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
+        (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
+        (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
+        [forceToShowContentieuxDetail]="duringPrint" [isPast]="false">
       </panel-history-ventilation>
     </div>
 
@@ -81,9 +82,10 @@
       <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [category]="h.category"
         [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
         [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-        [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
-        [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
-        (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint" [isPast]="true">
+        [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
+        (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
+        (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
+        [forceToShowContentieuxDetail]="duringPrint" [isPast]="true">
       </panel-history-ventilation>
     </div>
 
