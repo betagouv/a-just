@@ -256,15 +256,16 @@ input[type="number"] {
       }
 
       >.top {
-        border-bottom: 1px solid fColor(lightBorder);
-        height: 48px;
         margin: initial;
-        padding: 8px 16px;
         display: flex;
-        align-items: center;
+        justify-content: flex-end;
 
         >p {
           height: fit-content;
+        }
+
+        >div {
+          padding: 8px 16px;
         }
       }
 
@@ -400,6 +401,13 @@ input[type="number"] {
 
       .indispo-content {
         padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        >div {
+          margin-right: 0;
+        }
       }
 
       .indispo-header {
