@@ -499,7 +499,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           etp = 0;
         }
 
-        const id = (findSituation && findSituation.id) || -1;
+        let id = (findSituation && findSituation.id) || -1;
+        if (this.histories.find((h) => h.id === id)) {
+          id = -1;
+        }
 
         // add stop date
         if (this.histories.length) {
@@ -1002,13 +1005,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param history
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
-    console.log(history);
+    console.log(history, this.histories);
 
     const index = history
       ? this.histories.findIndex(
           (h) => h.id === history.id && h.dateStart === history.dateStart
         )
       : -1;
+    console.log('index', index);
 
     if (this.onEditIndex === null) {
       if (index === -1) {
