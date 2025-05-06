@@ -103,8 +103,7 @@
 }
 
 .second-row {
-  padding: 16px 24px;
-  //padding: 8px 24px 14px 24px;
+  padding: 0 12px 12px 12px;
   display: flex;
   justify-content: space-between;
   align-items: stretch;
@@ -139,17 +138,22 @@
       width: inherit;
       min-width: 180px;
       overflow: hidden;
+      padding: 4px 8px;
+      border-radius: 4px;
 
       &::placeholder {
         color: #aeaeae;
       }
 
-      &:focus {
-        outline: 1px solid #6a6af4 !important;
-        background-color: #ededed;
-        color: fColor(cblack);
+      &:hover {
+        border: 1px solid #DDD;
+        background-color: #F6F6F6;
       }
 
+      &:focus {
+        border: 1px solid #DDD;
+        background-color: #F6F6F6;
+      }
     }
 
     .input-wrapper {
@@ -157,13 +161,9 @@
       min-width: 200px;
       box-sizing: border-box;
       line-height: 1em;
-      padding: 4px 8px;
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
-      border: 1px solid #DDD;
-      border-radius: 4px;
-      background-color: #F6F6F6;
     }
   }
 
