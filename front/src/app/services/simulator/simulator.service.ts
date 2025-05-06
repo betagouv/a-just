@@ -278,6 +278,11 @@ export class SimulatorService extends MainClass {
           return 'N/R';
         }
         return toCompute ? data?.etpMag : fixDecimal(data?.etpMag || 0) || '0';
+      case 'etpFon':
+        if (data?.etpFon === null) {
+          return 'N/R';
+        }
+        return toCompute ? data?.etpFon : fixDecimal(data?.etpFon || 0) || '0';
       case 'totalOut': {
         if (data?.totalOut === null) {
           return 'N/R';
@@ -308,11 +313,6 @@ export class SimulatorService extends MainClass {
           return 'N/R';
         }
         return data?.etpCont || '0';
-      case 'etpFon':
-        if (data?.etpFon === null) {
-          return 'N/R';
-        }
-        return data?.etpFon || '0';
       case 'realCoverage': {
         if (data?.realCoverage === null) {
           return 'N/R';
