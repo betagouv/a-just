@@ -1,30 +1,34 @@
-<div class="items" [ngClass]="{ 'ca': getInterfaceType() }">
-  <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index"
-    [ngStyle]="{ 'border-right': header ? '1px solid rgba(0, 0, 0, 0.1)' : '0px'}">
-    <div class="header" *ngIf="header">
-      <p [ngStyle]="{
-        'text-transform' : ref.label.toLowerCase().includes('autres') ? 'uppercase' : '',}">
-        {{ userService.referentielMappingNameByInterface(ref.label).toUpperCase() }}
-      </p>
-      <p class="etp">{{ ref.totalAffected | number: '0.2-2' }}</p>
+<div *ngIf="header" class="header-panel" [ngClass]="{ 'ca': getInterfaceType() }">
+  <div class="sub-item" *ngFor="let ref of referentiel">
+    <div class="text">
+      <div class="label">
+        <p>
+          <b>{{ userService.referentielMappingNameByInterface(ref.label)
+            }}</b>
+        </p>
+      </div>
+      <div class="etp">
+        <p>{{ ref.totalAffected | number: '0.2-2' }}</p>
+      </div>
+      <div class="flex-1"></div>
     </div>
-    <div class="color" *ngIf="header"
-      [ngStyle]="{ 
-        'background-color': userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label)) }">
-    </div>
-    <div class="activity-bar">
-      <progression-bar *ngIf="showPlaceHolder" [color]="PLACEHOLDER_COLOR" class="no-opacity-to-background">
-      </progression-bar>
-      <progression-bar *ngIf="!showPlaceHolder" [percent]="ref.percent" [selected]="canSelectedTopReferentiel"
-        [color]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label))"
-        [colorOpacity]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label), OPACITY)"
-        (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
-        (percentChange)="onChangePercent(referentiel[index], $event)" class="dark-mode">
-      </progression-bar>
+    <div class="color"
+      [ngStyle]="{ 'background-color': userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label)) }">
     </div>
   </div>
 </div>
-
+<div class="activities-panel" [ngStyle]="{'grid-template-columns': 'repeat('+referentiel.length+', 1fr)'}">
+  <div class="sub-item" *ngFor="let ref of referentiel; trackBy: trackById; let index = index">
+    <progression-bar *ngIf="showPlaceHolder" [color]="PLACEHOLDER_COLOR" class="no-opacity-to-background">
+    </progression-bar>
+    <progression-bar *ngIf="!showPlaceHolder" [percent]="ref.percent" [selected]="canSelectedTopReferentiel"
+      [color]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label))"
+      [colorOpacity]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(ref.label), OPACITY)"
+      (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
+      (percentChange)="onChangePercent(referentiel[index], $event)" class="dark-mode">
+    </progression-bar>
+  </div>
+</div>
 
 <div *ngIf="!forceToShowContentieuxDetail && refIndexSelected !== -1" class="sub-panel-activites" [ngStyle]="{
     'border-top-color': userService.referentielMappingColorActivityByInterface(
