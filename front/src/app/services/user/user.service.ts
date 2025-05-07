@@ -1,4 +1,4 @@
-import { inject, Injectable, OnInit, signal } from '@angular/core';
+import { computed, inject, Injectable, OnInit, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ServerService } from '../http-server/server.service';
 import { HumanResourceService } from '../human-resource/human-resource.service';
@@ -20,6 +20,7 @@ import {
   USER_ACCESS_AVERAGE_TIME,
   USER_ACCESS_CALCULATOR,
   USER_ACCESS_DASHBOARD,
+  USER_ACCESS_REAFFECTATOR,
   USER_ACCESS_SIMULATOR,
   USER_ACCESS_VENTILATIONS,
   USER_ACCESS_WHITE_SIMULATOR,
@@ -49,7 +50,39 @@ export class UserService implements OnInit {
    * User infos to signal
    */
   userS = signal<UserInterface | null>(null);
-
+  /**
+   * User can view simulator
+   */
+  canViewSimulator = computed(() => {
+    const user = this.user.getValue();
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
+      ? true
+      : false;
+  });
+  /**
+   * User can view white simulator
+   */
+  canViewWhiteSimulator = computed(() => {
+    const user = this.user.getValue();
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1
+      ? true
+      : false;
+  });
+  /**
+   * User can view reaffectator
+   */
+  canViewReaffectator = computed(() => {
+    const user = this.user.getValue();
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_REAFFECTATOR) !== -1
+      ? true
+      : false;
+  });
   /**
    * Interface front TJ ou CA
    */
@@ -382,22 +415,13 @@ export class UserService implements OnInit {
     if (
       user &&
       user.access &&
-      user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1
+      (user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1 ||
+        user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 ||
+        user.access.indexOf(USER_ACCESS_REAFFECTATOR) !== -1)
     ) {
       menu.push({
         label: 'Simulateurs',
         path: 'simulateur',
-      });
-    }
-    if (
-      user &&
-      user.access &&
-      user.access.indexOf(USER_ACCESS_SIMULATOR) === -1 &&
-      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1
-    ) {
-      menu.push({
-        label: 'Simulateur',
-        path: 'simulateur-sans-donnees',
       });
     }
 

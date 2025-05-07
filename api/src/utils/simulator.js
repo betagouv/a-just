@@ -868,7 +868,7 @@ export function execSimulation (params, simulation, dateStart, dateStop, sufix, 
         simulation.etpMag = params.endSituation.etpMag
         simulation.etpFon =
             (((simulation.magRealTimePerCase || params.endSituation.magRealTimePerCase) * (simulation.totalOut || params.endSituation.totalOut)) /
-              ((environment['nbDaysPerMonthByGreffe'] / 12) * 7)) 
+              (environment['nbDaysPerMonthByGreffe'] * 7)) 
       }
     })
     if (counterExit >= 5) {

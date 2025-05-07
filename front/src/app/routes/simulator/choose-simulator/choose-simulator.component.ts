@@ -47,10 +47,6 @@ export class ChooseSimulatorComponent extends MainClass {
    * Mouse y
    */
   mouseY: number = 0;
-  /**
-   * Accès au réafectateur
-   */
-  canViewReaffectator: boolean = false;
 
   @HostListener('window:mousemove', ['$event']) mouseMove = (
     e: MouseEvent
@@ -64,12 +60,6 @@ export class ChooseSimulatorComponent extends MainClass {
    */
   constructor() {
     super();
-  }
-
-  ngOnInit(): void {
-    const user = this.userService.user.getValue();
-    this.canViewReaffectator =
-      user && user.access && user.access.indexOf(7) !== -1 ? true : false;
   }
 
   onSelect() {

@@ -220,24 +220,4 @@ export default class RouteSimulator extends Route {
     await this.models.Logs.addLog(EXECUTE_SIMULATION, ctx.state.user.id)
     this.sendOk(ctx, 'Ok')
   }
-
-  /**
-   * Log accès au simulateur classique
-   * @param {*} node
-   * @param {*} juridictionId
-   */
-  @Route.Post({
-    accesses: [Access.canVewSimulation],
-  })
-  async checkAccessSimulator (ctx) {}
-
-  /**
-   * Log accès au simulateur classique
-   * @param {*} node
-   * @param {*} juridictionId
-   */
-  @Route.Post({
-    accesses: [Access.canVewWhiteSimulation],
-  })
-  async checkAccessWhiteSimulator (ctx) {}
 }
