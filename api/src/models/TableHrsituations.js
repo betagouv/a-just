@@ -77,22 +77,6 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    // create artificial situation if date start if before the first situation
-    if (
-      dateStart &&
-      list.length &&
-      today(dateStart) < today(list[list.length - 1].dateStart)
-    ) {
-      list.push({
-        etp: 1,
-        dateStart: today(dateStart),
-        dateStartTimesTamps: today(dateStart).getTime(),
-        category: list[list.length - 1].category,
-        fonction: list[list.length - 1].fonction,
-        activities: [],
-      });
-    }
-
     return returnList;
   };
 

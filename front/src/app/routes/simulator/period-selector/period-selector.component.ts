@@ -4,11 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MainClass } from '../../../libs/main-class';
 import { SimulatorService } from '../../../services/simulator/simulator.service';
 import { KPIService } from '../../../services/kpi/kpi.service';
-import {
-  monthDiffList,
-  nbOfDays,
-  setTimeToMidDay,
-} from '../../../utils/dates';
+import { monthDiffList, nbOfDays, setTimeToMidDay } from '../../../utils/dates';
 import {
   DATE_WHITE_SIMULATOR,
   END_DATE_SIMULATOR,
@@ -86,6 +82,11 @@ export class PeriodSelectorComponent
             let now = new Date();
             now.setFullYear(now.getFullYear() + 1);
             this.dateStop = now;
+            this.mooveClass = 'present';
+            this.nbOfMonthWithinPeriod = monthDiffList(
+              this.dateStart,
+              this.dateStop
+            );
           }
           this.dateStart = new Date();
         }
@@ -123,7 +124,8 @@ export class PeriodSelectorComponent
       let now = new Date();
       now.setFullYear(now.getFullYear() + 1);
       this.dateStop = now;
-      console.log(this.dateStop);
+      this.mooveClass = 'present';
+      this.nbOfMonthWithinPeriod = monthDiffList(this.dateStart, this.dateStop);
     }
   }
 
@@ -193,6 +195,11 @@ export class PeriodSelectorComponent
         this.simulatorService.whiteSimulatorNbOfDays.next(
           nbOfDays(this.dateStart, this.dateStop)
         );
+        this.nbOfMonthWithinPeriod = monthDiffList(
+          this.dateStart,
+          this.dateStop
+        );
+        this.mooveClass = 'present';
         this.kpiService.register(DATE_WHITE_SIMULATOR, this.dateStop + '');
       }
     }

@@ -10,8 +10,8 @@ describe('Login Page', () => {
     it('should verify existence of Page Blanche button', () => {
       cy.get('form')
         .should('contain.text', 'Vous avez déjà un compte')
-        // .get('button')
-        // .should('contain.text', 'Se connecter avec Pages Blanches')
+        .get('button')
+        .should('contain.text', 'Se connecter avec Pages Blanches')
     })
 
     it('Try to connect with an invalid email', () => {
@@ -38,10 +38,10 @@ describe('Login Page', () => {
         .get('input[type=password]').type('invalidpassword!8')
         .get('form').submit()
         cy.on("window:alert", (alert) => {
-          expect(alert).to.equal("Email ou mot de passe incorrect.")
+          expect(alert).to.equal("Email ou mot de passe incorrect")
           }
         )
-        cy.get('.error-message').should('contain.text', 'Email ou mot de passe incorrect.')
+        cy.get('.error-message').should('contain.text', 'Email ou mot de passe incorrect')
     })
 
     it('should verify login functionality with username and password and button can be clicked', () => {
@@ -52,5 +52,7 @@ describe('Login Page', () => {
         .get('input[type=email]').type(user.email)
         .get('input[type=password]').type(user.password)
         .get('form').submit();
+      cy.location('pathname')
+        .should('include', '/panorama');
     })
 })
