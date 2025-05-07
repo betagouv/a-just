@@ -554,7 +554,6 @@ export class WhiteSimulatorPage
   constructor() {
     super();
 
-    this.serverService.post('simulator/check-access-white-simulator');
     this.watch(this.appService.appLoading.subscribe((a) => (this.loaded = !a)));
 
     this.watch(
