@@ -36,19 +36,21 @@
         font-size: 12px;
         line-height: 20px;
         border-radius: 12px;
-        background-color: white;
+        color: fColor(cbluedark);
+        background-color: fColor(cbluemiddle);
 
-        &.fonction,
-        &.time-worked {
-          color: fColor(cbluedark);
-          background-color: fColor(cbluemiddle);
-        }
+        // &.fonction,
+        // &.time-worked {
+        //   color: fColor(cbluedark);
+        //   background-color: fColor(cbluemiddle);
+        // }
       }
     }
 
     .past-tag {
       p {
         background-color: #DFDFDF;
+        color: fColor(cblack);
       }
     }
 
