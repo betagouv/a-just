@@ -15,6 +15,8 @@ import session from "koa-session";
 import { RateLimit } from "koa2-ratelimit";
 import { styleSha1Generate } from "./utils/csp";
 import * as Sentry from "@sentry/node";
+import authBasic from "http-auth";
+import { writeFileSync } from "fs";
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -36,6 +38,18 @@ setInterval(() => {
     console.log('WHO I AM', userName) // admin
   })
 }, 30000)*/
+
+let basicAuth = null;
+
+if (config.authPasswordFile) {
+  writeFileSync("htaccess.txt", config.authPasswordFile);
+  basicAuth = authBasic.basic({
+    realm: "BO",
+    file: "htaccess.txt",
+    skipUser: true,
+    //proxy: true,
+  });
+}
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
@@ -117,41 +131,47 @@ export default class App extends AppBase {
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
           directives: {
-            'media-src': ["'self'", "https://client.crisp.chat"],
-            'connect-src': [
-              'https://api.gitbook.com',
-              'https://www.google-analytics.com/j/collect',
+            "media-src": ["'self'", "https://client.crisp.chat"],
+            "connect-src": [
+              "https://api.gitbook.com",
+              "https://www.google-analytics.com/j/collect",
               "'self'",
-              'https://api.mapbox.com',
-              'https://events.mapbox.com',
-              'https://stats.beta.gouv.fr',
-              'https://forms-eu1.hsforms.com',
-              'https://hubspot-forms-static-embed-eu1.s3.amazonaws.com',
-              'https://stats.beta-gouv.cloud-ed.fr',
-              'https://*.hotjar.com',
-              'https://*.hotjar.io',
-              'wss://*.hotjar.com',
-              '*.justice.gouv.fr',
-              'https://client.crisp.chat',
-              'https://storage.crisp.chat',
-              'wss://client.relay.crisp.chat',
-              'wss://stream.relay.crisp.chat'
+              "https://api.mapbox.com",
+              "https://events.mapbox.com",
+              "https://stats.beta.gouv.fr",
+              "https://forms-eu1.hsforms.com",
+              "https://hubspot-forms-static-embed-eu1.s3.amazonaws.com",
+              "https://stats.beta-gouv.cloud-ed.fr",
+              "https://*.hotjar.com",
+              "https://*.hotjar.io",
+              "wss://*.hotjar.com",
+              "*.justice.gouv.fr",
+              "https://client.crisp.chat",
+              "https://storage.crisp.chat",
+              "wss://client.relay.crisp.chat",
+              "wss://stream.relay.crisp.chat",
             ],
-            'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com', 'https://client.crisp.chat'],
-            'img-src': [
+            "font-src": [
               "'self'",
-              'data:',
-              'https://js-eu1.hsforms.net',
-              'https://api.hubspot.com',
-              'https://forms-eu1.hsforms.com',
-              'https://forms.hsforms.com',
-              'https://www.ionos.fr',
-              'https://img.freepik.com',
-              'https://image.noelshack.com',
-              'https://i.goopics.net/',
-              'https://client.crisp.chat',
-              'https://image.crisp.chat',
-              'https://storage.crisp.chat'
+              "https://fonts.gstatic.com",
+              "data:",
+              "https://*.hotjar.com",
+              "https://client.crisp.chat",
+            ],
+            "img-src": [
+              "'self'",
+              "data:",
+              "https://js-eu1.hsforms.net",
+              "https://api.hubspot.com",
+              "https://forms-eu1.hsforms.com",
+              "https://forms.hsforms.com",
+              "https://www.ionos.fr",
+              "https://img.freepik.com",
+              "https://image.noelshack.com",
+              "https://i.goopics.net/",
+              "https://client.crisp.chat",
+              "https://image.crisp.chat",
+              "https://storage.crisp.chat",
             ],
             // "img-src": [
             //   "'self'",
@@ -183,19 +203,31 @@ export default class App extends AppBase {
               "'sha256-6x6g2SYysPsSMI15om2cLqbYnqaoyjXQD+Aivk9OP4U='",
               "'sha256-A+0b+HOyTgrPPZgW1Tcb6UJIvj7fs09WPLWFtyqq1ks='",
               //...scriptSha1Generate([`${__dirname}/front/index.html`]),
-              'https://client.crisp.chat',
-              'https://settings.crisp.chat',
+              "https://client.crisp.chat",
+              "https://settings.crisp.chat",
             ],
-            'default-src': ["'none'"],
-            'style-src': ["'self'", ...styleSha1Generate([`${__dirname}/front/index.html`, ]), 'cdnjs.cloudflare.com', "'sha256-Ks+4bfA56EzWbsVt5/a+A7rCibdXWRQVb7y2dkDLIZM='", "'sha256-MKASWYfd3dGFQes9nQT5XnslE3xYlnUb4cHpxhk4fag='", "'sha256-eK2nDKvEyw7RbvnsAc4UTeSvLsouV8qnHxl0X48dCbs='", 'https://client.crisp.chat', "'sha256-7Vo533bZB5hNdpZy9SiCUDc3JcgD9jqDXEc9aVAk5nY='", "'sha256-UP0QZg7irvSMvOBz9mH2PIIE28+57UiavRfeVea0l3g='", "'sha256-Mj/pDR/CuVebTo+8zwX6PU1+MXNnrzFL+dgRa0Q0JF0='", "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='"],
-            'worker-src': ['blob:'],
-            'frame-src': [
-              'https://app.videas.fr/',
-              'https://docs.a-just.beta.gouv.fr',
-              'https://meta.a-just.beta.gouv.fr',
-              'https://forms-eu1.hsforms.com/',
-              'https://calendly.com',
-              'https://game.crisp.chat'
+            "default-src": ["'none'"],
+            "style-src": [
+              "'self'",
+              ...styleSha1Generate([`${__dirname}/front/index.html`]),
+              "cdnjs.cloudflare.com",
+              "'sha256-Ks+4bfA56EzWbsVt5/a+A7rCibdXWRQVb7y2dkDLIZM='",
+              "'sha256-MKASWYfd3dGFQes9nQT5XnslE3xYlnUb4cHpxhk4fag='",
+              "'sha256-eK2nDKvEyw7RbvnsAc4UTeSvLsouV8qnHxl0X48dCbs='",
+              "https://client.crisp.chat",
+              "'sha256-7Vo533bZB5hNdpZy9SiCUDc3JcgD9jqDXEc9aVAk5nY='",
+              "'sha256-UP0QZg7irvSMvOBz9mH2PIIE28+57UiavRfeVea0l3g='",
+              "'sha256-Mj/pDR/CuVebTo+8zwX6PU1+MXNnrzFL+dgRa0Q0JF0='",
+              "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='",
+            ],
+            "worker-src": ["blob:"],
+            "frame-src": [
+              "https://app.videas.fr/",
+              "https://docs.a-just.beta.gouv.fr",
+              "https://meta.a-just.beta.gouv.fr",
+              "https://forms-eu1.hsforms.com/",
+              "https://calendly.com",
+              "https://game.crisp.chat",
             ],
             "worker-src": ["blob:"],
             "frame-src": [
@@ -239,6 +271,20 @@ export default class App extends AppBase {
         }
 
         await next();
+      },
+      async (ctx, next) => {
+        if (ctx.url.includes("/ap-bo/") && basicAuth) {
+          await basicAuth.check((req, res, err) => {
+            console.log("ici");
+            if (err) {
+              throw err;
+            } else {
+              next();
+            }
+          })(ctx.req, ctx.res);
+        } else {
+          await next();
+        }
       },
     ]);
 
