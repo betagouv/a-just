@@ -8,6 +8,10 @@
   border-radius: 8px;
   background-color: white;
 
+  &.duringPrint {
+    position: relative;
+  }
+
   .error {
     // border: 1px solid #0063CB;
     // background-color: #F5F5FE !important;
@@ -99,8 +103,7 @@
 }
 
 .second-row {
-  padding: 16px 24px;
-  //padding: 8px 24px 14px 24px;
+  padding: 0 12px 12px 12px;
   display: flex;
   justify-content: space-between;
   align-items: stretch;
@@ -124,7 +127,8 @@
 
     input {
       border: none;
-      font-weight: bold;
+      font-size: 20px;
+      font-weight: 700;
       white-space: wrap;
       outline: none;
       color: fColor(cblack);
@@ -134,17 +138,22 @@
       width: inherit;
       min-width: 180px;
       overflow: hidden;
+      padding: 4px 8px;
+      border-radius: 4px;
 
       &::placeholder {
         color: #aeaeae;
       }
 
-      &:focus {
-        outline: 1px solid #6a6af4 !important;
-        background-color: #ededed;
-        color: fColor(cblack);
+      &:hover {
+        border: 1px solid #DDD;
+        background-color: #F6F6F6;
       }
 
+      &:focus {
+        border: 1px solid #DDD;
+        background-color: #F6F6F6;
+      }
     }
 
     .input-wrapper {
@@ -152,13 +161,9 @@
       min-width: 200px;
       box-sizing: border-box;
       line-height: 1em;
-      padding: 4px 8px;
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
-      border: 1px solid #DDD;
-      border-radius: 4px;
-      background-color: #F6F6F6;
     }
   }
 
@@ -166,15 +171,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-
-    width: 100%;
     flex-wrap: wrap;
-
-    input {
-      font-size: 14px;
-      line-height: 24px;
-    }
-
   }
 
   .last-row {
@@ -183,8 +180,8 @@
     gap: 4px;
 
     input {
+      font-weight: normal;
       font-size: 12px;
-      line-height: 20px;
     }
   }
 

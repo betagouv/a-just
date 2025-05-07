@@ -64,9 +64,10 @@ describe("Ajout d'un agent", () => {
     
     cy.get('.dates').get('aj-date-select').eq(1)
       .click().get('mat-datepicker')
-      //select Year
+    //   //select Year
+      .get('mat-datepicker')
       .get('button[aria-label="Choose month and year"]').click()
-      .get('.mat-calendar-body-cell-content').contains(date.getFullYear()).click()
+        .get('.mat-calendar-body-cell-content').contains(date.getFullYear()).click()
       //select month
       .get('.mat-calendar-body-cell-content').contains( getShortMonthString(date).toUpperCase() ).click()
       //select date
@@ -137,8 +138,7 @@ describe("Ajout d'un agent", () => {
 
     const integers = []
     let randInt = Math.floor(Math.random() * 11)
-    cy.get('.activities')
-    .get('panel-activities')
+    cy.get('panel-activities')
     
     for(let i = 0; i < 4; i++) {
       while (integers.includes(randInt))
@@ -147,8 +147,8 @@ describe("Ajout d'un agent", () => {
       
      let pos = integers[integers.length - 1]
 
-     cy.get('.items').within(() => {
-      cy.get('.activity-bar')
+     cy.get('.activities-panel').within(() => {
+      cy.get('.sub-item')
         .eq(pos)
         .click()
       })

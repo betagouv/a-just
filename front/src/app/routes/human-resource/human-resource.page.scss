@@ -9,6 +9,10 @@
   margin-top: 8px;
   gap: 8px;
   overflow: auto;
+
+  &.duringPrint {
+    overflow: inherit;
+  }
 }
 
 .anchor {
@@ -27,7 +31,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background-color: white;
+  background-color: fColor(activityBgColor);
   border-radius: 8px;
   padding-bottom: 8px;
   border: 1px solid fColor(lightBorder);

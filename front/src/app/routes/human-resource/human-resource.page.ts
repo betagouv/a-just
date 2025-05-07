@@ -499,7 +499,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           etp = 0;
         }
 
-        const id = (findSituation && findSituation.id) || -1;
+        let id = (findSituation && findSituation.id) || -1;
+        if (this.histories.find((h) => h.id === id)) {
+          id = -1;
+        }
 
         // add stop date
         if (this.histories.length) {
@@ -1002,13 +1005,14 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param history
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
-    console.log(history);
+    console.log(history, this.histories);
 
     const index = history
       ? this.histories.findIndex(
           (h) => h.id === history.id && h.dateStart === history.dateStart
         )
       : -1;
+    console.log('index', index);
 
     if (this.onEditIndex === null) {
       if (index === -1) {
@@ -1203,12 +1207,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       // Scroll to the "Start Date" selector if it's the last element to complete.
       // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
-      if (
-        this.alertList.length === 1 &&
-        this.alertList[0] === 'activitiesStartDate'
-      ) {
-        if (this.addDomVentilation)
-          this.addDomVentilation.scrollToBottomElement();
+      if (this.alertList.length > 0) {
+        if (this.alertList.includes('activitiesStartDate')) {
+          if (this.addDomVentilation)
+            this.addDomVentilation.scrollToBottomElement();
+        } else if (this.alertList.includes('etp')) {
+          this.scrollTo(
+            'etpForm',
+            document.getElementsByClassName('wrapper-content')[0],
+            250
+          );
+        }
       }
     }
     if (index !== undefined) {

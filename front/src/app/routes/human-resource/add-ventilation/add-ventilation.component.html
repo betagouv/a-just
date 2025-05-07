@@ -6,6 +6,7 @@
 
         <div class="tags">
           <p *ngIf="lastDateStart">
+            A partir du
             {{ lastDateStart | date : 'dd' }}
             {{ getShortMonthString(lastDateStart) }}
             {{ lastDateStart.getFullYear() }}
@@ -15,6 +16,7 @@
               lastDateStart &&
               lastDateStart.getTime() !== dateStop.getTime()
             ">
+            Jusqu'au
             {{ dateStop | date : 'dd' }}
             {{ getShortMonthString(dateStop) }}
             {{ dateStop.getFullYear() }}
@@ -49,9 +51,6 @@
     <span class="middle">
       <div class="administration" id="admin">
         <div class="top">
-
-          <p>Situation administrative</p>
-          <div class="flex-1"></div>
           <div class="drop-down-container" *ngIf="!isEdit && !saveActions">
             <label id="drop-down2" class="drop-down" (click)="toggleDropDown=!toggleDropDown"
               (blur)="toggleDropDown=!toggleDropDown">
@@ -113,7 +112,7 @@
           </div>
           <div class="admin-element"
             [ngClass]="{'error': form.get('etp')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': alertList.includes('etp')}">
+            [ngClass]="{'error': alertList.includes('etp')}" id="etpForm">
             <div class="label-aj">
               Temps de travail (en ETPT) :
             </div>
@@ -156,18 +155,20 @@
             'background-color' : sumPercentImported !==100?'#feebd0':'#b8fec9'}"><i
               class="ri-checkbox-circle-fill"></i>{{sumPercentImported !==100?'à
             compléter':'importé'}}</label>
+
+          <div class="ressources">
+            <p>Ressources :</p>
+            <a (click)="downloadAsset('nomencalture')" class="download">
+              La nomenclature
+              <mat-icon>launch</mat-icon>
+            </a>
+            <a (click)="downloadAsset('calculator')" class="download">
+              Calculatrice de ventilations
+              <mat-icon>download</mat-icon>
+            </a>
+          </div>
         </div>
-        <div class="ressources">
-          <p>Ressources :</p>
-          <a (click)="downloadAsset('nomencalture')" class="download">
-            La nomenclature
-            <mat-icon>launch</mat-icon>
-          </a>
-          <a (click)="downloadAsset('calculator')" class="download">
-            Télécharger la calculatrice de ventilations
-            <mat-icon>download</mat-icon>
-          </a>
-        </div>
+
         <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
           [indexSituation]="indexSituation" (referentielChange)="onNewReferentiel($event)" #panelActivities
           [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit">
@@ -188,14 +189,14 @@
               compléter'}}</label>
           </div>
 
-          <div class="date-start-content">
-            <aj-date-select title="A compter du" [value]="isEdit ? form.get('activitiesStartDate')?.value : null"
-              (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false"
-              [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
+          <div class="date-start-content"
+            [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
+            <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
+              (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
             </aj-date-select>
             <aj-alert-small *ngIf="alertList.includes('activitiesStartDate')"
               alertMessage='Vous devez saisir une date de début de situation !'
-              (onClose)="removeAlertItem(alertList.indexOf('activitiesStartDate'))">
+              (onClose)="removeAlertItem(alertList.indexOf('activitiesStartDate'))" class="fix-width">
             </aj-alert-small>
           </div>
 

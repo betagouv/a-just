@@ -198,7 +198,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Formulaire de saisie
    */
   form = new FormGroup({
-    activitiesStartDate: new FormControl(new Date(), [Validators.required]),
+    activitiesStartDate: new FormControl<Date | null>(null, [
+      Validators.required,
+    ]),
     etp: new FormControl<number | null>(null, [
       Validators.min(0),
       Validators.max(1),
@@ -264,6 +266,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Au chargement charger les catégories et fonctions
    */
   ngOnInit() {
+    console.log('editId', this.editId);
     window.addEventListener('click', this.onclick.bind(this));
     window.addEventListener('click', this.onclick2.bind(this));
     this.watch(
@@ -383,7 +386,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.etp = etp;
     this.form
       .get('activitiesStartDate')
-      ?.setValue(this.lastDateStart ? new Date(this.lastDateStart) : null);
+      ?.setValue(
+        this.isEdit && this.lastDateStart ? new Date(this.lastDateStart) : null
+      );
     this.form.get('etp')?.setValue(etp === null ? null : fixDecimal(etp));
     this.form
       .get('categoryId')
@@ -541,7 +546,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             100 - totalAffected
           )}% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           secondaryText: 'Compléter la situation',
-          callbackSecondary: () => {},
+          callbackSecondary: () => {
+            this.scrollToBottomElement();
+          },
           okText: "Enregistrer en l'état",
           callback: () => {
             this.onSave(true, saveETPT0);
@@ -627,6 +634,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     fonct: HRFonctionInterface
   ) {
     let situations = this.human?.situations || [];
+
+    console.log(
+      'Situations:',
+      situations,
+      newReferentiel,
+      activitiesStartDate,
+      this.editId
+    );
+
     const activities: any[] = [];
     newReferentiel
       .filter((r) => r.percent && r.percent > 0)
@@ -652,6 +668,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
       );
     });
+    console.log('isSameDate:', isSameDate);
 
     const options = {
       etp: profil.etp,

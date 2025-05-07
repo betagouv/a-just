@@ -307,9 +307,10 @@ export class CoverProfilDetailsComponent
           this.alertSet.emit({ index: index });
         }
       }
-      if (nodeName === 'dateStart' || nodeName === 'dateEnd') {
-        this.onFocusNext(null, nodeName);
-      }
+      // if (nodeName === 'dateStart' /*|| nodeName === 'dateEnd'*/) {
+      //   console.log('dateStart:', value);
+      //   this.onFocusNext(null, nodeName);
+      // }
       this.ficheIsUpdated.emit(newHR);
     }
   }
@@ -333,7 +334,6 @@ export class CoverProfilDetailsComponent
    * @param event
    */
   onFocusNext(event: any, calendarType?: string) {
-    console.log("'focusNext', event, isCalendar);");
     this.focusNext.emit({ event: event, calendarType: calendarType ?? null });
   }
 

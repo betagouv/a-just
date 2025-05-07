@@ -118,7 +118,11 @@ export class SimulatorService extends MainClass {
     this.watch(
       this.selectedFonctionsIds.subscribe(() => {
         if (this.contentieuOrSubContentieuId.getValue() !== null) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue());
+          this.getSituation(
+            this.contentieuOrSubContentieuId.getValue(),
+            this.dateStart.getValue(),
+            this.dateStop.getValue()
+          );
         }
       })
     );
@@ -177,6 +181,7 @@ export class SimulatorService extends MainClass {
         .then((data) => {
           if (dateStop) {
             this.situationProjected.next(data.data.situation.endSituation);
+            this.situationActuelle.next(data.data.situation);
           } else this.situationActuelle.next(data.data.situation);
         })
         .then(() => this.isLoading.next(false));
@@ -273,6 +278,11 @@ export class SimulatorService extends MainClass {
           return 'N/R';
         }
         return toCompute ? data?.etpMag : fixDecimal(data?.etpMag || 0) || '0';
+      case 'etpFon':
+        if (data?.etpFon === null) {
+          return 'N/R';
+        }
+        return toCompute ? data?.etpFon : fixDecimal(data?.etpFon || 0) || '0';
       case 'totalOut': {
         if (data?.totalOut === null) {
           return 'N/R';
@@ -303,11 +313,6 @@ export class SimulatorService extends MainClass {
           return 'N/R';
         }
         return data?.etpCont || '0';
-      case 'etpFon':
-        if (data?.etpFon === null) {
-          return 'N/R';
-        }
-        return data?.etpFon || '0';
       case 'realCoverage': {
         if (data?.realCoverage === null) {
           return 'N/R';
