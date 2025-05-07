@@ -250,4 +250,8 @@ module.exports = {
       "86.234.115.218", // IP de Andrée
     ],
   },
+  /**
+   * authPasswordFile to BO
+   */
+  authPasswordFile: process.env.AUTH_PASSWORD_FILE,
 };

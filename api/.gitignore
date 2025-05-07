@@ -13,3 +13,4 @@ output.pdf
 src/public/tmp
 .output
 .error.log
+htaccess.txt
