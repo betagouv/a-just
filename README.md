@@ -56,13 +56,6 @@ Passer en mode tunnel
 scalingo --app a-just-staging db-tunnel "DATABASE_URL"
 ```
 
-## Configuration du DNS
-
-Always Data
-https://admin.alwaysdata.com/
-francois-xavier.montigny@beta.gouv.fr
-Demander le mot de passe à FX
-
 ## Visibilité des logs serveur utilisateurs
 
 URL en GET, il faut utiliser Postman pour saisir un mot de passe en Baerer.
