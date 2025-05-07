@@ -42,7 +42,7 @@ setInterval(() => {
 let basicAuth = null;
 
 if (config.authPasswordFile) {
-  writeFileSync("htaccess.txt", config.authPasswordFile);
+  writeFileSync("htaccess.txt", config.authPasswordFile.replace(/\\n/g, '\n'), 'utf8');
   basicAuth = authBasic.basic({
     realm: "BO",
     file: "htaccess.txt",
