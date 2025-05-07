@@ -9,12 +9,15 @@
       <div class="title">
         <p>Projetez une situation future</p>
 
-        <p class="circle" [class.selected]="selectedSimulator === SIMULATOR_DONNEES"
+        <p *ngIf="userService.canViewSimulator()" class="circle"
+          [class.selected]="selectedSimulator === SIMULATOR_DONNEES"
           (click)="selectedSimulator = SIMULATOR_DONNEES; onSelect()">avec les données d’A-JUST</p>
+        <p *ngIf="!userService.canViewSimulator()" class="circle-disable">avec les données d’A-JUST</p>
 
-
-        <p class="circle" [class.selected]="selectedSimulator === SIMULATOR_OTHER_ACTIVITY"
+        <p *ngIf="userService.canViewWhiteSimulator()" class="circle"
+          [class.selected]="selectedSimulator === SIMULATOR_OTHER_ACTIVITY"
           (click)="selectedSimulator = SIMULATOR_OTHER_ACTIVITY; onSelect()">pour une autre activité</p>
+        <p *ngIf="!userService.canViewWhiteSimulator()" class="circle-disable">pour une autre activité</p>
       </div>
       <div class="samples">
         <p>Par exemple :</p>
@@ -36,7 +39,8 @@
         Sélectionnez une option
       </div>
     </div>
-    <div *ngIf="canViewReaffectator" class="reaffectator" [class.selected]="selectedSimulator === REAFFECTATOR">
+    <div *ngIf="userService.canViewReaffectator()" class="reaffectator"
+      [class.selected]="selectedSimulator === REAFFECTATOR">
       <div class="header">
         <img src="/assets/simulator/reaffectator.svg" alt="reaffectator" />
       </div>

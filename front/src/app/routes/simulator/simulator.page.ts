@@ -708,8 +708,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
   constructor() {
     super();
 
-    this.serverService.post('simulator/check-access-simulator');
-
     this.watch(
       this.simulatorService.disabled.subscribe((disabled) => {
         this.disabled = disabled;
