@@ -1236,11 +1236,12 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     event: any;
     calendarType: string | null;
   }) {
-    console.log('event:', event);
-    console.log('calendarType:', calendarType);
+    // if (event.key === 'Tab') {
+    //   event.preventDefault();
+    // }
+    // console.log('here');
     if (
-      (event && event.key === 'Tab') ||
-      (event && event.key === 'Enter') ||
+      (event && event.key === 'Enter' /*|| event.key === 'Tab'*/) ||
       calendarType
     ) {
       const inputsArray = this.coverDetails.getInputs();
