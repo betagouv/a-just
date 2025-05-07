@@ -434,7 +434,7 @@
           <div class="modified-label simulated blue" #tooltip="matTooltip" [matTooltip]="getTooltipText()"
             [matTooltipClass]="{'tooltip-gray':true}" matTooltipPosition="left" matTooltipShowDelay="0"
             matTooltipHideDelay="0"
-            *ngIf="!(paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon') && getFieldValue('etpFon',simulatedSationData)!==getFieldValue('etpFon',firstSituationData) && whiteSimulator===false"
+            *ngIf="!(paramsToAjust.param1.label==='etpFon'  || paramsToAjust.param2.label==='etpFon') && getFieldValue('etpFon',simulatedSationData)!==getFieldValue('etpFon',firstSituationData)"
             [@fadeInOut]>
             {{ratioStr(getFieldValue('etpFon',simulatedSationData),getFieldValue('etpFon',firstSituationData))}}
 
