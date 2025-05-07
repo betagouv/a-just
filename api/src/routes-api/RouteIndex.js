@@ -24,14 +24,14 @@ class RouteIndex extends Route {
   /**
    * Interface qui retourne les versions du serveur
    */
-  @Route.Get({ path: '/' })
+  /*@Route.Get({ path: '/' })
   index (ctx) {
     this.sendOk(ctx, {
       name: packageJson.name,
       version: packageJson.version,
       envName: config.envName,
     })
-  }
+  }*/
 }
 
 export default RouteIndex
