@@ -394,14 +394,21 @@ export default (sequelizeInstance, Model) => {
           juridiction: list[i].juridiction || '',
         }
 
-        list[i].date_aff = list[i].date_aff.replace(/#/, '')
-        const dateSplited = list[i].date_aff.split('/')
-        if (dateSplited.length === 3) {
-          options.date_entree = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
-          situation.date_start = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
-        }
+        const cleanDate = (dateStr) => dateStr.replace(/#/, '').split('/').map(Number);
 
-        //console.log(options, situation)
+        const dateAff = cleanDate(list[i].date_aff);
+        const dateAffHAC = cleanDate(list[i].date_aff_hors_anc_cons);
+        
+        if (dateAffHAC.length === 3 && dateAff.length === 3){
+          const date1 = new Date(dateAff[2], dateAff[1] - 1, dateAff[0]);
+          const date2 = new Date(dateAffHAC[2], dateAffHAC[1] - 1, dateAffHAC[0]);
+          
+          if (date1 > date2) {
+            options.date_entree = situation.date_start = date2;
+          } else {
+            options.date_entree = situation.date_start = date1;
+          }
+        } 
 
         // create person
         findHRToDB = await Model.create(options)
