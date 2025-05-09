@@ -509,8 +509,8 @@ export class HumanResourceService {
    * @param situationId
    * @returns
    */
-  removeSituation(situationId: number) {
-    if (confirm('Supprimer cette situation ?')) {
+  removeSituation(situationId: number, forceAlert: boolean = true) {
+    if (!forceAlert || confirm('Supprimer cette situation ?')) {
       return this.serverService
         .delete(`human-resources/remove-situation/${situationId}`)
         .then((response) => {
