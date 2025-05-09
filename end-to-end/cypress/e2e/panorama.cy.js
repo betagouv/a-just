@@ -98,6 +98,40 @@ describe('Panorama page', () => {
       .should('contain.text', 'Contractuel')
   })
 
+  it("Check that if we add a CLE value for each agent category, they are well saved", () => {
+    const cleValues = ['4', '32', '10'];
+
+    cy.get('.container-panorama')
+    .find('.workforce-panel workforce-composition')
+    .within(() => {
+      cleValues.forEach((value, index) => {
+        cy.get('.cards')
+          .find('.category')
+          .eq(index)
+          .within(() => {
+            cy.get('.middle input').clear().type(value);
+          });
+      });
+    });
+
+    cy.wait(1000)
+
+    cy.reload().then(() => {
+      cy.get('.container-panorama')
+        .find('.workforce-panel workforce-composition')
+        .within(() => {
+          cleValues.forEach((expectedValue, index) => {
+            cy.get('.cards')
+              .find('.category')
+              .eq(index)
+              .within(() => {
+                cy.get('.middle input').should('have.value', expectedValue);
+              });
+          });
+        });
+    });
+  })
+
   it("Check that we have 3 cards in 'Actualisation des fiches'", () => {
     cy.get('.container-panorama')
       .get('.workforce-panel')
