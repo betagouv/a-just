@@ -10,7 +10,7 @@ describe('Login Page', () => {
     it('should verify existence of Page Blanche button', () => {
       cy.get('form')
         .should('contain.text', 'Vous avez déjà un compte')
-        .get('button')
+        .get('.sso-bt')
         .should('contain.text', 'Se connecter avec Pages Blanches')
     })
 
