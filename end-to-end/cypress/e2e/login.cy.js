@@ -8,10 +8,13 @@ describe('Login Page', () => {
     })
 
     it('should verify existence of Page Blanche button', () => {
-      cy.get('form')
+      const ssoIsActivate = Cypress.env('NG_APP_ENABLE_SSO')
+      if (ssoIsActivate) {
+        cy.get('form')
         .should('contain.text', 'Vous avez déjà un compte')
-        .get('button')
+        .get('.sso-bt')
         .should('contain.text', 'Se connecter avec Pages Blanches')
+      }
     })
 
     it('Try to connect with an invalid email', () => {

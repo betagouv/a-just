@@ -1042,17 +1042,37 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param id
    */
   async onRemoveSituation(id: number) {
-    const returnValue = await this.humanResourceService.removeSituation(id);
-    this.onEditIndex = null;
-
-    // console.log(returnValue, this.histories.length, this.onEditIndex)
-    if (returnValue) {
-      // force to not show on boarding after delete last situation
-      this.onLoad(returnValue);
-    }
-
-    if (this.histories.length === 0) {
+    const callback = async (forceAlert = true) => {
+      const returnValue = await this.humanResourceService.removeSituation(
+        id,
+        forceAlert
+      );
       this.onEditIndex = null;
+
+      // console.log(returnValue, this.histories.length, this.onEditIndex)
+      if (returnValue) {
+        // force to not show on boarding after delete last situation
+        this.onLoad(returnValue);
+      }
+
+      if (this.histories.length === 0) {
+        this.onEditIndex = null;
+      }
+    };
+
+    if (this.currentHR && this.currentHR.situations.length === 1) {
+      this.appService.alert.next({
+        title: 'Attention : ',
+        text: `La suppression de cette situation entraînera la suppression de la fiche agent et cette opération sera irréversible.<br/><br/>Si l'agent a quitté la juridiction, nous vous invitons à renseigner une date de départ.<br/><br/>S’il fait toujours partie de vos effectifs, vous pouvez corriger ou conserver cette situation en l'état.`,
+        secondaryText: 'Conserver cette fiche',
+        callbackSecondary: () => {},
+        okText: 'Supprimer cette fiche',
+        callback: () => {
+          callback(false);
+        },
+      });
+    } else {
+      callback(true);
     }
   }
 
@@ -1241,7 +1261,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     // }
     // console.log('here');
     if (
-      (event && event.key === 'Enter' /*|| event.key === 'Tab'*/) ||
+      (event && event.key === 'Enter') /*|| event.key === 'Tab'*/ ||
       calendarType
     ) {
       const inputsArray = this.coverDetails.getInputs();

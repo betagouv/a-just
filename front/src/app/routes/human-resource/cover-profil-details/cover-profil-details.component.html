@@ -12,7 +12,8 @@
   </div>
 
   <div class="disk-etp">
-    <big-etp-preview [etp]="(etp() || 0) - indisponibility" [realETP]="etp()" [indisponibility]="indisponibility">
+    <big-etp-preview [etp]="timeWorked === 'Parti' ? 0 : (etp() || 0) - indisponibility"
+      [realETP]="timeWorked === 'Parti' ? 0 : etp()" [indisponibility]="indisponibility">
     </big-etp-preview>
   </div>
 </div>
