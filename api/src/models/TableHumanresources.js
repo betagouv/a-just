@@ -318,7 +318,14 @@ export default (sequelizeInstance, Model) => {
           case 'CONT CJ':
             code = list[i].grade
             break
+          case 'CONTCB1C':
+            code = 'CONT CB'
+            break
           }
+        }
+
+        if (list[i].categorie === 'CT' && list[i].grade ==='CONT CT') {
+          code = 'CT'
         }
 
         if (code.startsWith('AS')) {
@@ -328,6 +335,28 @@ export default (sequelizeInstance, Model) => {
         if (filterBySP.includes(code) && list[i]['s/p'] === 'P') {
           importSituation.push(list[i].nom_usage + ' no add by S/P because P')
           continue
+        }
+
+        if (list[i].fonction === 'C CAB CC') { // pour CA
+          code = 'CHCAB'
+        } else if (list[i].fonction === 'DG') {
+          code = 'DG'
+        }
+
+        switch (list[i].grade) {
+          case 'DSG':
+            code = 'DSGJ'
+            break
+          case 'G PR': // CA
+          case 'GR':
+            code = 'B'
+            break
+        }
+
+        if (list[i].grade.startsWith('DSG')) { 
+          code = 'DSGJ'
+        } else if (list[i].grade.startsWith('SA')) { 
+          code = 'SA'
         }
 
         let findFonction = await Model.models.HRFonctions.findOne({

@@ -316,7 +316,25 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR = [
     category_detail: "C",
     recodedFunction: "Fonctionnaire A-B-CBUR",
     rank:13
-  }
+  },
+  {
+    category_label: "Greffe",
+    label: "DSGJ PLACÉ",
+    code: "DSGJ PLACÉ ADDITIONNEL",
+    rank: 10,
+    position: "Placé",
+    category_detail: "F-PLAC-ADD",
+    recodedFunction: "Fonctionnaire A-B-CBUR placé ADD",
+  },
+  {
+    category_label: "Greffe",
+    label: "DSGJ PLACÉ",
+    code: "DSGJ PLACÉ SUBSTITUTION",
+    rank: 10,
+    position: "Placé",
+    category_detail: "F-PLAC-SUB",
+    recodedFunction: "Fonctionnaire A-B-CBUR placé SUB",
+  },
 ];
 
 
@@ -569,5 +587,23 @@ export const FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA = [
     category_detail: "C",
     recodedFunction: "JA/AttJ Parquet",
     rank:2
+  },
+  {
+    category_label: "Greffe",
+    label: "DSGJ PLACÉ",
+    code: "DSGJ PLACÉ ADDITIONNEL",
+    rank: 10,
+    position: "Placé",
+    category_detail: "F-PLAC-ADD",
+    recodedFunction: "Fonctionnaire A-B-CBUR placé ADD",
+  },
+  {
+    category_label: "Greffe",
+    label: "DSGJ PLACÉ",
+    code: "DSGJ PLACÉ SUBSTITUTION",
+    rank: 10,
+    position: "Placé",
+    category_detail: "F-PLAC-SUB",
+    recodedFunction: "Fonctionnaire A-B-CBUR placé SUB",
   },
 ];
