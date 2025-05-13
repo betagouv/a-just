@@ -286,7 +286,44 @@ export class CoverProfilDetailsComponent
       }
 
       if ((nodeName === 'dateStart' || nodeName === 'dateEnd') && value) {
+        const situations = this.currentHR?.situations;
+
+        let firstDateStart: Date | string | undefined;
+        let lastDateStart: Date | string | undefined;
+
+        if (situations && situations.length > 0) {
+          firstDateStart = situations[0]?.dateStart;
+          firstDateStart = new Date(firstDateStart);
+          firstDateStart.setHours(12);
+
+          lastDateStart = situations[situations.length - 1]?.dateStart;
+          lastDateStart = new Date(lastDateStart);
+          lastDateStart.setHours(12);
+        }
+
         value = new Date(value);
+        value.setHours(12);
+
+        if (
+          nodeName === 'dateEnd' &&
+          firstDateStart &&
+          value < firstDateStart
+        ) {
+          alert(
+            'Vous ne pouvez pas saisir une date de départ antérieure à une date de début de situation déjà créée !'
+          );
+          value = this.currentHR.dateEnd;
+        }
+        if (
+          nodeName === 'dateStart' &&
+          lastDateStart &&
+          value > lastDateStart
+        ) {
+          alert(
+            "Vous ne pouvez pas saisir une date d'arrivée postérieure à une date de début de situation déjà créée !"
+          );
+          value = this.currentHR.dateStart;
+        }
         value.setHours(12);
       }
 
