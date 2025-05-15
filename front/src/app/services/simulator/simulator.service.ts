@@ -288,7 +288,7 @@ export class SimulatorService extends MainClass {
           return 'N/R';
         }
         if (data?.totalOut && data?.totalOut >= 0) {
-          return toCompute ? data?.totalOut : Math.floor(data?.totalOut);
+          return toCompute ? data?.totalOut : Math.round(data?.totalOut);
         } else return '0';
       }
       case 'totalIn': {
@@ -296,7 +296,7 @@ export class SimulatorService extends MainClass {
           return 'N/R';
         }
         if (data?.totalIn && data?.totalIn >= 0) {
-          return toCompute ? data?.totalIn : Math.floor(data?.totalIn);
+          return toCompute ? data?.totalIn : Math.round(data?.totalIn);
         } else return '0';
       }
       case 'lastStock': {
@@ -305,7 +305,7 @@ export class SimulatorService extends MainClass {
         }
         if (data?.lastStock) {
           //&& data?.lastStock >= 0) {
-          return toCompute ? data?.lastStock : Math.floor(data?.lastStock);
+          return toCompute ? data?.lastStock : Math.round(data?.lastStock);
         } else return '0';
       }
       case 'etpCont':
