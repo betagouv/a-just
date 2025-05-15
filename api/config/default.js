@@ -174,6 +174,7 @@ module.exports = {
     sameSite:
       null /** (string) session cookie sameSite options (default null, don't set it) */,
   },
+  redis: process.env.REDIS_HOST || null,
   // USER AGENT TO honey tracp
   useAgent: process.env.AUTHORIZED_AGENTS, 
   // IP to block
