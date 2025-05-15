@@ -355,6 +355,7 @@ export function monthDiffList (dateFrom, dateTo) {
  */
 export function setTimeToMidDay (date) {
   if (date === undefined || date === null) return undefined
+  date = new Date(date)
   date.setHours(12)
   date.setMinutes(0)
   date.setSeconds(0)

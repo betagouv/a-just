@@ -11,11 +11,8 @@ import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 import { dbInstance } from './index'
+import { deleteCacheValue, getCacheValue, setCacheValue } from '../utils/redis'
 
-/**
- * Cache des juridicitions avec leurs magistrats
- */
-let cacheJuridictionPeoples = {}
 /**
  * Cache des agents
  */
@@ -77,7 +74,7 @@ export default (sequelizeInstance, Model) => {
       console.time('onPreload')
       for (let i = 0; i < allBackups.length; i++) {
         const agents = await Model.getCurrentHr(allBackups[i].id)
-        cacheJuridictionPeoples[allBackups[i].id] = cloneDeep(agents)
+        await setCacheValue(allBackups[i].id, agents, "cacheJuridictionPeoples")
       }
       console.timeEnd('onPreload')
       if (config.database.logging) {
@@ -94,9 +91,7 @@ export default (sequelizeInstance, Model) => {
   Model.removeCacheByUser = async (humanId, backupId) => {
     Model.removeCacheAgent(humanId)
 
-    if(cacheJuridictionPeoples[backupId]) {
-      delete cacheJuridictionPeoples[backupId]
-    }
+    await deleteCacheValue(backupId, "cacheJuridictionPeoples")
   }
 
   /**
@@ -106,16 +101,18 @@ export default (sequelizeInstance, Model) => {
   Model.updateCacheByUser = async (human) => {
     Model.removeCacheAgent(human.id)
 
+    const cache = await getCacheValue(backupId, "cacheJuridictionPeoples")
     const backupId = human.backupId
-    const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === human.id)
+    const index = (cache || []).findIndex((h) => h.id === human.id)
 
-    if (cacheJuridictionPeoples[backupId] && index !== -1) {
-      cacheJuridictionPeoples[backupId][index] = human
-    } else if (cacheJuridictionPeoples[backupId]) {
-      cacheJuridictionPeoples[backupId].push(human)
+    if (cache && index !== -1) {
+      cache[index] = human
+    } else if (cache) {
+      cache.push(human)
     } else {
-      cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId) // save to cache
+      cache = await Model.getCurrentHr(backupId) // save to cache
     }
+    await setCacheValue(backupId, cache, "cacheJuridictionPeoples")
   }
 
   /**
@@ -124,11 +121,15 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getCache = async (backupId) => {
-    if (!cacheJuridictionPeoples[backupId]) {
-      cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
+    const cache = await getCacheValue(backupId, "cacheJuridictionPeoples")
+    console.log(cache, 'cache')
+    if (!cache) {
+      const value = await Model.getCurrentHr(backupId)
+      await setCacheValue(backupId, value, "cacheJuridictionPeoples")
+      return value
     }
 
-    return cacheJuridictionPeoples[backupId]
+    return cache
   }
 
   /**
@@ -423,7 +424,7 @@ export default (sequelizeInstance, Model) => {
     }
 
     // remove cache
-    cacheJuridictionPeoples = {}
+    await deleteCacheValue(null, "cacheJuridictionPeoples")
     Model.onPreload()
     console.log('IMPORT!:', importSituation)
   }
