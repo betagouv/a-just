@@ -461,11 +461,6 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
         reelEtp = cache.reelEtp
       } else {*/
       const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
-      /*models.HumanResources.updateCacheAgent(
-          hr.id,
-          `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`,
-          etpByDateAndPerson
-        )*/
       etp = etpByDateAndPerson.etp
       situation = etpByDateAndPerson.situation
       indispoFiltred = etpByDateAndPerson.indispoFiltred
@@ -530,9 +525,6 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     list[property].nbDay = nbDay
   }
 
-
-
-  models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
   return list
 }
 
