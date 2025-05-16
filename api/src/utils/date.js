@@ -401,3 +401,8 @@ export function getNextDay(date) {
   nextDay.setDate(date.getDate() + 1);
   return nextDay;
 }
+
+export function getTime(date) {
+  date = new Date(date);
+  return date.getTime();
+}

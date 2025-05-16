@@ -459,4 +459,18 @@ export class UserService implements OnInit {
 
     return menu;
   }
+
+  /**
+   * Retourne la page d'accès d'un utilisateur
+   */
+  redirectToHome() {
+    let urlToRedirect = '';
+
+    const user = this.user.getValue();
+    if (user) {
+      urlToRedirect = this.getUserPageUrl(user);
+    }
+
+    window.location.href = urlToRedirect;
+  }
 }
