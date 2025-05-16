@@ -417,11 +417,6 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
  * @returns
  */
 export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
-  const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
-  if (cache) {
-    return cache
-  }
-
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -452,21 +447,12 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
       let indispoFiltred = null
       let nextDeltaDate = null
       let reelEtp = null
-      /*const cache = models.HumanResources.cacheAgent(hr.id, `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`)
-      if (cache) {
-        etp = cache.etp
-        situation = cache.situation
-        indispoFiltred = cache.indispoFiltred
-        nextDeltaDate = cache.nextDeltaDate
-        reelEtp = cache.reelEtp
-      } else {*/
       const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
       etp = etpByDateAndPerson.etp
       situation = etpByDateAndPerson.situation
       indispoFiltred = etpByDateAndPerson.indispoFiltred
       nextDeltaDate = etpByDateAndPerson.nextDeltaDate
       reelEtp = etpByDateAndPerson.reelEtp
-      //}
 
       if (nextDeltaDate) {
         nextDateFinded = today(nextDeltaDate)
