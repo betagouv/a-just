@@ -13,27 +13,22 @@ import { dbInstance } from './index'
 import { deleteCacheValue, getCacheValue, setCacheValue } from '../utils/redis'
 import { cloneDeep } from 'lodash'
 
-/**
- * Cache des agents
- */
-let cacheAgents = {}
-
 export default (sequelizeInstance, Model) => {
   /**
    * Cache d'un agent
    * @param {*} agentId
    * @returns
    */
-  Model.cacheAgent = (agentId, node) => {
+  Model.cacheAgent = async (agentId, node) => {
     if (node && typeof node !== 'string') {
       node = JSON.stringify(node)
     }
 
-    if (node && cacheAgents[agentId]) {
-      return cacheAgents[agentId][node]
+    if (node) {
+      return await getCacheValue(agentId+node, "cacheAgents")
     }
 
-    return cacheAgents[agentId]
+    return await getCacheValue(agentId, "cacheAgents")
   }
 
   /**
@@ -41,16 +36,12 @@ export default (sequelizeInstance, Model) => {
    * @param {*} agentId
    * @returns
    */
-  Model.updateCacheAgent = (agentId, node, values) => {
+  Model.updateCacheAgent = async (agentId, node, values) => {
     if (node && typeof node !== 'string') {
       node = JSON.stringify(node)
     }
 
-    if (!cacheAgents[agentId]) {
-      cacheAgents[agentId] = {}
-    }
-
-    cacheAgents[agentId][node] = cloneDeep(values)
+    await setCacheValue(agentId+node, values, "cacheAgents")
   }
 
   /**
@@ -58,10 +49,8 @@ export default (sequelizeInstance, Model) => {
    * @param {*} agentId
    * @returns
    */
-  Model.removeCacheAgent = (agentId) => {
-    if (cacheAgents[agentId]) {
-      delete cacheAgents[agentId]
-    }
+  Model.removeCacheAgent = async (agentId) => {
+    await deleteCacheValue(agentId, "cacheAgents")
   }
 
   /**
@@ -89,7 +78,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    */
   Model.removeCacheByUser = async (humanId, backupId) => {
-    Model.removeCacheAgent(humanId)
+    await Model.removeCacheAgent(humanId)
     await deleteCacheValue(backupId, "cacheJuridictionPeoples")
   }
 
@@ -98,7 +87,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} human
    */
   Model.updateCacheByUser = async (human) => {
-    Model.removeCacheAgent(human.id)
+    await Model.removeCacheAgent(human.id)
 
     let cache = await getCacheValue(backupId, "cacheJuridictionPeoples")
     const backupId = human.backupId
@@ -748,7 +737,7 @@ export default (sequelizeInstance, Model) => {
     console.timeEnd('calculator-7')
 
     console.time('calculator-8')
-    list = syncCalculatorDatas(Model.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
+    list = await syncCalculatorDatas(Model.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
 
     const cleanDataToSent = (item) => ({
       ...item,
