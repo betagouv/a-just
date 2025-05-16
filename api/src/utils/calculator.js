@@ -1,5 +1,5 @@
 import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
-import { isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
+import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPerson } from './human-resource'
@@ -417,6 +417,11 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
  * @returns
  */
 export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
+  const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
+  if (cache) {
+    return cache
+  }
+
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -438,8 +443,8 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     // only working day
     if (workingDay(now)) {
       let sumByInd = 0
-      if (hr.dateEnd && hr.dateEnd.getTime() < dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
-      if (hr.dateStart && hr.dateStart.getTime() > dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
+      if (hr.dateEnd && getTime(hr.dateEnd) < dateStop.getTime() && now.getTime() > getTime(hr.dateEnd)) nbDaysGone++
+      if (hr.dateStart && getTime(hr.dateStart) > dateStart.getTime() && now.getTime() < getTime(dateStart)) nbDaysGone++
       nbDay++
 
       let etp = null
@@ -510,6 +515,8 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
     list[property].nbDaysGone = nbDaysGone
     list[property].nbDay = nbDay
   }
+
+  models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
 
   return list
 }

@@ -11,8 +11,59 @@ import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 import { dbInstance } from './index'
 import { deleteCacheValue, getCacheValue, setCacheValue } from '../utils/redis'
+import { cloneDeep } from 'lodash'
+
+/**
+ * Cache des agents
+ */
+let cacheAgents = {}
 
 export default (sequelizeInstance, Model) => {
+  /**
+   * Cache d'un agent
+   * @param {*} agentId
+   * @returns
+   */
+  Model.cacheAgent = (agentId, node) => {
+    if (node && typeof node !== 'string') {
+      node = JSON.stringify(node)
+    }
+
+    if (node && cacheAgents[agentId]) {
+      return cacheAgents[agentId][node]
+    }
+
+    return cacheAgents[agentId]
+  }
+
+  /**
+   * Update cache d'un agent
+   * @param {*} agentId
+   * @returns
+   */
+  Model.updateCacheAgent = (agentId, node, values) => {
+    if (node && typeof node !== 'string') {
+      node = JSON.stringify(node)
+    }
+
+    if (!cacheAgents[agentId]) {
+      cacheAgents[agentId] = {}
+    }
+
+    cacheAgents[agentId][node] = cloneDeep(values)
+  }
+
+  /**
+   * remove cache d'un agent
+   * @param {*} agentId
+   * @returns
+   */
+  Model.removeCacheAgent = (agentId) => {
+    if (cacheAgents[agentId]) {
+      delete cacheAgents[agentId]
+    }
+  }
+
   /**
    * Chargement des juridictions
    */
@@ -38,6 +89,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    */
   Model.removeCacheByUser = async (humanId, backupId) => {
+    Model.removeCacheAgent(humanId)
     await deleteCacheValue(backupId, "cacheJuridictionPeoples")
   }
 
@@ -46,6 +98,8 @@ export default (sequelizeInstance, Model) => {
    * @param {*} human
    */
   Model.updateCacheByUser = async (human) => {
+    Model.removeCacheAgent(human.id)
+
     let cache = await getCacheValue(backupId, "cacheJuridictionPeoples")
     const backupId = human.backupId
     const index = (cache || []).findIndex((h) => h.id === human.id)
@@ -67,7 +121,6 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getCache = async (backupId) => {
     const cache = await getCacheValue(backupId, "cacheJuridictionPeoples")
-    console.log(cache, 'cache')
     if (!cache) {
       const value = await Model.getCurrentHr(backupId)
       await setCacheValue(backupId, value, "cacheJuridictionPeoples")
