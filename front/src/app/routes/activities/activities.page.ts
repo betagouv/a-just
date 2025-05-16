@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PopinEditActivitiesComponent } from './popin-edit-activities/popin-edit-activities.component';
 import { MainClass } from '../../libs/main-class';
@@ -61,7 +61,7 @@ import { AppService } from '../../services/app/app.service';
   templateUrl: './activities.page.html',
   styleUrls: ['./activities.page.scss'],
 })
-export class ActivitiesPage extends MainClass implements OnDestroy {
+export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
   activitiesService = inject(ActivitiesService);
   humanResourceService = inject(HumanResourceService);
   referentielService = inject(ReferentielService);
@@ -403,6 +403,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.userService.isCa()
       ? (this.dateSelector.minDate = MIN_DATE_SELECT_CA)
       : (this.dateSelector.minDate = MIN_DATE_SELECT_TJ);
+  }
+
+  ngOnInit() {
+    if (!this.userService.canViewActivities()) {
+      this.userService.redirectToHome();
+    }
   }
 
   /**

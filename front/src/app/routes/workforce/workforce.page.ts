@@ -446,6 +446,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Initialisation du composent
    */
   ngOnInit() {
+    if (!this.userService.canViewVentilation()) {
+      this.userService.redirectToHome();
+    }
+
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(
         (ref: ContentieuReferentielInterface[]) => {

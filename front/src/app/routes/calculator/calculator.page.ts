@@ -464,6 +464,10 @@ export class CalculatorPage
    * Initialisation des datas au chargement de la page
    */
   ngOnInit() {
+    if (!this.userService.canViewRCockpit()) {
+      this.userService.redirectToHome();
+    }
+
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u);
