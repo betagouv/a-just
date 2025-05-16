@@ -11,7 +11,6 @@ import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 import { dbInstance } from './index'
 import { deleteCacheValue, getCacheValue, setCacheValue } from '../utils/redis'
-import { cloneDeep } from 'lodash'
 
 export default (sequelizeInstance, Model) => {
   /**
