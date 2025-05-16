@@ -46,7 +46,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} human
    */
   Model.updateCacheByUser = async (human) => {
-    const cache = await getCacheValue(backupId, "cacheJuridictionPeoples")
+    let cache = await getCacheValue(backupId, "cacheJuridictionPeoples")
     const backupId = human.backupId
     const index = (cache || []).findIndex((h) => h.id === human.id)
 
