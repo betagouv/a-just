@@ -25,7 +25,7 @@ export const getCacheValue = async (key, cacheName) => {
   }
 
   console.log("getCacheValue", key, cacheName);
-  const value = await client.get(key + "");
+  const value = await client.get(cacheName + key + "");
   if (value) {
     return JSON.parse(value);
   }
@@ -42,7 +42,7 @@ export const setCacheValue = async (key, value, cacheName) => {
     return;
   }
 
-  await client.set(key + "", JSON.stringify(value));
+  await client.set(cacheName + key + "", JSON.stringify(value));
 };
 
 export const deleteCacheValue = async (key, cacheName) => {
@@ -55,8 +55,8 @@ export const deleteCacheValue = async (key, cacheName) => {
     return;
   }
 
-  const value = await client.get(key + "");
+  const value = await client.get(cacheName + key + "");
   if (value) {
-    value.destroy();
+    //value.destroy();
   }
 };
