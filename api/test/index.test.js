@@ -7,6 +7,7 @@ import routeCalcultator from './api/RouteCalculator.test'
 import routeVentilateur from './api/RouteVentilateur.test'
 import routePanorama from './api/RoutePanorama.test'
 import routeActivities from './api/RouteActivities.test'
+import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from './constants/user'
 import { assert } from 'chai'
 import axios from 'axios'
 
@@ -54,10 +55,8 @@ describe('Test server is ready', () => {
    * Connect Admin
    */
   it('Login - Login admin', async () => {
-    const email = process.env.USER_ADMIN_EMAIL
-    const password = process.env.USER_ADMIN_PASSWORD
-    console.log('email:', email)
-    console.log('password:', password)
+    const email = USER_ADMIN_EMAIL
+    const password = USER_ADMIN_PASSWORD
     // Connexion de l'admin
     const response = await onLoginAdminApi({
       email: email,

@@ -1,5 +1,6 @@
 import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi , onUpdateAccountApi} from '../routes/user'
 import { JURIDICTION_TEST_NAME } from '../constants/juridiction'
+import { USER_TEST_EMAIL, USER_TEST_PASSWORD, USER_TEST_FIRSTNAME, USER_TEST_LASTNAME, USER_TEST_FONCTION } from '../constants/user'
 const assert = require('assert')
 
 module.exports = function (datas) {
@@ -10,11 +11,11 @@ module.exports = function (datas) {
     it('Sign up - Missing email, should return 400', async () => {
         const response = await onSignUpApi({
           email: '',
-          password: process.env.USER_TEST_PASSWORD,
-          firstName: process.env.USER_TEST_FIRSTNAME,
-          lastName: process.env.USER_TEST_LASTNAME,
+          password: USER_TEST_PASSWORD,
+          firstName: USER_TEST_FIRSTNAME,
+          lastName: USER_TEST_LASTNAME,
           tj: JURIDICTION_TEST_NAME,
-          fonction: process.env.USER_TEST_FONCTION,
+          fonction: USER_TEST_FONCTION,
         })
         // assert.ok(response.status < 200 || response.status >= 300)
         assert.strictEqual(response.status, 401)
@@ -88,12 +89,12 @@ module.exports = function (datas) {
     it('Sign up - Password is not strong enough, should return 401', async () => {
       try {
         const response = await onSignUpApi({
-          email: process.env.USER_TEST_EMAIL,
+          email: USER_TEST_EMAIL,
           password: '123456789',
-          firstName: process.env.USER_TEST_FIRSTNAME,
-          lastName: process.env.USER_TEST_LASTNAME,
+          firstName: USER_TEST_FIRSTNAME,
+          lastName: USER_TEST_LASTNAME,
           tj: JURIDICTION_TEST_NAME,
-          fonction: process.env.USER_TEST_FONCTION,
+          fonction: USER_TEST_FONCTION,
         })
         assert.strictEqual(response.status, 401)
       } catch (error) {
@@ -109,10 +110,10 @@ module.exports = function (datas) {
         const response = await onSignUpApi({
           email: "badPAssword@email.com",//USER_TEST_EMAIL,
           password: 'Zymotechnie',
-          firstName: process.env.USER_TEST_FIRSTNAME,
-          lastName: process.env.USER_TEST_LASTNAME,
+          firstName: USER_TEST_FIRSTNAME,
+          lastName: USER_TEST_LASTNAME,
           tj: JURIDICTION_TEST_NAME,
-          fonction: process.env.USER_TEST_FONCTION,
+          fonction: USER_TEST_FONCTION,
         })
         assert.strictEqual(response.status, 401)
       } catch (error) {
@@ -125,12 +126,12 @@ module.exports = function (datas) {
      */
     it('Sign up - Correct inputs, should return 200', async () => {
       const response = await onSignUpApi({
-        email: process.env.USER_TEST_EMAIL,
-        password: process.env.USER_TEST_PASSWORD,
-        firstName: process.env.USER_TEST_FIRSTNAME,
-        lastName: process.env.USER_TEST_LASTNAME,
+        email: USER_TEST_EMAIL,
+        password: USER_TEST_PASSWORD,
+        firstName: USER_TEST_FIRSTNAME,
+        lastName: USER_TEST_LASTNAME,
         tj: JURIDICTION_TEST_NAME,
-        fonction: process.env.USER_TEST_FONCTION,
+        fonction: USER_TEST_FONCTION,
       })
       datas.userId = response.data.user.id
 
@@ -150,7 +151,7 @@ module.exports = function (datas) {
      */
     it('Forgot password - Good email, should return 200', async () => {
       const response = await onForgotPasswordApi({
-        email: process.env.USER_TEST_EMAIL,
+        email: USER_TEST_EMAIL,
       })
       assert.strictEqual(response.status, 200)
     })
@@ -160,7 +161,7 @@ module.exports = function (datas) {
      */
     it('Login - Bad password, should return 401', async () => {
       const response = await onLoginApi({
-        email: process.env.USER_TEST_EMAIL,
+        email: USER_TEST_EMAIL,
         password: '123481349',
       })
       assert.strictEqual(response.status, 401)
@@ -172,7 +173,7 @@ module.exports = function (datas) {
     it('Login - Bad email, should return 401', async () => {
       const response = await onLoginApi({
         email: 'badEmail@email.com',
-        password: process.env.USER_TEST_PASSWORD,
+        password: USER_TEST_PASSWORD,
       })
       assert.strictEqual(response.status, 401)
     })
@@ -193,8 +194,8 @@ module.exports = function (datas) {
      */
     it('Login - Login should succeed and return 201 with user token', async () => {
       const response = await onLoginApi({
-        email: process.env.USER_TEST_EMAIL,
-        password: process.env.USER_TEST_PASSWORD,
+        email: USER_TEST_EMAIL,
+        password: USER_TEST_PASSWORD,
       })
       datas.userToken = response.status === 201 && response.data.token
       assert.strictEqual(response.status, 201)
@@ -256,8 +257,8 @@ module.exports = function (datas) {
      */
     it('Re Login - Login should succeed and return 201', async () => {
       const response = await onLoginApi({
-        email: process.env.USER_TEST_EMAIL,
-        password: process.env.USER_TEST_PASSWORD,
+        email: USER_TEST_EMAIL,
+        password: USER_TEST_PASSWORD,
       })
       datas.userToken = response.status === 201 && response.data.token
       assert.strictEqual(response.status, 201)
