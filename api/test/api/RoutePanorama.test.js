@@ -2,7 +2,6 @@ import { JURIDICTION_BACKUP_ID } from '../constants/juridiction'
 import { MAGISTART_ID, GREFFIER_ID } from '../constants/hrCategories'
 import { onSaveCle, onGetAllCle } from '../routes/panorama'
 import { onLoginApi, onLogoutApi } from '../routes/user'
-import { USER_TEST_EMAIL, USER_TEST_PASSWORD } from '../constants/user'
 import config from 'config'
 
 module.exports = function (datas) {

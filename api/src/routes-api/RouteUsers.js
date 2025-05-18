@@ -151,6 +151,12 @@ export default class RouteUsers extends Route {
     accesses: [Access.isAdmin],
   })
   async removeAccountTest (ctx) {
+   
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+      return
+    }
+
     const { id } = ctx.params
 
     const user = this.model.findOne({

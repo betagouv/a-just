@@ -30,7 +30,7 @@ export const onLoginApi = async ({ email, password }) => {
 
 export const onSignUpApi = async ({ email, password, firstName, lastName, fonction }) => {
   return await instanceAxios
-    .post('/users/create-account', {
+    .post('users/create-account', {
       email: email,
       password: password,
       firstName: firstName,
@@ -41,7 +41,7 @@ export const onSignUpApi = async ({ email, password, firstName, lastName, foncti
       return res
     })
     .catch((err) => {
-      return err.response
+      return err
     })
 }
 
@@ -99,7 +99,7 @@ export const onGetUserListApi = async ({ userToken }) => {
       return res
     })
     .catch((err) => {
-      return err.response
+      return err
     })
 }
 

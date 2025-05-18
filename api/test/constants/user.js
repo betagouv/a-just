@@ -1,5 +1,0 @@
-export const USER_TEST_EMAIL = 'utilisateurtest@a-just.fr'
-export const USER_TEST_PASSWORD = '@bUgGD25gX1b'
-export const USER_TEST_FIRSTNAME = 'userTest'
-export const USER_TEST_LASTNAME = 'userTest'
-export const USER_TEST_FONCTION = 'Vacataire'
