@@ -2,7 +2,7 @@ import { instanceAxios } from '../utils/axios'
 
 export const onLoginAdminApi = async ({ email, password }) => {
   return await instanceAxios
-    .post('/auths/login-admin', {
+    .post('/auths/login-admin-test', {
       email,
       password,
     })

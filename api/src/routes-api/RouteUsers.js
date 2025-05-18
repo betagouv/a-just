@@ -153,7 +153,7 @@ export default class RouteUsers extends Route {
   async removeAccountTest (ctx) {
    
     if (process.env.NODE_ENV !== 'test') {
-      ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+      ctx.throw(401, "Cette route n'est pas disponible")
       return
     }
 
@@ -312,7 +312,7 @@ export default class RouteUsers extends Route {
     })
     async forgotPasswordTest (ctx) {
       if (process.env.NODE_ENV !== 'test') {
-        ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+        ctx.throw(401, "Cette route n'est pas disponible")
         return
       }
       let { email } = this.body(ctx)
