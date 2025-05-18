@@ -67,6 +67,8 @@ describe('Test server is ready', () => {
       datas.adminToken = response.data.token
       datas.adminId = response.data.user.id
     }
+    console.log('email:', email)
+    console.log('password:', password)
     console.log('Response', response)
     console.log('reponse.data', response.data)
 
@@ -87,7 +89,7 @@ describe('Test server is ready', () => {
     const response = await onGetUserDataApi({ userToken: datas.adminToken })
     datas.adminAccess = response.data.user.access
     assert.strictEqual(response.status, 200)
-    assert.isNotEmptky(datas.adminAccess)
+    assert.isNotEmpty(datas.adminAccess)
   })
 
   routeUser(datas)
