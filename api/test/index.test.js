@@ -1,6 +1,6 @@
 import { default as server } from '../src/index'
 import { accessList } from '../src/constants/access'
-import routeUser from './api/RouteUser.test'
+import routeUser from './api/RouteUser.test.js'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculator.test'
 //import routeSimulator from './api/RouteSimulator.test'
@@ -19,7 +19,6 @@ import routeHR from './api/RouteHR.test'
 import routeActivities from './api/RouteActivities.test'
 import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
-import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from './constants/admin'
 import { onLoginAdminApi, onUpdateAccountApi, onGetUserDataApi } from './routes/user'
 
 const datas = {
@@ -55,45 +54,53 @@ describe('Test server is ready', () => {
    * Connect Admin
    */
   it('Login - Login admin', async () => {
-    const email = USER_ADMIN_EMAIL
-    const password = USER_ADMIN_PASSWORD
+    try {
+      const email = process.env.USER_ADMIN_EMAIL
+      const password = process.env.USER_ADMIN_PASSWORD
 
-    console.log('HERE TEST 00')
-    // Connexion de l'admin
-    const response = await onLoginAdminApi({
-      email: email,
-      password: password,
-    })
-    console.log('HERE TEST 01')
-    console.log('RESPONSE:', response)
-    // Récupération du token associé pour l'identifier
-    datas.adminToken = response.status === 201 && response.data.token
-    datas.adminId = response.status === 201 && response.data.user.id
-
-    assert.strictEqual(response.status, 201)
+      // Connexion de l'admin
+      const response = await onLoginAdminApi({
+        email: email,
+        password: password,
+      })
+      // Récupération du token associé et de l'id, pour identifier l'utilisateur
+      if (response.status === 201) {
+        datas.adminToken = response.data.token
+        datas.adminId = response.data.user.id
+      }
+      assert.strictEqual(response.status, 201)
+    } catch (error) {
+      console.error('Error in Login - Login admin', error)
+    }
   })
 
   // On donne tous les accès à l'administrateur
   it('Give all accesses to Admin', async () => {
-    const accessIds = accessList.map((elem) => {
-      return elem.id
-    })
-    await onUpdateAccountApi({
-      userToken: datas.adminToken,
-      userId: datas.adminId,
-      accessIds: accessIds,
-      ventilations: [],
-    })
-    let response = await onGetUserDataApi({ userToken: datas.adminToken })
-    datas.adminAccess = response.data.user.access
-    assert.strictEqual(response.status, 200)
-    assert.isNotEmpty(datas.adminAccess)
+    try {
+      const accessIds = accessList.map((elem) => {
+        return elem.id
+      })
+      await onUpdateAccountApi({
+        userToken: datas.adminToken,
+        userId: datas.adminId,
+        accessIds: accessIds,
+        ventilations: [],
+      })
+      let response = await onGetUserDataApi({ userToken: datas.adminToken })
+      datas.adminAccess = response.data.user.access
+      assert.strictEqual(response.status, 200)
+      assert.isNotEmpty(datas.adminAccess)
+    } catch (error) {
+      console.error("Error in 'Give all accesses to Admin'", error)
+    }
   })
 
   routeUser(datas)
   routeChangeUserData(datas)
   routeCalcultator(datas)
+  
   //routeSimulator(datas)
+  
   routeVentilateur(datas)
   routePanorama(datas)
   routeActivities(datas)

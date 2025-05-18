@@ -5,7 +5,6 @@ import { onFilterListHRApi } from '../routes/hr'
 import { JURIDICTION_BACKUP_ID, JURIDICTION_OPTION_BACKUP_ID, SOCIAL_LITIGATION_ID } from '../constants/juridiction'
 import { roundFloat } from '../utils/math'
 import config from 'config'
-import { EAM_ID, GREFFIER_ID, MAGISTART_ID } from '../constants/hrCategories'
 
 module.exports = function (datas) {
   let lastMonth = null

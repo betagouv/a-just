@@ -148,6 +148,12 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async removeHRTest (ctx) {
+
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+      return
+    }
+    
     const { hrId } = ctx.params
 
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
@@ -193,6 +199,12 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async removeSituationTest (ctx) {
+
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+      return
+    }
+
     const { situationId } = ctx.params
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
