@@ -63,6 +63,7 @@ describe('Test server is ready', () => {
         email: email,
         password: password,
       })
+      console.log('response', response)
       // Récupération du token associé et de l'id, pour identifier l'utilisateur
       if (response.status === 201) {
         datas.adminToken = response.data.token
