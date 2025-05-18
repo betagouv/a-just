@@ -68,9 +68,6 @@ describe('Test server is ready', () => {
       datas.adminId = response.data.user.id
     }
 
-    console.log('Response', response)
-    console.log('reponse.data', response.data)
-
     assert.strictEqual(response.status, 201)
   })
 
