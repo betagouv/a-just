@@ -28,6 +28,10 @@ module.exports = function (datas) {
         hr: hr,
         backupId: 11,
       })
+      console.log('Response create new hr:', response.status)
+      console.log('response.data:', response.data)
+      console.log('response.data.data:',response.data.data)
+
       const tmp_firstName = response.data.data.firstName
       const tmp_lastName = response.data.data.lastName
       const tmp_matricule = response.data.data.matricule

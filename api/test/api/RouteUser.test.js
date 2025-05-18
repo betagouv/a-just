@@ -143,6 +143,7 @@ module.exports = function (datas) {
      */
     it('Forgot password - Bad email, should return 401', async () => {
       const response = await onForgotPasswordApi({ email: 'badEmail@mail.com' })
+      console.log('forgot-password Response.status:', response.status)
       assert.strictEqual(response.status, 401)
     })
 
