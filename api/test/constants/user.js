@@ -1,0 +1,7 @@
+USER_ADMIN_EMAIL='utilisateurtest@a-just.fr'
+USER_ADMIN_PASSWORD='@bUgGD25gX1b'
+USER_TEST_EMAIL='usertest@a-just.fr'
+USER_TEST_PASSWORD='LDTUMi6@TgyU$CDZ'
+USER_TEST_FIRSTNAME='userTest'
+USER_TEST_LASTNAME='userTest'
+USER_TEST_FONCTION='Vacataire'
