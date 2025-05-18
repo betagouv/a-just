@@ -150,7 +150,7 @@ export default class RouteHumanResources extends Route {
   async removeHRTest (ctx) {
 
     if (process.env.NODE_ENV !== 'test') {
-      ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+      ctx.throw(401, "Cette route n'est pas disponible")
       return
     }
     
@@ -201,7 +201,7 @@ export default class RouteHumanResources extends Route {
   async removeSituationTest (ctx) {
 
     if (process.env.NODE_ENV !== 'test') {
-      ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+      ctx.throw(401, "Cette route n'est pas disponible")
       return
     }
 

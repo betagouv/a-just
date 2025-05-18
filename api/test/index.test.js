@@ -7,7 +7,7 @@ import routeCalcultator from './api/RouteCalculator.test'
 import routeVentilateur from './api/RouteVentilateur.test'
 import routePanorama from './api/RoutePanorama.test'
 import routeActivities from './api/RouteActivities.test'
-
+import { assert } from 'chai'
 import axios from 'axios'
 
 console.warn = () => { }
@@ -54,46 +54,37 @@ describe('Test server is ready', () => {
    * Connect Admin
    */
   it('Login - Login admin', async () => {
-    try {
-      const email = process.env.USER_ADMIN_EMAIL
-      const password = process.env.USER_ADMIN_PASSWORD
+    const email = process.env.USER_ADMIN_EMAIL
+    const password = process.env.USER_ADMIN_PASSWORD
 
-      // Connexion de l'admin
-      const response = await onLoginAdminApi({
-        email: email,
-        password: password,
-      })
-      console.log('response', response)
-      // Récupération du token associé et de l'id, pour identifier l'utilisateur
-      if (response.status === 201) {
-        datas.adminToken = response.data.token
-        datas.adminId = response.data.user.id
-      }
-      assert.strictEqual(response.status, 201)
-    } catch (error) {
-      console.error('Error in Login - Login admin', error)
+    // Connexion de l'admin
+    const response = await onLoginAdminApi({
+      email: email,
+      password: password,
+    })
+    // Récupération du token associé et de l'id, pour identifier l'utilisateur
+    if (response.status === 201) {
+      datas.adminToken = response.data.token
+      datas.adminId = response.data.user.id
     }
+    assert.strictEqual(response.status, 201)
   })
 
   // On donne tous les accès à l'administrateur
   it('Give all accesses to Admin', async () => {
-    try {
-      const accessIds = accessList.map((elem) => {
-        return elem.id
-      })
-      await onUpdateAccountApi({
-        userToken: datas.adminToken,
-        userId: datas.adminId,
-        accessIds: accessIds,
-        ventilations: [],
-      })
-      let response = await onGetUserDataApi({ userToken: datas.adminToken })
-      datas.adminAccess = response.data.user.access
-      assert.strictEqual(response.status, 200)
-      assert.isNotEmpty(datas.adminAccess)
-    } catch (error) {
-      console.error("Error in 'Give all accesses to Admin'", error)
-    }
+    const accessIds = accessList.map((elem) => {
+      return elem.id
+    })
+    await onUpdateAccountApi({
+      userToken: datas.adminToken,
+      userId: datas.adminId,
+      accessIds: accessIds,
+      ventilations: [],
+    })
+    const response = await onGetUserDataApi({ userToken: datas.adminToken })
+    datas.adminAccess = response.data.user.access
+    assert.strictEqual(response.status, 200)
+    assert.isNotEmptky(datas.adminAccess)
   })
 
   routeUser(datas)

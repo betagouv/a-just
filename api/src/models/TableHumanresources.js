@@ -631,6 +631,12 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.removeHRTest = async (hrId) => {
+
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible")
+      return
+    }
+
     const hrFromDB = await Model.findOne({
       attributes: ['id', 'backup_id'],
       where: {

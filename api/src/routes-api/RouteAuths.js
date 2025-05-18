@@ -153,6 +153,48 @@ export default class RouteAuths extends Route {
     }
   }
 
+
+    /**
+   * Interface de connexion administrateur (For test only)
+   * @param {*} email
+   * @param {*} password
+   */
+    @Route.Post({
+      bodyType: Types.object().keys({
+        email: Types.string().required(),
+        password: Types.string().required(),
+      }),
+    })
+    async loginAdminTest (ctx) {
+
+      if (process.env.NODE_ENV !== 'test') {
+        ctx.throw(401, "Cette route n'est pas disponible")
+        return
+      }
+
+      const { password, email } = this.body(ctx)
+  
+      const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
+      if (typeof tryUserCon === 'string') {
+        ctx.throw(401, tryUserCon)
+      } else {
+        const now = new Date()
+        now.setMonth(now.getMonth() - 6)
+        const nbAuthBy2FAOffMonth = (
+          await this.models.Logs.getLogs({
+            code_id: USER_USER_PASSWORD_CHANGED,
+            user_id: tryUserCon.id,
+            created_at: { [Op.gte]: now },
+          })
+        ).length
+
+        
+        await ctx.loginUser(tryUserCon, 7)
+        await super.addUserInfoInBody(ctx, tryUserCon.id)
+        this.sendCreated(ctx)
+      }
+    }
+
   /**
    * Interface de connexion administrateur
    * @param {*} email
