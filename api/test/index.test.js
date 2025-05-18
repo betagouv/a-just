@@ -56,7 +56,8 @@ describe('Test server is ready', () => {
   it('Login - Login admin', async () => {
     const email = process.env.USER_ADMIN_EMAIL
     const password = process.env.USER_ADMIN_PASSWORD
-
+    console.log('email:', email)
+    console.log('password:', password)
     // Connexion de l'admin
     const response = await onLoginAdminApi({
       email: email,
@@ -67,8 +68,7 @@ describe('Test server is ready', () => {
       datas.adminToken = response.data.token
       datas.adminId = response.data.user.id
     }
-    console.log('email:', email)
-    console.log('password:', password)
+
     console.log('Response', response)
     console.log('reponse.data', response.data)
 
