@@ -55,6 +55,11 @@ module.exports = function (datas) {
       const backupId = JURIDICTION_BACKUP_ID
       const optionBackupId = JURIDICTION_OPTION_BACKUP_ID
 
+      console.log('categorySelected', categorySelected)
+      console.log('contentieuxIds', contentieuxIds)
+      console.log('backupId', backupId)
+      console.log('optionBackupId', optionBackupId)
+      
       const response = await onFilterListCalculatorApi({
         userToken: datas.adminToken,
         backupId,
