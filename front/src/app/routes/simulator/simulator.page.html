@@ -28,8 +28,6 @@
 
   <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
   <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true, 'display-none': chooseScreen}">
-
-
     <aj-period-selector #periodSelector [whiteSimulator]="whiteSimulator"></aj-period-selector>
   </div>
 
@@ -892,6 +890,11 @@
     <p class="title">{{printTitle}}</p>
   </div>
 
+  <div id="export-button-2" class="reset-button export-b" [class.enable]="toDisplaySimulation" (click)="print()"
+    *ngIf="!chooseScreen" [ngClass]="{'enable': displayBeginSituation()}">
+    <mat-icon class="shape">save</mat-icon>
+    <p class="title">Exporter en PDF</p>
+  </div>
   <div id="main-init" class="reset-button {{disabled}}"
     (click)="toDisplaySimulation ? onUserActionClick(this.action.reinitAll) : resetParams()" *ngIf="!chooseScreen">
     <p class="title">Tout réinitialiser</p>
