@@ -609,7 +609,11 @@
     <img src="/assets/icons/logos/white-192x192@1x.svg" class="logo-ajust" width="80px" height="66px" />
     <p class="title">{{printTitle}}</p>
   </div>
-
+  <div id="export-button-2" class="reset-button export-b enable" *ngIf="displayWhiteElements && !chooseScreen"
+    (click)="print()">
+    <mat-icon class="shape">save</mat-icon>
+    <p class="title">Exporter en PDF</p>
+  </div>
   <div id="main-init" class="reset-button {{disabled}}"
     (click)="toDisplaySimulation ? onUserActionClick(this.action.reinitAll) : resetParams()">
     <p class="title">Tout réinitialiser</p>

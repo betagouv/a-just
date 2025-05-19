@@ -430,6 +430,36 @@
         border: solid 1px #000091; // #ddd;
         //transform: rotate(+90deg);
 
+        &.export-b {
+
+            margin-right: 8px;
+            border: solid 1px #000091;
+            background-color: #000091;
+            color: white !important;
+
+            &.disabled {
+                pointer-events: none;
+                cursor: auto;
+                opacity: 0.5;
+            }
+
+            &.enable {
+                opacity: 1 !important;
+                cursor: pointer !important;
+                pointer-events: initial !important;
+            }
+
+            mat-icon {
+                top: -1px;
+                position: relative;
+            }
+
+            p {
+                color: white;
+            }
+        }
+
+
         &.disabled-date {
             pointer-events: all;
             cursor: pointer;
