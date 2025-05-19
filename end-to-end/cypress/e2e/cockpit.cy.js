@@ -46,7 +46,7 @@ describe('Cockpit', () => {
       const token = win.localStorage.getItem('token');
   
       // Get the latest available month
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+      const serverUrl = 'http://173.0.0.20:8081/api' || 'http://localhost:8081/api';
       cy.log('Server URL:', serverUrl);
       cy.request({
         method: 'POST',
