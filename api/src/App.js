@@ -17,6 +17,10 @@ import { RateLimit } from "koa2-ratelimit";
 import { styleSha1Generate } from "./utils/csp";
 import * as Sentry from "@sentry/node";
 
+const os = require('os');
+console.log('HOST NAME', os.hostname() ); 
+
+
 /*var os = require('os')
 var osu = require('node-os-utils')
 
