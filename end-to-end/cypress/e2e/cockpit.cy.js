@@ -4,6 +4,7 @@ describe('Cockpit', () => {
   before(() => {
     cy.login()
     cy.visit('/cockpit')
+    cy.wait(4000)
   })
 
   it('Check the name page is displayed', () => {
@@ -12,9 +13,9 @@ describe('Cockpit', () => {
       .should('contain.text', 'Cockpit')
   })
 
-  it('Check that we have the doc button is accessible', () => {
+  it('Check that the doc button is accessible', () => {
     cy.get(".top-header")
-        .get(".title-with-doc").get('aj-help-button').click()
+        .get(".top-header-back-title .title-with-doc").get('aj-help-button').click()
 
     cy.wait(1000)
     cy.get('.panel-helper .panel-header').get('.panel-header-closing-row').should('contain.text', 'Cockpit')
