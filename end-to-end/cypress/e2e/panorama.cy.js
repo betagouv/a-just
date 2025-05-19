@@ -10,7 +10,7 @@ describe('Panorama page', () => {
     cy.get('a')
         .should('contain.text', 'Panorama')
         .should('contain.text', 'Ventilateur')
-        .should('contain.text', "ativité")
+        .should('contain.text', "Données d\'activité")
         .should('contain.text', 'Cockpit')
         .should('contain.text', 'Simulateur')
         .should('contain.text', 'Outils')

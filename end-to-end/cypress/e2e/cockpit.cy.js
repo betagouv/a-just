@@ -167,9 +167,10 @@ describe('Cockpit', () => {
       const token = win.localStorage.getItem('token');
   
       // Get the latest available month
+      const serverUrl = 'http://173.0.0.20:8081/api' || 'http://localhost:8081/api';
       cy.request({
         method: 'POST',
-        url: 'http://localhost:8081/api/activities/get-last-month',
+        url: `${serverUrl}/activities/get-last-month`,
         headers: {
           'Authorization': `${token}`
         },
