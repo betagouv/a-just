@@ -417,11 +417,10 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
  * @returns
  */
 export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
-  // Tester performances sans cache
-  /*const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
+  const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
   if (cache) {
     return cache
-  }*/
+  }
 
   const list = new Object()
   categories.map((c) => {
