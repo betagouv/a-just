@@ -25,5 +25,9 @@ export default defineConfig({
     videosFolder: "cypress/videos",
     downloadsFolder: "cypress/downloads",
     defaultCommandTimeout: 10000,
+    env: {
+      NG_APP_SERVER_URL:
+        process.env.NG_APP_SERVER_URL || "http://localhost:8081/api",
+    },
   },
 });
