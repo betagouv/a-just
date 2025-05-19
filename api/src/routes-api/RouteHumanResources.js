@@ -10,6 +10,7 @@ import { today } from '../utils/date'
 import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
+import { selfRouteToSyncJuridiction } from '../utils/docker'
 
 /**
  * Route des fiches
@@ -110,6 +111,7 @@ export default class RouteHumanResources extends Route {
     let { backupId, hr } = this.body(ctx)
 
     const responseUpdate = await this.model.updateHR(hr, backupId)
+    selfRouteToSyncJuridiction(backupId)
 
     this.sendOk(ctx, responseUpdate)
   }
