@@ -82,34 +82,32 @@ export const emptyCalulatorValues = (referentiels) => {
  * @param {*} optionsBackups
  * @returns
  */
-export const syncCalculatorDatas = async (models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens) => {
+export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens) => {
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
     const childrens = !loadChildrens
       ? []
-      : await Promise.all(
-          (list[i].childrens || []).map(async (c) => ({
-            ...c,
-            nbMonth,
-            ...(await getActivityValues(
-              models,
-              dateStart,
-              dateStop,
-              prefiltersActivities[c.contentieux.id] || [],
-              c.contentieux.id,
-              nbMonth,
-              hr,
-              categories,
-              optionsBackups,
-              false
-            )),
-          }))
-        )
+      : (list[i].childrens || []).map((c) => ({
+        ...c,
+        nbMonth,
+        ...getActivityValues(
+          models,
+          dateStart,
+          dateStop,
+          prefiltersActivities[c.contentieux.id] || [],
+          c.contentieux.id,
+          nbMonth,
+          hr,
+          categories,
+          optionsBackups,
+          false
+        ),
+      }))
 
     list[i] = {
       ...list[i],
-      ...(await getActivityValues(
+      ...getActivityValues(
         models,
         dateStart,
         dateStop,
@@ -120,7 +118,7 @@ export const syncCalculatorDatas = async (models, list, nbMonth, activities, dat
         categories,
         optionsBackups,
         true
-      )),
+      ),
       childrens,
       nbMonth,
     }
@@ -141,8 +139,8 @@ export const syncCalculatorDatas = async (models, list, nbMonth, activities, dat
  * @param {*} optionsBackups
  * @returns
  */
-const getActivityValues = async (models, dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups, loadDetails) => {
-  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = await getLastTwelveMonths(
+const getActivityValues = (models, dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups, loadDetails) => {
+  let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
     models,
     dateStart,
     dateStop,
@@ -178,7 +176,7 @@ const getActivityValues = async (models, dateStart, dateStop, activities, refere
 
   // ETP moyen sur la période
 
-  const etpAffected = await getHRPositions(models, hr, categories, referentielId, dateStart, dateStop)
+  const etpAffected = getHRPositions(models, hr, categories, referentielId, dateStart, dateStop)
   const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 100) : 0
   const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 100) : 0
   const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 100) : 0
@@ -198,13 +196,13 @@ const getActivityValues = async (models, dateStart, dateStop, activities, refere
 
   if (loadDetails === true) {
     // ETP début
-    etpAffectedBf = await getHRPositions(models, hr, categories, referentielId, dateStart, oneMonthAfterStart)
+    etpAffectedBf = getHRPositions(models, hr, categories, referentielId, dateStart, oneMonthAfterStart)
     etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 100) : 0
     etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 100) : 0
     etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 100) : 0
 
     // ETP fin
-    etpAffectedAf = await getHRPositions(models, hr, categories, referentielId, oneMonthBeforeEnd, dateStop)
+    etpAffectedAf = getHRPositions(models, hr, categories, referentielId, oneMonthBeforeEnd, dateStop)
     etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 100) : 0
     etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 100) : 0
     etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 100) : 0
@@ -256,7 +254,7 @@ const getActivityValues = async (models, dateStart, dateStop, activities, refere
 /**
  *
  */
-const getLastTwelveMonths = async (models, dateStart, dateStop, activities, referentielId, hr, categories, computeAll) => {
+const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentielId, hr, categories, computeAll) => {
   /**
    * Calcul sur les 12 derniers mois avant date de fin
    */
@@ -295,7 +293,7 @@ const getLastTwelveMonths = async (models, dateStart, dateStop, activities, refe
 
   // Calcul des sorties moyennes 12 derniers mois à compter de la date de fin selectionnée dans le calculateur
   const meanOutCs = (activitesEnd || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesEnd, 'sorties') / 12 : null
-  const etpByCategory = await getHRPositions(models, hr, categories, referentielId, startCs, endCs)
+  const etpByCategory = getHRPositions(models, hr, categories, referentielId, startCs, endCs)
   const etpMagCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[0].totalEtp, 100) : 0
   const etpFonCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[1].totalEtp, 100) : 0
 
@@ -367,7 +365,7 @@ const getLastTwelveMonths = async (models, dateStart, dateStop, activities, refe
  * @param {*} dateStop
  * @returns
  */
-export const getHRPositions = async (models, hr, categories, referentielId, dateStart, dateStop) => {
+export const getHRPositions = (models, hr, categories, referentielId, dateStart, dateStop) => {
   const hrCategories = {}
 
   categories.map((c) => {
@@ -386,7 +384,7 @@ export const getHRPositions = async (models, hr, categories, referentielId, date
         return activities.some((s) => s.contentieux.id === referentielId)
       })
     ) {
-      const etptAll = await getHRVentilation(models, hr[i], referentielId, categories, dateStart, dateStop)
+      const etptAll = getHRVentilation(models, hr[i], referentielId, categories, dateStart, dateStop)
 
       Object.values(etptAll).map((c) => {
         if (c.etpt) {
@@ -418,8 +416,8 @@ export const getHRPositions = async (models, hr, categories, referentielId, date
  * @param {*} dateStop
  * @returns
  */
-export const getHRVentilation = async (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
-  const cache = await models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
+export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
+  const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
   if (cache) {
     return cache
   }
@@ -518,7 +516,7 @@ export const getHRVentilation = async (models, hr, referentielId, categories, da
     list[property].nbDay = nbDay
   }
 
-  await models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
+  models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
 
   return list
 }
