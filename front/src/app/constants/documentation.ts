@@ -58,7 +58,7 @@ export const NOMENCLATURE_DOWNLOAD_URL = '/assets/nomenclature-A-Just.html';
  * URL de la nomenclature TJ avec droit local
  */
 export const NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL =
-  '/assets/nomenclature-A-Just-droit-local.html';
+  '/assets/nomenclature-A-Just-TJ-droit-local.html';
 /**
  * URL de la nomenclature CA
  */
