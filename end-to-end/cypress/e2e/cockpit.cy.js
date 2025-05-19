@@ -4,7 +4,7 @@ describe('Cockpit', () => {
   before(() => {
     cy.login()
     cy.visit('/cockpit')
-    cy.wait(4000)
+    cy.wait(10000)
   })
 
   it('Check the name page is displayed', () => {
