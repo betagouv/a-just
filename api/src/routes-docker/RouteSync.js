@@ -24,12 +24,12 @@ export default class RouteSync extends Route {
     if (from !== os.hostname()) {
       switch (type) {
         case "juridiction-agents": {
-          await this.models.HumanResources.getCache(id, true);
+          this.models.HumanResources.getCache(id, true);
           break;
         }
       }
     }
 
-    this.sendOk(ctx, "Ok");
+    this.sendOk(ctx, os.hostname());
   }
 }
