@@ -1,7 +1,6 @@
 import { instanceAxios } from '../utils/axios'
 
 export const onGetAllContentieuxReferentiels = async ({ userToken, jirs = false }) => {
-  console.log('\n\n\nhere')
   return await instanceAxios
     .post(
       '/contentieux-referentiels/get-referentiels',

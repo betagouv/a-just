@@ -2,6 +2,7 @@ import { onUpdateAccountApi } from '../routes/user'
 import { onFilterListHRApi } from '../routes/hr'
 import { JURIDICTION_BACKUP_ID } from '../constants/juridiction'
 import { EAM_ID, GREFFIER_ID, MAGISTART_ID } from '../constants/hrCategories'
+import { assert } from 'chai'
 
 module.exports = function (datas) {
 

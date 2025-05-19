@@ -3,6 +3,7 @@ import { MAGISTART_ID, GREFFIER_ID } from '../constants/hrCategories'
 import { onSaveCle, onGetAllCle } from '../routes/panorama'
 import { onLoginApi, onLogoutApi } from '../routes/user'
 import config from 'config'
+import { assert } from 'chai'
 
 module.exports = function (datas) {
   const siegeCle = 10
