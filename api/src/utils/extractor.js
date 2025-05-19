@@ -356,7 +356,7 @@ export const computeExtractDdg = async (
                 return indisponibility.contentieux.id === referentiel.id;
               })
             ) {
-              const etpAffected = await getHRVentilation(
+              const etpAffected = getHRVentilation(
                 models,
                 human,
                 referentiel.id,
@@ -835,7 +835,7 @@ export const computeExtract = async (
                 return indisponibility.contentieux.id === referentiel.id;
               })
             ) {
-              etpAffected = await getHRVentilation(
+              etpAffected = getHRVentilation(
                 models,
                 human,
                 referentiel.id,

@@ -717,7 +717,7 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
 
   if (etp !== null && etp !== 0) {
     let listContentieux = situation ? situation.activities.map((c) => c.contentieux) : null
-    if (listContentieux !== null) {
+    if (listContentieux !== [] && listContentieux !== null) {
       listContentieux = listContentieux.filter((contentieux) => referentielId.includes(contentieux.id))
     }
   }
