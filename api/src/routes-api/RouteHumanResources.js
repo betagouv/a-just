@@ -131,6 +131,7 @@ export default class RouteHumanResources extends Route {
 
       if (onRemoveHR) {
         this.sendOk(ctx, 'Ok')
+        selfRouteToSyncJuridiction(backupId)
         await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
           hrId,
         })
@@ -180,6 +181,7 @@ export default class RouteHumanResources extends Route {
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
+        selfRouteToSyncJuridiction(backupId)
         this.sendOk(ctx, await this.model.getHr(hrId))
       }
     }
