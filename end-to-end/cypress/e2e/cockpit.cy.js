@@ -46,7 +46,8 @@ describe('Cockpit', () => {
       const token = win.localStorage.getItem('token');
   
       // Get the latest available month
-      const serverUrl = 'http://173.0.0.20:8081/api' || 'http://localhost:8081/api';
+      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+
       cy.log('Server URL:', serverUrl);
       cy.request({
         method: 'POST',
@@ -167,7 +168,8 @@ describe('Cockpit', () => {
       const token = win.localStorage.getItem('token');
   
       // Get the latest available month
-      const serverUrl = 'http://173.0.0.20:8081/api' || 'http://localhost:8081/api';
+      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+
       cy.request({
         method: 'POST',
         url: `${serverUrl}/activities/get-last-month`,
@@ -245,7 +247,7 @@ describe('Cockpit', () => {
       cy.get('.save').click()
     })
     
-    cy.wait(10000)
+    cy.wait(15000)
 
     cy.get('.actions').within(() => {
       cy.get('button')
