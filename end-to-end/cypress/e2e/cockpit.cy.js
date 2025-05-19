@@ -48,7 +48,7 @@ describe('Cockpit', () => {
       // Get the latest available month
       const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
 
-      cy.log('Server URL:', serverUrl);
+      cy.log('Server URL:', Cypress.env('NG_APP_SERVER_URL'))
       cy.request({
         method: 'POST',
         url: `${serverUrl}/activities/get-last-month`,
@@ -169,7 +169,7 @@ describe('Cockpit', () => {
   
       // Get the latest available month
       const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
-
+      cy.log('Server URL:', Cypress.env('NG_APP_SERVER_URL'));
       cy.request({
         method: 'POST',
         url: `${serverUrl}/activities/get-last-month`,
