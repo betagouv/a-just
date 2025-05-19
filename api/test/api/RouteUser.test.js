@@ -1,7 +1,7 @@
 import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi , onUpdateAccountApi} from '../routes/user'
 import { JURIDICTION_TEST_NAME } from '../constants/juridiction'
 import { USER_TEST_EMAIL, USER_TEST_PASSWORD, USER_TEST_FIRSTNAME, USER_TEST_LASTNAME, USER_TEST_FONCTION } from '../constants/user'
-const assert = require('assert')
+import { assert } from 'chai'
 
 module.exports = function (datas) {
   describe('Users tests', () => {
@@ -133,6 +133,7 @@ module.exports = function (datas) {
         tj: JURIDICTION_TEST_NAME,
         fonction: USER_TEST_FONCTION,
       })
+
       datas.userId = response.data.user.id
 
       assert.strictEqual(response.status, 201)
