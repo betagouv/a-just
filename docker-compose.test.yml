@@ -18,7 +18,8 @@ services:
       - POSTGRES_PASSWORD=ajust-pass
       - TZ=Europe/Paris
     volumes:
-      - ./api/test/db:/docker-entrypoint-initdb.d
+      - ./api/test/db/test_tmp.sql.gz:/docker-entrypoint-initdb.d/init.sql.gz
+      # - ./api/test/db/test_tmp2.sql:/docker-entrypoint-initdb.d
     command:
       - "postgres"
       - "-c"
