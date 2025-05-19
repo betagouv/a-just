@@ -317,6 +317,29 @@
     border: solid 1px #000091; // #ddd;
     //transform: rotate(+90deg);
 
+    &.export-b {
+
+      margin-right: 8px;
+      border: solid 1px #000091;
+      background-color: #000091;
+      color: white !important;
+
+      &.enable {
+        opacity: 1;
+        cursor: pointer;
+        pointer-events: initial;
+      }
+
+      mat-icon {
+        top: -1px;
+        position: relative;
+      }
+
+      p {
+        color: white;
+      }
+    }
+
     &.disabled-date {
       pointer-events: all;
       cursor: pointer;

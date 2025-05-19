@@ -2074,6 +2074,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         exportButton1.classList.add('display-none');
       }
 
+      const exportButton2 = document.getElementById('export-button-2');
+      if (exportButton2) {
+        exportButton2.classList.add('display-none');
+      }
+
       const ajWrapper = document.getElementById('simu-wrapper');
       if (ajWrapper) ajWrapper?.classList.add('full-screen');
 
@@ -2095,6 +2100,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
           if (exportButton) exportButton.classList.remove('display-none');
           if (exportButton1) exportButton1.classList.remove('display-none');
+          if (exportButton2) exportButton2.classList.remove('display-none');
           if (initButton) initButton.classList.remove('display-none');
           if (backButton) backButton.classList.remove('display-none');
 
