@@ -76,6 +76,12 @@ module.exports = function (datas) {
      */
     it('Check ETPT Siege', async () => {
       // Retrieving all the HR 'Siege' from a specific jurisdiction who are assigned exclusively to the Social litigation department
+      console.log('backupId', JURIDICTION_BACKUP_ID)
+      console.log('SOCIAL_LITIGATION_ID', SOCIAL_LITIGATION_ID)
+      console.log('MAGISTART_ID', MAGISTART_ID)
+      console.log('GREFFIER_ID', GREFFIER_ID)
+      console.log('dataEtpMag', calculatorData.etpMag)
+      console.log('EAM_ID', EAM_ID)
       const userToken = datas.adminToken
       const backupId = JURIDICTION_BACKUP_ID
       const contentieuxIds = [SOCIAL_LITIGATION_ID]
