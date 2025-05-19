@@ -10,7 +10,6 @@ import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 import { dbInstance } from './index'
-import { setCacheValue } from '../utils/redis'
 import { cloneDeep } from 'lodash'
 
 /**
@@ -124,8 +123,8 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    * @returns
    */
-  Model.getCache = async (backupId) => {
-    if (!cacheJuridictionPeoples[backupId]) {
+  Model.getCache = async (backupId, force = false) => {
+    if (!cacheJuridictionPeoples[backupId] || force) {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
     }
 

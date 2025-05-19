@@ -17,9 +17,8 @@ import { RateLimit } from "koa2-ratelimit";
 import { styleSha1Generate } from "./utils/csp";
 import * as Sentry from "@sentry/node";
 
-const os = require('os');
-console.log('HOST NAME', os.hostname() ); 
-
+const os = require("os");
+console.log("HOST NAME", os.hostname());
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -54,13 +53,14 @@ export default class App extends AppBase {
   }
 
   async start() {
-    db.migrations().then(() => {
-      db.seeders().then(() => {
-        startCrons(this); // start crons
-        console.log("--- IS READY ---", config.port);
-        this.isReady();
+    if (os.hostname().includes("web-1") || !os.hostname().includes("web")) {
+      db.migrations().then(() => {
+        db.seeders().then(() => {
+          startCrons(this); // start crons
+          console.log("--- IS READY ---", config.port);
+          this.isReady();
 
-        /** PASSWORD TESTER to move to unit tests ?
+          /** PASSWORD TESTER to move to unit tests ?
         setTimeout(() => {
           const password_to_test = ['sdf', 'azerty', 'fxsurunbateau', 'ajust', 'fxaviermontigny']
           for (let i = 0; i < password_to_test.length; i++) {
@@ -72,8 +72,12 @@ export default class App extends AppBase {
             }
           }
         }, 100) */
+        });
       });
-    });
+    } else {
+      console.log("--- IS READY ---", config.port);
+      this.isReady();
+    }
 
     this.models = db.initModels();
     this.routeParam.models = this.models;
@@ -296,6 +300,7 @@ export default class App extends AppBase {
     super.mountFolder(join(__dirname, "routes-logs"), "/logs/"); // adds a folder to scan for route files
     super.mountFolder(join(__dirname, "routes-api"), "/api/"); // adds a folder to scan for route files
     super.mountFolder(join(__dirname, "routes-admin"), "/ap-bo/"); // adds a folder to scan for route files
+    super.mountFolder(join(__dirname, "routes-docker"), "/docker/");
     super.mountFolder(join(__dirname, "routes"), "/"); // adds a folder to scan for route files
 
     return super.start();
