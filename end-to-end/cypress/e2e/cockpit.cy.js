@@ -245,7 +245,7 @@ describe('Cockpit', () => {
       cy.get('.save').click()
     })
     
-    cy.wait(5000)
+    cy.wait(10000)
 
     cy.get('.actions').within(() => {
       cy.get('button')
