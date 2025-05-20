@@ -234,7 +234,7 @@ describe("Ajout d'un agent", () => {
 
         cy.get('.actions')
           .get('button')
-          .contains('Enregister')
+          .contains('Enregistrer')
           .click()
       })
   })

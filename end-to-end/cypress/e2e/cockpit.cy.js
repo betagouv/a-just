@@ -36,7 +36,7 @@ describe('Cockpit', () => {
   })
 
   it("Check that the default period is 12 months (until last month available for data)", () => {
-    
+
     cy.get('.switch-tab')
       .get('.brut')
       .click()
@@ -44,7 +44,7 @@ describe('Cockpit', () => {
     cy.window().then((win) => {
       const backupId = win.localStorage.getItem('backupId');
       const token = win.localStorage.getItem('token');
-  
+
       // Get the latest available month
       const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
 
@@ -58,13 +58,13 @@ describe('Cockpit', () => {
         body: { hrBackupId: backupId }
       }).then((response) => {
         expect(response.status).to.eq(200);
-  
+
         const lastMonth = response.body.data.date;
-  
+
         const endDate = new Date(lastMonth);
         const startDate = new Date(endDate);
         startDate.setMonth(endDate.getMonth() - 11);
-  
+
         cy.log('Start Date:', startDate.getDate() + '/' + getShortMonthString(startDate) + '/' + startDate.getFullYear());
         cy.log('End Date:', endDate.getDate() + '/' + getShortMonthString(endDate) + '/' + endDate.getFullYear());
 
@@ -73,7 +73,7 @@ describe('Cockpit', () => {
           .first()
           .should('contain.text', getShortMonthString(startDate))
           .should('contain.text', startDate.getFullYear());
-  
+
         cy.get('.dates-selector')
           .find('aj-date-select')
           .eq(1)
@@ -106,7 +106,7 @@ describe('Cockpit', () => {
     cy.get('.switch-tab')
       .get('.analytique')
       .click()
-    
+
     cy.get('.categories-switch').get('.magistrats').click().then(() => {
       cy.get('.container-colum').last().within(() => {
         cy.get('.title-section').should('contain.text', 'Temps moyen Siège')
@@ -121,7 +121,7 @@ describe('Cockpit', () => {
   })
 
   it("Check that the background color of the selected ETPT category (siege/geffe) change according to the selected agent category", () => {
-    
+
     cy.get('.switch-tab')
       .get('.brut')
       .click()
@@ -166,7 +166,7 @@ describe('Cockpit', () => {
     cy.window().then((win) => {
       const backupId = win.localStorage.getItem('backupId');
       const token = win.localStorage.getItem('token');
-  
+
       // Get the latest available month
       const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
       cy.log('Server URL:', Cypress.env('NG_APP_SERVER_URL'));
@@ -202,18 +202,18 @@ describe('Cockpit', () => {
     cy.get('body').click(0, 0);
   })
 
-  it('Comparateur | Check that if I choose a period, it apperas in the selector', () => {
+  it('Comparateur | Check that I can create a custom comparison period and that it appears in the selector as selected', () => {
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - 5);
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() - 1);
-    
+
     cy.get('.actions').within(() => {
       cy.get('button')
         .first()
         .click()
     })
-    
+
     cy.get('.drop-down')
       .should('be.visible')
       .get('.footer').should('contain.text', 'Personnaliser')
@@ -246,7 +246,7 @@ describe('Cockpit', () => {
     cy.get('aj-popup').within(() => {
       cy.get('.save').click()
     })
-    
+
     cy.wait(15000)
 
     cy.get('.actions').within(() => {
@@ -262,45 +262,89 @@ describe('Cockpit', () => {
         cy.get('.radio').should('have.class', 'filled')
       })
 
+    cy.get('body').click(0, 0);
+
   })
 
-  /*it('Check that we can change the period', () => {
+  it('Comparateur | Check that I can create a custom comparison referentiel', () => {
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - 5);
-
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() - 1);
 
-    cy.get('.dates-selector')
-      .find('aj-date-select')
-      .first()
+    cy.get('.actions').within(() => {
+      cy.get('button').first().click()
+    })
+
+    cy.get('.drop-down').should('be.visible')
+    cy.get('.footer').should('contain.text', 'Personnaliser').click()
+
+    cy.get('aj-popup').within(() => {
+      cy.contains('button', 'Créer un référentiel').click()
+    })
+
+    cy.location('pathname').should('eq', '/temps-moyens')
+
+    cy.get('aj-popup').within(() => {
+      cy.get('textarea').type('Test comparateur referentiel')
+
+      cy.get('.container')
+      cy.get('.left').should('contain.text', 'Siège')
+      cy.get('.right').should('contain.text', 'Greffe')
+
+      cy.get('.actions .save').should('contain.text', 'Enregistrer').click()
+    })
+
+    cy.location('pathname').should('include', '/referentiel-de-temps')
+
+    const timeInputs = [
+      { index: 0, time: '08:30' },
+      { index: 4, time: '04:10' }
+    ]
+
+    timeInputs.forEach(({ index, time }) => {
+      cy.get('.content-list .item-grouped').eq(index).within(() => {
+        cy.get('.column-item').first().within(() => {
+          cy.get('.label').first()
+          cy.get('app-time-selector input').clear().type(time)
+        })
+      })
+      cy.get('body').click(0, 0)
+    })
+
+    cy.get('aj-options-backup-panel')
+      .contains('button', 'Enregistrer')
       .click()
-      .get('mat-datepicker')
-      .get('.mat-calendar-period-button').click()
-      .get('button[aria-label="Choose month and year"]').click()
-      .get('.mat-calendar-body-cell-content').contains(startDate.getFullYear()).click()
-      .get('.mat-calendar-body-cell-content').contains(getShortMonthString(startDate).toUpperCase()).click()
 
-    cy.get('.dates-selector')
-      .find('aj-date-select')
-      .eq(1)
-      .click()
-      .get('mat-datepicker')
-      .get('button[aria-label="Choose date"]').click()
-      .get('button[aria-label="Choose month and year"]').click()
-      .get('.mat-calendar-body-cell-content').contains(endDate.getFullYear()).click()
-      .get('.mat-calendar-body-cell-content').contains(getShortMonthString(endDate).toUpperCase()).click()
+    cy.get('aj-popup').within(() => {
+      cy.get('.content').should('contain.text', 'Votre référentiel est bien enregistré !')
+      cy.contains('button', 'Poursuivre').click()
+    })
 
+    cy.location('pathname').should('eq', '/cockpit')
 
-    cy.get('.dates-selector')
-      .find('aj-date-select')
-      .first()
-      .should('contain.text', getShortMonthString(startDate))
-      .should('contain.text', startDate.getFullYear());
-    cy.get('.dates-selector')
-      .find('aj-date-select')
-      .eq(1)
-      .should('contain.text', getShortMonthString(endDate))
-      .should('contain.text', endDate.getFullYear());
-  })*/
+    cy.get('aj-popup').within(() => {
+      cy.get('.ref-list')
+        .contains('label', 'Test comparateur referentiel')
+        .click()
+      cy.get('.actions .save').click()
+    })
+
+    cy.get('.filters-item')
+      .contains('label', 'Test comparateur referentiel')
+
+    cy.get('.actions').within(() => {
+      cy.get('button')
+        .first()
+        .click()
+    })
+
+    cy.get('.drop-down')
+      .should('be.visible')
+      .contains('Test comparateur' )
+      // .parent('.item')
+      // .within(() => {
+      //   cy.get('.radio').should('have.class', 'filled')
+      // })
+  })
 })
