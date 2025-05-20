@@ -1896,6 +1896,13 @@ export class WhiteSimulatorPage
         editButton.style.display = 'none';
       else if (title) title.classList.add('display-none');
 
+      const tooltips = document.querySelectorAll('[id="chartjs-tooltip"]');
+      if (tooltips) {
+        tooltips.forEach((tooltip) => {
+          (tooltip as HTMLElement).style.marginLeft = '200px';
+        });
+      }
+
       const exportButton = document.getElementById('export-button');
       if (exportButton) {
         exportButton.classList.add('display-none');
@@ -1921,6 +1928,7 @@ export class WhiteSimulatorPage
       if (commentArea) commentArea.classList.add('display-none');
 
       this.onPrint = true;
+      await this.wait(2000);
 
       this.wrapper
         ?.exportAsPdf(filename, true, false, null, false /*true*/)
@@ -1935,6 +1943,10 @@ export class WhiteSimulatorPage
           if (exportButton2) exportButton2.classList.remove('display-none');
           if (initButton) initButton.classList.remove('display-none');
           if (backButton) backButton.classList.remove('display-none');
+          if (tooltips)
+            tooltips.forEach((tooltip) => {
+              (tooltip as HTMLElement).style.marginLeft = '0px';
+            });
 
           if (commentArea) {
             commentArea.style.display = 'block';
@@ -1961,6 +1973,13 @@ export class WhiteSimulatorPage
         setTimeout(() => reject('Comment too long'), 100);
       });
     }
+  }
+
+  /**
+   * Interrompt le code pendant X temps
+   */
+  wait(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**

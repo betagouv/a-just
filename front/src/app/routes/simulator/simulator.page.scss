@@ -219,49 +219,120 @@
   }
 
   .categories-switch {
+    margin-left: 24px;
+    margin-right: 53px;
     display: flex;
     align-items: stretch;
     height: 55px;
+    position: relative;
+    top: 0px;
     z-index: 0;
-    margin-right: 24px;
-    top: 6px;
 
     >div {
       display: flex;
       align-items: center;
       padding: 0 16px;
       cursor: pointer;
-      border: solid 1px fColor(cgraylightv3);
+      border: 1px solid #e0e0e0; // gris clair équivalent à cgraylightv3
+      background-color: white;
+      transition: all 0.2s ease-in-out;
 
       &.alone {
         border-radius: 4px;
+      }
+
+      input[type='radio'] {
+        accent-color: red; // couleur neutre
       }
 
       p {
         font-size: 16px;
         line-height: 1.5;
         margin-left: 8px;
-        color: fColor(colorTag);
+        color: #333; // texte standard
       }
     }
 
-    >.magistrats {
+    .magistrats {
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
 
-      &.selected {
-        border: solid 1px fColor(cbluedark);
-        background-color: fColor(cbluemiddle);
+      .radio-custom {
+        width: 23px;
+        height: 23px;
+        border: 1px solid #000091;
+        border-radius: 50%;
+        margin-right: 8px;
+
+        .circle {
+
+          top: 4px;
+          left: 4px;
+          position: relative;
+          display: none;
+          background-color: #000091; // couleur remplie si sélectionné
+
+          &.selected {
+            display: block;
+            width: 13px;
+            height: 13px;
+            border: 1px solid #000091;
+            border-radius: 50%;
+            margin-right: 8px;
+          }
+        }
+
+      }
+
+      &.selected-magistrat {
+        border: 1px solid #000091;
+        background-color: #e3e3fd;
+        color: #000091;
+
+        p {
+          color: #000091;
+        }
       }
     }
 
-    >.fonctionnaires {
+    .fonctionnaires {
       border-top-right-radius: 4px;
       border-bottom-right-radius: 4px;
 
-      &.selected {
-        border: solid 1px fColor(cpink);
-        background-color: fColor(cpinkmiddle);
+      .radio-custom {
+        width: 23px;
+        height: 23px;
+        border: 1px solid #a558a0;
+        border-radius: 50%;
+        margin-right: 8px;
+
+        .circle {
+
+          top: 4px;
+          left: 4px;
+          position: relative;
+          display: none;
+          background-color: #a558a0; // couleur remplie si sélectionné
+
+          &.selected {
+            display: block;
+            width: 13px;
+            height: 13px;
+            border: 1px solid #a558a0;
+            border-radius: 50%;
+            margin-right: 8px;
+          }
+        }
+
+      }
+
+      &.selected-greffier {
+        border: 1px solid #a558a0;
+        background-color: #fee7fc;
+
+        p {
+          color: #a558a0;
+        }
       }
     }
   }

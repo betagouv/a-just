@@ -100,7 +100,7 @@
             <div class="title-with-doc">
               <h3 [innerHTML]="title"></h3>
               <aj-help-button *ngIf="documentation" (click)="onTogglePanelHelper()"
-                class="documentation"></aj-help-button>
+                class="documentation no-print"></aj-help-button>
             </div>
             <p class="subtitle">
               <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
