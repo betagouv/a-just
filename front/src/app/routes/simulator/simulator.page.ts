@@ -2069,6 +2069,13 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         exportButton.classList.add('display-none');
       }
 
+      const tooltips = document.querySelectorAll('[id="chartjs-tooltip"]');
+      if (tooltips) {
+        tooltips.forEach((tooltip) => {
+          (tooltip as HTMLElement).style.marginLeft = '200px';
+        });
+      }
+
       const exportButton1 = document.getElementById('export-button-1');
       if (exportButton1) {
         exportButton1.classList.add('display-none');
@@ -2089,33 +2096,34 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       if (commentArea) commentArea.classList.add('display-none');
 
       this.onPrint = true;
+      await this.wait(2000);
+      this.wrapper?.exportAsPdf(filename, true, false, null, false).then(() => {
+        title?.classList.add('display-none');
 
-      this.wrapper
-        ?.exportAsPdf(filename, true, false, null, false /*true*/)
-        .then(() => {
-          title?.classList.add('display-none');
+        this.onPrint = false;
+        ajWrapper?.classList.remove('full-screen');
 
-          this.onPrint = false;
-          ajWrapper?.classList.remove('full-screen');
+        if (exportButton) exportButton.classList.remove('display-none');
+        if (exportButton1) exportButton1.classList.remove('display-none');
+        if (exportButton2) exportButton2.classList.remove('display-none');
+        if (initButton) initButton.classList.remove('display-none');
+        if (backButton) backButton.classList.remove('display-none');
+        if (tooltips)
+          tooltips.forEach((tooltip) => {
+            (tooltip as HTMLElement).style.marginLeft = '0px';
+          });
 
-          if (exportButton) exportButton.classList.remove('display-none');
-          if (exportButton1) exportButton1.classList.remove('display-none');
-          if (exportButton2) exportButton2.classList.remove('display-none');
-          if (initButton) initButton.classList.remove('display-none');
-          if (backButton) backButton.classList.remove('display-none');
+        if (commentArea) {
+          commentArea.style.display = 'block';
+          commentArea.classList.remove('display-none');
+          commentAreaCopy!.style.display = 'none';
+        }
 
-          if (commentArea) {
-            commentArea.style.display = 'block';
-            commentArea.classList.remove('display-none');
-            commentAreaCopy!.style.display = 'none';
-          }
-
-          if (editButton) {
-            editButton!.style.display = 'block';
-            editButton!.classList.remove('display-none');
-          }
-        });
-
+        if (editButton) {
+          editButton!.style.display = 'block';
+          editButton!.classList.remove('display-none');
+        }
+      });
       return new Promise((resolve, reject) => {
         setTimeout(() => resolve('Export done'), 200);
       });
@@ -2131,6 +2139,12 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Interrompt le code pendant X temps
+   */
+  wait(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
   /**
    * Changement de categorie selectionnée pour la simulation
    * @param category magistrat, fonctionnaire, greffier
