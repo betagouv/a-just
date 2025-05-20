@@ -6,19 +6,28 @@
 
   <!-- SIMULATEUR STD & BLANC - CHOIX PERIODE -->
   <div class="date-bar-container" [ngClass]="{'white-border': whiteSimulator === true}">
-    <div class="categories-switch" [ngClass]="{'disable': categorySelected===null}">
-      <div *ngIf="canViewMagistrat" class="magistrats {{disabled}}"
-        [ngClass]="{'selected': categorySelected === 'MAGISTRAT',  alone: !canViewGreffier}"
-        (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRAT'); ">
-        <input type="radio" [checked]="categorySelected === 'MAGISTRAT'" />
-        <p>Siège</p>
+    <div class="categories-switch" [ngClass]="{'disable': categorySelected === null}">
+      <!-- MAGISTRAT -->
+      <div *ngIf="canViewMagistrat" class="magistrats" [ngClass]="{
+             'selected-magistrat': categorySelected === 'MAGISTRAT',
+             'alone': !canViewGreffier
+           }" (click)="$event.stopPropagation(); changeCategorySelected('MAGISTRAT')">
+        <div class="radio-custom" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}">
+          <div class="circle" [ngClass]="{'selected': categorySelected === 'MAGISTRAT'}"></div>
+        </div>
+        <p [style.color]="categorySelected === 'MAGISTRAT' ? '#000091' : '#333'">Siège</p>
       </div>
-      <div *ngIf="canViewGreffier" class="fonctionnaires {{disabled}}"
-        [ngClass]="{'selected': categorySelected === 'GREFFE', alone: !canViewMagistrat}" class="fonctionnaires"
-        (click)="$event.stopPropagation(); changeCategorySelected('GREFFE')">
-        <input type="radio" [ngClass]="{'pink': categorySelected === 'GREFFE'}"
-          [checked]="categorySelected === 'GREFFE'" />
-        <p>Greffe</p>
+
+      <!-- GREFFE -->
+      <div *ngIf="canViewGreffier" class="fonctionnaires" [ngClass]="{
+             'selected-greffier': categorySelected === 'GREFFE',
+             'alone': !canViewMagistrat
+           }" (click)="$event.stopPropagation(); changeCategorySelected('GREFFE')">
+        <div class="radio-custom" [ngClass]="{'selected': categorySelected === 'GREFFE'}">
+          <div class="circle" [ngClass]="{'selected': categorySelected === 'GREFFE'}"></div>
+        </div>
+
+        <p [style.color]="categorySelected === 'GREFFE' ? '#a558a0' : '#333'">Greffe</p>
       </div>
     </div>
 
