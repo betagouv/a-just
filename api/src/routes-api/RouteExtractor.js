@@ -3,6 +3,7 @@ import { Types } from "../utils/types";
 import {
   autofitColumns,
   computeExtract,
+  computeExtract1,
   computeExtractDdg,
   flatListOfContentieuxAndSousContentieux,
   formatFunctions,
@@ -11,9 +12,10 @@ import {
   getViewModel,
   replaceIfZero,
   sortByCatAndFct,
+  sortResults,
 } from "../utils/extractor";
 import { getHumanRessourceList } from "../utils/humanServices";
-import { cloneDeep, groupBy, last, orderBy, sumBy } from "lodash";
+import { cloneDeep, groupBy, isEqual, last, orderBy, sumBy } from "lodash";
 import { isDateGreaterOrEqual, month, today } from "../utils/date";
 import { ABSENTEISME_LABELS } from "../constants/referentiel";
 import { EXECUTE_EXTRACTOR } from "../constants/log-codes";
@@ -60,8 +62,12 @@ export default class RouteExtractor extends Route {
     ) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
     }
+    console.time("TOTAL");
 
-    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
+    
+    console.time("init");
+
+    this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
       type: "effectif",
     });
 
@@ -78,12 +84,6 @@ export default class RouteExtractor extends Route {
       );
     console.timeEnd("extractor-1");
 
-    console.time("extractor-2");
-    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([
-      ...referentiels,
-    ]);
-    console.timeEnd("extractor-2");
-
     console.time("extractor-3");
     const hr = await this.model.getCache(backupId);
     console.timeEnd("extractor-3");
@@ -94,8 +94,19 @@ export default class RouteExtractor extends Route {
 
     console.time("extractor-4.1");
     const functionList = await this.models.HRFonctions.getAllFormatDdg();
+    console.timeEnd("extractor-4.1");
+
+    console.timeEnd("init");
+
+    console.time("extractor-2");
+    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([
+      ...referentiels,
+    ]);
+    console.timeEnd("extractor-2");
+
+    console.time("extractor-4.2");
     const formatedFunctions = await formatFunctions(functionList);
-    console.timeEnd("extractor-4;1");
+    console.timeEnd("extractor-4.2");
 
     console.time("extractor-5");
     let allHuman = await getHumanRessourceList(
@@ -108,19 +119,63 @@ export default class RouteExtractor extends Route {
     );
     console.timeEnd("extractor-5");
 
-    console.time("extractor-6");
-    let onglet1 = await computeExtract(
-      this.models,
-      cloneDeep(allHuman),
-      flatReferentielsList,
-      categories,
-      categoryFilter,
-      juridictionName,
-      dateStart,
-      dateStop,
-      isJirs
-    );
+    console.time("extractor-6&7");
+    let [onglet1, onglet2,onglet1BIS] = await Promise.all([
+      computeExtract(
+        this.models,
+        cloneDeep(allHuman),
+        flatReferentielsList,
+        categories,
+        categoryFilter,
+        juridictionName,
+        dateStart,
+        dateStop,
+        isJirs
+      ),
+      computeExtractDdg(
+        this.models,
+        cloneDeep(allHuman),
+        flatReferentielsList,
+        categories,
+        categoryFilter,
+        juridictionName,
+        dateStart,
+        dateStop,
+        isJirs
+      ),
+      computeExtract1(
+        this.models,
+        cloneDeep(allHuman),
+        flatReferentielsList,
+        categories,
+        categoryFilter,
+        juridictionName,
+        dateStart,
+        dateStop,
+        isJirs
+      ),
+    ]);
+    console.timeEnd("extractor-6&7");
     console.timeEnd("extractor-6");
+
+    
+     onglet1 = sortResults(onglet1);
+     onglet1BIS = sortResults(onglet1BIS);
+
+    if (!isEqual(onglet1, onglet1BIS)) {
+      console.log("❌ Les résultats sont différents.");
+      for (let i = 0; i < onglet1.length; i++) {
+        if (!isEqual(onglet1[i], onglet1BIS[i])) {
+          console.log(`❗ Différence à l'index ${i}:`);
+          console.log("Ancien:", onglet1[i]);
+          console.log("Nouveau:", onglet1BIS[i]);
+          break; // ou continue pour toutes les différences
+        }
+      }
+    } else {
+      console.log("✅ Les résultats sont strictement identiques.");
+    }
+
 
     const absenteismeList = [];
 
@@ -161,19 +216,6 @@ export default class RouteExtractor extends Route {
     ];
     console.timeEnd("extractor-6.2");
 
-    console.time("extractor-7");
-    let onglet2 = await computeExtractDdg(
-      this.models,
-      cloneDeep(allHuman),
-      flatReferentielsList,
-      categories,
-      categoryFilter,
-      juridictionName,
-      dateStart,
-      dateStop,
-      isJirs
-    );
-    console.timeEnd("extractor-7");
 
     console.time("extractor-8");
     onglet1 = orderBy(
@@ -186,8 +228,18 @@ export default class RouteExtractor extends Route {
       ["Catégorie", "Nom", "Prénom", "Matricule"],
       ["desc", "asc", "asc", "asc"]
     );
-    const columnSize1 = await autofitColumns(onglet1, true);
-    const columnSize2 = await autofitColumns(onglet2, true, 13);
+
+    onglet1BIS = orderBy(
+      onglet1BIS,
+      ["Catégorie", "Nom", "Prénom", "Matricule"],
+      ["desc", "asc", "asc", "asc"]
+    );
+
+    const [columnSize1, columnSize2] = await Promise.all([
+      autofitColumns(onglet1, true),
+      autofitColumns(onglet2, true, 13)
+    ]);
+
     console.timeEnd("extractor-8");
 
     const label = (juridictionName.label || "").toUpperCase();
@@ -213,6 +265,8 @@ export default class RouteExtractor extends Route {
       allJuridiction,
     });
 
+    console.timeEnd("TOTAL");
+
     this.sendOk(ctx, {
       fonctions: formatedFunctions,
       referentiels,
@@ -223,6 +277,7 @@ export default class RouteExtractor extends Route {
       viewModel,
     });
   }
+
 
   /**
    *

@@ -1035,6 +1035,222 @@ export const computeExtract = async (
   return data;
 };
 
+  /**
+   * Trie par matricule
+   * @param {*} results 
+   * @returns 
+   */
+  export const sortResults = (results) => {
+    return results.sort((a, b) => {
+      const matA = a['Matricule'] || '';
+      const matB = b['Matricule'] || '';
+      return matA.localeCompare(matB);
+    });
+  };
+/** TEST PERF */
+export const computeExtract1 = async (
+  models,
+  allHuman,
+  flatReferentielsList,
+  categories,
+  categoryFilter,
+  juridictionName,
+  dateStart,
+  dateStop,
+  isJirs
+) => {
+  console.time("extractor-6.0-NEW");
+
+  const data = [];
+  const refIndispoDetails = getIndispoDetails(flatReferentielsList);
+  const emptyRefTemplate = emptyRefObj(flatReferentielsList);
+  const fullPeriodDays = nbOfDays(dateStart, dateStop);
+  const excelLabelCache = new Map();
+  const refIndispoKey = getExcelLabel(refIndispoDetails.refIndispo, true);
+
+  const getLabel = (ref, withChildren) => {
+    const key = `${ref.id}_${withChildren}`;
+    if (!excelLabelCache.has(key)) {
+      excelLabelCache.set(key, getExcelLabel(ref, withChildren));
+    }
+    return excelLabelCache.get(key);
+  };
+
+  // Traitement batché pour éviter la surcharge
+  const batchSize = 10;
+  for (let i = 0; i < allHuman.length; i += batchSize) {
+    const batch = allHuman.slice(i, i + batchSize);
+    const processedBatch = await Promise.all(
+      batch.map(async (human) => {
+        const { currentSituation } = findSituation(human);
+
+        const categoryName =
+          currentSituation?.category?.label || "pas de catégorie";
+        const fonctionName =
+          currentSituation?.fonction?.code || "pas de fonction";
+
+        const refObj = { ...emptyRefTemplate };
+        let totalEtpt = 0;
+        let reelEtp = 0;
+
+        const relevantReferentiels = flatReferentielsList.filter((ref) =>
+          (human.situations || []).some((s) =>
+            (s.activities || []).some((a) => a.contentieux.id === ref.id)
+          ) ||
+          (human.indisponibilities || []).some((i) => i.contentieux.id === ref.id)
+        );
+
+        const indispoArray = await Promise.all(
+          relevantReferentiels.map(async (referentiel) => {
+            const etpAffected = await getHRVentilation(
+              models,
+              human,
+              referentiel.id,
+              [...categories],
+              dateStart,
+              dateStop
+            );
+
+            const {
+              counterEtpTotal,
+              counterEtpSubTotal,
+              counterIndispo,
+              counterReelEtp
+            } = await countEtp(etpAffected, referentiel);
+
+            reelEtp = reelEtp || counterReelEtp;
+
+            const isIndispoRef = refIndispoDetails.allIndispRefIds.includes(referentiel.id);
+            const label = getLabel(referentiel, !isIndispoRef);
+
+            if (referentiel.childrens && !isIndispoRef) {
+              refObj[label] = counterEtpTotal;
+              totalEtpt += counterEtpTotal;
+            } else if (isIndispoRef) {
+              refObj[label] = counterIndispo / 100;
+              return { indispo: counterIndispo / 100 };
+            } else {
+              refObj[label] = counterEtpSubTotal;
+            }
+
+            return { indispo: 0 };
+          })
+        );
+
+        refObj[refIndispoKey] = sumBy(indispoArray, "indispo");
+
+        if (reelEtp === 0) {
+          const reelEtpObject = [];
+          const sortedSituations = sortBy(human.situations || [], "dateStart", "asc");
+          const adjustedStart = setTimeToMidDay(dateStart);
+          const adjustedStop = setTimeToMidDay(dateStop);
+
+          for (let index = 0; index < sortedSituations.length; index++) {
+            const situation = sortedSituations[index];
+            const start = situation.dateStart <= dateStart ? adjustedStart : situation.dateStart;
+            const end =
+              index < sortedSituations.length - 1
+                ? new Date(sortedSituations[index + 1].dateStart)
+                : adjustedStop;
+
+            if (start && end && start <= end) {
+              const nbDays = nbWorkingDays(new Date(start), new Date(end));
+              if (typeof nbDays === "number") {
+                reelEtpObject.push({
+                  etp: situation.etp * nbDays,
+                  countNbOfDays: nbDays,
+                });
+              }
+            }
+          }
+
+          const etpSum = sumBy(reelEtpObject, "etp");
+          const daySum = sumBy(reelEtpObject, "countNbOfDays");
+          const baseReel = etpSum / daySum || 0;
+
+          const isGone = dateStop > human.dateEnd && human.dateEnd > dateStart;
+          const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop;
+
+          if (human.dateEnd && isGone && hasArrived) {
+            reelEtp = (baseReel * nbOfDays(human.dateStart, human.dateEnd)) / fullPeriodDays;
+          } else if (human.dateEnd && isGone) {
+            reelEtp = (baseReel * nbOfDays(dateStart, human.dateEnd)) / fullPeriodDays;
+          } else if (hasArrived) {
+            reelEtp = (baseReel * nbOfDays(human.dateStart, dateStop)) / fullPeriodDays;
+          } else {
+            reelEtp = baseReel;
+          }
+
+          reelEtp -= refObj[refIndispoKey] || 0;
+        }
+
+        let delegation = null;
+
+        if (isCa()) {
+          Object.keys(refObj).forEach((k) => {
+            if (k.includes(DELEGATION_TJ.toUpperCase())) {
+              refObj[refIndispoKey] -= refObj[k];
+            }
+          });
+
+          ({ refObj, delegation } = getAndDeleteAbsenteisme(
+            refObj,
+            ["14.13. DÉLÉGATION TJ"],
+            true
+          ));
+
+          const result = {};
+          for (const [k, v] of Object.entries(refObj)) {
+            if (k === "14. TOTAL INDISPONIBILITÉ") {
+              Object.assign(result, delegation);
+            }
+            result[k] = v;
+          }
+          refObj = result;
+        }
+
+        if (categoryFilter.includes(categoryName.toLowerCase())) {
+          if (categoryName !== "pas de catégorie" || fonctionName !== "pas de fonction") {
+            return {
+              ["Réf."]: String(human.id),
+              ...(isCa()
+                ? { Juridiction: juridictionName.label }
+                : { Arrondissement: juridictionName.label }),
+              Nom: human.lastName,
+              Prénom: human.firstName,
+              Matricule: human.matricule,
+              Catégorie: categoryName,
+              Fonction: fonctionName,
+              ["Fonction recodée"]: null,
+              ...(isCa() ? { ["_"]: null } : { ["TJCPH"]: null }),
+              ...(isCa() ? { ["__"]: null } : { ["Juridiction"]: null }),
+              Jirs: isJirs ? "x" : "",
+              ["Date d'arrivée"]: human.dateStart
+                ? setTimeToMidDay(human.dateStart).toISOString().split("T")[0]
+                : null,
+              ["Date de départ"]: human.dateEnd
+                ? setTimeToMidDay(human.dateEnd).toISOString().split("T")[0]
+                : null,
+              ["ETPT sur la période (absentéisme et action 99 déduits)"]: reelEtp < 0.0001 ? 0 : reelEtp,
+              ["Temps ventilés sur la période (absentéisme et action 99 déduits)"]: totalEtpt,
+              ...refObj,
+              ...(isCa() ? delegation : {}),
+            };
+          }
+        }
+
+        return null;
+      })
+    );
+
+    data.push(...processedBatch.filter(Boolean));
+  }
+
+  console.timeEnd("extractor-6.0-NEW");
+  return data;
+};
+
+
 export const formatFunctions = async (functionList) => {
   let list = [
     ...functionList,
