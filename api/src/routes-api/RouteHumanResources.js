@@ -236,12 +236,21 @@ export default class RouteHumanResources extends Route {
 
     date = today(date)
 
+    console.time('filter list 1')
     let hr = await this.model.getCache(backupId)
+    console.timeEnd('filter list 1')
+
+    console.time('filter list 2')
     const preformatedAllHumanResource = preformatHumanResources(hr, date)
+    console.timeEnd('filter list 2')
 
+    console.time('filter list 3')
     let list = await getHumanRessourceList(preformatedAllHumanResource, contentieuxIds, subContentieuxIds, categoriesIds, date, endPeriodToCheck)
+    console.timeEnd('filter list 3')
 
+    console.time('filter list 4')
     const allCategories = await this.models.HRCategories.getAll()
+    console.timeEnd('filter list 4')
 
     if (categoriesIds && categoriesIds.length === 3 && (!contentieuxIds || contentieuxIds.length === 0)) {
       // memorize first execution by user
@@ -250,9 +259,15 @@ export default class RouteHumanResources extends Route {
 
     let listFiltered = [...list]
 
+    console.time('filter list 5')
     const categories = getCategoriesByUserAccess(allCategories, ctx.state.user)
-    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
+    console.timeEnd('filter list 5')
 
+    console.time('filter list 6')
+    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
+    console.timeEnd('filter list 6')
+
+    console.time('filter list 7')
     const listFormated = categories
       .filter((c) => categoriesIds.indexOf(c.id) !== -1)
       .map((category) => {
@@ -290,6 +305,7 @@ export default class RouteHumanResources extends Route {
       const ids = categories.map((c) => c.id)
       hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
     }
+    console.timeEnd('filter list 7')
 
     this.sendOk(ctx, {
       list: listFormated,
