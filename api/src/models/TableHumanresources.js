@@ -124,14 +124,6 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getCache = async (backupId, force = false) => {
-    if(force && cacheJuridictionPeoples[backupId]) {
-      // force to clean agents
-      for(let i = 0; i < cacheJuridictionPeoples[backupId].length; i++) {
-        await Model.removeCacheAgent(cacheJuridictionPeoples[backupId][i].id)
-      }
-    }
-
-
     if (!cacheJuridictionPeoples[backupId] || force) {
       cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
     }
