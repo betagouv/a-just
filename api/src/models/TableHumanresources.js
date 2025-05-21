@@ -208,6 +208,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.importList = async (list) => {
     const now = new Date()
+    const ids = []
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     const filterBySP = ['MHFJS', 'MHFJ', 'AS', 'JA']
@@ -224,6 +225,9 @@ export default (sequelizeInstance, Model) => {
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(Number(config.juridictionType) !== 1 ? list[i].arrdt : list[i].juridiction)
+      if(!ids.includes(backupId)) {
+        ids.push(backupId)
+      }
 
       list[i].hRegMatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
       let findHRToDB = await Model.findOne({
@@ -426,6 +430,7 @@ export default (sequelizeInstance, Model) => {
     cacheJuridictionPeoples = {}
     Model.onPreload()
     console.log('IMPORT!:', importSituation)
+    return ids
   }
 
   /**
@@ -779,6 +784,7 @@ export default (sequelizeInstance, Model) => {
   }
 
   setTimeout(() => {
+    console.log('Preload human resources data')
     Model.onPreload()
   }, 10000);
 
