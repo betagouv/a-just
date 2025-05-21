@@ -15,5 +15,5 @@ module.exports = {
     enable2Auth: true,
     max2AuthByMonth: 1,
   },
-  nbInstances: 2,
+  nbInstances: 4,
 }
