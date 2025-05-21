@@ -778,5 +778,9 @@ export default (sequelizeInstance, Model) => {
     return { fonctions, list }
   }
 
+  setTimeout(() => {
+    Model.onPreload()
+  }, 10000);
+
   return Model
 }
