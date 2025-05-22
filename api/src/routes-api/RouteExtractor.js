@@ -2,15 +2,16 @@ import Route, { Access } from "./Route";
 import { Types } from "../utils/types";
 import {
   autofitColumns,
+  buildExcelRef,
   computeExtract,
   computeExtractDdg,
   flatListOfContentieuxAndSousContentieux,
   formatFunctions,
   getExcelLabel,
-  getObjectKeys,
+  getJuridictionData,
   getViewModel,
   replaceIfZero,
-  sortByCatAndFct,
+  runExtractsInParallel,
 } from "../utils/extractor";
 import { getHumanRessourceList } from "../utils/humanServices";
 import { cloneDeep, groupBy, last, orderBy, sumBy } from "lodash";
@@ -18,6 +19,7 @@ import { isDateGreaterOrEqual, month, today } from "../utils/date";
 import { ABSENTEISME_LABELS } from "../constants/referentiel";
 import { EXECUTE_EXTRACTOR } from "../constants/log-codes";
 import { updateLabels } from "../utils/referentiel";
+import { withAbortTimeout } from "../utils/abordTimeout";
 
 /**
  * Route de la page extrateur
@@ -54,176 +56,86 @@ export default class RouteExtractor extends Route {
     accesses: [Access.canVewHR],
   })
   async filterList(ctx) {
-    let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx);
-    if (
-      !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
-    ) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
-    }
-
-    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
-      type: "effectif",
-    });
-
-    const juridictionName = await this.models.HRBackups.findById(backupId);
-    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId);
-
-    console.time("extractor-1");
-    const referentiels =
-      await this.models.ContentieuxReferentiels.getReferentiels(
-        backupId,
-        undefined,
-        undefined,
-        true
-      );
-    console.timeEnd("extractor-1");
-
-    console.time("extractor-2");
-    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([
-      ...referentiels,
-    ]);
-    console.timeEnd("extractor-2");
-
-    console.time("extractor-3");
-    const hr = await this.model.getCache(backupId);
-    console.timeEnd("extractor-3");
-
-    console.time("extractor-4");
-    const categories = await this.models.HRCategories.getAll();
-    console.timeEnd("extractor-4");
-
-    console.time("extractor-4.1");
-    const functionList = await this.models.HRFonctions.getAllFormatDdg();
-    const formatedFunctions = await formatFunctions(functionList);
-    console.timeEnd("extractor-4;1");
-
-    console.time("extractor-5");
-    let allHuman = await getHumanRessourceList(
-      hr,
-      undefined,
-      undefined,
-      undefined,
-      dateStart,
-      dateStop
-    );
-    console.timeEnd("extractor-5");
-
-    console.time("extractor-6");
-    let onglet1 = await computeExtract(
-      this.models,
-      cloneDeep(allHuman),
-      flatReferentielsList,
-      categories,
-      categoryFilter,
-      juridictionName,
-      dateStart,
-      dateStop,
-      isJirs
-    );
-    console.timeEnd("extractor-6");
-
-    const absenteismeList = [];
-
-    console.time("extractor-6.1");
-    const formatedExcelList = flatReferentielsList
-      .filter((elem) => {
-        if (ABSENTEISME_LABELS.includes(elem.label) === false) return true;
-        else {
-          absenteismeList.push(elem);
-          return false;
+    try {
+      await withAbortTimeout(async (signal) => {
+        const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx);
+  
+        if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+          ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
         }
-      })
-      .map((x) => {
-        return x.childrens !== undefined
-          ? { global: getExcelLabel(x, true), sub: null }
-          : { global: null, sub: getExcelLabel(x, false) };
-      });
-    console.timeEnd("extractor-6.1");
+  
+        await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
+          type: "effectif",
+        });
+  
+        const juridictionName = await this.models.HRBackups.findById(backupId);
+        const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId);
+        const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(
+          backupId, undefined, undefined, true
+        );
+  
+        const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels]);
+        const hr = await this.model.getCache(backupId);
+        const categories = await this.models.HRCategories.getAll();
+        const functionList = await this.models.HRFonctions.getAllFormatDdg();
+        const formatedFunctions = await formatFunctions(functionList);
+        const allHuman = await getHumanRessourceList(
+          hr, undefined, undefined, undefined, dateStart, dateStop
+        );
+  
+        let { onglet1, onglet2 } = await runExtractsInParallel({
+          models: this.models,
+          allHuman,
+          flatReferentielsList,
+          categories,
+          categoryFilter,
+          juridictionName,
+          dateStart,
+          dateStop,
+          isJirs,
+          signal,
+        });
 
-    console.time("extractor-6.2");
-    const excelRef = [
-      {
-        global: null,
-        sub: "ETPT sur la période absentéisme non déduit (hors action 99)",
-      },
-      { global: null, sub: "Temps ventilés sur la période (hors action 99)" },
-      ...formatedExcelList,
-      { global: null, sub: "CET > 30 jours" },
-      {
-        global:
-          "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)",
-        sub: null,
-      },
-      { global: null, sub: "CET < 30 jours" },
-      ...absenteismeList.map((y) => {
-        return { global: null, sub: getExcelLabel(y, false) };
-      }),
-    ];
-    console.timeEnd("extractor-6.2");
-
-    console.time("extractor-7");
-    let onglet2 = await computeExtractDdg(
-      this.models,
-      cloneDeep(allHuman),
-      flatReferentielsList,
-      categories,
-      categoryFilter,
-      juridictionName,
-      dateStart,
-      dateStop,
-      isJirs
-    );
-    console.timeEnd("extractor-7");
-
-    console.time("extractor-8");
-    onglet1 = orderBy(
-      onglet1,
-      ["Catégorie", "Nom", "Prénom", "Matricule"],
-      ["desc", "asc", "asc", "asc"]
-    );
-    onglet2 = orderBy(
-      onglet2,
-      ["Catégorie", "Nom", "Prénom", "Matricule"],
-      ["desc", "asc", "asc", "asc"]
-    );
-    const columnSize1 = await autofitColumns(onglet1, true);
-    const columnSize2 = await autofitColumns(onglet2, true, 13);
-    console.timeEnd("extractor-8");
-
-    const label = (juridictionName.label || "").toUpperCase();
-    let tproxs = (
-      await this.models.TJ.getByTj(label, {}, { type: "TPRX" })
-    ).map((t) => ({ id: t.id, tj: t.tj, tprox: t.tprox }));
-    if (tproxs.length === 0) {
-      tproxs = [{ id: 0, tj: label, tprox: label }];
+        const excelRef = buildExcelRef(flatReferentielsList);
+        const { tproxs, allJuridiction } = await getJuridictionData(this.models, juridictionName);
+  
+        const onglet1Data = {
+          values: onglet1,
+          columnSize: await autofitColumns(onglet1, true),
+        };
+  
+        const onglet2Data = {
+          values: onglet2,
+          columnSize: await autofitColumns(onglet2, true, 13),
+          excelRef,
+        };
+  
+        const viewModel = await getViewModel({
+          referentiels,
+          tproxs,
+          onglet1: onglet1Data,
+          onglet2: onglet2Data,
+          allJuridiction,
+        });
+  
+        this.sendOk(ctx, {
+          fonctions: formatedFunctions,
+          referentiels,
+          tproxs,
+          onglet1: onglet1Data,
+          onglet2: onglet2Data,
+          allJuridiction,
+          viewModel,
+        });
+      }, 60000); // timeout en ms
+    } catch (err) {
+      console.error("❌ Traitement interrompu :", err.message);
+      ctx.status = 503;
+      ctx.body = { error: err.message };
     }
-
-    if (onglet1 === null || onglet1 === undefined) onglet1 = [];
-    if (onglet2 === null || onglet2 === undefined) onglet2 = [];
-
-    let allJuridiction = (await this.models.TJ.getByTj(label, {}, {})).map(
-      (t) => ({ id: t.id, tj: t.tj, tprox: t.tprox, type: t.type })
-    );
-
-    let viewModel = await getViewModel({
-      referentiels,
-      tproxs,
-      onglet1: { values: onglet1, columnSize: columnSize1 },
-      onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
-      allJuridiction,
-    });
-
-    this.sendOk(ctx, {
-      fonctions: formatedFunctions,
-      referentiels,
-      tproxs,
-      onglet1: { values: onglet1, columnSize: columnSize1 },
-      onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
-      allJuridiction,
-      viewModel,
-    });
+  
   }
-
+  
   /**
    *
    * @param {*} dateStart
