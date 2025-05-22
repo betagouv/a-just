@@ -1,4 +1,4 @@
-import { orderBy, sortBy, sumBy } from "lodash";
+import { cloneDeep, orderBy, sortBy, sumBy } from "lodash";
 import {
   ABSENTEISME_LABELS,
   CET_LABEL,
@@ -19,6 +19,7 @@ import {
   FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA,
 } from "../constants/extractor";
 import { isCa, isTj } from "./ca";
+import { checkAbort } from "./abordTimeout";
 
 /**
  * Tri par catégorie et par fonction
@@ -284,7 +285,8 @@ export const computeExtractDdg = async (
   juridictionName,
   dateStart,
   dateStop,
-  isJirs
+  isJirs,
+  signal=null,
 ) => {
   let onglet2 = [];
   dateStart = setTimeToMidDay(dateStart)
@@ -293,7 +295,7 @@ export const computeExtractDdg = async (
   console.time("extractor-7.1");
   await Promise.all(
     allHuman.map(async (human) => {
-      
+      checkAbort(signal);
       const { currentSituation } = findSituation(human);
 
       let categoryName =
@@ -342,6 +344,7 @@ export const computeExtractDdg = async (
       indispoArray = [
         ...(await Promise.all(
           flatReferentielsList.map(async (referentiel) => {
+            checkAbort(signal);
             const situations = human.situations || [];
             const indisponibilities = human.indisponibilities || [];
 
@@ -364,7 +367,8 @@ export const computeExtractDdg = async (
                 dateStart,
                 dateStop,
                 true,
-                absLabels
+                absLabels,
+                signal
               );
 
               const {
@@ -375,6 +379,8 @@ export const computeExtractDdg = async (
               } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
               };
+
+              checkAbort(signal);
 
               Object.keys(etpAffected).map((key) => {
                 totalDaysGone =
@@ -776,6 +782,131 @@ export const getViewModel = async (params) => {
   };
 };
 
+export async function runExtractsInParallel({
+  models,
+  allHuman,
+  flatReferentielsList,
+  categories,
+  categoryFilter,
+  juridictionName,
+  dateStart,
+  dateStop,
+  isJirs,
+  signal
+}) {
+  try {
+    let [onglet1, onglet2] = await Promise.all([
+      computeExtract(
+        models,
+        cloneDeep(allHuman),
+        flatReferentielsList,
+        categories,
+        categoryFilter,
+        juridictionName,
+        dateStart,
+        dateStop,
+        isJirs,
+        signal
+      ),
+      computeExtractDdg(
+        models,
+        cloneDeep(allHuman),
+        flatReferentielsList,
+        categories,
+        categoryFilter,
+        juridictionName,
+        dateStart,
+        dateStop,
+        isJirs,
+        signal
+      )
+    ]);
+
+    onglet1 = orderBy(
+      onglet1,
+      ["Catégorie", "Nom", "Prénom", "Matricule"],
+      ["desc", "asc", "asc", "asc"]
+    );
+    onglet2 = orderBy(
+      onglet2,
+      ["Catégorie", "Nom", "Prénom", "Matricule"],
+      ["desc", "asc", "asc", "asc"]
+    );
+
+
+    return { onglet1, onglet2 };
+  } catch (e) {
+    if (signal?.aborted) {
+      console.warn("🧨 computeExtract a été interrompu par un signal d'abandon.");
+    } else {
+      console.error("❌ Erreur lors de l'exécution des extractions :", e);
+    }
+    throw e;
+  }
+}
+
+
+
+export function buildExcelRef(flatReferentielsList) {
+  const absenteismeList = [];
+
+  const formatedExcelList = flatReferentielsList
+    .filter((elem) => {
+      if (!ABSENTEISME_LABELS.includes(elem.label)) return true;
+      absenteismeList.push(elem);
+      return false;
+    })
+    .map((x) => {
+      return x.childrens !== undefined
+        ? { global: getExcelLabel(x, true), sub: null }
+        : { global: null, sub: getExcelLabel(x, false) };
+    });
+
+  const excelRef = [
+    {
+      global: null,
+      sub: "ETPT sur la période absentéisme non déduit (hors action 99)",
+    },
+    { global: null, sub: "Temps ventilés sur la période (hors action 99)" },
+    ...formatedExcelList,
+    { global: null, sub: "CET > 30 jours" },
+    {
+      global:
+        "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)",
+      sub: null,
+    },
+    { global: null, sub: "CET < 30 jours" },
+    ...absenteismeList.map((y) => {
+      return { global: null, sub: getExcelLabel(y, false) };
+    }),
+  ];
+
+  return excelRef;
+}
+
+export const getJuridictionData = async (models, juridictionName) =>{
+  const label = (juridictionName.label || "").toUpperCase();
+
+  let tproxs = (await models.TJ.getByTj(label, {}, { type: "TPRX" })).map((t) => ({
+    id: t.id,
+    tj: t.tj,
+    tprox: t.tprox,
+  }));
+
+  if (tproxs.length === 0) {
+    tproxs = [{ id: 0, tj: label, tprox: label }];
+  }
+
+  const allJuridiction = (await models.TJ.getByTj(label, {}, {})).map((t) => ({
+    id: t.id,
+    tj: t.tj,
+    tprox: t.tprox,
+    type: t.type,
+  }));
+
+  return { tproxs, allJuridiction };
+}
+
 export const computeExtract = async (
   models,
   allHuman,
@@ -785,13 +916,15 @@ export const computeExtract = async (
   juridictionName,
   dateStart,
   dateStop,
-  isJirs
+  isJirs,
+  signal=null
 ) => {
   let data = [];
 
   console.time("extractor-6.0");
   await Promise.all(
     allHuman.map(async (human) => {
+      checkAbort(signal);
       const { currentSituation } = findSituation(human);
 
       let categoryName =
@@ -821,6 +954,7 @@ export const computeExtract = async (
       indispoArray = [
         ...(await Promise.all(
           flatReferentielsList.map(async (referentiel) => {
+            checkAbort(signal);
             const situations = human.situations || [];
             const indisponibilities = human.indisponibilities || [];
 
@@ -841,7 +975,8 @@ export const computeExtract = async (
                 referentiel.id,
                 [...categories],
                 dateStart,
-                dateStop
+                dateStop,
+                signal
               );
 
               const {
@@ -852,6 +987,8 @@ export const computeExtract = async (
               } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
               };
+
+              checkAbort(signal);
 
               Object.keys(etpAffected).map((key) => {
                 totalDaysGone =
@@ -992,6 +1129,8 @@ export const computeExtract = async (
 
         refObj = result;
       }
+
+      checkAbort(signal);
 
       if (categoryFilter.includes(categoryName.toLowerCase()))
         if (

@@ -416,7 +416,9 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
  * @param {*} dateStop
  * @returns
  */
-export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
+export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null,signal=null) => {
+  if (signal && signal.aborted) throw new Error("⛔ Annulé dans getHRVentilation");
+
   const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
   if (cache) {
     return cache
