@@ -1,9 +1,12 @@
-import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi , onUpdateAccountApi} from '../routes/user'
+import { onForgotPasswordApi, onGetMyInfosApi, onGetUserDataApi, onGetUserListApi, onLoginApi, onLogoutApi, onSignUpApi , onChangePasswordApi, onUpdateAccountApi} from '../routes/user'
 import { JURIDICTION_TEST_NAME } from '../constants/juridiction'
 import { USER_TEST_EMAIL, USER_TEST_PASSWORD, USER_TEST_FIRSTNAME, USER_TEST_LASTNAME, USER_TEST_FONCTION } from '../constants/user'
 import { assert } from 'chai'
 
 module.exports = function (datas) {
+
+  let recovery_code = null
+
   describe('Users tests', () => {
     /**
      *  Inscription - Vérification qu'on ait bien un erreur si le mail n'est pas indiqué
@@ -144,17 +147,68 @@ module.exports = function (datas) {
      */
     it('Forgot password - Bad email, should return 401', async () => {
       const response = await onForgotPasswordApi({ email: 'badEmail@mail.com' })
-      console.log('forgot-password Response.status:', response.status)
       assert.strictEqual(response.status, 401)
     })
 
     /**
-     * Mot de passe oublié - Vérification que l'utilisateur puisse bien changer son mot de passe en cas de perte
+     * Mot de passe oublié - Vérification que l'utilisateur puisse biendeamnder un changement de mot de passe en cas de perte
      */
     it('Forgot password - Good email, should return 200', async () => {
       const response = await onForgotPasswordApi({
         email: USER_TEST_EMAIL,
       })
+      if (response.status === 200) {
+        recovery_code = response.data.data.code
+      }
+      assert.strictEqual(response.status, 200)
+    })
+
+    /**
+     *Changement de mot de pass - Vérification qu'on ait bien un erreur si le mail n'est pas correct
+     */
+    it('Change password - Bad email, should return 401', async () => {
+      const response = await onChangePasswordApi({
+        email: 'test@a-just.fr',
+        password: USER_TEST_PASSWORD,
+        code: recovery_code,
+      })
+      assert.strictEqual(response.status, 401)
+    })
+
+    /**
+     *Changement de mot de pass - Vérification qu'on ait bien un erreur si le mot de passe n'est pas conforme
+     */
+     it('Change password - Password is not strong enough, should return 401', async () => {
+      const response = await onChangePasswordApi({
+        email: USER_TEST_EMAIL,
+        password: '123456789',
+        code: recovery_code,
+      })
+      assert.strictEqual(response.status, 401)
+    })
+
+      /**
+     *Changement de mot de pass - Vérification qu'on ait bien un erreur si le mot de passe n'est pas conforme
+     */
+     it('Change password - Password is not strong enough, should return 401', async () => {
+      const response = await onChangePasswordApi({
+        email: USER_TEST_EMAIL,
+        password: '123456789',
+        code: recovery_code,
+      })
+      assert.strictEqual(response.status, 401)
+    })
+
+      /**
+     *Changement de mot de pass - Vérification que l'utilisateur puisse bien changer son mot de passe + message d'alerte
+     */
+     it('Change password - Correct inputs, should return 200', async () => {
+      const response = await onChangePasswordApi({
+        email: USER_TEST_EMAIL,
+        password: USER_TEST_PASSWORD,
+        code: recovery_code,
+      })
+      assert.isNotEmpty(response.data.data.msg)
       assert.strictEqual(response.status, 200)
     })
 
