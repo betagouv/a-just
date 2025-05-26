@@ -44,6 +44,7 @@ module.exports = function () {
       }
     })
   })
+  
   describe('Login test that should succeed then logout', () => {
     let token = null
     it('Login should return 201 with user token', async () => {
@@ -66,6 +67,7 @@ module.exports = function () {
       assert.strictEqual(response.status, 200)
     })
   })
+  
   describe('Forgot password', () => {
     it('Bad email, should return 401', async () => {
       try {
@@ -84,6 +86,7 @@ module.exports = function () {
       assert.strictEqual(response.status, 200)
     })
   })
+
   describe('Sign up', () => {
     it('Missing email, should return 400', async () => {
       try {

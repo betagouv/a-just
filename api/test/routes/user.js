@@ -47,8 +47,23 @@ export const onSignUpApi = async ({ email, password, firstName, lastName, foncti
 
 export const onForgotPasswordApi = async ({ email }) => {
   return await instanceAxios
-    .post('/users/forgot-password', {
+    .post('/users/forgot-password-test', {
       email,
+    })
+    .then((res) => {
+      return res
+    })
+    .catch((err) => {
+      return err.response
+    })
+}
+
+export const onChangePasswordApi = async ({ email, password, code }) => {
+  return await instanceAxios
+    .post('/users/change-password', {
+      email,
+      password,
+      code,
     })
     .then((res) => {
       return res
