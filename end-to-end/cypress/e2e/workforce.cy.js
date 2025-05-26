@@ -19,7 +19,7 @@ describe('Ventilateur', () => {
         .visit('/ventilations')
   })
 
-  it('Check that the button on top "Ajouter un agent" is there and when clicked, opens the right popin ', () => {
+  it('Check that the button on top "Ajouter un agent" is there and when clicked, opens the right pag ', () => {
     cy.get('.header')
       .get('.top-header')
       .get('.actions')

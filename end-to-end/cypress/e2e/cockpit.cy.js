@@ -48,7 +48,6 @@ describe('Cockpit', () => {
       // Get the latest available month
       const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
 
-      cy.log('Server URL:', Cypress.env('NG_APP_SERVER_URL'))
       cy.request({
         method: 'POST',
         url: `${serverUrl}/activities/get-last-month`,
@@ -64,9 +63,6 @@ describe('Cockpit', () => {
         const endDate = new Date(lastMonth);
         const startDate = new Date(endDate);
         startDate.setMonth(endDate.getMonth() - 11);
-
-        cy.log('Start Date:', startDate.getDate() + '/' + getShortMonthString(startDate) + '/' + startDate.getFullYear());
-        cy.log('End Date:', endDate.getDate() + '/' + getShortMonthString(endDate) + '/' + endDate.getFullYear());
 
         cy.get('.dates-selector')
           .find('aj-date-select')
