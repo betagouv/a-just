@@ -47,7 +47,7 @@ describe('Login Page', () => {
         cy.get('.error-message').should('contain.text', 'Email ou mot de passe incorrect')
     })
 
-    it('should verify login functionality with username and password and button can be clicked', () => {
+    it('Check login functionality with correct username and password', () => {
       cy.get('form')
         .should('contain.text', 'Vous avez déjà un compte')
         .get('h3')
