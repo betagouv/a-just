@@ -1,5 +1,5 @@
 import { minBy, orderBy, sumBy } from 'lodash'
-import { isDateGreaterOrEqual, today } from '../utils/date'
+import { getTime, isDateGreaterOrEqual, today } from '../utils/date'
 
 /**
  * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines
@@ -10,9 +10,6 @@ import { isDateGreaterOrEqual, today } from '../utils/date'
  */
 export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false, absLabels = null) {
   if (hr.dateEnd && today(hr.dateEnd) < today(date)) {
-    if (hr.id===36732){
-      //console.log(date,'return null for this date')
-    }
     return {
       etp: null,
       situation: null,
@@ -22,7 +19,8 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
     }
   }
 
-  const { currentSituation /*, nextSituation*/ } = findSituation(hr, date)
+  let addDay = true
+  const { currentSituation, nextSituation } = findSituation(hr, date)
   const situation = currentSituation
 
   if (situation && situation.category && situation.category.id) {
@@ -34,15 +32,44 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
     if (reelEtp < 0) {
       reelEtp = 0
     }
+    //console.log('reelEtp', reelEtp, 'situation.etp', situation.etp, 'indispo', sumBy(indispoFiltred, 'percent'))
+    
 
-    //const nextIndispoDate = getNextIndisponiblitiesDate(hr, date)
+    // trouve la date de fin d'indispo la plus proche
+    let nextIndispoDate = null
+    const allIndispoDatesEnd = indispoFiltred.filter((i) => i.dateStopTimesTamps && i.dateStopTimesTamps > getTime(date)).map((i) => i.dateStopTimesTamps)
+    if(allIndispoDatesEnd.length) {
+      const min = minBy(allIndispoDatesEnd)
+      nextIndispoDate = new Date(min)
+      //console.log('is endend indispo', nextIndispoDate)
+    }
+
+    const indispos = hr.indisponibilities || []
+    let listAllDatesIndispoStart = indispos.filter((i) => i.dateStartTimesTamps && i.dateStartTimesTamps > getTime(date)).map((i) => i.dateStartTimesTamps)
+    //console.log('ici', indispos, listAllDatesIndispoStart, minBy(listAllDatesIndispoStart), nextIndispoDate)
+    if(listAllDatesIndispoStart.length && (minBy(listAllDatesIndispoStart) < getTime(nextIndispoDate) ||  !nextIndispoDate)) {
+      const min = minBy(listAllDatesIndispoStart)
+      nextIndispoDate = new Date(min)
+      nextIndispoDate.setDate(nextIndispoDate.getDate() - 1)
+      //console.log('is started indispo', nextIndispoDate)
+    }
+    
+    //console.log('indispoFiltred', nextIndispoDate)
     let nextDeltaDate = null
-    /*if(nextSituation) {
+    if(nextSituation) {
       nextDeltaDate = today(nextSituation.dateStart)
+      //console.log('nextDeltaDate 1', nextDeltaDate)
     }
     if(nextIndispoDate && (!nextDeltaDate || nextIndispoDate.getTime() < nextDeltaDate.getTime())) {
       nextDeltaDate = nextIndispoDate
-    }*/
+      //console.log('nextDeltaDate 2', nextDeltaDate)
+    }
+    if (!nextDeltaDate && hr.dateEnd) {
+      nextDeltaDate = today(hr.dateEnd)
+      //console.log('nextDeltaDate 3', nextDeltaDate)
+    }
+
+    //console.log('sum', sumBy(activitiesFiltred, 'percent'))
 
     return {
       etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
@@ -50,6 +77,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
       situation,
       indispoFiltred: !ddgFilter ? indispoFiltred : findAllIndisponibilities(hr, date),
       nextDeltaDate, // find the next date with have changes
+      addDay,
     }
   }
 
@@ -58,7 +86,8 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
     situation: null,
     reelEtp: null,
     indispoFiltred: [],
-    nextDeltaDate: null,
+    nextDeltaDate: hr.dateStart && today(hr.dateStart) >= today(date) ? today(hr.dateStart, -1) : null,
+    addDay,
   }
 }
 
@@ -121,7 +150,7 @@ export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
   listAllDates = listAllDates.concat(indispos.filter((i) => i.dateStopTimesTamps).map((i) => i.dateStopTimesTamps))
 
   listAllDates = listAllDates.filter((date) => date > dateSelected)
-
+  
   const min = minBy(listAllDates)
   return min ? new Date(min) : null
 }
@@ -133,7 +162,7 @@ export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
  * @param {*} reelEtp
  * @returns objet contenant la situation en cours et la prochaine situation
  */
-export const findSituation = (hr, date, reelEtp = false) => {
+export const findSituation = (hr, date) => {
   if (date) {
     date = today(date)
   }
@@ -153,15 +182,12 @@ export const findSituation = (hr, date, reelEtp = false) => {
   }
 
   let situations = findAllSituations(hr, date)
+  const situationsInTheFutur = findAllFuturSituations(hr, date)
+
   return {
     currentSituation: situations.length ? situations[0] : null,
-    nextSituation: null,
+    nextSituation: situationsInTheFutur.length ? situationsInTheFutur[situationsInTheFutur.length - 1] : null,
   }
-  /*let situations = findAllFuturSituations(hr, date)
-  return {
-    currentSituation: situations.length ? situations[situations.length - 1] : null,
-    nextSituation: situations.length > 1 ? situations[situations.length - 2] : null,
-  }*/
 }
 
 /**
@@ -174,16 +200,10 @@ export const findAllFuturSituations = (hr, date) => {
   if (date) {
     const getTime = date.getTime()
     const findedSituations = situations.filter((hra) => {
-      return hra.dateStartTimesTamps >= getTime
+      return hra.dateStartTimesTamps > getTime
     })
 
-    if (situations.length !== findedSituations.length) {
-      if (findedSituations.length && today(findedSituations[0].dateStart).getTime() !== date.getTime()) {
-        situations = findedSituations.slice(0)
-      } else {
-        situations = situations.slice(0, findedSituations.length + 1)
-      }
-    }
+    situations = findedSituations.slice(0)
   }
 
   return situations
@@ -263,3 +283,80 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
   }
   return indisponibilities
 }
+
+
+
+/**
+ * TESTS
+ * */
+const HR_TO_TEST = {
+   id: 1748,
+  firstName: 'Aurélie',
+  lastName: 'Lallart',
+  matricule: '45661',
+  dateStart: new Date('2019-09-01T22:00:00.000Z'),
+  dateEnd: null,
+  coverUrl: null,
+  updatedAt: new Date('2024-04-02T08:16:48.377Z'),
+  backupId: 16,
+  juridiction: null,
+  comment: '<p>Présidence 6ème chambre correctionnelle + "autre civil NS" = présidence de la Comex 1 mois sur 2</p>',
+  situations: [
+    {
+      id: 15001,
+      etp: 1,
+      dateStart: new Date('2025-09-01T23:00:00.000Z'),
+      dateStartTimesTamps: 1756767600000,
+      category: {"id":1,"rank":1,"label":"Magistrat"},
+      fonction: {"id":15,"rank":16,"code":"J","label":"JUGE","category_detail":"M-TIT","position":"Titulaire","calculatriceIsActive":false},
+      activities: [{"id":56031,"percent":22.5,"contentieux":{"id":486,"label":"Siège Pénal"}},{"id":56030,"percent":67.5,"contentieux":{"id":448,"label":"Départage prud'homal"}},{"id":56034,"percent":10,"contentieux":{"id":497,"label":"Autres activités"}},{"id":56032,"percent":12.5,"contentieux":{"id":487,"label":"Collégiales hors JIRS"}},{"id":56033,"percent":10,"contentieux":{"id":492,"label":"Tribunal de police"}},{"id":56029,"percent":67.5,"contentieux":{"id":447,"label":"Contentieux Social"}},{"id":56035,"percent":10,"contentieux":{"id":498,"label":"Soutien (hors formations suivies)"}}]
+    },
+    {
+      id: 15000,
+      etp: 1,
+      dateStart: new Date('2025-07-01T23:00:00.000Z'),
+      dateStartTimesTamps: 1751410800000,
+      category: {"id":1,"rank":1,"label":"Magistrat"},
+      fonction: {"id":15,"rank":16,"code":"J","label":"JUGE","category_detail":"M-TIT","position":"Titulaire","calculatriceIsActive":false},
+      activities: [{"id":56031,"percent":22.5,"contentieux":{"id":486,"label":"Siège Pénal"}},{"id":56030,"percent":67.5,"contentieux":{"id":448,"label":"Départage prud'homal"}},{"id":56034,"percent":10,"contentieux":{"id":497,"label":"Autres activités"}},{"id":56032,"percent":12.5,"contentieux":{"id":487,"label":"Collégiales hors JIRS"}},{"id":56033,"percent":10,"contentieux":{"id":492,"label":"Tribunal de police"}},{"id":56029,"percent":67.5,"contentieux":{"id":447,"label":"Contentieux Social"}},{"id":56035,"percent":10,"contentieux":{"id":498,"label":"Soutien (hors formations suivies)"}}]
+    },
+    {
+      id: 14388,
+      etp: 1,
+      dateStart: new Date('2023-01-01T23:00:00.000Z'),
+      dateStartTimesTamps: 1672660800000,
+      category: {"id":1,"rank":1,"label":"Magistrat"},
+      fonction: {"id":15,"rank":16,"code":"J","label":"JUGE","category_detail":"M-TIT","position":"Titulaire","calculatriceIsActive":false},
+      activities: [{"id":56031,"percent":22.5,"contentieux":{"id":486,"label":"Siège Pénal"}},{"id":56030,"percent":67.5,"contentieux":{"id":448,"label":"Départage prud'homal"}},{"id":56034,"percent":10,"contentieux":{"id":497,"label":"Autres activités"}},{"id":56032,"percent":12.5,"contentieux":{"id":487,"label":"Collégiales hors JIRS"}},{"id":56033,"percent":10,"contentieux":{"id":492,"label":"Tribunal de police"}},{"id":56029,"percent":67.5,"contentieux":{"id":447,"label":"Contentieux Social"}},{"id":56035,"percent":10,"contentieux":{"id":498,"label":"Soutien (hors formations suivies)"}}]
+    },
+    {
+      id: 14387,
+      etp: 1,
+      dateStart: new Date('2022-01-02T23:00:00.000Z'),
+      dateStartTimesTamps: 1641211200000,
+      category: {"id":1,"rank":1,"label":"Magistrat"},
+      fonction: {"id":15,"rank":16,"code":"J","label":"JUGE","category_detail":"M-TIT","position":"Titulaire","calculatriceIsActive":false},
+      activities: [{"id":56031,"percent":22.5,"contentieux":{"id":486,"label":"Siège Pénal"}},{"id":56030,"percent":67.5,"contentieux":{"id":448,"label":"Départage prud'homal"}},{"id":56034,"percent":10,"contentieux":{"id":497,"label":"Autres activités"}},{"id":56032,"percent":12.5,"contentieux":{"id":487,"label":"Collégiales hors JIRS"}},{"id":56033,"percent":10,"contentieux":{"id":492,"label":"Tribunal de police"}},{"id":56029,"percent":67.5,"contentieux":{"id":447,"label":"Contentieux Social"}},{"id":56035,"percent":10,"contentieux":{"id":498,"label":"Soutien (hors formations suivies)"}}]
+    },
+    {
+      id: 2819,
+      etp: 1,
+      dateStart: new Date('2020-12-31T23:00:00.000Z'),
+      dateStartTimesTamps: 1609502400000,
+      category: {"id":1,"rank":1,"label":"Magistrat"},
+      fonction: {"id":15,"rank":16,"code":"J","label":"JUGE","category_detail":"M-TIT","position":"Titulaire","calculatriceIsActive":false},
+      activities: [{"id":56031,"percent":22.5,"contentieux":{"id":486,"label":"Siège Pénal"}},{"id":56030,"percent":67.5,"contentieux":{"id":448,"label":"Départage prud'homal"}},{"id":56034,"percent":10,"contentieux":{"id":497,"label":"Autres activités"}},{"id":56032,"percent":12.5,"contentieux":{"id":487,"label":"Collégiales hors JIRS"}},{"id":56033,"percent":10,"contentieux":{"id":492,"label":"Tribunal de police"}},{"id":56029,"percent":67.5,"contentieux":{"id":447,"label":"Contentieux Social"}},{"id":56035,"percent":10,"contentieux":{"id":498,"label":"Soutien (hors formations suivies)"}}]
+    },
+    {
+      id: 2376,
+      etp: 1,
+      dateStart: new Date('2019-09-01T22:00:00.000Z'),
+      dateStartTimesTamps: 1567425600000,
+      category: {"id":1,"rank":1,"label":"Magistrat"},
+      fonction: {"id":15,"rank":16,"code":"J","label":"JUGE","category_detail":"M-TIT","position":"Titulaire","calculatriceIsActive":false},
+      activities: [{"id":56031,"percent":22.5,"contentieux":{"id":486,"label":"Siège Pénal"}},{"id":56030,"percent":67.5,"contentieux":{"id":448,"label":"Départage prud'homal"}},{"id":56034,"percent":10,"contentieux":{"id":497,"label":"Autres activités"}},{"id":56032,"percent":12.5,"contentieux":{"id":487,"label":"Collégiales hors JIRS"}},{"id":56033,"percent":10,"contentieux":{"id":492,"label":"Tribunal de police"}},{"id":56029,"percent":67.5,"contentieux":{"id":447,"label":"Contentieux Social"}},{"id":56035,"percent":10,"contentieux":{"id":498,"label":"Soutien (hors formations suivies)"}}]
+    }
+  ],
+  indisponibilities: []
+}
+//console.log('findSituation - test 1', getEtpByDateAndPerson(447, new Date('2024-04-02T12:00:00.000Z'), HR_TO_TEST))

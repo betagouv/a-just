@@ -634,7 +634,7 @@ export class CalculatorPage
         const max = month(date, 0, 'lastday');
         this.maxDateSelectionDate = max;
 
-        const min = month(max, -11);
+        const min = month(max, -1);
         this.calculatorService.dateStart.next(min);
         this.calculatorService.dateStop.next(max);
         this.checkLastMonthLoading = false;
