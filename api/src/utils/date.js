@@ -96,10 +96,13 @@ export const monthName = (date) => {
  * @param {*} date
  * @returns date
  */
-export function today (date = new Date()) {
+export function today (date = new Date(), deltaDays = 0) {
   date = setTimeToMidDay(date)
   const now = new Date(date)
   let newRef = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  if(deltaDays !== 0) {
+    newRef.setDate(newRef.getDate() + deltaDays)
+  }
   return  setTimeToMidDay(newRef)
 }
 
