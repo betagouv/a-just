@@ -360,7 +360,6 @@ export const computeExtractDdg = async (
               })
             ) {
               const etpAffected = getHRVentilation(
-                models,
                 human,
                 referentiel.id,
                 [...categories],
@@ -970,7 +969,6 @@ export const computeExtract = async (
               })
             ) {
               etpAffected = getHRVentilation(
-                models,
                 human,
                 referentiel.id,
                 [...categories],

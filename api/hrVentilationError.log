@@ -1,0 +1,21 @@
+
+
+          1734 - 447 - 2024-04-02T11:01:00.000Z - 2025-03-31T12:00:00.000Z
+
+          getHRVentilation: [{"etpt":0.7816,"indispo":0,"reelEtp":1,"id":1,"label":"Magistrat","rank":1,"textColor":"rgba(0, 0, 145, 1)","bgColor":"#e3e3fd","hoverColor":"#c8c8ff","nbDay":260},{"etpt":0,"indispo":0,"reelEtp":0,"id":2,"label":"Greffe","rank":2,"textColor":"rgba(165, 88, 160, 1)","bgColor":"#fee7fc","hoverColor":"#fabff5","nbDay":260},{"etpt":0,"indispo":0,"reelEtp":0,"id":3,"label":"Autour du magistrat","rank":3,"textColor":"rgba(121, 104, 48, 1)","bgColor":"#fef6e3","hoverColor":"white","nbDay":260},{"etpt":0,"indispo":0,"reelEtp":0,"id":4,"label":"Autre categorie","rank":4,"textColor":"rgba(121, 104, 48, 1)","bgColor":"#fef6e3","hoverColor":"white","nbDay":260}]
+
+          getHRVentilationOld: [{"etpt":0.7846,"indispo":0,"reelEtp":0.0038314176245210726,"id":1,"label":"Magistrat","rank":1,"textColor":"rgba(0, 0, 145, 1)","bgColor":"#e3e3fd","hoverColor":"#c8c8ff","nbDay":261},{"etpt":0,"indispo":0,"reelEtp":0,"id":2,"label":"Greffe","rank":2,"textColor":"rgba(165, 88, 160, 1)","bgColor":"#fee7fc","hoverColor":"#fabff5","nbDay":261},{"etpt":0,"indispo":0,"reelEtp":0,"id":3,"label":"Autour du magistrat","rank":3,"textColor":"rgba(121, 104, 48, 1)","bgColor":"#fef6e3","hoverColor":"white","nbDay":261},{"etpt":0,"indispo":0,"reelEtp":0,"id":4,"label":"Autre categorie","rank":4,"textColor":"rgba(121, 104, 48, 1)","bgColor":"#fef6e3","hoverColor":"white","nbDay":261}]
+
+          --------------------------------
+
+          
+
+          2201 - 447 - 2024-04-02T11:01:00.000Z - 2025-03-31T12:00:00.000Z
+
+          getHRVentilation: [{"etpt":0.5551,"indispo":0,"reelEtp":0.9382239382239382,"id":1,"label":"Magistrat","rank":1,"textColor":"rgba(0, 0, 145, 1)","bgColor":"#e3e3fd","hoverColor":"#c8c8ff","nbDay":259},{"etpt":0,"indispo":0,"reelEtp":0,"id":2,"label":"Greffe","rank":2,"textColor":"rgba(165, 88, 160, 1)","bgColor":"#fee7fc","hoverColor":"#fabff5","nbDay":259},{"etpt":0,"indispo":0,"reelEtp":0,"id":3,"label":"Autour du magistrat","rank":3,"textColor":"rgba(121, 104, 48, 1)","bgColor":"#fef6e3","hoverColor":"white","nbDay":259},{"etpt":0,"indispo":0,"reelEtp":0,"id":4,"label":"Autre categorie","rank":4,"textColor":"rgba(121, 104, 48, 1)","bgColor":"#fef6e3","hoverColor":"white","nbDay":259}]
+
+          getHRVentilationOld: [{"etpt":0.0113,"indispo":0,"reelEtp":0.003816793893129771,"id":1,"label":"Magistrat","rank":1,"textColor":"rgba(0, 0, 145, 1)","bgColor":"#e3e3fd","hoverColor":"#c8c8ff","nbDay":262},{"etpt":0,"indispo":0,"reelEtp":0,"id":2,"label":"Greffe","rank":2,"textColor":"rgba(165, 88, 160, 1)","bgColor":"#fee7fc","hoverColor":"#fabff5","nbDay":262},{"etpt":0,"indispo":0,"reelEtp":0,"id":3,"label":"Autour du magistrat","rank":3,"textColor":"rgba(121, 104, 48, 1)","bgColor":"#fef6e3","hoverColor":"white","nbDay":262},{"etpt":0,"indispo":0,"reelEtp":0,"id":4,"label":"Autre categorie","rank":4,"textColor":"rgba(121, 104, 48, 1)","bgColor":"#fef6e3","hoverColor":"white","nbDay":262}]
+
+          --------------------------------
+
+          
