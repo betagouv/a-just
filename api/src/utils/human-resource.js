@@ -26,7 +26,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
   if (situation && situation.category && situation.category.id) {
     const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
 
-    const indispoFiltred = findAllIndisponibilities(hr, date, ddgFilter, absLabels)
+    const indispoFiltred = findAllIndisponibilities(hr, date, ddgFilter, absLabels || [])
 
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
     if (reelEtp < 0) {

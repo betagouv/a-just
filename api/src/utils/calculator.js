@@ -448,12 +448,6 @@ export const getNbDaysGone = (hr, dateStart, dateStop) => {
 export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null,signal=null) => {
   if (signal && signal.aborted) throw new Error("⛔ Annulé dans getHRVentilation");
 
-  if(![1734].includes(hr.id) || referentielId !== 447) {
-    return null
-  }
-
-  //console.log('--------------------')
-
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -575,17 +569,10 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
   }
 
   //console.log('list 2', list, nbDay)
-
-  //models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
-
   return list
 }
 
 export const getHRVentilationOld = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
-  if(![1734].includes(hr.id) || referentielId !== 447) {
-    return null
-  }
-
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
