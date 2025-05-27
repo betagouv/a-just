@@ -3,6 +3,7 @@ import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } 
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPerson } from './human-resource'
+import {appendFileSync  } from 'fs'
 
 /**
  * Création d'un tableau vide du calculateur de tout les contentieux et sous contentieux
@@ -384,18 +385,28 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
         return activities.some((s) => s.contentieux.id === referentielId)
       })
     ) {
-      const etptAll = getHRVentilation(models, hr[i], referentielId, categories, dateStart, dateStop)
-      /*const etptAllOld = getHRVentilationOld(models, hr[i], referentielId, categories, dateStart, dateStop)
+      const etptAll = getHRVentilation(hr[i], referentielId, categories, dateStart, dateStop)
+      const etptAllOld = getHRVentilationOld(models, hr[i], referentielId, categories, dateStart, dateStop)
       if(etptAll && etptAllOld) {
-        const copyEtptAll = cloneDeep(etptAll)
-        delete copyEtptAll.nbDaysGone
-        const copyEtptAllOld = cloneDeep(etptAllOld)
-        delete copyEtptAllOld.nbDaysGone
+        const copyEtptAll = Object.values(cloneDeep(etptAll)).map((c) => {
+          delete c.nbDaysGone
+          return c
+        })
+        const copyEtptAllOld = Object.values(cloneDeep(etptAllOld)).map((c) => {
+          delete c.nbDaysGone
+          return c
+        })
         if(JSON.stringify(copyEtptAll) !== JSON.stringify(copyEtptAllOld)) {
+          appendFileSync('hrVentilationError.log', `\n
+          ${hr[i].id} - ${referentielId} - ${dateStart.toISOString()} - ${dateStop.toISOString()}\n
+          getHRVentilation: ${JSON.stringify(copyEtptAll)}\n
+          getHRVentilationOld: ${JSON.stringify(copyEtptAllOld)}\n
+          --------------------------------\n
+          `)
           console.log(hr[i], referentielId, categories, dateStart, dateStop, copyEtptAll, copyEtptAllOld)
-          throw new Error('getHRVentilation and getHRVentilationOld are not compatible')
+          //throw new Error('getHRVentilation and getHRVentilationOld are not compatible')
         }
-      }*/
+      }
 
       if(etptAll) {
         Object.values(etptAll).map((c) => {
@@ -445,7 +456,7 @@ export const getNbDaysGone = (hr, dateStart, dateStop) => {
  * @param {*} dateStop
  * @returns
  */
-export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null,signal=null) => {
+export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null, signal=null) => {
   if (signal && signal.aborted) throw new Error("⛔ Annulé dans getHRVentilation");
 
   const list = new Object()
@@ -472,7 +483,6 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
 
     // only working day
     if (workingDay(now)) {
-
       nextDeltaDate = null
       let sumByInd = 0
       let etp = null

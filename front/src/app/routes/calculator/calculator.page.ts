@@ -793,8 +793,8 @@ export class CalculatorPage
             })
             .catch(() => {
               this.isLoading = false;
-            })
-            .finally(() => {
+            });
+          /*.finally(() => {
               if (this.categorySelected && loadDetail) {
                 this.calculatorService
                   .filterList(
@@ -810,7 +810,7 @@ export class CalculatorPage
                     this.formatDatas(list);
                   });
               }
-            });
+            });*/
         }
       },
       this.firstLoading ? 0 : 1500
