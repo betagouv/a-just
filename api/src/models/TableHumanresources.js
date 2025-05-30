@@ -682,6 +682,9 @@ export default (sequelizeInstance, Model) => {
     { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds, loadChildrens },
     user, log = true
   ) => {
+    dateStart = today(dateStart)
+    dateStop = today(dateStop)
+
     if (!selectedFonctionsIds && user && log === true) {
       // memorize first execution by user
       await Model.models.Logs.addLog(EXECUTE_CALCULATOR, user.id)

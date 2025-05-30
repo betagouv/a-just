@@ -16,6 +16,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
       reelEtp: null,
       indispoFiltred: [],
       nextDeltaDate: null,
+      addDay: true,
     }
   }
 
@@ -32,44 +33,35 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
     if (reelEtp < 0) {
       reelEtp = 0
     }
-    //console.log('reelEtp', reelEtp, 'situation.etp', situation.etp, 'indispo', sumBy(indispoFiltred, 'percent'))
     
 
     // trouve la date de fin d'indispo la plus proche
     let nextIndispoDate = null
-    const allIndispoDatesEnd = indispoFiltred.filter((i) => i.dateStopTimesTamps && i.dateStopTimesTamps > getTime(date)).map((i) => i.dateStopTimesTamps)
+    const allIndispoDatesEnd = indispoFiltred.filter((i) => i.dateStopTimesTamps && i.dateStopTimesTamps >= getTime(date)).map((i) => i.dateStopTimesTamps)
     if(allIndispoDatesEnd.length) {
       const min = minBy(allIndispoDatesEnd)
       nextIndispoDate = new Date(min)
-      //console.log('is endend indispo', nextIndispoDate)
     }
 
     const indispos = hr.indisponibilities || []
     let listAllDatesIndispoStart = indispos.filter((i) => i.dateStartTimesTamps && i.dateStartTimesTamps > getTime(date)).map((i) => i.dateStartTimesTamps)
-    //console.log('ici', indispos, listAllDatesIndispoStart, minBy(listAllDatesIndispoStart), nextIndispoDate)
-    if(listAllDatesIndispoStart.length && (minBy(listAllDatesIndispoStart) < getTime(nextIndispoDate) ||  !nextIndispoDate)) {
+    if(listAllDatesIndispoStart.length && (minBy(listAllDatesIndispoStart) <= getTime(nextIndispoDate) || !nextIndispoDate)) {
       const min = minBy(listAllDatesIndispoStart)
       nextIndispoDate = new Date(min)
       nextIndispoDate.setDate(nextIndispoDate.getDate() - 1)
-      //console.log('is started indispo', nextIndispoDate)
     }
     
-    //console.log('indispoFiltred', nextIndispoDate)
     let nextDeltaDate = null
     if(nextSituation) {
       nextDeltaDate = today(nextSituation.dateStart)
-      //console.log('nextDeltaDate 1', nextDeltaDate)
+      nextDeltaDate.setDate(nextDeltaDate.getDate() - 1) // on enlève un jour pour que la date corresponde à la date de la situation
     }
-    if(nextIndispoDate && (!nextDeltaDate || nextIndispoDate.getTime() < nextDeltaDate.getTime())) {
+    if(nextIndispoDate && (!nextDeltaDate || nextIndispoDate.getTime() <= nextDeltaDate.getTime())) {
       nextDeltaDate = nextIndispoDate
-      //console.log('nextDeltaDate 2', nextDeltaDate)
     }
-    if (!nextDeltaDate && hr.dateEnd) {
+    if (!nextDeltaDate && hr.dateEnd || (nextDeltaDate && hr.dateEnd && today(hr.dateEnd).getTime() < nextDeltaDate.getTime())) {
       nextDeltaDate = today(hr.dateEnd)
-      //console.log('nextDeltaDate 3', nextDeltaDate)
     }
-
-    //console.log('sum', sumBy(activitiesFiltred, 'percent'))
 
     return {
       etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
