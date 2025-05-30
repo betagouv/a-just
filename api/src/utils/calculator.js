@@ -262,8 +262,6 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
 
   // Date: 12 mois avant date de fin selectionnée dans calculateur (début du mois)
   const startCs = month(today(dateStop), -11)
-  startCs.setDate(startCs.getDate() + 1)
-  startCs.setMinutes(startCs.getMinutes() + 1)
 
   // Date: fin de période selecitonnée dans calculateur (fin du mois)
   const endCs = month(today(dateStop), 0, 'lastday')
@@ -386,27 +384,6 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
       })
     ) {
       const etptAll = getHRVentilation(hr[i], referentielId, categories, dateStart, dateStop)
-      const etptAllOld = getHRVentilationOld(models, hr[i], referentielId, categories, dateStart, dateStop)
-      if(etptAll && etptAllOld) {
-        const copyEtptAll = Object.values(cloneDeep(etptAll)).map((c) => {
-          delete c.nbDaysGone
-          return c
-        })
-        const copyEtptAllOld = Object.values(cloneDeep(etptAllOld)).map((c) => {
-          delete c.nbDaysGone
-          return c
-        })
-        if(JSON.stringify(copyEtptAll) !== JSON.stringify(copyEtptAllOld)) {
-          appendFileSync('hrVentilationError.log', `\n
-          ${hr[i].id} - ${referentielId} - ${dateStart.toISOString()} - ${dateStop.toISOString()}\n
-          getHRVentilation: ${JSON.stringify(copyEtptAll)}\n
-          getHRVentilationOld: ${JSON.stringify(copyEtptAllOld)}\n
-          --------------------------------\n
-          `)
-          console.log(hr[i], referentielId, categories, dateStart, dateStop, copyEtptAll, copyEtptAllOld)
-          //throw new Error('getHRVentilation and getHRVentilationOld are not compatible')
-        }
-      }
 
       if(etptAll) {
         Object.values(etptAll).map((c) => {
@@ -490,7 +467,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       let indispoFiltred = null
       let reelEtp = null
       const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
-      //console.log('etpByDateAndPerson', etpByDateAndPerson, now)
       etp = etpByDateAndPerson.etp
       situation = etpByDateAndPerson.situation
       indispoFiltred = etpByDateAndPerson.indispoFiltred
@@ -502,7 +478,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
         lastEtpAdded = null
         lastSituationId = null
       } else {
-        nextDateFinded = new Date(dateStop)
+        nextDateFinded = today(dateStop)
         lastEtpAdded = 0
       }
 
@@ -514,19 +490,16 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       }
 
       //console.log('nextDateFinded', now, nextDateFinded, lastEtpAdded, lastSituationId)
-      if (nextDateFinded && nbWorkingDays(now, nextDateFinded) > 1) {
+      if (nextDateFinded) {
         if (nextDateFinded.getTime() > dateStop.getTime()) {
           nextDateFinded = today(dateStop)
         }
 
         const nbDayBetween = nbWorkingDays(now, nextDateFinded)
-        //console.log('nbDayBetween', nbDayBetween, now, nextDateFinded)
         nbDay += nbDayBetween
-        //console.log('nbDay to jump', nbDay)
 
         // don't block the average
         if (lastEtpAdded !== null && lastSituationId !== null) {
-          //console.log('là avant', list[lastSituationId].etpt)
           list[lastSituationId].etpt += nbDayBetween * lastEtpAdded
           list[lastSituationId].reelEtp += nbDayBetween * reelEtp
 
@@ -551,147 +524,26 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     if(addDay) {
       now.setDate(now.getDate() + 1)
     }
-
-    
-    //console.log('date', nbDay, now, dateStop, hr.id, nextDeltaDate)
+        
 
     const testNextDay = new Date(now)
-    testNextDay.setDate(testNextDay.getDate() + 1)
     if(testNextDay.getTime() > dateStop.getTime()) {
       continueLoop = false
     }
-
-    //console.log('++++++')
   } while (continueLoop)
 
   if (nbDay === 0) {
     nbDay = 1
   }
 
-  //console.log('list 1', list, nbDay)
   // format render
   for (const property in list) {
     list[property].etpt = fixDecimal(list[property].etpt / nbDay, 10000)
     list[property].indispo = list[property].indispo / nbDay
-    list[property].reelEtp = list[property].reelEtp / nbDay
+    list[property].reelEtp = fixDecimal(list[property].reelEtp / nbDay, 10000)
     list[property].nbDaysGone = getNbDaysGone(hr, dateStart, dateStop)
     list[property].nbDay = nbDay
   }
-
-  //console.log('list 2', list, nbDay)
-  return list
-}
-
-export const getHRVentilationOld = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
-  const list = new Object()
-  categories.map((c) => {
-    list[c.id] = new Object({
-      etpt: 0,
-      indispo: 0,
-      reelEtp: 0,
-      ...c,
-    })
-  })
-
-  let now = today(dateStart)
-  let nbDay = 0
-  let nbDaysGone = 0
-  do {
-    let nextDateFinded = null
-    let lastEtpAdded = null
-    let lastSituationId = null
-
-    // only working day
-    if (workingDay(now)) {
-      let sumByInd = 0
-      if (hr.dateEnd && hr.dateEnd.getTime() < dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
-      if (hr.dateStart && hr.dateStart.getTime() > dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
-      nbDay++
-
-      let etp = null
-      let situation = null
-      let indispoFiltred = null
-      let nextDeltaDate = null
-      let reelEtp = null
-      /*const cache = models.HumanResources.cacheAgent(hr.id, `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`)
-      if (cache) {
-        etp = cache.etp
-        situation = cache.situation
-        indispoFiltred = cache.indispoFiltred
-        nextDeltaDate = cache.nextDeltaDate
-        reelEtp = cache.reelEtp
-      } else {*/
-      const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
-      /*models.HumanResources.updateCacheAgent(
-          hr.id,
-          `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`,
-          etpByDateAndPerson
-        )*/
-      etp = etpByDateAndPerson.etp
-      situation = etpByDateAndPerson.situation
-      indispoFiltred = etpByDateAndPerson.indispoFiltred
-      nextDeltaDate = etpByDateAndPerson.nextDeltaDate
-      reelEtp = etpByDateAndPerson.reelEtp
-      //}
-
-      if (nextDeltaDate) {
-        nextDateFinded = today(nextDeltaDate)
-      }
-
-      const categoryId = situation && situation.category && situation.category.id ? '' + situation.category.id : null
-
-      if (situation && etp !== null && list[categoryId]) {
-        lastEtpAdded = etp
-        lastSituationId = categoryId
-        list[categoryId].reelEtp += reelEtp
-        list[categoryId].etpt += etp
-      }
-
-      sumByInd += sumBy(indispoFiltred, 'percent')
-
-      if (sumByInd !== 0) {
-        indispoFiltred.map((c) => {
-          if (c.contentieux.id === referentielId && list[categoryId]) list[categoryId].indispo += c.percent
-        })
-      }
-    }
-
-    //
-    if (nextDateFinded) {
-      if (nextDateFinded.getTime() > dateStop.getTime()) {
-        nextDateFinded = today(dateStop)
-        nextDateFinded.setDate(nextDateFinded.getDate() + 1)
-      }
-
-      // don't block the average
-      if (lastEtpAdded !== null && lastSituationId !== null) {
-        const nbDayBetween = nbWorkingDays(now, nextDateFinded)
-        nbDay += nbDayBetween - 1
-        list[lastSituationId].etpt += nbDayBetween * lastEtpAdded
-      }
-
-      // quick move to the next date
-      now = today(nextDateFinded)
-
-    } else {
-      now.setDate(now.getDate() + 1)
-    }
-  } while (now.getTime() <= dateStop.getTime())
-
-  if (nbDay === 0) {
-    nbDay = 1
-  }
-
-  // format render
-  for (const property in list) {
-    list[property].etpt = fixDecimal(list[property].etpt / nbDay, 10000)
-    list[property].indispo = list[property].indispo / nbDay
-    list[property].reelEtp = list[property].reelEtp / nbDay
-    list[property].nbDaysGone = nbDaysGone
-    list[property].nbDay = nbDay
-  }
-
-
 
   return list
 }
@@ -754,6 +606,3 @@ const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, 
     fonCalculateDTESInMonths,
   }
 }
-
-
-console.log('test nbWorkingDays', nbWorkingDays(new Date('2025-01-02T12:00:00.000Z'), new Date('2025-02-28T12:00:00.000Z')))

@@ -24,7 +24,6 @@ export default (sequelizeInstance, Model) => {
     });
 
     for (let i = 0; i < comments.length; i++) {
-      console.log(comments[i]);
       comments[i] = {
         commentId: comments[i].id,
         comment: comments[i].comment,
