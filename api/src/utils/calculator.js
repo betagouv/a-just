@@ -141,6 +141,7 @@ export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart
  * @returns
  */
 const getActivityValues = (models, dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups, loadDetails) => {
+  console.log('getActivityValues', referentielId, dateStart, dateStop, nbMonth, loadDetails)
   let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
     models,
     dateStart,
@@ -489,7 +490,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
         lastSituationId = categoryId
       }
 
-      //console.log('nextDateFinded', now, nextDateFinded, lastEtpAdded, lastSituationId)
+      console.log('nextDateFinded', now, nextDateFinded, lastEtpAdded, lastSituationId)
       if (nextDateFinded) {
         if (nextDateFinded.getTime() > dateStop.getTime()) {
           nextDateFinded = today(dateStop)
@@ -526,6 +527,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     }
         
 
+    console.log('getHRVentilation', now, hr.id, dateStop, nextDeltaDate, nbDay)
     const testNextDay = new Date(now)
     if(testNextDay.getTime() > dateStop.getTime()) {
       continueLoop = false

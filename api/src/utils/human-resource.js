@@ -78,7 +78,7 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
     situation: null,
     reelEtp: null,
     indispoFiltred: [],
-    nextDeltaDate: hr.dateStart && today(hr.dateStart) >= today(date) ? today(hr.dateStart, -1) : null,
+    nextDeltaDate: hr.dateStart && today(hr.dateStart) >= today(date) ? today(hr.dateStart) : null,
     addDay,
   }
 }
