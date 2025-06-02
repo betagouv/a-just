@@ -6,6 +6,7 @@ import config from 'config'
 import { getEtpByDateAndPersonSimu } from './human-resource'
 import { canHaveUserCategoryAccess } from './hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
+import { checkAbort } from './abordTimeout'
 
 /**
  * Variable de temps travail en fonction de la category
@@ -160,10 +161,12 @@ export function filterByCategoryAndFonction (hr, categoryId, functionIds, date) 
  * @param {*} selectedCategoryId catégorie selectionnée
  * @returns une situation à une date donnée ou sur une période
  */
-export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
+export async function getSituation (referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId, signal=null) {
+  checkAbort(signal);
   if (Array.isArray(referentielId) === false) referentielId = [referentielId]
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities)
+  checkAbort(signal);
 
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
@@ -197,14 +200,16 @@ export async function getSituation (referentielId, hr, allActivities, categories
   let sufix = 'By' + categoryLabel
 
   // Compute etpAffected & etpMag today (on specific date) to display & output
-  etpAffectedToday = await getHRPositions(hr, referentielId, categories)
+  etpAffectedToday = await getHRPositions(hr, referentielId, categories, undefined, undefined, undefined, undefined, signal)
+  checkAbort(signal);
 
   let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
 
   if (lastActivities.length === 0 && totalIn === 0 && totalOut === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
   else {
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
-    let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs))
+    let etpAffectedLast12MonthsToCompute = await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs), undefined, signal)
+    checkAbort(signal);
 
     ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
@@ -217,8 +222,10 @@ export async function getSituation (referentielId, hr, allActivities, categories
     //console.log('To compare final totalOut : ', totalOut, 'Tmd used : ', realTimePerCase, 'ETP used : ', selectedCategoryId === 1 ? etpMag : etpFon)
 
     // Projection of etpAffected between the last month available and today to compute stock
-    let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date())
+    let etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date(), undefined, signal)
     ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
+    checkAbort(signal);
+
     const countOfCalandarDays = nbOfDays(endDateCs, new Date())
 
     // Compute stock projection until today
@@ -240,15 +247,16 @@ export async function getSituation (referentielId, hr, allActivities, categories
       const nbDayCalendar = nbOfDays(new Date(), new Date(dateStart))
 
       // Compute etpAffected & etpMag at dateStart (specific date) to display
-      etpAffectedAtStartDate = await getHRPositions(hr, referentielId, categories, new Date(dateStart))
+      etpAffectedAtStartDate = await getHRPositions(hr, referentielId, categories, new Date(dateStart), undefined,  undefined,  undefined, signal)
       ;({ etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedAtStartDate))
 
       // Compute totalOut with etp at dateStart (specific date) to display
       totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
 
       // Projection of etpAffected between the last month available and dateStart to compute stock
-      etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(), true, new Date(dateStart))
+      etpAffectedDeltaToCompute = await getHRPositions(hr, referentielId, categories, new Date(), true, new Date(dateStart), undefined,signal)
       ;({ etpMagUntilStartDate, etpFonUntilStartDate, etpConUntilStartDate } = getEtpByCategory(etpAffectedDeltaToCompute, 'UntilStartDate'))
+      checkAbort(signal);
 
       // Compute stock, coverage, dtes projection until dateStart
       lastStock = computeLastStock(
@@ -267,7 +275,8 @@ export async function getSituation (referentielId, hr, allActivities, categories
       const nbDayCalendarProjected = nbOfDays(new Date(dateStart), new Date(dateStop))
 
       // Compute projected etp at stop date (specific date) to display
-      const projectedEtpAffected = await getHRPositions(hr, referentielId, categories, dateStop)
+      const projectedEtpAffected = await getHRPositions(hr, referentielId, categories, dateStop, undefined, undefined, undefined, signal)
+      checkAbort(signal);
 
       let { etpMagProjected, etpFonProjected, etpConProjected } = getEtpByCategory(projectedEtpAffected, 'Projected')
 
@@ -275,7 +284,8 @@ export async function getSituation (referentielId, hr, allActivities, categories
       const projectedTotalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMagProjected : etpFonProjected, sufix)
 
       // Projection of etpAffected between start and stop date to compute stock
-      let { etpAffectedStartToEndToCompute, monthlyReport } = await getHRPositions(hr, referentielId, categories, dateStart, true, dateStop, true)
+      let { etpAffectedStartToEndToCompute, monthlyReport } = await getHRPositions(hr, referentielId, categories, dateStart, true, dateStop, true, signal)
+      checkAbort(signal);
 
       let { etpMagStartToEndToCompute, etpFonStartToEndToCompute, etpConStartToEndToCompute } = getEtpByCategory(
         etpAffectedStartToEndToCompute,
@@ -529,7 +539,7 @@ export function appearOneTimeAtLeast (situations, referentielId) {
  * @param {*} monthlyReport données mensuels
  * @returns objet contenant l'ETP calculé
  */
-export async function getHRPositions (hr, referentielId, categories, date = undefined, onPeriod = false, dateStop = undefined, monthlyReport = false) {
+export async function getHRPositions (hr, referentielId, categories, date = undefined, onPeriod = false, dateStop = undefined, monthlyReport = false, signal=null) {
   const hrCategories = {}
   let hrCategoriesMonthly = new Object({})
   let emptyList = new Object({})
@@ -555,6 +565,7 @@ export async function getHRPositions (hr, referentielId, categories, date = unde
   })
 
   for (let i = 0; i < hr.length; i++) {
+    checkAbort(signal);
     let etptAll = []
     let monthlyList = null
     const situations = hr[i].situations || []
@@ -566,14 +577,19 @@ export async function getHRPositions (hr, referentielId, categories, date = unde
           referentielId,
           categories,
           date instanceof Date ? date : undefined,
-          dateStop instanceof Date ? dateStop : undefined
+          dateStop instanceof Date ? dateStop : undefined,
+          signal
         )),
       })
+      checkAbort(signal);
     } else if (appearOneTimeAtLeast(situations, referentielId)) {
-      etptAll = await getHRVentilation(hr[i], referentielId, categories, date instanceof Date ? date : undefined)
+      etptAll = await getHRVentilation(hr[i], referentielId, categories, date instanceof Date ? date : undefined, signal)
+      checkAbort(signal);
+
     }
 
     Object.values(etptAll).map((c) => {
+      checkAbort(signal);
       if (c.etpt) {
         hrCategories[c.label].list.push(hr[i])
         hrCategories[c.label].totalEtp += c.etpt
@@ -585,11 +601,13 @@ export async function getHRPositions (hr, referentielId, categories, date = unde
         })
       }
     })
+    checkAbort(signal);
   }
 
   const list = []
   const listMonthly = []
   for (const [key, value] of Object.entries(hrCategories)) {
+    checkAbort(signal);
     list.push({
       name: key,
       // @ts-ignore
@@ -602,6 +620,7 @@ export async function getHRPositions (hr, referentielId, categories, date = unde
       let tmpObj = []
 
       Object.keys(hrCategoriesMonthly[key]).map((x) => {
+        checkAbort(signal);
         hrCategoriesMonthly[key][x].etpt = fixDecimal(hrCategoriesMonthly[key][x].etpt || 0)
 
         tmpObj.push({
@@ -629,7 +648,7 @@ export async function getHRPositions (hr, referentielId, categories, date = unde
   } else return sortBy(list, 'rank')
 }
 
-export async function getHRVentilationOnPeriod (hr, referentielId, categories, dateStart = undefined, dateStop = undefined) {
+export async function getHRVentilationOnPeriod (hr, referentielId, categories, dateStart = undefined, dateStop = undefined, signal = null) {
   const list = {}
   let monthlyList = {}
 
@@ -660,13 +679,15 @@ export async function getHRVentilationOnPeriod (hr, referentielId, categories, d
   let nbDay = 0
   let monthDaysCounter = 0
   do {
+    checkAbort(signal);
     if (isFirstDayOfMonth(now)) monthDaysCounter = 0
 
     if (workingDay(now)) {
       // only working day
       nbDay++
       monthDaysCounter++
-      const { etp, situation } = await getEtpByDateAndPersonSimu(referentielId, now, hr)
+      const { etp, situation } = await getEtpByDateAndPersonSimu(referentielId, now, hr, signal)
+      checkAbort(signal);
 
       if (etp !== null && situation && situation.category) {
         const str = getShortMonthString(now) + now.getFullYear().toString().slice(-2)
@@ -681,11 +702,13 @@ export async function getHRVentilationOnPeriod (hr, referentielId, categories, d
         }
       }
     }
+    checkAbort(signal);
     now.setDate(now.getDate() + 1)
   } while (now.getTime() <= stop.getTime())
 
   // format render
   for (const property in list) {
+    checkAbort(signal);
     list[property].etpt = list[property].etpt / nbDay
     Object.keys(monthlyList).map((x) => {
       if (monthlyList[x][property].nbOfDays !== 0) monthlyList[x][property].etpt = monthlyList[x][property].etpt / monthlyList[x][property].nbOfDays
@@ -703,7 +726,7 @@ export async function getHRVentilationOnPeriod (hr, referentielId, categories, d
  * @param {*} date date selectionné
  * @returns objet contenant l'etp
  */
-export async function getHRVentilation (hr, referentielId, categories, date) {
+export async function getHRVentilation (hr, referentielId, categories, date, signal = null) {
   const list = {}
   categories.map((c) => {
     list[c.id] = {
@@ -713,7 +736,8 @@ export async function getHRVentilation (hr, referentielId, categories, date) {
   })
 
   const now = date ? date : new Date()
-  const { etp, situation } = await getEtpByDateAndPersonSimu(referentielId, now, hr)
+  const { etp, situation } = await getEtpByDateAndPersonSimu(referentielId, now, hr, signal)
+  checkAbort(signal);
 
   if (etp !== null && etp !== 0) {
     let listContentieux = situation ? situation.activities.map((c) => c.contentieux) : null

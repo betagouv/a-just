@@ -4,6 +4,7 @@ import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPerson } from './human-resource'
 import {appendFileSync  } from 'fs'
+import { checkAbort } from './abordTimeout'
 
 /**
  * Création d'un tableau vide du calculateur de tout les contentieux et sous contentieux
@@ -83,10 +84,12 @@ export const emptyCalulatorValues = (referentiels) => {
  * @param {*} optionsBackups
  * @returns
  */
-export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens) => {
+export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens, signal = null) => {
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
+    checkAbort(signal);
+
     const childrens = !loadChildrens
       ? []
       : (list[i].childrens || []).map((c) => ({
@@ -435,8 +438,8 @@ export const getNbDaysGone = (hr, dateStart, dateStop) => {
  * @returns
  */
 export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null, signal=null) => {
-  if (signal && signal.aborted) throw new Error("⛔ Annulé dans getHRVentilation");
-
+  checkAbort(signal);
+  
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -458,6 +461,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
   do {
     let addDay = true
+    checkAbort(signal);
 
     // only working day
     if (workingDay(now)) {
@@ -467,7 +471,8 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       let situation = null
       let indispoFiltred = null
       let reelEtp = null
-      const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
+      checkAbort(signal);
+      const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels, signal)
       etp = etpByDateAndPerson.etp
       situation = etpByDateAndPerson.situation
       indispoFiltred = etpByDateAndPerson.indispoFiltred
@@ -532,6 +537,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     if(testNextDay.getTime() > dateStop.getTime()) {
       continueLoop = false
     }
+    checkAbort(signal);
   } while (continueLoop)
 
   if (nbDay === 0) {

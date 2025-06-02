@@ -296,7 +296,7 @@ export const computeExtractDdg = async (
   await Promise.all(
     allHuman.map(async (human) => {
       checkAbort(signal);
-      const { currentSituation } = findSituation(human);
+      const { currentSituation } = findSituation(human, signal);
 
       let categoryName =
         currentSituation &&
@@ -924,7 +924,7 @@ export const computeExtract = async (
   await Promise.all(
     allHuman.map(async (human) => {
       checkAbort(signal);
-      const { currentSituation } = findSituation(human);
+      const { currentSituation } = findSituation(human, signal);
 
       let categoryName =
         currentSituation &&
