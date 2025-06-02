@@ -534,7 +534,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
     console.log('getHRVentilation', now, hr.id, dateStop, nextDeltaDate, nbDay)
     const testNextDay = new Date(now)
-    if(testNextDay.getTime() > dateStop.getTime()) {
+    if(testNextDay.getTime() >= dateStop.getTime()) {
       continueLoop = false
     }
     checkAbort(signal);
