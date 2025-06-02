@@ -442,6 +442,8 @@ export class CalculatorPage
    */
   nbHoursPerDayAndFonctionnaire: number = import.meta.env
     .NG_APP_NB_HOURS_PER_DAY_AND_FONCTIONNAIRE;
+  /** Date max cockpit */
+  limitDate = this.addMonthsToDate(new Date(), 11);
 
   /**
    * Constructeur
@@ -2085,5 +2087,15 @@ export class CalculatorPage
       (this.categorySelected === MAGISTRATS ? 'SIEGE' : 'GREFFE') +
       ' de ' +
       dates;
+  }
+
+  /**
+   * Ajout d'un nombre de mois à une date
+   * @param date
+   * @param months
+   * @returns
+   */
+  override addMonthsToDate(date: Date | null, months: number): Date | null {
+    return super.addMonthsToDate(date, months);
   }
 }
