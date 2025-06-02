@@ -1,3 +1,4 @@
+import { getLastMonthApi } from "../../support/api"
 import { getShortMonthString } from "../../support/utils/dates"
 
 describe('Cockpit', () => {
@@ -41,21 +42,8 @@ describe('Cockpit', () => {
       .get('.brut')
       .click()
 
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
-
-      // Get the latest available month
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
-
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/activities/get-last-month`,
-        headers: {
-          'Authorization': `${token}`
-        },
-        body: { hrBackupId: backupId }
-      }).then((response) => {
+    getLastMonthApi()
+      .then((response) => {
         expect(response.status).to.eq(200);
 
         const lastMonth = response.body.data.date;
@@ -76,7 +64,6 @@ describe('Cockpit', () => {
           .should('contain.text', getShortMonthString(endDate))
           .should('contain.text', endDate.getFullYear());
       });
-    });
   });
 
   it("Check that in the 'Données brutes' mode, the 'Temps moyen ... / dossier observé' change according to the selected agent category", () => {
@@ -159,31 +146,19 @@ describe('Cockpit', () => {
 
   it('Comparator | Check that the selector displays year N-1 by default', () => {
 
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
-
-      // Get the latest available month
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
-      cy.log('Server URL:', Cypress.env('NG_APP_SERVER_URL'));
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/activities/get-last-month`,
-        headers: {
-          'Authorization': `${token}`
-        },
-        body: { hrBackupId: backupId }
-      })
+    // Get the latest available month
+    getLastMonthApi()
       .then((response) => {
         expect(response.status).to.eq(200);
 
         const lastMonth = response.body.data.date;
 
+        cy.log('Last month:', lastMonth);
         const endDate = new Date(lastMonth);
-        endDate.setFullYear(endDate.getFullYear() - 1);
+          endDate.setFullYear(endDate.getFullYear() - 1);
 
         const startDate = new Date(endDate);
-        startDate.setMonth(endDate.getMonth() - 11);
+          startDate.setMonth(endDate.getMonth() - 11);
 
         cy.get('.actions').within(() => {
           cy.get('button')
@@ -194,7 +169,7 @@ describe('Cockpit', () => {
           .should('be.visible')
           .should('contain.text',  `${getShortMonthString(startDate) + ` ${startDate.getFullYear()}`} - ${getShortMonthString(endDate) + ` ${endDate.getFullYear()}`}` )
       })
-    })
+
     cy.get('body').click(0, 0);
   })
 

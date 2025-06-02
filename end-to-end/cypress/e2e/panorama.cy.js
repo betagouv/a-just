@@ -1,4 +1,5 @@
 import { normalizeDate, getShortMonthString } from '../../support/utils/dates'
+import { updateHumanResourcesApi } from '../../support/api'
 
 describe('Panorama page', () => {
   before(() => {
@@ -81,7 +82,7 @@ describe('Panorama page', () => {
       
     })
 
-    cy.wait(3000) // Wait for the input to be processed
+    cy.wait(3000)
     cy.reload()
 
     cleValues.forEach((expectedValue, index) => {
@@ -154,57 +155,40 @@ describe('Panorama page', () => {
   it("Should update the last update date in 'Actualisation des fiches' for 'Siège' after adding an agent", () => {
     cy.visit('/panorama');
   
-    // Step 1: Add an agent via API
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
-  
-      expect(backupId).to.not.be.null;
-      expect(token).to.not.be.null;
-  
-      const activities = [
-        {
-          percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social' },
-        },
-      ];
-      const category = { id: 1, rank: 1, label: 'Magistrat' };
-      const dateStart = new Date().toISOString();
-      const etp = 1;
-      const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false };
-      const situations = [
-        {
-          activities,
-          category,
-          dateStart,
-          etp,
-          fonction,
-        },
-      ];
-  
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/human-resources/update-hr`,
-        headers: {
-          Authorization: `${token}`,
-        },
-        body: {
-          backupId: backupId,
-          hr: {
-            firstName: 'Agent',
-            lastName: 'Test',
-            matricule: '123456',
-            situations: situations,
-            dateStart: new Date(),
-          },
-        },
-      }).then((response) => {
+    //  Add an agent via API
+    const activities = [
+      {
+        percent: 100,
+        contentieux: { id: 447, label: 'Contentieux Social' },
+      },
+    ];
+    const category = { id: 1, rank: 1, label: 'Magistrat' };
+    const dateStart = new Date().toISOString();
+    const etp = 1;
+    const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false };
+    const situations = [
+      {
+        activities,
+        category,
+        dateStart,
+        etp,
+        fonction,
+      },
+    ];
+    const hrData = {
+      firstName: 'Agent',
+      lastName: 'Test',
+      matricule: '123456',
+      situations: situations,
+      dateStart: new Date()
+    }
+
+    updateHumanResourcesApi(hrData)
+      .then((response) => {
         expect(response.status).to.eq(200);
       });
-    });
   
-    // Step 2: Reload the page and verify the last update date is today's date
+    // Reload the page and verify the last update date is today's date
     cy.reload();
     cy.wait(2000);
   
@@ -226,57 +210,40 @@ describe('Panorama page', () => {
   it("Should update the last update date in 'Actualisation des fiches' for 'Greffe' after adding an agent", () => {
     cy.visit('/panorama');
   
-    // Step 1: Add an agent via API
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+    // Add an agent via API
+    const activities = [
+      {
+        percent: 100,
+        contentieux: { id: 447, label: 'Contentieux Social' },
+      },
+    ];
+    const category = { id: 2, rank: 2, label: 'Greffe' };
+    const dateStart = new Date().toISOString();
+    const etp = 1;
+    const fonction = { id: 40, rank: 2, code: 'A', label: 'A', category_detail: 'F-TIT', position: 'Titulaire', calculatriceIsActive: false };
+    const situations = [
+      {
+        activities,
+        category,
+        dateStart,
+        etp,
+        fonction,
+      },
+    ];
+    const hrData = {
+      firstName: 'Agent',
+      lastName: 'Test',
+      matricule: '123456',
+      situations: situations,
+      dateStart: new Date(),
+    }
   
-      expect(backupId).to.not.be.null;
-      expect(token).to.not.be.null;
-  
-      const activities = [
-        {
-          percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social' },
-        },
-      ];
-      const category = { id: 2, rank: 2, label: 'Greffe' }; // Catégorie Greffe
-      const dateStart = new Date().toISOString();
-      const etp = 1;
-      const fonction = { id: 40, rank: 2, code: 'A', label: 'A', category_detail: 'F-TIT', position: 'Titulaire', calculatriceIsActive: false };
-      const situations = [
-        {
-          activities,
-          category,
-          dateStart,
-          etp,
-          fonction,
-        },
-      ];
-  
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/human-resources/update-hr`,
-        headers: {
-          Authorization: `${token}`,
-        },
-        body: {
-          backupId: backupId,
-          hr: {
-            firstName: 'Agent',
-            lastName: 'Test',
-            matricule: '123456',
-            situations: situations,
-            dateStart: new Date(),
-          },
-        },
-      }).then((response) => {
+    updateHumanResourcesApi(hrData)
+      .then((response) => {
         expect(response.status).to.eq(200);
       });
-    });
-  
-    // Step 2: Reload the page and verify the last update date is today's date
+
+    // Reload the page and verify the last update date is today's date
     cy.reload();
     cy.wait(2000);
   
@@ -284,7 +251,7 @@ describe('Panorama page', () => {
     const todayShort = today.getDate() + ' ' + getShortMonthString(today) + ' ' + today.getFullYear();
   
     cy.get('.workforce-panel .records-update .category')
-      .eq(1) // Index 1 pour la catégorie Greffe
+      .eq(1)
       .find('.update')
       .invoke('text')
       .then((text) => {
@@ -298,57 +265,41 @@ describe('Panorama page', () => {
   it("Should update the last update date in 'Actualisation des fiches' for 'EAM' after adding an agent", () => {
     cy.visit('/panorama');
   
-    // Step 1: Add an agent via API
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+    // Add an agent via API
+    const activities = [
+      {
+        percent: 100,
+        contentieux: { id: 447, label: 'Contentieux Social' },
+      },
+    ];
+    const category = { id: 3, rank: 3, label: 'EAM' }; // Catégorie EAM
+    const dateStart = new Date().toISOString();
+    const etp = 1;
+    const fonction = { id: 32, rank: 1, code: 'AS', label: 'ASSISTANT SPECIALISE', category_detail: 'C', position: 'Contractuel', calculatriceIsActive: false };
+    const situations = [
+      {
+        activities,
+        category,
+        dateStart,
+        etp,
+        fonction,
+      },
+    ];
+
+    const hrData = {
+      firstName: 'Agent',
+      lastName: 'Test',
+      matricule: '123456',
+      situations: situations,
+      dateStart: new Date(),
+    }
   
-      expect(backupId).to.not.be.null;
-      expect(token).to.not.be.null;
+    updateHumanResourcesApi(hrData)
+    .then((response) => {
+      expect(response.status).to.eq(200)
+    })
   
-      const activities = [
-        {
-          percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social' },
-        },
-      ];
-      const category = { id: 3, rank: 3, label: 'EAM' }; // Catégorie EAM
-      const dateStart = new Date().toISOString();
-      const etp = 1;
-      const fonction = { id: 32, rank: 1, code: 'AS', label: 'ASSISTANT SPECIALISE', category_detail: 'C', position: 'Contractuel', calculatriceIsActive: false };
-      const situations = [
-        {
-          activities,
-          category,
-          dateStart,
-          etp,
-          fonction,
-        },
-      ];
-  
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/human-resources/update-hr`,
-        headers: {
-          Authorization: `${token}`,
-        },
-        body: {
-          backupId: backupId,
-          hr: {
-            firstName: 'Agent',
-            lastName: 'Test',
-            matricule: '123456',
-            situations: situations,
-            dateStart: new Date(),
-          },
-        },
-      }).then((response) => {
-        expect(response.status).to.eq(200);
-      });
-    });
-  
-    // Step 2: Reload the page and verify the last update date is today's date
+    // Reload the page and verify the last update date is today's date
     cy.reload();
     cy.wait(2000);
   
@@ -356,7 +307,7 @@ describe('Panorama page', () => {
     const todayShort = today.getDate() + ' ' + getShortMonthString(today) + ' ' + today.getFullYear();
   
     cy.get('.workforce-panel .records-update .category')
-      .eq(2) // Index 2 pour la catégorie EAM
+      .eq(2) 
       .find('.update')
       .invoke('text')
       .then((text) => {
@@ -383,7 +334,8 @@ describe('Panorama page', () => {
         currentEtptSiege = parseInt(text);
         expect(currentEtptSiege).to.be.greaterThan(0);
       });
-    // Get current Siege number of agents
+    
+      // Get current Siege number of agents
     cy.get('.workforce-panel .cards .category')
       .eq(0)
       .find('.header .categoryType span')
@@ -394,89 +346,70 @@ describe('Panorama page', () => {
         expect(currentNbSiege).to.be.greaterThan(0);
       });
 
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
 
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+    const activities = [
+      {
+        percent: 100,
+        contentieux: { id: 447, label: 'Contentieux Social' },
+      },
+      {
+        percent: 100,
+        contentieux: { id: 448, label: "Départage prud'homal" },
+      },
+    ]
+    const category = { id: 1, rank: 1, label: 'Magistrat' }
+    const dateStart = normalizeDate(new Date())
+    const etp = 1
+    const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
+    const situations = [
+      {
+        activities,
+        category,
+        dateStart,
+        etp,
+        fonction,
+      },
+    ]
 
-      expect(backupId).to.not.be.null;
-      expect(token).to.not.be.null;
-
-
-      const activities = [
-        {
-          percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social' },
-        },
-        {
-          percent: 100,
-          contentieux: { id: 448, label: "Départage prud'homal" },
-        },
-      ]
-      const category = { id: 1, rank: 1, label: 'Magistrat' }
-      const dateStart = normalizeDate(new Date())
-      const etp = 1
-      const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
-      const situations = [
-        {
-          activities,
-          category,
-          dateStart,
-          etp,
-          fonction,
-        },
-      ]
+    const hrData = {
+      firstName: 'Agent',
+      lastName: 'Test',
+      matricule: '123456',
+      situations: situations, 
+      dateStart: new Date(),
+    }
       // Add a Siege agent
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/human-resources/update-hr`, 
-        headers: {
-          'Authorization': `${token}`
-        },
-        body: {
-          backupId: backupId,
-          hr: {
-            firstName: 'Agent',
-            lastName: 'Test',
-            matricule: '123456',
-            situations: situations, 
-            dateStart: new Date(),
-          },
-        },
-      }).then((response) => {
+    updateHumanResourcesApi(hrData)
+      .then((response) => {
         expect(response.status).to.eq(200); 
       });
 
-      cy.reload()
-  
-      cy.wait(2000)
+    cy.reload()
 
-      // Back to panorama
-      cy.visit('/panorama');
+    cy.wait(2000)
 
+    // Back to panorama
+    cy.visit('/panorama');
 
-  
-      // Check the agent is added in the "Composition des effectifs" section
-      cy.get('.workforce-panel .cards .category')
-        .eq(0)
-        .find('.header .etp')
-        .invoke('text')
-        .then((text) => {
-          const updatedNbSiege = parseInt(text);
-          expect(updatedNbSiege).to.be.equal(currentEtptSiege + 1); // Ensure the number of Siege agent increased
-        });
-      
-      cy.get('.workforce-panel .cards .category') 
-        .eq(0)
-        .find('.header .categoryType span')
-        .eq(1)
-        .invoke('text')
-        .then((text) => {
-          const updatedEtptSiege = parseInt(text);
-          expect(updatedEtptSiege).to.be.equal(currentNbSiege + 1); // Ensure the Siege ETP increased
-        });
-      })
+    // Check the agent is added in the "Composition des effectifs" section
+    cy.get('.workforce-panel .cards .category')
+      .eq(0)
+      .find('.header .etp')
+      .invoke('text')
+      .then((text) => {
+        const updatedNbSiege = parseInt(text);
+        expect(updatedNbSiege).to.be.equal(currentEtptSiege + 1); // Ensure the number of Siege agent increased
+      });
+    
+    cy.get('.workforce-panel .cards .category') 
+      .eq(0)
+      .find('.header .categoryType span')
+      .eq(1)
+      .invoke('text')
+      .then((text) => {
+        const updatedEtptSiege = parseInt(text);
+        expect(updatedEtptSiege).to.be.equal(currentNbSiege + 1); // Ensure the Siege ETP increased
+      });
   });
 
   it("Should add an agent of category 'Greffe' via API and verify in 'Panorama' the number of agent and assocaited ETP have inscreased of 1", () => {
@@ -504,89 +437,69 @@ describe('Panorama page', () => {
         expect(currentNbGreffe).to.be.greaterThan(0);
       });
 
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
+    const activities = [
+      {
+        percent: 100,
+        contentieux: { id: 447, label: 'Contentieux Social' },
+      },
+      {
+        percent: 100,
+        contentieux: { id: 448, label: "Départage prud'homal" },
+      },
+    ]
+    const category = { id: 2, rank: 2, label: 'Greffe' }
+    const dateStart = normalizeDate(new Date())
+    const etp = 1
+    const fonction = { id: 40, rank: 2, code: 'A', label: 'A', category_detail: 'F-TIT', position: 'Titulaire', calculatriceIsActive: false }
+    const situations = [
+      {
+        activities,
+        category,
+        dateStart,
+        etp,
+        fonction,
+      },
+    ]
+    const hrData = {
+      firstName: 'Agent',
+          lastName: 'Test',
+          matricule: '123456',
+          situations: situations, 
+          dateStart: new Date(),
+    }
 
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
-
-      expect(backupId).to.not.be.null;
-      expect(token).to.not.be.null;
-
-
-      const activities = [
-        {
-          percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social' },
-        },
-        {
-          percent: 100,
-          contentieux: { id: 448, label: "Départage prud'homal" },
-        },
-      ]
-      const category = { id: 2, rank: 2, label: 'Greffe' }
-      const dateStart = normalizeDate(new Date())
-      const etp = 1
-      const fonction = { id: 40, rank: 2, code: 'A', label: 'A', category_detail: 'F-TIT', position: 'Titulaire', calculatriceIsActive: false }
-      const situations = [
-        {
-          activities,
-          category,
-          dateStart,
-          etp,
-          fonction,
-        },
-      ]
-      // Add a Greffe agent
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/human-resources/update-hr`, 
-        headers: {
-          'Authorization': `${token}`
-        },
-        body: {
-          backupId: backupId,
-          hr: {
-            firstName: 'Agent',
-            lastName: 'Test',
-            matricule: '123456',
-            situations: situations, 
-            dateStart: new Date(),
-          },
-        },
-      }).then((response) => {
+    // Add a Greffe agent
+    updateHumanResourcesApi(hrData)
+      .then((response) => {
         expect(response.status).to.eq(200); 
       });
 
-      cy.reload()
+    cy.reload()
+
+    cy.wait(2000)
+
+    // Back to panorama
+    cy.visit('/panorama');
   
-      cy.wait(2000)
-
-      // Back to panorama
-      cy.visit('/panorama');
-
-
-  
-      // Check the agent is added in the "Composition des effectifs" section
-      cy.get('.workforce-panel .cards .category')
-        .eq(1)
-        .find('.header .etp')
-        .invoke('text')
-        .then((text) => {
-          const updatedNbGreffe = parseInt(text);
-          expect(updatedNbGreffe).to.be.equal(currentEtptGreffe + 1); // Ensure the number of Greffe agent increased
-        });
-      
-      cy.get('.workforce-panel .cards .category') 
-        .eq(1)
-        .find('.header .categoryType span')
-        .eq(1)
-        .invoke('text')
-        .then((text) => {
-          const updatedEtptGreffe = parseInt(text);
-          expect(updatedEtptGreffe).to.be.equal(currentNbGreffe + 1); // Ensure the Greffe ETP increased
-        });
-      })
+    // Check the agent is added in the "Composition des effectifs" section
+    cy.get('.workforce-panel .cards .category')
+      .eq(1)
+      .find('.header .etp')
+      .invoke('text')
+      .then((text) => {
+        const updatedNbGreffe = parseInt(text);
+        expect(updatedNbGreffe).to.be.equal(currentEtptGreffe + 1); // Ensure the number of Greffe agent increased
+      });
+    
+    cy.get('.workforce-panel .cards .category') 
+      .eq(1)
+      .find('.header .categoryType span')
+      .eq(1)
+      .invoke('text')
+      .then((text) => {
+        const updatedEtptGreffe = parseInt(text);
+        expect(updatedEtptGreffe).to.be.equal(currentNbGreffe + 1); // Ensure the Greffe ETP increased
+      });
   });
 
   it("Should add an agent of category 'EAM' via API and verify in 'Panorama' the number of agent and assocaited ETP have inscreased of 1", () => {
@@ -615,180 +528,144 @@ describe('Panorama page', () => {
         expect(currentNbEAM).to.be.greaterThan(0);
       });
 
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
+    const activities = [
+      {
+        percent: 100,
+        contentieux: { id: 447, label: 'Contentieux Social' },
+      },
+      {
+        percent: 100,
+        contentieux: { id: 448, label: "Départage prud'homal" },
+      },
+    ]
+    const category = { id: 3, rank: 3, label: 'EAM' }
+    const dateStart = normalizeDate(new Date())
+    const etp = 1
+    const fonction = { id: 32, rank: 1, code: 'AS', label: 'ASSISTANT SPECIALISE', category_detail: 'C', position: 'Contractuel', calculatriceIsActive: false }
+    const situations = [
+      {
+        activities,
+        category,
+        dateStart,
+        etp,
+        fonction,
+      },
+    ]
 
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+    const hrData = {
+      firstName: 'Agent',
+        lastName: 'Test',
+        matricule: '123456',
+        situations: situations, 
+        dateStart: new Date(),
+    }
 
-      expect(backupId).to.not.be.null;
-      expect(token).to.not.be.null;
-
-
-      const activities = [
-        {
-          percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social' },
-        },
-        {
-          percent: 100,
-          contentieux: { id: 448, label: "Départage prud'homal" },
-        },
-      ]
-      const category = { id: 3, rank: 3, label: 'EAM' }
-      const dateStart = normalizeDate(new Date())
-      const etp = 1
-      const fonction = { id: 32, rank: 1, code: 'AS', label: 'ASSISTANT SPECIALISE', category_detail: 'C', position: 'Contractuel', calculatriceIsActive: false }
-      const situations = [
-        {
-          activities,
-          category,
-          dateStart,
-          etp,
-          fonction,
-        },
-      ]
-      // Add an EAM agent 
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/human-resources/update-hr`, 
-        headers: {
-          'Authorization': `${token}`
-        },
-        body: {
-          backupId: backupId,
-          hr: {
-            firstName: 'Agent',
-            lastName: 'Test',
-            matricule: '123456',
-            situations: situations, 
-            dateStart: new Date(),
-          },
-        },
-      }).then((response) => {
+    // Add an EAM agent 
+    updateHumanResourcesApi(hrData)
+      .then((response) => {
         expect(response.status).to.eq(200); 
       });
 
-      cy.reload()
+    cy.reload()
+    cy.wait(2000)
+
+    //Back to Panorama
+    cy.visit('/panorama');
   
-      cy.wait(2000)
-
-      //Back to Panorama
-      cy.visit('/panorama');
-
-
-  
-      // Check the agent is added in the "Composition des effectifs" section
-      cy.get('.workforce-panel .cards .category')
-        .eq(2)
-        .find('.header .etp')
-        .invoke('text')
-        .then((text) => {
-          const updatedNbEAM = parseInt(text);
-          expect(updatedNbEAM).to.be.equal(currentEtptEAM + 1); // Ensure the number of EAM agent increased
-        });
-      
-      cy.get('.workforce-panel .cards .category') 
-        .eq(2)
-        .find('.header .categoryType span')
-        .eq(1)
-        .invoke('text')
-        .then((text) => {
-          const updatedEtptEAM = parseInt(text);
-          expect(updatedEtptEAM).to.be.equal(currentNbEAM + 1); // Ensure the EAM ETP increased
-        });
-      })
+    // Check the agent is added in the "Composition des effectifs" section
+    cy.get('.workforce-panel .cards .category')
+      .eq(2)
+      .find('.header .etp')
+      .invoke('text')
+      .then((text) => {
+        const updatedNbEAM = parseInt(text);
+        expect(updatedNbEAM).to.be.equal(currentEtptEAM + 1); 
+      });
+    
+    cy.get('.workforce-panel .cards .category') 
+      .eq(2)
+      .find('.header .categoryType span')
+      .eq(1)
+      .invoke('text')
+      .then((text) => {
+        const updatedEtptEAM = parseInt(text);
+        expect(updatedEtptEAM).to.be.equal(currentNbEAM + 1);
+      });
   });
+
 
   const findAgentInPagination = (agentName, formattedArrivalDate) => {
     cy.get('.workforce-change .cards ul li')
-    .then(($list) => {
-      const filtered = Cypress.$($list).filter((index, el) => {
-        const name = Cypress.$(el).find('span.name').text().trim();
-        return name === agentName; // Vérifie si le nom correspond
-      });
+      .then(($list) => {
+        const filtered = Cypress.$($list).filter((index, el) => {
+          const name = Cypress.$(el).find('span.name').text().trim();
+          return name === agentName; 
+        });
 
-      if (filtered.length > 0) {
-        // Si l'agent est trouvé, vérifie la date
-        cy.wrap(filtered)
-          .first()
-          .within(() => {
-            cy.get('div.date-section').should('contain.text', formattedArrivalDate);
-          });
-      } else {
-        // Si l'agent n'est pas trouvé, vérifie si le bouton "Suivant" est activé
-        cy.get('.ngx-pagination .pagination-next:not(.disabled)')
-          .then((nextButton) => {
-            if (nextButton.length > 0) {
-              // Clique sur "Suivant" et rappelle la fonction
-              cy.wrap(nextButton).click();
-              cy.wait(1000); // Attendre que la page suivante se charge
-              findAgentInPagination(agentName, formattedArrivalDate); // Rappel récursif
-            } else {
-              // Si "Suivant" est désactivé, l'agent n'est pas trouvé
-              throw new Error(`Agent "${agentName}" not found in any page.`);
-            }
-          });
+        if (filtered.length > 0) {
+          // Si l'agent est trouvé, vérifie la date
+          cy.wrap(filtered)
+            .first()
+            .within(() => {
+              cy.get('div.date-section').should('contain.text', formattedArrivalDate);
+            });
+        } else {
+          // Si l'agent n'est pas trouvé, vérifie si le bouton "Suivant" est activé
+          cy.get('.ngx-pagination .pagination-next:not(.disabled)')
+            .then((nextButton) => {
+              if (nextButton.length > 0) {
+                // Clique sur "Suivant" et rappelle la fonction
+                cy.wrap(nextButton).click();
+                cy.wait(1000); // Attendre que la page suivante se charge
+                findAgentInPagination(agentName, formattedArrivalDate);
+              } else {
+                throw new Error(`Agent "${agentName}" not found in any page.`);
+              }
+            });
+          }
         }
-      }
-    );
+      );
   };
 
   it("Should display the newly added agent in the 'Arrivées' column of 'Changement dans les effectifs'", () => {
     cy.visit('/panorama');
   
-    // Step 1: Add an agent via API with an arrival date in 8 days
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+    // Add an agent via API with an arrival date in 8 days
+
+    const activities = [
+      {
+        percent: 100,
+        contentieux: { id: 447, label: 'Contentieux Social' },
+      },
+    ];
+    const category = { id: 1, rank: 1, label: 'Magistrat' };
+    const dateStart = new Date();
+    dateStart.setDate(dateStart.getDate() + 8);
+    const etp = 1;
+    const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false };
+    const situations = [
+      {
+        activities,
+        category,
+        dateStart: dateStart,
+        etp,
+        fonction,
+      },
+    ];
+    const hrData = {
+      firstName: 'Agent',
+      lastName: 'Test dateStart',
+      matricule: '123456',
+      situations: situations,
+      dateStart: dateStart,
+    }
   
-      expect(backupId).to.not.be.null;
-      expect(token).to.not.be.null;
-  
-      const activities = [
-        {
-          percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social' },
-        },
-      ];
-      const category = { id: 1, rank: 1, label: 'Magistrat' }; // Exemple : Catégorie Siège
-      const dateStart = new Date();
-      dateStart.setDate(dateStart.getDate() + 8); // Date d'arrivée dans 8 jours
-      const etp = 1;
-      const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false };
-      const situations = [
-        {
-          activities,
-          category,
-          dateStart: dateStart,
-          etp,
-          fonction,
-        },
-      ];
-  
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/human-resources/update-hr`,
-        headers: {
-          Authorization: `${token}`,
-        },
-        body: {
-          backupId: backupId,
-          hr: {
-            firstName: 'Agent',
-            lastName: 'Test dateStart',
-            matricule: '123456',
-            situations: situations,
-            dateStart: dateStart,
-          },
-        },
-      }).then((response) => {
-        expect(response.status).to.eq(200);
+    updateHumanResourcesApi(hrData)
+      .then((response) => {
+        expect(response.status).to.eq(200)
       });
-    });
   
-    // Step 2: Reload the page and verify the agent appears in the "Arrivées" column
+    // Reload the page and verify the agent appears in the "Arrivées" column
     cy.reload();
     cy.wait(2000);
   
@@ -799,72 +676,54 @@ describe('Panorama page', () => {
     cy.get('.workforce-change .buttons')
       .find('button')
       .contains('Arrivées')
-      .click(); // Clic sur le bouton "Arrivées" pour filtrer les changements
+      .click(); 
     cy.wait(1000); // Attendre que le filtre soit appliqué
-    
 
     // Appelle la fonction pour chercher l'agent dans les pages
     findAgentInPagination('Agent Test dateStart', formattedArrivalDate);
-
   });
 
   it("Should display the newly added agent in the 'Départs' column of 'Changement dans les effectifs'", () => {
     cy.visit('/panorama');
   
-    // Step 1: Add an agent via API with a departure date in 8 days
-    cy.window().then((win) => {
-      const backupId = win.localStorage.getItem('backupId');
-      const token = win.localStorage.getItem('token');
-      const serverUrl = Cypress.env('NG_APP_SERVER_URL') || 'http://localhost:8081/api';
+    // Add an agent via API with a departure date in 8 days
+    const activities = [
+      {
+        percent: 100,
+        contentieux: { id: 447, label: 'Contentieux Social' },
+      },
+    ];
+    const category = { id: 1, rank: 1, label: 'Magistrat' };
+    const dateStart = new Date();
+    dateStart.setDate(dateStart.getDate() - 8); // Date d'arrivé 8 jours avant
+    const dateEnd = new Date();
+    dateEnd.setDate(dateEnd.getDate() + 8); // Date de départ dans 8 jours
+    const etp = 1;
+    const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false };
+    const situations = [
+      {
+        activities,
+        category,
+        dateStart: dateStart,
+        etp,
+        fonction,
+      },
+    ];
+    const hrData = {
+      firstName: 'Agent',
+      lastName: 'Test dateStop',
+      matricule: '123456',
+      situations: situations,
+      dateStart: dateStart,
+      dateEnd: dateEnd,
+    }
+
+    updateHumanResourcesApi(hrData)
+      .then((response) => {
+        expect(response.status).to.eq(200)
+      })
   
-      expect(backupId).to.not.be.null;
-      expect(token).to.not.be.null;
-  
-      const activities = [
-        {
-          percent: 100,
-          contentieux: { id: 447, label: 'Contentieux Social' },
-        },
-      ];
-      const category = { id: 1, rank: 1, label: 'Magistrat' }; // Exemple : Catégorie Siège
-      const dateStart = new Date();
-      dateStart.setDate(dateStart.getDate() - 8); // Date d'arrivé 8 jours avant
-      const dateEnd = new Date();
-      dateEnd.setDate(dateEnd.getDate() + 8); // Date de départ dans 8 jours
-      const etp = 1;
-      const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false };
-      const situations = [
-        {
-          activities,
-          category,
-          dateStart: dateStart,
-          etp,
-          fonction,
-        },
-      ];
-      cy.request({
-        method: 'POST',
-        url: `${serverUrl}/human-resources/update-hr`,
-        headers: {
-          Authorization: `${token}`,
-        },
-        body: {
-          backupId: backupId,
-          hr: {
-            firstName: 'Agent',
-            lastName: 'Test dateStop',
-            matricule: '123456',
-            situations: situations,
-            dateStart: dateStart,
-            dateEnd: dateEnd,
-          },
-        },
-      }).then((response) => {
-        expect(response.status).to.eq(200);
-      });
-    });
-  
-    // Step 2: Reload the page and verify the agent appears in the "Départs" column
+    // Reload the page and verify the agent appears in the "Départs" column
     cy.reload();
     cy.wait(2000);
   
@@ -875,7 +734,7 @@ describe('Panorama page', () => {
     cy.get('.workforce-change .buttons')
       .find('button')
       .contains('Départs')
-      .click(); // Clic sur le bouton "Départs" pour filtrer les changements
+      .click(); 
     cy.wait(1000); // Attendre que le filtre soit appliqué
       // Appelle la fonction pour chercher l'agent dans les pages
     findAgentInPagination('Agent Test dateStop', formattedDepartureDate);
