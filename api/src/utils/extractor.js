@@ -296,7 +296,7 @@ export const computeExtractDdg = async (
   await Promise.all(
     allHuman.map(async (human) => {
       checkAbort(signal);
-      const { currentSituation } = findSituation(human, signal);
+      const { currentSituation } = findSituation(human, undefined, signal);
 
       let categoryName =
         currentSituation &&
@@ -832,7 +832,6 @@ export async function runExtractsInParallel({
       ["desc", "asc", "asc", "asc"]
     );
 
-
     return { onglet1, onglet2 };
   } catch (e) {
     if (signal?.aborted) {
@@ -924,7 +923,7 @@ export const computeExtract = async (
   await Promise.all(
     allHuman.map(async (human) => {
       checkAbort(signal);
-      const { currentSituation } = findSituation(human, signal);
+      const { currentSituation } = findSituation(human, undefined, signal);
 
       let categoryName =
         currentSituation &&
@@ -974,6 +973,8 @@ export const computeExtract = async (
                 [...categories],
                 dateStart,
                 dateStop,
+                undefined,
+                undefined,
                 signal
               );
 
