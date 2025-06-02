@@ -6,7 +6,7 @@
     (valueChange)="selectDate('start',$event)" [max]="dateStop">
   </aj-date-select>
   <aj-date-select class="extend" title="À" [value]="dateStop" (valueChange)="selectDate('stop',$event)"
-    [min]="dateStart">
+    [min]="dateStart" [max]="addMonthsToDate(dateStart,24)">
   </aj-date-select>
 
   <aj-select title="Catégorie" class="category-select" [defaultRealValue]="'Sélectionner la catégorie'" [value]="null"
