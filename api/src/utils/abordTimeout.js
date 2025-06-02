@@ -55,7 +55,9 @@ export async function withAbortTimeout(fn, timeoutMs = 5000) {
     });
   }
 
-
+export function makeAbortableMethod(method, signal) {
+    return (...args) => abortable(() => method(...args), signal);
+  }
 
 export function checkAbort(signal) {
   if (signal && signal.aborted) throw new Error("⛔ Traitement annulé");

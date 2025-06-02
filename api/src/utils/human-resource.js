@@ -1,5 +1,6 @@
 import { minBy, orderBy, sumBy } from 'lodash'
 import { getTime, isDateGreaterOrEqual, today } from '../utils/date'
+import { checkAbort } from './abordTimeout';
 
 /**
  * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines
@@ -8,7 +9,7 @@ import { getTime, isDateGreaterOrEqual, today } from '../utils/date'
  * @param {*} hr
  * @returns objet d'ETP détaillé
  */
-export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false, absLabels = null) {
+export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = false, absLabels = null, signal = null) {
   if (hr.dateEnd && today(hr.dateEnd) < today(date)) {
     return {
       etp: null,
@@ -21,7 +22,8 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
   }
 
   let addDay = true
-  const { currentSituation, nextSituation } = findSituation(hr, date)
+  checkAbort(signal);
+  const { currentSituation, nextSituation } = findSituation(hr, date, signal)
   const situation = currentSituation
 
   if (situation && situation.category && situation.category.id) {
@@ -63,6 +65,8 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
       nextDeltaDate = today(hr.dateEnd)
     }
 
+    checkAbort(signal);
+
     return {
       etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
       reelEtp,
@@ -90,12 +94,13 @@ export function getEtpByDateAndPerson (referentielId, date, hr, ddgFilter = fals
  * @param {*} hr
  * @returns objet d'ETP détaillé
  */
-export async function getEtpByDateAndPersonSimu (referentielId, date, hr) {
+export async function getEtpByDateAndPersonSimu (referentielId, date, hr, signal = null) {
   const { currentSituation: situation, nextSituation } = findSituation(hr, date)
 
   if (situation && situation.category && situation.category.id) {
     // console.log(referentielId, date, hr)
     const activitiesFiltred = await (situation.activities || []).filter((a) => a.contentieux && referentielId.includes(a.contentieux.id))
+    checkAbort(signal);
 
     const indispoFiltred = findAllIndisponibilities(hr, date)
     let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
@@ -154,7 +159,8 @@ export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
  * @param {*} reelEtp
  * @returns objet contenant la situation en cours et la prochaine situation
  */
-export const findSituation = (hr, date) => {
+export const findSituation = (hr, date, signal=null) => {
+  checkAbort(signal);
   if (date) {
     date = today(date)
   }
@@ -175,7 +181,7 @@ export const findSituation = (hr, date) => {
 
   let situations = findAllSituations(hr, date)
   const situationsInTheFutur = findAllFuturSituations(hr, date)
-
+  checkAbort(signal);
   return {
     currentSituation: situations.length ? situations[0] : null,
     nextSituation: situationsInTheFutur.length ? situationsInTheFutur[situationsInTheFutur.length - 1] : null,

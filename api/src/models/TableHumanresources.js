@@ -11,6 +11,7 @@ import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 import { dbInstance } from './index'
 import { cloneDeep } from 'lodash'
+import { checkAbort } from '../utils/abordTimeout'
 
 /**
  * Cache des agents
@@ -123,9 +124,9 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    * @returns
    */
-  Model.getCache = async (backupId, force = false) => {
+  Model.getCache = async (backupId, force = false, signal = null) => {
     if (!cacheJuridictionPeoples[backupId] || force) {
-      cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
+      cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId, signal)
     }
 
     return cacheJuridictionPeoples[backupId]
@@ -136,7 +137,8 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    * @returns
    */
-  Model.getCurrentHr = async (backupId) => {
+  Model.getCurrentHr = async (backupId, signal = null) => {
+    checkAbort(signal);
     const list = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
       where: {
@@ -144,8 +146,10 @@ export default (sequelizeInstance, Model) => {
       },
       raw: true,
     })
+    checkAbort(signal);
 
     for (let i = 0; i < list.length; i++) {
+      checkAbort(signal);
       const comment = await Model.models.HRComments.getLastComment(list[i].id)
       list[i] = {
         id: list[i].id,
@@ -680,10 +684,11 @@ export default (sequelizeInstance, Model) => {
 
   Model.onCalculate = async (
     { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds, loadChildrens },
-    user, log = true
+    user, log = true, signal = null
   ) => {
     dateStart = today(dateStart)
     dateStop = today(dateStop)
+    checkAbort(signal);
 
     if (!selectedFonctionsIds && user && log === true) {
       // memorize first execution by user
@@ -691,6 +696,8 @@ export default (sequelizeInstance, Model) => {
     }
 
     let fonctions = await Model.models.HRFonctions.getAll()
+    checkAbort(signal);
+
     let categoryIdSelected = -1
     switch (categorySelected) {
     case MAGISTRATS:
@@ -708,10 +715,12 @@ export default (sequelizeInstance, Model) => {
 
     console.time('calculator-1')
     const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
+    checkAbort(signal);
     console.timeEnd('calculator-1')
 
     console.time('calculator-2')
     const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : []
+    checkAbort(signal);
     console.timeEnd('calculator-2')
 
     console.time('calculator-3')
@@ -724,10 +733,12 @@ export default (sequelizeInstance, Model) => {
 
     console.time('calculator-5')
     const categories = await Model.models.HRCategories.getAll()
+    checkAbort(signal);
     console.timeEnd('calculator-5')
 
     console.time('calculator-6')
     let hr = await Model.getCache(backupId)
+    checkAbort(signal);
     console.timeEnd('calculator-6')
 
     console.time('calculator-6-2')
@@ -754,10 +765,12 @@ export default (sequelizeInstance, Model) => {
 
     console.time('calculator-7')
     const activities = await Model.models.Activities.getAll(backupId, !loadChildrens ? referentiels.map((r) => r.id) : null)
+    checkAbort(signal);
     console.timeEnd('calculator-7')
 
     console.time('calculator-8')
-    list = syncCalculatorDatas(Model.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
+    list = syncCalculatorDatas(Model.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false, signal)
+    checkAbort(signal);
 
     const cleanDataToSent = (item) => ({
       ...item,
