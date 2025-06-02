@@ -495,7 +495,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
         lastSituationId = categoryId
       }
 
-      console.log('nextDateFinded', now, nextDateFinded, lastEtpAdded, lastSituationId)
+      //console.log('nextDateFinded', now, nextDateFinded, lastEtpAdded, lastSituationId)
       if (nextDateFinded) {
         if (nextDateFinded.getTime() > dateStop.getTime()) {
           nextDateFinded = today(dateStop)
@@ -532,7 +532,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
     }
         
 
-    console.log('getHRVentilation', now, hr.id, dateStop, nextDeltaDate, nbDay)
+    //console.log('getHRVentilation', now, hr.id, dateStop, nextDeltaDate, nbDay)
     const testNextDay = new Date(now)
     if(testNextDay.getTime() >= dateStop.getTime()) {
       continueLoop = false

@@ -68,21 +68,32 @@ export default class RouteExtractor extends Route {
           type: "effectif",
         });
   
+        console.time("extractor-1");
         const juridictionName = await this.models.HRBackups.findById(backupId);
         const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId);
         const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(
           backupId, undefined, undefined, true
         );
-  
+        console.timeEnd("extractor-1");
+
+        console.time("extractor-2");
         const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels]);
+        console.timeEnd("extractor-2");
+
+        console.time("extractor-3");
         const hr = await this.model.getCache(backupId);
+        console.timeEnd("extractor-3");
+
+        console.time("extractor-4");
         const categories = await this.models.HRCategories.getAll();
         const functionList = await this.models.HRFonctions.getAllFormatDdg();
         const formatedFunctions = await formatFunctions(functionList);
         const allHuman = await getHumanRessourceList(
           hr, undefined, undefined, undefined, dateStart, dateStop
         );
-  
+        console.timeEnd("extractor-4");
+
+        console.time("extractor-5");
         let { onglet1, onglet2 } = await runExtractsInParallel({
           models: this.models,
           allHuman,
@@ -95,7 +106,9 @@ export default class RouteExtractor extends Route {
           isJirs,
           signal,
         });
+        console.timeEnd("extractor-5");
 
+        console.time("extractor-6");
         const excelRef = buildExcelRef(flatReferentielsList);
         const { tproxs, allJuridiction } = await getJuridictionData(this.models, juridictionName);
   
@@ -117,6 +130,8 @@ export default class RouteExtractor extends Route {
           onglet2: onglet2Data,
           allJuridiction,
         });
+        console.timeEnd("extractor-6");
+
         this.sendOk(ctx, {
           fonctions: formatedFunctions,
           referentiels,
