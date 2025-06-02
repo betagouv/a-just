@@ -117,7 +117,6 @@ export default class RouteExtractor extends Route {
           onglet2: onglet2Data,
           allJuridiction,
         });
-  
         this.sendOk(ctx, {
           fonctions: formatedFunctions,
           referentiels,
