@@ -737,7 +737,7 @@ export class CalculatorPage
   /**
    * Chargement des données back
    */
-  onLoad(loadDetail = true) {
+  onLoad() {
     if (this.onTimeoutLoad) {
       clearTimeout(this.onTimeoutLoad);
     }
@@ -755,7 +755,68 @@ export class CalculatorPage
           this.onTimeoutLoad = null;
           this.isLoading = true;
           this.appService.appLoading.next(true);
-          this.calculatorService
+
+          console.time('onLoad');
+          const listPromise: Promise<any[]>[] = [];
+          this.referentielIds.forEach((refId) => {
+            if (this.categorySelected) {
+              listPromise.push(
+                this.calculatorService.filterList(
+                  this.categorySelected,
+                  this.lastCategorySelected === this.categorySelected
+                    ? this.selectedFonctionsIds
+                    : null,
+                  this.dateStart,
+                  this.dateStop,
+                  true,
+                  [refId]
+                )
+              );
+            }
+          });
+
+          Promise.all(listPromise)
+            .then((returnList) => {
+              console.log('list', returnList);
+              if (returnList.length) {
+                // @ts-ignore
+                const fonctions = returnList[0].fonctions;
+                // @ts-ignore
+                const list = returnList.flatMap((l) => l.list);
+
+                if (this.lastCategorySelected !== this.categorySelected) {
+                  this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
+                    id: f.id,
+                    value: f.code,
+                  }));
+                  this.selectedFonctionsIds = fonctions.map(
+                    (f: HRFonctionInterface) => f.id
+                  );
+                  this.calculatorService.selectedFonctionsIds.next(
+                    this.selectedFonctionsIds
+                  );
+                }
+                this.formatDatas(list);
+                this.lastCategorySelected = this.categorySelected;
+
+                if (
+                  this.firstLoading === false &&
+                  this.location.path() === '/cockpit'
+                ) {
+                  this.appService.notification(
+                    'Les données du cockpit ont été mises à jour !'
+                  );
+                }
+                this.firstLoading = false;
+                console.timeEnd('onLoad');
+              }
+            })
+            .finally(() => {
+              this.isLoading = false;
+              this.appService.appLoading.next(false);
+            });
+
+          /*this.calculatorService
             .filterList(
               this.categorySelected,
               this.lastCategorySelected === this.categorySelected
@@ -763,7 +824,7 @@ export class CalculatorPage
                 : null,
               this.dateStart,
               this.dateStop,
-              false
+              true,
             )
             .then(({ list, fonctions }) => {
               this.appService.appLoading.next(false);
@@ -795,24 +856,7 @@ export class CalculatorPage
             })
             .catch(() => {
               this.isLoading = false;
-            })
-            .finally(() => {
-              if (this.categorySelected && loadDetail) {
-                this.calculatorService
-                  .filterList(
-                    this.categorySelected,
-                    this.lastCategorySelected === this.categorySelected
-                      ? this.selectedFonctionsIds
-                      : null,
-                    this.dateStart,
-                    this.dateStop,
-                    true
-                  )
-                  .then(({ list }) => {
-                    this.formatDatas(list);
-                  });
-              }
-            });
+            })*/
         }
       },
       this.firstLoading ? 0 : 1500

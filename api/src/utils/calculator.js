@@ -144,7 +144,6 @@ export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart
  * @returns
  */
 const getActivityValues = (models, dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups, loadDetails) => {
-  console.log('getActivityValues', referentielId, dateStart, dateStop, nbMonth, loadDetails)
   let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
     models,
     dateStart,
