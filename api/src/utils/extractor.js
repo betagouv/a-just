@@ -627,6 +627,353 @@ export const handleAbsenteisme = (refObj, isCa, isTj) => {
   return { absenteismeDetails, delegation };
 };
 
+import pLimit from "p-limit";
+
+export const computeExtractDdgv5 = async (
+  models,
+  allHuman,
+  flatReferentielsList,
+  categories,
+  categoryFilter,
+  juridictionName,
+  dateStart,
+  dateStop,
+  isJirs,
+  signal = null
+) => {
+  let onglet2 = [];
+  const limit = pLimit(10);
+
+  dateStart = setTimeToMidDay(dateStart);
+  dateStop = setTimeToMidDay(dateStop);
+
+  console.time("extractor-5.2");
+
+  const processHuman = async (human) => {
+
+    checkAbort(signal);
+    const { currentSituation } = findSituation(human, undefined, signal);
+
+    let categoryName =
+      currentSituation &&
+      currentSituation.category &&
+      currentSituation.category.label
+        ? currentSituation.category.label
+        : "pas de catégorie";
+    let fonctionName =
+      currentSituation &&
+      currentSituation.fonction &&
+      currentSituation.fonction.code
+        ? currentSituation.fonction.code
+        : "pas de fonction";
+    let fonctionCategory =
+      currentSituation &&
+      currentSituation.fonction &&
+      currentSituation.fonction.category_detail
+        ? currentSituation.fonction.category_detail
+        : "";
+
+    let refObj = { ...emptyRefObj(flatReferentielsList) };
+    let totalEtpt = 0;
+    let reelEtp = 0;
+    let absenteisme = 0;
+    let totalDaysGone = 0;
+    let totalDays = 0;
+    let indispoArray = new Array([]);
+    let { allIndispRefIds, refIndispo } =
+      getIndispoDetails(flatReferentielsList);
+
+    let CETTotalEtp = 0;
+    let nbGlobalDaysCET = 0;
+
+    let nbCETDays = 0;
+    let absLabels = [...ABSENTEISME_LABELS];
+
+    nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop);
+    nbGlobalDaysCET = nbCETDays;
+
+    if (nbGlobalDaysCET < 30) absLabels.push(CET_LABEL);
+
+    indispoArray = [
+      ...(await Promise.all(
+        flatReferentielsList.map(async (referentiel) => {
+          checkAbort(signal);
+          const situations = human.situations || [];
+          const indisponibilities = human.indisponibilities || [];
+
+          if (
+            situations.some((s) => {
+              const activities = s.activities || [];
+              return activities.some(
+                (a) => a.contentieux.id === referentiel.id
+              );
+            }) ||
+            indisponibilities.some((indisponibility) => {
+              return indisponibility.contentieux.id === referentiel.id;
+            })
+          ) {
+            const etpAffected = getHRVentilation(
+              human,
+              referentiel.id,
+              [...categories],
+              dateStart,
+              dateStop,
+              true,
+              absLabels,
+              signal
+            );
+
+            const {
+              counterEtpTotal,
+              counterEtpSubTotal,
+              counterIndispo,
+              counterReelEtp,
+            } = {
+              ...(await countEtp({ ...etpAffected }, referentiel)),
+            };
+
+            checkAbort(signal);
+
+            Object.keys(etpAffected).map((key) => {
+              totalDaysGone =
+                totalDaysGone === 0 && etpAffected[key].nbDaysGone > 0
+                  ? etpAffected[key].nbDaysGone
+                  : totalDaysGone;
+              totalDays =
+                totalDays === 0 && etpAffected[key].nbDay > 0
+                  ? etpAffected[key].nbDay
+                  : totalDays;
+            });
+
+            reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp;
+
+            const isIndispoRef = await allIndispRefIds.includes(
+              referentiel.id
+            );
+
+            if (referentiel.childrens !== undefined && !isIndispoRef) {
+              const label = getExcelLabel(referentiel, true);
+              refObj[label] = counterEtpTotal;
+              totalEtpt += counterEtpTotal;
+            } else {
+              const label = getExcelLabel(referentiel, false);
+              if (isIndispoRef) {
+                refObj[label] = counterIndispo / 100;
+                if (referentiel.label === CET_LABEL)
+                  CETTotalEtp = refObj[label];
+                if (absLabels.includes(referentiel.label))
+                  absenteisme += refObj[label];
+                else
+                  return {
+                    indispo: counterIndispo / 100,
+                  };
+              } else {
+                refObj[label] = counterEtpSubTotal;
+              }
+            }
+          }
+          return { indispo: 0 };
+        })
+      )),
+    ];
+
+    const key = getExcelLabel(refIndispo, true);
+
+    refObj[key] = sumBy(indispoArray, "indispo");
+
+    if (reelEtp === 0) {
+      let reelEtpObject = [];
+
+      sortBy(human.situations, "dateStart", "asc").map((situation, index) => {
+        let nextDateStart =
+          situation.dateStart <= dateStart ? dateStart : situation.dateStart;
+        nextDateStart = nextDateStart <= dateStop ? nextDateStart : null;
+        const middleDate =
+          human.situations[index].dateStart <= dateStop
+            ? today(human.situations[index].dateStart)
+            : null;
+        const nextEndDate =
+          middleDate && index < human.situations.length - 1
+            ? middleDate
+            : dateStop;
+        let countNbOfDays = undefined;
+        let countNbOfDaysGone = 0;
+        if (
+          nextDateStart &&
+          nextEndDate &&
+          today(nextDateStart) < today(nextEndDate)
+        ) {
+          countNbOfDays = nbWorkingDays(
+            today(nextDateStart),
+            today(nextEndDate)
+          );
+        }
+        if (human.dateEnd && getNextDay(human.dateEnd) <= nextEndDate) {
+          countNbOfDaysGone = nbWorkingDays(
+            today(getNextDay(human.dateEnd)),
+            today(nextEndDate)
+          );
+        }
+        if (
+          typeof countNbOfDays === "number" &&
+          nextDateStart <= nextEndDate
+        ) {
+          reelEtpObject.push({
+            etp: situation.etp * (countNbOfDays - countNbOfDaysGone),
+            countNbOfDays: countNbOfDays - countNbOfDaysGone,
+          });
+        }
+      });
+
+      const isGone = dateStop > human.dateEnd && human.dateEnd > dateStart;
+      const hasArrived =
+        dateStart < human.dateStart && human.dateStart < dateStop;
+
+      if (human.dateEnd && isGone && hasArrived && dateStart) {
+        reelEtp =
+          ((sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays") -
+            ((refObj[key] || 0) * totalDays) /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+            nbOfDays(human.dateStart, human.dateEnd)) /
+          nbOfDays(dateStart, dateStop);
+      } else if (human.dateEnd && isGone) {
+        reelEtp =
+          ((sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays") -
+            ((refObj[key] || 0) * totalDays) /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+            nbOfDays(dateStart, human.dateEnd)) /
+          nbOfDays(dateStart, dateStop);
+      } else if (hasArrived && dateStart) {
+        reelEtp =
+          ((sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays") -
+            ((refObj[key] || 0) * totalDays) /
+              sumBy(reelEtpObject, "countNbOfDays")) *
+            nbOfDays(human.dateStart, dateStop)) /
+          nbOfDays(dateStart, dateStop);
+      } else {
+        reelEtp =
+          sumBy(reelEtpObject, "etp") /
+            sumBy(reelEtpObject, "countNbOfDays") -
+          ((refObj[key] || 0) * totalDays) /
+            sumBy(reelEtpObject, "countNbOfDays");
+      }
+    }
+
+    if (isCa()) {
+      Object.keys(refObj).map((k) => {
+        if (k.includes(DELEGATION_TJ.toUpperCase()))
+          refObj[key] = refObj[key] - refObj[k];
+      });
+    }
+
+    ["14.2. COMPTE ÉPARGNE TEMPS", "12.2. COMPTE ÉPARGNE TEMPS"].forEach(
+      (cle) => {
+        if (refObj.hasOwnProperty(cle)) {
+          delete refObj[cle];
+        }
+      }
+    );
+
+    let absenteismeDetails = null;
+    let delegation = null;
+    if (isCa()) {
+      ({ refObj, delegation } = getAndDeleteAbsenteisme(
+        refObj,
+        ["14.13. DÉLÉGATION TJ"],
+        true
+      ));
+
+      ({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
+        "14.4. CONGÉ MALADIE ORDINAIRE",
+        "14.5. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
+        "14.14. AUTRE ABSENTÉISME",
+      ]));
+    }
+    if (isTj()) {
+      ({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
+        "12.31. CONGÉ MALADIE ORDINAIRE",
+        "12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION",
+        "12.8. AUTRE ABSENTÉISME",
+      ]));
+    }
+
+    if (categoryFilter.includes(categoryName.toLowerCase()))
+      if (
+        categoryName !== "pas de catégorie" ||
+        fonctionName !== "pas de fonction"
+      ) {
+        if (human.juridiction && human.juridiction.length !== 0)
+          human.juridiction = human.juridiction.replaceAll("TPR ", "TPRX ");
+
+        let gaps = null;
+        if (isCa()) {
+          gaps = {
+            ["Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST"]:
+              null,
+            ["___"]: null,
+          };
+        }
+        if (isTj()) {
+          gaps = {
+            ["Ecart JE → détails manquants, à rajouter dans A-JUST"]: null,
+            ["Ecart JI → détails manquants, à rajouter dans A-JUST"]: null,
+          };
+        }
+        onglet2.push({
+          ["Réf."]: String(human.id),
+          Arrondissement: juridictionName.label,
+          Jirs: isJirs ? "x" : "",
+          Juridiction: (
+            human.juridiction || juridictionName.label
+          ).toUpperCase(),
+          Nom: human.lastName,
+          Prénom: human.firstName,
+          Matricule: human.matricule,
+          Catégorie: categoryName,
+          Fonction: fonctionName,
+          ["Fonction recodée"]: null,
+          ["Code fonction par défaut"]: fonctionCategory,
+          ["Fonction agrégat"]: null,
+          ["TJCPH"]: null,
+          ["Date d'arrivée"]:
+            human.dateStart === null
+              ? null
+              : setTimeToMidDay(human.dateStart).toISOString().split("T")[0],
+          ["Date de départ"]:
+            human.dateEnd === null
+              ? null
+              : setTimeToMidDay(human.dateEnd).toISOString().split("T")[0],
+          ["ETPT sur la période absentéisme non déduit (hors action 99)"]:
+            reelEtp < 0.0001 ? 0 : reelEtp,
+          ["Temps ventilés sur la période (hors action 99)"]: totalEtpt,
+          ["Ecart → ventilations manquantes dans A-JUST"]:
+            reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : "-",
+          ...gaps,
+          ...refObj,
+          ["CET > 30 jours"]: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
+          ["CET < 30 jours"]: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
+          ...absenteismeDetails,
+          ["TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)"]:
+            absenteisme,
+          ...(isCa() ? delegation : {}),
+        });
+      }
+
+  };
+
+  await Promise.all(allHuman.map((human) => limit(() => processHuman(human))));
+
+  console.timeEnd("extractor-5.2");
+
+  onglet2 = orderBy(onglet2, ["Catégorie", "Nom", "Prénom", "Matricule"], ["desc", "asc", "asc", "asc"]);
+
+  return onglet2;
+};
+
+
 export const computeExtractDdg = async (
   models,
   allHuman,
@@ -1181,9 +1528,10 @@ export async function runExtractsInParallel({
       ),
     ]);
 
+    
     /**
     const oldResult = onglet2;
-    const newResult = await computeExtractDdgv2(
+    const newResult = await computeExtractDdgv5(
       models,
       cloneDeep(allHuman),
       flatReferentielsList,
@@ -1238,27 +1586,8 @@ export async function runExtractsInParallel({
       "✅ Test de non-régression réussi. Les deux versions donnent des résultats identiques."
     );
     console.timeEnd("non-regression-test");
-
-
-    if (!deepEqual(onglet2, onglet3)) {
-      console.error("❌ Les résultats sont différents !");
-      throw new Error("Non-régression échouée !");
-    } else {
-      console.log("✅ Les résultats sont strictement identiques !");
-    }
-
-    onglet1 = orderBy(
-      onglet1,
-      ["Catégorie", "Nom", "Prénom", "Matricule"],
-      ["desc", "asc", "asc", "asc"]
-    );
-    onglet2 = orderBy(
-      onglet2,
-      ["Catégorie", "Nom", "Prénom", "Matricule"],
-      ["desc", "asc", "asc", "asc"]
-    );
-
-    */
+     */
+  
     return { onglet1, onglet2 };
   } catch (e) {
     if (signal?.aborted) {
