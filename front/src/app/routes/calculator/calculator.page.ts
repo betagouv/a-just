@@ -768,7 +768,7 @@ export class CalculatorPage
                     : null,
                   this.dateStart,
                   this.dateStop,
-                  true,
+                  false,
                   [refId]
                 )
               );
@@ -814,6 +814,31 @@ export class CalculatorPage
             .finally(() => {
               this.isLoading = false;
               this.appService.appLoading.next(false);
+
+              const listPromiseAll: Promise<any[]>[] = [];
+              this.referentielIds.forEach((refId) => {
+                if (this.categorySelected) {
+                  listPromiseAll.push(
+                    this.calculatorService.filterList(
+                      this.categorySelected,
+                      this.lastCategorySelected === this.categorySelected
+                        ? this.selectedFonctionsIds
+                        : null,
+                      this.dateStart,
+                      this.dateStop,
+                      true,
+                      [refId]
+                    )
+                  );
+                }
+              });
+              Promise.all(listPromiseAll).then((returnList) => {
+                if (returnList.length) {
+                  // @ts-ignore
+                  const list = returnList.flatMap((l) => l.list);
+                  this.formatDatas(list);
+                }
+              });
             });
 
           /*this.calculatorService
