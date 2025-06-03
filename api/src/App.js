@@ -291,11 +291,11 @@ export default class App extends AppBase {
       super.addMiddlewares([
         cors({ origin: config.corsUrl, credentials: true }), // add cors headers to the requests
       ]);
-    } else {
-      super.addMiddlewares([
-        cors({ credentials: true }), // add cors headers to the requests
-      ]);
-    }*/
+    } else {*/
+    super.addMiddlewares([
+      cors({ credentials: true }), // add cors headers to the requests
+    ]);
+    //}
 
     super.mountFolder(join(__dirname, "routes-logs"), "/logs/"); // adds a folder to scan for route files
     super.mountFolder(join(__dirname, "routes-api"), "/api/"); // adds a folder to scan for route files
