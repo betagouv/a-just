@@ -140,7 +140,7 @@ export default class App extends AppBase {
       addDefaultBody(), // if no body is present, put an empty object "{}" in its place.
       compress({}), // compresses requests made to the API
       givePassword,
-      helmet({
+      /*helmet({
         // https://github.com/helmetjs/helmet
         contentSecurityPolicy: {
           directives: {
@@ -274,7 +274,7 @@ export default class App extends AppBase {
         xPermittedCrossDomainPolicies: false,
         xPoweredBy: false,
         //xXssProtection: 1, don't work
-      }),
+      }),*/
       async (ctx, next) => {
         //console.log('Client IP', ctx.request.ip)
         ctx.set("x-xss-protection", "1");

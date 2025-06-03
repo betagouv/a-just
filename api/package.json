@@ -5,7 +5,7 @@
     "node": "20.9.0"
   },
   "scripts": {
-    "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
+    "start": "TZ='Europe/Paris' nodemon --exec babel-node src/cluster.js",
     "start:production": "cd dist && TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 --max-old-space-size=2048 cluster.js",
     "build": "npm run rm-build-prod && npm run build-prod",
     "build:test": "npm run build-prod",
