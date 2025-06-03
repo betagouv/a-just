@@ -53,31 +53,18 @@ export default class App extends AppBase {
   }
 
   async start() {
-    if (os.hostname().includes("web-1") || !os.hostname().includes("web")) {
+    /*if (os.hostname().includes("web-1") || !os.hostname().includes("web")) {
       db.migrations().then(() => {
         db.seeders().then(() => {
           startCrons(this); // start crons
           console.log("--- IS READY ---", config.port);
           this.isReady();
-
-          /** PASSWORD TESTER to move to unit tests ?
-        setTimeout(() => {
-          const password_to_test = ['sdf', 'azerty', 'fxsurunbateau', 'ajust', 'fxaviermontigny']
-          for (let i = 0; i < password_to_test.length; i++) {
-            try {
-              console.log('----------\n')
-              console.log(cryptPassword(password_to_test[i], 'fxaviermontigny@gmail.com'))
-            } catch (err) {
-              console.error(err)
-            }
-          }
-        }, 100) */
         });
       });
-    } else {
-      console.log("--- IS READY ---", config.port);
-      this.isReady();
-    }
+    } else {*/
+    console.log("--- IS READY ---", config.port);
+    this.isReady();
+    //}
 
     this.models = db.initModels();
     this.routeParam.models = this.models;
