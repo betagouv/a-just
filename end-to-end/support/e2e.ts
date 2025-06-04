@@ -20,3 +20,9 @@ import addCustomCommand from "cy-verify-downloads";
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 require("cy-verify-downloads").addCustomCommand();
+
+before(() => {
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.reload();
+});

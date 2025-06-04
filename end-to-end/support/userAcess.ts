@@ -13,55 +13,62 @@ export const HAS_ACCESS_TO_CONTRACTUEL = 10;
 export const accessUrlToString = (roleId) => {
   switch (roleId) {
     case USER_ACCESS_DASHBOARD:
-      return "panorama";
+      return "Panorama";
     case USER_ACCESS_VENTILATIONS:
-      return "ventilations";
+      return "Ventilateur";
     case USER_ACCESS_ACTIVITIES:
-      return "donnees-d-activite";
-    // case USER_ACCESS_AVERAGE_TIME:
-    //   return "Temps moyens";
+      return "Données d'activité";
+    case USER_ACCESS_AVERAGE_TIME:
+      return "Temps moyens";
     case USER_ACCESS_CALCULATOR:
-      return "cockpit";
+      return "Cockpit";
     case USER_ACCESS_SIMULATOR:
-      return "simulateur";
+      return "Simulateurs";
     case USER_ACCESS_WHITE_SIMULATOR:
-      return "simulateur-sans-donnees";
+      return "Simulateurs";
     case USER_ACCESS_REAFFECTATOR:
-      return "reaffectateur";
+      return "Réaffectateur";
   }
 };
 
 export const accessUrlList = [
   {
     id: USER_ACCESS_DASHBOARD,
+    url: "/panorama",
     label: accessUrlToString(USER_ACCESS_DASHBOARD),
   },
   {
     id: USER_ACCESS_VENTILATIONS,
+    url: "/ventilations",
     label: accessUrlToString(USER_ACCESS_VENTILATIONS),
   },
   {
     id: USER_ACCESS_ACTIVITIES,
+    url: "/donnees-d-activite",
     label: accessUrlToString(USER_ACCESS_ACTIVITIES),
   },
-  // {
-  //   id: USER_ACCESS_AVERAGE_TIME,
-  //   label: accessUrlToString(USER_ACCESS_AVERAGE_TIME),
-  // },
+  {
+    id: USER_ACCESS_AVERAGE_TIME,
+    label: accessUrlToString(USER_ACCESS_AVERAGE_TIME),
+  },
   {
     id: USER_ACCESS_CALCULATOR,
+    url: "/cockpit",
     label: accessUrlToString(USER_ACCESS_CALCULATOR),
   },
   {
     id: USER_ACCESS_SIMULATOR,
+    url: "/simulateur",
     label: accessUrlToString(USER_ACCESS_SIMULATOR),
   },
   {
     id: USER_ACCESS_WHITE_SIMULATOR,
+    url: "/simulateur-sans-donnees",
     label: accessUrlToString(USER_ACCESS_WHITE_SIMULATOR),
   },
   {
     id: USER_ACCESS_REAFFECTATOR,
+    url: "/reaffectateur",
     label: accessUrlToString(USER_ACCESS_REAFFECTATOR),
   },
 ];
