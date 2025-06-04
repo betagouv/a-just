@@ -312,10 +312,10 @@ export default class RouteHumanResources extends Route {
       list: listFormated,
       allPersons: orderBy(
         hr.map((person) => {
-          let sitations = findAllSituations(person, this.dateSelected)
-          if (sitations.length === 0) {
+          let situations = findAllSituations(person, this.dateSelected)
+          if (situations.length === 0) {
             // if no situation in the past get to the future
-            sitations = findAllSituations(person, this.dateSelected, true, true)
+            situations = findAllSituations(person, this.dateSelected, true, true)
           }
           const { currentSituation } = findSituation(person, this.dateSelected)
           let etp = (currentSituation && currentSituation.etp) || null
@@ -331,14 +331,14 @@ export default class RouteHumanResources extends Route {
             isIn: false,
             dateStart: person.dateStart,
             dateEnd: person.dateEnd,
-            sitations: sitations,
+            situations: situations,
             etp,
             etpLabel: etp ? etpLabel(etp) : null,
-            categoryName: sitations.length && sitations[0].category ? sitations[0].category.label : '',
-            category: sitations.length && sitations[0].category ? sitations[0].category : null,
-            categoryRank: sitations.length && sitations[0].category ? sitations[0].category.rank : null,
-            fonctionRank: sitations.length && sitations[0].fonction ? sitations[0].fonction.rank : null,
-            fonction: sitations.length && sitations[0].fonction ? sitations[0].fonction : null,
+            categoryName: situations.length && situations[0].category ? situations[0].category.label : '',
+            category: situations.length && situations[0].category ? situations[0].category : null,
+            categoryRank: situations.length && situations[0].category ? situations[0].category.rank : null,
+            fonctionRank: situations.length && situations[0].fonction ? situations[0].fonction.rank : null,
+            fonction: situations.length && situations[0].fonction ? situations[0].fonction : null,
             indisponibilities: person.indisponibilities,
             updatedAt: person.updatedAt,
           }
