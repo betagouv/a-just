@@ -453,21 +453,11 @@ export class UserService implements OnInit {
         path: 'ventilations',
       });
     }
+
     if (this.canViewActivities(user)) {
       menu.push({
         label: "Données d'activité",
         path: 'donnees-d-activite',
-      });
-    }
-
-    if (
-      user &&
-      user.access &&
-      user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1
-    ) {
-      menu.push({
-        label: 'Extracteurs',
-        path: 'dashboard',
       });
     }
 
