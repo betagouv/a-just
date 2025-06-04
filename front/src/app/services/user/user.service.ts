@@ -95,6 +95,17 @@ export class UserService implements OnInit {
       : false;
   });
   /**
+   * User can view white simulator
+   */
+  canViewTempsMoyens = computed(() => {
+    const user = this.user.getValue();
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
+      ? true
+      : false;
+  });
+  /**
    * Interface front TJ ou CA
    */
   interfaceType: number | null = null;
