@@ -23,7 +23,7 @@ export default class RouteHumanResources extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.HumanResources
@@ -39,7 +39,7 @@ export default class RouteHumanResources extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async getCurrentHr (ctx) {
+  async getCurrentHr(ctx) {
     let { backupId } = this.body(ctx)
     const backups = await this.model.models.HRBackups.list(ctx.state.user.id)
     backupId = backupId || (backups.length ? backups[backups.length - 1].id : null)
@@ -59,7 +59,7 @@ export default class RouteHumanResources extends Route {
     path: 'remove-backup/:backupId',
     accesses: [Access.canVewHR],
   })
-  async removeBackup (ctx) {
+  async removeBackup(ctx) {
     const { backupId } = ctx.params
 
     await this.model.models.HRBackups.removeBackup(backupId)
@@ -79,7 +79,7 @@ export default class RouteHumanResources extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async duplicateBackup (ctx) {
+  async duplicateBackup(ctx) {
     const { backupId, backupName } = this.body(ctx)
 
     this.sendOk(ctx, await this.model.models.HRBackups.duplicateBackup(backupId, backupName))
@@ -91,7 +91,7 @@ export default class RouteHumanResources extends Route {
   @Route.Get({
     accesses: [Access.isAdmin],
   })
-  async getBackupList (ctx) {
+  async getBackupList(ctx) {
     this.sendOk(ctx, await this.model.models.HRBackups.getAll())
   }
 
@@ -107,7 +107,7 @@ export default class RouteHumanResources extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async updateHr (ctx) {
+  async updateHr(ctx) {
     let { backupId, hr } = this.body(ctx)
 
     const responseUpdate = await this.model.updateHR(hr, backupId)
@@ -123,7 +123,7 @@ export default class RouteHumanResources extends Route {
     path: 'remove-hr/:hrId',
     accesses: [Access.canVewHR],
   })
-  async removeHR (ctx) {
+  async removeHR(ctx) {
     const { hrId } = ctx.params
 
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
@@ -150,7 +150,7 @@ export default class RouteHumanResources extends Route {
     path: 'remove-hr-test/:hrId',
     accesses: [Access.canVewHR],
   })
-  async removeHRTest (ctx) {
+  async removeHRTest(ctx) {
     const { hrId } = ctx.params
 
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
@@ -176,13 +176,14 @@ export default class RouteHumanResources extends Route {
     path: 'remove-situation/:situationId',
     accesses: [Access.canVewHR],
   })
-  async removeSituation (ctx) {
+  async removeSituation(ctx) {
     const { situationId } = ctx.params
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
-        selfRouteToSyncJuridiction(backupId)
-        this.sendOk(ctx, await this.model.getHr(hrId))
+        const agent = await this.model.getHr(hrId)
+        selfRouteToSyncJuridiction(agent.backupId)
+        this.sendOk(ctx, agent)
       }
     }
 
@@ -196,7 +197,7 @@ export default class RouteHumanResources extends Route {
     path: 'remove-situation-test/:situationId',
     accesses: [Access.canVewHR],
   })
-  async removeSituationTest (ctx) {
+  async removeSituationTest(ctx) {
     const { situationId } = ctx.params
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
@@ -228,7 +229,7 @@ export default class RouteHumanResources extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async filterList (ctx) {
+  async filterList(ctx) {
     let { backupId, date, endPeriodToCheck, categoriesIds, contentieuxIds, subContentieuxIds } = this.body(ctx)
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
@@ -342,7 +343,7 @@ export default class RouteHumanResources extends Route {
             updatedAt: person.updatedAt,
           }
         }),
-        ['categoryRank', 'fonctionRank', 'lastName']
+        ['categoryRank', 'fonctionRank', 'lastName'],
       ),
     })
   }
@@ -354,7 +355,7 @@ export default class RouteHumanResources extends Route {
     path: 'read-hr/:hrId',
     accesses: [Access.canVewHR],
   })
-  async readHr (ctx) {
+  async readHr(ctx) {
     const { hrId } = ctx.params
     if (await this.model.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getHrDetails(hrId))
