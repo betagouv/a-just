@@ -1,5 +1,5 @@
-import { HRSituationInterface } from './hr-situation'
-import { RHActivityInterface } from './rh-activity'
+import { HRSituationInterface } from './hr-situation';
+import { RHActivityInterface } from './rh-activity';
 
 /**
  * Interface d'une resource
@@ -8,49 +8,49 @@ export interface HumanResourceInterface {
   /**
    * Id de la base
    */
-  id: number
+  id: number;
   /**
    * Prénom
    */
-  firstName?: string | null
+  firstName?: string | null;
   /**
    * Juridiction de rattachement
    */
-  backupId?: number
+  backupId?: number;
   /**
    * Nom
    */
-  lastName?: string | null
+  lastName?: string | null;
   /**
    * Matricule exterieur à l'outil
    */
-  matricule?: string | null
+  matricule?: string | null;
   /**
    * Date d'arrivée en juridiction
    */
-  dateStart?: Date
+  dateStart?: Date;
   /**
    * Date de départ de juridiction
    */
-  dateEnd?: Date
+  dateEnd?: Date;
   /**
    * Pourcentage total d'affectation à une date choisie
    */
-  totalAffected?: number
+  totalAffected?: number;
   /**
    * Commentaire sur la personne
    */
-  comment?: string
+  comment?: string;
   /**
    * Liste des situations attribués
    */
-  situations: HRSituationInterface[]
+  situations: HRSituationInterface[];
   /**
    * Liste des indispos
    */
-  indisponibilities: RHActivityInterface[]
+  indisponibilities: RHActivityInterface[];
   /**
    * Date de dernière mise à jour
    */
-  updatedAt: Date
+  updatedAt: Date;
 }
