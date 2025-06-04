@@ -74,31 +74,32 @@
       <div class="agent">
         <div class="identity-section">
           <ng-template [ngIf]="listToPrint.category === 'Départs'">
-            <i class="ri-user-shared-line" [ngStyle]="{
-                color: categoryMappingColor(workforce.category?.label),
-                'background-color': categoryMappingColor(
-                  workforce.category?.label,
-                  0.2
-                )
-              }"></i>
+            <div class="status-icon" [ngStyle]="{
+                backgroundColor: categoryMappingColor(workforce.category?.label, 0.2)
+              }">
+              <i class="ri-user-shared-line" [ngStyle]="{
+                    color: categoryMappingColor(workforce.category?.label)
+                  }"></i>
+            </div>
           </ng-template>
           <ng-template [ngIf]="listToPrint.category === 'Arrivées'">
-            <i class="ri-user-received-line" [ngStyle]="{
-                color: categoryMappingColor(workforce.category?.label),
-                'background-color': categoryMappingColor(
-                  workforce.category?.label,
-                  0.2
-                )
-              }"></i>
+            <div class="status-icon" [ngStyle]="{
+                backgroundColor: categoryMappingColor(workforce.category?.label, 0.2)
+              }">
+              <i class="ri-user-received-line" [ngStyle]="{
+                    color: categoryMappingColor(workforce.category?.label)
+                  }"></i>
+            </div>
           </ng-template>
+
           <ng-template [ngIf]="listToPrint.category === 'Indisponibilités'">
-            <i class="ri-ghost-2-line" [ngStyle]="{
-                color: categoryMappingColor(workforce.category?.label),
-                'background-color': categoryMappingColor(
-                  workforce.category?.label,
-                  0.2
-                )
-              }"></i>
+            <div class="status-icon" [ngStyle]="{
+                backgroundColor: categoryMappingColor(workforce.category?.label, 0.2)
+              }">
+              <i class="ri-ghost-2-line" [ngStyle]="{
+                    color: categoryMappingColor(workforce.category?.label)
+                  }"></i>
+            </div>
           </ng-template>
           <div class="main-infos">
             <span class="name">{{
