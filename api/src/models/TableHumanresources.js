@@ -95,7 +95,7 @@ export default (sequelizeInstance, Model) => {
   Model.removeCacheByUser = (humanId, backupId) => {
     Model.removeCacheAgent(humanId)
 
-    if(cacheJuridictionPeoples[backupId]) {
+    if (cacheJuridictionPeoples[backupId]) {
       delete cacheJuridictionPeoples[backupId]
     }
   }
@@ -138,7 +138,7 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.getCurrentHr = async (backupId, signal = null) => {
-    checkAbort(signal);
+    checkAbort(signal)
     const list = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
       where: {
@@ -146,10 +146,10 @@ export default (sequelizeInstance, Model) => {
       },
       raw: true,
     })
-    checkAbort(signal);
+    checkAbort(signal)
 
     for (let i = 0; i < list.length; i++) {
-      checkAbort(signal);
+      checkAbort(signal)
       const comment = await Model.models.HRComments.getLastComment(list[i].id)
       list[i] = {
         id: list[i].id,
@@ -178,7 +178,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getHrDetails = async (hrId) => {
     const details = await Model.findOne({
-      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
+      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'created_at'],
       where: {
         id: hrId,
       },
@@ -195,6 +195,7 @@ export default (sequelizeInstance, Model) => {
         dateStart: details.date_entree,
         dateEnd: details.date_sortie,
         coverUrl: details.cover_url,
+        createdAt: details.created_at,
         updatedAt: details.updated_at,
         backupId: details.backup_id,
         comment: comment && comment.comment,
@@ -229,7 +230,7 @@ export default (sequelizeInstance, Model) => {
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(Number(config.juridictionType) !== 1 ? list[i].arrdt : list[i].juridiction)
-      if(!ids.includes(backupId)) {
+      if (!ids.includes(backupId)) {
         ids.push(backupId)
       }
 
@@ -253,9 +254,9 @@ export default (sequelizeInstance, Model) => {
 
         let statut = list[i].statut
         switch (statut) {
-        case 'Fonctionnaire':
-          statut = 'Greffe'
-          break
+          case 'Fonctionnaire':
+            statut = 'Greffe'
+            break
         }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
@@ -273,18 +274,18 @@ export default (sequelizeInstance, Model) => {
 
             // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
             switch (list[i].grade) {
-            case 'CONT A VIF JP':
-              code = 'CONT A JP'
-              break
-            case 'CONT B VIF JP':
-              code = 'CONT B JP'
-              break
-            case 'CONT C VIF JP':
-              code = 'CONT C JP'
-              break
-            default:
-              code = list[i].grade
-              break
+              case 'CONT A VIF JP':
+                code = 'CONT A JP'
+                break
+              case 'CONT B VIF JP':
+                code = 'CONT B JP'
+                break
+              case 'CONT C VIF JP':
+                code = 'CONT C JP'
+                break
+              default:
+                code = list[i].grade
+                break
             }
           } else situation.category_id = findCategory.id
         }
@@ -303,29 +304,29 @@ export default (sequelizeInstance, Model) => {
         }
 
         switch (code) {
-        case 'MHFJS':
-          code = 'MHFJ'
-          break
-        case 'ATT A':
-          code = 'CHCAB'
-          break
-        case 'JA JP':
-          code = 'JA'
-          break
-        case 'CONT B IFPA':
-          code = 'CONT B'
-          break
+          case 'MHFJS':
+            code = 'MHFJ'
+            break
+          case 'ATT A':
+            code = 'CHCAB'
+            break
+          case 'JA JP':
+            code = 'JA'
+            break
+          case 'CONT B IFPA':
+            code = 'CONT B'
+            break
         }
 
         if (list[i].categorie == 'CB') {
           switch (list[i].grade) {
-          case 'CONT A':
-          case 'CONT B':
-          case 'CONT C':
-          case 'CONT CB':
-          case 'CONT CJ':
-            code = list[i].grade
-            break
+            case 'CONT A':
+            case 'CONT B':
+            case 'CONT C':
+            case 'CONT CB':
+            case 'CONT CJ':
+              code = list[i].grade
+              break
           }
         }
 
@@ -684,11 +685,13 @@ export default (sequelizeInstance, Model) => {
 
   Model.onCalculate = async (
     { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds, loadChildrens },
-    user, log = true, signal = null
+    user,
+    log = true,
+    signal = null,
   ) => {
     dateStart = today(dateStart)
     dateStop = today(dateStop)
-    checkAbort(signal);
+    checkAbort(signal)
 
     if (!selectedFonctionsIds && user && log === true) {
       // memorize first execution by user
@@ -696,31 +699,31 @@ export default (sequelizeInstance, Model) => {
     }
 
     let fonctions = await Model.models.HRFonctions.getAll()
-    checkAbort(signal);
+    checkAbort(signal)
 
     let categoryIdSelected = -1
     switch (categorySelected) {
-    case MAGISTRATS:
-      categoryIdSelected = 1
-      break
-    case FONCTIONNAIRES:
-      categoryIdSelected = 2
-      break
-    default:
-      categoryIdSelected = 3
-      break
+      case MAGISTRATS:
+        categoryIdSelected = 1
+        break
+      case FONCTIONNAIRES:
+        categoryIdSelected = 2
+        break
+      default:
+        categoryIdSelected = 3
+        break
     }
 
     fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
 
     console.time('calculator-1')
     const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
-    checkAbort(signal);
+    checkAbort(signal)
     console.timeEnd('calculator-1')
 
     console.time('calculator-2')
     const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : []
-    checkAbort(signal);
+    checkAbort(signal)
     console.timeEnd('calculator-2')
 
     console.time('calculator-3')
@@ -733,12 +736,12 @@ export default (sequelizeInstance, Model) => {
 
     console.time('calculator-5')
     const categories = await Model.models.HRCategories.getAll()
-    checkAbort(signal);
+    checkAbort(signal)
     console.timeEnd('calculator-5')
 
     console.time('calculator-6')
     let hr = await Model.getCache(backupId)
-    checkAbort(signal);
+    checkAbort(signal)
     console.timeEnd('calculator-6')
 
     console.time('calculator-6-2')
@@ -751,7 +754,7 @@ export default (sequelizeInstance, Model) => {
           (s) =>
             (s.category && s.category.id !== categoryIdSelected) ||
             (selectedFonctionsIds && selectedFonctionsIds.length && s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) !== -1) ||
-            (!selectedFonctionsIds && s.category && s.category.id === categoryIdSelected)
+            (!selectedFonctionsIds && s.category && s.category.id === categoryIdSelected),
         )
 
         return {
@@ -765,12 +768,24 @@ export default (sequelizeInstance, Model) => {
 
     console.time('calculator-7')
     const activities = await Model.models.Activities.getAll(backupId, !loadChildrens ? referentiels.map((r) => r.id) : null)
-    checkAbort(signal);
+    checkAbort(signal)
     console.timeEnd('calculator-7')
 
     console.time('calculator-8')
-    list = syncCalculatorDatas(Model.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false, signal)
-    checkAbort(signal);
+    list = syncCalculatorDatas(
+      Model.models,
+      list,
+      nbMonth,
+      activities,
+      dateStart,
+      dateStop,
+      hr,
+      categories,
+      optionsBackups,
+      loadChildrens ? true : false,
+      signal,
+    )
+    checkAbort(signal)
 
     const cleanDataToSent = (item) => ({
       ...item,
@@ -802,7 +817,7 @@ export default (sequelizeInstance, Model) => {
   setTimeout(() => {
     console.log('Preload human resources data')
     Model.onPreload()
-  }, 10000);
+  }, 10000)
 
   return Model
 }
