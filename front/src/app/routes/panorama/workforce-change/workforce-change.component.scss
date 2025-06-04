@@ -125,14 +125,20 @@
       .identity-section {
         display: flex;
         align-items: center;
+        gap: 12px;
         width: 25%;
 
-        i {
-          width: 28px;
-          height: 24px;
-          margin: 0 12px 0 8px;
-          padding: 4px 6px;
-          border-radius: 12px;
+        .status-icon {
+          border-radius: 100%;
+          padding: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .status-icon i {
+          font-size: 16px;
+          color: #fff;
         }
 
         .main-infos {
@@ -149,6 +155,7 @@
         .infos {
           display: flex;
           font-size: 10px;
+          font-weight: bold;
 
           .category {
             border-radius: 12px;
@@ -169,6 +176,7 @@
         display: flex;
         margin-left: 3px;
         width: 50%;
+        gap: 8px;
         align-items: center;
 
         .assignments-percentage {
@@ -181,9 +189,11 @@
             background-color: #f6f6f6;
             border-radius: 4px;
             text-align: center;
+            margin: auto 0;
             color: #929292;
             padding: 3px 4px;
             width: 60px;
+            font-size: 14px;
           }
 
           .light-arrow {
@@ -231,6 +241,7 @@
         margin-left: 8px;
         color: #3a3a3a;
         font-size: 12px;
+        font-weight: bold;
         width: 18%;
 
         .date {
