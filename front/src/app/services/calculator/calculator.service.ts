@@ -91,7 +91,8 @@ export class CalculatorService extends MainClass {
     selectedFonctionsIds: number[] | null,
     dateStart: Date | null = this.dateStart.getValue(),
     dateStop: Date | null = this.dateStop.getValue(),
-    loadChildrens: boolean = true
+    loadChildrens: boolean = true,
+    contentieuxIds: number[] = this.referentielIds.getValue()
   ) {
     console.log('FILTER LIST');
     console.log('BACK Start', dateStart);
@@ -101,7 +102,7 @@ export class CalculatorService extends MainClass {
         backupId: this.humanResourceService.backupId.getValue(),
         dateStart: setTimeToMidDay(dateStart),
         dateStop: setTimeToMidDay(dateStop),
-        contentieuxIds: this.referentielIds.getValue(),
+        contentieuxIds,
         optionBackupId: this.contentieuxOptionsService.backupId.getValue(),
         categorySelected,
         selectedFonctionsIds,

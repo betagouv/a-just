@@ -1,8 +1,10 @@
 import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
-import { isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
+import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPerson } from './human-resource'
+import {appendFileSync  } from 'fs'
+import { checkAbort } from './abordTimeout'
 
 /**
  * Création d'un tableau vide du calculateur de tout les contentieux et sous contentieux
@@ -82,10 +84,12 @@ export const emptyCalulatorValues = (referentiels) => {
  * @param {*} optionsBackups
  * @returns
  */
-export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens) => {
+export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens, signal = null) => {
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
+    checkAbort(signal);
+
     const childrens = !loadChildrens
       ? []
       : (list[i].childrens || []).map((c) => ({
@@ -261,8 +265,6 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
 
   // Date: 12 mois avant date de fin selectionnée dans calculateur (début du mois)
   const startCs = month(today(dateStop), -11)
-  startCs.setDate(startCs.getDate() + 1)
-  startCs.setMinutes(startCs.getMinutes() + 1)
 
   // Date: fin de période selecitonnée dans calculateur (fin du mois)
   const endCs = month(today(dateStop), 0, 'lastday')
@@ -384,14 +386,16 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
         return activities.some((s) => s.contentieux.id === referentielId)
       })
     ) {
-      const etptAll = getHRVentilation(models, hr[i], referentielId, categories, dateStart, dateStop)
+      const etptAll = getHRVentilation(hr[i], referentielId, categories, dateStart, dateStop)
 
-      Object.values(etptAll).map((c) => {
-        if (c.etpt) {
-          hrCategories[c.label].list.push(hr[i])
-          hrCategories[c.label].totalEtp += fixDecimal(c.etpt, 1000)
-        }
-      })
+      if(etptAll) {
+        Object.values(etptAll).map((c) => {
+          if (c.etpt) {
+            hrCategories[c.label].list.push(hr[i])
+            hrCategories[c.label].totalEtp += fixDecimal(c.etpt, 1000)
+          }
+        })
+      }
     }
   }
 
@@ -407,6 +411,22 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
   return sortBy(list, 'rank')
 }
 
+export const getNbDaysGone = (hr, dateStart, dateStop) => {
+  let nbDaysGone = 0
+  let now = today(dateStart)
+
+  do {
+    // only working day
+    if (workingDay(now)) {
+      if (hr.dateEnd && getTime(hr.dateEnd) < dateStop.getTime() && now.getTime() > getTime(hr.dateEnd)) nbDaysGone++
+      if (hr.dateStart && getTime(hr.dateStart) > dateStart.getTime() && now.getTime() < getTime(dateStart)) nbDaysGone++
+    }
+    
+    now.setDate(now.getDate() + 1)
+  } while (now.getTime() <= dateStop.getTime())
+
+  return nbDaysGone
+}
 /**
  * Calcul du temps de ventilation d'un magistrat et d'un contentieux
  * @param {*} hr
@@ -416,12 +436,9 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
  * @param {*} dateStop
  * @returns
  */
-export const getHRVentilation = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
-  const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
-  if (cache) {
-    return cache
-  }
-
+export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null, signal=null) => {
+  checkAbort(signal);
+  
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -434,47 +451,40 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
 
   let now = today(dateStart)
   let nbDay = 0
-  let nbDaysGone = 0
+  let nextDeltaDate = null
+  let continueLoop = true
+
+  let nextDateFinded = null
+  let lastEtpAdded = null
+  let lastSituationId = null
+
   do {
-    let nextDateFinded = null
-    let lastEtpAdded = null
-    let lastSituationId = null
+    let addDay = true
+    checkAbort(signal);
 
     // only working day
     if (workingDay(now)) {
+      nextDeltaDate = null
       let sumByInd = 0
-      if (hr.dateEnd && hr.dateEnd.getTime() < dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
-      if (hr.dateStart && hr.dateStart.getTime() > dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
-      nbDay++
-
       let etp = null
       let situation = null
       let indispoFiltred = null
-      let nextDeltaDate = null
       let reelEtp = null
-      /*const cache = models.HumanResources.cacheAgent(hr.id, `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`)
-      if (cache) {
-        etp = cache.etp
-        situation = cache.situation
-        indispoFiltred = cache.indispoFiltred
-        nextDeltaDate = cache.nextDeltaDate
-        reelEtp = cache.reelEtp
-      } else {*/
-      const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels)
-      /*models.HumanResources.updateCacheAgent(
-          hr.id,
-          `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`,
-          etpByDateAndPerson
-        )*/
+      checkAbort(signal);
+      const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels, signal)
       etp = etpByDateAndPerson.etp
       situation = etpByDateAndPerson.situation
       indispoFiltred = etpByDateAndPerson.indispoFiltred
       nextDeltaDate = etpByDateAndPerson.nextDeltaDate
       reelEtp = etpByDateAndPerson.reelEtp
-      //}
-
+      addDay = etpByDateAndPerson.addDay
       if (nextDeltaDate) {
         nextDateFinded = today(nextDeltaDate)
+        lastEtpAdded = null
+        lastSituationId = null
+      } else {
+        nextDateFinded = today(dateStop)
+        lastEtpAdded = 0
       }
 
       const categoryId = situation && situation.category && situation.category.id ? '' + situation.category.id : null
@@ -482,40 +492,52 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
       if (situation && etp !== null && list[categoryId]) {
         lastEtpAdded = etp
         lastSituationId = categoryId
-        list[categoryId].reelEtp += reelEtp
-        list[categoryId].etpt += etp
       }
 
-      sumByInd += sumBy(indispoFiltred, 'percent')
+      //console.log('nextDateFinded', now, nextDateFinded, lastEtpAdded, lastSituationId)
+      if (nextDateFinded) {
+        if (nextDateFinded.getTime() > dateStop.getTime()) {
+          nextDateFinded = today(dateStop)
+        }
 
-      if (sumByInd !== 0) {
-        indispoFiltred.map((c) => {
-          if (c.contentieux.id === referentielId && list[categoryId]) list[categoryId].indispo += c.percent
-        })
-      }
-    }
-
-    //
-    if (nextDateFinded) {
-      if (nextDateFinded.getTime() > dateStop.getTime()) {
-        nextDateFinded = today(dateStop)
-        nextDateFinded.setDate(nextDateFinded.getDate() + 1)
-      }
-
-      // don't block the average
-      if (lastEtpAdded !== null && lastSituationId !== null) {
         const nbDayBetween = nbWorkingDays(now, nextDateFinded)
-        nbDay += nbDayBetween - 1
-        list[lastSituationId].etpt += nbDayBetween * lastEtpAdded
+        nbDay += nbDayBetween
+
+        // don't block the average
+        if (lastEtpAdded !== null && lastSituationId !== null) {
+          list[lastSituationId].etpt += nbDayBetween * lastEtpAdded
+          list[lastSituationId].reelEtp += nbDayBetween * reelEtp
+
+          sumByInd += sumBy(indispoFiltred, 'percent')
+
+          if (sumByInd !== 0) {
+            indispoFiltred.map((c) => {
+              if (c.contentieux.id === referentielId && list[categoryId]) list[categoryId].indispo += nbDayBetween * c.percent
+            })
+          }
+        }
+
+        // quick move to the next date
+        if (nextDateFinded.getTime() <= dateStop.getTime()) {
+          now = today(nextDateFinded)
+        }
+      } else {
+        nbDay++
       }
-
-      // quick move to the next date
-      now = today(nextDateFinded)
-
-    } else {
+    } 
+    
+    if(addDay) {
       now.setDate(now.getDate() + 1)
     }
-  } while (now.getTime() <= dateStop.getTime())
+        
+
+    //console.log('getHRVentilation', now, hr.id, dateStop, nextDeltaDate, nbDay)
+    const testNextDay = new Date(now)
+    if(testNextDay.getTime() >= dateStop.getTime()) {
+      continueLoop = false
+    }
+    checkAbort(signal);
+  } while (continueLoop)
 
   if (nbDay === 0) {
     nbDay = 1
@@ -523,16 +545,13 @@ export const getHRVentilation = (models, hr, referentielId, categories, dateStar
 
   // format render
   for (const property in list) {
-    list[property].etpt = list[property].etpt / nbDay
+    list[property].etpt = fixDecimal(list[property].etpt / nbDay, 10000)
     list[property].indispo = list[property].indispo / nbDay
-    list[property].reelEtp = list[property].reelEtp / nbDay
-    list[property].nbDaysGone = nbDaysGone
+    list[property].reelEtp = fixDecimal(list[property].reelEtp / nbDay, 10000)
+    list[property].nbDaysGone = getNbDaysGone(hr, dateStart, dateStop)
     list[property].nbDay = nbDay
   }
 
-
-
-  models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
   return list
 }
 

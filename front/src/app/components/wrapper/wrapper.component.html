@@ -32,20 +32,18 @@
 
     <div class="menu-scrollable">
       <div class="menu-item top" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-        <ng-container *ngIf="item.label === 'Extracteurs'; else other">
-          <div class="menu-item tools" (click)="openTools = !openTools">
-            <a>Outils</a>
-            <mat-icon class="arrow-list">{{
-              openTools ? 'expand_less' : 'expand_more'
-              }}</mat-icon>
-          </div>
-        </ng-container>
+        <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
+          {{ item.label }}
+        </a>
+      </div>
 
-        <ng-template #other>
-          <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
-            {{ item.label }}
-          </a>
-        </ng-template>
+      <div class="menu-item top">
+        <div class="menu-item tools" (click)="openTools = !openTools">
+          <a>Outils</a>
+          <mat-icon class="arrow-list">{{
+            openTools ? 'expand_less' : 'expand_more'
+            }}</mat-icon>
+        </div>
       </div>
 
       <div *ngIf="openTools" class="sub-tools">

@@ -12,7 +12,7 @@ export interface HumanResourceInterface {
   /**
    * Prénom
    */
-  firstName?: string | null
+  firstName?: string | null
   /**
    * Juridiction de rattachement
    */
@@ -20,11 +20,11 @@ export interface HumanResourceInterface {
   /**
    * Nom
    */
-  lastName?: string | null
+  lastName?: string | null
   /**
    * Matricule exterieur à l'outil
    */
-  matricule?: string | null
+  matricule?: string | null
   /**
    * Date d'arrivée en juridiction
    */
@@ -53,4 +53,8 @@ export interface HumanResourceInterface {
    * Date de dernière mise à jour
    */
   updatedAt: Date
+  /**
+   * Date de la création de la fiche
+   */
+  createdAt?: Date
 }

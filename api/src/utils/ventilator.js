@@ -3,10 +3,12 @@ import { etpLabel } from '../constants/referentiel'
 import { findSituation } from './human-resource'
 import { findAllIndisponibilities } from './indisponibilities'
 import { fixDecimal } from './number'
+import { checkAbort } from './abordTimeout'
 
-export const preformatHumanResources = (list, dateSelected, referentielList, fonctionsIds) => {
+export const preformatHumanResources = (list, dateSelected, referentielList, fonctionsIds, signal=null) => {
   return orderBy(
     list.map((h) => {
+      checkAbort(signal);
       const indisponibilities = dateSelected ? findAllIndisponibilities(h, dateSelected) : []
       let hasIndisponibility = fixDecimal(sumBy(indisponibilities, 'percent') / 100)
       if (hasIndisponibility > 1) {
@@ -16,7 +18,9 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
       let currentSituation
       let etp = 0
       if (dateSelected) {
-        const s = findSituation(h, dateSelected)
+        checkAbort(signal);
+        const s = findSituation(h, dateSelected, signal)
+        checkAbort(signal);
         currentSituation = s.currentSituation
         etp = (currentSituation && currentSituation.etp) || 0
         if (etp < 0) {
@@ -28,6 +32,7 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
           currentSituation = situations[0]
         }
       }
+      checkAbort(signal);
 
       return {
         ...h,
@@ -45,6 +50,7 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
     ['asc', 'asc']
   ).filter((hr) => {
     let isFiltered = true
+    checkAbort(signal);
 
     if (referentielList) {
       const activities = hr.currentActivities || []
@@ -58,6 +64,7 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
         isFiltered = false
       }
     }
+    checkAbort(signal);
 
     return isFiltered
   })

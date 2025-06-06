@@ -843,7 +843,7 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     );
 
     this.formWhiteSim.controls['lastStock'].setValue(
-      Math.floor(startLastStock) + ''
+      Math.round(startLastStock) + ''
     );
 
     const startetpMag = parseFloat(
@@ -916,38 +916,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       (this.nbOfDays / (365 / 12)) * startTotalIn -
       (this.nbOfDays / (365 / 12)) * startTotalOut;
 
-    /**
-    console.log(
-      'stock',
-      Math.floor(startLastStock),
-      Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn),
-      Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut),
-      Math.floor(startLastStock) +
-        Math.floor((this.nbOfDays / (365 / 12)) * startTotalIn) -
-        Math.floor((this.nbOfDays / (365 / 12)) * startTotalOut)
-    );
-    console.log(Math.floor(Math.floor(etpToUse * 7 * 19.1308) / tmd), tmd);
-    console.log(Math.floor(etpToUse * 7 * 19.1308) / tmd);
-    console.log(
-      'nbdays',
-      this.nbOfDays,
-      startTotalIn,
-      startTotalOut,
-      startLastStock
-    );
-
-    console.log(
-      'comparatif',
-      endStock,
-      startTotalOut,
-      Math.floor(Math.floor(etpToUse * 7 * 19.1308) / tmd),
-      Math.floor(etpToUse * 7 * 19.1308) / tmd
-    );
-     */
     this.endSituation = {
       totalIn: fixDecimal(startTotalIn),
       totalOut: fixDecimal(startTotalOut),
-      lastStock: Math.floor(endStock),
+      lastStock: Math.round(endStock),
       etpMag: this.category === 'MAGISTRAT' ? fixDecimal(startetpMag) : 0,
       etpFon: this.category !== 'MAGISTRAT' ? fixDecimal(startetpFon) : 0,
       etpCont: null,

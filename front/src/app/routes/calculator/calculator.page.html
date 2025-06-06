@@ -27,7 +27,7 @@
         </aj-date-select>
         <aj-date-select title="à" [value]="dateStop" (valueChange)="updateReferentielSelected('dateStop', $event)"
           class="bg-white calculator bottom-popin" [dateClass]="dateClass" [dateType]="'month'" [min]="dateStart"
-          [icon]="'chevron_right'" (isOpen)="lockLoader.next($event)">
+          [max]="limitDate" [icon]="'chevron_right'" (isOpen)="lockLoader.next($event)">
         </aj-date-select>
       </div>
       <div class="flex-1"></div>
@@ -214,7 +214,7 @@
                 [ngClass]="{'selected': compareOption===1,'greffe': compareOption===1 && categorySelected === 'fonctionnaires' }"
                 title="à" [value]="optionDateStop" (valueChange)="optionDateStop = $event"
                 class="bg-white calculator popup bottom-popin" [dateClass]="dateClass" [dateType]="'month'"
-                [min]="optionDateStart" [icon]="'none'">
+                [min]="optionDateStart" [max]="limitDate" [icon]="'none'">
               </aj-date-select>
             </div>
           </div>

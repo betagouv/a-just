@@ -1,5 +1,15 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './auth.guard';
+import {
+  activitiesGuard,
+  allSimulatorGuard,
+  authGuard,
+  cockpitGuard,
+  dashboardGuard,
+  reaffectatorGuard,
+  tempsMoyensGuard,
+  ventilationsGuard,
+  whiteSimulatorGuard,
+} from './auth.guard';
 import { typeGuard } from './type.guard';
 import { closeGuard } from './close.guard';
 import { SimulatorPage } from './simulator/simulator.page';
@@ -43,13 +53,13 @@ export const routes: Routes = [
     path: 'ventilations',
     loadComponent: () =>
       import('./workforce/workforce.page').then((mod) => mod.WorkforcePage),
-    canActivate: [authGuard, typeGuard],
+    canActivate: [ventilationsGuard, typeGuard],
   },
   {
     path: 'donnees-d-activite',
     loadComponent: () =>
       import('./activities/activities.page').then((mod) => mod.ActivitiesPage),
-    canActivate: [authGuard, typeGuard],
+    canActivate: [activitiesGuard, typeGuard],
   },
   {
     path: 'temps-moyens',
@@ -57,13 +67,13 @@ export const routes: Routes = [
       import('./average-etp/average-etp.page').then(
         (mod) => mod.AverageEtpPage
       ),
-    canActivate: [authGuard, typeGuard],
+    canActivate: [tempsMoyensGuard, typeGuard],
   },
   {
     path: 'cockpit',
     loadComponent: () =>
       import('./calculator/calculator.page').then((mod) => mod.CalculatorPage),
-    canActivate: [authGuard, typeGuard],
+    canActivate: [cockpitGuard, typeGuard],
   },
   {
     path: 'resource-humaine/:id',
@@ -71,7 +81,7 @@ export const routes: Routes = [
       import('./human-resource/human-resource.page').then(
         (mod) => mod.HumanResourcePage
       ),
-    canActivate: [authGuard, typeGuard],
+    canActivate: [ventilationsGuard, typeGuard],
   },
   {
     path: 'signup',
@@ -100,32 +110,32 @@ export const routes: Routes = [
   {
     path: 'referentiel-de-temps/:id',
     component: AverageEtpDisplayerPage,
-    canActivate: [authGuard, typeGuard],
+    canActivate: [tempsMoyensGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'simulateur',
     component: SimulatorPage,
-    canActivate: [authGuard, typeGuard],
+    canActivate: [allSimulatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'simulateur-sans-donnees',
     component: WhiteSimulatorPage,
-    canActivate: [authGuard, typeGuard],
+    canActivate: [whiteSimulatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'reaffectateur',
     component: ReaffectatorPage,
-    canActivate: [authGuard, typeGuard],
+    canActivate: [reaffectatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'panorama',
     loadComponent: () =>
       import('./panorama/panorama.page').then((mod) => mod.PanoramaPage),
-    canActivate: [authGuard, typeGuard],
+    canActivate: [dashboardGuard, typeGuard],
   },
   {
     path: 'carte-juridictions',

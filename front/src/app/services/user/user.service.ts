@@ -84,6 +84,28 @@ export class UserService implements OnInit {
       : false;
   });
   /**
+   * User can view cockpit
+   */
+  canViewRCockpit = computed(() => {
+    const user = this.user.getValue();
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1
+      ? true
+      : false;
+  });
+  /**
+   * User can view white simulator
+   */
+  canViewTempsMoyens = computed(() => {
+    const user = this.user.getValue();
+    return user &&
+      user.access &&
+      user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1
+      ? true
+      : false;
+  });
+  /**
    * Interface front TJ ou CA
    */
   interfaceType: number | null = null;
@@ -431,21 +453,11 @@ export class UserService implements OnInit {
         path: 'ventilations',
       });
     }
+
     if (this.canViewActivities(user)) {
       menu.push({
         label: "Données d'activité",
         path: 'donnees-d-activite',
-      });
-    }
-
-    if (
-      user &&
-      user.access &&
-      user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1
-    ) {
-      menu.push({
-        label: 'Extracteurs',
-        path: 'dashboard',
       });
     }
 
@@ -458,5 +470,19 @@ export class UserService implements OnInit {
     }
 
     return menu;
+  }
+
+  /**
+   * Retourne la page d'accès d'un utilisateur
+   */
+  redirectToHome() {
+    let urlToRedirect = '';
+
+    const user = this.user.getValue();
+    if (user) {
+      urlToRedirect = this.getUserPageUrl(user);
+    }
+
+    window.location.href = urlToRedirect;
   }
 }

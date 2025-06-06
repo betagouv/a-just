@@ -166,4 +166,14 @@ export class ExtractorVentilationComponent extends MainClass {
 
     this.excelService.modifyExcel(file);
   }
+
+  /**
+   * Ajout d'un nombre de mois à une date
+   * @param date
+   * @param months
+   * @returns
+   */
+  override addMonthsToDate(date: Date | null, months: number): Date | null {
+    return super.addMonthsToDate(date, months);
+  }
 }

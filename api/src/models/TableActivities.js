@@ -52,6 +52,7 @@ export default (sequelizeInstance, Model) => {
 
     const list = await Model.findAll({
       attributes: [
+        "id",
         "periode",
         "entrees",
         "sorties",
@@ -68,10 +69,12 @@ export default (sequelizeInstance, Model) => {
           attributes: ["id", "label", "code_import"],
           model: Model.models.ContentieuxReferentiels,
           where: whereCon,
+          required: true,
         },
       ],
       order: [["periode", "asc"]],
       raw: true,
+      logging: false,
     });
 
     for (let i = 0; i < list.length; i++) {

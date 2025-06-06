@@ -12,11 +12,15 @@ import { start as startCrons } from "./crons";
 import helmet from "koa-helmet";
 import { CSP_URL_IGNORE_RULES } from "./constants/csp";
 import session from "koa-session";
+import RedisStore from "koa-redis";
 import { RateLimit } from "koa2-ratelimit";
 import { styleSha1Generate } from "./utils/csp";
 import * as Sentry from "@sentry/node";
 import authBasic from "http-auth";
 import { writeFileSync } from "fs";
+
+const os = require("os");
+console.log("HOST NAME", os.hostname());
 
 /*var os = require('os')
 var osu = require('node-os-utils')
@@ -63,13 +67,14 @@ export default class App extends AppBase {
   }
 
   async start() {
-    db.migrations().then(() => {
-      db.seeders().then(() => {
-        startCrons(this); // start crons
-        console.log("--- IS READY ---", config.port);
-        this.isReady();
+    if (os.hostname().includes("web-1") || !os.hostname().includes("web")) {
+      db.migrations().then(() => {
+        db.seeders().then(() => {
+          startCrons(this); // start crons
+          console.log("--- IS READY ---", config.port);
+          this.isReady();
 
-        /** PASSWORD TESTER to move to unit tests ?
+          /** PASSWORD TESTER to move to unit tests ?
         setTimeout(() => {
           const password_to_test = ['sdf', 'azerty', 'fxsurunbateau', 'ajust', 'fxaviermontigny']
           for (let i = 0; i < password_to_test.length; i++) {
@@ -81,8 +86,12 @@ export default class App extends AppBase {
             }
           }
         }, 100) */
+        });
       });
-    });
+    } else {
+      console.log("--- IS READY ---", config.port);
+      this.isReady();
+    }
 
     this.models = db.initModels();
     this.routeParam.models = this.models;
@@ -102,7 +111,25 @@ export default class App extends AppBase {
       return await honeyTrap(ctx, next, this.models);
     });
 
-    this.koaApp.use(session(config.session, this.koaApp));
+    const sessionConfig = { ...config.session };
+    if (config.redis) {
+      const redisUrlSplited = config.redis.split("@");
+      const redisConfig = {};
+      if (redisUrlSplited.length > 1) {
+        const redisUrl = redisUrlSplited[redisUrlSplited.length - 1].split(":");
+        const redisAccount = redisUrlSplited[0].split(":");
+        redisConfig.host = redisUrl[0];
+        redisConfig.port = redisUrl[1];
+        redisConfig.password = redisAccount[redisAccount.length - 1];
+      } else {
+        const redisUrl = redisUrlSplited[redisUrlSplited.length - 1].split(":");
+        redisConfig.host = redisUrl[1].replace("//", "");
+        redisConfig.port = redisUrl[2];
+      }
+      sessionConfig.store = new RedisStore(redisConfig);
+    }
+
+    this.koaApp.use(session(sessionConfig, this.koaApp));
     Sentry.setupKoaErrorHandler(this.koaApp);
 
     super.addMiddlewares([
@@ -301,6 +328,7 @@ export default class App extends AppBase {
     super.mountFolder(join(__dirname, "routes-logs"), "/logs/"); // adds a folder to scan for route files
     super.mountFolder(join(__dirname, "routes-api"), "/api/"); // adds a folder to scan for route files
     super.mountFolder(join(__dirname, "routes-admin"), "/ap-bo/"); // adds a folder to scan for route files
+    super.mountFolder(join(__dirname, "routes-docker"), "/docker/");
     super.mountFolder(join(__dirname, "routes"), "/"); // adds a folder to scan for route files
 
     return super.start();
