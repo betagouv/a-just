@@ -25,7 +25,7 @@ import { UserService } from '../../services/user/user.service'
 import { KPIService } from '../../services/kpi/kpi.service'
 import { getCategoryTitle, getCategoryTitlePlurial } from '../../utils/category'
 import { fixDecimal } from '../../utils/numbers'
-import { DATE_REAFECTATOR } from '../../constants/log-codes'
+import { DATE_REAFECTATOR, REAFFECTOR_UPDATE_AGENT } from '../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
 import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe'
@@ -857,6 +857,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param indexList
    */
   updateHRReferentiel(hr: HumanResourceSelectedInterface, referentiels: ContentieuReferentielInterface[], indexList: number) {
+    this.kpiService.register(REAFFECTOR_UPDATE_AGENT, hr.id + '')
     console.log(hr, referentiels)
     const list: RHActivityInterface[] = []
 
