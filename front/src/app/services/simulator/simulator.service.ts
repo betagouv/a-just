@@ -333,9 +333,9 @@ export class SimulatorService extends MainClass {
    * @param step number of step between values
    * @returns return a LinearDataset
    */
-  generateLinearData(value1: number, value2: number, step: number) {
-    //if (value1 < 0) value1 = 0;
-    //if (value2 < 0) value2 = 0;
+  generateLinearData(value1: number, value2: number, step: number, negativValues = false) {
+    if (value1 < 0 && negativValues === false) value1 = 0
+    if (value2 < 0 && negativValues === false) value2 = 0
 
     let v = null
     if (step === 1 || step === 2) {
