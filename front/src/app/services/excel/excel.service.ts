@@ -94,6 +94,40 @@ export class ExcelService extends MainClass {
   }
 
   /**
+   * Tester différence de valeur entre deux objets
+   * @param obj1
+   * @param obj2
+   * @param path
+   * @returns
+   */
+  deepDiff(obj1: any, obj2: any, path = ''): any {
+    const changes = [];
+
+    for (const key in obj1) {
+      const currentPath = path ? `${path}.${key}` : key;
+
+      if (!(key in obj2)) {
+        changes.push(`🟥 Clé manquante dans obj2: ${currentPath}`);
+      } else if (typeof obj1[key] === 'object' && obj1[key] !== null) {
+        changes.push(...this.deepDiff(obj1[key], obj2[key], currentPath));
+      } else if (obj1[key] !== obj2[key]) {
+        changes.push(
+          `🟨 Différence à ${currentPath}: ${obj1[key]} !== ${obj2[key]}`
+        );
+      }
+    }
+
+    for (const key in obj2) {
+      const currentPath = path ? `${path}.${key}` : key;
+      if (!(key in obj1)) {
+        changes.push(`🟥 Clé manquante dans obj1: ${currentPath}`);
+      }
+    }
+
+    return changes;
+  }
+
+  /**
    * API retourne les données de ventilations aggrégées pour l'ensemble des ressources présentes sur une date choisie
    * @returns
    */

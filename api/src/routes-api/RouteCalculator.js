@@ -11,6 +11,7 @@ import {
 } from "../utils/simulator";
 import { fixDecimal } from "../utils/number";
 import config from "config";
+import { withAbortTimeout } from "../utils/abordTimeout";
 
 /**
  * Route des calculs de la page calcule
@@ -54,18 +55,26 @@ export default class RouteCalculator extends Route {
     accesses: [Access.canVewCalculator],
   })
   async filterList(ctx) {
-    const { backupId } = this.body(ctx);
+    try {
+      await withAbortTimeout(async (signal) => {
+        const { backupId } = this.body(ctx);
 
-    if (
-      !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
-    ) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
+        if (
+          !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
+        ) {
+          ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
+        }
+
+        this.sendOk(
+          ctx,
+          await this.model.onCalculate(this.body(ctx), ctx.state.user, signal)
+        );
+      }, 60000); // timeout en ms
+    } catch (err) {
+      console.error("❌ Traitement interrompu :", err.message);
+      ctx.status = 503;
+      ctx.body = { error: err.message };
     }
-
-    this.sendOk(
-      ctx,
-      await this.model.onCalculate(this.body(ctx), ctx.state.user)
-    );
   }
 
   /**
@@ -100,7 +109,7 @@ export default class RouteCalculator extends Route {
       fonctionsIds,
       categorySelected,
     } = this.body(ctx);
-    
+
     dateStart = today(dateStart);
     dateStop = today(dateStop);
 
@@ -110,9 +119,8 @@ export default class RouteCalculator extends Route {
     const list = [];
 
     do {
-
       let endOfTheMonth = today(dateStart);
-      endOfTheMonth= month(endOfTheMonth,0,'lastday')
+      endOfTheMonth = month(endOfTheMonth, 0, "lastday");
 
       switch (type) {
         case "entrees":
@@ -338,9 +346,8 @@ export default class RouteCalculator extends Route {
           break;
       }
 
-      dateStart = month(dateStart,1)
-} while (dateStart.getTime() <= dateStop.getTime());
-
+      dateStart = month(dateStart, 1);
+    } while (dateStart.getTime() <= dateStop.getTime());
 
     this.sendOk(ctx, list);
   }

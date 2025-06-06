@@ -261,6 +261,10 @@ export class PanoramaPage
    * Initialisation des datas au chargement de la page
    */
   ngOnInit() {
+    if (!this.userService.canViewPanorama()) {
+      this.userService.redirectToHome();
+    }
+
     this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u);

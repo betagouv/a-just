@@ -96,10 +96,13 @@ export const monthName = (date) => {
  * @param {*} date
  * @returns date
  */
-export function today (date = new Date()) {
+export function today (date = new Date(), deltaDays = 0) {
   date = setTimeToMidDay(date)
   const now = new Date(date)
   let newRef = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  if(deltaDays !== 0) {
+    newRef.setDate(newRef.getDate() + deltaDays)
+  }
   return  setTimeToMidDay(newRef)
 }
 
@@ -355,6 +358,7 @@ export function monthDiffList (dateFrom, dateTo) {
  */
 export function setTimeToMidDay (date) {
   if (date === undefined || date === null) return undefined
+  date = new Date(date)
   date.setHours(12)
   date.setMinutes(0)
   date.setSeconds(0)
@@ -399,4 +403,9 @@ export function getNextDay(date) {
   const nextDay = today(date);
   nextDay.setDate(date.getDate() + 1);
   return nextDay;
+}
+
+export function getTime(date) {
+  date = new Date(date);
+  return date.getTime();
 }

@@ -838,6 +838,14 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Initialisation du composant
    */
   ngOnInit(): void {
+    if (
+      !this.userService.canViewSimulator() &&
+      !this.userService.canViewWhiteSimulator() &&
+      !this.userService.canViewReaffectator()
+    ) {
+      this.userService.redirectToHome();
+    }
+
     this.resetParams();
     this.onResetUserAction();
     this.dateStop = null;
