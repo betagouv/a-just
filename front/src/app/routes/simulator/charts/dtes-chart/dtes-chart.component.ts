@@ -98,13 +98,15 @@ export class DtesChartComponent {
           simulatorService.getFieldValue('lastStock', simulatorService.situationActuelle.getValue()),
           simulatorService.getFieldValue('lastStock', simulatorService.situationProjected.getValue()),
           this.labels.length,
+          true,
         )
         this.data.simulatedStock.values = simulatorService.generateLinearData(
           simulatorService.getFieldValue('lastStock', simulatorService.situationActuelle.getValue()),
           value?.lastStock as number,
           this.labels.length,
+          true,
         )
-        console.log('The STOCK ', value?.lastStock)
+
         this.data.simulatedDTES.values = simulatorService.generateLinearData(
           simulatorService.situationActuelle.getValue()!.realDTESInMonths as number,
           value?.realDTESInMonths as number,
