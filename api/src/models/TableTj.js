@@ -42,6 +42,34 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
+   * Retourne toutes les juridictions qui ont au moins un agent ventilé
+   * @returns 
+   */
+  Model.getAllWithUser = async () => {
+    const jurisdictions = await Model.findAll({
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
+      where: {
+        parent_id: null,
+      },
+      order: [['label', 'asc']],
+      raw: true,
+    })
+
+    const filtered = []
+
+    for (const jurisdiction of jurisdictions) {
+      const users = await Model.models.UserVentilations.getUserVentilationsWithLabel(jurisdiction.label)
+
+      if (users && users.length > 0) {
+        filtered.push(jurisdiction)
+      }
+    }
+
+    return filtered
+  }
+
+
+  /**
    * Retourne les juridictions qui peuvent s'afficher si seulement elles sont bloqués via ce tableau
    * @param {*} juridictionLabel
    * @returns

@@ -1,5 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
+import { isCa } from '../utils/ca'
 
 /**
  * Route des juridictions
@@ -23,7 +24,11 @@ export default class RouteJuridictions extends Route {
    */
   @Route.Get()
   async getAllVisibles (ctx) {
-    const list = await this.model.getAllVisibles()
+    let list = null
+    if(isCa())
+      list = await this.model.getAllWithUser()
+    else 
+      list = await this.model.getAllVisibles()
     this.sendOk(ctx, list)
   }
 
