@@ -5,7 +5,16 @@
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
   <aj-back-button routerLink="/" />
-  <iframe src="https://meta.a-just.beta.gouv.fr/public/dashboard/9e73237a-0dee-4680-809e-a9ed54dce278" id="child-iframe"
-    frameborder="0" scrolling="yes" (load)='callJavascript($event)'></iframe>
+  <ng-container ngIf="userService.isCa(); else notCa">
+    <iframe src="http://meta.a-just.beta.gouv.fr/public/dashboard/7a5fb97e-2019-4757-ad1b-8c1ef6f6d548"
+      id="child-iframe" frameborder="0" scrolling="yes" (load)="callJavascript($event)">
+    </iframe>
+  </ng-container>
+
+  <ng-template #notCa>
+    <iframe src="https://meta.a-just.beta.gouv.fr/public/dashboard/9e73237a-0dee-4680-809e-a9ed54dce278"
+      id="child-iframe" frameborder="0" scrolling="yes" (load)="callJavascript($event)">
+    </iframe>
+  </ng-template>
   <div id="map-juridictions"></div>
 </aj-wrapper-no-connected>
