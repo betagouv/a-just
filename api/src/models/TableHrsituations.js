@@ -37,7 +37,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (let i = 0; i < list.length; i++) {
-      let dateS = list[i].date_start
+      let dateS = today(list[i].date_start)
       if (dateS && today(dateStart).getTime() > today(dateS).getTime()) {
         dateS = today(dateStart)
       }
@@ -47,7 +47,7 @@ export default (sequelizeInstance, Model) => {
           id: list[i].id,
           etp: list[i].etp,
           dateStart: dateS,
-          dateStartTimesTamps: today(dateS).getTime(),
+          dateStartTimesTamps: dateS.getTime(),
           category: {
             id: list[i]['HRCategory.id'],
             rank: list[i]['HRCategory.rank'],

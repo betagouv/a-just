@@ -1250,4 +1250,22 @@ export class ExcelService extends MainClass {
 
     return report
   }
+
+  getCache(newVersion: boolean) {
+    const startTime = performance.now()
+
+    return this.serverService
+      .postWithoutError(`extractor/get-cache`, {
+        backupId: this.humanResourceService.backupId.getValue(),
+        newVersion: newVersion,
+        regressionTest: false,
+      })
+      .then(async (data) => {
+        const endTime = performance.now()
+        const duration = endTime - startTime
+
+        console.log('Durée de la requête getCache ', newVersion ? ' New ' : ' Old ', '(en ms):', duration.toFixed(2))
+        console.log(data)
+      })
+  }
 }

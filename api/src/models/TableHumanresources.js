@@ -10,7 +10,7 @@ import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
 import { dbInstance } from './index'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, orderBy } from 'lodash'
 import { checkAbort } from '../utils/abordTimeout'
 
 /**
@@ -133,6 +133,19 @@ export default (sequelizeInstance, Model) => {
   }
 
   /**
+   * Liste des fiches d'une juridiction
+   * @param {*} backupId
+   * @returns
+   */
+  Model.getCacheNew = async (backupId, force = false, signal = null) => {
+    if (!cacheJuridictionPeoples[backupId] || force) {
+      cacheJuridictionPeoples[backupId] = await Model.getCurrentHrNew(backupId, signal)
+    }
+
+    return cacheJuridictionPeoples[backupId]
+  }
+
+  /**
    * Retour des détails d'une juridiction
    * @param {*} backupId
    * @returns
@@ -169,6 +182,161 @@ export default (sequelizeInstance, Model) => {
     }
 
     return list.filter((h) => h.situations && h.situations.length) // remove hr without situation
+  }
+
+  /**
+   * Retour des détails d'une juridiction
+   * @param {*} backupId
+   * @returns
+   */
+  Model.getCurrentHrNew = async (backupId, signal = null) => {
+    checkAbort(signal)
+
+    // 1. REQUÊTE PRINCIPALE
+    const hrList = await Model.findAll({
+      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
+      where: { backup_id: backupId },
+      include: [
+        // Situation avec association
+        {
+          model: Model.models.HRSituations,
+          required: true,
+          attributes: ['id', 'etp', 'date_start', 'category_id', 'fonction_id'],
+          include: [
+            {
+              model: Model.models.HRCategories,
+            },
+            {
+              model: Model.models.HRFonctions,
+            },
+            {
+              model: Model.models.HRActivities,
+              include: [
+                {
+                  model: Model.models.ContentieuxReferentiels,
+                },
+              ],
+            },
+          ],
+        },
+        // Commentaire
+        {
+          model: Model.models.HRComments,
+          separate: true,
+          order: [['created_at', 'DESC']],
+          limit: 1,
+          include: [
+            {
+              model: Model.models.Users,
+            },
+          ],
+        },
+        // Indisponibilités
+        {
+          model: Model.models.HRIndisponibilities,
+          separate: true,
+          include: [
+            {
+              model: Model.models.ContentieuxReferentiels,
+            },
+          ],
+        },
+      ],
+      subQuery: false,
+    })
+
+    checkAbort(signal)
+
+    // 2. TRANSFORMATION DES DONNÉES
+    return hrList
+      .map((hr) => {
+        // Traitement des situations
+        const situationsMap = new Map()
+        hr.HRSituations.sort((a, b) => new Date(b.date_start) - new Date(a.date_start) || b.id - a.id).forEach((sit) => {
+          const dateS = sit.date_start && new Date(hr.date_entree) > new Date(sit.date_start) ? hr.date_entree : sit.date_start
+
+          const dateKey = today(dateS).getTime()
+
+          if (!situationsMap.has(dateKey)) {
+            situationsMap.set(dateKey, {
+              id: sit.id,
+              etp: sit.etp,
+              dateStart: today(dateS),
+              dateStartTimesTamps: dateKey,
+              category: sit.HRCategory
+                ? {
+                    id: sit.HRCategory.id,
+                    rank: sit.HRCategory.rank,
+                    code: sit.HRCategory.code,
+                    label: sit.HRCategory.label,
+                  }
+                : null,
+              fonction: sit.HRFonction
+                ? {
+                    id: sit.HRFonction.id,
+                    rank: sit.HRFonction.rank,
+                    code: sit.HRFonction.code,
+                    label: sit.HRFonction.label,
+                    category_detail: sit.HRFonction.category_detail,
+                    position: sit.HRFonction.position,
+                    calculatriceIsActive: sit.HRFonction.calculatrice_is_active,
+                  }
+                : null,
+              activities: sit.HRActivities.filter((act) => act.ContentieuxReferentiel !== null).map((act) => {
+                return {
+                  id: act.id,
+                  percent: act.percent,
+                  contentieux: {
+                    id: act.ContentieuxReferentiel.id,
+                    label: act.ContentieuxReferentiel.label,
+                  },
+                }
+              }),
+            })
+          }
+        })
+
+        // Dernier commentaire
+        const lastComment = hr.HRComments[0]
+        const comment = lastComment ? lastComment.comment : null
+
+        // Indisponibilités
+        const indisponibilities = orderBy(
+          hr.HRIndisponibilities.map((ind) => ({
+            id: ind.id,
+            percent: ind.percent,
+            dateStart: ind.date_start,
+            dateStartTimesTamps: today(ind.date_start).getTime(),
+            dateStop: ind.date_stop,
+            dateStopTimesTamps: ind.date_stop ? today(ind.date_stop).getTime() : null,
+            contentieux: {
+              id: ind.ContentieuxReferentiel.id,
+              label: ind.ContentieuxReferentiel.label,
+              checkVentilation: ind.ContentieuxReferentiel.check_ventilation,
+            },
+          })),
+          'dateStart',
+          ['desc'],
+        )
+
+        // Structure finale
+        return {
+          id: hr.id,
+          firstName: hr.first_name,
+          lastName: hr.last_name,
+          matricule: hr.matricule,
+          dateStart: hr.date_entree,
+          dateEnd: hr.date_sortie,
+          coverUrl: hr.cover_url,
+          updatedAt: hr.updated_at,
+          backupId: hr.backup_id,
+          juridiction: hr.juridiction,
+          comment: comment,
+          situations: Array.from(situationsMap.values()),
+          indisponibilities: indisponibilities,
+        }
+      })
+      .filter((hr) => hr.situations.length > 0)
   }
 
   /**

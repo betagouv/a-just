@@ -73,13 +73,14 @@ export default (sequelizeInstance) => {
           fields: ['backup_id', 'registration_number'],
         },
       ],
-    }
+    },
   )
 
   Model.associate = function (models) {
-    Model.hasOne(models.HRComments, { foreignKey: 'human_id', sourceKey: 'id' })
+    Model.hasMany(models.HRComments, { foreignKey: 'human_id', sourceKey: 'id' })
     Model.hasOne(models.HRBackups, { foreignKey: 'id', sourceKey: 'backup_id' })
     Model.hasMany(models.HRSituations, { foreignKey: 'human_id', sourceKey: 'id' })
+    Model.hasMany(models.HRIndisponibilities, { foreignKey: 'hr_id', sourceKey: 'id' })
 
     return models
   }
