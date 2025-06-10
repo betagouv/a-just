@@ -34,7 +34,7 @@ export default (sequelizeInstance, Model) => {
         dateStart: list[i].date_start,
         dateStartTimesTamps: today(list[i].date_start).getTime(),
         dateStop: list[i].date_stop,
-        dateStopTimesTamps: today(list[i].date_stop).getTime(),
+        dateStopTimesTamps: list[i].date_stop ? today(list[i].date_stop).getTime() : null,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],
