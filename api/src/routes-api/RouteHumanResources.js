@@ -131,7 +131,7 @@ export default class RouteHumanResources extends Route {
 
       if (onRemoveHR) {
         this.sendOk(ctx, 'Ok')
-        selfRouteToSyncJuridiction(backupId)
+        selfRouteToSyncJuridiction(camelCaseReturn.backupId)
         await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
           hrId,
         })
