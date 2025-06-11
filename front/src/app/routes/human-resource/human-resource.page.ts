@@ -437,7 +437,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
         lastSituationId = (findSituation && findSituation.id) || null
         idsDetected = delta
-        let etp = (findSituation && findSituation.etp) || 0
+        let etp = findSituation !== null ? findSituation.etp : null
+        if (findIndispos.length !== 0 && etp === null) {
+          etp = 0
+        }
 
         if (currentDateEnd && currentDateEnd.getTime() <= currentDate.getTime()) {
           etp = 0
