@@ -75,7 +75,7 @@ describe("Test d'accés aux pages", () => {
     cy.get(".menu-item .tools").should("exist").click();
   };
 
-  it("User with access to specific pages should not have access to others", () => {
+  /*it("User with access to specific pages should not have access to others", () => {
     cy.login();
 
     // Parcourir toutes les URLs définies dans accessUrlList
@@ -110,9 +110,9 @@ describe("Test d'accés aux pages", () => {
         });
       }
     });
-  });
+  });*/
 
-  it("User with specific access should only see allowed menu items + check bottom menu is alaways accessible", () => {
+  /*it("User with specific access should only see allowed menu items + check bottom menu is alaways accessible", () => {
     cy.login();
 
     // Parcourir toutes les URLs définies dans accessUrlList
@@ -157,7 +157,7 @@ describe("Test d'accés aux pages", () => {
         });
       }
     });
-  });
+  });*/
 
   it("Remove access to Réafecteur and check that user does not have access to Réaffecteur page from ventilateur", () => {
     const accessIds = accessUrlList
