@@ -1,456 +1,477 @@
 import user from "../../fixtures/user.json";
 import { accessUrlList, accessFonctionsList } from "../../support/userAcess";
 import { menuContentTools, menuContentBottom } from "../../support/menuContent";
-import { loginApi, getUserDataApi, updateUserAccounatApi } from "../../support/api";
+import {
+  loginApi,
+  getUserDataApi,
+  updateUserAccounatApi,
+} from "../../support/api";
 
 describe("Test d'accés aux pages", () => {
-    let userId;
-    let token;
-    let ventilations = [];
+  let userId;
+  let token;
+  let ventilations = [];
 
-    before(() => {
-        //Login to get the admin user token so we can retireve user data
-        loginApi(user.email, user.password).then((resp) => {
-            userId = resp.body.user.id;
-            token = resp.body.token;
+  before(() => {
+    //Login to get the admin user token so we can retireve user data
+    loginApi(user.email, user.password).then((resp) => {
+      userId = resp.body.user.id;
+      token = resp.body.token;
 
-            // Get user data to check access
-            getUserDataApi(token).then((resp) => {
+      // Get user data to check access
+      getUserDataApi(token).then((resp) => {
+        // Give all access to the user
 
-                // Give all access to the user
-
-                ventilations = resp.body.data.backups.map(v => v.id);
-                const accessUrls = accessUrlList.map((access) =>  access.id)
-                const accessFonctions = accessFonctionsList.map((access) => access.id)
-                const accessIds = [...accessUrls, ...accessFonctions];
-                
-                updateUserAccounatApi({
-                    userId,
-                    accessIds,
-                    ventilations,
-                    token
-                })
-          })
-      })
-    });
-
-    afterEach(() => {
-        // Reset user access to default
-        const accessUrls = accessUrlList.map((access) =>  access.id)
-        const accessFonctions = accessFonctionsList.map((access) => access.id)
+        ventilations = resp.body.data.backups.map((v) => v.id);
+        const accessUrls = accessUrlList.map((access) => access.id);
+        const accessFonctions = accessFonctionsList.map((access) => access.id);
         const accessIds = [...accessUrls, ...accessFonctions];
-        // const accessIds = accessUrlList.map((access) => access.id);
+
         updateUserAccounatApi({
-            userId,
-            accessIds,
-            ventilations,
-            token
-        })
-    })
-    
+          userId,
+          accessIds,
+          ventilations,
+          token,
+        });
+      });
+    });
+  });
 
-    const checkBottomMenu = (toolToNotCheck = undefined) => {
-        //Chek all tools are present
-        cy.get(".menu-item .tools")
-          .should("exist")
-          .click()
-          .get(".sub-tools")
-          .within(() => {
-            menuContentTools.forEach((tool) => {
-              if (tool !== toolToNotCheck) {
-                if (tool === 'Les extracteurs' || tool === 'Référentiels de temps moyens') {
-                  cy.get("a").should('contain', tool)//.should("be.visible");
-                } else {
-                  cy.get("p").contains(tool).should("be.visible");
-                }
-              }
-            });
+  afterEach(() => {
+    // Reset user access to default
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList.map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+    // const accessIds = accessUrlList.map((access) => access.id);
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    });
+  });
+
+  const checkBottomMenu = (toolToNotCheck = undefined) => {
+    //Chek all tools are present
+    cy.get(".menu-item .tools")
+      .should("exist")
+      .click()
+      .get(".sub-tools")
+      .within(() => {
+        menuContentTools.forEach((tool) => {
+          if (tool !== toolToNotCheck) {
+            if (
+              tool === "Les extracteurs" ||
+              tool === "Référentiels de temps moyens"
+            ) {
+              cy.get("a").should("contain", tool); //.should("be.visible");
+            } else {
+              cy.get("p").contains(tool).should("be.visible");
+            }
+          }
+        });
+      });
+    // Close the tools menu
+    cy.get(".menu-item .tools").should("exist").click();
+  };
+
+  it("User with access to specific pages should not have access to others", () => {
+    cy.login();
+
+    // Parcourir toutes les URLs définies dans accessUrlList
+    accessUrlList.forEach((access) => {
+      const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
+
+      if (access.url !== undefined) {
+        // Mettre à jour les droits d'accès pour l'utilisateur
+        updateUserAccounatApi({
+          userId,
+          accessIds,
+          ventilations,
+          token,
+        }).then(() => {
+          // Vérifier que l'utilisateur peut accéder à la page autorisée
+          cy.visit(`${access.url}`)
+            .location("pathname")
+            .should("contain", access.url);
+
+          // Vérifier que l'utilisateur ne peut pas accéder aux autres pages
+          accessUrlList.forEach((otherAccess) => {
+            if (
+              otherAccess.url !== undefined &&
+              otherAccess.url !== access.url
+            ) {
+              cy.visit(`${otherAccess.url}`, { failOnStatusCode: false })
+                .location("pathname")
+                // .should("not.contain", otherAccess.label);
+                .should("contain", otherAccess.url);
+            }
           });
-        // Close the tools menu
-        cy.get(".menu-item .tools")
-          .should("exist")
-          .click()
+        });
       }
+    });
+  });
 
-    it("User with access to specific pages should not have access to others", () => {
-      cy.login();
+  it("User with specific access should only see allowed menu items + check bottom menu is alaways accessible", () => {
+    cy.login();
 
-      // Parcourir toutes les URLs définies dans accessUrlList
-      accessUrlList.forEach((access) => {
+    // Parcourir toutes les URLs définies dans accessUrlList
+    accessUrlList.forEach((access) => {
+      if (access.label !== "Réaffectateur" && access.label !== "Temps moyens") {
         const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
 
-        if (access.url !== undefined) {
-            // Mettre à jour les droits d'accès pour l'utilisateur
-            updateUserAccounatApi({
-              userId,
-              accessIds,
-              ventilations,
-              token,
-            }).then(() => {
-              // Vérifier que l'utilisateur peut accéder à la page autorisée
-              cy.visit(`${access.url}`)
-                .location("pathname")
-                .should("contain", access.url);
+        // Mettre à jour les droits d'accès pour l'utilisateur
+        updateUserAccounatApi({
+          userId,
+          accessIds,
+          ventilations,
+          token,
+        }).then(() => {
+          // Recharger la page pour appliquer les nouveaux droits
+          cy.reload();
 
-              // Vérifier que l'utilisateur ne peut pas accéder aux autres pages
+          // Vérifier que le menu contient uniquement l'élément autorisé
+          cy.get("#side-menu-bar .menu-scrollable") // Cible le conteneur du menu
+            .within(() => {
+              // Vérifier que l'élément correspondant à l'accès est visible
+              cy.get(".menu-item").should("contain.text", access.label);
+
+              // Vérifier que les autres éléments ne sont pas visibles
               accessUrlList.forEach((otherAccess) => {
-                if (otherAccess.url !== undefined && otherAccess.url !== access.url) {
-                  cy.visit(`${otherAccess.url}`, { failOnStatusCode: false })
-                    .location("pathname")
-                    .should("contain", otherAccess.url);
-                    // .should("not.contain", otherAccess.label);
+                if (
+                  otherAccess.label !== "Réaffectateur" &&
+                  otherAccess.label !== "Temps moyens" &&
+                  otherAccess.label !== undefined &&
+                  otherAccess.label !== access.label
+                ) {
+                  cy.get(".menu-item").should(
+                    "not.contain.text",
+                    otherAccess.label
+                  );
                 }
+
+                const toolToNotCheck = "Référentiels de temps moyens";
+                checkBottomMenu(toolToNotCheck);
               });
             });
-          }
-      })
+        });
+      }
     });
+  });
 
-    it("User with specific access should only see allowed menu items + check bottom menu is alaways accessible", () => {
+  it("Remove access to Réafecteur and check that user does not have access to Réaffecteur page from ventilateur", () => {
+    const accessIds = accessUrlList
+      .filter((access) => access.label !== "Réaffectateur")
+      .map((access) => access.id);
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
       cy.login();
-
-      // Parcourir toutes les URLs définies dans accessUrlList
-      accessUrlList.forEach((access) => {
-        if (access.label !== 'Réaffectateur' && access.label !== 'Temps moyens') {
-          const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
-
-            // Mettre à jour les droits d'accès pour l'utilisateur
-            updateUserAccounatApi({
-              userId,
-              accessIds,
-              ventilations,
-              token,
-            }).then(() => {
-              // Recharger la page pour appliquer les nouveaux droits
-              cy.reload();
-
-              // Vérifier que le menu contient uniquement l'élément autorisé
-              cy.get("#side-menu-bar .menu-scrollable") // Cible le conteneur du menu
-                .within(() => {
-
-                  // Vérifier que l'élément correspondant à l'accès est visible
-                  cy.get(".menu-item")
-                  .should('contain.text', access.label)
-
-                  // Vérifier que les autres éléments ne sont pas visibles
-                  accessUrlList.forEach((otherAccess) => {
-                    if (otherAccess.label !== 'Réaffectateur' && otherAccess.label !== 'Temps moyens' && otherAccess.label !== undefined && otherAccess.label !== access.label) {
-                      cy.get(".menu-item")
-                        .should("not.contain.text", otherAccess.label)
-                    }
-
-                    const toolToNotCheck = 'Référentiels de temps moyens'
-                    checkBottomMenu(toolToNotCheck)
-                  });
-                })
-            });
-        }
-      });
+      cy.visit("/ventilations");
+      cy.location("pathname").should("contain", "/ventilations");
+      cy.get(".top-header .actions").should(
+        "not.contain.text",
+        "Simuler des affectations"
+      );
     });
+    checkBottomMenu();
+  });
 
-    it('Remove access to Réafecteur and check that user does not have access to Réaffecteur page from ventilateur', () => {
-        const accessIds = accessUrlList
-          .filter((access) => access.label !== 'Réaffectateur')
-          .map((access) => access.id);
-        
-          updateUserAccounatApi({
-          userId,
-          accessIds,
-          ventilations,
-          token,
-        }).then(() => {
-          cy.login();
-          cy.visit('/ventilations');
-          cy.location("pathname").should("contain", "/ventilations");
-          cy.get('.top-header .actions')
-            .should('not.contain.text', 'Simuler des affectations')
-        })
-        checkBottomMenu()
-    })
+  it("Remove access to Réafecteur and check that user does not have access to Réaffecteur page from Simulateur", () => {
+    const accessIds = accessUrlList
+      .filter((access) => access.label !== "Réaffectateur")
+      .map((access) => access.id);
 
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/simulateur");
+      cy.location("pathname").should("contain", "/simulateur");
 
-    it('Remove access to Réafecteur and check that user does not have access to Réaffecteur page from Simulateur', () => {
-      const accessIds = accessUrlList
-        .filter((access) => access.label !== 'Réaffectateur')
-        .map((access) => access.id);
-      
-        updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login();
-        cy.visit('/simulateur');
-        cy.location("pathname").should("contain", "/simulateur");
-
-        cy.get('.reaffectator').should('not.exist');
-      })
-      checkBottomMenu()
-
-  })
-
-    it("Give only access to Magistrat and check user does not have access to Greffie and Contractuel datas on panorama ", () => {
-      const accessUrls = accessUrlList.map((access) =>  access.id)
-      const accessFonctions = accessFonctionsList.filter((access) => access.label === 'Accès aux magistrats').map((access) => access.id)
-      const accessIds = [...accessUrls, ...accessFonctions];
-
-        updateUserAccounatApi({
-          userId,
-          accessIds,
-          ventilations,
-          token,
-        }).then(() => {
-          cy.login()
-          cy.visit('/panorama')
-          cy.location("pathname").should("contain", "/panorama");
-          cy.get('.workforce-panel workforce-composition .cards .category')
-            .should('not.contain.text', 'Greffe')
-            .should('not.contain.text', 'Autour du magistrat')
-          cy.get('.workforce-panel .records-update .category')
-            .should('not.contain.text', 'Greffe')
-            .should('not.contain.text', 'Autour du magistrat')
-        })
-        checkBottomMenu()
-    })
-
-    it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on panorama", () => {
-      const accessUrls = accessUrlList.map((access) => access.id);
-      const accessFonctions = accessFonctionsList
-        .filter((access) => access.label === "Accès aux greffiers")
-        .map((access) => access.id);
-      const accessIds = [...accessUrls, ...accessFonctions];
-    
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login();
-        cy.visit("/panorama");
-        cy.location("pathname").should("contain", "/panorama");
-        cy.get(".workforce-panel workforce-composition .cards .category")
-          .should("not.contain.text", "Siège")
-          .should("not.contain.text", "Autour du magistrat");
-        cy.get(".workforce-panel .records-update .category")
-          .should("not.contain.text", "Siège")
-          .should("not.contain.text", "Autour du magistrat");
-      });
-      checkBottomMenu();
+      cy.get(".reaffectator").should("not.exist");
     });
-    
-    it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on panorama", () => {
-      const accessUrls = accessUrlList.map((access) => access.id);
-      const accessFonctions = accessFonctionsList
-        .filter((access) => access.label === "Accès aux contractuels")
-        .map((access) => access.id);
-      const accessIds = [...accessUrls, ...accessFonctions];
-    
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login();
-        cy.visit("/panorama");
-        cy.location("pathname").should("contain", "/panorama");
-        cy.get(".workforce-panel workforce-composition .cards .category")
-          .should("not.contain.text", "Siège")
-          .should("not.contain.text", "Greffe");
-        cy.get(".workforce-panel .records-update .category")
-          .should("not.contain.text", "Siège")
-          .should("not.contain.text", "Greffe");
-      });
-      checkBottomMenu();
+    checkBottomMenu();
+  });
+
+  it("Give only access to Magistrat and check user does not have access to Greffie and Contractuel datas on panorama ", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux magistrats")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/panorama");
+      cy.location("pathname").should("contain", "/panorama");
+      cy.get(".workforce-panel workforce-composition .cards .category")
+        .should("not.contain.text", "Greffe")
+        .should("not.contain.text", "Autour du magistrat");
+      cy.get(".workforce-panel .records-update .category")
+        .should("not.contain.text", "Greffe")
+        .should("not.contain.text", "Autour du magistrat");
     });
+    checkBottomMenu();
+  });
 
-    it("Give only access to Magistrat and check user does not have access to Greffier datas on cockpit ", () => {
-      const accessUrls = accessUrlList.map((access) =>  access.id)
-      const accessFonctions = accessFonctionsList.filter((access) => access.label === 'Accès aux magistrats').map((access) => access.id)
-      const accessIds = [...accessUrls, ...accessFonctions];
+  it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on panorama", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux greffiers")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
 
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login()
-        cy.visit('/cockpit')
-        cy.location("pathname").should("contain", "/cockpit");
-        cy.get('.sub-main-header .categories-switch')
-          .should('not.contain.text', 'Greffe')
-          .should('not.contain.text', 'Autour du magistrat')
-      })
-      checkBottomMenu();
-    })
-
-    it("Give only access to Greffier and check user does not have access to Magistrat datas on cockpit ", () => {
-      const accessUrls = accessUrlList.map((access) =>  access.id)
-      const accessFonctions = accessFonctionsList.filter((access) => access.label === 'Accès aux greffiers').map((access) => access.id)
-      const accessIds = [...accessUrls, ...accessFonctions];
-
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login()
-        cy.visit('/cockpit')
-        cy.location("pathname").should("contain", "/cockpit");
-        cy.get('.sub-main-header .categories-switch')
-          .should('not.contain.text', 'Siège')
-          .should('not.contain.text', 'Autour du magistrat')
-      })
-      checkBottomMenu();
-    })
-
-    it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on ventilateur", () => {
-      const accessUrls = accessUrlList.map((access) =>  access.id)
-      const accessFonctions = accessFonctionsList.filter((access) => access.label === 'Accès aux magistrats').map((access) => access.id)
-      const accessIds = [...accessUrls, ...accessFonctions];
-
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login()
-        cy.visit('/ventilations')
-        cy.location("pathname").should("contain", "/ventilations");
-        cy.get('.title .checkbox-button')
-          .should('not.contain.text', 'Greffe')
-          .should('not.contain.text', 'Autour du magistrat')
-      })
-      checkBottomMenu();
-    })
-
-    it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on ventilateur", () => {
-      const accessUrls = accessUrlList.map((access) => access.id);
-      const accessFonctions = accessFonctionsList
-        .filter((access) => access.label === "Accès aux greffiers")
-        .map((access) => access.id);
-      const accessIds = [...accessUrls, ...accessFonctions];
-    
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login();
-        cy.visit("/ventilations");
-        cy.location("pathname").should("contain", "/ventilations");
-        cy.get(".title .checkbox-button")
-          .should("not.contain.text", "Siège")
-          .should("not.contain.text", "Autour du magistrat");
-      });
-      checkBottomMenu();
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/panorama");
+      cy.location("pathname").should("contain", "/panorama");
+      cy.get(".workforce-panel workforce-composition .cards .category")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Autour du magistrat");
+      cy.get(".workforce-panel .records-update .category")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Autour du magistrat");
     });
+    checkBottomMenu();
+  });
 
-    it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on ventilateur", () => {
-      const accessUrls = accessUrlList.map((access) => access.id);
-      const accessFonctions = accessFonctionsList
-        .filter((access) => access.label === "Accès aux contractuels")
-        .map((access) => access.id);
-      const accessIds = [...accessUrls, ...accessFonctions];
-    
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login();
-        cy.visit("/ventilations");
-        cy.location("pathname").should("contain", "/ventilations");
-        cy.get(".title .checkbox-button")
-          .should("not.contain.text", "Siège")
-          .should("not.contain.text", "Greffe");
-      });
-      checkBottomMenu();
+  it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on panorama", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux contractuels")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/panorama");
+      cy.location("pathname").should("contain", "/panorama");
+      cy.get(".workforce-panel workforce-composition .cards .category")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Greffe");
+      cy.get(".workforce-panel .records-update .category")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Greffe");
     });
+    checkBottomMenu();
+  });
 
-    it ('Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on workforce extractor', () => {
-      const accessUrls = accessUrlList.map((access) =>  access.id)
-      const accessFonctions = accessFonctionsList.filter((access) => access.label === 'Accès aux magistrats').map((access) => access.id)
-      const accessIds = [...accessUrls, ...accessFonctions];
+  it("Give only access to Magistrat and check user does not have access to Greffier datas on cockpit ", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux magistrats")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
 
-        updateUserAccounatApi({
-          userId,
-          accessIds,
-          ventilations,
-          token,
-        }).then(() => {
-          cy.login()
-          cy.visit('/dashboard')
-          cy.location("pathname").should("contain", "/dashboard");
-          cy.get('aj-extractor-ventilation .exportateur-container .category-select')
-            .click()
-            .get('.cdk-overlay-pane')
-            .should('contain.text', 'Siège')
-            .should('not.contain.text', 'Greffe')
-            .should('not.contain.text', 'Equipe Autour du magistrat')
-          cy.get('body').click(0, 0);
-        })
-      checkBottomMenu();
-    })
-
-    it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on workforce extractor", () => {
-      const accessUrls = accessUrlList.map((access) => access.id);
-      const accessFonctions = accessFonctionsList
-        .filter((access) => access.label === "Accès aux greffiers")
-        .map((access) => access.id);
-      const accessIds = [...accessUrls, ...accessFonctions];
-    
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login();
-        cy.visit("/dashboard");
-        cy.location("pathname").should("contain", "/dashboard");
-        cy.get("aj-extractor-ventilation .exportateur-container .category-select")
-          .click()
-          .get('.cdk-overlay-pane')
-          .should("contain.text", "Greffe")
-          .should("not.contain.text", "Siège")
-          .should("not.contain.text", "Equipe Autour du magistrat");
-        cy.get('body').click(0, 0);
-      });
-      checkBottomMenu();
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/cockpit");
+      cy.location("pathname").should("contain", "/cockpit");
+      cy.get(".sub-main-header .categories-switch")
+        .should("not.contain.text", "Greffe")
+        .should("not.contain.text", "Autour du magistrat");
     });
+    checkBottomMenu();
+  });
 
-    it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on workforce extractor", () => {
-      const accessUrls = accessUrlList.map((access) => access.id);
-      const accessFonctions = accessFonctionsList
-        .filter((access) => access.label === "Accès aux contractuels")
-        .map((access) => access.id);
-      const accessIds = [...accessUrls, ...accessFonctions];
-    
-      updateUserAccounatApi({
-        userId,
-        accessIds,
-        ventilations,
-        token,
-      }).then(() => {
-        cy.login();
-        cy.visit("/dashboard");
-        cy.location("pathname").should("contain", "/dashboard");
-        cy.get("aj-extractor-ventilation .exportateur-container .category-select")
-          .click()
-          .get('.cdk-overlay-pane')
-          .should("contain.text", "Equipe autour du magistrat")
-          .should("not.contain.text", "Siège")
-          .should("not.contain.text", "Greffe");
-        cy.get('body').click(0, 0);
-      });
-      checkBottomMenu();
+  it("Give only access to Greffier and check user does not have access to Magistrat datas on cockpit ", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux greffiers")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/cockpit");
+      cy.location("pathname").should("contain", "/cockpit");
+      cy.get(".sub-main-header .categories-switch")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Autour du magistrat");
     });
-})
+    checkBottomMenu();
+  });
+
+  it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on ventilateur", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux magistrats")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/ventilations");
+      cy.location("pathname").should("contain", "/ventilations");
+      cy.get(".title .checkbox-button")
+        .should("not.contain.text", "Greffe")
+        .should("not.contain.text", "Autour du magistrat");
+    });
+    checkBottomMenu();
+  });
+
+  it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on ventilateur", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux greffiers")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/ventilations");
+      cy.location("pathname").should("contain", "/ventilations");
+      cy.get(".title .checkbox-button")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Autour du magistrat");
+    });
+    checkBottomMenu();
+  });
+
+  it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on ventilateur", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux contractuels")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/ventilations");
+      cy.location("pathname").should("contain", "/ventilations");
+      cy.get(".title .checkbox-button")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Greffe");
+    });
+    checkBottomMenu();
+  });
+
+  it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on workforce extractor", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux magistrats")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/dashboard");
+      cy.location("pathname").should("contain", "/dashboard");
+      cy.get("aj-extractor-ventilation .exportateur-container .category-select")
+        .click()
+        .get(".cdk-overlay-pane")
+        .should("contain.text", "Siège")
+        .should("not.contain.text", "Greffe")
+        .should("not.contain.text", "Equipe Autour du magistrat");
+      cy.get("body").click(0, 0);
+    });
+    checkBottomMenu();
+  });
+
+  it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on workforce extractor", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux greffiers")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/dashboard");
+      cy.location("pathname").should("contain", "/dashboard");
+      cy.get("aj-extractor-ventilation .exportateur-container .category-select")
+        .click()
+        .get(".cdk-overlay-pane")
+        .should("contain.text", "Greffe")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Equipe Autour du magistrat");
+      cy.get("body").click(0, 0);
+    });
+    checkBottomMenu();
+  });
+
+  it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on workforce extractor", () => {
+    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessFonctions = accessFonctionsList
+      .filter((access) => access.label === "Accès aux contractuels")
+      .map((access) => access.id);
+    const accessIds = [...accessUrls, ...accessFonctions];
+
+    updateUserAccounatApi({
+      userId,
+      accessIds,
+      ventilations,
+      token,
+    }).then(() => {
+      cy.login();
+      cy.visit("/dashboard");
+      cy.location("pathname").should("contain", "/dashboard");
+      cy.get("aj-extractor-ventilation .exportateur-container .category-select")
+        .click()
+        .get(".cdk-overlay-pane")
+        .should("contain.text", "Equipe autour du magistrat")
+        .should("not.contain.text", "Siège")
+        .should("not.contain.text", "Greffe");
+      cy.get("body").click(0, 0);
+    });
+    checkBottomMenu();
+  });
+});
