@@ -111,7 +111,7 @@ export default class RouteHumanResources extends Route {
     let { backupId, hr } = this.body(ctx)
 
     const responseUpdate = await this.model.updateHR(hr, backupId)
-    selfRouteToSyncJuridiction(backupId)
+    await selfRouteToSyncJuridiction(backupId)
 
     this.sendOk(ctx, responseUpdate)
   }
@@ -131,7 +131,7 @@ export default class RouteHumanResources extends Route {
 
       if (onRemoveHR) {
         this.sendOk(ctx, 'Ok')
-        selfRouteToSyncJuridiction(camelCaseReturn.backupId)
+        await selfRouteToSyncJuridiction(camelCaseReturn.backupId)
         await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
           hrId,
         })
@@ -182,7 +182,7 @@ export default class RouteHumanResources extends Route {
     if (hrId) {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
         const agent = await this.model.getHr(hrId)
-        selfRouteToSyncJuridiction(agent.backupId)
+        await selfRouteToSyncJuridiction(agent.backupId)
         this.sendOk(ctx, agent)
       }
     }
