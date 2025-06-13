@@ -16,7 +16,7 @@ export default class RouteImports extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.HumanResources
@@ -32,14 +32,14 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isSuperAdmin],
   })
-  async importHr (ctx) {
+  async importHr(ctx) {
     const { file } = this.body(ctx)
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ';',
     })
     const backupIds = await this.model.importList(arrayOfHR)
-    for(let i = 0; i < backupIds.length; i++) {
-      selfRouteToSyncJuridiction(backupIds[i])
+    for (let i = 0; i < backupIds.length; i++) {
+      await selfRouteToSyncJuridiction(backupIds[i])
     }
 
     this.sendOk(ctx, 'OK')
@@ -55,7 +55,7 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isSuperAdmin],
   })
-  async importReferentiel (ctx) {
+  async importReferentiel(ctx) {
     const { file } = this.body(ctx)
     const arrayOfHR = await csvToArrayJson(file ? file : readFileSync(ctx.request.files.file.path, 'utf8'), {
       delimiter: ';',
@@ -80,7 +80,7 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async importActivities (ctx) {
+  async importActivities(ctx) {
     console.log('oui? import activities')
     const { backupId, file } = this.body(ctx)
 
@@ -101,7 +101,7 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async importAllActivities (ctx) {
+  async importAllActivities(ctx) {
     const { file } = this.body(ctx)
     console.log('IMPORTS - START')
 
@@ -127,7 +127,7 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async checkDataBeforeImportAll (ctx) {
+  async checkDataBeforeImportAll(ctx) {
     const { file } = this.body(ctx)
     // console.log('CHECK - START')
 
@@ -153,7 +153,7 @@ export default class RouteImports extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async checkDataBeforeImportOne (ctx) {
+  async checkDataBeforeImportOne(ctx) {
     const { backupId, file } = this.body(ctx)
     // console.log('CHECK - START')
 
