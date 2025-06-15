@@ -23,6 +23,21 @@ import { withAbortTimeout } from '../utils/abordTimeout'
 import deepEqual from 'fast-deep-equal'
 import fs from 'node:fs'
 import { diff } from 'deep-diff'
+import {
+  buildIndexes,
+  createDateIntervalIndex,
+  formatHRData,
+  generateAllStableHRPeriods,
+  generateStableHRPeriods,
+  generateStableHRPeriodsOptimized,
+  generateStableHRPeriodsWithIndex,
+  generateStablePeriods,
+  getHRPositionsOptimized,
+  logIndex,
+  queryPeriodsByDateRange,
+  searchPeriods,
+} from '../utils/human-resource'
+import { getHRPositions } from '../utils/calculator'
 
 /**
  * Route de la page extrateur
@@ -299,51 +314,90 @@ export default class RouteExtractor extends Route {
   async getCache(ctx) {
     let { backupId, newVersion, regressionTest } = this.body(ctx)
 
-    let hr = null
+    const categories = await this.models.HRCategories.getAll()
 
-    if (regressionTest) {
-      let oldResult = await this.model.getCache(backupId, true)
-      oldResult = orderBy(oldResult, 'id')
+    let hr = await this.model.getCacheNew(backupId, true)
 
-      let newResult = await this.model.getCacheNew(backupId, true)
-      newResult = orderBy(newResult, 'id')
+    hr = hr.filter((h) => h.id === 2417)
 
-      let allEqual = true
-      let differences = []
+    console.time('Pré format')
+    let result = await generateAllStableHRPeriods(hr)
+    console.timeEnd('Pré format')
 
-      if (oldResult.length !== newResult.length) {
-        console.error(`❌ Nombre d'éléments différents : ${oldResult.length} vs ${newResult.length}`)
-        allEqual = false
-      }
+    // Appel de la fonction pour créer l'index
+    console.time('CREATE INDEX')
+    const indexMap = createDateIntervalIndex(result)
+    console.timeEnd('CREATE format')
 
-      for (let i = 0; i < Math.min(oldResult.length, newResult.length); i++) {
-        const oldItem = oldResult[i]
-        const newItem = newResult[i]
+    console.time('Request 1 year')
+    // Requête pour trouver toutes les périodes dans la plage du 1er janvier 2022 au 1er mars 2022
+    const queryStart = '2024-03-03T12:00:00.000Z'
+    const queryEnd = '2024-03-28T12:00:00.000Z'
+    const periodsInRange = searchPeriods(indexMap, queryStart, queryEnd)
+    console.timeEnd('Request 1 year')
 
-        if (!deepEqual(oldItem, newItem)) {
-          allEqual = false
-          differences.push({
-            index: i,
-            id: oldItem['Réf.'] || newItem['Réf.'],
-            old: oldItem,
-            new: newItem,
-          })
-        }
-      }
+    //const objResult = Object.fromEntries(result)
 
-      let differencess = diff(oldResult, newResult)
-      console.log(differencess)
-
-      if (!allEqual) {
-        console.error(`❌ ${differences.length} différences trouvées !`)
-        fs.writeFileSync('./computeExtract-differences.json', JSON.stringify(differences, null, 2), 'utf-8')
-        throw new Error('Non-régression échouée ! Différences enregistrées dans computeExtract-differences.json')
-      }
-
-      console.log('✅ Test de non-régression réussi. Les deux versions donnent des résultats identiques.')
-    } else {
-      hr = newVersion ? await this.model.getCacheNew(backupId, true) : await this.model.getCache(backupId, true)
-    }
-    this.sendOk(ctx, { hr })
+    this.sendOk(ctx, { hr, periodsInRange })
   }
 }
+
+//console.log(JSON.stringify(objResult, null, 2))
+
+/**
+    hr = hr.filter((h) => ![31537, 36992, 37002].includes(h.id))
+
+    // Initialisation (1 fois)
+    const indexes = buildIndexes(hr)
+
+    const dateStart = new Date('2024-01-01')
+    const dateStop = new Date('2024-12-31')
+
+    // Requêtage ultra-rapide
+    const results = getHRPositionsOptimized(indexes, 460, dateStart, dateStop)
+
+    const results2 = getHRPositions(this.models, hr, categories, 460, dateStart, dateStop)
+
+    console.log(results[0], results2[0])
+    */
+/**
+    console.time('WITH INDEX')
+    let result1 = generateStableHRPeriodsOptimized(hr[0])
+    console.timeEnd('WITH INDEX')
+
+    const oldResult = result
+    const newResult = result1
+    console.log('len', oldResult.length, newResult.length)
+
+    let allEqual = true
+    let differences = []
+
+    if (oldResult.length !== newResult.length) {
+      console.error(`❌ Nombre d'éléments différents : ${oldResult.length} vs ${newResult.length}`)
+      allEqual = false
+    }
+
+    for (let i = 0; i < Math.min(oldResult.length, newResult.length); i++) {
+      const oldItem = oldResult[i]
+      const newItem = newResult[i]
+
+      if (!deepEqual(oldItem, newItem)) {
+        allEqual = false
+        differences.push({
+          index: i,
+          id: oldItem['Réf.'] || newItem['Réf.'],
+          old: oldItem,
+          new: newItem,
+        })
+      }
+    }
+
+    if (!allEqual) {
+      console.error(`❌ ${differences.length} différences trouvées !`)
+      fs.writeFileSync('./computeExtract-differences.json', JSON.stringify(differences, null, 2), 'utf-8')
+      throw new Error('Non-régression échouée ! Différences enregistrées dans computeExtract-differences.json')
+    }
+
+    console.log('✅ Test de non-régression réussi. Les deux versions donnent des résultats identiques.')
+    console.timeEnd('non-regression-test')
+ */
