@@ -1258,7 +1258,7 @@ export class ExcelService extends MainClass {
       .postWithoutError(`extractor/get-cache`, {
         backupId: this.humanResourceService.backupId.getValue(),
         newVersion: newVersion,
-        regressionTest: false,
+        regressionTest: true,
       })
       .then(async (data) => {
         const endTime = performance.now()

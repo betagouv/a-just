@@ -3,7 +3,7 @@ import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } 
 import { fixDecimal } from './number'
 import config from 'config'
 import { getEtpByDateAndPerson } from './human-resource'
-import {appendFileSync  } from 'fs'
+import { appendFileSync } from 'fs'
 import { checkAbort } from './abordTimeout'
 
 /**
@@ -88,26 +88,26 @@ export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart
   const prefiltersActivities = groupBy(activities, 'contentieux.id')
 
   for (let i = 0; i < list.length; i++) {
-    checkAbort(signal);
+    checkAbort(signal)
 
     const childrens = !loadChildrens
       ? []
       : (list[i].childrens || []).map((c) => ({
-        ...c,
-        nbMonth,
-        ...getActivityValues(
-          models,
-          dateStart,
-          dateStop,
-          prefiltersActivities[c.contentieux.id] || [],
-          c.contentieux.id,
+          ...c,
           nbMonth,
-          hr,
-          categories,
-          optionsBackups,
-          false
-        ),
-      }))
+          ...getActivityValues(
+            models,
+            dateStart,
+            dateStop,
+            prefiltersActivities[c.contentieux.id] || [],
+            c.contentieux.id,
+            nbMonth,
+            hr,
+            categories,
+            optionsBackups,
+            false,
+          ),
+        }))
 
     list[i] = {
       ...list[i],
@@ -121,7 +121,7 @@ export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart
         hr,
         categories,
         optionsBackups,
-        true
+        true,
       ),
       childrens,
       nbMonth,
@@ -152,7 +152,7 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
     referentielId,
     hr,
     categories,
-    loadDetails
+    loadDetails,
   )
 
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
@@ -279,15 +279,15 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
   if (activitesEnd.length) {
     const lastActivities = activitesEnd[activitesEnd.length - 1]
     if (isSameMonthAndYear(lastActivities.periode, endCs)) {
-      if(lastActivities.stock !== null) {
+      if (lastActivities.stock !== null) {
         lastStockCs = lastActivities.stock
       }
 
-      if(lastActivities.entrees !== null) {
+      if (lastActivities.entrees !== null) {
         totalInCs = lastActivities.entrees
       }
 
-      if(lastActivities.sorties !== null) {
+      if (lastActivities.sorties !== null) {
         totalOutCs = lastActivities.sorties
       }
     }
@@ -319,7 +319,7 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
     // Clone de l'objet activities et filtre par date
     let activitesStart = cloneDeep(activities)
     activitesStart = activitesStart.filter(
-      (a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime()
+      (a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime(),
     )
 
     // Calcul des sorties moyennes 12 derniers mois à compter de la date de début selectionnée dans le calculateur
@@ -328,15 +328,15 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
     if (activitesStart.length) {
       const lastActivities = activitesStart[activitesStart.length - 1]
       if (isSameMonthAndYear(lastActivities.periode, endBf)) {
-        if(lastActivities.stock !== null) {
+        if (lastActivities.stock !== null) {
           lastStockBf = lastActivities.stock
         }
 
-        if(lastActivities.entrees !== null) {
+        if (lastActivities.entrees !== null) {
           totalInBf = lastActivities.entrees
         }
 
-        if(lastActivities.sorties !== null) {
+        if (lastActivities.sorties !== null) {
           totalOutBf = lastActivities.sorties
         }
       }
@@ -388,7 +388,7 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
     ) {
       const etptAll = getHRVentilation(hr[i], referentielId, categories, dateStart, dateStop)
 
-      if(etptAll) {
+      if (etptAll) {
         Object.values(etptAll).map((c) => {
           if (c.etpt) {
             hrCategories[c.label].list.push(hr[i])
@@ -421,7 +421,7 @@ export const getNbDaysGone = (hr, dateStart, dateStop) => {
       if (hr.dateEnd && getTime(hr.dateEnd) < dateStop.getTime() && now.getTime() > getTime(hr.dateEnd)) nbDaysGone++
       if (hr.dateStart && getTime(hr.dateStart) > dateStart.getTime() && now.getTime() < getTime(dateStart)) nbDaysGone++
     }
-    
+
     now.setDate(now.getDate() + 1)
   } while (now.getTime() <= dateStop.getTime())
 
@@ -436,9 +436,9 @@ export const getNbDaysGone = (hr, dateStart, dateStop) => {
  * @param {*} dateStop
  * @returns
  */
-export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null, signal=null) => {
-  checkAbort(signal);
-  
+export const getHRVentilation = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null, signal = null) => {
+  checkAbort(signal)
+
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -460,7 +460,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
 
   do {
     let addDay = true
-    checkAbort(signal);
+    checkAbort(signal)
 
     // only working day
     if (workingDay(now)) {
@@ -470,7 +470,7 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       let situation = null
       let indispoFiltred = null
       let reelEtp = null
-      checkAbort(signal);
+      checkAbort(signal)
       const etpByDateAndPerson = getEtpByDateAndPerson(referentielId, now, hr, ddgFilter, absLabels, signal)
       etp = etpByDateAndPerson.etp
       situation = etpByDateAndPerson.situation
@@ -524,19 +524,18 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       } else {
         nbDay++
       }
-    } 
-    
-    if(addDay) {
+    }
+
+    if (addDay) {
       now.setDate(now.getDate() + 1)
     }
-        
 
     //console.log('getHRVentilation', now, hr.id, dateStop, nextDeltaDate, nbDay)
     const testNextDay = new Date(now)
-    if(testNextDay.getTime() >= dateStop.getTime()) {
+    if (testNextDay.getTime() >= dateStop.getTime()) {
       continueLoop = false
     }
-    checkAbort(signal);
+    checkAbort(signal)
   } while (continueLoop)
 
   if (nbDay === 0) {
@@ -585,7 +584,7 @@ const calculateActivities = (referentielId, totalIn, lastStock, magEtpAffected, 
     console.log('Calc=>', magEtpAffected, config, magCalculateTimePerCase)
     magCalculateOut = Math.floor(Math.floor(magEtpAffected * config.nbHoursPerDayAndMagistrat * (config.nbDaysByMagistrat / 12)) / magCalculateTimePerCase)
     fonCalculateOut = Math.floor(
-      Math.floor(fonEtpAffected * config.nbHoursPerDayAndFonctionnaire * (config.nbDaysByFonctionnaire / 12)) / fonCalculateTimePerCase
+      Math.floor(fonEtpAffected * config.nbHoursPerDayAndFonctionnaire * (config.nbDaysByFonctionnaire / 12)) / fonCalculateTimePerCase,
     )
     //magCalculateOut = Math.floor((((magEtpAffected * config.nbHoursPerDayAndMagistrat) / magCalculateTimePerCase) * config.nbDaysByMagistrat) / 12)
     //fonCalculateOut = Math.floor((((fonEtpAffected * config.nbHoursPerDayAndFonctionnaire) / fonCalculateTimePerCase) * config.nbDaysByFonctionnaire) / 12)
