@@ -59,6 +59,8 @@ module.exports = {
    * Préchargement de toutes les jurictions ? (Prend 30s et de la mémoire)
    */
   preloadHumanResourcesDatas: false,
+
+  redis: process.env.REDIS_URL,
   /**
    * Nombre de jour travaillé / an d'un magistrat
    */

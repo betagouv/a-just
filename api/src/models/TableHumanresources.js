@@ -73,6 +73,7 @@ export default (sequelizeInstance, Model) => {
    * Chargement des juridictions
    */
   Model.onPreload = async () => {
+    /** 
     if (config.preloadHumanResourcesDatas) {
       const allBackups = await Model.models.HRBackups.getAll()
       dbInstance.options.logging = false
@@ -86,6 +87,8 @@ export default (sequelizeInstance, Model) => {
         dbInstance.options.logging = true
       }
     }
+
+     */
   }
 
   /**

@@ -1,58 +1,98 @@
-import { createClient } from "redis";
-import config from "config";
+import { createClient } from 'redis'
+import config from 'config'
+import zlib from 'zlib'
+import { promisify } from 'util'
 
-let client = null;
-let superCache = {};
+const gzip = promisify(zlib.gzip)
+const gunzip = promisify(zlib.gunzip)
 
+let client = null
+const superCache = {}
+const defaultTTL = 3600 // 1h
+
+const useCompression = true // met à false pour débug
+
+const getFullKey = (cacheName, key) => `${cacheName}:${key}`
+
+// Connexion Redis
 if (config.redis) {
   const loadRedis = async () => {
-    client = await createClient({
-      url: config.redis,
-    })
-      .on("error", (err) => console.log("Redis Client Error", err))
-      .connect();
-  };
-  loadRedis();
+    try {
+      client = await createClient({ url: config.redis })
+        .on('error', (err) => console.error('❌ Redis Client Error', err))
+        .connect()
+
+      console.log('✅ Redis connecté')
+    } catch (err) {
+      console.error('❌ Échec connexion Redis:', err)
+      client = null
+    }
+  }
+  loadRedis()
 }
 
+// === GET ===
 export const getCacheValue = async (key, cacheName) => {
-  if (client === null) {
-    try {
-      return superCache[cacheName][key];
-    } catch (e) {
-      return null;
+  const fullKey = getFullKey(cacheName, key)
+
+  if (!client) {
+    return superCache[fullKey] ?? null
+  }
+
+  try {
+    const value = await client.get(fullKey)
+    if (!value) return null
+
+    if (!useCompression) {
+      return JSON.parse(value)
     }
+
+    const buffer = Buffer.from(value, 'base64')
+    const decompressed = await gunzip(buffer)
+    return JSON.parse(decompressed.toString())
+  } catch (err) {
+    console.error(`❌ getCacheValue(${fullKey}) échoué :`, err)
+    return null
+  }
+}
+
+// === SET ===
+export const setCacheValue = async (key, value, cacheName, ttl = defaultTTL) => {
+  const fullKey = getFullKey(cacheName, key)
+
+  if (!client) {
+    superCache[fullKey] = value
+    return
   }
 
-  const value = await client.get(cacheName + key + "");
-  if (value) {
-    return JSON.parse(value);
-  }
+  try {
+    const json = JSON.stringify(value)
 
-  return null;
-};
-
-export const setCacheValue = async (key, value, cacheName) => {
-  if (client === null) {
-    if (!superCache[cacheName]) {
-      superCache[cacheName] = {};
+    if (!useCompression) {
+      await client.setEx(fullKey, ttl, json)
+      return
     }
-    superCache[cacheName][key + ""] = value;
-    return;
+
+    const compressed = await gzip(json)
+    const encoded = compressed.toString('base64')
+    await client.setEx(fullKey, ttl, encoded)
+  } catch (err) {
+    console.error(`❌ setCacheValue(${fullKey}) échoué :`, err)
   }
+}
 
-  await client.set(cacheName + key + "", JSON.stringify(value));
-};
-
+// === DELETE ===
 export const deleteCacheValue = async (key, cacheName) => {
-  if (client === null) {
-    if (superCache[cacheName] && key) {
-      delete superCache[cacheName][key];
-    } else if (superCache[cacheName]) {
-      superCache[cacheName] = {};
-    }
-    return;
+  const fullKey = getFullKey(cacheName, key)
+
+  if (!client) {
+    delete superCache[fullKey]
+    return
   }
 
-  await client.set(cacheName + key + "", "");
-};
+  try {
+    await client.del(fullKey)
+  } catch (err) {
+    console.error(`❌ deleteCacheValue(${fullKey}) échoué :`, err)
+  }
+}
