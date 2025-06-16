@@ -21,6 +21,7 @@ import fs from 'node:fs'
 import { diff } from 'deep-diff'
 import { calculateETPForContentieux, generateAndIndexAllStableHRPeriods } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
+import { getCacheValue, setCacheValue } from '../utils/redis'
 
 /**
  * Route de la page extrateur
@@ -300,7 +301,17 @@ export default class RouteExtractor extends Route {
     const categories = await this.models.HRCategories.getAll()
 
     console.time('Mise en cache')
-    let hr = await this.model.getCacheNew(backupId, true)
+    let hr = await getCacheValue(backupId, 'hrBackup')
+
+    if (!hr) {
+      hr = await this.model.getCacheNew(backupId, true)
+      console.log('🔄 Cache Redis manquant → recalcul hr')
+
+      // Stocke en cache (TTL de 1h ici, ou à adapter)
+      await setCacheValue(backupId, hr, 'hrBackup', 3600)
+    } else {
+      console.log('✅ Cache Redis utilisé pour hr')
+    }
     console.timeEnd('Mise en cache')
 
     //hr = hr.slice(200, 250)
@@ -336,9 +347,27 @@ export default class RouteExtractor extends Route {
     const etpAffected = getHRPositions({}, hr, categories, queryContentieux, today(queryStart), today(queryEnd))
     console.timeEnd('Get HRPosition')
 
-    console.log(totalETP, etpAffected)
+    //console.log(totalETP, etpAffected)
     const objResult = Object.fromEntries(resultMap)
 
     this.sendOk(ctx, { hr, totalETP, objResult })
   }
 }
+
+/**
+     let hr = await this.model.getCacheNew(backupId, true)
+
+    const key = backupId
+    const value = hr
+
+    console.time('set cache')
+    await setCacheValue(key, value, 'test')
+    console.timeEnd('set cache')
+
+    console.time('get cache')
+    const result = await getCacheValue(key, 'test')
+    console.timeEnd('get cache')
+
+    //console.log(result)
+    this.sendOk(ctx, { result })
+ */
