@@ -96,3 +96,9 @@ export const deleteCacheValue = async (key, cacheName) => {
     console.error(`❌ deleteCacheValue(${fullKey}) échoué :`, err)
   }
 }
+
+export const getObjectSizeInMB = (obj) => {
+  const str = JSON.stringify(obj)
+  const sizeInBytes = Buffer.byteLength(str, 'utf8')
+  return +(sizeInBytes / 1024 / 1024).toFixed(2) // en Mo
+}
