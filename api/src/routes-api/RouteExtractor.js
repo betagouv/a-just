@@ -21,7 +21,8 @@ import fs from 'node:fs'
 import { diff } from 'deep-diff'
 import { calculateETPForContentieux, generateAndIndexAllStableHRPeriods } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
-import { getCacheValue, setCacheValue } from '../utils/redis'
+import { getCacheValue, getObjectSizeInMB, setCacheValue } from '../utils/redis'
+import zlib from 'zlib'
 
 /**
  * Route de la page extrateur
@@ -312,6 +313,12 @@ export default class RouteExtractor extends Route {
     } else {
       console.log('✅ Cache Redis utilisé pour hr')
     }
+
+    const size = getObjectSizeInMB(hr)
+    console.log(`🔍 Poids de l'objet hr : ${size} Mo`)
+
+    const compressed = zlib.gzipSync(JSON.stringify(hr))
+    console.log('Taille HR compressée :', (compressed.length / 1024 / 1024).toFixed(2), 'Mo')
     console.timeEnd('Mise en cache')
 
     //hr = hr.slice(200, 250)
@@ -343,18 +350,12 @@ export default class RouteExtractor extends Route {
     )
     console.timeEnd('Get new query')
 
-    console.time('Get HRPosition')
-    const etpAffected = getHRPositions({}, hr, categories, queryContentieux, today(queryStart), today(queryEnd))
-    console.timeEnd('Get HRPosition')
-
-    //console.log(totalETP, etpAffected)
-    const objResult = Object.fromEntries(resultMap)
-
-    this.sendOk(ctx, { hr, totalETP, objResult })
+    this.sendOk(ctx, { hr, totalETP })
   }
 }
 
 /**
+ * 
      let hr = await this.model.getCacheNew(backupId, true)
 
     const key = backupId
@@ -370,4 +371,12 @@ export default class RouteExtractor extends Route {
 
     //console.log(result)
     this.sendOk(ctx, { result })
+ */
+/**
+    console.time('Get HRPosition')
+    const etpAffected = getHRPositions({}, hr, categories, queryContentieux, today(queryStart), today(queryEnd))
+    console.timeEnd('Get HRPosition')
+
+    //console.log(totalETP, etpAffected)
+    const objResult = Object.fromEntries(resultMap)
  */
