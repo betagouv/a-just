@@ -1,7 +1,8 @@
 import { minBy, orderBy, sumBy } from 'lodash'
-import { getTime, isDateGreaterOrEqual, today, workingDay } from '../utils/date'
+import { getTime, getWorkingDaysCount, isDateGreaterOrEqual, today, workingDay } from '../utils/date'
 import { checkAbort } from './abordTimeout'
 import { fixDecimal } from './number'
+import { IntervalTree } from './intervalTree'
 
 /**
  * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines
@@ -403,325 +404,120 @@ const HR_TO_TEST = {
   ],
   indisponibilities: [],
 }
-//console.log('findSituation - test 1', getEtpByDateAndPerson(447, new Date('2024-04-02T12:00:00.000Z'), HR_TO_TEST))
-
-export const buildIndexes = (hrList) => {
-  const indexes = {
-    timelineIndex: {},
-    contentieuxIndex: {},
-    categoryIndex: {},
-    hrData: {},
-  }
-
-  // Helper corrigé pour les dates
-  const getDayKey = (date) => {
-    const d = new Date(date)
-    return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
-  }
-
-  // Helper pour vérifier les jours ouvrés
-  const isWorkingDay = (date) => {
-    const day = new Date(date).getDay()
-    return day !== 0 && day !== 6 // Exclut samedi/dimanche
-  }
-
-  hrList.forEach((hr) => {
-    // 1. Données de base HR
-    indexes.hrData[hr.id] = {
-      etp: hr.situations?.[0]?.etp || 0,
-      indispos: (hr.indisponibilities || []).map((ind) => ({
-        start: getDayKey(ind.dateStart),
-        end: ind.dateStop ? getDayKey(ind.dateStop) : null,
-        percent: ind.percent,
-        type: ind.contentieux?.label || '',
-      })),
-      currentCategory: hr.situations?.[0]?.category?.id,
-    }
-
-    // 2. Index par catégorie
-    const categoryId = hr.situations?.[0]?.category?.id
-    if (categoryId) {
-      indexes.categoryIndex[categoryId] = indexes.categoryIndex[categoryId] || new Set()
-      indexes.categoryIndex[categoryId].add(hr.id)
-    }
-
-    // 3. Parcours des situations
-    ;(hr.situations || []).forEach((sit) => {
-      const startDate = getDayKey(sit.dateStart)
-      const endDate = sit.dateEnd ? getDayKey(sit.dateEnd) : getDayKey(new Date())
-
-      // 4. Parcours jour par jour
-      for (let day = startDate; day <= endDate; day += 86400000) {
-        if (!isWorkingDay(day)) continue
-
-        // 5. Index temporel
-        indexes.timelineIndex[day] = indexes.timelineIndex[day] || new Set()
-        indexes.timelineIndex[day].add(hr.id)
-
-        // 6. Index par contentieux
-        ;(sit.activities || []).forEach((act) => {
-          if (!act?.contentieux?.id) return
-
-          const contentieuxId = act.contentieux.id
-          indexes.contentieuxIndex[contentieuxId] = indexes.contentieuxIndex[contentieuxId] || {}
-          indexes.contentieuxIndex[contentieuxId][hr.id] = indexes.contentieuxIndex[contentieuxId][hr.id] || {
-            dates: new Set(),
-            percent: act.percent,
-            category: sit.category?.id,
-          }
-          indexes.contentieuxIndex[contentieuxId][hr.id].dates.add(day)
-        })
-      }
-    })
-  })
-
-  return indexes
-}
-
-export const getHRPositionsOptimized = (indexes, referentielId, dateStart, dateStop) => {
-  const results = {}
-  const startKey = dateStart.setHours(0, 0, 0, 0)
-  const endKey = dateStop.setHours(0, 0, 0, 0)
-
-  // 1. Trouver tous les HR concernés par ce contentieux
-  const hrIds = Object.keys(indexes.contentieuxIndex[referentielId] || {})
-
-  // 2. Calcul pour chaque catégorie
-  hrIds.forEach((hrId) => {
-    const hrInfo = indexes.contentieuxIndex[referentielId][hrId]
-    const categoryId = hrInfo.category
-    const hrData = indexes.hrData[hrId]
-
-    if (!categoryId) return
-
-    // Compter les jours concernés dans la période
-    let totalDays = 0
-    hrInfo.dates.forEach((dateKey) => {
-      if (dateKey >= startKey && dateKey <= endKey) totalDays++
-    })
-
-    if (totalDays === 0) return
-
-    // Calcul ETP pondéré (en tenant compte des indispos)
-    const avgIndispo = calculateAvgIndispo(hrData.indispos, startKey, endKey)
-
-    const effectiveETP = hrData.etp * (1 - avgIndispo)
-    const etpContentieux = effectiveETP * (hrInfo.percent / 100)
-
-    // Aggrégation par catégorie
-    results[categoryId] = results[categoryId] || {
-      etpt: 0,
-      indispo: 0,
-      reelEtp: 0,
-      count: 0,
-    }
-
-    results[categoryId].etpt += etpContentieux
-    results[categoryId].indispo += avgIndispo
-    results[categoryId].reelEtp += effectiveETP
-    results[categoryId].count++
-  })
-
-  // Formattage final
-  return Object.entries(results).map(([categoryId, data]) => ({
-    categoryId,
-    etpt: fixDecimal(data.etpt, 10000),
-    indispo: data.indispo / data.count,
-    reelEtp: fixDecimal(data.reelEtp, 10000),
-  }))
-}
-
-// Helper pour calculer l'indispo moyenne sur une période
-export const calculateAvgIndispo = (indispos, startKey, endKey) => {
-  let totalDays = 0
-  let indispoDays = 0
-
-  for (let day = startKey; day <= endKey; day += 86400000) {
-    if (!workingDay(new Date(day))) continue
-
-    totalDays++
-    const dayIndispo = indispos.find((ind) => day >= ind.start && (ind.end === null || day <= ind.end))
-    if (dayIndispo) indispoDays += dayIndispo.percent / 100
-  }
-
-  return totalDays > 0 ? indispoDays / totalDays : 0
-}
-
-export const formatHRData = (agent) => {
-  if (!agent || !agent.situations?.length) return []
-
-  const parseDate = (date) => (date ? new Date(date) : null)
-
-  const dateStart = parseDate(agent.dateStart)
-  const dateEnd = parseDate(agent.dateEnd) // peut être null
-
-  // 1. Préparation des situations triées
-  const sortedSituations = [...agent.situations].filter((s) => s.dateStart).sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart))
-
-  const result = []
-
-  for (let i = 0; i < sortedSituations.length; i++) {
-    const situation = sortedSituations[i]
-    const start = new Date(situation.dateStart)
-    const nextSituation = sortedSituations[i + 1]
-    let end = nextSituation ? new Date(nextSituation.dateStart) : null
-
-    // Cas où l'agent est toujours en poste sans dateEnd
-    if (!end && agent.dateEnd) end = new Date(agent.dateEnd)
-    if (!end && !agent.dateEnd) end = null // situation en cours
-
-    // 2. Application des indisponibilités
-    const periods = splitByIndispos(start, end, agent.indisponibilites || [])
-
-    for (const p of periods) {
-      const effectiveETP = situation.etp * (1 - p.absenceRate) // ajusté
-      result.push({
-        start: p.start,
-        end: p.end,
-        etp: roundETP(effectiveETP),
-        category: situation.category,
-        fonction: situation.fonction,
-        activities: situation.activities || [],
-      })
-    }
-  }
-
-  return result
-}
-
-// 3. Découpe une période stable en sous-périodes selon les indisponibilités
-export const splitByIndispos = (start, end, indispos) => {
-  const periods = []
-  const originEnd = end
-
-  const relevantIndispos = indispos
-    .filter((indispo) => {
-      const iStart = new Date(indispo.start)
-      const iEnd = new Date(indispo.end)
-      return (!end || iStart < end) && iEnd > start
-    })
-    .sort((a, b) => new Date(a.start) - new Date(b.start))
-
-  let current = new Date(start)
-
-  for (const indispo of relevantIndispos) {
-    const iStart = new Date(indispo.start)
-    const iEnd = new Date(indispo.end)
-
-    // Si l'indispo commence après la fin de la période => on saute
-    if (end && iStart >= end) break
-
-    if (iStart > current) {
-      // Période pleine activité avant l’indispo
-      periods.push({
-        start: new Date(current),
-        end: new Date(iStart),
-        absenceRate: 0,
-      })
-    }
-
-    // Chevauchement avec la période stable
-    const sliceStart = iStart < current ? current : iStart
-    const sliceEnd = end ? new Date(Math.min(iEnd, end)) : new Date(iEnd)
-
-    periods.push({
-      start: sliceStart,
-      end: sliceEnd,
-      absenceRate: indispo.percent / 100,
-    })
-
-    current = sliceEnd
-  }
-
-  // S'il reste une période après la dernière indispo
-  if (!end || current < end) {
-    periods.push({
-      start: new Date(current),
-      end: end,
-      absenceRate: 0,
-    })
-  }
-
-  return periods
-}
-
-// 4. Arrondi de l’ETP à 4 décimales
-export const roundETP = (value) => {
-  return Math.round((value + Number.EPSILON) * 10000) / 10000
-}
-
-// --- Fonctions utilitaires ---
-
-export const mergeOverlappingIndispos = (indispos) => {
-  if (!indispos.length) return []
-
-  indispos.sort((a, b) => a.dateStart - b.dateStart)
-  const merged = [indispos[0]]
-
-  for (let i = 1; i < indispos.length; i++) {
-    const last = merged[merged.length - 1]
-    const current = indispos[i]
-
-    if (current.dateStart <= last.dateStop) {
-      last.dateStop = new Date(Math.max(last.dateStop, current.dateStop))
-      last.percent = Math.max(last.percent, current.percent) // règle métier simple
-    } else {
-      merged.push(current)
-    }
-  }
-  return merged
-}
-
-export const getActiveSituation = (situations, date) => {
-  for (let i = 0; i < situations.length; i++) {
-    const current = situations[i]
-    const next = situations[i + 1]
-
-    const start = current.dateStart
-    const end = next?.dateStart || new Date(8640000000000000) // max Date
-
-    if (date >= start && date < end) {
-      return current
-    }
-  }
-  return null
-}
-
-export const getActiveIndispos = (indispos, start, end) => {
-  return indispos.filter((i) => i.dateStop > start && i.dateStart < end)
-}
-
-export const computeIndispoRatio = (indispos, start, end) => {
-  if (!indispos.length) return 0
-  const totalDuration = end - start
-  let covered = 0
-
-  for (const i of indispos) {
-    const overlapStart = i.dateStart > start ? i.dateStart : start
-    const overlapEnd = i.dateStop < end ? i.dateStop : end
-    const overlap = Math.max(0, overlapEnd - overlapStart)
-
-    covered += (overlap * (i.percent || 0)) / 100
-  }
-
-  return Math.min(1, covered / totalDuration) // ratio d’indispo
-}
 
 const { setImmediate: setImmediatePromise } = require('timers/promises')
 
-export const generateAllStableHRPeriods = async (agents) => {
-  const resultMap = new Map()
+let periodIdCounter = 0
+const generateUniqueId = () => {
+  return periodIdCounter++
+}
+
+export const generateAndIndexAllStableHRPeriods = async (agents) => {
+  const resultMap = new Map() // Map pour stocker les périodes par agent
+  const periodsDatabase = new Map() // Base de données centrale pour stocker les périodes avec un ID unique
+
+  const categoryIndex = new Map()
+  const functionIndex = new Map()
+  const contentieuxIndex = new Map()
+  const agentIndex = new Map() // Index par agentId pour faciliter l'accès aux périodes par agent
+  const intervalTree = new IntervalTree() // Arbre d'intervalle
 
   await Promise.all(
     agents.map(async (agent, index) => {
-      // Petite pause pour ne pas bloquer l’event loop
+      // Petite pause pour ne pas bloquer l'event loop
       if (index % 50 === 0) await setImmediatePromise()
-      const periods = generateStableHRPeriods(agent)
+
+      const periods = generateStableHRPeriods(agent) // Générer les périodes pour l'agent
+
+      // Pour chaque période générée, créer un ID unique et l'ajouter dans la base de données centrale
+      periods.forEach((period) => {
+        const periodId = generateUniqueId()
+
+        // Ajouter la période à la base de données centrale
+        periodsDatabase.set(periodId, {
+          agentId: agent.id,
+          start: period.start,
+          end: period.end,
+          etp: period.etp,
+          effectiveETP: period.effectiveETP,
+          fonction: period.fonction,
+          category: period.category,
+          activities: period.activities,
+          indisponibilities: period.indisponibilities,
+        })
+
+        // Ajouter cette période à l'index de la catégorie
+        if (!categoryIndex.has(period.category.id)) {
+          categoryIndex.set(period.category.id, [])
+        }
+        categoryIndex.get(period.category.id).push(periodId)
+
+        // Ajouter cette période à l'index de la fonction
+        if (!functionIndex.has(period.fonction.id)) {
+          functionIndex.set(period.fonction.id, [])
+        }
+        functionIndex.get(period.fonction.id).push(periodId)
+
+        // Ajouter cette période à l'index du contentieux (si applicable)
+        period.activities.forEach((activity) => {
+          const contentieuxId = activity.contentieux.id
+          if (!contentieuxIndex.has(contentieuxId)) {
+            contentieuxIndex.set(contentieuxId, [])
+          }
+          contentieuxIndex.get(contentieuxId).push(periodId)
+        })
+
+        // Ajouter cette période à l'index de l'agentId
+        if (!agentIndex.has(agent.id)) {
+          agentIndex.set(agent.id, [])
+        }
+        agentIndex.get(agent.id).push(periodId)
+
+        // Créer un Map pour stocker les contentieux avec leur pourcentage
+        const contentieuxMap = new Map()
+
+        // Ajouter chaque activité à l'index des contentieux
+        period.activities.forEach((activity) => {
+          const contentieuxId = activity.contentieux.id
+          contentieuxMap.set(contentieuxId, activity.percent) // Ajouter dans le map avec contentieuxId comme clé et percent comme valeur
+
+          // Ajouter cette période à l'index du contentieux
+          if (!contentieuxIndex.has(contentieuxId)) {
+            contentieuxIndex.set(contentieuxId, [])
+          }
+          contentieuxIndex.get(contentieuxId).push(periodId)
+        })
+
+        // Insérer cette période dans l'IntervalTree
+        const start = today(period.start)
+        const end = today(period.end)
+        intervalTree.insert(start, end, {
+          periodId,
+          agentId: agent.id,
+          categoryId: period.category.id,
+          start: period.start,
+          end: period.end,
+          effectiveETP: period.effectiveETP,
+          etp: period.etp,
+          activityIds: contentieuxMap,
+        })
+      })
+
+      // Stocker les périodes de l'agent dans le Map resultMap
       resultMap.set(agent.id, periods)
     }),
   )
 
-  return resultMap
+  // Retourner les résultats et les index
+  return {
+    resultMap, // Carte des périodes par agent
+    periodsDatabase, // Base de données centrale avec les périodes référencées
+    categoryIndex, // Index par catégorie
+    functionIndex, // Index par fonction
+    contentieuxIndex, // Index par contentieux
+    agentIndex, // Index par agentId
+    intervalTree, // L'IntervalTree des périodes
+  }
 }
 
 export const generateStableHRPeriods = (agent) => {
@@ -729,9 +525,9 @@ export const generateStableHRPeriods = (agent) => {
   const { id: agentId, dateStart: agentStart, dateEnd: agentEnd, situations = [], indisponibilities = [] } = agent
 
   // Affichage des informations de l'agent, des situations et des indisponibilités
-  console.log('Agent:', { agentId, dateStart: agentStart, dateEnd: agentEnd })
+  /**console.log('Agent:', { agentId, dateStart: agentStart, dateEnd: agentEnd })
   console.log('Situations:', situations)
-  console.log('Indisponibilités:', indisponibilities)
+  console.log('Indisponibilités:', indisponibilities)*/
 
   // Si l'agent n'a pas de date de début ou si aucune situation n'est définie, retourner un tableau vide
   if (!agentStart || situations.length === 0) return []
@@ -782,10 +578,10 @@ export const generateStableHRPeriods = (agent) => {
   // Tri des points de rupture pour avoir un ordre chronologique
   const sorted = [...breakpoints].sort((a, b) => a - b)
 
-  console.log(
+  /**console.log(
     '📍 Sorted breakpoints:',
     sorted.map((d) => d.toISOString()),
-  )
+  )*/
 
   const periods = [] // Tableau pour stocker les périodes générées
   let lastWasIndispoStop = false // Variable pour vérifier si la période précédente était causée par une indisponibilité
@@ -800,7 +596,7 @@ export const generateStableHRPeriods = (agent) => {
     const currentSituation = situations.sort((a, b) => new Date(b.dateStart) - new Date(a.dateStart)).find((s) => normalizeDate(s.dateStart) <= start)
 
     if (!currentSituation) {
-      console.warn(`⛔ Aucune situation trouvée pour la période ${start.toISOString()} → ${end.toISOString()}`)
+      //console.warn(`⛔ Aucune situation trouvée pour la période ${start.toISOString()} → ${end.toISOString()}`)
       continue
     }
 
@@ -854,17 +650,10 @@ export const generateStableHRPeriods = (agent) => {
     lastWasOneDayIndispoStop = false
     lastWasIndispoStop = isEndFromIndispoStop // Met à jour la variable pour la prochaine période
 
-    // Si le début de la période est après la fin, on l'ignore
-    if (start > end) {
-      console.warn(`⚠️ Période ignorée car start > end après ajustement: ${start.toISOString()} → ${end.toISOString()}`)
-      continue
-    }
-
     // Ajustement spécifique pour les indisponibilités d'une seule journée : fin de la période
     for (const indispo of indispoInPeriod) {
       const iStart = normalizeDate(indispo.dateStart)
       const iStop = normalizeDate(indispo.dateStop)
-      console.log(iStart, iStop, iStart.getTime() === iStop.getTime(), end.getTime() === iStart.getTime(), end)
       if (iStart.getTime() === iStop.getTime()) {
         lastWasOneDayIndispoStop = true
         end = normalizeDate(iStart) // Fixe la fin de la période au même jour
@@ -872,10 +661,16 @@ export const generateStableHRPeriods = (agent) => {
       }
     }
 
-    console.log(`✅ Période: ${start.toISOString()} → ${end.toISOString()}`)
+    // Si le début de la période est après la fin, on l'ignore
+    if (start > end) {
+      //console.warn(`⚠️ Période ignorée car start > end après ajustement: ${start.toISOString()} → ${end.toISOString()}`)
+      continue
+    }
+
+    /**console.log(`✅ Période: ${start.toISOString()} → ${end.toISOString()}`)
     console.log('  Situation:', { etp, fonctionId: fonction?.id, categoryId: category?.id })
     console.log('  Indispos:', indispoInPeriod.length, '→ Rate:', totalIndispoRate)
-    console.log('  Effective ETP:', effectiveETP)
+    console.log('  Effective ETP:', effectiveETP)*/
 
     // Ajouter la période calculée dans la liste des périodes
     periods.push({
@@ -891,195 +686,122 @@ export const generateStableHRPeriods = (agent) => {
     })
   }
 
-  console.log('📦 Résultat final:', periods)
-  return periods // Retourner la liste des périodes générées
-}
-export const generateStableHRPeriodsOptimized = (agent) => {
-  // Déstructuration des données de l'agent
-  const { id: agentId, dateStart: agentStart, dateEnd: agentEnd, situations = [], indisponibilities = [] } = agent
-
-  if (!agentStart || situations.length === 0) return []
-
-  // Fonction de normalisation des dates pour s'assurer qu'elles sont au format UTC 12h00
-  const normalizeDate = (date) => {
-    const d = new Date(date)
-    if (d.getUTCHours() === 22 || d.getUTCHours() === 23) {
-      d.setUTCDate(d.getUTCDate() + 1)
-      console.log('modified', d)
-    }
-    d.setUTCHours(12, 0, 0, 0) // On met l'heure à 12h00 pour les calculs
-    console.log(d)
-    return d
-  }
-
-  // Pré-traitement des données : normaliser les dates et préparer les objets
-  const normalizedSituations = situations.map((situation) => ({
-    ...situation,
-    normalizedStart: normalizeDate(situation.dateStart),
-    normalizedEnd: situation.dateEnd ? normalizeDate(situation.dateEnd) : null,
-  }))
-
-  const normalizedIndisponibilities = indisponibilities.map((indispo) => ({
-    ...indispo,
-    normalizedStart: normalizeDate(indispo.dateStart),
-    normalizedEnd: indispo.dateStop ? normalizeDate(indispo.dateStop) : null,
-  }))
-
-  // Création de la liste des points de rupture (breakpoints)
-  const breakpoints = new Set([normalizeDate(agentStart)])
-
-  normalizedSituations.forEach((situation) => {
-    breakpoints.add(situation.normalizedStart)
-    if (situation.normalizedEnd) breakpoints.add(situation.normalizedEnd)
-  })
-
-  normalizedIndisponibilities.forEach((indispo) => {
-    breakpoints.add(indispo.normalizedStart)
-    if (indispo.normalizedEnd) breakpoints.add(indispo.normalizedEnd)
-  })
-
-  breakpoints.add(agentEnd ? normalizeDate(agentEnd) : new Date(9999, 11, 31, 12))
-
-  // Tri des breakpoints pour avoir un ordre chronologique
-  const sortedBreakpoints = [...breakpoints].sort((a, b) => a - b)
-
-  const periods = []
-  let lastWasIndispoStop = false
-  let lastWasOneDayIndispoStop = false
-
-  // On parcourt les breakpoints pour générer les périodes
-  for (let i = 0; i < sortedBreakpoints.length - 1; i++) {
-    let start = new Date(sortedBreakpoints[i])
-    let end = new Date(sortedBreakpoints[i + 1])
-
-    // Trouver la situation active pour cette période
-    const currentSituation = normalizedSituations.find((s) => s.normalizedStart <= start)
-    if (!currentSituation) {
-      console.warn(`⛔ Aucune situation trouvée pour la période ${start.toISOString()} → ${end.toISOString()}`)
-      continue
-    }
-
-    const { etp, fonction, category, activities } = currentSituation
-
-    // Filtrage des indisponibilités affectant la période en cours
-    const indispoInPeriod = normalizedIndisponibilities.filter((i) => {
-      return i.normalizedStart < end && (i.normalizedEnd || new Date(9999, 11, 31, 12)) > start
-    })
-
-    // Calcul du taux d'indisponibilité total pendant cette période
-    const totalIndispoRate = indispoInPeriod.reduce((sum, i) => sum + (i.percent / 100 || 0), 0)
-
-    // Calcul de l'ETP effectif en fonction des indisponibilités
-    const effectiveETP = Math.max(0, etp * (1 - totalIndispoRate))
-
-    // Vérification si la fin de la période est causée par une indisponibilité
-    const isEndFromIndispoStop = normalizedIndisponibilities.some((i) => {
-      return i.normalizedEnd && i.normalizedEnd.getTime() === end.getTime()
-    })
-
-    // Réduction de la période si elle n'est pas causée par une indisponibilité
-    if (!isEndFromIndispoStop) {
-      end.setUTCDate(end.getUTCDate() - 1)
-    }
-
-    // Si la période précédente était due à une indisponibilité, on commence la période suivante au lendemain
-    if (lastWasIndispoStop && !lastWasOneDayIndispoStop) {
-      start.setUTCDate(start.getUTCDate() + 1)
-    }
-    lastWasOneDayIndispoStop = false
-    lastWasIndispoStop = isEndFromIndispoStop
-
-    if (start > end) {
-      console.warn(`⚠️ Période ignorée car start > end après ajustement: ${start.toISOString()} → ${end.toISOString()}`)
-      continue
-    }
-
-    // Ajustement spécifique pour les indisponibilités d'une seule journée : fin de la période
-    for (const indispo of indispoInPeriod) {
-      if (indispo.normalizedStart.getTime() === indispo.normalizedEnd.getTime()) {
-        lastWasOneDayIndispoStop = true
-        end = new Date(indispo.normalizedStart) // Fixe la fin de la période au même jour
-        break
-      }
-    }
-
-    // Ajouter la période calculée dans la liste des périodes
-    periods.push({
-      agentId,
-      start,
-      end,
-      etp,
-      effectiveETP,
-      fonction,
-      category,
-      activities,
-      indisponibilities: indispoInPeriod,
-    })
-  }
-
+  //console.log('📦 Résultat final:', periods)
   return periods // Retourner la liste des périodes générées
 }
 
-export const createDateIntervalIndex = (agentsPeriodsMap) => {
-  const index = new Map()
+export const searchPeriodsWithIndexes = (
+  intervalTree,
+  categoryIndex,
+  functionIndex,
+  contentieuxIndex,
+  queryStart,
+  queryEnd,
+  queryCategory,
+  queryFonctions,
+  queryContentieux,
+) => {
+  // Normaliser les dates de la requête
+  const startDate = today(queryStart)
+  const endDate = today(queryEnd)
 
-  // Itérer sur chaque agent dans le Map
-  agentsPeriodsMap.forEach((periods, agentId) => {
-    periods.forEach((period) => {
-      const start = new Date(period.start)
-      const end = new Date(period.end)
-
-      // Créer une clé d'index combinant start et end sous forme d'un intervalle unique
-      const periodKey = { start, end }
-
-      // Indexation unique par la clé période
-      if (!index.has(periodKey.start.toISOString())) {
-        index.set(periodKey.start.toISOString(), [])
-      }
-      index.get(periodKey.start.toISOString()).push({
-        agentId,
-        start: period.start,
-        end: period.end,
-        effectiveETP: period.effectiveETP,
-        etp: period.etp,
-      })
-    })
-  })
-
-  return index
-}
-
-export const searchPeriods = (index, startDate, endDate) => {
-  const start = new Date(startDate)
-  const end = new Date(endDate)
-
-  if (isNaN(start) || isNaN(end)) {
+  if (isNaN(startDate) || isNaN(endDate)) {
     console.error('Invalid start or end date.')
     return []
   }
 
-  const matchedPeriods = []
+  // Étape 1: Recherche des périodes par date avec l'Interval Tree
+  const periodsByDate = intervalTree.search(startDate, endDate)
+  //console.log('periodsByDate', periodsByDate.length)
 
-  // Recherche des périodes dans l'index
-  index.forEach((periods, date) => {
-    // Vérifier si la période chevauche l'intervalle
-    periods.forEach((period) => {
-      const periodStart = new Date(period.start)
-      const periodEnd = new Date(period.end)
+  // Étape 2: Recherche des périodes par catégorie
+  const periodsByCategory = queryCategory ? new Set(categoryIndex.get(queryCategory) || []) : new Set(periodsByDate.map((p) => p.periodId))
+  //console.log('periodsByCategory', periodsByCategory.length)
 
-      // 1. La période commence avant et finit dans l'intervalle
-      // 2. La période commence dans l'intervalle et finit après
-      // 3. La période couvre entièrement l'intervalle
-      if (
-        (periodStart < start && periodEnd >= start) || // La période commence avant et finit dans l'intervalle
-        (periodStart >= start && periodStart <= end) || // La période commence dans l'intervalle
-        (periodEnd >= start && periodEnd <= end) || // La période finit dans l'intervalle
-        (periodStart <= start && periodEnd >= end) // La période couvre entièrement l'intervalle
-      ) {
-        matchedPeriods.push(period)
-      }
-    })
+  // Étape 3: Recherche des périodes par fonction
+  const periodsByFunction =
+    queryFonctions && queryFonctions.length > 0
+      ? new Set(queryFonctions.flatMap((fonctionId) => functionIndex.get(fonctionId) || []))
+      : new Set(periodsByDate.map((p) => p.periodId))
+  //console.log('periodsByFunction', periodsByFunction.length)
+
+  // Étape 4: Recherche des périodes par contentieux
+  const periodsByContentieux = queryContentieux ? new Set(contentieuxIndex.get(queryContentieux) || []) : new Set(periodsByDate.map((p) => p.periodId))
+  //console.log('periodsByContentieux', periodsByContentieux.length)
+
+  // Étape 5: Filtrage des périodes en fonction des critères de catégorie, fonction et contentieux
+  const filteredPeriods = periodsByDate.filter((period) => {
+    // Vérification de l'inclusion des périodes par catégorie, fonction, contentieux
+    const isInCategory = periodsByCategory.has(period.periodId)
+    const isInFunction = periodsByFunction.has(period.periodId)
+    const isInContentieux = periodsByContentieux.has(period.periodId)
+
+    // Si tous les critères sont remplis, la période est valide
+    return isInCategory && isInFunction && isInContentieux
+  })
+  //console.log('filteredPeriods', filteredPeriods.length)
+
+  return filteredPeriods
+}
+
+export const calculateETPForContentieux = (
+  intervalTree,
+  categoryIndex,
+  functionIndex,
+  contentieuxIndex,
+  queryStart,
+  queryEnd,
+  queryCategory,
+  queryFonctions,
+  queryContentieux,
+  categories,
+) => {
+  // Recherche des périodes filtrées
+  const filteredPeriods = searchPeriodsWithIndexes(
+    intervalTree,
+    categoryIndex,
+    functionIndex,
+    contentieuxIndex,
+    queryStart,
+    queryEnd,
+    queryCategory,
+    queryFonctions,
+    queryContentieux,
+  )
+
+  // Pré-calculer les jours ouvrés dans la période de requête
+  const nbOfWorkingDaysQuery = getWorkingDaysCount(queryStart, queryEnd)
+
+  // Calculer l'ETP pour chaque période et totaliser l'ETP par catégorie
+  const etpByCategory = categories.reduce((acc, category) => {
+    acc[category.id] = 0
+    return acc
+  }, {})
+
+  // Calcul de l'ETP pour chaque période filtrée
+  filteredPeriods.forEach((period) => {
+    const activityPercentage = period.activityIds.get(queryContentieux) || 0
+    const effectiveETP = period.effectiveETP * (activityPercentage / 100)
+
+    // Ajustement des dates en fonction de l'intervalle de requête
+    const periodStart = Math.max(today(period.start), today(queryStart))
+    const periodEnd = Math.min(today(period.end), today(queryEnd))
+
+    // Nombre de jours ouvrés dans la période ajustée
+    const workingDays = getWorkingDaysCount(periodStart, periodEnd)
+
+    // Mise à jour de l'ETP par catégorie
+    if (period.categoryId) {
+      etpByCategory[period.categoryId] += (effectiveETP * workingDays) / nbOfWorkingDaysQuery
+    }
   })
 
-  return matchedPeriods
+  // Retourner les résultats triés par rang de la catégorie
+  return categories
+    .map((category) => ({
+      name: category.label,
+      totalEtp: fixDecimal(etpByCategory[category.id] || 0, 1000),
+      rank: category.rank,
+    }))
+    .sort((a, b) => a.rank - b.rank)
 }

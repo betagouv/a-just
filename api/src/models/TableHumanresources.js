@@ -12,6 +12,7 @@ import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGIST
 import { dbInstance } from './index'
 import { cloneDeep, orderBy } from 'lodash'
 import { checkAbort } from '../utils/abordTimeout'
+import { generateAndIndexAllStableHRPeriods } from '../utils/human-resource'
 
 /**
  * Cache des agents
@@ -902,6 +903,7 @@ export default (sequelizeInstance, Model) => {
     dateStart = today(dateStart)
     dateStop = today(dateStop)
     checkAbort(signal)
+    console.time('calculator-global')
 
     if (!selectedFonctionsIds && user && log === true) {
       // memorize first execution by user
@@ -950,12 +952,14 @@ export default (sequelizeInstance, Model) => {
     console.timeEnd('calculator-5')
 
     console.time('calculator-6')
-    let hr = await Model.getCache(backupId)
+    //let hr = await Model.getCache(backupId)
+    let hr = await Model.models.HumanResources.getCacheNew(backupId, true)
     checkAbort(signal)
     console.timeEnd('calculator-6')
 
     console.time('calculator-6-2')
     // filter by fonctions
+    /**
     hr = hr
       .map((human) => {
         let situations = human.situations || []
@@ -973,7 +977,9 @@ export default (sequelizeInstance, Model) => {
         }
       })
       .filter((h) => h.situations.length)
-
+ */
+    const { resultMap, periodsDatabase, categoryIndex, functionIndex, contentieuxIndex, agentIndex, intervalTree } =
+      await generateAndIndexAllStableHRPeriods(hr)
     console.timeEnd('calculator-6-2')
 
     console.time('calculator-7')
@@ -983,7 +989,7 @@ export default (sequelizeInstance, Model) => {
 
     console.time('calculator-8')
     list = syncCalculatorDatas(
-      Model.models,
+      { categoryIndex, functionIndex, contentieuxIndex, agentIndex, intervalTree },
       list,
       nbMonth,
       activities,
@@ -1020,14 +1026,15 @@ export default (sequelizeInstance, Model) => {
     }))
 
     console.timeEnd('calculator-8')
+    console.timeEnd('calculator-global')
 
     return { fonctions, list }
   }
-
+  /**
   setTimeout(() => {
     console.log('Preload human resources data')
     Model.onPreload()
   }, 10000)
-
+ */
   return Model
 }
