@@ -2,7 +2,7 @@ import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
 import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
-import { getEtpByDateAndPerson } from './human-resource'
+import { calculateETPForContentieux, getEtpByDateAndPerson } from './human-resource'
 import { appendFileSync } from 'fs'
 import { checkAbort } from './abordTimeout'
 
@@ -180,7 +180,19 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
 
   // ETP moyen sur la période
 
-  const etpAffected = getHRPositions(models, hr, categories, referentielId, dateStart, dateStop)
+  const etpAffected = calculateETPForContentieux(
+    models.intervalTree, // L'interval tree préalablement créé
+    models.categoryIndex, // L'index par catégorie
+    models.functionIndex, // L'index par fonction
+    models.contentieuxIndex, // L'index par contentieux
+    dateStart, // Date de début de la période recherchée
+    dateStop, // Date de fin de la période recherchée
+    undefined, // ID de la catégorie recherchée
+    undefined, // Liste des fonctions recherchées
+    referentielId, // ID du contentieux recherché
+    categories,
+  )
+
   const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 100) : 0
   const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 100) : 0
   const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 100) : 0
@@ -200,13 +212,37 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
 
   if (loadDetails === true) {
     // ETP début
-    etpAffectedBf = getHRPositions(models, hr, categories, referentielId, dateStart, oneMonthAfterStart)
+    etpAffectedBf = calculateETPForContentieux(
+      models.intervalTree, // L'interval tree préalablement créé
+      models.categoryIndex, // L'index par catégorie
+      models.functionIndex, // L'index par fonction
+      models.contentieuxIndex, // L'index par contentieux
+      dateStart, // Date de début de la période recherchée
+      oneMonthAfterStart, // Date de fin de la période recherchée
+      undefined, // ID de la catégorie recherchée
+      undefined, // Liste des fonctions recherchées
+      referentielId, // ID du contentieux recherché
+      categories,
+    )
+
     etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 100) : 0
     etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 100) : 0
     etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 100) : 0
 
     // ETP fin
-    etpAffectedAf = getHRPositions(models, hr, categories, referentielId, oneMonthBeforeEnd, dateStop)
+    etpAffectedAf = calculateETPForContentieux(
+      models.intervalTree, // L'interval tree préalablement créé
+      models.categoryIndex, // L'index par catégorie
+      models.functionIndex, // L'index par fonction
+      models.contentieuxIndex, // L'index par contentieux
+      oneMonthBeforeEnd, // Date de début de la période recherchée
+      dateStop, // Date de fin de la période recherchée
+      undefined, // ID de la catégorie recherchée
+      undefined, // Liste des fonctions recherchées
+      referentielId, // ID du contentieux recherché
+      categories,
+    )
+
     etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 100) : 0
     etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 100) : 0
     etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 100) : 0
@@ -295,7 +331,19 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
 
   // Calcul des sorties moyennes 12 derniers mois à compter de la date de fin selectionnée dans le calculateur
   const meanOutCs = (activitesEnd || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesEnd, 'sorties') / 12 : null
-  const etpByCategory = getHRPositions(models, hr, categories, referentielId, startCs, endCs)
+  const etpByCategory = calculateETPForContentieux(
+    models.intervalTree, // L'interval tree préalablement créé
+    models.categoryIndex, // L'index par catégorie
+    models.functionIndex, // L'index par fonction
+    models.contentieuxIndex, // L'index par contentieux
+    startCs, // Date de début de la période recherchée
+    endCs, // Date de fin de la période recherchée
+    undefined, // ID de la catégorie recherchée
+    undefined, // Liste des fonctions recherchées
+    referentielId, // ID du contentieux recherché
+    categories,
+  )
+
   const etpMagCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[0].totalEtp, 100) : 0
   const etpFonCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[1].totalEtp, 100) : 0
 
