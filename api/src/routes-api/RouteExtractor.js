@@ -21,7 +21,7 @@ import fs from 'node:fs'
 import { diff } from 'deep-diff'
 import { calculateETPForContentieux, generateAndIndexAllStableHRPeriods } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
-import { getCacheValue, getObjectSizeInMB, setCacheValue } from '../utils/redis'
+import { getCacheValue, getObjectSizeInMB, loadOrWarmHR, setCacheValue } from '../utils/redis'
 import zlib from 'zlib'
 
 /**
@@ -302,23 +302,7 @@ export default class RouteExtractor extends Route {
     const categories = await this.models.HRCategories.getAll()
 
     console.time('Mise en cache')
-    let hr = await getCacheValue(backupId, 'hrBackup')
-
-    if (!hr) {
-      hr = await this.model.getCacheNew(backupId, true)
-      console.log('🔄 Cache Redis manquant → recalcul hr')
-
-      // Stocke en cache (TTL de 1h ici, ou à adapter)
-      await setCacheValue(backupId, hr, 'hrBackup', 3600)
-    } else {
-      console.log('✅ Cache Redis utilisé pour hr')
-    }
-
-    const size = getObjectSizeInMB(hr)
-    console.log(`🔍 Poids de l'objet hr : ${size} Mo`)
-
-    const compressed = zlib.gzipSync(JSON.stringify(hr))
-    console.log('Taille HR compressée :', (compressed.length / 1024 / 1024).toFixed(2), 'Mo')
+    const hr = await loadOrWarmHR(backupId)
     console.timeEnd('Mise en cache')
 
     //hr = hr.slice(200, 250)
@@ -329,11 +313,14 @@ export default class RouteExtractor extends Route {
       await generateAndIndexAllStableHRPeriods(hr)
     console.timeEnd('Pré-formatage')
 
-    const queryStart = '2025-06-16T12:00:00.000Z'
-    const queryEnd = '2025-06-16T12:00:00.000Z'
-    const queryCategory = undefined
-    const queryFonctions = undefined //[22, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 38, 39, 36, 56, 35, 57]
-    const queryContentieux = 497
+    // 🔹 Requête ETP spécifique
+    const query = {
+      start: '2025-06-16T12:00:00.000Z',
+      end: '2025-06-16T12:00:00.000Z',
+      category: undefined,
+      fonctions: undefined,
+      contentieux: 497,
+    }
 
     console.time('Get new query')
     const totalETP = calculateETPForContentieux(
@@ -341,11 +328,11 @@ export default class RouteExtractor extends Route {
       categoryIndex, // L'index par catégorie
       functionIndex, // L'index par fonction
       contentieuxIndex, // L'index par contentieux
-      queryStart, // Date de début de la période recherchée
-      queryEnd, // Date de fin de la période recherchée
-      queryCategory, // ID de la catégorie recherchée
-      queryFonctions, // Liste des fonctions recherchées
-      queryContentieux, // ID du contentieux recherché
+      query.start, // Date de début de la période recherchée
+      query.end, // Date de fin de la période recherchée
+      query.category, // ID de la catégorie recherchée
+      query.fonctions, // Liste des fonctions recherchées
+      query.contentieux, // ID du contentieux recherché
       categories,
     )
     console.timeEnd('Get new query')
