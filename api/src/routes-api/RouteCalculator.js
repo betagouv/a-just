@@ -100,7 +100,7 @@ export default class RouteCalculator extends Route {
       switch (type) {
         case 'entrees':
           {
-            const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites.length) {
               const acti = activites[0]
               if (acti.entrees !== null) {

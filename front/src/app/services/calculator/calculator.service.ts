@@ -98,7 +98,9 @@ export class CalculatorService extends MainClass {
         selectedFonctionsIds,
         loadChildrens,
       })
-      .then((data) => data.data || [])
+      .then((data) => {
+        return data.data || []
+      })
   }
 
   changePeriodSelected(monthToAdd: number) {

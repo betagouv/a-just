@@ -11,6 +11,7 @@ import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
 import { selfRouteToSyncJuridiction } from '../utils/docker'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Route des fiches
@@ -248,7 +249,8 @@ export default class RouteHumanResources extends Route {
     date = today(date)
 
     console.time('filter list 1')
-    let hr = await this.model.getCache(backupId)
+    //let hr = await this.model.getCache(backupId)
+    let hr = await loadOrWarmHR(backupId, this.models)
     console.timeEnd('filter list 1')
 
     console.time('filter list 2')
