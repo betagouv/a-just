@@ -76,6 +76,12 @@ export const setCacheValue = async (key, value, cacheName, ttl = defaultTTL) => 
     const compressed = await gzip(json)
     const encoded = compressed.toString('base64')
     await client.setEx(fullKey, ttl, encoded)
+
+    const rawSize = getObjectSizeInMB(value)
+    const compressedSize = (compressed.length / 1024 / 1024).toFixed(2)
+
+    console.log(`🔍 Taille HR brute : ${rawSize} Mo`)
+    console.log(`📦 Taille HR compressée : ${compressedSize} Mo`)
   } catch (err) {
     console.error(`❌ setCacheValue(${fullKey}) échoué :`, err)
   }
@@ -101,4 +107,19 @@ export const getObjectSizeInMB = (obj) => {
   const str = JSON.stringify(obj)
   const sizeInBytes = Buffer.byteLength(str, 'utf8')
   return +(sizeInBytes / 1024 / 1024).toFixed(2) // en Mo
+}
+
+export const loadOrWarmHR = async (backupId) => {
+  const cacheKey = 'hrBackup'
+  let hr = await getCacheValue(backupId, cacheKey)
+
+  if (!hr) {
+    console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
+    hr = await this.model.getCacheNew(backupId, true)
+    await setCacheValue(backupId, hr, cacheKey, 3600)
+  } else {
+    console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
+  }
+
+  return hr
 }
