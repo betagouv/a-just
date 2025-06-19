@@ -3,6 +3,7 @@ import { getTime, getWorkingDaysCount, isDateGreaterOrEqual, today, workingDay }
 import { checkAbort } from './abordTimeout'
 import { fixDecimal } from './number'
 import { IntervalTree } from './intervalTree'
+import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 
 /**
  * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines
@@ -99,7 +100,6 @@ export async function getEtpByDateAndPersonSimu(referentielId, date, hr, signal 
   const { currentSituation: situation, nextSituation } = findSituation(hr, date)
 
   if (situation && situation.category && situation.category.id) {
-    // console.log(referentielId, date, hr)
     const activitiesFiltred = await (situation.activities || []).filter((a) => a.contentieux && referentielId.includes(a.contentieux.id))
     checkAbort(signal)
 
@@ -259,9 +259,6 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
           const dateStop = today(hra.dateStop)
           if (isDateGreaterOrEqual(dateStop, date)) {
             const d1 = new Date(2024, 8, 20)
-            if (hr.id === 36732) {
-              //console.log('date passed for indispo count',date,'end indispo date',dateStop)
-            }
 
             if (!ddgFilter) return true
             else if (absLabels.includes(hra.contentieux.label) === false) return true
@@ -277,9 +274,6 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
     })
   }
 
-  if (hr.id === 36429 && indisponibilities.length) {
-    console.log('date indisp', date, indisponibilities[0].percent)
-  }
   return indisponibilities
 }
 
@@ -510,12 +504,12 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
 
   // Retourner les résultats et les index
   return {
-    resultMap, // Carte des périodes par agent
+    resultMap, // Structure de donnée des périodes par agent
     periodsDatabase, // Base de données centrale avec les périodes référencées
     categoryIndex, // Index par catégorie
     functionIndex, // Index par fonction
     contentieuxIndex, // Index par contentieux
-    agentIndex, // Index par agentId
+    agentIndex, // Index par agentId (pas encore utilisé mais peut servir pour certaines fonctionnalités)
     intervalTree, // L'IntervalTree des périodes
   }
 }
@@ -690,17 +684,12 @@ export const generateStableHRPeriods = (agent) => {
   return periods // Retourner la liste des périodes générées
 }
 
-export const searchPeriodsWithIndexes = (
-  intervalTree,
-  categoryIndex,
-  functionIndex,
-  contentieuxIndex,
-  queryStart,
-  queryEnd,
-  queryCategory,
-  queryFonctions,
-  queryContentieux,
-) => {
+export const searchPeriodsWithIndexes = (indexes, queryStart, queryEnd, queryCategory, queryFonctions, queryContentieux) => {
+  let intervalTree = indexes.intervalTree // L'interval tree préalablement créé
+  let categoryIndex = indexes.categoryIndex // L'index par catégorie
+  let functionIndex = indexes.functionIndex // L'index par fonction
+  let contentieuxIndex = indexes.contentieuxIndex // L'index par contentieux
+
   // Normaliser les dates de la requête
   const startDate = today(queryStart)
   const endDate = today(queryEnd)
@@ -744,33 +733,12 @@ export const searchPeriodsWithIndexes = (
   return filteredPeriods
 }
 
-export const calculateETPForContentieux = (
-  intervalTree,
-  categoryIndex,
-  functionIndex,
-  contentieuxIndex,
-  queryStart,
-  queryEnd,
-  queryCategory,
-  queryFonctions,
-  queryContentieux,
-  categories,
-) => {
+export const calculateETPForContentieux = (indexes, query, categories) => {
   // Recherche des périodes filtrées
-  const filteredPeriods = searchPeriodsWithIndexes(
-    intervalTree,
-    categoryIndex,
-    functionIndex,
-    contentieuxIndex,
-    queryStart,
-    queryEnd,
-    queryCategory,
-    queryFonctions,
-    queryContentieux,
-  )
+  const filteredPeriods = searchPeriodsWithIndexes(indexes, query.start, query.end, query.category, query.fonctions, query.contentieux)
 
   // Pré-calculer les jours ouvrés dans la période de requête
-  const nbOfWorkingDaysQuery = getWorkingDaysCount(queryStart, queryEnd)
+  const nbOfWorkingDaysQuery = getWorkingDaysCount(query.start, query.end)
 
   // Calculer l'ETP pour chaque période et totaliser l'ETP par catégorie
   const etpByCategory = categories.reduce((acc, category) => {
@@ -780,12 +748,12 @@ export const calculateETPForContentieux = (
 
   // Calcul de l'ETP pour chaque période filtrée
   filteredPeriods.forEach((period) => {
-    const activityPercentage = period.activityIds.get(queryContentieux) || 0
+    const activityPercentage = period.activityIds.get(query.contentieux) || 0
     const effectiveETP = period.effectiveETP * (activityPercentage / 100)
 
     // Ajustement des dates en fonction de l'intervalle de requête
-    const periodStart = Math.max(today(period.start), today(queryStart))
-    const periodEnd = Math.min(today(period.end), today(queryEnd))
+    const periodStart = Math.max(today(period.start), today(query.start))
+    const periodEnd = Math.min(today(period.end), today(query.end))
 
     // Nombre de jours ouvrés dans la période ajustée
     const workingDays = getWorkingDaysCount(periodStart, periodEnd)
@@ -804,4 +772,40 @@ export const calculateETPForContentieux = (
       rank: category.rank,
     }))
     .sort((a, b) => a.rank - b.rank)
+}
+
+export const generateHRIndexes = async (hr) => {
+  const { resultMap, periodsDatabase, categoryIndex, functionIndex, contentieuxIndex, agentIndex, intervalTree } = await generateAndIndexAllStableHRPeriods(hr)
+
+  return {
+    resultMap,
+    periodsDatabase,
+    categoryIndex,
+    functionIndex,
+    contentieuxIndex,
+    agentIndex,
+    intervalTree,
+  }
+}
+
+export const getCategoryIdFromLabel = (categoryLabel) => {
+  switch (categoryLabel) {
+    case MAGISTRATS:
+      return 1
+    case FONCTIONNAIRES:
+      return 2
+    default:
+      return 3
+  }
+}
+
+export const loadFonctionsForCategory = async (categorySelected, models) => {
+  const all = await models.HRFonctions.getAll()
+  const categoryId = getCategoryIdFromLabel(categorySelected)
+  return all.filter((f) => f.categoryId === categoryId)
+}
+
+export const loadReferentiels = async (backupId, contentieuxIds, models) => {
+  const all = await models.ContentieuxReferentiels.getReferentiels(backupId)
+  return all.filter((c) => contentieuxIds.includes(c.id))
 }

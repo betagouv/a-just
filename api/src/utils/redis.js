@@ -109,13 +109,13 @@ export const getObjectSizeInMB = (obj) => {
   return +(sizeInBytes / 1024 / 1024).toFixed(2) // en Mo
 }
 
-export const loadOrWarmHR = async (backupId) => {
+export const loadOrWarmHR = async (backupId, models) => {
   const cacheKey = 'hrBackup'
   let hr = await getCacheValue(backupId, cacheKey)
 
   if (!hr) {
     console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
-    hr = await this.model.getCacheNew(backupId, true)
+    hr = await models.HumanResources.getCacheNew(backupId, true)
     await setCacheValue(backupId, hr, cacheKey, 3600)
   } else {
     console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)

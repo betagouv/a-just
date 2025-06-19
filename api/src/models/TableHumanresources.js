@@ -12,7 +12,15 @@ import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGIST
 import { dbInstance } from './index'
 import { cloneDeep, orderBy } from 'lodash'
 import { checkAbort } from '../utils/abordTimeout'
-import { generateAndIndexAllStableHRPeriods } from '../utils/human-resource'
+import {
+  generateAndIndexAllStableHRPeriods,
+  generateHRIndexes,
+  getCategoryIdFromLabel,
+  loadFonctionsForCategory,
+  loadReferentiels,
+} from '../utils/human-resource'
+import { cleanCalculationItemForUser } from '../utils/hrAccess'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Cache des agents
@@ -897,147 +905,44 @@ export default (sequelizeInstance, Model) => {
     Model.onPreload()
   }
 
-  Model.onCalculate = async (
-    { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds, loadChildrens },
-    user,
-    log = true,
-    signal = null,
-  ) => {
+  Model.onCalculate = async ({ backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }, user, log = true) => {
+    console.time('Calculator-global')
+
     dateStart = today(dateStart)
     dateStop = today(dateStop)
-    checkAbort(signal)
-    console.time('calculator-global')
 
     if (!selectedFonctionsIds && user && log === true) {
       // memorize first execution by user
       await Model.models.Logs.addLog(EXECUTE_CALCULATOR, user.id)
     }
 
-    let fonctions = await Model.models.HRFonctions.getAll()
-    checkAbort(signal)
-
-    let categoryIdSelected = -1
-    switch (categorySelected) {
-      case MAGISTRATS:
-        categoryIdSelected = 1
-        break
-      case FONCTIONNAIRES:
-        categoryIdSelected = 2
-        break
-      default:
-        categoryIdSelected = 3
-        break
-    }
-
-    fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
-
-    console.time('calculator-1')
-    const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
-    checkAbort(signal)
-    console.timeEnd('calculator-1')
-
-    console.time('calculator-2')
-    const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : []
-    checkAbort(signal)
-    console.timeEnd('calculator-2')
-
-    console.time('calculator-3')
-    let list = emptyCalulatorValues(referentiels)
-    console.timeEnd('calculator-3')
-
-    console.time('calculator-4')
-    const nbMonth = getNbMonth(dateStart, dateStop)
-    console.timeEnd('calculator-4')
-
-    console.time('calculator-5')
     const categories = await Model.models.HRCategories.getAll()
-    checkAbort(signal)
-    console.timeEnd('calculator-5')
+    const fonctions = await loadFonctionsForCategory(categorySelected, Model.models)
+    const referentiels = await loadReferentiels(backupId, contentieuxIds, Model.models)
+    const activities = await Model.models.Activities.getAll(backupId)
+    const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : [] // référentiel de temps moyen
+    const nbMonth = getNbMonth(dateStart, dateStop)
 
-    console.time('calculator-6')
-    //let hr = await Model.getCache(backupId)
-    let hr = await Model.models.HumanResources.getCacheNew(backupId, true)
-    checkAbort(signal)
-    console.timeEnd('calculator-6')
+    let list = emptyCalulatorValues(referentiels)
 
-    console.time('calculator-6-2')
-    // filter by fonctions
-    /**
-    hr = hr
-      .map((human) => {
-        let situations = human.situations || []
+    console.time('Mise en cache')
+    const hr = await loadOrWarmHR(backupId, Model.models)
+    console.timeEnd('Mise en cache')
 
-        situations = situations.filter(
-          (s) =>
-            (s.category && s.category.id !== categoryIdSelected) ||
-            (selectedFonctionsIds && selectedFonctionsIds.length && s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) !== -1) ||
-            (!selectedFonctionsIds && s.category && s.category.id === categoryIdSelected),
-        )
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(hr)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
 
-        return {
-          ...human,
-          situations,
-        }
-      })
-      .filter((h) => h.situations.length)
- */
-    const { resultMap, periodsDatabase, categoryIndex, functionIndex, contentieuxIndex, agentIndex, intervalTree } =
-      await generateAndIndexAllStableHRPeriods(hr)
-    console.timeEnd('calculator-6-2')
-
-    console.time('calculator-7')
-    const activities = await Model.models.Activities.getAll(backupId, !loadChildrens ? referentiels.map((r) => r.id) : null)
-    checkAbort(signal)
-    console.timeEnd('calculator-7')
-
-    console.time('calculator-8')
-    list = syncCalculatorDatas(
-      { categoryIndex, functionIndex, contentieuxIndex, agentIndex, intervalTree },
-      list,
-      nbMonth,
-      activities,
-      dateStart,
-      dateStop,
-      hr,
-      categories,
-      optionsBackups,
-      loadChildrens ? true : false,
-      signal,
-    )
-    checkAbort(signal)
-
-    const cleanDataToSent = (item) => ({
-      ...item,
-      etpMag: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.etpMag : null,
-      magRealTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magRealTimePerCase : null,
-      magCalculateCoverage: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateCoverage : null,
-      magCalculateDTESInMonths: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateDTESInMonths : null,
-      magCalculateTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateTimePerCase : null,
-      magCalculateOut: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateOut : null,
-      etpFon: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.etpFon : null,
-      fonRealTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonRealTimePerCase : null,
-      fonCalculateCoverage: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateCoverage : null,
-      fonCalculateDTESInMonths: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateDTESInMonths : null,
-      fonCalculateTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateTimePerCase : null,
-      fonCalculateOut: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateOut : null,
-      etpCont: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_CONTRACTUEL) ? item.etpCont : null,
-    })
-
+    console.time('Calculs cockpit')
+    list = syncCalculatorDatas(indexes, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups)
     list = list.map((item) => ({
-      ...cleanDataToSent(item),
-      childrens: (item.childrens || []).map(cleanDataToSent),
+      ...cleanCalculationItemForUser(item, user),
+      childrens: (item.childrens || []).map((child) => cleanCalculationItemForUser(child, user)),
     }))
-
-    console.timeEnd('calculator-8')
-    console.timeEnd('calculator-global')
+    console.timeEnd('Calculs cockpit')
+    console.timeEnd('Calculator-global')
 
     return { fonctions, list }
   }
-  /**
-  setTimeout(() => {
-    console.log('Preload human resources data')
-    Model.onPreload()
-  }, 10000)
- */
   return Model
 }

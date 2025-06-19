@@ -19,7 +19,7 @@ import { withAbortTimeout } from '../utils/abordTimeout'
 import deepEqual from 'fast-deep-equal'
 import fs from 'node:fs'
 import { diff } from 'deep-diff'
-import { calculateETPForContentieux, generateAndIndexAllStableHRPeriods } from '../utils/human-resource'
+import { calculateETPForContentieux, generateAndIndexAllStableHRPeriods, generateHRIndexes } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
 import { getCacheValue, getObjectSizeInMB, loadOrWarmHR, setCacheValue } from '../utils/redis'
 import zlib from 'zlib'
@@ -302,42 +302,32 @@ export default class RouteExtractor extends Route {
     const categories = await this.models.HRCategories.getAll()
 
     console.time('Mise en cache')
-    const hr = await loadOrWarmHR(backupId)
+    let hr = await loadOrWarmHR(backupId, this.models)
     console.timeEnd('Mise en cache')
 
-    //hr = hr.slice(200, 250)
+    hr = hr.slice(259, 260)
     //hr = hr.filter((h) => [2763].includes(h.id))
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(hr)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
 
-    console.time('Pré-formatage')
-    const { resultMap, periodsDatabase, categoryIndex, functionIndex, contentieuxIndex, agentIndex, intervalTree } =
-      await generateAndIndexAllStableHRPeriods(hr)
-    console.timeEnd('Pré-formatage')
-
+    console.log(indexes.resultMap, 'length', hr.length)
     // 🔹 Requête ETP spécifique
     const query = {
-      start: '2025-06-16T12:00:00.000Z',
-      end: '2025-06-16T12:00:00.000Z',
-      category: undefined,
-      fonctions: undefined,
-      contentieux: 497,
+      start: '2025-01-01T12:00:00.000Z', // Date de début de la période recherchée
+      end: '2025-06-01T12:00:00.000Z', // Date de fin de la période recherchée
+      category: undefined, // ID de la catégorie recherchée
+      fonctions: undefined, // Liste des fonctions recherchées
+      contentieux: 440, // ID du contentieux recherché
     }
 
     console.time('Get new query')
-    const totalETP = calculateETPForContentieux(
-      intervalTree, // L'interval tree préalablement créé
-      categoryIndex, // L'index par catégorie
-      functionIndex, // L'index par fonction
-      contentieuxIndex, // L'index par contentieux
-      query.start, // Date de début de la période recherchée
-      query.end, // Date de fin de la période recherchée
-      query.category, // ID de la catégorie recherchée
-      query.fonctions, // Liste des fonctions recherchées
-      query.contentieux, // ID du contentieux recherché
-      categories,
-    )
+    const totalETPold = getHRPositions(models, hr, categories, query.contentieux, today(query.start), today(query.end))
+    const totalETPnew = calculateETPForContentieux(indexes, query, categories)
     console.timeEnd('Get new query')
 
-    this.sendOk(ctx, { hr, totalETP })
+    console.log(totalETPold[0].totalEtp, totalETPnew[0].totalEtp, totalETPold[0].totalEtp - totalETPnew[0].totalEtp)
+    this.sendOk(ctx, { hr, totalETPnew })
   }
 }
 
