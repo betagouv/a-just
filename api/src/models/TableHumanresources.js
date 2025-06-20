@@ -944,5 +944,24 @@ export default (sequelizeInstance, Model) => {
 
     return { fonctions, list }
   }
+
+  Model.getAllJuridictionsWithSizes = async (sequelize) => {
+    console.log(sequelize)
+    const results = await Model.sequelize.query(
+      `
+      SELECT backup_id AS id, COUNT(*) AS size
+      FROM "HumanResources"
+      WHERE deleted_at IS NULL
+      GROUP BY backup_id
+      ORDER BY size DESC
+      `,
+      {
+        type: Model.sequelize.QueryTypes.SELECT,
+      },
+    )
+
+    return results.map(({ id, size }) => ({ id: Number(id), size: Number(size) }))
+  }
+
   return Model
 }
