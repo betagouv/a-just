@@ -83,11 +83,6 @@ export default class App extends AppBase {
     if (isPrimaryInstance) {
       db.migrations().then(() => {
         db.seeders().then(async () => {
-          // Lancement asynchrone du warmup de cache
-          this.warmupRedisCache().catch((err) => {
-            console.error('❌ Erreur lors du warmup Redis :', err)
-          })
-
           startCrons(this) // démarrage des crons
           console.log('--- IS READY ---', config.port)
           this.isReady()
@@ -97,6 +92,13 @@ export default class App extends AppBase {
       console.log('--- IS READY ---', config.port)
       this.isReady()
     }
+
+    // ❗ Warmup lancé en arrière-plan pour éviter timeout de Scalingo
+    setTimeout(() => {
+      this.warmupRedisCache().catch((err) => {
+        console.error('❌ Erreur warmup Redis (décalé) :', err)
+      })
+    }, 1000)
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
