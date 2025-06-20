@@ -364,7 +364,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     // if no situation and createdAt is more than 6 hours ago
-    if (this.currentHR.situations.length === 0 && this.currentHR.createdAt && getTime() - getTime(this.currentHR.createdAt) > 6 * 60 * 60 * 1000) {
+    if (this.currentHR.situations.length === 0 && this.currentHR.createdAt && getTime() - getTime(this.currentHR.createdAt) > 60 * 1000) {
       this.onEditIndex = null
       return
     }

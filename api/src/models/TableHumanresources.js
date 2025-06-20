@@ -168,7 +168,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    return list.filter((h) => h.situations && h.situations.length) // remove hr without situation
+    return list
   }
 
   /**

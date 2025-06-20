@@ -131,7 +131,7 @@ export default class RouteHumanResources extends Route {
 
       if (onRemoveHR) {
         this.sendOk(ctx, 'Ok')
-        await selfRouteToSyncJuridiction(camelCaseReturn.backupId)
+        await selfRouteToSyncJuridiction(onRemoveHR.backupId)
         await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
           hrId,
         })
@@ -302,10 +302,10 @@ export default class RouteHumanResources extends Route {
       })
 
     // if filter by user access to categories
-    if (categories.length !== allCategories.length) {
-      const ids = categories.map((c) => c.id)
-      hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
-    }
+    console.log('categories', categories)
+    console.log('allCategories', allCategories)
+    const ids = categories.map((c) => c.id)
+    hr = hr.filter((h) => h.situations.length === 0 || (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
     console.timeEnd('filter list 7')
 
     this.sendOk(ctx, {
@@ -321,6 +321,10 @@ export default class RouteHumanResources extends Route {
           let etp = (currentSituation && currentSituation.etp) || null
           if (etp < 0) {
             etp = 0
+          }
+
+          if (person.id === 37189) {
+            console.log(person)
           }
 
           return {
