@@ -946,7 +946,6 @@ export default (sequelizeInstance, Model) => {
   }
 
   Model.getAllJuridictionsWithSizes = async (sequelize) => {
-    console.log(sequelize)
     const results = await Model.sequelize.query(
       `
       SELECT backup_id AS id, COUNT(*) AS size
