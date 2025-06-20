@@ -1,4 +1,5 @@
 import { join } from 'path'
+import 'dotenv/config'
 import { App as AppBase, middlewares } from 'koa-smart'
 const { i18n, compress, cors, addDefaultBody, logger } = middlewares
 import koaBody from 'koa-body'
@@ -18,8 +19,7 @@ import { styleSha1Generate } from './utils/csp'
 import * as Sentry from '@sentry/node'
 import authBasic from 'http-auth'
 import { writeFileSync } from 'fs'
-import { mode } from 'crypto-js'
-import { loadOrWarmHR } from './utils/redis'
+import { getFullKey, getRedisClient, loadOrWarmHR, waitForRedis } from './utils/redis'
 
 const os = require('os')
 console.log('HOST NAME', os.hostname())
@@ -293,7 +293,6 @@ export default class App extends AppBase {
       async (ctx, next) => {
         if (ctx.url.includes('/ap-bo/') && basicAuth) {
           await basicAuth.check((req, res, err) => {
-            console.log('ici')
             if (err) {
               throw err
             } else {
@@ -332,28 +331,83 @@ export default class App extends AppBase {
     process.exit()
   }
 
-  async warmupRedisCache() {
-    console.time('warmupRedisCache')
-    const jurisdictions = await this.models.HumanResources.getAllJuridictionsWithSizes()
-    const maxAtOnce = 5
+  async warmupRedisCache(force = false) {
+    await waitForRedis()
+    const redis = getRedisClient()
 
-    console.log(`🚀 Warmup Redis : ${jurisdictions.length} juridictions...`)
-
-    const chunks = []
-    for (let i = 0; i < jurisdictions.length; i += maxAtOnce) {
-      chunks.push(jurisdictions.slice(i, i + maxAtOnce))
+    if (!redis) {
+      console.warn('⚠️ Redis non disponible, warmup ignoré.')
+      return
     }
 
-    for (const chunk of chunks) {
-      console.log(`🧊 Warmup batch : [${chunk.map((j) => j.id).join(', ')}]`)
-      const results = await Promise.allSettled(chunk.map((jur) => loadOrWarmHR(jur.id, this.models)))
-      results.forEach((res, i) => {
-        if (res.status === 'rejected') {
-          console.error(`❌ Échec warmup juridiction ${chunk[i].id}:`, res.reason)
+    const lockKey = 'warmup-redis-lock'
+    const lockTTL = 300
+    const lockId = `${Date.now()}-${Math.random()}`
+    let hasLock = false
+
+    try {
+      const lockSet = await redis.set(lockKey, lockId, { NX: true, EX: lockTTL })
+      if (!lockSet) {
+        console.log('⛔️ Warmup déjà en cours, on skip.')
+        return
+      }
+      hasLock = true
+
+      console.log(`🚀 Début du warmupRedisCache @ ${new Date().toISOString()} (force=${force})`)
+      console.time('warmupRedisCache')
+
+      const jurisdictions = await this.models.HumanResources.getAllJuridictionsWithSizes()
+      const maxAtOnce = 5
+
+      const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
+
+      for (const chunk of chunks) {
+        const ids = chunk.map((j) => j.id)
+        console.log(`🧊 Warmup batch : [${ids.join(', ')}]`)
+
+        const results = await Promise.allSettled(
+          ids.map(async (jurId) => {
+            try {
+              const fullKey = getFullKey('hrBackup', jurId)
+
+              if (force) {
+                await redis.del(fullKey)
+                if (process.env.NODE_ENV !== 'production') {
+                  console.log(`🧹 Cache supprimé pour ${fullKey}`)
+                }
+              }
+
+              await loadOrWarmHR(jurId, this.models)
+            } catch (err) {
+              console.error(`❌ Juridiction ${jurId} échouée`, err)
+              throw err
+            }
+          }),
+        )
+
+        const failures = results.filter((r) => r.status === 'rejected')
+        if (failures.length > 0) {
+          console.warn(`⚠️ ${failures.length} juridiction(s) échouée(s) dans ce batch.`)
         }
-      })
+      }
+
+      console.timeEnd('warmupRedisCache')
+      console.log('✅ Warmup Redis terminé')
+    } catch (err) {
+      console.error('❌ Erreur warmupRedisCache:', err)
+    } finally {
+      if (hasLock) {
+        try {
+          const currentLock = await redis.get(lockKey)
+          if (currentLock === lockId) {
+            await redis.del(lockKey)
+          } else {
+            console.warn('⚠️ Lock expiré ou pris par un autre process — non supprimé')
+          }
+        } catch (err) {
+          console.error('❌ Impossible de libérer le lock Redis', err)
+        }
+      }
     }
-    console.timeEnd('warmupRedisCache')
-    console.log('✅ Warmup Redis terminé')
   }
 }

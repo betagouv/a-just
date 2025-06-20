@@ -12,12 +12,12 @@ const defaultTTL = 3600 // 1h
 
 const useCompression = true // met à false pour débug
 
-const getFullKey = (cacheName, key) => `${cacheName}:${key}`
-
-// Connexion Redis
+export const getFullKey = (cacheName, key) => `${cacheName}:${key}`
+let redisReady = Promise.resolve()
 if (config.redis) {
-  const loadRedis = async () => {
+  redisReady = (async () => {
     try {
+      console.log('🔧 config.redis =', config.redis)
       client = await createClient({ url: config.redis })
         .on('error', (err) => console.error('❌ Redis Client Error', err))
         .connect()
@@ -27,8 +27,7 @@ if (config.redis) {
       console.error('❌ Échec connexion Redis:', err)
       client = null
     }
-  }
-  loadRedis()
+  })()
 }
 
 // === GET ===
@@ -123,3 +122,7 @@ export const loadOrWarmHR = async (backupId, models) => {
 
   return hr
 }
+
+export const getRedisClient = () => client
+
+export const waitForRedis = () => redisReady

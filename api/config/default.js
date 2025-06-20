@@ -30,8 +30,8 @@ module.exports = {
    */
   database: {
     url: process.env.DATABASE_URL,
-    logging: (msg) => console.log(msg),
-    //logging: false,
+    //logging: (msg) => console.log(msg),
+    logging: false,
   },
   /**
    * Code du cryptage JWT
@@ -59,7 +59,9 @@ module.exports = {
    * Préchargement de toutes les jurictions ? (Prend 30s et de la mémoire)
    */
   preloadHumanResourcesDatas: false,
-
+  /**
+   * Variable url redis
+   */
   redis: process.env.REDIS_URL,
   /**
    * Nombre de jour travaillé / an d'un magistrat
