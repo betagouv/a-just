@@ -667,12 +667,17 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         allPersonIds = allPersonIds.concat(l.hrFiltered.map((h) => h.id))
       })
 
-      this.allPersonsFiltered = list.map((person) => {
-        return {
-          ...person,
-          isIn: allPersonIds.includes(person.id),
-        }
-      })
+      console.log('allPersonIds', allPersonIds, this.allPersons)
+      console.log('list', list)
+      this.allPersonsFiltered = [
+        ...list.map((person) => {
+          return {
+            ...person,
+            isIn: allPersonIds.includes(person.id),
+          }
+        }),
+        ...this.allPersons.filter((person) => !person.category).map((p) => ({ ...p, isIn: false })),
+      ]
     }
 
     console.log('this.allPersonsFiltered', this.allPersonsFiltered)
