@@ -86,19 +86,18 @@ export default class App extends AppBase {
           startCrons(this) // démarrage des crons
           console.log('--- IS READY ---', config.port)
           this.isReady()
+          // ❗ Warmup lancé en arrière-plan pour éviter timeout de Scalingo
+          setTimeout(() => {
+            this.warmupRedisCache().catch((err) => {
+              console.error('❌ Erreur warmup Redis (décalé) :', err)
+            })
+          }, 1000)
         })
       })
     } else {
       console.log('--- IS READY ---', config.port)
       this.isReady()
     }
-
-    // ❗ Warmup lancé en arrière-plan pour éviter timeout de Scalingo
-    setTimeout(() => {
-      this.warmupRedisCache().catch((err) => {
-        console.error('❌ Erreur warmup Redis (décalé) :', err)
-      })
-    }, 1000)
 
     const limiter = RateLimit.middleware({
       interval: { min: 5 }, // 5 minutes = 5*60*1000
