@@ -106,8 +106,8 @@ export const setCacheValue = async (key, value, cacheName, ttl = defaultTTL) => 
     const rawSize = getObjectSizeInMB(value)
     const compressedSize = (compressed.length / 1024 / 1024).toFixed(2)
 
-    console.log(`🔍 Taille HR brute : ${rawSize} Mo`)
-    console.log(`📦 Taille HR compressée : ${compressedSize} Mo`)
+    //console.log(`🔍 Taille HR brute : ${rawSize} Mo`)
+    //console.log(`📦 Taille HR compressée : ${compressedSize} Mo`)
   } catch (err) {
     console.error(`❌ setCacheValue(${fullKey}) échoué :`, err)
   }
@@ -140,11 +140,11 @@ export const loadOrWarmHR = async (backupId, models) => {
   let hr = await getCacheValue(backupId, cacheKey)
 
   if (!hr) {
-    console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
+    //console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
     hr = await models.HumanResources.getCacheNew(backupId, true)
     await setCacheValue(backupId, hr, cacheKey, 3600)
   } else {
-    console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
+    //console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
   }
 
   return hr
