@@ -365,7 +365,7 @@ export default class App extends AppBase {
       const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
 
       for (const chunk of chunks) {
-        console.log(process.memoryUsage())
+        //console.log(process.memoryUsage())
 
         const ids = chunk.map((j) => j.id)
         console.log(`🧊 Warmup batch : [${ids.join(', ')}]`)
@@ -378,7 +378,7 @@ export default class App extends AppBase {
               if (force) {
                 await redis.del(fullKey)
                 if (process.env.NODE_ENV !== 'production') {
-                  console.log(`🧹 Cache supprimé pour ${fullKey}`)
+                  //console.log(`🧹 Cache supprimé pour ${fullKey}`)
                 }
               }
 
