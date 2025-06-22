@@ -343,15 +343,23 @@ export default class App extends AppBase {
     }
 
     const lockKey = 'warmup-redis-lock'
-    const lockTTL = 300 // en secondes
+    const lockTTL = process.env.NODE_ENV === 'production' ? 300 : 30 // TTL réduit en dev
     const lockId = `${Date.now()}-${Math.random()}`
     let hasLock = false
 
     try {
+      if (force) {
+        const deleted = await redis.del(lockKey)
+        if (deleted) {
+          console.warn('🧨 Lock supprimé manuellement (force=true)')
+        }
+      }
+
       const lockSet = await redis.set(lockKey, lockId, { NX: true, EX: lockTTL })
       if (!lockSet) {
         const currentLock = await redis.get(lockKey)
-        console.log(`⛔️ Warmup déjà en cours, on skip. Lock actuel : ${currentLock}`)
+        const ttl = await redis.ttl(lockKey)
+        console.log(`⛔️ Warmup déjà en cours, on skip. Lock actuel : ${currentLock} (expire dans ${ttl}s)`)
         return
       }
 
@@ -365,39 +373,22 @@ export default class App extends AppBase {
       const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
 
       for (const chunk of chunks) {
-        //console.log(process.memoryUsage())
+        await this.asyncForEach(chunk, async (jur) => {
+          const jurId = jur.id
+          try {
+            const fullKey = getFullKey('hrBackup', jurId)
 
-        const ids = chunk.map((j) => j.id)
-        console.log(`🧊 Warmup batch : [${ids.join(', ')}]`)
-
-        const results = await Promise.allSettled(
-          ids.map(async (jurId) => {
-            try {
-              const fullKey = getFullKey('hrBackup', jurId)
-
-              if (force) {
-                await redis.del(fullKey)
-                if (process.env.NODE_ENV !== 'production') {
-                  //console.log(`🧹 Cache supprimé pour ${fullKey}`)
-                }
-              }
-
-              const hr = await loadOrWarmHR(jurId, this.models)
-              if (!hr || typeof hr !== 'object') {
-                console.warn(`⚠️ Donnée HR vide ou invalide pour ${jurId}, skip setCache`)
-                return
-              }
-            } catch (err) {
-              console.error(`❌ Juridiction ${jurId} échouée`, err)
-              throw err
+            if (force) {
+              await redis.del(fullKey)
             }
-          }),
-        )
 
-        const failures = results.filter((r) => r.status === 'rejected')
-        if (failures.length > 0) {
-          console.warn(`⚠️ ${failures.length} juridiction(s) échouée(s) dans ce batch.`)
-        }
+            await loadOrWarmHR(jurId, this.models)
+          } catch (err) {
+            console.error(`❌ Juridiction ${jurId} échouée`, err)
+          }
+        })
+
+        await this.sleep(200) // petite pause entre les batchs
       }
 
       console.timeEnd('warmupRedisCache')
@@ -440,4 +431,12 @@ export default class App extends AppBase {
 
     throw new Error(`❌ PostgreSQL inaccessible après ${maxRetries} tentatives`)
   }
+
+  asyncForEach = async (array, fn) => {
+    for (let i = 0; i < array.length; i++) {
+      await fn(array[i], i)
+    }
+  }
+
+  sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 }

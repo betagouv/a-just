@@ -42,6 +42,7 @@ export const initRedis = () => {
           reconnectStrategy: (retries) => Math.min(retries * 100, 1000),
           keepAlive: true,
         },
+        maxRetriesPerRequest: 0,
       })
 
       client.on('error', (err) => {
