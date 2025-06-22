@@ -16,7 +16,11 @@ export const getFullKey = (cacheName, key) => `${cacheName}:${key}`
 
 let redisReady = Promise.resolve()
 
-export const getRedisClient = () => client
+export const getRedisClient = () => {
+  if (client && client.isReady) return client
+  console.warn('⚠️ Redis client non prêt ou indisponible')
+  return null
+}
 
 export const waitForRedis = () => redisReady
 
@@ -51,6 +55,7 @@ export const initRedis = () => {
     } catch (err) {
       console.error('❌ Échec connexion Redis:', err)
       client = null
+      return client
     }
   })()
 
