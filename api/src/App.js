@@ -327,33 +327,27 @@ export default class App extends AppBase {
 
   async warmupRedisCache(force = false) {
     await waitForRedis()
-    console.log('✅ Redis prêt!')
-
     const redis = getRedisClient()
 
-    //await redis.del('warmup-redis-lock')
-
-    if (!redis) {
-      console.warn('⚠️ Redis non disponible, warmup ignoré.')
+    if (!redis?.isReady) {
+      console.warn('⚠️ Redis non prêt, warmup ignoré.')
       return
     }
 
     const lockKey = 'warmup-redis-lock'
-    const lockTTL = 300
+    const lockTTL = 300 // en secondes
     const lockId = `${Date.now()}-${Math.random()}`
     let hasLock = false
 
     try {
       const lockSet = await redis.set(lockKey, lockId, { NX: true, EX: lockTTL })
       if (!lockSet) {
-        console.log('⛔️ Warmup déjà en cours, on skip.')
         const currentLock = await redis.get(lockKey)
-        console.log(`⛔️ Lock déjà pris : ${currentLock}`)
+        console.log(`⛔️ Warmup déjà en cours, on skip. Lock actuel : ${currentLock}`)
         return
       }
 
       hasLock = true
-
       console.log(`🚀 Début du warmupRedisCache @ ${new Date().toISOString()} (force=${force})`)
       console.time('warmupRedisCache')
 
@@ -363,6 +357,8 @@ export default class App extends AppBase {
       const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
 
       for (const chunk of chunks) {
+        console.log(process.memoryUsage())
+
         const ids = chunk.map((j) => j.id)
         console.log(`🧊 Warmup batch : [${ids.join(', ')}]`)
 
@@ -400,14 +396,13 @@ export default class App extends AppBase {
       if (hasLock) {
         try {
           const currentLock = await redis.get(lockKey)
-
           if (!currentLock) {
             console.warn('⚠️ Aucun lock trouvé — il a probablement expiré avant la fin du warmup.')
           } else if (currentLock === lockId) {
             await redis.del(lockKey)
             console.log('🔓 Lock Redis libéré proprement.')
           } else {
-            console.warn(`⚠️ Lock toujours actif mais détenu par une autre instance : ${currentLock}`)
+            console.warn(`⚠️ Lock détenu par une autre instance : ${currentLock}`)
           }
         } catch (err) {
           console.error('❌ Erreur lors de la tentative de libération du lock Redis :', err)

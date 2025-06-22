@@ -13,21 +13,48 @@ const defaultTTL = 3600 // 1h
 const useCompression = true // met à false pour débug
 
 export const getFullKey = (cacheName, key) => `${cacheName}:${key}`
+
 let redisReady = Promise.resolve()
-if (config.redis) {
+
+export const getRedisClient = () => client
+
+export const waitForRedis = () => redisReady
+
+export const initRedis = () => {
+  if (!config.redis) {
+    console.warn('⚠️ Pas de config Redis')
+    return
+  }
+
+  if (client) return redisReady
+
   redisReady = (async () => {
     try {
       console.log('🔧 config.redis =', config.redis)
-      client = await createClient({ url: config.redis })
-        .on('error', (err) => console.error('❌ Redis Client Error', err))
-        .connect()
 
+      client = createClient({
+        url: config.redis,
+        socket: {
+          reconnectStrategy: (retries) => Math.min(retries * 100, 1000),
+          keepAlive: true,
+        },
+      })
+
+      client.on('error', (err) => {
+        console.error('❌ Redis Client Error', err)
+      })
+
+      await client.connect()
       console.log('✅ Redis connecté')
+
+      return client
     } catch (err) {
       console.error('❌ Échec connexion Redis:', err)
       client = null
     }
   })()
+
+  return redisReady
 }
 
 // === GET ===
@@ -123,6 +150,7 @@ export const loadOrWarmHR = async (backupId, models) => {
   return hr
 }
 
-export const getRedisClient = () => client
-
-export const waitForRedis = () => redisReady
+// Initialisation immédiate si config présente
+if (config.redis) {
+  initRedis()
+}
