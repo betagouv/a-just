@@ -216,6 +216,14 @@ export default class App extends AppBase {
     this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
     this.koaApp.proxy = true
 
+    process.on('uncaughtException', (err) => {
+      console.error('🛑 Uncaught Exception:', err)
+    })
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('🛑 Unhandled Rejection at:', promise, 'reason:', reason)
+    })
+
     // 🧠 Migration + seed uniquement sur l’instance principale
     if (isPrimaryInstance) {
       await db.migrations()
@@ -374,7 +382,11 @@ export default class App extends AppBase {
                 }
               }
 
-              await loadOrWarmHR(jurId, this.models)
+              const hr = await loadOrWarmHR(jurId, this.models)
+              if (!hr || typeof hr !== 'object') {
+                console.warn(`⚠️ Donnée HR vide ou invalide pour ${jurId}, skip setCache`)
+                return
+              }
             } catch (err) {
               console.error(`❌ Juridiction ${jurId} échouée`, err)
               throw err
