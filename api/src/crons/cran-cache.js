@@ -3,7 +3,7 @@ import { CronJob } from 'cron'
 const cacheCron = async (env) => {
   // CRON chaque dimanche à 23h59
   //  const warmupEachSundayNight = new CronJob('59 23 * * 0', async function () {
-  const warmupEvery5Minutes = new CronJob('*/6 * * * *', async function () {
+  const warmupEvery5Minutes = new CronJob('*/5 * * * *', async function () {
     console.log('START CRON : WARMUP REDIS CACHE')
     try {
       await env.warmupRedisCache(true) // adapte si le nom diffère
