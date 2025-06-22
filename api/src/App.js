@@ -387,7 +387,8 @@ export default class App extends AppBase {
             console.error(`❌ Juridiction ${jurId} échouée`, err)
           }
         })
-
+        const used = process.memoryUsage()
+        console.log('🧠 Heap used (MB):', Math.round(used.heapUsed / 1024 / 1024))
         await this.sleep(200) // petite pause entre les batchs
       }
 
@@ -400,7 +401,8 @@ export default class App extends AppBase {
         try {
           const currentLock = await redis.get(lockKey)
           if (!currentLock) {
-            console.warn('⚠️ Aucun lock trouvé — il a probablement expiré avant la fin du warmup.')
+            const ttl = await redis.ttl(lockKey)
+            console.warn(`⚠️ Aucun lock trouvé (TTL restant : ${ttl}) — il a expiré ou Redis a été déconnecté`)
           } else if (currentLock === lockId) {
             await redis.del(lockKey)
             console.log('🔓 Lock Redis libéré proprement.')
