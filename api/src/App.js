@@ -216,6 +216,7 @@ export default class App extends AppBase {
     this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
     this.koaApp.proxy = true
 
+    
     process.on('uncaughtException', (err) => {
       console.error('🛑 Uncaught Exception:', err)
     })
