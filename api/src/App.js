@@ -228,6 +228,13 @@ export default class App extends AppBase {
       console.error('🛑 Unhandled Rejection at:', promise, 'reason:', reason)
     })
 
+    process.on('SIGTERM', () => {
+      console.log('⚠️ SIGTERM reçu, le container va s’arrêter')
+    })
+    process.on('SIGINT', () => {
+      console.log('⚠️ SIGINT reçu, interruption')
+    })
+
     // 🧠 Migration + seed uniquement sur l’instance principale
     if (isPrimaryInstance) {
       await db.migrations()
