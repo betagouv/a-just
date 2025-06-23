@@ -48,6 +48,13 @@ export const initRedis = () => {
       client.on('error', (err) => {
         console.error('❌ Redis Client Error', err)
       })
+      client.on('end', () => {
+        console.warn('⚠️ Connexion Redis terminée')
+      })
+
+      client.on('reconnecting', () => {
+        console.warn('♻️ Tentative de reconnexion Redis...')
+      })
 
       await client.connect()
       console.log('✅ Redis connecté')
