@@ -50,7 +50,7 @@ export const initRedis = () => {
           client.ping().catch((err) => console.error('❌ Ping Redis échoué', err))
         }
         //console.log(client?.isReady)
-      }, 5000)
+      }, 30000)
 
       client.on('error', (err) => {
         console.error('❌ Redis Client Error', err)

@@ -155,27 +155,6 @@ const cspConfig = {
 const os = require('os')
 console.log('HOST NAME', os.hostname())
 
-/*var os = require('os')
-var osu = require('node-os-utils')
-
-var cpu = osu.cpu
-
-// CONTROL EVERY 30S
-setInterval(() => {
-  console.log('MEM', os.freemem(), os.totalmem(), os.freemem() / os.totalmem())
-  var count = cpu.count() // 8
-
-  cpu.usage().then((cpuPercentage) => {
-    console.log('CPU', count, cpuPercentage) // 10.38
-  })
-
-  var osCmd = osu.osCmd
-
-  osCmd.whoami().then((userName) => {
-    console.log('WHO I AM', userName) // admin
-  })
-}, 30000)*/
-
 let basicAuth = null
 
 if (config.authPasswordFile) {
@@ -246,14 +225,11 @@ export default class App extends AppBase {
       this.isReady()
 
       // ⏳ Warmup redis différé pour éviter timeout Scalingo
-      /**
       setTimeout(() => {
         this.warmupRedisCache().catch((err) => {
           console.error('❌ Erreur warmup Redis (décalé) :', err)
         })
       }, 1000)
-
-       */
     } else {
       console.log('--- IS READY ---', config.port)
       this.isReady()
@@ -382,7 +358,7 @@ export default class App extends AppBase {
       console.time('warmupRedisCache')
 
       const jurisdictions = await this.models.HumanResources.getAllJuridictionsWithSizes()
-      const maxAtOnce = 1
+      const maxAtOnce = 5
 
       let chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
 
@@ -398,13 +374,13 @@ export default class App extends AppBase {
               await redis.del(fullKey)
             }
 
-            //await loadOrWarmHR(jurId, this.models)
+            await loadOrWarmHR(jurId, this.models)
           } catch (err) {
             console.error(`❌ Juridiction ${jurId} échouée`, err)
           }
         })
-        const used = process.memoryUsage()
-        console.log('🧠 Heap used (MB):', Math.round(used.heapUsed / 1024 / 1024))
+        //const used = process.memoryUsage()
+        //console.log('🧠 Heap used (MB):', Math.round(used.heapUsed / 1024 / 1024))
         await this.sleep(100) // petite pause entre les batchs
       }
 
