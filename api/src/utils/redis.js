@@ -53,7 +53,14 @@ export const initRedis = () => {
 
       client.on('error', (err) => {
         console.error('❌ Redis Client Error', err)
+        if (err.message.includes('Socket closed unexpectedly')) {
+          console.warn('♻️ Reconnexion forcée Redis')
+          client.quit().catch(() => {})
+          client = null
+          initRedis()
+        }
       })
+
       client.on('end', () => {
         console.warn('⚠️ Connexion Redis terminée')
       })
