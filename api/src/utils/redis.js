@@ -45,6 +45,12 @@ export const initRedis = () => {
         maxRetriesPerRequest: 0,
       })
 
+      setInterval(() => {
+        if (client?.isReady) {
+          client.ping().catch((err) => console.error('❌ Ping Redis échoué', err))
+        }
+      }, 5000)
+
       client.on('error', (err) => {
         console.error('❌ Redis Client Error', err)
       })
