@@ -246,11 +246,14 @@ export default class App extends AppBase {
       this.isReady()
 
       // ⏳ Warmup redis différé pour éviter timeout Scalingo
+      /**
       setTimeout(() => {
         this.warmupRedisCache().catch((err) => {
           console.error('❌ Erreur warmup Redis (décalé) :', err)
         })
       }, 1000)
+
+       */
     } else {
       console.log('--- IS READY ---', config.port)
       this.isReady()
