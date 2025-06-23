@@ -6,7 +6,7 @@ const cacheCron = async (env) => {
   const warmupEvery5Minutes = new CronJob('*/5 * * * *', async function () {
     console.log('START CRON : WARMUP REDIS CACHE')
     try {
-      await env.warmupRedisCache(true) // adapte si le nom diffère
+      await env.warmupRedisCache(true)
       console.log('END CRON : WARMUP REDIS CACHE')
     } catch (err) {
       console.error('ERROR CRON : WARMUP REDIS CACHE', err)
