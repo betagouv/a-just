@@ -379,7 +379,7 @@ export default class App extends AppBase {
       console.time('warmupRedisCache')
 
       const jurisdictions = await this.models.HumanResources.getAllJuridictionsWithSizes()
-      const maxAtOnce = 5
+      const maxAtOnce = 2
 
       const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
 
@@ -400,7 +400,7 @@ export default class App extends AppBase {
         })
         const used = process.memoryUsage()
         console.log('🧠 Heap used (MB):', Math.round(used.heapUsed / 1024 / 1024))
-        await this.sleep(200) // petite pause entre les batchs
+        await this.sleep(500) // petite pause entre les batchs
       }
 
       console.timeEnd('warmupRedisCache')
