@@ -379,9 +379,11 @@ export default class App extends AppBase {
       console.time('warmupRedisCache')
 
       const jurisdictions = await this.models.HumanResources.getAllJuridictionsWithSizes()
-      const maxAtOnce = 2
+      const maxAtOnce = 1
 
-      const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
+      let chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
+
+      chunks = chunks.slice(0, 2)
 
       for (const chunk of chunks) {
         await this.asyncForEach(chunk, async (jur) => {
@@ -393,14 +395,14 @@ export default class App extends AppBase {
               await redis.del(fullKey)
             }
 
-            await loadOrWarmHR(jurId, this.models)
+            //await loadOrWarmHR(jurId, this.models)
           } catch (err) {
             console.error(`❌ Juridiction ${jurId} échouée`, err)
           }
         })
         const used = process.memoryUsage()
         console.log('🧠 Heap used (MB):', Math.round(used.heapUsed / 1024 / 1024))
-        await this.sleep(500) // petite pause entre les batchs
+        await this.sleep(100) // petite pause entre les batchs
       }
 
       console.timeEnd('warmupRedisCache')
