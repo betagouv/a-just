@@ -439,7 +439,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         idsDetected = delta
         let etp = findSituation !== null ? findSituation.etp : null
         if (findIndispos.length !== 0 && etp === null) {
-          etp = 0
+          etp = null
         }
 
         if (currentDateEnd && currentDateEnd.getTime() <= currentDate.getTime()) {
@@ -553,6 +553,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     } else {
       this.showActuelPanel = true
     }
+
+    console.log('this.showActuelPanel', this.histories)
 
     this.preOpenSituation()
   }
