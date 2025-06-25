@@ -302,8 +302,6 @@ export default class RouteHumanResources extends Route {
       })
 
     // if filter by user access to categories
-    console.log('categories', categories)
-    console.log('allCategories', allCategories)
     const ids = categories.map((c) => c.id)
     hr = hr.filter((h) => h.situations.length === 0 || (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
     console.timeEnd('filter list 7')
@@ -321,10 +319,6 @@ export default class RouteHumanResources extends Route {
           let etp = (currentSituation && currentSituation.etp) || null
           if (etp < 0) {
             etp = 0
-          }
-
-          if (person.id === 37189) {
-            console.log(person)
           }
 
           return {
