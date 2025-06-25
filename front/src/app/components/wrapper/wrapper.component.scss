@@ -249,6 +249,8 @@
       z-index: 200;
 
       .menu-item {
+        color: white;
+        text-decoration: none !important;
 
         &.disconnect,
         a,
@@ -371,6 +373,8 @@
   .menu-item {
     display: block;
     padding: 13px 4px 13px 13px;
+    text-decoration: none;
+    color: #3a3a3a;
 
     &.top {
       cursor: pointer;
@@ -396,6 +400,9 @@
     }
 
     a {
+      text-decoration: none;
+      color: #000091;
+
       p {
         margin-top: 8px;
       }
@@ -415,6 +422,7 @@
     }
 
     &.selected {
+      color: #000091;
 
       a,
       p {
