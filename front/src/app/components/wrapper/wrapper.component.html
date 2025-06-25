@@ -31,11 +31,10 @@
     </div>
 
     <div class="menu-scrollable">
-      <div class="menu-item top" *ngFor="let item of menu" [class.selected]="isSelected(item)">
-        <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
-          {{ item.label }}
-        </a>
-      </div>
+      <a class="menu-item top" *ngFor="let item of menu" [routerLink]="['/' + item.path]"
+        [class.selected]="isSelected(item)" (click)="onSelect('/' + item.path)">
+        {{ item.label }}
+      </a>
 
       <div class="menu-item top">
         <div class="menu-item tools" (click)="openTools = !openTools">
