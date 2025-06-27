@@ -88,7 +88,7 @@ export default class RouteCalculator extends Route {
     dateStart = today(dateStart)
     dateStop = today(dateStop)
 
-    const hrList = await this.model.getCache(backupId)
+    const hrList = await loadOrWarmHR(backupId, this.models)
     let endOfTheMonth = dateStart
 
     const list = []

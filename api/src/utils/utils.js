@@ -1,8 +1,8 @@
-export function ucFirst (str) {
+export function ucFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
 }
 
-export function round (number) {
+export function round(number) {
   if (!number) {
     return 0
   }
@@ -16,7 +16,7 @@ export function round (number) {
  * @param {(','|';')} [separator=','] data separator in csv string
  * @return {(Object)} Return a json object or an empty object if something goes wrong (bad csv format or wrong separator)
  */
-export function csvToJson (csv, separator = ',') {
+export function csvToJson(csv, separator = ',') {
   let toArray = csv
     .trim()
     .replace(/"/g, '')
@@ -36,13 +36,13 @@ export function csvToJson (csv, separator = ',') {
   return toJSON
 }
 
-export function sleep (duration = 1000) {
+export function sleep(duration = 1000) {
   return new Promise((resolve) => {
     setTimeout(resolve, duration)
   })
 }
 
-export function controlPassword (password) {
+export function controlPassword(password) {
   if (password.length < 6) {
     return false
   }
@@ -50,7 +50,7 @@ export function controlPassword (password) {
   return true
 }
 
-export function validateEmail (email) {
+export function validateEmail(email) {
   // eslint-disable-next-line max-len
   const re =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -129,6 +129,6 @@ export const dayOfMonth = (date) => {
  * @desc transforms an Object into an array of key-value pairs
  * @todo check if this is right => currently returns array of values and use interface KeyValue
  */
-export function objValToArray (obj) {
+export function objValToArray(obj) {
   return Object.keys(obj).map((k) => obj[k])
 }

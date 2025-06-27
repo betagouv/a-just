@@ -82,7 +82,7 @@ export default class RouteExtractor extends Route {
         console.timeEnd('extractor-2')
 
         console.time('extractor-3')
-        const hr = await this.model.getCache(backupId)
+        const hr = await loadOrWarmHR(backupId, this.models)
         console.timeEnd('extractor-3')
 
         console.time('extractor-4')
@@ -300,13 +300,16 @@ export default class RouteExtractor extends Route {
     let { backupId } = this.body(ctx)
 
     const categories = await this.models.HRCategories.getAll()
+    console.time('onPreload')
+    await this.models.HumanResources.forceRecalculateAllHrCache()
+    console.timeEnd('onPreload')
 
     console.time('Mise en cache')
     let hr = await loadOrWarmHR(backupId, this.models)
     console.timeEnd('Mise en cache')
 
-    hr = hr.slice(259, 260)
-    //hr = hr.filter((h) => [2763].includes(h.id))
+    //hr = hr.slice(259, 260)
+    hr = hr.filter((h) => [33592].includes(h.id))
     console.time('🧩 Pré-formatage / Indexation')
     const indexes = await generateHRIndexes(hr)
     console.timeEnd('🧩 Pré-formatage / Indexation')
@@ -327,13 +330,13 @@ export default class RouteExtractor extends Route {
     console.timeEnd('Get new query')
 
     console.log(totalETPold[0].totalEtp, totalETPnew[0].totalEtp, totalETPold[0].totalEtp - totalETPnew[0].totalEtp)
-    this.sendOk(ctx, { hr, totalETPnew })
+
+    this.sendOk(ctx, { hr, totalETPnew, res: await loadOrWarmHR(211, this.models) })
   }
 }
 
 /**
  * 
-     let hr = await this.model.getCacheNew(backupId, true)
 
     const key = backupId
     const value = hr
