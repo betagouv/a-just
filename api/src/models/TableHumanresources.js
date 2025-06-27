@@ -5,157 +5,62 @@ import { getNbMonth, today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 import { EXECUTE_CALCULATOR } from '../constants/log-codes'
-import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
-import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
-import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { dbInstance } from './index'
-import { cloneDeep, orderBy } from 'lodash'
+import { orderBy } from 'lodash'
 import { checkAbort } from '../utils/abordTimeout'
-import {
-  generateAndIndexAllStableHRPeriods,
-  generateHRIndexes,
-  getCategoryIdFromLabel,
-  loadFonctionsForCategory,
-  loadReferentiels,
-} from '../utils/human-resource'
+import { generateHRIndexes, loadFonctionsForCategory, loadReferentiels } from '../utils/human-resource'
 import { cleanCalculationItemForUser } from '../utils/hrAccess'
-import { loadOrWarmHR } from '../utils/redis'
-
-/**
- * Cache des agents
- */
-let cacheAgents = {}
-/**
- * Cache des juridicitions avec leurs magistrats
- */
-let cacheJuridictionPeoples = {}
+import { getFullKey, getRedisClient, loadOrWarmHR, removeCacheListItem, updateCacheListItem, waitForRedis } from '../utils/redis'
 
 export default (sequelizeInstance, Model) => {
-  /**
-   * Cache d'un agent
-   * @param {*} agentId
-   * @returns
-   */
-  Model.cacheAgent = (agentId, node) => {
-    if (node && typeof node !== 'string') {
-      node = JSON.stringify(node)
-    }
-
-    if (node && cacheAgents[agentId]) {
-      return cacheAgents[agentId][node]
-    }
-
-    return cacheAgents[agentId]
-  }
-
-  /**
-   * Update cache d'un agent
-   * @param {*} agentId
-   * @returns
-   */
-  Model.updateCacheAgent = (agentId, node, values) => {
-    if (node && typeof node !== 'string') {
-      node = JSON.stringify(node)
-    }
-
-    if (!cacheAgents[agentId]) {
-      cacheAgents[agentId] = {}
-    }
-
-    cacheAgents[agentId][node] = cloneDeep(values)
-  }
-
-  /**
-   * remove cache d'un agent
-   * @param {*} agentId
-   * @returns
-   */
-  Model.removeCacheAgent = (agentId) => {
-    if (cacheAgents[agentId]) {
-      delete cacheAgents[agentId]
+  Model.asyncForEach = async (array, fn) => {
+    for (let i = 0; i < array.length; i++) {
+      await fn(array[i], i)
     }
   }
 
-  /**
-   * Chargement des juridictions
-   */
-  Model.onPreload = async () => {
-    /** 
-    if (config.preloadHumanResourcesDatas) {
-      const allBackups = await Model.models.HRBackups.getAll()
-      dbInstance.options.logging = false
-      console.time('onPreload')
-      for (let i = 0; i < allBackups.length; i++) {
-        const agents = await Model.getCurrentHr(allBackups[i].id)
-        cacheJuridictionPeoples[allBackups[i].id] = cloneDeep(agents)
-      }
-      console.timeEnd('onPreload')
-      if (config.database.logging) {
-        dbInstance.options.logging = true
-      }
+  Model.forceRecalculateAllHrCache = async () => {
+    await waitForRedis()
+    const redis = getRedisClient()
+
+    if (!redis?.isReady) {
+      console.warn('⚠️ Redis non prêt, recalcul forcé ignoré.')
+      return
     }
 
-     */
-  }
+    console.log(`🚀 Recalcul forcé du cache HR pour toutes les juridictions @ ${new Date().toISOString()}`)
+    console.time('forceRecalculateAllHrCache')
 
-  /**
-   * Suppresion de la fiche d'une juridiction en cache
-   * @param {*} humanId
-   * @param {*} backupId
-   */
-  Model.removeCacheByUser = (humanId, backupId) => {
-    Model.removeCacheAgent(humanId)
+    const jurisdictions = await Model.getAllJuridictionsWithSizes()
+    const maxAtOnce = 5
 
-    if (cacheJuridictionPeoples[backupId]) {
-      delete cacheJuridictionPeoples[backupId]
-    }
-  }
+    const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
 
-  /**
-   * Modification de la fiche d'une juridiction en cache
-   * @param {*} human
-   */
-  Model.updateCacheByUser = async (human) => {
-    Model.removeCacheAgent(human.id)
+    for (const chunk of chunks) {
+      await Model.asyncForEach(chunk, async (jur) => {
+        const jurId = jur.id
+        try {
+          const fullKey = getFullKey('hrBackup', jurId)
 
-    const backupId = human.backupId
-    const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === human.id)
+          // Suppression du cache existant
+          await redis.del(fullKey)
 
-    if (cacheJuridictionPeoples[backupId] && index !== -1) {
-      cacheJuridictionPeoples[backupId][index] = human
-    } else if (cacheJuridictionPeoples[backupId]) {
-      cacheJuridictionPeoples[backupId].push(human)
-    } else {
-      cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId) // save to cache
-    }
-  }
+          // Recalcul et stockage dans le cache
+          await loadOrWarmHR(jurId, Model.models)
+        } catch (err) {
+          console.error(`❌ Juridiction ${jurId} échouée :`, err)
+        }
+      })
 
-  /**
-   * Liste des fiches d'une juridiction
-   * @param {*} backupId
-   * @returns
-   */
-  Model.getCache = async (backupId, force = false, signal = null) => {
-    if (!cacheJuridictionPeoples[backupId] || force) {
-      cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId, signal)
+      // Pause légère entre les batchs
+      await Model.sleep(100)
     }
 
-    return cacheJuridictionPeoples[backupId]
+    console.timeEnd('forceRecalculateAllHrCache')
+    console.log('✅ Recalcul complet du cache HR terminé')
   }
 
-  /**
-   * Liste des fiches d'une juridiction
-   * @param {*} backupId
-   * @returns
-   */
-  Model.getCacheNew = async (backupId, force = false, signal = null) => {
-    if (!cacheJuridictionPeoples[backupId] || force) {
-      cacheJuridictionPeoples[backupId] = await Model.getCurrentHrNew(backupId, signal)
-    }
-
-    return cacheJuridictionPeoples[backupId]
-  }
+  Model.sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 
   /**
    * Retour des détails d'une juridiction
@@ -201,9 +106,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} backupId
    * @returns
    */
-  Model.getCurrentHrNew = async (backupId, signal = null) => {
-    checkAbort(signal)
-
+  Model.getCurrentHrNew = async (backupId) => {
     // 1. REQUÊTE PRINCIPALE
     const hrList = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
@@ -256,8 +159,6 @@ export default (sequelizeInstance, Model) => {
       ],
       subQuery: false,
     })
-
-    checkAbort(signal)
 
     // 2. TRANSFORMATION DES DONNÉES
     return hrList
@@ -649,8 +550,6 @@ export default (sequelizeInstance, Model) => {
     }
 
     // remove cache
-    cacheJuridictionPeoples = {}
-    Model.onPreload()
     console.log('IMPORT!:', importSituation)
     return ids
   }
@@ -757,7 +656,8 @@ export default (sequelizeInstance, Model) => {
     }
 
     // save to cache
-    await Model.updateCacheByUser(hr)
+    await updateCacheListItem(hr.backupId, 'hrBackup', hr)
+
     return hr
   }
 
@@ -774,6 +674,7 @@ export default (sequelizeInstance, Model) => {
       },
       raw: true,
     })
+
     if (hrFromDB) {
       const camelCaseReturn = snakeToCamelObject(hrFromDB)
       // control if have existing situations
@@ -783,7 +684,7 @@ export default (sequelizeInstance, Model) => {
         return false
       }
 
-      await Model.models.HRBackups.updateById(hrFromDB.backup_id, { updated_at: new Date() })
+      await Model.models.HRBackups.updateById(camelCaseReturn.backupId, { updated_at: new Date() })
 
       await Model.destroy({
         where: {
@@ -808,8 +709,7 @@ export default (sequelizeInstance, Model) => {
       })
 
       // remove to cache
-      Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
-
+      await removeCacheListItem(camelCaseReturn.backupId, 'hrBackup', hrId)
       return camelCaseReturn
     } else {
       return false
@@ -868,7 +768,7 @@ export default (sequelizeInstance, Model) => {
       })
 
       // remove to cache
-      Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
+      //Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
 
       return camelCaseReturn
     } else {
@@ -900,9 +800,6 @@ export default (sequelizeInstance, Model) => {
         registration_number: 'anonyme',
       })
     }
-
-    // update cache
-    Model.onPreload()
   }
 
   Model.onCalculate = async ({ backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }, user, log = true) => {

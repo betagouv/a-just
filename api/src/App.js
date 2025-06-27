@@ -310,7 +310,6 @@ export default class App extends AppBase {
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/')
     super.mountFolder(join(__dirname, 'routes-api'), '/api/')
     super.mountFolder(join(__dirname, 'routes-admin'), '/ap-bo/')
-    super.mountFolder(join(__dirname, 'routes-docker'), '/docker/')
     super.mountFolder(join(__dirname, 'routes'), '/')
 
     return super.start()
@@ -358,7 +357,7 @@ export default class App extends AppBase {
       console.time('warmupRedisCache')
 
       const jurisdictions = await this.models.HumanResources.getAllJuridictionsWithSizes()
-      const maxAtOnce = 5
+      const maxAtOnce = 2
 
       let chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
 

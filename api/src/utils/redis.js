@@ -10,7 +10,7 @@ let client = null
 const superCache = {}
 const defaultTTL = 3600 // 1h
 
-const useCompression = true // met à false pour débug
+const useCompression = true // mettre à false pour débug
 
 export const getFullKey = (cacheName, key) => `${cacheName}:${key}`
 
@@ -122,13 +122,13 @@ export const setCacheValue = async (key, value, cacheName, ttl = defaultTTL) => 
     const json = JSON.stringify(value)
 
     if (!useCompression) {
-      await client.setEx(fullKey, ttl, json)
+      await client.set(fullKey, json)
       return
     }
 
     const compressed = await gzip(json)
     const encoded = compressed.toString('base64')
-    await client.setEx(fullKey, ttl, encoded)
+    await client.set(fullKey, encoded)
 
     const rawSize = getObjectSizeInMB(value)
     const compressedSize = (compressed.length / 1024 / 1024).toFixed(2)
@@ -168,13 +168,51 @@ export const loadOrWarmHR = async (backupId, models) => {
 
   if (!hr) {
     //console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
-    hr = await models.HumanResources.getCacheNew(backupId, true)
+    hr = await models.HumanResources.getCurrentHrNew(backupId)
     await setCacheValue(backupId, hr, cacheKey, 3600)
   } else {
     //console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
   }
 
   return hr
+}
+
+/**
+ * Met à jour ou ajoute un élément dans un tableau stocké en cache
+ * @param {string} key - La clé simple (ex: backupId)
+ * @param {string} cacheName - Le préfixe du cache (ex: hrBackup)
+ * @param {object} item - L'élément à insérer ou remplacer (doit contenir un champ 'id')
+ * @param {number} [ttl=defaultTTL] - TTL en secondes (optionnel)
+ */
+export const updateCacheListItem = async (key, cacheName, item, ttl = defaultTTL) => {
+  if (!item?.id) {
+    console.error(`❌ updateCacheListItem : item invalide ou sans id`, item)
+    return
+  }
+
+  const list = (await getCacheValue(key, cacheName)) || []
+
+  const index = list.findIndex((el) => el.id == item.id)
+
+  if (index !== -1) {
+    list[index] = item
+  } else {
+    list.push(item)
+  }
+
+  await setCacheValue(key, list, cacheName, ttl)
+}
+
+/**
+ * Supprime un élément d'un tableau stocké en cache
+ * @param {string} key - La clé
+ * @param {string} cacheName - Le préfixe du cache
+ * @param {number} itemId - L'id de l'élément à supprimer
+ */
+export const removeCacheListItem = async (key, cacheName, itemId) => {
+  const list = (await getCacheValue(key, cacheName)) || []
+  const newList = list.filter((el) => el.id != itemId)
+  await setCacheValue(key, newList, cacheName)
 }
 
 // Initialisation immédiate si config présente

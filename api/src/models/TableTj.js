@@ -15,10 +15,10 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < list.length; i++) {
       list[i].users = await Model.models.UserVentilations.getUserVentilationsWithLabel(list[i].label)
       const getBackupId = await Model.models.HRBackups.findByLabel(list[i].label)
-      const agents = getBackupId ? listCategories(await Model.models.HumanResources.getCache(getBackupId)) : []
+      const agents = getBackupId ? listCategories(await loadOrWarmHR(backupId, Model.models)) : []
       const group = groupBy(
         agents.filter((a) => a.category),
-        'category.label'
+        'category.label',
       )
       list[i].categoriesAgents = []
       for (const [key, value] of Object.entries(group)) {
@@ -43,7 +43,7 @@ export default (sequelizeInstance, Model) => {
 
   /**
    * Retourne toutes les juridictions qui ont au moins un agent ventilé
-   * @returns 
+   * @returns
    */
   Model.getAllWithUser = async () => {
     const jurisdictions = await Model.findAll({
@@ -67,7 +67,6 @@ export default (sequelizeInstance, Model) => {
 
     return filtered
   }
-
 
   /**
    * Retourne les juridictions qui peuvent s'afficher si seulement elles sont bloqués via ce tableau
