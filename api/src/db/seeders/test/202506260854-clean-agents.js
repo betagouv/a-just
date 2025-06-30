@@ -37,7 +37,6 @@ module.exports = {
     })
 
     console.log('Records without any joins:', hrWithoutJoins.length)
-    throw 'test'
   },
   down: (/*queryInterface , Sequelize*/) => {},
 }

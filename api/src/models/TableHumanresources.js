@@ -814,6 +814,41 @@ export default (sequelizeInstance, Model) => {
     return { fonctions, list }
   }
 
+  Model.cleanEmptyAgent = async () => {
+    const findAllWhere = await Model.models.HumanResources.findAll({
+      where: {
+        first_name: { [Op.eq]: null },
+      },
+      include: [
+        {
+          model: Model.models.HRSituations,
+        },
+        {
+          model: Model.models.HRIndisponibilities,
+        },
+      ],
+      raw: true,
+    })
+
+    console.log('Found records with null first_name:', findAllWhere)
+
+    // Trouver ceux qui n'ont pas de jointures (situations ou indisponibilités)
+    const hrWithoutJoins = findAllWhere.filter((hr) => {
+      return hr['HRSituations.id'] !== null && hr['HRIndisponibilities.id'] !== null
+    })
+
+    for (const hr of hrWithoutJoins) {
+      await Model.models.HumanResources.destroy({
+        where: {
+          id: hr.id, // Assurez-vous de supprimer par ID
+        },
+        transaction, // Utiliser la transaction pour garantir l'atomicité
+      })
+    }
+
+    console.log('Records without any joins:', hrWithoutJoins.length)
+  }
+
   setTimeout(() => {
     console.log('Preload human resources data')
     Model.onPreload()
