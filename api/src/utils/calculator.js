@@ -430,7 +430,7 @@ export const getHRPositionsOld = (models, hr, categories, referentielId, dateSta
         return activities.some((s) => s.contentieux.id === referentielId)
       })
     ) {
-      const etptAll = getHRVentilation(models, hr[i], referentielId, categories, dateStart, dateStop)
+      const etptAll = getHRVentilationOld(models, hr[i], referentielId, categories, dateStart, dateStop)
 
       Object.values(etptAll).map((c) => {
         if (c.etpt) {
