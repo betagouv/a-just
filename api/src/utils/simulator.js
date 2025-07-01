@@ -938,14 +938,14 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix, c
 
 /**
  * Nouvelle version de getPosition plus performance
- * @param {*} referentielId 
- * @param {*} hr 
- * @param {*} allActivities 
- * @param {*} categories 
- * @param {*} dateStart 
- * @param {*} dateStop 
- * @param {*} selectedCategoryId 
- * @returns 
+ * @param {*} referentielId
+ * @param {*} hr
+ * @param {*} allActivities
+ * @param {*} categories
+ * @param {*} dateStart
+ * @param {*} dateStop
+ * @param {*} selectedCategoryId
+ * @returns
  */
 export async function getSituationNew(referentielId, hr, allActivities, categories, dateStart = undefined, dateStop = undefined, selectedCategoryId) {
   if (Array.isArray(referentielId) === false) referentielId = [referentielId]
@@ -1121,4 +1121,135 @@ export async function getSituationNew(referentielId, hr, allActivities, categori
       nbWorkingDays: environment['nbDaysPerMonth' + sufix],
     }
   }
+}
+
+export const filterByFonctionWithIndex = (hr, fonctionsIds, functionIndex) => {
+  if (!fonctionsIds || !fonctionsIds.length) return hr
+
+  // Récupérer tous les agentIds qui ont au moins une des fonctions demandées
+  const agentIdSet = new Set(fonctionsIds.flatMap((fid) => functionIndex.get(fid) || []))
+
+  return hr
+    .filter((agent) => agentIdSet.has(agent.id))
+    .map((agent) => {
+      const situations = (agent.situations || []).map((situation) => {
+        const keepFunction = fonctionsIds.includes(situation.fonction.id)
+
+        return {
+          ...situation,
+          etp: keepFunction ? situation.etp : 0,
+        }
+      })
+
+      return {
+        ...agent,
+        situations,
+      }
+    })
+    .filter((agent) => (agent.situations || []).some((s) => s.etp && s.etp !== 0))
+}
+
+// NEW OPTIMISED CODE :
+
+/**
+ * Construction de l'index des périodes par agent à partir des périodes RH stables
+ */
+export function buildPeriodsByAgent(periodsList) {
+  const periodsByAgent = new Map()
+
+  for (const period of periodsList) {
+    if (!periodsByAgent.has(period.agentId)) {
+      periodsByAgent.set(period.agentId, [])
+    }
+    periodsByAgent.get(period.agentId).push(period)
+  }
+
+  for (const periods of periodsByAgent.values()) {
+    periods.sort((a, b) => new Date(a.start) - new Date(b.start))
+  }
+
+  return periodsByAgent
+}
+
+/**
+ * Optimisation de getHRPositions en conservant exactement le même comportement
+ * mais en renommant la sortie en hrPositions pour matcher l'ancien format.
+ */
+export function getHRPositionsOptimised(periodsByAgent, referentielIds, categories, date) {
+  const etpByCategory = new Map()
+
+  for (const cat of categories) {
+    etpByCategory.set(cat.id, { name: cat.label, totalEtp: 0, rank: cat.rank })
+  }
+
+  for (const [agentId, periods] of periodsByAgent) {
+    for (const period of periods) {
+      if (new Date(period.start) <= date && new Date(period.end) >= date) {
+        for (const activity of period.activities) {
+          if (referentielIds.includes(activity.contentieux.id)) {
+            const current = etpByCategory.get(period.category.id)
+            if (current) current.totalEtp += period.effectiveETP * (activity.percent / 100)
+          }
+        }
+      }
+    }
+  }
+
+  return Array.from(etpByCategory.values())
+    .map((e) => ({
+      name: e.name,
+      totalEtp: Math.round(e.totalEtp * 100) / 100, // Arrondi à 2 décimales
+      rank: e.rank,
+    }))
+    .sort((a, b) => a.rank - b.rank)
+}
+
+/**
+ * Fonction getSituation optimisée mais qui conserve 100% le même résultat final
+ * et adapte le nom des propriétés pour matcher l'ancien format.
+ */
+export function getSituationOptimised(
+  periodsByAgent,
+  referentielId,
+  categories,
+  date,
+  sufix,
+  totalOut,
+  realTimePerCase,
+  totalIn,
+  lastStock,
+  nbMonthHistory,
+  etpToCompute,
+) {
+  const result = {
+    countOfCalandarDays: nbOfDays(date, new Date()),
+    totalIn,
+    totalOut,
+    lastStock,
+    realCoverage: computeCoverage(totalOut, totalIn),
+    realDTESInMonths: computeDTES(lastStock, totalOut),
+    magRealTimePerCase: realTimePerCase,
+    etpMag: 0,
+    etpFon: 0,
+    etpCont: 0,
+    hrPositions: [],
+    etpUseToday: 0,
+    etpToCompute,
+    nbWorkingHours: environment['nbHoursPerDayAnd' + sufix],
+    nbWorkingDays: environment['nbDaysPerMonth' + sufix],
+  }
+
+  const etpList = getHRPositionsOptimised(periodsByAgent, [referentielId], categories, date)
+  result.hrPositions = etpList
+
+  const mag = etpList.find((e) => e.name === 'Magistrat')?.totalEtp || 0
+  const fon = etpList.find((e) => e.name === 'Greffe')?.totalEtp || 0
+  const cont = etpList.find((e) => e.name === 'Autour du magistrat')?.totalEtp || 0
+
+  result.etpMag = mag
+  result.etpFon = fon
+  result.etpCont = cont
+  result.etpUseToday = mag
+
+  return result
 }

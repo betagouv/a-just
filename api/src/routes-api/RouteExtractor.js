@@ -301,7 +301,7 @@ export default class RouteExtractor extends Route {
 
     const categories = await this.models.HRCategories.getAll()
     console.time('onPreload')
-    await this.models.HumanResources.forceRecalculateAllHrCache()
+    //await this.models.HumanResources.forceRecalculateAllHrCache()
     console.timeEnd('onPreload')
 
     console.time('Mise en cache')
@@ -330,8 +330,9 @@ export default class RouteExtractor extends Route {
     console.timeEnd('Get new query')
 
     console.log(totalETPold[0].totalEtp, totalETPnew[0].totalEtp, totalETPold[0].totalEtp - totalETPnew[0].totalEtp)
-
-    this.sendOk(ctx, { hr, totalETPnew, res: await loadOrWarmHR(211, this.models) })
+    const objResult = Object.fromEntries(indexes.categoryIndex)
+    console.log(objResult)
+    this.sendOk(ctx, { hr, totalETPnew, res: await loadOrWarmHR(211, this.models), objResult })
   }
 }
 

@@ -809,3 +809,113 @@ export const loadReferentiels = async (backupId, contentieuxIds, models) => {
   const all = await models.ContentieuxReferentiels.getReferentiels(backupId)
   return all.filter((c) => contentieuxIds.includes(c.id))
 }
+
+export const filterHrWithIndexes = ({ categoryId, fonctionsIds, date, indexes }) => {
+  let categoryIndex = indexes.categoryIndex
+  let functionIndex = indexes.functionIndex
+  let periodsDatabase = indexes.periodsDatabase
+
+  const periodIdsCategory = categoryIndex.get(categoryId) || []
+  let periodIdsFiltered = periodIdsCategory
+
+  if (fonctionsIds && fonctionsIds.length) {
+    const periodIdsFunction = fonctionsIds.flatMap((fid) => functionIndex.get(fid) || [])
+    const setFunctionIds = new Set(periodIdsFunction)
+
+    periodIdsFiltered = periodIdsCategory.filter((pid) => setFunctionIds.has(pid))
+  }
+
+  const periodsByAgent = new Map()
+
+  for (const pid of periodIdsFiltered) {
+    const period = periodsDatabase.get(pid)
+    if (!period) continue
+
+    if (date) {
+      const d = today(date)
+      const start = today(period.start)
+      const end = today(period.end)
+      if (start > d || end <= d) continue
+    }
+
+    if (!periodsByAgent.has(period.agentId)) {
+      periodsByAgent.set(period.agentId, [])
+    }
+    periodsByAgent.get(period.agentId).push(period)
+  }
+
+  return Array.from(periodsByAgent.entries()).map(([agentId, periods]) => ({
+    id: agentId,
+    periods,
+  }))
+}
+
+export const filterAgentsWithIndexes = ({ hr, categoryId, fonctionsIds, date, indexes }) => {
+  let categoryIndex = indexes.categoryIndex
+  let functionIndex = indexes.functionIndex
+  let periodsDatabase = indexes.periodsDatabase
+
+  const periodIdsCategory = categoryIndex.get(categoryId) || []
+  let periodIdsFiltered = periodIdsCategory
+  if (categoryId === 0)
+    console.log(
+      '@@@',
+      periodIdsCategory.find((h) => h == 1734),
+    )
+  if (fonctionsIds && fonctionsIds.length) {
+    const periodIdsFunction = fonctionsIds.flatMap((fid) => functionIndex.get(fid) || [])
+    const setFunctionIds = new Set(periodIdsFunction)
+
+    periodIdsFiltered = periodIdsCategory.filter((pid) => setFunctionIds.has(pid))
+  }
+
+  const agentIdsSet = new Set()
+
+  for (const pid of periodIdsFiltered) {
+    const period = periodsDatabase.get(pid)
+    if (!period) continue
+
+    if (date) {
+      const d = today(date)
+      const start = today(period.start)
+      const end = today(period.end)
+      if (start > d || end <= d) continue
+    }
+
+    agentIdsSet.add(period.agentId)
+  }
+
+  return hr.filter((agent) => agentIdsSet.has(agent.id))
+}
+
+export const filterAgentsByDateCategoryFunction = ({ hr, date, categoryId, fonctionsIds, indexes }) => {
+  const { intervalTree, periodsDatabase } = indexes
+  const d = today(date)
+  if (!d) return hr
+
+  const results = intervalTree.search(d, d)
+  const agentMap = new Map()
+
+  for (const res of results) {
+    const period = periodsDatabase.get(res.periodId)
+    if (!period) continue
+
+    const matchCategory = !categoryId || (period.category && period.category.id === categoryId)
+    const matchFunction = !fonctionsIds || fonctionsIds.includes(period.fonction.id)
+
+    if (matchCategory && matchFunction) {
+      agentMap.set(period.agentId, true)
+    }
+  }
+
+  const filteredAgents = hr.filter((agent) => {
+    const hasMatchingPeriod = agentMap.has(agent.id)
+
+    const dateStop = agent.dateEnd ? today(agent.dateEnd) : null
+    const isStillPresent = !dateStop || dateStop > d
+
+    return hasMatchingPeriod && isStillPresent
+  })
+
+  return filteredAgents
+}
