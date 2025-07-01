@@ -2,7 +2,7 @@ import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
 import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
-import { getEtpByDateAndPerson } from './human-resource'
+import { getEtpByDateAndPerson, getEtpByDateAndPersonOld } from './human-resource'
 import { appendFileSync } from 'fs'
 import { checkAbort } from './abordTimeout'
 
