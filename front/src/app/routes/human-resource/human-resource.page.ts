@@ -865,15 +865,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       const returnValue = await this.humanResourceService.removeSituation(id, forceAlert)
       this.onEditIndex = null
 
-      // Remove all indispo
-      if (this.currentHR && returnValue) {
-        this.currentHR.situations = returnValue.situations
-        if (returnValue && returnValue.situations.length === 0 && this.currentHR) {
-          await this.updateHuman('indisponibilities', [])
-          this.allIndisponibilities = []
-        }
-      }
-
       // console.log(returnValue, this.histories.length, this.onEditIndex)
       if (returnValue) {
         // force to not show on boarding after delete last situation
