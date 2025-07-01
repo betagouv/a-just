@@ -132,3 +132,46 @@ export const dayOfMonth = (date) => {
 export function objValToArray(obj) {
   return Object.keys(obj).map((k) => obj[k])
 }
+
+import fs from 'fs'
+import deepEqual from 'fast-deep-equal' // Ou ta fonction deepEqual existante
+
+/**
+ * Compare deux listes d'objets et détecte les différences
+ * @param {Array} oldResult - Ancien tableau d'objets
+ * @param {Array} newResult - Nouveau tableau d'objets
+ * @param {string} [exportPath] - Chemin du fichier JSON à créer si des différences sont détectées
+ */
+export const compareResults = (oldResult, newResult, exportPath = './computeExtract-differences.json') => {
+  let allEqual = true
+  const differences = []
+
+  if (oldResult.length !== newResult.length) {
+    console.error(`❌ Nombre d'éléments différents : ${oldResult.length} vs ${newResult.length}`)
+    allEqual = false
+  }
+
+  for (let i = 0; i < Math.min(oldResult.length, newResult.length); i++) {
+    const oldItem = oldResult[i]
+    const newItem = newResult[i]
+
+    if (!deepEqual(oldItem, newItem)) {
+      allEqual = false
+      differences.push({
+        index: i,
+        id: oldItem['Réf.'] || newItem['Réf.'],
+        old: oldItem,
+        new: newItem,
+      })
+    }
+  }
+
+  if (!allEqual) {
+    console.error(`❌ ${differences.length} différences trouvées !`)
+    fs.writeFileSync(exportPath, JSON.stringify(differences, null, 2), 'utf-8')
+    throw new Error(`Non-régression échouée ! Différences enregistrées dans ${exportPath}`)
+  }
+
+  console.log('✅ Test de non-régression réussi. Les deux versions donnent des résultats identiques.')
+}
+
