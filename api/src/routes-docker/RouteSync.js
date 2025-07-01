@@ -1,6 +1,6 @@
-import Route from "./Route";
-import { Types } from "../utils/types";
-import os from "os";
+import Route from './Route'
+import { Types } from '../utils/types'
+import os from 'os'
 
 export default class RouteSync extends Route {
   /**
@@ -8,7 +8,7 @@ export default class RouteSync extends Route {
    * @param {*} params
    */
   constructor(params) {
-    super(params);
+    super(params)
   }
 
   @Route.Post({
@@ -19,17 +19,17 @@ export default class RouteSync extends Route {
     }),
   })
   async update(ctx) {
-    const { type, id, from } = this.body(ctx);
+    const { type, id, from } = this.body(ctx)
 
     if (from !== os.hostname()) {
       switch (type) {
-        case "juridiction-agents": {
-          this.models.HumanResources.getCache(id, true);
-          break;
+        case 'juridiction-agents': {
+          await this.models.HumanResources.getCache(id, true)
+          break
         }
       }
     }
 
-    this.sendOk(ctx, os.hostname());
+    this.sendOk(ctx, os.hostname())
   }
 }
