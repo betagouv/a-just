@@ -32,4 +32,22 @@ export default class RouteSync extends Route {
 
     this.sendOk(ctx, os.hostname())
   }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      agentId: Types.number(),
+      from: Types.string(),
+    }),
+  })
+  async updateAgent(ctx) {
+    const { agentId, from } = this.body(ctx)
+
+    if (from !== os.hostname()) {
+      await this.models.HumanResources.removeCacheAgent(agentId)
+      const agent = await this.models.HumanResources.getHr(agentId)
+      await this.models.HumanResources.removeCacheByUser(agentId, agent.backup_id)
+    }
+
+    this.sendOk(ctx, os.hostname())
+  }
 }

@@ -10,7 +10,7 @@ import { today } from '../utils/date'
 import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import { selfRouteToSyncJuridiction } from '../utils/docker'
+import { selfRouteToSyncAgent } from '../utils/docker'
 
 /**
  * Route des fiches
@@ -111,7 +111,8 @@ export default class RouteHumanResources extends Route {
     let { backupId, hr } = this.body(ctx)
 
     const responseUpdate = await this.model.updateHR(hr, backupId)
-    await selfRouteToSyncJuridiction(backupId)
+    //await selfRouteToSyncJuridiction(backupId)
+    await selfRouteToSyncAgent(hr.id)
 
     this.sendOk(ctx, responseUpdate)
   }
@@ -131,7 +132,8 @@ export default class RouteHumanResources extends Route {
 
       if (onRemoveHR) {
         this.sendOk(ctx, 'Ok')
-        await selfRouteToSyncJuridiction(onRemoveHR.backupId)
+        //await selfRouteToSyncJuridiction(onRemoveHR.backupId)
+        await selfRouteToSyncAgent(hrId)
         await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
           hrId,
         })
@@ -182,7 +184,8 @@ export default class RouteHumanResources extends Route {
     if (hrId) {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
         const agent = await this.model.getHr(hrId)
-        await selfRouteToSyncJuridiction(agent.backupId)
+        //await selfRouteToSyncJuridiction(agent.backupId)
+        await selfRouteToSyncAgent(hrId)
         this.sendOk(ctx, agent)
       }
     }

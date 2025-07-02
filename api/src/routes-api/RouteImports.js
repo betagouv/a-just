@@ -4,6 +4,7 @@ import { csvToArrayJson } from '../utils/csv'
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join } from 'path'
 import config from 'config'
+import { selfRouteToSyncJuridiction } from '../utils/docker'
 
 /**
  * Route des imports
