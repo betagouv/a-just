@@ -75,11 +75,15 @@
           </div>
           <label class="import-confirmation"
             *ngIf="displayImportLabels || alertList.includes('fonction') || alertList.includes('category') || alertList.includes('etp')"
-            [ngStyle]="{'color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null ||  form.get('etp')?.value === null?'#c3992a': '#18753c',
-              'background-color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null ||  form.get('etp')?.value === null?'#feebd0':'#b8fec9'}"><i
-              class="ri-checkbox-circle-fill"></i>{{form.get('categoryId')?.value === null ||
+            [ngStyle]="{'color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null || form.get('etp')?.value === null ? '#c3992a': '#18753c',
+              'background-color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null || form.get('etp')?.value === null ? '#feebd0':'#b8fec9'}">
+            <i class="ri-checkbox-circle-fill"></i>
+            {{
+            form.get('categoryId')?.value === null ||
             form.get('fonctionId')?.value === null || form.get('etp')?.value === null?'à
-            compléter':'importé'}}</label>
+            compléter':'importé'
+            }}
+          </label>
 
         </div>
 
