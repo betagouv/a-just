@@ -73,8 +73,6 @@ export class EtpPreviewComponent implements OnChanges {
     const fixDec = fixDecimal(this.etp)
     this.etp = fixDec < 0 ? 0 : fixDec
 
-    console.log('etp', this.needToBeUpdated, this.realETP, this.etp)
-
     this.onDraw()
   }
 
