@@ -1,42 +1,27 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  Output,
-  EventEmitter,
-  SimpleChanges,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { sumBy } from 'lodash';
-import * as xlsx from 'xlsx';
-import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel';
-import { CommonModule } from '@angular/common';
-import { PopupComponent } from '../../../components/popup/popup.component';
-import { CalculatriceComponent } from '../../../components/calculatrice/calculatrice.component';
-import { PanelActivitiesComponent } from '../../../components/panel-activities/panel-activities.component';
-import { AlertSmallComponent } from '../../../components/alert-small/alert-small.component';
-import { MainClass } from '../../../libs/main-class';
-import { HumanResourceInterface } from '../../../interfaces/human-resource-interface';
-import { RHActivityInterface } from '../../../interfaces/rh-activity';
-import { HRCategoryInterface } from '../../../interfaces/hr-category';
-import { HRFonctionInterface } from '../../../interfaces/hr-fonction';
-import { HRFonctionService } from '../../../services/hr-fonction/hr-function.service';
-import { HRCategoryService } from '../../../services/hr-category/hr-category.service';
-import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
-import { ReferentielService } from '../../../services/referentiel/referentiel.service';
-import { AppService } from '../../../services/app/app.service';
-import { CalculatriceService } from '../../../services/calculatrice/calculatrice.service';
-import { ServerService } from '../../../services/http-server/server.service';
-import { fixDecimal } from '../../../utils/numbers';
-import { downloadFile } from '../../../utils/system';
+import { Component, Input, OnChanges, Output, EventEmitter, SimpleChanges, ViewChild, ElementRef } from '@angular/core'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
+import { sumBy } from 'lodash'
+import * as xlsx from 'xlsx'
+import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel'
+import { CommonModule } from '@angular/common'
+import { PopupComponent } from '../../../components/popup/popup.component'
+import { CalculatriceComponent } from '../../../components/calculatrice/calculatrice.component'
+import { PanelActivitiesComponent } from '../../../components/panel-activities/panel-activities.component'
+import { AlertSmallComponent } from '../../../components/alert-small/alert-small.component'
+import { MainClass } from '../../../libs/main-class'
+import { HumanResourceInterface } from '../../../interfaces/human-resource-interface'
+import { RHActivityInterface } from '../../../interfaces/rh-activity'
+import { HRCategoryInterface } from '../../../interfaces/hr-category'
+import { HRFonctionInterface } from '../../../interfaces/hr-fonction'
+import { HRFonctionService } from '../../../services/hr-fonction/hr-function.service'
+import { HRCategoryService } from '../../../services/hr-category/hr-category.service'
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
+import { ReferentielService } from '../../../services/referentiel/referentiel.service'
+import { AppService } from '../../../services/app/app.service'
+import { CalculatriceService } from '../../../services/calculatrice/calculatrice.service'
+import { ServerService } from '../../../services/http-server/server.service'
+import { fixDecimal } from '../../../utils/numbers'
+import { downloadFile } from '../../../utils/system'
 import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_VENTILATEUR_PERSON,
@@ -45,28 +30,23 @@ import {
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
   NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
-} from '../../../constants/documentation';
-import {
-  findRealValueCustom,
-  isDateBiggerThan,
-  setTimeToMidDay,
-  today,
-} from '../../../utils/dates';
-import { MatIconModule } from '@angular/material/icon';
-import { DateSelectComponent } from '../../../components/date-select/date-select.component';
-import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
-import { ExcelService } from '../../../services/excel/excel.service';
-import { UserService } from '../../../services/user/user.service';
+} from '../../../constants/documentation'
+import { findRealValueCustom, isDateBiggerThan, setTimeToMidDay, today } from '../../../utils/dates'
+import { MatIconModule } from '@angular/material/icon'
+import { DateSelectComponent } from '../../../components/date-select/date-select.component'
+import { HelpButtonComponent } from '../../../components/help-button/help-button.component'
+import { ExcelService } from '../../../services/excel/excel.service'
+import { UserService } from '../../../services/user/user.service'
 
 export interface importedVentillation {
-  referentiel: ContentieuReferentielInterface;
-  percent: number | undefined;
-  parentReferentiel: ContentieuReferentielInterface | null;
+  referentiel: ContentieuReferentielInterface
+  percent: number | undefined
+  parentReferentiel: ContentieuReferentielInterface | null
 }
 
 export interface importedSituation {
-  index: number | null;
-  ventillation: importedVentillation[];
+  index: number | null
+  ventillation: importedVentillation[]
 }
 
 /**
@@ -93,153 +73,148 @@ export interface importedSituation {
   styleUrls: ['./add-ventilation.component.scss'],
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
-  @ViewChild('bottomContainerTarget') bottomContainerTargetRef!: ElementRef;
+  @ViewChild('bottomContainerTarget') bottomContainerTargetRef!: ElementRef
 
   /**
    * Fiche
    */
-  @Input() human: HumanResourceInterface | null = null;
+  @Input() human: HumanResourceInterface | null = null
   /**
    * Liste de toutes les indispo d'une fiche
    */
-  @Input() indisponibilities: RHActivityInterface[] = [];
+  @Input() indisponibilities: RHActivityInterface[] = []
   /**
    * Liste des ventilations en court de modification
    */
-  @Input() activities: RHActivityInterface[] = [];
+  @Input() activities: RHActivityInterface[] = []
   /**
    * Date de début de la situation
    */
-  @Input() lastDateStart: Date | null = null;
+  @Input() lastDateStart: Date | null = null
   /**
    * Date de fin estimé de la situation
    */
-  @Input() dateStop: Date | null = null;
+  @Input() dateStop: Date | null = null
   /**
    * Indispo en erreur si doublon d'indispo
    */
-  @Input() indisponibilityError: string | null = null;
+  @Input() indisponibilityError: string | null = null
   /**
    * Active les boutons de sauvegarde
    */
-  @Input() saveActions: boolean = false;
+  @Input() saveActions: boolean = false
   /**
    * Modification / Création d'une situation
    */
-  @Input() isEdit: boolean = false;
+  @Input() isEdit: boolean = false
   /**
    * Id de situation
    */
-  @Input() editId: number | null = null;
+  @Input() editId: number | null = null
   /**
    * Parent form
    */
-  @Input() basicData: FormGroup | null = null;
+  @Input() basicData: FormGroup | null = null
   /**
    * Force to show sub contentieux
    */
-  @Input() forceToShowContentieuxDetail: boolean = false;
+  @Input() forceToShowContentieuxDetail: boolean = false
   /**
    * Indice de la situation édité
    */
-  @Input() indexSituation: number | null = null;
+  @Input() indexSituation: number | null = null
   /**
    * Fonction pour mettre à jour l'ETP (lors de la création d'un nouvel agent)
    */
-  @Input() setValueEtp: (val: number | null) => void = () => {};
+  @Input() setValueEtp: (val: number | null) => void = () => {}
   /**
    * Liste des alertes
    */
-  @Input() alertList: string[] = [];
+  @Input() alertList: string[] = []
   /**
    * Event lors de la sauvegarde
    */
-  @Output() onSaveConfirm = new EventEmitter();
+  @Output() onSaveConfirm = new EventEmitter()
   /**
    * Event lors de la demande d'ajout d'une indispo
    */
-  @Output() addIndispiniblity = new EventEmitter();
+  @Output() addIndispiniblity = new EventEmitter()
   /**
    * Event fermeture du paneau
    */
-  @Output() close = new EventEmitter();
+  @Output() close = new EventEmitter()
   /**
    * Event pour ouvrir le paneau d'aide
    */
-  @Output() onOpenHelpPanel = new EventEmitter();
+  @Output() onOpenHelpPanel = new EventEmitter()
   /**
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    updatedList?: string[];
-    index?: number;
-  }>();
+    updatedList?: string[]
+    index?: number
+  }>()
   /**
    * Réferentiel des indispo
    */
-  allIndisponibilityReferentiel: ContentieuReferentielInterface[] = [];
+  allIndisponibilityReferentiel: ContentieuReferentielInterface[] = []
   /**
    * Liste des catégories (magistrat, greffier...)
    */
-  categories: HRCategoryInterface[] = [];
+  categories: HRCategoryInterface[] = []
   /**
    * Liste des fonctions (1VP, VP, ...)
    */
-  fonctions: HRFonctionInterface[] = [];
+  fonctions: HRFonctionInterface[] = []
   /**
    * Referentiel avec les activités
    */
-  updatedReferentiels: ContentieuReferentielInterface[] = [];
+  updatedReferentiels: ContentieuReferentielInterface[] = []
   /**
    * ETP
    */
-  etp: number = 1;
+  etp: number = 1
   /**
    * Formulaire de saisie
    */
   form = new FormGroup({
-    activitiesStartDate: new FormControl<Date | null>(null, [
-      Validators.required,
-    ]),
-    etp: new FormControl<number | null>(null, [
-      Validators.min(0),
-      Validators.max(1),
-    ]),
+    activitiesStartDate: new FormControl<Date | null>(null, [Validators.required]),
+    etp: new FormControl<number | null>(null, [Validators.min(0), Validators.max(1)]),
     fonctionId: new FormControl<number | null>(null, [Validators.required]),
     categoryId: new FormControl<number | null>(null, [Validators.required]),
-  });
+  })
   /**
    * Activation de la calculatrice
    */
-  calculatriceIsActive: boolean = false;
+  calculatriceIsActive: boolean = false
   /**
    * Ouverture de la calculatrice
    */
-  openCalculatricePopup: boolean = false;
+  openCalculatricePopup: boolean = false
   /**
    * Affichage du menu déroulant
    */
-  toggleDropDown: boolean = false;
+  toggleDropDown: boolean = false
   /**
    * Fonction importée
    */
-  importedFunction: number | null = null;
+  importedFunction: number | null = null
   /**
    * Import de fichié effectué
    */
-  displayImportLabels = false;
+  displayImportLabels = false
   /**
    * Somme des valeurs importés
    */
-  sumPercentImported = 0;
+  sumPercentImported = 0
   /**
    * Liste des indispo courrante
    */
-  indisponibilitiesFiltered: RHActivityInterface[] = [];
+  indisponibilitiesFiltered: RHActivityInterface[] = []
   /**
    * Afficher erreur date de début
    */
-  printErrorDateStart: boolean = false;
+  printErrorDateStart: boolean = false
 
   /**
    * Constructeur
@@ -257,98 +232,89 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private serverService: ServerService,
     private userService: UserService,
     private excelService: ExcelService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
   ) {
-    super();
+    super()
   }
 
   /**
    * Au chargement charger les catégories et fonctions
    */
   ngOnInit() {
-    console.log('editId', this.editId);
-    window.addEventListener('click', this.onclick.bind(this));
-    window.addEventListener('click', this.onclick2.bind(this));
-    this.watch(
-      this.hrFonctionService.getAll().then(() => this.loadCategories())
-    );
-    this.watch(
-      this.hrCategoryService.getAll().then((list) => (this.categories = list))
-    );
+    console.log('editId', this.editId)
+    window.addEventListener('click', this.onclick.bind(this))
+    window.addEventListener('click', this.onclick2.bind(this))
+    this.watch(this.hrFonctionService.getAll().then(() => this.loadCategories()))
+    this.watch(this.hrCategoryService.getAll().then((list) => (this.categories = list)))
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(
-        () =>
-          (this.allIndisponibilityReferentiel =
-            this.humanResourceService.allIndisponibilityReferentiel.slice(1))
-      )
-    );
+        () => (this.allIndisponibilityReferentiel = this.humanResourceService.allIndisponibilityReferentiel.slice(1)),
+      ),
+    )
     this.watch(
       this.form.get('categoryId')?.valueChanges.subscribe(() => {
         this.loadCategories().then(() => {
-          let fct = null;
+          let fct = null
           if (this.displayImportLabels) {
-            fct = this.fonctions.find((c) => c.id === this.importedFunction);
+            fct = this.fonctions.find((c) => c.id === this.importedFunction)
           } else {
-            fct = this.fonctions[0];
+            fct = this.fonctions[0]
           }
-          this.form.get('fonctionId')?.setValue(fct?.id || null);
-          if (fct)
-            this.calculatriceIsActive = fct.calculatrice_is_active || false;
+          this.form.get('fonctionId')?.setValue(fct?.id || null)
+          if (fct) this.calculatriceIsActive = fct.calculatrice_is_active || false
 
           // Suprpession de l'alerte
-          let index = -1;
-          index = this.alertList.indexOf('category');
+          let index = -1
+          index = this.alertList.indexOf('category')
           if (index !== -1) {
-            this.alertSet.emit({ index: index });
+            this.alertSet.emit({ index: index })
           }
-          index = this.alertList.indexOf('fonction');
+          index = this.alertList.indexOf('fonction')
           if (index !== -1) {
-            this.alertSet.emit({ index: index });
+            this.alertSet.emit({ index: index })
           }
-        });
-      })
-    );
+        })
+      }),
+    )
 
     this.watch(
       this.form.get('etp')?.valueChanges.subscribe((value) => {
-        console.log('value', value);
+        console.log('value', value)
         if (value) {
-          if (value > 1) value = 1;
-          else if (value < 0) value = 0;
-          let str_value = value?.toString();
-          let validationPattern = /^\d+(\.\d{0,2})?$/;
+          if (value > 1) value = 1
+          else if (value < 0) value = 0
+          let str_value = value?.toString()
+          let validationPattern = /^\d+(\.\d{0,2})?$/
 
           if (!validationPattern.test(str_value)) {
-            value = this.parseFloat(
-              str_value.substring(0, str_value.length - 1)
-            );
+            value = this.parseFloat(str_value.substring(0, str_value.length - 1))
           }
-          this.form.get('etp')?.setValue(value, { emitEvent: false });
-          this.setValueEtp(value);
+          this.form.get('etp')?.setValue(value, { emitEvent: false })
+          this.setValueEtp(value)
         } else {
           // Remise à 0 de l'ETP si la valeur est null (ex: user efface la valeur précédement entrée) pour remtrre l'ETP du composant big-et-preview à null
-          this.setValueEtp(value);
+          this.setValueEtp(value)
         }
         // Suppression de l'alert
-        let index = -1;
-        index = this.alertList.indexOf('etp');
+        let index = -1
+        index = this.alertList.indexOf('etp')
         if (index !== -1) {
-          this.alertSet.emit({ index: index });
+          this.alertSet.emit({ index: index })
         }
-      })
-    );
+      }),
+    )
 
     this.watch(
       this.form.get('activitiesStartDate')?.valueChanges.subscribe((value) => {
         if (value) {
-          let index = -1;
-          index = this.alertList.indexOf('activitiesStartDate');
+          let index = -1
+          index = this.alertList.indexOf('activitiesStartDate')
           if (index !== -1) {
-            this.alertSet.emit({ index: index });
+            this.alertSet.emit({ index: index })
           }
         }
-      })
-    );
+      }),
+    )
   }
 
   /**
@@ -357,16 +323,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   ngOnChanges(changes: SimpleChanges) {
     if (changes['lastDateStart'] && changes['lastDateStart'].firstChange) {
-      this.onStart();
+      this.onStart()
     }
     if (changes['indisponibilities']) {
       this.indisponibilitiesFiltered = [
         ...this.indisponibilities.filter((i) => i.id < 0),
         ...this.isBiggerThanArray(
           this.indisponibilities.filter((i) => i.id >= 0),
-          'dateStop'
+          'dateStop',
         ),
-      ];
+      ]
     }
   }
 
@@ -374,50 +340,31 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Initialisation du formulaire
    */
   onStart() {
-    const situation = this.humanResourceService.findSituation(
-      this.human,
-      this.lastDateStart ? this.lastDateStart : undefined
-    );
+    const situation = this.humanResourceService.findSituation(this.human, this.lastDateStart ? this.lastDateStart : undefined)
 
-    let etp = situation && situation.etp !== undefined ? situation.etp : null;
+    let etp = situation && situation.etp !== undefined ? situation.etp : null
     if (etp === this.ETP_NEED_TO_BE_UPDATED) {
-      etp = 0;
+      etp = 0
     }
-    this.etp = etp;
-    this.form
-      .get('activitiesStartDate')
-      ?.setValue(
-        this.isEdit && this.lastDateStart ? new Date(this.lastDateStart) : null
-      );
-    this.form.get('etp')?.setValue(etp === null ? null : fixDecimal(etp));
-    this.form
-      .get('categoryId')
-      ?.setValue(
-        (situation && situation.category && situation.category.id) || null
-      );
+    this.etp = etp
+    this.form.get('activitiesStartDate')?.setValue(this.isEdit && this.lastDateStart ? new Date(this.lastDateStart) : null)
+    this.form.get('etp')?.setValue(etp === null ? null : fixDecimal(etp))
+    this.form.get('categoryId')?.setValue((situation && situation.category && situation.category.id) || null)
 
-    this.form
-      .get('fonctionId')
-      ?.setValue(
-        (situation && situation.fonction && situation.fonction.id) || null
-      );
+    this.form.get('fonctionId')?.setValue((situation && situation.fonction && situation.fonction.id) || null)
 
-    const fonctions = this.humanResourceService.fonctions.getValue();
-    const fonct = fonctions.find(
-      (c) => c.id == this.form.get('fonctionId')?.value,
-      this.form.get('categoryId')?.value
-    );
-    if (fonct)
-      this.calculatriceIsActive = fonct.calculatrice_is_active || false;
+    const fonctions = this.humanResourceService.fonctions.getValue()
+    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value, this.form.get('categoryId')?.value)
+    if (fonct) this.calculatriceIsActive = fonct.calculatrice_is_active || false
 
-    this.loadCategories();
+    this.loadCategories()
   }
 
   /**
    * Destruction des observables
    */
   ngOnDestroy(): void {
-    this.watcherDestroy();
+    this.watcherDestroy()
   }
 
   /**
@@ -425,12 +372,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   async loadCategories() {
     if (this.form.value) {
-      const foncts = (await this.hrFonctionService.getAll()).filter(
-        (c) => this.form.value?.categoryId == c.categoryId
-      );
+      const foncts = (await this.hrFonctionService.getAll()).filter((c) => this.form.value?.categoryId == c.categoryId)
 
       if (JSON.stringify(foncts) !== JSON.stringify(this.fonctions)) {
-        this.fonctions = foncts;
+        this.fonctions = foncts
       }
     }
   }
@@ -440,142 +385,116 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @returns
    */
   async onSave(withoutPercentControl = false, saveETPT0 = false) {
-    let { activitiesStartDate, categoryId, fonctionId } = this.form.value;
-    const categories = this.humanResourceService.categories.getValue();
-    const fonctions = this.humanResourceService.fonctions.getValue();
-    const cat = categories.find((c) => categoryId && c.id == categoryId);
-    const fonct = fonctions.find((c) => c.id == fonctionId);
+    let { activitiesStartDate, categoryId, fonctionId } = this.form.value
+    const categories = this.humanResourceService.categories.getValue()
+    const fonctions = this.humanResourceService.fonctions.getValue()
+    const cat = categories.find((c) => categoryId && c.id == categoryId)
+    const fonct = fonctions.find((c) => c.id == fonctionId)
 
-    const indisponibilites = this.human?.indisponibilities || [];
-    const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some(
-      (c) => c.contentieux.checkVentilation === false
-    );
+    const indisponibilites = this.human?.indisponibilities || []
+    const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some((c) => c.contentieux.checkVentilation === false)
 
-    this.alertList = [];
+    this.alertList = []
 
-    if (
-      this.basicData!.controls['firstName'].value === '' ||
-      this.basicData!.controls['firstName'].value === 'Prénom'
-    ) {
-      this.alertList.push('firstName');
+    if (this.basicData!.controls['firstName'].value === '' || this.basicData!.controls['firstName'].value === 'Prénom') {
+      this.alertList.push('firstName')
     }
 
-    if (
-      this.basicData!.controls['lastName'].value === '' ||
-      this.basicData!.controls['lastName'].value === 'Nom'
-    ) {
-      this.alertList.push('lastName');
+    if (this.basicData!.controls['lastName'].value === '' || this.basicData!.controls['lastName'].value === 'Nom') {
+      this.alertList.push('lastName')
     }
 
     if (!(this.human && this.human.dateStart)) {
-      this.alertList.push('startDate');
+      this.alertList.push('startDate')
     }
 
     if (!cat) {
-      this.alertList.push('category');
+      this.alertList.push('category')
     }
 
     if (!fonct) {
-      this.alertList.push('fonction');
+      this.alertList.push('fonction')
     }
 
-    const etp = this.form.get('etp')?.value;
+    const etp = this.form.get('etp')?.value
     if (etp === null) {
-      this.alertList.push('etp');
+      this.alertList.push('etp')
     }
 
     if (!activitiesStartDate) {
-      this.alertList.push('activitiesStartDate');
-      this.printErrorDateStart = true;
+      this.alertList.push('activitiesStartDate')
+      this.printErrorDateStart = true
     }
     if (this.alertList.length > 0) {
-      console.log('AlertList:', this.alertList);
+      console.log('AlertList:', this.alertList)
 
-      this.alertSet.emit({ updatedList: this.alertList });
-      return;
+      this.alertSet.emit({ updatedList: this.alertList })
+      return
     }
 
-    activitiesStartDate =
-      setTimeToMidDay(today(activitiesStartDate)) || today(activitiesStartDate);
+    activitiesStartDate = setTimeToMidDay(today(activitiesStartDate)) || today(activitiesStartDate)
 
     if (this.human && this.human.dateStart && activitiesStartDate) {
-      const dateStart = today(this.human.dateStart);
+      const dateStart = today(this.human.dateStart)
       // check activity date
       if (activitiesStartDate.getTime() < dateStart.getTime()) {
-        alert(
-          "Vous ne pouvez pas saisir une situation antérieure à la date d'arrivée !"
-        );
-        return;
+        alert("Vous ne pouvez pas saisir une situation antérieure à la date d'arrivée !")
+        return
       }
     }
 
     if (this.human && this.human.dateEnd && activitiesStartDate) {
-      const dateEnd = new Date(this.human.dateEnd);
+      const dateEnd = new Date(this.human.dateEnd)
 
       // check activity date
       if (activitiesStartDate.getTime() > dateEnd.getTime()) {
-        alert(
-          'Vous ne pouvez pas saisir une situation postérieure à la date de départ !'
-        );
-        return;
+        alert('Vous ne pouvez pas saisir une situation postérieure à la date de départ !')
+        return
       }
     }
 
     if (this.indisponibilityError) {
-      alert(this.indisponibilityError);
-      return;
+      alert(this.indisponibilityError)
+      return
     }
 
-    if (
-      !checkIfIndispoIgnoreControlPercentVentilation &&
-      !withoutPercentControl
-    ) {
-      const totalAffected = fixDecimal(
-        sumBy(this.updatedReferentiels, 'percent')
-      );
+    if (!checkIfIndispoIgnoreControlPercentVentilation && !withoutPercentControl) {
+      const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
       if (totalAffected > 100) {
         this.appService.alert.next({
           title: 'Attention',
           text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`,
-        });
-        return;
+        })
+        return
       } else if (totalAffected < 100) {
         this.appService.alert.next({
           title: 'La ventilation de cet agent est incomplète',
           text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${fixDecimal(
-            100 - totalAffected
+            100 - totalAffected,
           )}% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           secondaryText: 'Compléter la situation',
           callbackSecondary: () => {
-            this.scrollToBottomElement();
+            this.scrollToBottomElement()
           },
           okText: "Enregistrer en l'état",
           callback: () => {
-            this.onSave(true, saveETPT0);
+            this.onSave(true, saveETPT0)
           },
-        });
-        return;
+        })
+        return
       }
     }
 
-    if (!fonct || !cat) return;
+    if (!fonct || !cat) return
 
-    if (
-      fonct.minDateAvalaible &&
-      !isDateBiggerThan(
-        today(activitiesStartDate),
-        today(fonct.minDateAvalaible)
-      )
-    ) {
+    if (fonct.minDateAvalaible && !isDateBiggerThan(today(activitiesStartDate), today(fonct.minDateAvalaible))) {
       alert(
-        `Date de début de situation à corriger ! La fonction ${
-          fonct.label
-        } n’entre en vigueur qu’à compter du ${findRealValueCustom(
+        `Date de début de situation à corriger ! La fonction ${fonct.label} n’entre en vigueur qu’à compter du ${findRealValueCustom(
           fonct.minDateAvalaible,
-          false
-        )}.`
-      );
-      return;
+          false,
+        )}.`,
+      )
+      return
     }
 
     if (etp === 0) {
@@ -587,20 +506,14 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           callbackSecondary: () => {},
           okText: "Confirmer l'ETPT à 0",
           callback: () => {
-            this.onSave(withoutPercentControl, true);
+            this.onSave(withoutPercentControl, true)
           },
-        });
-        return;
+        })
+        return
       }
     }
 
-    const situations = this.generateAllNewSituations(
-      this.updatedReferentiels,
-      activitiesStartDate,
-      { ...this.form.value, etp },
-      cat,
-      fonct
-    );
+    const situations = this.generateAllNewSituations(this.updatedReferentiels, activitiesStartDate, { ...this.form.value, etp }, cat, fonct)
 
     if (this.human) {
       if (
@@ -612,7 +525,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           indisponibilities: this.indisponibilities,
         })
       ) {
-        this.onSaveConfirm.emit();
+        this.onSaveConfirm.emit()
       }
     }
   }
@@ -631,77 +544,69 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     activitiesStartDate: Date,
     profil: any,
     cat: HRCategoryInterface,
-    fonct: HRFonctionInterface
+    fonct: HRFonctionInterface,
   ) {
-    let situations = this.human?.situations || [];
+    let situations = this.human?.situations || []
 
-    console.log(
-      'Situations:',
-      situations,
-      newReferentiel,
-      activitiesStartDate,
-      this.editId
-    );
+    console.log('Situations:', situations, newReferentiel, activitiesStartDate, this.editId)
 
-    const activities: any[] = [];
+    const activities: any[] = []
     newReferentiel
       .filter((r) => r.percent && r.percent > 0)
       .map((r) => {
         activities.push({
           percent: r.percent || 0,
           contentieux: r,
-        });
-        (r.childrens || [])
+        })
+        ;(r.childrens || [])
           .filter((r) => r.percent && r.percent > 0)
           .map((child) => {
             activities.push({
               percent: child.percent || 0,
               contentieux: child,
-            });
-          });
-      });
+            })
+          })
+      })
 
     // find if situation is in same date
     const isSameDate = situations.findIndex((s) => {
-      const day = today(s.dateStart);
-      return (
-        activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
-      );
-    });
-    console.log('isSameDate:', isSameDate);
+      const day = today(s.dateStart)
+      return activitiesStartDate.getTime() === day.getTime() && s.id !== this.editId
+    })
+    console.log('isSameDate:', isSameDate)
 
     const options = {
       etp: profil.etp,
       category: cat,
       fonction: fonct,
       activities,
-    };
+    }
 
     if (isSameDate !== -1) {
       situations[isSameDate] = {
         ...situations[isSameDate],
         ...options,
-      };
+      }
 
-      situations = situations.filter((s) => s.id !== this.editId);
+      situations = situations.filter((s) => s.id !== this.editId)
     } else if (this.editId !== -1 && this.editId !== null) {
-      const index = situations.findIndex((s) => s.id === this.editId);
+      const index = situations.findIndex((s) => s.id === this.editId)
       if (index !== -1) {
         situations[index] = {
           ...situations[index],
           ...options,
           dateStart: activitiesStartDate,
-        };
+        }
       }
     } else {
       situations.splice(0, 0, {
         id: -1,
         ...options,
         dateStart: activitiesStartDate,
-      });
+      })
     }
 
-    return situations;
+    return situations
   }
 
   /**
@@ -709,7 +614,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @param referentiels
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
-    this.updatedReferentiels = referentiels;
+    this.updatedReferentiels = referentiels
   }
 
   /**
@@ -717,61 +622,30 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @param type
    */
   openHelpPanel(type: string) {
-    this.onOpenHelpPanel.emit(type);
+    this.onOpenHelpPanel.emit(type)
   }
 
   convertirEtpt() {
-    if (
-      this.calculatriceService.dataCalculatrice.getValue().selectedTab ===
-      'volume'
-    ) {
-      if (
-        this.calculatriceService.dataCalculatrice.getValue().volume.value !==
-        null
-      ) {
-        this.openCalculatricePopup = false;
-        this.form
-          .get('etp')
-          ?.setValue(
-            fixDecimal(
-              this.calculatriceService.computeEtptCalculatrice(
-                String(this.form.get('categoryId')?.value || 1)
-              )
-            )
-          );
+    if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'volume') {
+      if (this.calculatriceService.dataCalculatrice.getValue().volume.value !== null) {
+        this.openCalculatricePopup = false
+        this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value || 1))))
       }
-    } else if (
-      this.calculatriceService.dataCalculatrice.getValue().selectedTab ===
-      'vacation'
-    ) {
+    } else if (this.calculatriceService.dataCalculatrice.getValue().selectedTab === 'vacation') {
       if (
-        this.calculatriceService.dataCalculatrice.getValue().vacation.value !==
-          null &&
-        this.calculatriceService.dataCalculatrice.getValue().vacation.unit !==
-          null
+        this.calculatriceService.dataCalculatrice.getValue().vacation.value !== null &&
+        this.calculatriceService.dataCalculatrice.getValue().vacation.unit !== null
       ) {
-        this.openCalculatricePopup = false;
-        this.form
-          .get('etp')
-          ?.setValue(
-            fixDecimal(
-              this.calculatriceService.computeEtptCalculatrice(
-                String(this.form.get('categoryId')?.value || 1)
-              )
-            )
-          );
+        this.openCalculatricePopup = false
+        this.form.get('etp')?.setValue(fixDecimal(this.calculatriceService.computeEtptCalculatrice(String(this.form.get('categoryId')?.value || 1))))
       }
     }
   }
 
   setFonc(event: any) {
-    const fonctions = this.humanResourceService.fonctions.getValue();
-    const fonct = fonctions.find(
-      (c) => c.id == this.form.get('fonctionId')?.value,
-      event.value
-    );
-    if (fonct)
-      this.calculatriceIsActive = fonct.calculatrice_is_active || false;
+    const fonctions = this.humanResourceService.fonctions.getValue()
+    const fonct = fonctions.find((c) => c.id == this.form.get('fonctionId')?.value, event.value)
+    if (fonct) this.calculatriceIsActive = fonct.calculatrice_is_active || false
   }
 
   async downloadCalculator() {
@@ -780,22 +654,22 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         value: CALCULATE_DOWNLOAD_URL,
       })
       .then((r) => {
-        return r.data;
-      });
-    window.open(CALCULATE_DOWNLOAD_URL);
+        return r.data
+      })
+    window.open(CALCULATE_DOWNLOAD_URL)
   }
 
   async downloadAsset(type: string, download = false) {
-    let url = null;
-    console.log('Type:', type);
+    let url = null
+    console.log('Type:', type)
     if (type === 'nomencalture') {
       if (this.userService.isCa()) {
-        url = NOMENCLATURE_DOWNLOAD_URL_CA;
+        url = NOMENCLATURE_DOWNLOAD_URL_CA
       } else {
         if (this.referentielService.isDroitLocal()) {
-          url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL;
+          url = NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL
         } else {
-          url = NOMENCLATURE_DOWNLOAD_URL;
+          url = NOMENCLATURE_DOWNLOAD_URL
         }
       }
     } else if (type === 'calculator') {
@@ -804,16 +678,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           value: CALCULATE_DOWNLOAD_URL,
         })
         .then((r) => {
-          return r.data;
-        });
-      window.open(CALCULATE_DOWNLOAD_URL);
+          return r.data
+        })
+      window.open(CALCULATE_DOWNLOAD_URL)
     }
 
     if (url) {
       if (download) {
-        downloadFile(url);
+        downloadFile(url)
       } else {
-        window.open(url);
+        window.open(url)
       }
     }
   }
@@ -824,19 +698,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         value: IMPORT_ETP_TEMPLATE,
       })
       .then((r) => {
-        return r.data;
-      });
-    this.excelService.generateAgentFile();
+        return r.data
+      })
+    this.excelService.generateAgentFile()
   }
 
   /**
    * Récupère le nom d'une catégorie
    */
   getCategoryLabel() {
-    const cat =
-      this.categories.find((c) => this.form.get('categoryId')?.value == c.id) ||
-      null;
-    return cat;
+    const cat = this.categories.find((c) => this.form.get('categoryId')?.value == c.id) || null
+    return cat
   }
 
   /**
@@ -845,65 +717,56 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @param element
    */
   getFile(event: any, element: HTMLInputElement) {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
 
     const classe = {
       codeImport: null,
       value: null,
-    };
+    }
 
-    this.fileReader(file, classe, event);
-    element.value = '';
+    this.fileReader(file, classe, event)
+    element.value = ''
   }
 
   private fileReader(file: any, line: any, event: any) {
-    let fileReader = new FileReader();
+    let fileReader = new FileReader()
     fileReader.onload = (e) => {
-      let arrayBuffer = fileReader.result;
-      const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-      const arr = new Array();
+      let arrayBuffer = fileReader.result
+      const data = new Uint8Array(arrayBuffer as ArrayBuffer)
+      const arr = new Array()
 
       for (let i = 0; i !== data.length; i++) {
-        arr[i] = String.fromCharCode(data[i]);
+        arr[i] = String.fromCharCode(data[i])
       }
 
-      const bstr = arr.join('');
-      const workbook = xlsx.read(bstr, { type: 'binary', cellDates: true });
-      const first_sheet_name = workbook.SheetNames[0];
-      const second_sheet_name = workbook.SheetNames[1];
+      const bstr = arr.join('')
+      const workbook = xlsx.read(bstr, { type: 'binary', cellDates: true })
+      const first_sheet_name = workbook.SheetNames[0]
+      const second_sheet_name = workbook.SheetNames[1]
 
-      if (
-        !(
-          second_sheet_name === 'Fonction' ||
-          second_sheet_name === 'Fonction_CA'
-        )
-      ) {
-        alert(
-          "Le fichier que vous essayez d'importer n'est pas au bon format, veuillez réessayer !"
-        );
-        event.target.value = '';
-        return;
+      if (!(second_sheet_name === 'Fonction' || second_sheet_name === 'Fonction_CA')) {
+        alert("Le fichier que vous essayez d'importer n'est pas au bon format, veuillez réessayer !")
+        event.target.value = ''
+        return
       }
 
-      const worksheet = workbook.Sheets[first_sheet_name];
+      const worksheet = workbook.Sheets[first_sheet_name]
       let firstWorksheet = xlsx.utils.sheet_to_json(worksheet, {
         blankrows: false,
-      });
+      })
 
       // Formated data from the Excel file imported
-      const importedSituation = { ...this.matchingCell(firstWorksheet, line) };
+      const importedSituation = { ...this.matchingCell(firstWorksheet, line) }
 
-      this.displayImportLabels = true;
+      this.displayImportLabels = true
       let situation: importedSituation = {
         index: this.indexSituation,
         ventillation: this.affectImportedSituation(importedSituation),
-      };
-      this.humanResourceService.importedSituation.next(situation);
-      this.appService.notification(
-        `L’import de vos données a bien été réalisé.`
-      );
-    };
-    fileReader.readAsArrayBuffer(file);
+      }
+      this.humanResourceService.importedSituation.next(situation)
+      this.appService.notification(`L’import de vos données a bien été réalisé.`)
+    }
+    fileReader.readAsArrayBuffer(file)
   }
 
   /**
@@ -913,76 +776,49 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @returns
    */
   private matchingCell(worksheet: any, line: any) {
-    const monTab = { value: [] };
-    let fct = null;
-    let category: any = null;
-    let mainEtp = null;
-    let startDate = null;
-    let worksheetLine = null;
+    const monTab = { value: [] }
+    let fct = null
+    let category: any = null
+    let mainEtp = null
+    let startDate = null
+    let worksheetLine = null
     for (let i = 0; i < worksheet.length; i++) {
-      worksheetLine = worksheet[i];
+      worksheetLine = worksheet[i]
 
-      if (
-        worksheetLine['__EMPTY_1'] === 'Fonction' &&
-        worksheetLine['__EMPTY_2']
-      ) {
-        const fctStr = worksheetLine['__EMPTY_2'];
+      if (worksheetLine['__EMPTY_1'] === 'Fonction' && worksheetLine['__EMPTY_2']) {
+        const fctStr = worksheetLine['__EMPTY_2']
 
-        fct =
-          this.humanResourceService.fonctions
-            .getValue()
-            .find(
-              (c: HRFonctionInterface) =>
-                c.label.toUpperCase() === fctStr?.toUpperCase()
-            ) || null;
-      } else if (
-        worksheetLine['__EMPTY_1'] === 'Catégorie' &&
-        worksheetLine['__EMPTY_2']
-      ) {
-        let categoryStr = worksheetLine['__EMPTY_2'].replaceAll('_', ' ');
+        fct = this.humanResourceService.fonctions.getValue().find((c: HRFonctionInterface) => c.label.toUpperCase() === fctStr?.toUpperCase()) || null
+      } else if (worksheetLine['__EMPTY_1'] === 'Catégorie' && worksheetLine['__EMPTY_2']) {
+        let categoryStr = worksheetLine['__EMPTY_2'].replaceAll('_', ' ')
         category =
-          this.humanResourceService.categories
-            .getValue()
-            .find(
-              (c: HRCategoryInterface) =>
-                c.label.toUpperCase() === categoryStr?.toUpperCase()
-            ) || null;
-      } else if (
-        worksheetLine['__EMPTY_1'] === 'ACTIVITES EXERCEES DEPUIS LE :'
-      ) {
-        startDate = worksheetLine['__EMPTY_2'];
-        if (
-          ['(saisir ici depuis quelle date)', '', undefined].includes(startDate)
-        )
-          startDate = null;
+          this.humanResourceService.categories.getValue().find((c: HRCategoryInterface) => c.label.toUpperCase() === categoryStr?.toUpperCase()) || null
+      } else if (worksheetLine['__EMPTY_1'] === 'ACTIVITES EXERCEES DEPUIS LE :') {
+        startDate = worksheetLine['__EMPTY_2']
+        if (['(saisir ici depuis quelle date)', '', undefined].includes(startDate)) startDate = null
         else {
-          startDate = new Date(startDate);
-          startDate.setHours(startDate.getHours() + 5);
+          startDate = new Date(startDate)
+          startDate.setHours(startDate.getHours() + 5)
         }
-        this.form.get('activitiesStartDate')?.setValue(startDate);
-      } else if (
-        worksheetLine['__EMPTY_1'] === 'Temps administratif de travail' &&
-        worksheetLine['__EMPTY_4']
-      ) {
-        mainEtp = worksheetLine['__EMPTY_4'] as number;
-        mainEtp = fixDecimal(mainEtp);
+        this.form.get('activitiesStartDate')?.setValue(startDate)
+      } else if (worksheetLine['__EMPTY_1'] === 'Temps administratif de travail' && worksheetLine['__EMPTY_4']) {
+        mainEtp = worksheetLine['__EMPTY_4'] as number
+        mainEtp = fixDecimal(mainEtp)
       } else if (worksheetLine['__EMPTY'] && worksheetLine['__EMPTY_4']) {
         const updatedLine = {
           codeImport: worksheetLine['__EMPTY'],
           value: worksheetLine['__EMPTY_4'],
-        };
-        line = { ...line, ...updatedLine };
-        monTab.value.push(line as never);
+        }
+        line = { ...line, ...updatedLine }
+        monTab.value.push(line as never)
       }
     }
 
-    this.importedFunction = fct?.id || null;
-    category !== null
-      ? this.form.get('categoryId')?.setValue(category.id || null)
-      : this.form.get('categoryId')?.setValue(null);
-    this.form.get('etp')?.setValue(mainEtp);
+    this.importedFunction = fct?.id || null
+    category !== null ? this.form.get('categoryId')?.setValue(category.id || null) : this.form.get('categoryId')?.setValue(null)
+    this.form.get('etp')?.setValue(mainEtp)
 
-    return { category, fct, mainEtp, startDate, ventilation: monTab };
+    return { category, fct, mainEtp, startDate, ventilation: monTab }
   }
 
   /**
@@ -991,59 +827,52 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * @returns
    */
   affectImportedSituation(formatedData: any) {
-    let result: importedVentillation[] = [];
-    this.sumPercentImported = 0;
+    let result: importedVentillation[] = []
+    this.sumPercentImported = 0
     formatedData.ventilation.value.map((ref: any) => {
-      let found = false;
+      let found = false
       this.updatedReferentiels = this.updatedReferentiels.map((item) => {
-        const re = new RegExp('[0-9]{1,2}[.]');
-        const startCode = ref.codeImport.split('.')[0] + '.';
-        if (
-          re.exec(ref.codeImport) !== null &&
-          ref.codeImport == item.code_import
-        ) {
-          item.percent = ref.value;
-          found = true;
+        const re = new RegExp('[0-9]{1,2}[.]')
+        const startCode = ref.codeImport.split('.')[0] + '.'
+        if (re.exec(ref.codeImport) !== null && ref.codeImport == item.code_import) {
+          item.percent = ref.value
+          found = true
           result.push({
             referentiel: item,
             percent: item.percent,
             parentReferentiel: null,
-          });
+          })
 
-          this.sumPercentImported += item.percent || 0;
-          let sumSubRef = 0;
-          const allImported = result.map((r) => r.referentiel.code_import);
+          this.sumPercentImported += item.percent || 0
+          let sumSubRef = 0
+          const allImported = result.map((r) => r.referentiel.code_import)
           const childs = item.childrens?.map((r) => {
-            if (allImported.includes(r.code_import))
-              sumSubRef += r.percent || 0;
-            return r.code_import;
-          });
+            if (allImported.includes(r.code_import)) sumSubRef += r.percent || 0
+            return r.code_import
+          })
 
-          if (sumSubRef !== item.percent)
-            result = result.filter(
-              (r) => childs?.includes(r.referentiel.code_import) === false
-            );
+          if (sumSubRef !== item.percent) result = result.filter((r) => childs?.includes(r.referentiel.code_import) === false)
         } else {
           if (startCode === item.code_import && found === false) {
             item.childrens = item.childrens?.map((child) => {
               if (child.code_import === ref.codeImport) {
-                child.percent = ref.value;
-                found = true;
+                child.percent = ref.value
+                found = true
                 result.push({
                   referentiel: child,
                   percent: child.percent,
                   parentReferentiel: item,
-                });
+                })
               }
-              return child;
-            });
+              return child
+            })
           }
         }
-        return item;
-      });
-    });
+        return item
+      })
+    })
 
-    return result;
+    return result
   }
 
   /**
@@ -1055,7 +884,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       // Clicked in box
     } else {
       // Clicked outside the box
-      if (this.isEdit || this.saveActions) this.toggleDropDown = false;
+      if (this.isEdit || this.saveActions) this.toggleDropDown = false
     }
   }
 
@@ -1068,17 +897,17 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       // Clicked in box
     } else {
       // Clicked outside the box
-      if (!this.isEdit && !this.saveActions) this.toggleDropDown = false;
+      if (!this.isEdit && !this.saveActions) this.toggleDropDown = false
     }
   }
 
   removeAlertItem(index: number) {
-    this.alertSet.emit({ index: index });
+    this.alertSet.emit({ index: index })
   }
 
   scrollToBottomElement() {
     this.bottomContainerTargetRef.nativeElement.scrollIntoView({
       behavior: 'smooth',
-    });
+    })
   }
 }

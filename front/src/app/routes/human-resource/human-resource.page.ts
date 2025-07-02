@@ -352,13 +352,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.categoryName = ''
     }
 
+    console.log('this.currentHR', this.currentHR)
+
     this.formatHRHistory()
   }
 
   /**
    * Génération des situations artificielle ou non
    */
+
   formatHRHistory() {
+    this.allIndisponibilities = this.currentHR?.indisponibilities || []
+
     if (this.fonctions.length === 0 || !this.currentHR || this.onEditIndex !== null) {
       return
     }
@@ -373,7 +378,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.historiesOfThePast = []
     this.historiesOfTheFutur = []
 
-    this.allIndisponibilities = this.currentHR.indisponibilities || []
     const situations = orderBy(this.currentHR.situations || [], [
       function (o: HRSituationInterface) {
         const date = new Date(o.dateStart)
