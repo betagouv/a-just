@@ -112,7 +112,7 @@ export default class RouteHumanResources extends Route {
 
     const responseUpdate = await this.model.updateHR(hr, backupId)
     //await selfRouteToSyncJuridiction(backupId)
-    await selfRouteToSyncAgent(hr.id)
+    await selfRouteToSyncAgent(hr.id, backupId)
 
     this.sendOk(ctx, responseUpdate)
   }
@@ -133,7 +133,7 @@ export default class RouteHumanResources extends Route {
       if (onRemoveHR) {
         this.sendOk(ctx, 'Ok')
         //await selfRouteToSyncJuridiction(onRemoveHR.backupId)
-        await selfRouteToSyncAgent(hrId)
+        await selfRouteToSyncAgent(hrId, onRemoveHR.backupId)
         await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
           hrId,
         })
@@ -185,7 +185,7 @@ export default class RouteHumanResources extends Route {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
         const agent = await this.model.getHr(hrId)
         //await selfRouteToSyncJuridiction(agent.backupId)
-        await selfRouteToSyncAgent(hrId)
+        await selfRouteToSyncAgent(hrId, agent.backup_id)
         this.sendOk(ctx, agent)
       }
     }
