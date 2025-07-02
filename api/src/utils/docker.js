@@ -19,12 +19,13 @@ export const selfRouteToSyncJuridiction = async (juridictionId) => {
   }
 }
 
-export const selfRouteToSyncAgent = async (agentId) => {
+export const selfRouteToSyncAgent = async (agentId, backupId) => {
   const instancesFounded = []
 
   while (instancesFounded.length < config.nbInstances) {
     const newInstanceName = await axiosDt.post(`${config.serverUrl.replace('/api', '')}/docker/sync/update-agent`, {
       agentId,
+      backupId,
       from: os.hostname(),
     })
     if (newInstanceName.data && instancesFounded.indexOf(newInstanceName.data) === -1) {
