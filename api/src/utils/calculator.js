@@ -454,10 +454,10 @@ export const getHRPositionsOld = (models, hr, categories, referentielId, dateSta
 }
 
 export const getHRVentilationOld = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
-  /*const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
+  const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
   if (cache) {
     return cache
-  }*/
+  }
 
   const list = new Object()
   categories.map((c) => {
@@ -566,7 +566,7 @@ export const getHRVentilationOld = (models, hr, referentielId, categories, dateS
     list[property].nbDay = nbDay
   }
 
-  //models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
+  models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
   return list
 }
 
