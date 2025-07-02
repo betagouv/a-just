@@ -80,8 +80,8 @@
             <i class="ri-checkbox-circle-fill"></i>
             {{
             form.get('categoryId')?.value === null ||
-            form.get('fonctionId')?.value === null || form.get('etp')?.value === null?'à
-            compléter':'importé'
+            form.get('fonctionId')?.value === null || form.get('etp')?.value === null?
+            'à compléter':'importé'
             }}
           </label>
 
@@ -185,12 +185,15 @@
             <p *ngIf="isEdit">Modification de la situation </p>
             <p *ngIf="!isEdit">Situation à prendre en compte </p>
             <div class="flex-1"></div>
-            <label class="import-confirmation"
-              *ngIf="displayImportLabels && form.get('activitiesStartDate')?.value === null || alertList.includes('activitiesStartDate') "
+            <label class="import-confirmation" *ngIf="displayImportLabels || alertList.includes('activitiesStartDate') "
               [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
-              'background-color' : form.get('activitiesStartDate')?.value === null ?'#feebd0':'#b8fec9'}"><i
-                class="ri-checkbox-circle-fill"></i>{{form.get('activitiesStartDate')?.value !== null ?'importé':'à
-              compléter'}}</label>
+              'background-color' : form.get('activitiesStartDate')?.value === null ?'#feebd0':'#b8fec9'}">
+              <i class="ri-checkbox-circle-fill"></i>
+              {{
+              form.get('activitiesStartDate')?.value === null ?
+              'à compléter' : 'importé'
+              }}
+            </label>
           </div>
 
           <div class="date-start-content"
