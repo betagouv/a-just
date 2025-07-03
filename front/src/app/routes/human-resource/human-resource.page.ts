@@ -842,6 +842,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
     console.log(history, this.histories)
+    this.alertList = []
 
     const index = history ? this.histories.findIndex((h) => h.id === history.id && h.dateStart === history.dateStart) : -1
     console.log('index', index)
@@ -871,6 +872,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onRemoveSituation(id: number) {
     const callback = async (forceAlert = true) => {
+      this.appService.appLoading.next(true)
       const returnValue = await this.humanResourceService.removeSituation(id, forceAlert)
       this.onEditIndex = null
 
@@ -881,8 +883,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       }
 
       if (this.histories.length === 0) {
+        this.currentETP.set(null)
         this.onEditIndex = null
       }
+      this.appService.appLoading.next(false)
     }
 
     if (this.currentHR && this.currentHR.situations.length === 1) {
