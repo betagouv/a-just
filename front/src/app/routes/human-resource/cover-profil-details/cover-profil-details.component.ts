@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common'
 import {
   Component,
   EventEmitter,
@@ -13,32 +13,28 @@ import {
   Signal,
   inject,
   ElementRef,
-} from '@angular/core';
-import { FormGroup, FormsModule } from '@angular/forms';
-import { isNumber, sumBy } from 'lodash';
-import { BackButtonComponent } from '../../../components/back-button/back-button.component';
-import { HelpButtonComponent } from '../../../components/help-button/help-button.component';
-import { DateSelectComponent } from '../../../components/date-select/date-select.component';
-import { BigEtpPreviewComponent } from '../big-etp-preview/big-etp-preview.component';
-import { AlertSmallComponent } from '../../../components/alert-small/alert-small.component';
-import { MainClass } from '../../../libs/main-class';
-import { HumanResourceInterface } from '../../../interfaces/human-resource-interface';
-import { HRFonctionInterface } from '../../../interfaces/hr-fonction';
-import { HRCategoryInterface } from '../../../interfaces/hr-category';
-import { RHActivityInterface } from '../../../interfaces/rh-activity';
-import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
-import { UserService } from '../../../services/user/user.service';
-import { ReferentielService } from '../../../services/referentiel/referentiel.service';
-import { fixDecimal } from '../../../utils/numbers';
-import { today } from '../../../utils/dates';
-import { etpLabel } from '../../../utils/referentiel';
-import { downloadFile } from '../../../utils/system';
-import { MatIconModule } from '@angular/material/icon';
-import {
-  NOMENCLATURE_DOWNLOAD_URL,
-  NOMENCLATURE_DOWNLOAD_URL_CA,
-  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
-} from '../../../constants/documentation';
+} from '@angular/core'
+import { FormGroup, FormsModule } from '@angular/forms'
+import { isNumber, sumBy } from 'lodash'
+import { BackButtonComponent } from '../../../components/back-button/back-button.component'
+import { HelpButtonComponent } from '../../../components/help-button/help-button.component'
+import { DateSelectComponent } from '../../../components/date-select/date-select.component'
+import { BigEtpPreviewComponent } from '../big-etp-preview/big-etp-preview.component'
+import { AlertSmallComponent } from '../../../components/alert-small/alert-small.component'
+import { MainClass } from '../../../libs/main-class'
+import { HumanResourceInterface } from '../../../interfaces/human-resource-interface'
+import { HRFonctionInterface } from '../../../interfaces/hr-fonction'
+import { HRCategoryInterface } from '../../../interfaces/hr-category'
+import { RHActivityInterface } from '../../../interfaces/rh-activity'
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
+import { UserService } from '../../../services/user/user.service'
+import { ReferentielService } from '../../../services/referentiel/referentiel.service'
+import { fixDecimal } from '../../../utils/numbers'
+import { isDateBiggerThan, today } from '../../../utils/dates'
+import { etpLabel } from '../../../utils/referentiel'
+import { downloadFile } from '../../../utils/system'
+import { MatIconModule } from '@angular/material/icon'
+import { NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA, NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL } from '../../../constants/documentation'
 
 /**
  * Panneau de présentation d'une fiche
@@ -60,94 +56,91 @@ import {
   templateUrl: './cover-profil-details.component.html',
   styleUrls: ['./cover-profil-details.component.scss'],
 })
-export class CoverProfilDetailsComponent
-  extends MainClass
-  implements OnChanges, OnInit
-{
+export class CoverProfilDetailsComponent extends MainClass implements OnChanges, OnInit {
   @ViewChildren('input')
-  inputs: QueryList<ElementRef> = new QueryList<ElementRef>();
-  @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>;
+  inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
+  @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>
 
-  userService = inject(UserService);
-  referentielService = inject(ReferentielService);
+  userService = inject(UserService)
+  referentielService = inject(ReferentielService)
   /**
    * Fiche courante
    */
-  @Input() currentHR: HumanResourceInterface | null = null;
+  @Input() currentHR: HumanResourceInterface | null = null
   /**
    * Ajout d'un bouton "back" avec un url
    */
-  @Input() backUrl: string | undefined;
+  @Input() backUrl: string | undefined
   /**
    * Ajouter d'une ancre sur le lien de retour
    */
-  @Input() backAnchor: string | undefined;
+  @Input() backAnchor: string | undefined
   /**
    * Affiche l'ETP calculé
    */
-  @Input() etp: Signal<number | null> = signal(null);
+  @Input() etp: Signal<number | null> = signal(null)
   /**
    * Fonction courante
    */
-  @Input() fonction: HRFonctionInterface | null = null;
+  @Input() fonction: HRFonctionInterface | null = null
   /**
    * Categorie courante
    */
-  @Input() category: HRCategoryInterface | null = null;
+  @Input() category: HRCategoryInterface | null = null
   /**
    * Liste des indispo courrante
    */
-  @Input() indisponibilities: RHActivityInterface[] = [];
+  @Input() indisponibilities: RHActivityInterface[] = []
   /**
    * Mode d'édition courant
    */
-  @Input() onEditIndex: number | null = null;
+  @Input() onEditIndex: number | null = null
   /**
    * Formulaire
    */
-  @Input() basicHrInfo: FormGroup | null = null;
+  @Input() basicHrInfo: FormGroup | null = null
   /**
    * Date de début de la situation actuelle
    */
-  @Input() dateStart: Date | null = null;
+  @Input() dateStart: Date | null = null
   /**
    * Liste des alertes
    */
-  @Input() alertList: string[] = [];
+  @Input() alertList: string[] = []
   /**
    * Envoie un event au parent pour le focus sur le prochain input
    */
   @Output() focusNext = new EventEmitter<{
-    event: any;
-    calendarType: string | null;
-  }>();
+    event: any
+    calendarType: string | null
+  }>()
   /**
    * Request an PDF export
    */
-  @Output() exportPDF = new EventEmitter();
+  @Output() exportPDF = new EventEmitter()
   /**
    * Request to help panel
    */
-  @Output() onOpenHelpPanel = new EventEmitter();
+  @Output() onOpenHelpPanel = new EventEmitter()
   /**
    * Request to to update screen
    */
-  @Output() ficheIsUpdated = new EventEmitter();
+  @Output() ficheIsUpdated = new EventEmitter()
   /**
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    updatedList?: string[];
-    index?: number;
-  }>();
+    updatedList?: string[]
+    index?: number
+  }>()
   /**
    * Temps de travail en text
    */
-  timeWorked: string | null = '';
+  timeWorked: string | null = ''
   /**
    * ETP des indispo
    */
-  indisponibility: number = 0;
+  indisponibility: number = 0
 
   /**
    * Taille des champs d'inputs (firstName et LastName)
@@ -155,73 +148,52 @@ export class CoverProfilDetailsComponent
   inputsWidth: { firstName: number; lastName: number } = {
     firstName: 120,
     lastName: 120,
-  };
+  }
 
   /**
    * Constructeur
    * @param humanResourceService
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private renderer: Renderer2
-  ) {
-    super();
+  constructor(private humanResourceService: HumanResourceService, private renderer: Renderer2) {
+    super()
   }
 
   /**
    * Déclenchemet à la création du composent
    */
   ngOnInit(): void {
-    const firstName = this.currentHR?.firstName || '';
-    const lastName = this.currentHR?.lastName || '';
+    const firstName = this.currentHR?.firstName || ''
+    const lastName = this.currentHR?.lastName || ''
 
-    this.inputsWidth['firstName'] = this.calculateTextWidth(
-      firstName,
-      'firstName'
-    );
-    this.inputsWidth['lastName'] = this.calculateTextWidth(
-      lastName,
-      'lastName'
-    );
+    this.inputsWidth['firstName'] = this.calculateTextWidth(firstName, 'firstName')
+    this.inputsWidth['lastName'] = this.calculateTextWidth(lastName, 'lastName')
   }
 
   /**
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges() {
-    this.indisponibility = fixDecimal(
-      sumBy(this.indisponibilities, 'percent') / 100
-    );
+    this.indisponibility = fixDecimal(sumBy(this.indisponibilities, 'percent') / 100)
     if (this.indisponibility > 1) {
-      this.indisponibility = 1;
+      this.indisponibility = 1
     }
 
-    (document.getElementById('firstName') as HTMLElement).innerHTML =
-      this.basicHrInfo?.get('firstName')?.value;
-    (document.getElementById('lastName') as HTMLElement).innerHTML =
-      this.basicHrInfo?.get('lastName')?.value;
-    (document.getElementById('matricule') as HTMLElement).innerHTML =
-      this.basicHrInfo?.get('matricule')?.value;
+    ;(document.getElementById('firstName') as HTMLElement).innerHTML = this.basicHrInfo?.get('firstName')?.value
+    ;(document.getElementById('lastName') as HTMLElement).innerHTML = this.basicHrInfo?.get('lastName')?.value
+    ;(document.getElementById('matricule') as HTMLElement).innerHTML = this.basicHrInfo?.get('matricule')?.value
 
     if (this.currentHR && this.currentHR.situations.length) {
-      const dateEndToJuridiction =
-        this.currentHR && this.currentHR.dateEnd
-          ? today(this.currentHR.dateEnd)
-          : null;
-      if (
-        dateEndToJuridiction &&
-        this.dateStart &&
-        dateEndToJuridiction.getTime() <= this.dateStart.getTime()
-      ) {
-        this.timeWorked = 'Parti';
+      const dateEndToJuridiction = this.currentHR && this.currentHR.dateEnd ? today(this.currentHR.dateEnd) : null
+      if (dateEndToJuridiction && this.dateStart && dateEndToJuridiction.getTime() <= this.dateStart.getTime()) {
+        this.timeWorked = 'Parti'
 
         // force to memorize last category
         if (this.currentHR && this.currentHR.situations.length) {
-          this.category = this.currentHR.situations[0].category;
+          this.category = this.currentHR.situations[0].category
         }
       } else {
         if (this.getEtpValue()) {
-          this.timeWorked = etpLabel(this.getEtpValue());
+          this.timeWorked = etpLabel(this.getEtpValue())
         }
       }
     }
@@ -231,7 +203,7 @@ export class CoverProfilDetailsComponent
    * Request an PDF export
    */
   onExport() {
-    this.exportPDF.emit();
+    this.exportPDF.emit()
   }
 
   /**
@@ -239,30 +211,25 @@ export class CoverProfilDetailsComponent
    * @param node
    * @param object
    */
-  completeFormWithDomObject(
-    node: 'firstName' | 'lastName' | 'matricule',
-    object: any
-  ) {
-    const value = object || ' ';
-    const spanInputElem = document.querySelector(
-      `.input-span-${node}`
-    ) as HTMLElement;
+  completeFormWithDomObject(node: 'firstName' | 'lastName' | 'matricule', object: any) {
+    const value = object || ' '
+    const spanInputElem = document.querySelector(`.input-span-${node}`) as HTMLElement
 
-    if (spanInputElem) spanInputElem.innerText = value;
+    if (spanInputElem) spanInputElem.innerText = value
 
     if (this.basicHrInfo) {
-      this.basicHrInfo.get(node)?.setValue(object);
+      this.basicHrInfo.get(node)?.setValue(object)
       //this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
     }
 
-    let index = -1;
+    let index = -1
     if (node === 'firstName') {
-      index = this.alertList.indexOf('firstName');
+      index = this.alertList.indexOf('firstName')
     } else if (node === 'lastName') {
-      index = this.alertList.indexOf('lastName');
+      index = this.alertList.indexOf('lastName')
     }
     if (index !== -1) {
-      this.alertSet.emit({ index: index });
+      this.alertSet.emit({ index: index })
     }
   }
 
@@ -271,7 +238,7 @@ export class CoverProfilDetailsComponent
    * @param type
    */
   openHelpPanel(type: string | undefined = undefined) {
-    this.onOpenHelpPanel.emit(type);
+    this.onOpenHelpPanel.emit(type)
   }
 
   /**
@@ -282,36 +249,35 @@ export class CoverProfilDetailsComponent
   async updateHuman(nodeName: string, value: any) {
     if (this.currentHR) {
       if (value && typeof value.innerText !== 'undefined') {
-        value = value.innerText;
+        value = value.innerText
       }
 
       if ((nodeName === 'dateStart' || nodeName === 'dateEnd') && value) {
-        value = new Date(value);
-        value.setHours(12);
+        value = new Date(value)
+        value.setHours(12)
+      }
+
+      if (nodeName === 'dateEnd' && value && this.dateStart && !isDateBiggerThan(today(value), today(this.dateStart), false)) {
+        alert('La date de départ ne peut être antérieure à la date d’arrivée dans la juridiction')
+        value = this.currentHR.dateEnd || null
       }
 
       this.currentHR = {
         ...this.currentHR,
         [nodeName]: value,
-      };
+      }
 
-      const newHR = await this.humanResourceService.updatePersonById(
-        this.currentHR,
-        {
-          [nodeName]: value,
-        }
-      );
+      const newHR = await this.humanResourceService.updatePersonById(this.currentHR, {
+        [nodeName]: value,
+      })
+
       if (nodeName === 'dateStart' && value) {
-        const index = this.alertList.indexOf('startDate');
+        const index = this.alertList.indexOf('startDate')
         if (index !== -1) {
-          this.alertSet.emit({ index: index });
+          this.alertSet.emit({ index: index })
         }
       }
-      // if (nodeName === 'dateStart' /*|| nodeName === 'dateEnd'*/) {
-      //   console.log('dateStart:', value);
-      //   this.onFocusNext(null, nodeName);
-      // }
-      this.ficheIsUpdated.emit(newHR);
+      this.ficheIsUpdated.emit(newHR)
     }
   }
 
@@ -322,11 +288,11 @@ export class CoverProfilDetailsComponent
    */
   keyPress(event: any) {
     if (event.which === 8 || event.which === 46) {
-      return true;
+      return true
     } else if (event.srcElement.innerHTML.length > 10) {
-      return false;
+      return false
     }
-    return true;
+    return true
   }
 
   /**
@@ -334,7 +300,7 @@ export class CoverProfilDetailsComponent
    * @param event
    */
   onFocusNext(event: any, calendarType?: string) {
-    this.focusNext.emit({ event: event, calendarType: calendarType ?? null });
+    this.focusNext.emit({ event: event, calendarType: calendarType ?? null })
   }
 
   /**
@@ -343,7 +309,7 @@ export class CoverProfilDetailsComponent
    */
   preventSubmit(event: any) {
     if (event.key === 'Enter') {
-      event.preventDefault();
+      event.preventDefault()
     }
   }
 
@@ -353,9 +319,9 @@ export class CoverProfilDetailsComponent
    * @param type
    */
   adjustInputWidth(event: Event, type: 'lastName' | 'firstName') {
-    const elem = event.target as HTMLInputElement;
-    const text = elem.value;
-    this.inputsWidth[type] = this.calculateTextWidth(text, type);
+    const elem = event.target as HTMLInputElement
+    const text = elem.value
+    this.inputsWidth[type] = this.calculateTextWidth(text, type)
   }
 
   /**
@@ -366,58 +332,58 @@ export class CoverProfilDetailsComponent
    * @returns
    */
   calculateTextWidth(text: string, type: 'lastName' | 'firstName') {
-    const input = document.getElementById(type) as HTMLElement;
+    const input = document.getElementById(type) as HTMLElement
 
-    const fontFamily = window.getComputedStyle(input).fontFamily;
-    const fontSize = window.getComputedStyle(input).fontSize;
+    const fontFamily = window.getComputedStyle(input).fontFamily
+    const fontSize = window.getComputedStyle(input).fontSize
 
-    const span = this.renderer.createElement('span');
+    const span = this.renderer.createElement('span')
 
-    this.renderer.setStyle(span, 'visibility', 'hidden');
-    this.renderer.setStyle(span, 'white-space', 'nowrap');
-    this.renderer.setStyle(span, 'position', 'absolute');
-    this.renderer.setProperty(span, 'textContent', text);
-    this.renderer.setStyle(span, 'font-size', fontSize);
-    this.renderer.setStyle(span, 'font-family', fontFamily);
+    this.renderer.setStyle(span, 'visibility', 'hidden')
+    this.renderer.setStyle(span, 'white-space', 'nowrap')
+    this.renderer.setStyle(span, 'position', 'absolute')
+    this.renderer.setProperty(span, 'textContent', text)
+    this.renderer.setStyle(span, 'font-size', fontSize)
+    this.renderer.setStyle(span, 'font-family', fontFamily)
 
-    this.renderer.appendChild(document.body, span);
+    this.renderer.appendChild(document.body, span)
 
-    const width = span.offsetWidth;
+    const width = span.offsetWidth
 
-    this.renderer.removeChild(document.body, span);
+    this.renderer.removeChild(document.body, span)
 
-    return width + 20;
+    return width + 20
   }
   /**
    * Rerourne la valeur de l'ETP
    * @returns
    */
   getEtpValue(): number {
-    const etp = this.etp();
+    const etp = this.etp()
     if (etp !== null && isNumber(etp)) {
-      return etp;
+      return etp
     }
-    return 0;
+    return 0
   }
 
   /**
    * Permet de suppimer une alerte sur un des champs du formulaire
    */
   removeAlertItem(index: number) {
-    this.alertSet.emit({ index: index });
+    this.alertSet.emit({ index: index })
   }
 
   /**
    *  Permet d'obtenir les calendriers de la page
    */
   getCalendars(): DateSelectComponent[] {
-    return this.calendar.toArray();
+    return this.calendar.toArray()
   }
 
   /**
    *  Permet d'obtenir les inputs de la page
    */
   getInputs(): ElementRef[] {
-    return this.inputs.toArray();
+    return this.inputs.toArray()
   }
 }
