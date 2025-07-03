@@ -327,9 +327,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
     if (changes['indisponibilities']) {
       this.indisponibilitiesFiltered = [
-        ...this.isBiggerThanArray(
-          this.indisponibilities.filter((i) => i.id >= 0),
-          'dateStop',
+        ...this.indisponibilities.filter(
+          (i) =>
+            i.id < 0 || !i.dateStop || today(i.dateStart).getTime() >= today().getTime() || (i.createdAt && today(i.createdAt).getTime() >= today().getTime()),
         ),
       ]
     }
