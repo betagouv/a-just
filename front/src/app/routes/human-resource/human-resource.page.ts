@@ -362,6 +362,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
 
   formatHRHistory() {
+    this.alertList = []
     this.allIndisponibilities = this.currentHR?.indisponibilities || []
 
     if (this.fonctions.length === 0 || !this.currentHR || this.onEditIndex !== null) {
@@ -591,6 +592,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async updateHuman(nodeName: string, value: any) {
     if (this.currentHR) {
+      this.appService.appLoading.next(true)
       if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
       }
@@ -606,6 +608,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         }),
         false,
       )
+
+      this.appService.appLoading.next(false)
 
       /* console.log({
         [nodeName]: value,
@@ -872,7 +876,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onRemoveSituation(id: number) {
     const callback = async (forceAlert = true) => {
-      this.appService.appLoading.next(true)
       const returnValue = await this.humanResourceService.removeSituation(id, forceAlert)
       this.onEditIndex = null
 
@@ -886,7 +889,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.currentETP.set(null)
         this.onEditIndex = null
       }
-      this.appService.appLoading.next(false)
     }
 
     if (this.currentHR && this.currentHR.situations.length === 1) {
