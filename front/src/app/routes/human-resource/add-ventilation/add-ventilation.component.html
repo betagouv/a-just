@@ -116,25 +116,26 @@
           </div>
           <div class="admin-element"
             [ngClass]="{'error': form.get('etp')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': humanResourceService.alertList().includes('etp')}" id="etpForm"></div>
-          <div class="label-aj">
-            Temps de travail (en ETPT) :
-          </div>
-          <div class="calculatrice-button-container">
-            <div class="open-calculatrice" *ngIf="calculatriceIsActive" (click)="openCalculatricePopup = true">
-              Calculer l'ETPT
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                  d="M4 2H20C20.5523 2 21 2.44772 21 3V21C21 21.5523 20.5523 22 20 22H4C3.44772 22 3 21.5523 3 21V3C3 2.44772 3.44772 2 4 2ZM7 12V14H9V12H7ZM7 16V18H9V16H7ZM11 12V14H13V12H11ZM11 16V18H13V16H11ZM15 12V18H17V12H15ZM7 6V10H17V6H7Z">
-                </path>
-              </svg>
+            [ngClass]="{'error': humanResourceService.alertList().includes('etp')}" id="etpForm">
+            <div class="label-aj">
+              Temps de travail (en ETPT) :
             </div>
-            <input type="number" formControlName="etp" min="0" max="1" step="0.01" (ngModelChange)="etp = $event" />
+            <div class="calculatrice-button-container">
+              <div class="open-calculatrice" *ngIf="calculatriceIsActive" (click)="openCalculatricePopup = true">
+                Calculer l'ETPT
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path
+                    d="M4 2H20C20.5523 2 21 2.44772 21 3V21C21 21.5523 20.5523 22 20 22H4C3.44772 22 3 21.5523 3 21V3C3 2.44772 3.44772 2 4 2ZM7 12V14H9V12H7ZM7 16V18H9V16H7ZM11 12V14H13V12H11ZM11 16V18H13V16H11ZM15 12V18H17V12H15ZM7 6V10H17V6H7Z">
+                  </path>
+                </svg>
+              </div>
+              <input type="number" formControlName="etp" min="0" max="1" step="0.01" (ngModelChange)="etp = $event" />
+            </div>
+            <aj-alert-small *ngIf="humanResourceService.alertList().includes('etp')"
+              alertMessage='Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)'
+              (onClose)="removeAlertItem('etp')">
+            </aj-alert-small>
           </div>
-          <aj-alert-small *ngIf="humanResourceService.alertList().includes('etp')"
-            alertMessage='Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)'
-            (onClose)="removeAlertItem('etp')">
-          </aj-alert-small>
         </div>
       </div>
 
