@@ -20,6 +20,7 @@ export const selfRouteToSyncJuridiction = async (juridictionId) => {
 }
 
 export const selfRouteToSyncAgent = async (agentId, backupId) => {
+  console.log('selfRouteToSyncAgent', agentId, backupId)
   const instancesFounded = []
 
   while (instancesFounded.length < config.nbInstances) {
