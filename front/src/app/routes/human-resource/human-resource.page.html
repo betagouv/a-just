@@ -9,7 +9,7 @@
       [fonction]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null"
       [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null"
       [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
-      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)" [alertList]="alertList"
+      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"
       (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"
       [class.duringPrint]="duringPrint"></cover-profil-details>
 
@@ -54,7 +54,7 @@
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
       [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
       (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
-      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)" [alertList]="alertList"
+      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)"
       (alertSet)="onAlertsUpdated($event)">
     </add-ventilation>
 

@@ -57,6 +57,8 @@ import { NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA, NOMENCLATURE_D
   styleUrls: ['./cover-profil-details.component.scss'],
 })
 export class CoverProfilDetailsComponent extends MainClass implements OnChanges, OnInit {
+  humanResourceService = inject(HumanResourceService)
+
   @ViewChildren('input')
   inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
   @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>
@@ -104,10 +106,6 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    */
   @Input() dateStart: Date | null = null
   /**
-   * Liste des alertes
-   */
-  @Input() alertList: string[] = []
-  /**
    * Envoie un event au parent pour le focus sur le prochain input
    */
   @Output() focusNext = new EventEmitter<{
@@ -130,8 +128,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    updatedList?: string[]
-    index?: number
+    tag: string
   }>()
   /**
    * Temps de travail en text
@@ -154,7 +151,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Constructeur
    * @param humanResourceService
    */
-  constructor(private humanResourceService: HumanResourceService, private renderer: Renderer2) {
+  constructor(private renderer: Renderer2) {
     super()
   }
 
@@ -173,6 +170,8 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges() {
+    console.log('ngOnChanges', this.humanResourceService.alertList())
+
     this.indisponibility = fixDecimal(sumBy(this.indisponibilities, 'percent') / 100)
     if (this.indisponibility > 1) {
       this.indisponibility = 1
@@ -182,6 +181,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
     ;(document.getElementById('lastName') as HTMLElement).innerHTML = this.basicHrInfo?.get('lastName')?.value
     ;(document.getElementById('matricule') as HTMLElement).innerHTML = this.basicHrInfo?.get('matricule')?.value
 
+    console.log('this.currentHR', this.currentHR)
     if (this.currentHR && this.currentHR.situations.length) {
       const dateEndToJuridiction = this.currentHR && this.currentHR.dateEnd ? today(this.currentHR.dateEnd) : null
       if (dateEndToJuridiction && this.dateStart && dateEndToJuridiction.getTime() <= this.dateStart.getTime()) {
@@ -220,16 +220,6 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
     if (this.basicHrInfo) {
       this.basicHrInfo.get(node)?.setValue(object)
       //this.basicHrInfo.get(node)?.setValue(object.srcElement.innerText)
-    }
-
-    let index = -1
-    if (node === 'firstName') {
-      index = this.alertList.indexOf('firstName')
-    } else if (node === 'lastName') {
-      index = this.alertList.indexOf('lastName')
-    }
-    if (index !== -1) {
-      this.alertSet.emit({ index: index })
     }
   }
 
@@ -272,10 +262,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
       })
 
       if (nodeName === 'dateStart' && value) {
-        const index = this.alertList.indexOf('startDate')
-        if (index !== -1) {
-          this.alertSet.emit({ index: index })
-        }
+        this.humanResourceService.alertList.update((list) => [...list, nodeName])
       }
       this.ficheIsUpdated.emit(newHR)
     }
@@ -369,8 +356,8 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
   /**
    * Permet de suppimer une alerte sur un des champs du formulaire
    */
-  removeAlertItem(index: number) {
-    this.alertSet.emit({ index: index })
+  removeAlertItem(tag: string) {
+    this.alertSet.emit({ tag })
   }
 
   /**
