@@ -185,7 +185,7 @@ export default class RouteHumanResources extends Route {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
         const agent = await this.model.getHr(hrId)
         //await selfRouteToSyncJuridiction(agent.backupId)
-        await selfRouteToSyncAgent(hrId, agent.backup_id)
+        await selfRouteToSyncAgent(hrId, agent.backupId)
         this.sendOk(ctx, agent)
       }
     }
