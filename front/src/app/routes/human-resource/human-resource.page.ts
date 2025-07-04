@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal, ViewChild, ViewChildren, ElementRef, QueryList, WritableSignal } from '@angular/core'
+import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef, Signal, WritableSignal } from '@angular/core'
 import { FormControl, FormGroup, FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import _, { maxBy, minBy, orderBy } from 'lodash'
@@ -193,7 +193,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Liste des alertes à afficher
    */
-  alertList: string[] = []
+  alertList: WritableSignal<string[]> = signal([])
 
   hasInitCalendars = false
   hasInitInputs = false
@@ -362,7 +362,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
 
   formatHRHistory() {
-    this.alertList = []
+    this.humanResourceService.alertList.set([])
     this.allIndisponibilities = this.currentHR?.indisponibilities || []
 
     if (this.fonctions.length === 0 || !this.currentHR || this.onEditIndex !== null) {
@@ -516,8 +516,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       if (((dateStart && dateStart.getTime() <= today().getTime()) || !dateStart) && ((dateStop && dateStop.getTime() >= today().getTime()) || !dateStop)) {
         this.indexOfTheFuture = index
-        this.currentETP.set(h.etp)
+        this.currentETP.update((etp: number | null) => etp)
         this.initialETP = this.currentETP()
+        this.currentETP.update((etp: number | null) => etp)
       }
     })
 
@@ -625,8 +626,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (removeIndispo && this.currentHR && this.currentHR.indisponibilities.length) {
       await this.updateHuman('indisponibilities', [])
     }
-
-    console.log('on cancel')
 
     this.onEditIndex = null
 
@@ -846,7 +845,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
     console.log(history, this.histories)
-    this.alertList = []
 
     const index = history ? this.histories.findIndex((h) => h.id === history.id && h.dateStart === history.dateStart) : -1
     console.log('index', index)
@@ -884,9 +882,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         // force to not show on boarding after delete last situation
         this.onLoad(returnValue)
       }
-
       if (this.histories.length === 0) {
-        this.currentETP.set(null)
+        this.currentETP.update(() => null)
         this.onEditIndex = null
       }
     }
@@ -1023,7 +1020,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   updateETP(etp: number | null) {
     if (!this.initialETP) {
-      this.currentETP.set(etp)
+      this.currentETP.update(() => etp)
     }
   }
   groupIndispoByCategory(): any {
@@ -1039,23 +1036,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Fonction de mise à jour des alertes
    * @param updatedList
    */
-  onAlertsUpdated({ updatedList, index }: { updatedList?: string[]; index?: number }) {
-    if (updatedList !== undefined) {
-      this.alertList = updatedList
-
-      // Scroll to the "Start Date" selector if it's the last element to complete.
-      // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
-      if (this.alertList.length > 0) {
-        if (this.alertList.includes('activitiesStartDate')) {
-          if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
-        } else if (this.alertList.includes('etp')) {
-          this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
-        }
+  onAlertsUpdated({ tag }: { tag: string }) {
+    // Scroll to the "Start Date" selector if it's the last element to complete.
+    // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
+    if (this.alertList().length > 0) {
+      if (this.alertList().includes('activitiesStartDate')) {
+        if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
+      } else if (this.alertList().includes('etp')) {
+        this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
       }
     }
-    if (index !== undefined) {
-      this.alertList.splice(index, 1)
-    }
+
+    this.humanResourceService.removeAlert(tag)
   }
 
   /**

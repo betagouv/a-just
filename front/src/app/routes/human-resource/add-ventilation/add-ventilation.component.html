@@ -74,7 +74,7 @@
             </div>
           </div>
           <label class="import-confirmation"
-            *ngIf="displayImportLabels || alertList.includes('fonction') || alertList.includes('category') || alertList.includes('etp')"
+            *ngIf="displayImportLabels || humanResourceService.alertList().includes('fonction') || humanResourceService.alertList().includes('category') || humanResourceService.alertList().includes('etp')"
             [ngStyle]="{'color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null || form.get('etp')?.value === null ? '#c3992a': '#18753c',
               'background-color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null || form.get('etp')?.value === null ? '#feebd0':'#b8fec9'}">
             <i class="ri-checkbox-circle-fill"></i>
@@ -90,52 +90,51 @@
         <div class="grid-triple">
           <div class="admin-element"
             [ngClass]="{'error': form.get('categoryId')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': alertList.includes('category')}">
+            [ngClass]="{'error': humanResourceService.alertList().includes('category')}">
             <div class="label-aj">Catégorie :</div>
             <select formControlName="categoryId">
               <option *ngFor="let cat of categories" [value]="cat.id">
                 {{ cat.label }}
               </option>
             </select>
-            <aj-alert-small *ngIf="alertList.includes('category')" alertMessage='Vous devez saisir une catégorie !'
-              (onClose)="removeAlertItem(alertList.indexOf('category'))">
+            <aj-alert-small *ngIf="humanResourceService.alertList().includes('category')"
+              alertMessage='Vous devez saisir une catégorie !' (onClose)="removeAlertItem('category')">
             </aj-alert-small>
           </div>
           <div class="admin-element"
             [ngClass]="{'error': form.get('fonctionId')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': alertList.includes('fonction')}">
+            [ngClass]="{'error': humanResourceService.alertList().includes('fonction')}">
             <div class="label-aj">Fonction :</div>
             <select formControlName="fonctionId" (change)="setFonc($event.target)">
               <option *ngFor="let fonc of fonctions" [value]="fonc.id">
                 {{ fonc.label }}
               </option>
             </select>
-            <aj-alert-small *ngIf="alertList.includes('fonction')" alertMessage='Vous devez saisir une fonction !'
-              (onClose)="removeAlertItem(alertList.indexOf('fonction'))">
+            <aj-alert-small *ngIf="humanResourceService.alertList().includes('fonction')"
+              alertMessage='Vous devez saisir une fonction !' (onClose)="removeAlertItem('fonction')">
             </aj-alert-small>
           </div>
           <div class="admin-element"
             [ngClass]="{'error': form.get('etp')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': alertList.includes('etp')}" id="etpForm">
-            <div class="label-aj">
-              Temps de travail (en ETPT) :
-            </div>
-            <div class="calculatrice-button-container">
-              <div class="open-calculatrice" *ngIf="calculatriceIsActive" (click)="openCalculatricePopup = true">
-                Calculer l'ETPT
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <path
-                    d="M4 2H20C20.5523 2 21 2.44772 21 3V21C21 21.5523 20.5523 22 20 22H4C3.44772 22 3 21.5523 3 21V3C3 2.44772 3.44772 2 4 2ZM7 12V14H9V12H7ZM7 16V18H9V16H7ZM11 12V14H13V12H11ZM11 16V18H13V16H11ZM15 12V18H17V12H15ZM7 6V10H17V6H7Z">
-                  </path>
-                </svg>
-              </div>
-              <input type="number" formControlName="etp" min="0" max="1" step="0.01" (ngModelChange)="etp = $event" />
-            </div>
-            <aj-alert-small *ngIf="alertList.includes('etp')"
-              alertMessage='Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)'
-              (onClose)="removeAlertItem(alertList.indexOf('etp'))">
-            </aj-alert-small>
+            [ngClass]="{'error': humanResourceService.alertList().includes('etp')}" id="etpForm"></div>
+          <div class="label-aj">
+            Temps de travail (en ETPT) :
           </div>
+          <div class="calculatrice-button-container">
+            <div class="open-calculatrice" *ngIf="calculatriceIsActive" (click)="openCalculatricePopup = true">
+              Calculer l'ETPT
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  d="M4 2H20C20.5523 2 21 2.44772 21 3V21C21 21.5523 20.5523 22 20 22H4C3.44772 22 3 21.5523 3 21V3C3 2.44772 3.44772 2 4 2ZM7 12V14H9V12H7ZM7 16V18H9V16H7ZM11 12V14H13V12H11ZM11 16V18H13V16H11ZM15 12V18H17V12H15ZM7 6V10H17V6H7Z">
+                </path>
+              </svg>
+            </div>
+            <input type="number" formControlName="etp" min="0" max="1" step="0.01" (ngModelChange)="etp = $event" />
+          </div>
+          <aj-alert-small *ngIf="humanResourceService.alertList().includes('etp')"
+            alertMessage='Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)'
+            (onClose)="removeAlertItem('etp')">
+          </aj-alert-small>
         </div>
       </div>
 
@@ -185,7 +184,8 @@
             <p *ngIf="isEdit">Modification de la situation </p>
             <p *ngIf="!isEdit">Situation à prendre en compte </p>
             <div class="flex-1"></div>
-            <label class="import-confirmation" *ngIf="displayImportLabels || alertList.includes('activitiesStartDate') "
+            <label class="import-confirmation"
+              *ngIf="displayImportLabels || humanResourceService.alertList().includes('activitiesStartDate') "
               [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
               'background-color' : form.get('activitiesStartDate')?.value === null ?'#feebd0':'#b8fec9'}">
               <i class="ri-checkbox-circle-fill"></i>
@@ -197,13 +197,13 @@
           </div>
 
           <div class="date-start-content"
-            [ngClass]="{'error': alertList.includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
+            [ngClass]="{'error': humanResourceService.alertList().includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
             <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
               (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
             </aj-date-select>
-            <aj-alert-small *ngIf="alertList.includes('activitiesStartDate')"
+            <aj-alert-small *ngIf="humanResourceService.alertList().includes('activitiesStartDate')"
               alertMessage='Vous devez saisir une date de début de situation !'
-              (onClose)="removeAlertItem(alertList.indexOf('activitiesStartDate'))" class="fix-width">
+              (onClose)="removeAlertItem('activitiesStartDate')" class="fix-width">
             </aj-alert-small>
           </div>
 
