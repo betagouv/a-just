@@ -547,6 +547,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
       )
     this.lastCategorySelected = this.categorySelected
     this.selectedFonctionsIds = this.fonctions.map((a) => a.id)
+    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
   ngAfterViewInit() {
@@ -675,7 +676,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
   /**
    * Chargement des données back
    */
-  onLoad(loadDetail = true) {
+  onLoad(loadDetail = true, changedCategory = false) {
     if (this.onTimeoutLoad) {
       clearTimeout(this.onTimeoutLoad)
     }
@@ -696,7 +697,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           this.calculatorService
             .filterList(
               this.categorySelected,
-              this.lastCategorySelected === this.categorySelected ? this.selectedFonctionsIds : null,
+              this.lastCategorySelected === this.categorySelected && !changedCategory ? this.selectedFonctionsIds : null,
               this.dateStart,
               this.dateStop,
               true,
@@ -826,6 +827,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.calculatorService.categorySelected.next(this.categorySelected)
     this.fonctionRealValue = ''
     this.loadFunctions()
+    this.onLoad(false, true)
     if (this.categorySelected === this.FONCTIONNAIRES) this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
   }
 

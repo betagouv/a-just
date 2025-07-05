@@ -408,11 +408,10 @@ const generateUniqueId = () => {
 
 export const generateAndIndexAllStableHRPeriods = async (agents) => {
   const resultMap = new Map() // Map pour stocker les périodes par agent
-  const periodsDatabase = new Map() // Base de données centrale pour stocker les périodes avec un ID unique
-
+  const periodsDatabase = new Map() // Base de données centrale pour stocker les périodes avec un ID unique <stableSituationIds> : [...AgentIds]
   const categoryIndex = new Map()
-  const functionIndex = new Map()
-  const contentieuxIndex = new Map()
+  const functionIndex = new Map() // <fonctionId> : [...stableSituationIds]
+  const contentieuxIndex = new Map() // <contentieuxId> : [...stableSituationIds]
   const agentIndex = new Map() // Index par agentId pour faciliter l'accès aux périodes par agent
   const intervalTree = new IntervalTree() // Arbre d'intervalle
 
@@ -708,14 +707,46 @@ export const searchPeriodsWithIndexes = (indexes, queryStart, queryEnd, queryCat
   //console.log('periodsByCategory', periodsByCategory.length)
 
   // Étape 3: Recherche des périodes par fonction
-  const periodsByFunction =
-    queryFonctions && queryFonctions.length > 0
-      ? new Set(queryFonctions.flatMap((fonctionId) => functionIndex.get(fonctionId) || []))
-      : new Set(periodsByDate.map((p) => p.periodId))
+  let periodsByFunction
+
+  if (Array.isArray(queryFonctions)) {
+    if (queryFonctions.length > 0) {
+      // Cas 1 : queryFonctions avec des valeurs
+      periodsByFunction = new Set(
+        queryFonctions.flatMap((fonctionId) => {
+          const periods = functionIndex.get(fonctionId)
+          if (!periods) {
+            console.warn(`⚠️ fonctionId ${fonctionId} not found in functionIndex`)
+          }
+          return periods || []
+        }),
+      )
+    } else {
+      // Cas 2 : queryFonctions = []
+      periodsByFunction = new Set() // on ne garde rien
+    }
+  } else {
+    // Cas 3 : queryFonctions null, undefined, autre type
+    periodsByFunction = new Set(periodsByDate.map((p) => p.periodId)) // on garde tout
+  }
+
   //console.log('periodsByFunction', periodsByFunction.length)
 
   // Étape 4: Recherche des périodes par contentieux
-  const periodsByContentieux = queryContentieux ? new Set(contentieuxIndex.get(queryContentieux) || []) : new Set(periodsByDate.map((p) => p.periodId))
+  let periodsByContentieux
+
+  if (queryContentieux) {
+    if (Array.isArray(queryContentieux)) {
+      // Gestion du cas liste de contentieux
+      const contentieuxSets = queryContentieux.map((contentieuxId) => contentieuxIndex.get(contentieuxId) || [])
+      periodsByContentieux = new Set(contentieuxSets.flat())
+    } else {
+      // Gestion du cas contentieux unique
+      periodsByContentieux = new Set(contentieuxIndex.get(queryContentieux) || [])
+    }
+  } else {
+    periodsByContentieux = new Set(periodsByDate.map((p) => p.periodId))
+  }
   //console.log('periodsByContentieux', periodsByContentieux.length)
 
   // Étape 5: Filtrage des périodes en fonction des critères de catégorie, fonction et contentieux

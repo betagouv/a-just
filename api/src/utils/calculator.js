@@ -62,12 +62,24 @@ export const emptyCalulatorValues = (referentiels) => {
  * @param {*} optionsBackups
  * @returns
  */
-export const syncCalculatorDatas = (indexes, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, signal = null) => {
+export const syncCalculatorDatas = (
+  indexes,
+  list,
+  nbMonth,
+  activities,
+  dateStart,
+  dateStop,
+  hr,
+  categories,
+  optionsBackups,
+  selectedFonctionsIds,
+  signal = null,
+) => {
   const prefilters = groupBy(activities, 'contentieux.id')
 
   const compute = (item, isParent) => {
     const id = item.contentieux.id
-    const values = getActivityValues(indexes, dateStart, dateStop, prefilters[id] || [], id, nbMonth, hr, categories, optionsBackups, false)
+    const values = getActivityValues(indexes, dateStart, dateStop, prefilters[id] || [], id, nbMonth, hr, categories, optionsBackups, selectedFonctionsIds)
     return { ...item, ...values, nbMonth }
   }
 
@@ -92,7 +104,19 @@ export const syncCalculatorDatas = (indexes, list, nbMonth, activities, dateStar
  * @param {*} optionsBackups
  * @returns
  */
-const getActivityValues = (indexes, dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups, old = false) => {
+const getActivityValues = (
+  indexes,
+  dateStart,
+  dateStop,
+  activities,
+  referentielId,
+  nbMonth,
+  hr,
+  categories,
+  optionsBackups,
+  selectedFonctionsIds,
+  old = false,
+) => {
   let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
     indexes,
     dateStart,
@@ -136,7 +160,7 @@ const getActivityValues = (indexes, dateStart, dateStop, activities, referentiel
           start: dateStart,
           end: dateStop,
           category: undefined,
-          fonctions: undefined,
+          fonctions: selectedFonctionsIds,
           contentieux: referentielId,
         },
         categories,
@@ -168,7 +192,7 @@ const getActivityValues = (indexes, dateStart, dateStop, activities, referentiel
           start: dateStart,
           end: oneMonthAfterStart,
           category: undefined,
-          fonctions: undefined,
+          fonctions: selectedFonctionsIds,
           contentieux: referentielId,
         },
         categories,
@@ -187,7 +211,7 @@ const getActivityValues = (indexes, dateStart, dateStop, activities, referentiel
           start: oneMonthBeforeEnd,
           end: dateStop,
           category: undefined,
-          fonctions: undefined,
+          fonctions: selectedFonctionsIds,
           contentieux: referentielId,
         },
         categories,
