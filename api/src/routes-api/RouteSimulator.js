@@ -9,6 +9,7 @@ import {
   EXECUTE_SIMULATOR_PARAM,
   EXECUTE_WHITE_SIMULATOR,
 } from '../constants/log-codes'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Route pour la page du simulateur

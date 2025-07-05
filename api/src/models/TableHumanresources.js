@@ -831,7 +831,7 @@ export default (sequelizeInstance, Model) => {
     console.timeEnd('🧩 Pré-formatage / Indexation')
 
     console.time('Calculs cockpit')
-    list = syncCalculatorDatas(indexes, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups)
+    list = syncCalculatorDatas(indexes, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, selectedFonctionsIds)
     list = list.map((item) => ({
       ...cleanCalculationItemForUser(item, user),
       childrens: (item.childrens || []).map((child) => cleanCalculationItemForUser(child, user)),
