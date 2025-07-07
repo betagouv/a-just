@@ -189,7 +189,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Current etp
    */
-  currentETP: WritableSignal<number | null> = signal(null)
+  currentETP: number | null = null
   /**
    * Liste des alertes à afficher
    */
@@ -516,9 +516,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       if (((dateStart && dateStart.getTime() <= today().getTime()) || !dateStart) && ((dateStop && dateStop.getTime() >= today().getTime()) || !dateStop)) {
         this.indexOfTheFuture = index
-        this.currentETP.update((etp: number | null) => etp)
-        this.initialETP = this.currentETP()
-        this.currentETP.update((etp: number | null) => etp)
+        this.currentETP = this.histories[index].etp
+        this.initialETP = this.currentETP
       }
     })
 
@@ -885,7 +884,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       }
       this.appService.appLoading.next(false)
       if (this.histories.length === 0) {
-        this.currentETP.update(() => null)
+        this.currentETP = null
         this.onEditIndex = null
       }
     }
@@ -1022,7 +1021,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   updateETP(etp: number | null) {
     if (!this.initialETP) {
-      this.currentETP.update(() => etp)
+      this.currentETP = etp
     }
   }
   groupIndispoByCategory(): any {
