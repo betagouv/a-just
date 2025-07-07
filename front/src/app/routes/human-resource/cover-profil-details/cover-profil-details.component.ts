@@ -13,6 +13,7 @@ import {
   Signal,
   inject,
   ElementRef,
+  WritableSignal,
 } from '@angular/core'
 import { FormGroup, FormsModule } from '@angular/forms'
 import { isNumber, sumBy } from 'lodash'
@@ -80,7 +81,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
   /**
    * Affiche l'ETP calculé
    */
-  @Input() etp: Signal<number | null> = signal(null)
+  @Input() etp: number | null = null
   /**
    * Fonction courante
    */
@@ -170,7 +171,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges() {
-    console.log('ngOnChanges', this.humanResourceService.alertList())
+    console.log('ngOnChanges', this.etp)
 
     this.indisponibility = fixDecimal(sumBy(this.indisponibilities, 'percent') / 100)
     if (this.indisponibility > 1) {
@@ -346,7 +347,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * @returns
    */
   getEtpValue(): number {
-    const etp = this.etp()
+    const etp = this.etp
     if (etp !== null && isNumber(etp)) {
       return etp
     }
