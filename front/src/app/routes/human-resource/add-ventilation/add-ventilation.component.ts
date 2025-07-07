@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, Output, EventEmitter, SimpleChanges, ViewChild, ElementRef, inject } from '@angular/core'
+import { Component, Input, OnChanges, Output, EventEmitter, SimpleChanges, ViewChild, ElementRef, inject, effect } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
 import * as xlsx from 'xlsx'
@@ -229,6 +229,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private referentielService: ReferentielService,
   ) {
     super()
+
+    effect(() => {
+      console.log('this.alertSet', this.alertSet)
+    })
   }
 
   /**
