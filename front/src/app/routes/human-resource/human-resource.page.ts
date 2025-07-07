@@ -874,6 +874,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onRemoveSituation(id: number) {
     const callback = async (forceAlert = true) => {
+      this.appService.appLoading.next(true)
       const returnValue = await this.humanResourceService.removeSituation(id, forceAlert)
       this.onEditIndex = null
 
@@ -882,6 +883,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         // force to not show on boarding after delete last situation
         this.onLoad(returnValue)
       }
+      this.appService.appLoading.next(false)
       if (this.histories.length === 0) {
         this.currentETP.update(() => null)
         this.onEditIndex = null
