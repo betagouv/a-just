@@ -834,7 +834,7 @@ export default (sequelizeInstance, Model) => {
 
     // Trouver ceux qui n'ont pas de jointures (situations ou indisponibilités)
     const hrWithoutJoins = findAllWhere.filter((hr) => {
-      return hr['HRSituations.id'] !== null && hr['HRIndisponibilities.id'] !== null
+      return hr['HRSituations.id'] === null && hr['HRIndisponibilities.id'] === null
     })
 
     for (const hr of hrWithoutJoins) {
