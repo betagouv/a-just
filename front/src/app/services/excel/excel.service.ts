@@ -187,12 +187,27 @@ export class ExcelService extends MainClass {
           // 5. Use `saveAs` to download on browser site.
           .then((buffer) => {
             const filename = this.getFileName()
+            return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
+          })
+          .catch((err) => {
+            console.log('Error writing excel export', err)
+          })
+          .finally(() => {
             this.isLoading.next(false)
             startExtract = false
             this.appService.appLoading.next(false)
-            return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
           })
-          .catch((err) => console.log('Error writing excel export', err))
+      })
+      .catch((err) => {
+        console.log('Error writing excel export', err)
+        alert(
+          'L’extraction n’a pas pu être générée car le chargement a été trop long. Vous pouvez renouveler l’opération. Si le problème persiste, n’hésitez pas à contacter notre support.',
+        )
+      })
+      .finally(() => {
+        this.isLoading.next(false)
+        startExtract = false
+        this.appService.appLoading.next(false)
       })
   }
 
