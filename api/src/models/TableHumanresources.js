@@ -845,7 +845,8 @@ export default (sequelizeInstance, Model) => {
       })
     }
 
-    console.log('Records without any joins:', hrWithoutJoins.length)
+    console.log('Records removed:', hrWithoutJoins.length)
+    console.log('Records without removed:', findAllWhere.length - hrWithoutJoins.length)
   }
 
   setTimeout(() => {
