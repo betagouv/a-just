@@ -248,7 +248,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         value.setHours(12)
       }
 
-      if (nodeName === 'dateEnd' && value && this.dateStart && !isDateBiggerThan(today(value), today(this.dateStart), false)) {
+      if (nodeName === 'dateEnd' && value && this.currentHR.dateStart && !isDateBiggerThan(today(value), today(this.currentHR.dateStart), false)) {
         alert('La date de départ ne peut être antérieure à la date d’arrivée dans la juridiction')
         value = this.currentHR.dateEnd || null
       }
