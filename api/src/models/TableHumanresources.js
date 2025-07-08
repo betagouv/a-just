@@ -836,6 +836,7 @@ export default (sequelizeInstance, Model) => {
     })
 
     for (const hr of hrWithoutJoins) {
+      console.log('we removehr', hr.id)
       await Model.models.HumanResources.destroy({
         where: {
           id: hr.id, // Assurez-vous de supprimer par ID
