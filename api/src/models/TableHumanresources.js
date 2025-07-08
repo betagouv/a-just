@@ -818,13 +818,13 @@ export default (sequelizeInstance, Model) => {
     const findAllWhere = await Model.models.HumanResources.findAll({
       where: {
         first_name: { [Op.eq]: null },
+        created_at: {
+          [Op.lte]: new Date(Date.now() - 1000 * 60 * 60 * 24),
+        },
       },
       include: [
         {
           model: Model.models.HRSituations,
-        },
-        {
-          model: Model.models.HRIndisponibilities,
         },
       ],
       raw: true,
@@ -832,7 +832,7 @@ export default (sequelizeInstance, Model) => {
 
     // Trouver ceux qui n'ont pas de jointures (situations ou indisponibilités)
     const hrWithoutJoins = findAllWhere.filter((hr) => {
-      return hr['HRSituations.id'] === null && hr['HRIndisponibilities.id'] === null
+      return hr['HRSituations.id'] === null
     })
 
     for (const hr of hrWithoutJoins) {
@@ -844,11 +844,6 @@ export default (sequelizeInstance, Model) => {
     }
 
     console.log('Nb Records removed:', hrWithoutJoins.length)
-    console.log('Nb Records without removed:', findAllWhere.length - hrWithoutJoins.length)
-    console.log(
-      'Found bu not removed',
-      findAllWhere.filter((hr) => hr['HRSituations.id'] !== null || hr['HRIndisponibilities.id'] !== null).map((hr) => hr.id),
-    )
   }
 
   setTimeout(() => {
