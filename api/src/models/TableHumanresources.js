@@ -830,11 +830,6 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    console.log(
-      'Found records with null first_name:',
-      findAllWhere.map((hr) => hr.id),
-    )
-
     // Trouver ceux qui n'ont pas de jointures (situations ou indisponibilités)
     const hrWithoutJoins = findAllWhere.filter((hr) => {
       return hr['HRSituations.id'] === null && hr['HRIndisponibilities.id'] === null
@@ -848,8 +843,12 @@ export default (sequelizeInstance, Model) => {
       })
     }
 
-    console.log('Records removed:', hrWithoutJoins.length)
-    console.log('Records without removed:', findAllWhere.length - hrWithoutJoins.length)
+    console.log('Nb Records removed:', hrWithoutJoins.length)
+    console.log('Nb Records without removed:', findAllWhere.length - hrWithoutJoins.length)
+    console.log(
+      'Found bu not removed',
+      findAllWhere.filter((hr) => hr['HRSituations.id'] !== null || hr['HRIndisponibilities.id'] !== null).map((hr) => hr.id),
+    )
   }
 
   setTimeout(() => {
