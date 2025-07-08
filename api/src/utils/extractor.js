@@ -363,7 +363,6 @@ export const computeExtractDdgv2 = async (
   }
 
   console.timeEnd('extractor-5.2ddgbis')
-  console.log(onglet2.length)
 
   onglet2 = orderBy(onglet2, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
 
@@ -818,7 +817,7 @@ export const computeExtractDdg = async (
                 return indisponibility.contentieux.id === referentiel.id
               })
             ) {
-              const etpAffected = getHRVentilationOld(null, human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels, signal)
+              const etpAffected = getHRVentilationOld(models, human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels, signal)
 
               const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
@@ -1462,7 +1461,7 @@ export const computeExtractv2 = async (
   console.time('extractor-5.2bis')
 
   const pLimit = require('p-limit')
-  const limit = pLimit(10)
+  const limit = pLimit(20)
 
   const allIndispRefIds = getIndispoDetails(flatReferentielsList).allIndispRefIds
   const refIndispo = getIndispoDetails(flatReferentielsList).refIndispo
@@ -1481,6 +1480,7 @@ export const computeExtractv2 = async (
         signal,
         allIndispRefIds,
         refIndispo,
+        models,
       }),
     ),
   )
@@ -1514,6 +1514,7 @@ async function computeHumanExtract(params) {
     signal,
     allIndispRefIds,
     refIndispo,
+    models,
   } = params
 
   checkAbort(signal)
@@ -1545,7 +1546,7 @@ async function computeHumanExtract(params) {
         const isUsedInIndispo = indisponibilities.some((indisponibility) => indisponibility.contentieux.id === referentiel.id)
 
         if (isUsedInSituation || isUsedInIndispo) {
-          const localEtpAffected = getHRVentilationOld(null, human, referentiel.id, [...categories], dateStart, dateStop, undefined, undefined, signal)
+          const localEtpAffected = getHRVentilationOld(models, human, referentiel.id, [...categories], dateStart, dateStop, undefined, undefined, signal)
 
           const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
             ...(await countEtp({ ...localEtpAffected }, referentiel)),
