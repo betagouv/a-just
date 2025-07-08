@@ -842,7 +842,6 @@ export default (sequelizeInstance, Model) => {
         where: {
           id: hr.id, // Assurez-vous de supprimer par ID
         },
-        transaction, // Utiliser la transaction pour garantir l'atomicité
       })
     }
 
