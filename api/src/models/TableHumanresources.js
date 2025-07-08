@@ -830,7 +830,10 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    console.log('Found records with null first_name:', findAllWhere)
+    console.log(
+      'Found records with null first_name:',
+      findAllWhere.map((hr) => hr.id),
+    )
 
     // Trouver ceux qui n'ont pas de jointures (situations ou indisponibilités)
     const hrWithoutJoins = findAllWhere.filter((hr) => {
