@@ -818,6 +818,7 @@ export default (sequelizeInstance, Model) => {
     const findAllWhere = await Model.models.HumanResources.findAll({
       where: {
         first_name: { [Op.eq]: null },
+        last_name: { [Op.eq]: null },
         created_at: {
           [Op.lte]: new Date(Date.now() - 1000 * 60 * 60 * 24),
         },
