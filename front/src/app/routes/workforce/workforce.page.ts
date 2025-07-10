@@ -834,7 +834,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       )
       .map((person) => {
         this.listFormated.map((l) => {
-          if (l.categoryId === person.category?.id) {
+          if (l.categoryId === person.category?.id && !l.hr.find((h) => h.id === person.id)) {
             const getIndispo = this.humanResourceService.findAllIndisponibilities(person, this.dateSelected)
             let hasIndisponibility = getIndispo.map((i) => i.percent).reduce((a, b) => a + b, 0)
             if (hasIndisponibility > 100) {
