@@ -828,8 +828,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           sortDates(today(person.dateStart), today(this.dateSelected), false) <= 0 &&
           person.situations &&
           person.situations.length &&
-          person.situations[0].dateStart &&
-          sortDates(today(person.situations[0].dateStart), today(this.dateSelected), false) > 0 &&
+          person.situations[person.situations.length - 1].dateStart &&
+          sortDates(today(person.situations[person.situations.length - 1].dateStart), today(this.dateSelected), false) > 0 &&
           person.category,
       )
       .map((person) => {
