@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { listFormatedInterface, HumanResourceSelectedInterface } from '../workforce/workforce.page'
-import { sumBy } from 'lodash'
+import { sortBy, sumBy } from 'lodash'
 import { WrapperComponent } from '../../components/wrapper/wrapper.component'
 import { PanoramaAlertComponent } from './panorama-alert/panorama-alert.component'
 import { WorkforceCompositionComponent } from './workforce-composition/workforce-composition.component'
@@ -10,7 +10,7 @@ import { ActivitiesLastDisponibilitiesComponent } from './activities-last-dispon
 import { ActivitiesLastModificationsComponent } from './activities-last-modifications/activities-last-modifications.component'
 import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { MainClass } from '../../libs/main-class'
-import { dateAddDays, today } from '../../utils/dates'
+import { dateAddDays, sortDates, today } from '../../utils/dates'
 import { HRCategorySelectedInterface } from '../../interfaces/hr-category'
 import { UserService } from '../../services/user/user.service'
 import { HumanResourceService } from '../../services/human-resource/human-resource.service'
@@ -332,6 +332,55 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
           dateEnd: p.dateEnd ? new Date(p.dateEnd) : null,
         }))
         this.formatDatasToVisualise()
+        this.findPersonWithoutVentilations()
+      })
+  }
+
+  /**
+   * Trouver les personnes sans ventilation mais on une date d'arrivée avant la date sélectionnée
+   */
+  findPersonWithoutVentilations() {
+    this.allPersons
+      .filter(
+        (person) =>
+          person.dateStart &&
+          sortDates(today(person.dateStart), today(this.dateSelected), false) <= 0 &&
+          person.situations &&
+          person.situations.length &&
+          person.situations[0].dateStart &&
+          sortDates(today(person.situations[0].dateStart), today(this.dateSelected), false) > 0 &&
+          person.category,
+      )
+      .map((person) => {
+        this.listFormated.map((l) => {
+          if (l.categoryId === person.category?.id && !l.hr.find((h) => h.id === person.id)) {
+            const getIndispo = this.humanResourceService.findAllIndisponibilities(person, this.dateSelected)
+            let hasIndisponibility = getIndispo.map((i) => i.percent).reduce((a, b) => a + b, 0)
+            if (hasIndisponibility > 100) {
+              hasIndisponibility = 100
+            }
+            const newPerson = {
+              ...person,
+              firstName: person.firstName || '',
+              lastName: person.lastName || '',
+              totalAffected: 0,
+              opacity: 1,
+              etpLabel: null,
+              hasIndisponibility,
+              currentActivities: [],
+              etp: 0,
+              fonction: person.situations[0].fonction,
+              currentSituation: null,
+              category: person.situations[0].category,
+            }
+            l.hrFiltered = l.hrFiltered || []
+            l.hrFiltered.push(newPerson)
+            l.hrFiltered = sortBy(l.hrFiltered, 'fonction.rank')
+            l.hr = l.hr || []
+            l.hr.push(newPerson)
+            l.hr = sortBy(l.hr, 'fonction.rank')
+          }
+        })
       })
   }
 
