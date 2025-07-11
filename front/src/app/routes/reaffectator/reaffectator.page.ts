@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { orderBy, sumBy } from 'lodash'
+import { cloneDeep, orderBy, sortBy, sumBy } from 'lodash'
 import { Router } from '@angular/router'
 import { HumanResourceInterface } from '../../interfaces/human-resource-interface'
 import { RHActivityInterface } from '../../interfaces/rh-activity'
@@ -29,8 +29,9 @@ import { DATE_REAFECTATOR } from '../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
 import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe'
-import { BehaviorSubject } from 'rxjs'
 import { AppService } from '../../services/app/app.service'
+import { HumanResourceIsInInterface } from '../workforce/workforce.page'
+import { sortDates, today } from '../../utils/dates'
 
 /**
  * Interface d'une fiche surchargé avec des rendus visuels
@@ -47,7 +48,7 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   /**
    * Temps de travail en string
    */
-  etpLabel: string
+  etpLabel: string | null
   /**
    * Total des indispo
    */
@@ -63,7 +64,7 @@ interface HumanResourceSelectedInterface extends HumanResourceInterface {
   /**
    * ETP a la date sélectionnée
    */
-  etp: number
+  etp: number | null
   /**
    * Categorie à la date sélectionnée
    */
@@ -225,6 +226,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param wrapper
    */
   @ViewChild('wrapper') wrapper: WrapperComponent | undefined
+  /**
+   * Liste de toutes les personnes quelque soit l'arrivée ou le départ
+   */
+  allPersons: HumanResourceIsInInterface[] = []
   /**
    * Boulean lors de l'impression
    */
@@ -444,7 +449,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         console.log(itemBlock.hrFiltered)
         c.value = `${itemBlock.hrFiltered.length} ${itemBlock.hrFiltered.length > 1 ? c.orignalValuePlurial || c.orignalValue : c.orignalValue} (${fixDecimal(
           sumBy(itemBlock.hrFiltered || [], function (h) {
-            const etp = h.etp - h.hasIndisponibility
+            const etp = (h.etp || 0) - h.hasIndisponibility
             return etp > 0 ? etp : 0
           }),
           100,
@@ -517,9 +522,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         selectedFonctionsIds,
         selectedReferentielIds,
       )
-      .then((returnValues) => {
-        console.log(returnValues)
-        this.listFormated = returnValues.list.map((i: listFormatedInterface, index: number) => {
+      .then(({ list, allPersons }) => {
+        this.allPersons = allPersons
+        this.listFormated = list.map((i: listFormatedInterface, index: number) => {
           if (index === 0) {
             this.referentiel = i.referentiel.map((r) => ({
               ...r,
@@ -556,9 +561,61 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           }
         })
 
+        this.findPersonWithoutVentilations()
         this.orderListWithFiltersParams()
 
         this.appService.appLoading.next(false)
+      })
+  }
+
+  /**
+   * Trouver les personnes sans ventilation mais on une date d'arrivée avant la date sélectionnée
+   */
+  findPersonWithoutVentilations() {
+    this.allPersons
+      .filter(
+        (person) =>
+          !person.isIn &&
+          person.dateStart &&
+          sortDates(today(person.dateStart), today(this.dateSelected), false) <= 0 &&
+          person.situations &&
+          person.situations.length &&
+          person.situations[person.situations.length - 1].dateStart &&
+          sortDates(today(person.situations[person.situations.length - 1].dateStart), today(this.dateSelected), false) > 0 &&
+          person.category,
+      )
+      .map((person) => {
+        this.listFormated.map((l) => {
+          if (l.categoryId === person.category?.id && !l.allHr.find((h) => h.id === person.id)) {
+            const getIndispo = this.humanResourceService.findAllIndisponibilities(person, this.dateSelected)
+            let hasIndisponibility = getIndispo.map((i) => i.percent).reduce((a, b) => a + b, 0)
+            if (hasIndisponibility > 100) {
+              hasIndisponibility = 100
+            }
+            const newPerson = {
+              ...person,
+              firstName: person.firstName || '',
+              lastName: person.lastName || '',
+              totalAffected: 0,
+              opacity: 1,
+              etpLabel: null,
+              hasIndisponibility,
+              currentActivities: [],
+              etp: null,
+              fonction: person.situations[0].fonction,
+              currentSituation: null,
+              category: person.situations[0].category,
+              orignalCurrentActivities: [],
+              isModify: false,
+            }
+            l.hrFiltered = l.hrFiltered || []
+            l.hrFiltered.push(cloneDeep(newPerson))
+            l.hrFiltered = sortBy(l.hrFiltered, 'fonction.rank')
+            l.allHr = l.allHr || []
+            l.allHr.push(cloneDeep(newPerson))
+            l.allHr = sortBy(l.allHr, 'fonction.rank')
+          }
+        })
       })
   }
 
@@ -946,8 +1003,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const indexOfHRFiltered = list.hrFiltered.findIndex((h) => h.id === id)
         const indexOfAllHR = list.allHr.findIndex((h) => h.id === id)
 
-        if (indexOfHRFiltered !== 1 && indexOfAllHR !== -1) {
-          list.hrFiltered[indexOfHRFiltered] = { ...list.allHr[indexOfAllHR] }
+        if (indexOfHRFiltered !== -1 && indexOfAllHR !== -1) {
+          list.hrFiltered[indexOfHRFiltered] = cloneDeep(list.allHr[indexOfAllHR])
         }
       })
 

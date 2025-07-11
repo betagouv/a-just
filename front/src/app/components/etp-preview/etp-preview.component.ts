@@ -65,6 +65,10 @@ export class EtpPreviewComponent implements OnChanges {
    * Détection du changement de variable pour rédessiner
    */
   ngOnChanges() {
+    if (this.realETP === null) {
+      console.log(this.realETP)
+    }
+
     this.needToBeUpdated = ETP_NEED_TO_BE_UPDATED === this.realETP
     if ((this.realETP === 0 && this.forceAlert) || this.realETP === null) {
       this.needToBeUpdated = true

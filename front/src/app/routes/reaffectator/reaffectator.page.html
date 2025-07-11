@@ -215,7 +215,7 @@
             <p *ngIf="hr.fonction && hr.fonction.code" class="function">
               {{ hr.fonction && hr.fonction.code}}
             </p>
-            <p class="etp">{{ hr.etpLabel }}</p>
+            <p class="etp" *ngIf="hr.etpLabel">{{ hr.etpLabel }}</p>
           </div>
           <div class="flex-1"></div>
           <div class="updated-at">
@@ -225,8 +225,9 @@
         </div>
         <div class="read-etp">
           <p class="label">ETP Travaillé :</p>
-          <etp-preview [width]="56" [height]="56" [etp]="(hr.etp || 0) - hr.hasIndisponibility"
-            [indisponibility]="hr.hasIndisponibility" [ngClass]="{'dark-mode': !hr.isModify}">
+          <etp-preview [width]="56" [height]="56" [realETP]="hr.etp" [forceAlert]="false"
+            [etp]="(hr.etp || 0) - hr.hasIndisponibility" [indisponibility]="hr.hasIndisponibility"
+            [ngClass]="{'dark-mode': !hr.isModify}">
           </etp-preview>
           <div class="flex-1"></div>
           <p class="unavailable" *ngIf="hr.hasIndisponibility">
