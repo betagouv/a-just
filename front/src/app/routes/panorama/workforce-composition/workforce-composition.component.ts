@@ -114,13 +114,14 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
                     sortDates(today(person.dateStart), today(), false) <= 0 &&
                     person.situations &&
                     person.situations.length &&
-                    person.situations[0].dateStart &&
-                    sortDates(today(person.situations[0].dateStart), today(), false) > 0 &&
+                    person.situations[person.situations.length - 1].dateStart &&
+                    sortDates(today(person.situations[person.situations.length - 1].dateStart), today(), false) > 0 &&
                     person.category,
                 )
                 .map((person: any) => {
                   if (!listAgent.find((h: any) => h.id === person.id)) {
-                    listAgent.push(person)
+                    console.log(person)
+                    //listAgent.push(person)
                   }
                 })
 
