@@ -255,7 +255,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           target: '#wrapper-contener',
           title: 'À quoi sert le cockpit ?',
           intro:
-            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p></p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit-a-just-ca-mp4-480p.mp4" type="video/mp4" /></video>',
+            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit-a-just-ca-mp4-480p.mp4" type="video/mp4" /></video>',
         },
         {
           target: '.sub-main-header',
