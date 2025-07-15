@@ -458,6 +458,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return
     }
 
+    // TODO pourquoi checkIfIndispoIgnoreControlPercentVentilation ?
+    console.log(
+      'checkIfIndispoIgnoreControlPercentVentilation',
+      checkIfIndispoIgnoreControlPercentVentilation,
+      withoutPercentControl,
+      fixDecimal(sumBy(this.updatedReferentiels, 'percent')),
+    )
     if (!checkIfIndispoIgnoreControlPercentVentilation && !withoutPercentControl) {
       const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
       if (totalAffected > 100) {
