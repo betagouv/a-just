@@ -1040,15 +1040,15 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   onAlertsUpdated({ tag }: { tag: string }) {
     // Scroll to the "Start Date" selector if it's the last element to complete.
     // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
-    if (this.alertList().length > 0) {
-      if (this.alertList().includes('activitiesStartDate')) {
+    if (this.humanResourceService.alertList().length > 0) {
+      if (this.humanResourceService.alertList().includes('activitiesStartDate')) {
         if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
-      } else if (this.alertList().includes('etp')) {
+      } else if (this.humanResourceService.alertList().includes('etp')) {
         this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
       }
     }
 
-    this.humanResourceService.removeAlert(tag)
+    //this.humanResourceService.removeAlert(tag)
   }
 
   /**

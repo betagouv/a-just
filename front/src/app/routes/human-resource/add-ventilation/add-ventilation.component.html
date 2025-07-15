@@ -186,7 +186,7 @@
             <p *ngIf="!isEdit">Situation à prendre en compte </p>
             <div class="flex-1"></div>
             <label class="import-confirmation"
-              *ngIf="displayImportLabels || humanResourceService.alertList().includes('activitiesStartDate') "
+              *ngIf="displayImportLabels && humanResourceService.alertList().includes('activitiesStartDate') "
               [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
               'background-color' : form.get('activitiesStartDate')?.value === null ?'#feebd0':'#b8fec9'}">
               <i class="ri-checkbox-circle-fill"></i>

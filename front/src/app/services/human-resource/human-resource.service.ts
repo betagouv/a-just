@@ -688,7 +688,6 @@ export class HumanResourceService {
   }
 
   removeAlert(tag: string) {
-    console.log('removeAlert', tag)
     const index = this.alertList().indexOf(tag)
     if (index !== -1) {
       this.alertList.update((list) => list.filter((t) => t !== tag))
