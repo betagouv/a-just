@@ -432,6 +432,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     if (this.humanResourceService.alertList().length > 0) {
       console.log('alertList', this.humanResourceService.alertList)
+      this.humanResourceService.alertList().map((tag) => {
+        this.alertSet.emit({ tag })
+      })
       return
     }
 
@@ -905,7 +908,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   }
 
   removeAlertItem(tag: string) {
-    this.alertSet.emit({ tag })
+    this.humanResourceService.removeAlert(tag)
   }
 
   scrollToBottomElement() {
