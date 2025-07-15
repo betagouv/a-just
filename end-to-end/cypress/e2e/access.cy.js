@@ -178,6 +178,7 @@ describe("Test d'accés aux pages", () => {
         "Simuler des affectations"
       );
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -198,6 +199,7 @@ describe("Test d'accés aux pages", () => {
 
       cy.get(".reaffectator").should("not.exist");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -224,6 +226,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Greffe")
         .should("not.contain.text", "Autour du magistrat");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -250,6 +253,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Siège")
         .should("not.contain.text", "Autour du magistrat");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -276,6 +280,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Siège")
         .should("not.contain.text", "Greffe");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -299,6 +304,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Greffe")
         .should("not.contain.text", "Autour du magistrat");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -322,6 +328,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Siège")
         .should("not.contain.text", "Autour du magistrat");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -345,6 +352,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Greffe")
         .should("not.contain.text", "Autour du magistrat");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -368,6 +376,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Siège")
         .should("not.contain.text", "Autour du magistrat");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -391,6 +400,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Siège")
         .should("not.contain.text", "Greffe");
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -418,6 +428,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Equipe Autour du magistrat");
       cy.get("body").click(0, 0);
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -445,6 +456,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Equipe Autour du magistrat");
       cy.get("body").click(0, 0);
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 
@@ -472,6 +484,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Greffe");
       cy.get("body").click(0, 0);
     });
+    cy.wait(2000); // Wait for the page to load completely
     checkBottomMenu();
   });
 });
