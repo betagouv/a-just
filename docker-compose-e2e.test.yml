@@ -1,122 +1,128 @@
 version: "3.3"
 services:
-   db:
-      image: postgres:15.11
-      restart: always
-      cpus: 2.0
-      mem_limit: 4G
-      networks:
-         ajust_e2e_network:
-            ipv4_address: 173.0.0.50
-      ports:
-         - "5435:5432"
-      expose:
-         - "5432"
-      environment:
-         - POSTGRES_DB=ajust
-         - POSTGRES_USER=ajust-user
-         - POSTGRES_PASSWORD=ajust-pass
-         - TZ=Europe/Paris
-      volumes:
-         - ./api/test/db/test_tmp.sql.gz:/docker-entrypoint-initdb.d/init.sql.gz
-      command:
-         - "postgres"
-         - "-c"
-         - "max_connections=200"
-         - "-c"
-         - "shared_buffers=2GB"
-         - "-c"
-         - "effective_cache_size=6GB"
-         - "-c"
-         - "maintenance_work_mem=512MB"
-         - "-c"
-         - "checkpoint_completion_target=0.7"
-         - "-c"
-         - "wal_buffers=16MB"
-         - "-c"
-         - "default_statistics_target=100"
-         - "-c"
-         - "random_page_cost=4"
-         - "-c"
-         - "effective_io_concurrency=2"
-         - "-c"
-         - "work_mem=5242kB"
-         - "-c"
-         - "min_wal_size=1GB"
-         - "-c"
-         - "max_wal_size=4GB"
-         - "-c"
-         - "max_worker_processes=4"
-         - "-c"
-         - "max_parallel_workers_per_gather=2"
-         - "-c"
-         - "max_parallel_workers=4"
+  db:
+    image: postgres:15.11
+    restart: always
+    cpus: 2.0
+    mem_limit: 4G
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 173.0.0.50
+    ports:
+      - "5435:5432"
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_DB=ajust
+      - POSTGRES_USER=ajust-user
+      - POSTGRES_PASSWORD=ajust-pass
+      - TZ=Europe/Paris
+    volumes:
+      - ./api/test/db/test_tmp.sql.gz:/docker-entrypoint-initdb.d/init.sql.gz
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "shared_buffers=2GB"
+      - "-c"
+      - "effective_cache_size=6GB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "checkpoint_completion_target=0.7"
+      - "-c"
+      - "wal_buffers=16MB"
+      - "-c"
+      - "default_statistics_target=100"
+      - "-c"
+      - "random_page_cost=4"
+      - "-c"
+      - "effective_io_concurrency=2"
+      - "-c"
+      - "work_mem=5242kB"
+      - "-c"
+      - "min_wal_size=1GB"
+      - "-c"
+      - "max_wal_size=4GB"
+      - "-c"
+      - "max_worker_processes=4"
+      - "-c"
+      - "max_parallel_workers_per_gather=2"
+      - "-c"
+      - "max_parallel_workers=4"
 
-   api:
-      build:
-         context: .
-         dockerfile: dockerfile_e2e_api
-      networks:
-         ajust_e2e_network:
-           ipv4_address: 173.0.0.20
-      ports:
-         - "8081:8081"
-      expose:
-         - "8081"
-      depends_on:
-         - "db"
-      volumes:
-         - "./api/coverage:/home/api/coverage"
-      environment:
-         - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust
-         - NODE_ENV=test
-         - JSON_WEB_TOKEN=123456789
-         - PORT=8081
-         - TYPE_ID=0
-      healthcheck:
-         test: ["CMD", "curl", "-f", "http://173.0.0.20:8081/api"]
-         interval: 30s
-         timeout: 10s
-         retries: 5
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile_e2e_api
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 173.0.0.20
+    ports:
+      - "8081:8081"
+    expose:
+      - "8081"
+    depends_on:
+      - "db"
+    volumes:
+      - "./api/coverage:/home/api/coverage"
+    environment:
+      - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust
+      - NODE_ENV=test
+      - JSON_WEB_TOKEN=123456789
+      - PORT=8081
+      - TYPE_ID=0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://173.0.0.20:8081/api"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-   front:
-      build:
-         context: .
-         dockerfile: dockerfile_front
-      networks:
-         ajust_e2e_network:
-           ipv4_address: 173.0.0.30
-      ports:
-         - "4200:4200"
-      expose:
-         - "4200"
-      environment:
-         - NG_APP_SERVER_URL=http://173.0.0.20:8081/api/
-         - NG_APP_NODE_ENV=test
-      healthcheck:
-         test: ["CMD", "curl", "-f", "http://173.0.0.30:4200"]
-         interval: 30s
-         timeout: 10s
-         retries: 5
+  front:
+    build:
+      context: .
+      dockerfile: dockerfile_front
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 173.0.0.30
+    ports:
+      - "4200:4200"
+    expose:
+      - "4200"
+    environment:
+      - NG_APP_SERVER_URL=http://173.0.0.20:8081/api/
+      - NG_APP_NODE_ENV=test
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://173.0.0.30:4200"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-   cypress:
-      build:   
-         context: .
-         dockerfile: dockerfile_e2e_test
-      networks:
-         - ajust_e2e_network
-      depends_on:
-         - api
-         - db
-         - front
-      volumes:
-         - ./end-to-end:/e2e
-         - ./end-to-end/scripts:/scripts
-      # working_dir: /e2e
-      # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
-      environment:
-         - CYPRESS_BASE_URL=http://173.0.0.30:4200
-         - NG_APP_SERVER_URL=http://173.0.0.20:8081/api
+  cypress:
+    build:
+      context: .
+      dockerfile: dockerfile_e2e_test
+    networks:
+      - ajust_e2e_network
+    depends_on:
+      - api
+      - db
+      - front
+    volumes:
+      - ./end-to-end:/e2e
+      - ./end-to-end/scripts:/scripts
+    # working_dir: /e2e
+    # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
+    environment:
+      - CYPRESS_BASE_URL=http://173.0.0.30:4200
+      - NG_APP_SERVER_URL=http://173.0.0.20:8081/api
+
+  redis:
+    image: redis:7
+    container_name: redis-server
+    ports:
+      - "6379:6379"
 
 networks:
   ajust_e2e_network:
