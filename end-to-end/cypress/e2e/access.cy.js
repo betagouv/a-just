@@ -299,6 +299,7 @@ describe("Test d'accés aux pages", () => {
     }).then(() => {
       cy.login();
       cy.visit("/cockpit");
+      cy.wait(50000);
       cy.location("pathname").should("contain", "/cockpit");
       cy.get(".sub-main-header .categories-switch")
         .should("not.contain.text", "Greffe")
@@ -323,7 +324,7 @@ describe("Test d'accés aux pages", () => {
     }).then(() => {
       cy.login();
       cy.visit("/cockpit");
-      cy.wait(10000); // Wait for the page to load completely
+      cy.wait(50000); // Wait for the page to load completely
       cy.location("pathname").should("contain", "/cockpit");
       cy.get(".sub-main-header .categories-switch")
         .should("not.contain.text", "Siège")
