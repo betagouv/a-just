@@ -7,7 +7,7 @@ services:
     mem_limit: 4G
     networks:
       ajust_e2e_network:
-        ipv4_address: 173.0.0.50
+        ipv4_address: 175.0.0.50
     ports:
       - "5435:5432"
     expose:
@@ -58,13 +58,14 @@ services:
       dockerfile: dockerfile_e2e_api
     networks:
       ajust_e2e_network:
-        ipv4_address: 173.0.0.20
+        ipv4_address: 175.0.0.20
     ports:
       - "8081:8081"
     expose:
       - "8081"
     depends_on:
       - "db"
+      - "redis"
     volumes:
       - "./api/coverage:/home/api/coverage"
     environment:
@@ -73,9 +74,9 @@ services:
       - JSON_WEB_TOKEN=123456789
       - PORT=8081
       - TYPE_ID=0
-      - REDIS_URL=redis://localhost:6379
+      - REDIS_URL=redis://redis:6379
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://173.0.0.20:8081/api"]
+      test: ["CMD", "curl", "-f", "http://175.0.0.20:8081/api"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -86,16 +87,16 @@ services:
       dockerfile: dockerfile_front
     networks:
       ajust_e2e_network:
-        ipv4_address: 173.0.0.30
+        ipv4_address: 175.0.0.30
     ports:
       - "4200:4200"
     expose:
       - "4200"
     environment:
-      - NG_APP_SERVER_URL=http://173.0.0.20:8081/api/
+      - NG_APP_SERVER_URL=http://175.0.0.20:8081/api/
       - NG_APP_NODE_ENV=test
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://173.0.0.30:4200"]
+      test: ["CMD", "curl", "-f", "http://175.0.0.30:4200"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -110,24 +111,30 @@ services:
       - api
       - db
       - front
+      - redis
     volumes:
       - ./end-to-end:/e2e
       - ./end-to-end/scripts:/scripts
     # working_dir: /e2e
     # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
     environment:
-      - CYPRESS_BASE_URL=http://173.0.0.30:4200
-      - NG_APP_SERVER_URL=http://173.0.0.20:8081/api
+      - CYPRESS_BASE_URL=http://175.0.0.30:4200
+      - NG_APP_SERVER_URL=http://175.0.0.20:8081/api
 
   redis:
     image: redis:7
-    container_name: redis-server
+    container_name: redis-server-e2e
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.40
     ports:
       - "6379:6379"
+    expose:
+      - "6379"
 
 networks:
   ajust_e2e_network:
     driver: bridge
     ipam:
       config:
-        - subnet: 173.0.0.0/16
+        - subnet: 175.0.0.0/16
