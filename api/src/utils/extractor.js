@@ -1503,9 +1503,9 @@ async function computeHumanExtract(params) {
     signal,
     allIndispRefIds,
     refIndispo,
-    indexes,
-    old,
   } = params
+
+  checkAbort(signal)
 
   const dateStart = today(originalDateStart)
   const dateStop = today(originalDateStop)
@@ -1522,34 +1522,25 @@ async function computeHumanExtract(params) {
 
   let refObj = { ...emptyRefObj(flatReferentielsList) }
 
-  const situations = human.situations || []
-  const indisponibilities = human.indisponibilities || []
-
   const indispoArray = [
     ...(await Promise.all(
       flatReferentielsList.map(async (referentiel) => {
+        checkAbort(signal)
+        const situations = human.situations || []
+        const indisponibilities = human.indisponibilities || []
+
         const isUsedInSituation = situations.some((s) => (s.activities || []).some((a) => a.contentieux.id === referentiel.id))
 
         const isUsedInIndispo = indisponibilities.some((indisponibility) => indisponibility.contentieux.id === referentiel.id)
 
         if (isUsedInSituation || isUsedInIndispo) {
           const localEtpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop, undefined, undefined, signal)
-          /**: calculateETPForContentieux(
-                indexes,
-                {
-                  start: dateStart,
-                  end: dateStop,
-                  category: categories,
-                  fonctions: undefined,
-                  contentieux: referentiel.id,
-                  agent: human.id,
-                },
-                categories,
-              ) */
 
           const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
             ...(await countEtp({ ...localEtpAffected }, referentiel)),
           }
+
+          checkAbort(signal)
 
           Object.keys(localEtpAffected).forEach((key) => {
             if (totalDaysGone === 0 && localEtpAffected[key].nbDaysGone > 0) totalDaysGone = localEtpAffected[key].nbDaysGone
@@ -1639,6 +1630,8 @@ async function computeHumanExtract(params) {
     }
     refObj = result
   }
+
+  checkAbort(signal)
 
   if (!categoryFilter.includes(categoryName.toLowerCase())) return null
   if (categoryName === 'pas de catégorie' && fonctionName === 'pas de fonction') return null
