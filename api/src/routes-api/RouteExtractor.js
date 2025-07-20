@@ -102,7 +102,7 @@ export default class RouteExtractor extends Route {
       dateStart,
       dateStop,
       isJirs,
-      old: false, // mettre une condition si supérioeur à 10 mois ou non
+      old: true, // mettre une condition si supérioeur à 10 mois ou non
     })
     console.timeEnd('extractor-5')
 
