@@ -641,64 +641,45 @@ export default (sequelizeInstance, Model) => {
       raw: true,
     })
 
-    const activityIds = rawActivities.map((a) => a.id)
     const contentieuxIds = [...new Set(rawActivities.map((a) => a['ContentieuxReferentiel.id']))]
-
-    // ⏩ Chargement groupé des commentaires par contentieuxId (via type = 'activities_<id>')
     const commentsMap = await Model.models.Comments.getNbByActivityTypes(contentieuxIds, HrBackupId)
 
-    // ⏩ Chargement groupé des updates
-    let updatesMap = {}
-    if (details) {
-      const allUpdates = await Model.models.HistoriesActivitiesUpdate.findAll({
-        where: {
-          activity_id: activityIds,
-        },
-        attributes: ['activity_id', 'updated_at', 'user_id'],
-        order: [['updated_at', 'DESC']],
-        raw: true,
-      })
+    // ⏬ Construction finale avec mêmes valeurs que l’ancienne méthode
+    return await Promise.all(
+      rawActivities.map(async (row) => {
+        const contentieuxId = row['ContentieuxReferentiel.id']
+        const activityId = row.id
 
-      for (const update of allUpdates) {
-        const id = update.activity_id
-        if (!updatesMap[id]) {
-          updatesMap[id] = {
-            entrees: { updatedAt: update.updated_at, userId: update.user_id },
-            sorties: { updatedAt: update.updated_at, userId: update.user_id },
-            stock: { updatedAt: update.updated_at, userId: update.user_id },
-          }
+        let updatedBy = null
+
+        if (details) {
+          const [entrees, sorties, stock] = await Promise.all([
+            Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(activityId, 'entrees'),
+            Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(activityId, 'sorties'),
+            Model.models.HistoriesActivitiesUpdate.getLastUpdateByActivityAndNode(activityId, 'stock'),
+          ])
+
+          updatedBy = { entrees, sorties, stock }
         }
-      }
-    }
 
-    // ⏬ Construction finale
-    return rawActivities.map((row) => {
-      const contentieuxId = row['ContentieuxReferentiel.id']
-      const activityId = row.id
-
-      return {
-        id: activityId,
-        periode: row.periode,
-        entrees: row.entrees,
-        originalEntrees: row.originalEntrees,
-        sorties: row.sorties,
-        originalSorties: row.originalSorties,
-        stock: row.stock,
-        originalStock: row.originalStock,
-        contentieux: {
-          id: contentieuxId,
-          label: row['ContentieuxReferentiel.label'],
-        },
-        nbComments: commentsMap.get(contentieuxId) || 0,
-        updatedBy: details
-          ? updatesMap[activityId] || {
-              entrees: null,
-              sorties: null,
-              stock: null,
-            }
-          : null,
-      }
-    })
+        return {
+          id: activityId,
+          periode: row.periode,
+          entrees: row.entrees,
+          originalEntrees: row.originalEntrees,
+          sorties: row.sorties,
+          originalSorties: row.originalSorties,
+          stock: row.stock,
+          originalStock: row.originalStock,
+          contentieux: {
+            id: contentieuxId,
+            label: row['ContentieuxReferentiel.label'],
+          },
+          nbComments: commentsMap.get(contentieuxId) || 0,
+          updatedBy,
+        }
+      }),
+    )
   }
 
   /**
