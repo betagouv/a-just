@@ -203,7 +203,7 @@ describe("Test d'accés aux pages", () => {
     checkBottomMenu();
   });
 
-  it("Give only access to Magistrat and check user does not have access to Greffie and Contractuel datas on panorama ", () => {
+  it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on panorama ", () => {
     const accessUrls = accessUrlList.map((access) => access.id);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux magistrats")
@@ -299,6 +299,7 @@ describe("Test d'accés aux pages", () => {
     }).then(() => {
       cy.login();
       cy.visit("/cockpit");
+      cy.wait(50000);
       cy.location("pathname").should("contain", "/cockpit");
       cy.get(".sub-main-header .categories-switch")
         .should("not.contain.text", "Greffe")
@@ -323,6 +324,7 @@ describe("Test d'accés aux pages", () => {
     }).then(() => {
       cy.login();
       cy.visit("/cockpit");
+      cy.wait(50000); // Wait for the page to load completely
       cy.location("pathname").should("contain", "/cockpit");
       cy.get(".sub-main-header .categories-switch")
         .should("not.contain.text", "Siège")
