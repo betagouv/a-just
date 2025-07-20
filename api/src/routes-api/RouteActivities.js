@@ -2,8 +2,6 @@ import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { today } from '../utils/date'
 import { ACTIVITIES_CHANGE_DATE, ACTIVITIES_PAGE_LOAD } from '../constants/log-codes'
-import deepEqual from 'fast-deep-equal'
-import fs from 'node:fs'
 
 /**
  * Route contenant les lectures et modifications des activités
@@ -78,46 +76,9 @@ export default class RouteActivities extends Route {
       const dateLastMonth = await this.model.getLastMonth(hrBackupId)
       this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
 
-      console.time('old')
-      const list = await this.model.getByMonth(date, hrBackupId)
-      console.timeEnd('old')
       console.time('new')
-      const listNew = await this.model.getByMonthNew(date, hrBackupId)
+      const list = await this.model.getByMonthNew(date, hrBackupId)
       console.timeEnd('new')
-
-      const oldResult = list
-      const newResult = listNew
-
-      let allEqual = true
-      let differences = []
-
-      if (oldResult.length !== newResult.length) {
-        console.error(`❌ Nombre d'éléments différents : ${oldResult.length} vs ${newResult.length}`)
-        allEqual = false
-      }
-
-      for (let i = 0; i < Math.min(oldResult.length, newResult.length); i++) {
-        const oldItem = oldResult[i]
-        const newItem = newResult[i]
-
-        if (!deepEqual(oldItem, newItem)) {
-          allEqual = false
-          differences.push({
-            index: i,
-            id: oldItem['Réf.'] || newItem['Réf.'],
-            old: oldItem,
-            new: newItem,
-          })
-        }
-      }
-
-      if (!allEqual) {
-        console.error(`❌ ${differences.length} différences trouvées !`)
-        fs.writeFileSync('./computeExtract-differences.json', JSON.stringify(differences, null, 2), 'utf-8')
-        throw new Error('Non-régression échouée ! Différences enregistrées dans computeExtract-differences.json')
-      }
-
-      console.log('✅ Test de non-régression réussi. Les deux versions donnent des résultats identiques.')
 
       this.sendOk(ctx, {
         list,

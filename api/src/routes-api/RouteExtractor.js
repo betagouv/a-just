@@ -15,14 +15,10 @@ import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
 import { updateLabels } from '../utils/referentiel'
-import { withAbortTimeout } from '../utils/abordTimeout'
-import deepEqual from 'fast-deep-equal'
-import fs from 'node:fs'
-import { diff } from 'deep-diff'
-import { calculateETPForContentieux, generateAndIndexAllStableHRPeriods, generateHRIndexes } from '../utils/human-resource'
+
+import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
-import { getCacheValue, getObjectSizeInMB, loadOrWarmHR, setCacheValue } from '../utils/redis'
-import zlib from 'zlib'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Route de la page extrateur
@@ -59,93 +55,91 @@ export default class RouteExtractor extends Route {
     accesses: [Access.canVewHR],
   })
   async filterList(ctx) {
-    try {
-      await withAbortTimeout(async (signal) => {
-        const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
+    const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
 
-        if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
-          ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
-        }
-
-        await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
-          type: 'effectif',
-        })
-
-        console.time('extractor-1')
-        const juridictionName = await this.models.HRBackups.findById(backupId)
-        const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-        const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, undefined, undefined, true)
-        console.timeEnd('extractor-1')
-
-        console.time('extractor-2')
-        const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
-        console.timeEnd('extractor-2')
-
-        console.time('extractor-3')
-        const hr = await loadOrWarmHR(backupId, this.models)
-        console.timeEnd('extractor-3')
-
-        console.time('extractor-4')
-        const categories = await this.models.HRCategories.getAll()
-        const functionList = await this.models.HRFonctions.getAllFormatDdg()
-        const formatedFunctions = await formatFunctions(functionList)
-        const allHuman = await getHumanRessourceList(hr, undefined, undefined, undefined, dateStart, dateStop)
-        console.timeEnd('extractor-4')
-
-        console.time('extractor-5')
-        let { onglet1, onglet2 } = await runExtractsInParallel({
-          models: this.models,
-          allHuman,
-          flatReferentielsList,
-          categories,
-          categoryFilter,
-          juridictionName,
-          dateStart,
-          dateStop,
-          isJirs,
-          signal,
-        })
-        console.timeEnd('extractor-5')
-
-        console.time('extractor-6')
-        const excelRef = buildExcelRef(flatReferentielsList)
-        const { tproxs, allJuridiction } = await getJuridictionData(this.models, juridictionName)
-
-        const onglet1Data = {
-          values: onglet1,
-          columnSize: await autofitColumns(onglet1, true),
-        }
-
-        const onglet2Data = {
-          values: onglet2,
-          columnSize: await autofitColumns(onglet2, true, 13),
-          excelRef,
-        }
-
-        const viewModel = await getViewModel({
-          referentiels,
-          tproxs,
-          onglet1: onglet1Data,
-          onglet2: onglet2Data,
-          allJuridiction,
-        })
-        console.timeEnd('extractor-6')
-
-        this.sendOk(ctx, {
-          fonctions: formatedFunctions,
-          referentiels,
-          tproxs,
-          onglet1: onglet1Data,
-          onglet2: onglet2Data,
-          allJuridiction,
-          viewModel,
-        })
-      }, 60000) // timeout en ms
-    } catch (err) {
-      console.error('❌ Traitement interrompu :', err.message)
-      ctx.status = 503
-      ctx.body = { error: err.message }
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
+
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
+      type: 'effectif',
+    })
+
+    console.time('extractor-1')
+    const juridictionName = await this.models.HRBackups.findById(backupId)
+    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, undefined, undefined, true)
+    console.timeEnd('extractor-1')
+
+    console.time('extractor-2')
+    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
+    console.timeEnd('extractor-2')
+
+    console.time('extractor-3')
+    let hr = await loadOrWarmHR(backupId, this.models)
+    console.timeEnd('extractor-3')
+    //hr = hr.slice(0, 1) // A SUPPRIMER
+
+    console.time('extractor-4')
+    const categories = await this.models.HRCategories.getAll()
+    const functionList = await this.models.HRFonctions.getAllFormatDdg()
+    const formatedFunctions = await formatFunctions(functionList)
+    const allHuman = await getHumanRessourceList(hr, undefined, undefined, undefined, today(dateStart), today(dateStop))
+    console.timeEnd('extractor-4')
+
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(allHuman)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
+
+    console.time('extractor-5')
+    let { onglet1, onglet2 } = await runExtractsInParallel({
+      indexes,
+      allHuman,
+      flatReferentielsList,
+      categories,
+      categoryFilter,
+      juridictionName,
+      dateStart,
+      dateStop,
+      isJirs,
+      old: false, // mettre une condition si supérioeur à 10 mois ou non
+    })
+    console.timeEnd('extractor-5')
+
+    console.time('extractor-6')
+    const excelRef = buildExcelRef(flatReferentielsList)
+    const { tproxs, allJuridiction } = await getJuridictionData(this.models, juridictionName)
+
+    const onglet1Data = {
+      values: onglet1,
+      columnSize: await autofitColumns(onglet1, true),
+    }
+
+    const onglet2Data = {
+      values: onglet2,
+      columnSize: await autofitColumns(onglet2, true, 13),
+      excelRef,
+    }
+
+    const viewModel = await getViewModel({
+      referentiels,
+      tproxs,
+      onglet1: onglet1Data,
+      onglet2: onglet2Data,
+      allJuridiction,
+    })
+
+    console.timeEnd('extractor-6')
+
+    this.sendOk(ctx, {
+      fonctions: formatedFunctions,
+      referentiels,
+      tproxs,
+      onglet1: onglet1Data,
+      onglet2: onglet2Data,
+      allJuridiction,
+      viewModel,
+    })
   }
 
   /**
@@ -167,7 +161,7 @@ export default class RouteExtractor extends Route {
 
     await this.models.HRBackups.getAll().then(async (res) => {
       res.map(async (elem) => {
-        await this.models.Activities.getByMonth(dateStart, elem.id)
+        await this.models.Activities.getByMonthNew(dateStart, elem.id)
           .then((res) => {
             if (res.length) {
               for (let i = 0; i < res.length; i++) {
@@ -207,7 +201,7 @@ export default class RouteExtractor extends Route {
 
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined)
 
-    const list = await this.models.Activities.getByMonth(dateStart, backupId)
+    const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
 
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 

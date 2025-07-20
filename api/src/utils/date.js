@@ -401,7 +401,7 @@ export function isDateEqual(date1, date2) {
  */
 export function getNextDay(date) {
   const nextDay = today(date)
-  nextDay.setDate(date.getDate() + 1)
+  nextDay.setDate(nextDay.getDate() + 1)
   return nextDay
 }
 

@@ -4,10 +4,7 @@ import { month, today } from '../utils/date'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { sumBy } from 'lodash'
-import { computeCoverage, computeDTES, computeRealTimePerCase } from '../utils/simulator'
-import { fixDecimal } from '../utils/number'
-import config from 'config'
-import { withAbortTimeout } from '../utils/abordTimeout'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Route des calculs de la page calcule
@@ -104,16 +101,16 @@ export default class RouteCalculator extends Route {
             if (activites.length) {
               const acti = activites[0]
               if (acti.entrees !== null) {
-                list.push({ value: acti.entrees, date: new Date(dateStart) })
+                list.push({ value: acti.entrees, date: today(dateStart) })
               } else if (acti.originalEntrees !== null) {
                 list.push({
                   value: acti.originalEntrees,
-                  date: new Date(dateStart),
+                  date: today(dateStart),
                 })
               } else {
                 list.push({
                   value: null,
-                  date: new Date(dateStart),
+                  date: today(dateStart),
                 })
               }
             }
@@ -121,20 +118,20 @@ export default class RouteCalculator extends Route {
           break
         case 'sorties':
           {
-            const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites.length) {
               const acti = activites[0]
               if (acti.sorties !== null) {
-                list.push({ value: acti.sorties, date: new Date(dateStart) })
+                list.push({ value: acti.sorties, date: today(dateStart) })
               } else if (acti.originalSorties !== null) {
                 list.push({
                   value: acti.originalSorties,
-                  date: new Date(dateStart),
+                  date: today(dateStart),
                 })
               } else {
                 list.push({
                   value: null,
-                  date: new Date(dateStart),
+                  date: today(dateStart),
                 })
               }
             }
@@ -143,20 +140,20 @@ export default class RouteCalculator extends Route {
         case 'stock':
         case 'stocks':
           {
-            const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites && activites.length) {
               const acti = activites[0]
               if (acti.stock !== null) {
-                list.push({ value: acti.stock, date: new Date(dateStart) })
+                list.push({ value: acti.stock, date: today(dateStart) })
               } else if (acti.originalStock !== null) {
                 list.push({
                   value: acti.originalStock,
-                  date: new Date(dateStart),
+                  date: today(dateStart),
                 })
               } else {
                 list.push({
                   value: null,
-                  date: new Date(dateStart),
+                  date: today(dateStart),
                 })
               }
             }
@@ -187,7 +184,7 @@ export default class RouteCalculator extends Route {
                 totalAffected += (timeAffected / 100) * realETP
               }
             })
-            list.push({ value: totalAffected, date: new Date(dateStart) })
+            list.push({ value: totalAffected, date: today(dateStart) })
           }
           break
         case 'dtes':
@@ -209,7 +206,7 @@ export default class RouteCalculator extends Route {
 
             list.push({
               value: datas.list[0].realDTESInMonths,
-              date: new Date(dateStart),
+              date: today(dateStart),
             })
           }
           break
@@ -232,13 +229,13 @@ export default class RouteCalculator extends Route {
 
             list.push({
               value: catId === 1 ? datas.list[0].magRealTimePerCase : datas.list[0].fonRealTimePerCase,
-              date: new Date(dateStart),
+              date: today(dateStart),
             })
           }
           break
         case 'taux-couverture':
           {
-            const activites = await this.models.Activities.getByMonth(dateStart, backupId, contentieuxId, false)
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites.length) {
               const acti = activites[0]
 
@@ -259,12 +256,12 @@ export default class RouteCalculator extends Route {
               if (sorties !== null && entrees !== null) {
                 list.push({
                   value: 100 * (sorties / entrees),
-                  date: new Date(dateStart),
+                  date: today(dateStart),
                 })
               } else {
                 list.push({
                   value: null,
-                  date: new Date(dateStart),
+                  date: today(dateStart),
                 })
               }
             }

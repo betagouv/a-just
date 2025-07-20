@@ -229,7 +229,7 @@ export default class App extends AppBase {
         this.warmupRedisCache().catch((err) => {
           console.error('❌ Erreur warmup Redis (décalé) :', err)
         })
-      }, 1000)
+      }, 10000)
     } else {
       console.log('--- IS READY ---', config.port)
       this.isReady()
