@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   Component,
@@ -32,7 +32,7 @@ import { getRandomInt } from '../../../../utils/numbers';
 @Component({
   selector: 'aj-graphs-verticals-lines',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './graphs-verticals-lines.component.html',
   styleUrls: ['./graphs-verticals-lines.component.scss'],
   providers: [...ngResizeObserverProviders],

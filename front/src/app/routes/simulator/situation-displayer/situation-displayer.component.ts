@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MainClass } from '../../../libs/main-class';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { SimulatorService } from '../../../services/simulator/simulator.service';
 import { UserService } from '../../../services/user/user.service';
@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 @Component({
   selector: 'aj-situation-displayer',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTooltipModule],
+  imports: [FormsModule, MatTooltipModule],
   templateUrl: './situation-displayer.component.html',
   styleUrls: ['./situation-displayer.component.scss'],
 })

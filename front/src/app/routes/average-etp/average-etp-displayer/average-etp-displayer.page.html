@@ -7,71 +7,76 @@
       <div class="label col">Nombre de dossiers par jour</div>
       <div class="label col">Nombre de dossiers par mois</div>
     </div>
-    <div class="content-list" *ngIf="categorySelected">
-      <div *ngFor="let ref of referentiel" class="item-grouped"
-        [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(ref.label, OPACITY)">
-        <div class="item position-relative" (click)="ref.showOptionGroup = !ref.showOptionGroup"
-          [class.selectable]="(ref.childrens || []).length">
-          <div class="label head">
-
-            <mat-icon *ngIf="(ref.childrens || []).length">{{ ref.showOptionGroup ? 'expand_less' : 'chevron_right' }}
-            </mat-icon>
-            <p>{{ userService.referentielMappingNameByInterface(ref.label)}}</p>
-          </div>
-          <div class="column-item">
-            <div class="label col">
-              <app-time-selector [value]="getInputValue(ref.averageProcessingTime,'hour')"
-                (valueChange)="onUpdateOptions(ref, $event,'hour')" [outsideChange]="ref.isModified"
-                [defaultValue]="ref.defaultValue" [defaultValueFonc]="ref.defaultValueFonc"
-                [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
-            </div>
-            <div class="label col">
-              <input #jour type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: ref.isModified === true}"
-                [ngModel]="fixDecimal(getInputValue(ref.averageProcessingTime,'nbPerDay'),100)"
-                (blur)="getField(ref,$event,'nbPerDay')" (keydown.enter)="getField(ref,$event,'nbPerDay')"
-                (click)="$event.stopPropagation();" min="0" />
-            </div>
-            <div class="label col no-margin">
-              <input #semaine type="number" placeholder="Nb de dossiers"
-                [ngClass]="{ modified: ref.isModified === true}"
-                [ngModel]="fixDecimal(getInputValue(ref.averageProcessingTime,'nbPerMonth'))"
-                (blur)="getField(ref,$event,'nbPerMonth')" (keydown.enter)="getField(ref,$event,'nbPerMonth')"
-                (click)="$event.stopPropagation();" min="0" />
-            </div>
-          </div>
-
-        </div>
-        <div class="group" [class.enable]="ref.showOptionGroup">
-          <div class="group-item" *ngFor="let itemGroup of (ref.childrens || [])">
-            <div class="label head">
-              <p>{{itemGroup.label}}</p>
-            </div>
-            <div class="column-item">
-              <div class="label col">
-                <app-time-selector [value]="getInputValue(itemGroup.averageProcessingTime,'hour')"
-                  (valueChange)="onUpdateOptions(itemGroup, $event,'hour')" [outsideChange]="itemGroup.isModified"
-                  [defaultValue]="itemGroup.defaultValue" [defaultValueFonc]="itemGroup.defaultValueFonc"
+    @if (categorySelected) {
+      <div class="content-list">
+        @for (ref of referentiel; track ref) {
+          <div class="item-grouped"
+            [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(ref.label, OPACITY)">
+            <div class="item position-relative" (click)="ref.showOptionGroup = !ref.showOptionGroup"
+              [class.selectable]="(ref.childrens || []).length">
+              <div class="label head">
+                @if ((ref.childrens || []).length) {
+                  <mat-icon>{{ ref.showOptionGroup ? 'expand_less' : 'chevron_right' }}
+                  </mat-icon>
+                }
+                <p>{{ userService.referentielMappingNameByInterface(ref.label)}}</p>
+              </div>
+              <div class="column-item">
+                <div class="label col">
+                  <app-time-selector [value]="getInputValue(ref.averageProcessingTime,'hour')"
+                    (valueChange)="onUpdateOptions(ref, $event,'hour')" [outsideChange]="ref.isModified"
+                    [defaultValue]="ref.defaultValue" [defaultValueFonc]="ref.defaultValueFonc"
                   [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
-              </div>
-              <div class="label col">
-                <input type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: itemGroup.isModified === true}"
-                  [ngModel]="fixDecimal(getInputValue(itemGroup.averageProcessingTime,'nbPerDay'))"
-                  (blur)="getField(itemGroup,$event,'nbPerDay')" (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
-                  (click)="$event.stopPropagation();" min="0" />
-              </div>
-              <div class="label col no-margin">
-                <input type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: itemGroup.isModified === true}"
-                  [ngModel]="fixDecimal(getInputValue(itemGroup.averageProcessingTime,'nbPerMonth'))"
-                  (blur)="getField(itemGroup,$event,'nbPerMonth')"
-                  (keydown.enter)="getField(itemGroup,$event,'nbPerMonth')" (click)="$event.stopPropagation();"
-                  min="0" />
+                </div>
+                <div class="label col">
+                  <input #jour type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: ref.isModified === true}"
+                    [ngModel]="fixDecimal(getInputValue(ref.averageProcessingTime,'nbPerDay'),100)"
+                    (blur)="getField(ref,$event,'nbPerDay')" (keydown.enter)="getField(ref,$event,'nbPerDay')"
+                    (click)="$event.stopPropagation();" min="0" />
+                </div>
+                <div class="label col no-margin">
+                  <input #semaine type="number" placeholder="Nb de dossiers"
+                    [ngClass]="{ modified: ref.isModified === true}"
+                    [ngModel]="fixDecimal(getInputValue(ref.averageProcessingTime,'nbPerMonth'))"
+                    (blur)="getField(ref,$event,'nbPerMonth')" (keydown.enter)="getField(ref,$event,'nbPerMonth')"
+                    (click)="$event.stopPropagation();" min="0" />
+                </div>
               </div>
             </div>
+            <div class="group" [class.enable]="ref.showOptionGroup">
+              @for (itemGroup of (ref.childrens || []); track itemGroup) {
+                <div class="group-item">
+                  <div class="label head">
+                    <p>{{itemGroup.label}}</p>
+                  </div>
+                  <div class="column-item">
+                    <div class="label col">
+                      <app-time-selector [value]="getInputValue(itemGroup.averageProcessingTime,'hour')"
+                        (valueChange)="onUpdateOptions(itemGroup, $event,'hour')" [outsideChange]="itemGroup.isModified"
+                        [defaultValue]="itemGroup.defaultValue" [defaultValueFonc]="itemGroup.defaultValueFonc"
+                      [category]="categorySelected" (click)="$event.stopPropagation();"></app-time-selector>
+                    </div>
+                    <div class="label col">
+                      <input type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: itemGroup.isModified === true}"
+                        [ngModel]="fixDecimal(getInputValue(itemGroup.averageProcessingTime,'nbPerDay'))"
+                        (blur)="getField(itemGroup,$event,'nbPerDay')" (keydown.enter)="getField(itemGroup,$event,'nbPerDay')"
+                        (click)="$event.stopPropagation();" min="0" />
+                    </div>
+                    <div class="label col no-margin">
+                      <input type="number" placeholder="Nb de dossiers" [ngClass]="{ modified: itemGroup.isModified === true}"
+                        [ngModel]="fixDecimal(getInputValue(itemGroup.averageProcessingTime,'nbPerMonth'))"
+                        (blur)="getField(itemGroup,$event,'nbPerMonth')"
+                        (keydown.enter)="getField(itemGroup,$event,'nbPerMonth')" (click)="$event.stopPropagation();"
+                        min="0" />
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
-
-        </div>
+        }
       </div>
-    </div>
+    }
     <div class="sticky-action-footer">
       <aj-options-backup-panel [category]="subTitleType"></aj-options-backup-panel>
     </div>
@@ -79,35 +84,38 @@
 
 
   <!-- POPUP FERMETURE -->
-  <aj-popup *ngIf="savePopup===true" [closeIcon]="true" (onClose)="savePopup = false" [removeShadow]="'noShadow'"
+  @if (savePopup===true) {
+    <aj-popup [closeIcon]="true" (onClose)="savePopup = false" [removeShadow]="'noShadow'"
     class="border-radius width-575" title="Modifications non enregistrées" [actions]="[
     { id: 'cancel', content: 'Non' },
     { id: 'save', content: 'Enregistrer les modifications', fill: true }
     ]" (selectedAction)="actionPopup($event)">
-    <p class="subtitle">Des modifications ont été effectuées et non pas été <br />enregistrées.</p>
-    <p class="content">Avant de changer de page souhaitez-vous les enregistrer ?</p>
-  </aj-popup>
+      <p class="subtitle">Des modifications ont été effectuées et non pas été <br />enregistrées.</p>
+      <p class="content">Avant de changer de page souhaitez-vous les enregistrer ?</p>
+    </aj-popup>
+  }
 
 
   <!-- POPUP COMPARAISON -->
-  <aj-popup *ngIf="onFollowCompare===true" [closeIcon]="true" (onClose)="onCloseCompare();" [removeShadow]="'noShadow'"
+  @if (onFollowCompare===true) {
+    <aj-popup [closeIcon]="true" (onClose)="onCloseCompare();" [removeShadow]="'noShadow'"
     class="border-radius width-500-custom comparaison" [actions]="[
     { id: 'cancel', content: 'Aller à la liste des référentiels', size: 'medium'},
     { id: 'follow', content: 'Poursuivre', fill: true , size: 'medium'}
     ]" (selectedAction)="actionPopupFollow($event)">
-    <div id="circle">
-      <i class="ri-a-b"></i>
-    </div>
-    <p>Votre référentiel est bien enregistré !</p>
-
-    <div class="content">
-      <p class="subtitle">Vous pouvez l’utiliser immédiatement ou le retrouver plus tard dans la liste de vos
-        référentiels de comparaison.
-      </p>
-      <p class="text">Souhaitez-vous poursuivre votre comparaison dans le cockpit ?</p>
-      <!-- POPIN FINALISER STYLE-->
-    </div>
-  </aj-popup>
+      <div id="circle">
+        <i class="ri-a-b"></i>
+      </div>
+      <p>Votre référentiel est bien enregistré !</p>
+      <div class="content">
+        <p class="subtitle">Vous pouvez l’utiliser immédiatement ou le retrouver plus tard dans la liste de vos
+          référentiels de comparaison.
+        </p>
+        <p class="text">Souhaitez-vous poursuivre votre comparaison dans le cockpit ?</p>
+        <!-- POPIN FINALISER STYLE-->
+      </div>
+    </aj-popup>
+  }
 
 
 </aj-wrapper>
@@ -119,16 +127,20 @@
 <ng-template #subtitleTemplate>
   <div class="before-subtitle" [ngStyle]="{'background-color': subTitleType === 'GREFFE' ? '#fee7fc' : '#e3e3fd',
   'color': subTitleType === 'GREFFE' ? '#a558a0':'#000091'}"><label>{{subTitleType ===
-      'GREFFE'?'Greffe':'Siège'}}</label></div>
+  'GREFFE'?'Greffe':'Siège'}}</label></div>
   {{this.backup && this.backup.userName ?' Créé par ':'' }}
-  <label *ngIf="this.backup && this.backup.userName" class="subtitle-name" [ngStyle]="{'background-color': subTitleType === 'GREFFE' ? '#fee7fc' : '#e3e3fd',
+  @if (this.backup && this.backup.userName) {
+<label class="subtitle-name" [ngStyle]="{'background-color': subTitleType === 'GREFFE' ? '#fee7fc' : '#e3e3fd',
   'color': subTitleType === 'GREFFE' ? '#a558a0':'#000091'}">
     {{this.backup.userName}}</label>
+  }
   {{subTitleDate.length ?', ':'.' }}
   {{this.backup && this.backup.userName ?subTitleDate.toLowerCase():subTitleDate }}
-  <label *ngIf="subTitleName !== ''" class="subtitle-name" [ngStyle]="{'background-color': subTitleType === 'GREFFE' ? '#fee7fc' : '#e3e3fd',
+  @if (subTitleName !== '') {
+<label class="subtitle-name" [ngStyle]="{'background-color': subTitleType === 'GREFFE' ? '#fee7fc' : '#e3e3fd',
   'color': subTitleType === 'GREFFE' ? '#a558a0':'#000091'}">
     {{subTitleName}}</label>
+  }
 </ng-template>
 <ng-template #actions>
 </ng-template>

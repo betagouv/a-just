@@ -18,9 +18,11 @@
       <div class="Rectangle">
         <div class="dot {{mooveClass}}"></div>
         <div class="blue-line {{mooveClass}}">
-          <div *ngFor="let d of nbOfMonthWithinPeriod" class="dot-generated-container">
-            <div class="dot-generated"></div>
-          </div>
+          @for (d of nbOfMonthWithinPeriod; track d) {
+            <div class="dot-generated-container">
+              <div class="dot-generated"></div>
+            </div>
+          }
         </div>
       </div>
     </div>

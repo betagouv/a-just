@@ -1,18 +1,26 @@
 <p (click)="onClick()" class="title-select">{{ title }}</p>
 <div>
-  <mat-icon *ngIf="onShowLeftArrow()" class="left cursor-pointer" (click)="onChangeDate(-1)">chevron_left</mat-icon>
+  @if (onShowLeftArrow()) {
+    <mat-icon class="left cursor-pointer" (click)="onChangeDate(-1)">chevron_left</mat-icon>
+  }
   <p (click)="onClick()">{{ realValue ? realValue : '-' }}</p>
-  <mat-icon *ngIf="value && clearable && !readOnly" (click)="
+  @if (value && clearable && !readOnly) {
+<mat-icon (click)="
       onDateChanged(null); $event.preventDefault(); $event.stopPropagation()
     " class="cursor-pointer">
     highlight_off</mat-icon>
-  <mat-icon *ngIf="!(value && clearable && !readOnly) && icon!=='none'" (click)="onClick()">{{
-    icon
+  }
+  @if (!(value && clearable && !readOnly) && icon!=='none') {
+    <mat-icon (click)="onClick()">{{
+      icon
     }}</mat-icon>
-  <mat-icon *ngIf="onShowRightArrow()" class="right cursor-pointer" (click)="onChangeDate(1)">chevron_right</mat-icon>
+  }
+  @if (onShowRightArrow()) {
+    <mat-icon class="right cursor-pointer" (click)="onChangeDate(1)">chevron_right</mat-icon>
+  }
 </div>
 <input matInput [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)" [min]="min"
   [max]="max" />
 <mat-datepicker #picker (monthSelected)="setMonthAndYear($event, picker)"
   [startView]="dateType === 'month' ? 'year' : 'month'" [dateClass]="dateClass" (opened)="isOpen.emit(true)"
-  (closed)="isOpen.emit(false)"></mat-datepicker>
+(closed)="isOpen.emit(false)"></mat-datepicker>

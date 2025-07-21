@@ -9,7 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MainClass } from '../../libs/main-class';
-import { CommonModule } from '@angular/common';
+
 
 declare const Quill: any;
 
@@ -20,7 +20,7 @@ declare const Quill: any;
 @Component({
   selector: 'aj-text-editor',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './text-editor.component.html',
   styleUrls: ['./text-editor.component.scss'],
 })

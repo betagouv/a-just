@@ -5,7 +5,7 @@ import annotationPlugin from 'chartjs-plugin-annotation'
 import { SimulatorService } from '../../../../services/simulator/simulator.service'
 import { findRealValue, getLongMonthString, getRangeOfMonths } from '../../../../utils/dates'
 import { fixDecimal } from '../../../../utils/numbers'
-import { CommonModule } from '@angular/common'
+
 import { LegendLabelComponent } from '../legend-label/legend-label.component'
 /**
  * Composant graphique DTES simulateur
@@ -13,7 +13,7 @@ import { LegendLabelComponent } from '../legend-label/legend-label.component'
 @Component({
   selector: 'aj-dtes-chart',
   standalone: true,
-  imports: [CommonModule, LegendLabelComponent],
+  imports: [LegendLabelComponent],
   templateUrl: './dtes-chart.component.html',
   styleUrls: ['./dtes-chart.component.scss'],
 })

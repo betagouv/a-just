@@ -1,11 +1,11 @@
-import { CommonModule, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'aj-back-button',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink],
   templateUrl: './back-button.component.html',
   styleUrls: ['./back-button.component.scss'],
 })

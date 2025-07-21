@@ -4,25 +4,31 @@
 </p>
 
 <div class="tags">
-  <span *ngFor="let t of tags; let index = index" [ngClass]="{ selected: t.selected }" (click)="onSelectedTag(index)">{{
+  @for (t of tags; track t; let index = $index) {
+    <span [ngClass]="{ selected: t.selected }" (click)="onSelectedTag(index)">{{
     t.label }}</span>
+  }
 </div>
 
-<div class="referentiel-row" *ngFor="let row of list">
-  <div>
-    <a routerLink="/donnees-d-activite" [queryParams]="{month: row.lastDateWhithoutData, cont: row.id}"><span
+@for (row of list; track row) {
+  <div class="referentiel-row">
+    <div>
+      <a routerLink="/donnees-d-activite" [queryParams]="{month: row.lastDateWhithoutData, cont: row.id}"><span
         class="tag" [ngStyle]="{
         'background-color': userService.referentielMappingColorByInterface(row.label)
       }">{{ userService.referentielMappingNameByInterface(row.label)
-        }}</span></a>
-  </div>
-  <div>
-    <a *ngFor="let tag of row.childrens" routerLink="/donnees-d-activite"
-      [queryParams]="{month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true}"><span class="tag"
+      }}</span></a>
+    </div>
+    <div>
+      @for (tag of row.childrens; track tag) {
+        <a routerLink="/donnees-d-activite"
+          [queryParams]="{month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true}"><span class="tag"
         [ngStyle]="{
         color: userService.referentielMappingColorByInterface(row.label),
         'background-color': userService.referentielMappingColorByInterface(row.label, OPACITY)
       }">{{ userService.referentielMappingNameByInterface(tag.label)
         }}</span></a>
+      }
+    </div>
   </div>
-</div>
+}

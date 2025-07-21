@@ -3,46 +3,54 @@
     <p>Répartition actuelle des activités</p>
     <div>
       <div class="tags">
-        <p *ngIf="dateStart" class="date">
-          <mat-icon>calendar_today</mat-icon>
-          <ng-template [ngIf]="dateStart.getTime() !== getToday().getTime()">
-            {{
-            dateStart && dateStart.getTime() > getToday().getTime()
-            ? 'À partir du'
-            : 'Depuis le'
-            }}
-            {{ dateStart | date : 'dd' }} {{ getShortMonthString(dateStart) }}
-            {{ dateStart.getFullYear() }}
-          </ng-template>
-          <ng-template [ngIf]="dateStart.getTime() === getToday().getTime()">
-            {{
-            dateStart && dateStart.getTime() > getToday().getTime()
-            ? "À partir d'Aujourd'hui"
-            : "Depuis Aujourd'hui"
-            }}
-          </ng-template>
-        </p>
-        <p *ngIf="dateStop" class="date">
-          <mat-icon>calendar_today</mat-icon>
-          <ng-template [ngIf]="dateStop.getTime() !== getToday().getTime()">Jusqu'au {{ dateStop | date : 'dd' }}
-            {{ getShortMonthString(dateStop) }}
-            {{ dateStop.getFullYear() }}
-          </ng-template>
-          <ng-template [ngIf]="dateStop.getTime() === getToday().getTime()">Jusqu'à Aujourd'hui
-          </ng-template>
-        </p>
+        @if (dateStart) {
+          <p class="date">
+            <mat-icon>calendar_today</mat-icon>
+            @if (dateStart.getTime() !== getToday().getTime()) {
+              {{
+              dateStart && dateStart.getTime() > getToday().getTime()
+              ? 'À partir du'
+              : 'Depuis le'
+              }}
+              {{ dateStart | date : 'dd' }} {{ getShortMonthString(dateStart) }}
+              {{ dateStart.getFullYear() }}
+            }
+            @if (dateStart.getTime() === getToday().getTime()) {
+              {{
+              dateStart && dateStart.getTime() > getToday().getTime()
+              ? "À partir d'Aujourd'hui"
+              : "Depuis Aujourd'hui"
+              }}
+            }
+          </p>
+        }
+        @if (dateStop) {
+          <p class="date">
+            <mat-icon>calendar_today</mat-icon>
+            @if (dateStop.getTime() !== getToday().getTime()) {
+              Jusqu'au {{ dateStop | date : 'dd' }}
+              {{ getShortMonthString(dateStop) }}
+              {{ dateStop.getFullYear() }}
+            }
+            @if (dateStop.getTime() === getToday().getTime()) {
+              Jusqu'à Aujourd'hui
+            }
+          </p>
+        }
       </div>
     </div>
   </div>
   <div class="right-panel">
-    <ng-template [ngIf]="canEdit">
+    @if (canEdit) {
       <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">
         Corriger
       </button>
-      <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="light small outline red no-print">
-        Supprimer
-      </button>
-    </ng-template>
+      @if (canRemoveSituation) {
+        <button (click)="onRemove.emit()" class="light small outline red no-print">
+          Supprimer
+        </button>
+      }
+    }
   </div>
 </div>
 <div class="ressources">
@@ -58,4 +66,4 @@
 </div>
 
 <panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
-  [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
+[forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>

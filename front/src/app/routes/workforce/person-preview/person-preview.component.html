@@ -1,4 +1,4 @@
-<ng-template [ngIf]="showComponent">
+@if (showComponent) {
   <div class="profil item" [ngClass]="{ ca: userService.isCa() }">
     <a [routerLink]="['/resource-humaine', hr.id]" class="text" [ngClass]="{ ca: userService.isCa() }">
       <div class="name">
@@ -14,18 +14,23 @@
           : hr.lastName
           }}
         </p>
-
-        <div *ngIf="hr.comment" class="tooltip">
-          <mat-icon>message</mat-icon>
-          <aj-text-editor class="tooltiptext global-tooltiptext" [value]="hr.comment"
+        @if (hr.comment) {
+          <div class="tooltip">
+            <mat-icon>message</mat-icon>
+            <aj-text-editor class="tooltiptext global-tooltiptext" [value]="hr.comment"
             [defaultReadOnly]="true"></aj-text-editor>
-        </div>
+          </div>
+        }
       </div>
       <div class="tags">
-        <p *ngIf="hr.fonction && hr.fonction.code" class="function" [style.background-color]="textColor">
-          {{ hr.fonction && hr.fonction.code }}
-        </p>
-        <p class="etp" *ngIf="hr.etpLabel">{{ hr.etpLabel }}</p>
+        @if (hr.fonction && hr.fonction.code) {
+          <p class="function" [style.background-color]="textColor">
+            {{ hr.fonction && hr.fonction.code }}
+          </p>
+        }
+        @if (hr.etpLabel) {
+          <p class="etp">{{ hr.etpLabel }}</p>
+        }
       </div>
       <div class="flex-1"></div>
       <div class="updated-at">
@@ -39,9 +44,11 @@
       <etp-preview [width]="56" [height]="56" [realETP]="hr.currentSituation?.etp" [forceAlert]="false"
         [etp]="(hr.etp || 0) - hr.hasIndisponibility" [indisponibility]="hr.hasIndisponibility">
       </etp-preview>
-      <p class="unavailable" *ngIf="hr.hasIndisponibility">
-        <mat-icon>error</mat-icon> Indispo
-      </p>
+      @if (hr.hasIndisponibility) {
+        <p class="unavailable">
+          <mat-icon>error</mat-icon> Indispo
+        </p>
+      }
     </div>
   </div>
   <div class="activities">
@@ -49,17 +56,19 @@
     <panel-activities [category]="hr.category" [activities]="hr.currentActivities" [header]="false" [selected]="false"
       [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED">
     </panel-activities>
-    <div *ngIf="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED" class="activities-button">
-      <a [routerLink]="['/resource-humaine', hr.id]"><button class="primary small">Activités à ventiler</button></a>
-    </div>
+    @if (hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED) {
+      <div class="activities-button">
+        <a [routerLink]="['/resource-humaine', hr.id]"><button class="primary small">Activités à ventiler</button></a>
+      </div>
+    }
   </div>
   <div class="actions">
     <a [routerLink]="['/resource-humaine', hr.id]">
       <mat-icon>chevron_right</mat-icon>
     </a>
   </div>
-</ng-template>
-<ng-template [ngIf]="!showComponent">
+}
+@if (!showComponent) {
   <div class="empty-element">
   </div>
-</ng-template>
+}

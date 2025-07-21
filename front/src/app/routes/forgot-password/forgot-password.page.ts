@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import {
   FormControl,
@@ -19,12 +19,11 @@ import { UserService } from '../../services/user/user.service';
   standalone: true,
   imports: [
     FormsModule,
-    CommonModule,
     WrapperNoConnectedComponent,
     PopupComponent,
     RouterLink,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
 })

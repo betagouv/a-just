@@ -1,6 +1,10 @@
-<aj-alert *ngIf="alertMessage" [alertMessage]="alertMessage.text" [alertTitle]="alertMessage.title"
-  [okText]="alertMessage.okText" [classPopin]="alertMessage.classPopin" [delay]="alertMessage.delay"
-  [secondaryText]="alertMessage.secondaryText" (onClose)="onCloseAlert($event)"
+@if (alertMessage) {
+  <aj-alert [alertMessage]="alertMessage.text" [alertTitle]="alertMessage.title"
+    [okText]="alertMessage.okText" [classPopin]="alertMessage.classPopin" [delay]="alertMessage.delay"
+    [secondaryText]="alertMessage.secondaryText" (onClose)="onCloseAlert($event)"
   (onCloseSecondary)="onCloseAlertSecondary($event)"></aj-alert>
-<aj-big-loader *ngIf="appLoading"></aj-big-loader>
+}
+@if (appLoading) {
+  <aj-big-loader></aj-big-loader>
+}
 <router-outlet></router-outlet>
