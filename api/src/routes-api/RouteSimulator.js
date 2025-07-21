@@ -10,6 +10,7 @@ import {
   EXECUTE_WHITE_SIMULATOR,
 } from '../constants/log-codes'
 import { loadOrWarmHR } from '../utils/redis'
+import { generateHRIndexes } from '../utils/human-resource'
 
 /**
  * Route pour la page du simulateur
@@ -60,6 +61,10 @@ export default class RouteSimulator extends Route {
     let hr = await loadOrWarmHR(backupId, this.models)
     console.timeEnd('simulator-1')
 
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(hr)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
+
     console.time('simulator-2')
     const categories = await this.models.HRCategories.getAll()
     console.timeEnd('simulator-2')
@@ -68,7 +73,7 @@ export default class RouteSimulator extends Route {
     const activities = await this.models.Activities.getAll(backupId)
     console.timeEnd('simulator-3')
 
-    const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId)
+    const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId, undefined, indexes, true)
 
     console.log(situation)
     console.time('simulator-1.1')
@@ -76,7 +81,7 @@ export default class RouteSimulator extends Route {
     console.timeEnd('simulator-1.1')
 
     console.time('simulator-4')
-    let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId)
+    let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId, undefined, indexes, true)
     console.timeEnd('simulator-4')
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId, ctx)
 
