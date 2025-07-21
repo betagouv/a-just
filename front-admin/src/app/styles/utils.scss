@@ -1,9 +1,4 @@
-$colors: (
-	primary: #000091,
-	cblack: #1e1e1e,
-	cred: #ff5655,
-	creddark: #ce0500,
-);
-@function fColor($key: "cprimary") {
-	@return map-get($colors, $key);
-}
+$colors-primary: #000091;
+$colors-cblack: #1e1e1e;
+$colors-cred: #ff5655;
+$colors-creddark: #ce0500;

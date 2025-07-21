@@ -1,8 +1,8 @@
-@import "remixicon/fonts/remixicon.css";
-@import "./utils.scss";
-@import "./typography.scss";
-@import "./form.scss";
-@import "./material.scss";
+@use "remixicon/fonts/remixicon.css";
+@use "./utils.scss";
+@use "./typography.scss";
+@use "./form.scss";
+@use "./material.scss";
 
 html,
 body {

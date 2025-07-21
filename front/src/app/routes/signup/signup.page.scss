@@ -1,10 +1,10 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss';
 
 :host {
   .logo {
     height: 7em;
 
-    > img {
+    >img {
       height: 90px;
       margin-right: 27px;
     }
@@ -123,7 +123,9 @@
     }
   }
 
-  input[type=text], input[type=email], input[type=password] {
+  input[type=text],
+  input[type=email],
+  input[type=password] {
     margin-bottom: 24px;
   }
 

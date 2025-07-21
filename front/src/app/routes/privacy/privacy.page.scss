@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss';
 
 :host {
   .logo {
@@ -18,7 +18,7 @@
   h4 {
     margin-bottom: 8px;
   }
-  
+
   p {
     margin-bottom: 24px;
   }

@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 .header-list {
   display: flex;
@@ -53,7 +53,7 @@
     >.contentieux-label {
       align-self: stretch;
       display: flex;
-      background-color: fColor(bgSelect);
+      background-color: utils.$colors-bgSelect;
       width: 100px !important;
 
       >.text {
@@ -68,11 +68,11 @@
         p {
           text-align: center;
           font-size: 12px;
-          color: fColor(colorTag);
+          color: utils.$colors-colorTag;
         }
 
         .etp-header {
-          color: fColor(cgraylightv2);
+          color: utils.$colors-cgraylightv2;
         }
 
         >.label {
@@ -101,10 +101,10 @@
       cursor: pointer;
 
       &.selected {
-        background-color: fColor(bgHeaderSelected);
+        background-color: utils.$colors-bgHeaderSelected;
 
         >div.text .filter mat-icon {
-          color: fColor(sortIconHeaderSelected);
+          color: utils.$colors-sortIconHeaderSelected;
         }
       }
 
@@ -125,7 +125,7 @@
 
         .etp {
           p {
-            color: fColor(headerNumberColor);
+            color: utils.$colors-headerNumberColor;
             font-size: 14px;
             font-weight: bold;
             letter-spacing: -0.53px;
@@ -134,7 +134,7 @@
 
         .filter {
           p {
-            color: fColor(headerColor);
+            color: utils.$colors-headerColor;
           }
 
           img {
@@ -142,14 +142,14 @@
             width: 14px;
             height: 14px;
             font-size: 14px;
-            color: fColor(headerColor);
+            color: utils.$colors-headerColor;
           }
 
           i {
-            color: fColor(headerColor);
+            color: utils.$colors-headerColor;
 
             &.selected {
-              color: fColor(sortHeaderSelected);
+              color: utils.$colors-sortHeaderSelected;
             }
           }
         }
@@ -245,7 +245,7 @@
   background-color: white;
 
   &.border-bottom {
-    border-bottom: 1px solid fColor(cbrownlight);
+    border-bottom: 1px solid utils.$colors-cbrownlight;
   }
 
   aj-select,
@@ -461,7 +461,7 @@ progression-bar {
     min-width: 250px;
 
     >* {
-      border-bottom: 1px solid fColor(lightBorder);
+      border-bottom: 1px solid utils.$colors-lightBorder;
 
       &:first-child {
         border-top-left-radius: 8px;
@@ -476,8 +476,8 @@ progression-bar {
     }
 
     >div {
-      background-color: fColor(bgSelect);
-      color: fColor(cgray);
+      background-color: utils.$colors-bgSelect;
+      color: utils.$colors-cgray;
       font-size: 12px;
       padding: 0 16px;
       font-weight: bold;
@@ -494,7 +494,7 @@ progression-bar {
       text-decoration: none;
 
       >p {
-        color: fColor(cgray);
+        color: utils.$colors-cgray;
         font-size: 12px;
         margin: 0 16px;
         flex: 1;
@@ -517,7 +517,7 @@ progression-bar {
         p {
           margin-left: 8px;
           font-size: 12px;
-          color: fColor(cblack);
+          color: utils.$colors-cblack;
           width: 70%;
           text-align: center;
         }
@@ -529,7 +529,7 @@ progression-bar {
 
       >i {
         color: white;
-        background-color: rgb(fColor(cgray), 0.6);
+        background-color: rgb(utils.$colors-cgray, 0.6);
         width: 24px;
         height: 24px;
         border-radius: 24px;
@@ -558,7 +558,7 @@ progression-bar {
     height: 24px;
     display: inline-flex;
     align-items: center;
-    background-color: fColor(tagBg);
+    background-color: utils.$colors-tagBg;
     padding: 0 8px;
     margin-right: 8px;
     cursor: pointer;
@@ -569,7 +569,7 @@ progression-bar {
     }
 
     p {
-      color: fColor(tagText);
+      color: utils.$colors-tagText;
       font-size: 12px;
       margin: 0 4px;
       position: relative;

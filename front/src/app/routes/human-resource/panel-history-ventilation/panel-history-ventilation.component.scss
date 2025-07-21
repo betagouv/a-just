@@ -1,10 +1,10 @@
-@import "../../../styles/utils.scss";
+@use "../../../styles/utils.scss" as utils;
 
 :host {
   display: flex;
   flex-direction: column;
   border-radius: 8px;
-  background-color: fColor(bgSelect);
+  background-color: utils.$colors-bgSelect;
   padding: 8px;
   margin: 0 8px;
   gap: 10px;
@@ -36,8 +36,8 @@
         font-size: 12px;
         line-height: 20px;
         border-radius: 12px;
-        color: fColor(cbluedark);
-        background-color: fColor(cbluemiddle);
+        color: utils.$colors-cbluedark;
+        background-color: utils.$colors-cbluemiddle;
 
         // &.fonction,
         // &.time-worked {
@@ -50,7 +50,7 @@
     .past-tag {
       p {
         background-color: #DFDFDF;
-        color: fColor(cblack);
+        color: utils.$colors-cblack;
       }
     }
 
@@ -62,19 +62,19 @@
       padding: 2px 8px;
       border-radius: 24px;
       height: 50px;
-      background-color: fColor(cgreenlight);
+      background-color: utils.$colors-cgreenlight;
 
       &.alert {
-        background-color: rgba(fColor(cred), 0.2);
+        background-color: rgba(utils.$colors-cred, 0.2);
 
         p {
-          color: fColor(cred);
+          color: utils.$colors-cred;
         }
       }
 
       p {
         font-size: 12px;
-        color: fColor(cgreen);
+        color: utils.$colors-cgreen;
         // margin-right: 10px;
       }
     }

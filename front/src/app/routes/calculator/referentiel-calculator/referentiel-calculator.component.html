@@ -15,7 +15,7 @@
     <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }" class="item dtes">
         <div class="block" *ngIf="!isSoutien(calculator.contentieux.id)">
             <ng-template [ngIf]="calculator.realDTESInMonths !== null && checkPastDate()" [ngIfElse]="nr">
-                <p>{{ calculator.realDTESInMonths | number: '0.2-2' || 0 }} mois</p>
+                <p>{{ calculator.realDTESInMonths | number: '0.2-2' }} mois</p>
             </ng-template>
         </div>
     </div>

@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 ::ng-deep .mdc-checkbox__ripple {
   display: none;
@@ -22,8 +22,8 @@
     height: 55px;
     width: 170px;
     border-radius: 4px;
-    background-color: fColor(bgSelect);
-    border: 1px solid fColor(borderSelect);
+    background-color: utils.$colors-bgSelect;
+    border: 1px solid utils.$colors-borderSelect;
     padding: 4px 8px;
     cursor: pointer;
 
@@ -69,7 +69,7 @@
   display: block;
   padding: 8px 12px 8px 16px;
   border-radius: 4px;
-  background-color: fColor(bgSelect);
+  background-color: utils.$colors-bgSelect;
   margin-bottom: 4px;
   position: relative;
 
@@ -90,7 +90,7 @@
 
     .title-list {
       font-size: 16px;
-      color: fColor(titleInput);
+      color: utils.$colors-titleInput;
       margin-right: 8px;
     }
 
@@ -111,7 +111,7 @@
           top: 0;
           right: 0;
           bottom: 0;
-          color: fColor(titleEtpGraph);
+          color: utils.$colors-titleEtpGraph;
         }
 
         p {
@@ -129,7 +129,7 @@
 
           >p,
           i {
-            color: fColor(cblack);
+            color: utils.$colors-cblack;
           }
         }
       }
@@ -149,7 +149,7 @@
 
         >p,
         i {
-          color: fColor(titleEtpGraph);
+          color: utils.$colors-titleEtpGraph;
         }
       }
     }
@@ -164,12 +164,12 @@
   right: 0;
   margin-top: 4px;
   border-radius: 4px;
-  background-color: fColor(bgSelect);
+  background-color: utils.$colors-bgSelect;
   overflow: auto;
 
   &:not(.multiple) {
     .selected {
-      background-color: fColor(bgSelectSelected);
+      background-color: utils.$colors-bgSelectSelected;
       color: white;
 
       p {
@@ -192,7 +192,7 @@
     align-items: center;
     height: 48px;
     padding: 0 16px;
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     cursor: pointer;
     transition: background-color 0.5s;
 
@@ -202,7 +202,7 @@
     }
 
     &:hover {
-      background-color: rgba(fColor(bgSelectSelected), 0.2);
+      background-color: rgba(utils.$colors-bgSelectSelected, 0.2);
       color: #0063cb;
 
       p {

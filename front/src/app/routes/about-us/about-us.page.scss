@@ -1,10 +1,10 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
   .logo {
     height: 135px;
 
-    > img {
+    >img {
       height: 90px;
       margin-right: 27px;
     }
