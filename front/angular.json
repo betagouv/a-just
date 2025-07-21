@@ -44,16 +44,10 @@
             "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/favicon.svg",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/favicon.svg", "src/assets"],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "node_modules/quill/dist/quill.snow.css",
@@ -61,7 +55,18 @@
               "src/app/styles/styles.scss",
               "node_modules/animate.css/animate.min.css",
               "node_modules/mapbox-gl/dist/mapbox-gl.css",
-              "node_modules/intro.js/minified/introjs.min.css"
+              "node_modules/intro.js/minified/introjs.min.css",
+              "node_modules/remixicon/fonts/remixicon.css",
+              "src/app/styles/typography.scss",
+              "src/app/styles/form.scss",
+              "src/app/styles/material.scss",
+              "src/app/styles/button.scss",
+              "src/app/styles/popup.scss",
+              "src/app/styles/print.scss",
+              "src/app/styles/quill.scss",
+              "src/app/styles/toastr.scss",
+              "src/app/styles/design-system-gouv.scss",
+              "src/app/styles/introjs.scss"
             ],
             "scripts": [
               "node_modules/quill/dist/quill.js",
@@ -231,10 +236,7 @@
         "test": {
           "builder": "@ngx-env/builder:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -243,10 +245,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
-              "src/styles.scss"
-            ],
+            "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.scss"],
             "scripts": [],
             "builderMode": "browser"
           }
