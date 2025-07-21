@@ -27,21 +27,23 @@ export default (sequelizeInstance, Model) => {
       isJirs = true
     }
 
-    const formatToGraph = async (parentId = null, index = 0) => {
+    const formatToGraph = async (parentId = null, index = 0, displayAll = true) => {
       const where = {}
-      if (backupId) {
-        where[Op.or] = [
-          {
-            only_to_hr_backup: null,
-          },
-          {
-            only_to_hr_backup: { [Op.contains]: [backupId] },
-          },
-        ]
-      }
-      // filter by referentiel only for level 3
-      if (filterReferentielsId && index === 2) {
-        where.id = filterReferentielsId
+      if (displayAll == false) {
+        if (backupId) {
+          where[Op.or] = [
+            {
+              only_to_hr_backup: null,
+            },
+            {
+              only_to_hr_backup: { [Op.contains]: [backupId] },
+            },
+          ]
+        }
+        // filter by referentiel only for level 3
+        if (filterReferentielsId && index === 2) {
+          where.id = filterReferentielsId
+        }
       }
 
       let list = await Model.findAll({
@@ -69,14 +71,14 @@ export default (sequelizeInstance, Model) => {
 
       if (list && list.length && index < 3) {
         for (let i = 0; i < list.length; i++) {
-          list[i].childrens = await formatToGraph(list[i].id, index + 1)
+          list[i].childrens = await formatToGraph(list[i].id, index + 1, displayAll)
         }
       }
 
       return list
     }
 
-    const mainList = await formatToGraph()
+    const mainList = await formatToGraph(undefined, undefined, displayAll)
     let list = []
     mainList.map((main) => {
       if (main.code_import) {
