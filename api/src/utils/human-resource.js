@@ -440,24 +440,30 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
         })
 
         // Ajouter cette période à l'index de la catégorie
-        if (!categoryIndex.has(period.category.id)) {
-          categoryIndex.set(period.category.id, [])
+        if (period.category && period.category.id) {
+          if (!categoryIndex.has(period.category.id)) {
+            categoryIndex.set(period.category.id, [])
+          }
+          categoryIndex.get(period.category.id).push(periodId)
         }
-        categoryIndex.get(period.category.id).push(periodId)
 
-        // Ajouter cette période à l'index de la fonction
-        if (!functionIndex.has(period.fonction.id)) {
-          functionIndex.set(period.fonction.id, [])
+        if (period.fonction && period.fonction.id) {
+          // Ajouter cette période à l'index de la fonction
+          if (!functionIndex.has(period.fonction.id)) {
+            functionIndex.set(period.fonction.id, [])
+          }
+          functionIndex.get(period.fonction.id).push(periodId)
         }
-        functionIndex.get(period.fonction.id).push(periodId)
 
         // Ajouter cette période à l'index du contentieux (si applicable)
         period.activities.forEach((activity) => {
-          const contentieuxId = activity.contentieux.id
-          if (!contentieuxIndex.has(contentieuxId)) {
-            contentieuxIndex.set(contentieuxId, [])
+          if (activity.contentieux && activity.contentieux.id) {
+            const contentieuxId = activity.contentieux.id
+            if (!contentieuxIndex.has(contentieuxId)) {
+              contentieuxIndex.set(contentieuxId, [])
+            }
+            contentieuxIndex.get(contentieuxId).push(periodId)
           }
-          contentieuxIndex.get(contentieuxId).push(periodId)
         })
 
         // Ajouter cette période à l'index de l'agentId
@@ -471,14 +477,16 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
 
         // Ajouter chaque activité à l'index des contentieux
         period.activities.forEach((activity) => {
-          const contentieuxId = activity.contentieux.id
-          contentieuxMap.set(contentieuxId, activity.percent) // Ajouter dans le map avec contentieuxId comme clé et percent comme valeur
+          if (activity.contentieux && activity.contentieux.id) {
+            const contentieuxId = activity.contentieux.id
+            contentieuxMap.set(contentieuxId, activity.percent) // Ajouter dans le map avec contentieuxId comme clé et percent comme valeur
 
-          // Ajouter cette période à l'index du contentieux
-          if (!contentieuxIndex.has(contentieuxId)) {
-            contentieuxIndex.set(contentieuxId, [])
+            // Ajouter cette période à l'index du contentieux
+            if (!contentieuxIndex.has(contentieuxId)) {
+              contentieuxIndex.set(contentieuxId, [])
+            }
+            contentieuxIndex.get(contentieuxId).push(periodId)
           }
-          contentieuxIndex.get(contentieuxId).push(periodId)
         })
 
         // Insérer cette période dans l'IntervalTree
@@ -487,7 +495,7 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
         intervalTree.insert(start, end, {
           periodId,
           agentId: agent.id,
-          categoryId: period.category.id,
+          categoryId: period.category && period.category.id ? period.category.id : null,
           start: period.start,
           end: period.end,
           effectiveETP: period.effectiveETP,
