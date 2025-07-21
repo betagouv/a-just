@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatListModule } from '@angular/material/list';
@@ -6,7 +6,7 @@ import { MatListModule } from '@angular/material/list';
 @Component({
   selector: 'aj-select-simple',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatListModule],
+  imports: [FormsModule, MatListModule],
   templateUrl: './select-simple.component.html',
   styleUrls: ['./select-simple.component.scss'],
 })

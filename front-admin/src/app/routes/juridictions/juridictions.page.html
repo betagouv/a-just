@@ -6,8 +6,10 @@
       <label>Sélectionner une juridiction à dupliquer =></label>
       <form #formExtract>
         <select class="cursor-pointer" name="juridiction">
-          <option *ngFor="let j of juridictionList" [value]="j.id">{{
+          @for (j of juridictionList; track j) {
+            <option [value]="j.id">{{
             j.label }}</option>
+          }
         </select>
         <label>, Copier également les données d'activité</label>
         <input class="copy-activity" name="copyActivity" type="checkbox">
@@ -30,48 +32,55 @@
       <th mat-sort-header="enabled">Actif</th>
     </tr>
 
-    <tr *ngFor="let element of datasSource">
-      <td>{{element.iElst}}</td>
-      <td class="cursor-pointer" (click)="onUpdate('label', element)">
-        {{element.label}}
-        <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.users && element.users.length ?
-          '(' + element.users.length
+    @for (element of datasSource; track element) {
+      <tr>
+        <td>{{element.iElst}}</td>
+        <td class="cursor-pointer" (click)="onUpdate('label', element)">
+          {{element.label}}
+          <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.users && element.users.length ?
+            '(' + element.users.length
           + ' utilisateurs)' : ''}}</i>
-        <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.nbAgents ?
-          '(' +
+          <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.nbAgents ?
+            '(' +
           element.nbAgents + ' agents)' : ''}}</i>
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('latitude', element)">
-        {{element.latitude || '-'}}
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('longitude', element)">
-        {{element.longitude || '-'}}
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('population', element)">
-        {{element.population || '-'}}
-      </td>
-      <td class="cursor-pointer" (click)="onUpdate('enabled', element)">
-        {{element.enabled ? 'Oui' : 'Non'}}
-      </td>
-    </tr>
+        </td>
+        <td class="cursor-pointer" (click)="onUpdate('latitude', element)">
+          {{element.latitude || '-'}}
+        </td>
+        <td class="cursor-pointer" (click)="onUpdate('longitude', element)">
+          {{element.longitude || '-'}}
+        </td>
+        <td class="cursor-pointer" (click)="onUpdate('population', element)">
+          {{element.population || '-'}}
+        </td>
+        <td class="cursor-pointer" (click)="onUpdate('enabled', element)">
+          {{element.enabled ? 'Oui' : 'Non'}}
+        </td>
+      </tr>
+    }
   </table>
 
-  <aj-popup *ngIf="selectedJuridiction" [closeIcon]="true" (onClose)="selectedJuridiction = null">
-    <h3>Détails de la juridiction</h3>
-    <div class="grid-double">
-      <div>
-        <p><b>Liste des personnes ayant accès :</b></p>
-        <p *ngFor="let e of (selectedJuridiction.users || [])">
-          {{e.firstName}} {{e.lastName}}
-        </p>
+  @if (selectedJuridiction) {
+    <aj-popup [closeIcon]="true" (onClose)="selectedJuridiction = null">
+      <h3>Détails de la juridiction</h3>
+      <div class="grid-double">
+        <div>
+          <p><b>Liste des personnes ayant accès :</b></p>
+          @for (e of (selectedJuridiction.users || []); track e) {
+            <p>
+              {{e.firstName}} {{e.lastName}}
+            </p>
+          }
+        </div>
+        <div>
+          <p><b>Nombre de type d'agents :</b></p>
+          @for (e of (selectedJuridiction.categoriesAgents || []); track e) {
+            <p>
+              {{e.nbAgents}} {{e.label}}
+            </p>
+          }
+        </div>
       </div>
-
-      <div>
-        <p><b>Nombre de type d'agents :</b></p>
-        <p *ngFor="let e of (selectedJuridiction.categoriesAgents || [])">
-          {{e.nbAgents}} {{e.label}}
-        </p>
-      </div>
-    </div>
-  </aj-popup>
+    </aj-popup>
+  }
 </aj-wrapper>
