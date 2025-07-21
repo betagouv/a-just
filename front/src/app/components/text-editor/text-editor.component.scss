@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss';
 
 :host ::ng-deep .ql-editing {
   position: absolute;

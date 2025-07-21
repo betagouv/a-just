@@ -1,10 +1,10 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
   display: block;
   border-radius: 8px;
-  background-color: fColor(bgSelect);
-  border: 1px solid fColor(borderSelect);
+  background-color: utils.$colors-bgSelect;
+  border: 1px solid utils.$colors-borderSelect;
   padding: 4px 8px;
   position: relative;
   cursor: pointer;
@@ -34,7 +34,7 @@
 
     &.selected {
       .title-select {
-        border-right: solid 1px #6a6af4;
+        border-right: solid 1px utils.$colors-cbluedark;
         ;
       }
     }
@@ -52,12 +52,12 @@
         width: fit-content;
         line-height: 28px;
         min-width: 62px;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
       }
     }
 
     .title-select {
-      border-right: solid 1px #ddd;
+      border-right: solid 1px utils.$colors-borderSelect;
       line-height: 28px;
       padding: 0 10px 0 2px;
       font-size: 10px;
@@ -69,7 +69,7 @@
     border-left: none;
     height: 32px;
     border-radius: 4px;
-    border: solid 1px #ddd;
+    border: solid 1px utils.$colors-borderSelect;
     background-color: #fff;
     padding: 0px 8px;
     width: 130px;
@@ -87,13 +87,13 @@
         line-height: 28px;
         height: 30px;
         border-right: solid 1px #ddd;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
       }
 
       mat-icon {
         margin-left: 7px;
         margin-right: 0px;
-        color: #929292;
+        color: utils.$colors-cgray;
       }
     }
 
@@ -103,7 +103,7 @@
     }
 
     &.left {
-      border: solid 1px #ddd;
+      border: solid 1px utils.$colors-borderSelect;
       border-right: none;
 
       div {
@@ -113,7 +113,7 @@
           padding-left: 16px;
           padding-right: 0px;
           border-right: none;
-          border-left: solid 1px #ddd;
+          border-left: solid 1px utils.$colors-borderSelect;
         }
 
         mat-icon {
@@ -137,8 +137,8 @@
   }
 
   &.dark-mode {
-    background-color: fColor(darkModeBgMenu);
-    border: 1px solid fColor(darkModeTitle);
+    background-color: utils.$colors-darkModeBgMenu;
+    border: 1px solid utils.$colors-darkModeTitle;
 
     p,
     mat-icon {
@@ -146,7 +146,7 @@
     }
 
     p.title-select {
-      color: fColor(headerColor);
+      color: utils.$colors-headerColor;
     }
   }
 
@@ -163,7 +163,7 @@
   }
 
   p.title-select {
-    color: fColor(titleSelect);
+    color: utils.$colors-titleSelect;
     white-space: nowrap;
     margin-right: 28px;
     font-size: 14px;

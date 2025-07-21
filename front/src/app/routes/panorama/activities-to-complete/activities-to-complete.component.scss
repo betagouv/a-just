@@ -1,4 +1,4 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss';
 
 :host {
   display: block;
@@ -19,11 +19,11 @@
   .tags {
     margin-bottom: 22px;
 
-    > span {
+    >span {
       display: inline-block;
       padding: 0 8px;
       margin-bottom: 4px;
-      border-radius: 12px;  
+      border-radius: 12px;
       color: fColor(tagTextColor);
       background-color: fColor(tagBgColor);
       margin-right: 8px;
@@ -44,7 +44,7 @@
     display: flex;
     align-items: flex-start;
 
-    > div:last-child {
+    >div:last-child {
       display: flex;
       flex-wrap: wrap;
     }

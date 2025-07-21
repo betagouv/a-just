@@ -1,4 +1,4 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   position: relative;
@@ -26,8 +26,8 @@
 
       button {
         background-color: transparent;
-        border: 1px solid #000091;
-        color: #000091;
+        border: 1px solid utils.$colors-primary;
+        color: utils.$colors-primary;
         border-radius: 0;
       }
     }

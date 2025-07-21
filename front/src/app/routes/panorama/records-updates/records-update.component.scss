@@ -1,4 +1,4 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss';
 
 :host {
   display: block;
@@ -8,10 +8,11 @@
     width: 100%;
   }
 
-  th, td {
+  th,
+  td {
     white-space: nowrap;
   }
-  
+
   h3 {
     color: fColor(primary);
     font-size: 20px;

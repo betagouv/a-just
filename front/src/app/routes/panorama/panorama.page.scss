@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss';
 
 .panorama-container {
   background-color: white;
@@ -22,7 +22,7 @@
       position: absolute;
     }
 
-    > div {
+    >div {
       cursor: pointer;
       padding: 9px 16px;
       font-size: 16px;
@@ -47,7 +47,7 @@
   display: flex;
   margin-top: 4px;
 
-  > div {
+  >div {
     padding: 0 8px;
     border-radius: 12px;
     margin-right: 8px;

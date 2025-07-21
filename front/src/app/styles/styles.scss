@@ -1,15 +1,15 @@
-@import "remixicon/fonts/remixicon.css";
-@import "./utils.scss";
-@import "./typography.scss";
-@import "./form.scss";
-@import "./material.scss";
-@import "./button.scss";
-@import "./popup.scss";
-@import "./print.scss";
-@import "./quill.scss";
-@import "./toastr.scss";
-@import "./design-system-gouv.scss";
-@import "./introjs.scss";
+@use "remixicon/fonts/remixicon.css";
+@use "./utils.scss";
+@use "./typography.scss";
+@use "./form.scss";
+@use "./material.scss";
+@use "./button.scss";
+@use "./popup.scss";
+@use "./print.scss";
+@use "./quill.scss";
+@use "./toastr.scss";
+@use "./design-system-gouv.scss";
+@use "./introjs.scss";
 
 html,
 body {
@@ -113,7 +113,7 @@ body {
 
 .error-message {
 	font-size: 16px;
-	color: fColor(cred);
+	color: utils.$colors-cred;
 }
 
 .height-8 {

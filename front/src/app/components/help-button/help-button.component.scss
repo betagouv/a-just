@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
   height: 26px;
@@ -6,8 +6,8 @@
   position: relative;
   z-index: 1;
 
-  > div {
-    background-color: fColor(bgHelper);
+  >div {
+    background-color: utils.$colors-bgHelper;
     position: absolute;
     //z-index: 10;
     top: 0;
@@ -23,7 +23,7 @@
     cursor: pointer;
     overflow: hidden;
 
-    > span {
+    >span {
       display: inline;
       white-space: nowrap;
       margin-left: 4px;

@@ -1,17 +1,17 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
   display: block;
   border-radius: 8px;
-  background-color: fColor(bgSelect);
-  border: 1px solid fColor(borderSelect);
+  background-color: utils.$colors-bgSelect;
+  border: 1px solid utils.$colors-borderSelect;
   padding: 4px 8px;
   position: relative;
   cursor: pointer;
   margin: auto 0;
 
   p.title-select {
-    color: fColor(titleSelect);
+    color: utils.$colors-titleSelect;
     white-space: nowrap;
     margin-right: 28px;
     font-size: 14px;

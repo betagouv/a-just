@@ -1,4 +1,4 @@
-@import "../../../styles/utils.scss";
+@use "../../../styles/utils.scss" as utils;
 
 :host {
   display: block;
@@ -29,12 +29,12 @@
     line-height: 12px;
     width: 50px;
     text-align: center;
-    color: white;
+    color: utils.$colors-white;
   }
 
   >div.white-background {
     overflow: hidden;
-    background-color: white;
+    background-color: utils.$colors-white;
     position: absolute;
     height: 100%;
     left: 0;
@@ -67,11 +67,11 @@
       justify-content: center;
 
       p {
-        color: white;
+        color: utils.$colors-white;
 
         &.top {
           position: relative;
-          color: black;
+          color: utils.$colors-cblack;
           top: -20px;
         }
       }

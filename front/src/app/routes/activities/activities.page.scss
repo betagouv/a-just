@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 @property --percent {
   syntax: "<number>";
@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: fColor(activityBgColor);
+  background-color: utils.$colors-activityBgColor;
 
   .content-list {
     flex: 1;
@@ -59,7 +59,7 @@
             top: 13px;
 
             &.data-changed {
-              color: fColor(darkModeTitle);
+              color: utils.$colors-darkModeTitle;
             }
           }
 
@@ -78,32 +78,32 @@
         p.data-changed {
           height: 100%;
           border-radius: 0;
-          color: fColor(textBlueTag);
+          color: utils.$colors-textBlueTag;
         }
 
         p.blue-bottom {
-          border-bottom: 3px solid fColor(textBlueTag);
+          border-bottom: 3px solid utils.$colors-textBlueTag;
           border-radius: 0;
         }
 
         p.grey-text {
-          color: fColor(dataGreyTxt);
+          color: utils.$colors-dataGreyTxt;
         }
 
         p.blue-txt {
-          color: fColor(dataBlueTxt);
+          color: utils.$colors-dataBlueTxt;
         }
       }
 
       >div:has(p.to-complete) {
-        background-color: fColor(dataToCompleteBg);
-        border: 1px solid fColor(textBlueTag) !important;
+        background-color: utils.$colors-dataToCompleteBg;
+        border: 1px solid utils.$colors-textBlueTag !important;
         border-radius: 4px;
       }
 
       >div:has(p.to-verify) {
-        background-color: fColor(dataNotSettedBg);
-        border: 1px solid fColor(dataNotSettedBorder);
+        background-color: utils.$colors-dataNotSettedBg;
+        border: 1px solid utils.$colors-dataNotSettedBorder;
         border-radius: 4px;
       }
     }
@@ -140,7 +140,7 @@
 
     >p,
     mat-icon {
-      color: fColor(dataGreyTxt);
+      color: utils.$colors-dataGreyTxt;
     }
   }
 
@@ -148,7 +148,7 @@
 
     >p,
     mat-icon {
-      color: fColor(dataYellowTxt);
+      color: utils.$colors-dataYellowTxt;
     }
   }
 
@@ -156,15 +156,15 @@
 
     >p,
     mat-icon {
-      color: fColor(dataBlueTxt);
+      color: utils.$colors-dataBlueTxt;
     }
   }
 
   .pastille {
-    background-color: fColor(pastilleDataToCompleteBg);
+    background-color: utils.$colors-pastilleDataToCompleteBg;
     border-radius: 12px;
     padding: 2px 8px;
-    color: fColor(pastilleDataToCompleteTxt);
+    color: utils.$colors-pastilleDataToCompleteTxt;
   }
 }
 
@@ -216,12 +216,12 @@
       padding: 0;
       line-height: normal;
       font-weight: bold;
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
     }
 
     p {
-      color: fColor(primary);
-      border-bottom: 2px solid fColor(primary);
+      color: utils.$colors-primary;
+      border-bottom: 2px solid utils.$colors-primary;
       font-size: 0.875em;
     }
 
@@ -229,7 +229,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      color: fColor(cbluedark);
+      color: utils.$colors-cbluedark;
     }
 
     .element {
@@ -265,7 +265,7 @@
   position: relative;
   width: 24px;
   height: 24px;
-  background-color: fColor(bgHelper);
+  background-color: utils.$colors-bgHelper;
   border-radius: 100px;
 
   >i {
@@ -275,7 +275,7 @@
     transform: translate(50%, -50%);
 
     &.blue {
-      color: fColor(tooltipIconColor);
+      color: utils.$colors-tooltipIconColor;
     }
   }
 }
@@ -293,7 +293,7 @@
 
 .header-list {
   background-color: white;
-  border-bottom: 2px solid fColor(cblack);
+  border-bottom: 2px solid utils.$colors-cblack;
   height: 3em;
 
   .activities.is-not-ios {
@@ -307,7 +307,7 @@
     padding: 0.625em 0.875em;
 
     p {
-      color: fColor(cgray);
+      color: utils.$colors-cgray;
       font-size: 0.875em;
     }
   }
@@ -383,7 +383,7 @@
     flex: 1;
 
     p {
-      color: fColor(dataCompletionTextColor);
+      color: utils.$colors-dataCompletionTextColor;
     }
 
     p:first-child {
@@ -392,7 +392,7 @@
 
 
     p:first-child {
-      color: fColor(dataCompletionTextColor);
+      color: utils.$colors-dataCompletionTextColor;
       transition: --percent 1s;
       --temp: var(--percent);
       --v1: max(var(--temp), 0);
@@ -449,7 +449,7 @@
     }
 
     .grey {
-      background-color: fColor(dataGreyBg) !important;
+      background-color: utils.$colors-dataGreyBg !important;
     }
 
     .group-item {
@@ -481,7 +481,7 @@
       }
 
       .state-optional {
-        background-color: fColor(dataNotSettedIsSetBg);
+        background-color: utils.$colors-dataNotSettedIsSetBg;
         padding: 0 6px;
         border-radius: 4px;
         justify-content: center;
@@ -489,7 +489,7 @@
         p {
           font-size: 12px !important;
           font-weight: bold;
-          color: fColor(dataGreyTxt);
+          color: utils.$colors-dataGreyTxt;
         }
       }
 

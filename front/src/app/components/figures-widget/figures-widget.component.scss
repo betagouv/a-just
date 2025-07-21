@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
     background-color: white;
@@ -28,25 +28,25 @@
         height: 96px;
         padding: 24px 24px;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        background-color: #fff;
+        background-color: utils.$colors-white;
         position: relative;
         z-index: 1;
 
         p {
             font-size: 16px;
             font-weight: bold;
-            color: #3a3a3a;
+            color: utils.$colors-cblack;
         }
 
         label {
             font-size: 14px;
             line-height: 1.71;
-            color: #929292;
+            color: utils.$colors-cgray;
         }
     }
 
     .items {
-        background-color: #fff;
+        background-color: utils.$colors-white;
         position: relative;
         overflow: hidden;
 
@@ -61,7 +61,7 @@
             -webkit-print-color-adjust: exact;
             -webkit-filter: opacity(1);
             box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
+            background-color: utils.$colors-white;
             border-radius: 50%;
             top: -30px;
         }
@@ -80,7 +80,7 @@
                 -webkit-print-color-adjust: exact;
                 -webkit-filter: opacity(1);
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                background-color: #fff;
+                background-color: utils.$colors-white;
                 padding: 21px 8px;
 
                 :first-child {
@@ -98,26 +98,26 @@
             font-size: 12px;
             font-weight: bold;
             line-height: 1.67;
-            color: #666;
+            color: utils.$colors-cgray;
         }
 
         .loader-value {
             font-size: 16px;
             font-weight: bold;
             line-height: 1.5;
-            color: #bfcdff;
+            color: utils.$colors-bgColor;
             margin-bottom: 8px;
             font-family: Aldrich;
             font-size: 32px;
 
             &.medium {
-                color: #2d46e0;
+                color: utils.$colors-primary;
             }
 
             &.hard {
                 font-family: Aldrich;
                 font-size: 40px;
-                color: #052e97;
+                color: utils.$colors-primary;
             }
         }
     }
