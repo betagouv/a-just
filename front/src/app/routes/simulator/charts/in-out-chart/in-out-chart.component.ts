@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, ElementRef, NgZone, OnDestroy } from '@angular/core';
 import { Chart, ChartItem, registerables } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
@@ -17,7 +17,7 @@ import { fixDecimal } from '../../../../utils/numbers';
 @Component({
   selector: 'aj-in-out-chart',
   standalone: true,
-  imports: [CommonModule, LegendLabelComponent],
+  imports: [LegendLabelComponent],
   templateUrl: './in-out-chart.component.html',
   styleUrls: ['./in-out-chart.component.scss'],
 })

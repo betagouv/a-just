@@ -28,10 +28,12 @@
             (ngModelChange)="completeFormWithDomObject('firstName', $event)" (keydown)="preventSubmit($event)"
             (keyup)="onFocusNext($event)" (input)="adjustInputWidth($event, 'firstName')" />
         </div>
-        <aj-alert-small *ngIf="alertList.includes('firstName')"
-          alertMessage='Vous devez saisir un prénom pour valider la création !'
-          (onClose)="removeAlertItem(alertList.indexOf('firstName'))">
-        </aj-alert-small>
+        @if (alertList.includes('firstName')) {
+          <aj-alert-small
+            alertMessage='Vous devez saisir un prénom pour valider la création !'
+            (onClose)="removeAlertItem(alertList.indexOf('firstName'))">
+          </aj-alert-small>
+        }
       </div>
       <div class="lastname">
         <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['lastName'] + 'px' }"
@@ -40,13 +42,15 @@
             (ngModelChange)="completeFormWithDomObject('lastName', $event)" (keydown)="preventSubmit($event)"
             (keyup)="onFocusNext($event)" (input)="adjustInputWidth($event, 'lastName')" />
         </div>
-        <aj-alert-small *ngIf="alertList.includes('lastName')"
-          alertMessage='Vous devez saisir un nom pour valider la création !'
-          (onClose)="removeAlertItem(alertList.indexOf('lastName'))">
-        </aj-alert-small>
+        @if (alertList.includes('lastName')) {
+          <aj-alert-small
+            alertMessage='Vous devez saisir un nom pour valider la création !'
+            (onClose)="removeAlertItem(alertList.indexOf('lastName'))">
+          </aj-alert-small>
+        }
       </div>
       <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
-        class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
+      class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
     </div>
     <div class="last-row">
       <div class="matricule input-wrapper">
@@ -55,26 +59,34 @@
           (keydown)="keyPress($event)" (keyup)="onFocusNext($event)" />
       </div>
       <div class="tags">
-        <p *ngIf="fonction" class="fonction"
-          [style.background-color]="category ? getCategoryColor(category && category.label) : null"
-          [style.color]="category ? 'white' : null">
-          {{ fonction.code }}
-        </p>
-        <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+        @if (fonction) {
+          <p class="fonction"
+            [style.background-color]="category ? getCategoryColor(category && category.label) : null"
+            [style.color]="category ? 'white' : null">
+            {{ fonction.code }}
+          </p>
+        }
+        @if (timeWorked) {
+          <p class="time-worked">{{ timeWorked }}</p>
+        }
       </div>
-      <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
-        {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
-        getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt)
-        + ' ' + getFullYear(currentHR.updatedAt) : '' }}
-      </p>
+      @if (currentHR && onEditIndex === null) {
+        <p class="user-updated-at">
+          {{ currentHR && currentHR.updatedAt ? 'Dernière mise à jour le ' +
+          getDate(currentHR.updatedAt) + ' ' + getMonthString(currentHR.updatedAt)
+          + ' ' + getFullYear(currentHR.updatedAt) : '' }}
+        </p>
+      }
     </div>
   </div>
 
   <div class="right-second-row">
     <div class="dates">
-      <aj-alert-small *ngIf="alertList.includes('startDate')" alertMessage="Vous devez saisir une date d'arrivée !"
-        (onClose)="removeAlertItem(alertList.indexOf('startDate'))">
-      </aj-alert-small>
+      @if (alertList.includes('startDate')) {
+        <aj-alert-small alertMessage="Vous devez saisir une date d'arrivée !"
+          (onClose)="removeAlertItem(alertList.indexOf('startDate'))">
+        </aj-alert-small>
+      }
       <aj-date-select title="Date d'arrivée" id="calendar" [value]="currentHR && currentHR.dateStart"
         (valueChange)="updateHuman('dateStart', $event)" [ngClass]="{'error': alertList.includes('startDate')}">
       </aj-date-select>

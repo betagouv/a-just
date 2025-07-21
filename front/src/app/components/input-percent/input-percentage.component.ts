@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   EventEmitter,
@@ -15,7 +15,7 @@ import { decimalToStringDate } from '../../utils/dates';
 @Component({
   selector: 'aj-input-percentage',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './input-percentage.component.html',
   styleUrls: ['./input-percentage.component.scss'],
 })

@@ -1,7 +1,11 @@
 <div class="main-container">
-  <div class="title-panel" *ngIf="showLeftPanel">
-    <h2 *ngIf="title" [innerHTML]="title"></h2>
-  </div>
+  @if (showLeftPanel) {
+    <div class="title-panel">
+      @if (title) {
+        <h2 [innerHTML]="title"></h2>
+      }
+    </div>
+  }
   <div [ngClass]="['content-panel', contentPadding ? '' : 'no-padding' ]">
     <ng-content></ng-content>
   </div>

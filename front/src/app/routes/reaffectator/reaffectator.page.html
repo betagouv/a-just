@@ -21,27 +21,37 @@
         [ngModel]="searchValue" (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()"
         ngDefaultControl icon="">
       </aj-input-button>
-      <div class="search-next" *ngIf="valuesFinded !== null">
-        <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
-        </mat-icon>
-        <mat-icon matSuffix *ngIf="valuesFinded !== null" (click)="onFindNext()" class="cursor-pointer">
-          expand_more
-        </mat-icon>
-      </div>
+      @if (valuesFinded !== null) {
+        <div class="search-next">
+          <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
+          </mat-icon>
+          @if (valuesFinded !== null) {
+            <mat-icon matSuffix (click)="onFindNext()" class="cursor-pointer">
+              expand_more
+            </mat-icon>
+          }
+        </div>
+      }
     </div>
 
     <div class="indicators">
       <div class="profil">
         <div class="label-container">
           <div>
-            <i *ngIf="!showIndicatorPanel" class="ri-eye-line" (click)="showIndicatorPanel = true"></i>
-            <i *ngIf="showIndicatorPanel" class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>
+            @if (!showIndicatorPanel) {
+              <i class="ri-eye-line" (click)="showIndicatorPanel = true"></i>
+            }
+            @if (showIndicatorPanel) {
+              <i class="ri-eye-off-line" (click)="showIndicatorPanel = false"></i>
+            }
             <p>Compteurs</p>
           </div>
-          <button *ngIf="showIndicatorPanel" class="no-print" (mousedown)="showReelValues = true"
+          @if (showIndicatorPanel) {
+            <button class="no-print" (mousedown)="showReelValues = true"
             (mouseleave)="showReelValues = false" (mouseup)="showReelValues = false">Voir avant / après</button>
+          }
         </div>
-        <ng-template [ngIf]="showIndicatorPanel">
+        @if (showIndicatorPanel) {
           <div class="contentieux-label">
             <div class="text">
               <div class="taux-row">
@@ -58,70 +68,79 @@
               </div>
             </div>
           </div>
-        </ng-template>
+        }
       </div>
-      <ng-template [ngIf]="showIndicatorPanel">
+      @if (showIndicatorPanel) {
         <div class="activities">
-          <div class="sub-item" *ngFor="let ref of referentiel; let index = index">
-            <div class="taux-row">
-              <ng-template [ngIf]="referentiel.length > index + 1">
-                <div class="taux"
-                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
-                  <aj-speedometer class="with-auto small-text"
-                    [classTextBlue]="!showReelValues && ref.totalAffected !== ref.etpUseToday ? true : false"
-                    [classDarkMode]="true"
-                    [percent]="isNaN(ref.coverage) ? null : (showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage)">
-                  </aj-speedometer>
-                </div>
-              </ng-template>
+          @for (ref of referentiel; track ref; let index = $index) {
+            <div class="sub-item">
+              <div class="taux-row">
+                @if (referentiel.length > index + 1) {
+                  <div class="taux"
+                    [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
+                    <aj-speedometer class="with-auto small-text"
+                      [classTextBlue]="!showReelValues && ref.totalAffected !== ref.etpUseToday ? true : false"
+                      [classDarkMode]="true"
+                      [percent]="isNaN(ref.coverage) ? null : (showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1 ? ref.realCoverage * 100 : ref.coverage)">
+                    </aj-speedometer>
+                  </div>
+                }
+              </div>
+              <div class="dtes-row">
+                @if (referentiel.length > index + 1) {
+                  <div class="dtes"
+                    [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
+                    @if (isNaN(ref.coverage)) {
+                      <p>
+                      N/R</p>
+                    }
+                    @if (!isNaN(ref.coverage)) {
+                      <p>
+                        {{((showReelValues ?
+                      ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
+                    }
+                  </div>
+                }
+              </div>
+              <div class="etp-target-row">
+                <input [(ngModel)]="firstETPTargetValue[index]" placeholder="-" />
+              </div>
+              <div class="flex-1"></div>
+              <div class="total-etp-row">
+                <p>{{ref.etpUseToday | number:".2-2"}}</p>
+              </div>
             </div>
-            <div class="dtes-row">
-              <ng-template [ngIf]="referentiel.length > index + 1">
-
-                <div class="dtes"
-                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
-                  <p *ngIf="isNaN(ref.coverage)">
-                    N/R</p>
-                  <p *ngIf="!isNaN(ref.coverage)">
-                    {{((showReelValues ?
-                    ref.realDTESInMonths : ref.dtes) || 0) | number: ".2-2"}}</p>
-                </div>
-              </ng-template>
-            </div>
-            <div class="etp-target-row">
-              <input [(ngModel)]="firstETPTargetValue[index]" placeholder="-" />
-            </div>
-            <div class="flex-1"></div>
-            <div class="total-etp-row">
-              <p>{{ref.etpUseToday | number:".2-2"}}</p>
-            </div>
-          </div>
+          }
         </div>
-      </ng-template>
+      }
       <div class="actions"></div>
     </div>
 
     <div class="content-list" id="container-list">
-      <ng-template ngFor let-list let-mainIndex="index" [ngForOf]="listFormated" [ngForTrackBy]="trackById">
-        <ng-template [ngIf]="list.categoryId === reaffectatorService.selectedCategoriesId">
+      @for (list of listFormated; track trackById(mainIndex, list); let mainIndex = $index) {
+        @if (list.categoryId === reaffectatorService.selectedCategoriesId) {
           <div class="header-list">
             <div class="profil">
               <div class="label-container">
-                <div class="selection-row" *ngIf="!duringPrint">
-                  <div class="check-item" [ngClass]="{selected: list.personSelected.length}"
-                    (click)="toogleCheckAllPerson(mainIndex)">
-                    {{ list.personSelected.length ? list.personSelected.length :
-                    '' }}
+                @if (!duringPrint) {
+                  <div class="selection-row">
+                    <div class="check-item" [ngClass]="{selected: list.personSelected.length}"
+                      (click)="toogleCheckAllPerson(mainIndex)">
+                      {{ list.personSelected.length ? list.personSelected.length :
+                      '' }}
+                    </div>
+                    <p class="label">
+                      {{ list.personSelected.length > 1 ? 'sélections' :
+                      'sélection' }}
+                    </p>
                   </div>
-                  <p class="label">
-                    {{ list.personSelected.length > 1 ? 'sélections' :
-                    'sélection' }}
-                  </p>
-                </div>
-                <div class="buttons-row" *ngIf="!duringPrint">
-                  <p class="btn" (click)="onToogleIsolation()" [class.selected]="this.isolatePersons">Isoler</p>
-                  <p class="btn" (click)="onInitList(list)">Réinitialiser</p>
-                </div>
+                }
+                @if (!duringPrint) {
+                  <div class="buttons-row">
+                    <p class="btn" (click)="onToogleIsolation()" [class.selected]="this.isolatePersons">Isoler</p>
+                    <p class="btn" (click)="onInitList(list)">Réinitialiser</p>
+                  </div>
+                }
               </div>
               <div class="contentieux-label">
                 <div class="label">
@@ -136,55 +155,58 @@
               </div>
             </div>
             <div class="activities">
-              <div class="sub-item" *ngFor="let ref of list.referentiel; let index = index"
-                [class.selected]="filterSelected.filter && filterSelected.filter.id === ref.id && (filterSelected.up === true || filterSelected.up === false)"
-                (click)="onFilterBy(ref)">
-                <div class="label">
-                  <p>{{ referentielMappingNameByInterface(ref.label) }}</p>
-                </div>
-                <div class="etp"
-                  [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
-                  <p>{{((showReelValues ? ref.etpUseToday : ref.totalAffected) || 0) | number:
+              @for (ref of list.referentiel; track ref; let index = $index) {
+                <div class="sub-item"
+                  [class.selected]="filterSelected.filter && filterSelected.filter.id === ref.id && (filterSelected.up === true || filterSelected.up === false)"
+                  (click)="onFilterBy(ref)">
+                  <div class="label">
+                    <p>{{ referentielMappingNameByInterface(ref.label) }}</p>
+                  </div>
+                  <div class="etp"
+                    [ngClass]="{'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday}">
+                    <p>{{((showReelValues ? ref.etpUseToday : ref.totalAffected) || 0) | number:
                     "0.2-2"}}</p>
-                </div>
-                <div class="filter">
+                  </div>
+                  <div class="filter">
                   <i [ngClass]="{
                     'ri-sort-asc': filterSelected.up === true && filterSelected.filter?.id === ref.id,
                     'ri-sort-desc': !(filterSelected.up === true && filterSelected.filter?.id === ref.id)
                   }"></i>
+                  </div>
                 </div>
-              </div>
+              }
             </div>
             <div class="actions"></div>
           </div>
-
           <div class="sub-content-list">
-            <ng-template ngFor let-hr let-index="index" [ngForOf]="list.hrFiltered" [ngForTrackBy]="trackById">
-              <ng-template [ngIf]="duringPrint && hr.isModify">
+            @for (hr of list.hrFiltered; track trackById(index, hr); let index = $index) {
+              @if (duringPrint && hr.isModify) {
                 <ng-container
                   *ngTemplateOutlet="rowPerson; context: { hr: getOrignalHuman(hr, list), list: list, mainIndex: mainIndex, isCheckable: !duringPrint }">
                 </ng-container>
-              </ng-template>
-              <ng-template [ngIf]="(duringPrint && hr.isModify) || !duringPrint">
+              }
+              @if ((duringPrint && hr.isModify) || !duringPrint) {
                 <ng-container
                   *ngTemplateOutlet="rowPerson; context: { hr: hr, list: list, mainIndex: mainIndex, isCheckable: !duringPrint }">
                 </ng-container>
-              </ng-template>
-            </ng-template>
+              }
+            }
           </div>
-        </ng-template>
-      </ng-template>
+        }
+      }
     </div>
   </div>
-  <aj-popup *ngIf="isLeaving" class="small blackBackground" [closeIcon]="true" (onClose)="isLeaving = false"
-    title="Quitter la simulation" [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)"
-    [removeShadow]="'noShadow'">
-    <div>
-      <p class="content">Vous souhaitez sortir du réaffectateur alors que vous avez effectué une simulation
-        d'affectation. Ces
+  @if (isLeaving) {
+    <aj-popup class="small blackBackground" [closeIcon]="true" (onClose)="isLeaving = false"
+      title="Quitter la simulation" [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)"
+      [removeShadow]="'noShadow'">
+      <div>
+        <p class="content">Vous souhaitez sortir du réaffectateur alors que vous avez effectué une simulation
+          d'affectation. Ces
         données modifiées seront perdues, pensez à effectuer un export afin d'en garder une trace.</p>
-    </div>
-  </aj-popup>
+      </div>
+    </aj-popup>
+  }
 </aj-wrapper>
 
 <ng-template #actions>
@@ -195,8 +217,7 @@
 </ng-template>
 
 <ng-template #rowPerson let-hr="hr" let-list="list" let-mainIndex="mainIndex" let-isCheckable="isCheckable">
-  <ng-template
-    [ngIf]="!isolatePersons || (isolatePersons && (list.personSelected.indexOf(hr.id) !== -1 || hr.isModify))">
+  @if (!isolatePersons || (isolatePersons && (list.personSelected.indexOf(hr.id) !== -1 || hr.isModify))) {
     <div class="item-list" [class.is-modify]="hr.isModify"
       [class.is-selected]="isCheckable ? list.personSelected.indexOf(hr.id) !== -1 : false"
       [style.opacity]="isCheckable ? hr.opacity : 1" [id]="'human-'+hr.id">
@@ -204,17 +225,21 @@
         <div class="text">
           <div class="name">
             <div class="check-item" [ngClass]="{selected: isCheckable && list.personSelected.indexOf(hr.id) !== -1}"
-              (click)="toogleCheckPerson(mainIndex, hr)"></div>
+            (click)="toogleCheckPerson(mainIndex, hr)"></div>
             <p>{{ hr.firstName}} {{ hr.lastName}}</p>
-            <div *ngIf="hr.comment" class="tooltip">
-              <mat-icon>message</mat-icon>
-              <span class="tooltiptext global-tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
-            </div>
+            @if (hr.comment) {
+              <div class="tooltip">
+                <mat-icon>message</mat-icon>
+                <span class="tooltiptext global-tooltiptext" [innerHTML]="hr.comment | sanitizeHtml"></span>
+              </div>
+            }
           </div>
           <div class="tags">
-            <p *ngIf="hr.fonction && hr.fonction.code" class="function">
-              {{ hr.fonction && hr.fonction.code}}
-            </p>
+            @if (hr.fonction && hr.fonction.code) {
+              <p class="function">
+                {{ hr.fonction && hr.fonction.code}}
+              </p>
+            }
             <p class="etp">{{ hr.etpLabel }}</p>
           </div>
           <div class="flex-1"></div>
@@ -229,9 +254,11 @@
             [indisponibility]="hr.hasIndisponibility" [ngClass]="{'dark-mode': !hr.isModify}">
           </etp-preview>
           <div class="flex-1"></div>
-          <p class="unavailable" *ngIf="hr.hasIndisponibility">
-            <mat-icon>error</mat-icon> Indispo
-          </p>
+          @if (hr.hasIndisponibility) {
+            <p class="unavailable">
+              <mat-icon>error</mat-icon> Indispo
+            </p>
+          }
         </div>
       </div>
       <div class="activities">
@@ -243,7 +270,9 @@
         <div class="flex-1"></div>
       </div>
     </div>
-  </ng-template>
+  }
 </ng-template>
 
-<aj-intro-js *ngIf="listFormated && listFormated.length" [steps]="introSteps" typeId="reaffectator"></aj-intro-js>
+@if (listFormated && listFormated.length) {
+  <aj-intro-js [steps]="introSteps" typeId="reaffectator"></aj-intro-js>
+}

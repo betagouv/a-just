@@ -1,4 +1,4 @@
-import { CommonModule, DecimalPipe } from '@angular/common'
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { AfterViewInit, Component, HostBinding, Input } from '@angular/core'
 import { SpeedometerComponent } from '../../../components/speedometer/speedometer.component'
 import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'

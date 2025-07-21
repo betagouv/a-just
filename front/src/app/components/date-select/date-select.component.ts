@@ -13,7 +13,7 @@ import {
 } from '@angular/material/datepicker';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { MainClass } from '../../libs/main-class';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { today } from '../../utils/dates';
@@ -24,7 +24,7 @@ import { today } from '../../utils/dates';
 @Component({
   selector: 'aj-date-select',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatDatepickerModule, FormsModule],
+  imports: [MatIconModule, MatDatepickerModule, FormsModule],
   templateUrl: './date-select.component.html',
   styleUrls: ['./date-select.component.scss'],
 })

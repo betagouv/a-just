@@ -1,6 +1,6 @@
 import { Component } from '@angular/core'
 import { MainClass } from '../../libs/main-class'
-import { CommonModule } from '@angular/common'
+
 import { WrapperComponent } from '../../components/wrapper/wrapper.component'
 import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component'
 import { ExtractorVentilationComponent } from './extractor-ventilation/extractor-ventilation.component'
@@ -13,7 +13,7 @@ import { userCanViewActivities, userCanViewContractuel, userCanViewGreffier, use
  */
 @Component({
   standalone: true,
-  imports: [CommonModule, WrapperComponent, ExtractorActivityComponent, ExtractorVentilationComponent],
+  imports: [WrapperComponent, ExtractorActivityComponent, ExtractorVentilationComponent],
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })

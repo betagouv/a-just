@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 import { orderBy } from 'lodash'
 import { AnalyticsLine, TemplateAnalyticsComponent } from './template-analytics/template-analytics.component'
 import { ActivatedRoute, Router } from '@angular/router'
-import { CommonModule, Location } from '@angular/common'
+import { CommonModule, Location } from '@angular/common';
 import { BehaviorSubject } from 'rxjs'
 import { WrapperComponent } from '../../components/wrapper/wrapper.component'
 import { dataInterface, SelectComponent } from '../../components/select/select.component'

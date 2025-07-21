@@ -6,24 +6,26 @@
     <th class="update-title">Dernière MAJ</th>
     <th class="arrow"></th>
   </tr>
-  <div *ngFor="let category of listFormatedFiltered" class="category" [ngStyle]="{
+  @for (category of listFormatedFiltered; track category) {
+<div class="category" [ngStyle]="{
       color: category.textColor,
       'background-color': category.bgColor
     }">
-    <tr class="content-wrapper">
-      <td class="label">{{ category.headerLabel }}</td>
-      <td class="percent">{{ category.fullComplete }}%</td>
-      <td class="update">
-        <ng-template [ngIf]="category.lastUpdated">
-          {{ getDate(category?.lastUpdated) }}
-          {{ getShortMonthString(category?.lastUpdated) }}
-          {{ getFullYear(category?.lastUpdated) }}
-        </ng-template>
-      </td>
-      <td class="arrow">
-        <a routerLink="/ventilations" [queryParams]="{ c: category.categoryId }"><mat-icon
-            class="dark-arrow">chevron_right</mat-icon></a>
-      </td>
-    </tr>
-  </div>
+      <tr class="content-wrapper">
+        <td class="label">{{ category.headerLabel }}</td>
+        <td class="percent">{{ category.fullComplete }}%</td>
+        <td class="update">
+          @if (category.lastUpdated) {
+            {{ getDate(category?.lastUpdated) }}
+            {{ getShortMonthString(category?.lastUpdated) }}
+            {{ getFullYear(category?.lastUpdated) }}
+          }
+        </td>
+        <td class="arrow">
+          <a routerLink="/ventilations" [queryParams]="{ c: category.categoryId }"><mat-icon
+          class="dark-arrow">chevron_right</mat-icon></a>
+        </td>
+      </tr>
+    </div>
+  }
 </table>
