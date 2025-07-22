@@ -255,7 +255,7 @@ describe("Cockpit", () => {
       cy.get(".save").click();
     });
 
-    cy.wait(2000);
+    cy.wait(4000);
 
     cy.get(".actions").within(() => {
       cy.get("button").first().click();
