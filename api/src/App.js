@@ -62,18 +62,6 @@ const cspConfig = {
         'https://image.crisp.chat',
         'https://storage.crisp.chat',
       ],
-      // "img-src": [
-      //   "'self'",
-      //   "data:",
-      //   "https://js-eu1.hsforms.net",
-      //   "https://api.hubspot.com",
-      //   "https://forms-eu1.hsforms.com",
-      //   "https://forms.hsforms.com",
-      //   "https://www.ionos.fr",
-      //   "https://img.freepik.com",
-      //   "https://image.noelshack.com",
-      //   "https://i.goopics.net/",
-      // ],
       'script-src': [
         "'self'",
         'https://*.hsforms.net',
@@ -127,7 +115,6 @@ const cspConfig = {
         'https://calendly.com',
       ],
       'object-src': ["'self'"],
-      //'report-uri': ['/api/csp/report'],
       'base-uri': ["'self'"],
       'form-action': ["'self'", '*.hsforms.com'],
       'upgrade-insecure-requests': [],
@@ -279,7 +266,7 @@ export default class App extends AppBase {
       addDefaultBody(),
       compress({}),
       givePassword,
-      //helmet(cspConfig),
+      helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
