@@ -26,9 +26,11 @@ describe("Ventilateur", () => {
       .get(".add-collaborator")
       .should("contain.text", "Ajouter un agent")
       .click();
-    cy.wait(2000);
-    cy.location("pathname").should("contain", "/resource-humaine");
-    //Vérifier qu'on peut ajouter un agent !
+
+    // cy.wait(2000);
+    // cy.location("pathname").should("contain", "/resource-humaine");
+
+    cy.url().should("include", "/resource-humaine");
   });
 
   it("Verify that when an agent’s card is clicked, it redirects to the full agent’s profile", () => {
