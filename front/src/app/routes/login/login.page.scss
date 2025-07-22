@@ -1,4 +1,4 @@
-@use '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
 
@@ -24,7 +24,7 @@
 
   form {
     padding: 1.5em;
-    border: solid 1px #ddd;
+    border: solid 1px utils.$colors-cgraylightv3;
   }
 
   h3 {
@@ -48,7 +48,7 @@
   }
 
   a {
-    color: fColor(primary);
+    color: utils.$colors-primary;
   }
 
   .remember-check {
@@ -74,7 +74,7 @@
 .signup {
   margin-bottom: 24px;
   padding: 1.5em;
-  background-color: fColor(bgProgressBar);
+  background-color: utils.$colors-bgProgressBar;
 
   p:last-child {
     margin-top: 2px;
@@ -113,8 +113,8 @@
 
   &.disabled {
     opacity: 0.75;
-    border-color: fColor(cblack);
-    color: fColor(cblack);
+    border-color: utils.$colors-cblack;
+    color: utils.$colors-cblack;
   }
 
   img {
@@ -137,14 +137,14 @@
     right: 0;
     top: 50%;
     height: 1px;
-    background-color: fColor(lightBorder);
+    background-color: utils.$colors-lightBorder;
   }
 
   p {
     display: inline-block;
     margin: 0;
     padding: 8px;
-    background-color: white;
+    background-color: utils.$colors-white;
     z-index: 1;
   }
 }
