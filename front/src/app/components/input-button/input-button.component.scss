@@ -59,7 +59,6 @@
   div {
     &.input {
       padding: 2px 8px;
-      //min-width: 189px;
       display: flex;
       align-items: center;
 
@@ -74,7 +73,6 @@
         background: none;
         border: none;
         font-size: 16px;
-        //width: 100%;
 
         &::placeholder {
           color: utils.$colors-cgray;

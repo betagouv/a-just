@@ -19,7 +19,6 @@
 .header-panel {
   display: flex;
   height: 87px;
-  // box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   margin-bottom: 8px;
 
   &.ca {
@@ -33,10 +32,6 @@
     align-self: stretch;
     display: flex;
     flex-direction: column;
-
-    // &:first-child div.text {
-    //   border-left: 1px solid rgba(0, 0, 0, 0.1);
-    // }
 
     &:last-child div.text {
       border-right: none;
@@ -251,7 +246,7 @@
       }
 
       .texte {
-        //background-color: utils.$colors-bgTooltip;
+        background-color: utils.$colors-cblack;
         color: utils.$colors-cblue;
         padding: 16px;
       }

@@ -6,7 +6,6 @@
 }
 
 ::ng-deep .mat-mdc-tooltip-panel-left {
-  //width: 100px !important;
   min-width: 100px !important;
   text-align: center;
 
@@ -49,7 +48,6 @@
     color: #161616;
     position: absolute;
     left: 256px;
-    //top: 27px;
     max-width: 50%;
     line-height: 20px;
   }
@@ -233,7 +231,7 @@
       align-items: center;
       padding: 0 16px;
       cursor: pointer;
-      border: 1px solid #e0e0e0; // gris clair équivalent à cgraylightv3
+      border: 1px solid #e0e0e0;
       background-color: white;
       transition: all 0.2s ease-in-out;
 
@@ -242,14 +240,14 @@
       }
 
       input[type='radio'] {
-        accent-color: red; // couleur neutre
+        accent-color: red;
       }
 
       p {
         font-size: 16px;
         line-height: 1.5;
         margin-left: 8px;
-        color: #333; // texte standard
+        color: #333;
       }
     }
 
@@ -270,7 +268,7 @@
           left: 4px;
           position: relative;
           display: none;
-          background-color: #000091; // couleur remplie si sélectionné
+          background-color: #000091;
 
           &.selected {
             display: block;
@@ -312,7 +310,7 @@
           left: 4px;
           position: relative;
           display: none;
-          background-color: #a558a0; // couleur remplie si sélectionné
+          background-color: #a558a0;
 
           &.selected {
             display: block;
@@ -378,15 +376,13 @@
     pointer-events: none;
     opacity: 0.5;
     position: relative;
-    //right: 16px;
     cursor: auto;
     display: flex;
     justify-content: center;
     text-align: center;
     height: 40px;
     padding: 8px 24px;
-    border: solid 1px #000091; // #ddd;
-    //transform: rotate(+90deg);
+    border: solid 1px #000091;
 
     &.export-b {
 
@@ -454,7 +450,6 @@
     .comment {
       background-color: white;
       flex: 3;
-      //height: 350px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
@@ -512,7 +507,6 @@
     background-color: fColor(bgColor);
     position: relative;
     margin-top: 108px;
-    //padding-top: 48px;
 
     .header-simulation {
       justify-content: space-between;
@@ -561,7 +555,6 @@
         padding: 6px 0px;
         width: 200px;
         margin-bottom: 48px;
-        //margin-right: 22px;
 
         &:first-child {
           font-size: 14px;
@@ -573,10 +566,6 @@
       .item-container {
         display: flex;
         flex: 1;
-      }
-
-      .line-item:last-child {
-        //margin-right: 72px;
       }
     }
 
@@ -597,10 +586,6 @@
         outline: none;
         border-bottom: solid 2px #3a3a3a !important;
       }
-    }
-
-    .line-item:last-child {
-      //margin-right: 72px;
     }
 
     .line-item {
@@ -1153,10 +1138,6 @@
       margin-left: 200px;
     }
 
-    .item:last-child {
-      //margin-right: 72px;
-    }
-
     .item {
       flex: 1;
       display: flex;
@@ -1200,13 +1181,7 @@
     background-color: white;
   }
 
-
-
-
-
-
   .white-simulator {
-    //right: 255px;
     pointer-events: none;
     margin: 0px 8px;
     cursor: auto;
@@ -1249,7 +1224,6 @@
     cursor: auto;
     opacity: 0.5;
     position: relative;
-    //right: 80px;
     display: flex;
     align-items: center;
     border-radius: 8px;

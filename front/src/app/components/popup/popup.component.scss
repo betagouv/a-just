@@ -50,13 +50,13 @@
     }
 
     .title {
-      //color: fColor(popupWhiteTitle);
+      color: utils.$colors-cblack;
       margin-bottom: 0px;
     }
 
     .close {
       i {
-        //color: fColor(darkModeTitle);
+        color: utils.$colors-cblack;
         font-size: 14px;
       }
 
@@ -91,7 +91,7 @@
     }
 
     .title {
-      //color: fColor(popupWhiteTitle);
+      color: utils.$colors-cblack;
       margin-bottom: 0px;
     }
 
@@ -136,13 +136,13 @@
     }
 
     .title {
-      //color: fColor(popupWhiteTitle);
+      color: utils.$colors-cblack;
       margin-bottom: 0px;
     }
 
     .close {
       i {
-        //color: fColor(darkModeTitle);
+        color: utils.$colors-cblack;
         font-size: 14px;
       }
 
@@ -366,7 +366,6 @@
 
   .content {
     flex: 1;
-    //overflow: visible;
     overflow-y: auto;
     overflow-x: visible;
     display: flex;

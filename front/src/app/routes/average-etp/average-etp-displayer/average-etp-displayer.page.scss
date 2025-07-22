@@ -96,11 +96,7 @@ aj-back-button {
 
     .item-grouped {
         min-height: 56px;
-        //margin: 8px 16px 0 16px;
         background-color: white;
-        //border-radius: 8px;
-        //box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        //padding: 15px;
         border-bottom: solid 1px white;
 
         .no-margin {
@@ -146,12 +142,9 @@ aj-back-button {
                 height: 56px;
 
                 .label {
-                    //width: 254px;
-
                     &.head {
                         width: 300px;
 
-                        //border-right: solid 1px white;
                         p {
                             font-size: 14px;
                         }
@@ -286,7 +279,6 @@ aj-back-button {
                 align-items: center;
                 justify-content: flex-end;
                 height: 100%;
-                //margin-right: 18px;
                 padding-right: 18px;
             }
         }
@@ -327,15 +319,9 @@ aj-back-button {
         .current-month {
             margin: 0 16px;
         }
-
-        /** 
-        .activities.is-not-ios {
-            margin-right: 16px;
-        }*/
     }
 
     .item {
-        //padding: 8px 0;
         display: flex;
         height: 56px;
 
@@ -392,7 +378,6 @@ aj-back-button {
         }
 
         input {
-            //margin-right: 16px;
             max-width: 160px;
         }
     }
@@ -407,21 +392,14 @@ aj-back-button {
             &.enable {
                 height: inherit;
                 overflow: inherit;
-                //display: table;
-                //margin-left: 15px;
-                //padding-bottom: 16px;
             }
 
             .group-item {
                 display: flex;
                 align-items: center;
                 background-color: white;
-                //padding: 8px 0;
-                //border-left: 3px solid gray;
 
                 .label {
-                    //width: 296px;
-                    //padding-left: 8px;
                     padding-left: 51px;
                 }
 

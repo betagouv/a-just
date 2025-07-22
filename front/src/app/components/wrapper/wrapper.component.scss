@@ -489,8 +489,6 @@
 }
 
 .header {
-  //height: 87px;
-  //min-height: 87px;
   border-bottom: 1px solid utils.$colors-bgColor;
 
   .top-header {
@@ -638,7 +636,6 @@
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    //margin: -148px 8px 8px 8px;
     border: none;
     height: calc(100% + 80px);
   }
