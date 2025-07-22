@@ -18,7 +18,7 @@ describe("Cockpit", () => {
       .get("aj-help-button")
       .click();
 
-    cy.wait(1000);
+    cy.wait(2000);
     cy.get(".panel-helper .panel-header")
       .get(".panel-header-closing-row")
       .should("contain.text", "Cockpit");
@@ -147,6 +147,7 @@ describe("Cockpit", () => {
 
   it("Check that on 'Graphiques' mode, the 'Voir les détails' & 'Masquer les détails' buttons work", () => {
     cy.get(".switch-tab").get(".analytique").click();
+    cy.wait(2000);
 
     cy.get(".scroll-container")
       .children()
@@ -254,7 +255,7 @@ describe("Cockpit", () => {
       cy.get(".save").click();
     });
 
-    cy.wait(15000);
+    cy.wait(2000);
 
     cy.get(".actions").within(() => {
       cy.get("button").first().click();
@@ -343,7 +344,7 @@ describe("Cockpit", () => {
       cy.get(".actions .save").click();
     });
 
-    cy.wait(3000);
+    cy.wait(2000);
 
     cy.get(".filters-item").contains("label", "Test comparateur referentiel");
 
