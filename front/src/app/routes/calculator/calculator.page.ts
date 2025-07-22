@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 import { orderBy } from 'lodash'
 import { AnalyticsLine, TemplateAnalyticsComponent } from './template-analytics/template-analytics.component'
 import { ActivatedRoute, Router } from '@angular/router'
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common'
 import { BehaviorSubject } from 'rxjs'
 import { WrapperComponent } from '../../components/wrapper/wrapper.component'
 import { dataInterface, SelectComponent } from '../../components/select/select.component'
@@ -96,6 +96,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Liste des id des référentiels
    */
   referentielIds: number[] = this.calculatorService.referentielIds.getValue()
+  /**
+   * Liste des référentiels filtrés
+   */
+  _filteredReferentiels: any[] = []
   /**
    * Date de début du calcul
    */
@@ -659,6 +663,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
 
       this.referentiels = [...refs]
       this.backupSettingSaved = l
+
+      this.updateFilteredReferentiels()
     })
   }
 
@@ -829,6 +835,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.loadFunctions()
     this.onLoad(false, true)
     if (this.categorySelected === this.FONCTIONNAIRES) this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
+    this.updateFilteredReferentiels()
   }
 
   /**
@@ -1673,6 +1680,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW, '')
   }
 
+  /**
+   * Obtenir la liste des referentiels filtrés
+   */
+  get filteredReferentiels() {
+    return this._filteredReferentiels
+  }
+
   filterReferentiels(referentiels: any[]) {
     let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
@@ -1708,6 +1722,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     }
 
     return refsList
+  }
+
+  /**
+   * Mets à jour la liste des référentiels filtrés
+   */
+  updateFilteredReferentiels() {
+    this._filteredReferentiels = this.filterReferentiels(this.referentiels)
   }
 
   saveCurrentAvgTime() {
