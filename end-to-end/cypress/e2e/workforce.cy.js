@@ -27,13 +27,12 @@ describe("Ventilateur", () => {
       .should("contain.text", "Ajouter un agent")
       .click();
 
-    // cy.wait(2000);
-    // cy.location("pathname").should("contain", "/resource-humaine");
+    cy.wait(10000);
 
     cy.url().should("include", "/resource-humaine");
   });
 
-  it("Verify that when an agent’s card is clicked, it redirects to the full agent’s profile", () => {
+  it("Check that when an agent’s card is clicked, it redirects to the full agent’s profile", () => {
     let userId = 0;
 
     cy.get(".sub-content-list person-preview:first")
