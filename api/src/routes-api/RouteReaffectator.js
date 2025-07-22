@@ -149,7 +149,7 @@ export default class RouteReaffectator extends Route {
             }),
             ['categoryRank', 'fonctionRank', 'lastName'],
           ),
-          categoryId: category.id,
+          categoryId,
           referentiel,
         })
       }, 60000) // timeout en ms
