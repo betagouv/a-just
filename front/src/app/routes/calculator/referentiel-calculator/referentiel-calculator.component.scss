@@ -1,4 +1,4 @@
-@use '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
@@ -94,8 +94,6 @@
       }
 
       &.dtes {
-        //align-items: flex-end !important;
-        //padding: 0 24px;
         border-left: solid 1px #f6f6f6 !important;
 
         min-width: 85px;
@@ -141,7 +139,6 @@
         }
 
         div>div {
-          //align-items: flex-end !important;
           padding: 0 24px;
 
           div>p {
@@ -230,7 +227,7 @@
         justify-content: center;
 
         &.selected {
-          //background-color: fColor(bgHeaderSelected);
+          background-color: utils.$colors-bgHeaderSelected;
         }
 
         p {
@@ -254,11 +251,11 @@
 p {
   font-size: 14px;
   text-align: center;
-  color: fColor(textColorLight);
+  color: utils.$colors-textColorLight;
 }
 
 .ref-nr {
-  border: 2px solid fColor(redNRColor);
+  border: 2px solid utils.$colors-redNRColor;
   border-radius: 4px;
   width: 100%;
   height: 100%;
@@ -269,19 +266,18 @@ p {
 
   p {
     font-size: 12px;
-    color: fColor(redNRColor);
+    color: utils.$colors-redNRColor;
   }
 }
 
 .bg-magistrats {
-  background-color: fColor(cbluemiddle);
+  background-color: utils.$colors-cbluemiddle;
 }
 
 .bg-fonctionnaires {
-  background-color: fColor(cpinkmiddle);
+  background-color: utils.$colors-cpinkmiddle;
 }
 
-// class size
 .width-contentieux {
   min-width: 160px;
   flex: 3;

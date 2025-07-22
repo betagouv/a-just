@@ -57,6 +57,7 @@
               "node_modules/mapbox-gl/dist/mapbox-gl.css",
               "node_modules/intro.js/minified/introjs.min.css",
               "node_modules/remixicon/fonts/remixicon.css",
+              "src/app/styles/popup.scss",
               "src/app/styles/typography.scss",
               "src/app/styles/form.scss",
               "src/app/styles/material.scss",

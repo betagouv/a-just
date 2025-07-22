@@ -162,100 +162,6 @@
                 height: 56px;
                 margin-top: 16px;
             }
-
-            .result-area {
-                /** 
-                margin: 0 24px;
-                z-index: 1;
-                position: absolute;
-                top: 230px;
-                max-height: 400px;
-                width: -webkit-fill-available;
-                overflow-y: scroll;
-                border-radius: 4px;
-                border-top: none !important;
-                border-top-left-radius: none;
-                border-top-right-radius: none;
-                border-bottom-left-radius: 4px;
-                border-bottom-right-radius: 4px;
-                background-color: #f6f6f6;
-                border: 1px solid #eeeeee;
-                padding: 0px 12px 12px 12px;
-
-                p {
-                    //margin-top: 8px;
-                    display: flex;
-                    align-items: center;
-                    min-height: 40px;
-                    position: relative;
-                    cursor: pointer;
-                    font-size: 14px;
-
-                    mat-icon {
-                        position: relative;
-                        margin-left: 4px;
-                        margin-right: 4px;
-                        top: 2px;
-                    }
-
-                    &.spaces {
-                        font-size: 12px;
-                        font-weight: 400;
-                        color: rgba(0, 0, 0, 0.448);
-                    }
-
-                    &.pages {
-                        margin-left: 8px;
-                        margin-top: 4px;
-
-                        &:hover {
-                            background-color: #cdcbcb;
-                            border-radius: 4px;
-
-                            &::before {
-                                content: 'Ouvrir';
-                                position: absolute;
-                                right: 10px;
-                                font-size: 12px;
-                                color: black;
-                            }
-                        }
-                    }
-
-                    &.sections {
-                        margin-top: 4px;
-                        display: block;
-                        margin-left: 32px;
-                        overflow: hidden;
-                        display: -webkit-box;
-                        -webkit-line-clamp: 3;
-                        -webkit-box-orient: vertical;
-
-                        //margin-top: 8px;
-
-                        &:hover {
-                            background-color: #cdcbcb;
-                            border-radius: 4px;
-
-                            &::before {
-                                content: 'Ouvrir';
-                                position: absolute;
-                                right: 10px;
-                                top: -2px;
-                                font-size: 12px;
-                                color: black;
-                            }
-                        }
-                    }
-                }
-**/
-
-
-
-
-
-
-            }
         }
 
         .line {
@@ -513,7 +419,6 @@
                         border: solid 1px #ddd;
                         background-color: white;
                         color: #000091;
-                        //outline:10px solid black;
                         border-top: solid 2px #000091;
                         border-bottom: none;
                     }
@@ -585,7 +490,6 @@
             box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
                 0 20px 25px -5px rgba(0, 0, 0, 0.1);
             background-color: #fff;
-            //margin: -148px 8px 8px 8px;
             border: none;
             width: 100%;
         }
@@ -697,7 +601,6 @@
 
     /* Sources */
     .gitbook-response .source-container {
-        //background: #f9f9f9;
         border-top: 1px solid #e0e0e0;
         padding-top: 12px;
         margin-top: 16px;
