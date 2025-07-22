@@ -1,10 +1,10 @@
-@use '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
   border-radius: 8px;
-  border: solid 1px fColor(lightBorder);
-  background-color: #fff;
+  border: solid 1px utils.$colors-lightBorder;
+  background-color: utils.$colors-white;
 }
 
 .header-panel {
@@ -12,14 +12,14 @@
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  background-color: fColor(bgSelect);
-  border-bottom: solid 1px fColor(lightBorder);
+  background-color: utils.$colors-bgSelect;
+  border-bottom: solid 1px utils.$colors-lightBorder;
   padding: 16px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 
   >p {
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     font-size: 16px;
     font-weight: bold;
   }
@@ -32,7 +32,7 @@
 
   >p {
     font-size: 16px;
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     font-weight: bold;
   }
 
@@ -47,8 +47,8 @@
 
       p {
         font-size: 14px;
-        color: fColor(cbluedark);
-        background-color: fColor(cbluemiddle);
+        color: utils.$colors-cbluedark;
+        background-color: utils.$colors-cbluemiddle;
       }
     }
   }
@@ -75,13 +75,13 @@
     font-size: 14px;
     line-height: 24px;
     border-radius: 29px;
-    background-color: fColor(bgTag);
-    color: fColor(colorTag);
+    background-color: utils.$colors-bgTag;
+    color: utils.$colors-colorTag;
     white-space: nowrap;
 
     &.fonction {
       color: white;
-      background-color: fColor(cbluedark);
+      background-color: utils.$colors-cbluedark;
     }
 
     mat-icon {

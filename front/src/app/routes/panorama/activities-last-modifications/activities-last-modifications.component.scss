@@ -1,4 +1,4 @@
-@use '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
@@ -6,13 +6,13 @@
   width: 354px;
 
   h3 {
-    color: fColor(primary);
+    color: utils.$colors-primary;
     font-size: 20px;
     margin-bottom: 22px;
   }
 
   .item {
-    border: 1px solid fColor(lightBorder);
+    border: 1px solid utils.$colors-lightBorder;
     border-radius: 4px;
     padding: 8px 8px 8px 16px;
     display: flex;
@@ -26,8 +26,8 @@
       .tag {
         height: 20px;
         border-radius: 4px;
-        background-color: fColor(bgSelect);
-        color: fColor(grayRow);
+        background-color: utils.$colors-bgSelect;
+        color: utils.$colors-cgray;
         font-size: 12px;
         font-weight: bold;
         padding: 0 6px;
@@ -40,11 +40,11 @@
     p {
       font-size: 14px;
       margin-top: 4px;
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
     }
 
     i {
-      color: fColor(primary);
+      color: utils.$colors-primary;
     }
   }
 }

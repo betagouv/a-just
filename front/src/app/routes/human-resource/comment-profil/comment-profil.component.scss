@@ -1,4 +1,4 @@
-@use '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   .hide {
@@ -10,8 +10,8 @@
     position: relative;
     display: block;
     border-radius: 8px;
-    border: solid 1px fColor(lightBorder);
-    background-color: #fff;
+    border: solid 1px utils.$colors-lightBorder;
+    background-color: utils.$colors-white;
 
     &.drop-down-display {
       padding-bottom: 16px;
@@ -22,7 +22,7 @@
     }
 
     .footer-panel {
-      border-top: solid 1px fColor(lightBorder);
+      border-top: solid 1px utils.$colors-lightBorder;
       height: 48px;
       display: flex;
       align-items: center;
@@ -34,7 +34,7 @@
 
       .save {
         color: white;
-        background-color: fColor(primary);
+        background-color: utils.$colors-primary;
         height: 32px;
         padding: 4px 12px;
         font-size: 14px;
@@ -48,9 +48,9 @@
       }
 
       .back {
-        border: solid 1px fColor(primary);
-        color: fColor(primary);
-        background-color: white;
+        border: solid 1px utils.$colors-primary;
+        color: utils.$colors-primary;
+        background-color: utils.$colors-white;
         height: 32px;
         padding: 4px 12px;
         font-size: 14px;
@@ -64,15 +64,15 @@
       display: flex;
       height: 56px;
       align-items: center;
-      background-color: fColor(bgSelect);
-      border-bottom: solid 1px fColor(lightBorder);
+      background-color: utils.$colors-bgSelect;
+      border-bottom: solid 1px utils.$colors-lightBorder;
       padding: 0 16px;
       gap: 10px;
       border-top-left-radius: 8px;
       border-top-right-radius: 8px;
 
       i {
-        color: fColor(cblack);
+        color: utils.$colors-cblack;
         font-size: 24px;
       }
 
@@ -97,7 +97,7 @@
         display: flex;
 
         .com {
-          color: fColor(cblack);
+          color: utils.$colors-cblack;
           font-size: 16px;
           font-weight: bold;
           bottom: 1px;
@@ -107,7 +107,7 @@
 
 
         .com-at {
-          color: fColor(titleSelect);
+          color: utils.$colors-titleSelect;
           font-size: 12px;
         }
       }
@@ -117,7 +117,7 @@
       height: 40px;
       background-color: white;
       display: flex;
-      border-bottom: solid 1px fColor(lightBorder);
+      border-bottom: solid 1px utils.$colors-lightBorder;
       align-items: center;
       padding: 0 16px;
 
@@ -181,7 +181,7 @@
 
         margin-top: 10px;
         margin-left: 16px;
-        color: fColor(titleSelect);
+        color: utils.$colors-titleSelect;
         font-size: 18px;
 
         &.editing {
