@@ -79,6 +79,7 @@ const cspConfig = {
         "'sha256-HVge3cnZEH/UZtmZ65oo81F6FB06/nfTNYudQkA58AE='",
         "'sha256-6x6g2SYysPsSMI15om2cLqbYnqaoyjXQD+Aivk9OP4U='",
         "'sha256-A+0b+HOyTgrPPZgW1Tcb6UJIvj7fs09WPLWFtyqq1ks='",
+        "'sha256-ErSGQ5RkfdaGFyDT7yi/vnakQoxNloHzsJR8SRc4ISE='",
         //...scriptSha1Generate([`${__dirname}/front/index.html`]),
         'https://client.crisp.chat',
         'https://settings.crisp.chat',
@@ -96,6 +97,7 @@ const cspConfig = {
         "'sha256-UP0QZg7irvSMvOBz9mH2PIIE28+57UiavRfeVea0l3g='",
         "'sha256-Mj/pDR/CuVebTo+8zwX6PU1+MXNnrzFL+dgRa0Q0JF0='",
         "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='",
+        "'sha256-7ZHILzwrPOtuEc8fFrW3q+2DMmiMh6VwC/wBhNbTuUY='",
       ],
       'worker-src': ['blob:'],
       'frame-src': [
