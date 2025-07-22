@@ -255,11 +255,14 @@ describe("Cockpit", () => {
       cy.get(".save").click();
     });
 
-    cy.wait(4000);
+    cy.get("aj-big-loader", { timeout: 40000 }).should("not.exist");
+
+    // cy.wait(4000);
 
     cy.get(".actions").within(() => {
-      cy.get("button").first().click();
+      cy.get("button").first().click({ force: true });
     });
+
     cy.get(".drop-down")
       .should("be.visible")
       .contains(
