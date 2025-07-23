@@ -10,7 +10,7 @@ import { today } from '../utils/date'
 import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import { loadOrWarmHR, removeCacheListItem, updateCacheListItem } from '../utils/redis'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Route des fiches
@@ -192,6 +192,7 @@ export default class RouteHumanResources extends Route {
     if (hrId) {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
         const agent = await this.model.getHr(hrId)
+
         this.sendOk(ctx, agent)
       }
     }
@@ -316,10 +317,8 @@ export default class RouteHumanResources extends Route {
       })
 
     // if filter by user access to categories
-    if (categories.length !== allCategories.length) {
-      const ids = categories.map((c) => c.id)
-      hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
-    }
+    const ids = categories.map((c) => c.id)
+    hr = hr.filter((h) => h.situations.length === 0 || (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
     console.timeEnd('filter list 7')
 
     this.sendOk(ctx, {

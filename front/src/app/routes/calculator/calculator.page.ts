@@ -263,7 +263,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           target: '#wrapper-contener',
           title: 'À quoi sert le cockpit ?',
           intro:
-            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p></p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit-a-just-ca-mp4-480p.mp4" type="video/mp4" /></video>',
+            '<p>Le cockpit vous permet de visualiser en un coup d’œil quelques <b>indicateurs simples, calculés à partir des données d’effectifs et d’activité renseignées dans A-JUST</b> et, si vous le souhaitez, de les <b>comparer à une autre période ou à un référentiel </b>que vous auriez renseigné.</p><p>Des visualisations graphiques vous sont également proposées.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-cockpit-a-just-ca-mp4-480p.mp4" type="video/mp4" /></video>',
         },
         {
           target: '.sub-main-header',
@@ -667,7 +667,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
 
       this.referentiels = [...refs]
       this.backupSettingSaved = l
-
       this.updateFilteredReferentiels()
     })
   }
@@ -1105,22 +1104,21 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    */
   async onLoadCompare() {
     if (this.categorySelected && this.isLoading === false) {
-      const datas = this.tabSelected === 0 ? this.datasFilted : this.datasAnalytics
-
       this.onEdit = false
       const actualRangeString = `${this.getRealValue(this.dateStart)} - ${this.getRealValue(this.dateStop)}`
       const list: AnalyticsLine[] = []
-      const value1TempsMoyen = (datas || []).map((d) => (this.categorySelected === MAGISTRATS ? d.magRealTimePerCase : d.fonRealTimePerCase))
+      const value1TempsMoyen = (this.datasFilted || []).map((d) => (this.categorySelected === MAGISTRATS ? d.magRealTimePerCase : d.fonRealTimePerCase))
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) => (d === null ? 'N/R' : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `))
 
-      const value1DTES = (datas || []).map((d) => d.realDTESInMonths)
-      const value1TauxCouverture = (datas || []).map((d) => d.realCoverage)
-      const value1Sorties = (datas || []).map((d) => (d.totalOut ? Math.floor(d.totalOut) : d.totalOut))
-      const value1Entrees = (datas || []).map((d) => (d.totalIn ? Math.floor(d.totalIn) : d.totalIn))
-      const value1Stock = (datas || []).map((d) => d.lastStock)
-      const value1ETPTSiege = (datas || []).map((d) => d.etpMag)
-      const value1ETPTGreffe = (datas || []).map((d) => d.etpFon)
-      const value1ETPTEam = (datas || []).map((d) => d.etpCont)
+      const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
+      const value1TauxCouverture = (this.datasFilted || []).map((d) => d.realCoverage)
+      const value1Sorties = (this.datasFilted || []).map((d) => (d.totalOut ? Math.floor(d.totalOut) : d.totalOut))
+      const value1Entrees = (this.datasFilted || []).map((d) => (d.totalIn ? Math.floor(d.totalIn) : d.totalIn))
+      const value1Stock = (this.datasFilted || []).map((d) => d.lastStock)
+      const value1ETPTSiege = (this.datasFilted || []).map((d) => d.etpMag)
+      const value1ETPTGreffe = (this.datasFilted || []).map((d) => d.etpFon)
+      const value1ETPTEam = (this.datasFilted || []).map((d) => d.etpCont)
+
       const getVariations = (tab2: any[], tab1: any[], isPercentComparaison = true) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null) {

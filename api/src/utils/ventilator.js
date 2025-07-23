@@ -19,6 +19,7 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
       let etp = 0
       if (dateSelected) {
         const s = findSituation(h, dateSelected, signal)
+
         currentSituation = s.currentSituation
         etp = (currentSituation && currentSituation.etp) || 0
         if (etp < 0) {

@@ -13,7 +13,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAllByHR = async (HRId) => {
     const list = await Model.findAll({
-      attributes: ['id', 'percent', 'date_start', 'date_stop'],
+      attributes: ['id', 'percent', 'date_start', 'date_stop', 'created_at', 'updated_at'],
       where: {
         hr_id: HRId,
       },
@@ -35,6 +35,8 @@ export default (sequelizeInstance, Model) => {
         dateStartTimesTamps: today(list[i].date_start).getTime(),
         dateStop: list[i].date_stop,
         dateStopTimesTamps: list[i].date_stop ? today(list[i].date_stop).getTime() : null,
+        createdAt: list[i].created_at,
+        updatedAt: list[i].updated_at,
         contentieux: {
           id: list[i]['ContentieuxReferentiel.id'],
           label: list[i]['ContentieuxReferentiel.label'],

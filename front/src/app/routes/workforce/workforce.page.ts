@@ -28,7 +28,7 @@ import { UserService } from '../../services/user/user.service'
 import { HRFonctionService } from '../../services/hr-fonction/hr-function.service'
 import { FILTER_LIMIT_ON_SEARCH } from '../../constants/workforce'
 import { fixDecimal } from '../../utils/numbers'
-import { sortDates } from '../../utils/dates'
+import { sortDates, today } from '../../utils/dates'
 import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
 import { EmptyInputComponent } from '../../components/empty-input/empty-input.component'
@@ -667,13 +667,17 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         allPersonIds = allPersonIds.concat(l.hrFiltered.map((h) => h.id))
       })
 
-      this.allPersonsFiltered = list.map((person) => {
-        return {
-          ...person,
-          isIn: allPersonIds.includes(person.id),
-        }
-      })
+      this.allPersonsFiltered = [
+        ...list.map((person) => {
+          return {
+            ...person,
+            isIn: allPersonIds.includes(person.id),
+          }
+        }),
+      ]
     }
+
+    console.log('this.allPersonsFiltered', this.allPersonsFiltered)
 
     this.allPersonsFilteredIsIn = this.filterFindedPerson(this.allPersonsFiltered, true)
     this.allPersonsFilteredNotIn = this.filterFindedPerson(this.allPersonsFiltered, false)
@@ -684,12 +688,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @param date
    * @returns
    */
-  isArriving(date: Date | string): boolean {
-    const now = new Date(this.dateSelected)
+  isArriving(date: Date | string, person: HumanResourceIsInInterface | null = null): boolean {
+    const now = today(this.dateSelected)
 
     const diff = sortDates(date, now, false)
 
-    return diff < 0 ? true : false
+    return diff > 0 ? true : false
   }
 
   /**
@@ -826,16 +830,21 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         (person) =>
           !person.isIn &&
           person.dateStart &&
-          sortDates(person.dateStart, this.dateSelected, false) < 0 &&
+          sortDates(today(person.dateStart), today(this.dateSelected), false) <= 0 &&
           person.situations &&
           person.situations.length &&
-          person.situations[0].dateStart &&
-          sortDates(person.situations[0].dateStart, this.dateSelected, false) > 0 &&
+          person.situations[person.situations.length - 1].dateStart &&
+          sortDates(today(person.situations[person.situations.length - 1].dateStart), today(this.dateSelected), false) > 0 &&
           person.category,
       )
       .map((person) => {
         this.listFormated.map((l) => {
-          if (l.categoryId === person.category?.id) {
+          if (l.categoryId === person.category?.id && !l.hr.find((h) => h.id === person.id)) {
+            const getIndispo = this.humanResourceService.findAllIndisponibilities(person, this.dateSelected)
+            let hasIndisponibility = getIndispo.map((i) => i.percent).reduce((a, b) => a + b, 0)
+            if (hasIndisponibility > 100) {
+              hasIndisponibility = 100
+            }
             const newPerson = {
               ...person,
               firstName: person.firstName || '',
@@ -843,7 +852,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               totalAffected: 0,
               opacity: 1,
               etpLabel: null,
-              hasIndisponibility: 0,
+              hasIndisponibility,
               currentActivities: [],
               etp: 0,
               fonction: person.situations[0].fonction,

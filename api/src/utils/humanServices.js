@@ -16,8 +16,10 @@ export async function getHumanRessourceList(
   let list = preformatedAllHumanResource.filter((hr) => {
     let isOk = true
 
-    if (hr.category && categoriesIds && categoriesIds.indexOf(hr.category.id) === -1) {
-      isOk = false
+    if (!hr.category) {
+      if (hr.category && categoriesIds && categoriesIds.indexOf(hr.category.id) === -1) {
+        isOk = false
+      }
     }
 
     if (hr.dateEnd && today(hr.dateEnd).getTime() < date.getTime()) {
