@@ -788,7 +788,12 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.humanResourceService.categoriesFilterListIds,
       )
       .then(({ list, allPersons }: { list: listFormatedInterface[]; allPersons: HumanResourceIsInInterface[] }) => {
-        this.listFormated = list
+        this.listFormated = list.map((l) => {
+          return {
+            ...l,
+            id: '0' + l.categoryId + '_' + l.label,
+          }
+        })
         this.allPersons = allPersons
 
         this.findPersonWithoutVentilations()
@@ -1004,7 +1009,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @param ref
    */
   onFilterBy(ref: ContentieuReferentielInterface) {
-    console.log('this.filterSelected:', this.filterSelected)
     if (!this.filterSelected.filter || this.filterSelected.filter?.id !== ref.id || this.filterSelected.up === true) {
       this.filterSelected.filter = ref
       this.filterSelected.up = this.filterSelected.up === null ? true : false
@@ -1077,7 +1081,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               if (realETP < 0) {
                 realETP = 0
               }
-              ref.totalAffected = (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+              const res = (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+              ref.totalAffected = Math.floor(res * 100) / 100 // arrondi à 2 décimales
             }
           }
 
