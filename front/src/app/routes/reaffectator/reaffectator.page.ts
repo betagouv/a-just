@@ -898,7 +898,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const inValue = refFromItemList.totalIn || 0
 
         let outValue = averageWorkingProcess === 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
-        outValue = Math.floor(outValue)
+        outValue = fixDecimal(outValue)
 
         return {
           ...ref,
