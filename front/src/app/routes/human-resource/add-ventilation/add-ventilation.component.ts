@@ -74,7 +74,6 @@ export interface importedSituation {
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
   humanResourceService = inject(HumanResourceService)
-
   @ViewChild('bottomContainerTarget') bottomContainerTargetRef!: ElementRef
 
   /**
@@ -130,10 +129,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   @Input() setValueEtp: (val: number | null) => void = () => {}
   /**
-   * Liste des alertes
-   */
-  @Input() alertList: string[] = []
-  /**
    * Event lors de la sauvegarde
    */
   @Output() onSaveConfirm = new EventEmitter()
@@ -153,8 +148,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    updatedList?: string[]
-    index?: number
     tag: string
   }>()
   /**
@@ -476,7 +469,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       if (totalAffected > 100) {
         this.appService.alert.next({
           title: 'Attention',
-          text: `L’ensemble de vos affectations atteint un total de ${totalAffected}% alors que vous ne pouvez pas dépasser 100% du temps de travail.`,
+          text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`,
         })
         return
       } else if (totalAffected < 100) {
