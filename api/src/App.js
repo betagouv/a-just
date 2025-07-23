@@ -24,6 +24,14 @@ import sequelize, { Sequelize } from 'sequelize'
 
 const cspConfig = {
   // https://github.com/helmetjs/helmet
+  permissionsPolicy: {
+    features: {
+      camera: ['self'], // ou [] pour désactiver complètement
+      microphone: ['none'],
+      geolocation: ['self'],
+      fullscreen: ['self'],
+    },
+  },
   contentSecurityPolicy: {
     directives: {
       'media-src': ["'self'", 'https://client.crisp.chat'],
