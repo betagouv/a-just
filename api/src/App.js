@@ -124,9 +124,9 @@ const cspConfig = {
     },
     //reportOnly: true,
   },
-  crossOriginEmbedderPolicy: false,
-  crossOriginOpenerPolicy: false,
-  crossOriginResourcePolicy: false,
+  crossOriginEmbedderPolicy: true,
+  crossOriginOpenerPolicy: true,
+  crossOriginResourcePolicy: true,
   originAgentCluster: false,
   referrerPolicy: false,
   strictTransportSecurity: {
