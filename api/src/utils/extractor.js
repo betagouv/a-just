@@ -1760,13 +1760,16 @@ async function processHumanExtract(params) {
     indexes,
   } = params
 
+  console.time('situation data ' + human.id)
   const { currentSituation } = findSituation(human, undefined, signal)
   const categoryName = currentSituation?.category?.label || 'pas de catégorie'
   const fonctionName = currentSituation?.fonction?.code || 'pas de fonction'
 
   if (!categoryFilter.includes(categoryName.toLowerCase())) return null
   if (categoryName === 'pas de catégorie' && fonctionName === 'pas de fonction') return null
+  console.timeEnd('situation data ' + human.id)
 
+  console.time('calculation data' + human.id)
   const { refObj, totalEtpt, reelEtp } = await computeReferentielStats(
     human,
     flatReferentielsList,
@@ -1778,7 +1781,9 @@ async function processHumanExtract(params) {
     signal,
     indexes,
   )
+  console.timeEnd('calculation data' + human.id)
 
+  console.time('format data' + human.id)
   const finalLine = formatHumanLine({
     human,
     refObj,
@@ -1790,6 +1795,7 @@ async function processHumanExtract(params) {
     isJirs,
     refIndispo,
   })
+  console.timeEnd('format data' + human.id)
 
   return finalLine
 }
@@ -1806,7 +1812,7 @@ async function computeReferentielStats(human, flatReferentielsList, categories, 
   for (const referentiel of flatReferentielsList) {
     const refId = referentiel.id
     const isUsed = situations.some((s) => s.activities?.some((a) => a.contentieux.id === refId)) || indispos.some((i) => i.contentieux.id === refId)
-
+    //indexes.agentIndex
     if (!isUsed) continue
 
     const etpAffected = getHRVentilation(human, refId, categories, dateStart, dateStop, undefined, undefined, signal)

@@ -503,7 +503,7 @@ export class ExcelService extends MainClass {
   getExcelFormulaFormat(array: string[], index: number, referentiel: string[], separator = ',') {
     let str = ''
     for (let i = 0; i < array.length; i++) {
-      console.log(this.findIndexByPrefix(referentiel, array[i]), referentiel, array[i])
+      //console.log(this.findIndexByPrefix(referentiel, array[i]), referentiel, array[i])
       let value = this.numberToExcelColumn(this.findIndexByPrefix(referentiel, array[i]) + 1)
       if (value && value.length) str += value + index + separator
     }
