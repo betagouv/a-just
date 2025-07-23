@@ -26,8 +26,8 @@ const cspConfig = {
   // https://github.com/helmetjs/helmet
   permissionsPolicy: {
     features: {
-      camera: ['self'], // ou [] pour désactiver complètement
-      microphone: ['none'],
+      camera: [], // ou [] pour désactiver complètement
+      microphone: [],
       geolocation: ['self'],
       fullscreen: ['self'],
     },
