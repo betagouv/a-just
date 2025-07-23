@@ -129,6 +129,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    */
   datasFilted: CalculatorInterface[] = []
   /**
+   * Données filtrées dédiées aux analytics
+   */
+  datasAnalytics: CalculatorInterface[] = []
+  /**
    * En chargement
    */
   isLoading: boolean = false
@@ -746,6 +750,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     backupLabel && filterReferentielCalculator(list, backupLabel)*/
 
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
+    this.datasFilted = [...this.datas]
+    this.datasAnalytics = [...this.datas]
     this.filtredDatas()
   }
 
@@ -771,7 +777,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
       )
     }
 
-    this.datasFilted = list
+    if (this.tabSelected === 0) {
+      this.datasFilted = list
+    } else {
+      this.datasAnalytics = list
+    }
   }
 
   /**
@@ -1095,20 +1105,22 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    */
   async onLoadCompare() {
     if (this.categorySelected && this.isLoading === false) {
+      const datas = this.tabSelected === 0 ? this.datasFilted : this.datasAnalytics
+
       this.onEdit = false
       const actualRangeString = `${this.getRealValue(this.dateStart)} - ${this.getRealValue(this.dateStop)}`
       const list: AnalyticsLine[] = []
-      const value1TempsMoyen = (this.datasFilted || []).map((d) => (this.categorySelected === MAGISTRATS ? d.magRealTimePerCase : d.fonRealTimePerCase))
+      const value1TempsMoyen = (datas || []).map((d) => (this.categorySelected === MAGISTRATS ? d.magRealTimePerCase : d.fonRealTimePerCase))
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) => (d === null ? 'N/R' : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `))
 
-      const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
-      const value1TauxCouverture = (this.datasFilted || []).map((d) => d.realCoverage)
-      const value1Sorties = (this.datasFilted || []).map((d) => (d.totalOut ? Math.floor(d.totalOut) : d.totalOut))
-      const value1Entrees = (this.datasFilted || []).map((d) => (d.totalIn ? Math.floor(d.totalIn) : d.totalIn))
-      const value1Stock = (this.datasFilted || []).map((d) => d.lastStock)
-      const value1ETPTSiege = (this.datasFilted || []).map((d) => d.etpMag)
-      const value1ETPTGreffe = (this.datasFilted || []).map((d) => d.etpFon)
-      const value1ETPTEam = (this.datasFilted || []).map((d) => d.etpCont)
+      const value1DTES = (datas || []).map((d) => d.realDTESInMonths)
+      const value1TauxCouverture = (datas || []).map((d) => d.realCoverage)
+      const value1Sorties = (datas || []).map((d) => (d.totalOut ? Math.floor(d.totalOut) : d.totalOut))
+      const value1Entrees = (datas || []).map((d) => (d.totalIn ? Math.floor(d.totalIn) : d.totalIn))
+      const value1Stock = (datas || []).map((d) => d.lastStock)
+      const value1ETPTSiege = (datas || []).map((d) => d.etpMag)
+      const value1ETPTGreffe = (datas || []).map((d) => d.etpFon)
+      const value1ETPTEam = (datas || []).map((d) => d.etpCont)
       const getVariations = (tab2: any[], tab1: any[], isPercentComparaison = true) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null) {
