@@ -1,11 +1,11 @@
-@use '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
   padding: 24px;
 
   h3 {
-    color: fColor(primary);
+    color: utils.$colors-primary;
     font-size: 20px;
     margin-bottom: 22px;
   }
@@ -51,7 +51,7 @@
       .middle {
         display: flex;
         justify-content: space-between;
-        color: black;
+        color: utils.$colors-cblack;
         font-size: 14px;
 
         input {
@@ -59,7 +59,7 @@
           height: 23px;
           border: none;
           border-radius: 0;
-          background-color: white;
+          background-color: utils.$colors-bgSelect;
           text-align: center;
         }
       }
@@ -88,7 +88,7 @@
       }
 
       .etp {
-        color: black;
+        color: utils.$colors-cblack;
       }
     }
   }

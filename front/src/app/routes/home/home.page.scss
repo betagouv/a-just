@@ -1,4 +1,4 @@
-@use "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
 	display: flex;
@@ -6,7 +6,7 @@
 	align-items: center;
 	justify-content: center;
 	height: 100%;
-	background-color: fColor(cfarine);
+	background-color: utils.$colors-bgSelect;
 
 	>div {
 		text-align: center;

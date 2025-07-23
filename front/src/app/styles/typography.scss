@@ -1,5 +1,6 @@
 @use "./fonts/marianne/Marianne.scss";
 @use "./fonts/aldrich/Aldrich.scss";
+@use "./utils.scss" as utils;
 
 html,
 body,
@@ -21,47 +22,47 @@ input {
 h1 {
   font-size: 40px;
   line-height: 48px;
-  color: fColor(cblack);
+  color: utils.$colors-cblack;
 }
 
 h2 {
   font-size: 32px;
   line-height: 40px;
-  color: fColor(cblack);
+  color: utils.$colors-cblack;
 }
 
 h3 {
   font-size: 28px;
   line-height: 36px;
-  color: fColor(cblack);
+  color: utils.$colors-cblack;
 
   b {
-    color: fColor(cbluelight);
+    color: utils.$colors-primary;
   }
 }
 
 h4 {
   font-size: 22px;
   line-height: 32px;
-  color: fColor(cblack);
+  color: utils.$colors-cblack;
 }
 
 h5 {
   font-size: 22px;
   line-height: 28px;
-  color: fColor(cblack);
+  color: utils.$colors-cblack;
 }
 
 h6 {
   font-size: 20px;
   line-height: 28px;
-  color: fColor(cblack);
+  color: utils.$colors-cblack;
 }
 
 p,
 li {
   font-size: 16px;
-  color: fColor(cblack);
+  color: utils.$colors-cblack;
 
   &.s {
     font-size: 14px;

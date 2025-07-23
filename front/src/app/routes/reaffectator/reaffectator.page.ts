@@ -811,7 +811,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ...itemList,
         referentiel: itemList.referentiel.map((r) => ({
           ...r,
-          etpUseToday: this.onCalculETPAffected(r.id, itemList.allHr),
+          etpUseToday: this.onCalculETPAffected(r.id, itemList.hrFiltered),
           totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
         })),
       }

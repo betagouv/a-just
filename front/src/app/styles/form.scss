@@ -1,7 +1,9 @@
+@use './utils.scss' as utils;
+
 .label-aj {
   font-size: 16px;
   font-weight: normal;
-  color: fColor(cblackdark);
+  color: utils.$colors-cblack;
   margin-bottom: 8px;
 }
 
@@ -12,7 +14,7 @@ input[type='email'] {
   padding: 8px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: fColor(cgrayDefault);
+  background-color: utils.$colors-cgray;
   border: none;
   border-bottom: 2px solid #8d8d8d;
   width: 100%;
@@ -27,7 +29,7 @@ select {
   padding: 8px 16px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: fColor(cgrayDefault);
+  background-color: utils.$colors-cgray;
   border: none;
   border-bottom: 2px solid black;
   width: 100%;
@@ -38,7 +40,7 @@ textarea {
   padding: 8px 16px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: fColor(cgrayDefault);
+  background-color: utils.$colors-cgray;
   resize: none;
   border: none;
   border-bottom: 2px solid black;
@@ -73,7 +75,7 @@ input[type='radio'] {
     position: absolute;
     content: ' ';
     display: inline-block;
-    border: 1px solid fColor(cbluedark);
+    border: 1px solid utils.$colors-primary;
   }
 
   &:checked:before {
@@ -83,18 +85,18 @@ input[type='radio'] {
     top: 6px;
     left: 6px;
     position: absolute;
-    background-color: fColor(cbluedark);
+    background-color: utils.$colors-primary;
     content: ' ';
     display: inline-block;
   }
 
   &.pink {
     &:checked:before {
-      background-color: fColor(cpink) !important;
+      background-color: utils.$colors-primary !important;
     }
 
     &:after {
-      border: 1px solid fColor(cpink) !important;
+      border: 1px solid utils.$colors-primary !important;
     }
   }
 }
@@ -106,7 +108,7 @@ input[type=submit] {
     text-align: center;
     display: block;
     width: 100%;
-    background-color: fColor(primary);
+    background-color: utils.$colors-primary;
     border: none;
     outline: none;
     font-size: 18px;

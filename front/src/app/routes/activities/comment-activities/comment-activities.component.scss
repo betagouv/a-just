@@ -1,4 +1,4 @@
-@use '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
     position: fixed;
@@ -22,7 +22,7 @@
         >p {
             font-size: 18px;
             font-weight: bold;
-            color: fColor(cblack);
+            color: utils.$colors-cblack;
         }
 
         .tag {
@@ -101,7 +101,7 @@
 
             .save {
                 color: white;
-                background-color: fColor(primary);
+                background-color: utils.$colors-primary;
                 height: 32px;
                 padding: 4px 12px;
                 font-size: 14px;
@@ -115,8 +115,8 @@
             }
 
             .back {
-                border: solid 1px fColor(primary);
-                color: fColor(primary);
+                border: solid 1px utils.$colors-primary;
+                color: utils.$colors-primary;
                 background-color: white;
                 height: 32px;
                 padding: 4px 12px;

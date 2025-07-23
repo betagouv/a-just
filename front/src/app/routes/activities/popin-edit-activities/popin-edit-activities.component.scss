@@ -31,8 +31,8 @@
         height: 24px;
         line-height: 24px;
         text-align: center;
-        color: fColor(tooltipIconColor);
-        background-color: fColor(bgHelper);
+        color: utils.$colors-tooltipIconColor;
+        background-color: utils.$colors-bgHelper;
         border-radius: 24px;
         margin-left: 16px;
         position: relative;
@@ -54,14 +54,14 @@
 
     i {
       font-size: 24px;
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
       cursor: pointer;
     }
   }
 }
 
 .sub-header {
-  background-color: fColor(bgSelect);
+  background-color: utils.$colors-bgSelect;
   display: flex;
   align-items: center;
   padding: 6px 25px;
@@ -71,12 +71,12 @@
     padding: 0;
     line-height: normal;
     font-weight: normal;
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
   }
 
   p {
-    color: fColor(primary);
-    border-bottom: 2px solid fColor(primary);
+    color: utils.$colors-primary;
+    border-bottom: 2px solid utils.$colors-primary;
     font-size: 12px;
   }
 
@@ -84,7 +84,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    color: fColor(cbluedark);
+    color: utils.$colors-cbluedark;
   }
 
   .element {
@@ -286,7 +286,7 @@
   }
 
   .item-template-original {
-    background-color: fColor(bgSelect);
+    background-color: utils.$colors-bgSelect;
     text-align: right;
     display: flex;
     align-items: center;
@@ -299,16 +299,16 @@
     }
 
     &.is-not-setted>div {
-      background-color: fColor(dataNotSettedBg);
+      background-color: utils.$colors-dataNotSettedBg;
       margin: 4px;
-      border: 1px solid fColor(dataNotSettedBorder);
+      border: 1px solid utils.$colors-dataNotSettedBorder;
       width: calc(100% - 8px);
       height: calc(100% - 8px);
       border-radius: 4px;
       position: relative;
 
       p {
-        color: fColor(cblack);
+        color: utils.$colors-cblack;
       }
     }
 
@@ -324,7 +324,7 @@
         padding: 2px 5px;
         z-index: 0;
         background-color: white;
-        color: fColor(dataToVerifyBtn);
+        color: utils.$colors-dataToVerifyBtn;
         border-radius: 4px;
         font-size: 10px;
         text-align: center;
@@ -332,24 +332,24 @@
     }
 
     &.is-not-setted-to-verify {
-      color: fColor(dataGreyTxt),
+      color: utils.$colors-dataGreyTxt;
     }
 
     &.is-not-setted-set {
-      background-color: fColor(dataNotSettedIsSetBg);
+      background-color: utils.$colors-dataNotSettedIsSetBg;
       display: flex;
       align-items: center;
       justify-content: flex-end;
 
       p {
-        color: fColor(dataNotSettedIsSetColor);
+        color: utils.$colors-dataNotSettedIsSetColor;
       }
     }
 
     &.to-confirm>div {
-      background-color: fColor(dataToCompleteBg);
+      background-color: utils.$colors-dataToCompleteBg;
       margin: 4px;
-      border: 1px solid fColor(dataToCompleteBorder);
+      border: 1px solid utils.$colors-dataToCompleteBorder;
       width: calc(100% - 8px);
       height: calc(100% - 8px);
       border-radius: 4px;
@@ -357,13 +357,13 @@
     }
 
     &.grey-bg {
-      background-color: fColor(dataGreyBg);
+      background-color: utils.$colors-dataGreyBg;
     }
 
     &.confirmed>div {
-      background-color: fColor(dataToCompleteBg);
+      background-color: utils.$colors-dataToCompleteBg;
       margin: 4px;
-      border: 1px solid fColor(dataToCompleteBorder);
+      border: 1px solid utils.$colors-dataToCompleteBorder;
       width: calc(100% - 8px);
       height: calc(100% - 8px);
       border-radius: 4px;
@@ -377,7 +377,7 @@
   }
 
   .blue-bottom {
-    border-bottom: 3px solid fColor(dataCompletionTextColor);
+    border-bottom: 3px solid utils.$colors-dataCompletionTextColor;
   }
 
   .item-template-new-total {
@@ -392,11 +392,11 @@
       transform: translateY(-50%);
 
       &.blue {
-        color: fColor(dataCompletionTextColor);
+        color: utils.$colors-dataCompletionTextColor;
       }
 
       &.grey {
-        color: fColor(cgray);
+        color: utils.$colors-cgray;
       }
     }
 
@@ -407,11 +407,11 @@
       font-size: 14px;
 
       &.blue {
-        color: fColor(dataCompletionTextColor) !important;
+        color: utils.$colors-dataCompletionTextColor !important;
       }
 
       &.grey {
-        color: fColor(cgray);
+        color: utils.$colors-cgray;
       }
     }
   }
@@ -429,11 +429,11 @@
       transform: translateY(-50%);
 
       &.blue {
-        color: fColor(dataCompletionTextColor);
+        color: utils.$colors-dataCompletionTextColor;
       }
 
       &.grey {
-        color: fColor(cgray);
+        color: utils.$colors-cgray;
       }
     }
 
