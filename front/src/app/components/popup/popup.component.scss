@@ -1,7 +1,7 @@
 @use '../../styles/utils.scss' as utils;
 
 :host ::ng-deep .content {
-  color: fColor(headerColor);
+  color: utils.$colors-headerColor;
 }
 
 :host {
@@ -248,27 +248,27 @@
   }
 
   &.blackBackground .popup>div {
-    background-color: fColor(popupDarkBgPopup);
+    background-color: utils.$colors-popupDarkBgPopup;
 
     .title {
-      color: fColor(popupWhiteTitle);
+      color: utils.$colors-popupWhiteTitle;
     }
 
     .close {
       i {
-        color: fColor(darkModeTitle);
+        color: utils.$colors-darkModeTitle;
       }
     }
 
     .actions {
       button {
-        color: fColor(popupDarkBgButton);
-        border: solid 1px fColor(popupDarkBgButton);
+        color: utils.$colors-popupDarkBgButton;
+        border: solid 1px utils.$colors-popupDarkBgButton;
         background-color: transparent;
 
         &.fill {
-          color: fColor(popupDarkBgFillTextButton);
-          background-color: fColor(popupDarkBgButton);
+          color: utils.$colors-popupDarkBgFillTextButton;
+          background-color: utils.$colors-popupDarkBgButton;
           border: none;
         }
       }

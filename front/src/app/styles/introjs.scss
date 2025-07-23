@@ -1,3 +1,5 @@
+@use './utils.scss' as utils;
+
 .introjs-tooltip {
   max-width: 700px !important;
   min-width: 400px !important;
@@ -26,7 +28,7 @@
     padding: 0px 8px !important;
     border-radius: 4px !important;
     color: white !important;
-    background-color: fColor(cblue) !important;
+    background-color: utils.$colors-primary !important;
     text-shadow: none !important;
     cursor: pointer;
 
@@ -55,8 +57,8 @@
   >a {
     margin-bottom: 8px;
     background-color: white;
-    border: 1px solid fColor(cblue);
-    color: fColor(cblue);
+    border: 1px solid utils.$colors-primary;
+    color: utils.$colors-primary;
     height: 32px;
     font-size: 16px;
     line-height: 32px;
@@ -83,7 +85,7 @@
 }
 
 .introjs-bullets ul li a {
-  background-color: fColor(cblue) !important;
+  background-color: utils.$colors-primary !important;
 }
 
 /*** ****/

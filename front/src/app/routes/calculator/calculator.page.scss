@@ -728,7 +728,7 @@ aj-date-select {
 }
 
 aj-referentiel-calculator:nth-child(even) {
-  background-color: fColor(bgRowEvent);
+  background-color: utils.$colors-bgRowEvent;
 }
 
 .sub-main-header {

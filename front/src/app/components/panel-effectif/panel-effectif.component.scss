@@ -1,16 +1,16 @@
-@use '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
   display: block;
 
   &.dark-mode {
     p {
-      color: fColor(grayRow);
+      color: utils.$color-grayRow;
     }
 
     .progress-bar {
       p {
-        color: fColor(grayRow);
+        color: utils.$color-grayRow;
       }
     }
   }
