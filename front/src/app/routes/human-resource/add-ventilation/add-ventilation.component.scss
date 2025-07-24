@@ -83,6 +83,9 @@
 }
 
 .import-confirmation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 14px;
   border: solid 1px utils.$colors-lightBorder;
   padding: 0 12px 3px 6px;
@@ -246,6 +249,7 @@ input[type="number"] {
       }
 
       >.top {
+        padding: 8px;
         margin: initial;
         display: flex;
         justify-content: flex-end;
@@ -254,9 +258,6 @@ input[type="number"] {
           height: fit-content;
         }
 
-        >div {
-          padding: 8px 16px;
-        }
       }
 
       .admin-element {

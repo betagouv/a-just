@@ -98,7 +98,7 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    return list.filter((h) => h.situations && h.situations.length) // remove hr without situation
+    return list
   }
 
   /**
@@ -857,6 +857,40 @@ export default (sequelizeInstance, Model) => {
     )
 
     return results.map(({ id, size }) => ({ id: Number(id), size: Number(size) }))
+  }
+
+  Model.cleanEmptyAgent = async () => {
+    const findAllWhere = await Model.models.HumanResources.findAll({
+      where: {
+        first_name: { [Op.eq]: null },
+        last_name: { [Op.eq]: null },
+        created_at: {
+          [Op.lte]: new Date(Date.now() - 1000 * 60 * 60 * 6),
+        },
+      },
+      include: [
+        {
+          model: Model.models.HRSituations,
+        },
+      ],
+      raw: true,
+    })
+
+    // Trouver ceux qui n'ont pas de jointures (situations ou indisponibilités)
+    const hrWithoutJoins = findAllWhere.filter((hr) => {
+      return hr['HRSituations.id'] === null
+    })
+
+    for (const hr of hrWithoutJoins) {
+      console.log('we removehr', hr.id)
+      await Model.models.HumanResources.destroy({
+        where: {
+          id: hr.id, // Assurez-vous de supprimer par ID
+        },
+      })
+    }
+
+    console.log('Nb Records removed:', hrWithoutJoins.length)
   }
 
   return Model

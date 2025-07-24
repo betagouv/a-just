@@ -127,6 +127,10 @@ export class ExcelService extends MainClass {
    * @returns
    */
   exportExcel() {
+    let startExtract = true
+    setTimeout(() => {
+      if (startExtract) this.appService.appLoading.next(true)
+    }, 5000)
     return this.serverService
       .postWithoutError(`extractor/filter-list`, {
         backupId: this.humanResourceService.backupId.getValue(),
@@ -183,10 +187,27 @@ export class ExcelService extends MainClass {
           // 5. Use `saveAs` to download on browser site.
           .then((buffer) => {
             const filename = this.getFileName()
-            this.isLoading.next(false)
             return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
           })
-          .catch((err) => console.log('Error writing excel export', err))
+          .catch((err) => {
+            console.log('Error writing excel export', err)
+          })
+          .finally(() => {
+            this.isLoading.next(false)
+            startExtract = false
+            this.appService.appLoading.next(false)
+          })
+      })
+      .catch((err) => {
+        console.log('Error writing excel export', err)
+        alert(
+          'L’extraction n’a pas pu être générée car le chargement a été trop long. Vous pouvez renouveler l’opération. Si le problème persiste, n’hésitez pas à contacter notre support.',
+        )
+      })
+      .finally(() => {
+        this.isLoading.next(false)
+        startExtract = false
+        this.appService.appLoading.next(false)
       })
   }
 
@@ -503,7 +524,6 @@ export class ExcelService extends MainClass {
   getExcelFormulaFormat(array: string[], index: number, referentiel: string[], separator = ',') {
     let str = ''
     for (let i = 0; i < array.length; i++) {
-      //console.log(this.findIndexByPrefix(referentiel, array[i]), referentiel, array[i])
       let value = this.numberToExcelColumn(this.findIndexByPrefix(referentiel, array[i]) + 1)
       if (value && value.length) str += value + index + separator
     }
@@ -1252,7 +1272,7 @@ export class ExcelService extends MainClass {
     return report
   }
 
-  getCache(newVersion: boolean) {
+  async getCache(newVersion: boolean) {
     const startTime = performance.now()
 
     return this.serverService
