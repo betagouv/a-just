@@ -1272,7 +1272,7 @@ export class ExcelService extends MainClass {
     return report
   }
 
-  async getCache(newVersion: boolean) {
+  getCache(newVersion: boolean) {
     const startTime = performance.now()
 
     return this.serverService
