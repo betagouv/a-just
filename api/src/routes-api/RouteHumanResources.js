@@ -316,10 +316,8 @@ export default class RouteHumanResources extends Route {
       })
 
     // if filter by user access to categories
-    if (categories.length !== allCategories.length) {
-      const ids = categories.map((c) => c.id)
-      hr = hr.filter((h) => (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
-    }
+    const ids = categories.map((c) => c.id)
+    hr = hr.filter((h) => h.situations.length === 0 || (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
     console.timeEnd('filter list 7')
 
     this.sendOk(ctx, {

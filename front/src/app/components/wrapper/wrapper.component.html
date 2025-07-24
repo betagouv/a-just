@@ -8,43 +8,43 @@
       <div class="logo-ajust white-mode logo-white" [title]="'Déconnexion'" (click)="popin = true"></div>
 
       @if (popin) {
-        <aj-popup [closeIcon]="true" (onClose)="popin = false">
-          <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
-          <div class="content-popup">
-            <button (click)="onSelectAction('logout')">Oui</button>
-            <button (click)="popin = false">Non</button>
-          </div>
-        </aj-popup>
+      <aj-popup [closeIcon]="true" (onClose)="popin = false">
+        <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+        <div class="content-popup">
+          <button (click)="onSelectAction('logout')">Oui</button>
+          <button (click)="popin = false">Non</button>
+        </div>
+      </aj-popup>
       }
 
       <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber" (click)="popin = true"></div>
     </div>
 
     @if (hrBackups.length) {
-      <div class="juridiction">
-        <div class="juridiction-title">
-          <h6>{{ hrBackup && hrBackup.label }}</h6>
-          @if (hrBackups && hrBackups.length > 1) {
-            <mat-icon [matMenuTriggerFor]="menu">expand_more</mat-icon>
+    <div class="juridiction">
+      <div class="juridiction-title">
+        <h6>{{ hrBackup && hrBackup.label }}</h6>
+        @if (hrBackups && hrBackups.length > 1) {
+        <mat-icon [matMenuTriggerFor]="menu">expand_more</mat-icon>
+        }
+        <mat-menu #menu="matMenu">
+          @for (bu of hrBackups; track bu) {
+          <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
+            {{ bu.label }}
+          </button>
           }
-          <mat-menu #menu="matMenu">
-            @for (bu of hrBackups; track bu) {
-              <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
-                {{ bu.label }}
-              </button>
-            }
-          </mat-menu>
-        </div>
+        </mat-menu>
       </div>
+    </div>
     }
 
     <div class="menu-scrollable">
       @for (item of menu; track item) {
-        <div class="menu-item top" [class.selected]="isSelected(item)">
-          <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
-            {{ item.label }}
-          </a>
-        </div>
+      <div class="menu-item top" [class.selected]="isSelected(item)">
+        <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
+          {{ item.label }}
+        </a>
+      </div>
       }
 
       <div class="menu-item top">
@@ -52,35 +52,35 @@
           <a>Outils</a>
           <mat-icon class="arrow-list">{{
             openTools ? 'expand_less' : 'expand_more'
-          }}</mat-icon>
+            }}</mat-icon>
         </div>
       </div>
 
       @if (openTools) {
-        <div class="sub-tools">
-          <p (click)="downloadAsset('guide-utilisateur')">
-            Le guide utilisateur
-            <i class="ri-external-link-line"
+      <div class="sub-tools">
+        <p (click)="downloadAsset('guide-utilisateur')">
+          Le guide utilisateur
+          <i class="ri-external-link-line"
             (click)="$event.stopPropagation(); downloadAsset('guide-utilisateur', true)"></i>
-          </p>
-          <p (click)="downloadAsset('nomenclature')">
-            La nomenclature
-            <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('nomenclature', true)"></i>
-          </p>
-          <p (click)="downloadAsset('data-book')">
-            Le data-book
-            <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('data-book', true)"></i>
-          </p>
-          <p (click)="downloadAsset('calculatrice')">La calculatrice <i class="ri-download-line"></i></p>
-          <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
-            Les extracteurs
-          </a>
-          <p (click)="downloadAsset('fiche-agent',true)">Modèle de feuille de temps <i class="ri-download-line"></i></p>
-          @if (userService.canViewAverageTime()) {
-            <a [routerLink]="['/' + 'temps-moyens']">Référentiels de temps moyens
-            </a>
-          }
-        </div>
+        </p>
+        <p (click)="downloadAsset('nomenclature')">
+          La nomenclature
+          <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('nomenclature', true)"></i>
+        </p>
+        <p (click)="downloadAsset('data-book')">
+          Le data-book
+          <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('data-book', true)"></i>
+        </p>
+        <p (click)="downloadAsset('calculatrice')">La calculatrice <i class="ri-download-line"></i></p>
+        <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
+          Les extracteurs
+        </a>
+        <p (click)="downloadAsset('fiche-agent',true)">Modèle de feuille de temps <i class="ri-download-line"></i></p>
+        @if (userService.canViewAverageTime()) {
+        <a [routerLink]="['/' + 'temps-moyens']">Référentiels de temps moyens
+        </a>
+        }
+      </div>
       }
 
       <div class="flex-1"></div>
@@ -96,33 +96,32 @@
       <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
       <p>Déconnexion</p>
     </div> -->
+    </div>
   </div>
-</div>
 
-<div class="contener" #contener title="" id="wrapper-contener" [class.duringPrint]="duringPrint">
-  <div class="header">
-    <div class="top-header" id="top">
-      <div class="top-header-back-title">
-        @if (backUrl) {
+  <div class="contener" #contener title="" id="wrapper-contener" [class.duringPrint]="duringPrint">
+    <div class="header">
+      <div class="top-header" id="top">
+        <div class="top-header-back-title">
+          @if (backUrl) {
           <aj-back-button [routerLink]="backUrl" [fragment]="backAnchor" class="back-url"
             [ngClass]="{ 'is-dark-screen': isDarkScreen }" />
-        }
-        @if (actionsLeftTemplate) {
+          }
+          @if (actionsLeftTemplate) {
           <ng-container *ngTemplateOutlet="actionsLeftTemplate"></ng-container>
-        }
-        <div>
-          <div class="title-with-doc">
-            <h3 [innerHTML]="title"></h3>
-            @if (documentation) {
-              <aj-help-button (click)="onTogglePanelHelper()"
-              class="documentation no-print"></aj-help-button>
-            }
+          }
+          <div>
+            <div class="title-with-doc">
+              <h3 [innerHTML]="title"></h3>
+              @if (documentation) {
+              <aj-help-button (click)="onTogglePanelHelper()" class="documentation no-print"></aj-help-button>
+              }
+            </div>
+            <p class="subtitle">
+              <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
+            </p>
           </div>
-          <p class="subtitle">
-            <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
-          </p>
-        </div>
-        <!-- <ng-template [ngIf]="dateSelector">
+          <!-- <ng-template [ngIf]="dateSelector">
         <aj-date-select
           title={{dateSelector.title}}
           dateType={{dateSelector.dateType}}
@@ -132,77 +131,77 @@
           >
         </aj-date-select>
       </ng-template> -->
-      @if (titleTemplate) {
+          @if (titleTemplate) {
+          <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+          }
+        </div>
+        @if (dateSelector) {
+        <aj-date-select [title]="dateSelector.title" [dateType]="dateSelector.dateType" [value]="dateSelector.value"
+          [min]="dateSelector.minDate" [showArrow]="dateSelector.showArrow" (valueChange)="changeMonth($event)"
+          class="date-selector">
+        </aj-date-select>
+        }
+        @if (titleTemplate) {
         <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+        }
+        @if (!alignLeft) {
+        <div class="space"></div>
+        }
+        <div class="actions">
+          <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+        </div>
+      </div>
+      <div class="bottom-header">
+        @if (actionTemplateBottom) {
+        <ng-template class="actions">
+          <ng-container *ngTemplateOutlet="actionTemplateBottom"></ng-container>
+        </ng-template>
+        }
+      </div>
+      @if (isLoading) {
+      <div class="progress-bar">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
       }
     </div>
-    @if (dateSelector) {
-      <aj-date-select [title]="dateSelector.title" [dateType]="dateSelector.dateType" [value]="dateSelector.value"
-        [min]="dateSelector.minDate" [showArrow]="dateSelector.showArrow" (valueChange)="changeMonth($event)"
-        class="date-selector">
-      </aj-date-select>
-    }
-    @if (titleTemplate) {
-      <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
-    }
-    @if (!alignLeft) {
-      <div class="space"></div>
-    }
-    <div class="actions">
-      <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
+    <div class="content" #content id="content" (scroll)="onScroll($event)" [class.duringPrint]="duringPrint">
+      <ng-content></ng-content>
     </div>
   </div>
-  <div class="bottom-header">
-    @if (actionTemplateBottom) {
-      <ng-template class="actions">
-        <ng-container *ngTemplateOutlet="actionTemplateBottom"></ng-container>
-      </ng-template>
-    }
-  </div>
-  @if (isLoading) {
-    <div class="progress-bar">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div>
-  }
-</div>
-<div class="content" #content id="content" (scroll)="onScroll($event)" [class.duringPrint]="duringPrint">
-  <ng-content></ng-content>
-</div>
-</div>
 </div>
 
 @if (panelHelper) {
-  <div class="panel-helper animate__animated animate__bounceInLeft">
-    <div class="panel-header"
-      [ngStyle]="{'background-color' : documentationToShow?.bgColor ? documentationToShow?.bgColor  : '#33569e' }">
-      <div class="over-title" [ngClass]="{'over-title-small': !documentationToShow?.printSubTitle }">
-        <div class="panel-header-closing-row">
-          <h6>{{ documentationToShow?.title }}</h6>
-          <i class="ri-close-line"
-            [ngStyle]="{'color': documentationToShow?.closeColor ? documentationToShow?.closeColor : 'white'}"
+<div class="panel-helper animate__animated animate__bounceInLeft">
+  <div class="panel-header"
+    [ngStyle]="{'background-color' : documentationToShow?.bgColor ? documentationToShow?.bgColor  : '#33569e' }">
+    <div class="over-title" [ngClass]="{'over-title-small': !documentationToShow?.printSubTitle }">
+      <div class="panel-header-closing-row">
+        <h6>{{ documentationToShow?.title }}</h6>
+        <i class="ri-close-line"
+          [ngStyle]="{'color': documentationToShow?.closeColor ? documentationToShow?.closeColor : 'white'}"
           (click)="panelHelper = false"></i>
-        </div>
-        @if (documentationToShow?.printSubTitle) {
-          <p>
-            <i class="ri-lightbulb-flash-line"></i>
-            <span>{{
-              documentationToShow?.subTitle || 'Comment ça marche ?'
-            }}</span>
-          </p>
-        }
       </div>
+      @if (documentationToShow?.printSubTitle) {
+      <p>
+        <i class="ri-lightbulb-flash-line"></i>
+        <span>{{
+          documentationToShow?.subTitle || 'Comment ça marche ?'
+          }}</span>
+      </p>
+      }
     </div>
-    <iframe [src]="documentationToShow?.path || '' | sanitizeResourceUrl"
-    [ngStyle]="{'margin' : documentationToShow?.printSubTitle ? '-148px 8px 8px 8px' : '-90px 8px 8px 8px' }"></iframe>
   </div>
+  <iframe [src]="documentationToShow?.path || '' | sanitizeResourceUrl"
+    [ngStyle]="{'margin' : documentationToShow?.printSubTitle ? '-148px 8px 8px 8px' : '-90px 8px 8px 8px' }"></iframe>
+</div>
 }
 
 <ng-template #defaultActionTemplate></ng-template>
 
 <ng-template #defaultSubtitleTemplate>{{ subtitle }}
   @if (subtitleName !== '') {
-    <label class="subtitle-name">{{
-      subtitleName
+  <label class="subtitle-name">{{
+    subtitleName
     }}</label>
   }
 </ng-template>

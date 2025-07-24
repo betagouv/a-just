@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal, ViewChild, ViewChildren, ElementRef, QueryList, WritableSignal } from '@angular/core'
+import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef, Signal, WritableSignal } from '@angular/core'
 import { FormControl, FormGroup, FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import _, { maxBy, minBy, orderBy } from 'lodash'
@@ -189,11 +189,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   /**
    * Current etp
    */
-  currentETP: WritableSignal<number | null> = signal(null)
+  currentETP: number | null = null
   /**
    * Liste des alertes à afficher
    */
-  alertList: string[] = []
+  alertList: WritableSignal<string[]> = signal([])
 
   hasInitCalendars = false
   hasInitInputs = false
@@ -352,19 +352,25 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.categoryName = ''
     }
 
+    console.log('this.currentHR', this.currentHR)
+
     this.formatHRHistory()
   }
 
   /**
    * Génération des situations artificielle ou non
    */
+
   formatHRHistory() {
+    this.humanResourceService.alertList.set([])
+    this.allIndisponibilities = this.currentHR?.indisponibilities || []
+
     if (this.fonctions.length === 0 || !this.currentHR || this.onEditIndex !== null) {
       return
     }
 
     // if no situation and createdAt is more than 6 hours ago
-    if (this.currentHR.situations.length === 0 && this.currentHR.createdAt && getTime() - getTime(this.currentHR.createdAt) > 6 * 60 * 60 * 1000) {
+    if (this.currentHR.situations.length === 0 && this.currentHR.createdAt && getTime() - getTime(this.currentHR.createdAt) > 60 * 1000) {
       this.onEditIndex = null
       return
     }
@@ -373,7 +379,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.historiesOfThePast = []
     this.historiesOfTheFutur = []
 
-    this.allIndisponibilities = this.currentHR.indisponibilities || []
     const situations = orderBy(this.currentHR.situations || [], [
       function (o: HRSituationInterface) {
         const date = new Date(o.dateStart)
@@ -437,7 +442,10 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
         lastSituationId = (findSituation && findSituation.id) || null
         idsDetected = delta
-        let etp = (findSituation && findSituation.etp) || 0
+        let etp = findSituation !== null ? findSituation.etp : null
+        if (findIndispos.length !== 0 && etp === null) {
+          etp = null
+        }
 
         if (currentDateEnd && currentDateEnd.getTime() <= currentDate.getTime()) {
           etp = 0
@@ -508,8 +516,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       if (((dateStart && dateStart.getTime() <= today().getTime()) || !dateStart) && ((dateStop && dateStop.getTime() >= today().getTime()) || !dateStop)) {
         this.indexOfTheFuture = index
-        this.currentETP.set(h.etp)
-        this.initialETP = this.currentETP()
+        this.currentETP = this.histories[index].etp
+        this.initialETP = this.currentETP
       }
     })
 
@@ -551,6 +559,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.showActuelPanel = true
     }
 
+    console.log('this.showActuelPanel', this.histories)
+
     this.preOpenSituation()
   }
 
@@ -582,6 +592,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async updateHuman(nodeName: string, value: any) {
     if (this.currentHR) {
+      this.appService.appLoading.next(true)
       if (value && typeof value.innerText !== 'undefined') {
         value = value.innerText
       }
@@ -598,6 +609,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         false,
       )
 
+      this.appService.appLoading.next(false)
+
       /* console.log({
         [nodeName]: value,
       }) */
@@ -612,8 +625,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     if (removeIndispo && this.currentHR && this.currentHR.indisponibilities.length) {
       await this.updateHuman('indisponibilities', [])
     }
-
-    console.log('on cancel')
 
     this.onEditIndex = null
 
@@ -862,6 +873,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onRemoveSituation(id: number) {
     const callback = async (forceAlert = true) => {
+      this.appService.appLoading.next(true)
       const returnValue = await this.humanResourceService.removeSituation(id, forceAlert)
       this.onEditIndex = null
 
@@ -870,8 +882,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         // force to not show on boarding after delete last situation
         this.onLoad(returnValue)
       }
-
+      this.appService.appLoading.next(false)
       if (this.histories.length === 0) {
+        this.currentETP = null
         this.onEditIndex = null
       }
     }
@@ -1008,7 +1021,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   updateETP(etp: number | null) {
     if (!this.initialETP) {
-      this.currentETP.set(etp)
+      this.currentETP = etp
     }
   }
   groupIndispoByCategory(): any {
@@ -1024,23 +1037,18 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Fonction de mise à jour des alertes
    * @param updatedList
    */
-  onAlertsUpdated({ updatedList, index }: { updatedList?: string[]; index?: number }) {
-    if (updatedList !== undefined) {
-      this.alertList = updatedList
-
-      // Scroll to the "Start Date" selector if it's the last element to complete.
-      // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
-      if (this.alertList.length > 0) {
-        if (this.alertList.includes('activitiesStartDate')) {
-          if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
-        } else if (this.alertList.includes('etp')) {
-          this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
-        }
+  onAlertsUpdated({ tag }: { tag: string }) {
+    // Scroll to the "Start Date" selector if it's the last element to complete.
+    // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
+    if (this.humanResourceService.alertList().length > 0) {
+      if (this.humanResourceService.alertList().includes('activitiesStartDate')) {
+        if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
+      } else if (this.humanResourceService.alertList().includes('etp')) {
+        this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
       }
     }
-    if (index !== undefined) {
-      this.alertList.splice(index, 1)
-    }
+
+    //this.humanResourceService.removeAlert(tag)
   }
 
   /**

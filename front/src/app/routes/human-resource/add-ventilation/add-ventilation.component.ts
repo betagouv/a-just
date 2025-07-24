@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, Output, EventEmitter, SimpleChanges, ViewChild, ElementRef } from '@angular/core'
+import { Component, Input, OnChanges, Output, EventEmitter, SimpleChanges, ViewChild, ElementRef, inject, effect } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
 import { sumBy } from 'lodash'
 import * as xlsx from 'xlsx'
@@ -73,6 +73,7 @@ export interface importedSituation {
   styleUrls: ['./add-ventilation.component.scss'],
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
+  humanResourceService = inject(HumanResourceService)
   @ViewChild('bottomContainerTarget') bottomContainerTargetRef!: ElementRef
 
   /**
@@ -128,10 +129,6 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   @Input() setValueEtp: (val: number | null) => void = () => {}
   /**
-   * Liste des alertes
-   */
-  @Input() alertList: string[] = []
-  /**
    * Event lors de la sauvegarde
    */
   @Output() onSaveConfirm = new EventEmitter()
@@ -151,8 +148,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    updatedList?: string[]
-    index?: number
+    tag: string
   }>()
   /**
    * Réferentiel des indispo
@@ -220,13 +216,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Constructeur
    * @param hrFonctionService
    * @param hrCategoryService
-   * @param humanResourceService
    * @param appService
    */
   constructor(
     private hrFonctionService: HRFonctionService,
     private hrCategoryService: HRCategoryService,
-    private humanResourceService: HumanResourceService,
     private appService: AppService,
     private calculatriceService: CalculatriceService,
     private serverService: ServerService,
@@ -235,6 +229,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private referentielService: ReferentielService,
   ) {
     super()
+
+    effect(() => {
+      console.log('this.alertSet', this.alertSet)
+    })
   }
 
   /**
@@ -265,13 +263,13 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
           // Suprpession de l'alerte
           let index = -1
-          index = this.alertList.indexOf('category')
+          index = this.humanResourceService.alertList().indexOf('category')
           if (index !== -1) {
-            this.alertSet.emit({ index: index })
+            this.alertSet.emit({ tag: 'category' })
           }
-          index = this.alertList.indexOf('fonction')
+          index = this.humanResourceService.alertList().indexOf('fonction')
           if (index !== -1) {
-            this.alertSet.emit({ index: index })
+            this.alertSet.emit({ tag: 'fonction' })
           }
         })
       }),
@@ -297,9 +295,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         }
         // Suppression de l'alert
         let index = -1
-        index = this.alertList.indexOf('etp')
+        index = this.humanResourceService.alertList().indexOf('etp')
         if (index !== -1) {
-          this.alertSet.emit({ index: index })
+          this.alertSet.emit({ tag: 'etp' })
         }
       }),
     )
@@ -308,9 +306,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.form.get('activitiesStartDate')?.valueChanges.subscribe((value) => {
         if (value) {
           let index = -1
-          index = this.alertList.indexOf('activitiesStartDate')
+          index = this.humanResourceService.alertList().indexOf('activitiesStartDate')
           if (index !== -1) {
-            this.alertSet.emit({ index: index })
+            this.alertSet.emit({ tag: 'activitiesStartDate' })
           }
         }
       }),
@@ -327,10 +325,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
     if (changes['indisponibilities']) {
       this.indisponibilitiesFiltered = [
-        ...this.indisponibilities.filter((i) => i.id < 0),
-        ...this.isBiggerThanArray(
-          this.indisponibilities.filter((i) => i.id >= 0),
-          'dateStop',
+        ...this.indisponibilities.filter(
+          (i) =>
+            i.id < 0 || !i.dateStop || today(i.dateStart).getTime() >= today().getTime() || (i.createdAt && today(i.createdAt).getTime() >= today().getTime()),
         ),
       ]
     }
@@ -394,41 +391,50 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const indisponibilites = this.human?.indisponibilities || []
     const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some((c) => c.contentieux.checkVentilation === false)
 
-    this.alertList = []
+    this.humanResourceService.alertList.set([])
 
     if (this.basicData!.controls['firstName'].value === '' || this.basicData!.controls['firstName'].value === 'Prénom') {
-      this.alertList.push('firstName')
+      this.humanResourceService.alertList.update((list) => [...list, 'firstName'])
     }
 
     if (this.basicData!.controls['lastName'].value === '' || this.basicData!.controls['lastName'].value === 'Nom') {
-      this.alertList.push('lastName')
+      this.humanResourceService.alertList.update((list) => [...list, 'lastName'])
     }
 
-    if (!(this.human && this.human.dateStart)) {
-      this.alertList.push('startDate')
+    console.log('this.human', this.human)
+    if (this.human && !this.human.dateStart) {
+      this.humanResourceService.alertList.update((list) => [...list, 'startDate'])
+    } else {
+      this.humanResourceService.removeAlert('startDate')
     }
 
     if (!cat) {
-      this.alertList.push('category')
+      this.humanResourceService.alertList.update((list) => [...list, 'category'])
+    } else {
+      this.humanResourceService.removeAlert('category')
     }
 
     if (!fonct) {
-      this.alertList.push('fonction')
+      this.humanResourceService.alertList.update((list) => [...list, 'fonction'])
+    } else {
+      this.humanResourceService.removeAlert('fonction')
     }
 
     const etp = this.form.get('etp')?.value
     if (etp === null) {
-      this.alertList.push('etp')
+      this.humanResourceService.alertList.update((list) => [...list, 'etp'])
     }
 
     if (!activitiesStartDate) {
-      this.alertList.push('activitiesStartDate')
+      this.humanResourceService.alertList.update((list) => [...list, 'activitiesStartDate'])
       this.printErrorDateStart = true
     }
-    if (this.alertList.length > 0) {
-      console.log('AlertList:', this.alertList)
 
-      this.alertSet.emit({ updatedList: this.alertList })
+    if (this.humanResourceService.alertList().length > 0) {
+      console.log('alertList', this.humanResourceService.alertList)
+      this.humanResourceService.alertList().map((tag) => {
+        this.alertSet.emit({ tag })
+      })
       return
     }
 
@@ -458,19 +464,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return
     }
 
-    // TODO pourquoi checkIfIndispoIgnoreControlPercentVentilation ?
-    console.log(
-      'checkIfIndispoIgnoreControlPercentVentilation',
-      checkIfIndispoIgnoreControlPercentVentilation,
-      withoutPercentControl,
-      fixDecimal(sumBy(this.updatedReferentiels, 'percent')),
-    )
     if (!checkIfIndispoIgnoreControlPercentVentilation && !withoutPercentControl) {
       const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
       if (totalAffected > 100) {
         this.appService.alert.next({
           title: 'Attention',
-          text: `L’ensemble de vos affectations atteint un total de ${totalAffected}% alors que vous ne pouvez pas dépasser 100% du temps de travail.`,
+          text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`,
         })
         return
       } else if (totalAffected < 100) {
@@ -908,8 +907,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
-  removeAlertItem(index: number) {
-    this.alertSet.emit({ index: index })
+  removeAlertItem(tag: string) {
+    this.humanResourceService.removeAlert(tag)
   }
 
   scrollToBottomElement() {

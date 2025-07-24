@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core'
+import { inject, Injectable, Input, Signal, signal, WritableSignal } from '@angular/core'
 import { maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { ActivitiesService } from '../activities/activities.service'
@@ -95,6 +95,10 @@ export class HumanResourceService {
    * Last backup Id
    */
   lastBackupId: number | null = null
+  /**
+   * Liste des alertes
+   */
+  @Input() alertList: WritableSignal<string[]> = signal([])
 
   /**
    * Constructeur qui lance le chargement d'une juridiction au chargement de la page
@@ -681,5 +685,13 @@ export class HumanResourceService {
     })
 
     return subTotalEtp
+  }
+
+  removeAlert(tag: string) {
+    const index = this.alertList().indexOf(tag)
+    if (index !== -1) {
+      this.alertList.update((list) => list.filter((t) => t !== tag))
+    }
+    console.log('this.alertList', this.alertList())
   }
 }

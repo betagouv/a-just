@@ -107,6 +107,7 @@ const cspConfig = {
         "'sha256-Mj/pDR/CuVebTo+8zwX6PU1+MXNnrzFL+dgRa0Q0JF0='",
         "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='",
         "'sha256-7ZHILzwrPOtuEc8fFrW3q+2DMmiMh6VwC/wBhNbTuUY='",
+        "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='",
       ],
       'worker-src': ['blob:'],
       'frame-src': [
@@ -277,7 +278,7 @@ export default class App extends AppBase {
       addDefaultBody(),
       compress({}),
       givePassword,
-      //helmet(cspConfig),
+      helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {

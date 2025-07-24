@@ -1,5 +1,5 @@
 import { HONEY_IP_BLOCK_AGAIN, HONEY_IP_TRAPPED } from '../../constants/log-codes'
-import config from "config"
+import config from 'config'
 
 const TRAPS = [
   'api/sn',
@@ -134,10 +134,10 @@ export default async (ctx, next, models) => {
   const ip = ctx.request.ip
   const url = ctx.request.url
 
-  if(config.useAgent) {
+  if (config.useAgent) {
     const useAgentSplited = (config.useAgent || '').toLowerCase().split(',')
-    const headerUserAgent = ctx.header['user-agent'];
-    if(useAgentSplited.some(w => headerUserAgent.includes(w))) {
+    const headerUserAgent = ctx.header['user-agent']
+    if (useAgentSplited.some((w) => (headerUserAgent || '').includes(w))) {
       await next()
       return
     }
@@ -145,7 +145,7 @@ export default async (ctx, next, models) => {
 
   //console.log('ip', ip, config.ipFilter.whitelist.some(w => ip.includes(w)))
 
-  if(config.ipFilter.whitelist.some(w => ip.includes(w))) {
+  if (config.ipFilter.whitelist.some((w) => ip.includes(w))) {
     await next()
     return
   }
