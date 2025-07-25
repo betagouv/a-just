@@ -35,16 +35,13 @@
          input {
              text-align: center;
              font-weight: normal;
-             background-color: utils.$colors-bgColor;
              border: none;
              border-top-left-radius: 4px;
              border-top-right-radius: 4px;
              position: relative;
-             border-bottom: solid 2px utils.$colors-bgColor;
 
              &:focus {
                  outline: none;
-                 border-bottom: solid 2px utils.$colors-cblack !important;
              }
          }
 

@@ -3,9 +3,9 @@
 .header-list {
   display: flex;
   width: 100%;
-  background-color: utils.$colors-bgSelect;
   z-index: 1;
   position: sticky;
+  background-color: #1a1c34 !important;
   top: 0;
 
   .profil {
@@ -42,7 +42,7 @@
         width: fit-content;
 
         &.selected {
-          background-color: utils.$colors-bgSelect;
+          background-color: utils.$colors-darkModeBgMenuSelected;
           color: utils.$colors-bgSelect;
         }
 
@@ -54,18 +54,18 @@
 
       p.label {
         flex: 1;
-        color: utils.$colors-cblack;
+        color: #8585f6;
       }
 
       p.btn {
-        border: 1px solid utils.$colors-cblack;
-        color: utils.$colors-cblack;
+        border: 1px solid #8585f6;
+        color: #8585f6;
         padding: 4px 12px;
         cursor: pointer;
 
         &.selected {
-          background-color: utils.$colors-cblack;
-          color: utils.$colors-bgSelect;
+          background-color: #8585f6;
+          color: white;
         }
       }
     }
@@ -122,10 +122,10 @@
       cursor: pointer;
 
       &.selected {
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-darkModeBgMenuSelected;
 
         .etp {
-          background-color: utils.$colors-bgSelect;
+          background-color: #272747;
         }
 
         .filter i {
@@ -153,11 +153,11 @@
       >.etp {
         height: 23px;
         border-radius: 4px;
-        background-color: utils.$colors-bgSelect;
+        background-color: #272747;
         margin: 0 4px;
 
         p {
-          color: utils.$colors-cblack;
+          color: #8585f6;
           width: 100%;
           text-align: center;
         }
@@ -191,7 +191,7 @@
 .indicators {
   display: flex;
   width: 100%;
-  background-color: utils.$colors-bgSelect;
+  background-color: #1a1c34 !important;
   margin-bottom: 1px;
 
   .profil {
@@ -210,8 +210,8 @@
           width: 32px;
           height: 32px;
           margin-right: 8px;
-          border: 1px solid utils.$colors-cblack;
-          color: utils.$colors-cblack;
+          border: 1px solid #8585f6;
+          color: #8585f6;
           text-align: center;
           line-height: 32px;
           cursor: pointer;
@@ -228,10 +228,10 @@
         margin: 8px 18px 8px 0;
         height: 32px;
         line-height: 32px;
-        border: solid 1px utils.$colors-cblack;
+        border: solid 1px #8585f6;
         font-size: 14px;
         font-weight: 500;
-        color: utils.$colors-cblack;
+        color: #8585f6;
         border-radius: 0;
         background-color: transparent;
         cursor: pointer;
@@ -328,12 +328,12 @@
           >p {
             text-align: center;
             font-weight: bold;
-            color: utils.$colors-cblack;
+            color: #718096;
           }
         }
 
         >div.taux {
-          background-color: utils.$colors-bgSelect;
+          background-color: #272747;
           border-radius: 3.7px;
           display: flex;
           align-items: center;
@@ -345,12 +345,12 @@
           }
 
           &.show-reel-values {
-            background-color: utils.$colors-primary;
+            background-color: #272747;
           }
         }
 
         >div.dtes {
-          background-color: utils.$colors-bgSelect;
+          background-color: #272747;
           border-radius: 4px;
           height: 100%;
           display: flex;
@@ -363,10 +363,10 @@
           }
 
           &.show-reel-values {
-            background-color: utils.$colors-primary;
+            background-color: #272747;
 
             p {
-              color: utils.$colors-bgSelect;
+              color: white;
             }
           }
         }
@@ -404,7 +404,6 @@
 
 .item-list {
   margin-top: 4px;
-  background-color: utils.$colors-bgSelect;
   display: flex;
   border-radius: 4px;
 
@@ -414,6 +413,7 @@
 
   .activities {
     flex-direction: column;
+    background-color: #272747;
     flex: 1;
     display: flex;
     padding-right: 16px;
@@ -435,7 +435,7 @@
     }
 
     .profil.item .read-etp {
-      background-color: utils.$colors-bgSelect;
+      background-color: #1b1b35;
     }
 
     .profil.item .text .updated-at {
@@ -470,6 +470,7 @@
       display: flex;
       flex-direction: column;
       text-decoration: none;
+      background-color: #272747;
 
       .name {
         margin-bottom: 8px;
@@ -495,7 +496,7 @@
           }
 
           mat-icon {
-            color: utils.$colors-bgSelect;
+            color: #6a6af4;
           }
 
           .tooltiptext {
@@ -529,12 +530,11 @@
 
           &.function {
             color: utils.$colors-bgSelect;
-            background-color: utils.$colors-primary;
+            background-color: #417dc4;
           }
 
           &.etp {
             color: utils.$colors-bgSelect;
-            background-color: utils.$colors-bgSelect;
           }
 
           mat-icon {
@@ -561,7 +561,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: utils.$colors-bgSelect;
+      background-color: #1b1b35;
 
       .label {
         font-size: 12px;
@@ -589,7 +589,7 @@
 .title {
   display: flex;
   align-items: center;
-  background-color: utils.$colors-bgSelect;
+  background-color: utils.$colors-darkModeBgMenuSelected;
   padding: 0 16px 16px 16px;
 
   aj-select,
@@ -628,7 +628,7 @@ progression-bar {
 .check-item {
   width: 16px;
   height: 16px;
-  border: 1px solid utils.$colors-cblack;
+  border: 1px solid #8585f6;
   border-radius: 4px;
   cursor: pointer;
   position: relative;
