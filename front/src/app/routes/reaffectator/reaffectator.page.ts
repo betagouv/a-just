@@ -548,6 +548,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             orignalCurrentActivities: h.currentActivities,
             isModify: false,
           }))
+          console.log('allHr', allHr)
           return {
             ...i,
             allHr,
@@ -560,10 +561,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             })),
           }
         })
-
+      })
+      .then(() => {
         this.findPersonWithoutVentilations()
         this.orderListWithFiltersParams()
-
+      })
+      .finally(() => {
         this.appService.appLoading.next(false)
       })
   }

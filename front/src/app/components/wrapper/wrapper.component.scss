@@ -243,8 +243,8 @@
     }
 
     .menu {
-      background-color: utils.$colors-darkModeBgMenuSelected;
-      border-right: 1px solid utils.$colors-darkModeBgMenu;
+      background-color: utils.$colors-darkModeBgMenuSelected !important;
+      border-right: 1px solid utils.$colors-darkModeBgMenu !important;
       margin-right: 0px;
       z-index: 200;
 
@@ -263,7 +263,7 @@
         }
 
         &.selected {
-          background-color: utils.$colors-darkModeBgMenuSelected;
+          background-color: utils.$colors-darkModeBgMenuSelected !important;
 
           a,
           p {
@@ -291,7 +291,7 @@
 
     .contener {
       .content {
-        background-color: utils.$colors-cblackdark;
+        background-color: utils.$colors-cblackdark !important;
       }
     }
   }

@@ -8,7 +8,7 @@
 
   &.dark-mode {
     .title {
-      color: utils.$colors-white;
+      color: utils.$colors-white !important;
 
       &.alert {
         color: utils.$colors-white;
