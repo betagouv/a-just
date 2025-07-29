@@ -1,8 +1,13 @@
 describe("Ventilateur", () => {
   beforeEach(() => {
     cy.login();
+  });
+
+  // Vérification que la page du ventilateur se charge correctement
+  it("Check the ventilateur page load", () => {
     cy.visit("/ventilations");
-    cy.wait(10000);
+    cy.wait(1000);
+    cy.url().should("include", "/ventilations");
   });
 
   it('Check that the button on top "Simuler des affectations" is there and when clicked, redirect to the right page ', () => {
