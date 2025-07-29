@@ -54,15 +54,15 @@ export default class App {
     await onGetIelstListApi().then(async (response) => {
       if (response) {
         // CIVIL
-        // await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
-        // await this.formatAndGroupJuridiction(
-        //   tmpFolder,
-        //   outputFolder,
-        //   outputAllFolder,
-        //   categoriesOfRules,
-        //   referentiel,
-        //   response
-        // );
+        await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
+        await this.formatAndGroupJuridiction(
+          tmpFolder,
+          outputFolder,
+          outputAllFolder,
+          categoriesOfRules,
+          referentiel,
+          response
+        );
         // WIP datas pénal
         // await this.getGroupByJuridictionPenalAndSpe(tmpFolder, inputFolder, response);
         // await this.formatAndGroupJuridictionPenal(
@@ -79,7 +79,7 @@ export default class App {
           inputFolder,
           response
         );
-        await this.formatAndGroupJuridictionSpecialise(
+        this.formatAndGroupJuridictionSpecialise(
           tmpFolder,
           outputFolder,
           outputAllFolder,
