@@ -4,8 +4,12 @@ import { getShortMonthString } from "../../support/utils/dates";
 describe("Cockpit", () => {
   before(() => {
     cy.login();
+  });
+
+  it("Check the cockpit page load", () => {
     cy.visit("/cockpit");
-    cy.wait(10000);
+    cy.wait(1000);
+    cy.url().should("include", "/cockpit");
   });
 
   it("Check the name page is displayed", () => {
