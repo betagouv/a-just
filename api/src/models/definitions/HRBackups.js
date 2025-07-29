@@ -21,6 +21,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       },
+      stat_exclusion: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

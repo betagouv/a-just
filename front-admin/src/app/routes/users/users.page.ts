@@ -5,7 +5,7 @@ import { UserInterface } from '../../interfaces/user-interface';
 import { UserService } from '../../services/user/user.service';
 import { PopupComponent } from '../../components/popup/popup.component';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { PageAccessInterface } from '../../interfaces/page-access-interface';
 import { BackupInterface } from '../../interfaces/backup';
@@ -23,9 +23,8 @@ interface FormSelection {
     PopupComponent,
     WrapperComponent,
     MatSortModule,
-    CommonModule,
-    FormsModule,
-  ],
+    FormsModule
+],
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
 })

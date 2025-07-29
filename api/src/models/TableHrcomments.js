@@ -24,7 +24,6 @@ export default (sequelizeInstance, Model) => {
     });
 
     for (let i = 0; i < comments.length; i++) {
-      console.log(comments[i]);
       comments[i] = {
         commentId: comments[i].id,
         comment: comments[i].comment,
@@ -148,7 +147,6 @@ export default (sequelizeInstance, Model) => {
       updated_at: new Date(),
     });
 
-    // save cache
     await Model.models.HumanResources.getHr(hrId);
 
     return com.dataValues.updatedAt;
@@ -178,7 +176,6 @@ export default (sequelizeInstance, Model) => {
       updated_at: new Date(),
     });
 
-    // save cache
     await Model.models.HumanResources.getHr(hrId);
 
     return com.dataValues.updatedAt;

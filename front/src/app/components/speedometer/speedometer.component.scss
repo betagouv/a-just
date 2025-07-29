@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
   display: flex;
@@ -8,34 +8,34 @@
 
   &.dark-mode {
     .title {
-      color: white;
+      color: utils.$colors-white !important;
 
       &.alert {
-        color: white;
+        color: utils.$colors-white;
       }
-    
+
       &.good {
-        color: white;
+        color: utils.$colors-white;
       }
-    }    
+    }
   }
 
-  &.small-text .title {  
+  &.small-text .title {
     font-size: 12px;
   }
 
   &.text-blue {
     .title {
-      color: fColor(bgSelectSelected);
+      color: utils.$colors-bgSelectSelected;
 
       &.alert {
-        color: fColor(bgSelectSelected);
+        color: utils.$colors-bgSelectSelected;
       }
-    
+
       &.good {
-        color: fColor(bgSelectSelected);
+        color: utils.$colors-bgSelectSelected;
       }
-    }    
+    }
   }
 }
 
@@ -47,10 +47,10 @@
   text-align: center;
   font-size: 16px;
   font-weight: bold;
-  color: fColor(cyellowdark);
+  color: utils.$colors-cyellowdark;
 
   &.alert {
-    color: #ce0500;
+    color: utils.$colors-cred;
   }
 
   &.good {

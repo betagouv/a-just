@@ -1,7 +1,9 @@
 <div class="container">
-    <mat-selection-list #list [(ngModel)]="selectedRights" (ngModelChange)="onNgModelChange($event)">
-        <mat-list-option *ngFor="let right of rightsUser" [value]="right">
-            {{path? (right.NAC ? right.NAC + ' - ' : '') + right.name+ ' - ' + right.path[1] :right}}
-        </mat-list-option>
-    </mat-selection-list>
+  <mat-selection-list #list [(ngModel)]="selectedRights" (ngModelChange)="onNgModelChange($event)">
+    @for (right of rightsUser; track right) {
+      <mat-list-option [value]="right">
+        {{path? (right.NAC ? right.NAC + ' - ' : '') + right.name+ ' - ' + right.path[1] :right}}
+      </mat-list-option>
+    }
+  </mat-selection-list>
 </div>

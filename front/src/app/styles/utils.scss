@@ -1,131 +1,126 @@
-$colors: (
-	primary: #000091,
-	cblack: #3a3a3a,
-	cblackdark: #161616,
-	cgray: #666666,
-	cgrayDefault: #eeeeee,
-	cgraylight: #f9f6f2,
-	cgraylightv2: #7b7b7b,
-	cgraylightv3: #ddd,
-	cbrownlight: #e6d8cb,
-	cbluedark: #000091,
-	cblue: #5151a1,
-	cbluemiddle: #e3e3fd,
-	cbluelight: #417dc4,
-	cblueextralight: #e2e8f0,
-	cgreen: #3a734f,
-	cgreenstrong: #00a95f,
-	cgreenlight: #e3fdeb,
-	cred: #ff5655,
-	creddark: #E1000F,
-	credlight: #ffe9e9,
-	cpink: #a558a0,
-	cpinkmiddle: #fee7fc,
-	cyellowlight: #fef6e3,
-	cyellow: #efcb3a,
-	cyellowdark: #796830,
-	bgSelect: #f6f6f6,
-	bgSelectSelected: #0063cb,
-	borderSelect: #eeeeee,
-	titleSelect: #666666,
-	titleEtpGraph: #0063cb,
-	bgProgressBar: #f5f5fe,
-	borderProgressBar: #6a6af4,
-	lineProgressBar: #9a9af7,
-	bgTag: #e5e5e5,
-	colorTag: #161616,
-	bgColor: #f9f6f2,
-	headerColor: #cecece,
-	headerNumberColor: #718096,
-	bgHeaderSelected: #fbf5f2,
-	sortIconHeaderSelected: #4c4ce2,
-	bgIndisponibilitiesPanel: #fef4f2,
-	titleIndisponibilitiesPanel: #e4794a,
-	blueseparator: #90cdf4,
-	textColorLight: #4a5568,
-	bgRowEvent: #f6f6f6,
-	grayRow: #929292,
-	bgRowSelected: #ebf8ff,
-	bgRowBorderSelected: #bee3f8,
-	redNRColor: #f99090,
-	tooltipBgColor: #f3f6fe,
-	tooltipContentColor: #644636,
-	tooltipBgTitleColor: #8585f6,
-	tooltipContentTitleColor: #ffffff,
-	tooltipIconColor: #f6f6f6,
-	tooltipBgFooterColor: #8585f6,
-	tooltipContentFooterColor: #ffffff,
-	darkModeBgMenu: #272747,
-	darkModeBgMenuSelected: #1d2437,
-	darkModeBgHeader: #1b1b35,
-	darkModeTitle: #8585f6,
-	darkModeBgLight: #1b1b35,
-	tagBg: #dee5fd,
-	tagText: #6e445a,
-	bgHelper: #000091,
-	titleInput: #666666,
-	bgReadETPDark: #ececfe,
-	lightBorder: #dddddd,
-	bgCategoryAll: #518fff,
-	textCategoryAll: white,
-	bgCategorySiege: #e3e3fd,
-	textCategorySiege: #000091,
-	bgCategoryGreffe: #fddbfa,
-	textCategoryGreffe: #855080,
-	bgCategoryAutour: #fef6e3,
-	textCategoryAutour: #706030,
-	popupDarkBgPopup: #303030,
-	popupWhiteTitle: #ffffff,
-	popupDarkBgButton: #8585f6,
-	popupDarkBgFillTextButton: #000091,
-	popupLightBg: #f6f6f6,
-	activityGuideSubTitle: #666,
-	activityGuideBg: #f5f5fe,
-	activityGuideBorder: #33569e,
-	activityGuideButtonBg: #000091,
-	activityGuideButtonText: #f5f5fe,
-	sortHeaderSelected: #8585f6,
-	bgBlueTag: #e8edff,
-	textBlueTag: #0063cb,
-	bgYellowTag: #feecc2,
-	textYellowTag: #716043,
-	tagTextColor: #929292,
-	tagBgColor: #f6f6f6,
-	tagTextSelectedColor: white,
-	tagBgSelectedColor: #518fff,
-	cplaceholder: rgb(246, 246, 246),
-	toastrBorderColor: #18753c,
-	activitiesItemTitle: #d5d8ea,
-	activitiesItemLastTitle: #ced0e0,
-	activityBgColor: #ffffff,
-	progressionBarBg: #ffffff,
-	dataCompletionTextColor: #0a76f6,
-	dataNotSettedBorder: #f5c137,
-	dataNotSettedBg: #fef5e8,
-	dataToCompleteBorder: #6a6af4,
-	dataToCompleteBg: #f5f5fe,
-	dataNotSettedIsSetBg: #e5e5e5,
-	dataNotSettedIsSetColor: rgba(22, 22, 22, 0.64),
-	dataToVerifySettedInputColor: #8585f6,
-	dataToVerifySettedInputBorderColor: #0063cb,
-	selectedReferentielBorder: #6a6af4,
-	selectedReferentielBg: #f5f5fe,
-	pastilleDataToCompleteBg : #e3e3fd,
-	pastilleDataToCompleteTxt : #000091,
-	dataGreyBg: #EDEDED,
-	dataGreyTxt: #929292,
-	dataYellowTxt: #b18a26,
-	dataBlueTxt: #0063cb,
-	dataToVerifyBtn: #c3992a,
-	dataGeyBg: #dddddd,
-	dataHoverBg: #F6F6F6,
-	ventilationCurrentSituationBg: #f6f6f6,
-	ventilationSituationToCome: #F5F5FE,
-	ventilationPastSituation: #EDEDED,
-	ventilationDefaultGreyBg: #EDEDED,
-
-);
-
-@function fColor($key: "cprimary") {
-	@return map-get($colors, $key);
-}
+$colors-primary: #000091;
+$colors-cblack: #3a3a3a;
+$colors-cblackdark: #161616;
+$colors-cgray: #666666;
+$colors-cgrayDefault: #eeeeee;
+$colors-cgraylight: #f9f6f2;
+$colors-cgraylightv2: #7b7b7b;
+$colors-cgraylightv3: #ddd;
+$colors-cbrownlight: #e6d8cb;
+$colors-cbluedark: #000091;
+$colors-cblue: #5151a1;
+$colors-cbluemiddle: #e3e3fd;
+$colors-cbluelight: #417dc4;
+$colors-cblueextralight: #e2e8f0;
+$colors-cgreen: #3a734f;
+$colors-cgreenstrong: #00a95f;
+$colors-cgreenlight: #e3fdeb;
+$colors-cred: #ff5655;
+$colors-creddark: #E1000F;
+$colors-credlight: #ffe9e9;
+$colors-cpink: #a558a0;
+$colors-cpinkmiddle: #fee7fc;
+$colors-cyellowlight: #fef6e3;
+$colors-cyellow: #efcb3a;
+$colors-cyellowdark: #796830;
+$colors-bgSelect: #f6f6f6;
+$colors-bgSelectSelected: #0063cb;
+$colors-borderSelect: #eeeeee;
+$colors-titleSelect: #666666;
+$colors-titleEtpGraph: #0063cb;
+$colors-bgProgressBar: #f5f5fe;
+$colors-borderProgressBar: #6a6af4;
+$colors-lineProgressBar: #9a9af7;
+$colors-bgTag: #e5e5e5;
+$colors-colorTag: #161616;
+$colors-bgColor: #f9f6f2;
+$colors-headerColor: #cecece;
+$colors-headerNumberColor: #718096;
+$colors-bgHeaderSelected: #fbf5f2;
+$colors-sortIconHeaderSelected: #4c4ce2;
+$colors-bgIndisponibilitiesPanel: #fef4f2;
+$colors-titleIndisponibilitiesPanel: #e4794a;
+$colors-blueseparator: #90cdf4;
+$colors-textColorLight: #4a5568;
+$colors-bgRowEvent: #f6f6f6;
+$colors-grayRow: #929292;
+$colors-bgRowSelected: #ebf8ff;
+$colors-bgRowBorderSelected: #bee3f8;
+$colors-redNRColor: #f99090;
+$colors-tooltipBgColor: #f3f6fe;
+$colors-tooltipContentColor: #644636;
+$colors-tooltipBgTitleColor: #8585f6;
+$colors-tooltipContentTitleColor: #ffffff;
+$colors-tooltipIconColor: #f6f6f6;
+$colors-tooltipBgFooterColor: #8585f6;
+$colors-tooltipContentFooterColor: #ffffff;
+$colors-darkModeBgMenu: #272747;
+$colors-darkModeBgMenuSelected: #1d2437;
+$colors-darkModeBgHeader: #1b1b35;
+$colors-darkModeTitle: #8585f6;
+$colors-darkModeBgLight: #1b1b35;
+$colors-tagBg: #dee5fd;
+$colors-tagText: #6e445a;
+$colors-bgHelper: #000091;
+$colors-titleInput: #666666;
+$colors-bgReadETPDark: #ececfe;
+$colors-lightBorder: #dddddd;
+$colors-bgCategoryAll: #518fff;
+$colors-textCategoryAll: white;
+$colors-bgCategorySiege: #e3e3fd;
+$colors-textCategorySiege: #000091;
+$colors-bgCategoryGreffe: #fddbfa;
+$colors-textCategoryGreffe: #855080;
+$colors-bgCategoryAutour: #fef6e3;
+$colors-textCategoryAutour: #706030;
+$colors-popupDarkBgPopup: #303030;
+$colors-popupWhiteTitle: #ffffff;
+$colors-popupDarkBgButton: #8585f6;
+$colors-popupDarkBgFillTextButton: #000091;
+$colors-popupLightBg: #f6f6f6;
+$colors-activityGuideSubTitle: #666;
+$colors-activityGuideBg: #f5f5fe;
+$colors-activityGuideBorder: #33569e;
+$colors-activityGuideButtonBg: #000091;
+$colors-activityGuideButtonText: #f5f5fe;
+$colors-sortHeaderSelected: #8585f6;
+$colors-bgBlueTag: #e8edff;
+$colors-textBlueTag: #0063cb;
+$colors-bgYellowTag: #feecc2;
+$colors-textYellowTag: #716043;
+$colors-tagTextColor: #929292;
+$colors-tagBgColor: #f6f6f6;
+$colors-tagTextSelectedColor: white;
+$colors-tagBgSelectedColor: #518fff;
+$colors-cplaceholder: rgb(246, 246, 246);
+$colors-toastrBorderColor: #18753c;
+$colors-activitiesItemTitle: #d5d8ea;
+$colors-activitiesItemLastTitle: #ced0e0;
+$colors-activityBgColor: #ffffff;
+$colors-progressionBarBg: #ffffff;
+$colors-dataCompletionTextColor: #0a76f6;
+$colors-dataNotSettedBorder: #f5c137;
+$colors-dataNotSettedBg: #fef5e8;
+$colors-dataToCompleteBorder: #6a6af4;
+$colors-dataToCompleteBg: #f5f5fe;
+$colors-dataNotSettedIsSetBg: #e5e5e5;
+$colors-dataNotSettedIsSetColor: rgba(22, 22, 22, 0.64);
+$colors-dataToVerifySettedInputColor: #8585f6;
+$colors-dataToVerifySettedInputBorderColor: #0063cb;
+$colors-selectedReferentielBorder: #6a6af4;
+$colors-selectedReferentielBg: #f5f5fe;
+$colors-pastilleDataToCompleteBg: #e3e3fd;
+$colors-pastilleDataToCompleteTxt: #000091;
+$colors-dataGreyBg: #EDEDED;
+$colors-dataGreyTxt: #929292;
+$colors-dataYellowTxt: #b18a26;
+$colors-dataBlueTxt: #0063cb;
+$colors-dataToVerifyBtn: #c3992a;
+$colors-dataGeyBg: #dddddd;
+$colors-dataHoverBg: #F6F6F6;
+$colors-ventilationCurrentSituationBg: #f6f6f6;
+$colors-ventilationSituationToCome: #EBEBF6;
+$colors-ventilationPastSituation: #EDEDED;
+$colors-ventilationDefaultGreyBg: #EDEDED;
+$colors-white: #ffffff;
+$colors-cpurpledark: #855080;

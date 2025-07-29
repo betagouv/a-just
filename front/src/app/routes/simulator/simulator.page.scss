@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 
 .display-none {
@@ -6,14 +6,13 @@
 }
 
 ::ng-deep .mat-mdc-tooltip-panel-left {
-  //width: 100px !important;
   min-width: 100px !important;
   text-align: center;
 
   .tooltip-gray {
     .mdc-tooltip__surface {
-      background-color: #000091;
-      border: solid 1px #000091;
+      background-color: utils.$colors-primary;
+      border: solid 1px utils.$colors-primary;
       font-size: 12px;
       text-align: center;
     }
@@ -25,8 +24,8 @@
     justify-content: center;
 
     .mdc-tooltip__surface {
-      background-color: #fa7a35;
-      border: solid 1px #fa7a35;
+      background-color: utils.$colors-primary;
+      border: solid 1px utils.$colors-primary;
       font-size: 12px;
       text-align: center;
       border-left: 100px;
@@ -46,10 +45,9 @@
     margin: 0 4px 0 8px;
     font-size: 20px;
     font-weight: bold;
-    color: #161616;
+    color: utils.$colors-cblack;
     position: absolute;
     left: 256px;
-    //top: 27px;
     max-width: 50%;
     line-height: 20px;
   }
@@ -108,11 +106,11 @@
       margin: 0 8px 0 0;
       padding: 8px 16px;
 
-      border: solid 1px #000091;
+      border: solid 1px utils.$colors-primary;
       background-color: white;
 
       p {
-        color: #000091;
+        color: utils.$colors-primary;
 
       }
     }
@@ -124,7 +122,7 @@
       height: 40px;
       margin: 0 0 0 8px;
       padding: 8px 16px;
-      background-color: #000091;
+      background-color: utils.$colors-primary;
 
       &.disabled {
         pointer-events: none;
@@ -149,7 +147,7 @@
     }
 
     .validate-button {
-      background-color: #000091;
+      background-color: utils.$colors-primary;
       height: 22px;
       border-radius: 6px;
       color: white;
@@ -157,7 +155,7 @@
     }
 
     .edit-button {
-      background-color: #e5e5e580;
+      background-color: utils.$colors-bgSelect;
       height: 28px;
       margin: 0px 8px;
       border-radius: 6px;
@@ -170,10 +168,10 @@
     padding: 8px 16px;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-    background-color: #eeeeee;
+    background-color: utils.$colors-bgSelect;
     resize: none;
     border: none;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid utils.$colors-cblack;
     font-size: 12px;
     margin: 24px;
     min-height: 40px;
@@ -206,7 +204,7 @@
 
       &::before {
         content: '';
-        border-bottom: solid 1px #f9f6f2;
+        border-bottom: solid 1px utils.$colors-bgSelect;
         left: 0px;
         background-color: white;
         position: absolute;
@@ -219,49 +217,120 @@
   }
 
   .categories-switch {
+    margin-left: 24px;
+    margin-right: 53px;
     display: flex;
     align-items: stretch;
     height: 55px;
+    position: relative;
+    top: 0px;
     z-index: 0;
-    margin-right: 24px;
-    top: 6px;
 
     >div {
       display: flex;
       align-items: center;
       padding: 0 16px;
       cursor: pointer;
-      border: solid 1px fColor(cgraylightv3);
+      border: 1px solid utils.$colors-bgSelect;
+      background-color: white;
+      transition: all 0.2s ease-in-out;
 
       &.alone {
         border-radius: 4px;
+      }
+
+      input[type='radio'] {
+        accent-color: utils.$colors-primary;
       }
 
       p {
         font-size: 16px;
         line-height: 1.5;
         margin-left: 8px;
-        color: fColor(colorTag);
+        color: utils.$colors-cblack;
       }
     }
 
-    >.magistrats {
+    .magistrats {
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
 
-      &.selected {
-        border: solid 1px fColor(cbluedark);
-        background-color: fColor(cbluemiddle);
+      .radio-custom {
+        width: 23px;
+        height: 23px;
+        border: 1px solid utils.$colors-primary;
+        border-radius: 50%;
+        margin-right: 8px;
+
+        .circle {
+
+          top: 4px;
+          left: 4px;
+          position: relative;
+          display: none;
+          background-color: utils.$colors-primary;
+
+          &.selected {
+            display: block;
+            width: 13px;
+            height: 13px;
+            border: 1px solid utils.$colors-primary;
+            border-radius: 50%;
+            margin-right: 8px;
+          }
+        }
+
+      }
+
+      &.selected-magistrat {
+        border: 1px solid utils.$colors-primary;
+        background-color: utils.$colors-bgSelect;
+        color: utils.$colors-primary;
+
+        p {
+          color: utils.$colors-primary;
+        }
       }
     }
 
-    >.fonctionnaires {
+    .fonctionnaires {
       border-top-right-radius: 4px;
       border-bottom-right-radius: 4px;
 
-      &.selected {
-        border: solid 1px fColor(cpink);
-        background-color: fColor(cpinkmiddle);
+      .radio-custom {
+        width: 23px;
+        height: 23px;
+        border: 1px solid utils.$colors-primary;
+        border-radius: 50%;
+        margin-right: 8px;
+
+        .circle {
+
+          top: 4px;
+          left: 4px;
+          position: relative;
+          display: none;
+          background-color: utils.$colors-primary;
+
+          &.selected {
+            display: block;
+            width: 13px;
+            height: 13px;
+            border: 1px solid utils.$colors-primary;
+            border-radius: 50%;
+            margin-right: 8px;
+          }
+        }
+
+      }
+
+      &.selected-greffier {
+        border: 1px solid utils.$colors-primary;
+        background-color: utils.$colors-bgSelect;
+
+        p {
+          color: utils.$colors-primary;
+        }
       }
     }
   }
@@ -289,11 +358,11 @@
     text-align: center;
     height: 40px;
     padding: 8px 24px;
-    border: solid 1px #000091;
+    border: solid 1px utils.$colors-primary;
     margin-right: 8px;
 
     p {
-      color: #000091;
+      color: utils.$colors-primary;
       bottom: 2px;
       position: relative;
     }
@@ -307,15 +376,36 @@
     pointer-events: none;
     opacity: 0.5;
     position: relative;
-    //right: 16px;
     cursor: auto;
     display: flex;
     justify-content: center;
     text-align: center;
     height: 40px;
     padding: 8px 24px;
-    border: solid 1px #000091; // #ddd;
-    //transform: rotate(+90deg);
+    border: solid 1px utils.$colors-primary;
+
+    &.export-b {
+
+      margin-right: 8px;
+      border: solid 1px utils.$colors-primary;
+      background-color: utils.$colors-primary;
+      color: white !important;
+
+      &.enable {
+        opacity: 1;
+        cursor: pointer;
+        pointer-events: initial;
+      }
+
+      mat-icon {
+        top: -1px;
+        position: relative;
+      }
+
+      p {
+        color: white;
+      }
+    }
 
     &.disabled-date {
       pointer-events: all;
@@ -330,7 +420,7 @@
     }
 
     p {
-      color: #000091;
+      color: utils.$colors-primary;
       font-size: 14px;
     }
   }
@@ -345,7 +435,7 @@
     p {
       font-size: 24px;
       font-weight: bold;
-      color: #3a3a3a;
+      color: utils.$colors-cblack;
     }
   }
 
@@ -360,7 +450,6 @@
     .comment {
       background-color: white;
       flex: 3;
-      //height: 350px;
       display: flex;
       flex-direction: column;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
@@ -376,7 +465,7 @@
           padding: 24px;
           font-size: 16px;
           font-weight: bold;
-          color: #3a3a3a;
+          color: utils.$colors-cblack;
 
           b {
             font-size: 16px;
@@ -415,10 +504,9 @@
   }
 
   .simulation-bottom {
-    background-color: fColor(bgColor);
+    background-color: utils.$colors-bgSelect;
     position: relative;
     margin-top: 108px;
-    //padding-top: 48px;
 
     .header-simulation {
       justify-content: space-between;
@@ -432,7 +520,7 @@
       font-size: 22px;
       font-weight: bold;
       line-height: 1.27;
-      color: #000091;
+      color: utils.$colors-primary;
     }
 
     .simulation-table {
@@ -446,7 +534,7 @@
       display: flex;
       align-items: flex-start;
       background-color: white;
-      border-bottom: solid 1px #e5e5e580;
+      border-bottom: solid 1px utils.$colors-bgSelect;
       padding: 0px 24px;
 
       .line-item {
@@ -455,7 +543,7 @@
 
         &.selected {
           mix-blend-mode: multiply;
-          background-color: #ececfe !important;
+          background-color: utils.$colors-bgSelect !important;
         }
 
         input {
@@ -467,7 +555,6 @@
         padding: 6px 0px;
         width: 200px;
         margin-bottom: 48px;
-        //margin-right: 22px;
 
         &:first-child {
           font-size: 14px;
@@ -480,10 +567,6 @@
         display: flex;
         flex: 1;
       }
-
-      .line-item:last-child {
-        //margin-right: 72px;
-      }
     }
 
     input {
@@ -491,22 +574,16 @@
       text-align: center;
       height: 40px;
       font-weight: normal;
-      background-color: #eeeeee;
+      background-color: utils.$colors-bgSelect;
       border: none;
       width: 95%;
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
       position: relative;
-      border-bottom: solid 2px #e5e5e5;
 
       &:focus {
         outline: none;
-        border-bottom: solid 2px #3a3a3a !important;
       }
-    }
-
-    .line-item:last-child {
-      //margin-right: 72px;
     }
 
     .line-item {
@@ -514,55 +591,55 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #161616;
+      color: utils.$colors-cblack;
       position: relative;
 
       &.orange-bg {
-        background-color: #feecc2;
+        background-color: utils.$colors-bgSelect;
 
         &.selected {
           mix-blend-mode: multiply;
-          background-color: #ececfe !important;
+          background-color: utils.$colors-bgSelect !important;
         }
       }
 
       &.grey-bg-disabled {
-        background-color: #b9b8b64a;
+        background-color: utils.$colors-bgSelect;
       }
 
       &.selected {
         mix-blend-mode: multiply;
-        background-color: #9b9bff !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
 
       &.pink-bg {
-        background-color: #fee7fc7d !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.no-bg {
-        background-color: white !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.grey-bg {
-        background-color: #e9edfe;
+        background-color: utils.$colors-bgSelect;
 
         &.selected {
           mix-blend-mode: multiply;
-          background-color: #ececfe !important;
+          background-color: utils.$colors-bgSelect !important;
         }
       }
 
       &.blue-bg {
-        background-color: #f4f6fe;
+        background-color: utils.$colors-bgSelect;
       }
 
       &.pink-bg {
-        background-color: #fee7fc7d !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.no-bg {
-        background-color: white !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       .modified-label {
@@ -575,21 +652,21 @@
         text-align: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
           0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        border: solid 1px #fa7a35;
-        background-color: #e4794a;
+        border: solid 1px utils.$colors-primary;
+        background-color: utils.$colors-primary;
         border-radius: 4px;
         min-width: 74px;
         height: 35px;
         line-height: 31px;
         font-size: 16px;
-        color: #fff;
+        color: utils.$colors-bgSelect;
 
         &.simulated {
           bottom: -50px;
 
           &.blue {
-            background-color: #000091;
-            border: solid 1px #000091;
+            background-color: utils.$colors-primary;
+            border: solid 1px utils.$colors-primary;
           }
         }
 
@@ -597,7 +674,7 @@
           cursor: pointer;
           height: 0;
           width: 0;
-          border-bottom: 4px solid #fa7a35;
+          border-bottom: 4px solid utils.$colors-primary;
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
@@ -608,7 +685,7 @@
             content: '';
             height: 0;
             width: 0;
-            border-bottom: 4px solid #e4794a;
+            border-bottom: 4px solid utils.$colors-primary;
             border-right: 4px solid transparent;
             border-left: 4px solid transparent;
             position: absolute;
@@ -620,13 +697,13 @@
             bottom: -40px;
 
             &.blue {
-              border-bottom: 4px solid #000091;
+              border-bottom: 4px solid utils.$colors-primary;
 
               &::before {
                 content: '';
                 height: 0;
                 width: 0;
-                border-bottom: 4px solid #000091;
+                border-bottom: 4px solid utils.$colors-primary;
                 border-right: 4px solid transparent;
                 border-left: 4px solid transparent;
                 position: absolute;
@@ -644,7 +721,7 @@
     #circle {
       width: 70px;
       height: 70px;
-      background: #ececfe;
+      background: utils.$colors-bgSelect;
       border-radius: 70px;
       margin: auto;
       display: flex;
@@ -661,7 +738,7 @@
     p {
       font-size: 18px;
       font-weight: bold;
-      color: #3a3a3a;
+      color: utils.$colors-cblack;
       text-align: center;
       margin-bottom: 23px;
     }
@@ -675,14 +752,14 @@
       width: 496px;
       padding: 12px 24px;
       border-radius: 8px;
-      background-color: #f6f6f6;
+      background-color: utils.$colors-bgSelect;
       display: flex;
       align-items: center;
       margin-top: 8px;
 
       .title {
         flex: 1;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
         font-size: 18px;
 
         span {
@@ -696,10 +773,9 @@
         width: 120px !important;
         height: 40px;
         font-size: 18px;
-        border-bottom: solid 2px #e5e5e5 !important;
 
         :focus {
-          border: solid 2px #3a3a3a !important;
+          border: solid 2px utils.$colors-cblack !important;
         }
       }
 
@@ -722,8 +798,8 @@
       }
 
       &:focus-within {
-        border: solid 1px #8585f6;
-        background-color: #f5f5fe;
+        border: solid 1px utils.$colors-bgSelect;
+        background-color: utils.$colors-bgSelect;
       }
     }
   }
@@ -742,11 +818,11 @@
       width: 260px;
       height: 105px;
       border-radius: 8px;
-      background-color: #f6f6f6;
+      background-color: utils.$colors-bgSelect;
       font-size: 18px;
       line-height: 1.56;
       text-align: center;
-      color: #3a3a3a;
+      color: utils.$colors-cblack;
       box-sizing: border-box;
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -759,8 +835,8 @@
       }
 
       &:hover {
-        border: solid 1px #8585f6;
-        background-color: #f5f5fe;
+        border: solid 1px utils.$colors-bgSelect;
+        background-color: utils.$colors-bgSelect;
       }
     }
   }
@@ -771,7 +847,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: solid 1px #e5e5e5;
+    border-bottom: solid 1px utils.$colors-bgSelect;
     position: absolute;
     bottom: -84px;
     width: 100%;
@@ -784,8 +860,8 @@
       height: 40px;
       margin: 0 8px 0 0;
       padding: 8px 16px;
-      color: #e5e5e5;
-      border: solid 1px #e5e5e5;
+      color: utils.$colors-bgSelect;
+      border: solid 1px utils.$colors-bgSelect;
     }
 
     .simulate-button {
@@ -795,7 +871,7 @@
       height: 40px;
       margin: 0 0 0 8px;
       padding: 8px 16px;
-      background-color: #000091;
+      background-color: utils.$colors-primary;
 
       &.disabled {
         pointer-events: none;
@@ -811,7 +887,7 @@
   }
 
   .actual-situation {
-    background-color: #fef6e3;
+    background-color: utils.$colors-bgSelect;
     position: relative;
     display: flex;
     padding: 0px 24px;
@@ -835,28 +911,28 @@
 
     &.color-white {
       background-color: white;
-      border-bottom: solid 1px #e5e5e5;
+      border-bottom: solid 1px utils.$colors-bgSelect;
 
       &::before {
         background-color: white;
-        border-bottom: solid 1px #e5e5e5;
+        border-bottom: solid 1px utils.$colors-bgSelect;
       }
 
       &::after {
         background-color: white;
-        border-bottom: solid 1px #e5e5e5;
+        border-bottom: solid 1px utils.$colors-bgSelect;
       }
     }
 
     &.color-blue {
-      background-color: #f4f6fe;
+      background-color: utils.$colors-bgSelect;
 
       &::before {
-        background-color: #f4f6fe;
+        background-color: utils.$colors-bgSelect;
       }
 
       &::after {
-        background-color: #f4f6fe;
+        background-color: utils.$colors-bgSelect;
       }
     }
 
@@ -880,54 +956,54 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #161616;
+      color: utils.$colors-cblack;
       position: relative;
 
       &.orange-bg {
-        background-color: #feecc2;
+        background-color: utils.$colors-bgSelect;
 
         &.selected {
           mix-blend-mode: multiply;
-          background-color: #dcdcfb !important;
+          background-color: utils.$colors-bgSelect !important;
         }
       }
 
       &.grey-bg-disabled {
-        background-color: #b9b8b64a;
+        background-color: utils.$colors-bgSelect;
       }
 
       &.selected {
         mix-blend-mode: multiply;
-        background-color: #ececfe !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.pink-bg {
-        background-color: #fee7fc7d !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.no-bg {
-        background-color: white !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.grey-bg {
-        background-color: #e9edfe;
+        background-color: utils.$colors-bgSelect;
 
         &.selected {
           mix-blend-mode: multiply;
-          background-color: #dcdcfb !important;
+          background-color: utils.$colors-bgSelect !important;
         }
       }
 
       &.blue-bg {
-        background-color: #f4f6fe;
+        background-color: utils.$colors-bgSelect;
       }
 
       &.pink-bg {
-        background-color: #fee7fc7d !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.no-bg {
-        background-color: white !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       .modified-label {
@@ -940,19 +1016,19 @@
         text-align: center;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
           0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        border: solid 1px #fa7a35;
-        background-color: #e4794a;
+        border: solid 1px utils.$colors-primary;
+        background-color: utils.$colors-primary;
         border-radius: 4px;
         min-width: 74px;
         height: 35px;
         line-height: 31px;
         font-size: 16px;
-        color: #fff;
+        color: utils.$colors-bgSelect;
 
         .triangle {
           height: 0;
           width: 0;
-          border-bottom: 4px solid #fa7a35;
+          border-bottom: 4px solid utils.$colors-primary;
           border-right: 4px solid transparent;
           border-left: 4px solid transparent;
           position: absolute;
@@ -963,7 +1039,7 @@
             content: '';
             height: 0;
             width: 0;
-            border-bottom: 4px solid #e4794a;
+            border-bottom: 4px solid utils.$colors-primary;
             border-right: 4px solid transparent;
             border-left: 4px solid transparent;
             position: absolute;
@@ -978,28 +1054,28 @@
         text-align: center;
         height: 40px;
         font-weight: normal;
-        background-color: #eeeeee;
+        background-color: utils.$colors-bgSelect;
         border: none;
         width: 95%;
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
         position: relative;
-        border-bottom: solid 2px #e5e5e5;
+        border-bottom: solid 2px utils.$colors-bgSelect;
 
         &:focus {
           outline: none;
-          border-bottom: solid 2px #3a3a3a !important;
+          border-bottom: solid 2px utils.$colors-cblack !important;
         }
       }
 
       .ajusted-button {
         pointer-events: all;
         cursor: pointer;
-        border: solid 2px #000091;
+        border: solid 2px utils.$colors-primary;
         width: 95%;
         height: 32px;
         text-align: center;
-        color: #000091;
+        color: utils.$colors-primary;
         font-size: 16px;
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
@@ -1007,8 +1083,8 @@
         padding-bottom: 5px;
 
         &.greffe {
-          border-color: #a558a0 !important;
-          color: #a558a0;
+          border-color: utils.$colors-primary !important;
+          color: utils.$colors-primary;
         }
 
         &.white-button {
@@ -1022,20 +1098,20 @@
         }
 
         &.filled {
-          background-color: #eeeeee;
+          background-color: utils.$colors-bgSelect;
           border: none;
-          color: black;
-          border-bottom: solid 2px #e5e5e5 !important;
+          color: utils.$colors-cblack;
+          border-bottom: solid 2px utils.$colors-bgSelect !important;
           border-top-left-radius: 4px;
           border-top-right-radius: 4px;
           position: relative;
-          border-bottom: solid 2px #e5e5e5;
-          background-color: #eeeeee;
+          border-bottom: solid 2px utils.$colors-bgSelect;
+          background-color: utils.$colors-bgSelect;
           height: 40px;
           width: 95%;
 
           :focus {
-            border: solid 2px #3a3a3a !important;
+            border: solid 2px utils.$colors-cblack !important;
           }
 
           &.disable {
@@ -1049,7 +1125,7 @@
   }
 
   .items {
-    background-color: #fff;
+    background-color: utils.$colors-bgSelect;
     display: flex;
     position: relative;
     padding: 0px 24px;
@@ -1059,10 +1135,6 @@
       margin-left: 200px;
     }
 
-    .item:last-child {
-      //margin-right: 72px;
-    }
-
     .item {
       flex: 1;
       display: flex;
@@ -1070,32 +1142,32 @@
       justify-content: center;
 
       &.pink-bg {
-        background-color: #fee7fc7d !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.no-bg {
-        background-color: white !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       &.blue-bg {
-        background-color: #f5f5fe;
+        background-color: utils.$colors-bgSelect;
 
         &.selected {
           mix-blend-mode: multiply;
-          background-color: #dcdcfb !important;
+          background-color: utils.$colors-bgSelect !important;
         }
       }
 
       &.selected {
         mix-blend-mode: multiply;
-        background-color: #e8e5fa !important;
+        background-color: utils.$colors-bgSelect !important;
       }
 
       p {
         text-align: center;
         font-size: 12px;
         font-weight: bold;
-        color: #161616;
+        color: utils.$colors-cblack;
         margin-bottom: 24px;
         margin-top: 24px;
       }
@@ -1103,16 +1175,10 @@
   }
 
   aj-wrapper {
-    background-color: white;
+    background-color: utils.$colors-bgSelect;
   }
 
-
-
-
-
-
   .white-simulator {
-    //right: 255px;
     pointer-events: none;
     margin: 0px 8px;
     cursor: auto;
@@ -1121,15 +1187,15 @@
     display: flex;
     align-items: center;
     border-radius: 8px;
-    background-color: fColor(bgSelect);
-    border: 1px solid fColor(borderSelect);
+    background-color: utils.$colors-bgSelect;
+    border: 1px solid utils.$colors-borderSelect;
     padding: 4px 8px;
     height: 55px;
 
     &.enable {
       pointer-events: all;
       cursor: pointer;
-      background-color: #000091;
+      background-color: utils.$colors-primary;
       color: white;
       opacity: 1;
 
@@ -1138,7 +1204,7 @@
       }
 
       .shape {
-        background-color: #000091;
+        background-color: utils.$colors-primary;
         color: white;
       }
     }
@@ -1155,12 +1221,11 @@
     cursor: auto;
     opacity: 0.5;
     position: relative;
-    //right: 80px;
     display: flex;
     align-items: center;
     border-radius: 8px;
-    background-color: fColor(bgSelect);
-    border: 1px solid fColor(borderSelect);
+    background-color: utils.$colors-bgSelect;
+    border: 1px solid utils.$colors-borderSelect;
     padding: 4px 8px;
     height: 55px;
     top: -14px;
@@ -1172,7 +1237,7 @@
     &.enable {
       pointer-events: all;
       cursor: pointer;
-      background-color: #000091;
+      background-color: utils.$colors-primary;
       color: white;
       opacity: 1;
       margin-top: 30px;
@@ -1182,13 +1247,13 @@
       }
 
       .shape {
-        background-color: #000091;
+        background-color: utils.$colors-primary;
         color: white;
       }
     }
 
     p.title {
-      color: fColor(titleSelect);
+      color: utils.$colors-cblack;
       white-space: nowrap;
       margin-right: 8px;
       margin-left: 8px;
@@ -1234,7 +1299,7 @@
     height: 4px;
     margin: 2px 4px;
     border-radius: 3px;
-    background-color: #ececfe;
+    background-color: utils.$colors-bgSelect;
     position: relative;
     display: block;
     margin-left: 24px;
@@ -1246,7 +1311,7 @@
       height: 4px;
       margin: 2px 4px;
       border-radius: 3px;
-      background-color: #6a6af4;
+      background-color: utils.$colors-primary;
       position: absolute;
       bottom: -2px;
       left: -3px;
@@ -1270,7 +1335,7 @@
             width: 8px;
             height: 8px;
             border-radius: 7.5px;
-            background-color: #6a6af4;
+            background-color: utils.$colors-primary;
           }
         }
       }
@@ -1293,7 +1358,7 @@
             width: 8px;
             height: 8px;
             border-radius: 7.5px;
-            background-color: #6a6af4;
+            background-color: utils.$colors-primary;
           }
         }
       }
@@ -1310,7 +1375,7 @@
       width: 8px;
       height: 8px;
       border-radius: 7.5px;
-      background-color: #6a6af4;
+      background-color: utils.$colors-primary;
       position: absolute;
       bottom: -2px;
       left: -3px;

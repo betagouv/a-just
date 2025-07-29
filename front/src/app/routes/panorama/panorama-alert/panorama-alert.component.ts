@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 
 /**
@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'panorama-alert',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './panorama-alert.component.html',
   styleUrls: ['./panorama-alert.component.scss'],
 })

@@ -2,8 +2,8 @@ import { JURIDICTION_BACKUP_ID } from '../constants/juridiction'
 import { MAGISTART_ID, GREFFIER_ID } from '../constants/hrCategories'
 import { onSaveCle, onGetAllCle } from '../routes/panorama'
 import { onLoginApi, onLogoutApi } from '../routes/user'
-import { USER_TEST_EMAIL, USER_TEST_PASSWORD } from '../constants/user'
 import config from 'config'
+import { assert } from 'chai'
 
 module.exports = function (datas) {
   const siegeCle = 10
@@ -67,5 +67,10 @@ module.exports = function (datas) {
       else assert.fail()
     })
 
+
+    // it('Effectif Composition - Add an agent to a category and verify it is saved correctly', async () => {
+    
+    
+    // })
   })
 }

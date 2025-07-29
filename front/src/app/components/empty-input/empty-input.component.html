@@ -1,5 +1,7 @@
 <p class="title-select">{{ title }}</p>
 <div>
   <p>{{ value }}</p>
-  <i *ngIf="icon" class="ri-{{icon}}"></i>
+  @if (icon) {
+    <i class="ri-{{icon}}"></i>
+  }
 </div>

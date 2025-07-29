@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 .wrapper-content {
   display: flex;
@@ -9,6 +9,10 @@
   margin-top: 8px;
   gap: 8px;
   overflow: auto;
+
+  &.duringPrint {
+    overflow: inherit;
+  }
 }
 
 .anchor {
@@ -27,25 +31,25 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background-color: white;
+  background-color: utils.$colors-activityBgColor;
   border-radius: 8px;
   padding-bottom: 8px;
-  border: 1px solid fColor(lightBorder);
+  border: 1px solid utils.$colors-lightBorder;
 
   &.futur {
     .title-history {
-      color: fColor(cgray);
+      color: utils.$colors-grayRow;
     }
 
     panel-history-ventilation {
-      background-color: fColor(ventilationSituationToCome);
+      background-color: utils.$colors-ventilationSituationToCome;
       box-shadow: none;
     }
   }
 
   &.past {
     panel-history-ventilation {
-      background-color: fColor(ventilationPastSituation);
+      background-color: utils.$colors-ventilationPastSituation;
       box-shadow: none;
     }
   }
@@ -55,16 +59,12 @@
     padding: 8px 16px;
     font-size: 16px;
     font-weight: bold;
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     line-height: 24px;
-    background-color: fColor(ventilationCurrentSituationBg);
+    background-color: utils.$colors-ventilationCurrentSituationBg;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    border-bottom: 1px solid fColor(lightBorder);
-  }
-
-  panel-history-ventilation {
-    //margin: 16px;
+    border-bottom: 1px solid utils.$colors-lightBorder;
   }
 }
 
@@ -107,7 +107,7 @@ add-ventilation {
 
 .black-screen {
   position: absolute;
-  background-color: rgba(fColor(cblackdark), 0.37);
+  background-color: rgba(utils.$colors-cblackdark, 0.37);
   top: 0;
   left: 0;
   right: 0;

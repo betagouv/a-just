@@ -1,30 +1,34 @@
 <h3>Composition des effectifs</h3>
 <div class="cards">
-  <div *ngFor="let category of listFormatedFiltered;index as i" class="category"
-    [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
-    <div class="header">
-      <div class="header-wrapper">
-        <span class='categoryType bold'>
-          <span>{{ category.headerLabel }}</span> :
-          <span>{{ category.nbPerson }}</span>
-        </span>
-        <span class="etp">{{ category.etpt }} ETPT</span>
-      </div>
-    </div>
-    <div class="middle">
-      Personnels CLE
-      <input id="cle-{{category.categoryId}}" type="text" placeholder="-" [value]="getCLE(category)"
-        (keyup)="saveCLE($event.srcElement, category,i)" />
-    </div>
-    <span [ngStyle]="{'border-bottom': '1px solid ' + category.textColor }" class="separation">
-    </span>
-    <div *ngFor="let subCategory of category.poste" class="footer">
-      <div class="subCategory">
-        <div class="categoryType">
-          <span>{{ subCategory.total}} {{ subCategory.label }}</span>
+  @for (category of listFormatedFiltered; track category; let i = $index) {
+    <div class="category"
+      [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}">
+      <div class="header">
+        <div class="header-wrapper">
+          <span class='categoryType bold'>
+            <span>{{ category.headerLabel }}</span> :
+            <span>{{ category.nbPerson }}</span>
+          </span>
+          <span class="etp">{{ category.etpt }} ETPT</span>
         </div>
-        <span class="etp">{{ subCategory.etpt | number:".2-2" }} ETPT</span>
       </div>
+      <div class="middle">
+        Personnels CLE
+        <input id="cle-{{category.categoryId}}" type="text" placeholder="-" [value]="getCLE(category)"
+          (keyup)="saveCLE($event.srcElement, category,i)" />
+      </div>
+      <span [ngStyle]="{'border-bottom': '1px solid ' + category.textColor }" class="separation">
+      </span>
+      @for (subCategory of category.poste; track subCategory) {
+        <div class="footer">
+          <div class="subCategory">
+            <div class="categoryType">
+              <span>{{ subCategory.total}} {{ subCategory.label }}</span>
+            </div>
+            <span class="etp">{{ subCategory.etpt | number:".2-2" }} ETPT</span>
+          </div>
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>

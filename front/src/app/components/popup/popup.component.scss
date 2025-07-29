@@ -1,7 +1,7 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host ::ng-deep .content {
-  color: fColor(headerColor);
+  color: utils.$colors-headerColor;
 }
 
 :host {
@@ -50,13 +50,13 @@
     }
 
     .title {
-      //color: fColor(popupWhiteTitle);
+      color: utils.$colors-cblack;
       margin-bottom: 0px;
     }
 
     .close {
       i {
-        //color: fColor(darkModeTitle);
+        color: utils.$colors-cblack;
         font-size: 14px;
       }
 
@@ -91,7 +91,7 @@
     }
 
     .title {
-      //color: fColor(popupWhiteTitle);
+      color: utils.$colors-cblack;
       margin-bottom: 0px;
     }
 
@@ -136,13 +136,13 @@
     }
 
     .title {
-      //color: fColor(popupWhiteTitle);
+      color: utils.$colors-cblack;
       margin-bottom: 0px;
     }
 
     .close {
       i {
-        //color: fColor(darkModeTitle);
+        color: utils.$colors-cblack;
         font-size: 14px;
       }
 
@@ -248,27 +248,27 @@
   }
 
   &.blackBackground .popup>div {
-    background-color: fColor(popupDarkBgPopup);
+    background-color: utils.$colors-popupDarkBgPopup;
 
     .title {
-      color: fColor(popupWhiteTitle);
+      color: utils.$colors-popupWhiteTitle;
     }
 
     .close {
       i {
-        color: fColor(darkModeTitle);
+        color: utils.$colors-darkModeTitle;
       }
     }
 
     .actions {
       button {
-        color: fColor(popupDarkBgButton);
-        border: solid 1px fColor(popupDarkBgButton);
+        color: utils.$colors-popupDarkBgButton;
+        border: solid 1px utils.$colors-popupDarkBgButton;
         background-color: transparent;
 
         &.fill {
-          color: fColor(popupDarkBgFillTextButton);
-          background-color: fColor(popupDarkBgButton);
+          color: utils.$colors-popupDarkBgFillTextButton;
+          background-color: utils.$colors-popupDarkBgButton;
           border: none;
         }
       }
@@ -319,7 +319,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(fColor(cblack), 0.37);
+  background-color: rgba(utils.$colors-cblack, 0.37);
   z-index: 200;
 
   >div {
@@ -335,7 +335,7 @@
 
   .title {
     font-size: 20px;
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     font-weight: 500;
     display: flex;
     margin: 16px;
@@ -347,12 +347,12 @@
       justify-content: center;
       text-decoration: none;
       cursor: pointer;
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
       font-size: 14px;
 
       i {
         font-size: 24px;
-        color: fColor(cblack);
+        color: utils.$colors-cblack;
         margin-left: 8px;
         position: relative;
         top: 1px;
@@ -366,7 +366,6 @@
 
   .content {
     flex: 1;
-    //overflow: visible;
     overflow-y: auto;
     overflow-x: visible;
     display: flex;

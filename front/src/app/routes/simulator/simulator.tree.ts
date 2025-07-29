@@ -1,106 +1,109 @@
 /**
  * Etp magistrat field name
  */
-const etpMag = 'etpMag'
+const etpMag = 'etpMag';
 /**
  * Etp magistrat text 1
  */
-const etpMagTitle = 'des ETPT siège'
+const etpMagTitle = 'des ETPT siège';
 /**
  * Etp magistrat unit
  */
-const etpMagToDefine = ['un volume moyen de']
+const etpMagToDefine = ['un volume moyen de'];
 
 /**
  * Etp fonctionnaire field name
  */
-const etpFon = 'etpFon'
+const etpFon = 'etpFon';
 /**
  * Etp fonctionnaire text 1
  */
-const etpFonTitle = 'des ETPT greffe'
+const etpFonTitle = 'des ETPT greffe';
 /**
  * Etp fonctionnaire unit
  */
-const etpFonToDefine = ['un volume moyen de']
+const etpFonToDefine = ['un volume moyen de'];
 
 /**
  * Temps moyen par dossier field name
  */
-const magRealTimePerCase = 'magRealTimePerCase'
+const magRealTimePerCase = 'magRealTimePerCase';
 /**
  * Temps moyen par dossier text 1
  */
-const magRealTimePerCaseTitle = 'du Temps moyen / Dossier'
+const magRealTimePerCaseTitle = 'du Temps moyen / Dossier';
 /**
  * Temps moyen par dossier field name
  */
-const magRealTimePerCaseToDefine = ['un temps moyen par dossier de', 'une variation de']
+const magRealTimePerCaseToDefine = [
+  'un temps moyen par dossier de',
+  'une variation de',
+];
 
 /**
  * Entrée field name
  */
-const totalIn = 'totalIn'
+const totalIn = 'totalIn';
 /**
  * Entrée text 1
  */
-const totalInTitle = 'des entrées moyennes mensuelles'
+const totalInTitle = 'des entrées moyennes mensuelles';
 /**
  * Entrée unit
  */
-const totalInToDefine = ['une valeur de', 'une variation de']
+const totalInToDefine = ['une valeur de', 'une variation de'];
 
 /**
  * Sorties field name
  */
-const totalOut = 'totalOut'
+const totalOut = 'totalOut';
 /**
  * Sorties text 1
  */
-const totalOutTitle = 'des sorties moyennes mensuelles'
+const totalOutTitle = 'des sorties moyennes mensuelles';
 /**
  * Sorties unit
  */
-const totalOutToDefine = ['une valeur de', 'une variation de']
+const totalOutToDefine = ['une valeur de', 'une variation de'];
 
 /**
  * Stock field name
  */
-const lastStock = 'lastStock'
+const lastStock = 'lastStock';
 /**
  * Stock text 1
  */
-const lastStockTitle = 'du stock'
+const lastStockTitle = 'du stock';
 /**
  * Stock unit
  */
-const lastStockToDefine = ['une valeur de', 'une variation de']
+const lastStockToDefine = ['une valeur de', 'une variation de'];
 
 /**
  * Taux de couverture field name
  */
-const realCoverage = 'realCoverage'
+const realCoverage = 'realCoverage';
 /**
  * Taux de couverture text 1
  */
-const realCoverageTitle = 'du Taux de Couverture'
+const realCoverageTitle = 'du Taux de Couverture';
 /**
  * Taux de couverture unit
  */
-const realCoverageToDefine = ['une valeur de (en %)']
+const realCoverageToDefine = ['une valeur de (en %)'];
 
 /**
  * DTES field name
  */
-const realDTESInMonths = 'realDTESInMonths'
+const realDTESInMonths = 'realDTESInMonths';
 /**
  * DTES text 1
  */
-const realDTESInMonthsTitle = 'du DTES'
+const realDTESInMonthsTitle = 'du DTES';
 /**
  * DTES unit
  */
-const realDTESInMonthsToDefine = ['une valeur de (en mois)']
+const realDTESInMonthsToDefine = ['une valeur de (en mois)'];
 
 /**
  * Arbre de décision de simulation
@@ -558,14 +561,14 @@ const tree = [
         ],
       },
       {
-        label: magRealTimePerCase,
-        popupTitle: magRealTimePerCaseTitle,
-        toDefine: magRealTimePerCaseToDefine,
+        label: realDTESInMonths,
+        popupTitle: realDTESInMonthsTitle,
+        toDefine: realDTESInMonthsToDefine,
         toSimulate: [
           {
             locked: '',
-            toDisplay: [totalIn, lastStock, magRealTimePerCase],
-            toCalculate: [totalOut, realCoverage, realDTESInMonths, etpMag],
+            toDisplay: [totalIn, realDTESInMonths, magRealTimePerCase],
+            toCalculate: [totalOut, lastStock, etpMag, realCoverage],
           },
         ],
       },
@@ -812,5 +815,5 @@ const tree = [
       },
     ],
   },
-]
-export { tree, etpFon, etpFonTitle, etpFonToDefine }
+];
+export { tree, etpFon, etpFonTitle, etpFonToDefine };

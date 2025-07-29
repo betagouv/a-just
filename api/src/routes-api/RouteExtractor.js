@@ -1,22 +1,24 @@
-import Route, { Access } from "./Route";
-import { Types } from "../utils/types";
+import Route, { Access } from './Route'
+import { Types } from '../utils/types'
 import {
   autofitColumns,
-  computeExtract,
-  computeExtractDdg,
+  buildExcelRef,
   flatListOfContentieuxAndSousContentieux,
   formatFunctions,
-  getExcelLabel,
-  getObjectKeys,
+  getJuridictionData,
   getViewModel,
   replaceIfZero,
-  sortByCatAndFct,
-} from "../utils/extractor";
-import { getHumanRessourceList } from "../utils/humanServices";
-import { cloneDeep, groupBy, last, orderBy, sumBy } from "lodash";
-import { isDateGreaterOrEqual, month, today } from "../utils/date";
-import { ABSENTEISME_LABELS } from "../constants/referentiel";
-import { EXECUTE_EXTRACTOR } from "../constants/log-codes";
+  runExtractsInParallel,
+} from '../utils/extractor'
+import { getHumanRessourceList } from '../utils/humanServices'
+import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
+import { isDateGreaterOrEqual, month, today } from '../utils/date'
+import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
+import { updateLabels } from '../utils/referentiel'
+
+import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
+import { getHRPositions } from '../utils/calculator'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Route de la page extrateur
@@ -24,16 +26,16 @@ import { EXECUTE_EXTRACTOR } from "../constants/log-codes";
 
 export default class RouteExtractor extends Route {
   // model de BDD
-  model;
+  model
 
   /**
    * Constructeur
    * @param {*} params
    */
   constructor(params) {
-    super(params);
+    super(params)
 
-    this.model = params.models.HumanResources;
+    this.model = params.models.HumanResources
   }
 
   /**
@@ -53,174 +55,91 @@ export default class RouteExtractor extends Route {
     accesses: [Access.canVewHR],
   })
   async filterList(ctx) {
-    let { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx);
-    if (
-      !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
-    ) {
-      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
+    const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
+
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
-      type: "effectif",
-    });
+      type: 'effectif',
+    })
 
-    const juridictionName = await this.models.HRBackups.findById(backupId);
-    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId);
+    console.time('extractor-1')
+    const juridictionName = await this.models.HRBackups.findById(backupId)
+    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, undefined, undefined, true)
+    console.timeEnd('extractor-1')
 
-    console.time("extractor-1");
-    const referentiels =
-      await this.models.ContentieuxReferentiels.getReferentiels(
-        backupId,
-        undefined,
-        undefined,
-        true
-      );
-    console.timeEnd("extractor-1");
+    console.time('extractor-2')
+    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
+    console.timeEnd('extractor-2')
 
-    console.time("extractor-2");
-    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([
-      ...referentiels,
-    ]);
-    console.timeEnd("extractor-2");
+    console.time('extractor-3')
+    let hr = await loadOrWarmHR(backupId, this.models)
+    console.timeEnd('extractor-3')
+    //hr = hr.slice(0, 1) // A SUPPRIMER
 
-    console.time("extractor-3");
-    const hr = await this.model.getCache(backupId);
-    console.timeEnd("extractor-3");
+    console.time('extractor-4')
+    const categories = await this.models.HRCategories.getAll()
+    const functionList = await this.models.HRFonctions.getAllFormatDdg()
+    const formatedFunctions = await formatFunctions(functionList)
+    const allHuman = await getHumanRessourceList(hr, undefined, undefined, undefined, today(dateStart), today(dateStop))
+    console.timeEnd('extractor-4')
 
-    console.time("extractor-4");
-    const categories = await this.models.HRCategories.getAll();
-    console.timeEnd("extractor-4");
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(allHuman)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
 
-    console.time("extractor-4.1");
-    const functionList = await this.models.HRFonctions.getAllFormatDdg();
-    const formatedFunctions = await formatFunctions(functionList);
-    console.timeEnd("extractor-4;1");
-
-    console.time("extractor-5");
-    let allHuman = await getHumanRessourceList(
-      hr,
-      undefined,
-      undefined,
-      undefined,
-      dateStart,
-      dateStop
-    );
-    console.timeEnd("extractor-5");
-
-    console.time("extractor-6");
-    let onglet1 = await computeExtract(
-      this.models,
-      cloneDeep(allHuman),
+    console.time('extractor-5')
+    let { onglet1, onglet2 } = await runExtractsInParallel({
+      indexes,
+      allHuman,
       flatReferentielsList,
       categories,
       categoryFilter,
       juridictionName,
       dateStart,
       dateStop,
-      isJirs
-    );
-    console.timeEnd("extractor-6");
+      isJirs,
+      old: false, // mettre une condition si supérioeur à 10 mois ou non
+    })
+    console.timeEnd('extractor-5')
 
-    const absenteismeList = [];
+    console.time('extractor-6')
+    const excelRef = buildExcelRef(flatReferentielsList)
+    const { tproxs, allJuridiction } = await getJuridictionData(this.models, juridictionName)
 
-    console.time("extractor-6.1");
-    const formatedExcelList = flatReferentielsList
-      .filter((elem) => {
-        if (ABSENTEISME_LABELS.includes(elem.label) === false) return true;
-        else {
-          absenteismeList.push(elem);
-          return false;
-        }
-      })
-      .map((x) => {
-        return x.childrens !== undefined
-          ? { global: getExcelLabel(x, true), sub: null }
-          : { global: null, sub: getExcelLabel(x, false) };
-      });
-    console.timeEnd("extractor-6.1");
-
-    console.time("extractor-6.2");
-    const excelRef = [
-      {
-        global: null,
-        sub: "ETPT sur la période absentéisme non déduit (hors action 99)",
-      },
-      { global: null, sub: "Temps ventilés sur la période (hors action 99)" },
-      ...formatedExcelList,
-      { global: null, sub: "CET > 30 jours" },
-      {
-        global:
-          "TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)",
-        sub: null,
-      },
-      { global: null, sub: "CET < 30 jours" },
-      ...absenteismeList.map((y) => {
-        return { global: null, sub: getExcelLabel(y, false) };
-      }),
-    ];
-    console.timeEnd("extractor-6.2");
-
-    console.time("extractor-7");
-    let onglet2 = await computeExtractDdg(
-      this.models,
-      cloneDeep(allHuman),
-      flatReferentielsList,
-      categories,
-      categoryFilter,
-      juridictionName,
-      dateStart,
-      dateStop,
-      isJirs
-    );
-    console.timeEnd("extractor-7");
-
-    console.time("extractor-8");
-    onglet1 = orderBy(
-      onglet1,
-      ["Catégorie", "Nom", "Prénom", "Matricule"],
-      ["desc", "asc", "asc", "asc"]
-    );
-    onglet2 = orderBy(
-      onglet2,
-      ["Catégorie", "Nom", "Prénom", "Matricule"],
-      ["desc", "asc", "asc", "asc"]
-    );
-    const columnSize1 = await autofitColumns(onglet1, true);
-    const columnSize2 = await autofitColumns(onglet2, true, 13);
-    console.timeEnd("extractor-8");
-
-    const label = (juridictionName.label || "").toUpperCase();
-    let tproxs = (
-      await this.models.TJ.getByTj(label, {}, { type: "TPRX" })
-    ).map((t) => ({ id: t.id, tj: t.tj, tprox: t.tprox }));
-    if (tproxs.length === 0) {
-      tproxs = [{ id: 0, tj: label, tprox: label }];
+    const onglet1Data = {
+      values: onglet1,
+      columnSize: await autofitColumns(onglet1, true),
     }
 
-    if (onglet1 === null || onglet1 === undefined) onglet1 = [];
-    if (onglet2 === null || onglet2 === undefined) onglet2 = [];
+    const onglet2Data = {
+      values: onglet2,
+      columnSize: await autofitColumns(onglet2, true, 13),
+      excelRef,
+    }
 
-    let allJuridiction = (await this.models.TJ.getByTj(label, {}, {})).map(
-      (t) => ({ id: t.id, tj: t.tj, tprox: t.tprox, type: t.type })
-    );
-
-    let viewModel = await getViewModel({
+    const viewModel = await getViewModel({
       referentiels,
       tproxs,
-      onglet1: { values: onglet1, columnSize: columnSize1 },
-      onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
+      onglet1: onglet1Data,
+      onglet2: onglet2Data,
       allJuridiction,
-    });
+    })
+
+    console.timeEnd('extractor-6')
 
     this.sendOk(ctx, {
       fonctions: formatedFunctions,
       referentiels,
       tproxs,
-      onglet1: { values: onglet1, columnSize: columnSize1 },
-      onglet2: { values: onglet2, columnSize: columnSize2, excelRef },
+      onglet1: onglet1Data,
+      onglet2: onglet2Data,
       allJuridiction,
       viewModel,
-    });
+    })
   }
 
   /**
@@ -237,29 +156,25 @@ export default class RouteExtractor extends Route {
     accesses: [Access.canVewHR],
   })
   async juridictionAjustedDataList(ctx) {
-    let { dateStart /*, dateStop */ } = this.body(ctx);
-    let result = [];
+    let { dateStart /*, dateStop */ } = this.body(ctx)
+    let result = []
 
     await this.models.HRBackups.getAll().then(async (res) => {
       res.map(async (elem) => {
-        await this.models.Activities.getByMonth(dateStart, elem.id)
+        await this.models.Activities.getByMonthNew(dateStart, elem.id)
           .then((res) => {
             if (res.length) {
               for (let i = 0; i < res.length; i++) {
-                if (
-                  res[i].entrees !== null ||
-                  res[i].sorties !== null ||
-                  res[i].stock !== null
-                ) {
-                  result.push({ label: elem.label, id: res[0].backupId });
-                  break;
+                if (res[i].entrees !== null || res[i].sorties !== null || res[i].stock !== null) {
+                  result.push({ label: elem.label, id: res[0].backupId })
+                  break
                 }
               }
             }
           })
-          .catch((err) => console.log("error: ", err));
-      });
-    });
+          .catch((err) => console.log('error: ', err))
+      })
+    })
   }
 
   @Route.Post({
@@ -271,83 +186,172 @@ export default class RouteExtractor extends Route {
     accesses: [Access.canVewHR],
   })
   async filterListAct(ctx) {
-    let { backupId, dateStart, dateStop } = this.body(ctx);
+    let { backupId, dateStart, dateStop } = this.body(ctx)
 
     if (!Access.isAdmin(ctx)) {
-      if (
-        !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
-      ) {
-        ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
+      if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+        ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
       }
     }
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
-      type: "activité",
-    });
+      type: 'activité',
+    })
 
-    const list = await this.models.Activities.getByMonth(dateStart, backupId);
+    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
 
-    const lastUpdate =
-      await this.models.HistoriesActivitiesUpdate.getLastUpdate(
-        list.map((i) => i.id)
-      );
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined)
 
-    let activities = await this.models.Activities.getAllDetails(backupId);
-    activities = orderBy(activities, "periode", ["asc"])
-      .filter(
-        (act) => isDateGreaterOrEqual(act.periode, month(dateStart, 0)) && isDateGreaterOrEqual(month(dateStop,0,'lastday'),act.periode)
-      )
+    const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
+
+    const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
+
+    let activities = await this.models.Activities.getAllDetails(backupId)
+    activities = orderBy(activities, 'periode', ['asc'])
+      .filter((act) => isDateGreaterOrEqual(act.periode, month(dateStart, 0)) && isDateGreaterOrEqual(month(dateStop, 0, 'lastday'), act.periode))
       .map((x) => {
         return {
-          ...x,
           periode: today(x.periode).setDate(1),
-        };
-      });
+          ...x,
+        }
+      })
 
-    let sum = cloneDeep(activities);
+    activities = updateLabels(activities, referentiels)
+
+    //activities.map(x=>console.log(x.contentieux))
+    referentiels.map((x) => console.log(x))
+    let sum = cloneDeep(activities)
 
     sum = sum.map((x) => {
-      const ajustedIn =
-        x.entrees === 0 ? x.entrees : x.entrees || x.originalEntrees;
-      const ajustedOut =
-        x.sorties === 0 ? x.sorties : x.sorties || x.originalSorties;
-      const ajustedStock = x.stock === 0 ? x.stock : x.stock || x.originalStock;
+      const ajustedIn = x.entrees === 0 ? x.entrees : x.entrees || x.originalEntrees
+      const ajustedOut = x.sorties === 0 ? x.sorties : x.sorties || x.originalSorties
+      const ajustedStock = x.stock === 0 ? x.stock : x.stock || x.originalStock
 
-      return { ajustedIn, ajustedOut, ajustedStock, ...x };
-    });
+      return { ajustedIn, ajustedOut, ajustedStock, ...x }
+    })
 
-    sum = groupBy(sum, "contentieux.id");
+    sum = groupBy(sum, 'contentieux.id')
 
-    let sumTab = [];
+    let sumTab = []
 
     Object.keys(sum).map((key) => {
       sumTab.push({
         periode: replaceIfZero(last(sum[key]).periode),
-        entrees: sumBy(sum[key], "ajustedIn"),
-        sorties: sumBy(sum[key], "ajustedOut"),
+        entrees: sumBy(sum[key], 'ajustedIn'),
+        sorties: sumBy(sum[key], 'ajustedOut'),
         stock: last(sum[key]).ajustedStock,
-        originalEntrees: sumBy(sum[key], "originalEntrees"),
-        originalSorties: sumBy(sum[key], "originalSorties"),
+        originalEntrees: sumBy(sum[key], 'originalEntrees'),
+        originalSorties: sumBy(sum[key], 'originalSorties'),
         originalStock: last(sum[key]).originalStock,
         idReferentiel: last(sum[key]).idReferentiel,
         contentieux: {
           code_import: last(sum[key]).contentieux.code_import,
           label: last(sum[key]).contentieux.label,
         },
-      });
-    });
+      })
+    })
 
-    sumTab = sumTab.filter((x) => x.contentieux.code_import !== null);
+    /** 
+    const flatReferentiels = await flatListOfContentieuxAndSousContentieux([
+      ...referentiels,
+    ]);
+    const labels = flatReferentiels.map(item => item.label);
 
-    let GroupedList = groupBy(activities, "periode");
-   
+    sumTab = sumTab.filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
+
+
     GroupedList =  Object.keys(GroupedList).map((l) => {
-      return GroupedList[l].filter((x) => x.contentieux.code_import !== null);
+      return GroupedList[l].filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
     });
+        */
 
+    let GroupedList = groupBy(activities, 'periode')
+
+    console.log(isJirs)
+    //console.log(labels)
     this.sendOk(ctx, {
       list: GroupedList,
       sumTab,
       lastUpdate,
-    });
+    })
+  }
+
+  /**
+   * Test pour mise en place de cache optimisé
+   * @param {*} backupId
+   * @param {*} dateStart
+   * @param {*} dateStop
+   * @param {*} categoryFilter
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      newVersion: Types.boolean(),
+      regressionTest: Types.boolean(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async getCache(ctx) {
+    let { backupId } = this.body(ctx)
+
+    const categories = await this.models.HRCategories.getAll()
+    console.time('onPreload')
+    //await this.models.HumanResources.forceRecalculateAllHrCache()
+    console.timeEnd('onPreload')
+
+    console.time('Mise en cache')
+    let hr = await loadOrWarmHR(backupId, this.models)
+    console.timeEnd('Mise en cache')
+
+    //hr = hr.slice(259, 260)
+    hr = hr.filter((h) => [33592].includes(h.id))
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(hr)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
+
+    console.log(indexes.resultMap, 'length', hr.length)
+    // 🔹 Requête ETP spécifique
+    const query = {
+      start: '2025-01-01T12:00:00.000Z', // Date de début de la période recherchée
+      end: '2025-06-01T12:00:00.000Z', // Date de fin de la période recherchée
+      category: undefined, // ID de la catégorie recherchée
+      fonctions: undefined, // Liste des fonctions recherchées
+      contentieux: 440, // ID du contentieux recherché
+    }
+
+    console.time('Get new query')
+    const totalETPold = getHRPositions(models, hr, categories, query.contentieux, today(query.start), today(query.end))
+    const totalETPnew = calculateETPForContentieux(indexes, query, categories)
+    console.timeEnd('Get new query')
+
+    console.log(totalETPold[0].totalEtp, totalETPnew[0].totalEtp, totalETPold[0].totalEtp - totalETPnew[0].totalEtp)
+    const objResult = Object.fromEntries(indexes.categoryIndex)
+    console.log(objResult)
+    this.sendOk(ctx, { hr, totalETPnew, res: await loadOrWarmHR(211, this.models), objResult })
   }
 }
+
+/**
+ * 
+
+    const key = backupId
+    const value = hr
+
+    console.time('set cache')
+    await setCacheValue(key, value, 'test')
+    console.timeEnd('set cache')
+
+    console.time('get cache')
+    const result = await getCacheValue(key, 'test')
+    console.timeEnd('get cache')
+
+    //console.log(result)
+    this.sendOk(ctx, { result })
+ */
+/**
+    console.time('Get HRPosition')
+    const etpAffected = getHRPositions({}, hr, categories, queryContentieux, today(queryStart), today(queryEnd))
+    console.timeEnd('Get HRPosition')
+
+    //console.log(totalETP, etpAffected)
+    const objResult = Object.fromEntries(resultMap)
+ */

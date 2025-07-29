@@ -1,17 +1,17 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
   padding: 24px;
 
   h3 {
-    color: fColor(primary);
+    color: utils.$colors-primary;
     font-size: 20px;
     margin-bottom: 0px;
   }
 
   p.description {
-    color: fColor(grayRow);
+    color: utils.$colors-cgray;
     font-size: 14px;
     margin-bottom: 19px;
   }
@@ -19,13 +19,13 @@
   .tags {
     margin-bottom: 22px;
 
-    > span {
+    >span {
       display: inline-block;
       padding: 0 8px;
       margin-bottom: 4px;
-      border-radius: 12px;  
-      color: fColor(tagTextColor);
-      background-color: fColor(tagBgColor);
+      border-radius: 12px;
+      color: utils.$colors-cgray;
+      background-color: utils.$colors-bgSelect;
       margin-right: 8px;
       font-size: 12px;
       height: 24px;
@@ -33,8 +33,8 @@
       cursor: pointer;
 
       &.selected {
-        color: fColor(tagTextSelectedColor);
-        background-color: fColor(tagBgSelectedColor);
+        color: utils.$colors-primary;
+        background-color: utils.$colors-bgSelect;
       }
     }
   }
@@ -44,7 +44,7 @@
     display: flex;
     align-items: flex-start;
 
-    > div:last-child {
+    >div:last-child {
       display: flex;
       flex-wrap: wrap;
     }
@@ -52,7 +52,7 @@
     .tag {
       height: 20px;
       border-radius: 4px;
-      color: white;
+      color: utils.$colors-bgSelect;
       font-size: 12px;
       font-weight: bold;
       padding: 0 6px;

@@ -1,12 +1,11 @@
 import axios from 'axios'
 import config from 'config'
-import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
-import { USER_TEST_EMAIL, USER_TEST_FIRSTNAME, USER_TEST_FONCTION, USER_TEST_LASTNAME, USER_TEST_PASSWORD } from '../constants/user'
+import { USER_TEST_EMAIL, USER_TEST_PASSWORD, USER_TEST_FIRSTNAME, USER_TEST_LASTNAME, USER_TEST_FONCTION } from './constants/user' 
 
 module.exports = function () {
   describe('Login tests that should fail', () => {
     it('Bad password, should return 401', async () => {
-      const email = USER_ADMIN_EMAIl
+      const email = USER_TEST_EMAIL
       const password = '1234859'
 
       try {
@@ -20,7 +19,7 @@ module.exports = function () {
     })
     it('Bad email, should return 401', async () => {
       const email = 'badEmail@mail.com'
-      const password = USER_ADMIN_PASSWORD
+      const password = USER_TEST_PASSWORD
 
       try {
         await axios.post(`${config.serverUrl}/auths/login`, {
@@ -45,11 +44,12 @@ module.exports = function () {
       }
     })
   })
+  
   describe('Login test that should succeed then logout', () => {
     let token = null
     it('Login should return 201 with user token', async () => {
-      const email = USER_ADMIN_EMAIl
-      const password = USER_ADMIN_PASSWORD
+      const email = USER_TEST_EMAIL
+      const password = USER_TEST_PASSWORD
 
       const response = await axios.post(`${config.serverUrl}/auths/login`, {
         email,
@@ -67,6 +67,7 @@ module.exports = function () {
       assert.strictEqual(response.status, 200)
     })
   })
+  
   describe('Forgot password', () => {
     it('Bad email, should return 401', async () => {
       try {
@@ -79,12 +80,13 @@ module.exports = function () {
     })
     it('Good email, should return 200', async () => {
       const response = await axios.post(`${config.serverUrl}/users/forgot-password`, {
-        email: USER_ADMIN_EMAIl,
+        email: USER_TEST_EMAIL
       })
 
       assert.strictEqual(response.status, 200)
     })
   })
+
   describe('Sign up', () => {
     it('Missing email, should return 400', async () => {
       try {
@@ -101,7 +103,7 @@ module.exports = function () {
     it('Missing password, should return 400', async () => {
       try {
         await axios.post(`${config.serverUrl}/users/create-account`, {
-          email: USER_ADMIN_EMAIl,
+          email: USER_TEST_EMAIL,
           firstName: USER_TEST_FIRSTNAME,
           lastName: USER_TEST_LASTNAME,
           fonction: USER_TEST_FONCTION,

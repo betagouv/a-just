@@ -554,7 +554,6 @@ export class WhiteSimulatorPage
   constructor() {
     super();
 
-    this.serverService.post('simulator/check-access-white-simulator');
     this.watch(this.appService.appLoading.subscribe((a) => (this.loaded = !a)));
 
     this.watch(
@@ -568,9 +567,9 @@ export class WhiteSimulatorPage
         this.hrBackup = this.hrBackups.find(
           (b) => b.id === this.humanResourceService.backupId.getValue()
         );
-        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
-          .toJSON()
-          .slice(0, 10)}`;
+        this.printTitle = `Simulation ${
+          this.userService.isCa() ? 'de la' : 'du'
+        } ${this.hrBackup?.label} du ${new Date().toJSON().slice(0, 10)}`;
       })
     );
 
@@ -578,9 +577,9 @@ export class WhiteSimulatorPage
       this.humanResourceService.backupId.subscribe((backupId) => {
         this.hrBackups = this.humanResourceService.backups.getValue();
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId);
-        this.printTitle = `Simulation du ${this.hrBackup?.label} du ${new Date()
-          .toJSON()
-          .slice(0, 10)}`;
+        this.printTitle = `Simulation ${
+          this.userService.isCa() ? 'de la' : 'du'
+        } ${this.hrBackup?.label} du ${new Date().toJSON().slice(0, 10)}`;
       })
     );
 
@@ -1897,6 +1896,13 @@ export class WhiteSimulatorPage
         editButton.style.display = 'none';
       else if (title) title.classList.add('display-none');
 
+      const tooltips = document.querySelectorAll('[id="chartjs-tooltip"]');
+      if (tooltips) {
+        tooltips.forEach((tooltip) => {
+          (tooltip as HTMLElement).style.marginLeft = '200px';
+        });
+      }
+
       const exportButton = document.getElementById('export-button');
       if (exportButton) {
         exportButton.classList.add('display-none');
@@ -1905,6 +1911,11 @@ export class WhiteSimulatorPage
       const exportButton1 = document.getElementById('export-button-1');
       if (exportButton1) {
         exportButton1.classList.add('display-none');
+      }
+
+      const exportButton2 = document.getElementById('export-button-2');
+      if (exportButton2) {
+        exportButton2.classList.add('display-none');
       }
 
       const ajWrapper = document.getElementById('simu-wrapper');
@@ -1917,6 +1928,7 @@ export class WhiteSimulatorPage
       if (commentArea) commentArea.classList.add('display-none');
 
       this.onPrint = true;
+      await this.wait(2000);
 
       this.wrapper
         ?.exportAsPdf(filename, true, false, null, false /*true*/)
@@ -1928,8 +1940,13 @@ export class WhiteSimulatorPage
 
           if (exportButton) exportButton.classList.remove('display-none');
           if (exportButton1) exportButton1.classList.remove('display-none');
+          if (exportButton2) exportButton2.classList.remove('display-none');
           if (initButton) initButton.classList.remove('display-none');
           if (backButton) backButton.classList.remove('display-none');
+          if (tooltips)
+            tooltips.forEach((tooltip) => {
+              (tooltip as HTMLElement).style.marginLeft = '0px';
+            });
 
           if (commentArea) {
             commentArea.style.display = 'block';
@@ -1956,6 +1973,13 @@ export class WhiteSimulatorPage
         setTimeout(() => reject('Comment too long'), 100);
       });
     }
+  }
+
+  /**
+   * Interrompt le code pendant X temps
+   */
+  wait(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**

@@ -1,14 +1,9 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 ::ng-deep .mdc-list-item__primary-text {
   font-size: 16px !important;
   color: black !important;
 }
-
-//.myMatOptions{  position: absolute;  top: 30vh;  left: 30vw; }
-//::ng-deep .cdk-overlay-container{left: 30vw;}
-//::ng-deep .cdk-overlay-pane { left:0 !important; transform:none !important;}
-//::ng-deep .mat-select-panel{left: 0;}
 
 :host {
   position: relative;
@@ -16,8 +11,8 @@
   height: 34px;
   width: 170px;
   border-radius: 4px;
-  background-color: fColor(bgSelect);
-  border: 1px solid fColor(borderSelect);
+  background-color: utils.$colors-bgSelect;
+  border: 1px solid utils.$colors-borderSelect;
   padding: 4px 8px;
   cursor: pointer;
 
@@ -69,8 +64,8 @@
   }
 
   &.dark-mode {
-    background-color: fColor(darkModeBgMenu);
-    border: 1px solid fColor(darkModeBgMenu);
+    background-color: utils.$colors-darkModeBgMenu;
+    border: 1px solid utils.$colors-darkModeBgMenu;
 
     p,
     mat-icon {
@@ -78,12 +73,12 @@
     }
 
     p.title {
-      color: fColor(headerColor);
+      color: utils.$colors-headerColor;
     }
   }
 
   p.title {
-    color: fColor(titleSelect);
+    color: utils.$colors-titleSelect;
     white-space: nowrap;
     font-size: 14px;
   }
@@ -114,9 +109,6 @@
   }
 
   mat-select {
-    //left: 35px;
-    //top: -10px;
     position: relative;
   }
-
 }

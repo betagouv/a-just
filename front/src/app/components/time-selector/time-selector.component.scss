@@ -74,18 +74,10 @@
             margin: auto;
             top: 0px;
             bottom: 0px;
-
-            &.disabled {
-                //display: none;
-            }
         }
 
         input:invalid {
             background: rgba(255, 0, 0, 0.282);
-        }
-
-        input:valid {
-            //background: rgba(0, 128, 0, 0.2);
         }
     }
 

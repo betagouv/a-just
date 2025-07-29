@@ -1,22 +1,22 @@
-import "dotenv/config";
+import 'dotenv/config'
 
 module.exports = {
   /**
    * String pour préfixer le nom de l'environement (idéal pour les mails de test)
    */
-  envName: "",
+  envName: '',
   /**
    * String pour préfixer le nom de l'environement (idéal pour les mails de test)
    */
-  displayEnvName: "",
+  displayEnvName: '',
   /**
    * Url du serveur (idéal pour le contenu des mails)
    */
-  serverUrl: process.env.SERVER_URL || "http://localhost:8081/api",
+  serverUrl: process.env.SERVER_URL || 'http://localhost:8081/api',
   /**
    * Url du font (idéal pour le contenu des mails)
    */
-  frontUrl: process.env.FRONT_URL || "http://localhost:4200",
+  frontUrl: process.env.FRONT_URL || 'http://localhost:4200',
   /**
    * Url du cors
    */
@@ -30,8 +30,8 @@ module.exports = {
    */
   database: {
     url: process.env.DATABASE_URL,
-    logging: (msg) => console.log(msg),
-    //logging: false,
+    //logging: (msg) => console.log(msg),
+    logging: false,
   },
   /**
    * Code du cryptage JWT
@@ -59,6 +59,10 @@ module.exports = {
    * Préchargement de toutes les jurictions ? (Prend 30s et de la mémoire)
    */
   preloadHumanResourcesDatas: false,
+  /**
+   * Variable url redis
+   */
+  redis: process.env.REDIS_URL,
   /**
    * Nombre de jour travaillé / an d'un magistrat
    */
@@ -159,7 +163,7 @@ module.exports = {
    * SESSION CONFIG
    */
   session: {
-    key: "koa.sess" /** (string) cookie key (default is koa.sess) */,
+    key: 'koa.sess' /** (string) cookie key (default is koa.sess) */,
     /** (number || 'session') maxAge in ms (default is 1 days) */
     /** 'session' will result in a cookie that expires when session/browser is closed */
     /** Warning: If a session cookie is stolen, this cookie will never expire */
@@ -171,83 +175,88 @@ module.exports = {
     rolling: false,
     renew: false /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/,
     secure: true /** (boolean) secure cookie*/,
-    sameSite:
-      null /** (string) session cookie sameSite options (default null, don't set it) */,
+    sameSite: null /** (string) session cookie sameSite options (default null, don't set it) */,
   },
+  redis: process.env.REDIS_HOST || null,
   // USER AGENT TO honey tracp
-  useAgent: process.env.AUTHORIZED_AGENTS, 
+  useAgent: process.env.AUTHORIZED_AGENTS,
   // IP to block
   ipFilter: {
     whitelist: [
       // https://bgp.he.net/AS60855#_prefixes IPs des ministères
-      "143.126.100.",
-      "143.126.203.",
-      "143.126.211.",
-      "143.126.221.",
-      "143.126.248.",
-      "143.126.248.",
-      "143.126.249.",
-      "143.126.250.",
-      "143.126.250.",
-      "143.126.251.",
-      "143.126.255.",
-      "143.196.14.",
-      "143.196.22.",
-      "143.196.22.",
-      "143.196.23.",
-      "143.196.146.",
-      "143.196.146.",
-      "143.196.147.",
-      "143.196.148.",
-      "143.196.176.",
-      "143.196.187.",
-      "143.196.251.",
-      "143.196.255.",
-      "164.131.80.",
-      "164.131.124.",
-      "164.131.124.",
-      "164.131.125.",
-      "164.131.126.",
-      "164.131.126.",
-      "164.131.127.",
-      "164.131.130.",
-      "164.131.130.",
-      "164.131.131.",
-      "164.131.132.",
-      "164.131.132.",
-      "164.131.133.",
-      "164.131.142.",
-      "164.131.142.",
-      "164.131.143.",
-      "164.131.160.",
-      "164.131.197.",
-      "164.131.198.",
-      "164.131.198.",
-      "164.131.199.",
-      "164.131.212.",
-      "164.131.214.",
-      "164.131.224.",
-      "164.131.226.",
-      "164.131.232.",
-      "164.131.233.",
-      "164.131.244.",
-      "185.24.184.",
-      "185.24.184.",
-      "185.24.185.",
-      "185.24.186.",
-      "185.24.186.",
-      "185.24.187.",
-      "192.134.136.",
-      "193.17.19.",
-      "194.5.170.",
-      "194.5.170.",
-      "194.5.171.",
-      "194.5.172.",
-      "194.5.172.",
-      "194.5.173.",
-      "195.42.231.",
-      "83.118.200.21", // wifi du lab
-      "86.234.115.218", // IP de Andrée
+      '143.126.100.',
+      '143.126.203.',
+      '143.126.211.',
+      '143.126.221.',
+      '143.126.248.',
+      '143.126.248.',
+      '143.126.249.',
+      '143.126.250.',
+      '143.126.250.',
+      '143.126.251.',
+      '143.126.255.',
+      '143.196.14.',
+      '143.196.22.',
+      '143.196.22.',
+      '143.196.23.',
+      '143.196.146.',
+      '143.196.146.',
+      '143.196.147.',
+      '143.196.148.',
+      '143.196.176.',
+      '143.196.187.',
+      '143.196.251.',
+      '143.196.255.',
+      '164.131.80.',
+      '164.131.124.',
+      '164.131.124.',
+      '164.131.125.',
+      '164.131.126.',
+      '164.131.126.',
+      '164.131.127.',
+      '164.131.130.',
+      '164.131.130.',
+      '164.131.131.',
+      '164.131.132.',
+      '164.131.132.',
+      '164.131.133.',
+      '164.131.142.',
+      '164.131.142.',
+      '164.131.143.',
+      '164.131.160.',
+      '164.131.197.',
+      '164.131.198.',
+      '164.131.198.',
+      '164.131.199.',
+      '164.131.212.',
+      '164.131.214.',
+      '164.131.224.',
+      '164.131.226.',
+      '164.131.232.',
+      '164.131.233.',
+      '164.131.244.',
+      '185.24.184.',
+      '185.24.184.',
+      '185.24.185.',
+      '185.24.186.',
+      '185.24.186.',
+      '185.24.187.',
+      '192.134.136.',
+      '193.17.19.',
+      '194.5.170.',
+      '194.5.170.',
+      '194.5.171.',
+      '194.5.172.',
+      '194.5.172.',
+      '194.5.173.',
+      '195.42.231.',
+      '83.118.200.21', // wifi du lab
+      '86.234.115.218', // IP de Andrée
     ],
   },
-};
+  /**
+   * authPasswordFile to BO
+   */
+  authPasswordFile: process.env.AUTH_PASSWORD_FILE,
+  nbInstances: 1,
+}

@@ -1,6 +1,7 @@
 module.exports = {
   envName: '[TEST] ',
   preLoad: false,
+  redis: process.env.REDIS_URL,
   login: {
     shareAuthCode: true,
     enable2Auth: false,

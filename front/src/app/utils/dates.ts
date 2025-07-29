@@ -1,4 +1,4 @@
-import { endOfMonth, startOfMonth } from 'date-fns';
+import { endOfMonth, startOfMonth } from 'date-fns'
 
 /**
  * Calcul du nombre de mois entre deux dates
@@ -7,11 +7,11 @@ import { endOfMonth, startOfMonth } from 'date-fns';
  * @returns
  */
 export function monthDiff(d1: Date, d2: Date) {
-  var months;
-  months = (d2.getFullYear() - d1.getFullYear()) * 12;
-  months -= d1.getMonth();
-  months += d2.getMonth();
-  return months <= 0 ? 0 : months;
+  var months
+  months = (d2.getFullYear() - d1.getFullYear()) * 12
+  months -= d1.getMonth()
+  months += d2.getMonth()
+  return months <= 0 ? 0 : months
 }
 
 /**
@@ -20,7 +20,7 @@ export function monthDiff(d1: Date, d2: Date) {
  * @returns
  */
 export function workingDay(date: Date) {
-  return [1, 2, 3, 4, 5].indexOf(date.getDay()) !== -1;
+  return [1, 2, 3, 4, 5].indexOf(date.getDay()) !== -1
 }
 
 /**
@@ -30,22 +30,9 @@ export function workingDay(date: Date) {
  */
 export function getMonthString(date: Date | string) {
   if (typeof date === 'string') {
-    date = new Date(date);
+    date = new Date(date)
   }
-  return [
-    'Janvier',
-    'Février',
-    'Mars',
-    'Avril',
-    'Mai',
-    'Juin',
-    'Juillet',
-    'Août',
-    'Septembre',
-    'Octobre',
-    'Novembre',
-    'Décembre',
-  ][date.getMonth()];
+  return ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'][date.getMonth()]
 }
 
 /**
@@ -55,22 +42,9 @@ export function getMonthString(date: Date | string) {
  */
 export function getShortMonthString(date: Date | string) {
   if (typeof date === 'string') {
-    date = new Date(date);
+    date = new Date(date)
   }
-  return [
-    'Janv.',
-    'Févr.',
-    'Mars',
-    'Avr.',
-    'Mai',
-    'Juin',
-    'Juil.',
-    'Août',
-    'Sept.',
-    'Oct.',
-    'Nov.',
-    'Déc.',
-  ][date.getMonth()];
+  return ['Janv.', 'Févr.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'][date.getMonth()]
 }
 
 /**
@@ -81,31 +55,31 @@ export function getShortMonthString(date: Date | string) {
 export function getLongMonthString(shortString: string) {
   switch (shortString) {
     case 'Janv.':
-      return 'Janvier';
+      return 'Janvier'
     case 'Févr.':
-      return 'Février';
+      return 'Février'
     case 'Mars':
-      return 'Mars';
+      return 'Mars'
     case 'Avr.':
-      return 'Avril';
+      return 'Avril'
     case 'Mai':
-      return 'Mai';
+      return 'Mai'
     case 'Juin':
-      return 'Juin';
+      return 'Juin'
     case 'Juil.':
-      return 'Juillet';
+      return 'Juillet'
     case 'Août':
-      return 'Août';
+      return 'Août'
     case 'Sept.':
-      return 'Septembre';
+      return 'Septembre'
     case 'Oct.':
-      return 'Octobre';
+      return 'Octobre'
     case 'Nov.':
-      return 'Novembre';
+      return 'Novembre'
     case 'Déc.':
-      return 'Décembre';
+      return 'Décembre'
   }
-  return;
+  return
 }
 
 /**
@@ -114,11 +88,11 @@ export function getLongMonthString(shortString: string) {
  * @returns
  */
 export function today(date: Date | null | undefined = new Date()): Date {
-  let now = new Date();
+  let now = new Date()
   if (date) {
-    now = new Date(date);
+    now = new Date(date)
   }
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate())
 }
 
 /**
@@ -128,24 +102,20 @@ export function today(date: Date | null | undefined = new Date()): Date {
  * @param lastDay prendre le dernier jour du mois
  * @returns
  */
-export function month(
-  date: Date | null = new Date(),
-  monthToAdd?: number,
-  lastDay?: string
-) {
-  date = date ? new Date(date) : new Date();
+export function month(date: Date | null = new Date(), monthToAdd?: number, lastDay?: string) {
+  date = date ? new Date(date) : new Date()
 
   if (lastDay) {
-    date = endOfMonth(date);
+    date = endOfMonth(date)
   } else {
-    date = startOfMonth(date);
+    date = startOfMonth(date)
   }
 
   if (monthToAdd && monthToAdd !== 0) {
-    date.setMonth(date.getMonth() + monthToAdd);
+    date.setMonth(date.getMonth() + monthToAdd)
   }
 
-  return date;
+  return date
 }
 
 /**
@@ -155,13 +125,13 @@ export function month(
  * @returns
  */
 export function nbOfWorkingDays(startDate: Date, endDate: Date) {
-  const start = new Date(startDate);
-  let nbOfWorkingDays = 0;
+  const start = new Date(startDate)
+  let nbOfWorkingDays = 0
   do {
-    if (workingDay(start)) nbOfWorkingDays++;
-    start.setDate(start.getDate() + 1);
-  } while (start.getTime() <= endDate.getTime());
-  return nbOfWorkingDays;
+    if (workingDay(start)) nbOfWorkingDays++
+    start.setDate(start.getDate() + 1)
+  } while (start.getTime() <= endDate.getTime())
+  return nbOfWorkingDays
 }
 
 /**
@@ -170,17 +140,17 @@ export function nbOfWorkingDays(startDate: Date, endDate: Date) {
  * @returns
  */
 const convertMsToDays = (ms: number) => {
-  const msInOneSecond = 1000;
-  const secondsInOneMinute = 60;
-  const minutesInOneHour = 60;
-  const hoursInOneDay = 24;
+  const msInOneSecond = 1000
+  const secondsInOneMinute = 60
+  const minutesInOneHour = 60
+  const hoursInOneDay = 24
 
-  const minutesInOneDay = hoursInOneDay * minutesInOneHour;
-  const secondsInOneDay = secondsInOneMinute * minutesInOneDay;
-  const msInOneDay = msInOneSecond * secondsInOneDay;
+  const minutesInOneDay = hoursInOneDay * minutesInOneHour
+  const secondsInOneDay = secondsInOneMinute * minutesInOneDay
+  const msInOneDay = msInOneSecond * secondsInOneDay
 
-  return Math.ceil(ms / msInOneDay);
-};
+  return Math.ceil(ms / msInOneDay)
+}
 
 /**
  * Calcul du nombre de jours entre 2 dates
@@ -189,15 +159,15 @@ const convertMsToDays = (ms: number) => {
  * @returns
  */
 export function nbOfDays(startDate: Date, endDate: Date) {
-  startDate = new Date(startDate);
-  endDate = new Date(endDate);
-  let differenceInMs = startDate.getTime() - endDate.getTime();
+  startDate = new Date(startDate)
+  endDate = new Date(endDate)
+  let differenceInMs = startDate.getTime() - endDate.getTime()
 
   if (differenceInMs < 0) {
-    differenceInMs *= -1;
+    differenceInMs *= -1
   }
 
-  return convertMsToDays(differenceInMs);
+  return convertMsToDays(differenceInMs)
 }
 
 /**
@@ -207,9 +177,9 @@ export function nbOfDays(startDate: Date, endDate: Date) {
  * @returns
  */
 export function dateAddDays(date: Date, nbDays: number = 0) {
-  date = new Date(date);
-  date.setDate(date.getDate() + nbDays);
-  return date;
+  date = new Date(date)
+  date.setDate(date.getDate() + nbDays)
+  return date
 }
 
 /**
@@ -218,18 +188,11 @@ export function dateAddDays(date: Date, nbDays: number = 0) {
  * @returns
  */
 export function findRealValue(date: Date) {
-  const today = new Date();
-  if (
-    today.getDate() === date.getDate() &&
-    today.getMonth() === date.getMonth() &&
-    today.getFullYear() === date.getFullYear()
-  )
-    return '';
+  const today = new Date()
+  if (today.getDate() === date.getDate() && today.getMonth() === date.getMonth() && today.getFullYear() === date.getFullYear()) return ''
   else if (date && typeof date.getMonth === 'function') {
-    return `${(date.getDate() + '').padStart(2, '0')} ${getShortMonthString(
-      date
-    )} ${date.getFullYear()}`;
-  } else return '';
+    return `${(date.getDate() + '').padStart(2, '0')} ${getShortMonthString(date)} ${date.getFullYear()}`
+  } else return ''
 }
 
 /**
@@ -237,24 +200,14 @@ export function findRealValue(date: Date) {
  * @param date
  * @returns
  */
-export function findRealValueCustom(
-  date: Date | string | null | undefined,
-  isTodayString = true
-) {
-  date = new Date(date || '');
-  const today = new Date();
-  if (
-    today.getDate() === date.getDate() &&
-    today.getMonth() === date.getMonth() &&
-    today.getFullYear() === date.getFullYear() &&
-    isTodayString
-  ) {
-    return "Aujourd'hui";
+export function findRealValueCustom(date: Date | string | null | undefined, isTodayString = true) {
+  date = new Date(date || '')
+  const today = new Date()
+  if (today.getDate() === date.getDate() && today.getMonth() === date.getMonth() && today.getFullYear() === date.getFullYear() && isTodayString) {
+    return "Aujourd'hui"
   } else if (date && typeof date.getMonth === 'function') {
-    return `${(date.getDate() + '').padStart(2, '0')} ${getMonthString(
-      date
-    )} ${date.getFullYear()}`;
-  } else return '';
+    return `${(date.getDate() + '').padStart(2, '0')} ${getMonthString(date)} ${date.getFullYear()}`
+  } else return ''
 }
 
 /**
@@ -264,15 +217,8 @@ export function findRealValueCustom(
  * @returns
  */
 export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
-  if (dateTo)
-    return [
-      ...Array(
-        dateTo.getMonth() -
-          dateFrom.getMonth() +
-          12 * (dateTo.getFullYear() - dateFrom.getFullYear())
-      ).keys(),
-    ];
-  else return [];
+  if (dateTo) return [...Array(dateTo.getMonth() - dateFrom.getMonth() + 12 * (dateTo.getFullYear() - dateFrom.getFullYear())).keys()]
+  else return []
 }
 
 /**
@@ -282,11 +228,11 @@ export function monthDiffList(dateFrom: Date, dateTo: Date | null): number[] {
  */
 export function stringToDecimalDate(str: string, sep = 'h') {
   if (str !== null || str !== '') {
-    const strArray = str.split(sep);
-    return (parseInt(strArray[0]) * 60 + parseInt(strArray[1])) / 60;
+    const strArray = str.split(sep)
+    return (parseInt(strArray[0]) * 60 + parseInt(strArray[1])) / 60
   }
 
-  return 0;
+  return 0
 }
 
 /**
@@ -294,20 +240,15 @@ export function stringToDecimalDate(str: string, sep = 'h') {
  * @param decimal
  * @returns
  */
-export function decimalToStringDate(
-  decimal: number | string | null | undefined,
-  sep = 'h'
-) {
-  if (decimal != null) {
-    const decimalString = ('' + decimal).replace(',', '.');
-    decimal = +decimalString;
-    const strArray = decimalString.split('.');
-    const dMin = decimal - parseInt(strArray[0]);
-    let minute = strArray[1] ? String(Math.round(dMin * 60)) : '00';
-    minute = minute.length === 1 ? '0' + minute : minute;
-    return strArray[0] + sep + minute;
+export function decimalToStringDate(d: number | string | null | undefined, s = 'h') {
+  if (d == null || isNaN((d = +('' + d).replace(',', '.')))) return '0'
+  let h = Math.floor(d),
+    m = Math.round((d - h) * 60)
+  if (m === 60) {
+    h++
+    m = 0
   }
-  return '0';
+  return h + s + (m < 10 ? '0' : '') + m
 }
 
 /**
@@ -317,28 +258,22 @@ export function decimalToStringDate(
  * @returns
  */
 export function getRangeOfMonths(startDate: Date, endDate: Date) {
-  const dates = new Array<string>();
-  const dateCounter = new Date(startDate);
+  const dates = new Array<string>()
+  const dateCounter = new Date(startDate)
 
   // avoids edge case where last month is skipped
-  dateCounter.setDate(1);
+  dateCounter.setDate(1)
   while (dateCounter < endDate) {
     //if (getShortMonthString(dateCounter) === 'Janv.')
-    dates.push(
-      `${
-        getShortMonthString(dateCounter) +
-        ' ' +
-        dateCounter.getFullYear().toString().slice(-2)
-      }`
-    );
+    dates.push(`${getShortMonthString(dateCounter) + ' ' + dateCounter.getFullYear().toString().slice(-2)}`)
     //else dates.push(`${getShortMonthString(dateCounter)}`)
 
-    dateCounter.setMonth(dateCounter.getMonth() + 1);
+    dateCounter.setMonth(dateCounter.getMonth() + 1)
   }
 
-  if (dates.length === 1) return [dates[0], dates[0]];
+  if (dates.length === 1) return [dates[0], dates[0]]
 
-  return dates;
+  return dates
 }
 
 /**
@@ -348,42 +283,29 @@ export function getRangeOfMonths(startDate: Date, endDate: Date) {
  * @param asObject
  * @returns
  */
-export function getRangeOfMonthsAsObject(
-  startDate: Date,
-  endDate: Date,
-  asObject = false
-) {
-  const dates = new Array<string>();
-  const dateCounter = new Date(startDate);
-  let monthlyL: { [key: string]: any } = {};
+export function getRangeOfMonthsAsObject(startDate: Date, endDate: Date, asObject = false) {
+  const dates = new Array<string>()
+  const dateCounter = new Date(startDate)
+  let monthlyL: { [key: string]: any } = {}
 
-  dateCounter.setDate(1);
+  dateCounter.setDate(1)
 
   while (dateCounter <= endDate) {
-    if (getShortMonthString(dateCounter) === 'Janv.')
-      dates.push(
-        `${
-          getShortMonthString(dateCounter) +
-          ' ' +
-          dateCounter.getFullYear().toString().slice(-2)
-        }`
-      );
-    else dates.push(`${getShortMonthString(dateCounter)}`);
+    if (getShortMonthString(dateCounter) === 'Janv.') dates.push(`${getShortMonthString(dateCounter) + ' ' + dateCounter.getFullYear().toString().slice(-2)}`)
+    else dates.push(`${getShortMonthString(dateCounter)}`)
 
-    const str: string =
-      getShortMonthString(dateCounter) +
-      dateCounter.getFullYear().toString().slice(-2);
+    const str: string = getShortMonthString(dateCounter) + dateCounter.getFullYear().toString().slice(-2)
     if (asObject) {
-      monthlyL[str] = { ...{} };
+      monthlyL[str] = { ...{} }
     }
-    dateCounter.setMonth(dateCounter.getMonth() + 1);
+    dateCounter.setMonth(dateCounter.getMonth() + 1)
   }
 
-  if (asObject) return { ...monthlyL };
+  if (asObject) return { ...monthlyL }
 
-  if (dates.length === 1) return [dates[0], dates[0]];
+  if (dates.length === 1) return [dates[0], dates[0]]
 
-  return dates;
+  return dates
 }
 
 /**
@@ -392,7 +314,7 @@ export function getRangeOfMonthsAsObject(
  * @returns
  */
 export function isFirstDayOfMonth(date = new Date()) {
-  return date.getDate() === 1;
+  return date.getDate() === 1
 }
 
 /**
@@ -401,18 +323,14 @@ export function isFirstDayOfMonth(date = new Date()) {
  * @param secondDate
  * @returns
  */
-export function isDateBiggerThan(
-  firstDate: string | Date,
-  secondDate: string | Date,
-  strict: boolean = false
-): boolean {
-  firstDate = new Date(firstDate);
-  secondDate = new Date(secondDate);
+export function isDateBiggerThan(firstDate: string | Date, secondDate: string | Date, strict: boolean = false): boolean {
+  firstDate = new Date(firstDate)
+  secondDate = new Date(secondDate)
 
   if (strict) {
-    return firstDate.getTime() > secondDate.getTime();
+    return firstDate.getTime() > secondDate.getTime()
   }
-  return firstDate.getTime() >= secondDate.getTime();
+  return firstDate.getTime() >= secondDate.getTime()
 }
 
 /**
@@ -421,22 +339,21 @@ export function isDateBiggerThan(
  * @returns
  */
 export function nbHourInMonth(date: Date = new Date()) {
-  const dateStart = new Date(date.getFullYear(), date.getMonth());
-  const dateStop = new Date(dateStart);
-  const nbHoursPerDayAndMagistrat = import.meta.env
-    .NG_APP_NB_HOURS_PER_DAY_AND_MAGISTRAT;
-  dateStop.setMonth(dateStop.getMonth() + 1);
+  const dateStart = new Date(date.getFullYear(), date.getMonth())
+  const dateStop = new Date(dateStart)
+  const nbHoursPerDayAndMagistrat = import.meta.env.NG_APP_NB_HOURS_PER_DAY_AND_MAGISTRAT
+  dateStop.setMonth(dateStop.getMonth() + 1)
 
-  let nbDay = 0;
+  let nbDay = 0
   do {
     // only working day
     if (workingDay(dateStart)) {
-      nbDay++;
+      nbDay++
     }
-    dateStart.setDate(dateStart.getDate() + 1);
-  } while (dateStart.getTime() < dateStop.getTime());
+    dateStart.setDate(dateStart.getDate() + 1)
+  } while (dateStart.getTime() < dateStop.getTime())
 
-  return nbDay * nbHoursPerDayAndMagistrat;
+  return nbDay * nbHoursPerDayAndMagistrat
 }
 
 /**
@@ -445,23 +362,23 @@ export function nbHourInMonth(date: Date = new Date()) {
  * @returns
  */
 export function generalizeTimeZone(date: Date | undefined | null) {
-  if (date === undefined || date === null) return undefined;
+  if (date === undefined || date === null) return undefined
   else {
-    return date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
   }
 }
 
 export function setTimeToMidDay(date: Date | undefined | null) {
-  if (date === undefined || date === null) return undefined;
-  date.setHours(12);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
-  date.setUTCHours(12);
-  date.setUTCMinutes(0);
-  date.setUTCSeconds(0);
-  date.setUTCMilliseconds(0);
-  return date;
+  if (date === undefined || date === null) return undefined
+  date.setHours(12)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+  date.setUTCHours(12)
+  date.setUTCMinutes(0)
+  date.setUTCSeconds(0)
+  date.setUTCMilliseconds(0)
+  return date
 }
 
 /**
@@ -471,17 +388,11 @@ export function setTimeToMidDay(date: Date | undefined | null) {
  * @param reverse
  * @returns
  */
-export function sortDates(
-  firstDate: string | Date,
-  secondDate: string | Date,
-  reverse: boolean
-) {
-  firstDate = new Date(firstDate);
-  secondDate = new Date(secondDate);
+export function sortDates(firstDate: string | Date, secondDate: string | Date, reverse: boolean) {
+  firstDate = new Date(firstDate)
+  secondDate = new Date(secondDate)
 
-  return reverse
-    ? secondDate.getTime() - firstDate.getTime()
-    : firstDate.getTime() - secondDate.getTime();
+  return reverse ? secondDate.getTime() - firstDate.getTime() : firstDate.getTime() - secondDate.getTime()
 }
 
 /**
@@ -490,6 +401,6 @@ export function sortDates(
  * @returns
  */
 export function getTime(date: string | Date | null = null) {
-  date = new Date(date || '');
-  return date.getTime();
+  date = new Date(date || new Date())
+  return date.getTime()
 }

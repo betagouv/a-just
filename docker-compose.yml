@@ -1,4 +1,3 @@
-version: "3.3"
 services:
   #api:
   #  restart: unless-stopped
@@ -102,6 +101,12 @@ services:
       - "max_parallel_workers_per_gather=2"
       - "-c"
       - "max_parallel_workers=4"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
 #networks:
 #  mobiville_network:
 #    driver: bridge

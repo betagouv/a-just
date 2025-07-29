@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PopinEditActivitiesComponent } from './popin-edit-activities/popin-edit-activities.component';
 import { MainClass } from '../../libs/main-class';
@@ -61,7 +61,7 @@ import { AppService } from '../../services/app/app.service';
   templateUrl: './activities.page.html',
   styleUrls: ['./activities.page.scss'],
 })
-export class ActivitiesPage extends MainClass implements OnDestroy {
+export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
   activitiesService = inject(ActivitiesService);
   humanResourceService = inject(HumanResourceService);
   referentielService = inject(ReferentielService);
@@ -357,6 +357,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
           }
         }*/
         },
+        {
+          target: '#wrapper-contener',
+          title: 'Découvrir la fonctionnalité',
+          intro:
+            '<p>Consultez la vidéo ci-dessous pour plus de détails sur le fonctionnement de l\'écran des données d’activité.</p><video controls class="intro-js-video small-video"><source src="/assets/videos/ca-activite.mp4" type="video/mp4" /></video>',
+        },
       ];
 
   /**
@@ -397,6 +403,12 @@ export class ActivitiesPage extends MainClass implements OnDestroy {
     this.userService.isCa()
       ? (this.dateSelector.minDate = MIN_DATE_SELECT_CA)
       : (this.dateSelector.minDate = MIN_DATE_SELECT_TJ);
+  }
+
+  ngOnInit() {
+    if (!this.userService.canViewActivities()) {
+      this.userService.redirectToHome();
+    }
   }
 
   /**

@@ -31,13 +31,15 @@ export class JuridictionsService {
     juridictionName: string,
     backupId: number,
     label: string,
-    copyAct: boolean
+    copyAct: boolean,
+    statExclusion: boolean
   ) {
     return this.serverService
       .postWithoutError('juridictions/duplicate-juridiction', {
         juridictionName,
         backupId,
         copyAct,
+        statExclusion,
       })
       .then((r) => {
         alert(

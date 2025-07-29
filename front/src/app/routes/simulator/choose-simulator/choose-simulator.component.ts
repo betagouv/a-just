@@ -6,7 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { MainClass } from '../../../libs/main-class';
-import { CommonModule } from '@angular/common';
+
 import { UserService } from '../../../services/user/user.service';
 import {
   REAFFECTATOR,
@@ -22,7 +22,7 @@ import { AppService } from '../../../services/app/app.service';
 @Component({
   standalone: true,
   selector: 'app-choose-simulator',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './choose-simulator.component.html',
   styleUrls: ['./choose-simulator.component.scss'],
 })
@@ -47,10 +47,6 @@ export class ChooseSimulatorComponent extends MainClass {
    * Mouse y
    */
   mouseY: number = 0;
-  /**
-   * Accès au réafectateur
-   */
-  canViewReaffectator: boolean = false;
 
   @HostListener('window:mousemove', ['$event']) mouseMove = (
     e: MouseEvent
@@ -64,12 +60,6 @@ export class ChooseSimulatorComponent extends MainClass {
    */
   constructor() {
     super();
-  }
-
-  ngOnInit(): void {
-    const user = this.userService.user.getValue();
-    this.canViewReaffectator =
-      user && user.access && user.access.indexOf(7) !== -1 ? true : false;
   }
 
   onSelect() {

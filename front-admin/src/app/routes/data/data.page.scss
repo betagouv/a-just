@@ -1,10 +1,10 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss";
 
-.section { 
+.section {
   margin-bottom: 30px;
 
   h2 {
-    margin-bottom: 15px;  
+    margin-bottom: 15px;
   }
 
   .form {
@@ -40,9 +40,9 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      
+
       .date-selectors {
-        display: flex; 
+        display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
@@ -59,9 +59,10 @@
 
   table {
     border-spacing: 10px;
-    th, td {
+
+    th,
+    td {
       padding: 15px;
     }
   }
 }
-

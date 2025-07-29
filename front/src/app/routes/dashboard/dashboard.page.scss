@@ -1,7 +1,7 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 h1 {
-  color: fColor(primary);
+  color: utils.$colors-primary;
   margin: 32px 0;
 }
 

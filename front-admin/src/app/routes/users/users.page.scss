@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss";
 
 table {
   width: 100%;
@@ -7,7 +7,7 @@ table {
 .content-popup {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-	grid-gap: 16px;
+  grid-gap: 16px;
 }
 
 .item {

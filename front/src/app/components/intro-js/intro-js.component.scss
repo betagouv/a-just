@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 .restart {
   position: fixed;
@@ -10,7 +10,7 @@
   height: 64px;
   width: 64px;
   border-radius: 64px;
-  background-color: fColor(cblue);
+  background-color: utils.$colors-cblue;
   box-shadow: 0 4px 10px 7px rgba(0, 0, 0, 0.1),
     0 10px 10px 10px rgba(0, 0, 0, 0.04);
   cursor: pointer;
@@ -21,7 +21,7 @@
   }
 
   i {
-    color: white;
+    color: utils.$colors-white;
     font-size: 32px;
   }
 }

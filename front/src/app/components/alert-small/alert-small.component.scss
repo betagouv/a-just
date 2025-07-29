@@ -1,3 +1,9 @@
+:host {
+    &.fix-width div {
+        width: 300px;
+    }
+}
+
 div {
     display: flex;
     justify-content: space-between;
@@ -6,13 +12,12 @@ div {
     position: absolute;
     top: 105%;
     left: 0;
-    z-index: 100;
+    z-index: 90;
     padding: 16px;
     border: 2px solid #CE0500;
     border-radius: 8px;
     background-color: white;
     color: #CE0500;
-    width: 300px;
     font-size: 14px;
     line-height: 24px;
     box-shadow: 0px 4px 12px 0px rgba(0, 0, 18, 0.16);

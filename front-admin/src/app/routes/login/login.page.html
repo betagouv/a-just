@@ -5,15 +5,17 @@
   <input type="submit" class="big" value="Connexion" />
 </form>
 
-<aj-popup *ngIf="needToGetCode !== null" [actions]="[
+@if (needToGetCode !== null) {
+<aj-popup [actions]="[
 { id: 'close', content: 'Annuler' },
 { id: 'connect', content: 'Se connecter', fill: true }]" [closeIcon]="true" (onClose)="needToGetCode = null"
-  title="Connexion" (selectedAction)="onContinuToLogin($event, codeInput)">
-  <div class="popin-code">
-    <p>
-      Vous devez saisir le code envoyé par mail pour confirmer votre
-      connexion.
-    </p>
-    <input #codeInput class="ethics-ui" placeholder="Code" type="text" [value]="needToGetCode" autofocus />
-  </div>
-</aj-popup>
+    title="Connexion" (selectedAction)="onContinuToLogin($event, codeInput)">
+    <div class="popin-code">
+      <p>
+        Vous devez saisir le code envoyé par mail pour confirmer votre
+        connexion.
+      </p>
+      <input #codeInput class="ethics-ui" placeholder="Code" type="text" [value]="needToGetCode" autofocus />
+    </div>
+  </aj-popup>
+}
