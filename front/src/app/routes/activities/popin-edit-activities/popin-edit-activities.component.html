@@ -6,17 +6,25 @@
         <p>Visualisation du détail des données d'activité du</p>
         <div>
           <h2>{{ referentiel?.label }}</h2>
-          <i *ngIf="referentiel && referentiel.helpUrl" class="ri-lightbulb-flash-line cursor-pointer blue"
+          @if (referentiel && referentiel.helpUrl) {
+            <i class="ri-lightbulb-flash-line cursor-pointer blue"
             (click)="onShowHelpPanel({url: referentiel.helpUrl})"></i>
+          }
         </div>
       </div>
       <div class="switch-comments">
-        <p *ngIf="(referentiel?.nbComments || 0) > 1">Afficher les <b>{{referentiel?.nbComments}}</b> commentaires</p>
-        <p *ngIf="(referentiel?.nbComments || 0) === 1">Afficher le commentaire</p>
-        <p *ngIf="(referentiel?.nbComments || 0) === 0">Rédiger un
+        @if ((referentiel?.nbComments || 0) > 1) {
+          <p>Afficher les <b>{{referentiel?.nbComments}}</b> commentaires</p>
+        }
+        @if ((referentiel?.nbComments || 0) === 1) {
+          <p>Afficher le commentaire</p>
+        }
+        @if ((referentiel?.nbComments || 0) === 0) {
+          <p>Rédiger un
           commentaire</p>
+        }
         <aj-radio-button bgColor="#000091" [switchColor]="showComments ? 'white' : '#000091'" [value]="showComments"
-          (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
+        (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
       </div>
       <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
         (valueChange)="selectMonth($event)">
@@ -105,13 +113,14 @@
     </div>
   </div>
 
-  <div class="contentieux-title" [ngStyle]="{'padding-right': getScrollbarWidth()}"
-    *ngIf="referentiel && hasValuesToShow">
-    <div class="contentieux-title-label">
-      <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
-      <i class="ri-lightbulb-flash-line cursor-pointer" (click)="onShowHelpPanel({url: totalUrl})"></i>
-    </div>
-    <div class="contentieux-title-label-entrees">
+  @if (referentiel && hasValuesToShow) {
+    <div class="contentieux-title" [ngStyle]="{'padding-right': getScrollbarWidth()}"
+      >
+      <div class="contentieux-title-label">
+        <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
+        <i class="ri-lightbulb-flash-line cursor-pointer" (click)="onShowHelpPanel({url: totalUrl})"></i>
+      </div>
+      <div class="contentieux-title-label-entrees">
       <ng-container *ngTemplateOutlet="
           itemTemplate;
           context: {
@@ -136,8 +145,8 @@
             updated: total.out.value !== null ? true : false
           }
         "></ng-container>
-    </div>
-    <div class="contentieux-title-label-stock">
+  </div>
+  <div class="contentieux-title-label-stock">
       <ng-container *ngTemplateOutlet="
           itemTemplate;
           context: {
@@ -149,19 +158,22 @@
             updated: total.stock.value !== null ? true : false,
           }
         "></ng-container>
-    </div>
-  </div>
+</div>
+</div>
+}
 
-  <div id="contentieux-list" [ngClass]="{
+@if (hasValuesToShow) {
+<div id="contentieux-list" [ngClass]="{
       'content-popin-scroll': referentiel && referentiel.childrens && referentiel.childrens.length > 4,
       'content-popin-no-scroll': referentiel && referentiel.childrens && referentiel.childrens.length <= 4,
-     }" *ngIf="hasValuesToShow">
-    <div class="contentieux-item header-list" *ngFor="let item of referentiel?.childrens"
-      [id]="'contentieux-' + item.id">
-      <div class="contentieux-item-label">
-        <p>{{ item.label }}</p>
-      </div>
-      <div class="contentieux-item-label-entrees">
+     }">
+    @for (item of referentiel?.childrens; track item) {
+      <div class="contentieux-item header-list"
+        [id]="'contentieux-' + item.id">
+        <div class="contentieux-item-label">
+          <p>{{ item.label }}</p>
+        </div>
+        <div class="contentieux-item-label-entrees">
         <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
@@ -186,8 +198,8 @@
               updated: item.activityUpdated?.sorties ? item.activityUpdated?.sorties : null,
             }
           "></ng-container>
-      </div>
-      <div class="contentieux-item-label-stock">
+    </div>
+    <div class="contentieux-item-label-stock">
         <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
@@ -199,34 +211,38 @@
               updated: item.activityUpdated?.stock ? item.activityUpdated?.stock : null,
             }
           "></ng-container>
-      </div>
-    </div>
   </div>
+</div>
+}
+</div>
+}
 
-  <div class="no-values" *ngIf="!hasValuesToShow">
+@if (!hasValuesToShow) {
+  <div class="no-values">
     <p>Cet écran sera accessible dès l'import des données logiciel du mois.</p>
   </div>
+}
 
-  <div class="bottom-popin">
-    <button class="small outline blue" (click)="close()">Annuler</button>
-    <div class="flex-1"></div>
-    <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, -1))">
-      {{ checkIfHasUpdates() ? 'Enregistrer puis mois précédent' : 'Aller au mois précédent' }}
-    </button>
+<div class="bottom-popin">
+  <button class="small outline blue" (click)="close()">Annuler</button>
+  <div class="flex-1"></div>
+  <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, -1))">
+    {{ checkIfHasUpdates() ? 'Enregistrer puis mois précédent' : 'Aller au mois précédent' }}
+  </button>
     <button class="small outline" [ngClass]="{
         'gray': !hasNextMonth,
         'blue': hasNextMonth
       }" (click)="selectMonth(getMonth(activityMonth, 1))" [disabled]="!hasNextMonth">
-      {{ checkIfHasUpdates() ? 'Enregistrer puis mois suivant' : 'Aller au mois suivant' }}
-    </button>
+    {{ checkIfHasUpdates() ? 'Enregistrer puis mois suivant' : 'Aller au mois suivant' }}
+  </button>
     <button class="small" [ngClass]="{
         'gray': !checkIfHasUpdates(),
         'outline': !checkIfHasUpdates(),
         'primary': checkIfHasUpdates(),
       }" (click)="onSave({force: false, exit: true})" [disabled]="!checkIfHasUpdates()">
-      Enregistrer
-    </button>
-  </div>
+    Enregistrer
+  </button>
+</div>
 </aj-popup>
 
 <ng-template #itemTemplate let-items let-valueQuality="valueQuality" let-original="original" let-newValue="newValue"
@@ -243,13 +259,16 @@
       <div>
         <p>{{ original == null ? '-' : original }}</p>
       </div>
-      <span *ngIf="valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)">
-        <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">
+      @if (valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)) {
+        <span>
+          <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">
           Confirmer</p>
-      </span>
+        </span>
+      }
     </div>
-    <div class="item-template-new-total" [ngClass]="{
-      }" *ngIf="items.childrens">
+    @if (items.childrens) {
+<div class="item-template-new-total" [ngClass]="{
+      }">
       <ng-container *ngTemplateOutlet="
           tooltip;
           context: {
@@ -265,7 +284,9 @@
         'blue': checkIfBlue({level: 3, cont: items, node: type, isForBulbOrBottom: false})
       }">{{ newValue !== null ? newValue : (original !== null ? original : '-') }}</p>
     </div>
-    <div class="item-template-new" *ngIf="!items.childrens">
+  }
+  @if (!items.childrens) {
+    <div class="item-template-new">
       <ng-container *ngTemplateOutlet="
           tooltip;
           context: {
@@ -277,8 +298,8 @@
             updated: updated,
           }
         ">
-      </ng-container>
-      <input #inputElement type="number" [ngModel]="newValue" [placeholder]="original !== null ? original : '-' "
+    </ng-container>
+    <input #inputElement type="number" [ngModel]="newValue" [placeholder]="original !== null ? original : '-' "
         [ngClass]="{
           'to-confirm': valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
           'blue-bottom': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: true}) ,
@@ -286,24 +307,29 @@
           'is-not-setted-to-verify':
             valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         }" [id]="'contentieux-' + items.id +'-' + type " (keyup.enter)="onBlur(inputElement.value, type, items)"
-        (keypress)="validateNo($event)" (blur)="onBlur(inputElement.value, type, items)" />
-    </div>
+      (keypress)="validateNo($event)" (blur)="onBlur(inputElement.value, type, items)" />
   </div>
+}
+</div>
 </ng-template>
 
 <ng-template #tooltip let-type="type" let-contentieux="contentieux" let-value="value" let-level="level"
   let-valueQuality="valueQuality" let-updated="updated">
-  <i *ngIf='level === 4 || (level === 3 && checkIfBlue({level: 3, cont: contentieux, node: type, isForBulbOrBottom: false}))'
+  @if (level === 4 || (level === 3 && checkIfBlue({level: 3, cont: contentieux, node: type, isForBulbOrBottom: false}))) {
+    <i
     class="{{
       ( level === 4 && ( value === null || checkIfBlue({level: level, cont: contentieux, node: type, isForBulbOrBottom: true}) ) ) ?
       'ri-lightbulb-flash-fill' : 'ri-lightbulb-flash-line'
     }}
     cursor-pointer
     {{  checkIfBlue({level: level, cont: contentieux, node: type, isForBulbOrBottom: false}) ? 'blue' : 'grey' }}"
-    #light [id]="'tooltip-icon-' + contentieux.id +'-' + type "
+      #light [id]="'tooltip-icon-' + contentieux.id +'-' + type "
     (click)="onShowHelpPanel({level: level ,cont: contentieux, node: type})"></i>
+  }
 </ng-template>
 
-<aj-comment-activities *ngIf="showComments && referentiel" class="animate__animated animate__bounceInLeft"
-  [type]="'activities_'+referentiel.id" [referentiel]="referentiel"
+@if (showComments && referentiel) {
+  <aj-comment-activities class="animate__animated animate__bounceInLeft"
+    [type]="'activities_'+referentiel.id" [referentiel]="referentiel"
   (close)="showComments = false"></aj-comment-activities>
+}

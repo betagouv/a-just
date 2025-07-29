@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
   &.left .tooltip-text {
@@ -11,7 +11,6 @@
     }
 
     .triangle {
-      //right: 35px;
       left: inherit;
     }
   }
@@ -82,36 +81,34 @@
   &.black {
     .tooltip-text {
       mat-icon {
-        color: white;
+        color: utils.$colors-white;
       }
 
       .triangle {
-        border-color: transparent transparent fColor(cblack) transparent;
+        border-color: transparent transparent utils.$colors-cblack transparent;
       }
 
       .title {
-        color: white;
-        background-color: fColor(cblack);
+        color: utils.$colors-white;
+        background-color: utils.$colors-cblack;
 
         >p {
-          color: fColor(tooltipContentTitleColor);
+          color: utils.$colors-tooltipContentTitleColor;
         }
       }
 
       .footer {
-        color: white;
-        background-color: fColor(cblack);
+        color: utils.$colors-white;
+        background-color: utils.$colors-cblack;
 
         &:before {
-          background-color: fColor(cblack);
+          background-color: utils.$colors-cblack;
         }
       }
     }
   }
 
   .tooltip-text {
-    // display: flex;
-    // flex-direction: column;
     position: absolute;
     z-index: 1;
     visibility: hidden;
@@ -123,7 +120,7 @@
       transform: translateX(-50%);
       border-radius: 8px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      background-color: fColor(tooltipBgColor);
+      background-color: utils.$colors-tooltipBgColor;
       max-width: 800px;
       min-width: 200px;
     }
@@ -133,14 +130,14 @@
       width: 0;
       height: 0;
       border-width: 0 3px 4px 3px;
-      border-color: transparent transparent fColor(tooltipBgTitleColor) transparent;
+      border-color: transparent transparent utils.$colors-tooltipBgTitleColor transparent;
       border-style: solid;
       top: -4px;
       left: calc(50% - 2px);
     }
 
     mat-icon {
-      color: fColor(tooltipContentTitleColor);
+      color: utils.$colors-tooltipContentTitleColor;
       position: absolute;
       top: 18px;
       right: 10px;
@@ -149,14 +146,14 @@
     }
 
     .title {
-      color: fColor(tooltipContentTitleColor);
-      background-color: fColor(tooltipBgTitleColor);
+      color: utils.$colors-tooltipContentTitleColor;
+      background-color: utils.$colors-tooltipBgTitleColor;
       padding: 16px 32px 16px 16px;
       border-top-left-radius: 8px;
       border-top-right-radius: 8px;
 
       >p {
-        color: fColor(tooltipContentTitleColor);
+        color: utils.$colors-tooltipContentTitleColor;
       }
 
       >div {
@@ -171,7 +168,7 @@
 
     .content {
       padding: 16px;
-      color: fColor(tooltipContentColor);
+      color: utils.$colors-tooltipContentColor;
       max-height: 130px;
       margin-bottom: 4px;
     }
@@ -180,8 +177,8 @@
       margin: 0 16px;
       padding: 9px 16px;
       position: relative;
-      color: fColor(tooltipContentFooterColor);
-      background-color: fColor(tooltipBgFooterColor);
+      color: utils.$colors-tooltipContentFooterColor;
+      background-color: utils.$colors-tooltipBgFooterColor;
 
       &:before {
         content: ' ';
@@ -190,7 +187,7 @@
         top: 1px;
         bottom: 1px;
         width: 4px;
-        background-color: fColor(tooltipContentFooterColor);
+        background-color: utils.$colors-tooltipContentFooterColor;
       }
     }
   }

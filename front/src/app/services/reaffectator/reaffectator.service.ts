@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
-import { ServerService } from '../http-server/server.service';
-import { setTimeToMidDay } from '../../utils/dates';
+import { inject, Injectable } from '@angular/core'
+import { ServerService } from '../http-server/server.service'
+import { setTimeToMidDay } from '../../utils/dates'
 
 /**
  * Service de la page du réaffectateur
@@ -9,19 +9,19 @@ import { setTimeToMidDay } from '../../utils/dates';
   providedIn: 'root',
 })
 export class ReaffectatorService {
-  serverService = inject(ServerService);
+  serverService = inject(ServerService)
   /**
    * Liste des référentiels sélectionnés et mise en cache
    */
-  selectedReferentielIds: number[] = [];
+  selectedReferentielIds: number[] = []
   /**
    * Liste des catégories sélectionnées et mise en cache
    */
-  selectedCategoriesId: number | null = null;
+  selectedCategoriesId: number | null = null
   /**
    * Liste des fonctions sélectionnées et mise en cache
    */
-  selectedFonctionsIds: number[] = [];
+  selectedFonctionsIds: number[] = []
 
   /**
    * API Appel au serveur pour lister les fiches d'une juridiction par catégorie
@@ -32,13 +32,7 @@ export class ReaffectatorService {
    * @param referentielList
    * @returns
    */
-  onFilterList(
-    backupId: number,
-    date: Date,
-    categoryId: number,
-    fonctionsIds: number[] | null,
-    referentielList: number[] | null
-  ) {
+  onFilterList(backupId: number, date: Date, categoryId: number, fonctionsIds: number[] | null, referentielList: number[] | null) {
     return this.serverService
       .post(`reaffectator/filter-list`, {
         backupId,
@@ -48,7 +42,7 @@ export class ReaffectatorService {
         referentielList,
       })
       .then((data) => {
-        return data.data;
-      });
+        return data.data
+      })
   }
 }

@@ -155,16 +155,20 @@ export class TimeSelectorComponent implements OnChanges, OnInit {
    * @param decimal hh:mm décimal
    * @returns string
    */
-  decimalToStringDate(decimal: number) {
-    if (decimal != null) {
-      const n = new Date(0, 0);
-      n.setMinutes(Math.round(+decimal * 60));
-      const subValue = Math.round(+decimal * 60);
-      if (subValue === 60 && decimal - Math.trunc(decimal) > 0.9)
-        return Math.trunc(decimal) + 1 + n.toTimeString().slice(2, 5);
-      return Math.trunc(decimal) + n.toTimeString().slice(2, 5);
-    }
-    return '';
+  decimalToStringDate(decimal: number): string {
+    if (decimal == null) return '';
+
+    const hours = Math.floor(decimal);
+    const minutes = Math.round((decimal - hours) * 60);
+
+    // Correction : si minutes arrondies font 60, on ajoute 1h et 0 min
+    const correctedHours = minutes === 60 ? hours + 1 : hours;
+    const correctedMinutes = minutes === 60 ? 0 : minutes;
+
+    // Format avec deux chiffres pour les minutes
+    const minutesStr = correctedMinutes.toString().padStart(2, '0');
+
+    return `${correctedHours}:${minutesStr}`;
   }
 
   /**

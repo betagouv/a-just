@@ -411,6 +411,9 @@ export class MainClass {
     const findElement = dom ? dom : document.getElementById('content');
     const findIdElement = document.getElementById(id);
 
+    console.log('findElement', findElement);
+    console.log('findIdElement', findIdElement);
+
     if (findElement && findIdElement) {
       const findTopElement = document.getElementById('top');
       let deltaToRemove = 0;
@@ -418,6 +421,13 @@ export class MainClass {
       if (findTopElement) {
         deltaToRemove = findTopElement.getBoundingClientRect().height;
       }
+
+      console.log(
+        findElement.scrollTop,
+        findIdElement.getBoundingClientRect().top,
+        deltaToRemove,
+        detalScrollY || 0
+      );
 
       findElement.scrollTo({
         behavior: 'smooth',
@@ -447,5 +457,18 @@ export class MainClass {
         today().getTime() === today(a[node]).getTime() ||
         !isDateBiggerThan(today(), today(a[node]))
     );
+  }
+
+  /**
+   * Ajoute un nombre de mois à une date sans modifier la date d'origine
+   * @param {Date} date - La date d'origine
+   * @param {number} monthsToAdd - Le nombre de mois à ajouter (peut être négatif)
+   * @returns {Date} - Une nouvelle date avec les mois ajoutés
+   */
+  public addMonthsToDate(date: Date | null, monthsToAdd: number) {
+    if (date === null) return null;
+    const newDate = new Date(date.getTime());
+    newDate.setMonth(newDate.getMonth() + monthsToAdd);
+    return newDate;
   }
 }

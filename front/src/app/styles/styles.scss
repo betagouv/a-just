@@ -1,15 +1,4 @@
-@import "remixicon/fonts/remixicon.css";
-@import "./utils.scss";
-@import "./typography.scss";
-@import "./form.scss";
-@import "./material.scss";
-@import "./button.scss";
-@import "./popup.scss";
-@import "./print.scss";
-@import "./quill.scss";
-@import "./toastr.scss";
-@import "./design-system-gouv.scss";
-@import "./introjs.scss";
+@use "./utils.scss" as utils;
 
 html,
 body {
@@ -19,7 +8,7 @@ body {
 	background-color: white;
 
 	&.remove-height {
-		height: fit-content;
+		height: inherit;
 	}
 }
 
@@ -113,7 +102,7 @@ body {
 
 .error-message {
 	font-size: 16px;
-	color: fColor(cred);
+	color: utils.$colors-cred;
 }
 
 .height-8 {

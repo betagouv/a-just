@@ -17,26 +17,22 @@
         "build": {
           "builder": "@ngx-env/builder:application",
           "options": {
-            "allowedCommonJsDependencies": [
-              "moment",
-              "file-saver",
-              "lodash"
-            ],
+            "allowedCommonJsDependencies": ["moment", "file-saver", "lodash"],
             "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "src/app/styles/styles.scss"
+              "src/app/styles/styles.scss",
+              "remixicon/fonts/remixicon.css",
+              "src/app/styles/utils.scss",
+              "src/app/styles/typography.scss",
+              "src/app/styles/form.scss",
+              "src/app/styles/material.scss"
             ],
             "scripts": []
           },
@@ -161,10 +157,7 @@
         "test": {
           "builder": "@ngx-env/builder:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -186,5 +179,31 @@
   },
   "cli": {
     "analytics": "c27f374a-4ff8-4d47-ac33-b6df13bde9ae"
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }

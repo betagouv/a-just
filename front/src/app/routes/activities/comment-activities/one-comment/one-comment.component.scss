@@ -1,4 +1,4 @@
-@import '../../../../styles/utils.scss';
+@use '../../../../styles/utils.scss' as utils;
 
 :host {
 
@@ -9,16 +9,16 @@
       padding-top: 42px;
       background-color: white;
       border-radius: 8px;
-      border: solid 1px #ddd;
-      background-color: #fff;
-      border: solid 1px #6a6af4;
-      background-color: #fff;
+      border: solid 1px utils.$colors-lightBorder;
+      background-color: utils.$colors-white;
+      border: solid 1px utils.$colors-primary;
+      background-color: utils.$colors-white;
     }
 
     aj-text-editor {
       border-radius: 8px;
-      border: solid 1px #dddddd;
-      background-color: #fff;
+      border: solid 1px utils.$colors-lightBorder;
+      background-color: utils.$colors-white;
     }
   }
 
@@ -54,7 +54,7 @@
     }
 
     .com-date {
-      color: fColor(titleSelect);
+      color: utils.$colors-titleSelect;
       font-size: 14px;
       padding: 0 16px;
     }
@@ -68,8 +68,8 @@
 
     >div {
       &.active {
-        color: #929292;
-        border-color: #929292;
+        color: utils.$colors-grayRow;
+        border-color: utils.$colors-grayRow;
         cursor: pointer;
         pointer-events: initial;
 
@@ -77,8 +77,8 @@
     }
 
     .unsave {
-      border: solid 1px fColor(primary);
-      color: fColor(primary);
+      border: solid 1px utils.$colors-primary;
+      color: utils.$colors-primary;
       margin-right: 16px;
       height: 32px;
       padding: 4px 12px;
@@ -90,7 +90,7 @@
 
     .save {
       color: white;
-      background-color: fColor(primary);
+      background-color: utils.$colors-primary;
       height: 32px;
       padding: 4px 12px;
       font-size: 14px;
@@ -106,14 +106,14 @@
 
   .actions {
     font-size: 14px;
-    color: #929292;
+    color: utils.$colors-grayRow;
 
     .modify {
       margin-left: 48px;
       margin-right: 4px;
       line-height: 24px;
       display: inline-block;
-      border-bottom: solid 1px #929292;
+      border-bottom: solid 1px utils.$colors-grayRow;
       cursor: pointer;
     }
 
@@ -121,7 +121,7 @@
       margin-left: 4px;
       line-height: 24px;
       display: inline-block;
-      border-bottom: solid 1px #929292;
+      border-bottom: solid 1px utils.$colors-grayRow;
       cursor: pointer;
     }
   }

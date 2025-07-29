@@ -1,11 +1,11 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 .header-list {
   display: flex;
   width: 100%;
-  background-color: fColor(darkModeBgHeader);
   z-index: 1;
   position: sticky;
+  background-color: #1a1c34 !important;
   top: 0;
 
   .profil {
@@ -42,8 +42,8 @@
         width: fit-content;
 
         &.selected {
-          background-color: fColor(bgSelectSelected);
-          color: white;
+          background-color: utils.$colors-darkModeBgMenuSelected;
+          color: utils.$colors-bgSelect;
         }
 
         &.selected::before {
@@ -54,17 +54,17 @@
 
       p.label {
         flex: 1;
-        color: fColor(darkModeTitle);
+        color: #8585f6;
       }
 
       p.btn {
-        border: 1px solid fColor(darkModeTitle);
-        color: fColor(darkModeTitle);
+        border: 1px solid #8585f6;
+        color: #8585f6;
         padding: 4px 12px;
         cursor: pointer;
 
         &.selected {
-          background-color: fColor(darkModeTitle);
+          background-color: #8585f6;
           color: white;
         }
       }
@@ -77,7 +77,7 @@
       p {
         text-align: right;
         font-size: 12px;
-        color: fColor(grayRow);
+        color: utils.$colors-cgray;
         white-space: nowrap;
       }
 
@@ -122,14 +122,14 @@
       cursor: pointer;
 
       &.selected {
-        background-color: fColor(darkModeBgMenu);
+        background-color: utils.$colors-darkModeBgMenuSelected;
 
         .etp {
-          background-color: fColor(darkModeBgHeader);
+          background-color: #272747;
         }
 
         .filter i {
-          color: fColor(tooltipBgTitleColor);
+          color: utils.$colors-cblack;
         }
       }
 
@@ -144,7 +144,7 @@
           text-transform: uppercase;
           font-size: 12px;
           font-weight: bold;
-          color: white;
+          color: utils.$colors-bgSelect;
           text-align: center;
           width: 100%;
         }
@@ -153,20 +153,20 @@
       >.etp {
         height: 23px;
         border-radius: 4px;
-        background-color: fColor(darkModeBgMenu);
+        background-color: #272747;
         margin: 0 4px;
 
         p {
-          color: fColor(tooltipBgTitleColor);
+          color: #8585f6;
           width: 100%;
           text-align: center;
         }
 
         &.show-reel-values {
-          background-color: fColor(cbluemiddle);
+          background-color: utils.$colors-primary;
 
           p {
-            color: fColor(bgSelectSelected);
+            color: utils.$colors-bgSelect;
           }
         }
       }
@@ -181,7 +181,7 @@
           width: 16px;
           height: 16px;
           font-size: 16px;
-          color: fColor(headerColor);
+          color: utils.$colors-cblack;
         }
       }
     }
@@ -191,7 +191,7 @@
 .indicators {
   display: flex;
   width: 100%;
-  background-color: fColor(darkModeBgLight);
+  background-color: #1a1c34 !important;
   margin-bottom: 1px;
 
   .profil {
@@ -210,15 +210,15 @@
           width: 32px;
           height: 32px;
           margin-right: 8px;
-          border: 1px solid fColor(darkModeTitle);
-          color: fColor(darkModeTitle);
+          border: 1px solid #8585f6;
+          color: #8585f6;
           text-align: center;
           line-height: 32px;
           cursor: pointer;
         }
 
         p {
-          color: white;
+          color: utils.$colors-bgSelect;
           font-size: 20px;
           font-weight: bold;
         }
@@ -228,10 +228,10 @@
         margin: 8px 18px 8px 0;
         height: 32px;
         line-height: 32px;
-        border: solid 1px fColor(tooltipBgTitleColor);
+        border: solid 1px #8585f6;
         font-size: 14px;
         font-weight: 500;
-        color: fColor(tooltipBgTitleColor);
+        color: #8585f6;
         border-radius: 0;
         background-color: transparent;
         cursor: pointer;
@@ -255,7 +255,7 @@
         p {
           text-align: right;
           font-size: 12px;
-          color: fColor(grayRow);
+          color: utils.$colors-cgray;
           white-space: nowrap;
         }
 
@@ -328,12 +328,12 @@
           >p {
             text-align: center;
             font-weight: bold;
-            color: fColor(headerNumberColor);
+            color: #718096;
           }
         }
 
         >div.taux {
-          background-color: fColor(darkModeBgMenu);
+          background-color: #272747;
           border-radius: 3.7px;
           display: flex;
           align-items: center;
@@ -345,12 +345,12 @@
           }
 
           &.show-reel-values {
-            background-color: fColor(cbluemiddle);
+            background-color: #272747;
           }
         }
 
         >div.dtes {
-          background-color: fColor(darkModeBgMenu);
+          background-color: #272747;
           border-radius: 4px;
           height: 100%;
           display: flex;
@@ -363,10 +363,10 @@
           }
 
           &.show-reel-values {
-            background-color: fColor(cbluemiddle);
+            background-color: #272747;
 
             p {
-              color: fColor(bgSelectSelected);
+              color: white;
             }
           }
         }
@@ -404,7 +404,6 @@
 
 .item-list {
   margin-top: 4px;
-  background-color: fColor(darkModeBgMenu);
   display: flex;
   border-radius: 4px;
 
@@ -414,6 +413,7 @@
 
   .activities {
     flex-direction: column;
+    background-color: #272747;
     flex: 1;
     display: flex;
     padding-right: 16px;
@@ -424,36 +424,36 @@
   }
 
   &.is-modify {
-    background-color: fColor(cbluemiddle);
+    background-color: utils.$colors-primary;
 
     .profil.item .text .name p {
-      color: fColor(cbluedark);
+      color: utils.$colors-cblack;
     }
 
     .activities {
-      background-color: fColor(bgProgressBar);
+      background-color: utils.$colors-bgSelect;
     }
 
     .profil.item .read-etp {
-      background-color: fColor(bgReadETPDark);
+      background-color: #1b1b35;
     }
 
     .profil.item .text .updated-at {
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
     }
   }
 
   &.is-selected {
     .profil.item {
-      background-color: fColor(cbluemiddle);
+      background-color: utils.$colors-primary;
     }
 
     .profil.item .text .name p {
-      color: fColor(cbluedark);
+      color: utils.$colors-cblack;
     }
 
     .profil.item .text .updated-at {
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
     }
   }
 }
@@ -470,6 +470,7 @@
       display: flex;
       flex-direction: column;
       text-decoration: none;
+      background-color: #272747;
 
       .name {
         margin-bottom: 8px;
@@ -481,7 +482,7 @@
 
         p {
           font-weight: bold;
-          color: white;
+          color: utils.$colors-bgSelect;
           flex: 1;
           padding-left: 12px;
         }
@@ -495,13 +496,13 @@
           }
 
           mat-icon {
-            color: fColor(borderProgressBar);
+            color: #6a6af4;
           }
 
           .tooltiptext {
             visibility: hidden;
-            background-color: fColor(borderProgressBar);
-            color: #fff;
+            background-color: utils.$colors-bgSelect;
+            color: utils.$colors-bgSelect;
             text-align: center;
             padding: 8px;
             font-size: 14px;
@@ -528,13 +529,12 @@
           margin-bottom: 4px;
 
           &.function {
-            color: white;
-            background-color: fColor(cbluelight);
+            color: utils.$colors-bgSelect;
+            background-color: #417dc4;
           }
 
           &.etp {
-            color: white;
-            background-color: fColor(darkModeBgMenu);
+            color: utils.$colors-bgSelect;
           }
 
           mat-icon {
@@ -561,12 +561,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: fColor(darkModeBgHeader);
+      background-color: #1b1b35;
 
       .label {
         font-size: 12px;
         font-weight: bold;
-        color: fColor(cgreen);
+        color: utils.$colors-cgreen;
         margin: 12px 0 12px 0;
       }
     }
@@ -589,7 +589,7 @@
 .title {
   display: flex;
   align-items: center;
-  background-color: fColor(darkModeBgHeader);
+  background-color: utils.$colors-darkModeBgMenuSelected;
   padding: 0 16px 16px 16px;
 
   aj-select,
@@ -602,7 +602,7 @@
   border-radius: 10px;
   font-size: 12px;
   color: white;
-  background-color: #2e7d32;
+  background-color: utils.$colors-primary;
   padding: 4px 8px;
   display: inline-block;
 }
@@ -613,7 +613,7 @@
   justify-content: space-between;
 
   mat-icon {
-    color: white;
+    color: utils.$colors-bgSelect;
   }
 }
 
@@ -628,7 +628,7 @@ progression-bar {
 .check-item {
   width: 16px;
   height: 16px;
-  border: 1px solid fColor(darkModeTitle);
+  border: 1px solid #8585f6;
   border-radius: 4px;
   cursor: pointer;
   position: relative;
@@ -643,7 +643,7 @@ progression-bar {
     top: 0;
     bottom: 0;
     font-size: 10px;
-    background-color: fColor(bgSelectSelected);
+    background-color: utils.$colors-bgSelect;
     border-radius: 3px;
   }
 }
@@ -654,12 +654,12 @@ progression-bar {
 
 .unavailable {
   font-size: 14px;
-  color: fColor(titleIndisponibilitiesPanel);
+  color: utils.$colors-cblack;
   margin-bottom: 10px;
 
   mat-icon {
     font-size: 17px;
-    color: fColor(titleIndisponibilitiesPanel);
+    color: utils.$colors-cblack;
     height: 17px;
     width: 17px;
     position: relative;

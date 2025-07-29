@@ -9,6 +9,8 @@ import {
   EXECUTE_SIMULATOR_PARAM,
   EXECUTE_WHITE_SIMULATOR,
 } from '../constants/log-codes'
+import { loadOrWarmHR } from '../utils/redis'
+import { generateHRIndexes } from '../utils/human-resource'
 
 /**
  * Route pour la page du simulateur
@@ -22,7 +24,7 @@ export default class RouteSimulator extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.HumanResources
@@ -48,7 +50,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewSimulation],
   })
-  async getSituation (ctx) {
+  async getSituation(ctx) {
     let { backupId, referentielId, dateStart, dateStop, functionIds, categoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
@@ -56,8 +58,12 @@ export default class RouteSimulator extends Route {
     }
 
     console.time('simulator-1')
-    let hr = await this.model.getCache(backupId)
+    let hr = await loadOrWarmHR(backupId, this.models)
     console.timeEnd('simulator-1')
+
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(hr)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
 
     console.time('simulator-2')
     const categories = await this.models.HRCategories.getAll()
@@ -67,7 +73,7 @@ export default class RouteSimulator extends Route {
     const activities = await this.models.Activities.getAll(backupId)
     console.timeEnd('simulator-3')
 
-    const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId)
+    const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId, undefined, indexes, true)
 
     console.log(situation)
     console.time('simulator-1.1')
@@ -75,7 +81,7 @@ export default class RouteSimulator extends Route {
     console.timeEnd('simulator-1.1')
 
     console.time('simulator-4')
-    let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId)
+    let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId, undefined, indexes, true)
     console.timeEnd('simulator-4')
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId, ctx)
 
@@ -102,7 +108,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewSimulation],
   })
-  async toSimulate (ctx) {
+  async toSimulate(ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
@@ -141,7 +147,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewWhiteSimulation],
   })
-  async toSimulateWhite (ctx) {
+  async toSimulateWhite(ctx) {
     let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
@@ -172,7 +178,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewWhiteSimulation],
   })
-  async logLaunchWhiteSimulation (ctx) {
+  async logLaunchWhiteSimulation(ctx) {
     let { params } = this.body(ctx)
     await this.models.Logs.addLog(EXECUTE_LAUNCH_WHITE_SIMULATOR, ctx.state.user.id, { ...params })
     this.sendOk(ctx, 'Ok')
@@ -189,7 +195,7 @@ export default class RouteSimulator extends Route {
     }),
     accesses: [Access.canVewSimulation],
   })
-  async logLaunchSimulation (ctx) {
+  async logLaunchSimulation(ctx) {
     let { params } = this.body(ctx)
     await this.models.Logs.addLog(EXECUTE_LAUNCH_SIMULATOR, ctx.state.user.id, { ...params })
     this.sendOk(ctx, 'Ok')
@@ -203,7 +209,7 @@ export default class RouteSimulator extends Route {
   @Route.Post({
     accesses: [Access.canVewSimulation],
   })
-  async logWhiteSimulation (ctx) {
+  async logWhiteSimulation(ctx) {
     await this.models.Logs.addLog(EXECUTE_WHITE_SIMULATOR, ctx.state.user.id)
     this.sendOk(ctx, 'Ok')
   }
@@ -216,28 +222,8 @@ export default class RouteSimulator extends Route {
   @Route.Post({
     accesses: [Access.canVewSimulation],
   })
-  async logSimulation (ctx) {
+  async logSimulation(ctx) {
     await this.models.Logs.addLog(EXECUTE_SIMULATION, ctx.state.user.id)
     this.sendOk(ctx, 'Ok')
   }
-
-  /**
-   * Log accès au simulateur classique
-   * @param {*} node
-   * @param {*} juridictionId
-   */
-  @Route.Post({
-    accesses: [Access.canVewSimulation],
-  })
-  async checkAccessSimulator (ctx) {}
-
-  /**
-   * Log accès au simulateur classique
-   * @param {*} node
-   * @param {*} juridictionId
-   */
-  @Route.Post({
-    accesses: [Access.canVewWhiteSimulation],
-  })
-  async checkAccessWhiteSimulator (ctx) {}
 }

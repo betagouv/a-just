@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
   &.flex-center .progression-bar {
@@ -9,7 +9,7 @@
   &.height-24 .progression-bar {
     height: 24px;
   }
-  
+
   .progression-bar {
     width: 100%;
 
@@ -17,23 +17,27 @@
       width: 100%;
       height: 8px;
       border-radius: 4px;
-      background-color: fColor(progressionBarBg);
+      background-color: utils.$colors-progressionBarBg;
     }
-    
+
     .level {
       height: 100%;
       border-radius: 4px;
       transition: all 3s ease;
     }
+
     .rouge {
       background-color: #ce0500;
     }
+
     .jaune {
       background-color: #ffe552;
     }
+
     .bleu {
       background-color: #0a76f6;
     }
+
     .vert {
       background-color: #2fc368;
     }

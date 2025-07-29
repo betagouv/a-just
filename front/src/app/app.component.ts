@@ -7,7 +7,7 @@ import { ContentieuxOptionsService } from './services/contentieux-options/conten
 import { UserService } from './services/user/user.service';
 import { iIOS } from './utils/system';
 import { filter } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 import { AlertComponent } from './components/alert/alert.component';
 import { BigLoaderComponent } from './components/big-loader/big-loader.component';
 
@@ -22,7 +22,7 @@ declare const window: any;
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, AlertComponent, BigLoaderComponent],
+  imports: [RouterOutlet, AlertComponent, BigLoaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

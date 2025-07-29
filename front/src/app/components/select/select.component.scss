@@ -1,14 +1,9 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 ::ng-deep .mdc-list-item__primary-text {
   font-size: 16px !important;
   color: black !important;
 }
-
-//.myMatOptions{  position: absolute;  top: 30vh;  left: 30vw; }
-//::ng-deep .cdk-overlay-container{left: 30vw;}
-//::ng-deep .cdk-overlay-pane { left:0 !important; transform:none !important;}
-//::ng-deep .mat-select-panel{left: 0;}
 
 :host {
   position: relative;
@@ -16,18 +11,18 @@
   height: 55px;
   width: 170px;
   border-radius: 4px;
-  background-color: fColor(bgSelect);
-  border: 1px solid fColor(borderSelect);
+  background-color: utils.$colors-bgSelect;
+  border: 1px solid utils.$colors-borderSelect;
   padding: 4px 8px;
   cursor: pointer;
 
   &.new-fonction {
-    border-color: #dddddd;
+    border-color: utils.$colors-borderSelect;
     display: flex;
     height: 32px;
     padding: 0;
-    border: solid 1px #ddd;
-    background-color: #fff;
+    border: solid 1px utils.$colors-borderSelect;
+    background-color: utils.$colors-white;
 
     p {
       margin-right: 7px;
@@ -35,7 +30,7 @@
 
     .title {
       padding: 4px 4px 4px 8px;
-      color: #3a3a3a;
+      color: utils.$colors-cblack;
       font-size: 14px;
     }
 
@@ -46,11 +41,11 @@
     div {
       position: relative;
       left: 0px;
-      border-left: solid 1px #dddddd;
+      border-left: solid 1px utils.$colors-borderSelect;
 
       mat-icon {
         margin-left: 0px;
-        color: #929292;
+        color: utils.$colors-cgray;
         margin: 8px;
       }
     }
@@ -69,21 +64,21 @@
   }
 
   &.dark-mode {
-    background-color: fColor(darkModeBgMenu);
-    border: 1px solid fColor(darkModeBgMenu);
+    background-color: utils.$colors-darkModeBgMenu;
+    border: 1px solid utils.$colors-darkModeBgMenu;
 
     p,
     mat-icon {
-      color: white;
+      color: utils.$colors-white;
     }
 
     p.title {
-      color: fColor(headerColor);
+      color: utils.$colors-headerColor;
     }
   }
 
   p.title {
-    color: fColor(titleSelect);
+    color: utils.$colors-titleSelect;
     white-space: nowrap;
     font-size: 14px;
   }
@@ -114,8 +109,6 @@
   }
 
   mat-select {
-    //left: 35px;
-    //top: -10px;
     position: relative;
   }
 

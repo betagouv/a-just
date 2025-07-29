@@ -1,6 +1,7 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
   <div class="wrapper-content" *ngIf="contentieuxReferentiel.length"
-    [ngStyle]="{'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px'}">
+    [ngStyle]="{'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px'}"
+    [class.duringPrint]="duringPrint">
     <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? ''+currentHR.id : undefined"
       [onEditIndex]="onEditIndex" [etp]="currentETP"
@@ -8,8 +9,9 @@
       [fonction]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null"
       [category]="indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null"
       [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
-      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)" [alertList]="alertList"
-      (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"></cover-profil-details>
+      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"
+      (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"
+      [class.duringPrint]="duringPrint"></cover-profil-details>
 
     <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
       <div id="top-scroll-anchor" class="anchor"></div>
@@ -22,7 +24,7 @@
     <actual-panel-situation *ngIf="currentHR && histories.length && showActuelPanel" [currentHR]="currentHR"
       [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
       [canEdit]="!duringPrint && indexOfTheFuture !== null"
-      [canRemoveSituation]="!duringPrint && indexOfTheFuture !== null ? histories[indexOfTheFuture].situationForTheFirstTime : false"
+      [canRemoveSituation]="!duringPrint && indexOfTheFuture !== null && histories[indexOfTheFuture].id !== -1 ? histories[indexOfTheFuture].situationForTheFirstTime : false"
       [etp]="indexOfTheFuture !== null ? (histories[indexOfTheFuture].etp || 0) : 0"
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
@@ -52,7 +54,7 @@
       (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
       [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
       (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
-      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)" [alertList]="alertList"
+      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)"
       (alertSet)="onAlertsUpdated($event)">
     </add-ventilation>
 
@@ -64,9 +66,10 @@
       <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [category]="h.category" [id]="h.id"
         [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
         [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-        [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
-        [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
-        (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint" [isPast]="false">
+        [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
+        (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
+        (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
+        [forceToShowContentieuxDetail]="duringPrint" [isPast]="false">
       </panel-history-ventilation>
     </div>
 
@@ -79,9 +82,10 @@
       <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [category]="h.category"
         [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
         [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
-        [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime" (editVentilation)="onSelectSituationToEdit(h)"
-        [canEditSituation]="!duringPrint" (addIndispiniblity)="onAddIndispiniblity($event)"
-        (onRemove)="onRemoveSituation(h.id)" [forceToShowContentieuxDetail]="duringPrint" [isPast]="true">
+        [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
+        (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
+        (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
+        [forceToShowContentieuxDetail]="duringPrint" [isPast]="true">
       </panel-history-ventilation>
     </div>
 

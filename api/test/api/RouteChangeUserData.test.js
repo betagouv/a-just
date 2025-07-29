@@ -1,4 +1,6 @@
 import { onRemoveHrApi, onRemoveSituationApi, onUpdateHrApi } from '../routes/hr'
+import { assert } from 'chai'
+import { normalizeDate } from '../utils/date'
 
 module.exports = function (datas) {
   let hrId = null
@@ -28,6 +30,7 @@ module.exports = function (datas) {
         hr: hr,
         backupId: 11,
       })
+
       const tmp_firstName = response.data.data.firstName
       const tmp_lastName = response.data.data.lastName
       const tmp_matricule = response.data.data.matricule
@@ -97,11 +100,11 @@ module.exports = function (datas) {
         },
         {
           percent: 100,
-          contentieux: { id: 448, label: 'Contentieux du travail' },
+          contentieux: { id: 448, label: "Départage prud'homal" },
         },
       ]
-      const category = { id: 1, label: 'Magistrat', rank: 1 }
-      const dateStart = new Date()
+      const category = { id: 1, rank: 1, label: 'Magistrat' }
+      const dateStart = normalizeDate(new Date())
       const etp = 1
       const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
 
@@ -127,7 +130,7 @@ module.exports = function (datas) {
 
       const tmp_activities = response.data.data.situations[0].activities.map(activity => { delete activity.id; return activity })
       const tmp_category = response.data.data.situations[0].category
-      const tmp_dateStart = new Date(response.data.data.situations[0].dateStart)
+      const tmp_dateStart = normalizeDate(new Date(response.data.data.situations[0].dateStart))
       const tmp_etp = response.data.data.situations[0].etp
       const tmp_fonction = response.data.data.situations[0].fonction
 
@@ -157,7 +160,7 @@ module.exports = function (datas) {
         },
         {
           percent: 100,
-          contentieux: { id: 448, label: 'Contentieux du travail' },
+          contentieux: { id: 448, label: "Départage prud'homal" },
         },
         {
           percent: 20,
@@ -168,8 +171,8 @@ module.exports = function (datas) {
           contentieux: { id: 462, label: 'Protection des majeurs' },
         },
       ]
-      const category = { id: 1, label: 'Magistrat', rank: 1 }
-      const dateStart = new Date()
+      const category = { id: 1, rank: 1, label: 'Magistrat'  }
+      const dateStart = normalizeDate(new Date())
       dateStart.setDate(dateStart.getDate() + 20)
       const etp = 1
       const fonction = { id: 22, rank: 1, code: 'P', label: 'PRÉSIDENT', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false }
@@ -195,7 +198,7 @@ module.exports = function (datas) {
       })
       const tmp_activities = response.data.data.situations[0].activities.map(activity => { delete activity.id; return activity })
       const tmp_category = response.data.data.situations[0].category
-      const tmp_dateStart = new Date(response.data.data.situations[0].dateStart)
+      const tmp_dateStart = normalizeDate(new Date(response.data.data.situations[0].dateStart))
       const tmp_etp = response.data.data.situations[0].etp
       const tmp_fonction = response.data.data.situations[0].fonction
 
@@ -217,11 +220,12 @@ module.exports = function (datas) {
       const contentieux = {
         id: 508,
         label: 'Congé longue maladie',
+        checkVentilation: false
       }
 
       const percent = 100
-      const dateStart = new Date()
-      const dateStop = new Date()
+      const dateStart = normalizeDate(new Date())
+      const dateStop = normalizeDate(new Date())
       dateStop.setDate(dateStop.getDate() + 20)
 
 
@@ -247,16 +251,16 @@ module.exports = function (datas) {
 
       current_hr = response.data.data
 
-      const tmp_dateStart = new Date(response.data.data.indisponibilities[0].dateStart)
-      const tmp_dateStop = new Date(response.data.data.indisponibilities[0].dateStop)
+      const tmp_dateStart = normalizeDate(new Date(response.data.data.indisponibilities[0].dateStart))
+      const tmp_dateStop = normalizeDate(new Date(response.data.data.indisponibilities[0].dateStop))
       const tmp_contentieux = response.data.data.indisponibilities[0].contentieux
       const tmp_percent = response.data.data.indisponibilities[0].percent
 
-      assert.strictEqual(response.status, 200)
-      assert.deepEqual(dateStart, tmp_dateStart)
-      assert.deepEqual(dateStop, tmp_dateStop)
-      assert.deepEqual(contentieux, tmp_contentieux)
-      assert.strictEqual(percent, tmp_percent)
+      assert.strictEqual(response.status, 200);
+      assert.deepEqual(dateStart, tmp_dateStart);
+      assert.deepEqual(dateStop, tmp_dateStop);
+      assert.deepEqual(contentieux, tmp_contentieux);
+      assert.strictEqual(percent, tmp_percent);
     })
 
     /**

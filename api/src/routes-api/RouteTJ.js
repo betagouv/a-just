@@ -1,5 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
+import { isCa } from '../utils/ca'
 
 /**
  * Route des juridictions
@@ -23,7 +24,11 @@ export default class RouteJuridictions extends Route {
    */
   @Route.Get()
   async getAllVisibles (ctx) {
-    const list = await this.model.getAllVisibles()
+    let list = null
+    if(isCa())
+      list = await this.model.getAllWithUser()
+    else 
+      list = await this.model.getAllVisibles()
     this.sendOk(ctx, list)
   }
 
@@ -95,13 +100,14 @@ export default class RouteJuridictions extends Route {
         juridictionName: Types.string().required(),
         backupId: Types.number().required(),
         copyAct:Types.boolean().required(),
+        statExclusion:Types.boolean().required()
       }),
       accesses: [Access.isAdmin],
     })
     async duplicateJuridiction (ctx) {
-      const { juridictionName, backupId, copyAct } = this.body(ctx)
+      const { juridictionName, backupId, copyAct, statExclusion } = this.body(ctx)
   
-      await models.HRBackups.duplicateBackup(backupId,juridictionName,copyAct)
+      await models.HRBackups.duplicateBackup(backupId,juridictionName,copyAct,statExclusion)
 
       this.sendOk(ctx, "En cours")
     }

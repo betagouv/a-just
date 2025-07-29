@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MainClass } from '../../../../libs/main-class';
 import { CommentInterface } from '../../../../interfaces/comment';
@@ -11,7 +11,7 @@ import { CommentService } from '../../../../services/comment/comment.service';
 @Component({
   selector: 'one-comment',
   standalone: true,
-  imports: [CommonModule, TextEditorComponent],
+  imports: [TextEditorComponent],
   templateUrl: './one-comment.component.html',
   styleUrls: ['./one-comment.component.scss'],
 })

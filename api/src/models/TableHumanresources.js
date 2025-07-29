@@ -4,139 +4,71 @@ import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
 import { getNbMonth, today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
-import { cloneDeep } from 'lodash'
 import { EXECUTE_CALCULATOR } from '../constants/log-codes'
-import { FONCTIONNAIRES, MAGISTRATS } from '../constants/categories'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
-import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
-import { HAS_ACCESS_TO_CONTRACTUEL, HAS_ACCESS_TO_GREFFIER, HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { dbInstance } from './index'
-
-/**
- * Cache des juridicitions avec leurs magistrats
- */
-let cacheJuridictionPeoples = {}
-/**
- * Cache des agents
- */
-let cacheAgents = {}
+import { orderBy } from 'lodash'
+import { checkAbort } from '../utils/abordTimeout'
+import { generateHRIndexes, loadFonctionsForCategory, loadReferentiels } from '../utils/human-resource'
+import { cleanCalculationItemForUser } from '../utils/hrAccess'
+import { getFullKey, getRedisClient, loadOrWarmHR, removeCacheListItem, updateCacheListItem, waitForRedis } from '../utils/redis'
 
 export default (sequelizeInstance, Model) => {
-  /**
-   * Cache d'un agent
-   * @param {*} agentId
-   * @returns
-   */
-  Model.cacheAgent = (agentId, node) => {
-    if (node && typeof node !== 'string') {
-      node = JSON.stringify(node)
-    }
-
-    if (node && cacheAgents[agentId]) {
-      return cacheAgents[agentId][node]
-    }
-
-    return cacheAgents[agentId]
-  }
-
-  /**
-   * Update cache d'un agent
-   * @param {*} agentId
-   * @returns
-   */
-  Model.updateCacheAgent = (agentId, node, values) => {
-    if (node && typeof node !== 'string') {
-      node = JSON.stringify(node)
-    }
-
-    if (!cacheAgents[agentId]) {
-      cacheAgents[agentId] = {}
-    }
-
-    cacheAgents[agentId][node] = cloneDeep(values)
-  }
-
-  /**
-   * remove cache d'un agent
-   * @param {*} agentId
-   * @returns
-   */
-  Model.removeCacheAgent = (agentId) => {
-    if (cacheAgents[agentId]) {
-      delete cacheAgents[agentId]
+  Model.asyncForEach = async (array, fn) => {
+    for (let i = 0; i < array.length; i++) {
+      await fn(array[i], i)
     }
   }
 
-  /**
-   * Chargement des juridictions
-   */
-  Model.onPreload = async () => {
-    if (config.preloadHumanResourcesDatas) {
-      const allBackups = await Model.models.HRBackups.getAll()
-      dbInstance.options.logging = false
-      console.time('onPreload')
-      for (let i = 0; i < allBackups.length; i++) {
-        const agents = await Model.getCurrentHr(allBackups[i].id)
-        cacheJuridictionPeoples[allBackups[i].id] = cloneDeep(agents)
-      }
-      console.timeEnd('onPreload')
-      if (config.database.logging) {
-        dbInstance.options.logging = true
-      }
-    }
-  }
+  Model.forceRecalculateAllHrCache = async () => {
+    await waitForRedis()
+    const redis = getRedisClient()
 
-  /**
-   * Suppresion de la fiche d'une juridiction en cache
-   * @param {*} humanId
-   * @param {*} backupId
-   */
-  Model.removeCacheByUser = async (humanId, backupId) => {
-    Model.removeCacheAgent(humanId)
-
-    if(cacheJuridictionPeoples[backupId]) {
-      delete cacheJuridictionPeoples[backupId]
-    }
-  }
-
-  /**
-   * Modification de la fiche d'une juridiction en cache
-   * @param {*} human
-   */
-  Model.updateCacheByUser = async (human) => {
-    Model.removeCacheAgent(human.id)
-
-    const backupId = human.backupId
-    const index = (cacheJuridictionPeoples[backupId] || []).findIndex((h) => h.id === human.id)
-
-    if (cacheJuridictionPeoples[backupId] && index !== -1) {
-      cacheJuridictionPeoples[backupId][index] = human
-    } else if (cacheJuridictionPeoples[backupId]) {
-      cacheJuridictionPeoples[backupId].push(human)
-    } else {
-      cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId) // save to cache
-    }
-  }
-
-  /**
-   * Liste des fiches d'une juridiction
-   * @param {*} backupId
-   * @returns
-   */
-  Model.getCache = async (backupId) => {
-    if (!cacheJuridictionPeoples[backupId]) {
-      cacheJuridictionPeoples[backupId] = await Model.getCurrentHr(backupId)
+    if (!redis?.isReady) {
+      console.warn('⚠️ Redis non prêt, recalcul forcé ignoré.')
+      return
     }
 
-    return cacheJuridictionPeoples[backupId]
+    console.log(`🚀 Recalcul forcé du cache HR pour toutes les juridictions @ ${new Date().toISOString()}`)
+    console.time('forceRecalculateAllHrCache')
+
+    const jurisdictions = await Model.getAllJuridictionsWithSizes()
+    const maxAtOnce = 5
+
+    const chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
+
+    for (const chunk of chunks) {
+      await Model.asyncForEach(chunk, async (jur) => {
+        const jurId = jur.id
+        try {
+          const fullKey = getFullKey('hrBackup', jurId)
+
+          // Suppression du cache existant
+          await redis.del(fullKey)
+
+          // Recalcul et stockage dans le cache
+          await loadOrWarmHR(jurId, Model.models)
+        } catch (err) {
+          console.error(`❌ Juridiction ${jurId} échouée :`, err)
+        }
+      })
+
+      // Pause légère entre les batchs
+      await Model.sleep(100)
+    }
+
+    console.timeEnd('forceRecalculateAllHrCache')
+    console.log('✅ Recalcul complet du cache HR terminé')
   }
+
+  Model.sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 
   /**
    * Retour des détails d'une juridiction
    * @param {*} backupId
    * @returns
    */
-  Model.getCurrentHr = async (backupId) => {
+  Model.getCurrentHr = async (backupId, signal = null) => {
+    checkAbort(signal)
     const list = await Model.findAll({
       attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
       where: {
@@ -144,8 +76,10 @@ export default (sequelizeInstance, Model) => {
       },
       raw: true,
     })
+    checkAbort(signal)
 
     for (let i = 0; i < list.length; i++) {
+      checkAbort(signal)
       const comment = await Model.models.HRComments.getLastComment(list[i].id)
       list[i] = {
         id: list[i].id,
@@ -164,7 +98,158 @@ export default (sequelizeInstance, Model) => {
       }
     }
 
-    return list.filter((h) => h.situations && h.situations.length) // remove hr without situation
+    return list
+  }
+
+  /**
+   * Retour des détails d'une juridiction
+   * @param {*} backupId
+   * @returns
+   */
+  Model.getCurrentHrNew = async (backupId) => {
+    // 1. REQUÊTE PRINCIPALE
+    const hrList = await Model.findAll({
+      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'juridiction'],
+      where: { backup_id: backupId },
+      include: [
+        // Situation avec association
+        {
+          model: Model.models.HRSituations,
+          required: true,
+          attributes: ['id', 'etp', 'date_start', 'category_id', 'fonction_id'],
+          include: [
+            {
+              model: Model.models.HRCategories,
+            },
+            {
+              model: Model.models.HRFonctions,
+            },
+            {
+              model: Model.models.HRActivities,
+              include: [
+                {
+                  model: Model.models.ContentieuxReferentiels,
+                },
+              ],
+            },
+          ],
+        },
+        // Commentaire
+        {
+          model: Model.models.HRComments,
+          separate: true,
+          order: [['created_at', 'DESC']],
+          limit: 1,
+          include: [
+            {
+              model: Model.models.Users,
+            },
+          ],
+        },
+        // Indisponibilités
+        {
+          model: Model.models.HRIndisponibilities,
+          separate: true,
+          include: [
+            {
+              model: Model.models.ContentieuxReferentiels,
+            },
+          ],
+        },
+      ],
+      subQuery: false,
+    })
+
+    // 2. TRANSFORMATION DES DONNÉES
+    return hrList
+      .map((hr) => {
+        // Traitement des situations
+        const situationsMap = new Map()
+        hr.HRSituations.sort((a, b) => new Date(b.date_start) - new Date(a.date_start) || b.id - a.id).forEach((sit) => {
+          const dateS = sit.date_start && new Date(hr.date_entree) > new Date(sit.date_start) ? hr.date_entree : sit.date_start
+
+          const dateKey = today(dateS).getTime()
+
+          if (!situationsMap.has(dateKey)) {
+            situationsMap.set(dateKey, {
+              id: sit.id,
+              etp: sit.etp,
+              dateStart: today(dateS),
+              dateStartTimesTamps: dateKey,
+              category: sit.HRCategory
+                ? {
+                    id: sit.HRCategory.id,
+                    rank: sit.HRCategory.rank,
+                    code: sit.HRCategory.code,
+                    label: sit.HRCategory.label,
+                  }
+                : null,
+              fonction: sit.HRFonction
+                ? {
+                    id: sit.HRFonction.id,
+                    rank: sit.HRFonction.rank,
+                    code: sit.HRFonction.code,
+                    label: sit.HRFonction.label,
+                    category_detail: sit.HRFonction.category_detail,
+                    position: sit.HRFonction.position,
+                    calculatriceIsActive: sit.HRFonction.calculatrice_is_active,
+                  }
+                : null,
+              activities: sit.HRActivities.filter((act) => act.ContentieuxReferentiel !== null).map((act) => {
+                return {
+                  id: act.id,
+                  percent: act.percent,
+                  contentieux: {
+                    id: act.ContentieuxReferentiel.id,
+                    label: act.ContentieuxReferentiel.label,
+                  },
+                }
+              }),
+            })
+          }
+        })
+
+        // Dernier commentaire
+        const lastComment = hr.HRComments[0]
+        const comment = lastComment ? lastComment.comment : null
+
+        // Indisponibilités
+        const indisponibilities = orderBy(
+          hr.HRIndisponibilities.map((ind) => ({
+            id: ind.id,
+            percent: ind.percent,
+            dateStart: ind.date_start,
+            dateStartTimesTamps: today(ind.date_start).getTime(),
+            dateStop: ind.date_stop,
+            dateStopTimesTamps: ind.date_stop ? today(ind.date_stop).getTime() : null,
+            contentieux: {
+              id: ind.ContentieuxReferentiel.id,
+              label: ind.ContentieuxReferentiel.label,
+              checkVentilation: ind.ContentieuxReferentiel.check_ventilation,
+            },
+          })),
+          'dateStart',
+          ['desc'],
+        )
+
+        // Structure finale
+        return {
+          id: hr.id,
+          firstName: hr.first_name,
+          lastName: hr.last_name,
+          matricule: hr.matricule,
+          dateStart: hr.date_entree,
+          dateEnd: hr.date_sortie,
+          coverUrl: hr.cover_url,
+          updatedAt: hr.updated_at,
+          backupId: hr.backup_id,
+          juridiction: hr.juridiction,
+          comment: comment,
+          situations: Array.from(situationsMap.values()),
+          indisponibilities: indisponibilities,
+        }
+      })
+      .filter((hr) => hr.situations.length > 0)
   }
 
   /**
@@ -174,7 +259,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getHrDetails = async (hrId) => {
     const details = await Model.findOne({
-      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at'],
+      attributes: ['id', 'first_name', 'last_name', 'matricule', 'date_entree', 'date_sortie', 'backup_id', 'cover_url', 'updated_at', 'created_at'],
       where: {
         id: hrId,
       },
@@ -191,6 +276,7 @@ export default (sequelizeInstance, Model) => {
         dateStart: details.date_entree,
         dateEnd: details.date_sortie,
         coverUrl: details.cover_url,
+        createdAt: details.created_at,
         updatedAt: details.updated_at,
         backupId: details.backup_id,
         comment: comment && comment.comment,
@@ -208,6 +294,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.importList = async (list) => {
     const now = new Date()
+    const ids = []
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
     const filterBySP = ['MHFJS', 'MHFJ', 'AS', 'JA']
@@ -224,6 +311,9 @@ export default (sequelizeInstance, Model) => {
     const importSituation = []
     for (let i = 0; i < list.length; i++) {
       const backupId = await Model.models.HRBackups.findOrCreateLabel(Number(config.juridictionType) !== 1 ? list[i].arrdt : list[i].juridiction)
+      if (!ids.includes(backupId)) {
+        ids.push(backupId)
+      }
 
       list[i].hRegMatricule = (list[i].hmatricule || '') + (list[i].nom_usage || '') + (list[i].prenom || '')
       let findHRToDB = await Model.findOne({
@@ -245,9 +335,9 @@ export default (sequelizeInstance, Model) => {
 
         let statut = list[i].statut
         switch (statut) {
-        case 'Fonctionnaire':
-          statut = 'Greffe'
-          break
+          case 'Fonctionnaire':
+            statut = 'Greffe'
+            break
         }
         const findCategory = await Model.models.HRCategories.findOne({
           where: {
@@ -265,18 +355,18 @@ export default (sequelizeInstance, Model) => {
 
             // fix https://trello.com/c/pdZrOSqJ/651-creation-dune-juridiction-pbm-dimport-des-fonctionnaires
             switch (list[i].grade) {
-            case 'CONT A VIF JP':
-              code = 'CONT A JP'
-              break
-            case 'CONT B VIF JP':
-              code = 'CONT B JP'
-              break
-            case 'CONT C VIF JP':
-              code = 'CONT C JP'
-              break
-            default:
-              code = list[i].grade
-              break
+              case 'CONT A VIF JP':
+                code = 'CONT A JP'
+                break
+              case 'CONT B VIF JP':
+                code = 'CONT B JP'
+                break
+              case 'CONT C VIF JP':
+                code = 'CONT C JP'
+                break
+              default:
+                code = list[i].grade
+                break
             }
           } else situation.category_id = findCategory.id
         }
@@ -295,30 +385,37 @@ export default (sequelizeInstance, Model) => {
         }
 
         switch (code) {
-        case 'MHFJS':
-          code = 'MHFJ'
-          break
-        case 'ATT A':
-          code = 'CHCAB'
-          break
-        case 'JA JP':
-          code = 'JA'
-          break
-        case 'CONT B IFPA':
-          code = 'CONT B'
-          break
+          case 'MHFJS':
+            code = 'MHFJ'
+            break
+          case 'ATT A':
+            code = 'CHCAB'
+            break
+          case 'JA JP':
+            code = 'JA'
+            break
+          case 'CONT B IFPA':
+            code = 'CONT B'
+            break
         }
 
         if (list[i].categorie == 'CB') {
           switch (list[i].grade) {
-          case 'CONT A':
-          case 'CONT B':
-          case 'CONT C':
-          case 'CONT CB':
-          case 'CONT CJ':
-            code = list[i].grade
-            break
+            case 'CONT A':
+            case 'CONT B':
+            case 'CONT C':
+            case 'CONT CB':
+            case 'CONT CJ':
+              code = list[i].grade
+              break
+            case 'CONTCB1C':
+              code = 'CONT CB'
+              break
           }
+        }
+
+        if (list[i].categorie === 'CT' && list[i].grade === 'CONT CT') {
+          code = 'CT'
         }
 
         if (code.startsWith('AS')) {
@@ -328,6 +425,29 @@ export default (sequelizeInstance, Model) => {
         if (filterBySP.includes(code) && list[i]['s/p'] === 'P') {
           importSituation.push(list[i].nom_usage + ' no add by S/P because P')
           continue
+        }
+
+        if (list[i].fonction === 'C CAB CC') {
+          // pour CA
+          code = 'CHCAB'
+        } else if (list[i].fonction === 'DG') {
+          code = 'DG'
+        }
+
+        switch (list[i].grade) {
+          case 'DSG':
+            code = 'DSGJ'
+            break
+          case 'G PR': // CA
+          case 'GR':
+            code = 'B'
+            break
+        }
+
+        if (list[i].grade.startsWith('DSG')) {
+          code = 'DSGJ'
+        } else if (list[i].grade.startsWith('SA')) {
+          code = 'SA'
         }
 
         let findFonction = await Model.models.HRFonctions.findOne({
@@ -394,14 +514,21 @@ export default (sequelizeInstance, Model) => {
           juridiction: list[i].juridiction || '',
         }
 
-        list[i].date_aff = list[i].date_aff.replace(/#/, '')
-        const dateSplited = list[i].date_aff.split('/')
-        if (dateSplited.length === 3) {
-          options.date_entree = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
-          situation.date_start = new Date(dateSplited[2], +dateSplited[1] - 1, dateSplited[0])
-        }
+        const cleanDate = (dateStr) => dateStr.replace(/#/, '').split('/').map(Number)
 
-        //console.log(options, situation)
+        const dateAff = cleanDate(list[i].date_aff)
+        const dateAffHAC = cleanDate(list[i].date_aff_hors_anc_cons)
+
+        if (dateAffHAC.length === 3 && dateAff.length === 3) {
+          const date1 = new Date(dateAff[2], dateAff[1] - 1, dateAff[0])
+          const date2 = new Date(dateAffHAC[2], dateAffHAC[1] - 1, dateAffHAC[0])
+
+          if (date1 > date2) {
+            options.date_entree = situation.date_start = date2
+          } else {
+            options.date_entree = situation.date_start = date1
+          }
+        }
 
         // create person
         findHRToDB = await Model.create(options)
@@ -423,9 +550,8 @@ export default (sequelizeInstance, Model) => {
     }
 
     // remove cache
-    cacheJuridictionPeoples = {}
-    Model.onPreload()
     console.log('IMPORT!:', importSituation)
+    return ids
   }
 
   /**
@@ -530,7 +656,8 @@ export default (sequelizeInstance, Model) => {
     }
 
     // save to cache
-    await Model.updateCacheByUser(hr)
+    await updateCacheListItem(hr.backupId, 'hrBackup', hr)
+
     return hr
   }
 
@@ -547,6 +674,7 @@ export default (sequelizeInstance, Model) => {
       },
       raw: true,
     })
+
     if (hrFromDB) {
       const camelCaseReturn = snakeToCamelObject(hrFromDB)
       // control if have existing situations
@@ -556,7 +684,7 @@ export default (sequelizeInstance, Model) => {
         return false
       }
 
-      await Model.models.HRBackups.updateById(hrFromDB.backup_id, { updated_at: new Date() })
+      await Model.models.HRBackups.updateById(camelCaseReturn.backupId, { updated_at: new Date() })
 
       await Model.destroy({
         where: {
@@ -581,8 +709,7 @@ export default (sequelizeInstance, Model) => {
       })
 
       // remove to cache
-      await Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
-
+      await removeCacheListItem(camelCaseReturn.backupId, 'hrBackup', hrId)
       return camelCaseReturn
     } else {
       return false
@@ -595,6 +722,11 @@ export default (sequelizeInstance, Model) => {
    * @returns
    */
   Model.removeHRTest = async (hrId) => {
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible")
+      return
+    }
+
     const hrFromDB = await Model.findOne({
       attributes: ['id', 'backup_id'],
       where: {
@@ -636,7 +768,7 @@ export default (sequelizeInstance, Model) => {
       })
 
       // remove to cache
-      await Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
+      //Model.removeCacheByUser(hrId, camelCaseReturn.backupId)
 
       return camelCaseReturn
     } else {
@@ -668,114 +800,97 @@ export default (sequelizeInstance, Model) => {
         registration_number: 'anonyme',
       })
     }
-
-    // update cache
-    Model.onPreload()
   }
 
-  Model.onCalculate = async (
-    { backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds, loadChildrens },
-    user, log = true
-  ) => {
+  Model.onCalculate = async ({ backupId, dateStart, dateStop, contentieuxIds, optionBackupId, categorySelected, selectedFonctionsIds }, user, log = true) => {
+    console.time('Calculator-global')
+
+    dateStart = today(dateStart)
+    dateStop = today(dateStop)
+
     if (!selectedFonctionsIds && user && log === true) {
       // memorize first execution by user
       await Model.models.Logs.addLog(EXECUTE_CALCULATOR, user.id)
     }
 
-    let fonctions = await Model.models.HRFonctions.getAll()
-    let categoryIdSelected = -1
-    switch (categorySelected) {
-    case MAGISTRATS:
-      categoryIdSelected = 1
-      break
-    case FONCTIONNAIRES:
-      categoryIdSelected = 2
-      break
-    default:
-      categoryIdSelected = 3
-      break
-    }
-
-    fonctions = fonctions.filter((f) => f.categoryId === categoryIdSelected)
-
-    console.time('calculator-1')
-    const referentiels = (await Model.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((c) => contentieuxIds.indexOf(c.id) !== -1)
-    console.timeEnd('calculator-1')
-
-    console.time('calculator-2')
-    const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : []
-    console.timeEnd('calculator-2')
-
-    console.time('calculator-3')
-    let list = emptyCalulatorValues(referentiels)
-    console.timeEnd('calculator-3')
-
-    console.time('calculator-4')
-    const nbMonth = getNbMonth(dateStart, dateStop)
-    console.timeEnd('calculator-4')
-
-    console.time('calculator-5')
     const categories = await Model.models.HRCategories.getAll()
-    console.timeEnd('calculator-5')
+    const fonctions = await loadFonctionsForCategory(categorySelected, Model.models)
+    const referentiels = await loadReferentiels(backupId, contentieuxIds, Model.models)
+    const activities = await Model.models.Activities.getAll(backupId)
+    const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : [] // référentiel de temps moyen
+    const nbMonth = getNbMonth(dateStart, dateStop)
 
-    console.time('calculator-6')
-    let hr = await Model.getCache(backupId)
-    console.timeEnd('calculator-6')
+    let list = emptyCalulatorValues(referentiels)
 
-    console.time('calculator-6-2')
-    // filter by fonctions
-    hr = hr
-      .map((human) => {
-        let situations = human.situations || []
+    console.time('Mise en cache')
+    const hr = await loadOrWarmHR(backupId, Model.models)
+    console.timeEnd('Mise en cache')
 
-        situations = situations.filter(
-          (s) =>
-            (s.category && s.category.id !== categoryIdSelected) ||
-            (selectedFonctionsIds && selectedFonctionsIds.length && s.fonction && selectedFonctionsIds.indexOf(s.fonction.id) !== -1) ||
-            (!selectedFonctionsIds && s.category && s.category.id === categoryIdSelected)
-        )
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(hr)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
 
-        return {
-          ...human,
-          situations,
-        }
-      })
-      .filter((h) => h.situations.length)
-
-    console.timeEnd('calculator-6-2')
-
-    console.time('calculator-7')
-    const activities = await Model.models.Activities.getAll(backupId, !loadChildrens ? referentiels.map((r) => r.id) : null)
-    console.timeEnd('calculator-7')
-
-    console.time('calculator-8')
-    list = syncCalculatorDatas(Model.models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens ? true : false)
-
-    const cleanDataToSent = (item) => ({
-      ...item,
-      etpMag: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.etpMag : null,
-      magRealTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magRealTimePerCase : null,
-      magCalculateCoverage: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateCoverage : null,
-      magCalculateDTESInMonths: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateDTESInMonths : null,
-      magCalculateTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateTimePerCase : null,
-      magCalculateOut: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_MAGISTRAT) ? item.magCalculateOut : null,
-      etpFon: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.etpFon : null,
-      fonRealTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonRealTimePerCase : null,
-      fonCalculateCoverage: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateCoverage : null,
-      fonCalculateDTESInMonths: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateDTESInMonths : null,
-      fonCalculateTimePerCase: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateTimePerCase : null,
-      fonCalculateOut: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_GREFFIER) ? item.fonCalculateOut : null,
-      etpCont: canHaveUserCategoryAccess(user, HAS_ACCESS_TO_CONTRACTUEL) ? item.etpCont : null,
-    })
-
+    console.time('Calculs cockpit')
+    list = syncCalculatorDatas(indexes, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, selectedFonctionsIds)
     list = list.map((item) => ({
-      ...cleanDataToSent(item),
-      childrens: (item.childrens || []).map(cleanDataToSent),
+      ...cleanCalculationItemForUser(item, user),
+      childrens: (item.childrens || []).map((child) => cleanCalculationItemForUser(child, user)),
     }))
-
-    console.timeEnd('calculator-8')
+    console.timeEnd('Calculs cockpit')
+    console.timeEnd('Calculator-global')
 
     return { fonctions, list }
+  }
+
+  Model.getAllJuridictionsWithSizes = async (sequelize) => {
+    const results = await Model.sequelize.query(
+      `
+      SELECT backup_id AS id, COUNT(*) AS size
+      FROM "HumanResources"
+      WHERE deleted_at IS NULL
+      GROUP BY backup_id
+      ORDER BY size DESC
+      `,
+      {
+        type: Model.sequelize.QueryTypes.SELECT,
+      },
+    )
+
+    return results.map(({ id, size }) => ({ id: Number(id), size: Number(size) }))
+  }
+
+  Model.cleanEmptyAgent = async () => {
+    const findAllWhere = await Model.models.HumanResources.findAll({
+      where: {
+        first_name: { [Op.eq]: null },
+        last_name: { [Op.eq]: null },
+        created_at: {
+          [Op.lte]: new Date(Date.now() - 1000 * 60 * 60 * 6),
+        },
+      },
+      include: [
+        {
+          model: Model.models.HRSituations,
+        },
+      ],
+      raw: true,
+    })
+
+    // Trouver ceux qui n'ont pas de jointures (situations ou indisponibilités)
+    const hrWithoutJoins = findAllWhere.filter((hr) => {
+      return hr['HRSituations.id'] === null
+    })
+
+    for (const hr of hrWithoutJoins) {
+      console.log('we removehr', hr.id)
+      await Model.models.HumanResources.destroy({
+        where: {
+          id: hr.id, // Assurez-vous de supprimer par ID
+        },
+      })
+    }
+
+    console.log('Nb Records removed:', hrWithoutJoins.length)
   }
 
   return Model

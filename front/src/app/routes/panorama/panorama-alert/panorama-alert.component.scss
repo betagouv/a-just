@@ -1,4 +1,4 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss';
 
 .main {
   display: flex;
@@ -20,7 +20,7 @@
     width: 40px;
     padding: 8px;
     background-color: #0063cb;
-  
+
     i {
       color: white;
     }
@@ -33,7 +33,7 @@
 
     color: #000091;
 
-    .material-icons{
+    .material-icons {
       width: 14px;
       height: 14px;
       font-size: 14px !important;

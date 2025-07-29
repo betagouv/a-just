@@ -1,11 +1,44 @@
-import { Routes } from '@angular/router';
-import { authGuard } from './auth.guard';
-import { typeGuard } from './type.guard';
-import { closeGuard } from './close.guard';
-import { SimulatorPage } from './simulator/simulator.page';
-import { AverageEtpDisplayerPage } from './average-etp/average-etp-displayer/average-etp-displayer.page';
-import { ReaffectatorPage } from './reaffectator/reaffectator.page';
-import { WhiteSimulatorPage } from './simulator/white-simulator/white-simulator.page';
+import { Routes } from '@angular/router'
+import {
+  activitiesGuard,
+  allSimulatorGuard,
+  authGuard,
+  cockpitGuard,
+  dashboardGuard,
+  reaffectatorGuard,
+  tempsMoyensGuard,
+  ventilationsGuard,
+  whiteSimulatorGuard,
+} from './auth.guard'
+import { typeGuard } from './type.guard'
+import { closeGuard } from './close.guard'
+import { SimulatorPage } from './simulator/simulator.page'
+import { AverageEtpDisplayerPage } from './average-etp/average-etp-displayer/average-etp-displayer.page'
+import { ReaffectatorPage } from './reaffectator/reaffectator.page'
+import { WhiteSimulatorPage } from './simulator/white-simulator/white-simulator.page'
+import { LoginPage } from './login/login.page'
+import { AboutUsPage } from './about-us/about-us.page'
+import { WelcomePage } from './welcome/welcome.page'
+import { DashboardPage } from './dashboard/dashboard.page'
+import { WorkforcePage } from './workforce/workforce.page'
+import { ActivitiesPage } from './activities/activities.page'
+import { AverageEtpPage } from './average-etp/average-etp.page'
+import { CalculatorPage } from './calculator/calculator.page'
+import { HumanResourcePage } from './human-resource/human-resource.page'
+import { SignupPage } from './signup/signup.page'
+import { ForgotPassword } from './forgot-password/forgot-password.page'
+import { ChangePassword } from './change-password/change-password.page'
+import { PanoramaPage } from './panorama/panorama.page'
+import { JuridictionsInstalledPage } from './juridictions-installed/juridictions-installed.page'
+import { SiteMapPage } from './sitemap/sitemap.page'
+import { LegaleNoticePage } from './legale-notice/legale-notice.page'
+import { PrivacyPage } from './privacy/privacy.page'
+import { AccessibilitiesPage } from './accessibilities/accessibilities.page'
+import { ContactPage } from './contact/contact.page'
+import { StatsPage } from './stats/stats.page'
+import { LogoutPage } from './logout/logout.page'
+import { CGUPage } from './cgu/cgu.page'
+import { HelpCenterPage } from './help-center/help-center.page'
 
 export const routes: Routes = [
   {
@@ -20,58 +53,45 @@ export const routes: Routes = [
   },
   {
     path: 'connexion',
-    loadComponent: () =>
-      import('./login/login.page').then((mod) => mod.LoginPage),
+    component: LoginPage,
   },
   {
     path: 'qui-sommes-nous',
-    loadComponent: () =>
-      import('./about-us/about-us.page').then((mod) => mod.AboutUsPage),
+    component: AboutUsPage,
   },
   {
     path: 'bienvenue',
-    loadComponent: () =>
-      import('./welcome/welcome.page').then((mod) => mod.WelcomePage),
+    component: WelcomePage,
   },
   {
     path: 'dashboard',
-    loadComponent: () =>
-      import('./dashboard/dashboard.page').then((mod) => mod.DashboardPage),
+    component: DashboardPage,
     canActivate: [authGuard],
   },
   {
     path: 'ventilations',
-    loadComponent: () =>
-      import('./workforce/workforce.page').then((mod) => mod.WorkforcePage),
-    canActivate: [authGuard, typeGuard],
+    component: WorkforcePage,
+    canActivate: [ventilationsGuard, typeGuard],
   },
   {
     path: 'donnees-d-activite',
-    loadComponent: () =>
-      import('./activities/activities.page').then((mod) => mod.ActivitiesPage),
-    canActivate: [authGuard, typeGuard],
+    component: ActivitiesPage,
+    canActivate: [activitiesGuard, typeGuard],
   },
   {
     path: 'temps-moyens',
-    loadComponent: () =>
-      import('./average-etp/average-etp.page').then(
-        (mod) => mod.AverageEtpPage
-      ),
-    canActivate: [authGuard, typeGuard],
+    component: AverageEtpPage,
+    canActivate: [tempsMoyensGuard, typeGuard],
   },
   {
     path: 'cockpit',
-    loadComponent: () =>
-      import('./calculator/calculator.page').then((mod) => mod.CalculatorPage),
-    canActivate: [authGuard, typeGuard],
+    component: CalculatorPage,
+    canActivate: [cockpitGuard, typeGuard],
   },
   {
     path: 'resource-humaine/:id',
-    loadComponent: () =>
-      import('./human-resource/human-resource.page').then(
-        (mod) => mod.HumanResourcePage
-      ),
-    canActivate: [authGuard, typeGuard],
+    component: HumanResourcePage,
+    canActivate: [ventilationsGuard, typeGuard],
   },
   {
     path: 'signup',
@@ -80,109 +100,84 @@ export const routes: Routes = [
   },
   {
     path: 'inscription',
-    loadComponent: () =>
-      import('./signup/signup.page').then((mod) => mod.SignupPage),
+    component: SignupPage,
   },
   {
     path: 'mot-de-passe-oublie',
-    loadComponent: () =>
-      import('./forgot-password/forgot-password.page').then(
-        (mod) => mod.ForgotPassword
-      ),
+    component: ForgotPassword,
   },
   {
     path: 'nouveau-mot-de-passe',
-    loadComponent: () =>
-      import('./change-password/change-password.page').then(
-        (mod) => mod.ChangePassword
-      ),
+    component: ChangePassword,
   },
   {
     path: 'referentiel-de-temps/:id',
     component: AverageEtpDisplayerPage,
-    canActivate: [authGuard, typeGuard],
+    canActivate: [tempsMoyensGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'simulateur',
     component: SimulatorPage,
-    canActivate: [authGuard, typeGuard],
+    canActivate: [allSimulatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'simulateur-sans-donnees',
     component: WhiteSimulatorPage,
-    canActivate: [authGuard, typeGuard],
+    canActivate: [whiteSimulatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'reaffectateur',
     component: ReaffectatorPage,
-    canActivate: [authGuard, typeGuard],
+    canActivate: [reaffectatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'panorama',
-    loadComponent: () =>
-      import('./panorama/panorama.page').then((mod) => mod.PanoramaPage),
-    canActivate: [authGuard, typeGuard],
+    component: PanoramaPage,
+    canActivate: [dashboardGuard, typeGuard],
   },
   {
     path: 'carte-juridictions',
-    loadComponent: () =>
-      import('./juridictions-installed/juridictions-installed.page').then(
-        (mod) => mod.JuridictionsInstalledPage
-      ),
+    component: JuridictionsInstalledPage,
   },
   {
     path: 'plan-du-site',
-    loadComponent: () =>
-      import('./sitemap/sitemap.page').then((mod) => mod.SiteMapPage),
+    component: SiteMapPage,
   },
   {
     path: 'mentions-legales',
-    loadComponent: () =>
-      import('./legale-notice/legale-notice.page').then(
-        (mod) => mod.LegaleNoticePage
-      ),
+    component: LegaleNoticePage,
   },
   {
     path: 'donnees-personnelles',
-    loadComponent: () =>
-      import('./privacy/privacy.page').then((mod) => mod.PrivacyPage),
+    component: PrivacyPage,
   },
   {
     path: 'declaration-accessibilite',
-    loadComponent: () =>
-      import('./accessibilities/accessibilities.page').then(
-        (mod) => mod.AccessibilitiesPage
-      ),
+    component: AccessibilitiesPage,
   },
   {
     path: 'contact',
-    loadComponent: () =>
-      import('./contact/contact.page').then((mod) => mod.ContactPage),
+    component: ContactPage,
   },
   {
     path: 'stats',
-    loadComponent: () =>
-      import('./stats/stats.page').then((mod) => mod.StatsPage),
+    component: StatsPage,
   },
   {
     path: 'logout',
-    loadComponent: () =>
-      import('./logout/logout.page').then((mod) => mod.LogoutPage),
+    component: LogoutPage,
   },
   {
     path: 'conditions-generales-d-utilisation',
-    loadComponent: () => import('./cgu/cgu.page').then((mod) => mod.CGUPage),
+    component: CGUPage,
   },
   {
     path: 'centre-d-aide',
-    loadComponent: () =>
-      import('./help-center/help-center.page').then(
-        (mod) => mod.HelpCenterPage
-      ),
+    component: HelpCenterPage,
     canActivate: [authGuard, typeGuard],
   },
   {
@@ -190,4 +185,4 @@ export const routes: Routes = [
     redirectTo: '/connexion',
     pathMatch: 'full',
   },
-];
+]

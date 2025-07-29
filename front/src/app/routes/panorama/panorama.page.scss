@@ -1,8 +1,8 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 .panorama-container {
   background-color: white;
-  border-left: solid 1px fColor(lightBorder);
+  border-left: solid 1px utils.$colors-lightBorder;
 
   .header-panorama {
     box-shadow: 0 4px 10px 7px rgba(0, 0, 0, 0.1),
@@ -22,16 +22,16 @@
       position: absolute;
     }
 
-    > div {
+    >div {
       cursor: pointer;
       padding: 9px 16px;
       font-size: 16px;
       font-weight: bold;
 
       &.selected {
-        border-left: solid 1px fColor(lightBorder);
-        border-right: solid 1px fColor(lightBorder);
-        border-top: solid 2px fColor(primary);
+        border-left: solid 1px utils.$colors-lightBorder;
+        border-right: solid 1px utils.$colors-lightBorder;
+        border-top: solid 2px utils.$colors-primary;
         padding: 7px 16px 9px 16px;
       }
     }
@@ -47,7 +47,7 @@
   display: flex;
   margin-top: 4px;
 
-  > div {
+  >div {
     padding: 0 8px;
     border-radius: 12px;
     margin-right: 8px;
@@ -61,40 +61,40 @@
     }
 
     &.all {
-      background-color: fColor(bgCategoryAll);
-      color: fColor(textCategoryAll);
+      background-color: utils.$colors-bgCategoryAll;
+      color: utils.$colors-textCategoryAll;
     }
 
     &.seat {
-      background-color: fColor(bgCategorySiege);
-      color: fColor(textCategorySiege);
+      background-color: utils.$colors-bgCategorySiege;
+      color: utils.$colors-textCategorySiege;
     }
 
     &.greffe {
-      background-color: fColor(bgCategoryGreffe);
-      color: fColor(textCategoryGreffe);
+      background-color: utils.$colors-bgCategoryGreffe;
+      color: utils.$colors-textCategoryGreffe;
     }
 
     &.arround {
-      background-color: fColor(bgCategoryAutour);
-      color: fColor(textCategoryAutour);
+      background-color: utils.$colors-bgCategoryAutour;
+      color: utils.$colors-textCategoryAutour;
     }
   }
 }
 
 .effectif-title,
 .pano-title {
-  background-color: white;
+  background-color: utils.$colors-white;
   font-size: 24px;
   font-weight: bold;
   padding: 16px 24px;
-  border-bottom: solid 1px fColor(lightBorder);
+  border-bottom: solid 1px utils.$colors-lightBorder;
 }
 
 .workforce-panel,
 .activities-panel {
-  border-bottom: solid 1px fColor(lightBorder);
-  background-color: white;
+  border-bottom: solid 1px utils.$colors-lightBorder;
+  background-color: utils.$colors-white;
   display: flex;
   align-items: stretch;
 
@@ -108,17 +108,17 @@
 
   records-update,
   activities-last-modifications {
-    border-left: solid 1px fColor(lightBorder);
+    border-left: solid 1px utils.$colors-lightBorder;
   }
 }
 
 .workforce-change {
-  background-color: white;
-  border-bottom: solid 1px fColor(lightBorder);
+  background-color: utils.$colors-white;
+  border-bottom: solid 1px utils.$colors-lightBorder;
   align-items: stretch;
 }
 
 panorama-alert {
   display: block;
-  border-bottom: solid 1px fColor(lightBorder);
+  border-bottom: solid 1px utils.$colors-lightBorder;
 }

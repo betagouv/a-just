@@ -1,13 +1,14 @@
 import { default as server } from '../src/index'
 import { accessList } from '../src/constants/access'
-import routeUser from './api/RouteUser.test'
+import routeUser from './api/RouteUser.test.js'
 import routeChangeUserData from './api/RouteChangeUserData.test'
 import routeCalcultator from './api/RouteCalculator.test'
 //import routeSimulator from './api/RouteSimulator.test'
 import routeVentilateur from './api/RouteVentilateur.test'
 import routePanorama from './api/RoutePanorama.test'
 import routeActivities from './api/RouteActivities.test'
-
+import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from './constants/user'
+import { assert } from 'chai'
 import axios from 'axios'
 
 console.warn = () => { }
@@ -19,7 +20,6 @@ import routeHR from './api/RouteHR.test'
 import routeActivities from './api/RouteActivities.test'
 import RouteContentieuxOptions from './api/RouteContentieuxOptions.test'*/
 import config from 'config'
-import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from './constants/admin'
 import { onLoginAdminApi, onUpdateAccountApi, onGetUserDataApi } from './routes/user'
 
 const datas = {
@@ -57,18 +57,16 @@ describe('Test server is ready', () => {
   it('Login - Login admin', async () => {
     const email = USER_ADMIN_EMAIL
     const password = USER_ADMIN_PASSWORD
-
-    console.log('HERE TEST 00')
     // Connexion de l'admin
     const response = await onLoginAdminApi({
       email: email,
       password: password,
     })
-    console.log('HERE TEST 01')
-    console.log('RESPONSE:', response)
-    // Récupération du token associé pour l'identifier
-    datas.adminToken = response.status === 201 && response.data.token
-    datas.adminId = response.status === 201 && response.data.user.id
+    // Récupération du token associé et de l'id, pour identifier l'utilisateur
+    if (response.status === 201) {
+      datas.adminToken = response.data.token
+      datas.adminId = response.data.user.id
+    }
 
     assert.strictEqual(response.status, 201)
   })
@@ -84,7 +82,7 @@ describe('Test server is ready', () => {
       accessIds: accessIds,
       ventilations: [],
     })
-    let response = await onGetUserDataApi({ userToken: datas.adminToken })
+    const response = await onGetUserDataApi({ userToken: datas.adminToken })
     datas.adminAccess = response.data.user.access
     assert.strictEqual(response.status, 200)
     assert.isNotEmpty(datas.adminAccess)
@@ -93,7 +91,9 @@ describe('Test server is ready', () => {
   routeUser(datas)
   routeChangeUserData(datas)
   routeCalcultator(datas)
+  
   //routeSimulator(datas)
+  
   routeVentilateur(datas)
   routePanorama(datas)
   routeActivities(datas)

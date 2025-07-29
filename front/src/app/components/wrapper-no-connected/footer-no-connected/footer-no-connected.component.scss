@@ -1,8 +1,8 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
-  border-top: 2px solid fColor(primary);
+  border-top: 2px solid utils.$colors-primary;
   padding: 40px 115px 15px 115px;
 }
 
@@ -22,23 +22,23 @@
     font-size: 14px;
     font-weight: bold;
     text-decoration: none;
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     white-space: nowrap;
   }
 }
 
 .panel-footer {
-  border-top: 1px solid fColor(bgTag);
+  border-top: 1px solid utils.$colors-bgTag;
 
   .pages {
     margin-top: 15px;
 
     a {
-      color: fColor(titleSelect);
+      color: utils.$colors-titleSelect;
       padding-right: 16px;
       margin-right: 16px;
       margin-bottom: 8px;
-      border-right: 1px solid fColor(lightBorder);
+      border-right: 1px solid utils.$colors-lightBorder;
       text-decoration: none;
       font-size: 12px;
       height: 16px;
@@ -57,11 +57,11 @@
 
   .mentions {
     margin-top: 24px;
-    color: fColor(titleInput);
+    color: utils.$colors-titleInput;
     font-size: 12px;
 
     a {
-      color: fColor(titleInput);
+      color: utils.$colors-titleInput;
     }
   }
 }

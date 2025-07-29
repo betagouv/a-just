@@ -1,6 +1,8 @@
 <h3>Dernières données disponibles</h3>
 <div class="tab-month">
-  <a *ngFor="let t of months" class="tag" [ngClass]="{'is-active': t.active, 'is-current': t.current}"
-    routerLink="/donnees-d-activite" [queryParams]="{month: t.month}">{{
+  @for (t of months; track t) {
+    <a class="tag" [ngClass]="{'is-active': t.active, 'is-current': t.current}"
+      routerLink="/donnees-d-activite" [queryParams]="{month: t.month}">{{
     getShortMonthString(t.month)}} {{t.month.getFullYear()}}</a>
+  }
 </div>

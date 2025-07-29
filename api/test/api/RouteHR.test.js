@@ -1,6 +1,6 @@
 import axios from 'axios'
 import config from 'config'
-import { USER_ADMIN_EMAIl, USER_ADMIN_PASSWORD } from '../constants/admin'
+import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from '../constants/admin'
 
 module.exports = function () {
   let userToken = null
@@ -10,7 +10,7 @@ module.exports = function () {
   describe('Générate user auth', () => {
     it('has token response code', async () => {
       const response = await axios.post(`${config.serverUrl}/auths/login`, {
-        email: USER_ADMIN_EMAIl,
+        email: USER_ADMIN_EMAIL,
         password: USER_ADMIN_PASSWORD,
       })
       userToken = response.data && response.data.token

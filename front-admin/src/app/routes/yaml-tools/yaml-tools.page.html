@@ -10,65 +10,60 @@
         <button [ngClass]="{'disable':initialYmlData!==null}" (click)="validateYML()">Valider</button>
       </div>
     </div>
-    <div class="step-2" *ngIf="initialYmlData!==null">
-      <h3>Que souhaitez-vous faire ?</h3>
-      <button [ngClass]="{'disable':actionSelection!==0}" (click)="actionSelection=1">Ajouter une nouvelle NAC</button>
-      <button [ngClass]="{'disable':actionSelection!==0}" (click)="actionSelection=2">Supprimer des NAC
+    @if (initialYmlData!==null) {
+      <div class="step-2">
+        <h3>Que souhaitez-vous faire ?</h3>
+        <button [ngClass]="{'disable':actionSelection!==0}" (click)="actionSelection=1">Ajouter une nouvelle NAC</button>
+        <button [ngClass]="{'disable':actionSelection!==0}" (click)="actionSelection=2">Supprimer des NAC
         existantes</button>
-    </div>
+      </div>
+    }
   </div>
   <br />
   <br />
 
-  <div *ngIf="actionSelection===0; else supprimerNac"></div>
-
-  <ng-template #supprimerNac>
-    <ng-container *ngIf="actionSelection===2;else ajouterNac">
+  @if (actionSelection===0) {
+    <div></div>
+  } @else {
+    @if (actionSelection===2) {
       <div class="textarea">
-
         <div class="step-3">
           <p>Etape 2 : Choisir une NAC parmi celles existantes :</p>
           <aj-select-simple [rightsUser]="distinctNAC" (valueChange)="onSelectedChanged($event)"></aj-select-simple>
           <code>NAC selectionnée(s): {{ selectedNACs | json }}</code>
         </div>
-
         <div class="step-4">
           <p>Etape 3 : Selectionner les valeurs que vous souhaitez supprimer :</p>
           <div class="textarea path">
             <aj-select-simple class="path" [rightsUser]="distinctPath" (valueChange)="onSelectedPathChanged($event)"
-              [path]="true"></aj-select-simple>
+            [path]="true"></aj-select-simple>
             <button [ngClass]="{'disable':this.selectedPath.length===0}" (click)="validateRemoval()">Valider</button>
           </div>
           <code>Comptage avant modification: {{ countResult | json }}</code>
           <br />
-          <code
-            *ngIf="countResultAfterChange!=={}">Comptage après modification: {{ countResultAfterChange | json }}</code>
+          @if (countResultAfterChange!=={}) {
+            <code
+            >Comptage après modification: {{ countResultAfterChange | json }}</code>
+          }
         </div>
       </div>
-
       <br />
       <br />
-
       <div [ngClass]="{'disable':this.displayResult===false}">
         <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
-        </p>
-        <br />
-        <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
-        <br />
-      </div>
-    </ng-container>
-  </ng-template>
-
-  <ng-template #ajouterNac>
+      </p>
+      <br />
+      <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
+      <br />
+    </div>
+  } @else {
     <ng-container>
       <div class="textarea">
-
         <div class="step-3" [ngClass]="{'disable':this.goToStep3_addNac === true}">
           <p>Etape 2 : Indiquer la NAC à ajouter</p>
           <input id="nac_to_add" [(ngModel)]="tmpNACToAdd" />
           <button (click)="goToStep3_addNac=true; onNACToAdd(tmpNACToAdd)">Valider</button>
         </div>
-
         <div class="step-4" [ngClass]="{'disable':this.goToStep3_addNac === false  || this.goToStep5_addNac === true} ">
           <p>Etape 3 : Selectionner les contentieux dans lesquels vous souhaitez ajouter cette NAC</p>
           <div class="textarea path">
@@ -77,36 +72,34 @@
                 (valueChange)="onSelectedContentieuxToAddNAC($event)" [path]="true" #contentieuxSelect>
               </aj-select-simple>
             </div>
-
             <button [ngClass]="{'disable':this.selectedContentieuxTmp.length===0}"
               (click)="this.goToStep4_addNac = true ; onAddNacValidation()">
               Valider
             </button>
-
             <div [ngClass]="{'disable':this.goToStep4_addNac === false || this.goToStep5_addNac === true}">
               <button [ngClass]="{'disable':this.selectedContentieux.length === 0}"
-                (click)="goToStep3_addNac=false; ; goToStep4_addNac=false">Ajouter une autre NAC ?</button>
+              (click)="goToStep3_addNac=false; ; goToStep4_addNac=false">Ajouter une autre NAC ?</button>
               <button [ngClass]="{'disable':this.selectedContentieux.length === 0}"
                 (click)="goToStep4_addNac=true ; goToStep5_addNac=true; validateAdding()">Générer les nouvelles
-                règles</button>
+              règles</button>
             </div>
-
           </div>
         </div>
-
       </div>
-
       <br />
       <br />
       <div [ngClass]="{'disable':this.displayResult===false}">
         <p>Etape 4 : Copier le contenu de votre YML : <button id="copy" #copy (click)="onCopy(copy)">Copier</button>
-        </p>
-        <br />
-        <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
-      </div>
+      </p>
       <br />
-    </ng-container>
-  </ng-template>
+      <textarea id="yml" [ngModel]="textResultValue" (ngModelChange)="onCopyReset(copy)"></textarea>
+    </div>
+    <br />
+  </ng-container>
+}
+}
+
+
 
 
 

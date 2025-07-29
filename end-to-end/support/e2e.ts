@@ -20,3 +20,21 @@ import addCustomCommand from "cy-verify-downloads";
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 require("cy-verify-downloads").addCustomCommand();
+
+before(() => {
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.reload();
+});
+
+// Ignore ResizeObserver errors
+Cypress.on("uncaught:exception", (err, runnable) => {
+  if (
+    err.message.includes(
+      "ResizeObserver loop completed with undelivered notifications"
+    )
+  ) {
+    return false;
+  }
+  return true;
+});

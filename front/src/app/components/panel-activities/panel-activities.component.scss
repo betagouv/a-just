@@ -1,76 +1,16 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: block;
 
   &.dark-mode {
     p {
-      color: fColor(grayRow);
+      color: utils.$colors-grayRow;
     }
 
     .progress-bar {
       p {
-        color: fColor(grayRow);
-      }
-    }
-  }
-}
-
-.items {
-  &.ca {
-    min-height: 87px !important;
-    height: auto;
-    word-break: break-all;
-  }
-
-  display: flex;
-
-  .sub-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 8px;
-
-    &:last-child {
-      border-right: none !important;
-    }
-
-    .header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 10px;
-      font-size: 12px;
-
-      >p {
-        text-align: center;
-        font-size: 12px;
-        line-height: 20px;
-      }
-
-      .etp {
-        color: fColor(headerNumberColor);
-      }
-    }
-
-    .color {
-      height: 4px;
-      width: 100%;
-      border-radius: 4px;
-      opacity: 0.2;
-      margin-bottom: 4px;
-    }
-
-    .activity-bar {
-      height: 64px;
-      width: 100%;
-
-      progression-bar {
-        width: 100%;
+        color: utils.$colors-grayRow;
       }
     }
   }
@@ -79,8 +19,7 @@
 .header-panel {
   display: flex;
   height: 87px;
-  // box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  // margin-bottom: 8px;
+  margin-bottom: 8px;
 
   &.ca {
     min-height: 87px !important;
@@ -93,9 +32,10 @@
     align-self: stretch;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 8px;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
+
+    &:last-child div.text {
+      border-right: none;
+    }
 
 
     div.text {
@@ -104,6 +44,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
 
       div {
         display: flex;
@@ -111,7 +52,7 @@
 
         &.label {
           flex: 2;
-          color: fColor(cblackdark);
+          color: utils.$colors-cblackdark;
           text-transform: uppercase;
           display: flex;
           align-items: flex-end;
@@ -121,7 +62,7 @@
           flex: 1;
 
           >p {
-            color: fColor(headerNumberColor) !important;
+            color: utils.$colors-headerNumberColor !important;
           }
         }
       }
@@ -137,31 +78,16 @@
     div.color {
       height: 8px;
       opacity: 0.2;
-      border-radius: 4px;
-    }
-  }
-
-  .sub-item-activity {
-    justify-content: center;
-    display: flex;
-
-    >div {
-      progression-bar {
-        width: 90%;
-        cursor: pointer;
-      }
     }
   }
 }
 
 .activities-panel {
   display: grid;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
 
   .sub-item {
     justify-content: center;
     display: flex;
-    padding: 4px 0;
   }
 
   >div {
@@ -173,49 +99,48 @@
 }
 
 .progress-bar {
-  display: flex;
+  margin-top: 16px;
   padding: 0px 8px;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  align-self: stretch;
-  margin-top: 1px;
 
   &.low-completion {
     p {
-      color: fColor(cred);
+      color: utils.$colors-cred;
     }
 
     .progress-bar-line>div {
-      background-color: fColor(cred);
+      background-color: utils.$colors-cred;
     }
   }
 
   &.placeholder {
     p {
-      color: fColor(cplaceholder);
+      color: utils.$colors-cplaceholder;
     }
 
     .progress-bar-line,
     .progress-bar-line>div {
-      background-color: fColor(cplaceholder);
+      background-color: utils.$colors-cplaceholder;
     }
   }
 
   p {
     width: 271px;
     font-size: 12px;
-    color: fColor(cgray);
+    color: utils.$colors-cgray;
   }
 
   .progress-bar-line {
     flex: 1;
-    background-color: fColor(bgProgressBar);
-    height: 8px;
+    background-color: utils.$colors-bgProgressBar;
+    height: 6px;
     border-radius: 8px;
+    margin-left: 8px;
 
     >div {
       height: 100%;
-      background-color: fColor(lineProgressBar);
+      background-color: utils.$colors-lineProgressBar;
       border-radius: 8px;
     }
   }
@@ -226,7 +151,7 @@
   margin-top: 16px;
   padding-top: 8px;
   margin-bottom: 16px;
-  border-top: 2px solid fColor(cgray);
+  border-top: 2px solid utils.$colors-cgray;
   position: relative;
 
   .arrow-block {
@@ -305,7 +230,7 @@
       .arrow-top {
         width: 15px;
         height: 15px;
-        background-color: #33569e;
+        background-color: utils.$colors-cblue;
         display: inline-block;
         margin-left: 75%;
         transform: rotate(-135deg);
@@ -314,15 +239,15 @@
       }
 
       .title {
-        background-color: #33569e;
-        color: #fff;
+        background-color: utils.$colors-cblue;
+        color: utils.$colors-white;
         font-size: 16px;
         padding: 16px;
       }
 
       .texte {
-        background-color: #f3f6fe;
-        color: #29437c;
+        background-color: utils.$colors-cblack;
+        color: utils.$colors-cblue;
         padding: 16px;
       }
     }

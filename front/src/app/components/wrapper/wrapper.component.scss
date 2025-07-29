@@ -1,7 +1,7 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
-  height: 100%;
+  min-height: 100%;
 
   aj-news {
     position: absolute;
@@ -85,7 +85,7 @@
       transition: background-color 0.5s;
 
       &:hover {
-        background-color: rgba(fColor(bgSelectSelected), 0.2);
+        background-color: rgba(utils.$colors-bgSelectSelected, 0.2);
       }
 
       i {
@@ -102,7 +102,7 @@
     align-self: center;
 
     :first-child {
-      background-color: #000091;
+      background-color: utils.$colors-primary;
       color: white;
     }
 
@@ -119,11 +119,11 @@
   >div {
     display: flex;
     height: 100%;
+
+    &.duringPrint {
+      height: inherit;
+    }
   }
-
-
-
-
 
   .logo-ajust {
     cursor: pointer;
@@ -243,12 +243,14 @@
     }
 
     .menu {
-      background-color: fColor(darkModeBgMenuSelected);
-      border-right: 1px solid fColor(darkModeBgMenu);
+      background-color: utils.$colors-darkModeBgMenuSelected !important;
+      border-right: 1px solid utils.$colors-darkModeBgMenu !important;
       margin-right: 0px;
       z-index: 200;
 
       .menu-item {
+        color: white;
+        text-decoration: none !important;
 
         &.disconnect,
         a,
@@ -261,7 +263,7 @@
         }
 
         &.selected {
-          background-color: fColor(darkModeBgMenuSelected);
+          background-color: utils.$colors-darkModeBgMenuSelected !important;
 
           a,
           p {
@@ -272,24 +274,24 @@
     }
 
     .header {
-      background-color: fColor(darkModeBgHeader);
+      background-color: utils.$colors-darkModeBgHeader;
 
       h3 {
-        color: fColor(darkModeTitle);
+        color: utils.$colors-darkModeTitle;
       }
 
       .top-header {
-        background-color: fColor(darkModeBgHeader);
+        background-color: utils.$colors-darkModeBgHeader;
 
         h3 {
-          color: fColor(darkModeTitle);
+          color: utils.$colors-darkModeTitle;
         }
       }
     }
 
     .contener {
       .content {
-        background-color: fColor(cblackdark);
+        background-color: utils.$colors-cblackdark !important;
       }
     }
   }
@@ -333,8 +335,8 @@
 
   .juridiction {
     padding: 19px 10px 23px 10px;
-    background-color: fColor(cblue);
-    border: 1px solid fColor(cblack);
+    background-color: utils.$colors-cblue;
+    border: 1px solid utils.$colors-cblack;
 
     .juridiction-title {
       display: flex;
@@ -371,13 +373,15 @@
   .menu-item {
     display: block;
     padding: 13px 4px 13px 13px;
+    text-decoration: none;
+    color: #3a3a3a;
 
     &.top {
       cursor: pointer;
       transition: background-color 0.5s;
 
       &:hover {
-        background-color: rgba(fColor(bgSelectSelected), 0.2);
+        background-color: rgba(utils.$colors-bgSelectSelected, 0.2);
       }
     }
 
@@ -396,29 +400,33 @@
     }
 
     a {
+      text-decoration: none;
+      color: #000091;
+
       p {
         margin-top: 8px;
       }
     }
 
     .unselectable {
-      color: fColor(cblack) !important;
+      color: utils.$colors-cblack !important;
     }
 
     &.disconnect,
     a,
     p {
       cursor: pointer;
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
       font-weight: semi-bold;
       text-decoration: none;
     }
 
     &.selected {
+      color: #000091;
 
       a,
       p {
-        color: fColor(cbluedark);
+        color: utils.$colors-cbluedark;
       }
     }
 
@@ -468,6 +476,10 @@
   flex-direction: column;
   overflow: hidden;
 
+  &.duringPrint {
+    overflow: inherit;
+  }
+
   .content {
     position: relative;
     padding: 24px;
@@ -475,14 +487,17 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
-    background-color: fColor(bgColor);
+    background-color: utils.$colors-bgColor;
+
+    &.duringPrint {
+      overflow: inherit;
+      height: inherit;
+    }
   }
 }
 
 .header {
-  //height: 87px;
-  //min-height: 87px;
-  border-bottom: 1px solid fColor(bgColor);
+  border-bottom: 1px solid utils.$colors-bgColor;
 
   .top-header {
     padding: 16px;
@@ -502,7 +517,7 @@
     }
 
     h3 {
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
       font-size: 22px;
       margin-right: 8px;
     }
@@ -629,7 +644,6 @@
     box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
       0 20px 25px -5px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    //margin: -148px 8px 8px 8px;
     border: none;
     height: calc(100% + 80px);
   }

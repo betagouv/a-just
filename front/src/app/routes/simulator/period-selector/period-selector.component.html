@@ -12,13 +12,18 @@
         (valueChange)="updateDateSelected('dateStop', $event)" [min]="getMin()" [side]="'right'">
       </aj-date-select-blue>
     </div>
-    <div class="Rectangle">
-      <div class="dot {{mooveClass}}"></div>
-      <div class="blue-line {{mooveClass}}">
-        <div *ngFor="let d of nbOfMonthWithinPeriod" class="dot-generated-container">
-          <div class="dot-generated"></div>
+    <div class="rec-container">
+      <div class="separator">
+      </div>
+      <div class="Rectangle">
+        <div class="dot {{mooveClass}}"></div>
+        <div class="blue-line {{mooveClass}}">
+          @for (d of nbOfMonthWithinPeriod; track d) {
+            <div class="dot-generated-container">
+              <div class="dot-generated"></div>
+            </div>
+          }
         </div>
       </div>
     </div>
   </div>
-</div>

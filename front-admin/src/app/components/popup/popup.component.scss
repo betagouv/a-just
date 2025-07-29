@@ -1,27 +1,27 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
-  &.fit-content .popup > div {
+  &.fit-content .popup>div {
     width: inherit;
     height: inherit;
     min-width: inherit;
     min-height: inherit;
   }
 
-  &.small .popup > div {
+  &.small .popup>div {
     width: 60%;
   }
 
-  &.large .popup > div {
+  &.large .popup>div {
     width: 80%;
   }
 
-  &.width-500 .popup > div {
+  &.width-500 .popup>div {
     width: 90%;
     max-width: 500px;
   }
 
-  &.extra-large .popup > div {
+  &.extra-large .popup>div {
     width: 90%;
     height: 90% !important;
     max-height: 90% !important;
@@ -31,7 +31,7 @@
     align-items: flex-end;
     padding-bottom: 48px;
 
-    > div {
+    >div {
       width: 90%;
       height: inherit;
       min-height: inherit;
@@ -54,13 +54,13 @@
     .popup {
       background-color: rgba(255, 255, 255, 0.46);
 
-      > div {
+      >div {
         padding: 16px 0 16px 16px;
         border-radius: 6px;
         min-width: auto;
         min-height: auto;
 
-        > * {
+        >* {
           padding-right: 16px;
         }
       }
@@ -82,7 +82,7 @@
   background-color: rgba(0, 0, 0, 0.54);
   z-index: 100;
 
-  > div {
+  >div {
     background-color: white;
     width: fit-content;
     min-width: 50%;
@@ -96,14 +96,14 @@
     height: fit-content;
     border-radius: 8px;
 
-    > * {
+    >* {
       padding-right: 24px;
     }
   }
 
   .title {
     font-size: 20px;
-    color: fColor(primary);
+    color: utils.$colors-primary;
     padding-bottom: 16px;
     margin-bottom: 8px;
     font-weight: 500;
@@ -124,7 +124,7 @@
       box-shadow: 2px 2px 4px rgba(31, 56, 50, 0.15);
       text-decoration: none;
       cursor: pointer;
-      color: fColor(primary);
+      color: utils.$colors-primary;
       font-size: 18px;
     }
   }
@@ -150,31 +150,31 @@
       align-items: center;
       justify-content: flex-end;
 
-      > div {
+      >div {
         margin-left: 8px;
         height: 48px;
-        color: fColor(cblack);
+        color: utils.$colors-cblack;
         font-size: 16px;
         border-radius: 4px;
-        border: solid 1px fColor(cpurpledark);
+        border: solid 1px utils.$colors-cpurpledark;
         padding: 0 27px;
         line-height: 48px;
         font-weight: 500;
         cursor: pointer;
 
         &.red {
-          color: fColor(creddark);
+          color: utils.$colors-creddark;
 
           &.fill {
             color: white;
-            background-color: fColor(creddark);
-            border: solid 1px fColor(creddark);
+            background-color: utils.$colors-creddark;
+            border: solid 1px utils.$colors-creddark;
           }
         }
 
         &.fill {
           color: white;
-          background-color: fColor(primary);
+          background-color: utils.$colors-primary;
         }
 
         &.material-icons {
@@ -187,7 +187,7 @@
 
 @media screen and (max-width: 576px) {
   :host {
-    .popup > div {
+    .popup>div {
       width: 100%;
       height: 100%;
     }

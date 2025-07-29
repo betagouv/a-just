@@ -15,10 +15,10 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < list.length; i++) {
       list[i].users = await Model.models.UserVentilations.getUserVentilationsWithLabel(list[i].label)
       const getBackupId = await Model.models.HRBackups.findByLabel(list[i].label)
-      const agents = getBackupId ? listCategories(await Model.models.HumanResources.getCache(getBackupId)) : []
+      const agents = getBackupId ? listCategories(await loadOrWarmHR(backupId, Model.models)) : []
       const group = groupBy(
         agents.filter((a) => a.category),
-        'category.label'
+        'category.label',
       )
       list[i].categoriesAgents = []
       for (const [key, value] of Object.entries(group)) {
@@ -39,6 +39,33 @@ export default (sequelizeInstance, Model) => {
       },
       order: [['label', 'asc']],
     })
+  }
+
+  /**
+   * Retourne toutes les juridictions qui ont au moins un agent ventilé
+   * @returns
+   */
+  Model.getAllWithUser = async () => {
+    const jurisdictions = await Model.findAll({
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
+      where: {
+        parent_id: null,
+      },
+      order: [['label', 'asc']],
+      raw: true,
+    })
+
+    const filtered = []
+
+    for (const jurisdiction of jurisdictions) {
+      const users = await Model.models.UserVentilations.getUserVentilationsWithLabel(jurisdiction.label)
+
+      if (users && users.length > 0) {
+        filtered.push(jurisdiction)
+      }
+    }
+
+    return filtered
   }
 
   /**

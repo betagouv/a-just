@@ -1,12 +1,12 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
   .bg-magistrats {
-    background-color: fColor(cbluemiddle);
+    background-color: utils.$colors-cbluemiddle;
   }
 
   .bg-fonctionnaires {
-    background-color: fColor(cpinkmiddle);
+    background-color: utils.$colors-cpinkmiddle;
   }
 
   aj-popup {
@@ -191,7 +191,7 @@
                 font-size: 12px;
                 color: #ddd;
                 border: none;
-                border-bottom: solid 1px #ddd; // #000091;
+                border-bottom: solid 1px #ddd;
 
                 &.selected {
                   border: none !important;
@@ -237,7 +237,6 @@
             .element-list {
               display: flex;
               height: 40px;
-              //border-bottom: solid 1px #ddd;
               font-size: 12px;
               display: flex;
               align-items: center;
@@ -283,7 +282,6 @@
           font-size: 14px;
 
           &.greffe {
-            //background-color: white;
             background-color: #fee7fc;
             color: #a558a0;
           }
@@ -464,7 +462,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(fColor(cblack), 0.37);
+    background-color: rgba(utils.$colors-cblack, 0.37);
     z-index: 199;
   }
 
@@ -560,17 +558,17 @@
       }
 
       &.selected {
-        border: solid 1px fColor(cbluedark);
-        background-color: fColor(cbluemiddle);
+        border: solid 1px utils.$colors-cbluedark;
+        background-color: utils.$colors-cbluemiddle;
 
         >div.arrow-zone {
-          border-left: solid 1px fColor(cbluedark);
+          border-left: solid 1px utils.$colors-cbluedark;
         }
 
         >i,
         >label,
         >div.arrow-zone i {
-          color: fColor(cbluedark);
+          color: utils.$colors-cbluedark;
         }
       }
 
@@ -696,17 +694,17 @@
 
     &.selected {
       i {
-        color: fColor(sortIconHeaderSelected);
+        color: utils.$colors-sortIconHeaderSelected;
       }
     }
 
     i {
       margin-top: 8px;
       margin-bottom: 8px;
-      color: fColor(headerColor);
+      color: utils.$colors-headerColor;
 
       &.selected {
-        color: fColor(bgSelectSelected);
+        color: utils.$colors-bgSelectSelected;
       }
     }
 
@@ -730,7 +728,7 @@ aj-date-select {
 }
 
 aj-referentiel-calculator:nth-child(even) {
-  background-color: fColor(bgRowEvent);
+  background-color: utils.$colors-bgRowEvent;
 }
 
 .sub-main-header {
@@ -741,7 +739,7 @@ aj-referentiel-calculator:nth-child(even) {
   border-bottom: solid 1px #ddd;
   border-top: solid 1px #ddd;
 
-  background-color: fColor(bgSelect);
+  background-color: utils.$colors-bgSelect;
   width: calc(100% - 2px);
   padding: 0px 16px;
 
@@ -763,7 +761,7 @@ aj-referentiel-calculator:nth-child(even) {
     align-items: center;
     padding: 0 16px;
     cursor: pointer;
-    border: solid 1px fColor(cgraylightv3);
+    border: solid 1px utils.$colors-cgraylightv3;
 
     &.alone {
       border-radius: 4px;
@@ -772,7 +770,6 @@ aj-referentiel-calculator:nth-child(even) {
     p {
       font-size: 14px;
       line-height: 1.5;
-      //margin-left: 8px;
       color: #3a3a3a;
     }
   }
@@ -784,11 +781,11 @@ aj-referentiel-calculator:nth-child(even) {
     padding: 0 8px;
 
     &.selected {
-      border: solid 1px fColor(cbluedark);
-      background-color: fColor(cbluemiddle);
+      border: solid 1px utils.$colors-cbluedark;
+      background-color: utils.$colors-cbluemiddle;
 
       p {
-        color: fColor(cbluedark);
+        color: utils.$colors-cbluedark;
       }
     }
   }
@@ -799,11 +796,11 @@ aj-referentiel-calculator:nth-child(even) {
     padding: 0 8px;
 
     &.selected {
-      border: solid 1px fColor(cpink);
-      background-color: fColor(cpinkmiddle);
+      border: solid 1px utils.$colors-cpink;
+      background-color: utils.$colors-cpinkmiddle;
 
       p {
-        color: fColor(cpink);
+        color: utils.$colors-cpink;
       }
     }
   }
@@ -817,7 +814,7 @@ aj-referentiel-calculator:nth-child(even) {
 
     &.selected {
       border: solid 1px #6a6af4;
-      background-color: fColor(cbluemiddle);
+      background-color: utils.$colors-cbluemiddle;
 
       i {
         color: #6a6af4;
@@ -841,7 +838,7 @@ aj-referentiel-calculator:nth-child(even) {
 
     &.selected {
       border: solid 1px #6a6af4;
-      background-color: fColor(cbluemiddle);
+      background-color: utils.$colors-cbluemiddle;
 
       i {
         color: #6a6af4;
@@ -854,7 +851,6 @@ aj-referentiel-calculator:nth-child(even) {
   }
 }
 
-// class size
 .width-contentieux {
   min-width: 160px;
   flex: 3;

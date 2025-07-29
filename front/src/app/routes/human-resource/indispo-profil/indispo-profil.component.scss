@@ -1,30 +1,30 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
   border-radius: 8px;
-  border: solid 1px fColor(lightBorder);
-  background-color: #fff;
+  border: solid 1px utils.$colors-lightBorder;
+  background-color: utils.$colors-white;
 }
 
 .header-panel {
   display: flex;
   align-items: center;
   height: 56px;
-  background-color: fColor(bgSelect);
-  border-bottom: solid 1px fColor(lightBorder);
+  background-color: utils.$colors-bgSelect;
+  border-bottom: solid 1px utils.$colors-lightBorder;
   padding: 0 16px;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 
   i {
-    color: fColor(creddark);
+    color: utils.$colors-creddark;
     margin-right: 9px;
     font-size: 22px;
   }
 
   p {
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     font-size: 16px;
     font-weight: bold;
     margin-right: 8px;
@@ -43,7 +43,7 @@
   .empty {
     text-align: center;
     font-size: 14px;
-    color: fColor(grayRow);
+    color: utils.$colors-cgray;
   }
 
   >div {
@@ -54,7 +54,7 @@
 }
 
 .indispo-error {
-  color: fColor(cred);
+  color: utils.$colors-cred;
   font-weight: bold;
   margin: 0 8px 8px 8px;
 }
