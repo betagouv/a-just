@@ -1,0 +1,1465 @@
+commit 374d9507505188f89fd3fad47d0e7d6ba8ab47b5
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri Jul 11 16:55:35 2025 +0200
+
+    Add axios as a dependency in package.json and update package-lock.json
+
+diff --git a/package.json b/package.json
+index 07cc3ae4..119fd9ee 100644
+--- a/package.json
++++ b/package.json
+@@ -21,5 +21,8 @@
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist/browser ../api/dist/front && cd ..",
+     "build:package": "cp package.json ./api/dist/.",
+     "start:production": "cd api && npm run start:production"
++  },
++  "dependencies": {
++    "axios": "^1.10.0"
+   }
+ }
+
+commit 43368fe96d5cd2365b0156fbd064d27cc44693a9
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri Jul 11 16:28:32 2025 +0200
+
+    Update Node.js version to 22.17.0 and bump package version to 2.0.0 in package.json and api/.nvmrc
+
+diff --git a/package.json b/package.json
+index 3cb83ed6..07cc3ae4 100644
+--- a/package.json
++++ b/package.json
+@@ -1,10 +1,14 @@
+ {
+   "name": "a-just",
+-  "version": "1.11.0",
++  "version": "2.0.0",
+   "engines": {
+-    "node": "20.9.0"
++    "node": "22.17.0"
+   },
+-  "cacheDirectories": ["api/node_modules", "front/node_modules", "front-admin/node_modules"],
++  "cacheDirectories": [
++    "api/node_modules",
++    "front/node_modules",
++    "front-admin/node_modules"
++  ],
+   "scripts": {
+     "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
+     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+
+commit 297d162685b6b6bad417a8b99285a29c2765ede7
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Mon May 19 09:56:42 2025 +0200
+
+    remove redis cache to agent resources
+
+diff --git a/package.json b/package.json
+index 27616bf4..3cb83ed6 100644
+--- a/package.json
++++ b/package.json
+@@ -4,6 +4,7 @@
+   "engines": {
+     "node": "20.9.0"
+   },
++  "cacheDirectories": ["api/node_modules", "front/node_modules", "front-admin/node_modules"],
+   "scripts": {
+     "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
+     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+
+commit c724fb246ac322db357b0be076ccf32893cc0ec9
+Merge: f70ef7fd 23341e2b
+Author: MrJimmyChevallier <103670713+MrJimmyChevallier@users.noreply.github.com>
+Date:   Tue Apr 15 09:56:14 2025 +0200
+
+    Merge branch 'sandbox' into dev
+
+commit 8f9068480ec686cb6a1fdde6c507e074f1bd892d
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri Apr 11 17:51:59 2025 +0200
+
+    change main env number
+
+diff --git a/package.json b/package.json
+index d45c5346..248f33e5 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.10.2",
++  "version": "1.11.0",
+   "engines": {
+     "node": "20.9.0"
+   },
+
+commit 38ae66e2fab375bd1d5437a3493e3f39b632c77b
+Merge: 394945ec 2ebeb24e
+Author: Redwane Zafari <56769614+rzafari42@users.noreply.github.com>
+Date:   Thu Apr 3 20:40:29 2025 +0200
+
+    Merge pull request #303 from betagouv/sandbox
+    
+    Merge Sandbox into feature/e2e
+
+commit 059edba9577aeecac822c84417c5dd3d77c87f99
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Wed Mar 12 18:00:34 2025 +0100
+
+    upgrade version
+
+diff --git a/package.json b/package.json
+index 78b334e1..d45c5346 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.10.1",
++  "version": "1.10.2",
+   "engines": {
+     "node": "20.9.0"
+   },
+
+commit b1626699b12897a1a62f033c1a0d2dd407736fc2
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Tue Mar 4 11:40:59 2025 +0100
+
+    upgrade project version
+
+diff --git a/package.json b/package.json
+index a340482f..78b334e1 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.9.1",
++  "version": "1.10.1",
+   "engines": {
+     "node": "20.9.0"
+   },
+
+commit d5d499e728fa1b9f1d3b1840fc0c5fd8830b1c55
+Merge: c5ad6d75 29960989
+Author: Redwane <56769614+rzafari42@users.noreply.github.com>
+Date:   Tue Jan 21 20:01:27 2025 +0100
+
+    Merge branch 'feature/e2e' of https://github.com/betagouv/a-just into feature/e2e
+
+commit c5ad6d75ded2436f4fae10a5bc72b2b0c29e06d2
+Author: Redwane <56769614+rzafari42@users.noreply.github.com>
+Date:   Tue Jan 21 20:00:15 2025 +0100
+
+    updatated package.json to stop all services when cypress test ends
+
+diff --git a/package.json b/package.json
+index 8c34f1be..ff1f53c9 100644
+--- a/package.json
++++ b/package.json
+@@ -9,7 +9,7 @@
+     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+     "test": "npm run test:api && npm run test:e2e",
+     "test:api": "docker compose -p test-api -f docker-compose.test.yml build && docker compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
+-    "test:e2e": "NODE_ENV=test docker compose -p test-e2e -f docker-compose-e2e.test.yml build && docker compose -p test-e2e -f docker-compose-e2e.test.yml up",
++    "test:e2e": "NODE_ENV=test docker compose -p test-e2e -f docker-compose-e2e.test.yml build && docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm cypress; exitcode=$?; docker compose -p test-e2e -f docker-compose-e2e.test.yml down; exit ${exitcode}",
+     "build": "npm run build:api && npm run build:front-admin && npm run build:front && npm run build:package",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist/browser ../api/dist/front-admin && cd ..",
+
+commit 9d3b51f336ff9197a8e36defe0809d5a07fca60a
+Merge: 98bb6902 1ab1c412
+Author: Redwane Zafari <56769614+rzafari42@users.noreply.github.com>
+Date:   Tue Jan 21 18:44:46 2025 +0100
+
+    Merge branch 'feature/e2e' into sandbox
+
+commit 1b3d4d63c2b12cc058d19dabd42668c9476129f4
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri Dec 20 16:06:26 2024 +0100
+
+    upgrade version
+
+diff --git a/package.json b/package.json
+index 396a5b9f..a340482f 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.8.2",
++  "version": "1.9.1",
+   "engines": {
+     "node": "20.9.0"
+   },
+
+commit 2ca8ef5d8955ca140f451b9c1a62bbb7f9b082e7
+Merge: ac78884b 9ec0e7bd
+Author: Redwane Zafari <56769614+rzafari42@users.noreply.github.com>
+Date:   Wed Dec 18 10:29:06 2024 +0100
+
+    Merge pull request #280 from betagouv/sandbox
+    
+    Merge sandbox into feature/e2e
+
+commit f267d7ef4b98c082debebb3b64d46eb133a77c3d
+Merge: 75cc5873 b20d55ab
+Author: MrJimmyChevallier <103670713+MrJimmyChevallier@users.noreply.github.com>
+Date:   Wed Nov 27 16:01:32 2024 +0100
+
+    Merge branch 'dev' into sandbox
+
+commit 2b71251915e28f2250c0aa780d9b41aa16c25a92
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Wed Nov 27 15:04:06 2024 +0100
+
+    upgrade version
+
+diff --git a/package.json b/package.json
+index 69b61c74..10f0a73a 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.8.1",
++  "version": "1.8.2",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 28a2b81685258cdd0d6cdf65a5bdeaf19d54be0f
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Thu Nov 7 10:41:52 2024 +0100
+
+    change build script
+
+diff --git a/package.json b/package.json
+index abf2fe97..e845170a 100644
+--- a/package.json
++++ b/package.json
+@@ -12,10 +12,9 @@
+     "test:e2e": "NODE_ENV=test && docker compose -p test-e2e -f docker-compose-e2e.test.yml build && docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm cypress; exitcode=$?",
+     "build": "npm run build:api && npm run build:front-admin && npm run build:front && npm run build:package",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+-    "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+-    "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
++    "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist/browser ../api/dist/front-admin && cd ..",
++    "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist/browser ../api/dist/front && cd ..",
+     "build:package": "cp package.json ./api/dist/.",
+-    "start:production": "cd api && npm run start:production",
+-    "deploy:production": "docker compose -f docker-compose.yml -f docker-compose.production.yml build && rm -rf images-docker && mkdir images-docker && docker save -o ./images-docker/api_production api_production:latest"
++    "start:production": "cd api && npm run start:production"
+   }
+ }
+
+commit c32a1dd1ec5322b5894964bf972fe518ae6dca7c
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Wed Oct 30 17:41:15 2024 +0100
+
+    upgrade format datas modules
+
+diff --git a/package.json b/package.json
+index 69b61c74..abf2fe97 100644
+--- a/package.json
++++ b/package.json
+@@ -2,7 +2,7 @@
+   "name": "a-just",
+   "version": "1.8.1",
+   "engines": {
+-    "node": "16.15.1"
++    "node": "20.9.0"
+   },
+   "scripts": {
+     "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
+
+commit c8090313e7de2ea7484efec107bf5841ef4e6d96
+Merge: 82291dd0 b500e6da
+Author: Redwane <56769614+rzafari42@users.noreply.github.com>
+Date:   Mon Oct 28 17:26:37 2024 +0100
+
+    Merge branch 'sandbox' into dev
+
+commit 69cdd08acaea463e3e9c4b8a1f8854235292cb93
+Merge: 4b4f1888 129f378b
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Wed Oct 16 16:28:53 2024 +0200
+
+    Merge branch 'dev' into sandbox
+
+commit fd4bc6cea97ddd48e695752f897178fb0da8c647
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Wed Oct 16 14:40:23 2024 +0200
+
+    upgrade version
+
+diff --git a/package.json b/package.json
+index 8aababce..e30b5a7d 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.7.2",
++  "version": "1.8.1",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit ac78884b951069932dda0b53789f9bc69afec1ea
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri Oct 4 09:32:30 2024 +0200
+
+    wip e2e automation
+
+diff --git a/package.json b/package.json
+index 77d5141b..0ee569eb 100644
+--- a/package.json
++++ b/package.json
+@@ -9,7 +9,7 @@
+     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+     "test": "npm run test:api && npm run test:e2e",
+     "test:api": "docker compose -p test-api -f docker-compose.test.yml build && docker compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
+-    "test:e2e": "NODE_ENV=test && docker compose -p test-e2e -f docker-compose-e2e.test.yml build && docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm cypress; exitcode=$?",
++    "test:e2e": "NODE_ENV=test docker compose -p test-e2e -f docker-compose-e2e.test.yml build && docker compose -p test-e2e -f docker-compose-e2e.test.yml up",
+     "build": "npm run build:api && npm run build:front-admin && npm run build:front && npm run build:package",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+
+commit b500e6da8a4415c4ef754c8fb3497f031ab727ca
+Author: Redwane <56769614+rzafari42@users.noreply.github.com>
+Date:   Thu Oct 3 17:19:37 2024 +0200
+
+    Cypress automation test
+
+diff --git a/package.json b/package.json
+index 8aababce..77d5141b 100644
+--- a/package.json
++++ b/package.json
+@@ -7,8 +7,9 @@
+   "scripts": {
+     "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
+     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+-    "test": "npm run test:api",
++    "test": "npm run test:api && npm run test:e2e",
+     "test:api": "docker compose -p test-api -f docker-compose.test.yml build && docker compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
++    "test:e2e": "NODE_ENV=test && docker compose -p test-e2e -f docker-compose-e2e.test.yml build && docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm cypress; exitcode=$?",
+     "build": "npm run build:api && npm run build:front-admin && npm run build:front && npm run build:package",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+
+commit 10e75e79043c8f8bf966f0968f8025e79e4155c8
+Author: Redwane <56769614+rzafari42@users.noreply.github.com>
+Date:   Wed Aug 21 13:02:39 2024 +0200
+
+    Fixed issue concerning docker-compose new command
+
+diff --git a/package.json b/package.json
+index c6e69e13..8aababce 100644
+--- a/package.json
++++ b/package.json
+@@ -5,16 +5,16 @@
+     "node": "16.15.1"
+   },
+   "scripts": {
+-    "db:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
+-    "db:start": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
++    "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
++    "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+     "test": "npm run test:api",
+-    "test:api": "docker-compose -p test-api -f docker-compose.test.yml build && docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
++    "test:api": "docker compose -p test-api -f docker-compose.test.yml build && docker compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
+     "build": "npm run build:api && npm run build:front-admin && npm run build:front && npm run build:package",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
+     "build:package": "cp package.json ./api/dist/.",
+     "start:production": "cd api && npm run start:production",
+-    "deploy:production": "docker-compose -f docker-compose.yml -f docker-compose.production.yml build && rm -rf images-docker && mkdir images-docker && docker save -o ./images-docker/api_production api_production:latest"
++    "deploy:production": "docker compose -f docker-compose.yml -f docker-compose.production.yml build && rm -rf images-docker && mkdir images-docker && docker save -o ./images-docker/api_production api_production:latest"
+   }
+ }
+
+commit c0ea316c3e66142d91e76c5db81ddb0694200359
+Author: François-Xavier Montigny <fxmontigny@users.noreply.github.com>
+Date:   Wed Aug 7 16:10:22 2024 +0200
+
+    Update package.json
+
+diff --git a/package.json b/package.json
+index 984cf6ac..c6e69e13 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.7.1",
++  "version": "1.7.2",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit c9a2785a3347b4e71d86d4bee768a027c0ed51a4
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri Jul 5 07:47:36 2024 +0200
+
+    upgrade version
+
+diff --git a/package.json b/package.json
+index 4c1beadf..984cf6ac 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.7.0",
++  "version": "1.7.1",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 3eaf7405ef81e17b87ca4b552e169c504a346bce
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Wed Jun 19 14:28:31 2024 +0200
+
+    upgrade version
+
+diff --git a/package.json b/package.json
+index ddbd2e5f..4c1beadf 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.6.1",
++  "version": "1.7.0",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit a4930decf13322b235526ce0ba0641bcc4833ba6
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri May 17 07:36:39 2024 +0200
+
+    change build version
+
+diff --git a/package.json b/package.json
+index 2cb305f5..ddbd2e5f 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.5.2",
++  "version": "1.6.1",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit efb7a05df484986e5e5b18d62737ccc4e9a6752a
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Wed Apr 10 08:39:23 2024 +0200
+
+    add docker compose with image docker
+
+diff --git a/package.json b/package.json
+index 579bff90..2cb305f5 100644
+--- a/package.json
++++ b/package.json
+@@ -14,6 +14,7 @@
+     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
+     "build:package": "cp package.json ./api/dist/.",
+-    "start:production": "cd api && npm run start:production"
++    "start:production": "cd api && npm run start:production",
++    "deploy:production": "docker-compose -f docker-compose.yml -f docker-compose.production.yml build && rm -rf images-docker && mkdir images-docker && docker save -o ./images-docker/api_production api_production:latest"
+   }
+ }
+
+commit 2642ee5cdaebcd96a9585a9881ad50a549f9a373
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri Jan 26 11:44:57 2024 +0100
+
+    change version
+
+diff --git a/package.json b/package.json
+index e2b438ea..579bff90 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.5.1",
++  "version": "1.5.2",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit b3ce0c5a60e902098307972291ed4357a445e2b2
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Thu Dec 28 16:54:38 2023 +0100
+
+    upgrade package version
+
+diff --git a/package.json b/package.json
+index 561e9f6a..e2b438ea 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.4.1",
++  "version": "1.5.1",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 76fe1ea53b11acc097a84e3a966813e729af8a6b
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Thu Nov 30 12:55:33 2023 +0100
+
+    add version number
+
+diff --git a/package.json b/package.json
+index 32c2c3f5..561e9f6a 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.4.0",
++  "version": "1.4.1",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 1c07d6e183aefd8a4f88b05e7d46828de45a96b8
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Wed Oct 25 16:12:29 2023 +0200
+
+    change prod version
+
+diff --git a/package.json b/package.json
+index f5a211f6..32c2c3f5 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.3.0",
++  "version": "1.4.0",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit a2e6832bfd797503811c59fcb278f7aec37b134a
+Author: François-Xavier Montigny <francois-xavier.montigny@dev-together.com>
+Date:   Fri Jun 23 11:54:40 2023 +0200
+
+    upgrade version
+
+diff --git a/package.json b/package.json
+index 7241cf67..f5a211f6 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.2.0",
++  "version": "1.3.0",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit c620f9c8d9a2824065377a8e1f577ab881ef116e
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Fri May 12 09:08:26 2023 +0200
+
+    rename version
+
+diff --git a/package.json b/package.json
+index 77ebcdb8..7241cf67 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.1.3",
++  "version": "1.2.0",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 485e081dbd4b168bab31a797eb4860aaa99e7df8
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Tue Mar 28 09:00:01 2023 +0200
+
+    change version number
+
+diff --git a/package.json b/package.json
+index a6e6c56c..77ebcdb8 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.1.2",
++  "version": "1.1.3",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 42e3fbede6c8ea4fe5a1b4caa837c26d96cc5c42
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Thu Mar 9 17:34:52 2023 +0100
+
+    change package name
+
+diff --git a/package.json b/package.json
+index 7b0f197b..a6e6c56c 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.1.1",
++  "version": "1.1.2",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 33a0dbbcd00af7914148d7c3b0b77ca251370e54
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Wed Feb 15 16:24:37 2023 +0100
+
+    remove unused packages
+
+diff --git a/package.json b/package.json
+index 92a87c3d..7b0f197b 100644
+--- a/package.json
++++ b/package.json
+@@ -15,66 +15,5 @@
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
+     "build:package": "cp package.json ./api/dist/.",
+     "start:production": "cd api && npm run start:production"
+-  },
+-  "dependencies": {
+-    "@hubspot/api-client": "^4.0.0",
+-    "@sentry/node": "^6.2.3",
+-    "@sentry/tracing": "^6.2.3",
+-    "async": "^3.2.0",
+-    "awesome-phonenumber": "^2.44.0",
+-    "aws-sdk": "^2.960.0",
+-    "axios": "^0.21.1",
+-    "base64-stream": "^1.0.0",
+-    "bcryptjs": "^2.4.3",
+-    "config": "^3.3.2",
+-    "cron": "^1.8.2",
+-    "crypto": "^1.0.1",
+-    "csv-parse": "^4.14.0",
+-    "dotenv": "^8.2.0",
+-    "firebase-admin": "^9.5.0",
+-    "fs": "0.0.1-security",
+-    "geolib": "^3.3.1",
+-    "html-entities": "^1.3.1",
+-    "jimp": "^0.16.1",
+-    "jsonwebtoken": "^8.5.1",
+-    "koa-body": "^4.0.6",
+-    "koa-ejs": "^4.3.0",
+-    "koa-smart": "^2.2.0",
+-    "lodash": "^4.17.20",
+-    "logzio-nodejs": "^2.0.2",
+-    "mime": "^2.5.2",
+-    "moment": "^2.29.1",
+-    "momentjs": "^2.0.0",
+-    "node-sass": "^6.0.1",
+-    "path": "^0.12.7",
+-    "pdfkit": "^0.12.1",
+-    "pg": "^8.5.1",
+-    "qrcode": "^1.4.4",
+-    "querystring": "^0.2.0",
+-    "sequelize": "^6.3.5",
+-    "sequelize-cli": "^6.2.0",
+-    "sequelize-transforms": "^2.0.0",
+-    "sib-api-v3-sdk": "^8.0.2",
+-    "slugify": "^1.5.3",
+-    "socket.io": "^4.1.2",
+-    "stream": "^0.0.2",
+-    "string-strip-html": "^6.3.0",
+-    "stripe": "^8.132.0",
+-    "winston": "^3.3.3",
+-    "winston-logzio": "^5.1.2"
+-  },
+-  "devDependencies": {
+-    "babel-cli": "^6.26.0",
+-    "babel-eslint": "^10.1.0",
+-    "babel-plugin-transform-class-properties": "^6.23.0",
+-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+-    "babel-plugin-transform-runtime": "^6.15.0",
+-    "babel-preset-env": "^1.6.1",
+-    "babel-preset-stage-3": "^6.17.0",
+-    "eslint": "^7.13.0",
+-    "expect": "^26.6.2",
+-    "mocha": "^8.2.1",
+-    "nodemon": "^2.0.6",
+-    "prettier-eslint": "^11.0.0"
+   }
+ }
+
+commit fc3e37f15a5109122b185247a98b4fe9b05f711d
+Author: MrJimmyChevallier <jimmy.chevallier@free.fr>
+Date:   Wed Jan 11 11:24:04 2023 +0100
+
+    update version pour mise en prod
+
+diff --git a/package.json b/package.json
+index 8e246805..92a87c3d 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.1.0",
++  "version": "1.1.1",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 78f019fd9cd2f0f595aeadbaede21f0c5d2d0353
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Fri Dec 16 11:21:50 2022 +0100
+
+    change version
+
+diff --git a/package.json b/package.json
+index 51ec77b4..8e246805 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.0.3",
++  "version": "1.1.0",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 80127535e2af0a796fc074a6ca6839a99261d49e
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Thu Oct 20 14:07:26 2022 +0200
+
+    change build version
+
+diff --git a/package.json b/package.json
+index 166a85b5..51ec77b4 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.0.2",
++  "version": "1.0.3",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit f4c94d21620dd10a14ecaae51744992dcbc4aaaf
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Fri Oct 7 09:37:12 2022 +0200
+
+    change version
+
+diff --git a/package.json b/package.json
+index c539e5cf..166a85b5 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.0.1",
++  "version": "1.0.2",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 1a4aa3c3e0073d70ca0595efa46511c7017b07be
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Wed Sep 21 10:59:51 2022 +0200
+
+    change package version
+
+diff --git a/package.json b/package.json
+index 7252e833..c539e5cf 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "1.0.0",
++  "version": "1.0.1",
+   "engines": {
+     "node": "16.15.1"
+   },
+
+commit 48e67109569914e43fc83b6e406982b0ccbd943a
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Thu Sep 15 11:10:19 2022 +0200
+
+    remove grunt
+
+diff --git a/package.json b/package.json
+index c4717728..7252e833 100644
+--- a/package.json
++++ b/package.json
+@@ -14,8 +14,7 @@
+     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
+     "build:package": "cp package.json ./api/dist/.",
+-    "start:production": "cd api && npm run start:production",
+-    "grunt": "grunt"
++    "start:production": "cd api && npm run start:production"
+   },
+   "dependencies": {
+     "@hubspot/api-client": "^4.0.0",
+@@ -35,7 +34,6 @@
+     "firebase-admin": "^9.5.0",
+     "fs": "0.0.1-security",
+     "geolib": "^3.3.1",
+-    "grunt-cli": "^1.4.3",
+     "html-entities": "^1.3.1",
+     "jimp": "^0.16.1",
+     "jsonwebtoken": "^8.5.1",
+
+commit cc111d760d63af84b579aeae07a04cc603d0d0d9
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Thu Sep 15 11:08:18 2022 +0200
+
+    add grunt
+
+diff --git a/package.json b/package.json
+index 7252e833..c4717728 100644
+--- a/package.json
++++ b/package.json
+@@ -14,7 +14,8 @@
+     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
+     "build:package": "cp package.json ./api/dist/.",
+-    "start:production": "cd api && npm run start:production"
++    "start:production": "cd api && npm run start:production",
++    "grunt": "grunt"
+   },
+   "dependencies": {
+     "@hubspot/api-client": "^4.0.0",
+@@ -34,6 +35,7 @@
+     "firebase-admin": "^9.5.0",
+     "fs": "0.0.1-security",
+     "geolib": "^3.3.1",
++    "grunt-cli": "^1.4.3",
+     "html-entities": "^1.3.1",
+     "jimp": "^0.16.1",
+     "jsonwebtoken": "^8.5.1",
+
+commit b09335195971296277cbef1e7c620475b2f92be7
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Thu Sep 15 11:01:13 2022 +0200
+
+    test version number
+
+diff --git a/package.json b/package.json
+index cf40c2f6..7252e833 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "0.0.2",
++  "version": "1.0.0",
+   "engines": {
+     "node": "16.15.1"
+   },
+@@ -9,10 +9,11 @@
+     "db:start": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+     "test": "npm run test:api",
+     "test:api": "docker-compose -p test-api -f docker-compose.test.yml build && docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
+-    "build": "npm run build:api && npm run build:front-admin && npm run build:front",
++    "build": "npm run build:api && npm run build:front-admin && npm run build:front && npm run build:package",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+     "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
++    "build:package": "cp package.json ./api/dist/.",
+     "start:production": "cd api && npm run start:production"
+   },
+   "dependencies": {
+
+commit ade8a4e2fcf0ed32f857697b8c0d32608f52f939
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Thu Jun 30 17:08:49 2022 +0200
+
+    change node version
+
+diff --git a/package.json b/package.json
+index 097341af..cf40c2f6 100644
+--- a/package.json
++++ b/package.json
+@@ -2,7 +2,7 @@
+   "name": "a-just",
+   "version": "0.0.2",
+   "engines": {
+-    "node": "12.18.4"
++    "node": "16.15.1"
+   },
+   "scripts": {
+     "db:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
+
+commit 582f1a9ac2ebf1095afb454d024e4e94d9a79b5c
+Author: François-Xavier Montigny <fxmontigny@users.noreply.github.com>
+Date:   Tue Dec 21 10:21:59 2021 +0100
+
+    Feature/add user role (#34)
+    
+    * fix backup selected
+    
+    * add user access
+    
+    * protect api with user access
+    
+    * create and build front-admin space
+    
+    * show user access
+    
+    * change access and juridiction with admin account
+
+diff --git a/package.json b/package.json
+index 7ef0449c..097341af 100644
+--- a/package.json
++++ b/package.json
+@@ -9,8 +9,9 @@
+     "db:start": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+     "test": "npm run test:api",
+     "test:api": "docker-compose -p test-api -f docker-compose.test.yml build && docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
+-    "build": "npm run build:api && npm run build:front",
++    "build": "npm run build:api && npm run build:front-admin && npm run build:front",
+     "build:api": "cd api && npm i && npm run build && cd ..",
++    "build:front-admin": "cd front-admin && npm i && npm i --dev && npm run build && mv dist ../api/dist/front-admin && cd ..",
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
+     "start:production": "cd api && npm run start:production"
+   },
+
+commit 4bb4da18ac84d3be60a06a95e659d6d592a1a419
+Author: François-Xavier Montigny <fxmontigny@users.noreply.github.com>
+Date:   Thu Dec 16 09:02:52 2021 +0100
+
+    Feature/increase test coverage (#31)
+    
+    * add test coverage percent
+    
+    * tests accept es6
+    
+    * test referentiel import
+    
+    * test import hr
+    
+    * Test HR
+    
+    * test load activities
+    
+    * fix form data module
+    
+    * load options and activities
+
+diff --git a/package.json b/package.json
+index 3189890d..7ef0449c 100644
+--- a/package.json
++++ b/package.json
+@@ -8,7 +8,7 @@
+     "db:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
+     "db:start": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+     "test": "npm run test:api",
+-    "test:api": "docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
++    "test:api": "docker-compose -p test-api -f docker-compose.test.yml build && docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
+     "build": "npm run build:api && npm run build:front",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+     "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
+
+commit 0146f02e62af2b1aa400734484bc494cfe4b53c2
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Tue Dec 14 09:41:02 2021 +0100
+
+    force commit to deploy
+
+diff --git a/package.json b/package.json
+index 37e40641..3189890d 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "a-just",
+-  "version": "0.0.1",
++  "version": "0.0.2",
+   "engines": {
+     "node": "12.18.4"
+   },
+
+commit 8985536bb46324f0ec06d7b6a01118ce30616b0b
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Tue Dec 14 09:25:26 2021 +0100
+
+    fix to save dev dependencies
+
+diff --git a/package.json b/package.json
+index 151ae123..37e40641 100644
+--- a/package.json
++++ b/package.json
+@@ -11,7 +11,7 @@
+     "test:api": "docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
+     "build": "npm run build:api && npm run build:front",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+-    "build:front": "cd front && npm i && npm i --save-dev && npm run build && mv dist ../api/dist/front && cd ..",
++    "build:front": "cd front && npm i && npm i --dev && npm run build && mv dist ../api/dist/front && cd ..",
+     "start:production": "cd api && npm run start:production"
+   },
+   "dependencies": {
+
+commit b6875f42dc5b3fe4e7069f7c9cf3fe7f7b0d2178
+Author: François-Xavier Montigny <fxaviermontigny@gmail.com>
+Date:   Tue Dec 14 09:23:19 2021 +0100
+
+    force to save dev dependency to production
+
+diff --git a/package.json b/package.json
+index 8b6bf007..151ae123 100644
+--- a/package.json
++++ b/package.json
+@@ -11,7 +11,7 @@
+     "test:api": "docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
+     "build": "npm run build:api && npm run build:front",
+     "build:api": "cd api && npm i && npm run build && cd ..",
+-    "build:front": "cd front && npm i && npm run build && mv dist ../api/dist/front && cd ..",
++    "build:front": "cd front && npm i && npm i --save-dev && npm run build && mv dist ../api/dist/front && cd ..",
+     "start:production": "cd api && npm run start:production"
+   },
+   "dependencies": {
+
+commit f83968ae3817fb1681bbd405bb8b01f21a00dac7
+Author: François-Xavier Montigny <fxmontigny@users.noreply.github.com>
+Date:   Tue Dec 14 08:56:44 2021 +0100
+
+    Create V1 (#27)
+    
+    * create base of app and build script
+    
+    * change CI build script
+    
+    * add front staging env
+    
+    * add slugignore to ignore node_module
+    
+    * Feature/login page (#1)
+    
+    * create login process
+    
+    * create base of pages
+    
+    * add beta style
+    
+    * add dev documentation
+    
+    Co-authored-by: François-Xavier Montigny <fxaviermontigny@gmail.com>
+    
+    * Feature/hr contentieux connexion (#3)
+    
+    * create all tables
+    
+    * rename title of html page
+    
+    * clean old table name with correct format
+    
+    * change server to accept table name with uppercase
+    
+    * add HR list with base of datas
+    
+    * select change activity
+    
+    * rename tables with activities
+    
+    * load referentiel datas
+    
+    * add HR ventilation
+    
+    * add profil
+    
+    * add popup component
+    
+    * edit human resource
+    
+    * edit human resource
+    
+    * add env instruction to readme
+    
+    * fix activities entrees and sorties to accept null
+    
+    * Feature/base simulation stocks (#4)
+    
+    * return and view activities with etp
+    
+    * calculate stocks
+    
+    * add referentiel with delay
+    
+    * add category and function and sortby (#5)
+    
+    * add category and function and sortby
+    
+    * remove console log
+    
+    * Feature/view edit hr (#6)
+    
+    * add date start and stop to HR
+    
+    * add date picker
+    
+    * add HR categories and fonctions
+    
+    * add activities
+    
+    * update hr activity with time
+    
+    * import HR and ventilations (#7)
+    
+    * Feature/import nomenclature (#8)
+    
+    * import referentiel
+    
+    * remove console log
+    
+    * Feature/create hr ventilation saved (#9)
+    
+    * create backups table
+    
+    * import hr with backup name
+    
+    * import hr with backup
+    
+    * fix hr import
+    
+    * fix case of table name
+    
+    * remove hr backup
+    
+    * Feature/hr save update remove backup (#10)
+    
+    * remove hr backup
+    
+    * duplicate hr backup
+    
+    * save hr with new activities
+    
+    * fix activity with date after now
+    
+    * remove console log
+    
+    * Feature/assigning hr to referentiel (#11)
+    
+    * remove hr
+    
+    * remove hr status
+    
+    * mistake grammar
+    
+    * fix order and fonction of HR
+    
+    * fix etp on import hr
+    
+    * rework menu
+    
+    * create empty backup
+    
+    * list hr with scrollbar
+    
+    * import new ref format
+    
+    * select contentieux and sub contentieux
+    
+    * remove hr
+    
+    * fix import hr
+    
+    * Feature/filter hr and referentiel (#12)
+    
+    * add filters
+    
+    * add filters
+    
+    * split save as
+    
+    * update ventialisation lyon
+    
+    * Feature/styling hr page view (#13)
+    
+    * fix ventilation
+    
+    * move filter to select multiple
+    
+    * styling ventilation page
+    
+    * Feature/control ventilation limit (#14)
+    
+    * limit activities at 100%
+    
+    * fix date format of backup name
+    
+    * fix ts format of main class
+    
+    * Feature/fix demo 17 nov (#15)
+    
+    * fix hr import name and ventilation
+    
+    * remove login
+    
+    * fix - add profil
+    
+    * add categories to interface
+    
+    * remove log
+    
+    * set float type to progress bar
+    
+    * alert save ok
+    
+    * add magistrat to header list
+    
+    * align title workforece
+    
+    * duplique backup with name
+    
+    * alert modification before change backup
+    
+    * fix etp
+    
+    * add juridiction to user (#16)
+    
+    * Feature/less indispo to etp (#17)
+    
+    * fix list and scrollbar
+    
+    * add work time
+    
+    * fix scrollbar
+    
+    * fix decimal of work time
+    
+    * init docker and first test (#18)
+    
+    * init docker and first test
+    
+    * add github actions
+    
+    * modify action
+    
+    * update github
+    
+    * add checkout
+    
+    * fix mocha path
+    
+    * fix npm install
+    
+    * Feature/view and edit activities (#19)
+    
+    * load activities
+    
+    * add activities list
+    
+    * add activities page
+    
+    * remove console log
+    
+    * Feature/fix ventilation 24 on (#20)
+    
+    * add posad
+    
+    * add juridiction name to backup
+    
+    * Feature/view and edit average time (#21)
+    
+    * add contentieux options table
+    
+    * view and edit options
+    
+    * add per hour and per day
+    
+    * Feature/litigation sub litigation (#22)
+    
+    * update contentieux by main or sub
+    
+    * check contentieux percent selected
+    
+    * fix show or not sub ref
+    
+    * Feature/backup average time (#23)
+    
+    * update rh backup
+    
+    * add options referentiel backup
+    
+    * Feature/simulator view (#24)
+    
+    * add actuel data view
+    
+    * create base of referentiel calculator
+    
+    * real contentieux visiblity
+    
+    * filter referetneil without soutient and indispo
+    
+    * on select month only
+    
+    * average processing time get parent
+    
+    * fix attribution
+    
+    * change test datas
+    
+    * add console log
+    
+    * change case
+    
+    * change case
+    
+    * control backup data table
+    
+    * Feature/styling calculate page (#25)
+    
+    * fix option backup
+    
+    * add cover graph
+    
+    * Feature/backup activities (#26)
+    
+    * change activity month
+    
+    * create backup of activities
+    
+    * remove unused route
+    
+    * update import ref
+    
+    * force reload ref on load
+    
+    * Feature/add user (#28)
+    
+    * force reload ref on load
+    
+    * put json web token to env
+    
+    * create user accompte with api
+    
+    * import user with api
+    
+    * change nb day / HR
+    
+    * Feature/fix demo 9 nov (#29)
+    
+    * fix activities
+    
+    * add JWT to env
+    
+    * fix ts ignore
+    
+    * remove console log
+    
+    * Feature/test pre commit (#30)
+    
+    * test precommit
+    
+    * test message
+    
+    * test precommit
+    
+    * complete read me
+    
+    Co-authored-by: François-Xavier Montigny <francois-xavier@delivreetic.com>
+
+diff --git a/package.json b/package.json
+new file mode 100644
+index 00000000..8b6bf007
+--- /dev/null
++++ b/package.json
+@@ -0,0 +1,78 @@
++{
++  "name": "a-just",
++  "version": "0.0.1",
++  "engines": {
++    "node": "12.18.4"
++  },
++  "scripts": {
++    "db:build": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml build",
++    "db:start": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
++    "test": "npm run test:api",
++    "test:api": "docker-compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker-compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
++    "build": "npm run build:api && npm run build:front",
++    "build:api": "cd api && npm i && npm run build && cd ..",
++    "build:front": "cd front && npm i && npm run build && mv dist ../api/dist/front && cd ..",
++    "start:production": "cd api && npm run start:production"
++  },
++  "dependencies": {
++    "@hubspot/api-client": "^4.0.0",
++    "@sentry/node": "^6.2.3",
++    "@sentry/tracing": "^6.2.3",
++    "async": "^3.2.0",
++    "awesome-phonenumber": "^2.44.0",
++    "aws-sdk": "^2.960.0",
++    "axios": "^0.21.1",
++    "base64-stream": "^1.0.0",
++    "bcryptjs": "^2.4.3",
++    "config": "^3.3.2",
++    "cron": "^1.8.2",
++    "crypto": "^1.0.1",
++    "csv-parse": "^4.14.0",
++    "dotenv": "^8.2.0",
++    "firebase-admin": "^9.5.0",
++    "fs": "0.0.1-security",
++    "geolib": "^3.3.1",
++    "html-entities": "^1.3.1",
++    "jimp": "^0.16.1",
++    "jsonwebtoken": "^8.5.1",
++    "koa-body": "^4.0.6",
++    "koa-ejs": "^4.3.0",
++    "koa-smart": "^2.2.0",
++    "lodash": "^4.17.20",
++    "logzio-nodejs": "^2.0.2",
++    "mime": "^2.5.2",
++    "moment": "^2.29.1",
++    "momentjs": "^2.0.0",
++    "node-sass": "^6.0.1",
++    "path": "^0.12.7",
++    "pdfkit": "^0.12.1",
++    "pg": "^8.5.1",
++    "qrcode": "^1.4.4",
++    "querystring": "^0.2.0",
++    "sequelize": "^6.3.5",
++    "sequelize-cli": "^6.2.0",
++    "sequelize-transforms": "^2.0.0",
++    "sib-api-v3-sdk": "^8.0.2",
++    "slugify": "^1.5.3",
++    "socket.io": "^4.1.2",
++    "stream": "^0.0.2",
++    "string-strip-html": "^6.3.0",
++    "stripe": "^8.132.0",
++    "winston": "^3.3.3",
++    "winston-logzio": "^5.1.2"
++  },
++  "devDependencies": {
++    "babel-cli": "^6.26.0",
++    "babel-eslint": "^10.1.0",
++    "babel-plugin-transform-class-properties": "^6.23.0",
++    "babel-plugin-transform-decorators-legacy": "^1.3.4",
++    "babel-plugin-transform-runtime": "^6.15.0",
++    "babel-preset-env": "^1.6.1",
++    "babel-preset-stage-3": "^6.17.0",
++    "eslint": "^7.13.0",
++    "expect": "^26.6.2",
++    "mocha": "^8.2.1",
++    "nodemon": "^2.0.6",
++    "prettier-eslint": "^11.0.0"
++  }
++}
