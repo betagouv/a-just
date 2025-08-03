@@ -1,9 +1,6 @@
 {
   "name": "a-just-api",
   "version": "0.0.1",
-  "engines": {
-    "node": "22"
-  },
   "scripts": {
     "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
     "start:production": "cd dist && TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 --max-old-space-size=2048 index.js",
