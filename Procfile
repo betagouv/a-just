@@ -1,1 +1,1 @@
-web: npm run start:production
+web: yarn run start:production
