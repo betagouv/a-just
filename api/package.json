@@ -81,5 +81,10 @@
     "prettier-eslint": "^16.3.0",
     "sinon": "^19.0.2",
     "esbuild": "0.19.12"
+  },
+  "nodemonConfig": {
+    "exitcrash": true,
+    "signal": "SIGINT",
+    "legacyWatch": true
   }
 }
