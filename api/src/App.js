@@ -168,6 +168,11 @@ if (config.authPasswordFile) {
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
+  httpServer = null
+  redisClient = null
+  dbInstance = null
+  isShuttingDown = false
+
   constructor() {
     super({
       port: config.port,
@@ -178,21 +183,27 @@ export default class App extends AppBase {
   }
 
   async start() {
-    const isPrimaryInstance = os.hostname().includes('web-1') || !os.hostname().includes('web')
+    this._setupProcessSignals()
 
-    // 🧱 Initialisation Sequelize + modèles
-    this.models = db.initModels()
-    this.routeParam.models = this.models
-    this.routeParam.replicaModels = this.replicaModels
-    this.koaApp.context.sequelize = db.instance
-    this.koaApp.context.models = this.models
+    this._initializeModels()
+    await this._waitForPostgres()
 
-    // 🔄 Attendre que PostgreSQL soit prêt (évite crash au boot sur toutes les instances)
-    await this.waitForPostgres(db.instance)
+    this._configureKoa()
 
-    // 🔑 Sessions
-    this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
-    this.koaApp.proxy = true
+    await this._setupRedisSession()
+
+    Sentry.setupKoaErrorHandler(this.koaApp)
+
+    this._registerMiddlewares()
+    this._mountRoutes()
+
+    await this._runIfPrimaryInstance()
+
+    return await this._startHttpServer()
+  }
+
+  _setupProcessSignals() {
+    process.removeAllListeners('SIGINT')
 
     process.on('exit', (code) => {
       console.error('PROCESS EXIT CODE:', code)
@@ -206,63 +217,80 @@ export default class App extends AppBase {
       console.error('🛑 Unhandled Rejection at:', promise, 'reason:', reason)
     })
 
+    process.on('beforeExit', () => {
+      console.log('📦 beforeExit déclenché')
+      process.stdout.write('\n✅ Shutdown terminé proprement.\n')
+    })
+
     process.on('SIGTERM', () => {
       console.log('⚠️ SIGTERM reçu, le container va s’arrêter')
+      this.shutdown()
     })
+
     process.on('SIGINT', () => {
+      if (this.isShuttingDown) return
+      this.isShuttingDown = true
       console.log('⚠️ SIGINT reçu, interruption')
+      this.shutdown()
     })
+  }
 
-    // 🧠 Migration + seed uniquement sur l’instance principale
-    if (isPrimaryInstance) {
-      await db.migrations()
-      await db.seeders()
+  _initializeModels() {
+    this.models = db.initModels()
+    this.routeParam.models = this.models
+    this.routeParam.replicaModels = this.replicaModels
+    this.koaApp.context.sequelize = db.instance
+    this.koaApp.context.models = this.models
+    this.dbInstance = db.instance
+  }
 
-      // ⏰ Démarrage des crons + warmup
-      startCrons(this)
-      console.log('--- IS READY ---', config.port)
-      this.isReady()
+  async _waitForPostgres() {
+    await this.waitForPostgres(db.instance)
+  }
 
-      // ⏳ Warmup redis différé pour éviter timeout Scalingo
-      setTimeout(() => {
-        this.warmupRedisCache().catch((err) => {
-          console.error('❌ Erreur warmup Redis (décalé) :', err)
-        })
-      }, 10000)
-    } else {
-      console.log('--- IS READY ---', config.port)
-      this.isReady()
+  _configureKoa() {
+    this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
+    this.koaApp.proxy = true
+  }
+
+  async _setupRedisSession() {
+    const sessionConfig = { ...config.session }
+
+    if (config.redis) {
+      try {
+        const redisUrlSplited = config.redis.split('@')
+        const redisConfig = {}
+
+        if (redisUrlSplited.length > 1) {
+          const redisUrl = redisUrlSplited[1].split(':')
+          const redisAccount = redisUrlSplited[0].split(':')
+          redisConfig.host = redisUrl[0]
+          redisConfig.port = redisUrl[1]
+          redisConfig.password = redisAccount[redisAccount.length - 1]
+        } else {
+          const redisUrl = redisUrlSplited[0].split(':')
+          redisConfig.host = redisUrl[1].replace('//', '')
+          redisConfig.port = redisUrl[2]
+        }
+
+        const store = new RedisStore(redisConfig)
+        this.redisClient = store.client
+        sessionConfig.store = store
+      } catch (err) {
+        console.error('❌ Redis ne peut pas se lancer :', err)
+        process.exit(1)
+      }
     }
 
-    // 🔒 Limiteur de requêtes
+    this.koaApp.use(session(sessionConfig, this.koaApp))
+  }
+
+  _registerMiddlewares() {
     const limiter = RateLimit.middleware({
       interval: { min: 5 },
       max: config.maxQueryLimit,
     })
 
-    // 🧊 Sessions Redis
-    const sessionConfig = { ...config.session }
-    if (config.redis) {
-      const redisUrlSplited = config.redis.split('@')
-      const redisConfig = {}
-      if (redisUrlSplited.length > 1) {
-        const redisUrl = redisUrlSplited[1].split(':')
-        const redisAccount = redisUrlSplited[0].split(':')
-        redisConfig.host = redisUrl[0]
-        redisConfig.port = redisUrl[1]
-        redisConfig.password = redisAccount[redisAccount.length - 1]
-      } else {
-        const redisUrl = redisUrlSplited[0].split(':')
-        redisConfig.host = redisUrl[1].replace('//', '')
-        redisConfig.port = redisUrl[2]
-      }
-      sessionConfig.store = new RedisStore(redisConfig)
-    }
-
-    this.koaApp.use(session(sessionConfig, this.koaApp))
-    Sentry.setupKoaErrorHandler(this.koaApp)
-
-    // 🧱 Middlewares principaux
     super.addMiddlewares([
       limiter,
       koaBody({ multipart: true, formLimit: '512mb', textLimit: '512mb', jsonLimit: '512mb' }),
@@ -278,7 +306,6 @@ export default class App extends AppBase {
       addDefaultBody(),
       compress({}),
       givePassword,
-      //helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
@@ -298,20 +325,51 @@ export default class App extends AppBase {
       },
     ])
 
-    // 🧩 CORS
-    if (config.corsUrl) {
-      super.addMiddlewares([cors({ origin: config.corsUrl, credentials: true })])
-    } else {
-      super.addMiddlewares([cors({ credentials: true })])
-    }
+    super.addMiddlewares([config.corsUrl ? cors({ origin: config.corsUrl, credentials: true }) : cors({ credentials: true })])
+  }
 
-    // 🔌 Montages de routes
+  _mountRoutes() {
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/')
     super.mountFolder(join(__dirname, 'routes-api'), '/api/')
     super.mountFolder(join(__dirname, 'routes-admin'), '/ap-bo/')
     super.mountFolder(join(__dirname, 'routes'), '/')
+  }
 
-    return super.start()
+  async _runIfPrimaryInstance() {
+    const isPrimaryInstance = os.hostname().includes('web-1') || !os.hostname().includes('web')
+
+    if (!isPrimaryInstance) {
+      console.log('--- IS READY ---', config.port)
+      this.isReady()
+      return
+    }
+
+    await db.migrations()
+    await db.seeders()
+
+    startCrons(this)
+    console.log('--- IS READY ---', config.port)
+    this.isReady()
+
+    setTimeout(() => {
+      this.warmupRedisCache().catch((err) => {
+        console.error('❌ Erreur warmup Redis (décalé) :', err)
+      })
+    }, 10000)
+  }
+
+  async _startHttpServer() {
+    try {
+      this.httpServer = await super.start()
+      return this.httpServer
+    } catch (err) {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`❌ Le port ${config.port} est déjà utilisé.`)
+      } else {
+        console.error('❌ Erreur au démarrage de l’app :', err)
+      }
+      process.exit(1)
+    }
   }
 
   isReady() {}
@@ -431,4 +489,41 @@ export default class App extends AppBase {
   }
 
   sleep = (ms) => new Promise((res) => setTimeout(res, ms))
+
+  async shutdown() {
+    console.log('🛑 Arrêt du serveur demandé...')
+
+    const forceKill = setTimeout(() => {
+      console.warn('⏳ Forçage de l’arrêt après 5s')
+      process.exit(1)
+    }, 5000)
+
+    try {
+      if (this.httpServer && this.httpServer.listening) {
+        await new Promise((resolve, reject) => {
+          this.httpServer.close((err) => (err ? reject(err) : resolve()))
+        })
+        console.log('✅ HTTP Server fermé')
+      }
+
+      if (this.redisClient?.status !== 'end') {
+        await this.redisClient.quit()
+        console.log('✅ Redis fermé')
+      }
+
+      if (this.dbInstance) {
+        await this.dbInstance.close()
+        console.log('✅ DB fermée')
+      }
+
+      clearTimeout(forceKill)
+      process.stdout.write('\n✅ Shutdown terminé proprement.\n', () => {
+        process.exit(0)
+      })
+    } catch (err) {
+      console.error('❌ Erreur pendant la fermeture :', err)
+      clearTimeout(forceKill)
+      process.exit(1)
+    }
+  }
 }
