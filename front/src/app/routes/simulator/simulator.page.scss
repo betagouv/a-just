@@ -380,7 +380,7 @@
     justify-content: center;
     text-align: center;
     height: 40px;
-    padding: 8px 24px;
+    padding: 8px 16px;
     border: solid 1px utils.$colors-primary;
 
     &.export-b {
@@ -399,6 +399,7 @@
       mat-icon {
         top: -1px;
         position: relative;
+        margin-right: 8px;
       }
 
       p {
@@ -503,7 +504,7 @@
   }
 
   .simulation-bottom {
-    background-color: utils.$colors-bgSelect;
+    //background-color: utils.$colors-bgSelect;
     position: relative;
     margin-top: 108px;
 
