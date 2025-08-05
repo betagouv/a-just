@@ -67,21 +67,31 @@ export default class RouteSimulator extends Route {
 
     console.time('simulator-2')
     const categories = await this.models.HRCategories.getAll()
+    const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === categoryId).map((f) => f.id)
+    const fctFilter = functionIds.length == fonctions.length ? undefined : functionIds
     console.timeEnd('simulator-2')
 
     console.time('simulator-3')
     const activities = await this.models.Activities.getAll(backupId)
     console.timeEnd('simulator-3')
 
-    const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId, undefined, indexes, true)
-
-    console.log(situation)
-    console.time('simulator-1.1')
-    const hrfiltered = filterByCategoryAndFonction(copyArray(hr), categoryId, functionIds)
-    console.timeEnd('simulator-1.1')
+    const situation = await getSituation(referentielId, hr, activities, categories, dateStart, dateStop, categoryId, undefined, indexes, true, true)
 
     console.time('simulator-4')
-    let situationFiltered = await getSituation(referentielId, hrfiltered, activities, categories, dateStart, dateStop, categoryId, undefined, indexes, true)
+    let situationFiltered = await getSituation(
+      referentielId,
+      hr,
+      activities,
+      categories,
+      dateStart,
+      dateStop,
+      categoryId,
+      undefined,
+      indexes,
+      true,
+      true,
+      fctFilter,
+    )
     console.timeEnd('simulator-4')
     situationFiltered = mergeSituations(situationFiltered, situation, categories, categoryId, ctx)
 
@@ -158,7 +168,6 @@ export default class RouteSimulator extends Route {
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
-    console.log(sufix)
     await this.models.Logs.addLog(EXECUTE_SIMULATOR_PARAM, ctx.state.user.id, params)
 
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)

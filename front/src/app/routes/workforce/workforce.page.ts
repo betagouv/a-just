@@ -1091,7 +1091,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
                 realETP = 0
               }
               const res = (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-              ref.totalAffected = Math.floor(res * 100) / 100 // arrondi à 2 décimales
+              ref.totalAffected = fixDecimal(res, 1000)
             }
           }
 
