@@ -216,9 +216,6 @@ export default class RouteExtractor extends Route {
       })
 
     activities = updateLabels(activities, referentiels)
-
-    //activities.map(x=>console.log(x.contentieux))
-    referentiels.map((x) => console.log(x))
     let sum = cloneDeep(activities)
 
     sum = sum.map((x) => {
