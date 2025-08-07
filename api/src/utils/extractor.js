@@ -1850,6 +1850,24 @@ async function computeReferentielStats(human, flatReferentielsList, categories, 
 
 function formatHumanLine({ human, refObj, reelEtp, totalEtpt, categoryName, fonctionName, juridictionName, isJirs, refIndispo }) {
   //const key = getExcelLabel(refIndispo, true)
+  let delegation = null
+  const key = getExcelLabel(refIndispo, true)
+  if (isCa()) {
+    Object.keys(refObj).forEach((k) => {
+      if (k.includes(DELEGATION_TJ.toUpperCase())) refObj[key] -= refObj[k]
+    })
+    ;({ refObj, delegation } = getAndDeleteAbsenteisme(refObj, ['14.13. DÉLÉGATION TJ'], true))
+    const newKey = '14.13. DÉLÉGATION TJ'
+    const targetKey = '14. TOTAL INDISPONIBILITÉ'
+
+    const result = {}
+    for (const [k, v] of Object.entries(refObj)) {
+      if (k === targetKey) Object.assign(result, delegation)
+      result[k] = v
+    }
+    refObj = result
+  }
+
   return {
     ['Réf.']: String(human.id),
     ...(isCa() ? { Juridiction: juridictionName.label } : { Arrondissement: juridictionName.label }),

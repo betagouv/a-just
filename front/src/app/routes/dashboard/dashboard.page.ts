@@ -63,8 +63,4 @@ export class DashboardPage extends MainClass {
       }),
     )
   }
-
-  getCacheNew(newVersion: boolean) {
-    this.excelService.getCache(newVersion)
-  }
 }
