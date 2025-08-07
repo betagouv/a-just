@@ -9,7 +9,7 @@
   .title {
     padding: 24px 24px;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    background-color: utils.$colors-bgSelect;
+    background-color: utils.$colors-white;
     position: relative;
     z-index: 1;
 
@@ -22,7 +22,7 @@
     label {
       font-size: 14px;
       line-height: 1.71;
-      color: utils.$colors-cgray;
+      color: utils.$colors-grayRow;
     }
   }
 
@@ -30,7 +30,7 @@
     position: relative;
     display: flex;
     padding: 36px 16px 36px 16px;
-    background-color: utils.$colors-bgSelect;
+    background-color: utils.$colors-white;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 
     .space {
@@ -52,7 +52,7 @@
       align-items: center;
       border-radius: 8px;
       background-color: utils.$colors-primary;
-      border: 1px solid utils.$colors-borderSelect;
+      border: 1px solid utils.$colors-lightBorder;
       padding: 4px 8px;
       height: 55px;
 
@@ -62,7 +62,7 @@
       }
 
       p {
-        color: utils.$colors-bgSelect !important;
+        color: utils.$colors-white !important;
         font-size: 14px;
       }
     }
