@@ -40,8 +40,9 @@
 
     <div class="menu-scrollable">
       @for (item of menu; track item) {
-      <div class="menu-item top" [class.selected]="isSelected(item)">
-        <a [routerLink]="['/' + item.path]" (click)="onSelect('/' + item.path)">
+      <div class="menu-item top" [class.selected]="isSelected(item)" [routerLink]="['/' + item.path]"
+        (click)="onSelect('/' + item.path)">
+        <a>
           {{ item.label }}
         </a>
       </div>
