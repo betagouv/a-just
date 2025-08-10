@@ -75,7 +75,7 @@ describe("Test d'accés aux pages", () => {
     cy.get(".menu-item .tools").should("exist").click();
   };
 
-  /*it("User with access to specific pages should not have access to others", () => {
+  it("User with access to specific pages should not have access to others", () => {
     cy.login();
 
     // Parcourir toutes les URLs définies dans accessUrlList
@@ -103,14 +103,13 @@ describe("Test d'accés aux pages", () => {
             ) {
               cy.visit(`${otherAccess.url}`, { failOnStatusCode: false })
                 .location("pathname")
-                // .should("not.contain", otherAccess.label);
-                .should("contain", otherAccess.url);
+                .should("not.contain", otherAccess.label);
             }
           });
         });
       }
     });
-  });*/
+  });
 
   /*it("User with specific access should only see allowed menu items + check bottom menu is alaways accessible", () => {
     cy.login();
