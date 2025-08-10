@@ -1,5 +1,6 @@
 import { groupBy, sumBy } from 'lodash'
 import { listCategories } from '../utils/ventilator'
+import { loadOrWarmHR } from '../utils/redis'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
