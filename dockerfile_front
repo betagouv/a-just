@@ -3,6 +3,7 @@ FROM node:22
 COPY ./front /home/front
 WORKDIR /home/front
 
-CMD   npm install --production=false && \
-      npm run start-e2e
+CMD   rm -rf node_modules && \
+      yarn install --force && \
+      yarn run start-e2e
 EXPOSE 4200

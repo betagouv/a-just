@@ -1,11 +1,10 @@
 FROM node:22
-
 COPY ./api /home/api
 WORKDIR /home/api
 
 CMD echo "NODE_ENV = $NODE_ENV"; \
     npm install --include=dev && \
-    npm run build && \ 
+    npm run build && \
     npm run start:production;
-    #npm run build && \ 
-   # npm run build && npm run start:production; 
+    #npm run build && \
+   # npm run build && npm run start:production;
