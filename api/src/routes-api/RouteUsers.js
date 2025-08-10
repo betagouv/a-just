@@ -339,45 +339,6 @@ export default class RouteUsers extends Route {
     ctx.throw(401, ctx.state.__('Information de contact non valide!'))
   }
 
-  /**
-   * Interface pour changer le mot de passe à la suite à une demande de changement de mot passe
-   * @param {*} email
-   * @param {*} code
-   * @param {*} password
-   * @returns
-   */
-  @Route.Post({
-    bodyType: Types.object().keys({
-      email: Types.string().required(),
-      code: Types.string().required(),
-      password: Types.string().required(),
-    }),
-  })
-  async changePassword (ctx) {
-    let { email, code, password } = this.body(ctx)
-    email = (email || '').trim().toLowerCase()
-
-    const user = await this.model.findOne({
-      where: { email, new_password_token: code },
-    })
-    if (user) {
-      try {
-        if (await this.model.updatePassword(user.dataValues.id, password, email)) {
-          await this.models.Logs.addLog(USER_USER_PASSWORD_CHANGED, user.dataValues.id)
-          this.sendOk(ctx, {
-            status: true,
-            msg: 'Votre mot de passe est maintenant changé. Vous pouvez dès maintenant vous connecter.',
-          })
-        }
-      } catch (err) {
-        ctx.throw(401, err)
-      }
-      return
-    }
-
-    ctx.throw(401, ctx.state.__('Information de contact non valide!'))
-  }
-
     /**
    * Interface pour changer le mot de passe à la suite à une demande de changement de mot passe
    * @param {*} email
