@@ -14,11 +14,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - run: docker compose version
 
       - name: Install dependencies
         run: npm i
-      
+
       - name: Run tests
         run: npm run test
 
