@@ -111,7 +111,7 @@
 
 <aj-popup *ngIf="updateIndisponiblity" [actions]="[
     { id: 'close', content: 'Annuler' },
-    { id: 'modify', content: 'Enregister', fill: true }
+    { id: 'modify', content: 'Enregistrer', fill: true }
   ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
   (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)">
   <p class="title">
