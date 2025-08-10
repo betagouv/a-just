@@ -111,7 +111,7 @@ describe("Test d'accés aux pages", () => {
     });
   });
 
-  /*it("User with specific access should only see allowed menu items + check bottom menu is alaways accessible", () => {
+  it("User with specific access should only see allowed menu items + check bottom menu is alaways accessible", () => {
     cy.login();
 
     // Parcourir toutes les URLs définies dans accessUrlList
@@ -127,36 +127,36 @@ describe("Test d'accés aux pages", () => {
           token,
         }).then(() => {
           // Recharger la page pour appliquer les nouveaux droits
-          cy.reload();
+          cy.visit("/");
+          // cy.wait(20000);
 
           // Vérifier que le menu contient uniquement l'élément autorisé
-          cy.get("#side-menu-bar .menu-scrollable") // Cible le conteneur du menu
-            .within(() => {
-              // Vérifier que l'élément correspondant à l'accès est visible
-              cy.get(".menu-item").should("contain.text", access.label);
+          cy.get("#side-menu-bar .menu-scrollable").within(() => {
+            // Vérifier que l'élément correspondant à l'accès est visible
+            cy.get(".menu-item").should("contain.text", access.label);
 
-              // Vérifier que les autres éléments ne sont pas visibles
-              accessUrlList.forEach((otherAccess) => {
-                if (
-                  otherAccess.label !== "Réaffectateur" &&
-                  otherAccess.label !== "Temps moyens" &&
-                  otherAccess.label !== undefined &&
-                  otherAccess.label !== access.label
-                ) {
-                  cy.get(".menu-item").should(
-                    "not.contain.text",
-                    otherAccess.label
-                  );
-                }
+            // Vérifier que les autres éléments ne sont pas visibles
+            accessUrlList.forEach((otherAccess) => {
+              if (
+                otherAccess.label !== "Réaffectateur" &&
+                otherAccess.label !== "Temps moyens" &&
+                otherAccess.label !== undefined &&
+                otherAccess.label !== access.label
+              ) {
+                cy.get(".menu-item").should(
+                  "not.contain.text",
+                  otherAccess.label
+                );
+              }
 
-                const toolToNotCheck = "Référentiels de temps moyens";
-                checkBottomMenu(toolToNotCheck);
-              });
+              const toolToNotCheck = "Référentiels de temps moyens";
+              checkBottomMenu(toolToNotCheck);
             });
+          });
         });
       }
     });
-  });*/
+  });
 
   it("Remove access to Réafecteur and check that user does not have access to Réaffecteur page from ventilateur", () => {
     const accessIds = accessUrlList
