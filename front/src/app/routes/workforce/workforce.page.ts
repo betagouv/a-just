@@ -1091,7 +1091,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
                 realETP = 0
               }
               const res = (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-              ref.totalAffected = fixDecimal(res, 1000)
+              ref.totalAffected = res
             }
           }
 
@@ -1099,6 +1099,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         })
 
         return hr
+      })
+
+      group.referentiel = group.referentiel.map((ref) => {
+        ref.totalAffected = fixDecimal(ref.totalAffected || 0, 1000)
+        return ref
       })
 
       return group

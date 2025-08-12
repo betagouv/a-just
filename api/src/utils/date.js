@@ -417,8 +417,8 @@ export function getTime(date) {
  * @returns
  */
 export const getWorkingDaysCount = (startDate, endDate) => {
-  const start = today(startDate)
-  const end = today(endDate)
+  let start = today(startDate)
+  let end = today(endDate)
 
   if (start > end) {
     // Si la date de début est après la date de fin, échanger les dates
