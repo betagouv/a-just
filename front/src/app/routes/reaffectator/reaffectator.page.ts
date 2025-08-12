@@ -865,7 +865,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       etpCalculate += (timeAffected / 100) * realETP
     })
 
-    return fixDecimal(etpCalculate)
+    return fixDecimal(etpCalculate, 1000)
   }
 
   /**
@@ -913,7 +913,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         }
       })
 
-      console.log(this.referentiel)
     }
   }
 
