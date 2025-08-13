@@ -33,8 +33,8 @@
       cursor: pointer;
 
       &.selected {
-        color: utils.$colors-primary;
-        background-color: utils.$colors-bgSelect;
+        color: utils.$colors-tagTextSelectedColor;
+        background-color: utils.$colors-tagBgSelectedColor;
       }
     }
   }
@@ -52,7 +52,7 @@
     .tag {
       height: 20px;
       border-radius: 4px;
-      color: utils.$colors-bgSelect;
+      color: utils.$colors-white;
       font-size: 12px;
       font-weight: bold;
       padding: 0 6px;
