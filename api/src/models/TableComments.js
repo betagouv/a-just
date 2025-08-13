@@ -132,6 +132,9 @@ export default (sequelizeInstance, Model) => {
   Model.getNbByActivityTypes = async (contentieuxIds, hrBackupId) => {
     const types = contentieuxIds.map((id) => `activities_${id}`)
 
+    if (types.length === 0) {
+      return new Map()
+    }
     const rows = await Model.sequelize.query(
       `
       SELECT type, COUNT(*) AS nb
