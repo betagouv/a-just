@@ -55,12 +55,12 @@ button {
 
   &.primary {
     color: white;
-    background-color: utils.$colors-primary;
+    background-color: utils.$colors-cbluedark;
   }
 
   &.red {
     color: white;
-    background-color: utils.$colors-primary;
+    background-color: utils.$colors-creddark;
   }
 
   &.blue-light {
@@ -78,8 +78,8 @@ button {
     }
 
     &.red {
-      color: utils.$colors-primary;
-      border: 1px solid utils.$colors-primary;
+      color: utils.$colors-creddark;
+      border: 1px solid utils.$colors-creddark;
       background-color: transparent;
     }
 

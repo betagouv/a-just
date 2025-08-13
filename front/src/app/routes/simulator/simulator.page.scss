@@ -634,7 +634,7 @@
       }
 
       &.blue-bg {
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-blueSimulator;
       }
 
       &.pink-bg {
@@ -1161,7 +1161,7 @@
       }
 
       &.blue-bg {
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-bgProgressBar;
 
         &.selected {
           mix-blend-mode: multiply;

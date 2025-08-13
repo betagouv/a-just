@@ -5,7 +5,7 @@
   width: 100%;
   z-index: 1;
   position: sticky;
-  background-color: #1a1c34 !important;
+  background-color: utils.$colors-darkModeBgHeader !important;
   top: 0;
 
   .profil {
@@ -42,8 +42,8 @@
         width: fit-content;
 
         &.selected {
-          background-color: utils.$colors-darkModeBgMenuSelected;
-          color: utils.$colors-bgSelect;
+          background-color: utils.$colors-bgSelectSelected;
+          color: utils.$colors-white;
         }
 
         &.selected::before {
@@ -54,17 +54,17 @@
 
       p.label {
         flex: 1;
-        color: #8585f6;
+        color: utils.$colors-darkModeTitle;
       }
 
       p.btn {
-        border: 1px solid #8585f6;
-        color: #8585f6;
+        border: 1px solid utils.$colors-darkModeTitle;
+        color: utils.$colors-darkModeTitle;
         padding: 4px 12px;
         cursor: pointer;
 
         &.selected {
-          background-color: #8585f6;
+          background-color: utils.$colors-darkModeTitle;
           color: white;
         }
       }
@@ -77,7 +77,7 @@
       p {
         text-align: right;
         font-size: 12px;
-        color: utils.$colors-cgray;
+        color: utils.$colors-grayRow;
         white-space: nowrap;
       }
 
@@ -122,10 +122,10 @@
       cursor: pointer;
 
       &.selected {
-        background-color: utils.$colors-darkModeBgMenuSelected;
+        background-color: utils.$colors-darkModeBgMenu;
 
         .etp {
-          background-color: #272747;
+          background-color: utils.$colors-darkModeBgHeader;
         }
 
         .filter i {
@@ -144,7 +144,7 @@
           text-transform: uppercase;
           font-size: 12px;
           font-weight: bold;
-          color: utils.$colors-bgSelect;
+          color: utils.$colors-white;
           text-align: center;
           width: 100%;
         }
@@ -163,7 +163,7 @@
         }
 
         &.show-reel-values {
-          background-color: utils.$colors-primary;
+          background-color: utils.$colors-cbluemiddle;
 
           p {
             color: utils.$colors-bgSelect;
@@ -191,7 +191,7 @@
 .indicators {
   display: flex;
   width: 100%;
-  background-color: #1a1c34 !important;
+  background-color: utils.$colors-darkModeBgLight !important;
   margin-bottom: 1px;
 
   .profil {
@@ -210,15 +210,15 @@
           width: 32px;
           height: 32px;
           margin-right: 8px;
-          border: 1px solid #8585f6;
-          color: #8585f6;
+          border: 1px solid utils.$colors-darkModeTitle;
+          color: utils.$colors-darkModeTitle;
           text-align: center;
           line-height: 32px;
           cursor: pointer;
         }
 
         p {
-          color: utils.$colors-bgSelect;
+          color: utils.$colors-white;
           font-size: 20px;
           font-weight: bold;
         }
@@ -228,10 +228,10 @@
         margin: 8px 18px 8px 0;
         height: 32px;
         line-height: 32px;
-        border: solid 1px #8585f6;
+        border: solid 1px utils.$colors-tooltipBgTitleColor;
         font-size: 14px;
         font-weight: 500;
-        color: #8585f6;
+        color: utils.$colors-tooltipBgTitleColor;
         border-radius: 0;
         background-color: transparent;
         cursor: pointer;
@@ -255,7 +255,7 @@
         p {
           text-align: right;
           font-size: 12px;
-          color: utils.$colors-cgray;
+          color: utils.$colors-grayRow;
           white-space: nowrap;
         }
 
@@ -328,12 +328,12 @@
           >p {
             text-align: center;
             font-weight: bold;
-            color: #718096;
+            color: utils.$colors-headerNumberColor;
           }
         }
 
         >div.taux {
-          background-color: #272747;
+          background-color: utils.$colors-darkModeBgMenu;
           border-radius: 3.7px;
           display: flex;
           align-items: center;
@@ -345,12 +345,12 @@
           }
 
           &.show-reel-values {
-            background-color: #272747;
+            background-color: utils.$colors-cbluemiddle;
           }
         }
 
         >div.dtes {
-          background-color: #272747;
+          background-color: utils.$colors-darkModeBgMenu;
           border-radius: 4px;
           height: 100%;
           display: flex;
@@ -363,10 +363,10 @@
           }
 
           &.show-reel-values {
-            background-color: #272747;
+            background-color: utils.$colors-cbluemiddle;
 
             p {
-              color: white;
+              color: utils.$colors-bgSelectSelected;
             }
           }
         }
@@ -413,7 +413,7 @@
 
   .activities {
     flex-direction: column;
-    background-color: #272747;
+    background-color: utils.$colors-darkModeBgMenu;
     flex: 1;
     display: flex;
     padding-right: 16px;
@@ -424,18 +424,18 @@
   }
 
   &.is-modify {
-    background-color: utils.$colors-primary;
+    background-color: utils.$colors-cbluemiddle;
 
     .profil.item .text .name p {
-      color: utils.$colors-cblack;
+      color: utils.$colors-cbluedark;
     }
 
     .activities {
-      background-color: utils.$colors-bgSelect;
+      background-color: utils.$colors-bgProgressBar;
     }
 
     .profil.item .read-etp {
-      background-color: #1b1b35;
+      background-color: utils.$colors-bgReadETPDark
     }
 
     .profil.item .text .updated-at {
@@ -445,11 +445,11 @@
 
   &.is-selected {
     .profil.item {
-      background-color: utils.$colors-primary;
+      background-color: utils.$colors-cbluemiddle;
     }
 
     .profil.item .text .name p {
-      color: utils.$colors-cblack;
+      color: utils.$colors-cbluedark;
     }
 
     .profil.item .text .updated-at {
@@ -470,7 +470,6 @@
       display: flex;
       flex-direction: column;
       text-decoration: none;
-      background-color: #272747;
 
       .name {
         margin-bottom: 8px;
@@ -482,7 +481,7 @@
 
         p {
           font-weight: bold;
-          color: utils.$colors-bgSelect;
+          color: utils.$colors-white;
           flex: 1;
           padding-left: 12px;
         }
@@ -496,13 +495,13 @@
           }
 
           mat-icon {
-            color: #6a6af4;
+            color: utils.$colors-borderProgressBar;
           }
 
           .tooltiptext {
             visibility: hidden;
-            background-color: utils.$colors-bgSelect;
-            color: utils.$colors-bgSelect;
+            background-color: utils.$colors-borderProgressBar;
+            color: utils.$colors-activityBgColor;
             text-align: center;
             padding: 8px;
             font-size: 14px;
@@ -529,12 +528,12 @@
           margin-bottom: 4px;
 
           &.function {
-            color: utils.$colors-bgSelect;
-            background-color: #417dc4;
+            color: utils.$colors-white;
+            background-color: utils.$colors-cbluelight;
           }
 
           &.etp {
-            color: utils.$colors-bgSelect;
+            color: utils.$colors-darkModeBgMenu;
           }
 
           mat-icon {
@@ -602,7 +601,7 @@
   border-radius: 10px;
   font-size: 12px;
   color: white;
-  background-color: utils.$colors-primary;
+  background-color: utils.$colors-greenReafectator;
   padding: 4px 8px;
   display: inline-block;
 }
@@ -643,7 +642,7 @@ progression-bar {
     top: 0;
     bottom: 0;
     font-size: 10px;
-    background-color: utils.$colors-bgSelect;
+    background-color: utils.$colors-bgSelectSelected;
     border-radius: 3px;
   }
 }
@@ -654,12 +653,12 @@ progression-bar {
 
 .unavailable {
   font-size: 14px;
-  color: utils.$colors-cblack;
+  color: utils.$colors-titleIndisponibilitiesPanel;
   margin-bottom: 10px;
 
   mat-icon {
     font-size: 17px;
-    color: utils.$colors-cblack;
+    color: utils.$colors-titleIndisponibilitiesPanel;
     height: 17px;
     width: 17px;
     position: relative;

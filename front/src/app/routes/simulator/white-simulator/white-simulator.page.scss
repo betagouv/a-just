@@ -23,8 +23,8 @@
         justify-content: center;
 
         .mdc-tooltip__surface {
-            background-color: utils.$colors-primary;
-            border: solid 1px utils.$colors-primary;
+            background-color: utils.$colors-tooltipSimulatorOrange;
+            border: solid 1px utils.$colors-tooltipSimulatorOrange;
             font-size: 12px;
             text-align: center;
             border-left: 100px;
@@ -52,9 +52,9 @@
             width: 620px;
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
-            border: solid 1px utils.$colors-bgSelect;
+            border: solid 1px utils.$colors-cgraylightv3;
             margin: auto;
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-textCategoryAll;
             position: relative;
 
             .intro-title {
@@ -82,10 +82,10 @@
             width: 620px;
             border-bottom-left-radius: 8px;
             border-bottom-right-radius: 8px;
-            border: solid 1px utils.$colors-bgSelect;
+            border: solid 1px utils.$colors-cgraylightv3;
             border-top: none;
             margin: auto;
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-textCategoryAll;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -93,8 +93,8 @@
             .blue-pan {
                 padding: 16px 24px;
                 border-radius: 4px;
-                border: solid 1px utils.$colors-primary;
-                background-color: utils.$colors-bgSelect;
+                border: solid 1px utils.$colors-bgSelectSelected;
+                background-color: utils.$colors-bgProgressBar;
 
                 .intro-blue-title {
                     font-size: 16px;
@@ -107,11 +107,11 @@
                         height: 20px;
                         padding: 0 6px;
                         border-radius: 4px;
-                        background-color: utils.$colors-bgSelect;
+                        background-color: utils.$colors-bgBlueTag;
                         font-size: 12px;
                         font-weight: bold;
                         text-align: center;
-                        color: utils.$colors-primary;
+                        color: utils.$colors-textBlueTag;
                     }
                 }
 
@@ -125,7 +125,7 @@
                         align-self: flex-end;
                         width: 111px;
                         height: 40px;
-                        color: utils.$colors-bgSelect;
+                        color: utils.$colors-textCategoryAll;
                         text-align: center;
                         margin-top: 16px;
                         padding: 8px 0;
@@ -156,7 +156,7 @@
         margin: 0 4px 0 8px;
         font-size: 20px;
         font-weight: bold;
-        color: utils.$colors-cblack;
+        color: utils.$colors-cblackdark;
         position: absolute;
         left: 256px;
         max-width: 50%;
@@ -199,7 +199,7 @@
             margin-top: 16px;
             margin-top: 1px;
             height: 110px;
-            background: utils.$colors-bgSelect;
+            background: utils.$colors-textCategoryAll;
         }
 
         p {
@@ -218,7 +218,7 @@
             padding: 8px 16px;
 
             border: solid 1px utils.$colors-primary;
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-textCategoryAll;
 
             p {
                 color: utils.$colors-primary;
@@ -266,7 +266,7 @@
         }
 
         .edit-button {
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-editBtton;
             height: 28px;
             margin: 0px 8px;
             border-radius: 6px;
@@ -279,7 +279,7 @@
         padding: 8px 16px;
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-cgrayDefault;
         resize: none;
         border: none;
         border-bottom: 2px solid utils.$colors-cblack;
@@ -302,7 +302,7 @@
     .date-bar-container {
         display: flex;
         width: 100%;
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-textCategoryAll;
         align-items: center;
 
         aj-period-selector {
@@ -314,9 +314,9 @@
 
             &::before {
                 content: '';
-                border-bottom: solid 1px utils.$colors-bgSelect;
+                border-bottom: solid 1px utils.$colors-bgColor;
                 left: 0px;
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-textCategoryAll;
                 position: absolute;
                 height: 128px;
                 right: 0px;
@@ -340,8 +340,8 @@
                 align-items: center;
                 padding: 0 16px;
                 cursor: pointer;
-                border: 1px solid utils.$colors-bgSelect;
-                background-color: utils.$colors-bgSelect;
+                border: 1px solid utils.$colors-borderSimulator;
+                background-color: utils.$colors-textCategoryAll;
                 transition: all 0.2s ease-in-out;
 
                 &.alone {
@@ -356,7 +356,7 @@
                     font-size: 16px;
                     line-height: 1.5;
                     margin-left: 8px;
-                    color: utils.$colors-cblack;
+                    color: utils.$colors-darkColorSimumator;
                 }
             }
 
@@ -393,7 +393,7 @@
 
                 &.selected-magistrat {
                     border: 1px solid utils.$colors-primary;
-                    background-color: utils.$colors-bgSelect;
+                    background-color: utils.$colors-cbluemiddle;
                     color: utils.$colors-primary;
 
                     p {
@@ -409,7 +409,7 @@
                 .radio-custom {
                     width: 23px;
                     height: 23px;
-                    border: 1px solid utils.$colors-primary;
+                    border: 1px solid utils.$colors-cpink;
                     border-radius: 50%;
                     margin-right: 8px;
 
@@ -419,13 +419,13 @@
                         left: 4px;
                         position: relative;
                         display: none;
-                        background-color: utils.$colors-primary;
+                        background-color: utils.$colors-cpink;
 
                         &.selected {
                             display: block;
                             width: 13px;
                             height: 13px;
-                            border: 1px solid utils.$colors-primary;
+                            border: 1px solid utils.$colors-cpink;
                             border-radius: 50%;
                             margin-right: 8px;
                         }
@@ -434,11 +434,11 @@
                 }
 
                 &.selected-greffier {
-                    border: 1px solid utils.$colors-primary;
-                    background-color: utils.$colors-bgSelect;
+                    border: 1px solid utils.$colors-cpink;
+                    background-color: utils.$colors-cpinkmiddle;
 
                     p {
-                        color: utils.$colors-primary;
+                        color: utils.$colors-cpink;
                     }
                 }
             }
@@ -567,7 +567,7 @@
         }
 
         .comment {
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-textCategoryAll;
             flex: 3;
             display: flex;
             flex-direction: column;
@@ -643,7 +643,7 @@
         }
 
         .simulation-table {
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-textCategoryAll;
             margin: 0px 24px;
         }
 
@@ -652,8 +652,8 @@
             position: relative;
             display: flex;
             align-items: flex-start;
-            background-color: utils.$colors-bgSelect;
-            border-bottom: solid 1px utils.$colors-bgSelect;
+            background-color: utils.$colors-textCategoryAll;
+            border-bottom: solid 1px utils.$colors-editBtton;
             padding: 0px 24px;
 
             .line-item {
@@ -693,13 +693,13 @@
             text-align: center;
             height: 40px;
             font-weight: normal;
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-cgrayDefault;
             border: none;
             width: 95%;
             border-top-left-radius: 4px;
             border-top-right-radius: 4px;
             position: relative;
-            border-bottom: solid 2px utils.$colors-bgSelect;
+            border-bottom: solid 2px utils.$colors-bgTag;
 
             &:focus {
                 outline: none;
@@ -712,11 +712,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: utils.$colors-cblack;
+            color: utils.$colors-colorTag;
             position: relative;
 
             &.orange-bg {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-bgYellowTag;
 
                 &.selected {
                     mix-blend-mode: multiply;
@@ -725,42 +725,42 @@
             }
 
             &.grey-bg-disabled {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-greySimulatorBorder;
             }
 
             &.selected {
                 mix-blend-mode: multiply;
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-blueColorSimulator !important;
             }
 
 
             &.pink-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-disabledPinkSimulator !important;
             }
 
             &.no-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-textCategoryAll !important;
             }
 
             &.grey-bg {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-disabledGreySimulator;
 
                 &.selected {
                     mix-blend-mode: multiply;
-                    background-color: utils.$colors-bgSelect !important;
+                    background-color: utils.$colors-bgReadETPDark !important;
                 }
             }
 
             &.blue-bg {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-blueSimulator;
             }
 
             &.pink-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-disabledPinkSimulator !important;
             }
 
             &.no-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-textCategoryAll !important;
             }
 
             .modified-label {
@@ -773,14 +773,14 @@
                 text-align: center;
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
                     0 1px 2px 0 rgba(0, 0, 0, 0.06);
-                border: solid 1px utils.$colors-primary;
-                background-color: utils.$colors-primary;
+                border: solid 1px utils.$colors-tooltipSimulatorOrange;
+                background-color: utils.$colors-titleIndisponibilitiesPanel;
                 border-radius: 4px;
                 min-width: 74px;
                 height: 35px;
                 line-height: 31px;
                 font-size: 16px;
-                color: utils.$colors-bgSelect;
+                color: utils.$colors-tooltipContentTitleColor;
 
                 &.simulated {
                     bottom: -50px;
@@ -795,7 +795,7 @@
                     cursor: pointer;
                     height: 0;
                     width: 0;
-                    border-bottom: 4px solid utils.$colors-primary;
+                    border-bottom: 4px solid utils.$colors-tooltipSimulatorOrange;
                     border-right: 4px solid transparent;
                     border-left: 4px solid transparent;
                     position: absolute;
@@ -806,7 +806,7 @@
                         content: '';
                         height: 0;
                         width: 0;
-                        border-bottom: 4px solid utils.$colors-primary;
+                        border-bottom: 4px solid utils.$colors-titleIndisponibilitiesPanel;
                         border-right: 4px solid transparent;
                         border-left: 4px solid transparent;
                         position: absolute;
@@ -842,7 +842,7 @@
         #circle {
             width: 70px;
             height: 70px;
-            background: utils.$colors-bgSelect;
+            background: utils.$colors-bgReadETPDark;
             border-radius: 70px;
             margin: auto;
             display: flex;
@@ -873,7 +873,7 @@
             width: 496px;
             padding: 12px 24px;
             border-radius: 8px;
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-popupLightBg;
             display: flex;
             align-items: center;
             margin-top: 8px;
@@ -894,7 +894,7 @@
                 width: 120px !important;
                 height: 40px;
                 font-size: 18px;
-                border-bottom: solid 2px utils.$colors-bgSelect !important;
+                border-bottom: solid 2px utils.$colors-dataNotSettedIsSetBg !important;
 
                 :focus {
                     border: solid 2px utils.$colors-cblack !important;
@@ -920,8 +920,8 @@
             }
 
             &:focus-within {
-                border: solid 1px utils.$colors-bgSelect;
-                background-color: utils.$colors-bgSelect;
+                border: solid 1px utils.$colors-tooltipBgTitleColor;
+                background-color: utils.$colors-activityGuideBg;
             }
         }
     }
@@ -940,7 +940,7 @@
             width: 260px;
             height: 105px;
             border-radius: 8px;
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-tagBgColor;
             font-size: 18px;
             line-height: 1.56;
             text-align: center;
@@ -957,8 +957,8 @@
             }
 
             &:hover {
-                border: solid 1px utils.$colors-bgSelect;
-                background-color: utils.$colors-bgSelect;
+                border: solid 1px utils.$colors-sortHeaderSelected;
+                background-color: utils.$colors-activityGuideBg;
             }
         }
     }
@@ -969,11 +969,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border-bottom: solid 1px utils.$colors-bgSelect;
+        border-bottom: solid 1px utils.$colors-dataNotSettedIsSetBg;
         position: absolute;
         bottom: -84px;
         width: 100%;
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-textCategoryAll;
 
         .init-button {
             pointer-events: all;
@@ -982,8 +982,8 @@
             height: 40px;
             margin: 0 8px 0 0;
             padding: 8px 16px;
-            color: utils.$colors-bgSelect;
-            border: solid 1px utils.$colors-bgSelect;
+            color: utils.$colors-dataNotSettedIsSetBg;
+            border: solid 1px utils.$colors-dataNotSettedIsSetBg;
         }
 
         .simulate-button {
@@ -1002,14 +1002,14 @@
             }
 
             p {
-                color: utils.$colors-bgSelect;
+                color: utils.$colors-textCategoryAll;
             }
         }
 
     }
 
     .actual-situation {
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-cyellowlight;
         position: relative;
         display: flex;
         padding: 0px 24px;
@@ -1032,29 +1032,29 @@
         }
 
         &.color-white {
-            background-color: utils.$colors-bgSelect;
-            border-bottom: solid 1px utils.$colors-bgSelect;
+            background-color: utils.$colors-textCategoryAll;
+            border-bottom: solid 1px utils.$colors-bgTag;
 
             &::before {
-                background-color: utils.$colors-bgSelect;
-                border-bottom: solid 1px utils.$colors-bgSelect;
+                background-color: utils.$colors-textCategoryAll;
+                border-bottom: solid 1px utils.$colors-bgTag;
             }
 
             &::after {
-                background-color: utils.$colors-bgSelect;
-                border-bottom: solid 1px utils.$colors-bgSelect;
+                background-color: utils.$colors-textCategoryAll;
+                border-bottom: solid 1px utils.$colors-bgTag;
             }
         }
 
         &.color-blue {
-            background-color: utils.$colors-bgSelect;
+            background-color: utils.$colors-blueSimulator;
 
             &::before {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-blueSimulator;
             }
 
             &::after {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-blueSimulator;
             }
         }
 
@@ -1078,54 +1078,54 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: utils.$colors-cblack;
+            color: utils.$colors-cblackdark;
             position: relative;
 
             &.orange-bg {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-bgYellowTag;
 
                 &.selected {
                     mix-blend-mode: multiply;
-                    background-color: utils.$colors-bgSelect !important;
+                    background-color: utils.$colors-selectedTooltipSimulator !important;
                 }
             }
 
             &.grey-bg-disabled {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-greySimulatorBorder;
             }
 
             &.selected {
                 mix-blend-mode: multiply;
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-bgReadETPDark !important;
             }
 
             &.pink-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-disabledPinkSimulator !important;
             }
 
             &.no-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-textCategoryAll !important;
             }
 
             &.grey-bg {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-disabledGreySimulator;
 
                 &.selected {
                     mix-blend-mode: multiply;
-                    background-color: utils.$colors-bgSelect !important;
+                    background-color: utils.$colors-selectedTooltipSimulator !important;
                 }
             }
 
             &.blue-bg {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-blueSimulator;
             }
 
             &.pink-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-disabledPinkSimulator !important;
             }
 
             &.no-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-textCategoryAll !important;
             }
 
             .modified-label {
@@ -1138,8 +1138,8 @@
                 text-align: center;
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
                     0 1px 2px 0 rgba(0, 0, 0, 0.06);
-                border: solid 1px utils.$colors-primary;
-                background-color: utils.$colors-primary;
+                border: solid 1px utils.$colors-tooltipSimulatorOrange;
+                background-color: utils.$colors-titleIndisponibilitiesPanel;
                 border-radius: 4px;
                 min-width: 74px;
                 height: 35px;
@@ -1150,7 +1150,7 @@
                 .triangle {
                     height: 0;
                     width: 0;
-                    border-bottom: 4px solid utils.$colors-primary;
+                    border-bottom: 4px solid utils.$colors-tooltipSimulatorOrange;
                     border-right: 4px solid transparent;
                     border-left: 4px solid transparent;
                     position: absolute;
@@ -1161,7 +1161,7 @@
                         content: '';
                         height: 0;
                         width: 0;
-                        border-bottom: 4px solid utils.$colors-primary;
+                        border-bottom: 4px solid utils.$colors-titleIndisponibilitiesPanel;
                         border-right: 4px solid transparent;
                         border-left: 4px solid transparent;
                         position: absolute;
@@ -1176,13 +1176,13 @@
                 text-align: center;
                 height: 40px;
                 font-weight: normal;
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-borderSelect;
                 border: none;
                 width: 95%;
                 border-top-left-radius: 4px;
                 border-top-right-radius: 4px;
                 position: relative;
-                border-bottom: solid 2px utils.$colors-bgSelect;
+                border-bottom: solid 2px utils.$colors-bgTag;
 
                 &:focus {
                     outline: none;
@@ -1205,8 +1205,8 @@
                 padding-bottom: 5px;
 
                 &.greffe {
-                    border-color: utils.$colors-primary !important;
-                    color: utils.$colors-primary;
+                    border-color: utils.$colors-cpink !important;
+                    color: utils.$colors-cpink;
                 }
 
                 &.white-button {
@@ -1220,15 +1220,15 @@
                 }
 
                 &.filled {
-                    background-color: utils.$colors-bgSelect;
+                    background-color: utils.$colors-borderSelect;
                     border: none;
                     color: utils.$colors-cblack;
-                    border-bottom: solid 2px utils.$colors-bgSelect !important;
+                    border-bottom: solid 2px utils.$colors-bgTag !important;
                     border-top-left-radius: 4px;
                     border-top-right-radius: 4px;
                     position: relative;
-                    border-bottom: solid 2px utils.$colors-bgSelect;
-                    background-color: utils.$colors-bgSelect;
+                    border-bottom: solid 2px utils.$colors-bgTag;
+                    background-color: utils.$colors-borderSelect;
                     height: 40px;
                     width: 95%;
 
@@ -1247,7 +1247,7 @@
     }
 
     .items {
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-tooltipContentTitleColor;
         display: flex;
         position: relative;
         padding: 0px 24px;
@@ -1264,32 +1264,32 @@
             justify-content: center;
 
             &.pink-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-disabledPinkSimulator !important;
             }
 
             &.no-bg {
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-textCategoryAll !important;
             }
 
             &.blue-bg {
-                background-color: utils.$colors-bgSelect;
+                background-color: utils.$colors-bgProgressBar;
 
                 &.selected {
                     mix-blend-mode: multiply;
-                    background-color: utils.$colors-bgSelect !important;
+                    background-color: utils.$colors-selectedTooltipSimulator !important;
                 }
             }
 
             &.selected {
                 mix-blend-mode: multiply;
-                background-color: utils.$colors-bgSelect !important;
+                background-color: utils.$colors-selectedSimulator !important;
             }
 
             p {
                 text-align: center;
                 font-size: 12px;
                 font-weight: bold;
-                color: utils.$colors-cblack;
+                color: utils.$colors-cblackdark;
                 margin-bottom: 24px;
                 margin-top: 24px;
             }
@@ -1297,7 +1297,7 @@
     }
 
     aj-wrapper {
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-textCategoryAll;
     }
 
 
@@ -1327,12 +1327,12 @@
             opacity: 1;
 
             p.title {
-                color: utils.$colors-bgSelect;
+                color: utils.$colors-textCategoryAll;
             }
 
             .shape {
                 background-color: utils.$colors-primary;
-                color: utils.$colors-bgSelect;
+                color: utils.$colors-textCategoryAll;
             }
         }
     }
@@ -1365,17 +1365,17 @@
             pointer-events: all;
             cursor: pointer;
             background-color: utils.$colors-primary;
-            color: utils.$colors-bgSelect;
+            color: utils.$colors-textCategoryAll;
             opacity: 1;
             margin-top: 30px;
 
             p.title {
-                color: utils.$colors-bgSelect;
+                color: utils.$colors-textCategoryAll;
             }
 
             .shape {
                 background-color: utils.$colors-primary;
-                color: utils.$colors-bgSelect;
+                color: utils.$colors-textCategoryAll;
             }
         }
 
@@ -1426,7 +1426,7 @@
         height: 4px;
         margin: 2px 4px;
         border-radius: 3px;
-        background-color: utils.$colors-bgSelect;
+        background-color: utils.$colors-bgReadETPDark;
         position: relative;
         display: block;
         margin-left: 24px;
@@ -1438,7 +1438,7 @@
             height: 4px;
             margin: 2px 4px;
             border-radius: 3px;
-            background-color: utils.$colors-primary;
+            background-color: utils.$colors-dataToCompleteBorder;
             position: absolute;
             bottom: -2px;
             left: -3px;
@@ -1462,7 +1462,7 @@
                         width: 8px;
                         height: 8px;
                         border-radius: 7.5px;
-                        background-color: utils.$colors-primary;
+                        background-color: utils.$colors-dataToCompleteBorder;
                     }
                 }
             }
@@ -1485,7 +1485,7 @@
                         width: 8px;
                         height: 8px;
                         border-radius: 7.5px;
-                        background-color: utils.$colors-primary;
+                        background-color: utils.$colors-dataToCompleteBorder;
                     }
                 }
             }
@@ -1502,7 +1502,7 @@
             width: 8px;
             height: 8px;
             border-radius: 7.5px;
-            background-color: utils.$colors-primary;
+            background-color: utils.$colors-dataToCompleteBorder;
             position: absolute;
             bottom: -2px;
             left: -3px;
