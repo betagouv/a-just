@@ -1,5 +1,5 @@
 import { minBy, orderBy, sumBy } from 'lodash'
-import { getTime, getWorkingDaysCount, isDateGreaterOrEqual, today, workingDay } from '../utils/date'
+import { getTime, getWorkingDaysCount, isDateGreaterOrEqual, today } from '../utils/date'
 import { checkAbort } from './abordTimeout'
 import { fixDecimal } from './number'
 import { IntervalTree } from './intervalTree'
