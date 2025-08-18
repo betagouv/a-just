@@ -156,7 +156,6 @@ console.log('HOST NAME', os.hostname())
 
 let basicAuth = null
 
-/**
 if (config.authPasswordFile) {
   writeFileSync('htaccess.txt', config.authPasswordFile.replace(/\\n/g, '\n'), 'utf8')
   basicAuth = authBasic.basic({
@@ -166,7 +165,6 @@ if (config.authPasswordFile) {
     //proxy: true,
   })
 }
-*/
 
 export default class App extends AppBase {
   // the starting class must extend appBase, provided by koa-smart
