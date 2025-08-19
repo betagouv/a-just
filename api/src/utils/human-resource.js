@@ -844,6 +844,14 @@ export const loadFonctionsForCategory = async (categorySelected, models) => {
   return all.filter((f) => f.categoryId === categoryId)
 }
 
+export const loadFonctionsForMultiCategoryFiltered = async (categorySelected, fctIdsFiltered, models) => {
+  if (fctIdsFiltered === null) return null
+  const all = await models.HRFonctions.getAll()
+  const categoryId = getCategoryIdFromLabel(categorySelected)
+
+  return all.filter((f) => f.categoryId !== categoryId || fctIdsFiltered.includes(f.id)).map((i) => i.id)
+}
+
 export const loadReferentiels = async (backupId, contentieuxIds, models) => {
   const all = await models.ContentieuxReferentiels.getReferentiels(backupId)
   return all.filter((c) => contentieuxIds.includes(c.id))
