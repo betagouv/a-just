@@ -129,7 +129,7 @@
         }
 
         .filter i {
-          color: utils.$colors-cblack;
+          color: utils.$colors-tooltipBgTitleColor;
         }
       }
 
@@ -181,7 +181,7 @@
           width: 16px;
           height: 16px;
           font-size: 16px;
-          color: utils.$colors-cblack;
+          color: utils.$colors-headerColor;
         }
       }
     }
@@ -410,6 +410,7 @@
   margin-top: 4px;
   display: flex;
   border-radius: 4px;
+  background-color: utils.$colors-darkModeBgMenu;
 
   &:last-child {
     margin-bottom: 16px;
