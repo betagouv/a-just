@@ -251,6 +251,18 @@ export default class App extends AppBase {
   _configureKoa() {
     this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
     this.koaApp.proxy = true
+    /**    const zlib = require('zlib')
+
+    // Active la compression pour les payloads JSON/text
+    this.koaApp.use(
+      compress({
+        threshold: 1024, // ne compresse pas les petites réponses (< 1ko)
+        br: { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } }, // Brotli si supporté
+        gzip: { level: 6 }, // fallback gzip
+        deflate: false, // optionnel, souvent inutile
+        filter: (type) => /json|text|javascript|css|svg|xml/.test(type), // types compressés
+      }),
+    )*/
   }
 
   async _setupRedisSession() {
