@@ -8,7 +8,7 @@ import { EXECUTE_CALCULATOR } from '../constants/log-codes'
 import { emptyCalulatorValues, syncCalculatorDatas } from '../utils/calculator'
 import { orderBy } from 'lodash'
 import { checkAbort } from '../utils/abordTimeout'
-import { generateHRIndexes, loadFonctionsForCategory, loadReferentiels } from '../utils/human-resource'
+import { generateHRIndexes, loadFonctionsForCategory, loadFonctionsForMultiCategoryFiltered, loadReferentiels } from '../utils/human-resource'
 import { cleanCalculationItemForUser } from '../utils/hrAccess'
 import { getFullKey, getRedisClient, loadOrWarmHR, removeCacheListItem, updateCacheListItem, waitForRedis } from '../utils/redis'
 
@@ -815,6 +815,7 @@ export default (sequelizeInstance, Model) => {
 
     const categories = await Model.models.HRCategories.getAll()
     const fonctions = await loadFonctionsForCategory(categorySelected, Model.models)
+    selectedFonctionsIds = await loadFonctionsForMultiCategoryFiltered(categorySelected, selectedFonctionsIds, Model.models)
     const referentiels = await loadReferentiels(backupId, contentieuxIds, Model.models)
     const activities = await Model.models.Activities.getAll(backupId)
     const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : [] // référentiel de temps moyen
