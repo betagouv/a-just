@@ -71,27 +71,27 @@ export const routes: Routes = [
   {
     path: 'ventilations',
     component: WorkforcePage,
-    canActivate: [ventilationsGuard, typeGuard],
+    canActivate: [authGuard, ventilationsGuard, typeGuard],
   },
   {
     path: 'donnees-d-activite',
     component: ActivitiesPage,
-    canActivate: [activitiesGuard, typeGuard],
+    canActivate: [authGuard, activitiesGuard, typeGuard],
   },
   {
     path: 'temps-moyens',
     component: AverageEtpPage,
-    canActivate: [tempsMoyensGuard, typeGuard],
+    canActivate: [authGuard, tempsMoyensGuard, typeGuard],
   },
   {
     path: 'cockpit',
     component: CalculatorPage,
-    canActivate: [cockpitGuard, typeGuard],
+    canActivate: [authGuard, cockpitGuard, typeGuard],
   },
   {
     path: 'resource-humaine/:id',
     component: HumanResourcePage,
-    canActivate: [ventilationsGuard, typeGuard],
+    canActivate: [authGuard, ventilationsGuard, typeGuard],
   },
   {
     path: 'signup',
@@ -113,31 +113,31 @@ export const routes: Routes = [
   {
     path: 'referentiel-de-temps/:id',
     component: AverageEtpDisplayerPage,
-    canActivate: [tempsMoyensGuard, typeGuard],
+    canActivate: [authGuard, tempsMoyensGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'simulateur',
     component: SimulatorPage,
-    canActivate: [allSimulatorGuard, typeGuard],
+    canActivate: [authGuard, allSimulatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'simulateur-sans-donnees',
     component: WhiteSimulatorPage,
-    canActivate: [whiteSimulatorGuard, typeGuard],
+    canActivate: [authGuard, whiteSimulatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'reaffectateur',
     component: ReaffectatorPage,
-    canActivate: [reaffectatorGuard, typeGuard],
+    canActivate: [authGuard, reaffectatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'panorama',
     component: PanoramaPage,
-    canActivate: [dashboardGuard, typeGuard],
+    canActivate: [authGuard, dashboardGuard, typeGuard],
   },
   {
     path: 'carte-juridictions',
