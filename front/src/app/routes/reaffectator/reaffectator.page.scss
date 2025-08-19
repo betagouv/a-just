@@ -157,7 +157,7 @@
         margin: 0 4px;
 
         p {
-          color: #8585f6;
+          color: utils.$colors-bgSelect;
           width: 100%;
           text-align: center;
         }
@@ -166,7 +166,7 @@
           background-color: utils.$colors-cbluemiddle;
 
           p {
-            color: utils.$colors-bgSelect;
+            color: #8585f6;
           }
         }
       }
@@ -346,6 +346,10 @@
 
           &.show-reel-values {
             background-color: utils.$colors-cbluemiddle;
+
+            p {
+              color: utils.$colors-bgSelectSelected !important;
+            }
           }
         }
 
