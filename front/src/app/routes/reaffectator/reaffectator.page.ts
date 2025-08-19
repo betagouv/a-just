@@ -513,7 +513,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
     this.appService.appLoading.next(true)
 
-    console.log(this.reaffectatorService.selectedReferentielIds.length)
     this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
@@ -614,9 +613,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             l.hrFiltered = l.hrFiltered || []
             l.hrFiltered.push(cloneDeep(newPerson))
             l.hrFiltered = sortBy(l.hrFiltered, 'fonction.rank')
-            l.allHr = l.allHr || []
-            l.allHr.push(cloneDeep(newPerson))
-            l.allHr = sortBy(l.allHr, 'fonction.rank')
+            l.allHr = l.hrFiltered || []
           }
         })
       })
@@ -877,7 +874,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         ...itemList,
         referentiel: itemList.referentiel.map((r) => ({
           ...r,
-          etpUseToday: this.onCalculETPAffected(r.id, itemList.hrFiltered),
+          etpUseToday: this.onCalculETPAffected(r.id, itemList.allHr),
           totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
         })),
       }
@@ -903,9 +900,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         let outValue = averageWorkingProcess === 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
         outValue = fixDecimal(outValue, 1000)
 
-        if (ref.id === 475) {
-          console.log(ref.etpUseToday, ref.totalAffected, ref)
-        }
         return {
           ...ref,
           coverage: fixDecimal(outValue / inValue) * 100,
