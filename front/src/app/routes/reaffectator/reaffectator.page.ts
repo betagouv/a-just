@@ -446,7 +446,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       c.value = c.orignalValue + ''
 
       if (itemBlock && itemBlock.hrFiltered) {
-        console.log(itemBlock.hrFiltered)
         c.value = `${itemBlock.hrFiltered.length} ${itemBlock.hrFiltered.length > 1 ? c.orignalValuePlurial || c.orignalValue : c.orignalValue} (${fixDecimal(
           sumBy(itemBlock.hrFiltered || [], function (h) {
             const etp = (h.etp || 0) - h.hasIndisponibility
@@ -464,8 +463,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       return c
     })
-
-    console.log('this.listFormated', this.listFormated)
   }
 
   /**
@@ -547,7 +544,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             orignalCurrentActivities: h.currentActivities,
             isModify: false,
           }))
-          console.log('allHr', allHr)
           return {
             ...i,
             allHr,
@@ -919,7 +915,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param indexList
    */
   updateHRReferentiel(hr: HumanResourceSelectedInterface, referentiels: ContentieuReferentielInterface[], indexList: number) {
-    console.log(hr, referentiels)
     const list: RHActivityInterface[] = []
 
     referentiels

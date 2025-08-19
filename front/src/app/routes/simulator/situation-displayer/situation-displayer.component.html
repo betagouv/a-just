@@ -2,16 +2,16 @@
 <div class="actual-situation {{header.colorClass}}">
   <div class="line-title">
     @if (header.type==='début') {
-      <p>
-        Situation{{header.label? ' au':''}}<br />
-        {{header.label || "à aujourd'hui"}}
-      </p>
+    <p>
+      Situation{{header.label? ' au':''}}<br />
+      {{header.label || "à aujourd'hui"}}
+    </p>
     }
     @if (header.type==='fin') {
-      <p>
-        Situation projetée<br />
-        au {{header.label}}
-      </p>
+    <p>
+      Situation projetée<br />
+      au {{header.label}}
+    </p>
     }
   </div>
 
@@ -31,23 +31,25 @@
     <input [value]="getFieldValue('lastStock',situation)" disabled />
   </div>
   @if (canViewMagistrat) {
-    <div class="line-item" #tooltip="matTooltip"
-      [matTooltip]="'Valeur exacte d\'etp utilisée dans les calculs : '+ trunc('etpMag',situation,false,true)"
-      matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
-      <input [value]="getFieldValue('etpMag',situation)" disabled />
-    </div>
+  <div class="line-item" #tooltip="matTooltip"
+    [matTooltip]="'Valeur exacte d\'etp utilisée dans les calculs : '+ trunc('etpMag',situation,false,true)"
+    matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
+    <input [value]="getFieldValue('etpMag',situation)" disabled />
+  </div>
   }
   @if (canViewGreffier) {
-    <div class="line-item {{header.elementColorClass}}" #tooltip="matTooltip"
-      [matTooltip]="'Valeur exacte de d\'etp utilisée dans les calculs : '+ trunc('etpFon',situation,false,true)"
-      matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
-      <input [value]="getFieldValue('etpFon',situation)" disabled />
-    </div>
+  <div class="line-item {{header.elementColorClass}}" #tooltip="matTooltip"
+    [matTooltip]="'Valeur exacte de d\'etp utilisée dans les calculs : '+ trunc('etpFon',situation,false,true)"
+    matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
+    <input [value]="getFieldValue('etpFon',situation)" disabled />
+  </div>
   }
   @if (canViewContractuel) {
-    <div class="line-item">
-      <input [value]="getFieldValue('etpCont',situation)" disabled />
-    </div>
+  <div class="line-item" #tooltip="matTooltip"
+    [matTooltip]="'Valeur exacte de d\'etp utilisée dans les calculs : '+ trunc('etpCont',situation,false,true)"
+    matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
+    <input [value]="getFieldValue('etpCont',situation)" disabled />
+  </div>
   }
   <div class="line-item {{header.elementColorClass}}" #tooltip="matTooltip"
     [matTooltip]="'Valeur exacte de taux de couverture utilisée dans les calculs : '+ trunc('realCoverage',situation,false,true)"

@@ -72,7 +72,7 @@
       </div>
       @if (showIndicatorPanel) {
       <div class="activities">
-        @for (ref of referentiel; track ref; let index = $index) {
+        @for (ref of referentiel; track ref.id; let index = $index) {
         <div class="sub-item">
           <div class="taux-row">
             @if (referentiel.length > index + 1) {
@@ -117,7 +117,7 @@
     </div>
 
     <div class="content-list" id="container-list">
-      @for (list of listFormated; track trackById(mainIndex, list); let mainIndex = $index) {
+      @for (list of listFormated; track trackById(mainIndex, list)?? $index; let mainIndex = $index) {
       @if (list.categoryId === reaffectatorService.selectedCategoriesId) {
       <div class="header-list">
         <div class="profil">
@@ -155,7 +155,7 @@
           </div>
         </div>
         <div class="activities">
-          @for (ref of list.referentiel; track ref; let index = $index) {
+          @for (ref of list.referentiel; track ref.id; let index = $index) {
           <div class="sub-item"
             [class.selected]="filterSelected.filter && filterSelected.filter.id === ref.id && (filterSelected.up === true || filterSelected.up === false)"
             (click)="onFilterBy(ref)">
@@ -178,7 +178,7 @@
         <div class="actions"></div>
       </div>
       <div class="sub-content-list">
-        @for (hr of list.hrFiltered; track trackById(index, hr); let index = $index) {
+        @for (hr of list.hrFiltered; track trackById(index, hr)?? $index; let index = $index) {
         @if (duringPrint && hr.isModify) {
         <ng-container
           *ngTemplateOutlet="rowPerson; context: { hr: getOrignalHuman(hr, list), list: list, mainIndex: mainIndex, isCheckable: !duringPrint }">
@@ -241,7 +241,7 @@
         <div class="flex-1"></div>
         <div class="updated-at">
           MàJ le {{ hr.updatedAt | date:"dd" }} {{
-          getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"YYYY" }}
+          getMonthString(hr.updatedAt) }} {{ hr.updatedAt | date:"yyyy" }}
         </div>
       </div>
       <div class="read-etp">
