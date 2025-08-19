@@ -611,6 +611,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   trackById(index: number, item: any) {
+    console.log('item', item)
     return index
   }
 

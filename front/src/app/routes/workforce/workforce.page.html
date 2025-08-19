@@ -20,7 +20,7 @@
         }
       </div>
       <div class="flex-1"></div>
-      @for (category of categoriesFilterList; track category) {
+      @for (category of categoriesFilterList; track category.id) {
       <div class="checkbox-button" [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
         (mouseenter)="category.openSubMenu=true" (mouseleave)="category.openSubMenu=false">
         <div class="label-container">
@@ -46,7 +46,7 @@
         @if (category.openSubMenu && category.headerLabel!=='Autour du magistrat' && category.selected) {
         <div class="open-menu">
           <div>
-            @for (poste of category.poste; track poste) {
+            @for (poste of category.poste; track poste.name) {
             <div #rectangleElem class="checkbox-button-cont"
               [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
               (mouseenter)="switchBgColor(rectangleElem,category.hoverColor)"
@@ -111,7 +111,7 @@
     </div>
     }
     <div class="content-list" id="container-list">
-      @for (list of listFormated; track trackById(i, list); let i = $index) {
+      @for (list of listFormated; track list.categoryId; let i = $index) {
       <div class="header-list">
         <div class="profil" [ngClass]="{'ca': userService.interfaceType === 1}">
           <div class="label-container" [ngClass]="{'ca': userService.interfaceType === 1}">
@@ -137,7 +137,7 @@
           </div>
         </div>
         <div class="activities">
-          @for (ref of list.referentiel; track ref; let index = $index) {
+          @for (ref of list.referentiel; track ref.id; let index = $index) {
           <div class="sub-item" (click)="onFilterBy(ref)">
             <div class="text">
               <div class="label">
@@ -163,7 +163,7 @@
         <div class="actions"></div>
       </div>
       <div class="sub-content-list" [style.background-color]="list.bgColor">
-        @for (hr of list.hrFiltered; track trackById($index, hr)) {
+        @for (hr of list.hrFiltered; track hr.id) {
         <person-preview [style.opacity]="hr.opacity" [id]="'human-'+hr.id" [hr]="hr" [filterParams]="filterParams"
           [textColor]="list.textColor"></person-preview>
         }
@@ -207,7 +207,7 @@
         ? 'résultats' : 'résultat'}} dans les effectifs
       </div>
       }
-      @for (person of allPersonsFilteredIsIn; track person) {
+      @for (person of allPersonsFilteredIsIn; track person.id) {
       <a [routerLink]="['/resource-humaine', person.id]" class="is-in">
         <p class="agent-username">
           {{ filterParams && filterParams.display === 'nom/prénom' ?
@@ -224,7 +224,7 @@
         1 ? 'résultats' : 'résultat'}} hors effectifs
       </div>
       }
-      @for (person of allPersonsFilteredNotIn; track person) {
+      @for (person of allPersonsFilteredNotIn; track person.id) {
       <a [routerLink]="['/resource-humaine', person.id]">
         <p class="agent-username">
           {{ filterParams && filterParams.display === 'nom/prénom' ?
