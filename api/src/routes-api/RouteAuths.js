@@ -28,7 +28,7 @@ export default class RouteAuths extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.Users
@@ -42,11 +42,11 @@ export default class RouteAuths extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
       email: Types.string().required(),
-      password: Types.string().required(),
+      password: Types.string(),
       remember: Types.number(),
     }),
   })
-  async login (ctx) {
+  async login(ctx) {
     const { password, remember } = this.body(ctx)
     let { email } = this.body(ctx)
     email = (email || '').toLowerCase()
@@ -87,7 +87,7 @@ export default class RouteAuths extends Route {
           {
             email,
             code,
-          }
+          },
         )
         await this.models.Logs.addLog(USER_USER_LOGIN_REQUEST_CODE, tryUserCon.id, {
           userId: tryUserCon.id,
@@ -119,7 +119,7 @@ export default class RouteAuths extends Route {
       code: Types.string().required(),
     }),
   })
-  async completeLogin (ctx) {
+  async completeLogin(ctx) {
     const { code } = this.body(ctx)
 
     if (!ctx.session || !ctx.session.loginControl) {
@@ -153,47 +153,44 @@ export default class RouteAuths extends Route {
     }
   }
 
-
-    /**
+  /**
    * Interface de connexion administrateur (For test only)
    * @param {*} email
    * @param {*} password
    */
-    @Route.Post({
-      bodyType: Types.object().keys({
-        email: Types.string().required(),
-        password: Types.string().required(),
-      }),
-    })
-    async loginAdminTest (ctx) {
-
-      if (process.env.NODE_ENV !== 'test') {
-        ctx.throw(401, "Cette route n'est pas disponible")
-        return
-      }
-
-      const { password, email } = this.body(ctx)
-  
-      const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
-      if (typeof tryUserCon === 'string') {
-        ctx.throw(401, tryUserCon)
-      } else {
-        const now = new Date()
-        now.setMonth(now.getMonth() - 6)
-        const nbAuthBy2FAOffMonth = (
-          await this.models.Logs.getLogs({
-            code_id: USER_USER_PASSWORD_CHANGED,
-            user_id: tryUserCon.id,
-            created_at: { [Op.gte]: now },
-          })
-        ).length
-
-        
-        await ctx.loginUser(tryUserCon, 7)
-        await super.addUserInfoInBody(ctx, tryUserCon.id)
-        this.sendCreated(ctx)
-      }
+  @Route.Post({
+    bodyType: Types.object().keys({
+      email: Types.string().required(),
+      password: Types.string().required(),
+    }),
+  })
+  async loginAdminTest(ctx) {
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible")
+      return
     }
+
+    const { password, email } = this.body(ctx)
+
+    const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
+    if (typeof tryUserCon === 'string') {
+      ctx.throw(401, tryUserCon)
+    } else {
+      const now = new Date()
+      now.setMonth(now.getMonth() - 6)
+      const nbAuthBy2FAOffMonth = (
+        await this.models.Logs.getLogs({
+          code_id: USER_USER_PASSWORD_CHANGED,
+          user_id: tryUserCon.id,
+          created_at: { [Op.gte]: now },
+        })
+      ).length
+
+      await ctx.loginUser(tryUserCon, 7)
+      await super.addUserInfoInBody(ctx, tryUserCon.id)
+      this.sendCreated(ctx)
+    }
+  }
 
   /**
    * Interface de connexion administrateur
@@ -206,7 +203,7 @@ export default class RouteAuths extends Route {
       password: Types.string().required(),
     }),
   })
-  async loginAdmin (ctx) {
+  async loginAdmin(ctx) {
     const { password, email } = this.body(ctx)
 
     const tryUserCon = await this.model.tryConnection(email, password, [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN])
@@ -258,7 +255,7 @@ export default class RouteAuths extends Route {
             {
               email,
               code,
-            }
+            },
           )
           this.sendOk(ctx, {
             status: LOGIN_STATUS_GET_CODE,
@@ -279,7 +276,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est connecté
    */
   @Route.Get({})
-  async autoLogin (ctx) {
+  async autoLogin(ctx) {
     if (this.userId(ctx)) {
       await super.addUserInfoInBody(ctx)
       await this.models.Logs.addLog(USER_AUTO_LOGIN, ctx.state.user.id, {
@@ -296,7 +293,7 @@ export default class RouteAuths extends Route {
    * Interface de control de qui est l'administrateur connecté
    */
   @Route.Get({})
-  async autoLoginAdmin (ctx) {
+  async autoLoginAdmin(ctx) {
     if (this.userId(ctx) && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1) {
       await super.addUserInfoInBody(ctx)
       this.sendOk(ctx)
@@ -309,7 +306,7 @@ export default class RouteAuths extends Route {
    * Suppression du token de l'utilisateur connecté
    */
   @Route.Get({})
-  async logout (ctx) {
+  async logout(ctx) {
     await ctx.logoutUser()
   }
 }
