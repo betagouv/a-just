@@ -6,7 +6,14 @@
   <mat-icon>{{ icon }}</mat-icon>
   <div class="triangle {{ side }}"></div>
 </div>
-<input matInput [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)" [min]="min"
-  [max]="max" class="{{ side }}" />
+<input
+  matInput
+  [ngModel]="value"
+  [matDatepicker]="picker"
+  (ngModelChange)="onDateChanged($event)"
+  [min]="min"
+  [max]="max"
+  class="{{ side }}"
+/>
 
 <mat-datepicker #picker></mat-datepicker>

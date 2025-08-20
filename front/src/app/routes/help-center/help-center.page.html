@@ -1,246 +1,265 @@
-<aj-wrapper id='help-center' title="Aide" [actionTemplate]="actions" class="white-bg-help content-margin-null"
-    [ngClass]="{'help-center':openSuggestionPanel===true}">
+<aj-wrapper
+  id="help-center"
+  title="Aide"
+  [actionTemplate]="actions"
+  class="white-bg-help content-margin-null"
+  [ngClass]="{ 'help-center': openSuggestionPanel === true }"
+>
+  <ng-container *ngIf="openSuggestionPanel === false">
+    <div id="toolbar" class="toolbar">
+      <div *ngFor="let card of docTools">
+        <img src="{{ card.image }}" alt="a-just" (click)="goToLink(card.url)" />
+        <p (click)="goToLink(card.url)">{{ card.title }}</p>
+        <i *ngIf="card.download" (click)="goToLink(card.url, true)" class="ri-file-download-line"></i>
+      </div>
+    </div>
 
-    <ng-container *ngIf="openSuggestionPanel===false">
-        <div id="toolbar" class="toolbar">
-            <div *ngFor="let card of docTools"> <img src="{{card.image}}" alt="a-just" (click)="goToLink(card.url)" />
-                <p (click)="goToLink(card.url)">{{card.title}}</p>
-                <i *ngIf="card.download" (click)="goToLink(card.url, true)" class="ri-file-download-line"></i>
-            </div>
+    <div class="section-one">
+      <div class="title-area">
+        <img src="/assets/images/community.svg" alt="a-just" />
+
+        <p *ngIf="!userService.isCa()" class="sub-title">Saisissez votre question ci-dessous</p>
+        <div *ngIf="!userService.isCa()" class="research-area"></div>
+        <aj-input-button
+          *ngIf="!userService.isCa()"
+          #searchInput
+          class="full-width"
+          placeholder="Que recherchez vous ?"
+          (valueChange)="searchValue = $event; lockPrompt = false"
+          [ngModel]="searchValue"
+          (search)="onSearchBy()"
+          ngDefaultControl
+          icon=""
+          (focusin)="focusOn = true"
+          (focusout)="delay()"
+          (keydown.enter)="onKeyDown()"
+        >
+          <div *ngIf="displayLoader" class="loader"></div>
+          <div
+            class="validate-prompt"
+            (click)="onSearchBy(); lockPrompt = true; displayResult = true; this.data = null"
+          >
+            <i
+              class="ri-arrow-right-circle-fill"
+              [ngStyle]="{ color: searchValue.length > 0 && !lockPrompt ? '#3a3a3a' : 'lightgray' }"
+            ></i>
+          </div>
+        </aj-input-button>
+      </div>
+      <div class="line"></div>
+      <div class="action-area">
+        <div class="clickable-link" (click)="goToLink(userGuide.url)">
+          <img src="{{ userGuide.image }}" alt="a-just" />
+          <p class="title">{{ userGuide.title }}</p>
         </div>
-
-        <div class="section-one">
-            <div class="title-area">
-                <img src="/assets/images/community.svg" alt="a-just" />
-
-                <p *ngIf="!userService.isCa()" class="sub-title">Saisissez votre question ci-dessous</p>
-                <div *ngIf="!userService.isCa()" class="research-area"></div>
-                <aj-input-button *ngIf="!userService.isCa()" #searchInput class="full-width"
-                    placeholder="Que recherchez vous ?" (valueChange)="searchValue = $event;lockPrompt = false"
-                    [ngModel]="searchValue" (search)="onSearchBy()" ngDefaultControl icon="" (focusin)="focusOn=true"
-                    (focusout)="delay()" (keydown.enter)="onKeyDown()">
-                    <div *ngIf="displayLoader" class="loader"></div>
-                    <div class="validate-prompt"
-                        (click)="onSearchBy();lockPrompt = true;displayResult = true;this.data = null">
-                        <i class="ri-arrow-right-circle-fill"
-                            [ngStyle]="{ 'color': searchValue.length >0 && !lockPrompt? '#3a3a3a': 'lightgray'}"></i>
-                    </div>
-                </aj-input-button>
-
-
-
-
-            </div>
-            <div class="line"></div>
-            <div class="action-area">
-                <div class="clickable-link" (click)="goToLink(userGuide.url)"> <img src="{{userGuide.image}}"
-                        alt="a-just" />
-                    <p class="title">{{userGuide.title}}</p>
-                </div>
-                <div class="clickable-link" (click)="goToLink(dataBook.url)">
-                    <img src="{{dataBook.image}}" alt="a-just" />
-                    <p class="title">{{dataBook.title}}</p>
-                </div>
-                <div class="blue" (click)="popinCall=true; $event.stopPropagation()"
-                    [ngClass]="{'validated':callValidated}">
-                    <img src="/assets/images/call-center.png" alt="a-just" />
-                    <p class="title">{{callValidated===false? 'Être recontacté':'Votre demande de contact est bien prise
-                        en compte !'}}</p>
-                    <div *ngIf="popinCall===true" class="popin-call">
-                        <div class="header">
-                            <h3 class="title">Être recontacté ?</h3> <i
-                                (click)="popinCall=!popinCall; $event.stopPropagation()"
-                                class="material-icons pointer">close</i>
-                        </div>
-                        <p class="label">Numéro de téléphone :</p>
-                        <input #phone type="text" (keypress)="validateNo($event)" />
-                        <div class="button"
-                            (click)="popinCall=!popinCall; callValidated=true; $event.stopPropagation(); sendForm(phone.value)">
-                            Rappelez-moi
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+        <div class="clickable-link" (click)="goToLink(dataBook.url)">
+          <img src="{{ dataBook.image }}" alt="a-just" />
+          <p class="title">{{ dataBook.title }}</p>
         </div>
+        <div class="blue" (click)="popinCall = true; $event.stopPropagation()" [ngClass]="{ validated: callValidated }">
+          <img src="/assets/images/call-center.png" alt="a-just" />
+          <p class="title">
+            {{
+              callValidated === false
+                ? 'Être recontacté'
+                : 'Votre demande de contact est bien prise
+                        en compte !'
+            }}
+          </p>
+          <div *ngIf="popinCall === true" class="popin-call">
+            <div class="header">
+              <h3 class="title">Être recontacté ?</h3>
+              <i (click)="popinCall = !popinCall; $event.stopPropagation()" class="material-icons pointer">close</i>
+            </div>
+            <p class="label">Numéro de téléphone :</p>
+            <input #phone type="text" (keypress)="validateNo($event)" />
+            <div
+              class="button"
+              (click)="popinCall = !popinCall; callValidated = true; $event.stopPropagation(); sendForm(phone.value)"
+            >
+              Rappelez-moi
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <div class="result-area" *ngIf="displayResult === true && data !==null">
-            <div *ngIf="data?.answer" class="gitbook-response">
-                <i class="ri-close-line close-tab"
-                    (click)="displayResult = false;data = null;searchInput.value = ''; searchValue=''"></i>
-                <p *ngIf="!data.answer.answer">Aucun résultat trouvé</p>
+    <div class="result-area" *ngIf="displayResult === true && data !== null">
+      <div *ngIf="data?.answer" class="gitbook-response">
+        <i
+          class="ri-close-line close-tab"
+          (click)="displayResult = false; data = null; searchInput.value = ''; searchValue = ''"
+        ></i>
+        <p *ngIf="!data.answer.answer">Aucun résultat trouvé</p>
 
-                <!-- Réponse Principale -->
-                <div *ngIf="data.answer.answer?.document?.nodes">
-                    <h2>Réponse</h2>
-                    <ng-container *ngFor="let node of data.answer.answer.document.nodes">
-                        <p *ngIf="node.type === 'paragraph' || node.type === 'text'">
+        <!-- Réponse Principale -->
+        <div *ngIf="data.answer.answer?.document?.nodes">
+          <h2>Réponse</h2>
+          <ng-container *ngFor="let node of data.answer.answer.document.nodes">
+            <p *ngIf="node.type === 'paragraph' || node.type === 'text'">
+              <ng-container *ngFor="let textNode of node.nodes">
+                <ng-container *ngFor="let leaf of textNode.leaves">
+                  <span [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }">
+                    {{ leaf.text }}
+                  </span>
+                </ng-container>
 
-                            <ng-container *ngFor="let textNode of node.nodes">
-                                <ng-container *ngFor="let leaf of textNode.leaves">
-                                    <span
-                                        [ngClass]="{'bold': isBold(leaf), 'italic': isItalic(leaf), 'underline': isUnderline(leaf)}">
-                                        {{ leaf.text }}
-                                    </span>
-                                </ng-container>
+                <ng-container *ngIf="textNode.type === 'link'">
+                  <ng-container *ngFor="let links of textNode.nodes">
+                    <ng-container *ngFor="let leaf of links.leaves">
+                      <a
+                        target="_blank"
+                        href="{{ textNode.data.ref.url }}"
+                        [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
+                      >
+                        {{ leaf.text }}
+                      </a>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </p>
 
-                                <ng-container *ngIf="textNode.type === 'link'">
-                                    <ng-container *ngFor="let links of textNode.nodes">
-                                        <ng-container *ngFor="let leaf of links.leaves">
-                                            <a target="_blank" href="{{textNode.data.ref.url}}"
-                                                [ngClass]="{'bold': isBold(leaf), 'italic': isItalic(leaf), 'underline': isUnderline(leaf)}">
-                                                {{ leaf.text }}
-                                            </a>
-                                        </ng-container>
-                                    </ng-container>
-                                </ng-container>
+            <ul *ngIf="node.type === 'list-unordered'">
+              <li *ngFor="let item of node.nodes">
+                <ng-container *ngFor="let itemList of item.nodes">
+                  <p *ngIf="itemList.type === 'paragraph'">
+                    <ng-container *ngFor="let textNode of itemList.nodes">
+                      <ng-container *ngFor="let leaf of textNode.leaves">
+                        <span class="ordered-list-title" [ngClass]="{ bold: isBold(leaf) }">{{ leaf.text }}</span>
+                      </ng-container>
 
+                      <ng-container *ngIf="textNode.type === 'link'">
+                        <ng-container *ngFor="let links of textNode.nodes">
+                          <ng-container *ngFor="let leaf of links.leaves">
+                            <a
+                              target="_blank"
+                              href="{{ textNode.data.ref.url }}"
+                              [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
+                            >
+                              {{ leaf.text }}
+                            </a>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </p>
+                  <ng-container *ngIf="itemList.type === 'link'">
+                    <ng-container *ngFor="let links of itemList.nodes">
+                      <ng-container *ngFor="let leaf of links.leaves">
+                        <a
+                          target="_blank"
+                          href="{{ itemList.data.ref.url }}"
+                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
+                        >
+                          {{ leaf.text }}
+                        </a>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
 
-                            </ng-container>
-                        </p>
+                  <ng-container *ngIf="itemList.type === 'list-unordered'">
+                    <ng-container *ngFor="let subItemList of itemList.nodes">
+                      <ng-container *ngFor="let subNodes of subItemList.nodes">
+                        <ng-container *ngFor="let textNode of subNodes.nodes">
+                          <ng-container *ngFor="let leaf of textNode.leaves">
+                            <span [ngClass]="{ bold: isBold(leaf) }">{{ leaf.text }}</span>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
 
-                        <ul *ngIf="node.type === 'list-unordered'">
-                            <li *ngFor="let item of node.nodes">
-                                <ng-container *ngFor="let  itemList  of item.nodes">
-                                    <p *ngIf=" itemList.type==='paragraph'">
-                                        <ng-container *ngFor=" let textNode of itemList.nodes">
-                                            <ng-container *ngFor="let leaf of textNode.leaves">
-                                                <span class="ordered-list-title" [ngClass]="{'bold': isBold(leaf)}">{{
-                                                    leaf.text }} </span>
-                                            </ng-container>
+                      <ng-container *ngIf="subItemList.type === 'link'">
+                        <ng-container *ngFor="let links of subItemList.nodes">
+                          <ng-container *ngFor="let leaf of links.leaves">
+                            <a
+                              target="_blank"
+                              href="{{ subItemList.data.ref.url }}"
+                              [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
+                            >
+                              {{ leaf.text }}
+                            </a>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
 
-                                            <ng-container *ngIf="textNode.type === 'link'">
-                                                <ng-container *ngFor="let links of textNode.nodes">
-                                                    <ng-container *ngFor="let leaf of links.leaves">
-                                                        <a target="_blank" href="{{textNode.data.ref.url}}"
-                                                            [ngClass]="{'bold': isBold(leaf), 'italic': isItalic(leaf), 'underline': isUnderline(leaf)}">
-                                                            {{ leaf.text }}
-                                                        </a>
-                                                    </ng-container>
-                                                </ng-container>
-                                            </ng-container>
+                <ng-container *ngFor="let textNode of item.nodes">
+                  <ng-container *ngFor="let leaf of textNode.leaves">
+                    <ng-container *ngIf="leaf.text">{{ leaf.text }}</ng-container>
+                  </ng-container>
 
-                                        </ng-container>
-                                    </p>
-                                    <ng-container *ngIf="itemList.type === 'link'">
-                                        <ng-container *ngFor="let links of itemList.nodes">
-                                            <ng-container *ngFor="let leaf of links.leaves">
-                                                <a target="_blank" href="{{itemList.data.ref.url}}"
-                                                    [ngClass]="{'bold': isBold(leaf), 'italic': isItalic(leaf), 'underline': isUnderline(leaf)}">
-                                                    {{ leaf.text }}
-                                                </a>
-                                            </ng-container>
-                                        </ng-container>
-                                    </ng-container>
+                  <ng-container *ngIf="textNode.type === 'link'">
+                    <ng-container *ngFor="let links of textNode.nodes">
+                      <ng-container *ngFor="let leaf of links.leaves">
+                        <a
+                          target="_blank"
+                          href="{{ textNode.data.ref.url }}"
+                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
+                        >
+                          {{ leaf.text }}
+                        </a>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </li>
+            </ul>
+            <!---->
 
-                                    <ng-container *ngIf=" itemList.type === 'list-unordered'">
-                                        <ng-container *ngFor="let subItemList of  itemList.nodes">
+            <ol *ngIf="node.type === 'list-ordered'">
+              <li *ngFor="let item of node.nodes">
+                <ng-container *ngFor="let itemList of item.nodes">
+                  <p *ngIf="itemList.type === 'paragraph'">
+                    <ng-container *ngFor="let textNode of itemList.nodes">
+                      <ng-container *ngFor="let leaf of textNode.leaves">
+                        <span class="ordered-list-title" [ngClass]="{ bold: isBold(leaf) }">{{ leaf.text }}</span>
+                      </ng-container>
+                    </ng-container>
+                  </p>
+                  <ng-container *ngIf="itemList.type === 'link'">
+                    <ng-container *ngFor="let links of itemList.nodes">
+                      <ng-container *ngFor="let leaf of links.leaves">
+                        <a
+                          target="_blank"
+                          href="{{ itemList.data.ref.url }}"
+                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
+                        >
+                          {{ leaf.text }}
+                        </a>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
 
-                                            <ng-container *ngFor="let subNodes of subItemList.nodes">
-                                                <ng-container *ngFor="let textNode of  subNodes.nodes">
-                                                    <ng-container *ngFor="let leaf of textNode.leaves">
-                                                        <span [ngClass]="{'bold': isBold(leaf)}">{{ leaf.text
-                                                            }} </span>
-                                                    </ng-container>
-                                                </ng-container>
-                                            </ng-container>
+                  <ng-container *ngIf="itemList.type === 'list-unordered'">
+                    <ng-container *ngFor="let subItemList of itemList.nodes">
+                      <ng-container *ngFor="let subNodes of subItemList.nodes">
+                        <ng-container *ngFor="let textNode of subNodes.nodes">
+                          <ng-container *ngFor="let leaf of textNode.leaves">
+                            <span [ngClass]="{ bold: isBold(leaf) }">{{ leaf.text }}</span>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </li>
+            </ol>
 
-                                            <ng-container *ngIf="subItemList.type === 'link'">
-                                                <ng-container *ngFor="let links of subItemList.nodes">
-                                                    <ng-container *ngFor="let leaf of links.leaves">
-                                                        <a target="_blank" href="{{subItemList.data.ref.url}}"
-                                                            [ngClass]="{'bold': isBold(leaf), 'italic': isItalic(leaf), 'underline': isUnderline(leaf)}">
-                                                            {{ leaf.text }}
-                                                        </a>
-                                                    </ng-container>
-                                                </ng-container>
-                                            </ng-container>
+            <h1 *ngIf="node.type === 'heading-1'">{{ node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h1>
+            <h2 *ngIf="node.type === 'heading-2'">{{ node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h2>
+            <h3 *ngIf="node.type === 'heading-3'">{{ node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h3>
 
-                                        </ng-container>
-                                    </ng-container>
+            <blockquote *ngIf="node.type === 'quote'">
+              <ng-container *ngFor="let textNode of node.nodes">
+                <ng-container *ngFor="let leaf of textNode.leaves">
+                  <p>{{ leaf.text }}</p>
+                </ng-container>
+              </ng-container>
+            </blockquote>
 
-                                </ng-container>
-
-
-
-                                <ng-container *ngFor="let textNode of item.nodes">
-                                    <ng-container *ngFor="let leaf of textNode.leaves">
-                                        <ng-container *ngIf="leaf.text">{{ leaf.text }}</ng-container>
-                                    </ng-container>
-
-                                    <ng-container *ngIf="textNode.type === 'link'">
-                                        <ng-container *ngFor="let links of textNode.nodes">
-                                            <ng-container *ngFor="let leaf of links.leaves">
-                                                <a target="_blank" href="{{textNode.data.ref.url}}"
-                                                    [ngClass]="{'bold': isBold(leaf), 'italic': isItalic(leaf), 'underline': isUnderline(leaf)}">
-                                                    {{ leaf.text }}
-                                                </a>
-                                            </ng-container>
-                                        </ng-container>
-                                    </ng-container>
-                                </ng-container>
-                            </li>
-                        </ul>
-                        <!---->
-
-
-                        <ol *ngIf="node.type === 'list-ordered'">
-                            <li *ngFor="let item of node.nodes">
-                                <ng-container *ngFor="let  itemList  of item.nodes">
-                                    <p *ngIf=" itemList.type==='paragraph'">
-                                        <ng-container *ngFor=" let textNode of itemList.nodes">
-                                            <ng-container *ngFor="let leaf of textNode.leaves">
-                                                <span class="ordered-list-title" [ngClass]="{'bold': isBold(leaf)}">{{
-                                                    leaf.text }} </span>
-                                            </ng-container>
-                                        </ng-container>
-                                    </p>
-                                    <ng-container *ngIf="itemList.type === 'link'">
-                                        <ng-container *ngFor="let links of itemList.nodes">
-                                            <ng-container *ngFor="let leaf of links.leaves">
-                                                <a target="_blank" href="{{itemList.data.ref.url}}"
-                                                    [ngClass]="{'bold': isBold(leaf), 'italic': isItalic(leaf), 'underline': isUnderline(leaf)}">
-                                                    {{ leaf.text }}
-                                                </a>
-                                            </ng-container>
-                                        </ng-container>
-                                    </ng-container>
-
-                                    <ng-container *ngIf=" itemList.type === 'list-unordered'">
-                                        <ng-container *ngFor="let subItemList of  itemList.nodes">
-                                            <ng-container *ngFor="let subNodes of subItemList.nodes">
-                                                <ng-container *ngFor="let textNode of  subNodes.nodes">
-                                                    <ng-container *ngFor="let leaf of textNode.leaves">
-                                                        <span [ngClass]="{'bold': isBold(leaf)}">{{ leaf.text
-                                                            }} </span>
-                                                    </ng-container>
-                                                </ng-container>
-                                            </ng-container>
-                                        </ng-container>
-                                    </ng-container>
-
-                                </ng-container>
-                            </li>
-                        </ol>
-
-
-
-                        <h1 *ngIf="node.type === 'heading-1'">{{
-                            node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h1>
-                        <h2 *ngIf="node.type === 'heading-2'">{{
-                            node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h2>
-                        <h3 *ngIf="node.type === 'heading-3'">{{
-                            node.nodes[0]?.nodes[0]?.leaves[0]?.text }}</h3>
-
-                        <blockquote *ngIf="node.type === 'quote'">
-                            <ng-container *ngFor="let textNode of node.nodes">
-                                <ng-container *ngFor="let leaf of textNode.leaves">
-                                    <p>{{ leaf.text }}</p>
-                                </ng-container>
-                            </ng-container>
-                        </blockquote>
-
-                        <pre *ngIf="node.type === 'code'">
+            <pre *ngIf="node.type === 'code'">
                             <code>
                                 <ng-container *ngFor="let textNode of node.nodes">
                                     <ng-container *ngFor="let text of textNode.nodes">
@@ -251,27 +270,38 @@
                                 </ng-container>
                             </code>
                         </pre>
-                    </ng-container>
-                </div>
+          </ng-container>
+        </div>
 
-                <!-- Questions de Suivi -->
-                <div *ngIf="data.answer.followupQuestions?.length" class="separator">
-                    <h2>Questions liées</h2>
-                    <ng-container *ngFor="let question of data.answer.followupQuestions">
-                        <p class="following"
-                            (click)="searchValue=question;displayResult = true;data = null;onSearchBy();onSearchBy();lockPrompt = true;scrollTo('toolbar');searchInput.value = question">
-                            <i class="ri-arrow-right-line"></i> {{ question }}
-                        </p>
-                    </ng-container>
-                </div>
+        <!-- Questions de Suivi -->
+        <div *ngIf="data.answer.followupQuestions?.length" class="separator">
+          <h2>Questions liées</h2>
+          <ng-container *ngFor="let question of data.answer.followupQuestions">
+            <p
+              class="following"
+              (click)="
+                searchValue = question;
+                displayResult = true;
+                data = null;
+                onSearchBy();
+                onSearchBy();
+                lockPrompt = true;
+                scrollTo('toolbar');
+                searchInput.value = question
+              "
+            >
+              <i class="ri-arrow-right-line"></i>
+              {{ question }}
+            </p>
+          </ng-container>
+        </div>
 
-                <!-- Sources -->
-                <div *ngIf="data.answer.sources?.length" class="source-container">
-                    <h2>Sources</h2>
-                    On peut remplir cette section et récupérer les sources utilisées (sections dans gitbook) pour la
-                    rédaction de la réponse, mais je vous laisse voir déjà si ce prototype vous plait et si vous
-                    souhaitez qu'on approfondisse.
-                    <!--
+        <!-- Sources -->
+        <div *ngIf="data.answer.sources?.length" class="source-container">
+          <h2>Sources</h2>
+          On peut remplir cette section et récupérer les sources utilisées (sections dans gitbook) pour la rédaction de
+          la réponse, mais je vous laisse voir déjà si ce prototype vous plait et si vous souhaitez qu'on approfondisse.
+          <!--
                     <ul>
                         <li *ngFor="let source of data.answer.sources">
                             <p><span>Espace:</span> {{ source.space }}</p>
@@ -281,104 +311,125 @@
                         </li>
                     </ul>
                     -->
-                </div>
-            </div>
-
-
-
         </div>
-
-        <p class="sub-title" *ngIf="this.userService.isCa()===false">Questions fréquentes</p>
-        <div class="suggestion" *ngIf="this.userService.isCa()===false">
-            <div (click)="openToIframe=documentation[0]; reloadContent()">
-                <label><span class="blue">Tout savoir </span><br /><span class="blue">en un coup
-                        d’oeil</span><br />
-                    <p class="italic">Les questions que tout le monde se pose</p>
-                </label>
-                <br />
-                <mat-icon>arrow_forward</mat-icon>
-            </div>
-            <div (click)="openToIframe=documentation[1];reloadContent()">
-                <label><span class="green">Prenez en main</span><br /><span class="green">votre
-                        espace</span><br />
-                    <p class="italic">Gérez vos
-                        effectifs et vos données d’activité</p>
-                </label><br />
-                <mat-icon>arrow_forward</mat-icon>
-            </div>
-            <div (click)="openToIframe=documentation[2];reloadContent()">
-                <label><span class="red">Pilotez votre juridiction</span><br />
-                    <p class="italic">Simulez une
-                        trajectoire ou des affectations,<br /> exploitez vos données et indicateurs</p>
-                </label><br />
-                <mat-icon>arrow_forward</mat-icon>
-            </div>
-            <div (click)="openToIframe=documentation[3];reloadContent()">
-                <label><span class="yellow">Cas d'usage</span><br />
-                    <p class="italic">Dialogues de gestion, demande de
-                        <br />renforts, organisation des services...
-                    </p>
-                </label><br />
-                <mat-icon>arrow_forward</mat-icon>
-            </div>
-        </div>
-
-        <p class="sub-title" *ngIf="this.userService.isCa()===false">Webinaires</p>
-
-        <div class="content-area" *ngIf="this.userService.isCa()===false">
-            <ng-container *ngFor="let webinaire of webinaires">
-                <div class="webinaire">
-                    <img class="cover" src="{{webinaire.img}}" />
-                    <div class="container">
-                        <p class="title">{{webinaire.title}}</p>
-                        <p class="content">{{webinaire.content}}</p>
-                        <!--<div class="action" *ngFor="let action of webinaire.action">{{action}}</div>-->
-                        <div class="action">
-                            <div *ngIf="webinaire.action[0] !== null" (click)="openLink(webinaire.action[0])">
-                                M'inscrire
-                            </div>
-                            <div *ngIf="webinaire.action[1] !== null" (click)="openLink(webinaire.action[1])">En
-                                savoir
-                                plus
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-container>
-        </div>
-    </ng-container>
-    <div *ngIf="openSuggestionPanel" class="open-panel animate__animated" [ngSwitch]="openToIframe.url">
-        <div class="suggestion-header">
-
-            <div class="back-title">
-                <aj-back-button (click)="openSuggestionPanel=!openSuggestionPanel" />
-                <p>Aide</p>
-            </div>
-            <div class="panel-header">
-                <p class="tab {{doc.color}}" [ngClass]="{'selected':openToIframe.url===documentation[i].url}"
-                    *ngFor="let doc of documentation; index as i;" (click)="openToIframe=documentation[i]">
-                    {{doc.title}}
-                </p>
-            </div>
-        </div>
-        <iframe *ngSwitchCase="documentation[0].url" id="iframe-doc" loading="lazy"
-            [src]="(documentation[0].url + cleDate)||'' | sanitizeResourceUrl">
-        </iframe>
-        <iframe *ngSwitchCase="documentation[1].url" id="iframe-doc" loading="lazy"
-            [src]="(documentation[1].url + cleDate)||'' | sanitizeResourceUrl">
-        </iframe>
-        <iframe *ngSwitchCase="documentation[2].url" id="iframe-doc" loading="lazy"
-            [src]="(documentation[2].url + cleDate)||'' | sanitizeResourceUrl">
-        </iframe>
-        <iframe *ngSwitchCase="documentation[3].url" id="iframe-doc" loading="lazy"
-            [src]="(documentation[3].url + cleDate)||'' | sanitizeResourceUrl">
-        </iframe>
-
-        <div class="hide-powered-by-gitbook"></div>
-
+      </div>
     </div>
 
-</aj-wrapper>
+    <p class="sub-title" *ngIf="this.userService.isCa() === false">Questions fréquentes</p>
+    <div class="suggestion" *ngIf="this.userService.isCa() === false">
+      <div (click)="openToIframe = documentation[0]; reloadContent()">
+        <label>
+          <span class="blue">Tout savoir</span>
+          <br />
+          <span class="blue">en un coup d’oeil</span>
+          <br />
+          <p class="italic">Les questions que tout le monde se pose</p>
+        </label>
+        <br />
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+      <div (click)="openToIframe = documentation[1]; reloadContent()">
+        <label>
+          <span class="green">Prenez en main</span>
+          <br />
+          <span class="green">votre espace</span>
+          <br />
+          <p class="italic">Gérez vos effectifs et vos données d’activité</p>
+        </label>
+        <br />
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+      <div (click)="openToIframe = documentation[2]; reloadContent()">
+        <label>
+          <span class="red">Pilotez votre juridiction</span>
+          <br />
+          <p class="italic">
+            Simulez une trajectoire ou des affectations,
+            <br />
+            exploitez vos données et indicateurs
+          </p>
+        </label>
+        <br />
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+      <div (click)="openToIframe = documentation[3]; reloadContent()">
+        <label>
+          <span class="yellow">Cas d'usage</span>
+          <br />
+          <p class="italic">
+            Dialogues de gestion, demande de
+            <br />
+            renforts, organisation des services...
+          </p>
+        </label>
+        <br />
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
+    </div>
 
+    <p class="sub-title" *ngIf="this.userService.isCa() === false">Webinaires</p>
+
+    <div class="content-area" *ngIf="this.userService.isCa() === false">
+      <ng-container *ngFor="let webinaire of webinaires">
+        <div class="webinaire">
+          <img class="cover" src="{{ webinaire.img }}" />
+          <div class="container">
+            <p class="title">{{ webinaire.title }}</p>
+            <p class="content">{{ webinaire.content }}</p>
+            <!--<div class="action" *ngFor="let action of webinaire.action">{{action}}</div>-->
+            <div class="action">
+              <div *ngIf="webinaire.action[0] !== null" (click)="openLink(webinaire.action[0])">M'inscrire</div>
+              <div *ngIf="webinaire.action[1] !== null" (click)="openLink(webinaire.action[1])">En savoir plus</div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+  <div *ngIf="openSuggestionPanel" class="open-panel animate__animated" [ngSwitch]="openToIframe.url">
+    <div class="suggestion-header">
+      <div class="back-title">
+        <aj-back-button (click)="openSuggestionPanel = !openSuggestionPanel" />
+        <p>Aide</p>
+      </div>
+      <div class="panel-header">
+        <p
+          class="tab {{ doc.color }}"
+          [ngClass]="{ selected: openToIframe.url === documentation[i].url }"
+          *ngFor="let doc of documentation; index as i"
+          (click)="openToIframe = documentation[i]"
+        >
+          {{ doc.title }}
+        </p>
+      </div>
+    </div>
+    <iframe
+      *ngSwitchCase="documentation[0].url"
+      id="iframe-doc"
+      loading="lazy"
+      [src]="documentation[0].url + cleDate || '' | sanitizeResourceUrl"
+    ></iframe>
+    <iframe
+      *ngSwitchCase="documentation[1].url"
+      id="iframe-doc"
+      loading="lazy"
+      [src]="documentation[1].url + cleDate || '' | sanitizeResourceUrl"
+    ></iframe>
+    <iframe
+      *ngSwitchCase="documentation[2].url"
+      id="iframe-doc"
+      loading="lazy"
+      [src]="documentation[2].url + cleDate || '' | sanitizeResourceUrl"
+    ></iframe>
+    <iframe
+      *ngSwitchCase="documentation[3].url"
+      id="iframe-doc"
+      loading="lazy"
+      [src]="documentation[3].url + cleDate || '' | sanitizeResourceUrl"
+    ></iframe>
+
+    <div class="hide-powered-by-gitbook"></div>
+  </div>
+</aj-wrapper>
 
 <ng-template #actions></ng-template>

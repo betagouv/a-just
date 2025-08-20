@@ -6,8 +6,13 @@
   }
   <div class="input-container">
     <img src="/assets/icons/search-line.svg" />
-    <input #inputElement [ngClass]="{ 'restrict-width': title === 'Rechercher un agent' }" [placeholder]="placeholder"
-      [(ngModel)]="value" (ngModelChange)="onChange()" />
+    <input
+      #inputElement
+      [ngClass]="{ 'restrict-width': title === 'Rechercher un agent' }"
+      [placeholder]="placeholder"
+      [(ngModel)]="value"
+      (ngModelChange)="onChange()"
+    />
   </div>
 </div>
 @if (icon) {

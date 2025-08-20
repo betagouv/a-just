@@ -7,19 +7,15 @@
           <p class="date">
             <mat-icon>calendar_today</mat-icon>
             @if (dateStart.getTime() !== getToday().getTime()) {
-              {{
-              dateStart && dateStart.getTime() > getToday().getTime()
-              ? 'À partir du'
-              : 'Depuis le'
-              }}
-              {{ dateStart | date : 'dd' }} {{ getShortMonthString(dateStart) }}
+              {{ dateStart && dateStart.getTime() > getToday().getTime() ? 'À partir du' : 'Depuis le' }}
+              {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
               {{ dateStart.getFullYear() }}
             }
             @if (dateStart.getTime() === getToday().getTime()) {
               {{
-              dateStart && dateStart.getTime() > getToday().getTime()
-              ? "À partir d'Aujourd'hui"
-              : "Depuis Aujourd'hui"
+                dateStart && dateStart.getTime() > getToday().getTime()
+                  ? "À partir d'Aujourd'hui"
+                  : "Depuis Aujourd'hui"
               }}
             }
           </p>
@@ -28,7 +24,7 @@
           <p class="date">
             <mat-icon>calendar_today</mat-icon>
             @if (dateStop.getTime() !== getToday().getTime()) {
-              Jusqu'au {{ dateStop | date : 'dd' }}
+              Jusqu'au {{ dateStop | date: 'dd' }}
               {{ getShortMonthString(dateStop) }}
               {{ dateStop.getFullYear() }}
             }
@@ -42,13 +38,9 @@
   </div>
   <div class="right-panel">
     @if (canEdit) {
-      <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">
-        Corriger
-      </button>
+      <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">Corriger</button>
       @if (canRemoveSituation) {
-        <button (click)="onRemove.emit()" class="light small outline red no-print">
-          Supprimer
-        </button>
+        <button (click)="onRemove.emit()" class="light small outline red no-print">Supprimer</button>
       }
     }
   </div>
@@ -65,5 +57,9 @@
   </a>
 </div>
 
-<panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
-[forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
+<panel-activities
+  [category]="category"
+  [etp]="(etp || 0) - indisponibility"
+  [activities]="activities"
+  [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"
+></panel-activities>

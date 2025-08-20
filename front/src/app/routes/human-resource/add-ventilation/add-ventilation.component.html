@@ -9,19 +9,15 @@
           @if (lastDateStart) {
           <p>
             A partir du
-            {{ lastDateStart | date : 'dd' }}
+            {{ lastDateStart | date: 'dd' }}
             {{ getShortMonthString(lastDateStart) }}
             {{ lastDateStart.getFullYear() }}
           </p>
           }
-          @if (
-          dateStop &&
-          lastDateStart &&
-          lastDateStart.getTime() !== dateStop.getTime()
-          ) {
+          @if (dateStop && lastDateStart && lastDateStart.getTime() !== dateStop.getTime()) {
           <p>
             Jusqu'au
-            {{ dateStop | date : 'dd' }}
+            {{ dateStop | date: 'dd' }}
             {{ getShortMonthString(dateStop) }}
             {{ dateStop.getFullYear() }}
           </p>
@@ -35,23 +31,25 @@
       <pre></pre>
       @if (isEdit || saveActions) {
       <div class="drop-down-container">
-        <label id="drop-down" class="drop-down" (click)="toggleDropDown=!toggleDropDown"
-          (blur)="toggleDropDown=!toggleDropDown">
+        <label id="drop-down" class="drop-down" (click)="toggleDropDown = !toggleDropDown"
+          (blur)="toggleDropDown = !toggleDropDown">
           Feuille de temps
           <mat-icon _ngcontent-ng-c640964094="" role="img"
             class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true"
-            data-mat-icon-type="font">{{toggleDropDown=== false ?"expand_more":"expand_less"}}</mat-icon>
+            data-mat-icon-type="font">
+            {{ toggleDropDown === false ? 'expand_more' : 'expand_less' }}
+          </mat-icon>
         </label>
-        <div class="drop-down-content" [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
-
+        <div class="drop-down-content" [ngStyle]="{ display: toggleDropDown === false ? 'none' : 'flex' }">
           <a (click)="downloadEtpTemplate()" class="download">
             <img src="/assets/icons/download-line.svg" />
             Télécharger un modèle vierge
           </a>
           <label class="custom-file-upload">
             <input #file id="file-picker" type="file" class="input-file" accept=".xlsx"
-              (change)="getFile($event,file)" />
-            <img src="/assets/icons/upload-line.svg" />Importer une situation pré-renseignée
+              (change)="getFile($event, file)" />
+            <img src="/assets/icons/upload-line.svg" />
+            Importer une situation pré-renseignée
           </label>
         </div>
       </div>
@@ -63,38 +61,57 @@
         <div class="top">
           @if (!isEdit && !saveActions) {
           <div class="drop-down-container">
-            <label id="drop-down2" class="drop-down" (click)="toggleDropDown=!toggleDropDown"
-              (blur)="toggleDropDown=!toggleDropDown">
+            <label id="drop-down2" class="drop-down" (click)="toggleDropDown = !toggleDropDown"
+              (blur)="toggleDropDown = !toggleDropDown">
               Feuille de temps
               <mat-icon _ngcontent-ng-c640964094="" role="img"
                 class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true"
-                data-mat-icon-type="font">{{toggleDropDown=== false ?"expand_more":"expand_less"}}</mat-icon>
+                data-mat-icon-type="font">
+                {{ toggleDropDown === false ? 'expand_more' : 'expand_less' }}
+              </mat-icon>
             </label>
             <div class="drop-down-content" id="timesheet"
-              [ngStyle]="{'display' : toggleDropDown=== false ? 'none': 'flex'}">
-
+              [ngStyle]="{ display: toggleDropDown === false ? 'none' : 'flex' }">
               <a (click)="downloadEtpTemplate()" class="download">
                 <img src="/assets/icons/download-line.svg" />
                 Télécharger un modèle vierge
               </a>
               <label class="custom-file-upload">
                 <input #file id="file-picker" type="file" class="input-file" accept=".xlsx"
-                  (change)="getFile($event,file)" />
-                <img src="/assets/icons/upload-line.svg" />Importer une situation pré-renseignée
+                  (change)="getFile($event, file)" />
+                <img src="/assets/icons/upload-line.svg" />
+                Importer une situation pré-renseignée
               </label>
             </div>
           </div>
           }
-          @if (displayImportLabels || humanResourceService.alertList().includes('fonction') ||
-          humanResourceService.alertList().includes('category') || humanResourceService.alertList().includes('etp')) {
-          <label class="import-confirmation"
-            [ngStyle]="{'color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null || form.get('etp')?.value === null ? '#c3992a': '#18753c',
-              'background-color' : form.get('categoryId')?.value === null ||  form.get('fonctionId')?.value === null || form.get('etp')?.value === null ? '#feebd0':'#b8fec9'}">
+          @if (
+          displayImportLabels ||
+          humanResourceService.alertList().includes('fonction') ||
+          humanResourceService.alertList().includes('category') ||
+          humanResourceService.alertList().includes('etp')
+          ) {
+          <label class="import-confirmation" [ngStyle]="{
+                color:
+                  form.get('categoryId')?.value === null ||
+                  form.get('fonctionId')?.value === null ||
+                  form.get('etp')?.value === null
+                    ? '#c3992a'
+                    : '#18753c',
+                'background-color':
+                  form.get('categoryId')?.value === null ||
+                  form.get('fonctionId')?.value === null ||
+                  form.get('etp')?.value === null
+                    ? '#feebd0'
+                    : '#b8fec9',
+              }">
             <i class="ri-checkbox-circle-fill"></i>
             {{
             form.get('categoryId')?.value === null ||
-            form.get('fonctionId')?.value === null || form.get('etp')?.value === null?
-            'à compléter':'importé'
+            form.get('fonctionId')?.value === null ||
+            form.get('etp')?.value === null
+            ? 'à compléter'
+            : 'importé'
             }}
           </label>
           }
@@ -102,43 +119,41 @@
 
         <div class="grid-triple">
           <div class="admin-element"
-            [ngClass]="{'error': form.get('categoryId')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': humanResourceService.alertList().includes('category')}">
+            [ngClass]="{ error: form.get('categoryId')?.value === null && displayImportLabels === true }"
+            [ngClass]="{ error: humanResourceService.alertList().includes('category') }">
             <div class="label-aj">Catégorie :</div>
             <select formControlName="categoryId">
-              @for (cat of categories; track cat) {
+              @for (cat of categories; track cat.id) {
               <option [value]="cat.id">
                 {{ cat.label }}
               </option>
               }
             </select>
             @if (humanResourceService.alertList().includes('category')) {
-            <aj-alert-small alertMessage='Vous devez saisir une catégorie !' (onClose)="removeAlertItem('category')">
-            </aj-alert-small>
+            <aj-alert-small alertMessage="Vous devez saisir une catégorie !"
+              (onClose)="removeAlertItem('category')"></aj-alert-small>
             }
           </div>
           <div class="admin-element"
-            [ngClass]="{'error': form.get('fonctionId')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': humanResourceService.alertList().includes('fonction')}">
+            [ngClass]="{ error: form.get('fonctionId')?.value === null && displayImportLabels === true }"
+            [ngClass]="{ error: humanResourceService.alertList().includes('fonction') }">
             <div class="label-aj">Fonction :</div>
             <select formControlName="fonctionId" (change)="setFonc($event.target)">
-              @for (fonc of fonctions; track fonc) {
+              @for (fonc of fonctions; track fonc.id) {
               <option [value]="fonc.id">
                 {{ fonc.label }}
               </option>
               }
             </select>
             @if (humanResourceService.alertList().includes('fonction')) {
-            <aj-alert-small alertMessage='Vous devez saisir une fonction !' (onClose)="removeAlertItem('fonction')">
-            </aj-alert-small>
+            <aj-alert-small alertMessage="Vous devez saisir une fonction !"
+              (onClose)="removeAlertItem('fonction')"></aj-alert-small>
             }
           </div>
           <div class="admin-element"
-            [ngClass]="{'error': form.get('etp')?.value === null && displayImportLabels === true}"
-            [ngClass]="{'error': humanResourceService.alertList().includes('etp')}" id="etpForm">
-            <div class="label-aj">
-              Temps de travail (en ETPT) :
-            </div>
+            [ngClass]="{ error: form.get('etp')?.value === null && displayImportLabels === true }"
+            [ngClass]="{ error: humanResourceService.alertList().includes('etp') }" id="etpForm">
+            <div class="label-aj">Temps de travail (en ETPT) :</div>
             <div class="calculatrice-button-container">
               @if (calculatriceIsActive) {
               <div class="open-calculatrice" (click)="openCalculatricePopup = true">
@@ -153,9 +168,8 @@
               <input type="number" formControlName="etp" min="0" max="1" step="0.01" (ngModelChange)="etp = $event" />
             </div>
             @if (humanResourceService.alertList().includes('etp')) {
-            <aj-alert-small alertMessage='Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)'
-              (onClose)="removeAlertItem('etp')">
-            </aj-alert-small>
+            <aj-alert-small alertMessage="Vous devez renseigner un temps de travail en ETPT (entre 0 et 1)"
+              (onClose)="removeAlertItem('etp')"></aj-alert-small>
             }
           </div>
         </div>
@@ -173,17 +187,24 @@
         <aj-calculatrice></aj-calculatrice>
       </aj-popup>
       }
-
       <div class="activities">
         <div class="top">
           <p>Répartition du temps disponible</p>
           <div class="flex-1"></div>
 
           @if (displayImportLabels) {
-          <label class="import-confirmation" [ngStyle]="{'color' : sumPercentImported !==100?'#c3992a': '#18753c',
-            'background-color' : sumPercentImported !==100?'#feebd0':'#b8fec9'}"><i
-              class="ri-checkbox-circle-fill"></i>{{sumPercentImported !==100?'à
-            compléter':'importé'}}</label>
+          <label class="import-confirmation" [ngStyle]="{
+                color: sumPercentImported !== 100 ? '#c3992a' : '#18753c',
+                'background-color': sumPercentImported !== 100 ? '#feebd0' : '#b8fec9',
+              }">
+            <i class="ri-checkbox-circle-fill"></i>
+            {{
+            sumPercentImported !== 100
+            ? 'à
+            compléter'
+            : 'importé'
+            }}
+          </label>
           }
           <div class="ressources">
             <p>Ressources :</p>
@@ -200,58 +221,55 @@
 
         <panel-activities [category]="getCategoryLabel()" [activities]="activities" [etp]="etp" [selected]="true"
           [indexSituation]="indexSituation" (referentielChange)="onNewReferentiel($event)" #panelActivities
-          [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit">
-        </panel-activities>
+          [forceToShowContentieuxDetail]="forceToShowContentieuxDetail" [isEdited]="isEdit"></panel-activities>
       </div>
       <div class="bottom-container" id="bottom-container" #bottomContainerTarget>
         <div class="date-start"
-          [ngClass]="{'error': form.get('activitiesStartDate')?.value === null && displayImportLabels}">
+          [ngClass]="{ error: form.get('activitiesStartDate')?.value === null && displayImportLabels }">
           <div class="header">
             @if (isEdit) {
-            <p>Modification de la situation </p>
+            <p>Modification de la situation</p>
             }
             @if (!isEdit) {
-            <p>Situation à prendre en compte </p>
+            <p>Situation à prendre en compte</p>
             }
             <div class="flex-1"></div>
-            @if (displayImportLabels || humanResourceService.alertList().includes('activitiesStartDate') ) {
-            <label class="import-confirmation" [ngStyle]="{'color' : form.get('activitiesStartDate')?.value === null ?'#c3992a': '#18753c',
-              'background-color' : form.get('activitiesStartDate')?.value === null ?'#feebd0':'#b8fec9'}">
+            @if (displayImportLabels || humanResourceService.alertList().includes('activitiesStartDate')) {
+            <label class="import-confirmation" [ngStyle]="{
+                  color: form.get('activitiesStartDate')?.value === null ? '#c3992a' : '#18753c',
+                  'background-color': form.get('activitiesStartDate')?.value === null ? '#feebd0' : '#b8fec9',
+                }">
               <i class="ri-checkbox-circle-fill"></i>
-              {{
-              form.get('activitiesStartDate')?.value === null ?
-              'à compléter' : 'importé'
-              }}
+              {{ form.get('activitiesStartDate')?.value === null ? 'à compléter' : 'importé' }}
             </label>
             }
           </div>
 
-          <div class="date-start-content"
-            [ngClass]="{'error': humanResourceService.alertList().includes('activitiesStartDate') || (form.get('activitiesStartDate')?.value === null && displayImportLabels)}">
+          <div class="date-start-content" [ngClass]="{
+              error:
+                humanResourceService.alertList().includes('activitiesStartDate') ||
+                (form.get('activitiesStartDate')?.value === null && displayImportLabels),
+            }">
             <aj-date-select title="A compter du" [value]="form.get('activitiesStartDate')?.value"
-              (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false">
-            </aj-date-select>
+              (valueChange)="form.get('activitiesStartDate')?.setValue($event)" [showToday]="false"></aj-date-select>
             @if (humanResourceService.alertList().includes('activitiesStartDate')) {
-            <aj-alert-small alertMessage='Vous devez saisir une date de début de situation !'
-              (onClose)="removeAlertItem('activitiesStartDate')" class="fix-width">
-            </aj-alert-small>
+            <aj-alert-small alertMessage="Vous devez saisir une date de début de situation !"
+              (onClose)="removeAlertItem('activitiesStartDate')" class="fix-width"></aj-alert-small>
             }
           </div>
-
         </div>
         <div class="indisponibilities">
           <div class="indispo-header">
-            <p>Indisponibilités </p> <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
+            <p>Indisponibilités</p>
+            <aj-help-button (click)="openHelpPanel('indispo')" class="help-icon"
               text="Qu'est-ce que c'est ?"></aj-help-button>
             <label>(facultatif)</label>
             <div class="flex-1"></div>
-            <button class="outline blue small" (click)="addIndispiniblity.emit(null)">
-              + Ajouter
-            </button>
+            <button class="outline blue small" (click)="addIndispiniblity.emit(null)">+ Ajouter</button>
           </div>
           @if (indisponibilities.length) {
           <div class="indispo-content">
-            @for (indisp of indisponibilitiesFiltered; track indisp) {
+            @for (indisp of indisponibilitiesFiltered; track indisp.contentieux.id) {
             <div class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
               <div class="icon">
                 <mat-icon>event_busy</mat-icon>
@@ -263,24 +281,24 @@
                 </p>
                 <p>
                   @if (indisp.dateStart) {
-                  <ng-template>du {{ indisp.dateStart | date : 'dd' }}
+                  <ng-template>
+                    du {{ indisp.dateStart | date: 'dd' }}
                     {{ getShortMonthString(indisp.dateStart) }}
-                    {{ getFullYear(indisp.dateStart) }}</ng-template>
+                    {{ getFullYear(indisp.dateStart) }}
+                  </ng-template>
                   }
                   @if (indisp.dateStart && indisp.dateStop) {
-                  <ng-template>
-                    au
-                  </ng-template>
+                  <ng-template>au</ng-template>
                   }
                   @if (!indisp.dateStart && indisp.dateStop) {
-                  <ng-template>
-                    jusqu'au
-                  </ng-template>
+                  <ng-template>jusqu'au</ng-template>
                   }
                   @if (indisp.dateStop) {
-                  <ng-template>{{ indisp.dateStop | date : 'dd' }}
+                  <ng-template>
+                    {{ indisp.dateStop | date: 'dd' }}
                     {{ getShortMonthString(indisp.dateStop) }}
-                    {{ getFullYear(indisp.dateStop) }}</ng-template>
+                    {{ getFullYear(indisp.dateStop) }}
+                  </ng-template>
                   }
                 </p>
               </div>
@@ -301,12 +319,11 @@
     </span>
     @if (saveActions) {
     <div class="actions">
-      <button class="outline blue strict-border" (click)="close.emit();displayImportLabels=false;sumPercentImported=0">
+      <button class="outline blue strict-border"
+        (click)="close.emit(); displayImportLabels = false; sumPercentImported = 0">
         Annuler
       </button>
-      <button class="primary strict-border" (click)="onSave()">
-        Enregistrer
-      </button>
+      <button class="primary strict-border" (click)="onSave()">Enregistrer</button>
     </div>
     }
   </div>

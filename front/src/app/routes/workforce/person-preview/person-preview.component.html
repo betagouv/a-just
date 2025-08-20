@@ -1,74 +1,78 @@
 @if (showComponent) {
-<div class="profil item" [ngClass]="{ ca: userService.isCa() }">
-  <a [routerLink]="['/resource-humaine', hr.id]" class="text" [ngClass]="{ ca: userService.isCa() }">
-    <div class="name">
-      <p>
-        {{
-        filterParams && filterParams.display === 'nom/prénom'
-        ? hr.lastName
-        : hr.firstName
-        }}
-        {{
-        filterParams && filterParams.display === 'nom/prénom'
-        ? hr.firstName
-        : hr.lastName
-        }}
-      </p>
-      @if (hr.comment) {
-      <div class="tooltip">
-        <mat-icon>message</mat-icon>
-        <aj-text-editor class="tooltiptext global-tooltiptext" [value]="hr.comment"
-          [defaultReadOnly]="true"></aj-text-editor>
+  <div class="profil item" [ngClass]="{ ca: userService.isCa() }">
+    <a [routerLink]="['/resource-humaine', hr.id]" class="text" [ngClass]="{ ca: userService.isCa() }">
+      <div class="name">
+        <p>
+          {{ filterParams && filterParams.display === 'nom/prénom' ? hr.lastName : hr.firstName }}
+          {{ filterParams && filterParams.display === 'nom/prénom' ? hr.firstName : hr.lastName }}
+        </p>
+        @if (hr.comment) {
+          <div class="tooltip">
+            <mat-icon>message</mat-icon>
+            <aj-text-editor
+              class="tooltiptext global-tooltiptext"
+              [value]="hr.comment"
+              [defaultReadOnly]="true"
+            ></aj-text-editor>
+          </div>
+        }
       </div>
+      <div class="tags">
+        @if (hr.fonction && hr.fonction.code) {
+          <p class="function" [style.background-color]="textColor">
+            {{ hr.fonction && hr.fonction.code }}
+          </p>
+        }
+        @if (hr.etpLabel) {
+          <p class="etp">{{ hr.etpLabel }}</p>
+        }
+      </div>
+      <div class="flex-1"></div>
+      <div class="updated-at">
+        Dernière mise à jour le {{ hr.updatedAt | date: 'dd' }}
+        {{ getShortMonthString(hr.updatedAt) }}
+        {{ hr.updatedAt | date: 'yyyy' }}
+      </div>
+    </a>
+    <div class="read-etp">
+      <p class="label" [ngClass]="{ red: hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED }">ETP Travaillé :</p>
+      <etp-preview
+        [width]="56"
+        [height]="56"
+        [realETP]="hr.currentSituation?.etp"
+        [forceAlert]="false"
+        [etp]="(hr.etp || 0) - hr.hasIndisponibility"
+        [indisponibility]="hr.hasIndisponibility"
+      ></etp-preview>
+      @if (hr.hasIndisponibility) {
+        <p class="unavailable">
+          <mat-icon>error</mat-icon>
+          Indispo
+        </p>
       }
     </div>
-    <div class="tags">
-      @if (hr.fonction && hr.fonction.code) {
-      <p class="function" [style.background-color]="textColor">
-        {{ hr.fonction && hr.fonction.code }}
-      </p>
-      }
-      @if (hr.etpLabel) {
-      <p class="etp">{{ hr.etpLabel }}</p>
-      }
-    </div>
-    <div class="flex-1"></div>
-    <div class="updated-at">
-      Dernière mise à jour le {{ hr.updatedAt | date : 'dd' }}
-      {{ getShortMonthString(hr.updatedAt) }}
-      {{ hr.updatedAt | date : 'yyyy' }}
-    </div>
-  </a>
-  <div class="read-etp">
-    <p class="label" [ngClass]="{red: hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED}">ETP Travaillé :</p>
-    <etp-preview [width]="56" [height]="56" [realETP]="hr.currentSituation?.etp" [forceAlert]="false"
-      [etp]="(hr.etp || 0) - hr.hasIndisponibility" [indisponibility]="hr.hasIndisponibility">
-    </etp-preview>
-    @if (hr.hasIndisponibility) {
-    <p class="unavailable">
-      <mat-icon>error</mat-icon> Indispo
-    </p>
+  </div>
+  <div class="activities">
+    <div class="space"></div>
+    <panel-activities
+      [category]="hr.category"
+      [activities]="hr.currentActivities"
+      [header]="false"
+      [selected]="false"
+      [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED"
+    ></panel-activities>
+    @if (hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED) {
+      <div class="activities-button">
+        <a [routerLink]="['/resource-humaine', hr.id]"><button class="primary small">Activités à ventiler</button></a>
+      </div>
     }
   </div>
-</div>
-<div class="activities">
-  <div class="space"></div>
-  <panel-activities [category]="hr.category" [activities]="hr.currentActivities" [header]="false" [selected]="false"
-    [showPlaceHolder]="hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED">
-  </panel-activities>
-  @if (hr.currentSituation?.etp === ETP_NEED_TO_BE_UPDATED) {
-  <div class="activities-button">
-    <a [routerLink]="['/resource-humaine', hr.id]"><button class="primary small">Activités à ventiler</button></a>
+  <div class="actions">
+    <a [routerLink]="['/resource-humaine', hr.id]">
+      <mat-icon>chevron_right</mat-icon>
+    </a>
   </div>
-  }
-</div>
-<div class="actions">
-  <a [routerLink]="['/resource-humaine', hr.id]">
-    <mat-icon>chevron_right</mat-icon>
-  </a>
-</div>
 }
 @if (!showComponent) {
-<div class="empty-element">
-</div>
+  <div class="empty-element"></div>
 }

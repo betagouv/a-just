@@ -1,12 +1,13 @@
-<div class="title" [ngClass]="{'print-shadow-bottom': print}">
+<div class="title" [ngClass]="{ 'print-shadow-bottom': print }">
   <p>Délai Théorique d’Ecoulement des Stocks</p>
-  <label>{{ dateStart === '' ? "d'aujourd'hui" : 'du' }} {{ dateStart }} au
-    {{ dateStop }}</label>
+  <label>{{ dateStart === '' ? "d'aujourd'hui" : 'du' }} {{ dateStart }} au {{ dateStop }}</label>
 </div>
 <div class="loaders">
-  <div class="loader" [ngClass]="{'print-shadow': print}">
+  <div class="loader" [ngClass]="{ 'print-shadow': print }">
     <p class="loader-title">
-      Situation <br />{{ dateStart === '' ? "à aujourd'hui" : 'au' }}
+      Situation
+      <br />
+      {{ dateStart === '' ? "à aujourd'hui" : 'au' }}
       {{ dateStart }}
     </p>
     <div class="space"></div>
@@ -15,16 +16,24 @@
       <div class="bar" [style.height]="valueBar0 + '%'"></div>
     </div>
   </div>
-  <div class="loader" [ngClass]="{'print-shadow': print}">
-    <p class="loader-title">Situation projetée <br />au {{ dateStop }}</p>
+  <div class="loader" [ngClass]="{ 'print-shadow': print }">
+    <p class="loader-title">
+      Situation projetée
+      <br />
+      au {{ dateStop }}
+    </p>
     <div class="space"></div>
     <label class="loader-value medium">{{ valueProjected }}</label>
     <div class="loader-bar medium">
       <div class="bar" [style.height]="valueBar1 + '%'"></div>
     </div>
   </div>
-  <div class="loader" [ngClass]="{'print-shadow': print}">
-    <p class="loader-title">Situation simulée <br />au {{ dateStop }}</p>
+  <div class="loader" [ngClass]="{ 'print-shadow': print }">
+    <p class="loader-title">
+      Situation simulée
+      <br />
+      au {{ dateStop }}
+    </p>
     <div class="space"></div>
     <label class="loader-value hard">{{ valueSimulated }}</label>
     <div class="loader-bar hard">

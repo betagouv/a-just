@@ -1,16 +1,17 @@
 @if (news) {
-  <div [ngStyle]="{backgroundColor: news.backgroundColor ? news.backgroundColor : '#e8edff'}">
+  <div [ngStyle]="{ backgroundColor: news.backgroundColor ? news.backgroundColor : '#e8edff' }">
     <div class="content-news">
       @if (news.icon) {
-        <i class="ri-{{news.icon}} icon" [ngStyle]="{color: news.textColor}"></i>
+        <i class="ri-{{ news.icon }} icon" [ngStyle]="{ color: news.textColor }"></i>
       }
       <p [innerHTML]="news.html | sanitizeHtml"></p>
-      <a [href]="news.actionButtonUrl" target="_blank" rel="noreferrer">@if (news.actionButtonText) {
-        <button
-          class="small" [ngStyle]="{borderColor: news.actionButtonColor, color: news.actionButtonColor}">{{
-          news.actionButtonText
-        }}</button>
-      }</a>
+      <a [href]="news.actionButtonUrl" target="_blank" rel="noreferrer">
+        @if (news.actionButtonText) {
+          <button class="small" [ngStyle]="{ borderColor: news.actionButtonColor, color: news.actionButtonColor }">
+            {{ news.actionButtonText }}
+          </button>
+        }
+      </a>
     </div>
     <i class="ri-close-line close cursor-pointer" (click)="onClose()"></i>
   </div>

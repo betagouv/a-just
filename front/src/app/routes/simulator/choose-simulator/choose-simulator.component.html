@@ -1,8 +1,10 @@
 <div class="top">
   <h3>Sélectionnez la simulation que vous souhaitez effectuer :</h3>
   <div>
-    <div class="simulator"
-      [class.selected]="selectedSimulator === SIMULATOR_DONNEES || selectedSimulator === SIMULATOR_OTHER_ACTIVITY">
+    <div
+      class="simulator"
+      [class.selected]="selectedSimulator === SIMULATOR_DONNEES || selectedSimulator === SIMULATOR_OTHER_ACTIVITY"
+    >
       <div class="header">
         <img src="/assets/simulator/rocket-moon.svg" alt="rocket-moon" />
       </div>
@@ -10,18 +12,25 @@
         <p>Projetez une situation future</p>
 
         @if (userService.canViewSimulator()) {
-          <p class="circle"
+          <p
+            class="circle"
             [class.selected]="selectedSimulator === SIMULATOR_DONNEES"
-          (click)="selectedSimulator = SIMULATOR_DONNEES; onSelect()">avec les données d’A-JUST</p>
+            (click)="selectedSimulator = SIMULATOR_DONNEES; onSelect()"
+          >
+            avec les données d’A-JUST
+          </p>
         }
         @if (!userService.canViewSimulator()) {
           <p class="circle-disable">avec les données d’A-JUST</p>
         }
-
         @if (userService.canViewWhiteSimulator()) {
-          <p class="circle"
+          <p
+            class="circle"
             [class.selected]="selectedSimulator === SIMULATOR_OTHER_ACTIVITY"
-          (click)="selectedSimulator = SIMULATOR_OTHER_ACTIVITY; onSelect()">pour une autre activité</p>
+            (click)="selectedSimulator = SIMULATOR_OTHER_ACTIVITY; onSelect()"
+          >
+            pour une autre activité
+          </p>
         }
         @if (!userService.canViewWhiteSimulator()) {
           <p class="circle-disable">pour une autre activité</p>
@@ -43,21 +52,24 @@
         </div>
       </div>
       @if (!selectedSimulator) {
-        <div class="cursor-tooltip" [style.left.px]="mouseX - MENU_WIDTH"
-          [style.top.px]="mouseY - MENU_HEIGHT + appService.scrollPosition()">
+        <div
+          class="cursor-tooltip"
+          [style.left.px]="mouseX - MENU_WIDTH"
+          [style.top.px]="mouseY - MENU_HEIGHT + appService.scrollPosition()"
+        >
           Sélectionnez une option
         </div>
       }
     </div>
     @if (userService.canViewReaffectator()) {
-      <div class="reaffectator"
-        [class.selected]="selectedSimulator === REAFFECTATOR">
+      <div class="reaffectator" [class.selected]="selectedSimulator === REAFFECTATOR">
         <div class="header">
           <img src="/assets/simulator/reaffectator.svg" alt="reaffectator" />
         </div>
         <div class="title" (click)="selectedSimulator = REAFFECTATOR; onSelect()">
-          <p class="circle" [class.selected]="selectedSimulator === REAFFECTATOR">Réorganisez votre équipe à moyens
-          constants</p>
+          <p class="circle" [class.selected]="selectedSimulator === REAFFECTATOR">
+            Réorganisez votre équipe à moyens constants
+          </p>
         </div>
         <div class="samples">
           <p>Par exemple :</p>
@@ -75,8 +87,11 @@
           </div>
         </div>
         @if (!selectedSimulator) {
-          <div class="cursor-tooltip" [style.left.px]="mouseX - MENU_WIDTH"
-            [style.top.px]="mouseY - MENU_HEIGHT + appService.scrollPosition()">
+          <div
+            class="cursor-tooltip"
+            [style.left.px]="mouseX - MENU_WIDTH"
+            [style.top.px]="mouseY - MENU_HEIGHT + appService.scrollPosition()"
+          >
             Sélectionnez une option
           </div>
         }

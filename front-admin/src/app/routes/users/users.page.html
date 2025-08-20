@@ -12,80 +12,80 @@
       <th mat-sort-header="actions">Actions</th>
     </tr>
 
-    @for (element of datasSource; track element) {
-      <tr>
-        <td>{{element.id}}</td>
-        <td>{{element.email}}</td>
-        <td>{{element.firstName}}</td>
-        <td>{{element.lastName}}</td>
-        <td>{{element.tj}}</td>
-        <td>{{element.fonction}}</td>
-        <td [innerHTML]="element.accessName"></td>
-        <td [innerHTML]="element.ventilationsName"></td>
-        <td>
-          @if (!(element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN)) {
-            <button
-              mat-button color="primary" (click)="onEdit(element)">
-              Modifier les accès
-            </button>
-          }
-          @if (element && userConnected && element.id !== userConnected.id && !(element.role && element.role === USER_ROLE_SUPER_ADMIN)) {
-            <button
-              mat-button color="warn" (click)="onDelete(element)">
-              Supprimer
-            </button>
-          }
-          @if (element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role !== USER_ROLE_SUPER_ADMIN) {
-            <p
-              class="super-administrateur">
-              <i>Super administrateur</i>
-            </p>
-          }
-        </td>
-      </tr>
+    @for (element of datasSource; track element.id) {
+    <tr>
+      <td>{{element.id}}</td>
+      <td>{{element.email}}</td>
+      <td>{{element.firstName}}</td>
+      <td>{{element.lastName}}</td>
+      <td>{{element.tj}}</td>
+      <td>{{element.fonction}}</td>
+      <td [innerHTML]="element.accessName"></td>
+      <td [innerHTML]="element.ventilationsName"></td>
+      <td>
+        @if (!(element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role
+        !== USER_ROLE_SUPER_ADMIN)) {
+        <button mat-button color="primary" (click)="onEdit(element)">
+          Modifier les accès
+        </button>
+        }
+        @if (element && userConnected && element.id !== userConnected.id && !(element.role && element.role ===
+        USER_ROLE_SUPER_ADMIN)) {
+        <button mat-button color="warn" (click)="onDelete(element)">
+          Supprimer
+        </button>
+        }
+        @if (element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role
+        !== USER_ROLE_SUPER_ADMIN) {
+        <p class="super-administrateur">
+          <i>Super administrateur</i>
+        </p>
+        }
+      </td>
+    </tr>
     }
   </table>
 
   @if (userEdit) {
-    <aj-popup class="large" title="Modification des accès" [actions]="popupAction"
-      (selectedAction)="onPopupDetailAction($event)">
-      <div class="content-popup">
-        <div>
-          <p>Email: {{ userEdit.email }}</p>
-          <p>Prénom: {{ userEdit.firstName }}</p>
-          <p>Nom: {{ userEdit.lastName }}</p>
-          <div class="item item-left">
-            <p><b>Liste des accès</b></p>
-            @for (ac of access; track ac) {
-              <p>
-                <input type="checkbox" #acDom [(ngModel)]="ac.selected" />
-                <label (click)="acDom.click()">{{ ac.label }}</label>
-              </p>
-            }
-          </div>
-        </div>
-        <div class="item">
-          <p><b>Liste des ventilations accessibles</b></p>
-          @for (jur of ventilations; track jur) {
-            <p>
-              <input type="checkbox" #jurDom [(ngModel)]="jur.selected" />
-              <label (click)="jurDom.click()">{{ jur.label }}</label>
-            </p>
+  <aj-popup class="large" title="Modification des accès" [actions]="popupAction"
+    (selectedAction)="onPopupDetailAction($event)">
+    <div class="content-popup">
+      <div>
+        <p>Email: {{ userEdit.email }}</p>
+        <p>Prénom: {{ userEdit.firstName }}</p>
+        <p>Nom: {{ userEdit.lastName }}</p>
+        <div class="item item-left">
+          <p><b>Liste des accès</b></p>
+          @for (ac of access; track ac.id) {
+          <p>
+            <input type="checkbox" #acDom [(ngModel)]="ac.selected" />
+            <label (click)="acDom.click()">{{ ac.label }}</label>
+          </p>
           }
         </div>
       </div>
-    </aj-popup>
+      <div class="item">
+        <p><b>Liste des ventilations accessibles</b></p>
+        @for (jur of ventilations; track jur.id) {
+        <p>
+          <input type="checkbox" #jurDom [(ngModel)]="jur.selected" />
+          <label (click)="jurDom.click()">{{ jur.label }}</label>
+        </p>
+        }
+      </div>
+    </div>
+  </aj-popup>
   }
 
   @if (userDelete) {
-    <aj-popup class="small" title="Suppression d'un utilisateur" [actions]="popupDeleteAction"
-      (selectedAction)="onPopupDeleteAction($event)">
-      <div>
-        <p>
-          Êtes vous sûr de vouloir supprimer {{ userDelete.firstName }} {{
-          userDelete.lastName }} ?
-        </p>
-      </div>
-    </aj-popup>
+  <aj-popup class="small" title="Suppression d'un utilisateur" [actions]="popupDeleteAction"
+    (selectedAction)="onPopupDeleteAction($event)">
+    <div>
+      <p>
+        Êtes vous sûr de vouloir supprimer {{ userDelete.firstName }} {{
+        userDelete.lastName }} ?
+      </p>
+    </div>
+  </aj-popup>
   }
 </aj-wrapper>

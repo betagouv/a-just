@@ -1,64 +1,77 @@
-<aj-wrapper title="Visualisation instantanée des effectifs"
-  [subtitle]="hrBackup ? 'Dernière mise à jour le ' + hrBackup.date.getDate() + ' ' + getMonthString(hrBackup.date) + ' ' + hrBackup.date.getFullYear() : ''"
-  [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
+<aj-wrapper title="Visualisation instantanée des effectifs" [subtitle]="
+    hrBackup
+      ? 'Dernière mise à jour le ' +
+        hrBackup.date.getDate() +
+        ' ' +
+        getMonthString(hrBackup.date) +
+        ' ' +
+        hrBackup.date.getFullYear()
+      : ''
+  " [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
   [isLoading]="isLoading">
   <div class="container step-3">
     <div class="title">
-      <aj-date-select title="A la date d'" [value]="dateSelected" (valueChange)="onDateChanged($event)">
-      </aj-date-select>
-      <div class="position-relative"><aj-empty-input title="Options d'affichage"
-          [value]="getOptionAffichageString() ? 'Personnalisé' : 'Aucune'" (click)="showFilterPanel = !showFilterPanel"
-          class="cursor-pointer" icon="filter-2-line"></aj-empty-input>
+      <aj-date-select title="A la date d'" [value]="dateSelected"
+        (valueChange)="onDateChanged($event)"></aj-date-select>
+      <div class="position-relative">
+        <aj-empty-input title="Options d'affichage" [value]="getOptionAffichageString() ? 'Personnalisé' : 'Aucune'"
+          (click)="showFilterPanel = !showFilterPanel" class="cursor-pointer" icon="filter-2-line"></aj-empty-input>
         @if (showFilterPanel) {
         <filter-panel (update)="updateFilterParams($event)" [orderValue]="filterParams && filterParams.order"
           [sortValue]="filterParams && filterParams.sort" [categories]="humanResourceService.categoriesFilterListIds"
           [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = false"
           [filterIndispoValues]="(filterParams && filterParams.filterIndispoValues) || null"
           [referentielIds]="selectedReferentielIds" [subReferentielIds]="selectedSubReferentielIds"
-          [referentiels]="formReferentiel" (updateReferentielIds)="onSelectedReferentielIdsChanged($event)">
-        </filter-panel>
+          [referentiels]="formReferentiel"
+          (updateReferentielIds)="onSelectedReferentielIdsChanged($event)"></filter-panel>
         }
       </div>
       <div class="flex-1"></div>
       @for (category of categoriesFilterList; track category.id) {
-      <div class="checkbox-button" [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
-        (mouseenter)="category.openSubMenu=true" (mouseleave)="category.openSubMenu=false">
+      <div class="checkbox-button" [ngStyle]="{ color: category.textColor, 'background-color': category.bgColor }"
+        (mouseenter)="category.openSubMenu = true" (mouseleave)="category.openSubMenu = false">
         <div class="label-container">
-          <p class="label" [ngStyle]="{'color': category.textColor}">
-            <span class="bold">{{category.headerLabel}}</span> : @if (category.headerLabel!=='Autour du magistrat') {
-            <span>{{ category.nbPersonal }} {{
-              category.nbPersonal > 1 ?
-              category.labelPlural : category.label }}</span>
+          <p class="label" [ngStyle]="{ color: category.textColor }">
+            <span class="bold">{{ category.headerLabel }}</span>
+            :
+            @if (category.headerLabel !== 'Autour du magistrat') {
+            <span>
+              {{ category.nbPersonal }} {{ category.nbPersonal > 1 ? category.labelPlural : category.label }}
+            </span>
             }
           </p>
-          <label class="etp">@if (category.headerLabel==='Autour du magistrat') {
+          <label class="etp">
+            @if (category.headerLabel === 'Autour du magistrat') {
             <span class="moovable">
-              {{category.nbPersonal }} {{
-              category.nbPersonal > 1 ?
-              category.labelPlural : category.label }}</span>
-            } {{ category.etpt | number:".2-2" }} ETPT</label>
+              {{ category.nbPersonal }} {{ category.nbPersonal > 1 ? category.labelPlural : category.label }}
+            </span>
+            }
+            {{ category.etpt | number: '.2-2' }} ETPT
+          </label>
         </div>
         <div class="radio-border-left">
-          <aj-radio-button [ngClass]="{'disabled': isLoading}" [bgColor]="category.textColor" switchColor="white"
-            [value]="category.selected" (click)="category.selected=!category.selected;onSelectCategory(category)"
+          <aj-radio-button [ngClass]="{ disabled: isLoading }" [bgColor]="category.textColor" switchColor="white"
+            [value]="category.selected" (click)="category.selected = !category.selected; onSelectCategory(category)"
             #radio></aj-radio-button>
         </div>
-        @if (category.openSubMenu && category.headerLabel!=='Autour du magistrat' && category.selected) {
+        @if (category.openSubMenu && category.headerLabel !== 'Autour du magistrat' && category.selected) {
         <div class="open-menu">
           <div>
             @for (poste of category.poste; track poste.name) {
             <div #rectangleElem class="checkbox-button-cont"
-              [ngStyle]="{'color': category.textColor, 'background-color': category.bgColor}"
-              (mouseenter)="switchBgColor(rectangleElem,category.hoverColor)"
-              (mouseleave)="switchBgColor(rectangleElem,category.bgColor)">
+              [ngStyle]="{ color: category.textColor, 'background-color': category.bgColor }"
+              (mouseenter)="switchBgColor(rectangleElem, category.hoverColor)"
+              (mouseleave)="switchBgColor(rectangleElem, category.bgColor)">
               <div class="rectangle">
-                <span class="nb-personal">{{poste.nbPersonal}}</span>&nbsp;
-                <label class="poste-title">{{poste.nbPersonal > 1 ? poste.name+'s': poste.name }}</label>&nbsp;
-                <label class="poste-etp">{{poste.etpt | number:".2-2"}}</label>
+                <span class="nb-personal">{{ poste.nbPersonal }}</span>
+                &nbsp;
+                <label class="poste-title">{{ poste.nbPersonal > 1 ? poste.name + 's' : poste.name }}</label>
+                &nbsp;
+                <label class="poste-etp">{{ poste.etpt | number: '.2-2' }}</label>
                 <div class="radio-border-left">
-                  <aj-radio-button [ngClass]="{'disabled': isLoading}" [bgColor]="category.textColor"
+                  <aj-radio-button [ngClass]="{ disabled: isLoading }" [bgColor]="category.textColor"
                     [switchColor]="'white'" [value]="getTooglePositionSelected(poste)"
-                    (click)="setTooglePositionSelected(category,poste);category.openSubMenu=false"
+                    (click)="setTooglePositionSelected(category, poste); category.openSubMenu = false"
                     #radio></aj-radio-button>
                 </div>
               </div>
@@ -75,35 +88,35 @@
       <div class="filters">
         @if (getOptionAffichageReferentielString()) {
         <div class="tag" (click)="clearFilterReferentiel()">
-          <p>{{getOptionAffichageReferentielString()}}</p>
+          <p>{{ getOptionAffichageReferentielString() }}</p>
           <i class="ri-close-line"></i>
         </div>
         }
         @if (getOptionAffichageSubReferentielString()) {
         <div class="tag" (click)="clearFilterSubReferentiel()">
-          <p>{{getOptionAffichageSubReferentielString()}}</p>
+          <p>{{ getOptionAffichageSubReferentielString() }}</p>
           <i class="ri-close-line"></i>
         </div>
         }
         @if (filterParams && filterParams.filterNames) {
         <div class="tag" (click)="clearFilterFilter()">
           <i class="ri-filter-3-line"></i>
-          <p>{{filterParams.filterNames}}</p>
+          <p>{{ filterParams.filterNames }}</p>
           <i class="ri-close-line"></i>
         </div>
         }
         @if (getOptionAffichageIndispoString()) {
         <div class="tag" (click)="clearFilterIndispo()">
-          <p>{{getOptionAffichageIndispoString()}}</p>
+          <p>{{ getOptionAffichageIndispoString() }}</p>
           <i class="ri-close-line"></i>
         </div>
         }
         @if (filterParams && filterParams.sortName) {
         <div class="tag" (click)="clearFilterSort()">
           @if (filterParams.orderIcon) {
-          <i class="ri-{{filterParams.orderIcon}}"></i>
+          <i class="ri-{{ filterParams.orderIcon }}"></i>
           }
-          <p>{{filterParams.sortName}}</p>
+          <p>{{ filterParams.sortName }}</p>
           <i class="ri-close-line"></i>
         </div>
         }
@@ -113,8 +126,8 @@
     <div class="content-list" id="container-list">
       @for (list of listFormated; track list.categoryId; let i = $index) {
       <div class="header-list">
-        <div class="profil" [ngClass]="{'ca': userService.interfaceType === 1}">
-          <div class="label-container" [ngClass]="{'ca': userService.interfaceType === 1}">
+        <div class="profil" [ngClass]="{ ca: userService.interfaceType === 1 }">
+          <div class="label-container" [ngClass]="{ ca: userService.interfaceType === 1 }">
             <div class="category-name">
               <mat-icon class="" [style.color]="list.textColor">person_outline</mat-icon>
               <div class="label" [style.color]="list.textColor">
@@ -141,21 +154,26 @@
           <div class="sub-item" (click)="onFilterBy(ref)">
             <div class="text">
               <div class="label">
-                <p><b>{{ userService.referentielMappingNameByInterface(ref.label) }}</b></p>
+                <p>
+                  <b>{{ userService.referentielMappingNameByInterface(ref.label) }}</b>
+                </p>
               </div>
               <div class="etp">
-                <p>{{ ref.totalAffected | number:'0.2-2' }}</p>
+                <p>{{ ref.totalAffected | number: '0.2-2' }}</p>
               </div>
               <div class="filter">
                 <i [ngClass]="{
-                      'ri-sort-asc': filterSelected.up === true && filterSelected.filter?.id === ref.id,
-                      'ri-sort-desc': !(filterSelected.up === true && filterSelected.filter?.id === ref.id)
-                    }"
-                  [class.selected]="filterSelected.filter && filterSelected.filter.id === ref.id && (filterSelected.up === true || filterSelected.up === false)"></i>
+                        'ri-sort-asc': filterSelected.up === true && filterSelected.filter?.id === ref.id,
+                        'ri-sort-desc': !(filterSelected.up === true && filterSelected.filter?.id === ref.id),
+                      }" [class.selected]="
+                        filterSelected.filter &&
+                        filterSelected.filter.id === ref.id &&
+                        (filterSelected.up === true || filterSelected.up === false)
+                      "></i>
               </div>
             </div>
             <div class="color"
-              [ngStyle]="{'background-color': userService.referentielMappingColorByInterface(ref.label, OPACITY)}">
+              [ngStyle]="{ 'background-color': userService.referentielMappingColorByInterface(ref.label, OPACITY) }">
             </div>
           </div>
           }
@@ -164,7 +182,7 @@
       </div>
       <div class="sub-content-list" [style.background-color]="list.bgColor">
         @for (hr of list.hrFiltered; track hr.id) {
-        <person-preview [style.opacity]="hr.opacity" [id]="'human-'+hr.id" [hr]="hr" [filterParams]="filterParams"
+        <person-preview [style.opacity]="hr.opacity" [id]="'human-' + hr.id" [hr]="hr" [filterParams]="filterParams"
           [textColor]="list.textColor"></person-preview>
         }
       </div>
@@ -179,23 +197,17 @@
     <button class="white outline">Simuler des affectations</button>
   </a>
   }
-
-  <button class="primary add-collaborator" (click)="addHR()">
-    Ajouter un agent
-  </button>
+  <button class="primary add-collaborator" (click)="addHR()">Ajouter un agent</button>
 
   <div class="search-zone">
     <aj-input-button title="Rechercher un agent" placeholder="Rechercher" [ngModel]="searchValue"
-      (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()" ngDefaultControl icon="">
-    </aj-input-button>
+      (valueChange)="searchValue = $event; onSearchBy()" (search)="onSearchBy()" ngDefaultControl
+      icon=""></aj-input-button>
     @if (valuesFinded !== null) {
     <div class="search-next">
-      <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less
-      </mat-icon>
+      <mat-icon matSuffix (click)="onFindNext(-1)" class="cursor-pointer">expand_less</mat-icon>
       @if (valuesFinded !== null) {
-      <mat-icon matSuffix (click)="onFindNext()" class="cursor-pointer">
-        expand_more
-      </mat-icon>
+      <mat-icon matSuffix (click)="onFindNext()" class="cursor-pointer">expand_more</mat-icon>
       }
     </div>
     }
@@ -203,50 +215,44 @@
     <div class="show-search-panel">
       @if (allPersonsFilteredIsIn.length) {
       <div>
-        {{ allPersonsFilteredIsIn.length }} {{ allPersonsFilteredIsIn.length > 1
-        ? 'résultats' : 'résultat'}} dans les effectifs
+        {{ allPersonsFilteredIsIn.length }} {{ allPersonsFilteredIsIn.length > 1 ? 'résultats' : 'résultat' }} dans
+        les effectifs
       </div>
       }
       @for (person of allPersonsFilteredIsIn; track person.id) {
       <a [routerLink]="['/resource-humaine', person.id]" class="is-in">
         <p class="agent-username">
-          {{ filterParams && filterParams.display === 'nom/prénom' ?
-          person.lastName:person.firstName}} {{ filterParams &&
-          filterParams.display === 'nom/prénom' ? person.firstName :
-          person.lastName}}
+          {{ filterParams && filterParams.display === 'nom/prénom' ? person.lastName : person.firstName }}
+          {{ filterParams && filterParams.display === 'nom/prénom' ? person.firstName : person.lastName }}
         </p>
         <i class="ri-user-follow-line" [style.background-color]="getCategoryColor(person.categoryName)"></i>
       </a>
       }
       @if (allPersonsFilteredNotIn.length) {
       <div>
-        {{ allPersonsFilteredNotIn.length }} {{ allPersonsFilteredNotIn.length >
-        1 ? 'résultats' : 'résultat'}} hors effectifs
+        {{ allPersonsFilteredNotIn.length }}
+        {{ allPersonsFilteredNotIn.length > 1 ? 'résultats' : 'résultat' }} hors effectifs
       </div>
       }
       @for (person of allPersonsFilteredNotIn; track person.id) {
       <a [routerLink]="['/resource-humaine', person.id]">
         <p class="agent-username">
-          {{ filterParams && filterParams.display === 'nom/prénom' ?
-          person.lastName:person.firstName}} {{ filterParams &&
-          filterParams.display === 'nom/prénom' ? person.firstName :
-          person.lastName}}
+          {{ filterParams && filterParams.display === 'nom/prénom' ? person.lastName : person.firstName }}
+          {{ filterParams && filterParams.display === 'nom/prénom' ? person.firstName : person.lastName }}
         </p>
         @if (person.dateStart && isArriving(person.dateStart) && !hasLeft(person.dateEnd)) {
         <div class="agent-status" [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
           <i class="ri-user-received-line" [ngStyle]="{
-              color: getCategoryColor(person.categoryName),
-            }">
-          </i>
+                    color: getCategoryColor(person.categoryName),
+                  }"></i>
           <p>Arrivée prévue</p>
         </div>
         }
         @if (person.dateEnd && hasLeft(person.dateEnd)) {
         <div class="agent-status" [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
           <i class="ri-user-shared-line" [ngStyle]="{
-              color: getCategoryColor(person.categoryName),
-            }">
-          </i>
+                    color: getCategoryColor(person.categoryName),
+                  }"></i>
           <p>Parti</p>
         </div>
         }

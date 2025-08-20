@@ -2,8 +2,7 @@
   <div class="title">
     <p>
       Evolution du stock et DTES &nbsp;
-      <label>{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }}
-        {{ startRealValue }} au {{ stopRealValue }}</label>
+      <label>{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }} {{ startRealValue }} au {{ stopRealValue }}</label>
     </p>
   </div>
   <div class="container">
@@ -12,7 +11,8 @@
       <div id="chartjs-tooltip">
         <div class="popin-title-content">
           <p class="popin-title">
-            <b>Stocks</b> <br />
+            <b>Stocks</b>
+            <br />
             à {{ getRealMonth(realSelectedMonth) }}
           </p>
           <div class="low">Projetés</div>
@@ -22,7 +22,7 @@
         <div class="popin-raw">
           <div class="popin-title">
             <div _ngcontent-vmx-c83="" class="circle green"></div>
-            <b> Affaires</b>
+            <b>Affaires</b>
           </div>
           <p class="low-value first">
             {{ getRounded(tooltip.projectedStock, true) || '0' }}
@@ -32,20 +32,15 @@
           </p>
           <div class="white-value">
             <div class="rounded-label">
-              <label>{{
-                getDeltaInPercent(
-                tooltip.simulatedStock,
-                tooltip.projectedStock
-                ) || 0
-                }}
-                %</label>
+              <label>{{ getDeltaInPercent(tooltip.simulatedStock, tooltip.projectedStock) || 0 }} %</label>
             </div>
           </div>
         </div>
         <div class="popin-raw">
           <div class="popin-title">
             <div _ngcontent-vmx-c83="" class="circle light-blue"></div>
-            <b>DTES</b> &nbsp; en mois
+            <b>DTES</b>
+            &nbsp; en mois
           </div>
           <p class="low-value">{{ getRounded(tooltip.projectedDTES) || '0' }}</p>
           <p class="hard-value">
@@ -53,13 +48,7 @@
           </p>
           <div class="white-value">
             <div class="rounded-label">
-              <label>{{
-                getDeltaInPercent(
-                tooltip.simulatedDTES,
-                tooltip.projectedDTES
-                ) || 0
-                }}
-                %</label>
+              <label>{{ getDeltaInPercent(tooltip.simulatedDTES, tooltip.projectedDTES) || 0 }} %</label>
             </div>
           </div>
         </div>
@@ -69,15 +58,35 @@
   </div>
 </div>
 <div class="right-side">
-  <aj-legend-label [title]="'projectedStock'" [label]="'Stock (projeté)'" [dotColor]="'#62dda7'" [bgColor]="'#c3fad5'"
-    (value)="display($event)"></aj-legend-label>
+  <aj-legend-label
+    [title]="'projectedStock'"
+    [label]="'Stock (projeté)'"
+    [dotColor]="'#62dda7'"
+    [bgColor]="'#c3fad5'"
+    (value)="display($event)"
+  ></aj-legend-label>
 
-  <aj-legend-label [title]="'simulatedStock'" [label]="'Stock (simulé)'" [dotColor]="'#00a95f'" [bgColor]="'#6fe49d'"
-    (value)="display($event)"></aj-legend-label>
+  <aj-legend-label
+    [title]="'simulatedStock'"
+    [label]="'Stock (simulé)'"
+    [dotColor]="'#00a95f'"
+    [bgColor]="'#6fe49d'"
+    (value)="display($event)"
+  ></aj-legend-label>
   <div class="space"></div>
-  <aj-legend-label [title]="'projectedDTES'" [label]="'DTES (projeté)'" [dotColor]="'#869ece'" [bgColor]="'#bfcdff'"
-    (value)="display($event)"></aj-legend-label>
+  <aj-legend-label
+    [title]="'projectedDTES'"
+    [label]="'DTES (projeté)'"
+    [dotColor]="'#869ece'"
+    [bgColor]="'#bfcdff'"
+    (value)="display($event)"
+  ></aj-legend-label>
 
-  <aj-legend-label [title]="'simulatedDTES'" [label]="'DTES (simulé)'" [dotColor]="'#dee5fd'" [bgColor]="'#7b99e4'"
-    (value)="display($event)"></aj-legend-label>
+  <aj-legend-label
+    [title]="'simulatedDTES'"
+    [label]="'DTES (simulé)'"
+    [dotColor]="'#dee5fd'"
+    [bgColor]="'#7b99e4'"
+    (value)="display($event)"
+  ></aj-legend-label>
 </div>
