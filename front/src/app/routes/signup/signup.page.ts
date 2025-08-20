@@ -168,7 +168,11 @@ export class SignupPage {
     }
 
     if (!tj) {
+      if(this.userService.isCa()) {
+        alert('Vous devez saisir une CA');
+      } else {
       alert('Vous devez saisir un TJ');
+    }
       return;
     }
 
