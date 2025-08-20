@@ -129,7 +129,7 @@ const cspConfig = {
       'object-src': ["'self'"],
       'base-uri': ["'self'"],
       'form-action': ["'self'", '*.hsforms.com'],
-      'upgrade-insecure-requests': [],
+      'upgrade-insecure-requests': true,
     },
     //reportOnly: true,
   },
