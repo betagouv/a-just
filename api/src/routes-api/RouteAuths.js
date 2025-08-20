@@ -116,7 +116,7 @@ export default class RouteAuths extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      code: Types.string().required(),
+      code: Types.string(),
     }),
   })
   async completeLogin(ctx) {
