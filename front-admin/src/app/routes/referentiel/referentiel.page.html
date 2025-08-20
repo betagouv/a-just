@@ -11,8 +11,8 @@
     <div class="input">Url de l'aide</div>
     <div class="select-big">Pour tous</div>
   </div>
-  @for (ref of referentiels; track ref) {
-    <div>
+  @for (ref of referentiels; track ref.id) {
+  <div>
     <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
@@ -20,7 +20,7 @@
             }
           "></ng-container>
   </div>
-}
+  }
 </aj-wrapper>
 
 <ng-template #itemTemplate let-items>
@@ -30,23 +30,23 @@
       (ngModelChange)="onUpdateElement(items, 'compter', $event.target?.checked ? $event.target?.checked : items.compter)" />
     <select #selectIn (change)="onUpdateElement(items, 'valueQualityIn', selectIn.value)">
       <option value="" selected>-</option>
-      @for (i of QUALITY_LIST; track i) {
-        <option [selected]="i.key === items.valueQualityIn" [value]="i.key">{{i.label}}
-        </option>
+      @for (i of QUALITY_LIST; track i.key) {
+      <option [selected]="i.key === items.valueQualityIn" [value]="i.key">{{i.label}}
+      </option>
       }
     </select>
     <select #selectOut (change)="onUpdateElement(items, 'valueQualityOut', selectOut.value)">
       <option value="" selected>-</option>
-      @for (i of QUALITY_LIST; track i) {
-        <option [selected]="i.key === items.valueQualityOut" [value]="i.key">{{i.label}}
-        </option>
+      @for (i of QUALITY_LIST; track i.key) {
+      <option [selected]="i.key === items.valueQualityOut" [value]="i.key">{{i.label}}
+      </option>
       }
     </select>
     <select #selectStock (change)="onUpdateElement(items, 'valueQualityStock', selectStock.value)">
       <option value="" selected>-</option>
-      @for (i of QUALITY_LIST; track i) {
-        <option [selected]="i.key === items.valueQualityStock" [value]="i.key">{{i.label}}
-        </option>
+      @for (i of QUALITY_LIST; track i.key) {
+      <option [selected]="i.key === items.valueQualityStock" [value]="i.key">{{i.label}}
+      </option>
       }
     </select>
     <input placeholder="Url d'aide" [ngModel]="items.helpUrl || ''"
@@ -58,25 +58,25 @@
         Pour tous
       </div>
       @if (items.backups !== null) {
-        <div>
-          <aj-select [datas]="backups" [value]="items.onlyToHrBackup || []"
+      <div>
+        <aj-select [datas]="backups" [value]="items.onlyToHrBackup || []"
           (valueChange)="onUpdateElement(items, 'onlyToHrBackup', $event)"></aj-select>
-        </div>
+      </div>
       }
     </div>
   </div>
   @if (items.childrens) {
-    <div class="list">
-      @for (item of items.childrens; track item) {
-        <div>
+  <div class="list">
+    @for (item of items.childrens; track item.id) {
+    <div>
       <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
               $implicit: item
             }
           "></ng-container>
-      </div>
+    </div>
     }
   </div>
-}
+  }
 </ng-template>

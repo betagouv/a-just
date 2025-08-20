@@ -1,9 +1,13 @@
-<div class="first-col" (click)="data.localUrl!?goTo(data.url):null" [routerLink]="data.localUrl ?['/dashboard']:null">
-    <img src="{{data.image}}" alt="a-just" />
+<div
+  class="first-col"
+  (click)="data.localUrl! ? goTo(data.url) : null"
+  [routerLink]="data.localUrl ? ['/dashboard'] : null"
+>
+  <img src="{{ data.image }}" alt="a-just" />
 </div>
 <div class="second-col" (click)="goTo(data.url)">
-    <label class="tag">{{data.tag}}</label>
-    <p class="title">{{data.title}}</p>
-    <p class="description">{{data.description}}</p>
-    <mat-icon>arrow_forward</mat-icon>
+  <label class="tag">{{ data.tag }}</label>
+  <p class="title">{{ data.title }}</p>
+  <p class="description">{{ data.description }}</p>
+  <mat-icon>arrow_forward</mat-icon>
 </div>

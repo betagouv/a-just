@@ -10,22 +10,36 @@
 </div>
 <div class="text">
   @if (subTitle) {
-    <p class="sub-title"
-      [style.color]="isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)">
-    {{subTitle}}</p>
+    <p
+      class="sub-title"
+      [style.color]="
+        isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)
+      "
+    >
+      {{ subTitle }}
+    </p>
   }
   @if (title) {
-    <p class="title"
-      [style.color]="isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)">
-      {{title}}
+    <p
+      class="title"
+      [style.color]="
+        isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)
+      "
+    >
+      {{ title }}
       @if (title === 'N/R') {
-        <aj-tooltips title="Donnée non renseignée" class="small"
-        content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+        <aj-tooltips
+          title="Donnée non renseignée"
+          class="small"
+          content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."
+        ></aj-tooltips>
       }
       @if (title === 'N/A') {
-        <aj-tooltips title="Pourcentage non calculable"
+        <aj-tooltips
+          title="Pourcentage non calculable"
           content="L'une des données de référence étant égale à 0, la variation ne peut être calculée"
-        class="small"></aj-tooltips>
+          class="small"
+        ></aj-tooltips>
       }
     </p>
   }

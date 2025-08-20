@@ -6,7 +6,8 @@
         <div class="flex-1"></div>
         @if (closeIcon) {
           <div class="close" (click)="onClose.emit()">
-            <label>Fermer</label><i class="material-icons pointer">close</i>
+            <label>Fermer</label>
+            <i class="material-icons pointer">close</i>
           </div>
         }
       </div>
@@ -15,28 +16,34 @@
       </div>
       @if (actions.length + actionsLeft.length > 0) {
         <div class="actions {{ removeShadow }}">
-          @for (action of actionsLeft; track action) {
-            <button (click)="onSelectAction(action)"
-                class="{{action.size ? action.size : 'small'}}" [ngClass]="{
-                    'material-icons': action.type && action.type === 'icon',
-                    red: action.red && action.red === true,
-                    primary: !action.red,
-                    fill: action.fill && action.fill === true,
-                    outline: !action.fill
-                    }">
+          @for (action of actionsLeft; track action.id) {
+            <button
+              (click)="onSelectAction(action)"
+              class="{{ action.size ? action.size : 'small' }}"
+              [ngClass]="{
+                'material-icons': action.type && action.type === 'icon',
+                red: action.red && action.red === true,
+                primary: !action.red,
+                fill: action.fill && action.fill === true,
+                outline: !action.fill,
+              }"
+            >
               {{ action.content }}
             </button>
           }
           <div class="flex-1"></div>
-          @for (action of actions; track action) {
-            <button (click)="onSelectAction(action)"
-                class="{{action.size ? action.size : 'small'}}" [ngClass]="{
-                    'material-icons': action.type && action.type === 'icon',
-                    red: action.red && action.red === true,
-                    primary: !action.red,
-                    fill: action.fill && action.fill === true,
-                    outline: !action.fill
-                }">
+          @for (action of actions; track action.id) {
+            <button
+              (click)="onSelectAction(action)"
+              class="{{ action.size ? action.size : 'small' }}"
+              [ngClass]="{
+                'material-icons': action.type && action.type === 'icon',
+                red: action.red && action.red === true,
+                primary: !action.red,
+                fill: action.fill && action.fill === true,
+                outline: !action.fill,
+              }"
+            >
               {{ action.content }}
             </button>
           }
@@ -45,7 +52,6 @@
     </div>
   </div>
 }
-
 <ng-template #defaultTitleTemplate>
-  {{ title }}
+  {{ title }}
 </ng-template>

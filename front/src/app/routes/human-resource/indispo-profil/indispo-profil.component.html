@@ -2,48 +2,46 @@
   <i id="logo-3" class="ri-ghost-2-line"></i>
   <p>Indisponibilités</p>
   <aj-help-button (click)="openHelpPanel('indispo')" class="no-print help-icon"
-  text="Qu'est-ce que c'est ?"></aj-help-button>
+    text="Qu'est-ce que c'est ?"></aj-help-button>
   <div class="flex-1"></div>
-  <button class="primary light small outline no-print" (click)="addIndispiniblity.emit()">
-    Ajouter
-  </button>
+  <button class="primary light small outline no-print" (click)="addIndispiniblity.emit()">Ajouter</button>
 </div>
 <div class="indispo-content">
   @if (indisponibilities.length === 0) {
-    <p class="empty">Pas d'indisponibilité en cours</p>
+  <p class="empty">Pas d'indisponibilité en cours</p>
   }
-  @for (indisp of indisponibilitiesFiltered; track indisp) {
-    <div class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
-      <div class="icon">
-        <mat-icon>event_busy</mat-icon>
-      </div>
-      <div class="text">
-        <p>
-          {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }}
-          ({{ indisp.percent || 0 }}%)
-        </p>
-        <p>
-          @if (indisp.dateStart) {
-            du {{ indisp.dateStart | date: 'dd' }}
-            {{ getShortMonthString(indisp.dateStart) }}
-            {{ getFullYear(indisp.dateStart) }}
-          }
-          @if (indisp.dateStart && indisp.dateStop) {
-            au
-          }
-          @if (!indisp.dateStart && indisp.dateStop) {
-            jusqu'au
-          }
-          @if (indisp.dateStop) {
-            {{ indisp.dateStop | date: 'dd' }}
-            {{ getShortMonthString(indisp.dateStop) }}
-            {{ getFullYear(indisp.dateStop) }}
-          }
-        </p>
-      </div>
-      <div class="action no-print">
-        <mat-icon>drive_file_rename_outline</mat-icon>
-      </div>
+  @for (indisp of indisponibilitiesFiltered; track indisp.contentieux.id) {
+  <div class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
+    <div class="icon">
+      <mat-icon>event_busy</mat-icon>
     </div>
+    <div class="text">
+      <p>
+        {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }}
+        ({{ indisp.percent || 0 }}%)
+      </p>
+      <p>
+        @if (indisp.dateStart) {
+        du {{ indisp.dateStart | date: 'dd' }}
+        {{ getShortMonthString(indisp.dateStart) }}
+        {{ getFullYear(indisp.dateStart) }}
+        }
+        @if (indisp.dateStart && indisp.dateStop) {
+        au
+        }
+        @if (!indisp.dateStart && indisp.dateStop) {
+        jusqu'au
+        }
+        @if (indisp.dateStop) {
+        {{ indisp.dateStop | date: 'dd' }}
+        {{ getShortMonthString(indisp.dateStop) }}
+        {{ getFullYear(indisp.dateStop) }}
+        }
+      </p>
+    </div>
+    <div class="action no-print">
+      <mat-icon>drive_file_rename_outline</mat-icon>
+    </div>
+  </div>
   }
 </div>

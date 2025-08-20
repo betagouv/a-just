@@ -6,8 +6,8 @@
       <label>Sélectionner une juridiction à dupliquer =></label>
       <form #formExtract>
         <select class="cursor-pointer" name="juridiction">
-          @for (j of juridictionList; track j) {
-            <option [value]="j.id">{{
+          @for (j of juridictionList; track j.id) {
+          <option [value]="j.id">{{
             j.label }}</option>
           }
         </select>
@@ -32,55 +32,55 @@
       <th mat-sort-header="enabled">Actif</th>
     </tr>
 
-    @for (element of datasSource; track element) {
-      <tr>
-        <td>{{element.iElst}}</td>
-        <td class="cursor-pointer" (click)="onUpdate('label', element)">
-          {{element.label}}
-          <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.users && element.users.length ?
-            '(' + element.users.length
+    @for (element of datasSource; track element.id) {
+    <tr>
+      <td>{{element.iElst}}</td>
+      <td class="cursor-pointer" (click)="onUpdate('label', element)">
+        {{element.label}}
+        <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.users && element.users.length ?
+          '(' + element.users.length
           + ' utilisateurs)' : ''}}</i>
-          <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.nbAgents ?
-            '(' +
+        <i (click)="selectedJuridiction = element; $event.stopPropagation()">{{element.nbAgents ?
+          '(' +
           element.nbAgents + ' agents)' : ''}}</i>
-        </td>
-        <td class="cursor-pointer" (click)="onUpdate('latitude', element)">
-          {{element.latitude || '-'}}
-        </td>
-        <td class="cursor-pointer" (click)="onUpdate('longitude', element)">
-          {{element.longitude || '-'}}
-        </td>
-        <td class="cursor-pointer" (click)="onUpdate('population', element)">
-          {{element.population || '-'}}
-        </td>
-        <td class="cursor-pointer" (click)="onUpdate('enabled', element)">
-          {{element.enabled ? 'Oui' : 'Non'}}
-        </td>
-      </tr>
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('latitude', element)">
+        {{element.latitude || '-'}}
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('longitude', element)">
+        {{element.longitude || '-'}}
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('population', element)">
+        {{element.population || '-'}}
+      </td>
+      <td class="cursor-pointer" (click)="onUpdate('enabled', element)">
+        {{element.enabled ? 'Oui' : 'Non'}}
+      </td>
+    </tr>
     }
   </table>
 
   @if (selectedJuridiction) {
-    <aj-popup [closeIcon]="true" (onClose)="selectedJuridiction = null">
-      <h3>Détails de la juridiction</h3>
-      <div class="grid-double">
-        <div>
-          <p><b>Liste des personnes ayant accès :</b></p>
-          @for (e of (selectedJuridiction.users || []); track e) {
-            <p>
-              {{e.firstName}} {{e.lastName}}
-            </p>
-          }
-        </div>
-        <div>
-          <p><b>Nombre de type d'agents :</b></p>
-          @for (e of (selectedJuridiction.categoriesAgents || []); track e) {
-            <p>
-              {{e.nbAgents}} {{e.label}}
-            </p>
-          }
-        </div>
+  <aj-popup [closeIcon]="true" (onClose)="selectedJuridiction = null">
+    <h3>Détails de la juridiction</h3>
+    <div class="grid-double">
+      <div>
+        <p><b>Liste des personnes ayant accès :</b></p>
+        @for (e of (selectedJuridiction.users || []); track e.id) {
+        <p>
+          {{e.firstName}} {{e.lastName}}
+        </p>
+        }
       </div>
-    </aj-popup>
+      <div>
+        <p><b>Nombre de type d'agents :</b></p>
+        @for (e of (selectedJuridiction.categoriesAgents || []); track e.label) {
+        <p>
+          {{e.nbAgents}} {{e.label}}
+        </p>
+        }
+      </div>
+    </div>
+  </aj-popup>
   }
 </aj-wrapper>

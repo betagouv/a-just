@@ -1,22 +1,27 @@
 <h3>Dernières modifications</h3>
 
-@for (item of list; track item) {
-  <a class="item" routerLink="/donnees-d-activite"
-    [queryParams]="{month: item.activity.periode, cont: item.contentieux.id}">
-    <div class="preview">
-      <div>
-        <span class="tag cont"
-          [ngStyle]="{'color': userService.referentielMappingColorByInterface(item.contentieux.label), 'background-color': userService.referentielMappingColorByInterface(item.contentieux.label, OPACITY)}">{{
-          userService.referentielMappingNameByInterface(item.contentieux.label)
-        }}</span>
-        <span class="tag month">{{ getShortMonthString(item.activity.periode) }} {{ getFullYear(item.activity.periode)
-        }}</span>
-      </div>
-      <p>par {{ item.user.firstName }} {{ item.user.lastName }} le {{ getDate(item.history.updatedAt) }} {{
-      getShortMonthString(item.history.updatedAt) }} {{ getFullYear(item.history.updatedAt) }}</p>
-    </div>
+@for (item of list; track item.contentieux.id) {
+<a class="item" routerLink="/donnees-d-activite"
+  [queryParams]="{ month: item.activity.periode, cont: item.contentieux.id }">
+  <div class="preview">
     <div>
-      <i class="ri-arrow-right-s-line"></i>
+      <span class="tag cont" [ngStyle]="{
+            color: userService.referentielMappingColorByInterface(item.contentieux.label),
+            'background-color': userService.referentielMappingColorByInterface(item.contentieux.label, OPACITY),
+          }">
+        {{ userService.referentielMappingNameByInterface(item.contentieux.label) }}
+      </span>
+      <span class="tag month">
+        {{ getShortMonthString(item.activity.periode) }} {{ getFullYear(item.activity.periode) }}
+      </span>
     </div>
-  </a>
+    <p>
+      par {{ item.user.firstName }} {{ item.user.lastName }} le {{ getDate(item.history.updatedAt) }}
+      {{ getShortMonthString(item.history.updatedAt) }} {{ getFullYear(item.history.updatedAt) }}
+    </p>
+  </div>
+  <div>
+    <i class="ri-arrow-right-s-line"></i>
+  </div>
+</a>
 }
