@@ -1,6 +1,7 @@
 import 'dotenv/config'
 
 module.exports = {
+  isDev: false,
   /**
    * String pour préfixer le nom de l'environement (idéal pour les mails de test)
    */
