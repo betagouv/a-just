@@ -318,7 +318,7 @@ export default class App extends AppBase {
       addDefaultBody(),
       compress({}),
       givePassword,
-      //honeyTrap,
+      honeyTrap,
       //helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
