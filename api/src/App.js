@@ -319,7 +319,7 @@ export default class App extends AppBase {
       compress({}),
       givePassword,
       honeyTrap,
-      //helmet(cspConfig),
+      helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
