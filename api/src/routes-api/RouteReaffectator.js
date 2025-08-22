@@ -6,10 +6,12 @@ import { copyArray } from '../utils/array'
 import { EXECUTE_REAFFECTATOR } from '../constants/log-codes'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { loadOrWarmHR } from '../utils/redis'
+import { getObjectSizeInMB, loadOrWarmHR } from '../utils/redis'
 import { filterAgentsByDateCategoryFunction, findAllSituations, findSituation, generateHRIndexes } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
+import zlib from 'zlib'
+import { promisify } from 'util'
 
 /**
  * Route de la page réaffectateur
@@ -167,7 +169,23 @@ export default class RouteReaffectator extends Route {
     )
     console.timeEnd('last step')
 
+    const json = JSON.stringify({
+      list: resultList,
+      allPersons: allP,
+    })
+
     console.timeEnd('Global reaffectator')
+    const gzip = promisify(zlib.gzip)
+    const compressed = await gzip(json)
+    const rawSize = getObjectSizeInMB({
+      list: resultList,
+      allPersons: allP,
+    })
+    const compressedSize = (compressed.length / 1024 / 1024).toFixed(2)
+
+    console.log(`🔍 Taille HR brute : ${rawSize} Mo`)
+    console.log(`📦 Taille HR compressée : ${compressedSize} Mo`)
+
     this.sendOk(ctx, {
       list: resultList,
       allPersons: allP,
