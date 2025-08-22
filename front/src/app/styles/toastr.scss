@@ -6,8 +6,8 @@
   >.toast {
     padding: 16px 16px 16px 57px;
     border-radius: 4px;
-    border: 1px solid utils.$colors-primary;
-    color: utils.$colors-primary;
+    border: 1px solid utils.$colors-toastrBorderColor;
+    color: utils.$colors-toastrBorderColor;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.4);

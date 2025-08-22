@@ -42,6 +42,10 @@ export class AppService {
 
   constructor() {
     this.initToastrConfig();
+
+    setInterval(()=> {
+      this.notification('coucou');
+    }, 1000);
   }
 
   initToastrConfig() {
