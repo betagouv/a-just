@@ -160,7 +160,7 @@ export class PanelActivitiesComponent
   /**
    * Détection d'un changement et génération des données du rendu
    */
-  ngOnChanges(change: any) {
+  ngOnChanges() {
     if (this.etp < 0) {
       this.etp = 0;
     }
