@@ -157,7 +157,7 @@
         margin: 0 4px;
 
         p {
-          color: utils.$colors-bgSelect;
+          color: utils.$colors-darkModeTitle;
           width: 100%;
           text-align: center;
         }
@@ -538,7 +538,8 @@
           }
 
           &.etp {
-            color: utils.$colors-darkModeBgMenu;
+            color: utils.$colors-bgSelect;
+            background-color: utils.$colors-darkModeBgMenu;
           }
 
           mat-icon {
