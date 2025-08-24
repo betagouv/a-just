@@ -1486,6 +1486,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       param1: { label: '', value: '' },
       param2: { label: '', value: '' },
     }
+
+    this.simulatorService.disabled.next('')
+
   }
 
   /**
