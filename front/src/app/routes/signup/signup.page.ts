@@ -228,8 +228,9 @@ export class SignupPage {
       return;
     }
 
-    if (this.paramsUrl?.email) {
-      email = this.paramsUrl?.email;
+    if (!email) {
+      alert('Vous devez saisir un email');
+      return;
     }
 
     if (
@@ -240,6 +241,22 @@ export class SignupPage {
     ) {
       alert('Vous devez saisir une adresse e-mail professionnelle');
       return;
+    }
+
+
+    if (!password) {
+      alert('Vous devez saisir un mot de passe');
+      return;
+    }
+
+    if (!passwordConf) {
+      alert('Vous devez confirmer votre mot de passe');
+      return;
+    }
+
+
+    if (this.paramsUrl?.email) {
+      email = this.paramsUrl?.email;
     }
 
     if (!checkbox) {
