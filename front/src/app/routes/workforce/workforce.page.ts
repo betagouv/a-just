@@ -776,13 +776,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       selectedSubReferentielIds = this.selectedSubReferentielIds
     }
 
-    if (memorizeScroolPosition) {
-      const domContent = document.getElementById('container-list')
-      if (domContent) {
-        scrollPosition = domContent?.scrollTop
-      }
-    }
-
     this.isLoading = true
     this.humanResourceService
       .onFilterList(
