@@ -122,11 +122,13 @@
         >div.end-empty-block,
         >div.middle-empty-block {
             background-color: utils.$colors-white;
-            height: 41px;
+            min-height: 41px;
             padding-left: 8px;
             padding-right: 8px;
             display: flex;
             align-items: center;
+            white-space: normal;
+            word-break: break-word;
 
             &.first-empty-block {
                 border-top-left-radius: 4px;
