@@ -898,7 +898,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         return {
           ...ref,
-          coverage: fixDecimal(outValue / inValue) * 100,
+          coverage: Math.round((outValue / inValue) * 100),
           dtes: lastStock === 0 || outValue === 0 ? 0 : fixDecimal(lastStock / outValue),
           etpUseToday: refFromItemList.etpUseToday,
           totalAffected: refFromItemList.totalAffected,
@@ -1038,5 +1038,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   referentielMappingNameByInterface(label: string) {
     if (this.getInterfaceType() === true) return this.referentielCAMappingName(label)
     else return this.referentielMappingName(label)
+  }
+
+  /**
+   * Arrondir un nombre à l'entier le plus proche
+   * @param valeur 
+   * @returns 
+   */
+  round(valeur:number){
+  return Math.round(valeur)
   }
 }

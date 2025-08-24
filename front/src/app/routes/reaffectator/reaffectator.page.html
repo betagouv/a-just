@@ -79,7 +79,7 @@
                         isNaN(ref.coverage)
                           ? null
                           : showReelValues && reaffectatorService.selectedReferentielIds.indexOf(ref.id) !== -1
-                            ? ref.realCoverage * 100
+                            ? round(ref.realCoverage * 100)
                             : ref.coverage
                       "></aj-speedometer>
             </div>
