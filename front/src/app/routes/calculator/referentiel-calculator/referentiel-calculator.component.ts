@@ -136,6 +136,15 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
   trunc(value: number) {
     return Math.trunc(value * 100000) / 100000
   }
+
+  /**
+   * Arrondi
+   * @param value 
+   * @returns 
+   */
+  round(value:number){
+  return Math.round(value)
+  }
   /**
    * Indique si la date de fin selectionnée est dans le passé
    */
