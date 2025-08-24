@@ -38,12 +38,12 @@
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                   datasFilted[index].realDTESInMonthsStart === null
                     ? 'N/R'
-                    : (datasFilted[index].realDTESInMonthsStart || 0 | number: '0.2')
+                    : (datasFilted[index].realDTESInMonthsStart || 0 | number: '0.2-2')
                 }}" subTitle="mois" class="no-border-bottom"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                   datasFilted[index].realDTESInMonths === null
                     ? 'N/R'
-                    : (datasFilted[index].realDTESInMonths || 0 | number: '0.2')
+                    : (datasFilted[index].realDTESInMonths || 0 | number: '0.2-2')
                 }}" subTitle="mois" [isWhite]="true" class="no-border-top"></aj-graphs-numbers>
       </div>
       }
@@ -325,24 +325,24 @@
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpMag === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpMag || 0) | number: '0.2')
+                      : ((datasFilted[index].etpMag || 0) | number: '0.2-2')
                   }}" class="text-center" [isWhite]="true"></aj-graphs-numbers>
         }
         @if (showDetailETPTSiege) {
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpMag === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpMag || 0) | number: '0.2')
+                      : ((datasFilted[index].etpMag || 0) | number: '0.2-2')
                   }}" class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpMagBf === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpMagBf || 0) | number: '0.2')
+                      : ((datasFilted[index].etpMagBf || 0) | number: '0.2-2')
                   }}" class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpMagAf === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpMagAf || 0) | number: '0.2')
+                      : ((datasFilted[index].etpMagAf || 0) | number: '0.2-2')
                   }}" class="text-center no-border-top"></aj-graphs-numbers>
         }
       </div>
@@ -396,24 +396,24 @@
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpFon === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpFon || 0) | number: '0.2')
+                      : ((datasFilted[index].etpFon || 0) | number: '0.2-2')
                   }}" class="text-center" [isWhite]="true"></aj-graphs-numbers>
         }
         @if (showDetailETPTGreffe) {
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpFon === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpFon || 0) | number: '0.2')
+                      : ((datasFilted[index].etpFon || 0) | number: '0.2-2')
                   }}" class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpFonBf === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpFonBf || 0) | number: '0.2')
+                      : ((datasFilted[index].etpFonBf || 0) | number: '0.2-2')
                   }}" class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpFonAf === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpFonAf || 0) | number: '0.2')
+                      : ((datasFilted[index].etpFonAf || 0) | number: '0.2-2')
                   }}" class="text-center no-border-top"></aj-graphs-numbers>
         }
       </div>
@@ -467,24 +467,24 @@
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpCont === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpCont || 0) | number: '0.2')
+                      : ((datasFilted[index].etpCont || 0) | number: '0.2-2')
                   }}" class="text-center" [isWhite]="true"></aj-graphs-numbers>
         }
         @if (showDetailETPTEam) {
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpCont === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpCont || 0) | number: '0.2')
+                      : ((datasFilted[index].etpCont || 0) | number: '0.2-2')
                   }}" class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpContBf === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpContBf || 0) | number: '0.2')
+                      : ((datasFilted[index].etpContBf || 0) | number: '0.2-2')
                   }}" class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpContAf === null
                       ? 'N/R'
-                      : (fixDecimal(datasFilted[index].etpContAf || 0) | number: '0.2')
+                      : ((datasFilted[index].etpContAf || 0) | number: '0.2-2')
                   }}" class="text-center no-border-top"></aj-graphs-numbers>
         }
       </div>

@@ -38,7 +38,7 @@
     @if (!isSoutien(calculator.contentieux.id)) {
     <div class="block left-border">
       @if (checkPastDate() && calculator.totalOut !== null && calculator.totalIn !== null) {
-      <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
+      <aj-speedometer [percent]="round((calculator.realCoverage || 0) * 100)"></aj-speedometer>
       } @else {
       <div class="ref-nr">
         <aj-tooltips title="Donnée non renseignée" class="small"
