@@ -71,7 +71,7 @@
       <p #tooltip="matTooltip"
         [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : ' + trunc(calculator.totalIn)"
         matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
-        {{ floor(calculator.totalIn) }}
+        {{ round(calculator.totalIn) }}
       </p>
     </div>
     } @else {
@@ -90,7 +90,7 @@
       <p #tooltip="matTooltip"
         [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : ' + trunc(calculator.totalOut)"
         matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
-        {{ floor(calculator.totalOut) }}
+        {{ round(calculator.totalOut) }}
       </p>
     </div>
     } @else {
