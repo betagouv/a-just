@@ -621,6 +621,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels = referentiels
+    this.sumPercentImported =  this.updatedReferentiels.reduce((sum, c) => sum + (c.percent || 0), 0) 
   }
 
   /**
