@@ -63,7 +63,7 @@
         }
         @for (variant of getOptionsToShow(line); track variant.label; let variantIndex = $index) {
         <aj-graphs-numbers [referentielName]="ref.label"
-          [title]="variant.values[refIndex] === null ? 'N/R' : variant.values[refIndex] + ''"
+          [title]="variant.values[refIndex] === null || !isFiniteNumber(variant.values[refIndex]) ? 'N/R' : variant.values[refIndex] + ''"
           [subTitle]="variant.subTitle" [ngClass]="{
                     'no-border-bottom':
                       variantIndex < getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1,
