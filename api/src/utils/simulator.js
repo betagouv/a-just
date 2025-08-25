@@ -229,7 +229,7 @@ export async function getSituation(
 
   let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
 
-  if (lastActivities.length === 0 && totalIn === 0 && totalOut === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
+  if (lastActivities.length === 0 && totalIn === 0 && totalOut === 0) return { ...emptySituation, etpMag, etpFon, etpCon, totalIn, totalOut, lastStock }
   else {
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = useNew
