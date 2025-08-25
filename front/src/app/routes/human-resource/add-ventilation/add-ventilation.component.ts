@@ -211,6 +211,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Afficher erreur date de début
    */
   printErrorDateStart: boolean = false
+  /**
+   * Import
+   */
+  imported=false
 
   /**
    * Constructeur
@@ -732,6 +736,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     this.fileReader(file, classe, event)
+    this.imported=true
     element.value = ''
   }
 
