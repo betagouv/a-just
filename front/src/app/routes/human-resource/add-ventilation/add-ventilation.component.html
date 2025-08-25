@@ -86,11 +86,7 @@
           </div>
           }
           @if (
-          displayImportLabels ||
-          humanResourceService.alertList().includes('fonction') ||
-          humanResourceService.alertList().includes('category') ||
-          humanResourceService.alertList().includes('etp')
-          ) {
+          displayImportLabels===true) {
           <label class="import-confirmation" [ngStyle]="{
                 color:
                   form.get('categoryId')?.value === null ||
@@ -192,7 +188,7 @@
           <p>Répartition du temps disponible</p>
           <div class="flex-1"></div>
 
-          @if (displayImportLabels) {
+          @if (displayImportLabels===true) {
           <label class="import-confirmation" [ngStyle]="{
                 color: sumPercentImported !== 100 ? '#c3992a' : '#18753c',
                 'background-color': sumPercentImported !== 100 ? '#feebd0' : '#b8fec9',
@@ -234,7 +230,7 @@
             <p>Situation à prendre en compte</p>
             }
             <div class="flex-1"></div>
-            @if (displayImportLabels || humanResourceService.alertList().includes('activitiesStartDate')) {
+            @if (displayImportLabels===true) {
             <label class="import-confirmation" [ngStyle]="{
                   color: form.get('activitiesStartDate')?.value === null ? '#c3992a' : '#18753c',
                   'background-color': form.get('activitiesStartDate')?.value === null ? '#feebd0' : '#b8fec9',
