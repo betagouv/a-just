@@ -124,4 +124,8 @@ export class TemplateAnalyticsComponent
       .filter((o) => o.graph)
       .map((o) => o.graph);
   }
+
+  isFiniteNumber(value: any): boolean {
+    return Number.isFinite(value);
+  }
 }
