@@ -4,44 +4,44 @@
     <div>
       <div class="tags">
         @if (dateStart) {
-          <p class="date">
-            <mat-icon>calendar_today</mat-icon>
-            @if (dateStart.getTime() !== getToday().getTime()) {
-              {{ dateStart && dateStart.getTime() > getToday().getTime() ? 'À partir du' : 'Depuis le' }}
-              {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
-              {{ dateStart.getFullYear() }}
-            }
-            @if (dateStart.getTime() === getToday().getTime()) {
-              {{
-                dateStart && dateStart.getTime() > getToday().getTime()
-                  ? "À partir d'Aujourd'hui"
-                  : "Depuis Aujourd'hui"
-              }}
-            }
-          </p>
+        <p class="date">
+          <mat-icon>calendar_today</mat-icon>
+          @if (dateStart.getTime() !== getToday().getTime()) {
+          {{ dateStart && dateStart.getTime() > getToday().getTime() ? 'À partir du' : 'Depuis le' }}
+          {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+          {{ dateStart.getFullYear() }}
+          }
+          @if (dateStart.getTime() === getToday().getTime()) {
+          {{
+          dateStart && dateStart.getTime() > getToday().getTime()
+          ? "À partir d'Aujourd'hui"
+          : "Depuis Aujourd'hui"
+          }}
+          }
+        </p>
         }
         @if (dateStop) {
-          <p class="date">
-            <mat-icon>calendar_today</mat-icon>
-            @if (dateStop.getTime() !== getToday().getTime()) {
-              Jusqu'au {{ dateStop | date: 'dd' }}
-              {{ getShortMonthString(dateStop) }}
-              {{ dateStop.getFullYear() }}
-            }
-            @if (dateStop.getTime() === getToday().getTime()) {
-              Jusqu'à Aujourd'hui
-            }
-          </p>
+        <p class="date">
+          <mat-icon>calendar_today</mat-icon>
+          @if (dateStop.getTime() !== getToday().getTime()) {
+          Jusqu'au {{ dateStop | date: 'dd' }}
+          {{ getShortMonthString(dateStop) }}
+          {{ dateStop.getFullYear() }}
+          }
+          @if (dateStop.getTime() === getToday().getTime()) {
+          Jusqu'à Aujourd'hui
+          }
+        </p>
         }
       </div>
     </div>
   </div>
   <div class="right-panel">
     @if (canEdit) {
-      <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">Corriger</button>
-      @if (canRemoveSituation) {
-        <button (click)="onRemove.emit()" class="light small outline red no-print">Supprimer</button>
-      }
+    <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">Corriger</button>
+    @if (canRemoveSituation) {
+    <button (click)="onRemove.emit()" class="light small outline red no-print">Supprimer</button>
+    }
     }
   </div>
 </div>
@@ -57,9 +57,10 @@
   </a>
 </div>
 
-<panel-activities
-  [category]="category"
-  [etp]="(etp || 0) - indisponibility"
-  [activities]="activities"
-  [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"
-></panel-activities>
+@defer (on viewport; prefetch on idle) {
+
+<panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
+  [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
+} @placeholder {
+<div class="flex-1"></div>
+}
