@@ -44,6 +44,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat, userCanViewWhiteSimulator } from '../../utils/user'
 import { ChooseSimulatorComponent } from './choose-simulator/choose-simulator.component'
 import { REAFFECTATOR, SIMULATOR_DONNEES, SIMULATOR_OTHER_ACTIVITY } from '../../constants/simulator'
+import { isNaN } from 'lodash'
 
 /**
  * Variable ETP magistrat field name
@@ -1226,7 +1227,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         return
       }
 
-      if (['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase'].includes(inputField.id) && parseFloat(volumeInput) <= 0) {
+      if (['totalIn', 'totalOut', 'lastStock','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))) {
         alert('Le nombre total ne peut pas être inférieur ou égal à 0')
         return
       }
@@ -1485,6 +1486,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       param1: { label: '', value: '' },
       param2: { label: '', value: '' },
     }
+
+    this.simulatorService.disabled.next('')
+
   }
 
   /**

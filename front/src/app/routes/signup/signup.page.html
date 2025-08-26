@@ -7,129 +7,137 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" (keydown)="preventSubmit($event)">
     <h3>Embarquement A-JUST</h3>
     @if (ssoIsActivate && signUpStep === 1 && !userService.isCa()) {
-      <button class="outline white strict-border sso-bt" id="signupSSO" (click)="onUseSSO()" type="button"
-        [ngClass]="{disabled: !canUseSSO}">
-        <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />
-        Embarquer avec Pages Blanches
-      </button>
-      <div class="or">
-        <p>ou</p>
-      </div>
+    <button class="outline white strict-border sso-bt" id="signupSSO" (click)="onUseSSO()" type="button"
+      [ngClass]="{ disabled: !canUseSSO }">
+      <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />
+      Embarquer avec Pages Blanches
+    </button>
+    <div class="or">
+      <p>ou</p>
+    </div>
     }
-
     <div class="box-signup">
       @if (!provider) {
-        <label class="steps">Étape {{signUpStep}} sur 2</label>
-        <label class="sub-title">Tous les champs de ce formulaire sont obligatoires</label>
+      <label class="steps">Étape {{ signUpStep }} sur 2</label>
+      <label class="sub-title">Tous les champs de ce formulaire sont obligatoires</label>
       }
-      <p class="step-title">{{signUpStep===1 ?'Je suis :':'Ma fonction'}}</p>
+      <p class="step-title">{{ signUpStep === 1 ? 'Je suis :' : 'Ma fonction' }}</p>
       @if (!provider) {
-        <div class="bordure-steps">
-          <div class="step-one"></div>
-          <div class="step-two" [ngStyle]="{ 'background-color': getStepColor()}"></div>
-        </div>
+      <div class="bordure-steps">
+        <div class="step-one"></div>
+        <div class="step-two" [ngStyle]="{ 'background-color': getStepColor() }"></div>
+      </div>
       }
-      @if (signUpStep===1) {
-        <div class="grid-double">
-          <div>
-            <label>Prénom</label>
-            <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text"
-              (keyup.enter)="focusNext($event)" autocomplete="off" />
-          </div>
-          <div>
-            <label>NOM</label>
-            <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text"
-              (keyup.enter)="focusNext($event)" autocomplete="off" />
-          </div>
+      @if (signUpStep === 1) {
+      <div class="grid-double">
+        <div>
+          <label>Prénom</label>
+          <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text"
+            (keyup.enter)="focusNext($event)" autocomplete="off" />
         </div>
-        <label>Courriel professionnel :</label>
-        <label class="sub-label">Adresse nominative uniquement, ne pas utiliser de boîte générique ou
-        structurelle</label>
-        <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
-          (keyup.enter)="focusNext($event)" autocomplete="off" />
-        @if (!paramsUrl?.provider) {
-          <div class="password-line">
-            <div><label>Créer un mot de passe :</label></div>
-            <span class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()"><input
-              (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"
-              formControlName="checkboxPassword" />
-          Afficher</span>
+        <div>
+          <label>NOM</label>
+          <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text"
+            (keyup.enter)="focusNext($event)" autocomplete="off" />
         </div>
-        <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"
-          type="{{!form.controls['checkboxPassword'].value?'password':'text'}}" (keyup)="checkStrength($event)"
-          (keyup.enter)="focusNext($event)" autocomplete="off" />
-        <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>
-        <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(0)}"><span
-        [ngStyle]="{ 'background-color': getParamColor(0)}">i</span>
-      &nbsp; {{MIN_PASSWORD_LENGTH}} caractères minimum</label>
-      <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(1)}"><span
-      [ngStyle]="{ 'background-color': getParamColor(1)}">i</span>
-    &nbsp; 1 caractère spécial</label>
-    <label class="sub-label password" [ngStyle]="{ 'color': getParamColor(2)}"><span
-    [ngStyle]="{ 'background-color': getParamColor(2)}">i</span>
-  &nbsp; 1 chiffre minimum</label>
-  <label class="sub-label password last" [ngStyle]="{ 'color': getParamColor(3)}"><span
-  [ngStyle]="{ 'background-color': getParamColor(3)}">i</span>
-&nbsp; 1 majuscule</label>
-<label>Confirmation de votre mot de passe :</label>
-<input #input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password"
-  (keyup.enter)="focusNext($event)" autocomplete="off" />
-}
-<div class="checkbox-container checkbox-row">
-  <input #checkbox class="large" type="checkbox" formControlName="checkbox" (keyup.enter)="focusNext($event)"
-    autocomplete="off" />
-  <p (click)="checkbox.click()">
-    Je certifie avoir lu et accepté les
-    <a [routerLink]="['/conditions-generales-d-utilisation', 'signUp']">Conditions générales d'utilisation</a>.
-  </p>
-</div>
-<div class="next-step" (click)="onStepTwo()">
-  <p>Continuer mon embarquement</p>
-</div>
-}
-@if (signUpStep===2) {
-  <label>{{userService.interfaceType === 1 ? "Ma cour":"Mon tribunal"}} de rattachement :</label>
-  <div class="tj">
-    <select (change)="setTj($event.target)">
-      <!--<option selected hidden></option>-->
-      <option selected hidden>Choisir {{userService.interfaceType === 1 ? "une CA":"un TJ"}}</option>
-      @for (tj of tjs; track tj) {
-        <option [value]="tj.id">
-          {{ tj.label }}
+      </div>
+      <label>Courriel professionnel :</label>
+      <label class="sub-label">
+        Adresse nominative uniquement, ne pas utiliser de boîte générique ou structurelle
+      </label>
+      <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
+        (keyup.enter)="focusNext($event)" autocomplete="off" />
+      @if (!paramsUrl?.provider) {
+      <div class="password-line">
+        <div><label>Créer un mot de passe :</label></div>
+        <span class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()">
+          <input (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"
+            formControlName="checkboxPassword" />
+          Afficher
+        </span>
+      </div>
+      <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"
+        type="{{ !form.controls['checkboxPassword'].value ? 'password' : 'text' }}" (keyup)="checkStrength($event)"
+        (keyup.enter)="focusNext($event)" autocomplete="off" />
+      <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>
+      <label class="sub-label password" [ngStyle]="{ color: getParamColor(0) }">
+        <span [ngStyle]="{ 'background-color': getParamColor(0) }">i</span>
+        &nbsp; {{ MIN_PASSWORD_LENGTH }} caractères minimum
+      </label>
+      <label class="sub-label password" [ngStyle]="{ color: getParamColor(1) }">
+        <span [ngStyle]="{ 'background-color': getParamColor(1) }">i</span>
+        &nbsp; 1 caractère spécial
+      </label>
+      <label class="sub-label password" [ngStyle]="{ color: getParamColor(2) }">
+        <span [ngStyle]="{ 'background-color': getParamColor(2) }">i</span>
+        &nbsp; 1 chiffre minimum
+      </label>
+      <label class="sub-label password last" [ngStyle]="{ color: getParamColor(3) }">
+        <span [ngStyle]="{ 'background-color': getParamColor(3) }">i</span>
+        &nbsp; 1 majuscule
+      </label>
+      <label>Confirmation de votre mot de passe :</label>
+      <input #input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password"
+        (keyup.enter)="focusNext($event)" autocomplete="off" />
+      }
+      <div class="checkbox-container checkbox-row">
+        <input #checkbox class="large" type="checkbox" formControlName="checkbox" (keyup.enter)="focusNext($event)"
+          autocomplete="off" />
+        <p (click)="checkbox.click()">
+          Je certifie avoir lu et accepté les
+          <a [routerLink]="['/conditions-generales-d-utilisation']">Conditions générales d'utilisation</a>
+          .
+        </p>
+      </div>
+      <div class="next-step" (click)="onStepTwo()">
+        <p>Continuer mon embarquement</p>
+      </div>
+      }
+      @if (signUpStep === 2) {
+      <label>{{ userService.interfaceType === 1 ? 'Ma cour' : 'Mon tribunal' }} de rattachement :</label>
+      <div class="tj">
+        <select (change)="setTj($event.target)">
+          <!--<option selected hidden></option>-->
+          <option selected hidden>Choisir {{ userService.interfaceType === 1 ? 'une CA' : 'un TJ' }}</option>
+          @for (tj of tjs; track tj.id) {
+          <option [value]="tj.id">
+            {{ tj.label }}
+          </option>
+          }
+        </select>
+      </div>
+      <label>Ma fonction :</label>
+      <select #fctSelect (change)="setFonc($event.target)">
+        <option selected hidden>Choisir une fonction</option>
+        @for (fonc of fonctions; track fonc) {
+        <option [value]="fonc">
+          {{ fonc }}
         </option>
+        }
+        <option>Autre</option>
+      </select>
+      @if (fctSelect.value === 'Autre') {
+      <label>Intitulé de ma fonction :</label>
+      <input class="ethics-ui" placeholder="Exemple" formControlName="fonctionAutre" type="text" autocomplete="off" />
+      <label>Mon responsable hiérarchique :</label>
+      <label class="sub-label">Personne qui validera l'ouverture de mes droits</label>
+      <input class="ethics-ui" placeholder="prénom nom et fonction" formControlName="responsable" type="text"
+        autocomplete="off" />
       }
-    </select>
-  </div>
-  <label>Ma fonction :</label>
-  <select #fctSelect (change)="setFonc($event.target)">
-    <option selected hidden>Choisir une fonction</option>
-    @for (fonc of fonctions; track fonc) {
-      <option [value]="fonc">
-        {{ fonc }}
-      </option>
-    }
-    <option>Autre</option>
-  </select>
-  @if (fctSelect.value==='Autre') {
-    <label>Intitulé de ma fonction :</label>
-    <input class="ethics-ui" placeholder="Exemple" formControlName="fonctionAutre" type="text"
-      autocomplete="off" />
-    <label>Mon responsable hiérarchique :</label>
-    <label class="sub-label">Personne qui validera l'ouverture de mes droits</label>
-    <input class="ethics-ui" placeholder="prénom nom et fonction" formControlName="responsable" type="text"
-      autocomplete="off" />
-  }
-  <div>
-    <input type="submit" class="big-button" value="Valider mon embarquement" />
-  </div>
-}
-</div>
+      <div>
+        <input type="submit" class="big-button" value="Valider mon embarquement" />
+      </div>
+      }
+    </div>
 
-<div class="login">
-  <p><b>Vous avez déjà un compte</b></p>
-  <a routerLink="/connexion"><button class="outline white strict-border">
-    <i class="ri-login-box-line"></i>Se connecter
-  </button></a>
-</div>
-</form>
+    <div class="login">
+      <p><b>Vous avez déjà un compte</b></p>
+      <a routerLink="/connexion">
+        <button class="outline white strict-border">
+          <i class="ri-login-box-line"></i>
+          Se connecter
+        </button>
+      </a>
+    </div>
+  </form>
 </aj-wrapper-no-connected>

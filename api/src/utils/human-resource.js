@@ -1,5 +1,5 @@
 import { minBy, orderBy, sumBy } from 'lodash'
-import { getTime, getWorkingDaysCount, isDateGreaterOrEqual, today, workingDay } from '../utils/date'
+import { getTime, getWorkingDaysCount, isDateGreaterOrEqual, today } from '../utils/date'
 import { checkAbort } from './abordTimeout'
 import { fixDecimal } from './number'
 import { IntervalTree } from './intervalTree'
@@ -842,6 +842,14 @@ export const loadFonctionsForCategory = async (categorySelected, models) => {
   const all = await models.HRFonctions.getAll()
   const categoryId = getCategoryIdFromLabel(categorySelected)
   return all.filter((f) => f.categoryId === categoryId)
+}
+
+export const loadFonctionsForMultiCategoryFiltered = async (categorySelected, fctIdsFiltered, models) => {
+  if (fctIdsFiltered === null) return null
+  const all = await models.HRFonctions.getAll()
+  const categoryId = getCategoryIdFromLabel(categorySelected)
+
+  return all.filter((f) => f.categoryId !== categoryId || fctIdsFiltered.includes(f.id)).map((i) => i.id)
 }
 
 export const loadReferentiels = async (backupId, contentieuxIds, models) => {

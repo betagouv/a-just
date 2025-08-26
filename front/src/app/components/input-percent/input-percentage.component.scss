@@ -42,6 +42,7 @@
 
              &:focus {
                  outline: none;
+                 border-bottom: solid 2px utils.$colors-cblack !important;
              }
          }
 

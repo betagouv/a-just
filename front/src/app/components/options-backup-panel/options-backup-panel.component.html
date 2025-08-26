@@ -1,15 +1,23 @@
 @if (readOnly === false) {
-  <button (click)="onBackBackup()" [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
-    class="left-margin blue-button empty">
+  <button
+    (click)="onBackBackup()"
+    [disabled]="!optionsIsModify"
+    [ngClass]="{ enable: optionsIsModify }"
+    class="left-margin blue-button empty"
+  >
     Annuler
   </button>
   <div class="flex-1"></div>
-  <button class="left-margin white-button empty" (click)="downloadTemplate();$event.stopPropagation();">
+  <button class="left-margin white-button empty" (click)="downloadTemplate(); $event.stopPropagation()">
     Exporter sous Excel
   </button>
   @if (selectedIds.length) {
-    <button [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }"
-      class="left-margin blue-button" (click)="onSaveHR(false)">
+    <button
+      [disabled]="!optionsIsModify"
+      [ngClass]="{ enable: optionsIsModify }"
+      class="left-margin blue-button"
+      (click)="onSaveHR(false)"
+    >
       Enregistrer
     </button>
   }

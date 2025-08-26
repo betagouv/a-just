@@ -17,8 +17,8 @@
     "test:e2e": "NODE_ENV=test docker compose -p test-e2e -f docker-compose-e2e.test.yml build && docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm cypress; exitcode=$?; docker compose -p test-e2e -f docker-compose-e2e.test.yml down; exit ${exitcode}",
     "build": "yarn build:api && yarn build:front-admin && yarn build:front && yarn build:package",
     "build:api": "cd api && yarn && yarn build && cd ..",
-    "build:front-admin": "cd front-admin && yarn && yarn --dev && yarn build && mv dist/browser ../api/dist/front-admin && cd ..",
-    "build:front": "cd front && yarn && yarn --dev && yarn build && mv dist/browser ../api/dist/front && cd ..",
+    "build:front-admin": "cd front-admin && yarn && yarn --dev --force && yarn build && mv dist/browser ../api/dist/front-admin && cd ..",
+    "build:front": "cd front && yarn && yarn --dev --omit=optional && yarn build && mv dist/browser ../api/dist/front && cd ..",
     "build:package": "cp package.json ./api/dist/.",
     "start:production": "cd api && yarn start:production"
   }

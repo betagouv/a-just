@@ -71,6 +71,7 @@ import { FiguresWidgetComponent } from '../../../components/figures-widget/figur
 import { DialWidgetComponent } from '../widgets/dial-widget/dial-widget.component';
 import { BackButtonComponent } from '../../../components/back-button/back-button.component';
 import { AppService } from '../../../services/app/app.service';
+import { isNaN } from 'lodash';
 
 /**
  * Composant page simulateur
@@ -1195,10 +1196,7 @@ export class WhiteSimulatorPage
       }
 
       if (
-        ['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase'].includes(
-          inputField.id
-        ) &&
-        parseFloat(volumeInput) <= 0
+        ['totalIn', 'totalOut', 'lastStock','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))
       ) {
         alert('Le nombre total ne peut pas être inférieur ou égal à 0');
         return;

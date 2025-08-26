@@ -3,33 +3,35 @@
   @if (comments.length) {
     <div class="tag">
       <mat-icon class="material-icons-outlined">sms</mat-icon>
-      <p>{{comments.length}}</p>
+      <p>{{ comments.length }}</p>
     </div>
   }
   <div class="flex-1"></div>
   <mat-icon class="cursor-pointer" (click)="close.emit()">close</mat-icon>
 </div>
 <div class="content">
-  @for (com of comments; track com; let index = $index) {
-    <one-comment [comment]="com"
-    (deletedComment)="removeComment(index)"></one-comment>
+  @for (com of comments; track com.id; let index = $index) {
+    <one-comment [comment]="com" (deletedComment)="removeComment(index)"></one-comment>
   }
 </div>
 <div class="action">
   @if (userService.userS(); as user) {
     <div class="properties">
-      <div class="number-circle">{{user.initials}}</div>
-      <label>{{user.firstName + ' ' + user.lastName}}</label>
+      <div class="number-circle">{{ user.initials }}</div>
+      <label>{{ user.firstName + ' ' + user.lastName }}</label>
     </div>
   }
-  <aj-text-editor #editor placeholder="Écrivez un commentaire" (valueChange)="commentContent = $event">
-  </aj-text-editor>
+  <aj-text-editor #editor placeholder="Écrivez un commentaire" (valueChange)="commentContent = $event"></aj-text-editor>
   <div class="footer-panel">
     @if (commentContent.length) {
       <div class="back" (click)="editor.setValue('')">Annuler</div>
     }
-    <div class="save" [ngClass]="{disabled: !commentContent.length}"
-      (click)="onSentComment(commentContent, null, editor)">
-    Enregistrer</div>
+    <div
+      class="save"
+      [ngClass]="{ disabled: !commentContent.length }"
+      (click)="onSentComment(commentContent, null, editor)"
+    >
+      Enregistrer
+    </div>
   </div>
 </div>

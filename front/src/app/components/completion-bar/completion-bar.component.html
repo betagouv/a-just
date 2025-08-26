@@ -1,7 +1,14 @@
 <div class="progression-bar">
   <div class="bar">
-    <div class="level" [ngClass]="{'rouge': this.value <= 50, 'jaune' : this.value > 50 && this.value <= 80, 'bleu' : this.value > 80 && this.value <= 99, 'vert': this.value > 99 && this.value <= 100 }" [ngStyle]="{'width' : this.value  + '%'}">
-
-    </div>
+    <div
+      class="level"
+      [ngClass]="{
+        rouge: this.value <= 50,
+        jaune: this.value > 50 && this.value <= 80,
+        bleu: this.value > 80 && this.value <= 99,
+        vert: this.value > 99 && this.value <= 100,
+      }"
+      [ngStyle]="{ width: this.value + '%' }"
+    ></div>
   </div>
 </div>

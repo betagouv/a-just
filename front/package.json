@@ -11,7 +11,11 @@
     "test": "ng test",
     "compodoc": "npx compodoc -p tsconfig.doc.json -s -w --port 8181",
     "analyse:build": "npm run build:stats && npx webpack-bundle-analyzer dist/stats.json",
-    "e2e": "npx cypress open"
+    "e2e": "npx cypress open",
+    "format": "node format-angular-templates.js && prettier --write \"src/**/*.{ts,scss,css,js,json}\"",
+    "format:html": "node format-angular-templates.js",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss,css,js,json}\"",
+    "format:angular": "node format-angular-templates.js"
   },
   "private": true,
   "dependencies": {
@@ -75,6 +79,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.5.6",
+    "prettier": "^3.0.0",
+    "prettier-plugin-organize-imports": "^3.2.0",
     "tailwindcss": "^4.1.11",
     "typescript": "~5.8.3"
   }

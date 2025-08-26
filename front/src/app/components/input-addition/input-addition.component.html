@@ -1,7 +1,6 @@
 <div class="input-container">
-    <form [formGroup]="valueForm">
-        <input formControlName="addition" class="main-input" type="number" #additionInput /><span class="compute">{{
-            returnAddition(additionInput.value) }}
-        </span>
-    </form>
+  <form [formGroup]="valueForm">
+    <input formControlName="addition" class="main-input" type="number" #additionInput />
+    <span class="compute">{{ returnAddition(additionInput.value) }}</span>
+  </form>
 </div>

@@ -211,6 +211,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Afficher erreur date de début
    */
   printErrorDateStart: boolean = false
+  /**
+   * Import
+   */
+  imported=false
 
   /**
    * Constructeur
@@ -621,6 +625,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels = referentiels
+    this.sumPercentImported =  this.updatedReferentiels.reduce((sum, c) => sum + (c.percent || 0), 0) 
   }
 
   /**
@@ -731,6 +736,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     this.fileReader(file, classe, event)
+    this.imported=true
     element.value = ''
   }
 

@@ -446,7 +446,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       c.value = c.orignalValue + ''
 
       if (itemBlock && itemBlock.hrFiltered) {
-        console.log(itemBlock.hrFiltered)
         c.value = `${itemBlock.hrFiltered.length} ${itemBlock.hrFiltered.length > 1 ? c.orignalValuePlurial || c.orignalValue : c.orignalValue} (${fixDecimal(
           sumBy(itemBlock.hrFiltered || [], function (h) {
             const etp = (h.etp || 0) - h.hasIndisponibility
@@ -464,8 +463,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
       return c
     })
-
-    console.log('this.listFormated', this.listFormated)
   }
 
   /**
@@ -513,7 +510,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }
     this.appService.appLoading.next(true)
 
-    console.log(this.reaffectatorService.selectedReferentielIds.length)
     this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
@@ -548,7 +544,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             orignalCurrentActivities: h.currentActivities,
             isModify: false,
           }))
-          console.log('allHr', allHr)
           return {
             ...i,
             allHr,
@@ -614,9 +609,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
             l.hrFiltered = l.hrFiltered || []
             l.hrFiltered.push(cloneDeep(newPerson))
             l.hrFiltered = sortBy(l.hrFiltered, 'fonction.rank')
-            l.allHr = l.allHr || []
-            l.allHr.push(cloneDeep(newPerson))
-            l.allHr = sortBy(l.allHr, 'fonction.rank')
+            l.allHr = l.hrFiltered || []
           }
         })
       })
@@ -677,6 +670,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.indexValuesFinded = 0
 
     if (this.valuesFinded && this.valuesFinded.length) {
+      this.valuesFinded = this.valuesFinded.filter(x=>x.situations[0]?.category?.id===this.reaffectatorService.selectedCategoriesId)
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
     } else {
       this.onGoTo(null)
@@ -865,7 +859,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       etpCalculate += (timeAffected / 100) * realETP
     })
 
-    return fixDecimal(etpCalculate)
+    return fixDecimal(etpCalculate, 1000)
   }
 
   /**
@@ -901,19 +895,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const inValue = refFromItemList.totalIn || 0
 
         let outValue = averageWorkingProcess === 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
-        outValue = fixDecimal(outValue)
+        outValue = fixDecimal(outValue, 1000)
 
         return {
           ...ref,
-          coverage: fixDecimal(outValue / inValue) * 100,
+          coverage: Math.round((outValue / inValue) * 100),
           dtes: lastStock === 0 || outValue === 0 ? 0 : fixDecimal(lastStock / outValue),
           etpUseToday: refFromItemList.etpUseToday,
           totalAffected: refFromItemList.totalAffected,
           realCoverage: this.reaffectatorService.selectedReferentielIds.includes(ref.id) ? ref.realCoverage : 0, // make empty data if the referentiel id is not selected
         }
       })
-
-      console.log(this.referentiel)
     }
   }
 
@@ -924,7 +916,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param indexList
    */
   updateHRReferentiel(hr: HumanResourceSelectedInterface, referentiels: ContentieuReferentielInterface[], indexList: number) {
-    console.log(hr, referentiels)
     const list: RHActivityInterface[] = []
 
     referentiels
@@ -1048,5 +1039,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   referentielMappingNameByInterface(label: string) {
     if (this.getInterfaceType() === true) return this.referentielCAMappingName(label)
     else return this.referentielMappingName(label)
+  }
+
+  /**
+   * Arrondir un nombre à l'entier le plus proche
+   * @param valeur 
+   * @returns 
+   */
+  round(valeur:number){
+  return Math.round(valeur)
   }
 }

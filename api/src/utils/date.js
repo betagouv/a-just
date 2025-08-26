@@ -417,8 +417,8 @@ export function getTime(date) {
  * @returns
  */
 export const getWorkingDaysCount = (startDate, endDate) => {
-  const start = today(startDate)
-  const end = today(endDate)
+  let start = today(startDate)
+  let end = today(endDate)
 
   if (start > end) {
     // Si la date de début est après la date de fin, échanger les dates
@@ -448,5 +448,19 @@ export const getWorkingDaysCount = (startDate, endDate) => {
     currentDay = (currentDay + 1) % 7
   }
 
+  if (comparerDatesJourMoisAnnee(start, end)) {
+    return 1
+  }
+
   return workingDays
+}
+
+/**
+ * Compare deux dates sur jour, mois et année uniquement
+ * @param {Date} date1 - Première date
+ * @param {Date} date2 - Deuxième date
+ * @returns {boolean} true si mêmes jour, mois et année, sinon false
+ */
+export const comparerDatesJourMoisAnnee = (date1, date2) => {
+  return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()
 }

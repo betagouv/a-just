@@ -1,9 +1,6 @@
 {
   "name": "a-just-api",
   "version": "0.0.1",
-  "engines": {
-    "node": "22"
-  },
   "scripts": {
     "start": "TZ='Europe/Paris' nodemon --exec babel-node src/index.js",
     "start:production": "cd dist && TZ='Europe/Paris' node --optimize_for_size --gc_interval=100 --max-old-space-size=2048 index.js",
@@ -46,7 +43,7 @@
     "jsonwebtoken": "^9.0.2",
     "koa-body": "^6.0.1",
     "koa-csp": "^1.2.6",
-    "koa-helmet": "^7.0.2",
+    "koa-helmet": "^8.0.1",
     "koa-ip": "^2.1.3",
     "koa-redis": "^4.0.1",
     "koa-session": "^6.4.0",
@@ -74,6 +71,7 @@
     "@babel/register": "^7.25.9",
     "axios": "^1.9.0",
     "babel-eslint": "^10.1.0",
+    "esbuild": "0.19.12",
     "eslint": "^9.13.0",
     "expect": "^29.7.0",
     "jsdoc": "^4.0.4",
@@ -83,5 +81,10 @@
     "prettier": "^3.5.3",
     "prettier-eslint": "^16.3.0",
     "sinon": "^19.0.2"
+  },
+  "nodemonConfig": {
+    "exitcrash": true,
+    "signal": "SIGINT",
+    "legacyWatch": true
   }
 }

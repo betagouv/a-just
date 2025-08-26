@@ -272,7 +272,7 @@ export class SimulatorService extends MainClass {
         if (data?.etpCont === null) {
           return 'N/R'
         }
-        return data?.etpCont || '0'
+        return toCompute ? data?.etpCont : fixDecimal(data?.etpCont || 0) || '0'
       case 'realCoverage': {
         if (data?.realCoverage === null) {
           return 'N/R'

@@ -544,6 +544,7 @@ export class DtesChartComponent {
               this.myChart.getDatasetMeta(2).data[value.pointIndex as number].y | 0,
               this.myChart.getDatasetMeta(3).data[value.pointIndex as number].y | 0,
             )
+            higuerYPosition = higuerYPosition < 30 ? 30 : higuerYPosition
             higuerXPosition = this.myChart.getDatasetMeta(0).data[value.pointIndex as number].x | 0
           }
 

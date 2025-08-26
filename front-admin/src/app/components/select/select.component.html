@@ -3,25 +3,25 @@
   <!-- <app-select-check-all *ngIf="multiple" [model]="selectionModel"
   [values]="this.subList ? this.subReferentielData : this.datas" check="true">
 </app-select-check-all> -->
-@if (!subList) {
+  @if (!subList) {
   <div>
-    @for (ref of datas; track ref) {
-      <mat-option [value]="ref.id" class="myMatOptions">
-        <span [innerHTML]="(ref.renderHTML || ref.value) | sanitizeHtml"></span>
-      </mat-option>
+    @for (ref of datas; track ref.id) {
+    <mat-option [value]="ref.id" class="myMatOptions">
+      <span [innerHTML]="(ref.renderHTML || ref.value) | sanitizeHtml"></span>
+    </mat-option>
     }
   </div>
-} @else {
-  @for (ref of subReferentielData; track ref) {
-    <mat-option [value]="ref.id">
-      <span [innerHTML]="ref.value | sanitizeHtml"></span>
-    </mat-option>
+  } @else {
+  @for (ref of subReferentielData; track ref.id) {
+  <mat-option [value]="ref.id">
+    <span [innerHTML]="ref.value | sanitizeHtml"></span>
+  </mat-option>
   }
-}
+  }
 </mat-select>
 <p (click)="openDropDown(matSelect)" class="title">{{ title }} @if (subTitleTemplate) {
   <ng-container *ngTemplateOutlet="subTitleTemplate" class="test"></ng-container>
-}
+  }
 </p>
 <div (click)="openDropDown(matSelect)">
   <p class="bold-family value">{{ realValue || defaultRealValue }}</p>
