@@ -1,6 +1,9 @@
 describe("Ventilateur", () => {
-  beforeEach(() => {
+  before(() => {
     cy.login();
+  });
+  beforeEach(() => {
+    cy.visit("/ventilations");
   });
 
   // Vérification que la page du ventilateur se charge correctement
@@ -19,8 +22,8 @@ describe("Ventilateur", () => {
       .should("contain.text", "Simuler des affectations")
       .click()
       .location("pathname")
-      .should("contain", "/reaffectateur")
-      .visit("/ventilations");
+      .should("contain", "/reaffectateur");
+    cy.go("back");
   });
 
   it('Check that the button on top "Ajouter un agent" is there and when clicked, opens the right pag ', () => {
@@ -35,6 +38,7 @@ describe("Ventilateur", () => {
     cy.wait(10000);
 
     cy.url().should("include", "/resource-humaine");
+    cy.go("back");
   });
 
   it("Check that when an agent’s card is clicked, it redirects to the full agent’s profile", () => {
@@ -46,11 +50,12 @@ describe("Ventilateur", () => {
         userId = id.split("-")[1];
         cy.get(".sub-content-list person-preview:first").within(() => {
           cy.get(".actions a").click();
-          cy.wait(20000);
+          cy.wait(1000);
           cy.location("pathname").should(
             "include",
             `/resource-humaine/${userId}`
           );
+          cy.go("back");
         });
       });
   });

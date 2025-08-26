@@ -6,10 +6,12 @@ import { copyArray } from '../utils/array'
 import { EXECUTE_REAFFECTATOR } from '../constants/log-codes'
 import { canHaveUserCategoryAccess } from '../utils/hr-catagories'
 import { HAS_ACCESS_TO_MAGISTRAT } from '../constants/access'
-import { loadOrWarmHR } from '../utils/redis'
+import { getObjectSizeInMB, loadOrWarmHR } from '../utils/redis'
 import { filterAgentsByDateCategoryFunction, findAllSituations, findSituation, generateHRIndexes } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
+import zlib from 'zlib'
+import { promisify } from 'util'
 
 /**
  * Route de la page réaffectateur
@@ -54,6 +56,7 @@ export default class RouteReaffectator extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
+    console.time('Global reaffectator')
     let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((r) => r.label !== 'Indisponibilité')
     if (referentielList && referentielList.length == referentiel.length) {
       referentielList = null
@@ -129,43 +132,63 @@ export default class RouteReaffectator extends Route {
     )
     console.timeEnd('Format by categories')
 
+    console.time('last step')
+    const allP = orderBy(
+      hr.map((person) => {
+        let situations = findAllSituations(person, this.date)
+        if (situations.length === 0) {
+          // if no situation in the past get to the future
+          situations = findAllSituations(person, this.date, true, true)
+        }
+        const { currentSituation } = findSituation(person, this.date)
+        let etp = (currentSituation && currentSituation.etp) || null
+        if (etp < 0) {
+          etp = 0
+        }
+        return {
+          id: person.id,
+          currentActivities: (currentSituation && currentSituation.activities) || [],
+          lastName: person.lastName,
+          firstName: person.firstName,
+          isIn: false,
+          dateStart: person.dateStart,
+          dateEnd: person.dateEnd,
+          situations: situations,
+          etp,
+          etpLabel: etp ? etpLabel(etp) : null,
+          categoryName: situations.length && situations[0].category ? situations[0].category.label : '',
+          category: situations.length && situations[0].category ? situations[0].category : null,
+          categoryRank: situations.length && situations[0].category ? situations[0].category.rank : null,
+          fonctionRank: situations.length && situations[0].fonction ? situations[0].fonction.rank : null,
+          fonction: situations.length && situations[0].fonction ? situations[0].fonction : null,
+          indisponibilities: person.indisponibilities,
+          updatedAt: person.updatedAt,
+        }
+      }),
+      ['categoryRank', 'fonctionRank', 'lastName'],
+    )
+    console.timeEnd('last step')
+
+    const json = JSON.stringify({
+      list: resultList,
+      allPersons: allP,
+    })
+
+    console.timeEnd('Global reaffectator')
+    const gzip = promisify(zlib.gzip)
+    const compressed = await gzip(json)
+    const rawSize = getObjectSizeInMB({
+      list: resultList,
+      allPersons: allP,
+    })
+    const compressedSize = (compressed.length / 1024 / 1024).toFixed(2)
+
+    console.log(`🔍 Taille HR brute : ${rawSize} Mo`)
+    console.log(`📦 Taille HR compressée : ${compressedSize} Mo`)
+
     this.sendOk(ctx, {
       list: resultList,
-      allPersons: orderBy(
-        hr.map((person) => {
-          let situations = findAllSituations(person, this.date)
-          if (situations.length === 0) {
-            // if no situation in the past get to the future
-            situations = findAllSituations(person, this.date, true, true)
-          }
-          const { currentSituation } = findSituation(person, this.date)
-          let etp = (currentSituation && currentSituation.etp) || null
-          if (etp < 0) {
-            etp = 0
-          }
-
-          return {
-            id: person.id,
-            currentActivities: (currentSituation && currentSituation.activities) || [],
-            lastName: person.lastName,
-            firstName: person.firstName,
-            isIn: false,
-            dateStart: person.dateStart,
-            dateEnd: person.dateEnd,
-            situations: situations,
-            etp,
-            etpLabel: etp ? etpLabel(etp) : null,
-            categoryName: situations.length && situations[0].category ? situations[0].category.label : '',
-            category: situations.length && situations[0].category ? situations[0].category : null,
-            categoryRank: situations.length && situations[0].category ? situations[0].category.rank : null,
-            fonctionRank: situations.length && situations[0].fonction ? situations[0].fonction.rank : null,
-            fonction: situations.length && situations[0].fonction ? situations[0].fonction : null,
-            indisponibilities: person.indisponibilities,
-            updatedAt: person.updatedAt,
-          }
-        }),
-        ['categoryRank', 'fonctionRank', 'lastName'],
-      ),
+      allPersons: allP,
     })
   }
 }

@@ -1,174 +1,173 @@
 @if (calculator) {
-  <div class="main-referentiel"
-    [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(userService.referentielMappingNameByInterface(calculator.contentieux.label ==='Autres activités'? 'other': calculator.contentieux.label), OPACITY)">
-    <div class="width-contentieux contentieux" (click)="onToggleChildren()">
-      @if (calculator.childrens && calculator.childrens.length) {
-        <mat-icon class="no-print">{{ showChildren ?
-          'expand_more' :
-          'chevron_right' }}
-        </mat-icon>
+<div class="main-referentiel" [style.backgroundColor]="
+      userService.referentielMappingColorActivityByInterface(
+        userService.referentielMappingNameByInterface(
+          calculator.contentieux.label === 'Autres activités' ? 'other' : calculator.contentieux.label
+        ),
+        OPACITY
+      )
+    ">
+  <div class="width-contentieux contentieux" (click)="onToggleChildren()">
+    @if (calculator.childrens && calculator.childrens.length) {
+    <mat-icon class="no-print">{{ showChildren ? 'expand_more' : 'chevron_right' }}</mat-icon>
+    }
+    <p>
+      {{
+      userService.isCa()
+      ? calculator.contentieux.label
+      : userService.referentielMappingNameByInterface(calculator.contentieux.label)
+      }}
+    </p>
+  </div>
+  <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }" class="item dtes">
+    @if (!isSoutien(calculator.contentieux.id)) {
+    <div class="block">
+      @if (calculator.realDTESInMonths !== null && checkPastDate()) {
+      <p>{{ calculator.realDTESInMonths | number: '0.2-2' }} mois</p>
+      } @else {
+      <div class="ref-nr">
+        <aj-tooltips title="Donnée non renseignée" class="small"
+          content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+        <p>N/R</p>
+      </div>
       }
-      <p>{{userService.isCa()?calculator.contentieux.label:userService.referentielMappingNameByInterface(calculator.contentieux.label)}}
+    </div>
+    }
+  </div>
+  <div [ngClass]="{ selected: sortBy === 'realCoverage' }" class="item coverage">
+    @if (!isSoutien(calculator.contentieux.id)) {
+    <div class="block left-border">
+      @if (checkPastDate() && calculator.totalOut !== null && calculator.totalIn !== null) {
+      <aj-speedometer [percent]="round((calculator.realCoverage || 0) * 100)"></aj-speedometer>
+      } @else {
+      <div class="ref-nr">
+        <aj-tooltips title="Donnée non renseignée" class="small"
+          content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+        <p>N/R</p>
+      </div>
+      }
+    </div>
+    }
+  </div>
+  <div [ngClass]="{ selected: sortBy === 'lastStock' }" class="item stock">
+    @if (!isSoutien(calculator.contentieux.id)) {
+    @if (calculator.lastStock !== null && checkPastDate()) {
+    <div>
+      <p>{{ calculator.lastStock }}</p>
+    </div>
+    } @else {
+    <div class="ref-nr">
+      <aj-tooltips title="Donnée non renseignée" class="small"
+        content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+      <p>N/R</p>
+    </div>
+    }
+    }
+  </div>
+  <div [ngClass]="{ selected: sortBy === 'totalIn' }" class="left-border item">
+    @if (!isSoutien(calculator.contentieux.id)) {
+    @if (calculator.totalIn !== null && checkPastDate()) {
+    <div>
+      <p #tooltip="matTooltip"
+        [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : ' + trunc(calculator.totalIn)"
+        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
+        {{ round(calculator.totalIn) }}
       </p>
     </div>
-    <div [ngClass]="{ selected: sortBy === 'realDTESInMonths' }" class="item dtes">
-      @if (!isSoutien(calculator.contentieux.id)) {
-        <div class="block">
-          @if (calculator.realDTESInMonths !== null && checkPastDate()) {
-            <p>{{ calculator.realDTESInMonths | number: '0.2-2' }} mois</p>
-          } @else {
-            <div class="ref-nr">
-              <aj-tooltips title="Donnée non renseignée" class="small"
-              content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
-              <p>N/R</p>
-            </div>
-          }
-        </div>
-      }
+    } @else {
+    <div class="ref-nr">
+      <aj-tooltips title="Donnée non renseignée" class="small"
+        content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+      <p>N/R</p>
     </div>
-    <div [ngClass]="{ selected: sortBy === 'realCoverage' }" class="item coverage">
-      @if (!isSoutien(calculator.contentieux.id)) {
-        <div class="block left-border">
-          @if (checkPastDate() && calculator.totalOut !== null && calculator.totalIn !== null) {
-            <aj-speedometer [percent]="(calculator.realCoverage || 0) * 100"></aj-speedometer>
-          } @else {
-            <div class="ref-nr">
-              <aj-tooltips title="Donnée non renseignée" class="small"
-              content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
-              <p>N/R</p>
-            </div>
-          }
-        </div>
-      }
-    </div>
-    <div [ngClass]="{ selected: sortBy === 'lastStock' }" class="item stock">
-      @if (!isSoutien(calculator.contentieux.id)) {
-        @if (calculator.lastStock !== null && checkPastDate()) {
-          <div>
-            <p>{{ calculator.lastStock }}</p>
-          </div>
-        } @else {
-          <div class="ref-nr">
-            <aj-tooltips title="Donnée non renseignée" class="small"
-            content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
-            <p>N/R</p>
-          </div>
-        }
-      }
-    </div>
-    <div [ngClass]="{ selected: sortBy === 'totalIn' }" class="left-border item">
-      @if (!isSoutien(calculator.contentieux.id)) {
-        @if (calculator.totalIn !== null && checkPastDate()) {
-          <div>
-            <p #tooltip="matTooltip"
-              [matTooltip]="'Valeur exacte d\'entrées utilisée dans les calculs : '+ trunc(calculator.totalIn)"
-              matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
-            floor(calculator.totalIn) }}</p>
-          </div>
-        } @else {
-          <div class="ref-nr">
-            <aj-tooltips title="Donnée non renseignée" class="small"
-            content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
-            <p>N/R</p>
-          </div>
-        }
-      }
-    </div>
-    <div [ngClass]="{ selected: sortBy === 'totalOut' }" class="left-border item">
-      @if (!isSoutien(calculator.contentieux.id)) {
-        @if (calculator.totalOut !== null && checkPastDate()) {
-          <div>
-            <p #tooltip="matTooltip"
-              [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : '+ trunc(calculator.totalOut)"
-              matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">{{
-            floor(calculator.totalOut) }}</p>
-          </div>
-        } @else {
-          <div class="ref-nr">
-            <aj-tooltips title="Donnée non renseignée" class="small"
-            content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
-            <p>N/R</p>
-          </div>
-        }
-      }
-    </div>
-    @if (canViewMagistrat) {
-<div [ngClass]="{
-        selected: sortBy === 'etpMag',
-        'bg-magistrats': categorySelected === MAGISTRATS
-      }" class="left-border item">
-        <div>
-          <p>{{ calculator.etpMag | number: '0.2-2' }}</p>
-        </div>
-      </div>
     }
-    @if (canViewGreffier) {
-<div [ngClass]="{
-        selected: sortBy === 'etpFon',
-        'bg-fonctionnaires': categorySelected === FONCTIONNAIRES
-      }" class="left-border item">
-        <div>
-          <p>{{ calculator.etpFon | number: '0.2-2' }}</p>
-        </div>
-      </div>
     }
-    @if (canViewContractuel) {
-      <div [ngClass]="{ selected: sortBy === 'etpCont' }" class="left-border item">
-        <div>
-          <p>{{ calculator.etpCont | number: '0.2-2' }}</p>
-        </div>
-      </div>
+  </div>
+  <div [ngClass]="{ selected: sortBy === 'totalOut' }" class="left-border item">
+    @if (!isSoutien(calculator.contentieux.id)) {
+    @if (calculator.totalOut !== null && checkPastDate()) {
+    <div>
+      <p #tooltip="matTooltip"
+        [matTooltip]="'Valeur exacte de sorties utilisée dans les calculs : ' + trunc(calculator.totalOut)"
+        matTooltipPosition="left" matTooltipShowDelay="0" matTooltipHideDelay="0">
+        {{ round(calculator.totalOut) }}
+      </p>
+    </div>
+    } @else {
+    <div class="ref-nr">
+      <aj-tooltips title="Donnée non renseignée" class="small"
+        content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+      <p>N/R</p>
+    </div>
     }
-    <div [ngClass]="{
-        selected: sortBy === 'magRealTimePerCase'
+    }
+  </div>
+  @if (canViewMagistrat) {
+  <div [ngClass]="{
+          selected: sortBy === 'etpMag',
+          'bg-magistrats': categorySelected === MAGISTRATS,
+        }" class="left-border item">
+    <div>
+      <p>{{ calculator.etpMag | number: '0.2-2' }}</p>
+    </div>
+  </div>
+  }
+  @if (canViewGreffier) {
+  <div [ngClass]="{
+          selected: sortBy === 'etpFon',
+          'bg-fonctionnaires': categorySelected === FONCTIONNAIRES,
+        }" class="left-border item">
+    <div>
+      <p>{{ calculator.etpFon | number: '0.2-2' }}</p>
+    </div>
+  </div>
+  }
+  @if (canViewContractuel) {
+  <div [ngClass]="{ selected: sortBy === 'etpCont' }" class="left-border item">
+    <div>
+      <p>{{ calculator.etpCont | number: '0.2-2' }}</p>
+    </div>
+  </div>
+  }
+  <div [ngClass]="{
+        selected: sortBy === 'magRealTimePerCase',
       }" class="item tmd">
-      <div class="block">
-        @if (categorySelected === MAGISTRATS && !isSoutien(calculator.contentieux.id)) {
-          @if (calculator.magRealTimePerCase !== null && checkPastDate()) {
-            <p>
-              {{
-              this.decimalToStringDate(calculator.magRealTimePerCase) || 0
-              }}
-            </p>
-          } @else {
-            <div class="ref-nr">
-              <aj-tooltips title="Donnée non renseignée" class="small"
-              content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
-              <p>N/R</p>
-            </div>
-          }
-        }
-        @if (categorySelected === FONCTIONNAIRES && !isSoutien(calculator.contentieux.id)) {
-          @if (calculator.fonRealTimePerCase !== null && checkPastDate()) {
-            <p>
-              {{
-              this.decimalToStringDate(calculator.fonRealTimePerCase) || 0
-              }}
-            </p>
-          } @else {
-            <div class="ref-nr">
-              <aj-tooltips title="Donnée non renseignée" class="small"
-              content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
-              <p>N/R</p>
-            </div>
-          }
-        }
+    <div class="block">
+      @if (categorySelected === MAGISTRATS && !isSoutien(calculator.contentieux.id)) {
+      @if (calculator.magRealTimePerCase !== null && checkPastDate()) {
+      <p>
+        {{ this.decimalToStringDate(calculator.magRealTimePerCase) || 0 }}
+      </p>
+      } @else {
+      <div class="ref-nr">
+        <aj-tooltips title="Donnée non renseignée" class="small"
+          content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+        <p>N/R</p>
       </div>
+      }
+      }
+      @if (categorySelected === FONCTIONNAIRES && !isSoutien(calculator.contentieux.id)) {
+      @if (calculator.fonRealTimePerCase !== null && checkPastDate()) {
+      <p>
+        {{ this.decimalToStringDate(calculator.fonRealTimePerCase) || 0 }}
+      </p>
+      } @else {
+      <div class="ref-nr">
+        <aj-tooltips title="Donnée non renseignée" class="small"
+          content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+        <p>N/R</p>
+      </div>
+      }
+      }
     </div>
   </div>
+</div>
 }
-@if (
-  (showChildren || forceToShowChildren) &&
-  calculator &&
-  calculator.childrens &&
-  calculator.childrens.length
-  ) {
-  <div class="childrens">
-    @for (r of calculator.childrens; track trackBy($index, r)) {
-      <aj-referentiel-calculator [calculator]="r"
-        [sortBy]="sortBy" class="is-child" [categorySelected]="categorySelected">
-      </aj-referentiel-calculator>
-    }
-  </div>
+@if ((showChildren || forceToShowChildren) && calculator && calculator.childrens && calculator.childrens.length) {
+<div class="childrens">
+  @for (r of calculator.childrens; track r.contentieux.id) {
+  <aj-referentiel-calculator [calculator]="r" [sortBy]="sortBy" class="is-child"
+    [categorySelected]="categorySelected"></aj-referentiel-calculator>
+  }
+</div>
 }
-

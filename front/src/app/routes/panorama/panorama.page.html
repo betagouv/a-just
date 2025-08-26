@@ -1,18 +1,35 @@
 <aj-wrapper
-  [title]="'Panorama de votre '+ getInterfaceType() + ' le ' + now.getDate() + ' ' + getMonthString(now) + ' ' + now.getFullYear()"
-  [subtitleTemplate]="subTitle" class="content-margin-null print" [isLoading]="isLoading">
+  [title]="
+    'Panorama de votre ' +
+    getInterfaceType() +
+    ' le ' +
+    now.getDate() +
+    ' ' +
+    getMonthString(now) +
+    ' ' +
+    now.getFullYear()
+  "
+  [subtitleTemplate]="subTitle"
+  class="content-margin-null print"
+  [isLoading]="isLoading"
+>
   <div class="panorama-container">
     <div class="header-panorama" #header>
       @if (canViewVentilation) {
-        <div class="effectifs" [ngClass]="{selected: !titleSelectActivities}"
-          (click)="scrollTo('effectif', container, 40)">
+        <div
+          class="effectifs"
+          [ngClass]="{ selected: !titleSelectActivities }"
+          (click)="scrollTo('effectif', container, 40)"
+        >
           Effectifs
         </div>
       }
       @if (canViewActivities && !userService.isCa()) {
-        <div class="activities"
-          [ngClass]="{selected: !canViewVentilation || titleSelectActivities}"
-          (click)="scrollTo('activites', container, 40)">
+        <div
+          class="activities"
+          [ngClass]="{ selected: !canViewVentilation || titleSelectActivities }"
+          (click)="scrollTo('activites', container, 40)"
+        >
           Données d'activité
         </div>
       }
@@ -25,22 +42,31 @@
         <div class="effectifs-panels">
           <div class="effectif-title" id="effectif">Effectifs</div>
           <div class="workforce-panel">
-            <workforce-composition [backupId]="backupId" [categoriesFiltered]="categoriesFiltered"
-            class="wordforce-composition"></workforce-composition>
-            <records-update [listFormated]="listFormated" [allPersons]="allPersons"
-            [categoriesFiltered]="categoriesFiltered" class="records-update"></records-update>
+            <workforce-composition
+              [backupId]="backupId"
+              [categoriesFiltered]="categoriesFiltered"
+              class="wordforce-composition"
+            ></workforce-composition>
+            <records-update
+              [listFormated]="listFormated"
+              [allPersons]="allPersons"
+              [categoriesFiltered]="categoriesFiltered"
+              class="records-update"
+            ></records-update>
           </div>
           <div class="workforce-change">
-            <workforce-change [listArrivals]="listArrivals" [listDepartures]="listDepartures"
-            [listUnavailabilities]="listUnavailabilities" [totalWorkforce]="totalWorkforce"></workforce-change>
+            <workforce-change
+              [listArrivals]="listArrivals"
+              [listDepartures]="listDepartures"
+              [listUnavailabilities]="listUnavailabilities"
+              [totalWorkforce]="totalWorkforce"
+            ></workforce-change>
           </div>
         </div>
       }
       @if (canViewActivities && !userService.isCa()) {
         <div class="activites-panels-helper">
-          <div class="pano-title" id="activites" #titleActivities>
-            Les données d’activité
-          </div>
+          <div class="pano-title" id="activites" #titleActivities>Les données d’activité</div>
           <div class="activities-panel">
             <div class="left-panel">
               <activities-last-disponibilities></activities-last-disponibilities>
@@ -57,26 +83,32 @@
 <ng-template #subTitle>
   <div class="tags">
     @if (canViewMagistrat && canViewGreffier && canViewContractuel) {
-      <div class="tag all"
-        [ngClass]="{active: categoriesFiltered === null}" (click)="onSelectCategories()">
-        Tous
-      </div>
+      <div class="tag all" [ngClass]="{ active: categoriesFiltered === null }" (click)="onSelectCategories()">Tous</div>
     }
     @if (canViewMagistrat) {
-      <div class="tag seat" (click)="onSelectCategories(1)"
-        [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(1) !== -1}">
+      <div
+        class="tag seat"
+        (click)="onSelectCategories(1)"
+        [ngClass]="{ active: categoriesFiltered === null || categoriesFiltered.indexOf(1) !== -1 }"
+      >
         Siège
       </div>
     }
     @if (canViewGreffier) {
-      <div class="tag greffe" (click)="onSelectCategories(2)"
-        [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(2) !== -1}">
+      <div
+        class="tag greffe"
+        (click)="onSelectCategories(2)"
+        [ngClass]="{ active: categoriesFiltered === null || categoriesFiltered.indexOf(2) !== -1 }"
+      >
         Greffe
       </div>
     }
     @if (canViewContractuel) {
-      <div class="tag arround" (click)="onSelectCategories(3)"
-        [ngClass]="{active: categoriesFiltered === null || categoriesFiltered.indexOf(3) !== -1}">
+      <div
+        class="tag arround"
+        (click)="onSelectCategories(3)"
+        [ngClass]="{ active: categoriesFiltered === null || categoriesFiltered.indexOf(3) !== -1 }"
+      >
         Autour du magistrat
       </div>
     }

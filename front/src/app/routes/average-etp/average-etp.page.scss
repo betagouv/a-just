@@ -295,7 +295,7 @@
     #circle {
       width: 70px;
       height: 70px;
-      background: utils.$colors-ventilationPastSituation;
+      background: utils.$colors-bgReadETPDark;
       border-radius: 70px;
       margin: auto;
       display: flex;
@@ -362,18 +362,18 @@
 
         label {
           background-color: utils.$colors-white;
-          border: solid 1px utils.$colors-lightBorder;
+          border: solid 1px utils.$colors-dataNotSettedIsSetBg;
 
           &.selected-mag {
-            background-color: utils.$colors-ventilationPastSituation;
-            border: solid 1px utils.$colors-primary;
+            background-color: utils.$colors-bgCategorySiege;
+            border: solid 1px utils.$colors-dataToCompleteBorder;
             color: utils.$colors-primary;
           }
 
           &.selected-greffe {
-            color: utils.$colors-primary;
-            border: solid 1px utils.$colors-primary !important;
-            background-color: utils.$colors-ventilationPastSituation !important;
+            color: utils.$colors-cpink;
+            border: solid 1px utils.$colors-cpink !important;
+            background-color: utils.$colors-cpinkmiddle !important;
           }
         }
 

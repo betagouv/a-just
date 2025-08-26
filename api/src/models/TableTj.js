@@ -1,5 +1,6 @@
 import { groupBy, sumBy } from 'lodash'
 import { listCategories } from '../utils/ventilator'
+import { loadOrWarmHR } from '../utils/redis'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
@@ -15,7 +16,7 @@ export default (sequelizeInstance, Model) => {
     for (let i = 0; i < list.length; i++) {
       list[i].users = await Model.models.UserVentilations.getUserVentilationsWithLabel(list[i].label)
       const getBackupId = await Model.models.HRBackups.findByLabel(list[i].label)
-      const agents = getBackupId ? listCategories(await loadOrWarmHR(backupId, Model.models)) : []
+      const agents = getBackupId ? listCategories(await loadOrWarmHR(getBackupId, Model.models)) : []
       const group = groupBy(
         agents.filter((a) => a.category),
         'category.label',

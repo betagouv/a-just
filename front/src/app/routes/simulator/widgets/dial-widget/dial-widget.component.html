@@ -1,23 +1,31 @@
-<div class="title" [ngClass]="{'print-shadow-bottom': print}">
+<div class="title" [ngClass]="{ 'print-shadow-bottom': print }">
   <p>Evolution du taux de couverture</p>
-  <label>{{ dateStart === '' ? "d'aujourd'hui" : 'du' }} {{ dateStart }} au
-    {{ dateStop }}</label>
+  <label>{{ dateStart === '' ? "d'aujourd'hui" : 'du' }} {{ dateStart }} au {{ dateStop }}</label>
 </div>
 <div class="button-container">
   <div class="buttons">
-    <div [class.selected]="selectedSituation === 'projected'" class="button"
-      (click)="selectedSituation = 'projected'; permuteValues()">
+    <div
+      [class.selected]="selectedSituation === 'projected'"
+      class="button"
+      (click)="selectedSituation = 'projected'; permuteValues()"
+    >
       Situation projetée
     </div>
-    <div [class.selected]="selectedSituation === 'simulated'" class="button"
-      (click)="selectedSituation = 'simulated'; permuteValues()">
+    <div
+      [class.selected]="selectedSituation === 'simulated'"
+      class="button"
+      (click)="selectedSituation = 'simulated'; permuteValues()"
+    >
       Situation simulée
     </div>
   </div>
   <div class="space-flex"></div>
   <div class="container">
-    <aj-coverage-preview [@fadeInOut] [oldCoverageRate]="toNumber(valueProjected)"
-      [coverageRate]="toNumber(valueSimulated)"></aj-coverage-preview>
+    <aj-coverage-preview
+      [@fadeInOut]
+      [oldCoverageRate]="toNumber(valueProjected)"
+      [coverageRate]="toNumber(valueSimulated)"
+    ></aj-coverage-preview>
   </div>
   <div class="space-flex"></div>
 </div>

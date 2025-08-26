@@ -1,16 +1,31 @@
 <!-- SIMULATEUR STD - SELECTEUR CONTENTIEUX, SS CONTENTIEUX, FCT-->
 <div class="action-simulator-bar">
-    <ng-content></ng-content>
-    <aj-select title="Contentieux (obligatoire)" class="contentieux {{this.disabled}}"
-        [defaultRealValue]="'Sélectionner un contentieux'" [value]="contentieuId" [datas]="formReferentiel"
-        (valueChange)="updateReferentielSelected('referentiel', $event)" [multiple]="false">
-    </aj-select>
-    <aj-select title="Sous-contentieux (option)" class="contentieux {{this.disabled}}"
-        [class.notSelectable]="contentieuId===null" [value]="subList" [datas]="formReferentiel" [subList]="subList"
-        [parent]="contentieuId" (valueChange)="updateReferentielSelected('subList', $event)">
-    </aj-select>
-    <aj-select class="contentieux fonctions-selection {{this.disabled}}" title="Choix des fonctions (option)"
-        [value]="selectedFonctionsIds" [datas]="functionsList" [defaultAllValue]="'Toutes'"
-        (valueChange)="onChangeFonctionsSelected($event)">
-    </aj-select>
+  <ng-content></ng-content>
+  <aj-select
+    title="Contentieux (obligatoire)"
+    class="contentieux {{ this.disabled }}"
+    [defaultRealValue]="'Sélectionner un contentieux'"
+    [value]="contentieuId"
+    [datas]="formReferentiel"
+    (valueChange)="updateReferentielSelected('referentiel', $event)"
+    [multiple]="false"
+  ></aj-select>
+  <aj-select
+    title="Sous-contentieux (option)"
+    class="contentieux {{ this.disabled }}"
+    [class.notSelectable]="contentieuId === null"
+    [value]="subList"
+    [datas]="formReferentiel"
+    [subList]="subList"
+    [parent]="contentieuId"
+    (valueChange)="updateReferentielSelected('subList', $event)"
+  ></aj-select>
+  <aj-select
+    class="contentieux fonctions-selection {{ this.disabled }}"
+    title="Choix des fonctions (option)"
+    [value]="selectedFonctionsIds"
+    [datas]="functionsList"
+    [defaultAllValue]="'Toutes'"
+    (valueChange)="onChangeFonctionsSelected($event)"
+  ></aj-select>
 </div>

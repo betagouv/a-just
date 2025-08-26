@@ -32,6 +32,7 @@ import { sortDates, today } from '../../utils/dates'
 import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
 import { EmptyInputComponent } from '../../components/empty-input/empty-input.component'
+import { AppService } from '../../services/app/app.service'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -181,7 +182,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   workforceService = inject(WorkforceService)
   userService = inject(UserService)
   hrFonctionService = inject(HRFonctionService)
-
+  appService = inject(AppService)
   /**
    * Liste de toutes les RH
    */
@@ -611,6 +612,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   trackById(index: number, item: any) {
+    console.log('item', item)
     return index
   }
 
@@ -652,13 +654,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }),
     }))
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
+    this.valuesFinded = this.valuesFinded?.filter((x:any)=> (this.humanResourceService.categoriesFilterListIds||[]).includes(x.category.id))||[]
     this.indexValuesFinded = 0
 
     this.allPersonsFiltered = null
     let list = [...this.allPersons]
     list = list.filter((h) => this.checkHROpacity(h) === 1)
     if (list.length <= FILTER_LIMIT_ON_SEARCH && this.allPersons.length !== list.length) {
-      if (this.valuesFinded && this.valuesFinded.length) {
+      if (this.allPersons.length !== list.length && this.valuesFinded && this.valuesFinded.length) {
         this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
       }
 
@@ -775,13 +778,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       selectedSubReferentielIds = this.selectedSubReferentielIds
     }
 
-    if (memorizeScroolPosition) {
-      const domContent = document.getElementById('container-list')
-      if (domContent) {
-        scrollPosition = domContent?.scrollTop
-      }
-    }
-
     this.isLoading = true
     this.humanResourceService
       .onFilterList(
@@ -805,6 +801,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.orderListWithFiltersParams()
 
         this.isLoading = false
+        this.appService.appLoading.next(false);
 
         const domContent = document.getElementById('container-list')
         if (domContent) {
@@ -838,6 +835,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           person.category,
       )
       .map((person) => {
+        console.log('person', person)
         this.listFormated.map((l) => {
           if (l.categoryId === person.category?.id && !l.hr.find((h) => h.id === person.id)) {
             const getIndispo = this.humanResourceService.findAllIndisponibilities(person, this.dateSelected)
@@ -1091,7 +1089,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
                 realETP = 0
               }
               const res = (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-              ref.totalAffected = Math.floor(res * 100) / 100 // arrondi à 2 décimales
+              ref.totalAffected = res
             }
           }
 
@@ -1099,6 +1097,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         })
 
         return hr
+      })
+
+      group.referentiel = group.referentiel.map((ref) => {
+        ref.totalAffected = fixDecimal(ref.totalAffected || 0, 1000)
+        return ref
       })
 
       return group
@@ -1124,6 +1127,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
+    this.appService.appLoading.next(true);
     const fonctions = await this.hrFonctionService.getAll()
     let fctFilterIds: number[] = this.getCurrentFilteredIds(fonctions)
 

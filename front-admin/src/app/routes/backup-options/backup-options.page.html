@@ -27,23 +27,23 @@
   </table>
 
   @if (backup) {
-    <aj-popup class="large" title="Modification des accès" [actions]="popupAction"
-      (selectedAction)="onPopupDetailAction($event)">
-      <div class="content-popup">
-        <div>
-          <p>Nom: {{ backup.label }}</p>
-          <div class="item item-left">
-            <p><b>Liste des juridictions</b></p>
-            @for (j of juridictions; track j) {
-              <p>
-                <input type="checkbox" #acDom [ngModel]="backup.juridictions.indexOf(j.id) !== -1"
-                  (ngModelChange)="onChangeSelection(j.id, $event)" /> <label (click)="acDom.click()">{{ j.label
-                }}</label>
-              </p>
-            }
-          </div>
+  <aj-popup class="large" title="Modification des accès" [actions]="popupAction"
+    (selectedAction)="onPopupDetailAction($event)">
+    <div class="content-popup">
+      <div>
+        <p>Nom: {{ backup.label }}</p>
+        <div class="item item-left">
+          <p><b>Liste des juridictions</b></p>
+          @for (j of juridictions; track j.id) {
+          <p>
+            <input type="checkbox" #acDom [ngModel]="backup.juridictions.indexOf(j.id) !== -1"
+              (ngModelChange)="onChangeSelection(j.id, $event)" /> <label (click)="acDom.click()">{{ j.label
+              }}</label>
+          </p>
+          }
         </div>
       </div>
-    </aj-popup>
+    </div>
+  </aj-popup>
   }
 </aj-wrapper>

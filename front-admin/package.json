@@ -23,7 +23,6 @@
     "@angular/platform-browser": "^20.1.2",
     "@angular/platform-browser-dynamic": "^20.1.2",
     "@angular/router": "^20.1.2",
-    "@compodoc/compodoc": "^1.1.26",
     "@types/file-saver": "^2.0.7",
     "@types/lodash": "^4.17.13",
     "file-saver": "^2.0.5",
@@ -35,9 +34,12 @@
     "remixicon": "^4.5.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "xlsx": "^0.18.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "yaml": "^2.6.0",
     "zone.js": "~0.15.0"
+  },
+  "overrides": {
+    "chokidar": "4.0.3"
   },
   "devDependencies": {
     "@angular/build": "^20.1.1",
@@ -52,6 +54,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "sass-migrator": "^2.3.3",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "@compodoc/compodoc": "^1.1.26"
   }
 }

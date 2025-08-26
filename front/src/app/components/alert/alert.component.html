@@ -1,9 +1,17 @@
-<aj-popup [actions]="secondaryText ? [
-    { id: 'close', content: okText || 'Ok' },
-    { id: 'secondary', content: secondaryText, fill: true }
-  ] : [
-    { id: 'close', content: okText || 'Ok' },
-  ]" [closeIcon]="true" (onClose)="onClose.emit(false)" (selectedAction)="close($event)"
-  [class]="classPopin || 'width-500'" [title]="alertTitle || ''">
+<aj-popup
+  [actions]="
+    secondaryText
+      ? [
+          { id: 'close', content: okText || 'Ok' },
+          { id: 'secondary', content: secondaryText, fill: true },
+        ]
+      : [{ id: 'close', content: okText || 'Ok' }]
+  "
+  [closeIcon]="true"
+  (onClose)="onClose.emit(false)"
+  (selectedAction)="close($event)"
+  [class]="classPopin || 'width-500'"
+  [title]="alertTitle || ''"
+>
   <p [innerHTML]="alertMessage | sanitizeHtml"></p>
 </aj-popup>

@@ -266,7 +266,7 @@ input[type="number"] {
         padding: 4px 2px 6px 2px;
 
         &.error {
-          background-color: utils.$colors-bgRowEvent;
+          background-color: utils.$colors-dataNotSettedBg;
           border: solid 1px utils.$colors-cyellow;
         }
       }
@@ -373,7 +373,7 @@ input[type="number"] {
       }
 
       >.error {
-        background-color: utils.$colors-bgRowEvent;
+        background-color: utils.$colors-dataNotSettedBg;
         border: solid 1px utils.$colors-cyellow;
       }
 

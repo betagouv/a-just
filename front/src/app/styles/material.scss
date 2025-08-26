@@ -32,3 +32,9 @@ button.material-date-calendar-no-datas {
   background: orange;
   border-radius: 100%;
 }
+
+.mat-mdc-icon-button img,
+.mat-mdc-icon-button svg {
+  position: relative;
+  top: -13px;
+}

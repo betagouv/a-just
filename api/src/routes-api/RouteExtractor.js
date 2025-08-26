@@ -102,7 +102,7 @@ export default class RouteExtractor extends Route {
       dateStart,
       dateStop,
       isJirs,
-      old: false, // mettre une condition si supérioeur à 10 mois ou non
+      old: true, // mettre une condition si supérioeur à 10 mois ou non,
     })
     console.timeEnd('extractor-5')
 
@@ -216,9 +216,6 @@ export default class RouteExtractor extends Route {
       })
 
     activities = updateLabels(activities, referentiels)
-
-    //activities.map(x=>console.log(x.contentieux))
-    referentiels.map((x) => console.log(x))
     let sum = cloneDeep(activities)
 
     sum = sum.map((x) => {

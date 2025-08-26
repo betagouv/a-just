@@ -1,34 +1,35 @@
 <h3>Les données d'activité à compléter</h3>
-<p class="description">
-  pour profiter de toutes les fonctionnalités dans les contentieux concernés.
-</p>
+<p class="description">pour profiter de toutes les fonctionnalités dans les contentieux concernés.</p>
 
 <div class="tags">
-  @for (t of tags; track t; let index = $index) {
-    <span [ngClass]="{ selected: t.selected }" (click)="onSelectedTag(index)">{{
-    t.label }}</span>
+  @for (t of tags; track t.label; let index = $index) {
+  <span [ngClass]="{ selected: t.selected }" (click)="onSelectedTag(index)">{{ t.label }}</span>
   }
 </div>
 
-@for (row of list; track row) {
-  <div class="referentiel-row">
-    <div>
-      <a routerLink="/donnees-d-activite" [queryParams]="{month: row.lastDateWhithoutData, cont: row.id}"><span
-        class="tag" [ngStyle]="{
-        'background-color': userService.referentielMappingColorByInterface(row.label)
-      }">{{ userService.referentielMappingNameByInterface(row.label)
-      }}</span></a>
-    </div>
-    <div>
-      @for (tag of row.childrens; track tag) {
-        <a routerLink="/donnees-d-activite"
-          [queryParams]="{month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true}"><span class="tag"
-        [ngStyle]="{
-        color: userService.referentielMappingColorByInterface(row.label),
-        'background-color': userService.referentielMappingColorByInterface(row.label, OPACITY)
-      }">{{ userService.referentielMappingNameByInterface(tag.label)
-        }}</span></a>
-      }
-    </div>
+@for (row of list; track row.id) {
+<div class="referentiel-row">
+  <div>
+    <a routerLink="/donnees-d-activite" [queryParams]="{ month: row.lastDateWhithoutData, cont: row.id }">
+      <span class="tag" [ngStyle]="{
+            'background-color': userService.referentielMappingColorByInterface(row.label),
+          }">
+        {{ userService.referentielMappingNameByInterface(row.label) }}
+      </span>
+    </a>
   </div>
+  <div>
+    @for (tag of row.childrens; track tag) {
+    <a routerLink="/donnees-d-activite"
+      [queryParams]="{ month: tag.lastDateWhithoutData, cont: tag.id, selectedEmptyValue: true }">
+      <span class="tag" [ngStyle]="{
+              color: userService.referentielMappingColorByInterface(row.label),
+              'background-color': userService.referentielMappingColorByInterface(row.label, OPACITY),
+            }">
+        {{ userService.referentielMappingNameByInterface(tag.label) }}
+      </span>
+    </a>
+    }
+  </div>
+</div>
 }

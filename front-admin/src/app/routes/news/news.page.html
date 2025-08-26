@@ -48,74 +48,73 @@
   </table>
 
   @if (newsToEdit) {
-    <aj-popup class="large"
-      title="{{newsToEdit.id < 0 ? 'Ajout ' : 'Modification '}} d'une notification" [actions]="popupAction"
-      (selectedAction)="onPopupDetailAction($event)">
-      @if (editor) {
-        <div>
-          <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
-          <ngx-editor [editor]="editor" [placeholder]="'Enter text here...'" [(ngModel)]="newsToEdit.html"></ngx-editor>
-        </div>
-      }
-      <div class="grid-triple">
-        <div>
-          <mat-form-field>
-            <mat-label>Notification active</mat-label>
-            <mat-select [(ngModel)]="newsToEdit.enabled">
-              <mat-option [value]="true">Oui</mat-option>
-              <mat-option [value]="false">Non</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field>
-            <mat-label>Date de début de diffusion</mat-label>
-            <input matInput [ngModel]="newsToEdit.dateStart" [matDatepicker]="pickerDateStart"
-              (ngModelChange)="onDateChanged('dateStart', $event)" [readonly]="true" (click)="pickerDateStart.open()" />
-            <mat-datepicker #pickerDateStart></mat-datepicker>
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field>
-            <mat-label>Date de fin de diffusion</mat-label>
-            <input matInput [ngModel]="newsToEdit.dateStop" [matDatepicker]="pickerDateStop"
-              (ngModelChange)="onDateChanged('dateStop', $event)" [readonly]="true" (click)="pickerDateStop.open()" />
-            <mat-datepicker #pickerDateStop></mat-datepicker>
-          </mat-form-field>
-        </div>
+  <aj-popup class="large" title="{{newsToEdit.id < 0 ? 'Ajout ' : 'Modification '}} d'une notification"
+    [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)">
+    @if (editor) {
+    <div>
+      <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+      <ngx-editor [editor]="editor" [placeholder]="'Enter text here...'" [(ngModel)]="newsToEdit.html"></ngx-editor>
+    </div>
+    }
+    <div class="grid-triple">
+      <div>
+        <mat-form-field>
+          <mat-label>Notification active</mat-label>
+          <mat-select [(ngModel)]="newsToEdit.enabled">
+            <mat-option [value]="true">Oui</mat-option>
+            <mat-option [value]="false">Non</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
-      <div class="grid-triple">
-        <div>
-          <mat-form-field hintLabel="Ne rien mettre pour ne pas afficher de bouton.">
-            <mat-label>Texte du bouton</mat-label>
-            <input matInput [(ngModel)]="newsToEdit.actionButtonText" />
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field>
-            <mat-label>URL du bouton</mat-label>
-            <input matInput [(ngModel)]="newsToEdit.actionButtonUrl" />
-          </mat-form-field>
-        </div>
-        <div>
-          <mat-form-field>
-            <mat-label>Couleur du bouton</mat-label>
-            <input matInput [style.background]="newsToEdit.actionButtonColor ? newsToEdit.actionButtonColor : ''"
-              [(colorPicker)]="newsToEdit.actionButtonColor" [(ngModel)]="newsToEdit.actionButtonColor" />
-          </mat-form-field>
-        </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Date de début de diffusion</mat-label>
+          <input matInput [ngModel]="newsToEdit.dateStart" [matDatepicker]="pickerDateStart" [max]="newsToEdit.dateStop"
+            (ngModelChange)="onDateChanged('dateStart', $event)" [readonly]="true" (click)="pickerDateStart.open()" />
+          <mat-datepicker #pickerDateStart></mat-datepicker>
+        </mat-form-field>
       </div>
-      <div class="grid-triple">
-        <div>
-          <mat-form-field>
-            <mat-label>Icone</mat-label>
-            <mat-select [(ngModel)]="newsToEdit.icon">
-              <mat-select-trigger>
-                <i class="ri-{{newsToEdit.icon}}"></i>
-              </mat-select-trigger>
-              @for (ico of REMIXICONLIST; track ico) {
-                <mat-option [value]="ico"><i class="ri-{{ico}}"></i>
-              </mat-option>
+      <div>
+        <mat-form-field>
+          <mat-label>Date de fin de diffusion</mat-label>
+          <input matInput [ngModel]="newsToEdit.dateStop" [matDatepicker]="pickerDateStop" [min]="newsToEdit.dateStart"
+            (ngModelChange)="onDateChanged('dateStop', $event)" [readonly]="true" (click)="pickerDateStop.open()" />
+          <mat-datepicker #pickerDateStop></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="grid-triple">
+      <div>
+        <mat-form-field hintLabel="Ne rien mettre pour ne pas afficher de bouton.">
+          <mat-label>Texte du bouton</mat-label>
+          <input matInput [(ngModel)]="newsToEdit.actionButtonText" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>URL du bouton</mat-label>
+          <input matInput [(ngModel)]="newsToEdit.actionButtonUrl" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Couleur du bouton</mat-label>
+          <input matInput [style.background]="newsToEdit.actionButtonColor ? newsToEdit.actionButtonColor : ''"
+            [(colorPicker)]="newsToEdit.actionButtonColor" [(ngModel)]="newsToEdit.actionButtonColor" />
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="grid-triple">
+      <div>
+        <mat-form-field>
+          <mat-label>Icone</mat-label>
+          <mat-select [(ngModel)]="newsToEdit.icon">
+            <mat-select-trigger>
+              <i class="ri-{{newsToEdit.icon}}"></i>
+            </mat-select-trigger>
+            @for (ico of REMIXICONLIST; track ico) {
+            <mat-option [value]="ico"><i class="ri-{{ico}}"></i>
+            </mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -136,5 +135,5 @@
       </div>
     </div>
   </aj-popup>
-}
+  }
 </aj-wrapper>

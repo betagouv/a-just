@@ -173,6 +173,7 @@ export async function getSituation(
   indexes,
   useNew = false,
   simulatorUse = true,
+  fonctionIds = undefined,
 ) {
   checkAbort(signal)
   if (Array.isArray(referentielId) === false) referentielId = [referentielId]
@@ -219,7 +220,7 @@ export async function getSituation(
           start: today(),
           end: today(),
           category: undefined,
-          fonctions: undefined,
+          fonctions: fonctionIds,
           contentieux: referentielId[0],
         },
         categories,
@@ -228,7 +229,7 @@ export async function getSituation(
 
   let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
 
-  if (lastActivities.length === 0 && totalIn === 0 && totalOut === 0) return { etpMag, etpFon, etpCon, totalIn, totalOut, lastStock, ...emptySituation }
+  if (lastActivities.length === 0 && totalIn === 0 && totalOut === 0) return { ...emptySituation, etpMag, etpFon, etpCon, totalIn, totalOut, lastStock }
   else {
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = useNew
@@ -238,7 +239,7 @@ export async function getSituation(
             start: new Date(startDateCs),
             end: new Date(endDateCs),
             category: undefined,
-            fonctions: undefined,
+            fonctions: fonctionIds,
             contentieux: referentielId[0],
           },
           categories,
@@ -263,7 +264,7 @@ export async function getSituation(
             start: new Date(endDateCs),
             end: new Date(),
             category: undefined,
-            fonctions: undefined,
+            fonctions: fonctionIds,
             contentieux: referentielId[0],
           },
           categories,
@@ -298,7 +299,7 @@ export async function getSituation(
               start: new Date(dateStart),
               end: new Date(dateStart),
               category: undefined,
-              fonctions: undefined,
+              fonctions: fonctionIds,
               contentieux: referentielId[0],
             },
             categories,
@@ -317,7 +318,7 @@ export async function getSituation(
               start: new Date(),
               end: new Date(dateStart),
               category: undefined,
-              fonctions: undefined,
+              fonctions: fonctionIds,
               contentieux: referentielId[0],
             },
             categories,
@@ -350,7 +351,7 @@ export async function getSituation(
               start: dateStop,
               end: dateStop,
               category: undefined,
-              fonctions: undefined,
+              fonctions: fonctionIds,
               contentieux: referentielId[0],
             },
             categories,
@@ -363,26 +364,25 @@ export async function getSituation(
       // Compute projected out flow with projected etp at stop date (specific date)
       const projectedTotalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMagProjected : etpFonProjected, sufix)
 
-      // Projection of etpAffected between start and stop date to compute stock
-      if (useNew)
-        etpAffectedStartToEndToCompute = calculateETPForContentieux(
-          indexes,
-          {
-            start: dateStart,
-            end: dateStop,
-            category: undefined,
-            fonctions: undefined,
-            contentieux: referentielId[0],
-          },
-          categories,
-        )
       let etpAffectedStartToEndToCompute, monthlyReport
 
-      //RESTE A IMPLEMENTER LE MONTHLY REPORT POUR LE SIMULATEUR
       if (simulatorUse === true) {
-        ;({ etpAffectedStartToEndToCompute, monthlyReport } = await getHRPositions(hr, referentielId, categories, dateStart, true, dateStop, true, signal))
+        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds)
       }
-      //let { etpAffectedStartToEndToCompute, monthlyReport } = await getHRPositions(hr, referentielId, categories, dateStart, true, dateStop, true, signal)
+
+      // Projection of etpAffected between start and stop date to compute stock
+      etpAffectedStartToEndToCompute = calculateETPForContentieux(
+        indexes,
+        {
+          start: dateStart,
+          end: dateStop,
+          category: undefined,
+          fonctions: fonctionIds,
+          contentieux: referentielId[0],
+        },
+        categories,
+      )
+
       checkAbort(signal)
 
       let { etpMagStartToEndToCompute, etpFonStartToEndToCompute, etpConStartToEndToCompute } = getEtpByCategory(
@@ -504,14 +504,7 @@ function computeTotalOut(magRealTimePerCase, etp, sufix) {
  * @returns le temps moyen par dossier sur les 12 derniers mois
  */
 export function computeRealTimePerCase(totalOut, etp, sufix) {
-  /**
-  console.log('[simulator.js][line 420] totalOut:', totalOut)
-  console.log('[simulator.js][line 421] nbDays:', environment['nbDays' + sufix])
-  console.log('[simulator.js][line 422] nbHoursPerDay:', environment['nbHoursPerDayAnd' + sufix])
-  console.log('[simulator.js][line 423] etp:', etp)
-  console.log('[simulator.js][line 424] suffix:', sufix) */
   let realTime = fixDecimal((environment['nbDays' + sufix] * environment['nbHoursPerDayAnd' + sufix] * etp) / (totalOut * 12), 100)
-  //console.log('[simulator.js][line 425] realTime:', realTime)
   return Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
 }
 
@@ -1062,4 +1055,112 @@ export function buildPeriodsByAgent(periodsList) {
   }
 
   return periodsByAgent
+}
+
+export function getStartAndEndDateOfMonth(label, yearSuffix) {
+  const monthsMap = {
+    'Janv.': 0,
+    'Févr.': 1,
+    Mars: 2,
+    'Avr.': 3,
+    'Mai.': 4,
+    Juin: 5,
+    'Juil.': 6,
+    Août: 7,
+    'Sept.': 8,
+    'Oct.': 9,
+    'Nov.': 10,
+    'Déc.': 11,
+  }
+
+  const month = monthsMap[label]
+  const year = parseInt('20' + yearSuffix)
+
+  const start = new Date(year, month, 1)
+  const end = new Date(year, month + 1, 0)
+
+  return { start, end }
+}
+
+export function splitMonthKey(key) {
+  const match = key.match(/^([^\d]+)(\d{2})$/)
+  if (match) return [match[1], match[2]]
+  throw new Error(`Mois invalide : ${key}`)
+}
+
+export async function monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, signal = null) {
+  const monthlyList = getRangeOfMonthsAsObject(dateStart, dateStop, true)
+
+  // Initialisation des données
+  Object.keys(monthlyList).forEach((monthKey) => {
+    categories.forEach((category) => {
+      monthlyList[monthKey][category.id] = {
+        name: category.label,
+        etpt: 0,
+        nbOfDays: 0,
+      }
+    })
+  })
+
+  // Traitement rapide par mois
+  for (const monthKey of Object.keys(monthlyList)) {
+    const [monthLabel, yearSuffix] = splitMonthKey(monthKey) // Ex: "Août25" => ["Août", "25"]
+    const { start, end } = getStartAndEndDateOfMonth(monthLabel, yearSuffix) // à implémenter
+    const etps = await calculateETPForContentieux(
+      indexes,
+      {
+        start,
+        end,
+        category: undefined,
+        fonctions: fonctionIds,
+        contentieux: referentielId[0],
+      },
+      categories,
+    )
+
+    etps.forEach(({ name, totalEtp }) => {
+      const category = categories.find((c) => c.label === name)
+
+      if (!category) {
+        console.warn(`Catégorie "${name}" non trouvée dans la liste des catégories.`)
+        return
+      }
+
+      const catId = category.id.toString()
+
+      if (!monthlyList[monthKey]?.[catId]) {
+        console.warn(`monthlyList[${monthKey}][${catId}] introuvable.`)
+        return
+      }
+
+      monthlyList[monthKey][catId].etpt = parseFloat(totalEtp.toFixed(3))
+    })
+  }
+
+  const finalFormatted = formatMonthlyListToCategoryArray(monthlyList, categories)
+
+  return finalFormatted
+}
+function formatMonthlyListToCategoryArray(monthlyList, categories) {
+  const formatted = categories.map((category) => ({
+    name: category.label,
+    values: {},
+  }))
+
+  const monthKeys = Object.keys(monthlyList)
+
+  monthKeys.forEach((monthKey, index) => {
+    const categoryValues = monthlyList[monthKey]
+
+    categories.forEach((category) => {
+      const categoryData = formatted.find((f) => f.name === category.label)
+
+      categoryData.values[index.toString()] = {
+        name: monthKey,
+        etpt: parseFloat((categoryValues[category.id]?.etpt || 0).toFixed(3)),
+      }
+    })
+  })
+
+  return formatted
 }

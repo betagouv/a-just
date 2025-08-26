@@ -3,7 +3,7 @@
 .label-aj {
   font-size: 16px;
   font-weight: normal;
-  color: utils.$colors-cblack;
+  color: utils.$colors-cblackdark;
   margin-bottom: 8px;
 }
 
@@ -16,7 +16,7 @@ input[type='email'] {
   border-top-right-radius: 4px;
   background-color: utils.$colors-cgrayDefault;
   border: none;
-  border-bottom: solid 2px #E5E5E6 !important;
+  border-bottom: 2px solid #8d8d8d;
   width: 100%;
   font-size: 16px;
 
@@ -29,7 +29,7 @@ select {
   padding: 8px 16px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: utils.$colors-cgray;
+  background-color: utils.$colors-cgrayDefault;
   border: none;
   border-bottom: 2px solid black;
   width: 100%;
@@ -40,7 +40,7 @@ textarea {
   padding: 8px 16px;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  background-color: utils.$colors-cgray;
+  background-color: #eeeeee;
   resize: none;
   border: none;
   border-bottom: 2px solid black;
