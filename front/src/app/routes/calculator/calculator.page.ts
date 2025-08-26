@@ -1123,7 +1123,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
       const value1ETPTEam = (datas || []).map((d) => d.etpCont)
       const getVariations = (tab2: any[], tab1: any[], isPercentComparaison = true) =>
         tab2.map((d: any, index: number) => {
-          if (d === null || tab1[index] === null) {
+          if (d === null || tab1[index] === null || d === Infinity) {
             return 'N/R'
           }
 
