@@ -125,7 +125,7 @@ export class TemplateAnalyticsComponent
       .map((o) => o.graph);
   }
 
-  isFiniteNumber(value: any): boolean {
-    return Number.isFinite(value);
+  isInfinity(value: any): boolean {
+    return value === Infinity || value === -Infinity;  
   }
 }
