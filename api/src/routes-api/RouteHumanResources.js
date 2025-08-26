@@ -345,6 +345,7 @@ export default class RouteHumanResources extends Route {
             dateEnd: person.dateEnd,
             situations: situations,
             etp,
+            comment: person.comment,
             etpLabel: etp ? etpLabel(etp) : null,
             categoryName: situations.length && situations[0].category ? situations[0].category.label : '',
             category: situations.length && situations[0].category ? situations[0].category : null,
