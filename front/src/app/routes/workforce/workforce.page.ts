@@ -32,6 +32,7 @@ import { sortDates, today } from '../../utils/dates'
 import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
 import { EmptyInputComponent } from '../../components/empty-input/empty-input.component'
+import { AppService } from '../../services/app/app.service'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -181,7 +182,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   workforceService = inject(WorkforceService)
   userService = inject(UserService)
   hrFonctionService = inject(HRFonctionService)
-
+  appService = inject(AppService)
   /**
    * Liste de toutes les RH
    */
@@ -653,13 +654,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }),
     }))
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
+    this.valuesFinded = this.valuesFinded?.filter((x:any)=> (this.humanResourceService.categoriesFilterListIds||[]).includes(x.category.id))||[]
     this.indexValuesFinded = 0
 
     this.allPersonsFiltered = null
     let list = [...this.allPersons]
     list = list.filter((h) => this.checkHROpacity(h) === 1)
     if (list.length <= FILTER_LIMIT_ON_SEARCH && this.allPersons.length !== list.length) {
-      if (this.valuesFinded && this.valuesFinded.length) {
+      if (this.allPersons.length !== list.length && this.valuesFinded && this.valuesFinded.length) {
         this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
       }
 
@@ -799,6 +801,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.orderListWithFiltersParams()
 
         this.isLoading = false
+        this.appService.appLoading.next(false);
 
         const domContent = document.getElementById('container-list')
         if (domContent) {
@@ -1123,6 +1126,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
+    this.appService.appLoading.next(true);
     const fonctions = await this.hrFonctionService.getAll()
     let fctFilterIds: number[] = this.getCurrentFilteredIds(fonctions)
 
