@@ -265,9 +265,13 @@
     </div>
     <div class="activities">
       <div class="flex-1"></div>
+      @defer (on viewport; prefetch on idle) {
       <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true" class="dark-mode"
         (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)" [updateRefentielOnLoad]="false"
         [canSelectedTopReferentiel]="true"></panel-activities>
+      } @placeholder {
+      <div class="flex-1"></div>
+      }
       <div class="flex-1"></div>
     </div>
   </div>

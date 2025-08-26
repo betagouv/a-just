@@ -6,7 +6,7 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { sumBy } from 'lodash';
+import { cloneDeep, sumBy } from 'lodash';
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component';
 import { MainClass } from '../../libs/main-class';
 import { RHActivityInterface } from '../../interfaces/rh-activity';
@@ -155,6 +155,10 @@ export class PanelActivitiesComponent
         }
       })
     );
+
+    this.referentiel = cloneDeep(
+      this.humanResourceService.contentieuxReferentielOnly.getValue()
+    );
   }
 
   /**
@@ -203,9 +207,6 @@ export class PanelActivitiesComponent
    * Chargement du référentiel et calcul des pourcents
    */
   onLoadReferentiel() {
-    this.referentiel = copyArray(
-      this.humanResourceService.contentieuxReferentielOnly.getValue()
-    );
 
     /*const backupLabel = localStorage.getItem('backupLabel')
     backupLabel && filterReferentiels(this.referentiel, backupLabel)*/
