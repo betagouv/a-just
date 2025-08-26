@@ -1,4 +1,4 @@
-@for (item of values; track item; let index = $index) {
+@for (item of values; track $index; let index = $index) {
 <div [style.height.%]="item === 0 ? 0 : (item / localMaxValue < 0.01 ? 0.01 : item / localMaxValue) * 100" class="bar"
   [style.background-color]="
       userService.referentielMappingColorByInterface(
