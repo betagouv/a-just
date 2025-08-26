@@ -670,6 +670,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.indexValuesFinded = 0
 
     if (this.valuesFinded && this.valuesFinded.length) {
+      this.valuesFinded = this.valuesFinded.filter(x=>x.situations[0]?.category?.id===this.reaffectatorService.selectedCategoriesId)
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
     } else {
       this.onGoTo(null)
