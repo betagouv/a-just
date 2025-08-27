@@ -233,17 +233,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private referentielService: ReferentielService,
   ) {
     super()
-
-    effect(() => {
-      console.log('this.alertSet', this.alertSet)
-    })
   }
 
   /**
    * Au chargement charger les catégories et fonctions
    */
   ngOnInit() {
-    console.log('editId', this.editId)
     window.addEventListener('click', this.onclick.bind(this))
     window.addEventListener('click', this.onclick2.bind(this))
     this.watch(this.hrFonctionService.getAll().then(() => this.loadCategories()))
@@ -283,6 +278,20 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.form.get('etp')?.valueChanges.subscribe((value) => {
         console.log('value', value)
         if (value) {
+
+          const valueFormated =
+            parseFloat((value || '')+''.replace(/,/, '.'));
+    
+          if (valueFormated < 0) {
+            alert('Le pourcentage ne peut pas être négatif');
+            return;
+          }
+    
+          if (Number.isNaN(valueFormated)) {
+            alert('La valeur saisie n\'est pas un nombre');
+            return;
+          }
+
           if (value > 1) value = 1
           else if (value < 0) value = 0
           let str_value = value?.toString()
