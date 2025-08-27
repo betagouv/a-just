@@ -257,3 +257,12 @@
   padding: 1.5em;
   border: solid 1px utils.$colors-cgraylightv3;
 }
+
+.back-step {
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 1em;
+  color: utils.$colors-primary;
+  font-size: 14px;
+  font-weight: 500;
+}
