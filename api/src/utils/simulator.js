@@ -504,7 +504,7 @@ function computeTotalOut(magRealTimePerCase, etp, sufix) {
  * @returns le temps moyen par dossier sur les 12 derniers mois
  */
 export function computeRealTimePerCase(totalOut, etp, sufix) {
-  let realTime = fixDecimal((environment['nbDays' + sufix] * environment['nbHoursPerDayAnd' + sufix] * etp) / (totalOut * 12), 100)
+  let realTime = fixDecimal((environment['nbDays' + sufix] * environment['nbHoursPerDayAnd' + sufix] * etp) / (totalOut * 12), 1000)
   return Math.trunc(realTime) + Math.round((realTime - Math.trunc(realTime)) * 60) / 60
 }
 
