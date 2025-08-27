@@ -147,10 +147,12 @@ export class UserService implements OnInit {
    * @returns
    */
   async getInterfaceType() {
-    return this.serverService.get('users/interface-type').then((data) => {
-      this.interfaceType = [0, 1].includes(data.data) ? data.data : null;
-      return this.interfaceType !== null ? true : false;
-    });
+    if (this.interfaceType !== null) return this.interfaceType
+    else
+      return this.serverService.get('users/interface-type').then((data) => {
+        this.interfaceType = [0, 1].includes(data.data) ? data.data : null;
+        return this.interfaceType !== null ? true : false;
+      });
   }
 
   isCa() {
