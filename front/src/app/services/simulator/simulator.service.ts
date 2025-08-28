@@ -235,12 +235,12 @@ export class SimulatorService extends MainClass {
     switch (param) {
       case 'etpMag':
         if (data?.etpMag === null) {
-          return 'N/R'
+          return '0'
         }
         return toCompute ? data?.etpMag : fixDecimal(data?.etpMag || 0) || '0'
       case 'etpFon':
         if (data?.etpFon === null) {
-          return 'N/R'
+          return '0'
         }
         return toCompute ? data?.etpFon : fixDecimal(data?.etpFon || 0) || '0'
       case 'totalOut': {
@@ -270,7 +270,7 @@ export class SimulatorService extends MainClass {
       }
       case 'etpCont':
         if (data?.etpCont === null) {
-          return 'N/R'
+          return '0'
         }
         return toCompute ? data?.etpCont : fixDecimal(data?.etpCont || 0) || '0'
       case 'realCoverage': {
