@@ -148,7 +148,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    tag: string
+    tag: string,
+    remove?: boolean
   }>()
   /**
    * Réferentiel des indispo
@@ -260,15 +261,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           this.form.get('fonctionId')?.setValue(fct?.id || null)
           if (fct) this.calculatriceIsActive = fct.calculatrice_is_active || false
 
-          // Suprpession de l'alerte
+          // // Suprpession de l'alerte
           let index = -1
           index = this.humanResourceService.alertList().indexOf('category')
           if (index !== -1) {
-            this.alertSet.emit({ tag: 'category' })
+            this.alertSet.emit({ tag: 'category', remove: true })
           }
           index = this.humanResourceService.alertList().indexOf('fonction')
           if (index !== -1) {
-            this.alertSet.emit({ tag: 'fonction' })
+            this.alertSet.emit({ tag: 'fonction', remove: true })
           }
         })
       }),
@@ -310,7 +311,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         let index = -1
         index = this.humanResourceService.alertList().indexOf('etp')
         if (index !== -1) {
-          this.alertSet.emit({ tag: 'etp' })
+          this.alertSet.emit({ tag: 'etp', remove: true })
         }
       }),
     )
@@ -318,10 +319,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.watch(
       this.form.get('activitiesStartDate')?.valueChanges.subscribe((value) => {
         if (value) {
+          // Suppression de l'alert
           let index = -1
           index = this.humanResourceService.alertList().indexOf('activitiesStartDate')
           if (index !== -1) {
-            this.alertSet.emit({ tag: 'activitiesStartDate' })
+            this.alertSet.emit({ tag: 'activitiesStartDate', remove: true })
           }
         }
       }),
@@ -922,8 +924,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Remove an alert item from the list
+   * @param tag
+   */
   removeAlertItem(tag: string) {
-    this.humanResourceService.removeAlert(tag)
+    let index = -1
+    index = this.humanResourceService.alertList().indexOf(tag)
+    if (index !== -1) {
+      this.alertSet.emit({ tag, remove: true })
+    }
   }
 
   scrollToBottomElement() {
