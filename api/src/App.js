@@ -431,8 +431,6 @@ export default class App extends AppBase {
 
       let chunks = Array.from({ length: Math.ceil(jurisdictions.length / maxAtOnce) }, (_, i) => jurisdictions.slice(i * maxAtOnce, (i + 1) * maxAtOnce))
 
-      chunks = chunks.slice(0, 2)
-
       for (const chunk of chunks) {
         await this.asyncForEach(chunk, async (jur) => {
           const jurId = jur.id
