@@ -915,12 +915,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         const inValue = refFromItemList.totalIn || 0
 
         let outValue = averageWorkingProcess === 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
-        outValue = fixDecimal(outValue, 1000)
-        
+
         return {
           ...ref,
           coverage: Math.round((outValue / inValue) * 100),
-          dtes: lastStock === 0 || outValue === 0 ? 0 : fixDecimal(lastStock / outValue),
+          dtes: lastStock === 0 || outValue === 0 ? 0 : fixDecimal(lastStock / outValue,100),
           etpUseToday: refFromItemList.etpUseToday,
           totalAffected: refFromItemList.totalAffected,
           realCoverage: this.reaffectatorService.selectedReferentielIds.includes(ref.id) ? ref.realCoverage : 0, // make empty data if the referentiel id is not selected
