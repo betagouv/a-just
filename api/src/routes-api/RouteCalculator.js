@@ -181,6 +181,11 @@ export default class RouteCalculator extends Route {
                 if (realETP < 0) {
                   realETP = 0
                 }
+                if (timeAffected > 0) {
+                  console.log('agent', agent)
+                  console.log('timeAffected', timeAffected)
+                  console.log('realETP', realETP)
+                }
                 totalAffected += (timeAffected / 100) * realETP
               }
             })

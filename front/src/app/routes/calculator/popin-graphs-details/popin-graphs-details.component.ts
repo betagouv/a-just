@@ -144,6 +144,7 @@ export class PopinGraphsDetailsComponent
           this.calculatorService.showGraphDetailType
         )
       ).filter((v: any) => v);
+      console.log('firstValues', firstValues)
 
       secondValues = (
         await this.calculatorService.rangeValues(
@@ -153,6 +154,7 @@ export class PopinGraphsDetailsComponent
           this.optionDateStop
         )
       ).filter((v: any) => v);
+      console.log('secondValues', secondValues)
 
       if (
         this.calculatorService.dateStop.getValue() &&
