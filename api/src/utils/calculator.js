@@ -224,7 +224,7 @@ const getActivityValues = (
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
   const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (meanOutCs / etpMagCs), 1000)
   const fonRealTimePerCase = fixDecimal(((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (meanOutCs / etpFonCs), 1000)
-
+  if (referentielId === 471) console.log(fonRealTimePerCase, meanOutCs, etpFonCs)
   return {
     ...calculateActivities(referentielId, totalIn, lastStock, etpMag, etpFon, optionsBackups),
     // entrée sorties et taux de couverture moyen sur la période avec stock de fin
