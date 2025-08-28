@@ -544,6 +544,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Destruction du composant
    */
   ngOnDestroy() {
+    this.listFormated = []
     this.watcherDestroy()
   }
 
@@ -779,6 +780,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.isLoading = true
+    this.appService.appLoading.next(true)
     this.humanResourceService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
@@ -811,6 +813,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             domContent.scrollTop = 0
           }
         }
+      }).finally(() => {
+        this.appService.appLoading.next(false)
       })
 
     if (this.route.snapshot.fragment) {
