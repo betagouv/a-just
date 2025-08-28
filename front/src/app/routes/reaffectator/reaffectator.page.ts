@@ -326,6 +326,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   nextState: string | null = null
 
+  /**
+   * Flag pour indiquer que le composant est en cours de destruction
+   */
+  isDestroyed: boolean = false
+
   introSteps: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
@@ -404,6 +409,26 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * Destruction des observables
    */
   ngOnDestroy() {
+    // Vider immédiatement les listes pour arrêter les @defer
+    this.listFormated = []
+    this.humanResources = []
+    this.referentiel = []
+    this.allPersons = []
+    
+    // Nettoyer les timeouts actifs
+    if (this.timeoutUpdateSearch) {
+      clearTimeout(this.timeoutUpdateSearch)
+      this.timeoutUpdateSearch = null
+    }
+    
+    // Réinitialiser les variables de recherche
+    this.valuesFinded = null
+    this.searchValue = ''
+    
+    // Marquer le composant comme détruit
+    this.isDestroyed = true
+    
+    // Détruire les observables
     this.watcherDestroy()
   }
 
@@ -495,7 +520,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @returns list
    */
   onFilterList() {
-    if (!this.formFilterSelect.length || this.humanResourceService.backupId.getValue() === null || this.reaffectatorService.selectedCategoriesId === null) {
+    if (this.isDestroyed || !this.formFilterSelect.length || this.humanResourceService.backupId.getValue() === null || this.reaffectatorService.selectedCategoriesId === null) {
       return
     }
 
@@ -519,6 +544,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         selectedReferentielIds,
       )
       .then(({ list, allPersons }) => {
+        // Ne pas traiter la réponse si le composant est détruit
+        if (this.isDestroyed) {
+          return
+        }
+        
         this.allPersons = allPersons
         this.listFormated = list.map((i: listFormatedInterface, index: number) => {
           if (index === 0) {
@@ -935,6 +965,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @param indexList
    */
   updateHRReferentiel(hr: HumanResourceSelectedInterface, referentiels: ContentieuReferentielInterface[], indexList: number) {
+    // Arrêter le traitement si le composant est détruit
+    if (this.isDestroyed) {
+      return
+    }
+    
     const list: RHActivityInterface[] = []
 
     referentiels
