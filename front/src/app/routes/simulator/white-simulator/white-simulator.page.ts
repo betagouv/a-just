@@ -1196,11 +1196,17 @@ export class WhiteSimulatorPage
       }
 
       if (
-        ['totalIn', 'totalOut', 'lastStock','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))
+        ['totalIn', 'totalOut','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))
       ) {
         alert('Le nombre total ne peut pas être inférieur ou égal à 0');
         return;
       }
+
+      if (['lastStock'].includes(inputField.id) && (parseFloat(volumeInput) < 0||isNaN(parseFloat(volumeInput)))) {
+        {
+        alert('La valeur totale ne peut pas être inférieure 0')
+        return
+        }
 
       // if param1 reset =>  reset all params
       if (inputField.id === this.paramsToAjust.param1.label) {
