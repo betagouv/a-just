@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MainClass } from '../../libs/main-class';
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
 import { BackButtonComponent } from '../../components/back-button/back-button.component';
@@ -19,6 +19,10 @@ export class CGUPage extends MainClass implements OnInit {
   title = inject(Title);
   route = inject(ActivatedRoute);
   /**
+   * url en cours
+   */
+  hasTrailingSlash:boolean = true
+  /**
    * Back link
    */
   backLink = '/';
@@ -26,8 +30,9 @@ export class CGUPage extends MainClass implements OnInit {
    * Constructeur
    * @param title
    */
-  constructor() {
+  constructor(public router: Router) {
     super();
+    if(this.route.snapshot.queryParamMap.get('noBack') === 'true') this.hasTrailingSlash=false
     this.title.setTitle("Conditions générales d'utilisation | A-Just");
   }
 

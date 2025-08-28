@@ -1,12 +1,13 @@
-<aj-wrapper-no-connected
-  [title]="'Simulateur de vol<br/>pour le pilotage<br/>de votre juridiction'"
-  class="small-left-panel"
->
+<aj-wrapper-no-connected [title]="'Simulateur de vol<br/>pour le pilotage<br/>de votre juridiction'"
+  class="small-left-panel">
   <div class="logo">
     <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
+
+  @if (hasTrailingSlash) {
   <aj-back-button [routerLink]="backLink" />
+  }
   <h3>Conditions générales d'utilisation</h3>
 
   <p>En vigueur à partir du 10 juin 2023</p>
