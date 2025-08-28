@@ -888,7 +888,27 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         }
 
         const averageWorkingProcess = refFromItemList.magRealTimePerCase || 0
-        const etpt = refFromItemList.totalAffected || 0
+        let etpt = 0
+        switch (this.reaffectatorService.selectedCategoriesId) {
+          case 1: {
+            etpt = (refFromItemList as any).etpMag ?? 0;
+            break;
+          }
+          case 2:
+
+          {
+            etpt = (refFromItemList as any).etpFon ?? 0;
+            break;
+          }
+          case 3: {
+            etpt = (refFromItemList as any).etpCon ?? 0;
+            break;
+          }
+          default: {
+            etpt = refFromItemList.totalAffected ?? 0;
+          }
+        } 
+        if (refFromItemList.etpUseToday!==refFromItemList.totalAffected) etpt=refFromItemList.totalAffected||0
         const nbWorkingHours = refFromItemList.nbWorkingHours || 0
         const nbWorkingDays = refFromItemList.nbWorkingDays || 0
         const lastStock = refFromItemList.lastStock || 0
@@ -896,7 +916,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         let outValue = averageWorkingProcess === 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
         outValue = fixDecimal(outValue, 1000)
-
+        
         return {
           ...ref,
           coverage: Math.round((outValue / inValue) * 100),
