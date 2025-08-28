@@ -429,6 +429,8 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
         // Ajouter la période à la base de données centrale
         periodsDatabase.set(periodId, {
           agentId: agent.id,
+          agentStart: agent.dateStart,
+          agentEnd: agent.dateEnd,
           start: period.start,
           end: period.end,
           etp: period.etp,
@@ -495,6 +497,8 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
         intervalTree.insert(start, end, {
           periodId,
           agentId: agent.id,
+          agentStart: agent.dateStart,
+          agentEnd: agent.dateEnd,
           categoryId: period.category && period.category.id ? period.category.id : null,
           start: period.start,
           end: period.end,
@@ -798,7 +802,7 @@ export const calculateETPForContentieux = (indexes, query, categories) => {
     const workingDays = getWorkingDaysCount(periodStart, periodEnd)
 
     // Mise à jour de l'ETP par catégorie
-    if (period.categoryId) {
+    if (period.categoryId && (!period.agentEnd || periodStart <= today(period.agentEnd).getTime())) {
       etpByCategory[period.categoryId] += (effectiveETP * workingDays) / nbOfWorkingDaysQuery
     }
   })
