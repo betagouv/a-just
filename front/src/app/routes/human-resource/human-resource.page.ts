@@ -331,6 +331,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
         this.basicHrInfo.get('firstName')?.setValue(findUser.firstName || '')
         this.basicHrInfo.get('lastName')?.setValue(findUser.lastName || '')
         this.basicHrInfo.get('matricule')?.setValue(findUser.matricule || '')
+        this.humanResourceService.alertList.set([])
       }
 
       // control indisponibilities
@@ -362,7 +363,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
 
   formatHRHistory() {
-    this.humanResourceService.alertList.set([])
     this.allIndisponibilities = this.currentHR?.indisponibilities || []
 
     if (this.fonctions.length === 0 || !this.currentHR || this.onEditIndex !== null) {
@@ -1037,14 +1037,19 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Fonction de mise à jour des alertes
    * @param updatedList
    */
-  onAlertsUpdated({ tag }: { tag: string }) {
-    // Scroll to the "Start Date" selector if it's the last element to complete.
-    // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
-    if (this.humanResourceService.alertList().length > 0) {
-      if (this.humanResourceService.alertList().includes('activitiesStartDate')) {
-        if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
-      } else if (this.humanResourceService.alertList().includes('etp')) {
-        this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
+  onAlertsUpdated({ tag, remove = false }: { tag: string; remove?: boolean }) {
+    // Remove alert from the service
+    if (remove) {
+      this.humanResourceService.removeAlert(tag)
+    } else {
+      // Scroll to the "Start Date" selector
+      // This ensures all users can see the element regardless of their screen size, and avoids manual scrolling.
+      if (this.humanResourceService.alertList().length > 0) {
+        if (this.humanResourceService.alertList().includes('activitiesStartDate')) {
+          if (this.addDomVentilation) this.addDomVentilation.scrollToBottomElement()
+        } else if (this.humanResourceService.alertList().includes('etp')) {
+          this.scrollTo('etpForm', document.getElementsByClassName('wrapper-content')[0], 250)
+        }
       }
     }
 

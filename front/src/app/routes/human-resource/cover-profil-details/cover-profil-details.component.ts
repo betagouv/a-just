@@ -130,6 +130,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    */
   @Output() alertSet = new EventEmitter<{
     tag: string
+    remove?: boolean
   }>()
   /**
    * Temps de travail en text
@@ -165,6 +166,45 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
 
     this.inputsWidth['firstName'] = this.calculateTextWidth(firstName, 'firstName')
     this.inputsWidth['lastName'] = this.calculateTextWidth(lastName, 'lastName')
+
+    this.watch(
+      this.basicHrInfo?.get('firstName')?.valueChanges.subscribe((value) => {
+        if (value) {
+          // Suppression de l'alert
+          let index = -1
+          index = this.humanResourceService.alertList().indexOf('firstName')
+          if (index !== -1) {
+            this.alertSet.emit({ tag: 'firstName', remove: true })
+          }
+        }
+      }),
+    )
+
+    this.watch(
+      this.basicHrInfo?.get('lastName')?.valueChanges.subscribe((value) => {
+        if (value) {
+          // Suppression de l'alert
+          let index = -1
+          index = this.humanResourceService.alertList().indexOf('lastName')
+          if (index !== -1) {
+            this.alertSet.emit({ tag: 'lastName', remove: true })
+          }
+        }
+      }),
+    )
+
+    this.watch(
+      this.basicHrInfo?.get('startDate')?.valueChanges.subscribe((value) => {
+        if (value) {
+          // Suppression de l'alert
+          let index = -1
+          index = this.humanResourceService.alertList().indexOf('startDate')
+          if (index !== -1) {
+            this.alertSet.emit({ tag: 'startDate', remove: true })
+          }
+        }
+      }),
+    )
   }
 
   /**
@@ -262,9 +302,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         [nodeName]: value,
       })
 
-      if (nodeName === 'dateStart' && value) {
-        this.humanResourceService.alertList.update((list) => [...list, nodeName])
-      }
+      this.removeAlertItem('startDate')
       this.ficheIsUpdated.emit(newHR)
     }
   }
@@ -358,7 +396,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Permet de suppimer une alerte sur un des champs du formulaire
    */
   removeAlertItem(tag: string) {
-    this.alertSet.emit({ tag })
+    this.alertSet.emit({ tag, remove: true})
   }
 
   /**
