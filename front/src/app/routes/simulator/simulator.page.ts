@@ -1233,7 +1233,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       }
 
       if (['lastStock'].includes(inputField.id) && (parseFloat(volumeInput) < 0||isNaN(parseFloat(volumeInput)))) {
-      {
       alert('La valeur totale ne peut pas être inférieure 0')
       return
       }
