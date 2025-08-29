@@ -272,6 +272,19 @@ export class TextEditorComponent extends MainClass {
   }
 
   /**
+   * Force to init new value
+   */
+  initValue(text: string) {
+    this.value = text;
+    this.ignoreUpdate = true;
+    this.quillEditor.root.innerHTML = '';
+    setTimeout(() => {
+      this.quillEditor.root.innerHTML = this.cleanInputValue(this.value);
+    }, 0);
+    this.valueChange.emit(this.value);
+  }
+
+  /**
    * Clean input new values
    */
   cleanInputValue(text: string) {
