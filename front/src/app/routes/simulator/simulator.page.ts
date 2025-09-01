@@ -1227,7 +1227,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         return
       }
 
-      if (['totalIn', 'totalOut', 'lastStock','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))) {
+      if (['totalIn', 'totalOut','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))) {
         alert('Le nombre total ne peut pas être inférieur ou égal à 0')
         return
       }
