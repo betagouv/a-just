@@ -1196,7 +1196,7 @@ export class WhiteSimulatorPage
       }
 
       if (
-        ['totalIn', 'totalOut', 'lastStock','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))
+        ['totalIn', 'totalOut','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))
       ) {
         alert('Le nombre total ne peut pas être inférieur ou égal à 0');
         return;
