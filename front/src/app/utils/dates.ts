@@ -200,11 +200,13 @@ export function findRealValue(date: Date) {
  * @param date
  * @returns
  */
-export function findRealValueCustom(date: Date | string | null | undefined, isTodayString = true) {
+export function findRealValueCustom(date: Date | string | null | undefined, isTodayString = true,monthAndYear=false) {
   date = new Date(date || '')
   const today = new Date()
   if (today.getDate() === date.getDate() && today.getMonth() === date.getMonth() && today.getFullYear() === date.getFullYear() && isTodayString) {
     return "Aujourd'hui"
+  } else if(date && typeof date.getMonth === 'function' && monthAndYear){
+    return `${getMonthString(date)} ${date.getFullYear()}`
   } else if (date && typeof date.getMonth === 'function') {
     return `${(date.getDate() + '').padStart(2, '0')} ${getMonthString(date)} ${date.getFullYear()}`
   } else return ''
