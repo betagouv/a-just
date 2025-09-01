@@ -2194,6 +2194,12 @@ export class WhiteSimulatorPage
             this.userAction.isLeaving = true;
           }
           break;
+        case this.action.closeTab:
+          {
+            this.popupActionToUse = this.popupAction.closeTab;
+            this.userAction.isClosingTab = true;
+          }
+          break;
       }
     }
     return;
