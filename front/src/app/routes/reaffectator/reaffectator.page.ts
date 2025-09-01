@@ -949,7 +949,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         return {
           ...ref,
           coverage: Math.round((outValue / inValue) * 100),
-          dtes: lastStock === 0 || outValue === 0 ? 0 : fixDecimal(lastStock / outValue,100),
+          dtes: lastStock === 0 || outValue === 0 
+          ? 0 
+          : Math.max(0, fixDecimal(lastStock / outValue, 100)),
           etpUseToday: refFromItemList.etpUseToday,
           totalAffected: refFromItemList.totalAffected,
           realCoverage: this.reaffectatorService.selectedReferentielIds.includes(ref.id) ? ref.realCoverage : 0, // make empty data if the referentiel id is not selected
