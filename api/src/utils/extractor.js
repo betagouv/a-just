@@ -760,7 +760,7 @@ export const computeExtractDdgv5 = async (
           ['TJCPH']: null,
           ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
           ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
-          ['ETPT sur la période absentéisme non déduit (hors action 99)']: reelEtp < 0.0001 ? 0 : reelEtp,
+          ['ETPT sur la période absentéisme non déduit (hors action 99)']: reelEtp < 0.0001 ? 0 : reelEtp || 0,
           ['Temps ventilés sur la période (hors action 99)']: totalEtpt,
           ['Ecart → ventilations manquantes dans A-JUST']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
           ...gaps,
@@ -1001,9 +1001,9 @@ export const computeExtractDdg = async (
             ['TJCPH']: null,
             ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
             ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
-            ['ETPT sur la période absentéisme non déduit (hors action 99)']: reelEtp < 0.0001 ? 0 : reelEtp,
-            ['Temps ventilés sur la période (hors action 99)']: totalEtpt,
-            ['Ecart → ventilations manquantes dans A-JUST']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
+            ['ETPT sur la période absentéisme non déduit (hors action 99)']: reelEtp < 0.0001 ? 0 : reelEtp || 0,
+            ['Temps ventilés sur la période (hors action 99)']: returnAIfClose(reelEtp, totalEtpt),
+            ['Ecart → ventilations manquantes dans A-JUST']: [0, NaN].includes(returnAIfClose(0, reelEtp - totalEtpt)) ? '-' : reelEtp - totalEtpt,
             ...gaps,
             ...refObj,
             ['CET > 30 jours']: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
@@ -1152,7 +1152,7 @@ export async function runExtractsInParallel({
   dateStop,
   isJirs,
   signal,
-  old = true,
+  old,
 }) {
   let [onglet1, onglet2] = await Promise.all([
     old == false
@@ -1478,8 +1478,6 @@ export const computeExtractv2 = async (
 
   console.timeEnd('extractor-5.2bis')
 
-  results = results.filter(Boolean)
-
   results = orderBy(results, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
 
   return results.filter(Boolean)
@@ -1651,7 +1649,7 @@ async function computeHumanExtract(params) {
     ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
     ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
     ['ETPT sur la période (absentéisme et action 99 déduits)']: reelEtp < 0.0001 ? 0 : reelEtp,
-    ['Temps ventilés sur la période (absentéisme et action 99 déduits)']: totalEtpt,
+    ['Temps ventilés sur la période (absentéisme et action 99 déduits)']: returnAIfClose(reelEtp, totalEtpt),
     ...refObj,
     ...(isCa() ? delegation : {}),
   }
@@ -1936,4 +1934,15 @@ function computeFallbackReelEtp(human, dateStart, dateStop, totalIndispo) {
   }
 
   return base - totalIndispo
+}
+
+// tolérance typique pour tes données : 1e-4
+const TOL = 1e-4 + Number.EPSILON
+
+// Retourne `a` si |a - b| ≤ TOL, sinon `undefined`
+function returnAIfClose(a, b, tol = TOL) {
+  const d = a - b // 1 soustraction
+  return (d < 0 ? -d : d) <= tol // abs sans appel de fonction
+    ? a
+    : b
 }

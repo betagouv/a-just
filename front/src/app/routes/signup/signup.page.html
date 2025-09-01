@@ -85,7 +85,10 @@
           autocomplete="off" />
         <p (click)="checkbox.click()">
           Je certifie avoir lu et accepté les
-          <a [routerLink]="['/conditions-generales-d-utilisation']">Conditions générales d'utilisation</a>
+          <a [routerLink]="['/conditions-generales-d-utilisation']" [queryParams]="{ noBack: true }" target="_blank"
+            rel="noopener">Conditions
+            générales
+            d'utilisation</a>
           .
         </p>
       </div>

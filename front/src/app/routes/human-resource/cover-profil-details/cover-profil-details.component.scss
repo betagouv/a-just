@@ -251,3 +251,10 @@
     }
   }
 }
+
+input#firstName:-internal-autofill-selected,
+input#lastName:-internal-autofill-selected {
+  background-color: inherit !important;
+  background-image: inherit !important;
+  color: inherit !important;
+}
