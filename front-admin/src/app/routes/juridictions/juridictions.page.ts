@@ -5,12 +5,12 @@ import { JuridictionInterface } from '../../interfaces/juridiction';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { PopupComponent } from '../../components/popup/popup.component';
-
+import { JsonPipe } from '@angular/common';
 import { HumanResourceService } from '../../services/human-resource/human-resource.service';
 
 @Component({
   standalone: true,
-  imports: [WrapperComponent, PopupComponent, MatSortModule],
+  imports: [WrapperComponent, PopupComponent, MatSortModule, JsonPipe],
   templateUrl: './juridictions.page.html',
   styleUrls: ['./juridictions.page.scss'],
 })
