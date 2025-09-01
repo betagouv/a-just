@@ -28,7 +28,6 @@ import { HumanResourceService } from '../../services/human-resource/human-resour
 import { UserService } from '../../services/user/user.service';
 import { importedVentillation } from '../../routes/human-resource/add-ventilation/add-ventilation.component';
 import { fixDecimal } from '../../utils/numbers';
-import { copyArray } from '../../utils/array';
 import { CommonModule } from '@angular/common';
 
 /**
