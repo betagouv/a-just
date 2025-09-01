@@ -11,6 +11,8 @@
 
 .ql-editor {
   padding: 10px 0px;
+  white-space: pre-wrap;
+  word-break: break-word;
 
   p,
   ul,
