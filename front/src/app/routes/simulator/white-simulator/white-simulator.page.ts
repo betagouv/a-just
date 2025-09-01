@@ -1202,6 +1202,11 @@ export class WhiteSimulatorPage
         return;
       }
 
+      if (['lastStock'].includes(inputField.id) && (parseFloat(volumeInput) < 0||isNaN(parseFloat(volumeInput)))) {
+      alert('La valeur totale ne peut pas être inférieure 0')
+      return
+      }
+
       // if param1 reset =>  reset all params
       if (inputField.id === this.paramsToAjust.param1.label) {
         this.paramsToAjust.param1.value = '';

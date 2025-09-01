@@ -684,7 +684,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     console.log('this.allPersonsFiltered', this.allPersonsFiltered)
 
     this.allPersonsFilteredIsIn = this.filterFindedPerson(this.allPersonsFiltered, true)
-    this.allPersonsFilteredNotIn = this.filterFindedPerson(this.allPersonsFiltered, false)
+    this.allPersonsFilteredNotIn = this.humanResourceService.categoriesFilterListIds.length===3 ?this.filterFindedPerson(this.allPersonsFiltered, false):[]
   }
 
   /**
