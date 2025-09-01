@@ -479,15 +479,18 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return
     }
 
+    const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
+    if (totalAffected > 100) {
+      this.appService.alert.next({
+        title: 'Attention',
+        text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`,
+      })
+      return
+    }
+
+
     if (!checkIfIndispoIgnoreControlPercentVentilation && !withoutPercentControl) {
-      const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
-      if (totalAffected > 100) {
-        this.appService.alert.next({
-          title: 'Attention',
-          text: `Avec les autres affectations, vous avez atteint un total de ${totalAffected}% de ventilation ! Vous ne pouvez passer au dessus de 100%.`,
-        })
-        return
-      } else if (totalAffected < 100) {
+      if (totalAffected < 100) {
         this.appService.alert.next({
           title: 'La ventilation de cet agent est incomplète',
           text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${fixDecimal(
