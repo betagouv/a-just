@@ -3,7 +3,7 @@ import { Chart, ChartItem, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 import { LegendLabelComponent } from '../legend-label/legend-label.component'
 import { SimulatorService } from '../../../../services/simulator/simulator.service'
-import { findRealValue, getLongMonthString, getRangeOfMonths } from '../../../../utils/dates'
+import { findRealValue, findRealValueCustom, getLongMonthString, getRangeOfMonths } from '../../../../utils/dates'
 import { fixDecimal } from '../../../../utils/numbers'
 
 /**
@@ -30,9 +30,17 @@ export class InOutChartComponent implements OnDestroy {
    */
   startRealValue = ''
   /**
+   * Valeur de début mois et année
+   */
+  startRealValueShort = ''
+  /**
    * Valeur de fin
    */
   stopRealValue = ''
+  /**
+   * Valeur de fin moi et année
+   */
+  stopRealValueShort = ''
   /**
    * Valeur de fin
    */
@@ -80,12 +88,15 @@ export class InOutChartComponent implements OnDestroy {
     simulatorService.dateStop.subscribe((value) => {
       if (value !== undefined) {
         this.stopRealValue = findRealValue(value)
+        this.stopRealValueShort = findRealValueCustom(value,false,true)
+
         this.dateStop = value
         this.labels = getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))
       }
     })
     simulatorService.dateStart.subscribe((value) => {
       this.startRealValue = findRealValue(value)
+      this.startRealValueShort = findRealValueCustom(value,false,true)
       this.dateStart = value
       if (this.dateStop !== null) {
         this.labels = getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))

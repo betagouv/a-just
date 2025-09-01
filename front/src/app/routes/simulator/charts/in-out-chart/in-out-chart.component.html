@@ -1,8 +1,9 @@
 <div class="left-side">
   <div class="title">
     <p>
-      Evolution des entrées et sorties &nbsp;
-      <label>{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }} {{ startRealValue }} au {{ stopRealValue }}</label>
+      Evolution des entrées et sorties moyennes mensuelles &nbsp;
+      <label>de {{ startRealValueShort }} à {{ stopRealValueShort
+        }}</label>
     </p>
   </div>
   <div class="container">
@@ -56,35 +57,15 @@
   </div>
 </div>
 <div class="right-side">
-  <aj-legend-label
-    [title]="'projectedIn'"
-    [label]="'Entrées (projeté)'"
-    [dotColor]="'#CB9F2D'"
-    [bgColor]="'#FCC63A'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'projectedIn'" [label]="'Entrées (projeté)'" [dotColor]="'#CB9F2D'" [bgColor]="'#FCC63A'"
+    (value)="display($event)"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedIn'"
-    [label]="'Entrées (simulé)'"
-    [dotColor]="'#FCC63A'"
-    [bgColor]="'#CB9F2D'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'simulatedIn'" [label]="'Entrées (simulé)'" [dotColor]="'#FCC63A'" [bgColor]="'#CB9F2D'"
+    (value)="display($event)"></aj-legend-label>
   <div class="space"></div>
-  <aj-legend-label
-    [title]="'projectedOut'"
-    [label]="'Sorties (projeté)'"
-    [dotColor]="'#49B6C0'"
-    [bgColor]="'#60E0EB'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'projectedOut'" [label]="'Sorties (projeté)'" [dotColor]="'#49B6C0'" [bgColor]="'#60E0EB'"
+    (value)="display($event)"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedOut'"
-    [label]="'Sorties (simulé)'"
-    [dotColor]="'#60E0EB'"
-    [bgColor]="'#49B6C0'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'simulatedOut'" [label]="'Sorties (simulé)'" [dotColor]="'#60E0EB'" [bgColor]="'#49B6C0'"
+    (value)="display($event)"></aj-legend-label>
 </div>
