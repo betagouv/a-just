@@ -18,14 +18,13 @@ const agentCron = async (env) => {
   syncAllDaysAt6.start()
   await env.models.HumanResources.checkAgentToAnonymise()
   await env.models.HumanResources.cleanEmptyAgent()
-  /**
+
   try {
     await env.warmupRedisCache(true)
     console.log('END CRON : WARMUP REDIS CACHE')
   } catch (err) {
     console.error('ERROR CRON : WARMUP REDIS CACHE', err)
   }
-   */
 }
 
 export default agentCron
