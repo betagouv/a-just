@@ -2001,13 +2001,19 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
             this.popupActionToUse = this.popupAction.backBeforeSimulate
             this.userAction.isComingBack = true
           }
-          break
+          break;
         case this.action.leave:
           {
             this.popupActionToUse = this.popupAction.leaving
             this.userAction.isLeaving = true
           }
-          break
+          break;
+        case this.action.closeTab:
+        {
+          this.popupActionToUse = this.popupAction.closeTab;
+          this.userAction.isClosingTab = true;
+        }
+          break;
       }
     }
     return
