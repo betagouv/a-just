@@ -1,90 +1,93 @@
 @use '../../styles/utils.scss' as utils;
 
-
-.disabled-tmd {
-    div>form>input {
-        background-color: rgba(185, 184, 182, 0.2901960784);
-        cursor: initial;
-        pointer-events: none;
+:host {
+    &.disabled-tmd {
+        div>form>input {
+            background-color: rgba(185, 184, 182, 0.2901960784);
+            cursor: initial;
+            pointer-events: none;
+        }
     }
-}
 
-.disabled {
-    div>form>input {
-        cursor: initial;
-        pointer-events: none;
+    &.disabled {
+        div>form>input {
+            cursor: initial;
+            pointer-events: none;
+        }
     }
-}
 
-.white-bg {
-    form {
-        input {
-            background-color: white;
-            border: solid 1px #e5e5e5;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
 
-            text-align: center;
+    &.white-bg {
+        form {
+            input {
+                background-color: white;
+                border: solid 1px #e5e5e5;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
 
-            &.disabled {
-                pointer-events: none;
-                cursor: none;
-                background-color: #b9b8b638;
-                color: #4e4e4e;
+                text-align: center;
+
+                &.disabled {
+                    pointer-events: none;
+                    cursor: none;
+                    background-color: #b9b8b638;
+                    color: #4e4e4e;
+                }
+
+                &:focus {
+                    outline: none;
+                    border-bottom: 2px solid black;
+
+                }
+
+                &.changed {
+                    color: black;
+                }
             }
+
+            img {
+                display: none;
+            }
+        }
+    }
+
+
+    form {
+        position: relative;
+        text-align: center;
+
+        input {
+            outline: none;
+            border-bottom: 2px solid #8d8d8d;
+
+            &.changed {
+                color: #000091
+            }
+
+            max-width: 140px;
 
             &:focus {
                 outline: none;
-                border-bottom: 2px solid black;
-
-            }
-
-            &.changed {
-                color: black;
+                border-bottom: solid 2px utils.$colors-cblack !important;
             }
         }
 
         img {
-            display: none;
-        }
-    }
-}
-
-form {
-    position: relative;
-    text-align: center;
-
-    input {
-        outline: none;
-        border-bottom: 2px solid #8d8d8d;
-
-        &.changed {
-            color: #000091
+            position: absolute;
+            right: 8px;
+            margin: auto;
+            top: 0px;
+            bottom: 0px;
         }
 
-        max-width: 140px;
-
-        &:focus {
-            outline: none;
-            border-bottom: solid 2px utils.$colors-cblack !important;
+        input:invalid {
+            background: rgba(255, 0, 0, 0.282);
         }
     }
 
-    img {
-        position: absolute;
-        right: 8px;
-        margin: auto;
-        top: 0px;
-        bottom: 0px;
+    .disabled {
+        pointer-events: none;
+        cursor: none;
+        background-color: #b9b8b64a;
     }
-
-    input:invalid {
-        background: rgba(255, 0, 0, 0.282);
-    }
-}
-
-.disabled {
-    pointer-events: none;
-    cursor: none;
-    background-color: #b9b8b64a;
 }
