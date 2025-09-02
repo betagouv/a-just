@@ -85,7 +85,6 @@ export default class RouteCalculator extends Route {
     dateStart = today(dateStart)
     dateStop = today(dateStop)
 
-    const hrList = await loadOrWarmHR(backupId, this.models)
     let endOfTheMonth = dateStart
 
     const list = []
@@ -170,25 +169,30 @@ export default class RouteCalculator extends Route {
               newFonctions = null
             }
 
+            const hrList = await loadOrWarmHR(backupId, this.models)
+            const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
+            const refFineded = originalReferentiel.find((r) => r.id === contentieuxId)
             const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart, null, newFonctions)
-            let hList = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], undefined, [catId], dateStart, endOfTheMonth)
+            let hList = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], undefined, null, dateStart, endOfTheMonth)
             let totalAffected = 0
-            hList.map((agent) => {
-              const activities = (agent.currentActivities || []).filter((r) => r.contentieux && r.contentieux.id === contentieuxId)
-              const timeAffected = sumBy(activities, 'percent')
-              if (timeAffected) {
-                let realETP = (agent.etp || 0) - agent.hasIndisponibility
-                if (realETP < 0) {
-                  realETP = 0
+            let subId = []
+            if (refFineded) {
+              subId = (refFineded.childrens || []).map((r) => r.id)
+            }
+
+            hList
+              .filter((h) => h.category && h.category.id === catId)
+              .map((agent) => {
+                const activities = (agent.currentActivities || []).filter((r) => r.contentieux && [contentieuxId, ...subId].includes(r.contentieux.id))
+                const timeAffected = sumBy(activities, 'percent') / 2 // because include parent and childrens percent ventilations
+                if (timeAffected) {
+                  let realETP = (agent.etp || 0) - agent.hasIndisponibility
+                  if (realETP < 0) {
+                    realETP = 0
+                  }
+                  totalAffected += (timeAffected / 100) * realETP
                 }
-                if (timeAffected > 0) {
-                  console.log('agent', agent)
-                  console.log('timeAffected', timeAffected)
-                  console.log('realETP', realETP)
-                }
-                totalAffected += (timeAffected / 100) * realETP
-              }
-            })
+              })
             list.push({ value: totalAffected, date: today(dateStart) })
           }
           break
