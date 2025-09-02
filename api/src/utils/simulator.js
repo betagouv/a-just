@@ -925,6 +925,8 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix, c
           simulation.lastStock = params.beginSituation.lastStock + (nbDays / (365 / 12)) * simulation.totalIn - (nbDays / (365 / 12)) * simulation.totalOut
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths !== 0) && simulation.totalOut) {
           simulation.lastStock = simulation.realDTESInMonths * simulation.totalOut
+        } else if (simulation.totalOut && simulation.realDTESInMonths === 0) {
+          simulation.lastStock = 0
         }
         if (simulation.lastStock && simulation.lastStock < 0) {
           //simulation.lastStock = 0
