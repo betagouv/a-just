@@ -182,11 +182,8 @@
       </div>
       <div class="sub-content-list" [style.background-color]="list.bgColor">
         @for (hr of list.hrFiltered; track hr.id) {
-        @defer (on viewport) {
         <person-preview [style.opacity]="hr.opacity" [id]="'human-' + hr.id" [hr]="hr" [filterParams]="filterParams"
-          [textColor]="list.textColor"></person-preview>} @placeholder {
-        <div class="flex-1"></div>
-        }
+          [textColor]="list.textColor"></person-preview>
         }
 
       </div>
