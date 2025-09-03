@@ -206,6 +206,11 @@ export default class RouteExtractor extends Route {
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 
     let activities = await this.models.Activities.getAllDetails(backupId)
+
+    activities = activities.map((r) => {
+      return { ...r, periode: today(r.periode) }
+    })
+
     activities = orderBy(activities, 'periode', ['asc'])
       .filter((act) => isDateGreaterOrEqual(act.periode, month(dateStart, 0)) && isDateGreaterOrEqual(month(dateStop, 0, 'lastday'), act.periode))
       .map((x) => {
@@ -247,24 +252,8 @@ export default class RouteExtractor extends Route {
       })
     })
 
-    /** 
-    const flatReferentiels = await flatListOfContentieuxAndSousContentieux([
-      ...referentiels,
-    ]);
-    const labels = flatReferentiels.map(item => item.label);
-
-    sumTab = sumTab.filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
-
-
-    GroupedList =  Object.keys(GroupedList).map((l) => {
-      return GroupedList[l].filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
-    });
-        */
-
     let GroupedList = groupBy(activities, 'periode')
 
-    console.log(isJirs)
-    //console.log(labels)
     this.sendOk(ctx, {
       list: GroupedList,
       sumTab,
