@@ -183,8 +183,15 @@ export default class RouteCalculator extends Route {
             hList
               .filter((h) => h.category && h.category.id === catId)
               .map((agent) => {
-                const activities = (agent.currentActivities || []).filter((r) => r.contentieux && [contentieuxId, ...subId].includes(r.contentieux.id))
-                const timeAffected = sumBy(activities, 'percent') / 2 // because include parent and childrens percent ventilations
+                let activities = (agent.currentActivities || []).filter((r) => r.contentieux && [contentieuxId].includes(r.contentieux.id))
+                let timeAffected = sumBy(activities, 'percent')
+
+                // search in childrens if not found in parent
+                if (!timeAffected) {
+                  activities = (agent.currentActivities || []).filter((r) => r.contentieux && subId.includes(r.contentieux.id))
+                  timeAffected = sumBy(activities, 'percent')
+                }
+
                 if (timeAffected) {
                   let realETP = (agent.etp || 0) - agent.hasIndisponibility
                   if (realETP < 0) {
