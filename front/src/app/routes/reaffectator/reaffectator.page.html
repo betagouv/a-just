@@ -89,12 +89,16 @@
             @if (referentiel.length > index + 1) {
             <div class="dtes"
               [ngClass]="{ 'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday }">
-              @if (isNaN(ref.coverage)) {
+              @if (isInfinity(ref.realDTESInMonths) && showReelValues) {
               <p>N/R</p>
               }
-              @if (!isNaN(ref.coverage)) {
+              @else if (isInfinity(ref.dtes)&& !showReelValues){
+              <p>N/R</p>
+              }
+              @else {
               <p>
-                {{ (showReelValues ? ref.realDTESInMonths : ref.dtes) || 0 | number: '.2-2' }}
+                {{ (showReelValues ? (ref.realDTESInMonths) : (ref.dtes)) | number:
+                '.2-2' }}
               </p>
               }
             </div>
