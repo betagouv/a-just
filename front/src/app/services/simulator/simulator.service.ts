@@ -288,6 +288,8 @@ export class SimulatorService extends MainClass {
           return 'N/R'
         } else if (data?.realDTESInMonths && data?.realDTESInMonths <= 0) {
           return '0'
+        } else if (data?.totalOut === null) {
+          return 'N/R'
         }
         if (data?.realDTESInMonths && data?.realDTESInMonths !== Infinity) {
           if (data?.realDTESInMonths <= 0) {
