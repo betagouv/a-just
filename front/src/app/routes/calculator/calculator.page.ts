@@ -1430,7 +1430,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewContractuel) {
-          const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpCont)
+          const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpCont ? this.round2(d.etpCont):d.etpCont)
           const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
           list.push({
             title: 'ETPT EAM',
