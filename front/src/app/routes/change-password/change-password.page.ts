@@ -91,7 +91,7 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
       return
     }
 
-    if (email.length === 0) {
+    if ((email || '').length === 0) {
       alert('Vous devez saisir votre email')
       return
     }
