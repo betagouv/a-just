@@ -58,7 +58,7 @@ export function mergeSituations(situationFiltered, situation, categories, catego
     if (x.id !== categoryId) {
       if (x.id === 1) situationFiltered.etpMag = situation.etpMag
       if (x.id === 2) situationFiltered.etpFon = situation.etpFon
-      if (x.id === 3) situationFiltered.etpCont = situation.etpCont
+      if (x.id === 3) situationFiltered.etpCont = situation.etpCont || situation.etpCon
       if (situation.endSituation) {
         situationFiltered.endSituation.monthlyReport[x.id - 1] = situation.endSituation.monthlyReport[x.id - 1]
         if (x.id === 1) situationFiltered.endSituation.etpMag = situation.endSituation.etpMag
