@@ -146,9 +146,11 @@
 
           i {
             color: utils.$colors-headerColor;
+            font-weight: bold;
 
             &.selected {
-              color: utils.$colors-sortHeaderSelected;
+              //color: utils.$colors-sortHeaderSelected;
+              color: #4c4ce2;
             }
           }
         }
