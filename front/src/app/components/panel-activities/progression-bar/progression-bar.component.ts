@@ -62,19 +62,19 @@ export class ProgressionBarComponent {
       }
 
       const valueFormated =
-        parseFloat((newPercent || '').replace(/,/, '.'));
+        (newPercent || '').replace(/,/, '.');
 
-      if (valueFormated < 0) {
+      if (+valueFormated < 0) {
         alert('Le pourcentage ne peut pas être négatif');
         return;
       }
 
-      if (Number.isNaN(valueFormated)) {
+      if (Number.isNaN(+valueFormated)) {
         alert('La valeur saisie n\'est pas un nombre');
         return;
       }
 
-      this.percent = valueFormated;
+      this.percent = +valueFormated;
       this.percentChange.emit(this.percent);
     }
   }
