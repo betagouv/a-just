@@ -243,7 +243,7 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
           target: '.actions .right-panel',
           title: 'Les ressources (outils)',
           intro:
-            "Pour vous aider, retrouver :<ul><li>le <b>data-book</b> : regroupe toutes les réponses aux questions que vous vous posez sur les <b>données d'activité</b> ;</li><li>la <b>nomenclature</b> : permet par les <b>codes NAC</b> de connaître la nature des affaires prises en compte dans un sous-contentieux civil : c'est la <b>colonne vertébrale d'A-JUST</b> !",
+            "Pour vous aider, retrouvez :<ul><li>le <b>data-book</b> : regroupe toutes les réponses aux questions que vous vous posez sur les <b>données d'activité</b> ;</li><li>la <b>nomenclature</b> : permet par les <b>codes NAC</b> de connaître la nature des affaires prises en compte dans un sous-contentieux civil : c'est la <b>colonne vertébrale d'A-JUST</b> !",
         },
         {
           target: '.menu-item.tools',
@@ -335,7 +335,7 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
           target: '.actions .right-panel',
           title: 'Les ressources (outils)',
           intro:
-            "Pour vous aider, retrouver :<ul><li>le <b>data-book</b> : regroupe toutes les réponses aux questions que vous vous posez sur les <b>données d'activité</b> ;</li><li>la <b>nomenclature</b> : permet par les <b>codes NAC</b> de connaître la nature des affaires prises en compte dans un sous-contentieux civil : c'est la <b>colonne vertébrale d'A-JUST</b> !",
+            "Pour vous aider, retrouvez :<ul><li>le <b>data-book</b> : regroupe toutes les réponses aux questions que vous vous posez sur les <b>données d'activité</b> ;</li><li>la <b>nomenclature</b> : permet par les <b>codes NAC</b> de connaître la nature des affaires prises en compte dans un sous-contentieux civil : c'est la <b>colonne vertébrale d'A-JUST</b> !",
         },
         {
           target: '.menu-item.tools',
