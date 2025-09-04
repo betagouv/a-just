@@ -259,3 +259,39 @@ export function updateLabels(listeA, listeReference) {
 
   return listeFiltree
 }
+
+// ---- 1) Formatage d'un item "vide" au format GroupedList à partir d'un référentiel
+export function makeEmptyItemFromRef(ref, periode, fill = null) {
+  return {
+    periode,
+    id: undefined,
+    entrees: fill,
+    sorties: fill,
+    stock: null,
+    originalEntrees: fill,
+    originalSorties: fill,
+    originalStock: null,
+    idReferentiel: ref.id,
+    contentieux: {
+      id: ref.id,
+      label: ref.label ?? null,
+      code_import: ref.code_import ?? null,
+    },
+  }
+}
+
+// ---- 2) Compléter un tableau (pour UNE période) avec les référentiels manquants
+export function completePeriod(items, flatReferentielsList, periode, fill = null) {
+  const existingIds = new Set(items.map((i) => i?.contentieux?.id ?? i?.idReferentiel))
+  const completed = [...items, ...flatReferentielsList.filter((ref) => !existingIds.has(ref.id)).map((ref) => makeEmptyItemFromRef(ref, periode, fill))]
+  return completed
+}
+
+// ---- 3) Parcourir tout l'objet groupé par période et appliquer completePeriod
+export function fillMissingContentieux(GroupedList, flatReferentielsList) {
+  const out = {}
+  for (const [periode, items] of Object.entries(GroupedList || {})) {
+    out[periode] = completePeriod(items || [], flatReferentielsList || [], periode)
+  }
+  return out
+}
