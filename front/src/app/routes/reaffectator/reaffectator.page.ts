@@ -954,9 +954,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           ? ref.realDTESInMonths
           : Infinity;
         
-        let coverage = Math.round((outValue / inValue) * 100);
+        let coverage = outValue && refFromItemList.totalIn!==0?Math.round((outValue / inValue) * 100):NaN;
         
-        let realCoverage = this.reaffectatorService.selectedReferentielIds.includes(ref.id)
+        let realCoverage = this.reaffectatorService.selectedReferentielIds.includes(ref.id) && outValue && refFromItemList.totalIn!==0
           ? ref.realCoverage
           : NaN;
           

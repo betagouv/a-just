@@ -14,7 +14,7 @@ import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
-import { updateLabels } from '../utils/referentiel'
+import { completePeriod, fillMissingContentieux, updateAndMerge, updateLabels } from '../utils/referentiel'
 
 import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
@@ -200,6 +200,7 @@ export default class RouteExtractor extends Route {
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
 
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined)
+    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
 
     const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
 
@@ -252,7 +253,10 @@ export default class RouteExtractor extends Route {
       })
     })
 
+    sumTab = completePeriod(sumTab || [], flatReferentielsList || [], '', 0)
+
     let GroupedList = groupBy(activities, 'periode')
+    GroupedList = fillMissingContentieux(GroupedList, flatReferentielsList)
 
     this.sendOk(ctx, {
       list: GroupedList,
