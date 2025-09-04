@@ -2237,7 +2237,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.logOpenWhiteSimulator()
       this.changePage()
     } else if (type === REAFFECTATOR) {
-      this.router.navigate(['/reaffectateur'])
+      this.router.navigate(['/reaffectateur'], {
+        relativeTo: this.route,
+        queryParams: { b: 'simulateur' },
+        queryParamsHandling: 'merge'
+      })
     }
   }
 

@@ -194,7 +194,7 @@
 
 <ng-template #actions>
   @if (canViewReaffectator) {
-  <a routerLink="/reaffectateur" class="reaffectator-page">
+  <a routerLink="/reaffectateur" [queryParams]="{ b: 'ventilations' }" class="reaffectator-page">
     <button class="white outline">Simuler des affectations</button>
   </a>
   }
