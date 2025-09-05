@@ -12,7 +12,7 @@ import {
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
-import { isDateGreaterOrEqual, month, today } from '../utils/date'
+import { getWorkingDaysCount, isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
 import { completePeriod, fillMissingContentieux, updateAndMerge, updateLabels } from '../utils/referentiel'
 
@@ -131,6 +131,7 @@ export default class RouteExtractor extends Route {
 
     console.timeEnd('extractor-6')
 
+    console.log(dateStart, dateStop, getWorkingDaysCount(dateStart, dateStop))
     this.sendOk(ctx, {
       fonctions: formatedFunctions,
       referentiels,
