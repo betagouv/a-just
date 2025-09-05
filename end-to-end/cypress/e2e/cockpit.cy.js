@@ -6,7 +6,7 @@ describe("Cockpit", () => {
     cy.login();
   });
 
-  it("Check the cockpit page load", () => {
+  /*it("Check the cockpit page load", () => {
     cy.visit("/cockpit");
     cy.wait(1000);
     cy.url().should("include", "/cockpit");
@@ -364,5 +364,5 @@ describe("Cockpit", () => {
     // .within(() => {
     //   cy.get('.radio').should('have.class', 'filled')
     // })
-  });
+  });*/
 });

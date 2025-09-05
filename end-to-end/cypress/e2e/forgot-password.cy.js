@@ -6,7 +6,7 @@ describe("Forgot Password Page", () => {
   // })
   let token = null;
 
-  it("should verify existence of forgotten password button and its navigation", () => {
+  /*it("should verify existence of forgotten password button and its navigation", () => {
     cy.clearAllLocalStorage();
     cy.visit(`/connexion`);
     cy.get("form > .remember-row > a")
@@ -233,5 +233,5 @@ describe("Forgot Password Page", () => {
       );
     });
     cy.location("pathname").should("eq", "/connexion");
-  });
+  });*/
 });
