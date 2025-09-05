@@ -2,7 +2,7 @@ import { cloneDeep, orderBy, sortBy, sumBy } from 'lodash'
 import { ABSENTEISME_LABELS, CET_LABEL, DELEGATION_TJ } from '../constants/referentiel'
 import { getNextDay, nbOfDays, nbWorkingDays, setTimeToMidDay, today, workingDay } from './date'
 import { findSituation } from './human-resource'
-import { getHRVentilation } from '../utils/calculator'
+import { getHRVentilation, getHRVentilationOld } from '../utils/calculator'
 import { FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR, FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA } from '../constants/extractor'
 import { isCa, isTj } from './ca'
 import { checkAbort } from './abordTimeout'
@@ -847,7 +847,7 @@ export const computeExtractDdg = async (
                 return indisponibility.contentieux.id === referentiel.id
               })
             ) {
-              const etpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels, signal)
+              const etpAffected = getHRVentilationOld(human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels, signal)
 
               const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),

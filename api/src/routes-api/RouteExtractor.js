@@ -12,9 +12,9 @@ import {
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
-import { isDateGreaterOrEqual, month, today } from '../utils/date'
+import { getWorkingDaysCount, isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
-import { updateLabels } from '../utils/referentiel'
+import { completePeriod, fillMissingContentieux, updateAndMerge, updateLabels } from '../utils/referentiel'
 
 import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
@@ -68,7 +68,7 @@ export default class RouteExtractor extends Route {
     console.time('extractor-1')
     const juridictionName = await this.models.HRBackups.findById(backupId)
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(undefined, undefined, undefined, true)
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, true)
     console.timeEnd('extractor-1')
 
     console.time('extractor-2')
@@ -131,6 +131,7 @@ export default class RouteExtractor extends Route {
 
     console.timeEnd('extractor-6')
 
+    console.log(dateStart, dateStop, getWorkingDaysCount(dateStart, dateStop))
     this.sendOk(ctx, {
       fonctions: formatedFunctions,
       referentiels,
@@ -200,12 +201,18 @@ export default class RouteExtractor extends Route {
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
 
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined)
+    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
 
     const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
 
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 
     let activities = await this.models.Activities.getAllDetails(backupId)
+
+    activities = activities.map((r) => {
+      return { ...r, periode: today(r.periode) }
+    })
+
     activities = orderBy(activities, 'periode', ['asc'])
       .filter((act) => isDateGreaterOrEqual(act.periode, month(dateStart, 0)) && isDateGreaterOrEqual(month(dateStop, 0, 'lastday'), act.periode))
       .map((x) => {
@@ -247,24 +254,11 @@ export default class RouteExtractor extends Route {
       })
     })
 
-    /** 
-    const flatReferentiels = await flatListOfContentieuxAndSousContentieux([
-      ...referentiels,
-    ]);
-    const labels = flatReferentiels.map(item => item.label);
-
-    sumTab = sumTab.filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
-
-
-    GroupedList =  Object.keys(GroupedList).map((l) => {
-      return GroupedList[l].filter((x) => x.contentieux.code_import !== null && (labels.includes( x.contentieux.label)||labels.includes('Total '+x.contentieux.label)));
-    });
-        */
+    sumTab = completePeriod(sumTab || [], flatReferentielsList || [], '', 0)
 
     let GroupedList = groupBy(activities, 'periode')
+    GroupedList = fillMissingContentieux(GroupedList, flatReferentielsList)
 
-    console.log(isJirs)
-    //console.log(labels)
     this.sendOk(ctx, {
       list: GroupedList,
       sumTab,

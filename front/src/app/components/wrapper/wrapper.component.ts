@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, HostBinding, inject, Input, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core'
-import { Router, RouterLink } from '@angular/router'
+import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { ActionsInterface, PopupComponent } from '../popup/popup.component'
@@ -90,6 +90,15 @@ interface ExportPDFInterface {
   styleUrls: ['./wrapper.component.scss'],
 })
 export class WrapperComponent extends MainClass implements OnDestroy {
+  router = inject(Router)
+  route = inject(ActivatedRoute)
+  userService = inject(UserService)
+  humanResourceService = inject(HumanResourceService)
+  appService = inject(AppService)
+  titlePlatform = inject(Title)
+  activitiesService = inject(ActivitiesService)
+  serverService = inject(ServerService)
+  excelService = inject(ExcelService)
   /**
    * Service de log des KPIs
    */
@@ -244,16 +253,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    * @param appService
    * @param activitiesService
    */
-  constructor(
-    private router: Router,
-    public userService: UserService,
-    private humanResourceService: HumanResourceService,
-    private appService: AppService,
-    private titlePlatform: Title,
-    private activitiesService: ActivitiesService,
-    private serverService: ServerService,
-    private excelService: ExcelService,
-  ) {
+  constructor() {
     super()
     this.appService.appLoading.next(true)
     this.watch(
@@ -276,6 +276,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
       }),
     )
+
+    if(this.route.snapshot.queryParams['b']) {
+      this.backUrl = `/${this.route.snapshot.queryParams['b']}`
+    }
   }
 
   /**

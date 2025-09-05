@@ -1,5 +1,5 @@
 <aj-wrapper #wrapper title="Simulation d’affectations" [actionTemplate]="actions"
-  class="content-margin-null header-border-none" backUrl="back" [isDarkScreen]="true">
+  class="content-margin-null header-border-none" [isDarkScreen]="true">
   <div class="container" [ngClass]="{ print: duringPrint }">
     <div class="title">
       <aj-date-select title="A la date d'" class="dark-mode" [value]="dateSelected"
@@ -89,12 +89,16 @@
             @if (referentiel.length > index + 1) {
             <div class="dtes"
               [ngClass]="{ 'show-reel-values': !showReelValues && ref.totalAffected !== ref.etpUseToday }">
-              @if (isNaN(ref.coverage)) {
+              @if (isInfinity(ref.realDTESInMonths) && showReelValues) {
               <p>N/R</p>
               }
-              @if (!isNaN(ref.coverage)) {
+              @else if (isInfinity(ref.dtes)&& !showReelValues){
+              <p>N/R</p>
+              }
+              @else {
               <p>
-                {{ (showReelValues ? ref.realDTESInMonths : ref.dtes) || 0 | number: '.2-2' }}
+                {{ (showReelValues ? (ref.realDTESInMonths) : (ref.dtes)) | number:
+                '.2-2' }}
               </p>
               }
             </div>
@@ -265,10 +269,10 @@
     </div>
     <div class="activities">
       <div class="flex-1"></div>
-      @defer (on viewport; prefetch on idle) {
-      <panel-activities [activities]="hr.currentActivities" [header]="false" [selected]="true" class="dark-mode"
-        (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)" [updateRefentielOnLoad]="false"
-        [canSelectedTopReferentiel]="true"></panel-activities>
+      @defer (on viewport; prefetch on idle;) {
+      <panel-activities [activities]="hr.currentActivities" [id]="hr.id" [header]="false" [selected]="true"
+        class="dark-mode" (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)"
+        [updateRefentielOnLoad]="false" [canSelectedTopReferentiel]="true"></panel-activities>
       } @placeholder {
       <div class="flex-1"></div>
       }

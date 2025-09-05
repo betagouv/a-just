@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { cloneDeep, orderBy, sortBy, sumBy } from 'lodash'
+import { cloneDeep, isNaN, orderBy, sortBy, sumBy } from 'lodash'
 import { Router } from '@angular/router'
 import { HumanResourceInterface } from '../../interfaces/human-resource-interface'
 import { RHActivityInterface } from '../../interfaces/rh-activity'
@@ -946,15 +946,28 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         let outValue = averageWorkingProcess === 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
 
+        let dtes = outValue && Number.isFinite(lastStock / outValue)
+        ? Math.max(0, fixDecimal(lastStock / outValue, 100))
+        : Infinity;
+        
+        let realDTESInMonths = outValue && Number.isFinite(ref.realDTESInMonths)
+          ? ref.realDTESInMonths
+          : Infinity;
+        
+        let coverage = outValue && refFromItemList.totalIn!==0?Math.round((outValue / inValue) * 100):NaN;
+        
+        let realCoverage = this.reaffectatorService.selectedReferentielIds.includes(ref.id) && outValue && refFromItemList.totalIn!==0
+          ? ref.realCoverage
+          : NaN;
+          
         return {
           ...ref,
-          coverage: Math.round((outValue / inValue) * 100),
-          dtes: lastStock === 0 || outValue === 0 
-          ? 0 
-          : Math.max(0, fixDecimal(lastStock / outValue, 100)),
+          realDTESInMonths:this.noNegativValues(realDTESInMonths),
+          coverage,
+          dtes:this.noNegativValues(dtes),
           etpUseToday: refFromItemList.etpUseToday,
           totalAffected: refFromItemList.totalAffected,
-          realCoverage: this.reaffectatorService.selectedReferentielIds.includes(ref.id) ? ref.realCoverage : 0, // make empty data if the referentiel id is not selected
+          realCoverage: realCoverage,
         }
       })
     }
@@ -1104,5 +1117,13 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   round(valeur:number){
   return Math.round(valeur)
+  }
+
+  noNegativValues(value:number){
+  return value<0 ? 0: value
+  }
+
+  isInfinity(value:number){
+    return isNaN(value)|| !Number.isFinite(value)?true:false
   }
 }

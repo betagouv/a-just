@@ -41,7 +41,7 @@ export default class RouteAuths extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      email: Types.string().required(),
+      email: Types.string(),
       password: Types.string(),
       remember: Types.number(),
     }),
@@ -160,8 +160,8 @@ export default class RouteAuths extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      email: Types.string().required(),
-      password: Types.string().required(),
+      email: Types.string(),
+      password: Types.string(),
     }),
   })
   async loginAdminTest(ctx) {
@@ -199,8 +199,8 @@ export default class RouteAuths extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      email: Types.string().required(),
-      password: Types.string().required(),
+      email: Types.string(),
+      password: Types.string(),
     }),
   })
   async loginAdmin(ctx) {
