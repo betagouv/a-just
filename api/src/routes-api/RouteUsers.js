@@ -227,9 +227,9 @@ export default class RouteUsers extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      userId: Types.number().required(),
-      access: Types.any().required(),
-      ventilations: Types.any().required(),
+      userId: Types.number(),
+      access: Types.any(),
+      ventilations: Types.any(),
     }),
     accesses: [Access.isAdmin],
   })
@@ -339,9 +339,9 @@ export default class RouteUsers extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      email: Types.string().required(),
-      code: Types.string().required(),
-      password: Types.string().required(),
+      email: Types.string(),
+      code: Types.string(),
+      password: Types.string(),
     }),
   })
   async changePassword(ctx) {

@@ -28,7 +28,6 @@ import { HumanResourceService } from '../../services/human-resource/human-resour
 import { UserService } from '../../services/user/user.service';
 import { importedVentillation } from '../../routes/human-resource/add-ventilation/add-ventilation.component';
 import { fixDecimal } from '../../utils/numbers';
-import { copyArray } from '../../utils/array';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -46,6 +45,7 @@ export class PanelActivitiesComponent
   extends MainClass
   implements OnChanges, OnDestroy
 {
+  @Input() id: number | null = null;
   /**
    * Valeure de l'ETP
    */
@@ -159,6 +159,10 @@ export class PanelActivitiesComponent
     this.referentiel = cloneDeep(
       this.humanResourceService.contentieuxReferentielOnly.getValue()
     );
+  }
+
+  ngOnInit() {
+    console.log('this.id', this.id);
   }
 
   /**

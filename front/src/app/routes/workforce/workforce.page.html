@@ -182,11 +182,8 @@
       </div>
       <div class="sub-content-list" [style.background-color]="list.bgColor">
         @for (hr of list.hrFiltered; track hr.id) {
-        @defer (on viewport; prefetch on idle) {
         <person-preview [style.opacity]="hr.opacity" [id]="'human-' + hr.id" [hr]="hr" [filterParams]="filterParams"
-          [textColor]="list.textColor"></person-preview>} @placeholder {
-        <div class="flex-1"></div>
-        }
+          [textColor]="list.textColor"></person-preview>
         }
 
       </div>
@@ -197,7 +194,7 @@
 
 <ng-template #actions>
   @if (canViewReaffectator) {
-  <a routerLink="/reaffectateur" class="reaffectator-page">
+  <a routerLink="/reaffectateur" [queryParams]="{ b: 'ventilations' }" class="reaffectator-page">
     <button class="white outline">Simuler des affectations</button>
   </a>
   }

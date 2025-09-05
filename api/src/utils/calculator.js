@@ -2,7 +2,7 @@ import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
 import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
-import { calculateETPForContentieux, getEtpByDateAndPerson } from './human-resource'
+import { calculateETPForContentieux, getEtpByDateAndPerson, getEtpByDateAndPersonOld } from './human-resource'
 import { appendFileSync } from 'fs'
 import { checkAbort } from './abordTimeout'
 
@@ -446,6 +446,120 @@ export const getNbDaysGone = (hr, dateStart, dateStop) => {
   } while (now.getTime() <= dateStop.getTime())
 
   return nbDaysGone
+}
+
+export const getHRVentilationOld = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
+  const list = new Object()
+  categories.map((c) => {
+    list[c.id] = new Object({
+      etpt: 0,
+      indispo: 0,
+      reelEtp: 0,
+      ...c,
+    })
+  })
+
+  let now = today(dateStart)
+  let nbDay = 0
+  let nbDaysGone = 0
+  do {
+    let nextDateFinded = null
+    let lastEtpAdded = null
+    let lastSituationId = null
+
+    hr.dateEnd = hr.dateEnd ? today(hr.dateEnd) : hr.dateEnd
+    hr.dateStart = hr.dateStart ? today(hr.dateStart) : hr.dateStart
+
+    // only working day
+    if (workingDay(now)) {
+      let sumByInd = 0
+      if (hr.dateEnd && hr.dateEnd.getTime() < dateStop.getTime() && now.getTime() > hr.dateEnd.getTime()) nbDaysGone++
+      if (hr.dateStart && hr.dateStart.getTime() > dateStart.getTime() && now.getTime() < dateStart.getTime()) nbDaysGone++
+      nbDay++
+
+      let etp = null
+      let situation = null
+      let indispoFiltred = null
+      let nextDeltaDate = null
+      let reelEtp = null
+      /*const cache = models.HumanResources.cacheAgent(hr.id, `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`)
+      if (cache) {
+        etp = cache.etp
+        situation = cache.situation
+        indispoFiltred = cache.indispoFiltred
+        nextDeltaDate = cache.nextDeltaDate
+        reelEtp = cache.reelEtp
+      } else {*/
+      const etpByDateAndPerson = getEtpByDateAndPersonOld(referentielId, now, hr, ddgFilter, absLabels)
+      /*models.HumanResources.updateCacheAgent(
+          hr.id,
+          `getEtpByDateAndPerson${referentielId};now${now};ddgFilter${ddgFilter};absLabels${absLabels}`,
+          etpByDateAndPerson
+        )*/
+      etp = etpByDateAndPerson.etp
+      situation = etpByDateAndPerson.situation
+      indispoFiltred = etpByDateAndPerson.indispoFiltred
+      nextDeltaDate = etpByDateAndPerson.nextDeltaDate
+      reelEtp = etpByDateAndPerson.reelEtp
+      //}
+
+      if (nextDeltaDate) {
+        nextDateFinded = today(nextDeltaDate)
+      }
+
+      const categoryId = situation && situation.category && situation.category.id ? '' + situation.category.id : null
+
+      if (situation && etp !== null && list[categoryId]) {
+        lastEtpAdded = etp
+        lastSituationId = categoryId
+        list[categoryId].reelEtp += reelEtp
+        list[categoryId].etpt += etp
+      }
+
+      sumByInd += sumBy(indispoFiltred, 'percent')
+
+      if (sumByInd !== 0) {
+        indispoFiltred.map((c) => {
+          if (c.contentieux.id === referentielId && list[categoryId]) list[categoryId].indispo += c.percent
+        })
+      }
+    }
+
+    //
+    if (nextDateFinded) {
+      if (nextDateFinded.getTime() > dateStop.getTime()) {
+        nextDateFinded = today(dateStop)
+        nextDateFinded.setDate(nextDateFinded.getDate() + 1)
+      }
+
+      // don't block the average
+      if (lastEtpAdded !== null && lastSituationId !== null) {
+        const nbDayBetween = nbWorkingDays(now, nextDateFinded)
+        nbDay += nbDayBetween - 1
+        list[lastSituationId].etpt += nbDayBetween * lastEtpAdded
+      }
+
+      // quick move to the next date
+      now = today(nextDateFinded)
+    } else {
+      now.setDate(now.getDate() + 1)
+    }
+  } while (now.getTime() <= dateStop.getTime())
+
+  if (nbDay === 0) {
+    nbDay = 1
+  }
+
+  // format render
+  for (const property in list) {
+    list[property].etpt = list[property].etpt / nbDay
+    list[property].indispo = list[property].indispo / nbDay
+    list[property].reelEtp = list[property].reelEtp / nbDay
+    list[property].nbDaysGone = nbDaysGone
+    list[property].nbDay = nbDay
+  }
+
+  return list
 }
 /**
  * Calcul du temps de ventilation d'un magistrat et d'un contentieux

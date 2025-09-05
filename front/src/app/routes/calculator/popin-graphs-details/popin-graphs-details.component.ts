@@ -14,7 +14,7 @@ import { UserService } from '../../../services/user/user.service';
 import { PopupComponent } from '../../../components/popup/popup.component';
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
 import { CalculatorService } from '../../../services/calculator/calculator.service';
-import { Chart, ChartItem, plugins } from 'chart.js/auto';
+import { Chart, ChartItem } from 'chart.js/auto';
 import { findLastIndex, maxBy, minBy } from 'lodash';
 import { today } from '../../../utils/dates';
 import { KPIService } from '../../../services/kpi/kpi.service';
@@ -144,7 +144,6 @@ export class PopinGraphsDetailsComponent
           this.calculatorService.showGraphDetailType
         )
       ).filter((v: any) => v);
-      console.log('firstValues', firstValues)
 
       secondValues = (
         await this.calculatorService.rangeValues(
@@ -154,7 +153,6 @@ export class PopinGraphsDetailsComponent
           this.optionDateStop
         )
       ).filter((v: any) => v);
-      console.log('secondValues', secondValues)
 
       if (
         this.calculatorService.dateStop.getValue() &&

@@ -10,7 +10,7 @@ import { today } from '../utils/date'
 import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import { loadOrWarmHR, removeCacheListItem, updateCacheListItem } from '../utils/redis'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Route des fiches

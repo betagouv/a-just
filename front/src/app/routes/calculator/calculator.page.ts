@@ -1115,12 +1115,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
 
       const value1DTES = (datas || []).map((d) => d.realDTESInMonths)
       const value1TauxCouverture = (datas || []).map((d) => d.realCoverage)
-      const value1Sorties = (datas || []).map((d) => (d.totalOut ? Math.floor(d.totalOut) : d.totalOut))
-      const value1Entrees = (datas || []).map((d) => (d.totalIn ? Math.floor(d.totalIn) : d.totalIn))
+      const value1Sorties = (datas || []).map((d) => (d.totalOut ? Math.round(d.totalOut) : d.totalOut))
+      const value1Entrees = (datas || []).map((d) => (d.totalIn ? Math.round(d.totalIn) : d.totalIn))
       const value1Stock = (datas || []).map((d) => d.lastStock)
-      const value1ETPTSiege = (datas || []).map((d) => d.etpMag)
-      const value1ETPTGreffe = (datas || []).map((d) => d.etpFon)
-      const value1ETPTEam = (datas || []).map((d) => d.etpCont)
+      const value1ETPTSiege = (datas || []).map((d) => d.etpMag ? this.round2(d.etpMag):d.etpMag)
+      const value1ETPTGreffe = (datas || []).map((d) => d.etpFon ? this.round2(d.etpFon):d.etpFon)
+      const value1ETPTEam = (datas || []).map((d) => d.etpCont ? this.round2(d.etpCont):d.etpCont)
       const getVariations = (tab2: any[], tab1: any[], isPercentComparaison = true) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null || d === Infinity) {
@@ -1348,7 +1348,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewMagistrat) {
-          const value2ETPTSiege: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpMag)
+          const value2ETPTSiege: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpMag ? this.round2(d.etpMag):d.etpMag)
           const variationsETPTSiege = getVariations(value2ETPTSiege, value1ETPTSiege)
           list.push({
             title: 'ETPT Siège',
@@ -1389,7 +1389,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewGreffier) {
-          const value2ETPTGreffe: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpFon)
+          const value2ETPTGreffe: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpFon ? this.round2(d.etpFon):d.etpFon)
           const variationsETPTGreffe = getVariations(value2ETPTGreffe, value1ETPTGreffe)
           list.push({
             title: 'ETPT Greffe',
@@ -1430,7 +1430,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewContractuel) {
-          const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpCont)
+          const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpCont ? this.round2(d.etpCont):d.etpCont)
           const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
           list.push({
             title: 'ETPT EAM',
@@ -1809,5 +1809,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    */
   override addMonthsToDate(date: Date | null, months: number): Date | null {
     return super.addMonthsToDate(date, months)
+  }
+
+  round2(num:number) {
+    return Math.round(num * 100) / 100;
   }
 }

@@ -1,13 +1,7 @@
-<aj-wrapper
-  #wrapper
-  title="Données d'activité"
-  [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
+<aj-wrapper #wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
   [documentation]="documentation"
   class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null large-actions"
-  [actionTemplate]="ressources"
-  [alignLeft]="false"
-  [dateSelector]="dateSelector"
->
+  [actionTemplate]="ressources" [alignLeft]="false" [dateSelector]="dateSelector">
   <div class="container">
     <div class="header-list">
       <!--<ng-template [ngIf]="canEditActivities">-->
@@ -31,188 +25,150 @@
     </div>
     <div class="content-list">
       @if (!canEditActivities && !isLoadedFirst) {
-        <p class="in-the-future-text">Cet écran sera accessible dès l'import des données logiciel du mois.</p>
+      <p class="in-the-future-text">Cet écran sera accessible dès l'import des données logiciel du mois.</p>
       }
       @if (canEditActivities) {
-        @for (ref of referentiel; track ref.id) {
-          <div class="item-grouped" [class.maximize]="ref.showActivityGroup">
-            <div
-              class="item"
-              [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(ref.label, OPACITY)"
-              (click)="
+      @for (ref of referentiel; track ref.id) {
+      <div class="item-grouped" [class.maximize]="ref.showActivityGroup">
+        <div class="item"
+          [style.backgroundColor]="userService.referentielMappingColorActivityByInterface(ref.label, OPACITY)" (click)="
                 (ref.childrens || []).length ? (ref.showActivityGroup = !ref.showActivityGroup) : null;
                 onShowLevel4(ref)
-              "
-              [class.selectable]="(ref.childrens || []).length"
-            >
-              <div class="label">
-                <div
-                  class="color-border"
-                  [style.backgroundColor]="
+              " [class.selectable]="(ref.childrens || []).length">
+          <div class="label">
+            <div class="color-border" [style.backgroundColor]="
                     ref.showActivityGroup ? null : userService.referentielMappingColorByInterface(ref.label, OPACITY)
-                  "
-                ></div>
-                @if ((ref.childrens || []).length) {
-                  <mat-icon>{{ ref.showActivityGroup ? 'expand_more' : 'chevron_right' }}</mat-icon>
-                }
-                <p>{{ ref.label }}</p>
-                <!--<ng-container
+                  "></div>
+            @if ((ref.childrens || []).length) {
+            <mat-icon>{{ ref.showActivityGroup ? 'expand_more' : 'chevron_right' }}</mat-icon>
+            }
+            <p>{{ ref.label }}</p>
+            <!--<ng-container
               *ngTemplateOutlet="tooltip; context: { contentieux: ref }"
               >
             </ng-container>-->
-                @if (ref.helpUrl) {
-                  <div class="tooltip">
-                    <i
-                      class="ri-lightbulb-flash-line cursor-pointer blue"
-                      #light
-                      (click)="onShowPanel({ label: ref.label, url: ref.helpUrl }); $event.stopPropagation()"
-                    ></i>
-                  </div>
-                }
-              </div>
-              <div class="column-item">
-                <div></div>
-              </div>
-              <div class="column-item">
-                <div>
-                  <p
-                    [ngClass]="{
+            @if (ref.helpUrl) {
+            <div class="tooltip">
+              <i class="ri-lightbulb-flash-line cursor-pointer blue" #light
+                (click)="onShowPanel({ label: ref.label, url: ref.helpUrl }); $event.stopPropagation()"></i>
+            </div>
+            }
+          </div>
+          <div class="column-item">
+            <div></div>
+          </div>
+          <div class="column-item">
+            <div>
+              <p [ngClass]="{
                       'data-changed': checkIfBlue({ cont: ref, node: 'entrees', isForBulbOrBottom: false }),
-                    }"
-                  >
-                    {{ ref.in !== null ? ref.in : ref.originalIn !== null ? ref.originalIn : '-' }}
-                  </p>
-                </div>
-                @if (
-                  checkIfBlue({ cont: ref, node: 'entrees', isForBulbOrBottom: false }) &&
-                  ref.activityUpdated &&
-                  ref.activityUpdated.entrees &&
-                  ref.activityUpdated.entrees.date &&
-                  ref.activityUpdated.entrees.user
-                ) {
-                  <aj-tooltips
-                    class="medium no-bg"
-                    [title]="
+                    }">
+                {{ ref.in !== null ? ref.in : ref.originalIn !== null ? ref.originalIn : '-' }}
+              </p>
+            </div>
+            @if (
+            checkIfBlue({ cont: ref, node: 'entrees', isForBulbOrBottom: false }) &&
+            ref.activityUpdated &&
+            ref.activityUpdated.entrees &&
+            ref.activityUpdated.entrees.date &&
+            ref.activityUpdated.entrees.user
+            ) {
+            <aj-tooltips class="medium no-bg" [title]="
                       getTooltipTitle({
                         user: ref.activityUpdated.entrees.user,
                         date: ref.activityUpdated.entrees.date,
                       })
-                    "
-                  ></aj-tooltips>
-                }
-              </div>
-              <div class="column-item">
-                <div>
-                  <p
-                    [ngClass]="{
+                    "></aj-tooltips>
+            }
+          </div>
+          <div class="column-item">
+            <div>
+              <p [ngClass]="{
                       'data-changed': checkIfBlue({ cont: ref, node: 'sorties', isForBulbOrBottom: false }),
-                    }"
-                  >
-                    {{ ref.out !== null ? ref.out : ref.originalOut !== null ? ref.originalOut : '-' }}
-                  </p>
-                </div>
-                @if (
-                  checkIfBlue({ cont: ref, node: 'sorties', isForBulbOrBottom: false }) &&
-                  ref.activityUpdated &&
-                  ref.activityUpdated.sorties &&
-                  ref.activityUpdated.sorties.date &&
-                  ref.activityUpdated.sorties.user
-                ) {
-                  <aj-tooltips
-                    class="medium no-bg"
-                    [title]="
+                    }">
+                {{ ref.out !== null ? ref.out : ref.originalOut !== null ? ref.originalOut : '-' }}
+              </p>
+            </div>
+            @if (
+            checkIfBlue({ cont: ref, node: 'sorties', isForBulbOrBottom: false }) &&
+            ref.activityUpdated &&
+            ref.activityUpdated.sorties &&
+            ref.activityUpdated.sorties.date &&
+            ref.activityUpdated.sorties.user
+            ) {
+            <aj-tooltips class="medium no-bg" [title]="
                       getTooltipTitle({
                         user: ref.activityUpdated.sorties.user,
                         date: ref.activityUpdated.sorties.date,
                       })
-                    "
-                  ></aj-tooltips>
-                }
-              </div>
-              <div class="column-item">
-                <div>
-                  <!--
+                    "></aj-tooltips>
+            }
+          </div>
+          <div class="column-item">
+            <div>
+              <!--
               <p
                 [ngClass]="{'data-changed': checkIfBlue(ref, 'stock') && ref.stock !== null && ref.activityUpdated && ref.activityUpdated.stock && ref.activityUpdated.stock.user && ref.activityUpdated.stock.date}"
                 >
                 -->
-                  <p
-                    [ngClass]="{ 'data-changed': checkIfBlue({ cont: ref, node: 'stock', isForBulbOrBottom: false }) }"
-                  >
-                    {{ ref.stock !== null ? ref.stock : ref.originalStock !== null ? ref.originalStock : '-' }}
-                  </p>
-                </div>
-                @if (
-                  checkIfBlue({ cont: ref, node: 'stock', isForBulbOrBottom: false }) &&
-                  ref.activityUpdated &&
-                  ref.activityUpdated.stock &&
-                  ref.activityUpdated.stock.user &&
-                  ref.activityUpdated.stock.date &&
-                  !isStockCalculated(ref)
-                ) {
-                  <aj-tooltips
-                    class="medium no-bg"
-                    [title]="
-                      getTooltipTitle({ user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date })
-                    "
-                  ></aj-tooltips>
-                } @else {
-                  @if (checkIfBlue({ cont: ref, node: 'stock', isForBulbOrBottom: false }) && isStockCalculated(ref)) {
-                    <aj-tooltips class="medium" [title]="getTooltipTitle()" [content]="getTooltipBody()"></aj-tooltips>
-                  }
-                }
-              </div>
-              <div class="column-item completion">
-                <p [id]="'referentiel-' + ref.id" [style.--percent]="ref.completion">disponibles</p>
-                <span class="completion-bar">
-                  <aj-completion-bar [value]="ref.completion ? ref.completion : 0"></aj-completion-bar>
-                </span>
-                <p>
-                  {{ ref.completion !== undefined && ref.completion < 100 ? 'il reste des données à compléter' : '' }}
-                </p>
-              </div>
-              <div class="nb-comments-zone">
-                @if ((ref?.nbComments || 0) > 0) {
-                  <div class="nb-comments" (click)="showContComment(ref)">
-                    <mat-icon class="material-icons-outlined">sms</mat-icon>
-                    <p>{{ ref?.nbComments || 0 }}</p>
-                  </div>
-                }
-              </div>
+              <p [ngClass]="{ 'data-changed': checkIfBlue({ cont: ref, node: 'stock', isForBulbOrBottom: false }) }">
+                {{ ref.stock !== null ? ref.stock : ref.originalStock !== null ? ref.originalStock : '-' }}
+              </p>
             </div>
-            <div class="group">
-              <div>
-                @for (itemGroup of ref.childrens || []; track itemGroup.id) {
-                  <div>
-                    <div
-                      class="group-item"
-                      (mouseenter)="setItemBgColor(ref.label, itemGroup.id)"
-                      (mouseleave)="setItemBgColor(ref.label, itemGroup.id, true)"
-                      [id]="'item-' + itemGroup.id"
-                      [ngClass]="{
+            @if (
+            checkIfBlue({ cont: ref, node: 'stock', isForBulbOrBottom: false }) &&
+            ref.activityUpdated &&
+            ref.activityUpdated.stock &&
+            ref.activityUpdated.stock.user &&
+            ref.activityUpdated.stock.date &&
+            !isStockCalculated(ref)
+            ) {
+            <aj-tooltips class="medium no-bg" [title]="
+                      getTooltipTitle({ user: ref.activityUpdated.stock.user, date: ref.activityUpdated.stock.date })
+                    "></aj-tooltips>
+            } @else {
+            @if (checkIfBlue({ cont: ref, node: 'stock', isForBulbOrBottom: false }) && isStockCalculated(ref)) {
+            <aj-tooltips class="medium" [title]="getTooltipTitle()" [content]="getTooltipBody()"></aj-tooltips>
+            }
+            }
+          </div>
+          <div class="column-item completion">
+            <p [id]="'referentiel-' + ref.id" [style.--percent]="ref.completion"> disponibles</p>
+            <span class="completion-bar">
+              <aj-completion-bar [value]="ref.completion ? ref.completion : 0"></aj-completion-bar>
+            </span>
+            <p>
+              {{ ref.completion !== undefined && ref.completion < 100 ? 'il reste des données à compléter' : '' }} </p>
+          </div>
+          <div class="nb-comments-zone">
+            @if ((ref?.nbComments || 0) > 0) {
+            <div class="nb-comments" (click)="showContComment(ref)">
+              <mat-icon class="material-icons-outlined">sms</mat-icon>
+              <p>{{ ref?.nbComments || 0 }}</p>
+            </div>
+            }
+          </div>
+        </div>
+        <div class="group">
+          <div>
+            @for (itemGroup of ref.childrens || []; track itemGroup.id) {
+            <div>
+              <div class="group-item" (mouseenter)="setItemBgColor(ref.label, itemGroup.id)"
+                (mouseleave)="setItemBgColor(ref.label, itemGroup.id, true)" [id]="'item-' + itemGroup.id" [ngClass]="{
                         grey:
                           itemGroup.valueQualityIn === 'facultatif' ||
                           itemGroup.valueQualityOut === 'facultatif' ||
                           itemGroup.valueQualityStock === 'facultatif',
-                      }"
-                      (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id"
-                    >
-                      <div
-                        class="label"
-                        [ngClass]="{
+                      }" (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
+                <div class="label" [ngClass]="{
                           'grey-txt':
                             itemGroup.valueQualityIn === 'facultatif' ||
                             itemGroup.valueQualityOut === 'facultatif' ||
                             itemGroup.valueQualityStock === 'facultatif',
-                        }"
-                      >
-                        <p>{{ itemGroup.label }}</p>
-                        @if (itemGroup.helpUrl) {
-                          <div class="tooltip">
-                            <i
-                              class="ri-lightbulb-flash-line cursor-pointer blue"
-                              #light
-                              (click)="
+                        }">
+                  <p>{{ itemGroup.label }}</p>
+                  @if (itemGroup.helpUrl) {
+                  <div class="tooltip">
+                    <i class="ri-lightbulb-flash-line cursor-pointer blue" #light (click)="
                                 onShowPanel({
                                   label:
                                     ref.label === 'Juges des Enfants'
@@ -221,28 +177,26 @@
                                   url: itemGroup.helpUrl,
                                 });
                                 $event.stopPropagation()
-                              "
-                            ></i>
-                          </div>
-                        }
-                      </div>
-                      <div class="column-item">
-                        <div>
-                          @if (
-                            itemGroup.valueQualityIn === 'facultatif' ||
-                            itemGroup.valueQualityOut === 'facultatif' ||
-                            itemGroup.valueQualityStock === 'facultatif'
-                          ) {
-                            <div class="state-optional">
-                              <p>FACULTATIF</p>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                      <div class="column-item">
-                        <div>
-                          <p
-                            [ngClass]="{
+                              "></i>
+                  </div>
+                  }
+                </div>
+                <div class="column-item">
+                  <div>
+                    @if (
+                    itemGroup.valueQualityIn === 'facultatif' ||
+                    itemGroup.valueQualityOut === 'facultatif' ||
+                    itemGroup.valueQualityStock === 'facultatif'
+                    ) {
+                    <div class="state-optional">
+                      <p>FACULTATIF</p>
+                    </div>
+                    }
+                  </div>
+                </div>
+                <div class="column-item">
+                  <div>
+                    <p [ngClass]="{
                               'to-complete':
                                 itemGroup.valueQualityIn === VALUE_QUALITY_TO_COMPLETE &&
                                 itemGroup.in === null &&
@@ -259,40 +213,35 @@
                                 itemGroup.valueQualityIn === 'facultatif' ||
                                 itemGroup.valueQualityOut === 'facultatif' ||
                                 itemGroup.valueQualityStock === 'facultatif',
-                            }"
-                          >
-                            {{
-                              itemGroup.in !== null
-                                ? itemGroup.in
-                                : itemGroup.originalIn !== null
-                                  ? itemGroup.originalIn
-                                  : '-'
-                            }}
-                          </p>
-                        </div>
-                        <!--itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date-->
-                        @if (
-                          checkIfBlue({ cont: itemGroup, node: 'entrees', isForBulbOrBottom: false }) &&
-                          itemGroup.activityUpdated &&
-                          itemGroup.activityUpdated.entrees &&
-                          itemGroup.activityUpdated.entrees.user &&
-                          itemGroup.activityUpdated.entrees.date
-                        ) {
-                          <aj-tooltips
-                            class="medium"
-                            [title]="
+                            }">
+                      {{
+                      itemGroup.in !== null
+                      ? itemGroup.in
+                      : itemGroup.originalIn !== null
+                      ? itemGroup.originalIn
+                      : '-'
+                      }}
+                    </p>
+                  </div>
+                  <!--itemGroup.in !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.entrees && itemGroup.activityUpdated.entrees.user && itemGroup.activityUpdated.entrees.date-->
+                  @if (
+                  checkIfBlue({ cont: itemGroup, node: 'entrees', isForBulbOrBottom: false }) &&
+                  itemGroup.activityUpdated &&
+                  itemGroup.activityUpdated.entrees &&
+                  itemGroup.activityUpdated.entrees.user &&
+                  itemGroup.activityUpdated.entrees.date
+                  ) {
+                  <aj-tooltips class="medium" [title]="
                               getTooltipTitle({
                                 user: itemGroup.activityUpdated.entrees.user,
                                 date: itemGroup.activityUpdated.entrees.date,
                               })
-                            "
-                          ></aj-tooltips>
-                        }
-                      </div>
-                      <div class="column-item">
-                        <div>
-                          <p
-                            [ngClass]="{
+                            "></aj-tooltips>
+                  }
+                </div>
+                <div class="column-item">
+                  <div>
+                    <p [ngClass]="{
                               'to-complete':
                                 itemGroup.valueQualityOut === VALUE_QUALITY_TO_COMPLETE &&
                                 itemGroup.out === null &&
@@ -309,40 +258,35 @@
                                 itemGroup.valueQualityIn === 'facultatif' ||
                                 itemGroup.valueQualityOut === 'facultatif' ||
                                 itemGroup.valueQualityStock === 'facultatif',
-                            }"
-                          >
-                            {{
-                              itemGroup.out !== null
-                                ? itemGroup.out
-                                : itemGroup.originalOut !== null
-                                  ? itemGroup.originalOut
-                                  : '-'
-                            }}
-                          </p>
-                        </div>
-                        <!--itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date-->
-                        @if (
-                          checkIfBlue({ cont: itemGroup, node: 'sorties', isForBulbOrBottom: false }) &&
-                          itemGroup.activityUpdated &&
-                          itemGroup.activityUpdated.sorties &&
-                          itemGroup.activityUpdated.sorties.user &&
-                          itemGroup.activityUpdated.sorties.date
-                        ) {
-                          <aj-tooltips
-                            class="medium"
-                            [title]="
+                            }">
+                      {{
+                      itemGroup.out !== null
+                      ? itemGroup.out
+                      : itemGroup.originalOut !== null
+                      ? itemGroup.originalOut
+                      : '-'
+                      }}
+                    </p>
+                  </div>
+                  <!--itemGroup.out !== null && itemGroup.activityUpdated && itemGroup.activityUpdated.sorties && itemGroup.activityUpdated.sorties.user && itemGroup.activityUpdated.sorties.date-->
+                  @if (
+                  checkIfBlue({ cont: itemGroup, node: 'sorties', isForBulbOrBottom: false }) &&
+                  itemGroup.activityUpdated &&
+                  itemGroup.activityUpdated.sorties &&
+                  itemGroup.activityUpdated.sorties.user &&
+                  itemGroup.activityUpdated.sorties.date
+                  ) {
+                  <aj-tooltips class="medium" [title]="
                               getTooltipTitle({
                                 user: itemGroup.activityUpdated.sorties.user,
                                 date: itemGroup.activityUpdated.sorties.date,
                               })
-                            "
-                          ></aj-tooltips>
-                        }
-                      </div>
-                      <div class="column-item">
-                        <div (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
-                          <p
-                            [ngClass]="{
+                            "></aj-tooltips>
+                  }
+                </div>
+                <div class="column-item">
+                  <div (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
+                    <p [ngClass]="{
                               'to-complete':
                                 itemGroup.valueQualityStock === VALUE_QUALITY_TO_COMPLETE &&
                                 itemGroup.stock === null &&
@@ -355,79 +299,67 @@
                                 itemGroup.valueQualityIn === 'facultatif' ||
                                 itemGroup.valueQualityOut === 'facultatif' ||
                                 itemGroup.valueQualityStock === 'facultatif',
-                            }"
-                          >
-                            {{
-                              itemGroup.stock !== null
-                                ? itemGroup.stock
-                                : itemGroup.originalStock !== null
-                                  ? itemGroup.originalStock
-                                  : '-'
-                            }}
-                          </p>
-                        </div>
-                        @if (
-                          checkIfBlue({ cont: itemGroup, node: 'stock', isForBulbOrBottom: false }) &&
-                          itemGroup.activityUpdated &&
-                          itemGroup.activityUpdated.stock &&
-                          itemGroup.activityUpdated.stock.user &&
-                          itemGroup.activityUpdated.stock.date &&
-                          !isStockCalculated(itemGroup)
-                        ) {
-                          <aj-tooltips
-                            class="medium"
-                            [title]="
+                            }">
+                      {{
+                      itemGroup.stock !== null
+                      ? itemGroup.stock
+                      : itemGroup.originalStock !== null
+                      ? itemGroup.originalStock
+                      : '-'
+                      }}
+                    </p>
+                  </div>
+                  @if (
+                  checkIfBlue({ cont: itemGroup, node: 'stock', isForBulbOrBottom: false }) &&
+                  itemGroup.activityUpdated &&
+                  itemGroup.activityUpdated.stock &&
+                  itemGroup.activityUpdated.stock.user &&
+                  itemGroup.activityUpdated.stock.date &&
+                  !isStockCalculated(itemGroup)
+                  ) {
+                  <aj-tooltips class="medium" [title]="
                               getTooltipTitle({
                                 user: itemGroup.activityUpdated.stock.user,
                                 date: itemGroup.activityUpdated.stock.date,
                               })
-                            "
-                          ></aj-tooltips>
-                        }
-                        @if (
-                          checkIfBlue({ cont: itemGroup, node: 'stock', isForBulbOrBottom: false }) &&
-                          isStockCalculated(itemGroup)
-                        ) {
-                          <aj-tooltips
-                            class="medium"
-                            [title]="getTooltipTitle()"
-                            [content]="getTooltipBody()"
-                          ></aj-tooltips>
-                        }
-                      </div>
-                      <div
-                        class="column-item complete-btn cursor-pointer"
-                        [ngClass]="{
+                            "></aj-tooltips>
+                  }
+                  @if (
+                  checkIfBlue({ cont: itemGroup, node: 'stock', isForBulbOrBottom: false }) &&
+                  isStockCalculated(itemGroup)
+                  ) {
+                  <aj-tooltips class="medium" [title]="getTooltipTitle()" [content]="getTooltipBody()"></aj-tooltips>
+                  }
+                </div>
+                <div class="column-item complete-btn cursor-pointer" [ngClass]="{
                           'grey-txt':
                             getCompletionStatus(itemGroup).includes('Compléter') ||
                             getCompletionStatus(itemGroup).includes('A-JUSTer'),
                           'yellow-txt': getCompletionStatus(itemGroup).includes('A vérifier'),
                           'blue-txt': getCompletionStatus(itemGroup).includes('A compléter'),
-                        }"
-                        (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id"
-                      >
-                        @if (getCompletionStatus(itemGroup).includes('A compléter')) {
-                          <p>
-                            {{ getCompletionStatus(itemGroup) }}
-                            <span class="pastille">+{{ itemGroup.possibleGainCompletion }}%</span>
-                          </p>
-                        }
-                        @if (!getCompletionStatus(itemGroup).includes('A compléter')) {
-                          <p>
-                            {{ getCompletionStatus(itemGroup) }}
-                          </p>
-                        }
-                        <mat-icon>
-                          {{ 'chevron_right' }}
-                        </mat-icon>
-                      </div>
-                    </div>
-                  </div>
-                }
+                        }" (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
+                  @if (getCompletionStatus(itemGroup).includes('A compléter')) {
+                  <p>
+                    {{ getCompletionStatus(itemGroup) }}
+                    <span class="pastille">+{{ itemGroup.possibleGainCompletion }}%</span>
+                  </p>
+                  }
+                  @if (!getCompletionStatus(itemGroup).includes('A compléter')) {
+                  <p>
+                    {{ getCompletionStatus(itemGroup) }}
+                  </p>
+                  }
+                  <mat-icon>
+                    {{ 'chevron_right' }}
+                  </mat-icon>
+                </div>
               </div>
             </div>
+            }
           </div>
-        }
+        </div>
+      </div>
+      }
       }
     </div>
   </div>
@@ -436,11 +368,8 @@
 <ng-template #ressources>
   <div class="top-right-header">
     <div class="left-panel">
-      <p
-        [id]="'total-completion'"
-        [style.--percent]="totalCompletion"
-        [ngStyle]="{ color: getAcivityPercentColor(totalCompletion) }"
-      >
+      <p [id]="'total-completion'" [style.--percent]="totalCompletion"
+        [ngStyle]="{ color: getAcivityPercentColor(totalCompletion) }">
         Complétude globale :
       </p>
       <div class="completion-bar">
@@ -465,10 +394,10 @@
 
 <ng-template #subTitleTemplate>
   @if (updatedBy) {
-    <p class="sub-title">
-      Dernière mise à jour le {{ updatedBy.date | date: 'dd' }} {{ getMonthString(updatedBy.date) }}
-      {{ updatedBy.date | date: 'YYYY' }}
-    </p>
+  <p class="sub-title">
+    Dernière mise à jour le {{ updatedBy.date | date: 'dd' }} {{ getMonthString(updatedBy.date) }}
+    {{ updatedBy.date | date: 'YYYY' }}
+  </p>
   }
 </ng-template>
 
@@ -498,13 +427,8 @@ let-year="year"
 </ng-template>-->
 
 @if (contentieuxToUpdate) {
-  <aj-popin-edit-activities
-    #editActivites
-    [wrapper]="wrapper"
-    [referentiel]="contentieuxToUpdate"
-    [activityMonth]="activityMonth"
-    [selectedReferentielId]="selectedReferentielId"
-    (onClose)="onCloseEditedPopin($event)"
-  ></aj-popin-edit-activities>
+<aj-popin-edit-activities #editActivites [wrapper]="wrapper" [referentiel]="contentieuxToUpdate"
+  [activityMonth]="activityMonth" [selectedReferentielId]="selectedReferentielId"
+  (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
 }
 <aj-intro-js [steps]="introSteps" typeId="activities"></aj-intro-js>

@@ -197,18 +197,18 @@
           type="entrees" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
         @if (!showDetailEntrees) {
         <aj-graphs-numbers [referentielName]="ref.label"
-          [title]="datasFilted[index].totalIn === null ? 'N/R' : '' + floor(datasFilted[index].totalIn || 0)"
+          [title]="datasFilted[index].totalIn === null ? 'N/R' : '' + round(datasFilted[index].totalIn || 0)"
           class="text-center" [isWhite]="true"></aj-graphs-numbers>
         }
         @if (showDetailEntrees) {
         <aj-graphs-numbers [referentielName]="ref.label"
-          [title]="datasFilted[index].totalIn === null ? 'N/R' : '' + floor(datasFilted[index].totalIn || 0)"
+          [title]="datasFilted[index].totalIn === null ? 'N/R' : '' + round(datasFilted[index].totalIn || 0)"
           class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" [title]="
-                    datasFilted[index].totalInBf === null ? 'N/R' : '' + floor(datasFilted[index].totalInBf || 0)
+                    datasFilted[index].totalInBf === null ? 'N/R' : '' + round(datasFilted[index].totalInBf || 0)
                   " class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" [title]="
-                    datasFilted[index].totalInAf === null ? 'N/R' : '' + floor(datasFilted[index].totalInAf || 0)
+                    datasFilted[index].totalInAf === null ? 'N/R' : '' + round(datasFilted[index].totalInAf || 0)
                   " class="text-center no-border-top"></aj-graphs-numbers>
         }
       </div>
@@ -260,18 +260,18 @@
           type="sorties" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
         @if (!showDetailSorties) {
         <aj-graphs-numbers [referentielName]="ref.label"
-          [title]="datasFilted[index].totalOut === null ? 'N/R' : '' + floor(datasFilted[index].totalOut || 0)"
+          [title]="datasFilted[index].totalOut === null ? 'N/R' : '' + round(datasFilted[index].totalOut || 0)"
           class="text-center" [isWhite]="true"></aj-graphs-numbers>
         }
         @if (showDetailSorties) {
         <aj-graphs-numbers [referentielName]="ref.label"
-          [title]="datasFilted[index].totalOut === null ? 'N/R' : '' + floor(datasFilted[index].totalOut || 0)"
+          [title]="datasFilted[index].totalOut === null ? 'N/R' : '' + round(datasFilted[index].totalOut || 0)"
           class="text-center no-border-bottom" [isWhite]="true"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" [title]="
-                    datasFilted[index].totalOutBf === null ? 'N/R' : '' + floor(datasFilted[index].totalOutBf || 0)
+                    datasFilted[index].totalOutBf === null ? 'N/R' : '' + round(datasFilted[index].totalOutBf || 0)
                   " class="text-center no-border-bottom no-border-top"></aj-graphs-numbers>
         <aj-graphs-numbers [referentielName]="ref.label" [title]="
-                    datasFilted[index].totalOutAf === null ? 'N/R' : '' + floor(datasFilted[index].totalOutAf || 0)
+                    datasFilted[index].totalOutAf === null ? 'N/R' : '' + round(datasFilted[index].totalOutAf || 0)
                   " class="text-center no-border-top"></aj-graphs-numbers>
         }
       </div>

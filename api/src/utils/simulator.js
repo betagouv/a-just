@@ -58,7 +58,7 @@ export function mergeSituations(situationFiltered, situation, categories, catego
     if (x.id !== categoryId) {
       if (x.id === 1) situationFiltered.etpMag = situation.etpMag
       if (x.id === 2) situationFiltered.etpFon = situation.etpFon
-      if (x.id === 3) situationFiltered.etpCont = situation.etpCont
+      if (x.id === 3) situationFiltered.etpCont = situation.etpCont || situation.etpCon
       if (situation.endSituation) {
         situationFiltered.endSituation.monthlyReport[x.id - 1] = situation.endSituation.monthlyReport[x.id - 1]
         if (x.id === 1) situationFiltered.endSituation.etpMag = situation.endSituation.etpMag
@@ -925,6 +925,8 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix, c
           simulation.lastStock = params.beginSituation.lastStock + (nbDays / (365 / 12)) * simulation.totalIn - (nbDays / (365 / 12)) * simulation.totalOut
         } else if ((simulation.realDTESInMonths || simulation.realDTESInMonths !== 0) && simulation.totalOut) {
           simulation.lastStock = simulation.realDTESInMonths * simulation.totalOut
+        } else if (simulation.totalOut && simulation.realDTESInMonths === 0) {
+          simulation.lastStock = 0
         }
         if (simulation.lastStock && simulation.lastStock < 0) {
           //simulation.lastStock = 0

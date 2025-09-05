@@ -89,6 +89,57 @@ export function getEtpByDateAndPerson(referentielId, date, hr, ddgFilter = false
   }
 }
 
+export function getEtpByDateAndPersonOld(referentielId, date, hr, ddgFilter = false, absLabels = null) {
+  if (hr.dateEnd && today(hr.dateEnd) < today(date)) {
+    return {
+      etp: null,
+      situation: null,
+      reelEtp: null,
+      indispoFiltred: [],
+      nextDeltaDate: null,
+    }
+  }
+
+  const { currentSituation /*, nextSituation*/ } = findSituation(hr, date)
+  const situation = currentSituation
+
+  if (situation && situation.category && situation.category.id) {
+    const activitiesFiltred = (situation.activities || []).filter((a) => a.contentieux && a.contentieux.id === referentielId)
+
+    const indispoFiltred = findAllIndisponibilities(hr, date, ddgFilter, absLabels)
+
+    let reelEtp = situation.etp - sumBy(indispoFiltred, 'percent') / 100
+    if (reelEtp < 0) {
+      reelEtp = 0
+    }
+
+    //const nextIndispoDate = getNextIndisponiblitiesDate(hr, date)
+    let nextDeltaDate = null
+    /*if(nextSituation) {
+      nextDeltaDate = today(nextSituation.dateStart)
+    }
+    if(nextIndispoDate && (!nextDeltaDate || nextIndispoDate.getTime() < nextDeltaDate.getTime())) {
+      nextDeltaDate = nextIndispoDate
+    }*/
+
+    return {
+      etp: (reelEtp * sumBy(activitiesFiltred, 'percent')) / 100,
+      reelEtp,
+      situation,
+      indispoFiltred: !ddgFilter ? indispoFiltred : findAllIndisponibilities(hr, date),
+      nextDeltaDate, // find the next date with have changes
+    }
+  }
+
+  return {
+    etp: null,
+    situation: null,
+    reelEtp: null,
+    indispoFiltred: [],
+    nextDeltaDate: null,
+  }
+}
+
 /**
  * Calcul d'ETP à une date donnée pour un ensemble de ressources humaines et un contentieux donné
  * @param {*} referentielId

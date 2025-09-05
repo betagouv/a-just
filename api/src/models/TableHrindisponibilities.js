@@ -63,8 +63,8 @@ export default (sequelizeInstance, Model) => {
         nac_id: indispo.contentieux.id,
         hr_id: hRId,
         percent: indispo.percent,
-        date_start: indispo.dateStart,
-        date_stop: indispo.dateStop,
+        date_start: indispo.dateStart || null,
+        date_stop: indispo.dateStop || null,
       }
       let findToBdd
 

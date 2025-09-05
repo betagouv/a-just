@@ -713,17 +713,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     )
 
     this.watch(
-      this.simulatorService.isValidatedWhiteSimu.subscribe((b) => {
-        this.displayWhiteElements = b
-        if (b === false) {
-          this.toDisplaySimulation = false
-          //this.simulatorService.situationSimulated.next(null)
-          this.initParamsToAjust()
-        }
-      }),
-    )
-
-    this.watch(
       this.userService.user.subscribe((u) => {
         this.canViewMagistrat = userCanViewMagistrat(u)
         this.canViewGreffier = userCanViewGreffier(u)
@@ -2237,7 +2226,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.logOpenWhiteSimulator()
       this.changePage()
     } else if (type === REAFFECTATOR) {
-      this.router.navigate(['/reaffectateur'])
+      this.router.navigate(['/reaffectateur'], {
+        relativeTo: this.route,
+        queryParams: { b: 'simulateur' },
+        queryParamsHandling: 'merge'
+      })
     }
   }
 

@@ -5,7 +5,6 @@ import { JuridictionInterface } from '../../interfaces/juridiction';
 import { JuridictionsService } from '../../services/juridictions/juridictions.service';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
 import { PopupComponent } from '../../components/popup/popup.component';
-
 import { HumanResourceService } from '../../services/human-resource/human-resource.service';
 
 @Component({
