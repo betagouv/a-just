@@ -43,6 +43,7 @@ describe("Test d'accés aux pages", () => {
     const accessUrls = accessUrlList.map((access) => access.id);
     const accessFonctions = accessFonctionsList.map((access) => access.id);
     const accessIds = [...accessUrls, ...accessFonctions];
+
     // const accessIds = accessUrlList.map((access) => access.id);
     updateUserAccounatApi({
       userId,
@@ -52,7 +53,7 @@ describe("Test d'accés aux pages", () => {
     });
   });
 
-  const checkBottomMenu = (toolToNotCheck = undefined) => {
+  const checkToolsMenu = (toolToNotCheck = []) => {
     //Chek all tools are present
     cy.get(".menu-item .tools")
       .should("exist")
@@ -60,7 +61,7 @@ describe("Test d'accés aux pages", () => {
       .get(".sub-tools")
       .within(() => {
         menuContentTools.forEach((tool) => {
-          if (tool !== toolToNotCheck) {
+          if (!toolToNotCheck.includes(tool)) {
             if (
               tool === "Les extracteurs" ||
               tool === "Référentiels de temps moyens"
@@ -76,7 +77,7 @@ describe("Test d'accés aux pages", () => {
     cy.get(".menu-item .tools").should("exist").click();
   };
 
-  /*it("User with access to specific pages should not have access to others", () => {
+  it("User with access to specific pages should not have access to others", () => {
     cy.login();
 
     // Parcourir toutes les URLs définies dans accessUrlList
@@ -119,7 +120,6 @@ describe("Test d'accés aux pages", () => {
     accessUrlList.forEach((access) => {
       if (access.label !== "Réaffectateur" && access.label !== "Temps moyens") {
         const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
-
         // Mettre à jour les droits d'accès pour l'utilisateur
         updateUserAccounatApi({
           userId,
@@ -150,8 +150,14 @@ describe("Test d'accés aux pages", () => {
                 );
               }
 
-              const toolToNotCheck = "Référentiels de temps moyens";
-              checkBottomMenu(toolToNotCheck);
+              const toolToNotCheck = [];
+              toolToNotCheck.push("Référentiels de temps moyens");
+              if (
+                access.label !== "Ventilateur" ||
+                access.label !== "Données d'activité"
+              )
+                toolToNotCheck.push("Les extracteurs");
+              checkToolsMenu(toolToNotCheck);
             });
           });
         });
@@ -179,7 +185,7 @@ describe("Test d'accés aux pages", () => {
       );
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Remove access to Réafecteur and check that user does not have access to Réaffecteur page from Simulateur", () => {
@@ -200,7 +206,7 @@ describe("Test d'accés aux pages", () => {
       cy.get(".reaffectator").should("not.exist");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on panorama ", () => {
@@ -227,7 +233,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Autour du magistrat");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on panorama", () => {
@@ -254,7 +260,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Autour du magistrat");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on panorama", () => {
@@ -281,7 +287,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Greffe");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Magistrat and check user does not have access to Greffier datas on cockpit ", () => {
@@ -306,7 +312,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Autour du magistrat");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Greffier and check user does not have access to Magistrat datas on cockpit ", () => {
@@ -331,7 +337,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Autour du magistrat");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on ventilateur", () => {
@@ -355,7 +361,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Autour du magistrat");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on ventilateur", () => {
@@ -379,7 +385,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Autour du magistrat");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on ventilateur", () => {
@@ -403,7 +409,7 @@ describe("Test d'accés aux pages", () => {
         .should("not.contain.text", "Greffe");
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on workforce extractor", () => {
@@ -431,7 +437,7 @@ describe("Test d'accés aux pages", () => {
       cy.get("body").click(0, 0);
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on workforce extractor", () => {
@@ -459,7 +465,7 @@ describe("Test d'accés aux pages", () => {
       cy.get("body").click(0, 0);
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
+    checkToolsMenu();
   });
 
   it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on workforce extractor", () => {
@@ -487,6 +493,6 @@ describe("Test d'accés aux pages", () => {
       cy.get("body").click(0, 0);
     });
     cy.wait(2000); // Wait for the page to load completely
-    checkBottomMenu();
-  });*/
+    checkToolsMenu();
+  });
 });

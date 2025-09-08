@@ -6,7 +6,7 @@ describe("Ajout d'un agent", () => {
     cy.visit("/ventilations");
   });
 
-  /*it("Check that we can access the add agent page", () => {
+  it("Check that we can access the add agent page", () => {
     cy.get("button.add-collaborator")
       .should("be.visible")
       .should("contain.text", "Ajouter un agent")
@@ -285,5 +285,5 @@ describe("Ajout d'un agent", () => {
       //cy.get('#backButton')
       cy.get("aj-back-button").click();
     });
-  });*/
+  });
 });
