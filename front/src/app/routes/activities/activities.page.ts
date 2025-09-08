@@ -226,7 +226,7 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
           intro:
             "Pour chaque sous-contentieux, vous pouvez :<ul><li><b>Vérifier</b> les données d'activité « logiciel », extraites à la fin de chaque mois par A-JUST des logiciels métiers utilisés par la " +
             (this.isTJ() ? 'juridiction' : "cour d'appel") +
-            '. Cette mention apparaît pour tous les sous-contentieux dont nous savons que nos remontées peuvent varier en comparaison avec vos données locales.</li><li><b>Compléter</b> manuellement si nécessaire les entrées, sorties et/ou stocks qui ne sont pas pré-alimentés pour disposer de données exhaustives.</li><li><b>A-JUSTer</b> la donnée logiciel si elle ne vous semble pas correcte. Une fois sur la page de complétion, vous pourrez saisir une nouvelle donnée, choisir de "confirmer" la donnée existante si elle vous parait correcte ou la laisser comme telle par défaut.</li>',
+            '. Cette mention apparaît pour tous les sous-contentieux dont nous savons que nos remontées peuvent varier en comparaison avec vos données locales.</li><li><b>Compléter</b> manuellement si nécessaire les entrées, sorties et/ou stocks qui ne sont pas pré-alimentés pour disposer de données exhaustives.</li><li><b>A-JUSTer</b> la donnée logiciel si elle ne vous semble pas correcte. Une fois sur la page de complétion, vous pourrez saisir une nouvelle donnée, choisir de "confirmer" la donnée existante si elle vous paraît correcte ou la laisser comme telle par défaut.</li>',
           beforeLoad: async (intro: any) => {
             const subTools = document.querySelector('.item-grouped .group');
             if (subTools && subTools.getBoundingClientRect().height === 0) {
