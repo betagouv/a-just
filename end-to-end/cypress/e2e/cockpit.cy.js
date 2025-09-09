@@ -6,7 +6,7 @@ describe("Cockpit", () => {
     cy.login();
   });
 
-  /*it("Check the cockpit page load", () => {
+  it("Check the cockpit page load", () => {
     cy.visit("/cockpit");
     cy.wait(1000);
     cy.url().should("include", "/cockpit");
@@ -75,7 +75,8 @@ describe("Cockpit", () => {
         cy.get(".contentieux-header-calculator").within(() => {
           cy.get(".item")
             .last()
-            .should("contain.text", "Temps moyen siège/ dossier observé");
+            .should("contain.text", "Temps moyen siège")
+            .should("contain.text", "/ dossier observé");
         });
       });
 
@@ -86,7 +87,8 @@ describe("Cockpit", () => {
         cy.get(".contentieux-header-calculator").within(() => {
           cy.get(".item")
             .last()
-            .should("contain.text", "Temps moyen greffe/ dossier observé");
+            .should("contain.text", "Temps moyen greffe")
+            .should("contain.text", "/ dossier observé");
         });
       });
   });
@@ -364,5 +366,5 @@ describe("Cockpit", () => {
     // .within(() => {
     //   cy.get('.radio').should('have.class', 'filled')
     // })
-  });*/
+  });
 });
