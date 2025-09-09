@@ -1,5 +1,5 @@
 import { inject, Injectable, Input, Signal, signal, WritableSignal } from '@angular/core'
-import { maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
+import { isNaN, maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { ActivitiesService } from '../activities/activities.service'
 import { ServerService } from '../http-server/server.service'
@@ -665,7 +665,7 @@ export class HumanResourceService {
     }
     list.map((h: any) => {
       let realETP = (h.etp || 0) - h.hasIndisponibility
-      if (realETP < 0) {
+      if (realETP < 0 || isNaN(realETP)) {
         realETP = 0
       }
       switch (h.fonction.position) {
