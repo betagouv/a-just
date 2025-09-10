@@ -208,7 +208,6 @@ export class SpeedometerComponent extends MainClass implements OnInit {
       const radiusAngle = this.getRadiusPosition(percent)
 
       ctx.strokeStyle = this.classTextBlue ? '#0063cb' : this.classDarkMode ? 'white' : 'black'
-      console.log(this.classTextBlue, this.classDarkMode, ctx.strokeStyle)
       ctx.lineWidth = 1
       ctx.moveTo(this.canvasWidth / 2 + this.lineWidth / 2, this.canvasWidth / 2 + this.lineWidth / 2)
       ctx.lineTo(
