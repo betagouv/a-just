@@ -133,37 +133,35 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
         )
       ).filter((v: any) => v)
 
-      /*if (
+      if (
         this.calculatorService.dateStop.getValue() &&
         this.optionDateStart &&
-        this.getMonth(this.calculatorService.dateStop.getValue()).getTime() <
-          this.getMonth(this.optionDateStart).getTime()
+        this.getMonth(this.calculatorService.dateStop.getValue()).getTime() < this.getMonth(this.optionDateStart).getTime()
       ) {
         middleValues = (
           await this.calculatorService.rangeValues(
             +this.calculatorService.selectedRefGraphDetail,
             this.calculatorService.showGraphDetailType,
             this.getMonth(this.calculatorService.dateStop.getValue()),
-            this.getMonth(this.optionDateStart)
+            this.getMonth(this.optionDateStart),
           )
-        ).filter((v: any) => v);
-      }*/
+        ).filter((v: any) => v)
+      }
 
-      /*if (
+      if (
         this.optionDateStop &&
         this.calculatorService.dateStart.getValue() &&
-        this.getMonth(this.optionDateStop).getTime() <
-          this.getMonth(this.calculatorService.dateStart.getValue()).getTime()
+        this.getMonth(this.optionDateStop).getTime() < this.getMonth(this.calculatorService.dateStart.getValue()).getTime()
       ) {
         middleValues = (
           await this.calculatorService.rangeValues(
             +this.calculatorService.selectedRefGraphDetail,
             this.calculatorService.showGraphDetailType,
             this.getMonth(this.optionDateStop),
-            this.getMonth(this.calculatorService.dateStart.getValue())
+            this.getMonth(this.calculatorService.dateStart.getValue()),
           )
-        ).filter((v: any) => v);
-      }*/
+        ).filter((v: any) => v)
+      }
     }
 
     if (firstValues.find((v) => v.value === null) || secondValues.find((v) => v.value === null)) {
