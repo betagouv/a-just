@@ -24,8 +24,58 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Run tests
-        run: npm run test
+      - name: Run tests with logging
+        run: |
+          set -e
+
+          # Créer le répertoire pour les logs
+          mkdir -p logs
+
+          # Fonction pour nettoyer en cas d'erreur
+          cleanup() {
+            echo "Cleaning up..."
+            # Récupérer les logs des conteneurs avant de les arrêter
+            docker compose -p test-api -f docker-compose.test.yml logs --no-color > logs/api-test-logs.txt 2>&1 || true
+            docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --no-color > logs/e2e-logs.txt 2>&1 || true
+            
+            # Arrêter tous les conteneurs
+            docker compose -p test-api -f docker-compose.test.yml down || true
+            docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
+          }
+
+          # Configurer le nettoyage en cas d'interruption
+          trap cleanup EXIT
+
+          # Exécuter les tests
+          npm run test
+
+      - name: Display server logs
+        if: always()
+        run: |
+          echo "=== API TEST LOGS ==="
+          if [ -f logs/api-test-logs.txt ]; then
+            echo "Showing last 100 lines of API logs:"
+            tail -n 100 logs/api-test-logs.txt
+          else
+            echo "No API test logs found"
+          fi
+
+          echo -e "\n=== E2E LOGS ==="
+          if [ -f logs/e2e-logs.txt ]; then
+            echo "Showing last 100 lines of E2E logs:"
+            tail -n 100 logs/e2e-logs.txt
+          else
+            echo "No E2E logs found"
+          fi
+
+      - name: Upload server logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-logs
+          path: |
+            logs/
+            ./api/coverage/
 
       - name: Upload Cypress video
         if: always()
