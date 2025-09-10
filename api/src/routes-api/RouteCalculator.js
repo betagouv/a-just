@@ -174,6 +174,7 @@ export default class RouteCalculator extends Route {
             const refFineded = originalReferentiel.find((r) => r.id === contentieuxId)
             const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart, null, newFonctions)
             let hList = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], undefined, null, dateStart, endOfTheMonth)
+            /**
             let totalAffected = 0
             let subId = []
             if (refFineded) {
@@ -201,6 +202,8 @@ export default class RouteCalculator extends Route {
                 }
               })
             list.push({ value: totalAffected, date: today(dateStart) })
+          
+           */
           }
           break
         case 'dtes':
