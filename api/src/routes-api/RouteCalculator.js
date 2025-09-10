@@ -5,6 +5,8 @@ import { preformatHumanResources } from '../utils/ventilator'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { sumBy } from 'lodash'
 import { loadOrWarmHR } from '../utils/redis'
+import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
+import { getEtpByCategory } from '../utils/simulator'
 
 /**
  * Route des calculs de la page calcule
@@ -170,37 +172,23 @@ export default class RouteCalculator extends Route {
             }
 
             const hrList = await loadOrWarmHR(backupId, this.models)
-            const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
-            const refFineded = originalReferentiel.find((r) => r.id === contentieuxId)
-            const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart, null, newFonctions)
-            let hList = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], undefined, null, dateStart, endOfTheMonth)
-            let totalAffected = 0
-            let subId = []
-            if (refFineded) {
-              subId = (refFineded.childrens || []).map((r) => r.id)
-            }
+            const indexes = await generateHRIndexes(hrList)
+            const categories = await this.models.HRCategories.getAll()
 
-            hList
-              .filter((h) => h.category && h.category.id === catId)
-              .map((agent) => {
-                let activities = (agent.currentActivities || []).filter((r) => r.contentieux && [contentieuxId].includes(r.contentieux.id))
-                let timeAffected = sumBy(activities, 'percent')
+            const etp = calculateETPForContentieux(
+              indexes,
+              {
+                start: dateStart,
+                end: endOfTheMonth,
+                category: undefined,
+                fonctions: newFonctions,
+                contentieux: contentieuxId,
+              },
+              categories,
+            )
 
-                // search in childrens if not found in parent
-                if (!timeAffected) {
-                  activities = (agent.currentActivities || []).filter((r) => r.contentieux && subId.includes(r.contentieux.id))
-                  timeAffected = sumBy(activities, 'percent')
-                }
-
-                if (timeAffected) {
-                  let realETP = (agent.etp || 0) - agent.hasIndisponibility
-                  if (realETP < 0) {
-                    realETP = 0
-                  }
-                  totalAffected += (timeAffected / 100) * realETP
-                }
-              })
-            list.push({ value: totalAffected, date: today(dateStart) })
+            let { etpMag, etpFon, etpCon } = getEtpByCategory(etp)
+            list.push({ value: type === 'ETPTSiege' ? etpMag : type === 'ETPTGreffe' ? etpFon : etpCon, date: today(dateStart) })
           }
           break
         case 'dtes':
