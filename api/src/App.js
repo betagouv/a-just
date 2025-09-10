@@ -20,7 +20,6 @@ import * as Sentry from '@sentry/node'
 import authBasic from 'http-auth'
 import { writeFileSync } from 'fs'
 import { getFullKey, getRedisClient, loadOrWarmHR, waitForRedis } from './utils/redis'
-import sequelize, { Sequelize } from 'sequelize'
 
 const cspConfig = {
   // https://github.com/helmetjs/helmet
@@ -53,6 +52,7 @@ const cspConfig = {
         'https://storage.crisp.chat',
         'wss://client.relay.crisp.chat',
         'wss://stream.relay.crisp.chat',
+        'https://sentry.incubateur.net',
       ],
       'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:', 'https://*.hotjar.com', 'https://client.crisp.chat'],
       'img-src': [
