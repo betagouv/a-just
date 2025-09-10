@@ -13,6 +13,20 @@ Sentry.init({
     browserTracingIntegration(),
   ],
   tracesSampleRate: 1.0,
+  beforeSendTransaction: (event) => {
+    try {
+      const fullUrl = window?.location?.href
+      event.tags = {
+        ...event.tags,
+        ...(fullUrl ? { full_url: fullUrl } : {}),
+      }
+      event.extra = {
+        ...event.extra,
+        ...(fullUrl ? { full_url: fullUrl } : {}),
+      }
+    } catch {}
+    return event
+  },
 })
 
 bootstrapApplication(AppComponent, appConfig)
