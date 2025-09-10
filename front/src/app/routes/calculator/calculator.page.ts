@@ -551,7 +551,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           ({
             id: f.id,
             value: f.code,
-          } as dataInterface),
+          }) as dataInterface,
       )
     this.lastCategorySelected = this.categorySelected
     this.selectedFonctionsIds = this.fonctions.map((a) => a.id)
@@ -1118,9 +1118,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
       const value1Sorties = (datas || []).map((d) => (d.totalOut ? Math.round(d.totalOut) : d.totalOut))
       const value1Entrees = (datas || []).map((d) => (d.totalIn ? Math.round(d.totalIn) : d.totalIn))
       const value1Stock = (datas || []).map((d) => d.lastStock)
-      const value1ETPTSiege = (datas || []).map((d) => d.etpMag ? this.round2(d.etpMag):d.etpMag)
-      const value1ETPTGreffe = (datas || []).map((d) => d.etpFon ? this.round2(d.etpFon):d.etpFon)
-      const value1ETPTEam = (datas || []).map((d) => d.etpCont ? this.round2(d.etpCont):d.etpCont)
+      const value1ETPTSiege = (datas || []).map((d) => (d.etpMag ? this.round2(d.etpMag) : d.etpMag))
+      const value1ETPTGreffe = (datas || []).map((d) => (d.etpFon ? this.round2(d.etpFon) : d.etpFon))
+      const value1ETPTEam = (datas || []).map((d) => (d.etpCont ? this.round2(d.etpCont) : d.etpCont))
       const getVariations = (tab2: any[], tab1: any[], isPercentComparaison = true) =>
         tab2.map((d: any, index: number) => {
           if (d === null || tab1[index] === null || d === Infinity) {
@@ -1171,15 +1171,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         if (!dateEndIsPast && this.optionDateStop && this.maxDateSelectionDate) {
           dateEndIsPast = isDateBiggerThan(this.optionDateStop, this.maxDateSelectionDate, true)
         }
-        console.log(
-          dateEndIsPast,
-          this.dateStop,
-          this.maxDateSelectionDate,
-          isDateBiggerThan(this.dateStop || new Date(), this.maxDateSelectionDate || new Date(), true),
-          this.optionDateStop,
-          this.maxDateSelectionDate,
-          isDateBiggerThan(this.optionDateStop || new Date(), this.maxDateSelectionDate || new Date(), true),
-        )
 
         this.appService.appLoading.next(false)
         const nextRangeString = `${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(this.optionDateStop)}`
@@ -1348,7 +1339,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewMagistrat) {
-          const value2ETPTSiege: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpMag ? this.round2(d.etpMag):d.etpMag)
+          const value2ETPTSiege: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => (d.etpMag ? this.round2(d.etpMag) : d.etpMag))
           const variationsETPTSiege = getVariations(value2ETPTSiege, value1ETPTSiege)
           list.push({
             title: 'ETPT Siège',
@@ -1389,7 +1380,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewGreffier) {
-          const value2ETPTGreffe: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpFon ? this.round2(d.etpFon):d.etpFon)
+          const value2ETPTGreffe: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => (d.etpFon ? this.round2(d.etpFon) : d.etpFon))
           const variationsETPTGreffe = getVariations(value2ETPTGreffe, value1ETPTGreffe)
           list.push({
             title: 'ETPT Greffe',
@@ -1430,7 +1421,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewContractuel) {
-          const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpCont ? this.round2(d.etpCont):d.etpCont)
+          const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => (d.etpCont ? this.round2(d.etpCont) : d.etpCont))
           const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
           list.push({
             title: 'ETPT EAM',
@@ -1579,6 +1570,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           }),
         ]
 
+        console.log('fx', value2TauxCouverture, value1TauxCouverture)
         const variationsCouverture = getVariations(value2TauxCouverture, value1TauxCouverture, false)
         list.push({
           title: 'Taux de couverture',
@@ -1811,7 +1803,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     return super.addMonthsToDate(date, months)
   }
 
-  round2(num:number) {
-    return Math.round(num * 100) / 100;
+  round2(num: number) {
+    return Math.round(num * 100) / 100
   }
 }

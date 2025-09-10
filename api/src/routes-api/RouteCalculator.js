@@ -5,6 +5,7 @@ import { preformatHumanResources } from '../utils/ventilator'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { sumBy } from 'lodash'
 import { loadOrWarmHR } from '../utils/redis'
+import { fixDecimal } from '../utils/number'
 
 /**
  * Route des calculs de la page calcule
@@ -172,7 +173,7 @@ export default class RouteCalculator extends Route {
             const hrList = await loadOrWarmHR(backupId, this.models)
             const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
             const refFineded = originalReferentiel.find((r) => r.id === contentieuxId)
-            const preformatedAllHumanResource = preformatHumanResources(hrList, dateStart, null, newFonctions)
+            const preformatedAllHumanResource = preformatHumanResources(hrList, null, null, newFonctions)
             let hList = await getHumanRessourceList(preformatedAllHumanResource, [contentieuxId], undefined, null, dateStart, endOfTheMonth)
             let totalAffected = 0
             let subId = []
@@ -183,21 +184,31 @@ export default class RouteCalculator extends Route {
             hList
               .filter((h) => h.category && h.category.id === catId)
               .map((agent) => {
+                if (agent.id === 24503) {
+                  //console.log('fx 2', 24503, contentieuxId, subId, agent.currentSituation, agent.currentSituation.activities)
+                }
                 let activities = (agent.currentActivities || []).filter((r) => r.contentieux && [contentieuxId].includes(r.contentieux.id))
                 let timeAffected = sumBy(activities, 'percent')
+                let calculByMain = true
 
                 // search in childrens if not found in parent
                 if (!timeAffected) {
                   activities = (agent.currentActivities || []).filter((r) => r.contentieux && subId.includes(r.contentieux.id))
                   timeAffected = sumBy(activities, 'percent')
+                  calculByMain = false
                 }
 
                 if (timeAffected) {
-                  let realETP = (agent.etp || 0) - agent.hasIndisponibility
+                  let realETP = (agent.currentSituation.etp || 0) - agent.hasIndisponibility
                   if (realETP < 0) {
                     realETP = 0
                   }
                   totalAffected += (timeAffected / 100) * realETP
+                  console.log('test', totalAffected)
+                  if (timeAffected && agent.id === 24472) {
+                    console.log('fx', dateStart, endOfTheMonth, agent.id, timeAffected, realETP, (timeAffected / 100) * realETP, calculByMain)
+                  }
+                  console.log('test 2', totalAffected)
                 }
               })
             list.push({ value: totalAffected, date: today(dateStart) })
@@ -271,7 +282,7 @@ export default class RouteCalculator extends Route {
 
               if (sorties !== null && entrees !== null) {
                 list.push({
-                  value: 100 * (sorties / entrees),
+                  value: Math.floor(fixDecimal(sorties / entrees, 100) * 100),
                   date: today(dateStart),
                 })
               } else {
