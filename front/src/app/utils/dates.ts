@@ -245,6 +245,22 @@ export function stringToDecimalDate(str: string, sep = 'h') {
 export function decimalToStringDate(d: number | string | null | undefined, s = 'h') {
   if (d == null || isNaN((d = +('' + d).replace(',', '.')))) return '0'
   let h = Math.floor(d),
+    m = Math.round((d - h) * 60)
+  if (m === 60) {
+    h++
+    m = 0
+  }
+  return h + s + (m < 10 ? '0' : '') + m
+}
+
+/**
+ * Conversion d'une date en HH:MM
+ * @param decimal
+ * @returns
+ */
+export function decimalToStringDateFloor(d: number | string | null | undefined, s = 'h') {
+  if (d == null || isNaN((d = +('' + d).replace(',', '.')))) return '0'
+  let h = Math.floor(d),
     m = Math.floor((d - h) * 60)
   if (m === 60) {
     h++

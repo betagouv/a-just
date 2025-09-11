@@ -1631,7 +1631,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
   }
 
   getMinutes(value: number) {
-    return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0')
+    //return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0');
+    let h = Math.floor(value)
+    return (Math.round((value - h) * 60) + '').padStart(2, '0')
   }
 
   /** Retourne la derniere date de maj si elle existe ou date de creation */

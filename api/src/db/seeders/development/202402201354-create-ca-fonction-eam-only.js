@@ -1,37 +1,43 @@
-import config from 'config';
+import config from 'config'
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-
     const CAFonctions = [
       {
-        "FONCTION": "AS",
-        "FONCTION_NL": "ASSISTANT SPECIALISE"
+        FONCTION: 'AS',
+        FONCTION_NL: 'ASSISTANT SPECIALISE',
+        Ordre: 1,
       },
       {
-        "FONCTION": "ADJ",
-        "FONCTION_NL": "ASSISTANT DE JUSTICE"
+        FONCTION: 'JA',
+        FONCTION_NL: 'JURISTE ASSISTANT',
+        Ordre: 2,
       },
       {
-        "FONCTION": "JA",
-        "FONCTION_NL": "JURISTE ASSISTANT"
+        FONCTION: 'ADJ',
+        FONCTION_NL: 'ASSISTANT DE JUSTICE',
+        Ordre: 3,
       },
       {
-        "FONCTION": "PPI",
-        "FONCTION_NL": "ELEVE AVOCAT"
+        FONCTION: 'CONT A JP',
+        FONCTION_NL: 'CONTRACTUEL A JUSTICE DE PROXIMITE',
+        Ordre: 4,
       },
       {
-        "FONCTION": "CONT A JP",
-        "FONCTION_NL": "CONTRACTUEL A JUSTICE DE PROXIMITE"
+        FONCTION: 'CONT B JP',
+        FONCTION_NL: 'CONTRACTUEL B JUSTICE DE PROXIMITE',
+        Ordre: 5,
       },
       {
-        "FONCTION": "CONT B JP",
-        "FONCTION_NL": "CONTRACTUEL B JUSTICE DE PROXIMITE"
+        FONCTION: 'CONT C JP',
+        FONCTION_NL: 'CONTRACTUEL C JUSTICE DE PROXIMITE',
+        Ordre: 6,
       },
       {
-        "FONCTION": "CONT C JP",
-        "FONCTION_NL": "CONTRACTUEL C JUSTICE DE PROXIMITE"
-      }
+        FONCTION: 'PPI',
+        FONCTION_NL: 'ELEVE AVOCAT',
+        Ordre: 7,
+      },
     ]
 
     // ONLY FOR CA
