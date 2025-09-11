@@ -12,7 +12,15 @@ Sentry.init({
   integrations: [
     browserTracingIntegration(),
   ],
-  tracesSampleRate: 0,
+  tracesSampleRate: Math.max(
+    0,
+    Math.min(
+      1,
+      Number(
+        (import.meta.env['NG_APP_SENTRY_TRACES_SAMPLE_RATE'] ?? 0) as any,
+      ),
+    ),
+  ),
   beforeSendTransaction: (event) => {
     try {
       const fullUrl = window?.location?.href
