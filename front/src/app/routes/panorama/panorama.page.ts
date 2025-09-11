@@ -371,7 +371,7 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
 
     for (let i = 0; i < hrList.length; i++) {
       const hr = hrList[i]
-      if (!hr.firstName || !hr.lastName) {
+      if (!hr.firstName || !hr.lastName || (hr.situations && hr.situations.length === 0)) {
         continue
       }
 
