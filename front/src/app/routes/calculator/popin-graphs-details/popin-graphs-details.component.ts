@@ -341,7 +341,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
             bodyLine.style.color = '#000'
             bodyLine.style.fontSize = '12px'
             if (this.calculatorService.showGraphDetailTypeLineTitle === 'Temps moyen') {
-              bodyLine.innerHTML = this.decimalToStringDateFloor(body.lines[0])
+              bodyLine.innerHTML = this.decimalToStringDate(body.lines[0])
             } else if (this.calculatorService.showGraphDetailTypeLineTitle === 'Taux de couverture') {
               body.lines[0] = body.lines[0].replace(',', '.').replace(/\s/g, '')
               body.lines[0] = parseInt(body.lines[0])
