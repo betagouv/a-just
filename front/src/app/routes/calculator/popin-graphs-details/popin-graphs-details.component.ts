@@ -433,7 +433,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
               }
 
               if (this.calculatorService.showGraphDetailTypeLineTitle === 'Temps moyen') {
-                return this.decimalToStringDateFloor(value)
+                return this.decimalToStringDate(value)
               }
 
               if (this.calculatorService.showGraphDetailTypeLineTitle === 'Taux de couverture') {
