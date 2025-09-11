@@ -12,7 +12,31 @@ Sentry.init({
   integrations: [
     browserTracingIntegration(),
   ],
-  tracesSampleRate: 1.0,
+  // Propagate tracing headers only to our own backend
+  tracePropagationTargets: [window.location.origin],
+  tracesSampleRate: Math.max(
+    0,
+    Math.min(
+      1,
+      Number(
+        (import.meta.env['NG_APP_SENTRY_TRACES_SAMPLE_RATE'] ?? 0) as any,
+      ),
+    ),
+  ),
+  beforeSendTransaction: (event) => {
+    try {
+      const fullUrl = window?.location?.href
+      event.tags = {
+        ...event.tags,
+        ...(fullUrl ? { full_url: fullUrl } : {}),
+      }
+      event.extra = {
+        ...event.extra,
+        ...(fullUrl ? { full_url: fullUrl } : {}),
+      }
+    } catch {}
+    return event
+  },
 })
 
 bootstrapApplication(AppComponent, appConfig)
