@@ -12,7 +12,7 @@ Sentry.init({
   integrations: [
     browserTracingIntegration(),
   ],
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0,
   beforeSendTransaction: (event) => {
     try {
       const fullUrl = window?.location?.href
