@@ -12,6 +12,8 @@ Sentry.init({
   integrations: [
     browserTracingIntegration(),
   ],
+  // Propagate tracing headers only to our own backend
+  tracePropagationTargets: [window.location.origin],
   tracesSampleRate: Math.max(
     0,
     Math.min(
