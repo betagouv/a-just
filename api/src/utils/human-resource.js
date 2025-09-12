@@ -856,16 +856,8 @@ export const calculateETPForContentieux = (indexes, query, categories) => {
     if (period.categoryId && (!period.agentEnd || periodStart <= today(period.agentEnd).getTime())) {
       etpByCategory[period.categoryId] += (effectiveETP * workingDays) / nbOfWorkingDaysQuery
     }
-    if (
-      query.contentieux === 440 &&
-      period.categoryId === 1 &&
-      new Date('2025-09-11T12:00:00.000Z').getTime() === new Date(query.start).getTime() &&
-      new Date('2025-09-11T12:00:00.000Z').getTime() === new Date(query.end).getTime()
-    ) {
-      console.log(query.start, query.end, (effectiveETP * workingDays) / nbOfWorkingDaysQuery, period)
-    }
   })
-  console.log('@@@@@@@@@@ END =>', fixDecimal(etpByCategory[1]))
+
   // Retourner les résultats triés par rang de la catégorie
   return categories
     .map((category) => ({
