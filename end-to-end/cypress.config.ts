@@ -36,6 +36,7 @@ export default defineConfig({
       inlineAssets: true,
       saveAllAttempts: false,
       reportDir: "cypress/reports",
+      reportFilename: "report",
       overwrite: false,
       html: true,
       json: true,

@@ -27,6 +27,14 @@ jobs:
       - name: Run tests
         run: npm run test
 
+      - name: Debug - List generated files
+        if: always()
+        run: |
+          echo "Listing end-to-end directory structure:"
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
+          echo "Reports directory content:"
+          ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
+
       - name: Upload Cypress video
         if: always()
         uses: actions/upload-artifact@v4
@@ -44,7 +52,8 @@ jobs:
       - name: Publish Test Results
         if: always()
         uses: dorny/test-reporter@v1
+        continue-on-error: true
         with:
           name: Cypress E2E Test Results
-          path: ./end-to-end/cypress/reports/*.json
+          path: "./end-to-end/cypress/reports/**/*.json"
           reporter: mocha-json
