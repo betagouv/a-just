@@ -3,6 +3,7 @@ import { Types } from '../utils/types'
 import {
   autofitColumns,
   buildExcelRef,
+  computeExtractor,
   flatListOfContentieuxAndSousContentieux,
   formatFunctions,
   getJuridictionData,
@@ -15,35 +16,49 @@ import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { getWorkingDaysCount, isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
 import { completePeriod, fillMissingContentieux, updateAndMerge, updateLabels } from '../utils/referentiel'
-
 import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
 import { loadOrWarmHR } from '../utils/redis'
+import { createJob, getJob, setJobProgress, setJobResult, setJobError, cleanupOld } from '../utils/jobStore'
 
 /**
- * Route de la page extrateur
+ * Route de la page extracteur
  */
-
 export default class RouteExtractor extends Route {
   // model de BDD
   model
 
-  /**
-   * Constructeur
-   * @param {*} params
-   */
   constructor(params) {
     super(params)
-
     this.model = params.models.HumanResources
   }
 
+  // Handler commun pour retourner l'état d'un job (réutilisé par la route POST /status)
+  async respondJobStatus(ctx, jobId) {
+    ctx.set('Cache-Control', 'no-store')
+    const job = getJob(jobId)
+
+    if (!job) return ctx.throw(404, 'Job introuvable')
+
+    // sécurité : le job doit appartenir à l’utilisateur courant
+    const userId = ctx.state?.user?.id
+    if (!userId || userId !== job.userId) return ctx.throw(403, 'Job non accessible')
+
+    if (job.status === 'done') {
+      ctx.status = 200
+      ctx.body = { status: 'done', result: job.result }
+    } else if (job.status === 'error') {
+      ctx.status = 500
+      ctx.body = { status: 'error', error: job.error }
+    } else {
+      ctx.status = 202
+      ctx.body = { status: job.status, progress: job.progress, step: job.step }
+    }
+  }
+
   /**
-   * Interface de retour des calculs pour la page extracteur
-   * @param {*} backupId
-   * @param {*} dateStart
-   * @param {*} dateStop
-   * @param {*} categoryFilter
+   *
+   * @param {*} ctx
    */
   @Route.Post({
     bodyType: Types.object().keys({
@@ -61,9 +76,7 @@ export default class RouteExtractor extends Route {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
-      type: 'effectif',
-    })
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'effectif' })
 
     console.time('extractor-1')
     const juridictionName = await this.models.HRBackups.findById(backupId)
@@ -78,7 +91,6 @@ export default class RouteExtractor extends Route {
     console.time('extractor-3')
     let hr = await loadOrWarmHR(backupId, this.models)
     console.timeEnd('extractor-3')
-    //hr = hr.slice(0, 1) // A SUPPRIMER
 
     console.time('extractor-4')
     const categories = await this.models.HRCategories.getAll()
@@ -178,6 +190,10 @@ export default class RouteExtractor extends Route {
     })
   }
 
+  /**
+   *
+   * @param {*} ctx
+   */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
@@ -194,49 +210,33 @@ export default class RouteExtractor extends Route {
         ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
       }
     }
-    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, {
-      type: 'activité',
-    })
+    await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'activité' })
 
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined)
     const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
 
     const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
-
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 
     let activities = await this.models.Activities.getAllDetails(backupId)
-
-    activities = activities.map((r) => {
-      return { ...r, periode: today(r.periode) }
-    })
-
+    activities = activities.map((r) => ({ ...r, periode: today(r.periode) }))
     activities = orderBy(activities, 'periode', ['asc'])
       .filter((act) => isDateGreaterOrEqual(act.periode, month(dateStart, 0)) && isDateGreaterOrEqual(month(dateStop, 0, 'lastday'), act.periode))
-      .map((x) => {
-        return {
-          periode: today(x.periode).setDate(1),
-          ...x,
-        }
-      })
+      .map((x) => ({ periode: today(x.periode).setDate(1), ...x }))
 
     activities = updateLabels(activities, referentiels)
-    let sum = cloneDeep(activities)
 
-    sum = sum.map((x) => {
+    let sum = cloneDeep(activities).map((x) => {
       const ajustedIn = x.entrees === 0 ? x.entrees : x.entrees || x.originalEntrees
       const ajustedOut = x.sorties === 0 ? x.sorties : x.sorties || x.originalSorties
       const ajustedStock = x.stock === 0 ? x.stock : x.stock || x.originalStock
-
       return { ajustedIn, ajustedOut, ajustedStock, ...x }
     })
 
     sum = groupBy(sum, 'contentieux.id')
 
     let sumTab = []
-
     Object.keys(sum).map((key) => {
       sumTab.push({
         periode: replaceIfZero(last(sum[key]).periode),
@@ -259,90 +259,58 @@ export default class RouteExtractor extends Route {
     let GroupedList = groupBy(activities, 'periode')
     GroupedList = fillMissingContentieux(GroupedList, flatReferentielsList)
 
-    this.sendOk(ctx, {
-      list: GroupedList,
-      sumTab,
-      lastUpdate,
-    })
+    this.sendOk(ctx, { list: GroupedList, sumTab, lastUpdate })
   }
 
   /**
-   * Test pour mise en place de cache optimisé
-   * @param {*} backupId
-   * @param {*} dateStart
-   * @param {*} dateStop
-   * @param {*} categoryFilter
+   * Nouvelle route pour démarrer le job (asynchrone) : répond 202 + jobId
    */
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
-      newVersion: Types.boolean(),
-      regressionTest: Types.boolean(),
+      dateStart: Types.date().required(),
+      dateStop: Types.date().required(),
+      categoryFilter: Types.any().required(),
     }),
     accesses: [Access.canVewHR],
   })
-  async getCache(ctx) {
-    let { backupId } = this.body(ctx)
+  async startFilterList(ctx) {
+    const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
+    const userId = ctx.state?.user?.id
+    if (!userId) return ctx.throw(401, 'Non authentifié')
 
-    const categories = await this.models.HRCategories.getAll()
-    console.time('onPreload')
-    //await this.models.HumanResources.forceRecalculateAllHrCache()
-    console.timeEnd('onPreload')
-
-    console.time('Mise en cache')
-    let hr = await loadOrWarmHR(backupId, this.models)
-    console.timeEnd('Mise en cache')
-
-    //hr = hr.slice(259, 260)
-    hr = hr.filter((h) => [33592].includes(h.id))
-    console.time('🧩 Pré-formatage / Indexation')
-    const indexes = await generateHRIndexes(hr)
-    console.timeEnd('🧩 Pré-formatage / Indexation')
-
-    console.log(indexes.resultMap, 'length', hr.length)
-    // 🔹 Requête ETP spécifique
-    const query = {
-      start: '2025-01-01T12:00:00.000Z', // Date de début de la période recherchée
-      end: '2025-06-01T12:00:00.000Z', // Date de fin de la période recherchée
-      category: undefined, // ID de la catégorie recherchée
-      fonctions: undefined, // Liste des fonctions recherchées
-      contentieux: 440, // ID du contentieux recherché
+    if (!(await this.models.HRBackups.haveAccess(backupId, userId))) {
+      return ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    console.time('Get new query')
-    const totalETPold = getHRPositions(models, hr, categories, query.contentieux, today(query.start), today(query.end))
-    const totalETPnew = calculateETPForContentieux(indexes, query, categories)
-    console.timeEnd('Get new query')
+    const jobId = createJob(userId, { backupId, dateStart, dateStop, categoryFilter })
 
-    console.log(totalETPold[0].totalEtp, totalETPnew[0].totalEtp, totalETPold[0].totalEtp - totalETPnew[0].totalEtp)
-    const objResult = Object.fromEntries(indexes.categoryIndex)
-    console.log(objResult)
-    this.sendOk(ctx, { hr, totalETPnew, res: await loadOrWarmHR(211, this.models), objResult })
+    ;(async () => {
+      try {
+        await this.models.Logs.addLog(EXECUTE_EXTRACTOR, userId, { type: 'effectif' })
+        const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, (p, step) =>
+          setJobProgress(jobId, p, step),
+        )
+        setJobResult(jobId, result)
+      } catch (e) {
+        setJobError(jobId, e?.message || 'unknown')
+      } finally {
+        cleanupOld()
+      }
+    })()
+
+    ctx.status = 202
+    ctx.body = { jobId }
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      jobId: Types.string().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async statusFilterListPost(ctx) {
+    const { jobId } = this.body(ctx)
+    await this.respondJobStatus(ctx, jobId)
   }
 }
-
-/**
- * 
-
-    const key = backupId
-    const value = hr
-
-    console.time('set cache')
-    await setCacheValue(key, value, 'test')
-    console.timeEnd('set cache')
-
-    console.time('get cache')
-    const result = await getCacheValue(key, 'test')
-    console.timeEnd('get cache')
-
-    //console.log(result)
-    this.sendOk(ctx, { result })
- */
-/**
-    console.time('Get HRPosition')
-    const etpAffected = getHRPositions({}, hr, categories, queryContentieux, today(queryStart), today(queryEnd))
-    console.timeEnd('Get HRPosition')
-
-    //console.log(totalETP, etpAffected)
-    const objResult = Object.fromEntries(resultMap)
- */

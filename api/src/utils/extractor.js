@@ -1,7 +1,7 @@
 import { cloneDeep, orderBy, sortBy, sumBy } from 'lodash'
 import { ABSENTEISME_LABELS, CET_LABEL, DELEGATION_TJ } from '../constants/referentiel'
 import { getNextDay, nbOfDays, nbWorkingDays, setTimeToMidDay, today, workingDay } from './date'
-import { findSituation } from './human-resource'
+import { findSituation, generateHRIndexes } from './human-resource'
 import { getHRVentilation, getHRVentilationOld } from '../utils/calculator'
 import { FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR, FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA } from '../constants/extractor'
 import { isCa, isTj } from './ca'
@@ -539,6 +539,8 @@ export const handleAbsenteisme = (refObj, isCa, isTj) => {
 }
 
 import pLimit from 'p-limit'
+import { loadOrWarmHR } from './redis'
+import { getHumanRessourceList } from './humanServices'
 
 export const computeExtractDdgv5 = async (
   models,
@@ -1945,4 +1947,63 @@ function returnAIfClose(a, b, tol = TOL) {
   return (d < 0 ? -d : d) <= tol // abs sans appel de fonction
     ? a
     : b
+}
+
+export async function computeExtractor(models, params, onProgress) {
+  const { backupId, dateStart, dateStop, categoryFilter, old = true } = params
+
+  onProgress?.(5, 'init')
+
+  const juridictionName = await models.HRBackups.findById(backupId)
+  const isJirs = await models.ContentieuxReferentiels.isJirs(backupId)
+  const referentiels = await models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
+  onProgress?.(15, 'referentiels')
+
+  const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
+  onProgress?.(25, 'flat')
+
+  let hr = await loadOrWarmHR(backupId, models)
+  onProgress?.(35, 'hr')
+
+  const categories = await models.HRCategories.getAll()
+  const functionList = await models.HRFonctions.getAllFormatDdg()
+  const formatedFunctions = await formatFunctions(functionList)
+  const allHuman = await getHumanRessourceList(hr, undefined, undefined, undefined, today(dateStart), today(dateStop))
+  onProgress?.(45, 'prep')
+
+  const indexes = await generateHRIndexes(allHuman)
+  onProgress?.(50, 'index')
+
+  const { onglet1, onglet2 } = await runExtractsInParallel({
+    indexes,
+    allHuman,
+    flatReferentielsList,
+    categories,
+    categoryFilter,
+    juridictionName,
+    dateStart,
+    dateStop,
+    isJirs,
+    old,
+  })
+  onProgress?.(70, 'extracts')
+
+  const excelRef = buildExcelRef(flatReferentielsList)
+  const { tproxs, allJuridiction } = await getJuridictionData(models, juridictionName)
+
+  const onglet1Data = { values: onglet1, columnSize: await autofitColumns(onglet1, true) }
+  const onglet2Data = { values: onglet2, columnSize: await autofitColumns(onglet2, true, 13), excelRef }
+
+  const viewModel = await getViewModel({ referentiels, tproxs, onglet1: onglet1Data, onglet2: onglet2Data, allJuridiction })
+  onProgress?.(95, 'finalize')
+
+  return {
+    fonctions: formatedFunctions,
+    referentiels,
+    tproxs,
+    onglet1: onglet1Data,
+    onglet2: onglet2Data,
+    allJuridiction,
+    viewModel,
+  }
 }
