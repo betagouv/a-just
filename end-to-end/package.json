@@ -4,7 +4,9 @@
   "scripts": {
     "start": "npm run cy:open",
     "cy:run": "cypress run",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open",
+    "cy:run:report": "cypress run --reporter cypress-mochawesome-reporter",
+    "clean:reports": "rm -rf cypress/reports"
   },
   "private": true,
   "dependencies": {
@@ -17,6 +19,7 @@
   },
   "devDependencies": {
     "cypress": "^13.17.0",
+    "cypress-mochawesome-reporter": "^3.8.2",
     "typescript": "~5.5.2"
   }
 }
