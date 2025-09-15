@@ -19,10 +19,18 @@
     </div>
 
     <ul class="results" *ngIf="results.length">
-      <li *ngFor="let r of results">
-        <div class="title">{{ r.title }}</div>
-        <div class="meta">
-          <span class="score">{{ (r.score * 100) | number:'1.0-0' }}%</span>
+      <li *ngFor="let r of results; let i = index">
+        <div class="header-row">
+          <div class="title">{{ r.title }}</div>
+          <div class="score">{{ (r.score * 100) | number:'1.0-0' }}%</div>
+        </div>
+        <div class="chevron-row">
+          <span class="chevron" (click)="onToggleSnippet(i)">{{ snippets[i] ? '▼' : '▶' }}</span>
+        </div>
+        <div class="snippet" *ngIf="snippets[i]">
+          <div class="snippet-meta">{{ r.file }}:{{ r.line || snippets[i]?.start }}</div>
+          <div class="loading" *ngIf="snippets[i]?.loading">Chargement…</div>
+          <pre class="code-block" *ngIf="!snippets[i]?.loading" [innerText]="snippets[i]?.content"></pre>
         </div>
       </li>
     </ul>

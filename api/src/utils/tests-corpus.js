@@ -23,7 +23,8 @@ function extractTitlesFromFile(filePath) {
   const describeRe = /\bdescribe\s*\(\s*([`'"])(.*?)\1\s*,/g
   const itRe = /\bit\s*\(\s*([`'"])(.*?)\1\s*,/g
 
-  for (const line of lines) {
+  for (let idx = 0; idx < lines.length; idx++) {
+    const line = lines[idx]
     // Enter describes on this line
     let m
     describeRe.lastIndex = 0
@@ -34,7 +35,7 @@ function extractTitlesFromFile(filePath) {
     itRe.lastIndex = 0
     while ((m = itRe.exec(line))) {
       const title = (stack.length ? stack.join(' > ') + ' > ' : '') + m[2]
-      items.push({ title, file: rel })
+      items.push({ title, file: rel, line: idx + 1 })
     }
     // Heuristic pop: closing lines
     if (/^\s*\)\s*[,;]?\s*$/.test(line) || /^\s*\}\s*\)\s*[,;]?\s*$/.test(line)) {
@@ -58,5 +59,9 @@ export function buildTestCorpus() {
 }
 
 export function formatCorpusLines(items) {
-  return items.map((it) => `- ${it.title}  [${it.file}]`).join('\n') + '\n'
+  return (
+    items
+      .map((it) => `- ${it.title}  [${it.file}${it.line ? `:${it.line}` : ''}]`)
+      .join('\n') + '\n'
+  )
 }

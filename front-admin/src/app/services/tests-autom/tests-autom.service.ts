@@ -5,6 +5,7 @@ export interface TestSearchResult {
   score: number; // 0..1
   title: string;
   file: string;
+  line?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,7 +24,7 @@ export class TestsAutomService {
       const resp = await this.server.post('/admin-tests/search', { query, topK: 20 });
       const payload = resp?.data ?? resp;
       const items = Array.isArray(payload?.items) ? payload.items : [];
-      return items.map((i: any) => ({ score: i.score ?? 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '' }));
+      return items.map((i: any) => ({ score: i.score ?? 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '', line: i.line }));
     } catch (e) {
       // Fallback to mock if backend not available
       const q = (query || '').toLowerCase();
@@ -51,9 +52,22 @@ export class TestsAutomService {
       const resp = await this.server.get('/admin-tests/list');
       const payload = resp?.data ?? resp;
       const items = Array.isArray(payload?.items) ? payload.items : [];
-      return items.map((i: any) => ({ score: 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '' }));
+      return items.map((i: any) => ({ score: 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '', line: i.line }));
     } catch {
       return [];
+    }
+  }
+
+  async getSnippet(file: string, line: number): Promise<{ snippet: string; start: number; end: number; includedBefores?: number } | null> {
+    try {
+      const resp = await this.server.get(`/admin-tests/snippet?file=${encodeURIComponent(file)}&line=${encodeURIComponent(String(line || 1))}`);
+      const payload = resp?.data ?? resp;
+      if (payload?.exists) {
+        return { snippet: payload.snippet ?? '', start: payload.start ?? line, end: payload.end ?? line, includedBefores: payload.includedBefores };
+      }
+      return null;
+    } catch {
+      return null;
     }
   }
 
