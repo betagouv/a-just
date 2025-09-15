@@ -33,16 +33,25 @@ export default class RouteExtractor extends Route {
     this.model = params.models.HumanResources
   }
 
-  // Handler commun pour retourner l'état d'un job (réutilisé par la route POST /status)
   async respondJobStatus(ctx, jobId) {
+    // Évite le cache
     ctx.set('Cache-Control', 'no-store')
-    const job = getJob(jobId)
 
+    const job = await getJob(jobId)
     if (!job) return ctx.throw(404, 'Job introuvable')
 
-    // sécurité : le job doit appartenir à l’utilisateur courant
     const userId = ctx.state?.user?.id
-    if (!userId || userId !== job.userId) return ctx.throw(403, 'Job non accessible')
+    if (!userId) return ctx.throw(401, 'Non authentifié')
+
+    if (String(userId) !== String(job.userId)) {
+      console.warn('[jobs] user mismatch', {
+        jobId,
+        userIdRuntime: userId,
+        userIdJob: job.userId,
+        types: { runtime: typeof userId, job: typeof job.userId },
+      })
+      return ctx.throw(403, 'Job non accessible')
+    }
 
     if (job.status === 'done') {
       ctx.status = 200
@@ -51,6 +60,7 @@ export default class RouteExtractor extends Route {
       ctx.status = 500
       ctx.body = { status: 'error', error: job.error }
     } else {
+      // queued | running
       ctx.status = 202
       ctx.body = { status: job.status, progress: job.progress, step: job.step }
     }
@@ -283,21 +293,31 @@ export default class RouteExtractor extends Route {
       return ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    const jobId = createJob(userId, { backupId, dateStart, dateStop, categoryFilter })
+    // ✅ jobId depuis le jobStore Redis (async)
+    const jobId = await createJob(userId, { backupId, dateStart, dateStop, categoryFilter })
 
     ;(async () => {
       try {
         await this.models.Logs.addLog(EXECUTE_EXTRACTOR, userId, { type: 'effectif' })
-        const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, (p, step) =>
-          setJobProgress(jobId, p, step),
-        )
-        setJobResult(jobId, result)
+
+        // Progress callback asynchrone (fire-and-forget, ne bloque pas le calcul)
+        const onProgress = (p, step) => setJobProgress(jobId, p, step)
+
+        const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
+
+        // ✅ marque comme terminé
+        await setJobResult(jobId, result)
       } catch (e) {
-        setJobError(jobId, e?.message || 'unknown')
+        // ✅ marque comme erreur
+        await setJobError(jobId, e?.message || 'unknown')
       } finally {
-        cleanupOld()
+        // ✅ purge des anciens jobs
+        await cleanupOld()
       }
-    })()
+    })().catch((err) => {
+      // sécurité : log si l’IIFE crashe
+      console.error('Background job error:', err)
+    })
 
     ctx.status = 202
     ctx.body = { jobId }
@@ -311,6 +331,8 @@ export default class RouteExtractor extends Route {
   })
   async statusFilterListPost(ctx) {
     const { jobId } = this.body(ctx)
+    // si respondJobStatus est une méthode async de la classe :
     await this.respondJobStatus(ctx, jobId)
+    // (sinon, remplace par la logique inline getJob/retours 200/202/500)
   }
 }
