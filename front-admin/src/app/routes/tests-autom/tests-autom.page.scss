@@ -1,0 +1,64 @@
+.tests-autom-container {
+  padding: 16px;
+}
+
+.search-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.search-bar button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #eee;
+  cursor: pointer;
+}
+
+.search-bar button[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.state .error {
+  color: #b00020;
+}
+
+.results {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.results li {
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+}
+
+.results .title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.results .meta {
+  color: #555;
+  display: flex;
+  gap: 12px;
+}
+
+.results .score {
+  margin-left: auto;
+}

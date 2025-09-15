@@ -11,7 +11,9 @@ export class ServerService {
   serverUrl: string = import.meta.env.NG_APP_SERVER_URL;
 
   getUrl(url: string): string {
-    return this.serverUrl + url;
+    const base = (this.serverUrl || '').replace(/\/+$/, '');
+    const path = (url || '').replace(/^\/+/, '');
+    return `${base}/${path}`;
   }
 
   handleError(error: any) {

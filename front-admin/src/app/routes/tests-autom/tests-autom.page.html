@@ -1,9 +1,30 @@
 <aj-wrapper title="Tests autom">
-  <div class="container">
-    <p>Interface de recherche de tests automatiques à partir d'une description en langage naturel.</p>
-    <p>
-      Cette page accueillera l'outil de recherche sémantique (embeddings Hugging Face) permettant
-      d'identifier le test Cypress le plus proche d'une user story.
-    </p>
+  <div class="tests-autom-container">
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Décrivez votre besoin (ex: 'vérifier le chargement du simulateur CA pour le contentieux Pénal')"
+        [(ngModel)]="query"
+        (keyup.enter)="onSearch()"
+      />
+      <button (click)="onSearch()" [disabled]="isSearching">{{ isSearching ? 'Recherche…' : 'Rechercher' }}</button>
+    </div>
+
+    <div class="state" *ngIf="error">
+      <p class="error">{{ error }}</p>
+    </div>
+
+    <div class="state" *ngIf="!error && !isSearching && results.length === 0 && query">
+      <p>Aucun résultat</p>
+    </div>
+
+    <ul class="results" *ngIf="results.length">
+      <li *ngFor="let r of results">
+        <div class="title">{{ r.title }}</div>
+        <div class="meta">
+          <span class="score">{{ (r.score * 100) | number:'1.0-0' }}%</span>
+        </div>
+      </li>
+    </ul>
   </div>
 </aj-wrapper>
