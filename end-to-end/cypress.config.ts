@@ -41,6 +41,9 @@ export default defineConfig({
       html: true,
       json: true,
       timestamp: "mmddyyyy_HHMMss",
+      // Force la génération du fichier JSON
+      generateReport: true,
+      quiet: false,
     },
     env: {
       NG_APP_SERVER_URL:
