@@ -10,7 +10,6 @@ Sentry.init({
   environment: import.meta.env['NG_APP_NODE_ENV'] || import.meta.env['NODE_ENV'],
   release: `a-just-front@${import.meta.env['NG_APP_VERSION'] || 'dev'}`,
   integrations: [browserTracingIntegration()],
-  /**
   // Propagate tracing headers only to our own backend
   tracePropagationTargets: [window.location.origin],
 
@@ -37,7 +36,7 @@ Sentry.init({
       }
     } catch {}
     return event
-  },   */
+  },
 })
 
 bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err))
