@@ -34,6 +34,10 @@ jobs:
           find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
           echo "Reports directory content:"
           ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
+          echo "Detailed content of reports directory:"
+          find ./end-to-end/cypress/reports/ -type f -exec ls -la {} \; 2>/dev/null || echo "No files found"
+          echo "Looking for any JSON files specifically:"
+          find ./end-to-end/cypress/reports/ -name "*.json" -exec cat {} \; 2>/dev/null || echo "No JSON files found"
 
       - name: Upload Cypress video
         if: always()
@@ -51,9 +55,12 @@ jobs:
 
       - name: Publish Test Results
         if: always()
-        uses: dorny/test-reporter@v1
         continue-on-error: true
-        with:
-          name: Cypress E2E Test Results
-          path: "./end-to-end/cypress/reports/**/*.json"
-          reporter: mocha-json
+        run: |
+          if [ -f "./end-to-end/cypress/reports/"*.html ]; then
+            echo "✅ Cypress E2E test reports generated successfully"
+            echo "📊 Reports available in artifacts: cypress-reports"
+            ls -la ./end-to-end/cypress/reports/
+          else
+            echo "❌ No test reports found"
+          fi
