@@ -24,58 +24,20 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Run tests with logging
-        run: |
-          set -e
+      - name: Run tests
+        run: npm run test
 
-          # Créer le répertoire pour les logs
-          mkdir -p logs
-
-          # Fonction pour nettoyer en cas d'erreur
-          cleanup() {
-            echo "Cleaning up..."
-            # Récupérer les logs des conteneurs avant de les arrêter
-            docker compose -p test-api -f docker-compose.test.yml logs --no-color > logs/api-test-logs.txt 2>&1 || true
-            docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --no-color > logs/e2e-logs.txt 2>&1 || true
-            
-            # Arrêter tous les conteneurs
-            docker compose -p test-api -f docker-compose.test.yml down || true
-            docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
-          }
-
-          # Configurer le nettoyage en cas d'interruption
-          trap cleanup EXIT
-
-          # Exécuter les tests
-          npm run test
-
-      - name: Display server logs
+      - name: Debug - List generated files
         if: always()
         run: |
-          echo "=== API TEST LOGS ==="
-          if [ -f logs/api-test-logs.txt ]; then
-            echo "Showing last 100 lines of API logs:"
-            tail -n 100 logs/api-test-logs.txt
-          else
-            echo "No API test logs found"
-          fi
-
-          echo -e "\n=== E2E LOGS ==="
-          if [ -f logs/e2e-logs.txt ]; then
-            echo "Showing last 100 lines of E2E logs:"
-            tail -n 100 logs/e2e-logs.txt
-          else
-            echo "No E2E logs found"
-          fi
-
-      - name: Upload server logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: server-logs
-          path: |
-            logs/
-            ./api/coverage/
+          echo "Listing end-to-end directory structure:"
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
+          echo "Reports directory content:"
+          ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
+          echo "Detailed content of reports directory:"
+          find ./end-to-end/cypress/reports/ -type f -exec ls -la {} \; 2>/dev/null || echo "No files found"
+          echo "Looking for any JSON files specifically:"
+          find ./end-to-end/cypress/reports/ -name "*.json" -exec cat {} \; 2>/dev/null || echo "No JSON files found"
 
       - name: Upload Cypress video
         if: always()
@@ -83,3 +45,22 @@ jobs:
         with:
           name: cypress-video
           path: ./end-to-end/cypress/videos
+
+      - name: Upload Cypress test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-reports
+          path: ./end-to-end/cypress/reports
+
+      - name: Publish Test Results
+        if: always()
+        continue-on-error: true
+        run: |
+          if [ -f "./end-to-end/cypress/reports/"*.html ]; then
+            echo "✅ Cypress E2E test reports generated successfully"
+            echo "📊 Reports available in artifacts: cypress-reports"
+            ls -la ./end-to-end/cypress/reports/
+          else
+            echo "❌ No test reports found"
+          fi
