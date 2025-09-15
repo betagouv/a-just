@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, HostBinding, inject, Input, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core'
+import * as Sentry from '@sentry/browser'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
@@ -274,6 +275,16 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       this.humanResourceService.backupId.subscribe((backupId) => {
         this.hrBackupId = backupId
         this.hrBackup = this.hrBackups.find((b) => b.id === backupId)
+      }),
+    )
+
+    // Keep Sentry tag in sync with selected juridiction title
+    this.watch(
+      this.humanResourceService.hrBackup.subscribe((bk) => {
+        const title = bk?.label?.toString().trim()
+        if (title) {
+          Sentry.setTag('juridiction_title', title)
+        }
       }),
     )
 

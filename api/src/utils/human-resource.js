@@ -681,7 +681,7 @@ export const generateStableHRPeriods = (agent) => {
     }, 0)
 
     // Calcul de l'ETP effectif en fonction des indisponibilités
-    const effectiveETP = Math.max(0, etp * (1 - totalIndispoRate))
+    const effectiveETP = Math.max(0, etp - totalIndispoRate)
 
     // Vérification si la fin de la période est causée par une indisponibilité
     const isEndFromIndispoStop = indisponibilities.some((i) => {

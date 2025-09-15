@@ -16,7 +16,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} isJirs
    * @returns
    */
-  Model.getReferentiels = async (backupId = null, isJirs = false, filterReferentielsId = null, displayAll = false) => {
+  Model.getReferentiels = async (backupId = null, isJirs = false, filterReferentielsId = null, displayAll = false, extractorMode = false) => {
     if (backupId) {
       const juridiction = await Model.models.HRBackups.findById(backupId)
       if (juridiction && !displayAll) {
@@ -110,6 +110,7 @@ export default (sequelizeInstance, Model) => {
       ['rank'],
     )
 
+    if (extractorMode) isJirs = true
     list = jirsRules(list, isJirs)
 
     return list

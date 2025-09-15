@@ -147,7 +147,7 @@ export default (sequelizeInstance, Model) => {
           })
 
           listAllMainContentieux[i].update({
-            percent: sum || 0,
+            percent: sum || listAllMainContentieux[i].dataValues.percent,
           })
         }
       }
