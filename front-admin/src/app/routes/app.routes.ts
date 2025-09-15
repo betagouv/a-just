@@ -8,6 +8,12 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'tests-autom',
+    loadComponent: () =>
+      import('./tests-autom/tests-autom.page').then((mod) => mod.TestsAutomPage),
+    canActivate: [authGuard],
+  },
+  {
     path: 'login',
     loadComponent: () =>
       import('./login/login.page').then((mod) => mod.LoginPage),

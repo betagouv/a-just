@@ -54,6 +54,11 @@ const MENU = [
     path: 'data',
     isSuperAdmin: false,
   },
+  {
+    label: 'Tests autom',
+    path: 'tests-autom',
+    isSuperAdmin: false,
+  },
 ];
 
 @Component({
