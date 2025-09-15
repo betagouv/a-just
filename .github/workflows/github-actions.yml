@@ -34,13 +34,6 @@ jobs:
           name: cypress-video
           path: ./end-to-end/cypress/videos
 
-      - name: Upload Cypress screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots
-          path: ./end-to-end/cypress/screenshots
-
       - name: Upload Cypress test reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -54,4 +47,4 @@ jobs:
         with:
           name: Cypress E2E Test Results
           path: ./end-to-end/cypress/reports/*.json
-          reporter: mochawesome-json
+          reporter: mocha-json
