@@ -15,7 +15,10 @@
     "format": "node format-angular-templates.js && prettier --write \"src/**/*.{ts,scss,css,js,json}\"",
     "format:html": "node format-angular-templates.js",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss,css,js,json}\"",
-    "format:angular": "node format-angular-templates.js"
+    "format:angular": "node format-angular-templates.js",
+    "compodoc:build": "compodoc -p tsconfig.doc.json",
+    "compodoc:build-and-serve": "compodoc -p tsconfig.doc.json -s",
+    "compodoc:serve": "compodoc -s"
   },
   "private": true,
   "dependencies": {

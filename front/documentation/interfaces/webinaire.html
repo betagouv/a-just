@@ -1,0 +1,1013 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  webinaire</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/routes/help-center/help-center.page.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#action" 
+>
+                                            action
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#content" 
+>
+                                            content
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#img" 
+>
+                                            img
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#rank" 
+>
+                                            rank
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#title" 
+>
+                                            title
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="action"></a>
+                                        <span class="name "><b>action</b>
+                                            <a href="#action">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>action:     <code>string[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>string[]</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="content"></a>
+                                        <span class="name "><b>content</b>
+                                            <a href="#content">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>content:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="img"></a>
+                                        <span class="name "><b>img</b>
+                                            <a href="#img">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>img:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="rank"></a>
+                                        <span class="name "><b>rank</b>
+                                            <a href="#rank">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>rank:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="title"></a>
+                                        <span class="name "><b>title</b>
+                                            <a href="#title">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>title:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from &#x27;@angular/core&#x27;;
+import { GitBookAPI } from &#x27;@gitbook/api&#x27;;
+import { WrapperComponent } from &#x27;../../components/wrapper/wrapper.component&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import { InputButtonComponent } from &#x27;../../components/input-button/input-button.component&#x27;;
+import { DocCardInterface } from &#x27;../../components/doc-card/doc-card.component&#x27;;
+import {
+  CALCULATE_DOWNLOAD_URL,
+  DATA_GITBOOK,
+  DATA_GITBOOK_CA,
+  DOCUMENTATION_URL,
+  DOCUMENTATION_URL_CA,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
+} from &#x27;../../constants/documentation&#x27;;
+import { UserService } from &#x27;../../services/user/user.service&#x27;;
+import { ServerService } from &#x27;../../services/http-server/server.service&#x27;;
+import { AppService } from &#x27;../../services/app/app.service&#x27;;
+import { downloadFile } from &#x27;../../utils/system&#x27;;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;;
+import { SanitizeResourceUrlPipe } from &#x27;../../pipes/sanitize-resource-url/sanitize-resource-url.pipe&#x27;;
+import { BackButtonComponent } from &#x27;../../components/back-button/back-button.component&#x27;;
+import { FormsModule } from &#x27;@angular/forms&#x27;;
+import { ReferentielService } from &#x27;../../services/referentiel/referentiel.service&#x27;;
+import { MainClass } from &#x27;../../libs/main-class&#x27;;
+
+interface webinaire {
+  img: string;
+  title: string;
+  content: string;
+  action: string[];
+  rank: number;
+}
+/**
+ * Contact
+ */
+
+@Component({
+  standalone: true,
+  imports: [
+    WrapperComponent,
+    CommonModule,
+    InputButtonComponent,
+    MatIconModule,
+    SanitizeResourceUrlPipe,
+    BackButtonComponent,
+    FormsModule,
+  ],
+  templateUrl: &#x27;./help-center.page.html&#x27;,
+  styleUrls: [&#x27;./help-center.page.scss&#x27;],
+})
+export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
+  @ViewChild(&#x27;searchInput&#x27;) searchInput!: any;
+  userService &#x3D; inject(UserService);
+  serverService &#x3D; inject(ServerService);
+  appService &#x3D; inject(AppService);
+  referentielService &#x3D; inject(ReferentielService);
+  /**
+   * Résultat de la recherche GitBook
+   */
+  data: any &#x3D; null;
+  /**
+   * Valeur de rechercher
+   */
+  searchValue: string &#x3D; &#x27;&#x27;;
+  /**
+   * Gitbook API
+   */
+  gitbook;
+  /**
+   * Focus barre de recherche
+   */
+  focusOn &#x3D; false;
+  /**
+   * URL de la nomenclature
+   */
+  NOMENCLATURE_DOWNLOAD_URL &#x3D; &#x27;/assets/nomenclature-A-Just.html&#x27;;
+  /**
+   * GitBook Token
+   */
+  gitToken;
+  /** Carte guide utilisateur */
+  userGuide &#x3D; {
+    tag: &#x27;Documentation&#x27;,
+    title: &#x27;Le guide utilisateur&#x27;,
+    description:
+      &#x27;Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!&#x27;,
+    image: &#x27;/assets/images/avatar.svg&#x27;,
+    url: this.userService.isCa() ? DOCUMENTATION_URL_CA : DOCUMENTATION_URL,
+  };
+  /** Carte data book */
+  dataBook &#x3D; {
+    tag: &#x27;Documentation&#x27;,
+    title: &#x27;Le data-book&#x27;,
+    description:
+      &quot;Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d&#x27;activité».&quot;,
+    image: &#x27;/assets/images/data-visualization.svg&#x27;,
+    url: this.userService.isCa() ? DATA_GITBOOK_CA : DATA_GITBOOK,
+  };
+  /** Carte nomenclature */
+  nomenclature &#x3D; {
+    tag: &#x27;Documentation&#x27;,
+    title: &#x27;La nomenclature&#x27;,
+    description:
+      &#x27;Vous permet de visualiser globalement et en détail le contenu de chaque contentieux et sous-contentieux. Au civil, vous y retrouverez la liste des NAC prises en compte dans chaque rubrique.&#x27;,
+    image: &#x27;/assets/images/system.svg&#x27;,
+    url: this.userService.isCa()
+      ? NOMENCLATURE_DOWNLOAD_URL_CA
+      : this.referentielService.isDroitLocal()
+      ? NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL
+      : NOMENCLATURE_DOWNLOAD_URL,
+    localUrl: false,
+    download: true,
+  };
+  /**
+   * Cards documentation
+   */
+  docCards: Array&lt;DocCardInterface&gt; &#x3D; [
+    this.userGuide,
+    this.dataBook,
+    this.nomenclature,
+  ];
+  /**
+   * Cards outils
+   */
+  docTools: Array&lt;DocCardInterface&gt; &#x3D; [
+    this.nomenclature,
+    {
+      tag: &#x27;Les outils A-JUST&#x27;,
+      title: &#x27;La calculatrice de ventilation des ETPT&#x27;,
+      description: &#x27;&#x27;,
+      image: &#x27;/assets/images/coding.svg&#x27;,
+      url: CALCULATE_DOWNLOAD_URL,
+    },
+    {
+      tag: &#x27;Les outils A-JUST&#x27;,
+      title: &#x27;L’extracteur de données d’effectifs&#x27;,
+      description: &#x27;&#x27;,
+      image: &#x27;/assets/images/Tableur.svg&#x27;,
+      url: &#x27;/dashboard&#x27;,
+      localUrl: true,
+    },
+    {
+      tag: &#x27;Les outils A-JUST&#x27;,
+      title: &#x27;L’extracteur de données d’activité&#x27;,
+      description: &#x27;&#x27;,
+      image: &#x27;/assets/images/Tableur2.svg&#x27;,
+      url: &#x27;/dashboard&#x27;,
+      localUrl: true,
+    },
+  ];
+  /**
+   * webinaire
+   */
+  webinaires: Array&lt;webinaire&gt; | null &#x3D; null;
+
+  /**
+   * Ouverture d&#x27;un iframe gitbook embeded
+   */
+  openSuggestionPanel &#x3D; false;
+  /**
+   * Ouverture de popin d appel
+   */
+  popinCall &#x3D; false;
+  /**
+   * Appel demandé
+   */
+  callValidated &#x3D; false;
+  /**
+   * Doc à afficher dans une IFRAME
+   */
+  openToIframe &#x3D; { url: &#x27;&#x27;, title: &#x27;&#x27; };
+  /**
+   * Liens vers la doc
+   */
+  documentation &#x3D; [
+    {
+      url: &#x27;https://docs.a-just.beta.gouv.fr/tout-savoir-en-un-coup-doeil/&#x27;,
+      title: &quot;Tout savoir en un coup d&#x27;oeil&quot;,
+      color: &#x27;blue&#x27;,
+    },
+    {
+      url: &#x27;https://docs.a-just.beta.gouv.fr/prenez-en-main-votre-espace/&#x27;,
+      title: &#x27;Prenez en main votre espace&#x27;,
+      color: &#x27;green&#x27;,
+    },
+    {
+      url: &#x27;https://docs.a-just.beta.gouv.fr/pilotez-votre-juridiction/&#x27;,
+      title: &#x27;Pilotez votre juridiction&#x27;,
+      color: &#x27;red&#x27;,
+    },
+    {
+      url: &#x27;https://docs.a-just.beta.gouv.fr/cas-dusage/&#x27;,
+      title: &#x27;Cas d’usage&#x27;,
+      color: &#x27;yellow&#x27;,
+    },
+  ];
+  /**
+   * Cle date pour usage unique
+   */
+  cleDate &#x3D; &#x27;?date&#x3D;&#x27; + new Date();
+
+  /**
+   * GITBOOK ID
+   */
+  gitbookId &#x3D; import.meta.env.NG_APP_GITBOOK_ID;
+  /**
+   * Organisation ID gitbook
+   */
+  organisationId &#x3D; import.meta.env.NG_APP_GITBOOK_ORG_ID;
+  /**
+   * Bloqueur pour le prompteur en cas de valeur vide dans la barre de recherche
+   */
+  lockPrompt &#x3D; true;
+  /**
+   * Affichage du résultat d&#x27;une question posée
+   */
+  displayResult &#x3D; false;
+  /**
+   * Affichage du loader
+   */
+  displayLoader &#x3D; false;
+  /**
+   * Constructeur
+   */
+  constructor(private renderer: Renderer2) {
+    super();
+    this.gitToken &#x3D; import.meta.env.NG_APP_GITBOOK_TOKEN;
+    this.gitbook &#x3D; new GitBookAPI({
+      authToken: this.gitToken,
+    });
+    this.sendLog();
+  }
+
+  ngOnInit() {
+    if (this.userService.isCa())
+      this.docTools &#x3D; [
+        this.nomenclature,
+        {
+          tag: &#x27;Les outils A-JUST&#x27;,
+          title: &#x27;La calculatrice de ventilation des ETPT&#x27;,
+          description: &#x27;&#x27;,
+          image: &#x27;/assets/images/coding.svg&#x27;,
+          url: CALCULATE_DOWNLOAD_URL,
+        },
+      ];
+    this.loadWebinaires();
+  }
+  ngAfterViewInit(): void {
+    window.addEventListener(&#x27;click&#x27;, this.onClick.bind(this));
+  }
+
+  loseFocus() {
+    console.log(this.searchInput);
+    this.searchInput.triggerBlur();
+  }
+  onClick(e: any) {
+    if (document.getElementById(&#x27;help-center&#x27;)?.contains(e.target)) {
+      this.popinCall &#x3D; false;
+    }
+  }
+
+  async onSearchBy() {
+    this.displayLoader &#x3D; true;
+    const { data } &#x3D; await this.gitbook.orgs.askInOrganization(
+      this.organisationId,
+      { query: this.searchValue }
+    );
+    console.log(this.gitbook);
+    console.log(data);
+    this.data &#x3D; data;
+    this.displayLoader &#x3D; false;
+
+    /**
+    const { data } &#x3D; await this.gitbook.orgs.getOrganizationById(
+      &#x27;ERPUa4pw8EhQDGz6MqrT&#x27;
+    );
+    */
+    /**
+    search.searchContent({
+      query: this.searchValue,
+    });
+    this.data &#x3D; data.items;
+     */
+  }
+
+  getDocIcon(title: string) {
+    switch (title) {
+      //case &quot;Guide d&#x27;utilisateur A-JUST CA&quot;:
+      //return &#x27;supervised_user_circle&#x27;
+      case &quot;Guide d&#x27;utilisateur A-JUST&quot;:
+        return &#x27;supervised_user_circle&#x27;;
+      case &#x27;FAQ A-JUST&#x27;:
+        return &#x27;question_answer&#x27;;
+      default:
+        return &#x27;face&#x27;;
+    }
+  }
+
+  async goTo(researchRes: any, title: string) {
+    await this.serverService
+      .post(&#x27;centre-d-aide/log-documentation-link&#x27;, {
+        value: researchRes.urls.app,
+      })
+      .then((r) &#x3D;&gt; {
+        return r.data;
+      });
+    await this.serverService
+      .post(&#x27;centre-d-aide/log-documentation-recherche&#x27;, {
+        value: this.searchValue,
+      })
+      .then((r) &#x3D;&gt; {
+        return r.data;
+      });
+
+    switch (title) {
+      case &quot;Guide d&#x27;utilisateur A-JUST CA&quot;:
+        window.open(
+          &#x27;https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/&#x27; +
+            researchRes.path
+        );
+        break;
+      case &quot;Guide d&#x27;utilisateur A-JUST&quot;:
+        window.open(
+          &#x27;https://docs.a-just.beta.gouv.fr/documentation-deploiement/&#x27; +
+            researchRes.path
+        );
+        break;
+      case &#x27;Le data-book&#x27;:
+        window.open(
+          &#x27;https://docs.a-just.beta.gouv.fr/le-data-book/&#x27; + researchRes.path
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
+  isValid(space: string) {
+    if (this.userService.isCa()) {
+      //console.log(&#x27;OK&#x27;)
+      switch (space) {
+        case &quot;Guide d&#x27;utilisateur A-JUST CA&quot;:
+          //console.log(&#x27;isValid OK&#x27;)
+          return true;
+        default:
+          //console.log(&#x27;isValid NOT OK&#x27;)
+          return false;
+      }
+    } else {
+      //console.log(&#x27;NOT OK&#x27;)
+      switch (space) {
+        case &quot;Guide d&#x27;utilisateur A-JUST&quot;:
+          return true;
+        case &#x27;Le data-book&#x27;:
+          return true;
+        default:
+          return false;
+      }
+    }
+  }
+
+  /**
+   * Temporiser le focus d&#x27;un input
+   */
+  delay() {
+    setTimeout(() &#x3D;&gt; {
+      this.focusOn &#x3D; false;
+    }, 200);
+  }
+
+  /**
+   * Envoie de log
+   */
+  async sendLog() {
+    await this.serverService
+      .post(&#x27;centre-d-aide/log-documentation&#x27;)
+      .then((r) &#x3D;&gt; {
+        return r.data;
+      });
+  }
+
+  /**
+   * Envoie d&#x27;un formulaire
+   * @param phoneNumber
+   */
+  async sendForm(phoneNumber: string) {
+    let userId &#x3D; this.userService.user.getValue()?.id || null;
+    if (userId)
+      await this.serverService
+        .post(&#x27;centre-d-aide/post-form-hubspot&#x27;, {
+          userId,
+          phoneNumber,
+        })
+        .then((r) &#x3D;&gt; {
+          return r.data;
+        });
+  }
+
+  /**
+   * Aller vers une page donnée
+   * @param url
+   * @param download
+   */
+  async goToLink(url: string, download &#x3D; false) {
+    await this.serverService
+      .post(&#x27;centre-d-aide/log-documentation-link&#x27;, {
+        value: url,
+      })
+      .then((r) &#x3D;&gt; {
+        return r.data;
+      });
+    if (CALCULATE_DOWNLOAD_URL &#x3D;&#x3D;&#x3D; url)
+      this.appService.alert.next({
+        text: &quot;Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu&#x27;à l&#x27;ouverture de votre fenêtre de téléchargement.&quot;,
+      });
+
+    if (url &#x3D;&#x3D;&#x3D; &#x27;/dashboard&#x27;) window.location.href &#x3D; url;
+    else {
+      if (download) {
+        downloadFile(url);
+      } else {
+        window.open(url);
+      }
+    }
+  }
+
+  /**
+   * Ouvrir un lien dans une autre page
+   * @param url
+   */
+  openLink(url: string) {
+    window.open(url, &#x27;_blank&#x27;);
+  }
+
+  /**
+   * Chargement des webinaires
+   */
+  async loadWebinaires() {
+    this.webinaires &#x3D; new Array();
+    const { data } &#x3D; await this.gitbook.spaces.getPageByPath(
+      this.gitbookId,
+      &#x27;accueil/&#x27;
+    );
+
+    await Promise.all(
+      data.pages.map(async (page, index) &#x3D;&gt; {
+        const { data } &#x3D; (await this.gitbook.spaces.getPageById(
+          this.gitbookId,
+          page.id
+        )) as any;
+        try {
+          let webinaire &#x3D; {
+            img: data.document?.nodes[0].data.url,
+            title: data.title,
+            content: data.document?.nodes[1].nodes[0].leaves[0].text,
+            action: [
+              data.document.nodes[2].data.url || null,
+              data.document.nodes[3]?.data.url || null,
+            ],
+            rank: index,
+          };
+          if (data.title.includes(&#x27;[CACHER]&#x27;) &#x3D;&#x3D;&#x3D; false)
+            this.webinaires?.push(webinaire);
+        } catch (error) {
+          console.log(
+            &quot;Le format du webinaire gitbook n&#x27;est pas conforme&quot;,
+            data
+          );
+        }
+      })
+    ).then(() &#x3D;&gt; {
+      this.webinaires?.sort((a, b) &#x3D;&gt; a.rank - b.rank);
+      console.log(this.webinaires);
+    });
+  }
+
+  /**
+   * Validation de saisie
+   * @param e
+   * @returns
+   */
+  validateNo(e: any) {
+    const charCode &#x3D; e.which ? e.which : e.keyCode;
+    if (charCode &#x3D;&#x3D;&#x3D; 46) return true;
+    if (charCode &gt; 31 &amp;&amp; (charCode &lt; 48 || charCode &gt; 57)) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Recupère une iframe
+   * @returns
+   */
+  getIframeUrl() {
+    return this.openToIframe.url;
+  }
+
+  /**
+   * Recharge le contenu d&#x27;une page
+   */
+  reloadContent() {
+    this.openSuggestionPanel &#x3D; !this.openSuggestionPanel;
+  }
+  /**
+   * Recupere la clef de doc
+   * @returns
+   */
+  getDocKeys(): Array&lt;any&gt; {
+    return Object.keys(this.documentation);
+  }
+
+  /**
+   * Mise en forme gras
+   * @param leaf
+   * @returns
+   */
+  isBold(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;bold&#x27;);
+  }
+  /**
+   * Mise en forme italic
+   * @param leaf
+   * @returns
+   */
+  isItalic(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;itcalic&#x27;);
+  }
+  /**
+   * Mise en forme souligné
+   * @param leaf
+   * @returns
+   */
+  isUnderline(leaf: any): boolean {
+    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;underlined&#x27;);
+  }
+  /**
+   * recupère les sous éléments d&#x27;une liste non ordronnée
+   * @param item
+   * @returns
+   */
+  getUnorderedListNodes(item: any) {
+    return (
+      item.nodes?.find((n: any) &#x3D;&gt; n.type &#x3D;&#x3D;&#x3D; &#x27;list-unordered&#x27;)?.nodes || []
+    );
+  }
+  /**
+   * recupère les éléments d&#x27;une liste non ordronnée
+   * @param item
+   * @returns
+   */
+  hasUnorderedList(item: any): boolean {
+    return item.nodes?.some((n: any) &#x3D;&gt; n.type &#x3D;&#x3D;&#x3D; &#x27;list-unordered&#x27;);
+  }
+
+  /**
+   * En cas de validation par le bouton entrer
+   */
+  onKeyDown() {
+    if (this.lockPrompt &#x3D;&#x3D;&#x3D; false) {
+      this.data &#x3D; null;
+      this.onSearchBy();
+      this.lockPrompt &#x3D; true;
+      this.displayResult &#x3D; true;
+      this.loseFocus();
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'webinaire.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

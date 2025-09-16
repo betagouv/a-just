@@ -866,7 +866,7 @@ export default (sequelizeInstance, Model) => {
         first_name: { [Op.eq]: null },
         last_name: { [Op.eq]: null },
         created_at: {
-          [Op.lte]: new Date(Date.now() - 1000 * 60 * 60 * 6),
+          [Op.lte]: new Date(Date.now() - 1000 * 60 * 6),
         },
       },
       include: [
