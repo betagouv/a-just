@@ -175,13 +175,37 @@ export interface listFormatedInterface {
   styleUrls: ['./workforce.page.scss'],
 })
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service de gestion des ressources humaines
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion des référentiels
+   */
   referentielService = inject(ReferentielService)
+  /**
+   * Service de gestion des routes
+   */
   route = inject(ActivatedRoute)
+  /**
+   * Service de gestion des routes
+   */
   router = inject(Router)
+  /**
+   * Service de gestion des ventilations
+   */
   workforceService = inject(WorkforceService)
+  /**
+   * Service de gestion des utilisateurs
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion des fonctions
+   */
   hrFonctionService = inject(HRFonctionService)
+  /**
+   * Service de gestion de l'application
+   */
   appService = inject(AppService)
   /**
    * Liste de toutes les RH
@@ -1123,6 +1147,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return (list || []).filter((h) => h.isIn === isIn)
   }
 
+  /**
+   * Retourne les ids des fonctions filtrées
+   * @param fonctionsList
+   * @returns
+   */
   getCurrentFilteredIds(fonctionsList: HRFonctionInterface[]) {
     if (this.filterParams && this.filterParams.filterValues) {
       return this.filterParams.filterValues as number[]
@@ -1131,6 +1160,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Changement de filtre des sous catégories
+   * @param category
+   * @param poste
+   */
   async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
     this.appService.appLoading.next(true)
     const fonctions = await this.hrFonctionService.getAll()
@@ -1179,6 +1213,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.orderListWithFiltersParams()
   }
 
+  /**
+   * Retourne si la position est sélectionnée
+   * @param poste
+   * @returns
+   */
   getTooglePositionSelected(poste: HRCategorypositionInterface) {
     return poste.selected
   }
@@ -1188,6 +1227,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
   }
 
+  /**
+   * Changement de couleur de la catégorie
+   * @param category
+   * @param color
+   */
   switchBgColor(category: any, color: string) {
     category.style['background-color'] = color
   }
@@ -1310,6 +1354,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return null
   }
 
+  /**
+   * Supprimer le filtre des indispo
+   */
   clearFilterIndispo() {
     if (this.filterParams) {
       this.filterParams.filterIndispoValues = []

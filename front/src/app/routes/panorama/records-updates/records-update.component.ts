@@ -38,6 +38,9 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
   styleUrls: ['./records-update.component.scss'],
 })
 export class RecordsUpdateComponent extends MainClass implements OnChanges, OnDestroy {
+  /**
+   * Service de gestion de l'utilisateur
+   */
   humanResourceService = inject(HumanResourceService)
 
   /**
@@ -70,6 +73,9 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges, OnDe
     )
   }
 
+  /**
+   * Destruction du composant
+   */
   ngOnDestroy() {
     this.watcherDestroy()
   }
@@ -81,6 +87,9 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges, OnDe
     this.onLoadDatas()
   }
 
+  /**
+   * Chargement des datas
+   */
   onLoadDatas() {
     const contentieux = this.humanResourceService.contentieuxReferentielOnly.getValue().map((c) => c.id)
 

@@ -399,8 +399,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="615"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:615</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="619"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:619</a></div>
                         </td>
                     </tr>
 
@@ -473,8 +473,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="598"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:598</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="602"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:602</a></div>
                         </td>
                     </tr>
 
@@ -547,8 +547,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="645"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:645</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="649"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:649</a></div>
                         </td>
                     </tr>
 
@@ -637,8 +637,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="677"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:677</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="681"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:681</a></div>
                         </td>
                     </tr>
 
@@ -718,8 +718,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="667"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:667</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="671"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:671</a></div>
                         </td>
                     </tr>
 
@@ -793,8 +793,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="657"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:657</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="661"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:661</a></div>
                         </td>
                     </tr>
 
@@ -887,8 +887,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="169"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:169</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:173</a></div>
                         </td>
                     </tr>
 
@@ -926,8 +926,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="141"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:141</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="145"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:145</a></div>
                         </td>
                     </tr>
 
@@ -965,8 +965,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="629"
-                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:629</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="633"
+                                    class="link-to-prism">src/app/routes/simulator/charts/dtes-chart/dtes-chart.component.ts:633</a></div>
                         </td>
                     </tr>
 
@@ -1464,8 +1464,8 @@ import annotationPlugin from &#x27;chartjs-plugin-annotation&#x27;
 import { SimulatorService } from &#x27;../../../../services/simulator/simulator.service&#x27;
 import { findRealValue, getLongMonthString, getRangeOfMonths } from &#x27;../../../../utils/dates&#x27;
 import { fixDecimal } from &#x27;../../../../utils/numbers&#x27;
-
 import { LegendLabelComponent } from &#x27;../legend-label/legend-label.component&#x27;
+
 /**
  * Composant graphique DTES simulateur
  */
@@ -1536,7 +1536,11 @@ export class DtesChartComponent {
    * @param element Element HTML
    * @param simulatorService Service simulateur
    */
-  constructor(element: ElementRef&lt;HTMLElement&gt;, private simulatorService: SimulatorService, private ngZone: NgZone) {
+  constructor(
+    element: ElementRef&lt;HTMLElement&gt;,
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone,
+  ) {
     simulatorService.dateStop.subscribe((value) &#x3D;&gt; {
       if (value !&#x3D;&#x3D; undefined) {
         this.stopRealValue &#x3D; findRealValue(value)
@@ -2556,7 +2560,7 @@ export class DtesChartComponent {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><div class="left-side">  <div class="title">    <p>      Evolution du stock et DTES &nbsp;      <label>{{ startRealValue === \'\' ? "d\'aujourd\'hui" : \'du\' }} {{ startRealValue }} au {{ stopRealValue }}</label>    </p>  </div>  <div class="container">    <div class="canvas-container">      <canvas id="dtes-chart"></canvas>      <div id="chartjs-tooltip">        <div class="popin-title-content">          <p class="popin-title">            <b>Stocks</b>            <br />            à {{ getRealMonth(realSelectedMonth) }}          </p>          <div class="low">Projetés</div>          <p class="hard">Simulés</p>          <p class="white">Variation</p>        </div>        <div class="popin-raw">          <div class="popin-title">            <div _ngcontent-vmx-c83="" class="circle green"></div>            <b>Affaires</b>          </div>          <p class="low-value first">            {{ getRounded(tooltip.projectedStock, true) || \'0\' }}          </p>          <p class="hard-value first">            {{ getRounded(tooltip.simulatedStock, true) || \'0\' }}          </p>          <div class="white-value">            <div class="rounded-label">              <label>{{ getDeltaInPercent(tooltip.simulatedStock, tooltip.projectedStock) || 0 }} %</label>            </div>          </div>        </div>        <div class="popin-raw">          <div class="popin-title">            <div _ngcontent-vmx-c83="" class="circle light-blue"></div>            <b>DTES</b>            &nbsp; en mois          </div>          <p class="low-value">{{ getRounded(tooltip.projectedDTES) || \'0\' }}</p>          <p class="hard-value">            {{ getRounded(tooltip.simulatedDTES) || \'0\' }}          </p>          <div class="white-value">            <div class="rounded-label">              <label>{{ getDeltaInPercent(tooltip.simulatedDTES, tooltip.projectedDTES) || 0 }} %</label>            </div>          </div>        </div>      </div>      <div id="chartjs-tooltip-triangle"></div>    </div>  </div></div><div class="right-side">  <aj-legend-label    [title]="\'projectedStock\'"    [label]="\'Stock (projeté)\'"    [dotColor]="\'#62dda7\'"    [bgColor]="\'#c3fad5\'"    (value)="display($event)"  ></aj-legend-label>  <aj-legend-label    [title]="\'simulatedStock\'"    [label]="\'Stock (simulé)\'"    [dotColor]="\'#00a95f\'"    [bgColor]="\'#6fe49d\'"    (value)="display($event)"  ></aj-legend-label>  <div class="space"></div>  <aj-legend-label    [title]="\'projectedDTES\'"    [label]="\'DTES (projeté)\'"    [dotColor]="\'#869ece\'"    [bgColor]="\'#bfcdff\'"    (value)="display($event)"  ></aj-legend-label>  <aj-legend-label    [title]="\'simulatedDTES\'"    [label]="\'DTES (simulé)\'"    [dotColor]="\'#dee5fd\'"    [bgColor]="\'#7b99e4\'"    (value)="display($event)"  ></aj-legend-label></div></div>'
-    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'DtesChartComponent'};
 </script>

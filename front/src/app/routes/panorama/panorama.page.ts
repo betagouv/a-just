@@ -42,48 +42,64 @@ import { RHActivityInterface } from '../../interfaces/rh-activity'
   styleUrls: ['./panorama.page.scss'],
 })
 export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterViewInit {
+  /**
+   * Service de gestion de l'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion de la force de travail
+   */
   humanResourceService = inject(HumanResourceService)
   /**
    * Dom du contenu scrollable
    */
   @ViewChild('container') domContainer: ElementRef | null = null
+
   /**
    * Dom du header
    */
   @ViewChild('header') domHeader: ElementRef | null = null
+
   /**
    * Dom du titre des activites
    */
   @ViewChild('titleActivities') domTitleActivities: ElementRef | null = null
+
   /**
    * Date selected
    */
   dateSelected: Date = new Date()
+
   /**
    * Date de fin de requête
    */
   dateStart: Date = dateAddDays(new Date(), -15)
+
   /**
    * Date de début de requête
    */
   dateEnd: Date = dateAddDays(new Date(), +15)
+
   /**
    * Date de début de requête
    */
   now: Date = new Date()
+
   /**
    * liste première requête
    */
   firstList: listFormatedInterface[] = []
+
   /**
    * Liste seconde requête
    */
   secondList: listFormatedInterface[] = []
+
   /**
    * Peux voir l'interface magistrat
    */
   canViewMagistrat: boolean = false
+
   /**
    * Peux voir l'interface greffier
    */
@@ -193,6 +209,9 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
     },
   ]
 
+  /**
+   * Étapes d'introduction pour le TJ
+   */
   stepsOnlyForTJ: IntroJSStep[] = [
     {
       target: '#activites',
@@ -219,6 +238,9 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
     },
   ]
 
+  /**
+   * Dernière étape d'introduction
+   */
   lastStep: IntroJSStep = {
     target: '.contact-us',
     title: 'Je passe à la suite :',
@@ -446,6 +468,10 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
     return this.userService.interfaceType === 1 ? "cour d'appel" : 'tribunal judiciaire'
   }
 
+  /**
+   * Vérifie si le TJ
+   * @returns
+   */
   isTJ() {
     return this.userService.interfaceType !== 1
   }

@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface pour les bouttons de trie (Nom, Affectation, Départ, Début indispo, Fin indispo ) à afficher et leur statut (actif/non-actif)</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -194,6 +201,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Statut du boutton (actif/non-actif)</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -227,6 +240,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Label du boutton</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -234,30 +253,57 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, Input, OnChanges, OnDestroy } from &#x27;@angular/core&#x27;;
-import { HumanResourceSelectedInterface } from &#x27;../../workforce/workforce.page&#x27;;
-import { sortBy } from &#x27;lodash&#x27;;
-import { CommonModule } from &#x27;@angular/common&#x27;;
-import { MainClass } from &#x27;../../../libs/main-class&#x27;;
-import { UserService } from &#x27;../../../services/user/user.service&#x27;;
-import { today } from &#x27;../../../utils/dates&#x27;;
-import { MatIconModule } from &#x27;@angular/material/icon&#x27;;
-import { RouterLink } from &#x27;@angular/router&#x27;;
-import { NgxPaginationModule } from &#x27;ngx-pagination&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, Input, OnChanges, OnDestroy } from &#x27;@angular/core&#x27;
+import { HumanResourceSelectedInterface } from &#x27;../../workforce/workforce.page&#x27;
+import { sortBy } from &#x27;lodash&#x27;
+import { CommonModule } from &#x27;@angular/common&#x27;
+import { MainClass } from &#x27;../../../libs/main-class&#x27;
+import { UserService } from &#x27;../../../services/user/user.service&#x27;
+import { today } from &#x27;../../../utils/dates&#x27;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;
+import { RouterLink } from &#x27;@angular/router&#x27;
+import { NgxPaginationModule } from &#x27;ngx-pagination&#x27;
 
+/**
+ * Interface pour les bouttons de sélection des catégories (Arrivées, Départs, Indisponibiltiés) à afficher et leur statut (actif/non-actif)
+ */
 interface categoryButtonsInterface {
-  label: string;
-  isSelected: boolean;
+  /**
+   * Label du boutton
+   */
+  label: string
+  /**
+   * Statut du boutton (actif/non-actif)
+   */
+  isSelected: boolean
 }
 
+/**
+ * Interface pour les bouttons de trie (Nom, Affectation, Départ, Début indispo, Fin indispo ) à afficher et leur statut (actif/non-actif)
+ */
 interface sortButtonsInterface {
-  label: string;
-  isReverse: boolean;
+  /**
+   * Label du boutton
+   */
+  label: string
+  /**
+   * Statut du boutton (actif/non-actif)
+   */
+  isReverse: boolean
 }
 
+/**
+ * Interface pour la liste des effectifs à afficher sur le panorama
+ */
 interface listToPrintInterface {
-  category: string;
-  hr: HumanResourceSelectedInterface[];
+  /**
+   * Catégorie à afficher
+   */
+  category: string
+  /**
+   * Liste des effectifs à afficher
+   */
+  hr: HumanResourceSelectedInterface[]
 }
 
 /**
@@ -270,19 +316,31 @@ interface listToPrintInterface {
   templateUrl: &#x27;./workforce-change.component.html&#x27;,
   styleUrls: [&#x27;./workforce-change.component.scss&#x27;],
 })
-export class WorkforceChangeComponent
-  extends MainClass
-  implements OnChanges, OnDestroy
-{
-  userService &#x3D; inject(UserService);
-  @Input() listArrivals: HumanResourceSelectedInterface[] &#x3D; [];
-  @Input() listDepartures: HumanResourceSelectedInterface[] &#x3D; [];
-  @Input() listUnavailabilities: HumanResourceSelectedInterface[] &#x3D; [];
-  @Input() totalWorkforce: number &#x3D; 0;
+export class WorkforceChangeComponent extends MainClass implements OnChanges, OnDestroy {
+  /**
+   * Service de gestion de l&#x27;utilisateur
+   */
+  userService &#x3D; inject(UserService)
+  /**
+   * Liste des arrivées
+   */
+  @Input() listArrivals: HumanResourceSelectedInterface[] &#x3D; []
+  /**
+   * Liste des départs
+   */
+  @Input() listDepartures: HumanResourceSelectedInterface[] &#x3D; []
+  /**
+   * Liste des indisponibilités
+   */
+  @Input() listUnavailabilities: HumanResourceSelectedInterface[] &#x3D; []
+  /**
+   * Total de la force de travail
+   */
+  @Input() totalWorkforce: number &#x3D; 0
   /**
    * Page actuelle (pagination)
    */
-  currentPage &#x3D; 0;
+  currentPage &#x3D; 0
   /**
    * Bouttons de sélection des catégories (Arrivées, Départs, Indisponibiltiés) à afficher et leur statut (actif/non-actif)
    */
@@ -299,7 +357,7 @@ export class WorkforceChangeComponent
       label: &#x27;Indisponibilités&#x27;,
       isSelected: false,
     },
-  ];
+  ]
   /**
    * Bouttons de trie (Nom, Affectation, Départ, Début indispo, Fin indispo ) à afficher et leur statut (actif/non-actif)
    */
@@ -328,27 +386,27 @@ export class WorkforceChangeComponent
       label: &#x27;indispoEnd&#x27;,
       isReverse: false,
     },
-  ];
+  ]
   /**
    * Liste des effectifs à afficher sur le panorama
    */
   listToPrint: listToPrintInterface &#x3D; {
     category: &#x27;Départs&#x27;,
     hr: [],
-  };
+  }
 
   /**
    * Constructor
    */
   constructor() {
-    super();
+    super()
   }
 
   /**
    * Initialisation des datas au chargement de la page
    */
   ngOnChanges() {
-    this.changeButtonsState(this.listToPrint.category);
+    this.changeButtonsState(this.listToPrint.category)
   }
 
   /**
@@ -357,115 +415,111 @@ export class WorkforceChangeComponent
   changeButtonsState(label: string) {
     this.categoryButtons.map((button) &#x3D;&gt; {
       if (button.label &#x3D;&#x3D;&#x3D; label) {
-        button.isSelected &#x3D; true;
-      } else button.isSelected &#x3D; false;
-    });
+        button.isSelected &#x3D; true
+      } else button.isSelected &#x3D; false
+    })
 
     switch (label) {
       case &#x27;Arrivées&#x27;:
-        this.listToPrint.hr &#x3D; this.listArrivals;
-        break;
+        this.listToPrint.hr &#x3D; this.listArrivals
+        break
       case &#x27;Indisponibilités&#x27;:
-        this.listToPrint.hr &#x3D; this.listUnavailabilities;
-        break;
+        this.listToPrint.hr &#x3D; this.listUnavailabilities
+        break
       default:
-        this.listToPrint.hr &#x3D; this.listDepartures;
-        break;
+        this.listToPrint.hr &#x3D; this.listDepartures
+        break
     }
 
-    this.listToPrint.category &#x3D; label;
+    this.listToPrint.category &#x3D; label
 
-    this.currentPage &#x3D; 0;
+    this.currentPage &#x3D; 0
   }
 
   /**
    * Evaluation d&#x27;une situation pour déterminer si elle est dans le future ou actuel
    */
   isSituationComing(date: Date | null) {
-    const now &#x3D; today();
+    const now &#x3D; today()
 
     if (date &amp;&amp; date &gt; now) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   /**
    * Trie de la liste à afficher selon le boutton de trie sélectionné
    */
   orderList(category: string) {
-    let button: sortButtonsInterface | undefined &#x3D; this.sortButtonsStates.find(
-      (button) &#x3D;&gt; button.label &#x3D;&#x3D;&#x3D; category
-    );
+    let button: sortButtonsInterface | undefined &#x3D; this.sortButtonsStates.find((button) &#x3D;&gt; button.label &#x3D;&#x3D;&#x3D; category)
 
     switch (category) {
       case &#x27;name&#x27;:
         if (button) {
           this.listToPrint.hr &#x3D; sortBy(this.listToPrint.hr, [
             (h: HumanResourceSelectedInterface) &#x3D;&gt; {
-              return &#x60;${h.firstName} ${h.lastName}&#x60;.toLowerCase();
+              return &#x60;${h.firstName} ${h.lastName}&#x60;.toLowerCase()
             },
-          ]);
+          ])
         }
-        break;
+        break
       case &#x27;assignment&#x27;:
         if (button) {
           this.listToPrint.hr &#x3D; sortBy(this.listToPrint.hr, [
             (h: HumanResourceSelectedInterface) &#x3D;&gt; {
               // @ts-ignore
-              return &#x60;${h.totalAffected}&#x60;;
+              return &#x60;${h.totalAffected}&#x60;
             },
-          ]);
+          ])
         }
-        break;
+        break
       case &#x27;departures&#x27;:
         if (button) {
           this.listToPrint.hr &#x3D; sortBy(this.listToPrint.hr, [
             (h: HumanResourceSelectedInterface) &#x3D;&gt; {
               // @ts-ignore
-              return new Date(&#x60;${h.dateEnd}&#x60;);
+              return new Date(&#x60;${h.dateEnd}&#x60;)
             },
-          ]);
+          ])
         }
-        break;
+        break
       case &#x27;arrivals&#x27;:
         if (button) {
           this.listToPrint.hr &#x3D; sortBy(this.listToPrint.hr, [
             (h: HumanResourceSelectedInterface) &#x3D;&gt; {
               // @ts-ignore
-              return new Date(&#x60;${h.situations[0].dateStart}&#x60;);
+              return new Date(&#x60;${h.situations[0].dateStart}&#x60;)
             },
-          ]);
+          ])
         }
-        break;
+        break
       case &#x27;indispoStart&#x27;:
         if (button) {
           this.listToPrint.hr &#x3D; sortBy(this.listToPrint.hr, [
             (h: HumanResourceSelectedInterface) &#x3D;&gt; {
               // @ts-ignore
-              return new Date(&#x60;${h.indisponibilities[0].dateStart}&#x60;);
+              return new Date(&#x60;${h.indisponibilities[0].dateStart}&#x60;)
             },
-          ]);
+          ])
         }
-        break;
+        break
       case &#x27;indispoEnd&#x27;:
         if (button) {
           this.listToPrint.hr &#x3D; sortBy(this.listToPrint.hr, [
             (h: HumanResourceSelectedInterface) &#x3D;&gt; {
               // @ts-ignore
-              return new Date(&#x60;${h.indisponibilities[0].dateStop}&#x60;);
+              return new Date(&#x60;${h.indisponibilities[0].dateStop}&#x60;)
             },
-          ]);
+          ])
         }
-        break;
+        break
     }
     if (button) {
-      if (button.isReverse) this.listToPrint.hr.reverse();
-      button.isReverse &#x3D; !button.isReverse;
+      if (button.isReverse) this.listToPrint.hr.reverse()
+      button.isReverse &#x3D; !button.isReverse
     }
-    this.sortButtonsStates.map((button) &#x3D;&gt;
-      button.label !&#x3D;&#x3D; category ? (button.isReverse &#x3D; false) : null
-    );
+    this.sortButtonsStates.map((button) &#x3D;&gt; (button.label !&#x3D;&#x3D; category ? (button.isReverse &#x3D; false) : null))
   }
 
   /**

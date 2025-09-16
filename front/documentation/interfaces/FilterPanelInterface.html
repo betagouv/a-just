@@ -619,28 +619,17 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  Output,
-  EventEmitter,
-  Component,
-  Input,
-  HostListener,
-  ElementRef,
-  AfterViewInit,
-  OnChanges,
-  ViewChild,
-  SimpleChanges,
-} from &#x27;@angular/core&#x27;;
-import { orderBy, sortBy, sumBy } from &#x27;lodash&#x27;;
-import { HumanResourceSelectedInterface } from &#x27;../workforce.page&#x27;;
-import { CommonModule } from &#x27;@angular/common&#x27;;
-import { ListSelectionComponent } from &#x27;../../../components/list-selection/list-selection.component&#x27;;
-import { MainClass } from &#x27;../../../libs/main-class&#x27;;
-import { dataInterface } from &#x27;../../../components/select/select.component&#x27;;
-import { ItemInterface } from &#x27;../../../interfaces/item&#x27;;
-import { HRFonctionService } from &#x27;../../../services/hr-fonction/hr-function.service&#x27;;
-import { ReferentielService } from &#x27;../../../services/referentiel/referentiel.service&#x27;;
-import { HumanResourceService } from &#x27;../../../services/human-resource/human-resource.service&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Output, EventEmitter, Component, Input, HostListener, ElementRef, AfterViewInit, OnChanges, ViewChild, SimpleChanges } from &#x27;@angular/core&#x27;
+import { orderBy, sortBy, sumBy } from &#x27;lodash&#x27;
+import { HumanResourceSelectedInterface } from &#x27;../workforce.page&#x27;
+import { CommonModule } from &#x27;@angular/common&#x27;
+import { ListSelectionComponent } from &#x27;../../../components/list-selection/list-selection.component&#x27;
+import { MainClass } from &#x27;../../../libs/main-class&#x27;
+import { dataInterface } from &#x27;../../../components/select/select.component&#x27;
+import { ItemInterface } from &#x27;../../../interfaces/item&#x27;
+import { HRFonctionService } from &#x27;../../../services/hr-fonction/hr-function.service&#x27;
+import { ReferentielService } from &#x27;../../../services/referentiel/referentiel.service&#x27;
+import { HumanResourceService } from &#x27;../../../services/human-resource/human-resource.service&#x27;
 
 /**
  * Interface d&#x27;un filtre
@@ -650,43 +639,43 @@ export interface FilterPanelInterface {
   /**
    * Clé de tri
    */
-  sort: string | number | null;
+  sort: string | number | null
   /**
    * Label de tri
    */
-  sortName: string | null;
+  sortName: string | null
   /**
    * Traitement du tri
    */
-  sortFunction: Function | null;
+  sortFunction: Function | null
   /**
    * Clé de l&#x27;ordre
    */
-  order: string | number | null;
+  order: string | number | null
   /**
    * Icon d&#x27;ordre
    */
-  orderIcon: string | null;
+  orderIcon: string | null
   /**
    * Filtre fonction
    */
-  filterFunction: Function | null;
+  filterFunction: Function | null
   /**
    * Filtre des valeurs
    */
-  filterValues: (string | number)[] | null;
+  filterValues: (string | number)[] | null
   /**
    * Filtre des indispo
    */
-  filterIndispoValues: (string | number)[] | null;
+  filterIndispoValues: (string | number)[] | null
   /**
    * Filtre des noms
    */
-  filterNames: string | null;
+  filterNames: string | null
   /**
    * Filtre rendu visuel dans le paneau
    */
-  display?: string | number | null;
+  display?: string | number | null
 }
 
 /**
@@ -699,23 +688,19 @@ export interface FilterPanelInterface {
   templateUrl: &#x27;./filter-panel.component.html&#x27;,
   styleUrls: [&#x27;./filter-panel.component.scss&#x27;],
 })
-export class FilterPanelComponent
-  extends MainClass
-  implements AfterViewInit, OnChanges
-{
+export class FilterPanelComponent extends MainClass implements AfterViewInit, OnChanges {
   /**
    * Event au père lors d&#x27;une mise à jour
    */
-  @Output() update: EventEmitter&lt;FilterPanelInterface&gt; &#x3D; new EventEmitter();
+  @Output() update: EventEmitter&lt;FilterPanelInterface&gt; &#x3D; new EventEmitter()
   /**
    * Event au père lors de la demande de fermeture
    */
-  @Output() close: EventEmitter&lt;any&gt; &#x3D; new EventEmitter();
+  @Output() close: EventEmitter&lt;any&gt; &#x3D; new EventEmitter()
   /**
    * Event qui informate quand la liste des referentiels changes
    */
-  @Output() updateReferentielIds: EventEmitter&lt;{ list: any; subList: any }&gt; &#x3D;
-    new EventEmitter();
+  @Output() updateReferentielIds: EventEmitter&lt;{ list: any; subList: any }&gt; &#x3D; new EventEmitter()
   /**
    * Liste complète des tris possibles
    */
@@ -724,17 +709,13 @@ export class FilterPanelComponent
       id: &#x27;name&#x27;,
       label: &#x27;Nom&#x27;,
       sortFunction: (list: HumanResourceSelectedInterface[]) &#x3D;&gt; {
-        return sortBy(list, [
-          (h: HumanResourceSelectedInterface) &#x3D;&gt;
-            &#x60;${h.lastName} ${h.firstName}&#x60;.toLowerCase(),
-        ]);
+        return sortBy(list, [(h: HumanResourceSelectedInterface) &#x3D;&gt; &#x60;${h.lastName} ${h.firstName}&#x60;.toLowerCase()])
       },
     },
     {
       id: &#x27;function&#x27;,
       label: &#x27;Fonction&#x27;,
-      sortFunction: (list: HumanResourceSelectedInterface[]) &#x3D;&gt;
-        sortBy(list, [&#x27;fonction.rank&#x27;]),
+      sortFunction: (list: HumanResourceSelectedInterface[]) &#x3D;&gt; sortBy(list, [&#x27;fonction.rank&#x27;]),
     },
     {
       id: &#x27;updateAt&#x27;,
@@ -752,18 +733,13 @@ export class FilterPanelComponent
       sortFunction: (list: HumanResourceSelectedInterface[]) &#x3D;&gt; {
         return sortBy(list, [
           (h: HumanResourceSelectedInterface) &#x3D;&gt; {
-            const allMainActivities &#x3D; (h.currentActivities || []).filter(
-              (c) &#x3D;&gt;
-                this.referentielService.mainActivitiesId.indexOf(
-                  c.contentieux.id
-                ) !&#x3D;&#x3D; -1
-            );
-            return sumBy(allMainActivities, &#x27;percent&#x27;);
+            const allMainActivities &#x3D; (h.currentActivities || []).filter((c) &#x3D;&gt; this.referentielService.mainActivitiesId.indexOf(c.contentieux.id) !&#x3D;&#x3D; -1)
+            return sumBy(allMainActivities, &#x27;percent&#x27;)
           },
-        ]);
+        ])
       },
     },
-  ];
+  ]
   /**
    * Liste complète des ordres
    */
@@ -778,7 +754,7 @@ export class FilterPanelComponent
       icon: &#x27;sort-asc&#x27;,
       label: &#x27;Ordre descendant&#x27;,
     },
-  ];
+  ]
   /**
    * List des tris possibles
    */
@@ -793,94 +769,94 @@ export class FilterPanelComponent
       icon: &#x27;sort-asc&#x27;,
       label: &#x27;prénom/nom&#x27;,
     },
-  ];
+  ]
   /**
    * Mode d&#x27;affichage du composant
    */
-  @Input() button: boolean &#x3D; false;
+  @Input() button: boolean &#x3D; false
   /**
    * Valeur de filtre déjà selectionnée
    */
-  @Input() filterValues: (string | number)[] | null &#x3D; null;
+  @Input() filterValues: (string | number)[] | null &#x3D; null
   /**
    * Valeur de filtre des indispo
    */
-  @Input() filterIndispoValues: (string | number)[] | null &#x3D; null;
+  @Input() filterIndispoValues: (string | number)[] | null &#x3D; null
   /**
    * Valeur de tri déjà selectionnée
    */
-  @Input() sortValue: string | number | null &#x3D; null;
+  @Input() sortValue: string | number | null &#x3D; null
   /**
    * Valeur d&#x27;ordre déjà selectionné
    */
-  @Input() orderValue: string | number | null &#x3D; null;
+  @Input() orderValue: string | number | null &#x3D; null
   /**
    * Filtre déjà selectionnée
    */
-  @Input() displayValue: string | number | null &#x3D; &#x27;prénom/nom&#x27;;
+  @Input() displayValue: string | number | null &#x3D; &#x27;prénom/nom&#x27;
   /**
    * Categories déjà selectionnée
    */
-  @Input() categories: number[] &#x3D; [];
+  @Input() categories: number[] &#x3D; []
   /**
    * Liste des contentieux selectionnées
    */
-  @Input() referentielIds: (string | number)[] | null &#x3D; null;
+  @Input() referentielIds: (string | number)[] | null &#x3D; null
   /**
    * Liste des sous contentieux selectionnées
    */
-  @Input() subReferentielIds: (string | number)[] | null &#x3D; null;
+  @Input() subReferentielIds: (string | number)[] | null &#x3D; null
   /**
    * Referentiels
    */
-  @Input() referentiels: dataInterface[] &#x3D; [];
+  @Input() referentiels: dataInterface[] &#x3D; []
   /**
    * Dom de la popin
    */
-  @ViewChild(&#x27;popin&#x27;) popin: ElementRef&lt;HTMLElement&gt; | null &#x3D; null;
+  @ViewChild(&#x27;popin&#x27;) popin: ElementRef&lt;HTMLElement&gt; | null &#x3D; null
   /**
    * Position left par rapport à l&#x27;écran complet
    */
-  leftPosition: number &#x3D; 0;
+  leftPosition: number &#x3D; 0
   /**
    * Position top par rapport à l&#x27;écran complet
    */
-  topPosition: number &#x3D; 0;
+  topPosition: number &#x3D; 0
   /**
    * List des filtres possibles
    */
-  filterList: ItemInterface[] &#x3D; [];
+  filterList: ItemInterface[] &#x3D; []
   /**
    * List des filtres des contentieux possibles
    */
-  contentieuxFilterList: ItemInterface[] &#x3D; [];
+  contentieuxFilterList: ItemInterface[] &#x3D; []
   /**
    * List des filtres des sous contentieux possibles
    */
-  subContentieuxFilterList: ItemInterface[] &#x3D; [];
+  subContentieuxFilterList: ItemInterface[] &#x3D; []
   /**
    * Valeur par défaut de filtre
    */
-  defaultFilterValues: (string | number)[] | null &#x3D; null;
+  defaultFilterValues: (string | number)[] | null &#x3D; null
   /**
    * Valeur par défaut de tri
    */
-  defaultSortValue: string | number | null &#x3D; this.sortList[1].id;
+  defaultSortValue: string | number | null &#x3D; this.sortList[1].id
   /**
    * Valeur par défaut d&#x27;ordre
    */
-  defaultOrderValue: string | number | null &#x3D; this.orderList[0].id;
+  defaultOrderValue: string | number | null &#x3D; this.orderList[0].id
   /**
    * Référentiel des indispo
    */
-  allIndisponibilityReferentiel: ItemInterface[] &#x3D; [];
+  allIndisponibilityReferentiel: ItemInterface[] &#x3D; []
 
   /**
    * Détection d&#x27;un click sur le composant
    */
   @HostListener(&#x27;click&#x27;, [&#x27;$event&#x27;])
   onClick() {
-    this.close.emit();
+    this.close.emit()
   }
 
   /**
@@ -893,9 +869,9 @@ export class FilterPanelComponent
     private hrFonctionService: HRFonctionService,
     private elementRef: ElementRef,
     private referentielService: ReferentielService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
   ) {
-    super();
+    super()
   }
 
   /**
@@ -904,16 +880,15 @@ export class FilterPanelComponent
   ngOnInit() {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe(() &#x3D;&gt; {
-        this.allIndisponibilityReferentiel &#x3D;
-          this.humanResourceService.allIndisponibilityReferentiel
-            .slice(1)
-            .map((r) &#x3D;&gt; ({ id: r.id, label: r.label.replace(/\//g, &#x27; / &#x27;) }));
+        this.allIndisponibilityReferentiel &#x3D; this.humanResourceService.allIndisponibilityReferentiel
+          .slice(1)
+          .map((r) &#x3D;&gt; ({ id: r.id, label: r.label.replace(/\//g, &#x27; / &#x27;) }))
 
         if (this.filterIndispoValues &#x3D;&#x3D;&#x3D; null) {
-          this.filterIndispoValues &#x3D; [];
+          this.filterIndispoValues &#x3D; []
         }
-      })
-    );
+      }),
+    )
   }
 
   /**
@@ -921,29 +896,24 @@ export class FilterPanelComponent
    */
   async ngOnChanges(changes: SimpleChanges) {
     if (!this.sortList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.sortValue)) {
-      this.sortValue &#x3D; this.sortList[1].id;
+      this.sortValue &#x3D; this.sortList[1].id
     }
     if (!this.orderList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.orderValue)) {
-      this.orderValue &#x3D; this.orderList[0].id;
+      this.orderValue &#x3D; this.orderList[0].id
     }
 
     if (changes[&#x27;categories&#x27;]) {
-      this.loadFonctions();
+      this.loadFonctions()
     }
     if (this.button &#x3D;&#x3D;&#x3D; true &amp;&amp; this.filterValues &#x3D;&#x3D;&#x3D; null) {
-      const fonctions &#x3D; await this.hrFonctionService.getAll();
-      const listUsedFunctions &#x3D; orderBy(
-        [...fonctions],
-        [&#x27;categoryId&#x27;, &#x27;rank&#x27;]
-      ).filter((f) &#x3D;&gt; this.categories.includes(f.categoryId));
-      const idsToExclude &#x3D; fonctions
-        .filter((f) &#x3D;&gt; !this.categories.includes(f.categoryId))
-        .map((v) &#x3D;&gt; +v.id);
-      this.filterValues &#x3D; listUsedFunctions.map((f) &#x3D;&gt; f.id);
+      const fonctions &#x3D; await this.hrFonctionService.getAll()
+      const listUsedFunctions &#x3D; orderBy([...fonctions], [&#x27;categoryId&#x27;, &#x27;rank&#x27;]).filter((f) &#x3D;&gt; this.categories.includes(f.categoryId))
+      const idsToExclude &#x3D; fonctions.filter((f) &#x3D;&gt; !this.categories.includes(f.categoryId)).map((v) &#x3D;&gt; +v.id)
+      this.filterValues &#x3D; listUsedFunctions.map((f) &#x3D;&gt; f.id)
     }
 
     if (changes[&#x27;referentiels&#x27;]) {
-      this.formatReferentielList();
+      this.formatReferentielList()
     }
   }
 
@@ -952,49 +922,40 @@ export class FilterPanelComponent
    */
   ngAfterViewInit() {
     setTimeout(() &#x3D;&gt; {
-      let { x, y } &#x3D;
-        this.elementRef.nativeElement.parentNode.getBoundingClientRect();
-      const bottomMargin &#x3D; 100;
+      let { x, y } &#x3D; this.elementRef.nativeElement.parentNode.getBoundingClientRect()
+      const bottomMargin &#x3D; 100
 
       if (this.popin) {
-        const popin &#x3D; this.popin.nativeElement.getBoundingClientRect();
-        const windowHeight &#x3D; window.innerHeight - 50;
+        const popin &#x3D; this.popin.nativeElement.getBoundingClientRect()
+        const windowHeight &#x3D; window.innerHeight - 50
 
         if (y + popin.height + bottomMargin &gt; windowHeight) {
-          y &#x3D; windowHeight - popin.height - bottomMargin;
+          y &#x3D; windowHeight - popin.height - bottomMargin
         }
       }
 
-      this.leftPosition &#x3D; x;
-      this.topPosition &#x3D; y;
-    }, 0);
+      this.leftPosition &#x3D; x
+      this.topPosition &#x3D; y
+    }, 0)
   }
 
   /**
    * Chargement des fonctions
    */
   async loadFonctions() {
-    const fonctions &#x3D; await this.hrFonctionService.getAll();
-    const listUsedFunctions &#x3D; orderBy(
-      [...fonctions],
-      [&#x27;categoryId&#x27;, &#x27;rank&#x27;]
-    ).filter((f) &#x3D;&gt; this.categories.includes(f.categoryId));
-    const idsToExclude &#x3D; fonctions
-      .filter((f) &#x3D;&gt; !this.categories.includes(f.categoryId))
-      .map((v) &#x3D;&gt; +v.id);
+    const fonctions &#x3D; await this.hrFonctionService.getAll()
+    const listUsedFunctions &#x3D; orderBy([...fonctions], [&#x27;categoryId&#x27;, &#x27;rank&#x27;]).filter((f) &#x3D;&gt; this.categories.includes(f.categoryId))
+    const idsToExclude &#x3D; fonctions.filter((f) &#x3D;&gt; !this.categories.includes(f.categoryId)).map((v) &#x3D;&gt; +v.id)
 
     this.filterList &#x3D; listUsedFunctions.map((f) &#x3D;&gt; ({
       id: f.id,
       label: f.code || &#x27;&#x27;,
-    }));
-    this.filterValues &#x3D;
-      this.filterValues &#x3D;&#x3D;&#x3D; null
-        ? listUsedFunctions.map((f) &#x3D;&gt; f.id)
-        : this.filterValues.filter((f) &#x3D;&gt; !idsToExclude.includes(+f));
+    }))
+    this.filterValues &#x3D; this.filterValues &#x3D;&#x3D;&#x3D; null ? listUsedFunctions.map((f) &#x3D;&gt; f.id) : this.filterValues.filter((f) &#x3D;&gt; !idsToExclude.includes(+f))
 
-    this.defaultFilterValues &#x3D; listUsedFunctions.map((f) &#x3D;&gt; f.id);
+    this.defaultFilterValues &#x3D; listUsedFunctions.map((f) &#x3D;&gt; f.id)
     if (this.button &#x3D;&#x3D;&#x3D; true &amp;&amp; this.filterValues.length &#x3D;&#x3D;&#x3D; 0) {
-      this.filterValues &#x3D; listUsedFunctions.map((f) &#x3D;&gt; f.id);
+      this.filterValues &#x3D; listUsedFunctions.map((f) &#x3D;&gt; f.id)
     }
   }
 
@@ -1002,100 +963,80 @@ export class FilterPanelComponent
    * Choix du filtre change
    */
   updateParams() {
-    const sortItem &#x3D; this.sortList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.sortValue);
-    const orderItem &#x3D; this.orderList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.orderValue);
-    let filterNames &#x3D; &#x27;&#x27;;
-    if (
-      this.filterValues &amp;&amp;
-      this.filterValues.length !&#x3D;&#x3D; this.defaultFilterValues?.length
-    ) {
-      const nbStringToAdd &#x3D; 3;
-      let stringAdd &#x3D; 0;
+    const sortItem &#x3D; this.sortList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.sortValue)
+    const orderItem &#x3D; this.orderList.find((o) &#x3D;&gt; o.id &#x3D;&#x3D;&#x3D; this.orderValue)
+    let filterNames &#x3D; &#x27;&#x27;
+    if (this.filterValues &amp;&amp; this.filterValues.length !&#x3D;&#x3D; this.defaultFilterValues?.length) {
+      const nbStringToAdd &#x3D; 3
+      let stringAdd &#x3D; 0
       filterNames +&#x3D; this.filterList.reduce((acc, cur) &#x3D;&gt; {
-        if (
-          this.filterValues &amp;&amp;
-          this.filterValues.indexOf(cur.id) !&#x3D;&#x3D; -1 &amp;&amp;
-          stringAdd &lt; nbStringToAdd
-        ) {
+        if (this.filterValues &amp;&amp; this.filterValues.indexOf(cur.id) !&#x3D;&#x3D; -1 &amp;&amp; stringAdd &lt; nbStringToAdd) {
           if (stringAdd &gt; 0) {
-            acc +&#x3D; &#x27;, &#x27;;
+            acc +&#x3D; &#x27;, &#x27;
           }
-          acc +&#x3D; cur.label;
-          stringAdd++;
+          acc +&#x3D; cur.label
+          stringAdd++
         }
-        return acc;
-      }, &#x27;&#x27;);
+        return acc
+      }, &#x27;&#x27;)
 
       if (this.filterValues.length &gt; nbStringToAdd) {
-        filterNames +&#x3D;
-          &#x27; et &#x27; + (this.filterValues.length - nbStringToAdd) + &#x27; de plus&#x27;;
+        filterNames +&#x3D; &#x27; et &#x27; + (this.filterValues.length - nbStringToAdd) + &#x27; de plus&#x27;
       }
     }
 
     this.update.next({
       sort: this.sortValue,
-      sortName:
-        sortItem &amp;&amp; sortItem.label &amp;&amp; this.sortValue !&#x3D;&#x3D; this.defaultSortValue
-          ? sortItem.label
-          : null,
-      sortFunction:
-        (sortItem &amp;&amp; sortItem.sortFunction) ||
-        ((l: HumanResourceSelectedInterface) &#x3D;&gt; l),
+      sortName: sortItem &amp;&amp; sortItem.label &amp;&amp; this.sortValue !&#x3D;&#x3D; this.defaultSortValue ? sortItem.label : null,
+      sortFunction: (sortItem &amp;&amp; sortItem.sortFunction) || ((l: HumanResourceSelectedInterface) &#x3D;&gt; l),
       order: this.orderValue,
       orderIcon: orderItem &amp;&amp; orderItem.icon ? orderItem.icon : null,
       filterValues: this.filterValues,
       filterIndispoValues: this.filterIndispoValues,
       display: this.displayValue,
       filterFunction: (list: HumanResourceSelectedInterface[]) &#x3D;&gt; {
-        if (
-          this.filterValues &#x3D;&#x3D;&#x3D; null ||
-          this.filterValues.length &#x3D;&#x3D;&#x3D; this.filterList.length
-        ) {
-          return list;
+        if (this.filterValues &#x3D;&#x3D;&#x3D; null || this.filterValues.length &#x3D;&#x3D;&#x3D; this.filterList.length) {
+          return list
         } else {
-          return list.filter(
-            (h) &#x3D;&gt;
-              h.fonction &amp;&amp;
-              this.filterValues &amp;&amp;
-              this.filterValues.indexOf(h.fonction.id) !&#x3D;&#x3D; -1
-          );
+          return list.filter((h) &#x3D;&gt; h.fonction &amp;&amp; this.filterValues &amp;&amp; this.filterValues.indexOf(h.fonction.id) !&#x3D;&#x3D; -1)
         }
       },
       filterNames,
-    });
+    })
 
     this.updateReferentielIds.emit({
       list: this.referentielIds,
       subList: this.subReferentielIds,
-    });
+    })
   }
 
+  /**
+   * Formatage de la liste des contentieux
+   */
   formatReferentielList() {
     this.contentieuxFilterList &#x3D; this.referentiels.map((r) &#x3D;&gt; ({
       id: r.id,
       label: r.value,
-    }));
+    }))
 
-    this.updateSubcontentieux();
+    this.updateSubcontentieux()
   }
 
+  /**
+   * Mise à jour de la liste des sous contentieux
+   * @param forceSub
+   */
   updateSubcontentieux(forceSub &#x3D; false) {
-    let list: ItemInterface[] &#x3D; [];
+    let list: ItemInterface[] &#x3D; []
     this.referentiels.map((cont) &#x3D;&gt; {
-      if (
-        !this.referentielIds ||
-        (this.referentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)
-      ) {
-        list &#x3D; [
-          ...list,
-          ...(cont.childrens || []).map((c) &#x3D;&gt; ({ id: c.id, label: c.value })),
-        ];
+      if (!this.referentielIds || (this.referentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
+        list &#x3D; [...list, ...(cont.childrens || []).map((c) &#x3D;&gt; ({ id: c.id, label: c.value }))]
       }
-    });
+    })
 
-    this.subContentieuxFilterList &#x3D; [...list];
+    this.subContentieuxFilterList &#x3D; [...list]
     if (this.subReferentielIds &#x3D;&#x3D;&#x3D; null || forceSub) {
-      this.subReferentielIds &#x3D; list.map((l) &#x3D;&gt; l.id);
+      this.subReferentielIds &#x3D; list.map((l) &#x3D;&gt; l.id)
     }
   }
 }

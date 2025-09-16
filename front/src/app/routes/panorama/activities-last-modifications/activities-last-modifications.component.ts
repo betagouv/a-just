@@ -1,24 +1,45 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel';
-import { ActivityInterface } from '../../../interfaces/activity';
-import { UserInterface } from '../../../interfaces/user-interface';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { MainClass } from '../../../libs/main-class';
-import { OPACITY_20 } from '../../../constants/colors';
-import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
-import { ActivitiesService } from '../../../services/activities/activities.service';
-import { UserService } from '../../../services/user/user.service';
-import { BackupInterface } from '../../../interfaces/backup';
+import { Component, OnDestroy, OnInit } from '@angular/core'
+import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel'
+import { ActivityInterface } from '../../../interfaces/activity'
+import { UserInterface } from '../../../interfaces/user-interface'
+import { CommonModule } from '@angular/common'
+import { RouterLink } from '@angular/router'
+import { MainClass } from '../../../libs/main-class'
+import { OPACITY_20 } from '../../../constants/colors'
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
+import { ActivitiesService } from '../../../services/activities/activities.service'
+import { UserService } from '../../../services/user/user.service'
+import { BackupInterface } from '../../../interfaces/backup'
 
+/**
+ * Interface de l'activité par human
+ */
 interface ActivityByHuman {
-  contentieux: ContentieuReferentielInterface;
-  activity: ActivityInterface;
-  user: UserInterface;
+  /**
+   * Contentieux
+   */
+  contentieux: ContentieuReferentielInterface
+  /**
+   * Activité
+   */
+  activity: ActivityInterface
+  /**
+   * Utilisateur
+   */
+  user: UserInterface
+  /**
+   * Historique
+   */
   history: {
-    id: number;
-    updatedAt: Date;
-  };
+    /**
+     * ID de l'historique
+     */
+    id: number
+    /**
+     * Date de la dernière modification
+     */
+    updatedAt: Date
+  }
 }
 
 /**
@@ -31,15 +52,15 @@ interface ActivityByHuman {
   templateUrl: './activities-last-modifications.component.html',
   styleUrls: ['./activities-last-modifications.component.scss'],
 })
-export class ActivitiesLastModificationsComponent
-  extends MainClass
-  implements OnInit, OnDestroy
-{
-  list: ActivityByHuman[] = [];
+export class ActivitiesLastModificationsComponent extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Liste des activités par human
+   */
+  list: ActivityByHuman[] = []
   /**
    * Opacité background des contentieux
    */
-  OPACITY = OPACITY_20;
+  OPACITY = OPACITY_20
 
   /**
    * Constructor
@@ -47,9 +68,9 @@ export class ActivitiesLastModificationsComponent
   constructor(
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService,
-    public userService: UserService
+    public userService: UserService,
   ) {
-    super();
+    super()
   }
 
   /**
@@ -57,24 +78,22 @@ export class ActivitiesLastModificationsComponent
    */
   ngOnInit() {
     this.watch(
-      this.humanResourceService.hrBackup.subscribe(
-        (hrBackup: BackupInterface | null) => {
-          if (hrBackup) {
-            this.activitiesService.getLastUpdatedActivities().then((l) => {
-              this.list = l;
-            });
-          } else {
-            this.list = [];
-          }
+      this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) => {
+        if (hrBackup) {
+          this.activitiesService.getLastUpdatedActivities().then((l) => {
+            this.list = l
+          })
+        } else {
+          this.list = []
         }
-      )
-    );
+      }),
+    )
   }
 
   /**
    * Destruction du composant
    */
   ngOnDestroy() {
-    this.watcherDestroy();
+    this.watcherDestroy()
   }
 }

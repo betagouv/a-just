@@ -910,13 +910,37 @@ export interface listFormatedInterface {
   styleUrls: [&#x27;./workforce.page.scss&#x27;],
 })
 export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service de gestion des ressources humaines
+   */
   humanResourceService &#x3D; inject(HumanResourceService)
+  /**
+   * Service de gestion des référentiels
+   */
   referentielService &#x3D; inject(ReferentielService)
+  /**
+   * Service de gestion des routes
+   */
   route &#x3D; inject(ActivatedRoute)
+  /**
+   * Service de gestion des routes
+   */
   router &#x3D; inject(Router)
+  /**
+   * Service de gestion des ventilations
+   */
   workforceService &#x3D; inject(WorkforceService)
+  /**
+   * Service de gestion des utilisateurs
+   */
   userService &#x3D; inject(UserService)
+  /**
+   * Service de gestion des fonctions
+   */
   hrFonctionService &#x3D; inject(HRFonctionService)
+  /**
+   * Service de gestion de l&#x27;application
+   */
   appService &#x3D; inject(AppService)
   /**
    * Liste de toutes les RH
@@ -1532,10 +1556,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           }
         })
         this.allPersons &#x3D; allPersons
-        console.log(
-          &#x27;list FX&#x27;,
-          allPersons.filter((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; 39290),
-        )
 
         this.findPersonWithoutVentilations()
 
@@ -1862,6 +1882,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return (list || []).filter((h) &#x3D;&gt; h.isIn &#x3D;&#x3D;&#x3D; isIn)
   }
 
+  /**
+   * Retourne les ids des fonctions filtrées
+   * @param fonctionsList
+   * @returns
+   */
   getCurrentFilteredIds(fonctionsList: HRFonctionInterface[]) {
     if (this.filterParams &amp;&amp; this.filterParams.filterValues) {
       return this.filterParams.filterValues as number[]
@@ -1870,6 +1895,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Changement de filtre des sous catégories
+   * @param category
+   * @param poste
+   */
   async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
     this.appService.appLoading.next(true)
     const fonctions &#x3D; await this.hrFonctionService.getAll()
@@ -1918,6 +1948,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.orderListWithFiltersParams()
   }
 
+  /**
+   * Retourne si la position est sélectionnée
+   * @param poste
+   * @returns
+   */
   getTooglePositionSelected(poste: HRCategorypositionInterface) {
     return poste.selected
   }
@@ -1927,6 +1962,11 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
   }
 
+  /**
+   * Changement de couleur de la catégorie
+   * @param category
+   * @param color
+   */
   switchBgColor(category: any, color: string) {
     category.style[&#x27;background-color&#x27;] &#x3D; color
   }
@@ -2049,6 +2089,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     return null
   }
 
+  /**
+   * Supprimer le filtre des indispo
+   */
   clearFilterIndispo() {
     if (this.filterParams) {
       this.filterParams.filterIndispoValues &#x3D; []

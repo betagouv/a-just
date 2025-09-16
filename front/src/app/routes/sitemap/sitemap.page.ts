@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
-import { BackButtonComponent } from '../../components/back-button/back-button.component';
+import { Component, inject } from '@angular/core'
+import { Title } from '@angular/platform-browser'
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
+import { BackButtonComponent } from '../../components/back-button/back-button.component'
 
 /**
  * Plan du site
@@ -14,12 +14,15 @@ import { BackButtonComponent } from '../../components/back-button/back-button.co
   styleUrls: ['./sitemap.page.scss'],
 })
 export class SiteMapPage {
-  title = inject(Title);
+  /**
+   * Service de gestion du titre
+   */
+  title = inject(Title)
 
   /**
    * Constructeur
    */
   constructor() {
-    this.title.setTitle('Plan du site | A-Just');
+    this.title.setTitle('Plan du site | A-Just')
   }
 }

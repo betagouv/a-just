@@ -6,7 +6,13 @@ import { JuridictionInterface } from '../../interfaces/juridiction'
 import { JuridictionsService } from '../../services/juridictions/juridictions.service'
 import { UserService } from '../../services/user/user.service'
 
+/**
+ * Declaration de la variable iframe
+ */
 declare let iframe: any
+/**
+ * Declaration de la variable mapboxgl
+ */
 declare const mapboxgl: any
 
 /**
@@ -20,8 +26,17 @@ declare const mapboxgl: any
   styleUrls: ['./stats.page.scss'],
 })
 export class StatsPage {
+  /**
+   * Service de gestion du titre
+   */
   title = inject(Title)
+  /**
+   * Service de gestion des juridictions
+   */
   juridictionsService = inject(JuridictionsService)
+  /**
+   * Service de gestion de l'utilisateur
+   */
   userService = inject(UserService)
   /**
    * Mapbox styling
@@ -52,6 +67,9 @@ export class StatsPage {
     this.title.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + 'Stats')
   }
 
+  /**
+   * Initialisation de la page
+   */
   ngAfterViewInit() {
     this.juridictionsService.getAllVisible().then((l) => {
       this.list = l
@@ -59,6 +77,9 @@ export class StatsPage {
     })
   }
 
+  /**
+   * Mise à jour de la carte
+   */
   updateMap() {
     mapboxgl.accessToken = this.mapboxToken
     const map = new mapboxgl.Map({
@@ -110,6 +131,10 @@ export class StatsPage {
     })
   }
 
+  /**
+   * Appel de la fonction javascript
+   * @param obj
+   */
   callJavascript(obj: any) {
     //iframe = obj.currentTarget.contentWindow.document
     // obj.currentTarget.style.height = obj.currentTarget.contentWindow.document.documentElement.scrollHeight + 'px';

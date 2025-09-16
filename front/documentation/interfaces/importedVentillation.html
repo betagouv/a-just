@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface pour l&#39;importation des ventilations</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -200,6 +207,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Référentiel parent</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -233,6 +246,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Pourcentage</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -266,6 +285,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Référentiel</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -301,7 +326,6 @@ import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_VENTILATEUR_PERSON,
   IMPORT_ETP_TEMPLATE,
-  IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
   NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
@@ -313,13 +337,31 @@ import { HelpButtonComponent } from &#x27;../../../components/help-button/help-b
 import { ExcelService } from &#x27;../../../services/excel/excel.service&#x27;
 import { UserService } from &#x27;../../../services/user/user.service&#x27;
 
+/**
+ * Interface pour l&#x27;importation des ventilations
+ */
 export interface importedVentillation {
+  /**
+   * Référentiel
+   */
   referentiel: ContentieuReferentielInterface
+  /**
+   * Pourcentage
+   */
   percent: number | undefined
+  /**
+   * Référentiel parent
+   */
   parentReferentiel: ContentieuReferentielInterface | null
 }
 
+/**
+ * Interface pour l&#x27;importation des situations
+ */
 export interface importedSituation {
+  /**
+   * Index
+   */
   index: number | null
   ventillation: importedVentillation[]
 }
@@ -348,7 +390,13 @@ export interface importedSituation {
   styleUrls: [&#x27;./add-ventilation.component.scss&#x27;],
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
+  /**
+   * Service de gestion des fiches
+   */
   humanResourceService &#x3D; inject(HumanResourceService)
+  /**
+   * Référence au conteneur de bas de page
+   */
   @ViewChild(&#x27;bottomContainerTarget&#x27;) bottomContainerTargetRef!: ElementRef
 
   /**
@@ -423,7 +471,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet &#x3D; new EventEmitter&lt;{
-    tag: string,
+    tag: string
     remove?: boolean
   }&gt;()
   /**
@@ -490,7 +538,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   /**
    * Import
    */
-  imported&#x3D;false
+  imported &#x3D; false
 
   /**
    * Constructeur
@@ -554,18 +602,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.form.get(&#x27;etp&#x27;)?.valueChanges.subscribe((value) &#x3D;&gt; {
         console.log(&#x27;value&#x27;, value)
         if (value) {
+          const valueFormated &#x3D; parseFloat((value || &#x27;&#x27;) + &#x27;&#x27;.replace(/,/, &#x27;.&#x27;))
 
-          const valueFormated &#x3D;
-            parseFloat((value || &#x27;&#x27;)+&#x27;&#x27;.replace(/,/, &#x27;.&#x27;));
-    
           if (valueFormated &lt; 0) {
-            alert(&#x27;Le pourcentage ne peut pas être négatif&#x27;);
-            return;
+            alert(&#x27;Le pourcentage ne peut pas être négatif&#x27;)
+            return
           }
-    
+
           if (Number.isNaN(valueFormated)) {
-            alert(&#x27;La valeur saisie n\&#x27;est pas un nombre&#x27;);
-            return;
+            alert(&quot;La valeur saisie n&#x27;est pas un nombre&quot;)
+            return
           }
 
           if (value &gt; 1) value &#x3D; 1
@@ -679,7 +725,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const fonct &#x3D; fonctions.find((c) &#x3D;&gt; c.id &#x3D;&#x3D; fonctionId)
 
     //const indisponibilites &#x3D; this.human?.indisponibilities || []
-    
+
     /***
      * Je supprime le check si l&#x27;indisponibilité est ignorée pour la ventilation car on ne sais plus pourquoi on a fait ce check
      */
@@ -915,7 +961,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels &#x3D; referentiels
-    this.sumPercentImported &#x3D;  this.updatedReferentiels.reduce((sum, c) &#x3D;&gt; sum + (c.percent || 0), 0) 
+    this.sumPercentImported &#x3D; this.updatedReferentiels.reduce((sum, c) &#x3D;&gt; sum + (c.percent || 0), 0)
   }
 
   /**
@@ -993,6 +1039,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Téléchargement du template d&#x27;ETP
+   */
   async downloadEtpTemplate() {
     await this.serverService
       .post(&#x27;centre-d-aide/log-documentation-link&#x27;, {
@@ -1026,10 +1075,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     this.fileReader(file, classe, event)
-    this.imported&#x3D;true
+    this.imported &#x3D; true
     element.value &#x3D; &#x27;&#x27;
   }
 
+  /**
+   * Lecture du fichier Excel
+   * @param file
+   * @param line
+   * @param event
+   */
   private fileReader(file: any, line: any, event: any) {
     let fileReader &#x3D; new FileReader()
     fileReader.onload &#x3D; (e) &#x3D;&gt; {
@@ -1215,6 +1270,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Scroll to bottom element
+   */
   scrollToBottomElement() {
     this.bottomContainerTargetRef.nativeElement.scrollIntoView({
       behavior: &#x27;smooth&#x27;,

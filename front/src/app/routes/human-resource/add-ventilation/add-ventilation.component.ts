@@ -26,7 +26,6 @@ import {
   CALCULATE_DOWNLOAD_URL,
   DOCUMENTATION_VENTILATEUR_PERSON,
   IMPORT_ETP_TEMPLATE,
-  IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
   NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
@@ -38,13 +37,31 @@ import { HelpButtonComponent } from '../../../components/help-button/help-button
 import { ExcelService } from '../../../services/excel/excel.service'
 import { UserService } from '../../../services/user/user.service'
 
+/**
+ * Interface pour l'importation des ventilations
+ */
 export interface importedVentillation {
+  /**
+   * Référentiel
+   */
   referentiel: ContentieuReferentielInterface
+  /**
+   * Pourcentage
+   */
   percent: number | undefined
+  /**
+   * Référentiel parent
+   */
   parentReferentiel: ContentieuReferentielInterface | null
 }
 
+/**
+ * Interface pour l'importation des situations
+ */
 export interface importedSituation {
+  /**
+   * Index
+   */
   index: number | null
   ventillation: importedVentillation[]
 }
@@ -73,7 +90,13 @@ export interface importedSituation {
   styleUrls: ['./add-ventilation.component.scss'],
 })
 export class AddVentilationComponent extends MainClass implements OnChanges {
+  /**
+   * Service de gestion des fiches
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Référence au conteneur de bas de page
+   */
   @ViewChild('bottomContainerTarget') bottomContainerTargetRef!: ElementRef
 
   /**
@@ -148,7 +171,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    tag: string,
+    tag: string
     remove?: boolean
   }>()
   /**
@@ -215,7 +238,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   /**
    * Import
    */
-  imported=false
+  imported = false
 
   /**
    * Constructeur
@@ -279,18 +302,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.form.get('etp')?.valueChanges.subscribe((value) => {
         console.log('value', value)
         if (value) {
+          const valueFormated = parseFloat((value || '') + ''.replace(/,/, '.'))
 
-          const valueFormated =
-            parseFloat((value || '')+''.replace(/,/, '.'));
-    
           if (valueFormated < 0) {
-            alert('Le pourcentage ne peut pas être négatif');
-            return;
+            alert('Le pourcentage ne peut pas être négatif')
+            return
           }
-    
+
           if (Number.isNaN(valueFormated)) {
-            alert('La valeur saisie n\'est pas un nombre');
-            return;
+            alert("La valeur saisie n'est pas un nombre")
+            return
           }
 
           if (value > 1) value = 1
@@ -404,7 +425,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const fonct = fonctions.find((c) => c.id == fonctionId)
 
     //const indisponibilites = this.human?.indisponibilities || []
-    
+
     /***
      * Je supprime le check si l'indisponibilité est ignorée pour la ventilation car on ne sais plus pourquoi on a fait ce check
      */
@@ -640,7 +661,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels = referentiels
-    this.sumPercentImported =  this.updatedReferentiels.reduce((sum, c) => sum + (c.percent || 0), 0) 
+    this.sumPercentImported = this.updatedReferentiels.reduce((sum, c) => sum + (c.percent || 0), 0)
   }
 
   /**
@@ -718,6 +739,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Téléchargement du template d'ETP
+   */
   async downloadEtpTemplate() {
     await this.serverService
       .post('centre-d-aide/log-documentation-link', {
@@ -751,10 +775,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     this.fileReader(file, classe, event)
-    this.imported=true
+    this.imported = true
     element.value = ''
   }
 
+  /**
+   * Lecture du fichier Excel
+   * @param file
+   * @param line
+   * @param event
+   */
   private fileReader(file: any, line: any, event: any) {
     let fileReader = new FileReader()
     fileReader.onload = (e) => {
@@ -940,6 +970,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Scroll to bottom element
+   */
   scrollToBottomElement() {
     this.bottomContainerTargetRef.nativeElement.scrollIntoView({
       behavior: 'smooth',

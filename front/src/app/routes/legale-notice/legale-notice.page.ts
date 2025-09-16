@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
-import { BackButtonComponent } from '../../components/back-button/back-button.component';
+import { Component, inject } from '@angular/core'
+import { Title } from '@angular/platform-browser'
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
+import { BackButtonComponent } from '../../components/back-button/back-button.component'
 
 /**
  * Mentions légales
@@ -14,12 +14,15 @@ import { BackButtonComponent } from '../../components/back-button/back-button.co
   styleUrls: ['./legale-notice.page.scss'],
 })
 export class LegaleNoticePage {
-  title = inject(Title);
+  /**
+   * Service de gestion du titre
+   */
+  title = inject(Title)
 
   /**
    * Constructeur
    */
   constructor() {
-    this.title.setTitle('Mentions légales | A-Just');
+    this.title.setTitle('Mentions légales | A-Just')
   }
 }

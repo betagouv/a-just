@@ -31,9 +31,21 @@ interface listFormatedWithDatasInterface extends listFormatedInterface {
   poste?: { label: string; etpt: number; total: number }[]
 }
 
+/**
+ * Interface pour la clé
+ */
 interface cleInterface {
+  /**
+   * ID de la juridiction
+   */
   juridiction_id: number
+  /**
+   * ID de la catégorie
+   */
   category_id: number
+  /**
+   * Valeur de la clé
+   */
   value: number
 }
 
@@ -72,7 +84,10 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
   /**
    * Constructor
    */
-  constructor(private humanResourceService: HumanResourceService, private serverService: ServerService) {
+  constructor(
+    private humanResourceService: HumanResourceService,
+    private serverService: ServerService,
+  ) {
     super()
   }
 
@@ -151,6 +166,12 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
     }
   }
 
+  /**
+   * Enregistre la CLE
+   * @param value
+   * @param category
+   * @param index
+   */
   saveCLE(value: EventTarget | null, category: listFormatedWithDatasInterface, index: number) {
     if (this.onTimeoutLoad && this.onTimeoutLoad[index]) {
       clearTimeout(this.onTimeoutLoad[index])
@@ -173,6 +194,11 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
     }
   }
 
+  /**
+   * Récupère le CLE
+   * @param category
+   * @returns
+   */
   getCLE(category: listFormatedWithDatasInterface) {
     if (this.humanResourceService.backupId.getValue()) {
       let res = null
@@ -185,6 +211,9 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
     return ''
   }
 
+  /**
+   * Récupère tous les CLE
+   */
   async getAllCle() {
     this.cleByCategory = await this.serverService
       .post('juridictions-details/get-cle', {

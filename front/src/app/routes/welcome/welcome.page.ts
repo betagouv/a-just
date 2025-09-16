@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
-import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
-import { RouterLink } from '@angular/router';
-import { MEETING_URL } from '../../constants/pages';
-import { SSOService } from '../../services/sso/sso.service';
+import { AfterViewInit, Component, inject } from '@angular/core'
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
+import { RouterLink } from '@angular/router'
+import { MEETING_URL } from '../../constants/pages'
+import { SSOService } from '../../services/sso/sso.service'
 
 /**
  * Page pour onboarder des nouveaux utilisateurs
@@ -14,22 +14,31 @@ import { SSOService } from '../../services/sso/sso.service';
   styleUrls: ['./welcome.page.scss'],
 })
 export class WelcomePage implements AfterViewInit {
-  ssoService = inject(SSOService);
-  MEETING_URL = MEETING_URL;
+  /**
+   * Service de gestion de l'authentification
+   */
+  ssoService = inject(SSOService)
+  /**
+   * URL de la réunion
+   */
+  MEETING_URL = MEETING_URL
 
+  /**
+   * Initialisation de la page
+   */
   ngAfterViewInit() {
-    const my_awesome_script = document.createElement('script');
-    my_awesome_script.setAttribute('type', 'text/javascript');
-    my_awesome_script.setAttribute(
-      'src',
-      'https://assets.calendly.com/assets/external/widget.js'
-    );
-    document.head.appendChild(my_awesome_script);
+    const my_awesome_script = document.createElement('script')
+    my_awesome_script.setAttribute('type', 'text/javascript')
+    my_awesome_script.setAttribute('src', 'https://assets.calendly.com/assets/external/widget.js')
+    document.head.appendChild(my_awesome_script)
 
-    this.loadCalendly();
-    this.ssoService.clearSession();
+    this.loadCalendly()
+    this.ssoService.clearSession()
   }
 
+  /**
+   * Chargement du calendly
+   */
   loadCalendly() {
     // @ts-ignore
     if (window.Calendly) {
@@ -39,11 +48,11 @@ export class WelcomePage implements AfterViewInit {
         parentElement: document.getElementById('calendly'),
         prefill: {},
         utm: {},
-      });
+      })
     } else {
       setTimeout(() => {
-        this.loadCalendly();
-      }, 100);
+        this.loadCalendly()
+      }, 100)
     }
   }
 }

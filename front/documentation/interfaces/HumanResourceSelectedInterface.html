@@ -122,7 +122,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>src/app/routes/workforce/workforce.page.ts</code>
+            <code>src/app/routes/reaffectator/reaffectator.page.ts</code>
         </p>
 
 
@@ -130,7 +130,7 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>Interface d&#39;une fiche avec ses valeurs rendu</p>
+                <p>Interface d&#39;une fiche surchargé avec des rendus visuels</p>
 
             </p>
 
@@ -184,13 +184,6 @@
                                         </a>
                                 </li>
                                 <li>
-                                            <span class="modifier">Optional</span>
-                                        <a href="#firstName" 
->
-                                            firstName
-                                        </a>
-                                </li>
-                                <li>
                                         <a href="#fonction" 
 >
                                             fonction
@@ -203,10 +196,9 @@
                                         </a>
                                 </li>
                                 <li>
-                                            <span class="modifier">Optional</span>
-                                        <a href="#lastName" 
+                                        <a href="#isModify" 
 >
-                                            lastName
+                                            isModify
                                         </a>
                                 </li>
                                 <li>
@@ -216,17 +208,16 @@
                                         </a>
                                 </li>
                                 <li>
-                                            <span class="modifier">Optional</span>
-                                        <a href="#tmpActivities" 
+                                        <a href="#orignalCurrentActivities" 
 >
-                                            tmpActivities
+                                            orignalCurrentActivities
                                         </a>
                                 </li>
                                 <li>
                                             <span class="modifier">Optional</span>
-                                        <a href="#totalAffected" 
+                                        <a href="#tmpActivities" 
 >
-                                            totalAffected
+                                            tmpActivities
                                         </a>
                                 </li>
                             </ul>
@@ -371,7 +362,7 @@
                                 </tr>
                                 <tr>
                                     <td class="col-md-4">
-                                        <code>etp:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                        <code>etp:     <code>number | null</code>
 </code>
                                     </td>
                                 </tr>
@@ -379,7 +370,7 @@
 
                                     <tr>
                                         <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            <i>Type : </i>    <code>number | null</code>
 
                                         </td>
                                     </tr>
@@ -430,50 +421,6 @@
                             <tr>
                                 <td class="col-md-4">
                                     <div class="io-description"><p>Temps de travail en string</p>
-</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="firstName"></a>
-                                        <span class="name "><b>firstName</b>
-                                            <a href="#firstName">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>firstName:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-</code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Optional</i>
-                                        </td>
-                                    </tr>
-
-
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-description"><p>Prénom de l&#39;agent</p>
 </div>
                                 </td>
                             </tr>
@@ -561,9 +508,9 @@
                         <tbody>
                                 <tr>
                                     <td class="col-md-4">
-                                        <a name="lastName"></a>
-                                        <span class="name "><b>lastName</b>
-                                            <a href="#lastName">
+                                        <a name="isModify"></a>
+                                        <span class="name "><b>isModify</b>
+                                            <a href="#isModify">
                                                 <span class="icon ion-ios-link"></span>
                                             </a>
                                         </span>
@@ -571,7 +518,7 @@
                                 </tr>
                                 <tr>
                                     <td class="col-md-4">
-                                        <code>lastName:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                        <code>isModify:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 </code>
                                     </td>
                                 </tr>
@@ -579,23 +526,18 @@
 
                                     <tr>
                                         <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                                         </td>
                                     </tr>
 
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Optional</i>
-                                        </td>
-                                    </tr>
 
 
 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-description"><p>Nom de l&#39;agent</p>
+                                    <div class="io-description"><p>Is c&#39;est modifié ou non</p>
 </div>
                                 </td>
                             </tr>
@@ -635,6 +577,45 @@
                             <tr>
                                 <td class="col-md-4">
                                     <div class="io-description"><p>Trouvé dans la recherche ou non</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="orignalCurrentActivities"></a>
+                                        <span class="name "><b>orignalCurrentActivities</b>
+                                            <a href="#orignalCurrentActivities">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>orignalCurrentActivities:     <code>RHActivityInterface[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>RHActivityInterface[]</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Situation orignal de l&#39;activité</p>
 </div>
                                 </td>
                             </tr>
@@ -684,133 +665,50 @@
                             </tr>
                         </tbody>
                     </table>
-                    <table class="table table-sm table-bordered">
-                        <tbody>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <a name="totalAffected"></a>
-                                        <span class="name "><b>totalAffected</b>
-                                            <a href="#totalAffected">
-                                                <span class="icon ion-ios-link"></span>
-                                            </a>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="col-md-4">
-                                        <code>totalAffected:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-</code>
-                                    </td>
-                                </tr>
-
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="col-md-4">
-                                            <i>Optional</i>
-                                        </td>
-                                    </tr>
-
-
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-description"><p>Total d&#39;affectation</p>
-</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
             </section>
     </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, OnDestroy, OnInit } from &#x27;@angular/core&#x27;
-import { orderBy, sortBy, sumBy, union } from &#x27;lodash&#x27;
-import { ActivatedRoute, Router, RouterLink } from &#x27;@angular/router&#x27;
-import { FilterPanelComponent, FilterPanelInterface } from &#x27;./filter-panel/filter-panel.component&#x27;
-import { debounceTime } from &#x27;rxjs&#x27;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, OnDestroy, OnInit, ViewChild } from &#x27;@angular/core&#x27;
+import { cloneDeep, isNaN, orderBy, sortBy, sumBy } from &#x27;lodash&#x27;
+import { Router } from &#x27;@angular/router&#x27;
 import { HumanResourceInterface } from &#x27;../../interfaces/human-resource-interface&#x27;
-import { HRSituationInterface } from &#x27;../../interfaces/hr-situation&#x27;
-import { HRFonctionInterface } from &#x27;../../interfaces/hr-fonction&#x27;
-import { HRCategoryInterface, HRCategorypositionInterface, HRCategorySelectedInterface } from &#x27;../../interfaces/hr-category&#x27;
 import { RHActivityInterface } from &#x27;../../interfaces/rh-activity&#x27;
+import { HRCategoryInterface } from &#x27;../../interfaces/hr-category&#x27;
+import { HRFonctionInterface } from &#x27;../../interfaces/hr-fonction&#x27;
+import { HRSituationInterface } from &#x27;../../interfaces/hr-situation&#x27;
 import { ContentieuReferentielInterface } from &#x27;../../interfaces/contentieu-referentiel&#x27;
+import { MainClass } from &#x27;../../libs/main-class&#x27;
 import { WrapperComponent } from &#x27;../../components/wrapper/wrapper.component&#x27;
 import { DateSelectComponent } from &#x27;../../components/date-select/date-select.component&#x27;
-import { RadioButtonComponent } from &#x27;../../components/radio-button/radio-button.component&#x27;
-import { CommonModule } from &#x27;@angular/common&#x27;
-import { PersonPreviewComponent } from &#x27;./person-preview/person-preview.component&#x27;
+import { dataInterface, SelectComponent } from &#x27;../../components/select/select.component&#x27;
 import { InputButtonComponent } from &#x27;../../components/input-button/input-button.component&#x27;
+import { SpeedometerComponent } from &#x27;../../components/speedometer/speedometer.component&#x27;
+import { CommonModule } from &#x27;@angular/common&#x27;
+import { PopupComponent } from &#x27;../../components/popup/popup.component&#x27;
+import { EtpPreviewComponent } from &#x27;../../components/etp-preview/etp-preview.component&#x27;
+import { PanelActivitiesComponent } from &#x27;../../components/panel-activities/panel-activities.component&#x27;
 import { IntroJSComponent, IntroJSStep } from &#x27;../../components/intro-js/intro-js.component&#x27;
-import { MainClass } from &#x27;../../libs/main-class&#x27;
-import { childrenInterface, dataInterface } from &#x27;../../components/select/select.component&#x27;
-import { BackupInterface } from &#x27;../../interfaces/backup&#x27;
-import { DocumentationInterface } from &#x27;../../interfaces/documentation&#x27;
-import { OPACITY_20 } from &#x27;../../constants/colors&#x27;
+import { ReaffectatorService } from &#x27;../../services/reaffectator/reaffectator.service&#x27;
 import { HumanResourceService } from &#x27;../../services/human-resource/human-resource.service&#x27;
-import { ReferentielService } from &#x27;../../services/referentiel/referentiel.service&#x27;
 import { WorkforceService } from &#x27;../../services/workforce/workforce.service&#x27;
 import { UserService } from &#x27;../../services/user/user.service&#x27;
-import { HRFonctionService } from &#x27;../../services/hr-fonction/hr-function.service&#x27;
-import { FILTER_LIMIT_ON_SEARCH } from &#x27;../../constants/workforce&#x27;
+import { KPIService } from &#x27;../../services/kpi/kpi.service&#x27;
+import { getCategoryTitle, getCategoryTitlePlurial } from &#x27;../../utils/category&#x27;
 import { fixDecimal } from &#x27;../../utils/numbers&#x27;
-import { sortDates, today } from &#x27;../../utils/dates&#x27;
+import { DATE_REAFECTATOR } from &#x27;../../constants/log-codes&#x27;
 import { MatIconModule } from &#x27;@angular/material/icon&#x27;
 import { FormsModule } from &#x27;@angular/forms&#x27;
-import { EmptyInputComponent } from &#x27;../../components/empty-input/empty-input.component&#x27;
+import { SanitizeHtmlPipe } from &#x27;../../pipes/sanitize-html/sanitize-html.pipe&#x27;
 import { AppService } from &#x27;../../services/app/app.service&#x27;
+import { HumanResourceIsInInterface } from &#x27;../workforce/workforce.page&#x27;
+import { sortDates, today } from &#x27;../../utils/dates&#x27;
 
 /**
- * Interface d&#x27;une fiche avec ses valeurs rendu
+ * Interface d&#x27;une fiche surchargé avec des rendus visuels
  */
-export interface HumanResourceIsInInterface extends HumanResourceInterface {
-  /**
-   * Est présent dans l&#x27;interface
-   */
-  isIn: boolean
-  /**
-   * Category name
-   */
-  categoryName?: string
-  /**
-   * Category rank
-   */
-  categoryRank?: number | null
-  /**
-   * Fonction rank
-   */
-  fonctionRank?: number | null
-  /**
-   * Categorie de la personne
-   */
-  category?: HRCategoryInterface
-}
-
-/**
- * Interface d&#x27;une fiche avec ses valeurs rendu
- */
-export interface HumanResourceSelectedInterface extends HumanResourceInterface {
-  /**
-   * Prénom de l&#x27;agent
-   */
-  firstName?: string
-  /**
-   * Nom de l&#x27;agent
-   */
-  lastName?: string
-  /**
-   * Total d&#x27;affectation
-   */
-  totalAffected?: number
+interface HumanResourceSelectedInterface extends HumanResourceInterface {
   /**
    * Trouvé dans la recherche ou non
    */
@@ -832,9 +730,13 @@ export interface HumanResourceSelectedInterface extends HumanResourceInterface {
    */
   currentActivities: RHActivityInterface[]
   /**
+   * Situation orignal de l&#x27;activité
+   */
+  orignalCurrentActivities: RHActivityInterface[]
+  /**
    * ETP a la date sélectionnée
    */
-  etp: number
+  etp: number | null
   /**
    * Categorie à la date sélectionnée
    */
@@ -847,12 +749,16 @@ export interface HumanResourceSelectedInterface extends HumanResourceInterface {
    * Situation à la date sélectionnée
    */
   currentSituation: HRSituationInterface | null
+  /**
+   * Is c&#x27;est modifié ou non
+   */
+  isModify: boolean
 }
 
 /**
  * Liste des fiches d&#x27;une catégories
  */
-export interface listFormatedInterface {
+interface listFormatedInterface {
   /**
    * Couleur de la categories
    */
@@ -862,17 +768,21 @@ export interface listFormatedInterface {
    */
   bgColor: string
   /**
-   * Couleur de fond de la categories
+   * Couleur de fond de la categories au hover
    */
-  hoverColor: string
+  hoveColor: string
   /**
    * Nom de la catégorie (pluriel ou non)
    */
   label: string
   /**
+   * Nom de la catégorie (au singulier)
+   */
+  originalLabel: string
+  /**
    * Liste des fiches
    */
-  hr: HumanResourceSelectedInterface[]
+  allHr: HumanResourceSelectedInterface[]
   /**
    * Liste des fiches après filtres
    */
@@ -880,488 +790,439 @@ export interface listFormatedInterface {
   /**
    * Reférentiel avec les calcules d&#x27;etp, couverture propre à la catégorie
    */
-  referentiel: ContentieuReferentielInterface[]
+  referentiel: ContentieuReferentielCalculateInterface[]
+  /**
+   * Liste des id des personnes selectionnée
+   */
+  personSelected: number[]
   /**
    * Id de la categorie
    */
   categoryId: number
+  /**
+   * Total des ETP d&#x27;une categorie
+   */
+  totalRealETp: number
 }
 
 /**
- * Page de la liste des fiches (magistrats, greffier ...)
+ * Référentiel surchargé avec un visuel et des calculs ajustés
+ */
+interface ContentieuReferentielCalculateInterface
+  /**
+   * Référentiel surchargé avec un visuel et des calculs ajustés
+   */
+  extends ContentieuReferentielInterface {
+  /**
+   * Délai Total d&#x27;Ecoulement des Stock
+   */
+  dtes: number
+  /**
+   * Taux de couverture
+   */
+  coverage: number
+  /**
+   * Délai Total d&#x27;Ecoulement des Stock réél
+   */
+  realDTESInMonths: number
+  /**
+   * Taux de couverture réél
+   */
+  realCoverage: number
+  /**
+   * ETP moyen sur une période
+   */
+  etpToCompute: number
+  /**
+   * ETP disponible à aujourd&#x27;hui
+   */
+  etpUseToday: number
+  /**
+   * Temps moyen par dossier
+   */
+  magRealTimePerCase: number | null
+  /**
+   * Nombre d&#x27;heure travaillé
+   */
+  nbWorkingHours: number
+  /**
+   * Nombre de jour travaillé
+   */
+  nbWorkingDays: number
+  /**
+   * Total d&#x27;entrée
+   */
+  totalIn: number
+  /**
+   * Dernier stock disponible
+   */
+  lastStock: number
+}
+
+/**
+ * Page de réaffectation
  */
 @Component({
   standalone: true,
   imports: [
     WrapperComponent,
     DateSelectComponent,
-    FilterPanelComponent,
-    RadioButtonComponent,
-    CommonModule,
-    PersonPreviewComponent,
+    SelectComponent,
     InputButtonComponent,
+    SpeedometerComponent,
+    CommonModule,
+    PopupComponent,
+    EtpPreviewComponent,
+    PanelActivitiesComponent,
     IntroJSComponent,
-    RouterLink,
     MatIconModule,
     FormsModule,
-    EmptyInputComponent,
+    SanitizeHtmlPipe,
   ],
-  templateUrl: &#x27;./workforce.page.html&#x27;,
-  styleUrls: [&#x27;./workforce.page.scss&#x27;],
+  templateUrl: &#x27;./reaffectator.page.html&#x27;,
+  styleUrls: [&#x27;./reaffectator.page.scss&#x27;],
 })
-export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
+/**
+ * Page de réaffectation
+ */
+export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service de gestion des fiches agents
+   */
   humanResourceService &#x3D; inject(HumanResourceService)
-  referentielService &#x3D; inject(ReferentielService)
-  route &#x3D; inject(ActivatedRoute)
-  router &#x3D; inject(Router)
+  /**
+   * Service de gestion de la force de travail
+   */
   workforceService &#x3D; inject(WorkforceService)
+  /**
+   * Service de gestion de la réaffectation
+   */
+  rs &#x3D; inject(ReaffectatorService)
+  /**
+   * Service de gestion de l&#x27;utilisateur
+   */
   userService &#x3D; inject(UserService)
-  hrFonctionService &#x3D; inject(HRFonctionService)
+  /**
+   * Service de navigation
+   */
+  router &#x3D; inject(Router)
+  /**
+   * Service de log des KPIs
+   */
+  kpiService &#x3D; inject(KPIService)
+  /**
+   * Service de gestion de l&#x27;application
+   */
   appService &#x3D; inject(AppService)
   /**
-   * Liste de toutes les RH
+   * Dom du wrapper
+   * @param wrapper
    */
-  allHumanResources: HumanResourceInterface[] &#x3D; []
+  @ViewChild(&#x27;wrapper&#x27;) wrapper: WrapperComponent | undefined
   /**
    * Liste de toutes les personnes quelque soit l&#x27;arrivée ou le départ
    */
   allPersons: HumanResourceIsInInterface[] &#x3D; []
   /**
-   * Liste de toutes les personnes quelque soit l&#x27;arrivée ou le départ
+   * Boulean lors de l&#x27;impression
    */
-  allPersonsFiltered: HumanResourceIsInInterface[] | null &#x3D; null
+  duringPrint: boolean &#x3D; false
   /**
-   * Liste de toutes les personnes visibles
-   */
-  allPersonsFilteredIsIn: HumanResourceIsInInterface[] &#x3D; []
-  /**
-   * Liste de toutes les personnes non visibles
-   */
-  allPersonsFilteredNotIn: HumanResourceIsInInterface[] &#x3D; []
-  /**
-   * Formated RH
-   */
-  preformatedAllHumanResource: HumanResourceSelectedInterface[] &#x3D; []
-  /***
-   * RH
+   * Liste des fiches
    */
   humanResources: HumanResourceSelectedInterface[] &#x3D; []
   /**
-   * RH filtrés
+   * Referentiel complet
    */
-  humanResourcesFilters: HumanResourceSelectedInterface[] &#x3D; []
+  referentiel: ContentieuReferentielCalculateInterface[] &#x3D; []
   /**
-   * Contentieux
-   */
-  referentiel: ContentieuReferentielInterface[] &#x3D; []
-  /**
-   * Liste des référentiels
+   * Menu déroulant pour le référentiel
    */
   formReferentiel: dataInterface[] &#x3D; []
   /**
-   * liste des catégories filtrées
+   * Menu déroulant pour les catégories
    */
-  categoriesFilterList: HRCategorySelectedInterface[] &#x3D; []
+  formFilterSelect: dataInterface[] &#x3D; []
   /**
-   * Liste des ids catégories
+   * Menu déroulant pour les fonctions
    */
-  categoriesFilterListIds: number[] &#x3D; []
+  formFilterFonctionsSelect: dataInterface[] &#x3D; []
   /**
-   * Identifiants des contentieux selectionnés
-   */
-  selectedReferentielIds: number[] &#x3D; []
-  /**
-   * Identifiants des sous contentieux selectionnés
-   */
-  selectedSubReferentielIds: number[] | null &#x3D; null
-  /**
-   * Valeur du champs recherche
+   * Recherche textuelle
    */
   searchValue: string &#x3D; &#x27;&#x27;
   /**
-   * Liste des RH trouvées
+   * List des personnes trouvé lors de la recherche
    */
   valuesFinded: HumanResourceInterface[] | null &#x3D; null
   /**
-   * Indice des valeurs trouvées suite à une recherche
+   * Index de la personne que nous avons trouvé
    */
   indexValuesFinded: number &#x3D; 0
   /**
-   * Backup des RH
+   * Instance du timeout pour la recherche
    */
-  hrBackup: BackupInterface | null &#x3D; null
+  timeoutUpdateSearch: any &#x3D; null
   /**
-   * Date selectionnée
+   * Date sélectionnée
    */
   dateSelected: Date &#x3D; this.workforceService.dateSelected.getValue()
   /**
-   * Liste formatée contenant l&#x27;ensemble des informations nécessaire au chargement de la page
+   * Liste reçu par le serveur
    */
   listFormated: listFormatedInterface[] &#x3D; []
   /**
-   * Liste des filtres selectionnés
+   * Contentieux avec les calculs
    */
   filterSelected: {
-    filter: ContentieuReferentielInterface | null
+    filter: ContentieuReferentielCalculateInterface | null
     up: boolean | null
   } &#x3D; { filter: null, up: null }
   /**
-   * Affichage du panneau de selection de filtre
+   * Position de la dernière recherche
    */
-  showFilterPanel: boolean &#x3D; false
+  lastScrollTop: number &#x3D; 0
   /**
-   * Paramètres de filtre selectionnés
+   * Boolean de première recherche
    */
-  filterParams: FilterPanelInterface | null &#x3D; this.workforceService.filterParams
+  isFirstLoad: boolean &#x3D; true
   /**
-   * Accès au réafectateur
+   * Affiche ou non le paneau des indicateurs
    */
-  canViewReaffectator: boolean &#x3D; false
+  showIndicatorPanel: boolean &#x3D; true
   /**
-   * Documentation module
+   * Liste des ETP par défaut qui sont modifiable à titre informatif
    */
-  documentation: DocumentationInterface &#x3D; {
-    title: &#x27;Le ventilateur :&#x27;,
-    path: this.userService.isCa()
-      ? &#x27;https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/quest-ce-que-cest&#x27;
-      : &#x27;https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest&#x27;,
-    printSubTitle: true,
-  }
+  firstETPTargetValue: (number | null)[] &#x3D; []
   /**
-   * En cour de chargement
+   * Isole les personnes modifiés
    */
-  isLoading: boolean &#x3D; false
+  isolatePersons: boolean &#x3D; false
   /**
-   * Poste string
+   * Affiche les personnes modifiés et leurs pendant non modifié
    */
-  listPoste &#x3D; [&#x27;titulaire&#x27;, &#x27;placé&#x27;, &#x27;contractuel&#x27;]
+  showReelValues: boolean &#x3D; false
   /**
-   * Opacité pour les background des contentieux
+   * Reaffectator Service
    */
-  OPACITY &#x3D; OPACITY_20
+  reaffectatorService: ReaffectatorService
   /**
-   * Intro JS Steps
+   * Utilisateur sort du composant
    */
-  introSteps: IntroJSStep[] &#x3D; this.isTJ()
-    ? [
-        {
-          target: &#x27;#wrapper-contener&#x27;,
-          title: &#x27;A quoi sert le ventilateur ?&#x27;,
-          intro:
-            &quot;En renseignant la situation de chacun des agents de votre juridiction dans une fiche individuelle, cette fonctionnalité vous permet de &lt;b&gt;visualiser en un coup d&#x27;œil et à la date de votre choix pour l&#x27;ensemble des agents du TJ leur ETPT réel et l&#x27;affectation de chacun&lt;/b&gt; sur les différents contentieux.&quot;,
-        },
-        {
-          target: &#x27;.header-list&#x27;,
-          title: &#x27;Liste des contentieux&#x27;,
-          intro:
-            &quot;Retrouvez ici la &lt;b&gt;liste des contentieux&lt;/b&gt; traités par la juridiction et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le &lt;b&gt;volume global d&#x27;ETPT&lt;/b&gt; affecté par votre juridiction au &lt;b&gt;traitement de chaque type d&#x27;activité&lt;/b&gt; par &lt;b&gt;catégorie d&#x27;agent&lt;/b&gt;.&quot;,
-        },
-        {
-          target: &#x27;.step-3 &gt; .title&#x27;,
-          title: &quot;Le calendrier, le choix des contentieux et le nombre d&#x27;agents&quot;,
-          intro:
-            &quot;En &lt;b&gt;modifiant la date dans le calendrier&lt;/b&gt;, affichez &lt;b&gt;la liste des agents présents&lt;/b&gt; et les &lt;b&gt;ETPT mobilisés sur les différents contentieux&lt;/b&gt; à la date choisie. Vous pouvez aussi &lt;b&gt;choisir&lt;/b&gt; de n&#x27;afficher que les données d&#x27;ETPT relatives à &lt;b&gt;certains contentieux&lt;/b&gt;.&quot;,
-        },
-        {
-          target: &#x27;.header-list .filter-button&#x27;,
-          title: &#x27;Filtrer et trier&#x27;,
-          intro:
-            &quot;Vous avez la possibilité de &lt;b&gt;filtrer&lt;/b&gt; cette liste d&#x27;agents par fonction, la &lt;b&gt;trier&lt;/b&gt; par &lt;b&gt;nom&lt;/b&gt;, &lt;b&gt;fonction&lt;/b&gt;, &lt;b&gt;date de mise à jour ou taux d&#x27;affectation&lt;/b&gt; et de &lt;b&gt;modifier l&#x27;affichage&lt;/b&gt; des agents d&#x27;abord par nom ou par prénom.&quot;,
-        },
-        {
-          target: &#x27;person-preview&#x27;,
-          title: &#x27;Ajuster une fiche en cliquant directement sur celle-ci&#x27;,
-          intro:
-            &quot;Vous pourrez ainsi modifier les &lt;b&gt;nom&lt;/b&gt;, &lt;b&gt;prénom&lt;/b&gt;, &lt;b&gt;matricule&lt;/b&gt; et &lt;b&gt;date d&#x27;arrivée&lt;/b&gt; ou de départ de la juridiction d&#x27;un agent, en saisissant les nouvelles valeurs directement dans les champs concernés. Vous aurez également la possibilité d&#x27;ajouter un commentaire et des indisponibilités.&lt;br/&gt;&lt;br/&gt;Dans ces fiches agents, vous pourrez &lt;b&gt;renseigner ou modifier la répartition en pourcentage du temps de travail&lt;/b&gt; de chaque agent sur les différents contentieux ou sous-contentieux qu&#x27;il traite.&lt;br/&gt;&lt;br/&gt;Dès lors, plus besoin de faire de calculs d&#x27;ETPT en proportion du temps de travail ou de la &lt;b&gt;date d’arrivée&lt;/b&gt; dans la juridiction : A-JUST s’en chargera pour vous !&quot;,
-        },
-        {
-          target: &#x27;.search-zone&#x27;,
-          title: &#x27;Rechercher un agent :&#x27;,
-          intro:
-            &quot;Le &lt;b&gt;champ dédié en haut à droite&lt;/b&gt; de l&#x27;écran vous permet de &lt;b&gt;trouver rapidement la fiche d&#x27;un agent&lt;/b&gt; (même s&#x27;il a quitté votre juridiction). Pour cela, il vous suffit de saisir son nom ou son prénom et de cliquer sur la fiche proposée.&quot;,
-        },
-        {
-          target: &#x27;.add-collaborator&#x27;,
-          title: &#x27;Ajouter un nouvel agent :&#x27;,
-          intro:
-            &quot;Vous pouvez ajouter un agent s&#x27;il n&#x27;est pas dans les effectifs présents dans A-JUST. &lt;br/&gt;&lt;br/&gt;Renseignez les informations demandées, une date d&#x27;arrivée et de départ lors que celle-ci est connue. Vous pouvez effectuer une première ventilation ; pensez à &lt;b&gt;vérifier que votre taux d&#x27;affectation est de 100%&lt;/b&gt; à l’aide de la barre de remplissage située sous les contentieux.&quot;,
-        },
-        {
-          target: &#x27;.menu-item.tools&#x27;,
-          //target: &#x27;.menu .sub-tools &gt; p:nth-child(2n)&#x27;,
-          title: &#x27;Découvrez nos outils :&#x27;,
-          intro:
-            &quot;Téléchargeable dans chaque fiche agent, la &lt;b&gt;calculatrice&lt;/b&gt; vous permet d&#x27;obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.&lt;br/&gt;&lt;br/&gt;La &lt;b&gt;nomenclature&lt;/b&gt; permet par les codes NAC de connaître la nature des affaires prises en compte dans un sous-contentieux : c&#x27;est la colonne vertébrale d&#x27;A-JUST !&quot;,
-          /*intro:
-        &quot;vous permet de convertir en &lt;b&gt;pourcentage d&#x27;ETPT la part de temps de travail&lt;/b&gt; qu&#x27;un agent consacre à une activité.&quot;,
-        beforeLoad: async (intro: any) &#x3D;&gt; {
-          const subTools &#x3D; document.querySelector(&#x27;.menu .sub-tools&#x27;)
-          if(!subTools) {
-            const itemToClick &#x3D; document.querySelector(&#x27;.menu-item.tools&#x27;)
-            if(itemToClick) {
-              // @ts-ignore
-              itemToClick.click()
-              await sleep(200)
-            }
-          }
-        }*/
-        },
-        {
-          target: &#x27;.menu-item.tools&#x27;,
-          //target: &#x27;.menu .sub-tools &gt; p:nth-child(3n)&#x27;,
-          title: &quot;L&#x27;extracteur d&#x27;ETPT :&quot;,
-          intro:
-            &quot;Choisissez la &lt;b&gt;période&lt;/b&gt; et la &lt;b&gt;catégorie d&#x27;agents souhaitées&lt;/b&gt; et obtenez toutes ces informations dans un &lt;b&gt;fichier Excel&lt;/b&gt; que vous pourrez utiliser pour simplifier l&#x27;exercice annuel des déclaratifs d&#x27;ETPT&quot;,
-        },
-      ]
-    : [
-        {
-          target: &#x27;#wrapper-contener&#x27;,
-          title: &#x27;A quoi sert le ventilateur ?&#x27;,
-          intro:
-            &quot;En renseignant la situation de chacun des agents de votre cour d&#x27;appel dans une fiche individuelle, cette fonctionnalité vous permet de &lt;b&gt;visualiser en un coup d&#x27;œil et à la date de votre choix pour l&#x27;ensemble des agents de la CA leur ETPT réel et l&#x27;affectation de chacun&lt;/b&gt; sur les différents contentieux.&quot;,
-        },
-        {
-          target: &#x27;.header-list&#x27;,
-          title: &#x27;Liste des contentieux&#x27;,
-          intro:
-            &quot;Retrouvez ici la &lt;b&gt;liste des contentieux&lt;/b&gt; traités par la cour d&#x27;appel et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le &lt;b&gt;volume global d&#x27;ETPT&lt;/b&gt; affecté par votre juridiction au &lt;b&gt;traitement de chaque type d&#x27;activité&lt;/b&gt; par &lt;b&gt;catégorie d&#x27;agent&lt;/b&gt;.&quot;,
-        },
-        {
-          target: &#x27;.header-list .filter-button&#x27;,
-          title: &#x27;Filtrer et trier&#x27;,
-          intro:
-            &quot;Vous avez la possibilité de &lt;b&gt;filtrer&lt;/b&gt; cette liste d&#x27;agents par fonction, la &lt;b&gt;trier&lt;/b&gt; par &lt;b&gt;nom&lt;/b&gt;, &lt;b&gt;fonction&lt;/b&gt;, &lt;b&gt;date de mise à jour ou taux d&#x27;affectation&lt;/b&gt; et de &lt;b&gt;modifier l&#x27;affichage&lt;/b&gt; des agents d&#x27;abord par nom ou par prénom.&quot;,
-        },
-        {
-          target: &#x27;person-preview&#x27;,
-          title: &#x27;Ajuster une fiche en cliquant directement sur celle-ci&#x27;,
-          intro:
-            &quot;Vous pourrez ainsi modifier les &lt;b&gt;nom&lt;/b&gt;, &lt;b&gt;prénom&lt;/b&gt;, &lt;b&gt;matricule&lt;/b&gt; et &lt;b&gt;date d&#x27;arrivée&lt;/b&gt; ou de départ de la juridiction d&#x27;un agent, en saisissant les nouvelles valeurs directement dans les champs concernés. Vous aurez également la possibilité d&#x27;ajouter un commentaire et des indisponibilités.&lt;br/&gt;&lt;br/&gt;Dans ces fiches agents, vous pourrez &lt;b&gt;renseigner ou modifier la répartition en pourcentage du temps de travail&lt;/b&gt; de chaque agent sur les différents contentieux ou sous-contentieux qu&#x27;il traite.&lt;br/&gt;&lt;br/&gt;Dès lors, plus besoin de faire de calculs d&#x27;ETPT en proportion du temps de travail ou de la &lt;b&gt;date d’arrivée&lt;/b&gt; dans la juridiction : A-JUST s’en chargera pour vous !&quot;,
-        },
-        {
-          target: &#x27;.search-zone&#x27;,
-          title: &#x27;Rechercher un agent :&#x27;,
-          intro:
-            &quot;Le &lt;b&gt;champ dédié en haut à droite&lt;/b&gt; de l&#x27;écran vous permet de &lt;b&gt;trouver rapidement la fiche d&#x27;un agent&lt;/b&gt; (même s&#x27;il a quitté votre juridiction). Pour cela, il vous suffit de saisir son nom ou son prénom et de cliquer sur la fiche proposée.&quot;,
-        },
-        {
-          target: &#x27;.add-collaborator&#x27;,
-          title: &#x27;Ajouter un nouvel agent :&#x27;,
-          intro:
-            &quot;Vous pouvez ajouter un agent s&#x27;il n&#x27;est pas dans les effectifs présents dans A-JUST. &lt;br/&gt;&lt;br/&gt;Renseignez les informations demandées, une date d&#x27;arrivée et de départ lors que celle-ci est connue. Vous pouvez effectuer une première ventilation ; pensez à &lt;b&gt;vérifier que votre taux d&#x27;affectation est de 100%&lt;/b&gt; à l’aide de la barre de remplissage située sous les contentieux.&quot;,
-        },
-        {
-          target: &#x27;.menu-item.tools&#x27;,
-          //target: &#x27;.menu .sub-tools &gt; p:nth-child(2n)&#x27;,
-          title: &#x27;Découvrez nos outils :&#x27;,
-          intro:
-            &quot;Téléchargeable dans chaque fiche agent, la &lt;b&gt;calculatrice&lt;/b&gt; vous permet d&#x27;obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.&quot;,
-        },
-      ]
+  isLeaving: boolean &#x3D; false
+  /**
+   * Utilisateur peut sortir du composant
+   */
+  canLeave: boolean &#x3D; false
 
   /**
-   * Constructor
+   * Force désactivation du composant
+   */
+  forceDeactivate: boolean &#x3D; false
+
+  /**
+   * État suivant
+   */
+  nextState: string | null &#x3D; null
+
+  /**
+   * Flag pour indiquer que le composant est en cours de destruction
+   */
+  isDestroyed: boolean &#x3D; false
+
+  /**
+   * Étapes d&#x27;introduction
+   */
+  introSteps: IntroJSStep[] &#x3D; [
+    {
+      target: &#x27;#wrapper-contener&#x27;,
+      title: &#x27;À quoi sert le simulateur des affectations ?&#x27;,
+      intro:
+        &#x27;&lt;p&gt;Cet écran qui se présente comme le ventilateur en mode « nuit », c’est-à-dire simulation, vous permet &lt;b&gt;d’adapter finement l’affectation de vos effectifs, à ressources constantes&lt;/b&gt;, sur les différents contentieux, &lt;b&gt;en visualisant instantanément l’impact de votre projet de réorganisation sur les délais de traitement du contentieux que vous voulez renforcer&lt;/b&gt; mais aussi sur les autres matières que vous allez de ce fait nécessairement dégarnir.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Toutes vos actions sur cet écran n’ont aucun impact sur la ventilation actuelle de vos agents&lt;/b&gt; : ce ne sont que des projections.&lt;/p&gt;&#x27;,
+    },
+    {
+      target: &#x27;#content .container .title&#x27;,
+      title: &#x27;Choisissez la date et la catégorie d’agent&#x27;,
+      intro:
+        &#x27;&lt;p&gt;afin de déterminer &lt;b&gt;le champ d’application des hypothèses que vous allez jouer.&lt;/b&gt; Comme dans le ventilateur, en modifiant la date dans le calendrier, vous affichez la liste &lt;b&gt;des agents présents selon leur catégorie ainsi que la ventilation de leur ETPT&lt;/b&gt; sur les différents contentieux à la date choisie. Vous pouvez &lt;b&gt;filtrer par fonction ou contentieux&lt;/b&gt; selon vos besoins.&lt;/p&gt;&#x27;,
+    },
+    {
+      target: &#x27;#content .container .title .search-bar&#x27;,
+      title: &#x27;Rechercher&#x27;,
+      intro: &#x27;&lt;p&gt;Vous pouvez également rechercher un agent de façon nominative&lt;/p&gt;&#x27;,
+    },
+    {
+      target: &#x27;#content .container .indicators&#x27;,
+      title: &#x27;Vos indicateurs d’impact affichent&#x27;,
+      intro:
+        &quot;&lt;p&gt;pour chaque contentieux, la situation à la date choisie : &lt;ul&gt;&lt;li&gt;des &lt;b&gt;ETPT affectés&lt;/b&gt;&lt;/li&gt;&lt;li&gt; du &lt;b&gt;taux de couverture et du DTES exprimé en nombre de mois&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt; issue des &lt;b&gt;données d&#x27;activité&lt;/b&gt; et &lt;b&gt;d’effectifs&lt;/b&gt; enregistrées dans A-JUST. La projection sera d’autant plus précise et fine que vous aurez actualisé ces éléments, en fonction des informations dont vous disposez, dans le ventilateur et l&#x27;écran de données d’activité.&lt;br/&gt; Vous pouvez renseigner la &lt;b&gt;valeur cible d’ETPT&lt;/b&gt; que vous souhaitez atteindre dans un contentieux.&lt;/p&gt;&quot;,
+    },
+    {
+      target: &#x27;#wrapper-contener&#x27;,
+      title: &#x27;Découvrir la fonctionnalité&#x27;,
+      intro:
+        &#x27;&lt;p&gt;Explorez notre vidéo explicative du &quot;&lt;b&gt;simulateur des affectations&lt;/b&gt;&quot;, orientée autour de deux cas d\&#x27;usage : &lt;b&gt;réagir à une diminution des ETPT disponibles&lt;/b&gt; et &lt;b&gt;prioriser un contentieux pour en améliorer les délais de traitement&lt;/b&gt;.&lt;/p&gt;&lt;video controls class&#x3D;&quot;intro-js-video&quot;&gt;&lt;source src&#x3D;&quot;/assets/videos/video-reaffectateur.mp4&quot; type&#x3D;&quot;video/mp4&quot; /&gt;&lt;/video&gt;&#x27;,
+    },
+  ]
+
+  /**
+   * Constructeur
    */
   constructor() {
     super()
+    this.reaffectatorService &#x3D; this.rs
   }
 
   /**
-   * Initialisation du composent
+   * Actions du popup
+   */
+  popupAction &#x3D; [
+    { id: &#x27;leave&#x27;, content: &#x27;Quitter sans exporter&#x27; },
+    { id: &#x27;export&#x27;, content: &#x27;Exporter en PDF et quitter&#x27;, fill: true },
+  ]
+
+  /**
+   * A l&#x27;initialisation chercher les variables globals puis charger
    */
   ngOnInit() {
-    if (!this.userService.canViewVentilation()) {
-      this.userService.redirectToHome()
-    }
-
     this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((ref: ContentieuReferentielInterface[]) &#x3D;&gt; {
-        this.referentiel &#x3D; ref.filter((a) &#x3D;&gt; this.referentielService.idsIndispo.indexOf(a.id) &#x3D;&#x3D;&#x3D; -1).map((r) &#x3D;&gt; ({ ...r, selected: true }))
-
-        this.formReferentiel &#x3D; this.referentiel.map((r) &#x3D;&gt; ({
-          id: r.id,
-          value: this.userService.referentielMappingNameByInterface(r.label),
-          childrens: (r.childrens || []).map((c) &#x3D;&gt; ({
-            id: c.id,
-            value: this.userService.referentielMappingNameByInterface(c.label),
-          })),
+      this.humanResourceService.backupId.subscribe(() &#x3D;&gt; {
+        this.onFilterList()
+      }),
+    )
+    this.watch(
+      this.humanResourceService.categories.subscribe((categories: HRCategoryInterface[]) &#x3D;&gt; {
+        this.formFilterSelect &#x3D; categories.map((f) &#x3D;&gt; ({
+          id: f.id,
+          value: f.label,
+          orignalValue: getCategoryTitle(f.label),
+          orignalValuePlurial: getCategoryTitlePlurial(f.label),
         }))
 
-        this.selectedReferentielIds &#x3D; this.humanResourceService.selectedReferentielIds
-        this.selectedSubReferentielIds &#x3D; this.humanResourceService.selectedSubReferentielIds
-
-        this.onFilterList(false, true, true)
+        this.onSelectedCategoriesIdChanged(
+          this.reaffectatorService.selectedCategoriesId !&#x3D;&#x3D; null
+            ? [this.reaffectatorService.selectedCategoriesId]
+            : this.formFilterSelect.length
+              ? [this.formFilterSelect[0].id]
+              : [],
+        )
       }),
     )
-    this.watch(
-      this.humanResourceService.categories.subscribe((categories) &#x3D;&gt; {
-        this.categoriesFilterListIds &#x3D; this.humanResourceService.categoriesFilterListIds
-
-        this.categoriesFilterList &#x3D; categories.map((c) &#x3D;&gt; {
-          let selected &#x3D; true
-
-          if (this.categoriesFilterListIds.length &#x3D;&#x3D;&#x3D; categories.length) {
-            const { c: categoryId } &#x3D; this.route.snapshot.queryParams
-            if (categoryId &amp;&amp; c.id !&#x3D;&#x3D; +categoryId) {
-              selected &#x3D; false
-            }
-          } else {
-            selected &#x3D; this.categoriesFilterListIds.indexOf(c.id) !&#x3D;&#x3D; -1
-          }
-
-          return {
-            ...c,
-            selected,
-            headerLabel: c.label &amp;&amp; c.label &#x3D;&#x3D;&#x3D; &#x27;Magistrat&#x27; ? &#x27;Siège&#x27; : c.label,
-            label: c.label &amp;&amp; c.label &#x3D;&#x3D;&#x3D; &#x27;Magistrat&#x27; ? &#x27;magistrat&#x27; : &#x27;agent&#x27;,
-            labelPlural: c.label &amp;&amp; c.label &#x3D;&#x3D;&#x3D; &#x27;Magistrat&#x27; ? &#x27;magistrats&#x27; : &#x27;agents&#x27;,
-            etpt: 0,
-            nbPersonal: 0,
-            openSubMenu: false,
-            poste: [
-              {
-                name: &#x27;titulaire&#x27;,
-                selected: true,
-                etpt: 0,
-                nbPersonal: 0,
-              },
-              {
-                name: &#x27;placé&#x27;,
-                selected: true,
-                etpt: 0,
-                nbPersonal: 0,
-              },
-              {
-                name: &#x27;contractuel&#x27;,
-                selected: true,
-                etpt: 0,
-                nbPersonal: 0,
-              },
-            ],
-          }
-        })
-
-        this.onFilterList()
-      }),
-    )
-    this.watch(
-      this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) &#x3D;&gt; {
-        this.hrBackup &#x3D; hrBackup
-        this.onFilterList()
-      }),
-    )
-    this.route.queryParams.pipe(debounceTime(300)).subscribe((params) &#x3D;&gt; {
-      const { c: categoryId } &#x3D; params
-
-      if (categoryId) {
-        this.categoriesFilterList &#x3D; this.categoriesFilterList.map((c) &#x3D;&gt; {
-          let selected &#x3D; true
-          if (categoryId &amp;&amp; c.id !&#x3D;&#x3D; +categoryId) {
-            selected &#x3D; false
-          }
-
-          return {
-            ...c,
-            selected,
-          }
-        })
-
-        this.onFilterList()
-      }
-    })
-
-    const user &#x3D; this.userService.user.getValue()
-    this.canViewReaffectator &#x3D; user &amp;&amp; user.access &amp;&amp; user.access.indexOf(7) !&#x3D;&#x3D; -1 ? true : false
   }
 
   /**
-   * Destruction du composant
+   * Destruction des observables
    */
   ngOnDestroy() {
+    // Vider immédiatement les listes pour arrêter les @defer
     this.listFormated &#x3D; []
+    this.humanResources &#x3D; []
+    this.referentiel &#x3D; []
+    this.allPersons &#x3D; []
+
+    // Nettoyer les timeouts actifs
+    if (this.timeoutUpdateSearch) {
+      clearTimeout(this.timeoutUpdateSearch)
+      this.timeoutUpdateSearch &#x3D; null
+    }
+
+    // Réinitialiser les variables de recherche
+    this.valuesFinded &#x3D; null
+    this.searchValue &#x3D; &#x27;&#x27;
+
+    // Marquer le composant comme détruit
+    this.isDestroyed &#x3D; true
+
+    // Détruire les observables
     this.watcherDestroy()
   }
 
   /**
-   * Detect is TJ
+   * Vérifie si le composant peut être désactivé
+   * @param nextState
    * @returns
    */
-  isTJ() {
-    return this.userService.interfaceType !&#x3D;&#x3D; 1
+  canDeactivate(nextState: string) {
+    const modified &#x3D; this.listFormated.filter((elem) &#x3D;&gt; {
+      return elem.hrFiltered.some((hr) &#x3D;&gt; hr.isModify)
+    })
+    if (modified.length &#x3D;&#x3D;&#x3D; 0) return true
+
+    this.isLeaving &#x3D; true
+    this.nextState &#x3D; nextState
+    return this.forceDeactivate
   }
 
   /**
-   * Maj de catégorie filtrée
+   * Actions du popup
+   * @param action
+   */
+  onPopupDetailAction(action: any) {
+    switch (action.id) {
+      case &#x27;leave&#x27;:
+        {
+          this.isLeaving &#x3D; false
+          this.forceDeactivate &#x3D; true
+          this.router.navigate([this.nextState])
+        }
+        break
+      case &#x27;export&#x27;:
+        {
+          this.isLeaving &#x3D; false
+          this.forceDeactivate &#x3D; true
+          this.onExport()
+        }
+        break
+    }
+  }
+
+  /**
+   * Mise à jour des catégories du menu déroulant
    */
   updateCategoryValues() {
-    this.categoriesFilterList &#x3D; this.categoriesFilterList.map((c) &#x3D;&gt; {
-      const formatedList &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
-      let personal: any &#x3D; []
-      let etpt &#x3D; 0
-      let subTotalEtp: { [key: string]: { etpt: number; total: number } } &#x3D; this.humanResourceService.calculateSubCategories(formatedList?.hrFiltered || [])
+    // Mettre à jour les valeurs des catégories
+    this.formFilterSelect &#x3D; this.formFilterSelect.map((c) &#x3D;&gt; {
+      const itemBlock &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
+      c.value &#x3D; c.orignalValue + &#x27;&#x27;
 
-      if (formatedList) {
-        personal &#x3D; formatedList.hrFiltered
-
-        personal.map((h: any) &#x3D;&gt; {
-          let realETP &#x3D; (h.etp || 0) - h.hasIndisponibility
-          if (realETP &lt; 0) {
-            realETP &#x3D; 0
-          }
-          etpt +&#x3D; realETP
-        })
+      if (itemBlock &amp;&amp; itemBlock.hrFiltered) {
+        c.value &#x3D; &#x60;${itemBlock.hrFiltered.length} ${itemBlock.hrFiltered.length &gt; 1 ? c.orignalValuePlurial || c.orignalValue : c.orignalValue} (${fixDecimal(
+          sumBy(itemBlock.hrFiltered || [], function (h) {
+            const etp &#x3D; (h.etp || 0) - h.hasIndisponibility
+            return etp &gt; 0 ? etp : 0
+          }),
+          100,
+        )} ETPT)&#x60;
       }
 
-      const posteList &#x3D; c.poste.map((f: HRCategorypositionInterface) &#x3D;&gt; {
-        return {
-          ...f,
-          name: f.name,
-          etpt: fixDecimal(subTotalEtp[f.name].etpt),
-          nbPersonal: personal.filter((x: any) &#x3D;&gt; x.fonction?.position &#x3D;&#x3D;&#x3D; f.name.charAt(0).toUpperCase() + f.name.slice(1)).length,
-        }
-      })
-
-      return {
-        ...c,
-        etpt,
-        nbPersonal: personal.length,
-        poste: posteList,
+      if (c.id &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId) {
+        c.renderHTML &#x3D; &#x60;&lt;b&gt;${c.value}&lt;/b&gt;&#x60;
+      } else {
+        c.renderHTML &#x3D; c.value
       }
+
+      return c
     })
-    this.calculateTotalAffected()
   }
 
   /**
-   * Ajout d&#x27;une RH
-   */
-  async addHR() {
-    const newId &#x3D; await this.humanResourceService.createHumanResource(this.dateSelected)
-    this.route.snapshot.fragment &#x3D; newId + &#x27;&#x27;
-    this.router.navigate([&#x27;/resource-humaine&#x27;, newId])
-  }
-
-  /**
-   * Retourne l&#x27;id d&#x27;un élément
+   * Accélération du chargement de la liste
    * @param index
    * @param item
-   * @returns
+   * @returns id
    */
   trackById(index: number, item: any) {
-    console.log(&#x27;item&#x27;, item)
-    return index
+    return item.id
   }
 
   /**
-   * Gestion de l&#x27;opacité pour une RH
+   * Retourne si une personne est trouvé par la recherche ou non
    * @param hr
-   * @returns
+   * @returns opacity
    */
   checkHROpacity(hr: HumanResourceInterface) {
-    const name &#x3D;
-      this.filterParams &amp;&amp; this.filterParams.display &#x3D;&#x3D;&#x3D; &#x27;nom/prénom&#x27;
-        ? (hr.lastName || &#x27;&#x27;) + &#x27; &#x27; + (hr.firstName || &#x27;&#x27;)
-        : (hr.firstName || &#x27;&#x27;) + &#x27; &#x27; + (hr.lastName || &#x27;&#x27;)
+    const name &#x3D; (hr.firstName || &#x27;&#x27;) + &#x27; &#x27; + (hr.lastName || &#x27;&#x27;)
+
     if (!this.searchValue || name.toLowerCase().includes(this.searchValue.toLowerCase())) {
       return 1
     }
@@ -1370,192 +1231,89 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   /**
-   * Recherche de RH
+   * Appel au serveur pour avoir la liste
+   * @returns list
    */
-  onSearchBy() {
-    const valuesFinded: HumanResourceInterface[] &#x3D; []
-    let nbPerson &#x3D; 0
-    this.listFormated &#x3D; this.listFormated.map((l: listFormatedInterface) &#x3D;&gt; ({
-      ...l,
-      hrFiltered: l.hrFiltered.map((h) &#x3D;&gt; {
-        const opacity &#x3D; this.checkHROpacity(h)
-        nbPerson++
-        if (opacity &#x3D;&#x3D;&#x3D; 1) {
-          valuesFinded.push(h)
-        }
-        return {
-          ...h,
-          opacity,
-        }
-      }),
-    }))
-    this.valuesFinded &#x3D; valuesFinded.length &#x3D;&#x3D;&#x3D; nbPerson ? null : valuesFinded
-    this.valuesFinded &#x3D; this.valuesFinded?.filter((x: any) &#x3D;&gt; (this.humanResourceService.categoriesFilterListIds || []).includes(x.category.id)) || []
-    this.indexValuesFinded &#x3D; 0
-
-    this.allPersonsFiltered &#x3D; null
-    let list &#x3D; [...this.allPersons]
-    list &#x3D; list.filter((h) &#x3D;&gt; this.checkHROpacity(h) &#x3D;&#x3D;&#x3D; 1)
-    if (list.length &lt;&#x3D; FILTER_LIMIT_ON_SEARCH &amp;&amp; this.allPersons.length !&#x3D;&#x3D; list.length) {
-      if (this.allPersons.length !&#x3D;&#x3D; list.length &amp;&amp; this.valuesFinded &amp;&amp; this.valuesFinded.length) {
-        this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
-      }
-
-      let allPersonIds: number[] &#x3D; []
-      this.listFormated.map((l) &#x3D;&gt; {
-        allPersonIds &#x3D; allPersonIds.concat(l.hrFiltered.map((h) &#x3D;&gt; h.id))
-      })
-
-      this.allPersonsFiltered &#x3D; [
-        ...list.map((person) &#x3D;&gt; {
-          return {
-            ...person,
-            isIn: allPersonIds.includes(person.id),
-          }
-        }),
-      ]
-    }
-
-    console.log(&#x27;this.allPersonsFiltered&#x27;, this.allPersonsFiltered)
-
-    this.allPersonsFilteredIsIn &#x3D; this.filterFindedPerson(this.allPersonsFiltered, true)
-    this.allPersonsFilteredNotIn &#x3D; this.humanResourceService.categoriesFilterListIds.length &#x3D;&#x3D;&#x3D; 3 ? this.filterFindedPerson(this.allPersonsFiltered, false) : []
-  }
-
-  /**
-   * Vérifie si un agent arrive bientôt ou est déjà parti de la juridiction
-   * @param date
-   * @returns
-   */
-  isArriving(date: Date | string, person: HumanResourceIsInInterface | null &#x3D; null): boolean {
-    const now &#x3D; today(this.dateSelected)
-
-    const diff &#x3D; sortDates(date, now, false)
-
-    return diff &gt; 0 ? true : false
-  }
-
-  /**
-   * Vérifie si un agent arrive bientôt ou est déjà parti de la juridiction
-   * @param date
-   * @returns
-   */
-  hasLeft(date: Date | undefined): boolean {
-    if (date &#x3D;&#x3D;&#x3D; undefined || date &#x3D;&#x3D;&#x3D; null) {
-      return false
-    }
-
-    const now &#x3D; new Date(this.dateSelected)
-
-    const diff &#x3D; sortDates(date, now, false)
-
-    return diff &lt; 0 ? true : false
-  }
-
-  /**
-   * force to change filter values
-   */
-  async onSelectCategory(category: HRCategorySelectedInterface) {
-    this.isLoading &#x3D; true
-    if (category.selected &amp;&amp; this.filterParams &amp;&amp; this.filterParams.filterValues) {
-      const fonctions &#x3D; await this.hrFonctionService.getAll()
-      const getIdOfFonctions &#x3D; fonctions.filter((f) &#x3D;&gt; category.id &#x3D;&#x3D;&#x3D; f.categoryId).map((f) &#x3D;&gt; f.id)
-      const filterValues &#x3D; (this.filterParams &amp;&amp; this.filterParams.filterValues) || []
-
-      getIdOfFonctions.map((fId) &#x3D;&gt; {
-        if (!filterValues.includes(fId)) {
-          filterValues.push(fId)
-        }
-      })
-      this.filterParams!.filterValues &#x3D; filterValues
-    }
-
-    this.categoriesFilterList.map((cat) &#x3D;&gt; {
-      cat.poste.map(async (position) &#x3D;&gt; {
-        if (cat.id &#x3D;&#x3D;&#x3D; category.id) {
-          position.selected &#x3D; category.selected
-          await this.switchSubFilter(cat, position)
-        }
-      })
-    })
-
-    this.onFilterList()
-  }
-
-  /**
-   * Filtre liste RH
-   */
-  onFilterList(memorizeScroolPosition &#x3D; false, keepEmptyVentilation &#x3D; true, isFirstLoad &#x3D; false) {
-    if (!this.categoriesFilterList.length || !this.referentiel.length || !this.hrBackup) {
+  onFilterList() {
+    if (
+      this.isDestroyed ||
+      !this.formFilterSelect.length ||
+      this.humanResourceService.backupId.getValue() &#x3D;&#x3D;&#x3D; null ||
+      this.reaffectatorService.selectedCategoriesId &#x3D;&#x3D;&#x3D; null
+    ) {
       return
     }
 
-    let scrollPosition: number | null &#x3D; null
-
-    this.humanResourceService.categoriesFilterListIds &#x3D; this.categoriesFilterList.filter((c) &#x3D;&gt; c.selected).map((c) &#x3D;&gt; c.id) // copy to memoryse selection
     let selectedReferentielIds: number[] | null &#x3D; null
-    if (this.formReferentiel.length !&#x3D;&#x3D; this.selectedReferentielIds.length) {
-      selectedReferentielIds &#x3D; this.selectedReferentielIds
+    if (this.formReferentiel.length !&#x3D;&#x3D; this.reaffectatorService.selectedReferentielIds.length &amp;&amp; this.formReferentiel.length !&#x3D;&#x3D; 0) {
+      selectedReferentielIds &#x3D; this.reaffectatorService.selectedReferentielIds
     }
 
-    let selectedSubReferentielIds: number[] | null &#x3D; []
-    this.formReferentiel.map((cont) &#x3D;&gt; {
-      if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
-        selectedSubReferentielIds &#x3D; [...(selectedSubReferentielIds || []), ...(cont.childrens || []).map((c) &#x3D;&gt; c.id)]
-      }
-    })
-    if (
-      isFirstLoad ||
-      !this.selectedSubReferentielIds ||
-      (selectedSubReferentielIds &amp;&amp; selectedSubReferentielIds.length &#x3D;&#x3D;&#x3D; this.selectedSubReferentielIds.length)
-    ) {
-      selectedSubReferentielIds &#x3D; null
-    } else {
-      selectedSubReferentielIds &#x3D; this.selectedSubReferentielIds
+    let selectedFonctionsIds &#x3D; null
+    if (this.reaffectatorService.selectedFonctionsIds.length !&#x3D;&#x3D; this.formFilterFonctionsSelect.length) {
+      selectedFonctionsIds &#x3D; [...this.reaffectatorService.selectedFonctionsIds]
     }
-
-    this.isLoading &#x3D; true
     this.appService.appLoading.next(true)
-    this.humanResourceService
+
+    this.reaffectatorService
       .onFilterList(
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
+        this.reaffectatorService.selectedCategoriesId || 0,
+        selectedFonctionsIds,
         selectedReferentielIds,
-        selectedSubReferentielIds,
-        this.humanResourceService.categoriesFilterListIds,
       )
-      .then(({ list, allPersons }: { list: listFormatedInterface[]; allPersons: HumanResourceIsInInterface[] }) &#x3D;&gt; {
-        this.listFormated &#x3D; list.map((l) &#x3D;&gt; {
+      .then(({ list, allPersons }) &#x3D;&gt; {
+        // Ne pas traiter la réponse si le composant est détruit
+        if (this.isDestroyed) {
+          return
+        }
+
+        this.allPersons &#x3D; allPersons
+        this.listFormated &#x3D; list.map((i: listFormatedInterface, index: number) &#x3D;&gt; {
+          if (index &#x3D;&#x3D;&#x3D; 0) {
+            this.referentiel &#x3D; i.referentiel.map((r) &#x3D;&gt; ({
+              ...r,
+              selected: true,
+            }))
+            this.formReferentiel &#x3D; i.referentiel.map((r) &#x3D;&gt; ({
+              id: r.id,
+              value: this.referentielMappingNameByInterface(r.label),
+            }))
+            if (this.firstETPTargetValue.length &#x3D;&#x3D;&#x3D; 0) {
+              this.firstETPTargetValue &#x3D; i.referentiel.map(() &#x3D;&gt; null)
+            }
+
+            this.reaffectatorService.selectedReferentielIds &#x3D; this.reaffectatorService.selectedReferentielIds.length
+              ? this.reaffectatorService.selectedReferentielIds
+              : this.formReferentiel.map((c) &#x3D;&gt; c.id)
+          }
+
+          const allHr &#x3D; i.allHr.map((h) &#x3D;&gt; ({
+            ...h,
+            orignalCurrentActivities: h.currentActivities,
+            isModify: false,
+          }))
           return {
-            ...l,
-            id: &#x27;0&#x27; + l.categoryId + &#x27;_&#x27; + l.label,
+            ...i,
+            allHr,
+            hrFiltered: [...allHr],
+            personSelected: [],
+            referentiel: i.referentiel.map((r) &#x3D;&gt; ({
+              ...r,
+              dtes: 0,
+              coverage: 0,
+            })),
           }
         })
-        this.allPersons &#x3D; allPersons
-
+      })
+      .then(() &#x3D;&gt; {
         this.findPersonWithoutVentilations()
-
         this.orderListWithFiltersParams()
-
-        this.isLoading &#x3D; false
-        this.appService.appLoading.next(false)
-
-        const domContent &#x3D; document.getElementById(&#x27;container-list&#x27;)
-        if (domContent) {
-          if (scrollPosition !&#x3D;&#x3D; null) {
-            domContent.scrollTop &#x3D; scrollPosition
-          } else {
-            domContent.scrollTop &#x3D; 0
-          }
-        }
       })
       .finally(() &#x3D;&gt; {
         this.appService.appLoading.next(false)
       })
-
-    if (this.route.snapshot.fragment) {
-      this.onGoTo(+this.route.snapshot.fragment)
-    }
   }
 
   /**
@@ -1575,9 +1333,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
           person.category,
       )
       .map((person) &#x3D;&gt; {
-        console.log(&#x27;person&#x27;, person)
         this.listFormated.map((l) &#x3D;&gt; {
-          if (l.categoryId &#x3D;&#x3D;&#x3D; person.category?.id &amp;&amp; !l.hr.find((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; person.id)) {
+          if (l.categoryId &#x3D;&#x3D;&#x3D; person.category?.id &amp;&amp; !l.allHr.find((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; person.id)) {
             const getIndispo &#x3D; this.humanResourceService.findAllIndisponibilities(person, this.dateSelected)
             let hasIndisponibility &#x3D; getIndispo.map((i) &#x3D;&gt; i.percent).reduce((a, b) &#x3D;&gt; a + b, 0)
             if (hasIndisponibility &gt; 100) {
@@ -1592,58 +1349,35 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
               etpLabel: null,
               hasIndisponibility,
               currentActivities: [],
-              etp: 0,
+              etp: null,
               fonction: person.situations[0].fonction,
               currentSituation: null,
               category: person.situations[0].category,
+              orignalCurrentActivities: [],
+              isModify: false,
             }
             l.hrFiltered &#x3D; l.hrFiltered || []
-            l.hrFiltered.push(newPerson)
+            l.hrFiltered.push(cloneDeep(newPerson))
             l.hrFiltered &#x3D; sortBy(l.hrFiltered, &#x27;fonction.rank&#x27;)
-            l.hr &#x3D; l.hr || []
-            l.hr.push(newPerson)
-            l.hr &#x3D; sortBy(l.hr, &#x27;fonction.rank&#x27;)
+            l.allHr &#x3D; l.hrFiltered || []
           }
         })
       })
   }
 
   /**
-   * Ordonner une liste de RH
+   * Trie de la liste retournée
+   * @param onSearch
    */
-  orderListWithFiltersParams(up: boolean | null &#x3D; null) {
+  orderListWithFiltersParams(onSearch: boolean &#x3D; true, up: boolean | null &#x3D; null) {
     this.listFormated &#x3D; this.listFormated.map((list) &#x3D;&gt; {
-      let listFiltered &#x3D; [...list.hr]
-      if (this.filterParams) {
-        if (this.filterParams.filterFunction) {
-          listFiltered &#x3D; this.filterParams.filterFunction(listFiltered)
-        }
-
-        if (this.filterParams.sortFunction) {
-          listFiltered &#x3D; this.filterParams.sortFunction(listFiltered)
-        }
-
-        if (this.filterParams.order &amp;&amp; this.filterParams.order &#x3D;&#x3D;&#x3D; &#x27;desc&#x27;) {
-          listFiltered &#x3D; listFiltered.reverse()
-        }
-
-        if (this.getOptionAffichageIndispoString()) {
-          listFiltered &#x3D; listFiltered.filter(
-            (h) &#x3D;&gt;
-              h.indisponibilities &amp;&amp;
-              h.indisponibilities.length &amp;&amp;
-              h.indisponibilities.some((i) &#x3D;&gt; (this.filterParams?.filterIndispoValues || []).includes(i.contentieux.id)),
-          )
-        }
-      }
-
-      list.hrFiltered &#x3D; listFiltered
+      list.hrFiltered &#x3D; orderBy(list.hrFiltered, [&#x27;fonction.rank&#x27;], [&#x27;asc&#x27;])
 
       if (this.filterSelected) {
         list.hrFiltered &#x3D; orderBy(
           list.hrFiltered,
           (h) &#x3D;&gt; {
-            const acti &#x3D; (h.currentActivities || []).find((a) &#x3D;&gt; a.contentieux?.id &#x3D;&#x3D;&#x3D; this.filterSelected.filter?.id)
+            const acti &#x3D; (h.orignalCurrentActivities || []).find((a) &#x3D;&gt; a.contentieux?.id &#x3D;&#x3D;&#x3D; this.filterSelected.filter?.id)
             return acti ? acti.percent || 0 : 0
           },
           [up ? &#x27;asc&#x27; : &#x27;desc&#x27;],
@@ -1653,13 +1387,49 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       return list
     })
 
+    if (onSearch) {
+      this.onSearchBy()
+    }
+    this.calculateReferentielValues()
     this.updateCategoryValues()
-    this.onSearchBy()
   }
 
   /**
-   * Scroll jusqu&#x27;à une RH donnée en paramètre
-   * @param hrId identifiant d&#x27;une ressource
+   * Demande de recherche sur la liste
+   */
+  onSearchBy() {
+    const valuesFinded: HumanResourceInterface[] &#x3D; []
+    let nbPerson &#x3D; 0
+    this.listFormated &#x3D; this.listFormated.map((l: listFormatedInterface) &#x3D;&gt; ({
+      ...l,
+      hrFiltered: l.hrFiltered.map((h) &#x3D;&gt; {
+        const opacity &#x3D; this.checkHROpacity(h)
+        nbPerson++
+        if (opacity &#x3D;&#x3D;&#x3D; 1) {
+          valuesFinded.push(h)
+        }
+
+        return {
+          ...h,
+          opacity,
+        }
+      }),
+    }))
+
+    this.valuesFinded &#x3D; valuesFinded.length &#x3D;&#x3D;&#x3D; nbPerson ? null : valuesFinded
+    this.indexValuesFinded &#x3D; 0
+
+    if (this.valuesFinded &amp;&amp; this.valuesFinded.length) {
+      this.valuesFinded &#x3D; this.valuesFinded.filter((x) &#x3D;&gt; x.situations[0]?.category?.id &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId)
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
+    } else {
+      this.onGoTo(null)
+    }
+  }
+
+  /**
+   * Scroller sur une fiche
+   * @param hrId
    */
   onGoTo(hrId: number | null) {
     let isFinded &#x3D; false
@@ -1670,23 +1440,26 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         if (findElement) {
           const headers &#x3D; findContainer.querySelectorAll(&#x27;.header-list&#x27;)
           const { top } &#x3D; findElement.getBoundingClientRect()
-          const mainTop &#x3D; findContainer.getBoundingClientRect().top
-          let topDelta &#x3D; mainTop
+          let topDelta &#x3D; findContainer.getBoundingClientRect().top + 8
           for (let i &#x3D; 0; i &lt; headers.length; i++) {
             const topHeader &#x3D; headers[i].getBoundingClientRect().top
-            if (topHeader &#x3D;&#x3D;&#x3D; mainTop || topHeader &lt; top) {
+            if (topHeader &lt; top) {
               topDelta +&#x3D; headers[i].getBoundingClientRect().height
-              break
             }
           }
 
-          let scrollTop &#x3D; top - topDelta + findContainer.scrollTop - 8
+          let scrollTop &#x3D; top - topDelta + findContainer.scrollTop
+          if (this.lastScrollTop &amp;&amp; this.lastScrollTop &gt; scrollTop) {
+            scrollTop -&#x3D; 88
+          }
 
           isFinded &#x3D; true
           findContainer.scroll({
             behavior: &#x27;smooth&#x27;,
             top: scrollTop,
           })
+
+          this.lastScrollTop &#x3D; scrollTop
         } else {
         }
       } else {
@@ -1704,7 +1477,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   /**
-   * Trouver la RH suivante dans la liste de recherche
+   * Recherche allez au prochain
    * @param delta
    */
   onFindNext(delta: number &#x3D; 1) {
@@ -1721,41 +1494,38 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   /**
-   * Contentieux ids selectionnés
+   * Quand le referentiel du menu déroulant change
+   * @param list
    */
-  onSelectedReferentielIdsChanged({ list &#x3D; [], subList &#x3D; [] }: { list: number[]; subList: number[] }) {
-    this.selectedReferentielIds &#x3D; list
-    this.humanResourceService.selectedReferentielIds &#x3D; this.selectedReferentielIds
-
-    console.log(&#x27;subList&#x27;, subList)
-
-    this.selectedSubReferentielIds &#x3D; [...subList]
-    this.humanResourceService.selectedSubReferentielIds &#x3D; this.selectedSubReferentielIds
-
+  onSelectedReferentielIdsChanged(list: any) {
+    this.reaffectatorService.selectedReferentielIds &#x3D; list
     this.referentiel &#x3D; this.referentiel.map((cat) &#x3D;&gt; {
       cat.selected &#x3D; list.indexOf(cat.id) !&#x3D;&#x3D; -1
 
       return cat
     })
 
-    this.onFilterList(true, false)
+    if (list.length &#x3D;&#x3D;&#x3D; 0) {
+      this.listFormated &#x3D; []
+    } else this.onFilterList()
   }
 
   /**
-   * Changement de date du ventilateur
+   * Date de sélection change
    * @param date
    */
   onDateChanged(date: any) {
     this.dateSelected &#x3D; date
     this.workforceService.dateSelected.next(date)
     this.onFilterList()
+    this.kpiService.register(DATE_REAFECTATOR, date)
   }
 
   /**
-   * Filtrer par contentieux
+   * Filtre de la liste
    * @param ref
    */
-  onFilterBy(ref: ContentieuReferentielInterface) {
+  onFilterBy(ref: ContentieuReferentielCalculateInterface) {
     if (!this.filterSelected.filter || this.filterSelected.filter?.id !&#x3D;&#x3D; ref.id || this.filterSelected.up &#x3D;&#x3D;&#x3D; true) {
       this.filterSelected.filter &#x3D; ref
       this.filterSelected.up &#x3D; this.filterSelected.up &#x3D;&#x3D;&#x3D; null ? true : false
@@ -1764,327 +1534,320 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.filterSelected.up &#x3D; null
     }
 
-    this.orderListWithFiltersParams(this.filterSelected.up)
+    this.orderListWithFiltersParams(false, this.filterSelected.up)
   }
 
   /**
-   * Maj des paramètres de filtre
-   * @param event
+   * Export en PDF de la page
    */
-  updateFilterParams(event: FilterPanelInterface) {
-    this.workforceService.filterParams &#x3D; event // memorize in cache
-    this.filterParams &#x3D; event
-    this.orderListWithFiltersParams()
-  }
+  onExport() {
+    this.duringPrint &#x3D; true
+    const date &#x3D; new Date()
 
-  /**
-   * Reset tri
-   */
-  clearFilterSort() {
-    if (this.filterParams) {
-      this.filterParams.sort &#x3D; null
-      this.filterParams.sortName &#x3D; null
-      this.filterParams.sortFunction &#x3D; null
-      this.filterParams.order &#x3D; null
-      this.filterParams.orderIcon &#x3D; null
-    }
-
-    this.orderListWithFiltersParams()
-  }
-
-  /**
-   * Reset filtre
-   */
-  clearFilterFilter() {
-    if (this.filterParams) {
-      this.filterParams.filterNames &#x3D; null
-      this.filterParams.filterValues &#x3D; null
-      this.filterParams.filterFunction &#x3D; null
-    }
-
-    this.orderListWithFiltersParams()
-  }
-
-  /**
-   * Calcul de l&#x27;ETP total
-   */
-  calculateTotalAffected() {
-    this.listFormated &#x3D; this.listFormated.map((group) &#x3D;&gt; {
-      group.referentiel &#x3D; group.referentiel.map((r) &#x3D;&gt; ({
-        ...r,
-        totalAffected: 0,
-      }))
-
-      const listFiltered &#x3D; group.hrFiltered || []
-      listFiltered.map((hr) &#x3D;&gt; {
-        hr.tmpActivities &#x3D; {}
-
-        group.referentiel &#x3D; group.referentiel.map((ref) &#x3D;&gt; {
-          hr.tmpActivities[ref.id] &#x3D; hr.currentActivities.filter((r) &#x3D;&gt; r.contentieux &amp;&amp; r.contentieux.id &#x3D;&#x3D;&#x3D; ref.id)
-          if (hr.tmpActivities[ref.id].length) {
-            const timeAffected &#x3D; sumBy(hr.tmpActivities[ref.id], &#x27;percent&#x27;)
-            if (timeAffected) {
-              let realETP &#x3D; (hr.etp || 0) - hr.hasIndisponibility
-              if (realETP &lt; 0) {
-                realETP &#x3D; 0
-              }
-              const res &#x3D; (ref.totalAffected || 0) + (timeAffected / 100) * realETP
-              ref.totalAffected &#x3D; res
-            }
-          }
-
-          return ref
-        })
-
-        return hr
+    this.wrapper
+      ?.exportAsPdf(
+        &#x60;Simulation-D-Affectation_par ${this.userService.user.getValue()!.firstName}_${this.userService.user.getValue()!.lastName!}_le ${new Date()
+          .toJSON()
+          .slice(0, 10)}.pdf&#x60;,
+        true,
+        true,
+        &#x60;Simulation d&#x27;affectation par ${this.userService.user.getValue()!.firstName} ${this.userService.user.getValue()!.lastName} - le ${(
+          date.getDate() + &#x27;&#x27;
+        ).padStart(2, &#x27;0&#x27;)} ${this.getShortMonthString(date)} ${date.getFullYear()}&#x60;,
+      )
+      .then(() &#x3D;&gt; {
+        this.duringPrint &#x3D; false
+        if (this.forceDeactivate) this.router.navigate([this.nextState])
       })
-
-      group.referentiel &#x3D; group.referentiel.map((ref) &#x3D;&gt; {
-        ref.totalAffected &#x3D; fixDecimal(ref.totalAffected || 0, 1000)
-        return ref
-      })
-
-      return group
-    })
   }
 
   /**
-   * Filtre la liste des personnes trouvées dans la recherche
+   * Rechargement de la liste des fonctions en fonction des catégories
+   * @param item
+   */
+  onSelectedCategoriesIdChanged(item: string[] | number[]) {
+    this.reaffectatorService.selectedCategoriesId &#x3D; item.length ? +item[0] : null
+
+    const allFonctions &#x3D; this.humanResourceService.fonctions.getValue()
+    let fonctionList: HRFonctionInterface[] &#x3D; allFonctions.filter((f) &#x3D;&gt; f.categoryId &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId)
+    this.formFilterFonctionsSelect &#x3D; fonctionList.map((f) &#x3D;&gt; ({
+      id: f.id,
+      value: f.code || f.label,
+    }))
+
+    this.onSelectedFonctionsIdsChanged(fonctionList.map((f) &#x3D;&gt; f.id))
+  }
+
+  /**
+   * Event lors du changement des fonctions
    * @param list
-   * @param isIn
+   */
+  onSelectedFonctionsIdsChanged(list: string[] | number[]) {
+    this.reaffectatorService.selectedFonctionsIds &#x3D; list.map((i) &#x3D;&gt; +i)
+
+    this.onFilterList()
+  }
+
+  /**
+   * Calcul des ETP
+   * @param referentielId
+   * @param hrList
    * @returns
    */
-  filterFindedPerson(list: HumanResourceIsInInterface[] | null, isIn: boolean) {
-    return (list || []).filter((h) &#x3D;&gt; h.isIn &#x3D;&#x3D;&#x3D; isIn)
+  onCalculETPAffected(referentielId: number, hrList: HumanResourceSelectedInterface[]) {
+    let etpCalculate &#x3D; 0
+
+    hrList.map((hr) &#x3D;&gt; {
+      const timeAffected &#x3D; sumBy(
+        hr.currentActivities.filter((r) &#x3D;&gt; r.contentieux &amp;&amp; r.contentieux.id &#x3D;&#x3D;&#x3D; referentielId),
+        &#x27;percent&#x27;,
+      )
+      let realETP &#x3D; (hr.etp || 0) - hr.hasIndisponibility
+      if (realETP &lt; 0) {
+        realETP &#x3D; 0
+      }
+      etpCalculate +&#x3D; (timeAffected / 100) * realETP
+    })
+
+    return fixDecimal(etpCalculate, 1000)
   }
 
-  getCurrentFilteredIds(fonctionsList: HRFonctionInterface[]) {
-    if (this.filterParams &amp;&amp; this.filterParams.filterValues) {
-      return this.filterParams.filterValues as number[]
-    } else {
-      return fonctionsList.map((f) &#x3D;&gt; f.id)
-    }
-  }
-
-  async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
-    this.appService.appLoading.next(true)
-    const fonctions &#x3D; await this.hrFonctionService.getAll()
-    let fctFilterIds: number[] &#x3D; this.getCurrentFilteredIds(fonctions)
-
-    this.listPoste.map(async (position) &#x3D;&gt; {
-      if (poste.name &#x3D;&#x3D;&#x3D; position) {
-        //selected fct by position clicked
-        const focusFct &#x3D; fonctions.filter((f) &#x3D;&gt; f.position &#x3D;&#x3D;&#x3D; position.charAt(0).toUpperCase() + position.slice(1) &amp;&amp; f.categoryId &#x3D;&#x3D;&#x3D; category.id)
-        let myArray &#x3D; null
-
-        const isSelected &#x3D; poste.selected
-
-        if (!isSelected) {
-          myArray &#x3D; fctFilterIds.filter((el) &#x3D;&gt; !focusFct.map((x) &#x3D;&gt; x.id).includes(el))
-        } else {
-          myArray &#x3D; union(
-            fctFilterIds,
-            focusFct.map((x) &#x3D;&gt; x.id),
-          )
-        }
-
-        this.filterParams &#x3D; await {
-          display: &#x27;prénom/nom&#x27;,
-          filterFunction: (list: HumanResourceSelectedInterface[]) &#x3D;&gt; {
-            return list.filter(
-              (h) &#x3D;&gt; h.fonction &amp;&amp; this.filterParams &amp;&amp; this.filterParams.filterValues &amp;&amp; this.filterParams.filterValues.indexOf(h.fonction.id) !&#x3D;&#x3D; -1,
-            )
-          },
-          filterNames: null,
-          filterValues: myArray,
-          filterIndispoValues: this.filterParams?.filterIndispoValues || null,
-          order: &#x27;asc&#x27;,
-          orderIcon: &#x27;sort-desc&#x27;,
-          sort: &#x27;function&#x27;,
-          sortFunction: null,
-          sortName: null,
-        }
+  /**
+   * Calcul des couvertures et DTES en fonction des saisies
+   */
+  calculateReferentielValues() {
+    this.listFormated &#x3D; this.listFormated.map((itemList) &#x3D;&gt; {
+      return {
+        ...itemList,
+        referentiel: itemList.referentiel.map((r) &#x3D;&gt; ({
+          ...r,
+          etpUseToday: this.onCalculETPAffected(r.id, itemList.allHr),
+          totalAffected: this.onCalculETPAffected(r.id, itemList.hrFiltered),
+        })),
       }
     })
 
-    if (category.poste &amp;&amp; category.poste.length) {
-      category.selected &#x3D; category.poste.some((p) &#x3D;&gt; p.selected)
-    }
-    this.onFilterList()
-    this.orderListWithFiltersParams()
-  }
+    const itemList &#x3D; this.listFormated.find((i) &#x3D;&gt; i.categoryId &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId)
 
-  getTooglePositionSelected(poste: HRCategorypositionInterface) {
-    return poste.selected
-  }
-  async setTooglePositionSelected(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
-    poste.selected &#x3D; !poste.selected
-    await this.switchSubFilter(category, poste)
-    // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
-  }
+    if (itemList) {
+      this.referentiel &#x3D; this.referentiel.map((ref) &#x3D;&gt; {
+        const refFromItemList &#x3D; (itemList.referentiel || []).find((r) &#x3D;&gt; r.id &#x3D;&#x3D;&#x3D; ref.id)
 
-  switchBgColor(category: any, color: string) {
-    category.style[&#x27;background-color&#x27;] &#x3D; color
-  }
+        if (!refFromItemList) {
+          return ref
+        }
 
-  /**
-   * Retour une string qui affiche les options de filtre / trie
-   */
-  getOptionAffichageString() {
-    const list &#x3D; []
+        const averageWorkingProcess &#x3D; refFromItemList.magRealTimePerCase || 0
+        let etpt &#x3D; 0
+        switch (this.reaffectatorService.selectedCategoriesId) {
+          case 1: {
+            etpt &#x3D; (refFromItemList as any).etpMag ?? 0
+            break
+          }
+          case 2: {
+            etpt &#x3D; (refFromItemList as any).etpFon ?? 0
+            break
+          }
+          case 3: {
+            etpt &#x3D; (refFromItemList as any).etpCon ?? 0
+            break
+          }
+          default: {
+            etpt &#x3D; refFromItemList.totalAffected ?? 0
+          }
+        }
+        if (refFromItemList.etpUseToday !&#x3D;&#x3D; refFromItemList.totalAffected) etpt &#x3D; refFromItemList.totalAffected || 0
+        const nbWorkingHours &#x3D; refFromItemList.nbWorkingHours || 0
+        const nbWorkingDays &#x3D; refFromItemList.nbWorkingDays || 0
+        const lastStock &#x3D; refFromItemList.lastStock || 0
+        const inValue &#x3D; refFromItemList.totalIn || 0
 
-    if (this.selectedReferentielIds.length !&#x3D;&#x3D; this.formReferentiel.length) {
-      list.push(this.getOptionAffichageReferentielString())
-    }
+        let outValue &#x3D; averageWorkingProcess &#x3D;&#x3D;&#x3D; 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
 
-    if (this.selectedSubReferentielIds) {
-      let count &#x3D; 0
-      this.formReferentiel.map((cont) &#x3D;&gt; {
-        if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
-          count +&#x3D; (cont.childrens || []).length
+        let dtes &#x3D; outValue &amp;&amp; Number.isFinite(lastStock / outValue) ? Math.max(0, fixDecimal(lastStock / outValue, 100)) : Infinity
+
+        let realDTESInMonths &#x3D; outValue &amp;&amp; Number.isFinite(ref.realDTESInMonths) ? ref.realDTESInMonths : Infinity
+
+        let coverage &#x3D; outValue &amp;&amp; refFromItemList.totalIn !&#x3D;&#x3D; 0 ? Math.round((outValue / inValue) * 100) : NaN
+
+        let realCoverage &#x3D;
+          this.reaffectatorService.selectedReferentielIds.includes(ref.id) &amp;&amp; outValue &amp;&amp; refFromItemList.totalIn !&#x3D;&#x3D; 0 ? ref.realCoverage : NaN
+
+        return {
+          ...ref,
+          realDTESInMonths: this.noNegativValues(realDTESInMonths),
+          coverage,
+          dtes: this.noNegativValues(dtes),
+          etpUseToday: refFromItemList.etpUseToday,
+          totalAffected: refFromItemList.totalAffected,
+          realCoverage: realCoverage,
         }
       })
-
-      if (this.selectedSubReferentielIds.length !&#x3D;&#x3D; count) {
-        list.push(this.getOptionAffichageSubReferentielString())
-      }
     }
-
-    if (this.filterParams &amp;&amp; this.filterParams.orderIcon &amp;&amp; this.filterParams.sortName) {
-      list.push(this.filterParams.sortName)
-    }
-
-    if (this.filterParams &amp;&amp; this.filterParams.filterNames) {
-      list.push(this.filterParams.filterNames)
-    }
-
-    const indispString &#x3D; this.getOptionAffichageIndispoString()
-    if (indispString) {
-      list.push(indispString)
-    }
-
-    return list.length &#x3D;&#x3D;&#x3D; 0 ? null : list.join(&#x27;, &#x27;)
   }
 
   /**
-   * Retour une string qui affiche les options de filtre / trie
+   * Mise à jour à la volé de la ventilation d&#x27;une fiche
+   * @param hr
+   * @param referentiels
+   * @param indexList
    */
-  getOptionAffichageReferentielString() {
-    if (this.selectedReferentielIds.length !&#x3D;&#x3D; this.formReferentiel.length) {
-      const labels &#x3D; this.selectedReferentielIds.map((id) &#x3D;&gt; {
-        const ref &#x3D; this.formReferentiel.find((formRef) &#x3D;&gt; formRef.id &#x3D;&#x3D;&#x3D; id)
-        return ref?.value
-      })
-
-      let text &#x3D; labels.slice(0, 3).join(&#x27;, &#x27;)
-
-      if (labels.length &gt; 3) {
-        text +&#x3D; &#x27; et &#x27; + (labels.length - 3) + &#x27; de plus&#x27;
-      }
-
-      return text
+  updateHRReferentiel(hr: HumanResourceSelectedInterface, referentiels: ContentieuReferentielInterface[], indexList: number) {
+    // Arrêter le traitement si le composant est détruit
+    if (this.isDestroyed) {
+      return
     }
 
-    return null
-  }
+    const list: RHActivityInterface[] &#x3D; []
 
-  /**
-   * Retour une string qui affiche les options des sous contentieux
-   */
-  getOptionAffichageSubReferentielString() {
-    if (this.selectedSubReferentielIds) {
-      let allSubRefs: childrenInterface[] &#x3D; []
-      this.formReferentiel.map((cont) &#x3D;&gt; {
-        if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
-          allSubRefs &#x3D; [...allSubRefs, ...(cont.childrens || [])]
-        }
-      })
-
-      if (this.selectedSubReferentielIds.length !&#x3D;&#x3D; allSubRefs.length) {
-        const labels &#x3D; this.selectedSubReferentielIds.map((id) &#x3D;&gt; {
-          const ref &#x3D; allSubRefs.find((formRef) &#x3D;&gt; formRef.id &#x3D;&#x3D;&#x3D; id)
-          return ref?.value
+    referentiels
+      .filter((r) &#x3D;&gt; r.percent)
+      .map((r) &#x3D;&gt; {
+        list.push({
+          id: -1,
+          percent: r.percent || 0,
+          contentieux: {
+            id: r.id,
+            label: r.label,
+            averageProcessingTime: null,
+          },
         })
+        ;(r.childrens || [])
+          .filter((rc: ContentieuReferentielInterface) &#x3D;&gt; rc.percent)
+          .map((rc: ContentieuReferentielInterface) &#x3D;&gt; {
+            list.push({
+              id: -1,
+              percent: rc.percent || 0,
+              contentieux: {
+                id: rc.id,
+                label: rc.label,
+                averageProcessingTime: null,
+              },
+            })
+          })
+      })
 
-        let text &#x3D; labels.slice(0, 3).join(&#x27;, &#x27;)
+    const humanId &#x3D; hr.id
+    const indexOfHR &#x3D; this.listFormated[indexList].hrFiltered.findIndex((hr) &#x3D;&gt; hr.id &#x3D;&#x3D;&#x3D; humanId)
 
-        if (labels.length &gt; 3) {
-          text +&#x3D; &#x27; et &#x27; + (labels.length - 3) + &#x27; de plus&#x27;
-        }
+    if (indexOfHR !&#x3D;&#x3D; -1) {
+      this.listFormated[indexList].hrFiltered[indexOfHR].currentActivities &#x3D; list
+      this.listFormated[indexList].hrFiltered[indexOfHR].isModify &#x3D; true
 
-        return text
-      }
+      this.orderListWithFiltersParams(false)
     }
-
-    return null
   }
 
   /**
-   * Retour une string qui affiche les options de filtre / trie des indispo
+   * Selection on non une fiche
+   * @param index
+   * @param hr
    */
-  getOptionAffichageIndispoString() {
-    const allIndisponibilityReferentiel &#x3D; this.humanResourceService.allIndisponibilityReferentiel
-      .slice(1)
-      .map((r) &#x3D;&gt; ({ id: r.id, label: r.label.replace(/\//g, &#x27; / &#x27;) }))
-    const filtre &#x3D; this.filterParams?.filterIndispoValues || []
-    if (filtre.length) {
-      const labels &#x3D; filtre.map((id) &#x3D;&gt; {
-        const ref &#x3D; allIndisponibilityReferentiel.find((f) &#x3D;&gt; f.id &#x3D;&#x3D;&#x3D; id)
-        return ref?.label
-      })
-
-      let text &#x3D; labels.slice(0, 3).join(&#x27;, &#x27;)
-
-      if (labels.length &gt; 3) {
-        text +&#x3D; &#x27; et &#x27; + (labels.length - 3) + &#x27; de plus&#x27;
-      }
-
-      return text
+  toogleCheckPerson(index: number, hr: HumanResourceSelectedInterface) {
+    const indexFinded &#x3D; this.listFormated[index].personSelected.indexOf(hr.id)
+    if (indexFinded &#x3D;&#x3D;&#x3D; -1) {
+      this.listFormated[index].personSelected.push(hr.id)
+    } else {
+      this.listFormated[index].personSelected.splice(indexFinded, 1)
     }
 
-    return null
+    if (this.listFormated[index].personSelected.length &#x3D;&#x3D;&#x3D; 0) {
+      // force to reset isolate var
+      this.isolatePersons &#x3D; false
+    }
   }
 
-  clearFilterIndispo() {
-    if (this.filterParams) {
-      this.filterParams.filterIndispoValues &#x3D; []
+  /**
+   * Selectionne ou non toutes les fiches
+   * @param index
+   */
+  toogleCheckAllPerson(index: number) {
+    if (this.listFormated[index].personSelected.length &#x3D;&#x3D;&#x3D; this.listFormated[index].hrFiltered.length) {
+      this.listFormated[index].personSelected &#x3D; []
+    } else {
+      this.listFormated[index].personSelected &#x3D; this.listFormated[index].hrFiltered.map((h) &#x3D;&gt; h.id)
+    }
+  }
+
+  /**
+   * Supprime les données modifiés sélectionnées
+   * @param list
+   */
+  onInitList(list: listFormatedInterface) {
+    if (list.personSelected.length) {
+      list.personSelected.map((id) &#x3D;&gt; {
+        const indexOfHRFiltered &#x3D; list.hrFiltered.findIndex((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; id)
+        const indexOfAllHR &#x3D; list.allHr.findIndex((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; id)
+
+        if (indexOfHRFiltered !&#x3D;&#x3D; -1 &amp;&amp; indexOfAllHR !&#x3D;&#x3D; -1) {
+          list.hrFiltered[indexOfHRFiltered] &#x3D; cloneDeep(list.allHr[indexOfAllHR])
+        }
+      })
+
+      list.personSelected &#x3D; []
       this.orderListWithFiltersParams()
     }
   }
 
   /**
-   * Supprimer le filtre des contentieux
+   * Isole ou non
    */
-  clearFilterReferentiel() {
-    this.selectedReferentielIds &#x3D; this.formReferentiel.map((r) &#x3D;&gt; r.id)
-    this.selectedSubReferentielIds &#x3D; []
-    this.formReferentiel.map((cont) &#x3D;&gt; {
-      if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
-        this.selectedSubReferentielIds &#x3D; [...(this.selectedSubReferentielIds || []), ...(cont.childrens || []).map((c) &#x3D;&gt; c.id)]
-      }
-    })
-
-    this.onSelectedReferentielIdsChanged({
-      list: this.selectedReferentielIds,
-      subList: this.selectedSubReferentielIds,
-    })
+  onToogleIsolation() {
+    this.isolatePersons &#x3D; !this.isolatePersons
   }
 
   /**
-   * Supprimer le filtre des sous contentieux
+   * Trouve les valeurs non modifiés d&#x27;une fiche
+   * @param hr
+   * @param itemObject
+   * @returns
    */
-  clearFilterSubReferentiel() {
-    this.selectedSubReferentielIds &#x3D; []
-    this.formReferentiel.map((cont) &#x3D;&gt; {
-      if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
-        this.selectedSubReferentielIds &#x3D; [...(this.selectedSubReferentielIds || []), ...(cont.childrens || []).map((c) &#x3D;&gt; c.id)]
-      }
-    })
+  getOrignalHuman(hr: HumanResourceSelectedInterface, itemObject: listFormatedInterface) {
+    return itemObject.allHr.find((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; hr.id)
+  }
 
-    this.onSelectedReferentielIdsChanged({
-      list: this.selectedReferentielIds,
-      subList: this.selectedSubReferentielIds,
-    })
+  /**
+   * Récuperer le type de l&#x27;app
+   */
+  getInterfaceType() {
+    return this.userService.interfaceType &#x3D;&#x3D;&#x3D; 1
+  }
+
+  /**
+   * Mapping des noms de contentieux selon l&#x27;interface
+   * @param label
+   * @returns
+   */
+  referentielMappingNameByInterface(label: string) {
+    if (this.getInterfaceType() &#x3D;&#x3D;&#x3D; true) return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
+  }
+
+  /**
+   * Arrondir un nombre à l&#x27;entier le plus proche
+   * @param valeur
+   * @returns
+   */
+  round(valeur: number) {
+    return Math.round(valeur)
+  }
+
+  /**
+   * Retourne la valeur si elle est positive, sinon 0
+   * @param value
+   * @returns
+   */
+  noNegativValues(value: number) {
+    return value &lt; 0 ? 0 : value
+  }
+
+  /**
+   * Vérifie si la valeur est infinie
+   * @param value
+   * @returns
+   */
+  isInfinity(value: number) {
+    return isNaN(value) || !Number.isFinite(value) ? true : false
   }
 }
 </code></pre>

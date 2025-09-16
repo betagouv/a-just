@@ -24,11 +24,21 @@ interface TagInterface {
   label: string
 }
 
+/**
+ * Interface de contentieux sélectionné
+ */
 interface ContentieuxSelected extends ContentieuReferentielInterface {
+  /** Date de la dernière date sans données */
   lastDateWhithoutData: Date
+  /**
+   * Enfants du contentieux
+   */
   childrens?: ContentieuxSelected[]
 }
 
+/**
+ * Date actuelle
+ */
 const now = new Date()
 now.setDate(10)
 const lastTwelve = new Date(now)

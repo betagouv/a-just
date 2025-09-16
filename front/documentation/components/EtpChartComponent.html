@@ -598,8 +598,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="698"
-                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:698</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="702"
+                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:702</a></div>
                         </td>
                     </tr>
 
@@ -672,8 +672,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="678"
-                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:678</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="682"
+                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:682</a></div>
                         </td>
                     </tr>
 
@@ -746,8 +746,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="727"
-                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:727</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="731"
+                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:731</a></div>
                         </td>
                     </tr>
 
@@ -836,8 +836,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="793"
-                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:793</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="797"
+                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:797</a></div>
                         </td>
                     </tr>
 
@@ -911,8 +911,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="739"
-                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:739</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="743"
+                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:743</a></div>
                         </td>
                     </tr>
 
@@ -986,8 +986,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="249"
-                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:249</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="253"
+                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:253</a></div>
                         </td>
                     </tr>
 
@@ -1025,8 +1025,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="746"
-                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:746</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="750"
+                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:750</a></div>
                         </td>
                     </tr>
 
@@ -1064,8 +1064,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="711"
-                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:711</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="715"
+                                    class="link-to-prism">src/app/routes/simulator/charts/etp-chart/etp-chart.component.ts:715</a></div>
                         </td>
                     </tr>
 
@@ -1680,18 +1680,18 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * Valeur de début de simulation
    */
   startRealValue &#x3D; &#x27;&#x27;
-   /**
+  /**
    * Valeur de début de simulation mois année
    */
-   startRealValueShort &#x3D; &#x27;&#x27;
+  startRealValueShort &#x3D; &#x27;&#x27;
   /**
    * Valeur de fin de simulation
    */
   stopRealValue &#x3D; &#x27;&#x27;
-    /**
+  /**
    * Valeur de fin de simulation mois année
    */
-    stopRealValueShort &#x3D; &#x27;&#x27;
+  stopRealValueShort &#x3D; &#x27;&#x27;
   /**
    * Element html du graphique
    */
@@ -1774,18 +1774,22 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @param element element html
    * @param simulatorService service simulateur
    */
-  constructor(private element: ElementRef&lt;HTMLElement&gt;, private simulatorService: SimulatorService, private ngZone: NgZone) {
+  constructor(
+    private element: ElementRef&lt;HTMLElement&gt;,
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone,
+  ) {
     simulatorService.dateStop.subscribe((value) &#x3D;&gt; {
       if (value !&#x3D;&#x3D; undefined) {
         this.stopRealValue &#x3D; findRealValue(value)
-        this.stopRealValueShort &#x3D; findRealValueCustom(value,false,true)
+        this.stopRealValueShort &#x3D; findRealValueCustom(value, false, true)
         this.dateStop &#x3D; value
         this.labels &#x3D; getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))
       }
     })
     simulatorService.dateStart.subscribe((value) &#x3D;&gt; {
       this.startRealValue &#x3D; findRealValue(value)
-      this.startRealValueShort &#x3D; findRealValueCustom(value,false,true)
+      this.startRealValueShort &#x3D; findRealValueCustom(value, false, true)
       this.dateStart &#x3D; value
       if (this.dateStop !&#x3D;&#x3D; null) {
         this.labels &#x3D; getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))
@@ -2947,7 +2951,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><div class="left-side">  <div class="title">    <p>      Evolution des ETPT mensuels moyens &nbsp;      <label>de {{ startRealValueShort }} à {{ stopRealValueShort      }}</label>    </p>  </div>  <div class="container">    <div class="canvas-container">      <canvas id="etp-chart"></canvas>      <div id="chartjs-tooltip">        <div class="popin-title-content">          <p class="popin-title">            <b>Effectifs</b>            <br />            à {{ getRealMonth(realSelectedMonth) }}          </p>          <div class="low">Projetés</div>          <p class="hard">Simulés</p>          <p class="white">Variation</p>        </div>        @if (canViewMagistrat) {          <div class="popin-raw">            <div class="popin-title">              <div _ngcontent-vmx-c83="" class="circle pink"></div>              <b>Magistrats</b>            </div>            <p class="low-value first">              {{ getRounded(tooltip.projectedMag) || \'\' }}            </p>            <p class="hard-value first">              {{ this.categorySelected === \'MAGISTRAT\' ? getRounded(tooltip.simulatedMag) || \'\' : \'\' }}            </p>            <div class="white-value">              @if (this.categorySelected === \'MAGISTRAT\') {                <div class="rounded-label">                  <label>                    {{ getDeltaInPercent(tooltip.simulatedMag, tooltip.projectedMag) || 0 }}                    %                  </label>                </div>              }            </div>          </div>        }        @if (canViewGreffier) {          <div class="popin-raw">            <div class="popin-title">              <div _ngcontent-vmx-c83="" class="circle light-pink"></div>              <b>Agents</b>              &nbsp;            </div>            <p class="low-value">              {{ getRounded(tooltip.projectedFon) || \'\' }}            </p>            <p class="hard-value">              {{ this.categorySelected === \'MAGISTRAT\' ? \'\' : getRounded(tooltip.simulatedFon) || \'\' }}            </p>            <div class="white-value">              @if (this.categorySelected !== \'MAGISTRAT\') {                <div class="rounded-label">                  <label>                    {{ getDeltaInPercent(tooltip.simulatedFon, tooltip.projectedFon) || 0 }}                    %                  </label>                </div>              }            </div>          </div>        }        @if (canViewContractuel) {          <div class="popin-raw">            <div class="popin-title">              <div class="circle light-pink"></div>              <b>Autour du magistrat</b>              &nbsp;            </div>            <p class="low-value">              {{ getRounded(tooltip.projectedCont) || \'\' }}            </p>            <p class="hard-value"></p>            <div class="white-value"></div>          </div>        }      </div>      <div id="chartjs-tooltip-triangle"></div>    </div>  </div></div><div class="right-side">  @if (!whiteSimulator || categorySelected === \'MAGISTRAT\') {    <aj-legend-label      [title]="\'projectedMag\'"      [label]="\'Siège (projeté)\'"      [dotColor]="\'#e07dd8\'"      [bgColor]="\'#fdc0f8\'"      [disabledEl]="!canViewMagistrat"      [ngClass]="{        \'disabled-label\': !canViewMagistrat,      }"      (value)="display($event)"    ></aj-legend-label>  }  @if (!whiteSimulator || categorySelected === \'MAGISTRAT\') {    <aj-legend-label      [title]="\'simulatedMag\'"      [label]="\'Siège (simulé)\'"      [dotColor]="\'#fdc0f8\'"      [bgColor]="\'#e07dd8\'"      (value)="display($event)"      [disabledEl]="!canViewMagistrat || categorySelected !== \'MAGISTRAT\' ? true : false"      [ngClass]="{        \'disabled-label\': !canViewMagistrat || categorySelected !== \'MAGISTRAT\',      }"    ></aj-legend-label>  }  <div class="space"></div>  @if (!whiteSimulator || categorySelected === \'GREFFE\') {    <aj-legend-label      [title]="\'projectedGref\'"      [label]="\'Greffe (projeté)\'"      [dotColor]="\'#f083a0\'"      [bgColor]="\'#ffcade\'"      (value)="display($event)"      [disabledEl]="!canViewGreffier"      [ngClass]="{        \'disabled-label\': !canViewGreffier,      }"    ></aj-legend-label>  }  @if (!whiteSimulator || categorySelected === \'GREFFE\') {    <aj-legend-label      [title]="\'simulatedGref\'"      [label]="\'Greffe (simulé)\'"      [dotColor]="\'#ffcade\'"      [bgColor]="\'#f083a0\'"      (value)="display($event)"      [disabledEl]="!canViewGreffier || categorySelected !== \'GREFFE\' ? true : false"      [ngClass]="{        \'disabled-label\': !canViewGreffier || categorySelected !== \'GREFFE\',      }"    ></aj-legend-label>  }  @if (canViewContractuel) {    <div class="space"></div>  }  @if (canViewContractuel) {    <aj-legend-label      [title]="\'projectedCont\'"      [label]="\'EAM (projeté)\'"      [dotColor]="\'#fdbfb7\'"      [bgColor]="\'#fcd7d3\'"      (value)="display($event)"      [disabledEl]="!canViewContractuel"      [ngClass]="{        \'disabled-label\': !canViewContractuel,      }"    ></aj-legend-label>  }  @if (canViewContractuel) {    <aj-legend-label      [title]="\'simulatedCont\'"      [label]="\'EAM (simulé)\'"      [dotColor]="\'#fcd7d3\'"      [bgColor]="\'#eba89f\'"      (value)="display($event)"      [disabledEl]="true"      class="disabled-label"    ></aj-legend-label>  }</div></div>'
-    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'EtpChartComponent'};
 </script>

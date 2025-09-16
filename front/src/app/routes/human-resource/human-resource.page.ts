@@ -89,7 +89,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   addDomVentilation: AddVentilationComponent | null = null
 
   /**
-   *
+   * Dom du paneau de détails du profil
    */
   @ViewChild(CoverProfilDetailsComponent)
   coverDetails!: CoverProfilDetailsComponent
@@ -195,8 +195,17 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    */
   alertList: WritableSignal<string[]> = signal([])
 
+  /**
+   * Initialisation des calendriers
+   */
   hasInitCalendars = false
+  /**
+   * Initialisation des inputs
+   */
   hasInitInputs = false
+  /**
+   * Calendriers ouverts
+   */
   calendarsOpened: number[] = []
 
   /**
@@ -288,10 +297,16 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     })
   }
 
+  /**
+   * Au chargement de la vue
+   */
   ngAfterViewInit() {
     this.routerLinkToGoBack = this.appService.previousUrl ? [this.appService.previousUrl] : ['/']
   }
 
+  /**
+   * Au changement de la vue
+   */
   ngAfterViewChecked() {
     if (!this.hasInitCalendars && !this.hasInitInputs && this.coverDetails) {
       this.hasInitCalendars = true
@@ -359,9 +374,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   /**
-   * Génération des situations artificielle ou non
+   * Formatage des historiques
    */
-
   formatHRHistory() {
     this.allIndisponibilities = this.currentHR?.indisponibilities || []
 
@@ -840,7 +854,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Demande de modification d'une situation
-   * @param history
+   * @param history history of situation
    */
   onSelectSituationToEdit(history: HistoryInterface | null = null) {
     console.log(history, this.histories)
@@ -869,7 +883,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Demande de suppression d'une situation
-   * @param id
+   * @param id id of situation
    */
   async onRemoveSituation(id: number) {
     const callback = async (forceAlert = true) => {
@@ -953,7 +967,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Force to open help panel
-   * @param type
+   * @param type type of help panel
    */
   openHelpPanel(type: string | undefined) {
     switch (type) {
@@ -1017,25 +1031,36 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Fonction de mise à jours de l'etp courant pour la création d'un nouvel agent uniquement
-   * @param etp
+   * @param etp etp to update
    */
   updateETP(etp: number | null) {
     if (!this.initialETP) {
       this.currentETP = etp
     }
   }
+
+  /**
+   * Groupement des indisponibilités par catégorie
+   * @returns
+   */
   groupIndispoByCategory(): any {
     const grouped = _.groupBy(this.allIndisponibilityReferentiel, (indispo) => indispo.category)
     return grouped
   }
 
+  /**
+   * Mise à midi de la date
+   * @param elem
+   * @returns
+   */
   setToMidDay(elem: Date) {
     return setTimeToMidDay(elem)
   }
 
   /**
    * Fonction de mise à jour des alertes
-   * @param updatedList
+   * @param tag
+   * @param remove
    */
   onAlertsUpdated({ tag, remove = false }: { tag: string; remove?: boolean }) {
     // Remove alert from the service
@@ -1058,6 +1083,8 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Permet à l'utilisateur de passer d'un input à un autre avec la touche "Entrée"
+   * @param event mouse event
+   * @param calendarType type of calendar
    * @param event
    */
   focusNext({ event, calendarType }: { event: any; calendarType: string | null }) {

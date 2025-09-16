@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface de tag de visualisation</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -200,6 +207,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Indicateur d&#39;activité</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -233,6 +246,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Indicateur si c&#39;est le mois courant</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -266,6 +285,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Mois</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -273,19 +298,32 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CommonModule } from &#x27;@angular/common&#x27;;
-import { Component, OnDestroy, OnInit } from &#x27;@angular/core&#x27;;
-import { sortBy } from &#x27;lodash&#x27;;
-import { MainClass } from &#x27;../../../libs/main-class&#x27;;
-import { HumanResourceService } from &#x27;../../../services/human-resource/human-resource.service&#x27;;
-import { ActivitiesService } from &#x27;../../../services/activities/activities.service&#x27;;
-import { BackupInterface } from &#x27;../../../interfaces/backup&#x27;;
-import { month } from &#x27;../../../utils/dates&#x27;;
-import { RouterLink } from &#x27;@angular/router&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CommonModule } from &#x27;@angular/common&#x27;
+import { Component, OnDestroy, OnInit } from &#x27;@angular/core&#x27;
+import { sortBy } from &#x27;lodash&#x27;
+import { MainClass } from &#x27;../../../libs/main-class&#x27;
+import { HumanResourceService } from &#x27;../../../services/human-resource/human-resource.service&#x27;
+import { ActivitiesService } from &#x27;../../../services/activities/activities.service&#x27;
+import { BackupInterface } from &#x27;../../../interfaces/backup&#x27;
+import { month } from &#x27;../../../utils/dates&#x27;
+import { RouterLink } from &#x27;@angular/router&#x27;
+
+/**
+ * Interface de tag de visualisation
+ */
 interface TagMonthInterface {
-  month: Date;
-  active: boolean;
-  current: boolean;
+  /**
+   * Mois
+   */
+  month: Date
+  /**
+   * Indicateur d&#x27;activité
+   */
+  active: boolean
+  /**
+   * Indicateur si c&#x27;est le mois courant
+   */
+  current: boolean
 }
 
 /**
@@ -298,67 +336,62 @@ interface TagMonthInterface {
   templateUrl: &#x27;./activities-last-disponibilities.component.html&#x27;,
   styleUrls: [&#x27;./activities-last-disponibilities.component.scss&#x27;],
 })
-export class ActivitiesLastDisponibilitiesComponent
-  extends MainClass
-  implements OnInit, OnDestroy
-{
+export class ActivitiesLastDisponibilitiesComponent extends MainClass implements OnInit, OnDestroy {
   /**
    * Liste of months
    */
-  months: TagMonthInterface[] &#x3D; [];
+  months: TagMonthInterface[] &#x3D; []
 
   /**
    * Constructor
    */
   constructor(
     private humanResourceService: HumanResourceService,
-    private activitiesService: ActivitiesService
+    private activitiesService: ActivitiesService,
   ) {
-    super();
+    super()
   }
 
   /**
    * Initialisation des datas au chargement de la page
    */
   ngOnInit() {
-    const now &#x3D; new Date();
-    const nbMonth &#x3D; 12;
+    const now &#x3D; new Date()
+    const nbMonth &#x3D; 12
 
     for (let i &#x3D; 0; i &lt; nbMonth; i++) {
       this.months.push({
         month: new Date(now.getFullYear(), now.getMonth() - i, 10),
         active: false,
         current: false,
-      });
+      })
     }
-    this.months &#x3D; sortBy(this.months, [(elem) &#x3D;&gt; elem.month]);
+    this.months &#x3D; sortBy(this.months, [(elem) &#x3D;&gt; elem.month])
 
     this.watch(
-      this.humanResourceService.hrBackup.subscribe(
-        (hrBackup: BackupInterface | null) &#x3D;&gt; {
-          if (hrBackup) {
-            this.activitiesService.getLastMonthActivities().then((date) &#x3D;&gt; {
-              let max &#x3D; null;
+      this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) &#x3D;&gt; {
+        if (hrBackup) {
+          this.activitiesService.getLastMonthActivities().then((date) &#x3D;&gt; {
+            let max &#x3D; null
 
-              if (date !&#x3D;&#x3D; null) {
-                date &#x3D; new Date(date ? date : &#x27;&#x27;);
-                max &#x3D; month(date, 0, &#x27;lastday&#x27;);
-              }
-              this.updateMonthActivity(max);
-            });
-          } else {
-            this.updateMonthActivity();
-          }
+            if (date !&#x3D;&#x3D; null) {
+              date &#x3D; new Date(date ? date : &#x27;&#x27;)
+              max &#x3D; month(date, 0, &#x27;lastday&#x27;)
+            }
+            this.updateMonthActivity(max)
+          })
+        } else {
+          this.updateMonthActivity()
         }
-      )
-    );
+      }),
+    )
   }
 
   /**
    * Destruction du composant
    */
   ngOnDestroy() {
-    this.watcherDestroy();
+    this.watcherDestroy()
   }
 
   /**
@@ -367,19 +400,9 @@ export class ActivitiesLastDisponibilitiesComponent
    */
   updateMonthActivity(maxDate: Date | null &#x3D; null) {
     for (let i &#x3D; 0; i &lt; this.months.length; i++) {
-      const m &#x3D; this.months[i].month;
-      this.months[i].active &#x3D;
-        maxDate &amp;&amp;
-        maxDate.getFullYear() &gt;&#x3D; m.getFullYear() &amp;&amp;
-        maxDate.getMonth() &gt; m.getMonth()
-          ? true
-          : false;
-      this.months[i].current &#x3D;
-        maxDate &amp;&amp;
-        maxDate.getFullYear() &#x3D;&#x3D;&#x3D; m.getFullYear() &amp;&amp;
-        maxDate.getMonth() &#x3D;&#x3D;&#x3D; m.getMonth()
-          ? true
-          : false;
+      const m &#x3D; this.months[i].month
+      this.months[i].active &#x3D; maxDate &amp;&amp; maxDate.getFullYear() &gt;&#x3D; m.getFullYear() &amp;&amp; maxDate.getMonth() &gt; m.getMonth() ? true : false
+      this.months[i].current &#x3D; maxDate &amp;&amp; maxDate.getFullYear() &#x3D;&#x3D;&#x3D; m.getFullYear() &amp;&amp; maxDate.getMonth() &#x3D;&#x3D;&#x3D; m.getMonth() ? true : false
     }
   }
 }

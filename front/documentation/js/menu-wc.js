@@ -58,12 +58,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             <li class="link">
                                 <a href="modules/CGUPageModule.html" data-type="entity-link" >CGUPageModule</a>
                             </li>
-                            <li class="link">
-                                <a href="modules/HeaderSelectorsModule.html" data-type="entity-link" >HeaderSelectorsModule</a>
-                            </li>
-                            <li class="link">
-                                <a href="modules/SituationDisplayerModule.html" data-type="entity-link" >SituationDisplayerModule</a>
-                            </li>
                 </ul>
                 </li>
                     <li class="chapter">
@@ -216,6 +210,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/GraphsVerticalsLinesComponent.html" data-type="entity-link" >GraphsVerticalsLinesComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/HeaderSelectorsComponent.html" data-type="entity-link" >HeaderSelectorsComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/HelpButtonComponent.html" data-type="entity-link" >HelpButtonComponent</a>
                             </li>
                             <li class="link">
@@ -340,9 +337,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/SiteMapPage.html" data-type="entity-link" >SiteMapPage</a>
-                            </li>
-                            <li class="link">
-                                <a href="components/SituationDisplayerComponent.html" data-type="entity-link" >SituationDisplayerComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/SpeedometerComponent.html" data-type="entity-link" >SpeedometerComponent</a>

@@ -30,18 +30,18 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * Valeur de début de simulation
    */
   startRealValue = ''
-   /**
+  /**
    * Valeur de début de simulation mois année
    */
-   startRealValueShort = ''
+  startRealValueShort = ''
   /**
    * Valeur de fin de simulation
    */
   stopRealValue = ''
-    /**
+  /**
    * Valeur de fin de simulation mois année
    */
-    stopRealValueShort = ''
+  stopRealValueShort = ''
   /**
    * Element html du graphique
    */
@@ -124,18 +124,22 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @param element element html
    * @param simulatorService service simulateur
    */
-  constructor(private element: ElementRef<HTMLElement>, private simulatorService: SimulatorService, private ngZone: NgZone) {
+  constructor(
+    private element: ElementRef<HTMLElement>,
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone,
+  ) {
     simulatorService.dateStop.subscribe((value) => {
       if (value !== undefined) {
         this.stopRealValue = findRealValue(value)
-        this.stopRealValueShort = findRealValueCustom(value,false,true)
+        this.stopRealValueShort = findRealValueCustom(value, false, true)
         this.dateStop = value
         this.labels = getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))
       }
     })
     simulatorService.dateStart.subscribe((value) => {
       this.startRealValue = findRealValue(value)
-      this.startRealValueShort = findRealValueCustom(value,false,true)
+      this.startRealValueShort = findRealValueCustom(value, false, true)
       this.dateStart = value
       if (this.dateStop !== null) {
         this.labels = getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))

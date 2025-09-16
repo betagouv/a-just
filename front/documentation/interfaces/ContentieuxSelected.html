@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface de contentieux sélectionné</p>
+
+            </p>
 
             <p class="comment">
                 <h3>Extends</h3>
@@ -206,6 +213,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Enfants du contentieux</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -239,6 +252,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date de la dernière date sans données</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -272,11 +291,21 @@ interface TagInterface {
   label: string
 }
 
+/**
+ * Interface de contentieux sélectionné
+ */
 interface ContentieuxSelected extends ContentieuReferentielInterface {
+  /** Date de la dernière date sans données */
   lastDateWhithoutData: Date
+  /**
+   * Enfants du contentieux
+   */
   childrens?: ContentieuxSelected[]
 }
 
+/**
+ * Date actuelle
+ */
 const now &#x3D; new Date()
 now.setDate(10)
 const lastTwelve &#x3D; new Date(now)

@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnChanges } from '@angular/core'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'
-import { map, pairwise, startWith } from 'rxjs'
+import { pairwise, startWith } from 'rxjs'
 import { MainClass } from '../../../libs/main-class'
 import { TooltipsComponent } from '../../../components/tooltips/tooltips.component'
 import { CommonModule } from '@angular/common'
@@ -13,7 +13,13 @@ import { TimeSelectorComponent } from '../../../components/time-selector/time-se
 import { WHITE_SIMULATOR_START } from '../../../constants/log-codes'
 import { KPIService } from '../../../services/kpi/kpi.service'
 
+/**
+ * Variable ETP magistrat factor
+ */
 const etpMagFactor = (208 / 12) * 8
+/**
+ * Variable ETP greffe factor
+ */
 const etpGreffeFactor = (229.57 / 12) * 7
 
 @Component({
@@ -24,7 +30,13 @@ const etpGreffeFactor = (229.57 / 12) * 7
   styleUrls: ['./editable-situation.component.scss'],
 })
 export class EditableSituationComponent extends MainClass implements OnChanges {
+  /**
+   * Service de simulation
+   */
   simulatorService = inject(SimulatorService)
+  /**
+   * Service de KPI
+   */
   kPIService = inject(KPIService)
 
   /**
@@ -32,25 +44,24 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
    */
   nbOfDays: number = 0
 
+  /**
+   * Date de fin à afficher
+   */
   @Input() endDateToDisplay: string = ''
 
+  /**
+   * Catégorie
+   */
   @Input()
   set category(value: string | null) {
     this._category = value
-    /**
-    if (this._category === 'MAGISTRAT') {
-      this.formWhiteSim.controls['etpMag'].enable()
-      //this.formWhiteSim.controls['etpFon'].disable()
-    }
-    else {
-      this.formWhiteSim.controls['etpMag'].disable()
-      //this.formWhiteSim.controls['etpFon'].enable()
-    }
-    */
   }
   get category(): string | null {
     return this._category
   }
+  /**
+   * Catégorie
+   */
   private _category: string | null = null
 
   /**
@@ -76,6 +87,9 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     ]),
   })
 
+  /**
+   * Objet de la situation de fin
+   */
   endSituation = {
     totalIn: 0,
     totalOut: 0,
@@ -88,6 +102,9 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     magRealTimePerCase: 0,
   }
 
+  /**
+   * Objet de la situation de fin
+   */
   endSituationDisplay = {
     realCoverage: '',
     realDTESInMonths: '',
@@ -110,12 +127,27 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
    */
   displayEndSituation: boolean = false
 
+  /**
+   * Paramètres verrouillés
+   */
   lockedParams = new Array()
 
+  /**
+   * Bool to check if beginning situation is validated
+   */
   pressedKey = false
+  /**
+   * Bool to check if beginning situation is validated
+   */
 
+  /**
+   * Bool to check if beginning situation is validated
+   */
   disabledTmd = false
 
+  /**
+   * Bool to check if beginning situation is validated
+   */
   defaultTmd = -1
 
   /**
@@ -143,6 +175,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     )
   }
 
+  /**
+   * Change in real time
+   * @param val
+   */
   async changeInRealTime(val: any) {
     if (this.pressedKey === true) {
       this.pressedKey = false
@@ -526,6 +562,9 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     else return val
   }
 
+  /**
+   * Initialisation des champs
+   */
   initFields() {
     Object.keys(this.formWhiteSim.controls).forEach((key) => {
       this.formWhiteSim.patchValue({ [key]: '' })
@@ -539,6 +578,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     this.defaultTmd = -1
     this.lockedParams = new Array()
   }
+
+  /**
+   * Disable element
+   * @param eq
+   */
   disableElement(eq: any) {
     this.formWhiteSim.patchValue({ [eq.field]: String(eq.value) })
     if (this.lockedParams.includes(eq.field)) {
@@ -550,15 +594,11 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
       }
     }
   }
-  /**
-  compute(value1: number, value2: number, eq: number) {
-    const equation1 = 
-    const equation2 =
-    const equation3 =
-  }
-   
-  equation1() {  } */
 
+  /**
+   * Change in real time
+   * @param changes
+   */
   ngOnChanges(changes: any) {
     if (this.isValidatedWhiteSimu) this.generateEndSituation()
   }
@@ -599,6 +639,9 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Edit white simulator
+   */
   editWhiteSimulator() {
     this.isValidatedWhiteSimu = false
     this.displayEndSituation = false
@@ -606,6 +649,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     const coverage = this.formWhiteSim.controls['realCoverage'].value
     if (coverage?.includes('%')) this.formWhiteSim.controls['realCoverage'].setValue(coverage.replace('%', ''))
   }
+
+  /**
+   * Generate end situation
+   */
   generateEndSituation() {
     this.replaceSeparator()
 
@@ -698,6 +745,9 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     })
   }
 
+  /**
+   * Replace separator
+   */
   replaceSeparator() {
     this.formWhiteSim.controls['lastStock'].setValue(this.formWhiteSim.controls['lastStock'].value?.replaceAll(',', '.') || '')
     this.formWhiteSim.controls['realCoverage'].setValue(this.formWhiteSim.controls['realCoverage'].value?.replaceAll(',', '.') || '')
@@ -709,6 +759,12 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
 
     this.formWhiteSim.controls['magRealTimePerCase'].setValue(this.formWhiteSim.controls['magRealTimePerCase'].value?.replaceAll(',', '.') || '')
   }
+
+  /**
+   * Validate no (no ?)
+   * @param e
+   * @returns
+   */
   validateNo(e: any) {
     const charCode = e.which ? e.which : e.keyCode
     this.pressedKey = true
@@ -719,6 +775,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     return true
   }
 
+  /**
+   * On delete pressed
+   * @param e
+   */
   onDeletePressed(e: any) {
     const charCode = e.which ? e.which : e.keyCode
     if (charCode === 46 || charCode === 8) {
@@ -726,6 +786,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Get start TMD
+   * @returns
+   */
   getStartTmd() {
     /**
     console.log(
@@ -737,6 +801,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     return parseFloat(this.formWhiteSim.controls['magRealTimePerCase'].value || '0')
   }
 
+  /**
+   * Update time value
+   * @param value
+   */
   updateTimeValue(value: Number) {
     if (value !== 0) {
       this.pressedKey = true
@@ -752,6 +820,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Check if empty value
+   * @returns
+   */
   checkIfEmptyValue() {
     let counter = 0
     let infiniteValue = false
@@ -766,6 +838,10 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     return counter <= 2 ? false : true
   }
 
+  /**
+   * Check if empty counter
+   * @returns
+   */
   checkIfEmptyCounter() {
     let counter = 0
     for (const field in this.formWhiteSim.controls) {
@@ -776,10 +852,18 @@ export class EditableSituationComponent extends MainClass implements OnChanges {
     return counter
   }
 
+  /**
+   * Get tooltip text
+   * @returns
+   */
   getTooltipText() {
     return 'Dès que vous aurez saisi suffisamment de données pour que la situation de départ puisse être projetée, vous pourrez la valider afin d’effectuer une simulation. Veuillez saisir des données complémentaires pour que toutes les autres puissent être calculées automatiquement. Vous ne pouvez pas saisir de valeur égale à 0 pour les entrées ou les sorties.'
   }
 
+  /**
+   * Get Temps Moyen Par Dossier
+   * @returns
+   */
   getTmd() {
     return decimalToStringDate(this.getStartTmd(), ':')
   }

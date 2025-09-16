@@ -212,7 +212,7 @@
                             title="Official documentation about module declarations"><span class="icon ion-ios-information-circle-outline"></span></a></h3>
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <a href="../components/HeaderSelectorsComponent.html">HeaderSelectorsComponent</a>
+                            <a href="../components/SituationDisplayerComponent.html">SituationDisplayerComponent</a>
                         </li>
                     </ul>
                 </div>
@@ -222,7 +222,7 @@
                                 class="icon ion-ios-information-circle-outline"></a></h3>
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <a href="../components/HeaderSelectorsComponent.html">HeaderSelectorsComponent</a>
+                            <a href="../components/SituationDisplayerComponent.html">SituationDisplayerComponent</a>
                         </li>
                     </ul>
                 </div>
@@ -253,14 +253,7 @@ const list &#x3D; [SituationDisplayerComponent]
  */
 @NgModule({
   declarations: [...list],
-  imports: [
-    ComponentsModule,
-    RouterModule,
-    ComponentsModule,
-    MaterialModule,
-    CommonModule,
-    PeriodSelectorModule,
-  ],
+  imports: [ComponentsModule, RouterModule, ComponentsModule, MaterialModule, CommonModule, PeriodSelectorModule],
   exports: [...list],
 })
 export class SituationDisplayerModule {}

@@ -880,12 +880,33 @@ interface ContentieuReferentielCalculateInterface
  * Page de réaffectation
  */
 export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service de gestion des fiches agents
+   */
   humanResourceService &#x3D; inject(HumanResourceService)
+  /**
+   * Service de gestion de la force de travail
+   */
   workforceService &#x3D; inject(WorkforceService)
+  /**
+   * Service de gestion de la réaffectation
+   */
   rs &#x3D; inject(ReaffectatorService)
+  /**
+   * Service de gestion de l&#x27;utilisateur
+   */
   userService &#x3D; inject(UserService)
+  /**
+   * Service de navigation
+   */
   router &#x3D; inject(Router)
+  /**
+   * Service de log des KPIs
+   */
   kpiService &#x3D; inject(KPIService)
+  /**
+   * Service de gestion de l&#x27;application
+   */
   appService &#x3D; inject(AppService)
   /**
    * Dom du wrapper
@@ -988,8 +1009,14 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   canLeave: boolean &#x3D; false
 
+  /**
+   * Force désactivation du composant
+   */
   forceDeactivate: boolean &#x3D; false
 
+  /**
+   * État suivant
+   */
   nextState: string | null &#x3D; null
 
   /**
@@ -997,6 +1024,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   isDestroyed: boolean &#x3D; false
 
+  /**
+   * Étapes d&#x27;introduction
+   */
   introSteps: IntroJSStep[] &#x3D; [
     {
       target: &#x27;#wrapper-contener&#x27;,
@@ -1037,6 +1067,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.reaffectatorService &#x3D; this.rs
   }
 
+  /**
+   * Actions du popup
+   */
   popupAction &#x3D; [
     { id: &#x27;leave&#x27;, content: &#x27;Quitter sans exporter&#x27; },
     { id: &#x27;export&#x27;, content: &#x27;Exporter en PDF et quitter&#x27;, fill: true },
@@ -1064,8 +1097,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           this.reaffectatorService.selectedCategoriesId !&#x3D;&#x3D; null
             ? [this.reaffectatorService.selectedCategoriesId]
             : this.formFilterSelect.length
-            ? [this.formFilterSelect[0].id]
-            : [],
+              ? [this.formFilterSelect[0].id]
+              : [],
         )
       }),
     )
@@ -1080,24 +1113,29 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.humanResources &#x3D; []
     this.referentiel &#x3D; []
     this.allPersons &#x3D; []
-    
+
     // Nettoyer les timeouts actifs
     if (this.timeoutUpdateSearch) {
       clearTimeout(this.timeoutUpdateSearch)
       this.timeoutUpdateSearch &#x3D; null
     }
-    
+
     // Réinitialiser les variables de recherche
     this.valuesFinded &#x3D; null
     this.searchValue &#x3D; &#x27;&#x27;
-    
+
     // Marquer le composant comme détruit
     this.isDestroyed &#x3D; true
-    
+
     // Détruire les observables
     this.watcherDestroy()
   }
 
+  /**
+   * Vérifie si le composant peut être désactivé
+   * @param nextState
+   * @returns
+   */
   canDeactivate(nextState: string) {
     const modified &#x3D; this.listFormated.filter((elem) &#x3D;&gt; {
       return elem.hrFiltered.some((hr) &#x3D;&gt; hr.isModify)
@@ -1109,6 +1147,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     return this.forceDeactivate
   }
 
+  /**
+   * Actions du popup
+   * @param action
+   */
   onPopupDetailAction(action: any) {
     switch (action.id) {
       case &#x27;leave&#x27;:
@@ -1132,6 +1174,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * Mise à jour des catégories du menu déroulant
    */
   updateCategoryValues() {
+    // Mettre à jour les valeurs des catégories
     this.formFilterSelect &#x3D; this.formFilterSelect.map((c) &#x3D;&gt; {
       const itemBlock &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
       c.value &#x3D; c.orignalValue + &#x27;&#x27;
@@ -1186,7 +1229,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @returns list
    */
   onFilterList() {
-    if (this.isDestroyed || !this.formFilterSelect.length || this.humanResourceService.backupId.getValue() &#x3D;&#x3D;&#x3D; null || this.reaffectatorService.selectedCategoriesId &#x3D;&#x3D;&#x3D; null) {
+    if (
+      this.isDestroyed ||
+      !this.formFilterSelect.length ||
+      this.humanResourceService.backupId.getValue() &#x3D;&#x3D;&#x3D; null ||
+      this.reaffectatorService.selectedCategoriesId &#x3D;&#x3D;&#x3D; null
+    ) {
       return
     }
 
@@ -1214,7 +1262,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         if (this.isDestroyed) {
           return
         }
-        
+
         this.allPersons &#x3D; allPersons
         this.listFormated &#x3D; list.map((i: listFormatedInterface, index: number) &#x3D;&gt; {
           if (index &#x3D;&#x3D;&#x3D; 0) {
@@ -1366,7 +1414,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.indexValuesFinded &#x3D; 0
 
     if (this.valuesFinded &amp;&amp; this.valuesFinded.length) {
-      this.valuesFinded &#x3D; this.valuesFinded.filter(x&#x3D;&gt;x.situations[0]?.category?.id&#x3D;&#x3D;&#x3D;this.reaffectatorService.selectedCategoriesId)
+      this.valuesFinded &#x3D; this.valuesFinded.filter((x) &#x3D;&gt; x.situations[0]?.category?.id &#x3D;&#x3D;&#x3D; this.reaffectatorService.selectedCategoriesId)
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
     } else {
       this.onGoTo(null)
@@ -1587,24 +1635,22 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         let etpt &#x3D; 0
         switch (this.reaffectatorService.selectedCategoriesId) {
           case 1: {
-            etpt &#x3D; (refFromItemList as any).etpMag ?? 0;
-            break;
+            etpt &#x3D; (refFromItemList as any).etpMag ?? 0
+            break
           }
-          case 2:
-
-          {
-            etpt &#x3D; (refFromItemList as any).etpFon ?? 0;
-            break;
+          case 2: {
+            etpt &#x3D; (refFromItemList as any).etpFon ?? 0
+            break
           }
           case 3: {
-            etpt &#x3D; (refFromItemList as any).etpCon ?? 0;
-            break;
+            etpt &#x3D; (refFromItemList as any).etpCon ?? 0
+            break
           }
           default: {
-            etpt &#x3D; refFromItemList.totalAffected ?? 0;
+            etpt &#x3D; refFromItemList.totalAffected ?? 0
           }
-        } 
-        if (refFromItemList.etpUseToday!&#x3D;&#x3D;refFromItemList.totalAffected) etpt&#x3D;refFromItemList.totalAffected||0
+        }
+        if (refFromItemList.etpUseToday !&#x3D;&#x3D; refFromItemList.totalAffected) etpt &#x3D; refFromItemList.totalAffected || 0
         const nbWorkingHours &#x3D; refFromItemList.nbWorkingHours || 0
         const nbWorkingDays &#x3D; refFromItemList.nbWorkingDays || 0
         const lastStock &#x3D; refFromItemList.lastStock || 0
@@ -1612,25 +1658,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         let outValue &#x3D; averageWorkingProcess &#x3D;&#x3D;&#x3D; 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
 
-        let dtes &#x3D; outValue &amp;&amp; Number.isFinite(lastStock / outValue)
-        ? Math.max(0, fixDecimal(lastStock / outValue, 100))
-        : Infinity;
-        
-        let realDTESInMonths &#x3D; outValue &amp;&amp; Number.isFinite(ref.realDTESInMonths)
-          ? ref.realDTESInMonths
-          : Infinity;
-        
-        let coverage &#x3D; outValue &amp;&amp; refFromItemList.totalIn!&#x3D;&#x3D;0?Math.round((outValue / inValue) * 100):NaN;
-        
-        let realCoverage &#x3D; this.reaffectatorService.selectedReferentielIds.includes(ref.id) &amp;&amp; outValue &amp;&amp; refFromItemList.totalIn!&#x3D;&#x3D;0
-          ? ref.realCoverage
-          : NaN;
-          
+        let dtes &#x3D; outValue &amp;&amp; Number.isFinite(lastStock / outValue) ? Math.max(0, fixDecimal(lastStock / outValue, 100)) : Infinity
+
+        let realDTESInMonths &#x3D; outValue &amp;&amp; Number.isFinite(ref.realDTESInMonths) ? ref.realDTESInMonths : Infinity
+
+        let coverage &#x3D; outValue &amp;&amp; refFromItemList.totalIn !&#x3D;&#x3D; 0 ? Math.round((outValue / inValue) * 100) : NaN
+
+        let realCoverage &#x3D;
+          this.reaffectatorService.selectedReferentielIds.includes(ref.id) &amp;&amp; outValue &amp;&amp; refFromItemList.totalIn !&#x3D;&#x3D; 0 ? ref.realCoverage : NaN
+
         return {
           ...ref,
-          realDTESInMonths:this.noNegativValues(realDTESInMonths),
+          realDTESInMonths: this.noNegativValues(realDTESInMonths),
           coverage,
-          dtes:this.noNegativValues(dtes),
+          dtes: this.noNegativValues(dtes),
           etpUseToday: refFromItemList.etpUseToday,
           totalAffected: refFromItemList.totalAffected,
           realCoverage: realCoverage,
@@ -1650,7 +1691,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     if (this.isDestroyed) {
       return
     }
-    
+
     const list: RHActivityInterface[] &#x3D; []
 
     referentiels
@@ -1778,19 +1819,29 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Arrondir un nombre à l&#x27;entier le plus proche
-   * @param valeur 
-   * @returns 
+   * @param valeur
+   * @returns
    */
-  round(valeur:number){
-  return Math.round(valeur)
+  round(valeur: number) {
+    return Math.round(valeur)
   }
 
-  noNegativValues(value:number){
-  return value&lt;0 ? 0: value
+  /**
+   * Retourne la valeur si elle est positive, sinon 0
+   * @param value
+   * @returns
+   */
+  noNegativValues(value: number) {
+    return value &lt; 0 ? 0 : value
   }
 
-  isInfinity(value:number){
-    return isNaN(value)|| !Number.isFinite(value)?true:false
+  /**
+   * Vérifie si la valeur est infinie
+   * @param value
+   * @returns
+   */
+  isInfinity(value: number) {
+    return isNaN(value) || !Number.isFinite(value) ? true : false
   }
 }
 </code></pre>

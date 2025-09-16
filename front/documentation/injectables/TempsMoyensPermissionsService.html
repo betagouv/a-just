@@ -119,6 +119,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Guard de la page des temps moyens</p>
+
+            </p>
 
 
 
@@ -193,19 +200,24 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="46"
-                                    class="link-to-prism">src/app/routes/auth.guard.ts:46</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="78"
+                                    class="link-to-prism">src/app/routes/auth.guard.ts:78</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Vérifie si l&#39;utilisateur peut voir la page des temps moyens</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#now" target="_self" >unknown</a></code>
 
                         </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -234,10 +246,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/routes/auth.guard.ts:44</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/routes/auth.guard.ts:72</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de gestion de l&#39;authentification</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -261,13 +279,26 @@ import {
   USER_ACCESS_WHITE_SIMULATOR,
 } from &#x27;../constants/user-access&#x27;
 
+/**
+ * Service de gestion des permissions globales
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class PermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
+  /**
+   * Service de gestion des routes
+   */
   router &#x3D; inject(Router)
 
+  /**
+   * Vérifie si l&#x27;utilisateur est connecté
+   * @returns
+   */
   async checkLogin() {
     if (await this.authService.userConnected()) {
       return true
@@ -282,96 +313,195 @@ class PermissionsService {
   }
 }
 
+/**
+ * Guard de l&#x27;authentification
+ * @param route
+ * @param state
+ * @returns
+ */
 export const authGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(PermissionsService).checkLogin()
 }
 
+/**
+ * Guard de la page des temps moyens
+ * @param route
+ * @param state
+ * @returns
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class TempsMoyensPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page des temps moyens
+   * @returns
+   */
   async canViewTempsMoyens() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp; user.access &amp;&amp; user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !&#x3D;&#x3D; -1 ? true : false
   }
 }
 
+/**
+ * Guard de la page des temps moyens
+ * @param route
+ * @param state
+ * @returns
+ */
 export const tempsMoyensGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(TempsMoyensPermissionsService).canViewTempsMoyens()
 }
 
+/**
+ * Service de gestion des permissions de la page des reaffectations
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class ReaffectatorPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page des reaffectations
+   * @returns
+   */
   async canViewReaffectator() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp; user.access &amp;&amp; user.access.indexOf(USER_ACCESS_REAFFECTATOR) !&#x3D;&#x3D; -1 ? true : false
   }
 }
 
+/**
+ * Guard de la page des reaffectations
+ * @param route
+ * @param state
+ * @returns
+ */
 export const reaffectatorGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(ReaffectatorPermissionsService).canViewReaffectator()
 }
 
+/**
+ * Service de gestion des permissions de la page du cockpit
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class CockpitPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page du cockpit
+   * @returns
+   */
   async canViewCockpit() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp; user.access &amp;&amp; user.access.indexOf(USER_ACCESS_CALCULATOR) !&#x3D;&#x3D; -1 ? true : false
   }
 }
 
+/**
+ * Guard de la page du cockpit
+ * @param route
+ * @param state
+ * @returns
+ */
 export const cockpitGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(CockpitPermissionsService).canViewCockpit()
 }
 
+/**
+ * Service de gestion des permissions de la page du simulateur
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class SimulatorPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page du simulateur
+   * @returns
+   */
   async canViewSimulator() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp; user.access &amp;&amp; user.access.indexOf(USER_ACCESS_SIMULATOR) !&#x3D;&#x3D; -1 ? true : false
   }
 }
 
+/**
+ * Guard de la page du simulateur
+ * @param route
+ * @param state
+ * @returns
+ */
 export const simulatorGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(SimulatorPermissionsService).canViewSimulator()
 }
 
+/**
+ * Service de gestion des permissions de la page du simulateur blanc
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class WhiteSimulatorPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page du simulateur blanc
+   * @returns
+   */
   async canViewWhiteSimulator() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp; user.access &amp;&amp; user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !&#x3D;&#x3D; -1 ? true : false
   }
 }
 
+/**
+ * Guard de la page du simulateur blanc
+ * @param route
+ * @param state
+ * @returns
+ */
 export const whiteSimulatorGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(WhiteSimulatorPermissionsService).canViewWhiteSimulator()
 }
 
+/**
+ * Service de gestion des permissions de la page du simulateur blanc
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class AllSimulatorPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page du simulateur blanc
+   * @returns
+   */
   async canAllWhiteSimulator() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp;
@@ -384,54 +514,108 @@ class AllSimulatorPermissionsService {
   }
 }
 
+/**
+ * Guard de la page du simulateur blanc
+ * @param route
+ * @param state
+ * @returns
+ */
 export const allSimulatorGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(AllSimulatorPermissionsService).canAllWhiteSimulator()
 }
 
+/**
+ * Service de gestion des permissions de la page du dashboard
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class DashboardPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page du dashboard
+   * @returns
+   */
   async canViewDashboard() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp; user.access &amp;&amp; user.access.indexOf(USER_ACCESS_DASHBOARD) !&#x3D;&#x3D; -1 ? true : false
   }
 }
 
+/**
+ * Guard de la page du dashboard
+ * @param route
+ * @param state
+ * @returns
+ */
 export const dashboardGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(DashboardPermissionsService).canViewDashboard()
 }
 
+/**
+ * Service de gestion des permissions de la page des ventilations
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class VentilationsPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page des ventilations
+   * @returns
+   */
   async canViewVentilations() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp; user.access &amp;&amp; user.access.indexOf(USER_ACCESS_VENTILATIONS) !&#x3D;&#x3D; -1 ? true : false
   }
 }
 
+/**
+ * Guard de la page des ventilations
+ * @param route
+ * @param state
+ * @returns
+ */
 export const ventilationsGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(VentilationsPermissionsService).canViewVentilations()
 }
 
+/**
+ * Service de gestion des permissions de la page des activités
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 class ActivitiesPermissionsService {
+  /**
+   * Service de gestion de l&#x27;authentification
+   */
   authService &#x3D; inject(AuthService)
 
+  /**
+   * Vérifie si l&#x27;utilisateur peut voir la page des activités
+   * @returns
+   */
   async canViewActivities() {
     const user &#x3D; await this.authService.userConnected()
     return user &amp;&amp; user.access &amp;&amp; user.access.indexOf(USER_ACCESS_ACTIVITIES) !&#x3D;&#x3D; -1 ? true : false
   }
 }
 
+/**
+ * Guard de la page des activités
+ * @param route
+ * @param state
+ * @returns
+ */
 export const activitiesGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
   return inject(ActivitiesPermissionsService).canViewActivities()
 }

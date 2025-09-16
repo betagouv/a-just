@@ -1,20 +1,5 @@
 import { CommonModule } from '@angular/common'
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  ViewChildren,
-  QueryList,
-  Renderer2,
-  OnInit,
-  signal,
-  Signal,
-  inject,
-  ElementRef,
-  WritableSignal,
-} from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, Output, ViewChildren, QueryList, Renderer2, OnInit, inject, ElementRef } from '@angular/core'
 import { FormGroup, FormsModule } from '@angular/forms'
 import { isNumber, sumBy } from 'lodash'
 import { BackButtonComponent } from '../../../components/back-button/back-button.component'
@@ -33,9 +18,7 @@ import { ReferentielService } from '../../../services/referentiel/referentiel.se
 import { fixDecimal } from '../../../utils/numbers'
 import { isDateBiggerThan, today } from '../../../utils/dates'
 import { etpLabel } from '../../../utils/referentiel'
-import { downloadFile } from '../../../utils/system'
 import { MatIconModule } from '@angular/material/icon'
-import { NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA, NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL } from '../../../constants/documentation'
 
 /**
  * Panneau de présentation d'une fiche
@@ -58,13 +41,28 @@ import { NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA, NOMENCLATURE_D
   styleUrls: ['./cover-profil-details.component.scss'],
 })
 export class CoverProfilDetailsComponent extends MainClass implements OnChanges, OnInit {
+  /**
+   * Service de gestion des fiches
+   */
   humanResourceService = inject(HumanResourceService)
 
+  /**
+   * Inputs
+   */
   @ViewChildren('input')
   inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
+  /**
+   * Calendriers
+   */
   @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>
 
+  /**
+   * Service de gestion des utilisateurs
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion des référentiels
+   */
   referentielService = inject(ReferentielService)
   /**
    * Fiche courante
@@ -396,7 +394,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Permet de suppimer une alerte sur un des champs du formulaire
    */
   removeAlertItem(tag: string) {
-    this.alertSet.emit({ tag, remove: true})
+    this.alertSet.emit({ tag, remove: true })
   }
 
   /**

@@ -5,8 +5,8 @@ import annotationPlugin from 'chartjs-plugin-annotation'
 import { SimulatorService } from '../../../../services/simulator/simulator.service'
 import { findRealValue, getLongMonthString, getRangeOfMonths } from '../../../../utils/dates'
 import { fixDecimal } from '../../../../utils/numbers'
-
 import { LegendLabelComponent } from '../legend-label/legend-label.component'
+
 /**
  * Composant graphique DTES simulateur
  */
@@ -77,7 +77,11 @@ export class DtesChartComponent {
    * @param element Element HTML
    * @param simulatorService Service simulateur
    */
-  constructor(element: ElementRef<HTMLElement>, private simulatorService: SimulatorService, private ngZone: NgZone) {
+  constructor(
+    element: ElementRef<HTMLElement>,
+    private simulatorService: SimulatorService,
+    private ngZone: NgZone,
+  ) {
     simulatorService.dateStop.subscribe((value) => {
       if (value !== undefined) {
         this.stopRealValue = findRealValue(value)
