@@ -1,7 +1,10 @@
-export const basicEtptData : { [key: string]: number } = {
+/**
+ * Nombre de jour travaillé / an d'un magistrat
+ */
+export const basicEtptData: { [key: string]: number } = {
   /**
-     * Nombre de jour travaillé / an d'un magistrat
-     */
+   * Nombre de jour travaillé / an d'un magistrat
+   */
   nbDaysByMagistrat: 208,
   /**
    * Nombre de jour travaillé / an d'un fonctionnaire
@@ -14,5 +17,5 @@ export const basicEtptData : { [key: string]: number } = {
   /**
    * Nombre d'heure par jour de travail d'un fonctionnaire
    */
-  nbHoursPerDayAndFonctionnaire: 7,  
-  }
+  nbHoursPerDayAndFonctionnaire: 7,
+}
