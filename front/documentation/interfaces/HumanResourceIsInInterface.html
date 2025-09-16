@@ -1,0 +1,1855 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  HumanResourceIsInInterface</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/routes/workforce/workforce.page.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;une fiche avec ses valeurs rendu</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface</a></code>
+            </p>
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#category" 
+>
+                                            category
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#categoryName" 
+>
+                                            categoryName
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#categoryRank" 
+>
+                                            categoryRank
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#fonctionRank" 
+>
+                                            fonctionRank
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#isIn" 
+>
+                                            isIn
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="category"></a>
+                                        <span class="name "><b>category</b>
+                                            <a href="#category">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>category:         <code><a href="../interfaces/HRCategoryInterface.html" target="_self" >HRCategoryInterface</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/HRCategoryInterface.html" target="_self" >HRCategoryInterface</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Categorie de la personne</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="categoryName"></a>
+                                        <span class="name "><b>categoryName</b>
+                                            <a href="#categoryName">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>categoryName:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Category name</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="categoryRank"></a>
+                                        <span class="name "><b>categoryRank</b>
+                                            <a href="#categoryRank">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>categoryRank:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Category rank</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="fonctionRank"></a>
+                                        <span class="name "><b>fonctionRank</b>
+                                            <a href="#fonctionRank">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>fonctionRank:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Fonction rank</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="isIn"></a>
+                                        <span class="name "><b>isIn</b>
+                                            <a href="#isIn">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>isIn:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Est présent dans l&#39;interface</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, OnDestroy, OnInit } from &#x27;@angular/core&#x27;
+import { orderBy, sortBy, sumBy, union } from &#x27;lodash&#x27;
+import { ActivatedRoute, Router, RouterLink } from &#x27;@angular/router&#x27;
+import { FilterPanelComponent, FilterPanelInterface } from &#x27;./filter-panel/filter-panel.component&#x27;
+import { debounceTime } from &#x27;rxjs&#x27;
+import { HumanResourceInterface } from &#x27;../../interfaces/human-resource-interface&#x27;
+import { HRSituationInterface } from &#x27;../../interfaces/hr-situation&#x27;
+import { HRFonctionInterface } from &#x27;../../interfaces/hr-fonction&#x27;
+import { HRCategoryInterface, HRCategorypositionInterface, HRCategorySelectedInterface } from &#x27;../../interfaces/hr-category&#x27;
+import { RHActivityInterface } from &#x27;../../interfaces/rh-activity&#x27;
+import { ContentieuReferentielInterface } from &#x27;../../interfaces/contentieu-referentiel&#x27;
+import { WrapperComponent } from &#x27;../../components/wrapper/wrapper.component&#x27;
+import { DateSelectComponent } from &#x27;../../components/date-select/date-select.component&#x27;
+import { RadioButtonComponent } from &#x27;../../components/radio-button/radio-button.component&#x27;
+import { CommonModule } from &#x27;@angular/common&#x27;
+import { PersonPreviewComponent } from &#x27;./person-preview/person-preview.component&#x27;
+import { InputButtonComponent } from &#x27;../../components/input-button/input-button.component&#x27;
+import { IntroJSComponent, IntroJSStep } from &#x27;../../components/intro-js/intro-js.component&#x27;
+import { MainClass } from &#x27;../../libs/main-class&#x27;
+import { childrenInterface, dataInterface } from &#x27;../../components/select/select.component&#x27;
+import { BackupInterface } from &#x27;../../interfaces/backup&#x27;
+import { DocumentationInterface } from &#x27;../../interfaces/documentation&#x27;
+import { OPACITY_20 } from &#x27;../../constants/colors&#x27;
+import { HumanResourceService } from &#x27;../../services/human-resource/human-resource.service&#x27;
+import { ReferentielService } from &#x27;../../services/referentiel/referentiel.service&#x27;
+import { WorkforceService } from &#x27;../../services/workforce/workforce.service&#x27;
+import { UserService } from &#x27;../../services/user/user.service&#x27;
+import { HRFonctionService } from &#x27;../../services/hr-fonction/hr-function.service&#x27;
+import { FILTER_LIMIT_ON_SEARCH } from &#x27;../../constants/workforce&#x27;
+import { fixDecimal } from &#x27;../../utils/numbers&#x27;
+import { sortDates, today } from &#x27;../../utils/dates&#x27;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;
+import { FormsModule } from &#x27;@angular/forms&#x27;
+import { EmptyInputComponent } from &#x27;../../components/empty-input/empty-input.component&#x27;
+import { AppService } from &#x27;../../services/app/app.service&#x27;
+
+/**
+ * Interface d&#x27;une fiche avec ses valeurs rendu
+ */
+export interface HumanResourceIsInInterface extends HumanResourceInterface {
+  /**
+   * Est présent dans l&#x27;interface
+   */
+  isIn: boolean
+  /**
+   * Category name
+   */
+  categoryName?: string
+  /**
+   * Category rank
+   */
+  categoryRank?: number | null
+  /**
+   * Fonction rank
+   */
+  fonctionRank?: number | null
+  /**
+   * Categorie de la personne
+   */
+  category?: HRCategoryInterface
+}
+
+/**
+ * Interface d&#x27;une fiche avec ses valeurs rendu
+ */
+export interface HumanResourceSelectedInterface extends HumanResourceInterface {
+  /**
+   * Prénom de l&#x27;agent
+   */
+  firstName?: string
+  /**
+   * Nom de l&#x27;agent
+   */
+  lastName?: string
+  /**
+   * Total d&#x27;affectation
+   */
+  totalAffected?: number
+  /**
+   * Trouvé dans la recherche ou non
+   */
+  opacity: number
+  /**
+   * Cache pour les activité courantes
+   */
+  tmpActivities?: any
+  /**
+   * Temps de travail en string
+   */
+  etpLabel: string | null
+  /**
+   * Total des indispo
+   */
+  hasIndisponibility: number
+  /**
+   * Activités de la date sélectionnée
+   */
+  currentActivities: RHActivityInterface[]
+  /**
+   * ETP a la date sélectionnée
+   */
+  etp: number
+  /**
+   * Categorie à la date sélectionnée
+   */
+  category: HRCategoryInterface | null
+  /**
+   * Fonction à la date sélectionnée
+   */
+  fonction: HRFonctionInterface | null
+  /**
+   * Situation à la date sélectionnée
+   */
+  currentSituation: HRSituationInterface | null
+}
+
+/**
+ * Liste des fiches d&#x27;une catégories
+ */
+export interface listFormatedInterface {
+  /**
+   * Couleur de la categories
+   */
+  textColor: string
+  /**
+   * Couleur de fond de la categories
+   */
+  bgColor: string
+  /**
+   * Couleur de fond de la categories
+   */
+  hoverColor: string
+  /**
+   * Nom de la catégorie (pluriel ou non)
+   */
+  label: string
+  /**
+   * Liste des fiches
+   */
+  hr: HumanResourceSelectedInterface[]
+  /**
+   * Liste des fiches après filtres
+   */
+  hrFiltered: HumanResourceSelectedInterface[]
+  /**
+   * Reférentiel avec les calcules d&#x27;etp, couverture propre à la catégorie
+   */
+  referentiel: ContentieuReferentielInterface[]
+  /**
+   * Id de la categorie
+   */
+  categoryId: number
+}
+
+/**
+ * Page de la liste des fiches (magistrats, greffier ...)
+ */
+@Component({
+  standalone: true,
+  imports: [
+    WrapperComponent,
+    DateSelectComponent,
+    FilterPanelComponent,
+    RadioButtonComponent,
+    CommonModule,
+    PersonPreviewComponent,
+    InputButtonComponent,
+    IntroJSComponent,
+    RouterLink,
+    MatIconModule,
+    FormsModule,
+    EmptyInputComponent,
+  ],
+  templateUrl: &#x27;./workforce.page.html&#x27;,
+  styleUrls: [&#x27;./workforce.page.scss&#x27;],
+})
+export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
+  humanResourceService &#x3D; inject(HumanResourceService)
+  referentielService &#x3D; inject(ReferentielService)
+  route &#x3D; inject(ActivatedRoute)
+  router &#x3D; inject(Router)
+  workforceService &#x3D; inject(WorkforceService)
+  userService &#x3D; inject(UserService)
+  hrFonctionService &#x3D; inject(HRFonctionService)
+  appService &#x3D; inject(AppService)
+  /**
+   * Liste de toutes les RH
+   */
+  allHumanResources: HumanResourceInterface[] &#x3D; []
+  /**
+   * Liste de toutes les personnes quelque soit l&#x27;arrivée ou le départ
+   */
+  allPersons: HumanResourceIsInInterface[] &#x3D; []
+  /**
+   * Liste de toutes les personnes quelque soit l&#x27;arrivée ou le départ
+   */
+  allPersonsFiltered: HumanResourceIsInInterface[] | null &#x3D; null
+  /**
+   * Liste de toutes les personnes visibles
+   */
+  allPersonsFilteredIsIn: HumanResourceIsInInterface[] &#x3D; []
+  /**
+   * Liste de toutes les personnes non visibles
+   */
+  allPersonsFilteredNotIn: HumanResourceIsInInterface[] &#x3D; []
+  /**
+   * Formated RH
+   */
+  preformatedAllHumanResource: HumanResourceSelectedInterface[] &#x3D; []
+  /***
+   * RH
+   */
+  humanResources: HumanResourceSelectedInterface[] &#x3D; []
+  /**
+   * RH filtrés
+   */
+  humanResourcesFilters: HumanResourceSelectedInterface[] &#x3D; []
+  /**
+   * Contentieux
+   */
+  referentiel: ContentieuReferentielInterface[] &#x3D; []
+  /**
+   * Liste des référentiels
+   */
+  formReferentiel: dataInterface[] &#x3D; []
+  /**
+   * liste des catégories filtrées
+   */
+  categoriesFilterList: HRCategorySelectedInterface[] &#x3D; []
+  /**
+   * Liste des ids catégories
+   */
+  categoriesFilterListIds: number[] &#x3D; []
+  /**
+   * Identifiants des contentieux selectionnés
+   */
+  selectedReferentielIds: number[] &#x3D; []
+  /**
+   * Identifiants des sous contentieux selectionnés
+   */
+  selectedSubReferentielIds: number[] | null &#x3D; null
+  /**
+   * Valeur du champs recherche
+   */
+  searchValue: string &#x3D; &#x27;&#x27;
+  /**
+   * Liste des RH trouvées
+   */
+  valuesFinded: HumanResourceInterface[] | null &#x3D; null
+  /**
+   * Indice des valeurs trouvées suite à une recherche
+   */
+  indexValuesFinded: number &#x3D; 0
+  /**
+   * Backup des RH
+   */
+  hrBackup: BackupInterface | null &#x3D; null
+  /**
+   * Date selectionnée
+   */
+  dateSelected: Date &#x3D; this.workforceService.dateSelected.getValue()
+  /**
+   * Liste formatée contenant l&#x27;ensemble des informations nécessaire au chargement de la page
+   */
+  listFormated: listFormatedInterface[] &#x3D; []
+  /**
+   * Liste des filtres selectionnés
+   */
+  filterSelected: {
+    filter: ContentieuReferentielInterface | null
+    up: boolean | null
+  } &#x3D; { filter: null, up: null }
+  /**
+   * Affichage du panneau de selection de filtre
+   */
+  showFilterPanel: boolean &#x3D; false
+  /**
+   * Paramètres de filtre selectionnés
+   */
+  filterParams: FilterPanelInterface | null &#x3D; this.workforceService.filterParams
+  /**
+   * Accès au réafectateur
+   */
+  canViewReaffectator: boolean &#x3D; false
+  /**
+   * Documentation module
+   */
+  documentation: DocumentationInterface &#x3D; {
+    title: &#x27;Le ventilateur :&#x27;,
+    path: this.userService.isCa()
+      ? &#x27;https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/quest-ce-que-cest&#x27;
+      : &#x27;https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/quest-ce-que-cest&#x27;,
+    printSubTitle: true,
+  }
+  /**
+   * En cour de chargement
+   */
+  isLoading: boolean &#x3D; false
+  /**
+   * Poste string
+   */
+  listPoste &#x3D; [&#x27;titulaire&#x27;, &#x27;placé&#x27;, &#x27;contractuel&#x27;]
+  /**
+   * Opacité pour les background des contentieux
+   */
+  OPACITY &#x3D; OPACITY_20
+  /**
+   * Intro JS Steps
+   */
+  introSteps: IntroJSStep[] &#x3D; this.isTJ()
+    ? [
+        {
+          target: &#x27;#wrapper-contener&#x27;,
+          title: &#x27;A quoi sert le ventilateur ?&#x27;,
+          intro:
+            &quot;En renseignant la situation de chacun des agents de votre juridiction dans une fiche individuelle, cette fonctionnalité vous permet de &lt;b&gt;visualiser en un coup d&#x27;œil et à la date de votre choix pour l&#x27;ensemble des agents du TJ leur ETPT réel et l&#x27;affectation de chacun&lt;/b&gt; sur les différents contentieux.&quot;,
+        },
+        {
+          target: &#x27;.header-list&#x27;,
+          title: &#x27;Liste des contentieux&#x27;,
+          intro:
+            &quot;Retrouvez ici la &lt;b&gt;liste des contentieux&lt;/b&gt; traités par la juridiction et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le &lt;b&gt;volume global d&#x27;ETPT&lt;/b&gt; affecté par votre juridiction au &lt;b&gt;traitement de chaque type d&#x27;activité&lt;/b&gt; par &lt;b&gt;catégorie d&#x27;agent&lt;/b&gt;.&quot;,
+        },
+        {
+          target: &#x27;.step-3 &gt; .title&#x27;,
+          title: &quot;Le calendrier, le choix des contentieux et le nombre d&#x27;agents&quot;,
+          intro:
+            &quot;En &lt;b&gt;modifiant la date dans le calendrier&lt;/b&gt;, affichez &lt;b&gt;la liste des agents présents&lt;/b&gt; et les &lt;b&gt;ETPT mobilisés sur les différents contentieux&lt;/b&gt; à la date choisie. Vous pouvez aussi &lt;b&gt;choisir&lt;/b&gt; de n&#x27;afficher que les données d&#x27;ETPT relatives à &lt;b&gt;certains contentieux&lt;/b&gt;.&quot;,
+        },
+        {
+          target: &#x27;.header-list .filter-button&#x27;,
+          title: &#x27;Filtrer et trier&#x27;,
+          intro:
+            &quot;Vous avez la possibilité de &lt;b&gt;filtrer&lt;/b&gt; cette liste d&#x27;agents par fonction, la &lt;b&gt;trier&lt;/b&gt; par &lt;b&gt;nom&lt;/b&gt;, &lt;b&gt;fonction&lt;/b&gt;, &lt;b&gt;date de mise à jour ou taux d&#x27;affectation&lt;/b&gt; et de &lt;b&gt;modifier l&#x27;affichage&lt;/b&gt; des agents d&#x27;abord par nom ou par prénom.&quot;,
+        },
+        {
+          target: &#x27;person-preview&#x27;,
+          title: &#x27;Ajuster une fiche en cliquant directement sur celle-ci&#x27;,
+          intro:
+            &quot;Vous pourrez ainsi modifier les &lt;b&gt;nom&lt;/b&gt;, &lt;b&gt;prénom&lt;/b&gt;, &lt;b&gt;matricule&lt;/b&gt; et &lt;b&gt;date d&#x27;arrivée&lt;/b&gt; ou de départ de la juridiction d&#x27;un agent, en saisissant les nouvelles valeurs directement dans les champs concernés. Vous aurez également la possibilité d&#x27;ajouter un commentaire et des indisponibilités.&lt;br/&gt;&lt;br/&gt;Dans ces fiches agents, vous pourrez &lt;b&gt;renseigner ou modifier la répartition en pourcentage du temps de travail&lt;/b&gt; de chaque agent sur les différents contentieux ou sous-contentieux qu&#x27;il traite.&lt;br/&gt;&lt;br/&gt;Dès lors, plus besoin de faire de calculs d&#x27;ETPT en proportion du temps de travail ou de la &lt;b&gt;date d’arrivée&lt;/b&gt; dans la juridiction : A-JUST s’en chargera pour vous !&quot;,
+        },
+        {
+          target: &#x27;.search-zone&#x27;,
+          title: &#x27;Rechercher un agent :&#x27;,
+          intro:
+            &quot;Le &lt;b&gt;champ dédié en haut à droite&lt;/b&gt; de l&#x27;écran vous permet de &lt;b&gt;trouver rapidement la fiche d&#x27;un agent&lt;/b&gt; (même s&#x27;il a quitté votre juridiction). Pour cela, il vous suffit de saisir son nom ou son prénom et de cliquer sur la fiche proposée.&quot;,
+        },
+        {
+          target: &#x27;.add-collaborator&#x27;,
+          title: &#x27;Ajouter un nouvel agent :&#x27;,
+          intro:
+            &quot;Vous pouvez ajouter un agent s&#x27;il n&#x27;est pas dans les effectifs présents dans A-JUST. &lt;br/&gt;&lt;br/&gt;Renseignez les informations demandées, une date d&#x27;arrivée et de départ lors que celle-ci est connue. Vous pouvez effectuer une première ventilation ; pensez à &lt;b&gt;vérifier que votre taux d&#x27;affectation est de 100%&lt;/b&gt; à l’aide de la barre de remplissage située sous les contentieux.&quot;,
+        },
+        {
+          target: &#x27;.menu-item.tools&#x27;,
+          //target: &#x27;.menu .sub-tools &gt; p:nth-child(2n)&#x27;,
+          title: &#x27;Découvrez nos outils :&#x27;,
+          intro:
+            &quot;Téléchargeable dans chaque fiche agent, la &lt;b&gt;calculatrice&lt;/b&gt; vous permet d&#x27;obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.&lt;br/&gt;&lt;br/&gt;La &lt;b&gt;nomenclature&lt;/b&gt; permet par les codes NAC de connaître la nature des affaires prises en compte dans un sous-contentieux : c&#x27;est la colonne vertébrale d&#x27;A-JUST !&quot;,
+          /*intro:
+        &quot;vous permet de convertir en &lt;b&gt;pourcentage d&#x27;ETPT la part de temps de travail&lt;/b&gt; qu&#x27;un agent consacre à une activité.&quot;,
+        beforeLoad: async (intro: any) &#x3D;&gt; {
+          const subTools &#x3D; document.querySelector(&#x27;.menu .sub-tools&#x27;)
+          if(!subTools) {
+            const itemToClick &#x3D; document.querySelector(&#x27;.menu-item.tools&#x27;)
+            if(itemToClick) {
+              // @ts-ignore
+              itemToClick.click()
+              await sleep(200)
+            }
+          }
+        }*/
+        },
+        {
+          target: &#x27;.menu-item.tools&#x27;,
+          //target: &#x27;.menu .sub-tools &gt; p:nth-child(3n)&#x27;,
+          title: &quot;L&#x27;extracteur d&#x27;ETPT :&quot;,
+          intro:
+            &quot;Choisissez la &lt;b&gt;période&lt;/b&gt; et la &lt;b&gt;catégorie d&#x27;agents souhaitées&lt;/b&gt; et obtenez toutes ces informations dans un &lt;b&gt;fichier Excel&lt;/b&gt; que vous pourrez utiliser pour simplifier l&#x27;exercice annuel des déclaratifs d&#x27;ETPT&quot;,
+        },
+      ]
+    : [
+        {
+          target: &#x27;#wrapper-contener&#x27;,
+          title: &#x27;A quoi sert le ventilateur ?&#x27;,
+          intro:
+            &quot;En renseignant la situation de chacun des agents de votre cour d&#x27;appel dans une fiche individuelle, cette fonctionnalité vous permet de &lt;b&gt;visualiser en un coup d&#x27;œil et à la date de votre choix pour l&#x27;ensemble des agents de la CA leur ETPT réel et l&#x27;affectation de chacun&lt;/b&gt; sur les différents contentieux.&quot;,
+        },
+        {
+          target: &#x27;.header-list&#x27;,
+          title: &#x27;Liste des contentieux&#x27;,
+          intro:
+            &quot;Retrouvez ici la &lt;b&gt;liste des contentieux&lt;/b&gt; traités par la cour d&#x27;appel et sur lesquels vos agents sont mobilisés. Une fois leur fiche individuelle renseignée, vous pourrez visualiser le &lt;b&gt;volume global d&#x27;ETPT&lt;/b&gt; affecté par votre juridiction au &lt;b&gt;traitement de chaque type d&#x27;activité&lt;/b&gt; par &lt;b&gt;catégorie d&#x27;agent&lt;/b&gt;.&quot;,
+        },
+        {
+          target: &#x27;.header-list .filter-button&#x27;,
+          title: &#x27;Filtrer et trier&#x27;,
+          intro:
+            &quot;Vous avez la possibilité de &lt;b&gt;filtrer&lt;/b&gt; cette liste d&#x27;agents par fonction, la &lt;b&gt;trier&lt;/b&gt; par &lt;b&gt;nom&lt;/b&gt;, &lt;b&gt;fonction&lt;/b&gt;, &lt;b&gt;date de mise à jour ou taux d&#x27;affectation&lt;/b&gt; et de &lt;b&gt;modifier l&#x27;affichage&lt;/b&gt; des agents d&#x27;abord par nom ou par prénom.&quot;,
+        },
+        {
+          target: &#x27;person-preview&#x27;,
+          title: &#x27;Ajuster une fiche en cliquant directement sur celle-ci&#x27;,
+          intro:
+            &quot;Vous pourrez ainsi modifier les &lt;b&gt;nom&lt;/b&gt;, &lt;b&gt;prénom&lt;/b&gt;, &lt;b&gt;matricule&lt;/b&gt; et &lt;b&gt;date d&#x27;arrivée&lt;/b&gt; ou de départ de la juridiction d&#x27;un agent, en saisissant les nouvelles valeurs directement dans les champs concernés. Vous aurez également la possibilité d&#x27;ajouter un commentaire et des indisponibilités.&lt;br/&gt;&lt;br/&gt;Dans ces fiches agents, vous pourrez &lt;b&gt;renseigner ou modifier la répartition en pourcentage du temps de travail&lt;/b&gt; de chaque agent sur les différents contentieux ou sous-contentieux qu&#x27;il traite.&lt;br/&gt;&lt;br/&gt;Dès lors, plus besoin de faire de calculs d&#x27;ETPT en proportion du temps de travail ou de la &lt;b&gt;date d’arrivée&lt;/b&gt; dans la juridiction : A-JUST s’en chargera pour vous !&quot;,
+        },
+        {
+          target: &#x27;.search-zone&#x27;,
+          title: &#x27;Rechercher un agent :&#x27;,
+          intro:
+            &quot;Le &lt;b&gt;champ dédié en haut à droite&lt;/b&gt; de l&#x27;écran vous permet de &lt;b&gt;trouver rapidement la fiche d&#x27;un agent&lt;/b&gt; (même s&#x27;il a quitté votre juridiction). Pour cela, il vous suffit de saisir son nom ou son prénom et de cliquer sur la fiche proposée.&quot;,
+        },
+        {
+          target: &#x27;.add-collaborator&#x27;,
+          title: &#x27;Ajouter un nouvel agent :&#x27;,
+          intro:
+            &quot;Vous pouvez ajouter un agent s&#x27;il n&#x27;est pas dans les effectifs présents dans A-JUST. &lt;br/&gt;&lt;br/&gt;Renseignez les informations demandées, une date d&#x27;arrivée et de départ lors que celle-ci est connue. Vous pouvez effectuer une première ventilation ; pensez à &lt;b&gt;vérifier que votre taux d&#x27;affectation est de 100%&lt;/b&gt; à l’aide de la barre de remplissage située sous les contentieux.&quot;,
+        },
+        {
+          target: &#x27;.menu-item.tools&#x27;,
+          //target: &#x27;.menu .sub-tools &gt; p:nth-child(2n)&#x27;,
+          title: &#x27;Découvrez nos outils :&#x27;,
+          intro:
+            &quot;Téléchargeable dans chaque fiche agent, la &lt;b&gt;calculatrice&lt;/b&gt; vous permet d&#x27;obtenir rapidement le pourcentage de temps de travail qu’un agent (magistrat, ou fonctionnaire) consacre à une activité.&quot;,
+        },
+      ]
+
+  /**
+   * Constructor
+   */
+  constructor() {
+    super()
+  }
+
+  /**
+   * Initialisation du composent
+   */
+  ngOnInit() {
+    if (!this.userService.canViewVentilation()) {
+      this.userService.redirectToHome()
+    }
+
+    this.watch(
+      this.humanResourceService.contentieuxReferentiel.subscribe((ref: ContentieuReferentielInterface[]) &#x3D;&gt; {
+        this.referentiel &#x3D; ref.filter((a) &#x3D;&gt; this.referentielService.idsIndispo.indexOf(a.id) &#x3D;&#x3D;&#x3D; -1).map((r) &#x3D;&gt; ({ ...r, selected: true }))
+
+        this.formReferentiel &#x3D; this.referentiel.map((r) &#x3D;&gt; ({
+          id: r.id,
+          value: this.userService.referentielMappingNameByInterface(r.label),
+          childrens: (r.childrens || []).map((c) &#x3D;&gt; ({
+            id: c.id,
+            value: this.userService.referentielMappingNameByInterface(c.label),
+          })),
+        }))
+
+        this.selectedReferentielIds &#x3D; this.humanResourceService.selectedReferentielIds
+        this.selectedSubReferentielIds &#x3D; this.humanResourceService.selectedSubReferentielIds
+
+        this.onFilterList(false, true, true)
+      }),
+    )
+    this.watch(
+      this.humanResourceService.categories.subscribe((categories) &#x3D;&gt; {
+        this.categoriesFilterListIds &#x3D; this.humanResourceService.categoriesFilterListIds
+
+        this.categoriesFilterList &#x3D; categories.map((c) &#x3D;&gt; {
+          let selected &#x3D; true
+
+          if (this.categoriesFilterListIds.length &#x3D;&#x3D;&#x3D; categories.length) {
+            const { c: categoryId } &#x3D; this.route.snapshot.queryParams
+            if (categoryId &amp;&amp; c.id !&#x3D;&#x3D; +categoryId) {
+              selected &#x3D; false
+            }
+          } else {
+            selected &#x3D; this.categoriesFilterListIds.indexOf(c.id) !&#x3D;&#x3D; -1
+          }
+
+          return {
+            ...c,
+            selected,
+            headerLabel: c.label &amp;&amp; c.label &#x3D;&#x3D;&#x3D; &#x27;Magistrat&#x27; ? &#x27;Siège&#x27; : c.label,
+            label: c.label &amp;&amp; c.label &#x3D;&#x3D;&#x3D; &#x27;Magistrat&#x27; ? &#x27;magistrat&#x27; : &#x27;agent&#x27;,
+            labelPlural: c.label &amp;&amp; c.label &#x3D;&#x3D;&#x3D; &#x27;Magistrat&#x27; ? &#x27;magistrats&#x27; : &#x27;agents&#x27;,
+            etpt: 0,
+            nbPersonal: 0,
+            openSubMenu: false,
+            poste: [
+              {
+                name: &#x27;titulaire&#x27;,
+                selected: true,
+                etpt: 0,
+                nbPersonal: 0,
+              },
+              {
+                name: &#x27;placé&#x27;,
+                selected: true,
+                etpt: 0,
+                nbPersonal: 0,
+              },
+              {
+                name: &#x27;contractuel&#x27;,
+                selected: true,
+                etpt: 0,
+                nbPersonal: 0,
+              },
+            ],
+          }
+        })
+
+        this.onFilterList()
+      }),
+    )
+    this.watch(
+      this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) &#x3D;&gt; {
+        this.hrBackup &#x3D; hrBackup
+        this.onFilterList()
+      }),
+    )
+    this.route.queryParams.pipe(debounceTime(300)).subscribe((params) &#x3D;&gt; {
+      const { c: categoryId } &#x3D; params
+
+      if (categoryId) {
+        this.categoriesFilterList &#x3D; this.categoriesFilterList.map((c) &#x3D;&gt; {
+          let selected &#x3D; true
+          if (categoryId &amp;&amp; c.id !&#x3D;&#x3D; +categoryId) {
+            selected &#x3D; false
+          }
+
+          return {
+            ...c,
+            selected,
+          }
+        })
+
+        this.onFilterList()
+      }
+    })
+
+    const user &#x3D; this.userService.user.getValue()
+    this.canViewReaffectator &#x3D; user &amp;&amp; user.access &amp;&amp; user.access.indexOf(7) !&#x3D;&#x3D; -1 ? true : false
+  }
+
+  /**
+   * Destruction du composant
+   */
+  ngOnDestroy() {
+    this.listFormated &#x3D; []
+    this.watcherDestroy()
+  }
+
+  /**
+   * Detect is TJ
+   * @returns
+   */
+  isTJ() {
+    return this.userService.interfaceType !&#x3D;&#x3D; 1
+  }
+
+  /**
+   * Maj de catégorie filtrée
+   */
+  updateCategoryValues() {
+    this.categoriesFilterList &#x3D; this.categoriesFilterList.map((c) &#x3D;&gt; {
+      const formatedList &#x3D; this.listFormated.find((l) &#x3D;&gt; l.categoryId &#x3D;&#x3D;&#x3D; c.id)
+      let personal: any &#x3D; []
+      let etpt &#x3D; 0
+      let subTotalEtp: { [key: string]: { etpt: number; total: number } } &#x3D; this.humanResourceService.calculateSubCategories(formatedList?.hrFiltered || [])
+
+      if (formatedList) {
+        personal &#x3D; formatedList.hrFiltered
+
+        personal.map((h: any) &#x3D;&gt; {
+          let realETP &#x3D; (h.etp || 0) - h.hasIndisponibility
+          if (realETP &lt; 0) {
+            realETP &#x3D; 0
+          }
+          etpt +&#x3D; realETP
+        })
+      }
+
+      const posteList &#x3D; c.poste.map((f: HRCategorypositionInterface) &#x3D;&gt; {
+        return {
+          ...f,
+          name: f.name,
+          etpt: fixDecimal(subTotalEtp[f.name].etpt),
+          nbPersonal: personal.filter((x: any) &#x3D;&gt; x.fonction?.position &#x3D;&#x3D;&#x3D; f.name.charAt(0).toUpperCase() + f.name.slice(1)).length,
+        }
+      })
+
+      return {
+        ...c,
+        etpt,
+        nbPersonal: personal.length,
+        poste: posteList,
+      }
+    })
+    this.calculateTotalAffected()
+  }
+
+  /**
+   * Ajout d&#x27;une RH
+   */
+  async addHR() {
+    const newId &#x3D; await this.humanResourceService.createHumanResource(this.dateSelected)
+    this.route.snapshot.fragment &#x3D; newId + &#x27;&#x27;
+    this.router.navigate([&#x27;/resource-humaine&#x27;, newId])
+  }
+
+  /**
+   * Retourne l&#x27;id d&#x27;un élément
+   * @param index
+   * @param item
+   * @returns
+   */
+  trackById(index: number, item: any) {
+    console.log(&#x27;item&#x27;, item)
+    return index
+  }
+
+  /**
+   * Gestion de l&#x27;opacité pour une RH
+   * @param hr
+   * @returns
+   */
+  checkHROpacity(hr: HumanResourceInterface) {
+    const name &#x3D;
+      this.filterParams &amp;&amp; this.filterParams.display &#x3D;&#x3D;&#x3D; &#x27;nom/prénom&#x27;
+        ? (hr.lastName || &#x27;&#x27;) + &#x27; &#x27; + (hr.firstName || &#x27;&#x27;)
+        : (hr.firstName || &#x27;&#x27;) + &#x27; &#x27; + (hr.lastName || &#x27;&#x27;)
+    if (!this.searchValue || name.toLowerCase().includes(this.searchValue.toLowerCase())) {
+      return 1
+    }
+
+    return 0.5
+  }
+
+  /**
+   * Recherche de RH
+   */
+  onSearchBy() {
+    const valuesFinded: HumanResourceInterface[] &#x3D; []
+    let nbPerson &#x3D; 0
+    this.listFormated &#x3D; this.listFormated.map((l: listFormatedInterface) &#x3D;&gt; ({
+      ...l,
+      hrFiltered: l.hrFiltered.map((h) &#x3D;&gt; {
+        const opacity &#x3D; this.checkHROpacity(h)
+        nbPerson++
+        if (opacity &#x3D;&#x3D;&#x3D; 1) {
+          valuesFinded.push(h)
+        }
+        return {
+          ...h,
+          opacity,
+        }
+      }),
+    }))
+    this.valuesFinded &#x3D; valuesFinded.length &#x3D;&#x3D;&#x3D; nbPerson ? null : valuesFinded
+    this.valuesFinded &#x3D; this.valuesFinded?.filter((x:any)&#x3D;&gt; (this.humanResourceService.categoriesFilterListIds||[]).includes(x.category.id))||[]
+    this.indexValuesFinded &#x3D; 0
+
+    this.allPersonsFiltered &#x3D; null
+    let list &#x3D; [...this.allPersons]
+    list &#x3D; list.filter((h) &#x3D;&gt; this.checkHROpacity(h) &#x3D;&#x3D;&#x3D; 1)
+    if (list.length &lt;&#x3D; FILTER_LIMIT_ON_SEARCH &amp;&amp; this.allPersons.length !&#x3D;&#x3D; list.length) {
+      if (this.allPersons.length !&#x3D;&#x3D; list.length &amp;&amp; this.valuesFinded &amp;&amp; this.valuesFinded.length) {
+        this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
+      }
+
+      let allPersonIds: number[] &#x3D; []
+      this.listFormated.map((l) &#x3D;&gt; {
+        allPersonIds &#x3D; allPersonIds.concat(l.hrFiltered.map((h) &#x3D;&gt; h.id))
+      })
+
+      this.allPersonsFiltered &#x3D; [
+        ...list.map((person) &#x3D;&gt; {
+          return {
+            ...person,
+            isIn: allPersonIds.includes(person.id),
+          }
+        }),
+      ]
+    }
+
+    console.log(&#x27;this.allPersonsFiltered&#x27;, this.allPersonsFiltered)
+
+    this.allPersonsFilteredIsIn &#x3D; this.filterFindedPerson(this.allPersonsFiltered, true)
+    this.allPersonsFilteredNotIn &#x3D; this.humanResourceService.categoriesFilterListIds.length&#x3D;&#x3D;&#x3D;3 ?this.filterFindedPerson(this.allPersonsFiltered, false):[]
+  }
+
+  /**
+   * Vérifie si un agent arrive bientôt ou est déjà parti de la juridiction
+   * @param date
+   * @returns
+   */
+  isArriving(date: Date | string, person: HumanResourceIsInInterface | null &#x3D; null): boolean {
+    const now &#x3D; today(this.dateSelected)
+
+    const diff &#x3D; sortDates(date, now, false)
+
+    return diff &gt; 0 ? true : false
+  }
+
+  /**
+   * Vérifie si un agent arrive bientôt ou est déjà parti de la juridiction
+   * @param date
+   * @returns
+   */
+  hasLeft(date: Date | undefined): boolean {
+    if (date &#x3D;&#x3D;&#x3D; undefined || date &#x3D;&#x3D;&#x3D; null) {
+      return false
+    }
+
+    const now &#x3D; new Date(this.dateSelected)
+
+    const diff &#x3D; sortDates(date, now, false)
+
+    return diff &lt; 0 ? true : false
+  }
+
+  /**
+   * force to change filter values
+   */
+  async onSelectCategory(category: HRCategorySelectedInterface) {
+    this.isLoading &#x3D; true
+    if (category.selected &amp;&amp; this.filterParams &amp;&amp; this.filterParams.filterValues) {
+      const fonctions &#x3D; await this.hrFonctionService.getAll()
+      const getIdOfFonctions &#x3D; fonctions.filter((f) &#x3D;&gt; category.id &#x3D;&#x3D;&#x3D; f.categoryId).map((f) &#x3D;&gt; f.id)
+      const filterValues &#x3D; (this.filterParams &amp;&amp; this.filterParams.filterValues) || []
+
+      getIdOfFonctions.map((fId) &#x3D;&gt; {
+        if (!filterValues.includes(fId)) {
+          filterValues.push(fId)
+        }
+      })
+      this.filterParams!.filterValues &#x3D; filterValues
+    }
+
+    this.categoriesFilterList.map((cat) &#x3D;&gt; {
+      cat.poste.map(async (position) &#x3D;&gt; {
+        if (cat.id &#x3D;&#x3D;&#x3D; category.id) {
+          position.selected &#x3D; category.selected
+          await this.switchSubFilter(cat, position)
+        }
+      })
+    })
+
+    this.onFilterList()
+  }
+
+  /**
+   * Filtre liste RH
+   */
+  onFilterList(memorizeScroolPosition &#x3D; false, keepEmptyVentilation &#x3D; true, isFirstLoad &#x3D; false) {
+    if (!this.categoriesFilterList.length || !this.referentiel.length || !this.hrBackup) {
+      return
+    }
+
+    let scrollPosition: number | null &#x3D; null
+
+    this.humanResourceService.categoriesFilterListIds &#x3D; this.categoriesFilterList.filter((c) &#x3D;&gt; c.selected).map((c) &#x3D;&gt; c.id) // copy to memoryse selection
+    let selectedReferentielIds: number[] | null &#x3D; null
+    if (this.formReferentiel.length !&#x3D;&#x3D; this.selectedReferentielIds.length) {
+      selectedReferentielIds &#x3D; this.selectedReferentielIds
+    }
+
+    let selectedSubReferentielIds: number[] | null &#x3D; []
+    this.formReferentiel.map((cont) &#x3D;&gt; {
+      if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
+        selectedSubReferentielIds &#x3D; [...(selectedSubReferentielIds || []), ...(cont.childrens || []).map((c) &#x3D;&gt; c.id)]
+      }
+    })
+    if (
+      isFirstLoad ||
+      !this.selectedSubReferentielIds ||
+      (selectedSubReferentielIds &amp;&amp; selectedSubReferentielIds.length &#x3D;&#x3D;&#x3D; this.selectedSubReferentielIds.length)
+    ) {
+      selectedSubReferentielIds &#x3D; null
+    } else {
+      selectedSubReferentielIds &#x3D; this.selectedSubReferentielIds
+    }
+
+    this.isLoading &#x3D; true
+    this.appService.appLoading.next(true)
+    this.humanResourceService
+      .onFilterList(
+        this.humanResourceService.backupId.getValue() || 0,
+        this.dateSelected,
+        selectedReferentielIds,
+        selectedSubReferentielIds,
+        this.humanResourceService.categoriesFilterListIds,
+      )
+      .then(({ list, allPersons }: { list: listFormatedInterface[]; allPersons: HumanResourceIsInInterface[] }) &#x3D;&gt; {
+        this.listFormated &#x3D; list.map((l) &#x3D;&gt; {
+          return {
+            ...l,
+            id: &#x27;0&#x27; + l.categoryId + &#x27;_&#x27; + l.label,
+          }
+        })
+        this.allPersons &#x3D; allPersons
+
+        this.findPersonWithoutVentilations()
+
+        this.orderListWithFiltersParams()
+
+        this.isLoading &#x3D; false
+        this.appService.appLoading.next(false);
+
+        const domContent &#x3D; document.getElementById(&#x27;container-list&#x27;)
+        if (domContent) {
+          if (scrollPosition !&#x3D;&#x3D; null) {
+            domContent.scrollTop &#x3D; scrollPosition
+          } else {
+            domContent.scrollTop &#x3D; 0
+          }
+        }
+      }).finally(() &#x3D;&gt; {
+        this.appService.appLoading.next(false)
+      })
+
+    if (this.route.snapshot.fragment) {
+      this.onGoTo(+this.route.snapshot.fragment)
+    }
+  }
+
+  /**
+   * Trouver les personnes sans ventilation mais on une date d&#x27;arrivée avant la date sélectionnée
+   */
+  findPersonWithoutVentilations() {
+    this.allPersons
+      .filter(
+        (person) &#x3D;&gt;
+          !person.isIn &amp;&amp;
+          person.dateStart &amp;&amp;
+          sortDates(today(person.dateStart), today(this.dateSelected), false) &lt;&#x3D; 0 &amp;&amp;
+          person.situations &amp;&amp;
+          person.situations.length &amp;&amp;
+          person.situations[person.situations.length - 1].dateStart &amp;&amp;
+          sortDates(today(person.situations[person.situations.length - 1].dateStart), today(this.dateSelected), false) &gt; 0 &amp;&amp;
+          person.category,
+      )
+      .map((person) &#x3D;&gt; {
+        console.log(&#x27;person&#x27;, person)
+        this.listFormated.map((l) &#x3D;&gt; {
+          if (l.categoryId &#x3D;&#x3D;&#x3D; person.category?.id &amp;&amp; !l.hr.find((h) &#x3D;&gt; h.id &#x3D;&#x3D;&#x3D; person.id)) {
+            const getIndispo &#x3D; this.humanResourceService.findAllIndisponibilities(person, this.dateSelected)
+            let hasIndisponibility &#x3D; getIndispo.map((i) &#x3D;&gt; i.percent).reduce((a, b) &#x3D;&gt; a + b, 0)
+            if (hasIndisponibility &gt; 100) {
+              hasIndisponibility &#x3D; 100
+            }
+            const newPerson &#x3D; {
+              ...person,
+              firstName: person.firstName || &#x27;&#x27;,
+              lastName: person.lastName || &#x27;&#x27;,
+              totalAffected: 0,
+              opacity: 1,
+              etpLabel: null,
+              hasIndisponibility,
+              currentActivities: [],
+              etp: 0,
+              fonction: person.situations[0].fonction,
+              currentSituation: null,
+              category: person.situations[0].category,
+            }
+            l.hrFiltered &#x3D; l.hrFiltered || []
+            l.hrFiltered.push(newPerson)
+            l.hrFiltered &#x3D; sortBy(l.hrFiltered, &#x27;fonction.rank&#x27;)
+            l.hr &#x3D; l.hr || []
+            l.hr.push(newPerson)
+            l.hr &#x3D; sortBy(l.hr, &#x27;fonction.rank&#x27;)
+          }
+        })
+      })
+  }
+
+  /**
+   * Ordonner une liste de RH
+   */
+  orderListWithFiltersParams(up: boolean | null &#x3D; null) {
+    this.listFormated &#x3D; this.listFormated.map((list) &#x3D;&gt; {
+      let listFiltered &#x3D; [...list.hr]
+      if (this.filterParams) {
+        if (this.filterParams.filterFunction) {
+          listFiltered &#x3D; this.filterParams.filterFunction(listFiltered)
+        }
+
+        if (this.filterParams.sortFunction) {
+          listFiltered &#x3D; this.filterParams.sortFunction(listFiltered)
+        }
+
+        if (this.filterParams.order &amp;&amp; this.filterParams.order &#x3D;&#x3D;&#x3D; &#x27;desc&#x27;) {
+          listFiltered &#x3D; listFiltered.reverse()
+        }
+
+        if (this.getOptionAffichageIndispoString()) {
+          listFiltered &#x3D; listFiltered.filter(
+            (h) &#x3D;&gt;
+              h.indisponibilities &amp;&amp;
+              h.indisponibilities.length &amp;&amp;
+              h.indisponibilities.some((i) &#x3D;&gt; (this.filterParams?.filterIndispoValues || []).includes(i.contentieux.id)),
+          )
+        }
+      }
+
+      list.hrFiltered &#x3D; listFiltered
+
+      if (this.filterSelected) {
+        list.hrFiltered &#x3D; orderBy(
+          list.hrFiltered,
+          (h) &#x3D;&gt; {
+            const acti &#x3D; (h.currentActivities || []).find((a) &#x3D;&gt; a.contentieux?.id &#x3D;&#x3D;&#x3D; this.filterSelected.filter?.id)
+            return acti ? acti.percent || 0 : 0
+          },
+          [up ? &#x27;asc&#x27; : &#x27;desc&#x27;],
+        )
+      }
+
+      return list
+    })
+
+    this.updateCategoryValues()
+    this.onSearchBy()
+  }
+
+  /**
+   * Scroll jusqu&#x27;à une RH donnée en paramètre
+   * @param hrId identifiant d&#x27;une ressource
+   */
+  onGoTo(hrId: number | null) {
+    let isFinded &#x3D; false
+    const findContainer &#x3D; document.getElementById(&#x27;container-list&#x27;)
+    if (findContainer) {
+      if (hrId) {
+        const findElement &#x3D; findContainer.querySelector(&#x60;#human-${hrId}&#x60;)
+        if (findElement) {
+          const headers &#x3D; findContainer.querySelectorAll(&#x27;.header-list&#x27;)
+          const { top } &#x3D; findElement.getBoundingClientRect()
+          const mainTop &#x3D; findContainer.getBoundingClientRect().top
+          let topDelta &#x3D; mainTop
+          for (let i &#x3D; 0; i &lt; headers.length; i++) {
+            const topHeader &#x3D; headers[i].getBoundingClientRect().top
+            if (topHeader &#x3D;&#x3D;&#x3D; mainTop || topHeader &lt; top) {
+              topDelta +&#x3D; headers[i].getBoundingClientRect().height
+              break
+            }
+          }
+
+          let scrollTop &#x3D; top - topDelta + findContainer.scrollTop - 8
+
+          isFinded &#x3D; true
+          findContainer.scroll({
+            behavior: &#x27;smooth&#x27;,
+            top: scrollTop,
+          })
+        } else {
+        }
+      } else {
+        isFinded &#x3D; true
+        findContainer.scrollTo({
+          behavior: &#x27;smooth&#x27;,
+          top: 0,
+        })
+      }
+    }
+
+    if (!isFinded) {
+      setTimeout(() &#x3D;&gt; this.onGoTo(hrId), 200)
+    }
+  }
+
+  /**
+   * Trouver la RH suivante dans la liste de recherche
+   * @param delta
+   */
+  onFindNext(delta: number &#x3D; 1) {
+    if (this.valuesFinded) {
+      this.indexValuesFinded &#x3D; this.indexValuesFinded + delta
+      if (this.indexValuesFinded &gt; this.valuesFinded.length - 1) {
+        this.indexValuesFinded &#x3D; 0
+      } else if (this.indexValuesFinded &lt; 0) {
+        this.indexValuesFinded &#x3D; this.valuesFinded.length - 1
+      }
+
+      this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
+    }
+  }
+
+  /**
+   * Contentieux ids selectionnés
+   */
+  onSelectedReferentielIdsChanged({ list &#x3D; [], subList &#x3D; [] }: { list: number[]; subList: number[] }) {
+    this.selectedReferentielIds &#x3D; list
+    this.humanResourceService.selectedReferentielIds &#x3D; this.selectedReferentielIds
+
+    console.log(&#x27;subList&#x27;, subList)
+
+    this.selectedSubReferentielIds &#x3D; [...subList]
+    this.humanResourceService.selectedSubReferentielIds &#x3D; this.selectedSubReferentielIds
+
+    this.referentiel &#x3D; this.referentiel.map((cat) &#x3D;&gt; {
+      cat.selected &#x3D; list.indexOf(cat.id) !&#x3D;&#x3D; -1
+
+      return cat
+    })
+
+    this.onFilterList(true, false)
+  }
+
+  /**
+   * Changement de date du ventilateur
+   * @param date
+   */
+  onDateChanged(date: any) {
+    this.dateSelected &#x3D; date
+    this.workforceService.dateSelected.next(date)
+    this.onFilterList()
+  }
+
+  /**
+   * Filtrer par contentieux
+   * @param ref
+   */
+  onFilterBy(ref: ContentieuReferentielInterface) {
+    if (!this.filterSelected.filter || this.filterSelected.filter?.id !&#x3D;&#x3D; ref.id || this.filterSelected.up &#x3D;&#x3D;&#x3D; true) {
+      this.filterSelected.filter &#x3D; ref
+      this.filterSelected.up &#x3D; this.filterSelected.up &#x3D;&#x3D;&#x3D; null ? true : false
+    } else {
+      this.filterSelected.filter &#x3D; null
+      this.filterSelected.up &#x3D; null
+    }
+
+    this.orderListWithFiltersParams(this.filterSelected.up)
+  }
+
+  /**
+   * Maj des paramètres de filtre
+   * @param event
+   */
+  updateFilterParams(event: FilterPanelInterface) {
+    this.workforceService.filterParams &#x3D; event // memorize in cache
+    this.filterParams &#x3D; event
+    this.orderListWithFiltersParams()
+  }
+
+  /**
+   * Reset tri
+   */
+  clearFilterSort() {
+    if (this.filterParams) {
+      this.filterParams.sort &#x3D; null
+      this.filterParams.sortName &#x3D; null
+      this.filterParams.sortFunction &#x3D; null
+      this.filterParams.order &#x3D; null
+      this.filterParams.orderIcon &#x3D; null
+    }
+
+    this.orderListWithFiltersParams()
+  }
+
+  /**
+   * Reset filtre
+   */
+  clearFilterFilter() {
+    if (this.filterParams) {
+      this.filterParams.filterNames &#x3D; null
+      this.filterParams.filterValues &#x3D; null
+      this.filterParams.filterFunction &#x3D; null
+    }
+
+    this.orderListWithFiltersParams()
+  }
+
+  /**
+   * Calcul de l&#x27;ETP total
+   */
+  calculateTotalAffected() {
+    this.listFormated &#x3D; this.listFormated.map((group) &#x3D;&gt; {
+      group.referentiel &#x3D; group.referentiel.map((r) &#x3D;&gt; ({
+        ...r,
+        totalAffected: 0,
+      }))
+
+      const listFiltered &#x3D; group.hrFiltered || []
+      listFiltered.map((hr) &#x3D;&gt; {
+        hr.tmpActivities &#x3D; {}
+
+        group.referentiel &#x3D; group.referentiel.map((ref) &#x3D;&gt; {
+          hr.tmpActivities[ref.id] &#x3D; hr.currentActivities.filter((r) &#x3D;&gt; r.contentieux &amp;&amp; r.contentieux.id &#x3D;&#x3D;&#x3D; ref.id)
+          if (hr.tmpActivities[ref.id].length) {
+            const timeAffected &#x3D; sumBy(hr.tmpActivities[ref.id], &#x27;percent&#x27;)
+            if (timeAffected) {
+              let realETP &#x3D; (hr.etp || 0) - hr.hasIndisponibility
+              if (realETP &lt; 0) {
+                realETP &#x3D; 0
+              }
+              const res &#x3D; (ref.totalAffected || 0) + (timeAffected / 100) * realETP
+              ref.totalAffected &#x3D; res
+            }
+          }
+
+          return ref
+        })
+
+        return hr
+      })
+
+      group.referentiel &#x3D; group.referentiel.map((ref) &#x3D;&gt; {
+        ref.totalAffected &#x3D; fixDecimal(ref.totalAffected || 0, 1000)
+        return ref
+      })
+
+      return group
+    })
+  }
+
+  /**
+   * Filtre la liste des personnes trouvées dans la recherche
+   * @param list
+   * @param isIn
+   * @returns
+   */
+  filterFindedPerson(list: HumanResourceIsInInterface[] | null, isIn: boolean) {
+    return (list || []).filter((h) &#x3D;&gt; h.isIn &#x3D;&#x3D;&#x3D; isIn)
+  }
+
+  getCurrentFilteredIds(fonctionsList: HRFonctionInterface[]) {
+    if (this.filterParams &amp;&amp; this.filterParams.filterValues) {
+      return this.filterParams.filterValues as number[]
+    } else {
+      return fonctionsList.map((f) &#x3D;&gt; f.id)
+    }
+  }
+
+  async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
+    this.appService.appLoading.next(true);
+    const fonctions &#x3D; await this.hrFonctionService.getAll()
+    let fctFilterIds: number[] &#x3D; this.getCurrentFilteredIds(fonctions)
+
+    this.listPoste.map(async (position) &#x3D;&gt; {
+      if (poste.name &#x3D;&#x3D;&#x3D; position) {
+        //selected fct by position clicked
+        const focusFct &#x3D; fonctions.filter((f) &#x3D;&gt; f.position &#x3D;&#x3D;&#x3D; position.charAt(0).toUpperCase() + position.slice(1) &amp;&amp; f.categoryId &#x3D;&#x3D;&#x3D; category.id)
+        let myArray &#x3D; null
+
+        const isSelected &#x3D; poste.selected
+
+        if (!isSelected) {
+          myArray &#x3D; fctFilterIds.filter((el) &#x3D;&gt; !focusFct.map((x) &#x3D;&gt; x.id).includes(el))
+        } else {
+          myArray &#x3D; union(
+            fctFilterIds,
+            focusFct.map((x) &#x3D;&gt; x.id),
+          )
+        }
+
+        this.filterParams &#x3D; await {
+          display: &#x27;prénom/nom&#x27;,
+          filterFunction: (list: HumanResourceSelectedInterface[]) &#x3D;&gt; {
+            return list.filter(
+              (h) &#x3D;&gt; h.fonction &amp;&amp; this.filterParams &amp;&amp; this.filterParams.filterValues &amp;&amp; this.filterParams.filterValues.indexOf(h.fonction.id) !&#x3D;&#x3D; -1,
+            )
+          },
+          filterNames: null,
+          filterValues: myArray,
+          filterIndispoValues: this.filterParams?.filterIndispoValues || null,
+          order: &#x27;asc&#x27;,
+          orderIcon: &#x27;sort-desc&#x27;,
+          sort: &#x27;function&#x27;,
+          sortFunction: null,
+          sortName: null,
+        }
+      }
+    })
+
+    if (category.poste &amp;&amp; category.poste.length) {
+      category.selected &#x3D; category.poste.some((p) &#x3D;&gt; p.selected)
+    }
+    this.onFilterList()
+    this.orderListWithFiltersParams()
+  }
+
+  getTooglePositionSelected(poste: HRCategorypositionInterface) {
+    return poste.selected
+  }
+  async setTooglePositionSelected(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
+    poste.selected &#x3D; !poste.selected
+    await this.switchSubFilter(category, poste)
+    // PRENDRE EN COMPTE LE TOOGLE POUR SOUSTRAIRE OU RAJOUTER LES FCT
+  }
+
+  switchBgColor(category: any, color: string) {
+    category.style[&#x27;background-color&#x27;] &#x3D; color
+  }
+
+  /**
+   * Retour une string qui affiche les options de filtre / trie
+   */
+  getOptionAffichageString() {
+    const list &#x3D; []
+
+    if (this.selectedReferentielIds.length !&#x3D;&#x3D; this.formReferentiel.length) {
+      list.push(this.getOptionAffichageReferentielString())
+    }
+
+    if (this.selectedSubReferentielIds) {
+      let count &#x3D; 0
+      this.formReferentiel.map((cont) &#x3D;&gt; {
+        if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
+          count +&#x3D; (cont.childrens || []).length
+        }
+      })
+
+      if (this.selectedSubReferentielIds.length !&#x3D;&#x3D; count) {
+        list.push(this.getOptionAffichageSubReferentielString())
+      }
+    }
+
+    if (this.filterParams &amp;&amp; this.filterParams.orderIcon &amp;&amp; this.filterParams.sortName) {
+      list.push(this.filterParams.sortName)
+    }
+
+    if (this.filterParams &amp;&amp; this.filterParams.filterNames) {
+      list.push(this.filterParams.filterNames)
+    }
+
+    const indispString &#x3D; this.getOptionAffichageIndispoString()
+    if (indispString) {
+      list.push(indispString)
+    }
+
+    return list.length &#x3D;&#x3D;&#x3D; 0 ? null : list.join(&#x27;, &#x27;)
+  }
+
+  /**
+   * Retour une string qui affiche les options de filtre / trie
+   */
+  getOptionAffichageReferentielString() {
+    if (this.selectedReferentielIds.length !&#x3D;&#x3D; this.formReferentiel.length) {
+      const labels &#x3D; this.selectedReferentielIds.map((id) &#x3D;&gt; {
+        const ref &#x3D; this.formReferentiel.find((formRef) &#x3D;&gt; formRef.id &#x3D;&#x3D;&#x3D; id)
+        return ref?.value
+      })
+
+      let text &#x3D; labels.slice(0, 3).join(&#x27;, &#x27;)
+
+      if (labels.length &gt; 3) {
+        text +&#x3D; &#x27; et &#x27; + (labels.length - 3) + &#x27; de plus&#x27;
+      }
+
+      return text
+    }
+
+    return null
+  }
+
+  /**
+   * Retour une string qui affiche les options des sous contentieux
+   */
+  getOptionAffichageSubReferentielString() {
+    if (this.selectedSubReferentielIds) {
+      let allSubRefs: childrenInterface[] &#x3D; []
+      this.formReferentiel.map((cont) &#x3D;&gt; {
+        if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
+          allSubRefs &#x3D; [...allSubRefs, ...(cont.childrens || [])]
+        }
+      })
+
+      if (this.selectedSubReferentielIds.length !&#x3D;&#x3D; allSubRefs.length) {
+        const labels &#x3D; this.selectedSubReferentielIds.map((id) &#x3D;&gt; {
+          const ref &#x3D; allSubRefs.find((formRef) &#x3D;&gt; formRef.id &#x3D;&#x3D;&#x3D; id)
+          return ref?.value
+        })
+
+        let text &#x3D; labels.slice(0, 3).join(&#x27;, &#x27;)
+
+        if (labels.length &gt; 3) {
+          text +&#x3D; &#x27; et &#x27; + (labels.length - 3) + &#x27; de plus&#x27;
+        }
+
+        return text
+      }
+    }
+
+    return null
+  }
+
+  /**
+   * Retour une string qui affiche les options de filtre / trie des indispo
+   */
+  getOptionAffichageIndispoString() {
+    const allIndisponibilityReferentiel &#x3D; this.humanResourceService.allIndisponibilityReferentiel
+      .slice(1)
+      .map((r) &#x3D;&gt; ({ id: r.id, label: r.label.replace(/\//g, &#x27; / &#x27;) }))
+    const filtre &#x3D; this.filterParams?.filterIndispoValues || []
+    if (filtre.length) {
+      const labels &#x3D; filtre.map((id) &#x3D;&gt; {
+        const ref &#x3D; allIndisponibilityReferentiel.find((f) &#x3D;&gt; f.id &#x3D;&#x3D;&#x3D; id)
+        return ref?.label
+      })
+
+      let text &#x3D; labels.slice(0, 3).join(&#x27;, &#x27;)
+
+      if (labels.length &gt; 3) {
+        text +&#x3D; &#x27; et &#x27; + (labels.length - 3) + &#x27; de plus&#x27;
+      }
+
+      return text
+    }
+
+    return null
+  }
+
+  clearFilterIndispo() {
+    if (this.filterParams) {
+      this.filterParams.filterIndispoValues &#x3D; []
+      this.orderListWithFiltersParams()
+    }
+  }
+
+  /**
+   * Supprimer le filtre des contentieux
+   */
+  clearFilterReferentiel() {
+    this.selectedReferentielIds &#x3D; this.formReferentiel.map((r) &#x3D;&gt; r.id)
+    this.selectedSubReferentielIds &#x3D; []
+    this.formReferentiel.map((cont) &#x3D;&gt; {
+      if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
+        this.selectedSubReferentielIds &#x3D; [...(this.selectedSubReferentielIds || []), ...(cont.childrens || []).map((c) &#x3D;&gt; c.id)]
+      }
+    })
+
+    this.onSelectedReferentielIdsChanged({
+      list: this.selectedReferentielIds,
+      subList: this.selectedSubReferentielIds,
+    })
+  }
+
+  /**
+   * Supprimer le filtre des sous contentieux
+   */
+  clearFilterSubReferentiel() {
+    this.selectedSubReferentielIds &#x3D; []
+    this.formReferentiel.map((cont) &#x3D;&gt; {
+      if (!this.selectedReferentielIds || (this.selectedReferentielIds || []).find((refId) &#x3D;&gt; refId &#x3D;&#x3D;&#x3D; cont.id)) {
+        this.selectedSubReferentielIds &#x3D; [...(this.selectedSubReferentielIds || []), ...(cont.childrens || []).map((c) &#x3D;&gt; c.id)]
+      }
+    })
+
+    this.onSelectedReferentielIdsChanged({
+      list: this.selectedReferentielIds,
+      subList: this.selectedSubReferentielIds,
+    })
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'HumanResourceIsInInterface.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

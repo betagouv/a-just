@@ -1,0 +1,1031 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  CalculatriceComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/components/calculatrice/calculatrice.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+                <code>OnDestroy</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>aj-calculatrice</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>CommonModule</code>
+                            <code>FormsModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./calculatrice.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./calculatrice.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#calculatriceService" >calculatriceService</a>
+                            </li>
+                            <li>
+                                <a href="#model" >model</a>
+                            </li>
+                            <li>
+                                <a href="#radioItems" >radioItems</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#ngOnDestroy" >ngOnDestroy</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#openTab" >openTab</a>
+                            </li>
+                            <li>
+                                <a href="#updateModel" >updateModel</a>
+                            </li>
+                            <li>
+                                <a href="#validateNumber" >validateNumber</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnDestroy"></a>
+                    <span class="name">
+                        <span ><b>ngOnDestroy</b></span>
+                        <a href="#ngOnDestroy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnDestroy()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="40"
+                                    class="link-to-prism">src/app/components/calculatrice/calculatrice.component.ts:40</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Destruction du composant</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/components/calculatrice/calculatrice.component.ts:33</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Déclenchemet à la création du composent</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openTab"></a>
+                    <span class="name">
+                        <span ><b>openTab</b></span>
+                        <a href="#openTab"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>openTab(tabName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">src/app/components/calculatrice/calculatrice.component.ts:54</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Ouvre l&#39;onglet cliqué</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tabName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateModel"></a>
+                    <span class="name">
+                        <span ><b>updateModel</b></span>
+                        <a href="#updateModel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateModel()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/components/calculatrice/calculatrice.component.ts:79</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Update le model de donnée de la calculatrice</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateNumber"></a>
+                    <span class="name">
+                        <span ><b>validateNumber</b></span>
+                        <a href="#validateNumber"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>validateNumber(e: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="63"
+                                    class="link-to-prism">src/app/components/calculatrice/calculatrice.component.ts:63</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Verifie si le char tapé est bien un chiffre</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>e</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>boolean si chiffre ou non</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculatriceService"></a>
+                    <span class="name">
+                        <span ><b>calculatriceService</b></span>
+                        <a href="#calculatriceService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(CalculatriceService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/components/calculatrice/calculatrice.component.ts:15</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="model"></a>
+                    <span class="name">
+                        <span ><b>model</b></span>
+                        <a href="#model"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/CalculatriceInterface.html" target="_self" >CalculatriceInterface</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    vacation: { value: null, option: null, unit: null },
+    volume: { value: null, option: null },
+    selectedTab: &#x27;&#x27;,
+  }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/components/calculatrice/calculatrice.component.ts:24</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Model utilisé pour les calculs d&#39;ETPT</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="radioItems"></a>
+                    <span class="name">
+                        <span ><b>radioItems</b></span>
+                        <a href="#radioItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;jour mois an&#x27;.split(&#x27; &#x27;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/components/calculatrice/calculatrice.component.ts:19</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Option radio button</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CommonModule } from &#x27;@angular/common&#x27;;
+import { Component, inject, OnDestroy, OnInit } from &#x27;@angular/core&#x27;;
+import { CalculatriceInterface } from &#x27;../../interfaces/calculatrice&#x27;;
+import { CalculatriceService } from &#x27;../../services/calculatrice/calculatrice.service&#x27;;
+import { FormsModule } from &#x27;@angular/forms&#x27;;
+
+@Component({
+  selector: &#x27;aj-calculatrice&#x27;,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: &#x27;./calculatrice.component.html&#x27;,
+  styleUrls: [&#x27;./calculatrice.component.scss&#x27;],
+})
+export class CalculatriceComponent implements OnInit, OnDestroy {
+  calculatriceService &#x3D; inject(CalculatriceService);
+  /**
+   * Option radio button
+   */
+  radioItems &#x3D; &#x27;jour mois an&#x27;.split(&#x27; &#x27;);
+
+  /**
+   * Model utilisé pour les calculs d&#x27;ETPT
+   */
+  model: CalculatriceInterface &#x3D; {
+    vacation: { value: null, option: null, unit: null },
+    volume: { value: null, option: null },
+    selectedTab: &#x27;&#x27;,
+  };
+
+  /**
+   * Déclenchemet à la création du composent
+   */
+  ngOnInit(): void {
+    this.model &#x3D; this.calculatriceService.dataCalculatrice.value;
+  }
+
+  /**
+   * Destruction du composant
+   */
+  ngOnDestroy(): void {
+    this.model &#x3D; {
+      vacation: { value: null, option: &#x27;jour&#x27;, unit: null },
+      volume: { value: null, option: &#x27;jour&#x27; },
+      selectedTab: &#x27;vacation&#x27;,
+    };
+    setTimeout(() &#x3D;&gt; {
+      this.calculatriceService.dataCalculatrice.next(this.model);
+    }, 100);
+  }
+  /**
+   * Ouvre l&#x27;onglet cliqué
+   * @param tabName
+   */
+  openTab(tabName: string) {
+    this.model.selectedTab &#x3D; tabName;
+  }
+
+  /**
+   * Verifie si le char tapé est bien un chiffre
+   * @param e
+   * @returns boolean si chiffre ou non
+   */
+  validateNumber(e: any) {
+    const charCode &#x3D; e.which ? e.which : e.keyCode;
+    if (
+      e.code !&#x3D;&#x3D; &#x27;KeyM&#x27; &amp;&amp;
+      charCode &gt; 31 &amp;&amp;
+      (charCode &lt; 48 || charCode &gt; 57)
+    ) {
+      if (charCode &#x3D;&#x3D;&#x3D; 46) return true;
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Update le model de donnée de la calculatrice
+   */
+  updateModel() {
+    this.calculatriceService.dataCalculatrice.next(this.model);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;headers&quot;&gt;
+  &lt;div class&#x3D;&quot;header&quot; [ngClass]&#x3D;&quot;{ selected: model.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27; }&quot; (click)&#x3D;&quot;openTab(&#x27;vacation&#x27;)&quot;&gt;
+    &lt;label&gt;Vacations&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class&#x3D;&quot;header&quot; [ngClass]&#x3D;&quot;{ selected: model.selectedTab &#x3D;&#x3D;&#x3D; &#x27;volume&#x27; }&quot; (click)&#x3D;&quot;openTab(&#x27;volume&#x27;)&quot;&gt;
+    &lt;label&gt;Volume horaire&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+@if (model.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27;) {
+  &lt;div&gt;
+    &lt;div class&#x3D;&quot;rectangle&quot;&gt;
+      &lt;span&gt;L’agent effectue&lt;/span&gt;
+      &lt;input
+        (keypress)&#x3D;&quot;validateNumber($event)&quot;
+        type&#x3D;&quot;text&quot;
+        [(ngModel)]&#x3D;&quot;model.vacation.value&quot;
+        [value]&#x3D;&quot;model.vacation.value&quot;
+        (ngModelChange)&#x3D;&quot;updateModel()&quot;
+      /&gt;
+      &lt;span&gt;vacations par&lt;/span&gt;
+      &lt;div class&#x3D;&quot;radio-container&quot;&gt;
+        @for (item of radioItems; track item; let isFirst &#x3D; $first) {
+          &lt;div class&#x3D;&quot;radio-button&quot;&gt;
+            &lt;input
+              type&#x3D;&quot;radio&quot;
+              id&#x3D;&quot;{{ item }}&quot;
+              name&#x3D;&quot;radios&quot;
+              [(ngModel)]&#x3D;&quot;model.vacation.option&quot;
+              [value]&#x3D;&quot;item&quot;
+              [checked]&#x3D;&quot;isFirst&quot;
+            /&gt;
+            &lt;label for&#x3D;&quot;{{ item }}&quot;&gt;{{ item }}&lt;/label&gt;
+          &lt;/div&gt;
+        }
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class&#x3D;&quot;rectangle&quot;&gt;
+      &lt;span&gt;Une vacation dure :&lt;/span&gt;
+      &lt;input
+        (keypress)&#x3D;&quot;validateNumber($event)&quot;
+        type&#x3D;&quot;text&quot;
+        [(ngModel)]&#x3D;&quot;model.vacation.unit&quot;
+        [value]&#x3D;&quot;model.vacation.unit&quot;
+        (ngModelChange)&#x3D;&quot;updateModel()&quot;
+      /&gt;
+      &lt;span&gt;heures&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+} @else {
+  &lt;div class&#x3D;&quot;rectangle&quot;&gt;
+    &lt;span&gt;L’agent effectue&lt;/span&gt;
+    &lt;input
+      (keypress)&#x3D;&quot;validateNumber($event)&quot;
+      type&#x3D;&quot;text&quot;
+      [(ngModel)]&#x3D;&quot;model.volume.value&quot;
+      [value]&#x3D;&quot;model.volume.value&quot;
+      (ngModelChange)&#x3D;&quot;updateModel()&quot;
+    /&gt;
+    &lt;span&gt;heures par&lt;/span&gt;
+    &lt;div class&#x3D;&quot;radio-container&quot;&gt;
+      @for (item of radioItems; track item; let isFirst &#x3D; $first) {
+        &lt;div class&#x3D;&quot;radio-button&quot;&gt;
+          &lt;input
+            type&#x3D;&quot;radio&quot;
+            id&#x3D;&quot;{{ item }}&quot;
+            name&#x3D;&quot;radios&quot;
+            [(ngModel)]&#x3D;&quot;model.volume.option&quot;
+            [value]&#x3D;&quot;item&quot;
+            [checked]&#x3D;&quot;isFirst&quot;
+          /&gt;
+          &lt;label for&#x3D;&quot;{{ item }}&quot;&gt;{{ item }}&lt;/label&gt;
+        &lt;/div&gt;
+      }
+    &lt;/div&gt;
+  &lt;/div&gt;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./calculatrice.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">:host {
+
+  .headers {
+    display: flex;
+    border-bottom: 1px solid #dddddd;
+    margin-bottom: 24px;
+
+    .header {
+      display: inline-flex;
+      height: 40px;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 0px 16px;
+      margin-right: 8px;
+      border-top: solid 2px white;
+      border-right: 1px solid white;
+      border-left: 1px solid white;
+      cursor: pointer;
+      color: black;
+
+      &amp;.selected {
+        position: relative;
+        border-top: solid 2px #000091;
+        border-right: 1px solid #dddddd;
+        border-left: 1px solid #dddddd;
+        border-bottom: none;
+        color: #000091;
+
+        &amp;::after {
+          content: &quot;&quot;;
+          position: absolute;
+          bottom: -1px;
+          height: 1px;
+          background-color: white;
+          left: 0px;
+          right: 0px;
+        }
+      }
+
+      label {
+        margin: auto;
+      }
+    }
+  }
+
+  .rectangle {
+    width: 600px;
+    height: 84px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 24px;
+    border-radius: 6px;
+    background-color: #f6f6f6;
+    margin-top: 8px;
+    border: 1px solid #f6f6f6;
+
+    &amp;:focus-within {
+      border: solid 1px #8585f6;
+      background-color: #f5f5fe;
+
+    }
+
+    span {
+      font-size: 16px;
+      color: #3a3a3a;
+    }
+
+    input {
+      margin: 0px 12px;
+      width: 60px;
+    }
+
+    .radio-container {
+      margin-left: 12px;
+      display: flex;
+
+      .radio-button {
+
+        &amp;:first-child label {
+          border-bottom-left-radius: 6px;
+          border-top-left-radius: 6px;
+        }
+
+        &amp;:last-child label {
+          border-bottom-right-radius: 6px;
+          border-top-right-radius: 6px;
+        }
+
+        input[type&#x3D;&quot;radio&quot;] {
+          display: none;
+        }
+
+        label {
+          display: inline-block;
+          padding: 0px 11px;
+          font-size: 16px;
+          border: #000091 solid 1px;
+          color: #000091;
+          cursor: pointer;
+          line-height: 32px;
+        }
+
+        input[type&#x3D;&quot;radio&quot;]:checked+label {
+          background-color: #000091;
+          color: white;
+        }
+      }
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="headers">  <div class="header" [ngClass]="{ selected: model.selectedTab === \'vacation\' }" (click)="openTab(\'vacation\')">    <label>Vacations</label>  </div>  <div class="header" [ngClass]="{ selected: model.selectedTab === \'volume\' }" (click)="openTab(\'volume\')">    <label>Volume horaire</label>  </div></div>@if (model.selectedTab === \'vacation\') {  <div>    <div class="rectangle">      <span>L’agent effectue</span>      <input        (keypress)="validateNumber($event)"        type="text"        [(ngModel)]="model.vacation.value"        [value]="model.vacation.value"        (ngModelChange)="updateModel()"      />      <span>vacations par</span>      <div class="radio-container">        @for (item of radioItems; track item; let isFirst = $first) {          <div class="radio-button">            <input              type="radio"              id="{{ item }}"              name="radios"              [(ngModel)]="model.vacation.option"              [value]="item"              [checked]="isFirst"            />            <label for="{{ item }}">{{ item }}</label>          </div>        }      </div>    </div>    <div class="rectangle">      <span>Une vacation dure :</span>      <input        (keypress)="validateNumber($event)"        type="text"        [(ngModel)]="model.vacation.unit"        [value]="model.vacation.unit"        (ngModelChange)="updateModel()"      />      <span>heures</span>    </div>  </div>} @else {  <div class="rectangle">    <span>L’agent effectue</span>    <input      (keypress)="validateNumber($event)"      type="text"      [(ngModel)]="model.volume.value"      [value]="model.volume.value"      (ngModelChange)="updateModel()"    />    <span>heures par</span>    <div class="radio-container">      @for (item of radioItems; track item; let isFirst = $first) {        <div class="radio-button">          <input            type="radio"            id="{{ item }}"            name="radios"            [(ngModel)]="model.volume.option"            [value]="item"            [checked]="isFirst"          />          <label for="{{ item }}">{{ item }}</label>        </div>      }    </div>  </div>}</div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'CalculatriceComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'CalculatriceComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -1,0 +1,1120 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  LegendLabelComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/routes/simulator/charts/legend-label/legend-label.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Composant de légende pour les graphiques du simulateur</p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+                <code>OnChanges</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>aj-legend-label</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="../components/RadioButtonComponent.html" target="_self" >RadioButtonComponent</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./legend-label.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./legend-label.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#elementRef" >elementRef</a>
+                            </li>
+                            <li>
+                                <a href="#toogle" >toogle</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#clicked" >clicked</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnChanges" >ngOnChanges</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#updateValue" >updateValue</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#bgColor" >bgColor</a>
+                            </li>
+                            <li>
+                                <a href="#disabledEl" >disabledEl</a>
+                            </li>
+                            <li>
+                                <a href="#dotColor" >dotColor</a>
+                            </li>
+                            <li>
+                                <a href="#label" >label</a>
+                            </li>
+                            <li>
+                                <a href="#title" >title</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#value" >value</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(element: ElementRef<HTMLElement>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:59</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                                    <td>Description</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>element</td>
+                                                  
+                                                        <td>
+                                                                    <code>ElementRef&lt;HTMLElement&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                        <td>
+                                                                <p>HTML Element</p>
+
+                                                        </td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="bgColor"></a>
+                        <b>bgColor</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:34</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Couleur 2</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="disabledEl"></a>
+                        <b>disabledEl</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:42</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Activation de l&#39;élément</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="dotColor"></a>
+                        <b>dotColor</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:30</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Couleur 1</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="label"></a>
+                        <b>label</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:38</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Intitulé</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="title"></a>
+                        <b>title</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:26</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Titre de la courbe graphique</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+    <section data-compodoc="block-outputs">
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="value"></a>
+                        <b>value</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>EventEmitter</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:46</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Valeur de sortie du composant</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="clicked"></a>
+                    <span class="name">
+                        <span ><b>clicked</b></span>
+                        <a href="#clicked"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>clicked()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="113"
+                                    class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:113</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Evenement &#39;clicker&#39; sur le bouton</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnChanges"></a>
+                    <span class="name">
+                        <span ><b>ngOnChanges</b></span>
+                        <a href="#ngOnChanges"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnChanges()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:79</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Ecoute le changement de valeur du bouton toogle</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:72</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A l&#39;initialisation du composant, définir la valeur</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateValue"></a>
+                    <span class="name">
+                        <span ><b>updateValue</b></span>
+                        <a href="#updateValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateValue(event: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:105</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Changement de la valeur du toogle button</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>click souris</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="elementRef"></a>
+                    <span class="name">
+                        <span ><b>elementRef</b></span>
+                        <a href="#elementRef"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>HTMLElement | undefined</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:59</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Element HTML</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toogle"></a>
+                    <span class="name">
+                        <span ><b>toogle</b></span>
+                        <a href="#toogle"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    label: &#x27;&#x27;,
+    checked: true,
+  }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/routes/simulator/charts/legend-label/legend-label.component.ts:51</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Action d&#39;affichage ou non d&#39;une courbe sur un graphique</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+} from &#x27;@angular/core&#x27;;
+import { RadioButtonComponent } from &#x27;../../../../components/radio-button/radio-button.component&#x27;;
+
+/**
+ * Composant de légende pour les graphiques du simulateur
+ */
+@Component({
+  selector: &#x27;aj-legend-label&#x27;,
+  standalone: true,
+  imports: [RadioButtonComponent],
+  templateUrl: &#x27;./legend-label.component.html&#x27;,
+  styleUrls: [&#x27;./legend-label.component.scss&#x27;],
+})
+export class LegendLabelComponent implements OnInit, OnChanges {
+  /**
+   * Titre de la courbe graphique
+   */
+  @Input() title: string &#x3D; &#x27;&#x27;;
+  /**
+   * Couleur 1
+   */
+  @Input() dotColor: string &#x3D; &#x27;&#x27;;
+  /**
+   * Couleur 2
+   */
+  @Input() bgColor: string &#x3D; &#x27;&#x27;;
+  /**
+   * Intitulé
+   */
+  @Input() label: string &#x3D; &#x27;&#x27;;
+  /**
+   * Activation de l&#x27;élément
+   */
+  @Input() disabledEl: boolean &#x3D; false;
+  /**
+   * Valeur de sortie du composant
+   */
+  @Output() value &#x3D; new EventEmitter();
+
+  /**
+   * Action d&#x27;affichage ou non d&#x27;une courbe sur un graphique
+   */
+  toogle &#x3D; {
+    label: &#x27;&#x27;,
+    checked: true,
+  };
+
+  /**
+   * Element HTML
+   */
+  elementRef: HTMLElement | undefined;
+
+  /**
+   * Constructeur
+   * @param element HTML Element
+   */
+  constructor(element: ElementRef&lt;HTMLElement&gt;) {
+    this.elementRef &#x3D; element.nativeElement;
+  }
+
+  /**
+   * A l&#x27;initialisation du composant, définir la valeur
+   */
+  ngOnInit(): void {
+    if (this.disabledEl &#x3D;&#x3D;&#x3D; true) this.toogle.checked &#x3D; !this.toogle.checked;
+  }
+
+  /**
+   * Ecoute le changement de valeur du bouton toogle
+   */
+  ngOnChanges(): void {
+    const circleElement &#x3D; (
+      this.elementRef!.getElementsByClassName(
+        &#x27;circle&#x27;
+      ) as HTMLCollectionOf&lt;HTMLElement&gt;
+    )[0];
+    circleElement.style.backgroundColor &#x3D; this.dotColor;
+    const mainElement &#x3D; (
+      this.elementRef!.getElementsByClassName(
+        &#x27;container&#x27;
+      ) as HTMLCollectionOf&lt;HTMLElement&gt;
+    )[0];
+
+    mainElement.style.backgroundColor &#x3D; this.bgColor;
+    const contenteElement &#x3D; (
+      this.elementRef!.getElementsByClassName(
+        &#x27;label&#x27;
+      ) as HTMLCollectionOf&lt;HTMLElement&gt;
+    )[0];
+    contenteElement.innerHTML &#x3D; this.label;
+  }
+
+  /**
+   * Changement de la valeur du toogle button
+   * @param event click souris
+   */
+  updateValue(event: any) {
+    this.toogle &#x3D; event;
+    this.value.emit(event);
+  }
+
+  /**
+   * Evenement &#x27;clicker&#x27; sur le bouton
+   */
+  clicked() {
+    this.toogle.checked &#x3D; !this.toogle.checked;
+    this.value.emit(this.toogle);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;container&quot; (click)&#x3D;&quot;clicked()&quot;&gt;
+  &lt;div class&#x3D;&quot;circle&quot;&gt;&lt;/div&gt;
+  &lt;p class&#x3D;&quot;label&quot;&gt;&lt;/p&gt;
+  &lt;div class&#x3D;&quot;space&quot;&gt;&lt;/div&gt;
+  &lt;aj-radio-button
+    [title]&#x3D;&quot;title&quot;
+    [switchColor]&#x3D;&quot;bgColor&quot;
+    (valueChange)&#x3D;&quot;updateValue($event)&quot;
+    [value]&#x3D;&quot;this.toogle.checked&quot;
+    #radio
+  &gt;&lt;/aj-radio-button&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./legend-label.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;../../../../styles/utils.scss&quot; as utils;
+
+:host {
+
+    .container {
+        cursor: pointer;
+        display: flex;
+        position: relative;
+        align-items: center;
+        width: 100%;
+        height: 40px;
+        padding: 8px;
+        border-radius: 4px;
+        margin: 1px;
+
+        p {
+            margin: 0 0 0 8px;
+            font-size: 14px;
+            line-height: 1;
+            color: utils.$colors-cblack;
+        }
+
+        .circle {
+            margin: 8px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .space {
+            flex: 1
+        }
+    }
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="container" (click)="clicked()">  <div class="circle"></div>  <p class="label"></p>  <div class="space"></div>  <aj-radio-button    [title]="title"    [switchColor]="bgColor"    (valueChange)="updateValue($event)"    [value]="this.toogle.checked"    #radio  ></aj-radio-button></div></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'LegendLabelComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'LegendLabelComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

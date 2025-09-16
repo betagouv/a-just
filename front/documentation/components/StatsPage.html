@@ -1,0 +1,1009 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  StatsPage</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/routes/stats/stats.page.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Page de qui sommes nous</p>
+
+    </p>
+
+
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="../components/WrapperNoConnectedComponent.html" target="_self" >WrapperNoConnectedComponent</a></code>
+                                <code><a href="../components/BackButtonComponent.html" target="_self" >BackButtonComponent</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./stats.page.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./stats.page.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#center" >center</a>
+                            </li>
+                            <li>
+                                <a href="#juridictionsService" >juridictionsService</a>
+                            </li>
+                            <li>
+                                <a href="#list" >list</a>
+                            </li>
+                            <li>
+                                <a href="#mapboxToken" >mapboxToken</a>
+                            </li>
+                            <li>
+                                <a href="#style" >style</a>
+                            </li>
+                            <li>
+                                <a href="#title" >title</a>
+                            </li>
+                            <li>
+                                <a href="#userService" >userService</a>
+                            </li>
+                            <li>
+                                <a href="#zoom" >zoom</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#callJavascript" >callJavascript</a>
+                            </li>
+                            <li>
+                                <a href="#ngAfterViewInit" >ngAfterViewInit</a>
+                            </li>
+                            <li>
+                                <a href="#updateMap" >updateMap</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/routes/stats/stats.page.ts:45</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="callJavascript"></a>
+                    <span class="name">
+                        <span ><b>callJavascript</b></span>
+                        <a href="#callJavascript"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>callJavascript(obj: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="113"
+                                    class="link-to-prism">src/app/routes/stats/stats.page.ts:113</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>obj</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngAfterViewInit"></a>
+                    <span class="name">
+                        <span ><b>ngAfterViewInit</b></span>
+                        <a href="#ngAfterViewInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngAfterViewInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/routes/stats/stats.page.ts:55</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateMap"></a>
+                    <span class="name">
+                        <span ><b>updateMap</b></span>
+                        <a href="#updateMap"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateMap()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/routes/stats/stats.page.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="center"></a>
+                    <span class="name">
+                        <span ><b>center</b></span>
+                        <a href="#center"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[number, number]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[2.213749, 46.227638]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/routes/stats/stats.page.ts:33</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Center of mapbox</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="juridictionsService"></a>
+                    <span class="name">
+                        <span ><b>juridictionsService</b></span>
+                        <a href="#juridictionsService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(JuridictionsService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/routes/stats/stats.page.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="list"></a>
+                    <span class="name">
+                        <span ><b>list</b></span>
+                        <a href="#list"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/JuridictionInterface.html" target="_self" >JuridictionInterface[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/routes/stats/stats.page.ts:41</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste juridictions</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mapboxToken"></a>
+                    <span class="name">
+                        <span ><b>mapboxToken</b></span>
+                        <a href="#mapboxToken"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>import.meta.env.NG_APP_MAPBOX_TOKEN</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/routes/stats/stats.page.ts:45</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Mapbox Token</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="style"></a>
+                    <span class="name">
+                        <span ><b>style</b></span>
+                        <a href="#style"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>import.meta.env.NG_APP_MAPBOX_STYLE</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/routes/stats/stats.page.ts:29</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Mapbox styling</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="title"></a>
+                    <span class="name">
+                        <span ><b>title</b></span>
+                        <a href="#title"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(Title)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/routes/stats/stats.page.ts:23</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userService"></a>
+                    <span class="name">
+                        <span ><b>userService</b></span>
+                        <a href="#userService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(UserService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/routes/stats/stats.page.ts:25</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="zoom"></a>
+                    <span class="name">
+                        <span ><b>zoom</b></span>
+                        <a href="#zoom"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[number]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[4.7]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/routes/stats/stats.page.ts:37</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Zoom of mapbox</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject } from &#x27;@angular/core&#x27;
+import { Title } from &#x27;@angular/platform-browser&#x27;
+import { WrapperNoConnectedComponent } from &#x27;../../components/wrapper-no-connected/wrapper-no-connected.component&#x27;
+import { BackButtonComponent } from &#x27;../../components/back-button/back-button.component&#x27;
+import { JuridictionInterface } from &#x27;../../interfaces/juridiction&#x27;
+import { JuridictionsService } from &#x27;../../services/juridictions/juridictions.service&#x27;
+import { UserService } from &#x27;../../services/user/user.service&#x27;
+
+declare let iframe: any
+declare const mapboxgl: any
+
+/**
+ * Page de qui sommes nous
+ */
+
+@Component({
+  standalone: true,
+  imports: [WrapperNoConnectedComponent, BackButtonComponent],
+  templateUrl: &#x27;./stats.page.html&#x27;,
+  styleUrls: [&#x27;./stats.page.scss&#x27;],
+})
+export class StatsPage {
+  title &#x3D; inject(Title)
+  juridictionsService &#x3D; inject(JuridictionsService)
+  userService &#x3D; inject(UserService)
+  /**
+   * Mapbox styling
+   */
+  style &#x3D; import.meta.env.NG_APP_MAPBOX_STYLE
+  /**
+   * Center of mapbox
+   */
+  center: [number, number] &#x3D; [2.213749, 46.227638]
+  /**
+   * Zoom of mapbox
+   */
+  zoom: [number] &#x3D; [4.7]
+  /**
+   * Liste juridictions
+   */
+  list: JuridictionInterface[] &#x3D; []
+  /**
+   * Mapbox Token
+   */
+  mapboxToken &#x3D; import.meta.env.NG_APP_MAPBOX_TOKEN
+
+  /**
+   * Constructeur
+   * @param title
+   */
+  constructor() {
+    this.title.setTitle((this.userService.isCa() ? &#x27;A-Just CA | &#x27; : &#x27;A-Just TJ | &#x27;) + &#x27;Stats&#x27;)
+  }
+
+  ngAfterViewInit() {
+    this.juridictionsService.getAllVisible().then((l) &#x3D;&gt; {
+      this.list &#x3D; l
+      this.updateMap()
+    })
+  }
+
+  updateMap() {
+    mapboxgl.accessToken &#x3D; this.mapboxToken
+    const map &#x3D; new mapboxgl.Map({
+      container: &#x27;map-juridictions&#x27;,
+      style: this.style,
+      zoom: this.zoom,
+      center: this.center,
+    })
+
+    map.on(&#x27;style.load&#x27;, () &#x3D;&gt; {
+      this.list.map((j) &#x3D;&gt; {
+        const sourceName &#x3D; &#x60;marker-${j.id}&#x60;
+        map.addSource(sourceName, {
+          type: &#x27;geojson&#x27;,
+          data: {
+            type: &#x27;FeatureCollection&#x27;,
+            features: [
+              {
+                type: &#x27;Feature&#x27;,
+                geometry: {
+                  type: &#x27;Point&#x27;,
+                  coordinates: [j.longitude || 0, j.latitude || 0],
+                },
+              },
+            ],
+          },
+        })
+
+        let size &#x3D; (j.population || 1) / 33333
+        if (size &lt; 10) {
+          size &#x3D; 10
+        }
+        map.addLayer({
+          id: &#x60;circles-${j.id}&#x60;,
+          source: sourceName,
+          type: &#x27;circle&#x27;,
+          paint: {
+            &#x27;circle-radius&#x27;: size,
+            &#x27;circle-color&#x27;: &#x27;#000091&#x27;,
+            &#x27;circle-opacity&#x27;: 0.5,
+            &#x27;circle-stroke-width&#x27;: 0,
+          },
+        })
+
+        const m &#x3D; new mapboxgl.Marker().setLngLat([j.longitude || 0, j.latitude || 0]).addTo(map)
+        const popup &#x3D; new mapboxgl.Popup({ offset: 25 }).setHTML(&#x60;${j.label}${j.population ? &#x27;&lt;br/&gt;&#x27; + j.population + &#x27; habitants&#x27; : &#x27;&#x27;}&#x60;)
+        m.setPopup(popup)
+      })
+    })
+  }
+
+  callJavascript(obj: any) {
+    //iframe &#x3D; obj.currentTarget.contentWindow.document
+    // obj.currentTarget.style.height &#x3D; obj.currentTarget.contentWindow.document.documentElement.scrollHeight + &#x27;px&#x27;;
+    let iframe &#x3D; document.getElementById(&#x27;child-iframe&#x27;)
+    if (iframe) {
+      iframe.style.height &#x3D; iframe.parentElement?.scrollHeight + &#x27;px&#x27;
+    }
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;aj-wrapper-no-connected
+  [title]&#x3D;&quot;&#x27;Simulateur de vol&lt;br/&gt;pour le pilotage&lt;br/&gt;de votre juridiction&#x27;&quot;
+  class&#x3D;&quot;small-left-panel&quot;
+&gt;
+  &lt;div class&#x3D;&quot;logo&quot;&gt;
+    &lt;img src&#x3D;&quot;/assets/icons/bloc-marque/bloc-marque-white@2x.svg&quot; alt&#x3D;&quot;ministère de la justice&quot; /&gt;
+    &lt;img src&#x3D;&quot;/assets/icons/logos/white-192x192@1x.svg&quot; alt&#x3D;&quot;a-just&quot; /&gt;
+  &lt;/div&gt;
+  &lt;aj-back-button routerLink&#x3D;&quot;/&quot; /&gt;
+  @if (userService.isCa()) {
+    &lt;iframe
+      src&#x3D;&quot;http://meta.a-just.beta.gouv.fr/public/dashboard/7a5fb97e-2019-4757-ad1b-8c1ef6f6d548&quot;
+      id&#x3D;&quot;child-iframe&quot;
+      frameborder&#x3D;&quot;0&quot;
+      scrolling&#x3D;&quot;yes&quot;
+      (load)&#x3D;&quot;callJavascript($event)&quot;
+    &gt;&lt;/iframe&gt;
+  } @else {
+    &lt;iframe
+      src&#x3D;&quot;https://meta.a-just.beta.gouv.fr/public/dashboard/9e73237a-0dee-4680-809e-a9ed54dce278&quot;
+      id&#x3D;&quot;child-iframe&quot;
+      frameborder&#x3D;&quot;0&quot;
+      scrolling&#x3D;&quot;yes&quot;
+      (load)&#x3D;&quot;callJavascript($event)&quot;
+    &gt;&lt;/iframe&gt;
+  }
+  &lt;div id&#x3D;&quot;map-juridictions&quot;&gt;&lt;/div&gt;
+&lt;/aj-wrapper-no-connected&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./stats.page.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &#x27;../../styles/utils.scss&#x27;;
+
+:host {
+  .logo {
+    height: 135px;
+
+    &gt;img {
+      height: 90px;
+      margin-right: 27px;
+    }
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    margin-top: 8px;
+  }
+
+  p {
+    margin-bottom: 24px;
+  }
+
+  iframe {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  #map-juridictions {
+    margin-top: 25px;
+    height: 80vh;
+    width: 100%;
+  }
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><aj-wrapper-no-connected  [title]="\'Simulateur de vol<br/>pour le pilotage<br/>de votre juridiction\'"  class="small-left-panel">  <div class="logo">    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />    <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />  </div>  <aj-back-button routerLink="/" />  @if (userService.isCa()) {    <iframe      src="http://meta.a-just.beta.gouv.fr/public/dashboard/7a5fb97e-2019-4757-ad1b-8c1ef6f6d548"      id="child-iframe"      frameborder="0"      scrolling="yes"      (load)="callJavascript($event)"    ></iframe>  } @else {    <iframe      src="https://meta.a-just.beta.gouv.fr/public/dashboard/9e73237a-0dee-4680-809e-a9ed54dce278"      id="child-iframe"      frameborder="0"      scrolling="yes"      (load)="callJavascript($event)"    ></iframe>  }  <div id="map-juridictions"></div></aj-wrapper-no-connected></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'StatsPage'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'StatsPage.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -1,0 +1,474 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  SiteMapPage</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/routes/sitemap/sitemap.page.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Plan du site</p>
+
+    </p>
+
+
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="../components/WrapperNoConnectedComponent.html" target="_self" >WrapperNoConnectedComponent</a></code>
+                                <code><a href="../components/BackButtonComponent.html" target="_self" >BackButtonComponent</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./sitemap.page.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./sitemap.page.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#title" >title</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/routes/sitemap/sitemap.page.ts:17</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="title"></a>
+                    <span class="name">
+                        <span ><b>title</b></span>
+                        <a href="#title"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(Title)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/routes/sitemap/sitemap.page.ts:17</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject } from &#x27;@angular/core&#x27;;
+import { Title } from &#x27;@angular/platform-browser&#x27;;
+import { WrapperNoConnectedComponent } from &#x27;../../components/wrapper-no-connected/wrapper-no-connected.component&#x27;;
+import { BackButtonComponent } from &#x27;../../components/back-button/back-button.component&#x27;;
+
+/**
+ * Plan du site
+ */
+
+@Component({
+  standalone: true,
+  imports: [WrapperNoConnectedComponent, BackButtonComponent],
+  templateUrl: &#x27;./sitemap.page.html&#x27;,
+  styleUrls: [&#x27;./sitemap.page.scss&#x27;],
+})
+export class SiteMapPage {
+  title &#x3D; inject(Title);
+
+  /**
+   * Constructeur
+   */
+  constructor() {
+    this.title.setTitle(&#x27;Plan du site | A-Just&#x27;);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;aj-wrapper-no-connected [title]&#x3D;&quot;&#x27;Simulateur de vol&lt;br/&gt;pour le pilotage&lt;br/&gt;de votre juridiction&#x27;&quot;&gt;
+  &lt;div class&#x3D;&quot;logo&quot;&gt;
+    &lt;img src&#x3D;&quot;/assets/icons/bloc-marque/bloc-marque-white@2x.svg&quot; alt&#x3D;&quot;ministère de la justice&quot; /&gt;
+    &lt;img src&#x3D;&quot;/assets/icons/logos/white-192x192@1x.svg&quot; alt&#x3D;&quot;a-just&quot; /&gt;
+  &lt;/div&gt;
+  &lt;aj-back-button routerLink&#x3D;&quot;/&quot; /&gt;
+  &lt;h3&gt;Plan du site&lt;/h3&gt;
+
+  &lt;p&gt;Bientôt disponible&lt;/p&gt;
+&lt;/aj-wrapper-no-connected&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./sitemap.page.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &#x27;../../styles/utils.scss&#x27;;
+
+:host {
+  .logo {
+    height: 135px;
+
+    &gt;img {
+      height: 90px;
+      margin-right: 27px;
+    }
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    margin-top: 8px;
+  }
+
+  p {
+    margin-bottom: 24px;
+  }
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><aj-wrapper-no-connected [title]="\'Simulateur de vol<br/>pour le pilotage<br/>de votre juridiction\'">  <div class="logo">    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />    <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />  </div>  <aj-back-button routerLink="/" />  <h3>Plan du site</h3>  <p>Bientôt disponible</p></aj-wrapper-no-connected></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'SiteMapPage'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'SiteMapPage.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
