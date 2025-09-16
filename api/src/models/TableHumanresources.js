@@ -115,7 +115,6 @@ export default (sequelizeInstance, Model) => {
         // Situation avec association
         {
           model: Model.models.HRSituations,
-          required: true,
           attributes: ['id', 'etp', 'date_start', 'category_id', 'fonction_id'],
           include: [
             {
@@ -161,95 +160,93 @@ export default (sequelizeInstance, Model) => {
     })
 
     // 2. TRANSFORMATION DES DONNÉES
-    return hrList
-      .map((hr) => {
-        // Traitement des situations
-        const situationsMap = new Map()
-        hr.HRSituations.sort((a, b) => new Date(b.date_start) - new Date(a.date_start) || b.id - a.id).forEach((sit) => {
-          const dateS = sit.date_start && new Date(hr.date_entree) > new Date(sit.date_start) ? hr.date_entree : sit.date_start
+    return hrList.map((hr) => {
+      // Traitement des situations
+      const situationsMap = new Map()
+      hr.HRSituations.sort((a, b) => new Date(b.date_start) - new Date(a.date_start) || b.id - a.id).forEach((sit) => {
+        const dateS = sit.date_start && new Date(hr.date_entree) > new Date(sit.date_start) ? hr.date_entree : sit.date_start
 
-          const dateKey = today(dateS).getTime()
+        const dateKey = today(dateS).getTime()
 
-          if (!situationsMap.has(dateKey)) {
-            situationsMap.set(dateKey, {
-              id: sit.id,
-              etp: sit.etp,
-              dateStart: today(dateS),
-              dateStartTimesTamps: dateKey,
-              category: sit.HRCategory
-                ? {
-                    id: sit.HRCategory.id,
-                    rank: sit.HRCategory.rank,
-                    code: sit.HRCategory.code,
-                    label: sit.HRCategory.label,
-                  }
-                : null,
-              fonction: sit.HRFonction
-                ? {
-                    id: sit.HRFonction.id,
-                    rank: sit.HRFonction.rank,
-                    code: sit.HRFonction.code,
-                    label: sit.HRFonction.label,
-                    category_detail: sit.HRFonction.category_detail,
-                    position: sit.HRFonction.position,
-                    calculatriceIsActive: sit.HRFonction.calculatrice_is_active,
-                  }
-                : null,
-              activities: sit.HRActivities.filter((act) => act.ContentieuxReferentiel !== null).map((act) => {
-                return {
-                  id: act.id,
-                  percent: act.percent,
-                  contentieux: {
-                    id: act.ContentieuxReferentiel.id,
-                    label: act.ContentieuxReferentiel.label,
-                  },
+        if (!situationsMap.has(dateKey)) {
+          situationsMap.set(dateKey, {
+            id: sit.id,
+            etp: sit.etp,
+            dateStart: today(dateS),
+            dateStartTimesTamps: dateKey,
+            category: sit.HRCategory
+              ? {
+                  id: sit.HRCategory.id,
+                  rank: sit.HRCategory.rank,
+                  code: sit.HRCategory.code,
+                  label: sit.HRCategory.label,
                 }
-              }),
-            })
-          }
-        })
-
-        // Dernier commentaire
-        const lastComment = hr.HRComments[0]
-        const comment = lastComment ? lastComment.comment : null
-
-        // Indisponibilités
-        const indisponibilities = orderBy(
-          hr.HRIndisponibilities.map((ind) => ({
-            id: ind.id,
-            percent: ind.percent,
-            dateStart: ind.date_start,
-            dateStartTimesTamps: today(ind.date_start).getTime(),
-            dateStop: ind.date_stop,
-            dateStopTimesTamps: ind.date_stop ? today(ind.date_stop).getTime() : null,
-            contentieux: {
-              id: ind.ContentieuxReferentiel.id,
-              label: ind.ContentieuxReferentiel.label,
-              checkVentilation: ind.ContentieuxReferentiel.check_ventilation,
-            },
-          })),
-          'dateStart',
-          ['desc'],
-        )
-
-        // Structure finale
-        return {
-          id: hr.id,
-          firstName: hr.first_name,
-          lastName: hr.last_name,
-          matricule: hr.matricule,
-          dateStart: hr.date_entree,
-          dateEnd: hr.date_sortie,
-          coverUrl: hr.cover_url,
-          updatedAt: hr.updated_at,
-          backupId: hr.backup_id,
-          juridiction: hr.juridiction,
-          comment: comment,
-          situations: Array.from(situationsMap.values()),
-          indisponibilities: indisponibilities,
+              : null,
+            fonction: sit.HRFonction
+              ? {
+                  id: sit.HRFonction.id,
+                  rank: sit.HRFonction.rank,
+                  code: sit.HRFonction.code,
+                  label: sit.HRFonction.label,
+                  category_detail: sit.HRFonction.category_detail,
+                  position: sit.HRFonction.position,
+                  calculatriceIsActive: sit.HRFonction.calculatrice_is_active,
+                }
+              : null,
+            activities: sit.HRActivities.filter((act) => act.ContentieuxReferentiel !== null).map((act) => {
+              return {
+                id: act.id,
+                percent: act.percent,
+                contentieux: {
+                  id: act.ContentieuxReferentiel.id,
+                  label: act.ContentieuxReferentiel.label,
+                },
+              }
+            }),
+          })
         }
       })
-      .filter((hr) => hr.situations.length > 0)
+
+      // Dernier commentaire
+      const lastComment = hr.HRComments[0]
+      const comment = lastComment ? lastComment.comment : null
+
+      // Indisponibilités
+      const indisponibilities = orderBy(
+        hr.HRIndisponibilities.map((ind) => ({
+          id: ind.id,
+          percent: ind.percent,
+          dateStart: ind.date_start,
+          dateStartTimesTamps: today(ind.date_start).getTime(),
+          dateStop: ind.date_stop,
+          dateStopTimesTamps: ind.date_stop ? today(ind.date_stop).getTime() : null,
+          contentieux: {
+            id: ind.ContentieuxReferentiel.id,
+            label: ind.ContentieuxReferentiel.label,
+            checkVentilation: ind.ContentieuxReferentiel.check_ventilation,
+          },
+        })),
+        'dateStart',
+        ['desc'],
+      )
+
+      // Structure finale
+      return {
+        id: hr.id,
+        firstName: hr.first_name,
+        lastName: hr.last_name,
+        matricule: hr.matricule,
+        dateStart: hr.date_entree,
+        dateEnd: hr.date_sortie,
+        coverUrl: hr.cover_url,
+        updatedAt: hr.updated_at,
+        backupId: hr.backup_id,
+        juridiction: hr.juridiction,
+        comment: comment,
+        situations: Array.from(situationsMap.values()),
+        indisponibilities: indisponibilities,
+      }
+    })
   }
 
   /**
