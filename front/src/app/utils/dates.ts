@@ -386,6 +386,11 @@ export function generalizeTimeZone(date: Date | undefined | null) {
   }
 }
 
+/**
+ * Définition de l'heure à midi
+ * @param date
+ * @returns
+ */
 export function setTimeToMidDay(date: Date | undefined | null) {
   if (date === undefined || date === null) return undefined
   date.setHours(12)
