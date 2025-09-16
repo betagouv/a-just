@@ -201,8 +201,8 @@ Exemple président, 1VP,...</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="24"
-                                    class="link-to-prism">src/app/services/hr-fonction/hr-function.service.ts:24</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/services/hr-fonction/hr-function.service.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -254,7 +254,7 @@ Et si c&#39;est en cache ne pas faire d&#39;appel</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/services/hr-fonction/hr-function.service.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/services/hr-fonction/hr-function.service.ts:20</a></div>
                         </td>
                     </tr>
 
@@ -285,10 +285,16 @@ Et si c&#39;est en cache ne pas faire d&#39;appel</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/services/hr-fonction/hr-function.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/hr-fonction/hr-function.service.ts:16</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de communication avec le serveur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -298,9 +304,9 @@ Et si c&#39;est en cache ne pas faire d&#39;appel</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;;
-import { ServerService } from &#x27;../http-server/server.service&#x27;;
-import { HRFonctionInterface } from &#x27;../../interfaces/hr-fonction&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { HRFonctionInterface } from &#x27;../../interfaces/hr-fonction&#x27;
 
 /**
  * Service de listing des fonctions
@@ -310,11 +316,14 @@ import { HRFonctionInterface } from &#x27;../../interfaces/hr-fonction&#x27;;
   providedIn: &#x27;root&#x27;,
 })
 export class HRFonctionService {
-  serverService &#x3D; inject(ServerService);
+  /**
+   * Service de communication avec le serveur
+   */
+  serverService &#x3D; inject(ServerService)
   /**
    * Liste mise en cache
    */
-  fonctions: HRFonctionInterface[] &#x3D; [];
+  fonctions: HRFonctionInterface[] &#x3D; []
 
   /**
    * API récupération de la liste complète
@@ -324,17 +333,17 @@ export class HRFonctionService {
   getAll(): Promise&lt;HRFonctionInterface[]&gt; {
     if (this.fonctions.length) {
       return new Promise((resolve) &#x3D;&gt; {
-        resolve(this.fonctions);
-      });
+        resolve(this.fonctions)
+      })
     }
 
     return this.serverService
       .get(&#x27;hr-fonctions/get-all&#x27;)
       .then((r) &#x3D;&gt; r.data || [])
       .then((list) &#x3D;&gt; {
-        this.fonctions &#x3D; list;
-        return list;
-      });
+        this.fonctions &#x3D; list
+        return list
+      })
   }
 }
 </code></pre>

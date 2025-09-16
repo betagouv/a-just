@@ -103,6 +103,10 @@ export class CalculatorService extends MainClass {
       })
   }
 
+  /**
+   * Changement de la période sélectionnée pour mémorisation au changement de page
+   * @param monthToAdd
+   */
   changePeriodSelected(monthToAdd: number) {
     this.dateStart.next(month(this.dateStart.getValue(), monthToAdd))
     console.log('step1', this.dateStop.getValue())

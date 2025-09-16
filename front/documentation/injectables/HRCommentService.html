@@ -189,12 +189,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(serverService: <a href="../injectables/ServerService.html" target="_self">ServerService</a>, humanResourceService: <a href="../injectables/HumanResourceService.html" target="_self">HumanResourceService</a>)</code>
+<code>constructor(serverService: <a href="../injectables/ServerService.html" target="_self">ServerService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:19</a></div>
                             </td>
                         </tr>
 
@@ -218,18 +218,6 @@
                                                   
                                                         <td>
                                                                         <code><a href="../injectables/ServerService.html" target="_self" >ServerService</a></code>
-                                                        </td>
-                                                  
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-                                                </tr>
-                                                <tr>
-                                                        <td>humanResourceService</td>
-                                                  
-                                                        <td>
-                                                                        <code><a href="../injectables/HumanResourceService.html" target="_self" >HumanResourceService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -271,8 +259,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="80"
-                                    class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:80</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -352,8 +340,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="36"
-                                    class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:36</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="32"
+                                    class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -421,8 +409,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="49"
-                                    class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:49</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="45"
+                                    class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:45</a></div>
                         </td>
                     </tr>
 
@@ -502,8 +490,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="63"
-                                    class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:63</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -627,7 +615,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:19</a></div>
                         </td>
                     </tr>
 
@@ -664,7 +652,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/services/hr-comment/hr-comment.service.ts:15</a></div>
                         </td>
                     </tr>
 
@@ -683,10 +671,9 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
-import { ServerService } from &#x27;../http-server/server.service&#x27;;
-import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;;
-import { BehaviorSubject } from &#x27;rxjs&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { BehaviorSubject } from &#x27;rxjs&#x27;
 
 /**
  * Service de gestion des commentaires d&#x27;un magistrat, greffier....
@@ -705,45 +692,42 @@ export class HRCommentService {
   forceOpenAll: BehaviorSubject&lt;boolean&gt; &#x3D; new BehaviorSubject&lt;boolean&gt;(false)
   /**
    * Constructeur
-   * @param serverService 
-   * @param humanResourceService 
+   * @param serverService
+   * @param humanResourceService
    */
-  constructor(
-    private serverService: ServerService,
-    private humanResourceService: HumanResourceService
-  ) { }
+  constructor(private serverService: ServerService) {}
 
   /**
    * API appel au serveur pour récuperer le commentaire d&#x27;une fiche
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   getHRComment(id: number) {
     return this.serverService
       .post(&#x27;hr-comment/get-hr-comment&#x27;, {
         hrId: id,
       })
-      .then((r) &#x3D;&gt; r.data);
+      .then((r) &#x3D;&gt; r.data)
   }
 
   /**
- * API appel au serveur pour récuperer le commentaire d&#x27;une fiche
- * @param id 
- * @returns 
- */
+   * API appel au serveur pour récuperer le commentaire d&#x27;une fiche
+   * @param id
+   * @returns
+   */
   getHRCommentByCommentId(id: number, hrId: number) {
     return this.serverService
       .post(&#x27;hr-comment/get-hr-comment-by-id&#x27;, {
         id: id,
-        hrId: hrId
+        hrId: hrId,
       })
-      .then((r) &#x3D;&gt; r.data);
+      .then((r) &#x3D;&gt; r.data)
   }
   /**
    * API mise à jour du commentaire d&#x27;une fiche
-   * @param id 
-   * @param comment 
-   * @returns 
+   * @param id
+   * @param comment
+   * @returns
    */
   updateHRComment(id: number, comment: string, userId: number, commentId: number &#x3D; -1) {
     return this.serverService
@@ -751,23 +735,22 @@ export class HRCommentService {
         commentId,
         hrId: id,
         comment,
-        userId: userId || -1
+        userId: userId || -1,
       })
       .then((r) &#x3D;&gt; {
-        const updateAt &#x3D; new Date(r.data);
-        return updateAt;
-      });
+        const updateAt &#x3D; new Date(r.data)
+        return updateAt
+      })
   }
 
   /**
    * API suppression d&#x27;un commentaire
    */
   deleteHRComment(commentId: number, hrId: number) {
-    return this.serverService
-      .post(&#x27;hr-comment/delete-hr-comment&#x27;, {
-        commentId,
-        hrId
-      })
+    return this.serverService.post(&#x27;hr-comment/delete-hr-comment&#x27;, {
+      commentId,
+      hrId,
+    })
   }
 }
 </code></pre>

@@ -475,14 +475,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/services/calculator/calculator.service.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="110"
+                                    class="link-to-prism">src/app/services/calculator/calculator.service.ts:110</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Changement de la période sélectionnée pour mémorisation au changement de page</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -688,8 +690,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="119"
-                                    class="link-to-prism">src/app/services/calculator/calculator.service.ts:119</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="123"
+                                    class="link-to-prism">src/app/services/calculator/calculator.service.ts:123</a></div>
                         </td>
                     </tr>
 
@@ -4454,6 +4456,10 @@ export class CalculatorService extends MainClass {
       })
   }
 
+  /**
+   * Changement de la période sélectionnée pour mémorisation au changement de page
+   * @param monthToAdd
+   */
   changePeriodSelected(monthToAdd: number) {
     this.dateStart.next(month(this.dateStart.getValue(), monthToAdd))
     console.log(&#x27;step1&#x27;, this.dateStop.getValue())

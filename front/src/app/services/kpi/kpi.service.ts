@@ -8,6 +8,9 @@ import { ServerService } from '../http-server/server.service'
   providedIn: 'root',
 })
 export class KPIService {
+  /**
+   * Service de communication avec le serveur
+   */
   serverService = inject(ServerService)
 
   /**

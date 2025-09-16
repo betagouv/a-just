@@ -1075,7 +1075,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }),
     }))
     this.valuesFinded &#x3D; valuesFinded.length &#x3D;&#x3D;&#x3D; nbPerson ? null : valuesFinded
-    this.valuesFinded &#x3D; this.valuesFinded?.filter((x:any)&#x3D;&gt; (this.humanResourceService.categoriesFilterListIds||[]).includes(x.category.id))||[]
+    this.valuesFinded &#x3D; this.valuesFinded?.filter((x: any) &#x3D;&gt; (this.humanResourceService.categoriesFilterListIds || []).includes(x.category.id)) || []
     this.indexValuesFinded &#x3D; 0
 
     this.allPersonsFiltered &#x3D; null
@@ -1104,7 +1104,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     console.log(&#x27;this.allPersonsFiltered&#x27;, this.allPersonsFiltered)
 
     this.allPersonsFilteredIsIn &#x3D; this.filterFindedPerson(this.allPersonsFiltered, true)
-    this.allPersonsFilteredNotIn &#x3D; this.humanResourceService.categoriesFilterListIds.length&#x3D;&#x3D;&#x3D;3 ?this.filterFindedPerson(this.allPersonsFiltered, false):[]
+    this.allPersonsFilteredNotIn &#x3D; this.humanResourceService.categoriesFilterListIds.length &#x3D;&#x3D;&#x3D; 3 ? this.filterFindedPerson(this.allPersonsFiltered, false) : []
   }
 
   /**
@@ -1223,7 +1223,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.orderListWithFiltersParams()
 
         this.isLoading &#x3D; false
-        this.appService.appLoading.next(false);
+        this.appService.appLoading.next(false)
 
         const domContent &#x3D; document.getElementById(&#x27;container-list&#x27;)
         if (domContent) {
@@ -1233,7 +1233,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             domContent.scrollTop &#x3D; 0
           }
         }
-      }).finally(() &#x3D;&gt; {
+      })
+      .finally(() &#x3D;&gt; {
         this.appService.appLoading.next(false)
       })
 
@@ -1551,7 +1552,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
-    this.appService.appLoading.next(true);
+    this.appService.appLoading.next(true)
     const fonctions &#x3D; await this.hrFonctionService.getAll()
     let fctFilterIds: number[] &#x3D; this.getCurrentFilteredIds(fonctions)
 

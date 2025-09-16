@@ -347,7 +347,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/services/app/app.service.ts:18</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/services/app/app.service.ts:21</a></div>
                         </td>
                     </tr>
 
@@ -421,7 +421,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/services/app/app.service.ts:27</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/services/app/app.service.ts:29</a></div>
                         </td>
                     </tr>
 
@@ -458,7 +458,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/services/app/app.service.ts:23</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/services/app/app.service.ts:25</a></div>
                         </td>
                     </tr>
 
@@ -521,14 +521,12 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>new BehaviorSubject&lt;
-    string | null
-  &gt;(null)</code>
+                        <i>Default value : </i><code>new BehaviorSubject&lt;string | null&gt;(null)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/services/app/app.service.ts:31</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/services/app/app.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -547,11 +545,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, signal } from &#x27;@angular/core&#x27;;
-import { BehaviorSubject } from &#x27;rxjs&#x27;;
-import { AlertInterface } from &#x27;../../interfaces/alert&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, signal } from &#x27;@angular/core&#x27;
+import { BehaviorSubject } from &#x27;rxjs&#x27;
+import { AlertInterface } from &#x27;../../interfaces/alert&#x27;
 
-declare const toastr: any;
+/**
+ * Toastr JS global déclaré dans le fichier angular.json
+ */
+declare const toastr: any
 
 /**
  * Service d&#x27;outil généraux qui concerne l&#x27;APP, chez nous ce n&#x27;est que l&#x27;alerte
@@ -564,33 +565,30 @@ export class AppService {
   /**
    * Mettre à mettre en alert
    */
-  alert: BehaviorSubject&lt;AlertInterface | null&gt; &#x3D;
-    new BehaviorSubject&lt;AlertInterface | null&gt;(null);
+  alert: BehaviorSubject&lt;AlertInterface | null&gt; &#x3D; new BehaviorSubject&lt;AlertInterface | null&gt;(null)
   /**
    * Cache previous URL
    */
-  previousUrl: string | null &#x3D; null;
+  previousUrl: string | null &#x3D; null
   /**
    * Cache current URL
    */
-  currentUrl: string | null &#x3D; null;
+  currentUrl: string | null &#x3D; null
   /**
    * Mettre à mettre en alert
    */
-  tooltipsOpenId: BehaviorSubject&lt;string | null&gt; &#x3D; new BehaviorSubject&lt;
-    string | null
-  &gt;(null);
+  tooltipsOpenId: BehaviorSubject&lt;string | null&gt; &#x3D; new BehaviorSubject&lt;string | null&gt;(null)
   /**
    * Mettre un grand loader
    */
-  appLoading: BehaviorSubject&lt;boolean&gt; &#x3D; new BehaviorSubject&lt;boolean&gt;(false);
+  appLoading: BehaviorSubject&lt;boolean&gt; &#x3D; new BehaviorSubject&lt;boolean&gt;(false)
   /**
    * Main scroll position
    */
-  scrollPosition &#x3D; signal&lt;number&gt;(0);
+  scrollPosition &#x3D; signal&lt;number&gt;(0)
 
   constructor() {
-    this.initToastrConfig();
+    this.initToastrConfig()
   }
 
   initToastrConfig() {
@@ -610,11 +608,11 @@ export class AppService {
       hideEasing: &#x27;linear&#x27;,
       showMethod: &#x27;fadeIn&#x27;,
       hideMethod: &#x27;fadeOut&#x27;,
-    };
+    }
   }
 
   notification(message: string) {
-    toastr.warning(message);
+    toastr.warning(message)
   }
 }
 </code></pre>

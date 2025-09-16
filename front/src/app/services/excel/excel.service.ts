@@ -69,6 +69,9 @@ export class ExcelService extends MainClass {
    */
   columnSizeSecondTab: Array<any> = []
 
+  /**
+   * Tabs de l'excel pour les personnaliser
+   */
   tabs: any = {
     onglet1: { values: null, columnSize: null },
     onglet2: { values: null, columnSize: null },
@@ -122,6 +125,9 @@ export class ExcelService extends MainClass {
     return changes
   }
 
+  /**
+   * Exportation de l'excel
+   */
   exportExcel() {
     let startExtract = true
     const loaderTimer = setTimeout(() => {

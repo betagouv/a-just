@@ -21,7 +21,13 @@ import { HRSituationInterface } from '../../interfaces/hr-situation'
   providedIn: 'root',
 })
 export class HumanResourceService {
+  /**
+   * Service de communication avec le serveur
+   */
   serverService = inject(ServerService)
+  /**
+   * Service de gestion des activités
+   */
   activitiesService = inject(ActivitiesService)
   /**
    * Liste des contentieux sans soutien et indispo
@@ -616,6 +622,10 @@ export class HumanResourceService {
     return this.serverService.get(`human-resources/read-hr/${hrId}`).then((response) => this.formatHR(response.data))
   }
 
+  /**
+   * Ajout d'un id à la liste des ids à charger
+   * @param hrId
+   */
   needIdToLoad(hrId: number) {
     this.tmpComponentIdsCanBeView.push(hrId)
 
@@ -624,6 +634,9 @@ export class HumanResourceService {
     }
   }
 
+  /**
+   * Démarrage du watcher des ids à charger
+   */
   startWatcherTmp() {
     this.interfaceWatcherTmp = setInterval(() => {
       const nbFiche = 20
@@ -638,6 +651,9 @@ export class HumanResourceService {
     }, 100)
   }
 
+  /**
+   * Arrêt du watcher des ids à charger
+   */
   stopWatcherTmp() {
     if (this.interfaceWatcherTmp) {
       clearInterval(this.interfaceWatcherTmp)
@@ -687,6 +703,10 @@ export class HumanResourceService {
     return subTotalEtp
   }
 
+  /**
+   * Suppression d'un alert
+   * @param tag
+   */
   removeAlert(tag: string) {
     const index = this.alertList().indexOf(tag)
     if (index !== -1) {

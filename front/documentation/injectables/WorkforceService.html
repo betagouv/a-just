@@ -160,30 +160,6 @@
     </table>
 </section>
 
-            <section data-compodoc="block-constructor">
-    <h3 id="constructor">Constructor</h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-<code>constructor()</code>
-                    </td>
-                </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/services/workforce/workforce.service.ts:19</a></div>
-                            </td>
-                        </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                            <div class="io-description"><p>Constructeur</p>
-</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-</section>
 
 
             <section data-compodoc="block-properties">
@@ -271,9 +247,9 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
-import { BehaviorSubject } from &#x27;rxjs&#x27;;
-import { FilterPanelInterface } from &#x27;../../routes/workforce/filter-panel/filter-panel.component&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;
+import { BehaviorSubject } from &#x27;rxjs&#x27;
+import { FilterPanelInterface } from &#x27;../../routes/workforce/filter-panel/filter-panel.component&#x27;
 
 /**
  * Service de sauvegarde des filtres de la page ventilateur
@@ -285,16 +261,11 @@ export class WorkforceService {
   /**
    * Date sélectionnée en cache
    */
-  dateSelected: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(new Date());
+  dateSelected: BehaviorSubject&lt;Date&gt; &#x3D; new BehaviorSubject&lt;Date&gt;(new Date())
   /**
    * Filtres sélectionnée en cache
    */
-  filterParams: FilterPanelInterface | null &#x3D; null;
-
-  /**
-   * Constructeur
-   */
-  constructor() {}
+  filterParams: FilterPanelInterface | null &#x3D; null
 }
 </code></pre>
     </div>

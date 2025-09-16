@@ -209,8 +209,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/services/news/news.service.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/services/news/news.service.ts:62</a></div>
                         </td>
                     </tr>
 
@@ -278,8 +278,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/services/news/news.service.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/app/services/news/news.service.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -320,8 +320,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="24"
-                                    class="link-to-prism">src/app/services/news/news.service.ts:24</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/services/news/news.service.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -362,8 +362,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="72"
-                                    class="link-to-prism">src/app/services/news/news.service.ts:72</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="75"
+                                    class="link-to-prism">src/app/services/news/news.service.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -431,8 +431,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="39"
-                                    class="link-to-prism">src/app/services/news/news.service.ts:39</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/app/services/news/news.service.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -504,10 +504,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/services/news/news.service.ts:18</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/services/news/news.service.ts:21</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de communication avec le serveur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -517,14 +523,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;;
-import { ServerService } from &#x27;../http-server/server.service&#x27;;
-import { NewsInterface } from &#x27;../../interfaces/news&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { NewsInterface } from &#x27;../../interfaces/news&#x27;
 
 /**
  * Clé de token du local storage
  */
-const NEWS_TOKEN &#x3D; &#x27;news-token-closes&#x27;;
+const NEWS_TOKEN &#x3D; &#x27;news-token-closes&#x27;
 
 /**
  * Liste des news pour les utilisateurs
@@ -534,7 +540,10 @@ const NEWS_TOKEN &#x3D; &#x27;news-token-closes&#x27;;
   providedIn: &#x27;root&#x27;,
 })
 export class NewsService {
-  serverService &#x3D; inject(ServerService);
+  /**
+   * Service de communication avec le serveur
+   */
+  serverService &#x3D; inject(ServerService)
 
   /**
    * API qui permet retourner la news propre à une personne
@@ -542,21 +551,21 @@ export class NewsService {
    */
   getLast(): Promise&lt;NewsInterface&gt; {
     return this.serverService.getWithoutError(&#x60;news/last&#x60;).then((d) &#x3D;&gt; {
-      const news &#x3D; d.data;
+      const news &#x3D; d.data
 
       if (news &amp;&amp; news.id &amp;&amp; !this.hasClose(news.id)) {
-        return news;
+        return news
       }
 
-      return null;
-    });
+      return null
+    })
   }
 
   /**
    * API qui trace le clique utilisateur
    */
   updateNewsOnClick(id: number) {
-    this.addIdMemorise(id);
+    this.addIdMemorise(id)
     //return this.serverService.post(&#x60;news/on-close&#x60;, { id })
   }
 
@@ -565,10 +574,10 @@ export class NewsService {
    * @returns
    */
   getIdsSelected() {
-    const ls &#x3D; localStorage.getItem(NEWS_TOKEN);
-    const ids &#x3D; ls ? (JSON.parse(ls) as number[]) : [];
+    const ls &#x3D; localStorage.getItem(NEWS_TOKEN)
+    const ids &#x3D; ls ? (JSON.parse(ls) as number[]) : []
 
-    return ids;
+    return ids
   }
 
   /**
@@ -576,11 +585,11 @@ export class NewsService {
    * @returns
    */
   addIdMemorise(id: number) {
-    const ids &#x3D; this.getIdsSelected();
+    const ids &#x3D; this.getIdsSelected()
 
     if (ids.indexOf(id) &#x3D;&#x3D;&#x3D; -1) {
-      ids.push(id);
-      localStorage.setItem(NEWS_TOKEN, JSON.stringify(ids));
+      ids.push(id)
+      localStorage.setItem(NEWS_TOKEN, JSON.stringify(ids))
     }
   }
 
@@ -589,9 +598,9 @@ export class NewsService {
    * @returns
    */
   hasClose(id: number) {
-    const ids &#x3D; this.getIdsSelected();
+    const ids &#x3D; this.getIdsSelected()
 
-    return ids.indexOf(id) !&#x3D;&#x3D; -1;
+    return ids.indexOf(id) !&#x3D;&#x3D; -1
   }
 }
 </code></pre>

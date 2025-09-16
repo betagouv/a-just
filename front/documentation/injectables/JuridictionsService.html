@@ -119,6 +119,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service de gestion des juridictions</p>
+
+            </p>
 
 
 
@@ -190,14 +197,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="11"
-                                    class="link-to-prism">src/app/services/juridictions/juridictions.service.ts:11</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="20"
+                                    class="link-to-prism">src/app/services/juridictions/juridictions.service.ts:20</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Récupération des juridictions visibles</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../interfaces/JuridictionInterface.html" target="_self" >Promise&lt;JuridictionInterface[]&gt;</a></code>
@@ -231,10 +240,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/services/juridictions/juridictions.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/services/juridictions/juridictions.service.ts:15</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de communication avec le serveur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -244,20 +259,27 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;;
-import { ServerService } from &#x27;../http-server/server.service&#x27;;
-import { JuridictionInterface } from &#x27;../../interfaces/juridiction&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { JuridictionInterface } from &#x27;../../interfaces/juridiction&#x27;
 
+/**
+ * Service de gestion des juridictions
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
 export class JuridictionsService {
-  serverService &#x3D; inject(ServerService);
+  /**
+   * Service de communication avec le serveur
+   */
+  serverService &#x3D; inject(ServerService)
 
+  /**
+   * Récupération des juridictions visibles
+   */
   getAllVisible(): Promise&lt;JuridictionInterface[]&gt; {
-    return this.serverService
-      .get(&#x27;juridictions/get-all-visibles&#x27;)
-      .then((data) &#x3D;&gt; data.data || []);
+    return this.serverService.get(&#x27;juridictions/get-all-visibles&#x27;).then((data) &#x3D;&gt; data.data || [])
   }
 }
 </code></pre>

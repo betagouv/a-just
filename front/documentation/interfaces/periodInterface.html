@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface pour les périodes</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -288,11 +295,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
-import { BehaviorSubject } from &#x27;rxjs&#x27;;
-import { CalculatriceInterface } from &#x27;../../interfaces/calculatrice&#x27;;
-import { basicEtptData } from &#x27;../../constants/etpt-calculation&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;
+import { BehaviorSubject } from &#x27;rxjs&#x27;
+import { CalculatriceInterface } from &#x27;../../interfaces/calculatrice&#x27;
+import { basicEtptData } from &#x27;../../constants/etpt-calculation&#x27;
 
+/**
+ * Données périodiques des magistrats et fonctionnaires
+ */
 const periodicData: { [key: string]: any } &#x3D; {
   Magistrat: {
     jour: 208,
@@ -306,14 +316,21 @@ const periodicData: { [key: string]: any } &#x3D; {
     mois: 12,
     an: 1,
   },
-};
-
-interface periodInterface {
-  jour: &#x27;jour&#x27;;
-  semaine: &#x27;semaine&#x27;;
-  mois: &#x27;mois&#x27;;
-  an: &#x27;an&#x27;;
 }
+
+/**
+ * Interface pour les périodes
+ */
+interface periodInterface {
+  jour: &#x27;jour&#x27;
+  semaine: &#x27;semaine&#x27;
+  mois: &#x27;mois&#x27;
+  an: &#x27;an&#x27;
+}
+
+/**
+ * Service de la calculatrice
+ */
 @Injectable({
   providedIn: &#x27;root&#x27;,
 })
@@ -321,48 +338,38 @@ export class CalculatriceService {
   /**
    * Contenu de la calculatrice
    */
-  dataCalculatrice: BehaviorSubject&lt;CalculatriceInterface&gt; &#x3D;
-    new BehaviorSubject&lt;CalculatriceInterface&gt;({
-      vacation: { value: null, option: &#x27;jour&#x27;, unit: null },
-      volume: { value: null, option: &#x27;jour&#x27; },
-      selectedTab: &#x27;vacation&#x27;,
-    });
+  dataCalculatrice: BehaviorSubject&lt;CalculatriceInterface&gt; &#x3D; new BehaviorSubject&lt;CalculatriceInterface&gt;({
+    vacation: { value: null, option: &#x27;jour&#x27;, unit: null },
+    volume: { value: null, option: &#x27;jour&#x27; },
+    selectedTab: &#x27;vacation&#x27;,
+  })
 
   /**
    * Constructeur
    */
   constructor() {
     this.dataCalculatrice.subscribe((calcul) &#x3D;&gt; {
-      let reloadDatas &#x3D; false;
+      let reloadDatas &#x3D; false
 
-      if (
-        typeof calcul.vacation.value &#x3D;&#x3D;&#x3D; &#x27;string&#x27; &amp;&amp;
-        calcul.vacation.value.includes(&#x27;,&#x27;)
-      ) {
-        calcul.vacation.value &#x3D; calcul.vacation.value.replace(/,/g, &#x27;.&#x27;);
-        reloadDatas &#x3D; true;
+      if (typeof calcul.vacation.value &#x3D;&#x3D;&#x3D; &#x27;string&#x27; &amp;&amp; calcul.vacation.value.includes(&#x27;,&#x27;)) {
+        calcul.vacation.value &#x3D; calcul.vacation.value.replace(/,/g, &#x27;.&#x27;)
+        reloadDatas &#x3D; true
       }
 
-      if (
-        typeof calcul.vacation.unit &#x3D;&#x3D;&#x3D; &#x27;string&#x27; &amp;&amp;
-        calcul.vacation.unit.includes(&#x27;,&#x27;)
-      ) {
-        calcul.vacation.unit &#x3D; calcul.vacation.unit.replace(/,/g, &#x27;.&#x27;);
-        reloadDatas &#x3D; true;
+      if (typeof calcul.vacation.unit &#x3D;&#x3D;&#x3D; &#x27;string&#x27; &amp;&amp; calcul.vacation.unit.includes(&#x27;,&#x27;)) {
+        calcul.vacation.unit &#x3D; calcul.vacation.unit.replace(/,/g, &#x27;.&#x27;)
+        reloadDatas &#x3D; true
       }
 
-      if (
-        typeof calcul.volume.value &#x3D;&#x3D;&#x3D; &#x27;string&#x27; &amp;&amp;
-        calcul.volume.value.includes(&#x27;,&#x27;)
-      ) {
-        calcul.volume.value &#x3D; calcul.volume.value.replace(/,/g, &#x27;.&#x27;);
-        reloadDatas &#x3D; true;
+      if (typeof calcul.volume.value &#x3D;&#x3D;&#x3D; &#x27;string&#x27; &amp;&amp; calcul.volume.value.includes(&#x27;,&#x27;)) {
+        calcul.volume.value &#x3D; calcul.volume.value.replace(/,/g, &#x27;.&#x27;)
+        reloadDatas &#x3D; true
       }
 
       if (reloadDatas) {
-        this.dataCalculatrice.next(calcul);
+        this.dataCalculatrice.next(calcul)
       }
-    });
+    })
   }
 
   /**
@@ -374,68 +381,49 @@ export class CalculatriceService {
     const option &#x3D;
       this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27;
         ? (this.dataCalculatrice.value.vacation.option as keyof periodInterface)
-        : (this.dataCalculatrice.value.volume.option as keyof periodInterface);
+        : (this.dataCalculatrice.value.volume.option as keyof periodInterface)
     const value &#x3D; Number(
-      this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27;
-        ? this.dataCalculatrice.value.vacation.value
-        : this.dataCalculatrice.value.volume.value
-    );
-    const unit &#x3D; Number(
-      this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27;
-        ? this.dataCalculatrice.value.vacation.unit
-        : 0
-    );
-    let cat &#x3D; &#x27;Magistrat&#x27;;
+      this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27; ? this.dataCalculatrice.value.vacation.value : this.dataCalculatrice.value.volume.value,
+    )
+    const unit &#x3D; Number(this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27; ? this.dataCalculatrice.value.vacation.unit : 0)
+    let cat &#x3D; &#x27;Magistrat&#x27;
 
     switch (categoryId) {
       case &#x27;1&#x27;:
-        cat &#x3D; &#x27;Magistrat&#x27;;
-        break;
+        cat &#x3D; &#x27;Magistrat&#x27;
+        break
       case &#x27;2&#x27;:
-        cat &#x3D; &#x27;Fonctionnaire&#x27;;
-        break;
+        cat &#x3D; &#x27;Fonctionnaire&#x27;
+        break
       case &#x27;3&#x27;:
-        cat &#x3D; &#x27;Fonctionnaire&#x27;;
-        break;
+        cat &#x3D; &#x27;Fonctionnaire&#x27;
+        break
     }
 
-    const nbHoursPerDay &#x3D; &#x27;nbHoursPerDayAnd&#x27; + cat;
-    const byDayAndCat &#x3D; &#x27;nbDaysBy&#x27; + cat;
+    const nbHoursPerDay &#x3D; &#x27;nbHoursPerDayAnd&#x27; + cat
+    const byDayAndCat &#x3D; &#x27;nbDaysBy&#x27; + cat
 
-    if (
-      cat &#x3D;&#x3D;&#x3D; &#x27;Fonctionnaire&#x27; &amp;&amp;
-      this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27;
-    ) {
-      return (
-        ((value / basicEtptData[nbHoursPerDay]) *
-          unit *
-          periodicData[cat][option]) /
-        basicEtptData[byDayAndCat]
-      );
+    if (cat &#x3D;&#x3D;&#x3D; &#x27;Fonctionnaire&#x27; &amp;&amp; this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27;) {
+      return ((value / basicEtptData[nbHoursPerDay]) * unit * periodicData[cat][option]) / basicEtptData[byDayAndCat]
     }
-    if (
-      cat &#x3D;&#x3D;&#x3D; &#x27;Magistrat&#x27; &amp;&amp;
-      this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27;
-    ) {
-      return (
-        ((unit / basicEtptData[nbHoursPerDay]) *
-          value *
-          periodicData[cat][option]) /
-        basicEtptData[byDayAndCat]
-      );
+    if (cat &#x3D;&#x3D;&#x3D; &#x27;Magistrat&#x27; &amp;&amp; this.dataCalculatrice.value.selectedTab &#x3D;&#x3D;&#x3D; &#x27;vacation&#x27;) {
+      return ((unit / basicEtptData[nbHoursPerDay]) * value * periodicData[cat][option]) / basicEtptData[byDayAndCat]
     } else {
-      return (
-        (value * periodicData[cat][option]) /
-        (periodicData[cat][&#x27;jour&#x27;] * basicEtptData[nbHoursPerDay])
-      );
+      return (value * periodicData[cat][option]) / (periodicData[cat][&#x27;jour&#x27;] * basicEtptData[nbHoursPerDay])
     }
   }
 
+  /**
+   * Méthode pour vérifier si la calculatrice est calculable
+   * @param cat
+   * @param fonc
+   * @returns
+   */
   isCalculable(cat: number | null &#x3D; null, fonc: number | null &#x3D; null) {
     if (cat &amp;&amp; fonc) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 }
 </code></pre>

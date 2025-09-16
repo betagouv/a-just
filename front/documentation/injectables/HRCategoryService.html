@@ -201,8 +201,8 @@ Exemple : Magistrat, Greffier....</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="23"
-                                    class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:23</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="26"
+                                    class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:26</a></div>
                         </td>
                     </tr>
 
@@ -253,7 +253,7 @@ Exemple : Magistrat, Greffier....</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:20</a></div>
                         </td>
                     </tr>
 
@@ -284,10 +284,16 @@ Exemple : Magistrat, Greffier....</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/services/hr-category/hr-category.service.ts:16</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de communication avec le serveur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -297,9 +303,9 @@ Exemple : Magistrat, Greffier....</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;;
-import { ServerService } from &#x27;../http-server/server.service&#x27;;
-import { HRCategoryInterface } from &#x27;../../interfaces/hr-category&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { HRCategoryInterface } from &#x27;../../interfaces/hr-category&#x27;
 
 /**
  * Service d&#x27;appel au serveur des différentes catégories existantes.
@@ -309,11 +315,14 @@ import { HRCategoryInterface } from &#x27;../../interfaces/hr-category&#x27;;
   providedIn: &#x27;root&#x27;,
 })
 export class HRCategoryService {
-  serverService &#x3D; inject(ServerService);
+  /**
+   * Service de communication avec le serveur
+   */
+  serverService &#x3D; inject(ServerService)
   /**
    * Liste des catégories gardés en cache
    */
-  categories: HRCategoryInterface[] &#x3D; [];
+  categories: HRCategoryInterface[] &#x3D; []
 
   /**
    * Appel au serveur pour récupérer la liste de toutes les catégories
@@ -322,17 +331,17 @@ export class HRCategoryService {
   getAll(): Promise&lt;HRCategoryInterface[]&gt; {
     if (this.categories.length) {
       return new Promise((resolve) &#x3D;&gt; {
-        resolve(this.categories);
-      });
+        resolve(this.categories)
+      })
     }
 
     return this.serverService
       .get(&#x27;hr-categories/get-all&#x27;)
       .then((r) &#x3D;&gt; r.data || [])
       .then((list) &#x3D;&gt; {
-        this.categories &#x3D; list;
-        return list;
-      });
+        this.categories &#x3D; list
+        return list
+      })
   }
 }
 </code></pre>

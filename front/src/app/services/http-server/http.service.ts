@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
 
 /**
  * Service de simplification des appels à un serveur
@@ -9,7 +9,10 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class HttpService {
-  _http = inject(HttpClient);
+  /**
+   * Service de communication avec le serveur
+   */
+  _http = inject(HttpClient)
 
   /**
    * Préformatage des retours
@@ -17,7 +20,7 @@ export class HttpService {
    * @returns
    */
   consoleResult(val: any) {
-    return val;
+    return val
   }
 
   /**
@@ -27,7 +30,7 @@ export class HttpService {
    * @returns
    */
   get(url: string, options = {}): Promise<any> {
-    return this._http.get(url, options).toPromise().then(this.consoleResult);
+    return this._http.get(url, options).toPromise().then(this.consoleResult)
   }
 
   /**
@@ -38,10 +41,7 @@ export class HttpService {
    * @returns
    */
   post(url: string, params = {}, options = {}): Promise<any> {
-    return this._http
-      .post(url, params, options)
-      .toPromise()
-      .then(this.consoleResult);
+    return this._http.post(url, params, options).toPromise().then(this.consoleResult)
   }
 
   /**
@@ -52,10 +52,7 @@ export class HttpService {
    * @returns
    */
   put(url: string, params = {}, options = {}): Promise<any> {
-    return this._http
-      .put(url, params, options)
-      .toPromise()
-      .then(this.consoleResult);
+    return this._http.put(url, params, options).toPromise().then(this.consoleResult)
   }
 
   /**
@@ -65,6 +62,6 @@ export class HttpService {
    * @returns
    */
   delete(url: string, options = {}): Promise<any> {
-    return this._http.delete(url, options).toPromise();
+    return this._http.delete(url, options).toPromise()
   }
 }

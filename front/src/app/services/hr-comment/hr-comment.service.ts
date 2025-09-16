@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
-import { ServerService } from '../http-server/server.service';
-import { HumanResourceService } from '../human-resource/human-resource.service';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from '@angular/core'
+import { ServerService } from '../http-server/server.service'
+import { BehaviorSubject } from 'rxjs'
 
 /**
  * Service de gestion des commentaires d'un magistrat, greffier....
@@ -20,45 +19,42 @@ export class HRCommentService {
   forceOpenAll: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
   /**
    * Constructeur
-   * @param serverService 
-   * @param humanResourceService 
+   * @param serverService
+   * @param humanResourceService
    */
-  constructor(
-    private serverService: ServerService,
-    private humanResourceService: HumanResourceService
-  ) { }
+  constructor(private serverService: ServerService) {}
 
   /**
    * API appel au serveur pour récuperer le commentaire d'une fiche
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   getHRComment(id: number) {
     return this.serverService
       .post('hr-comment/get-hr-comment', {
         hrId: id,
       })
-      .then((r) => r.data);
+      .then((r) => r.data)
   }
 
   /**
- * API appel au serveur pour récuperer le commentaire d'une fiche
- * @param id 
- * @returns 
- */
+   * API appel au serveur pour récuperer le commentaire d'une fiche
+   * @param id
+   * @returns
+   */
   getHRCommentByCommentId(id: number, hrId: number) {
     return this.serverService
       .post('hr-comment/get-hr-comment-by-id', {
         id: id,
-        hrId: hrId
+        hrId: hrId,
       })
-      .then((r) => r.data);
+      .then((r) => r.data)
   }
   /**
    * API mise à jour du commentaire d'une fiche
-   * @param id 
-   * @param comment 
-   * @returns 
+   * @param id
+   * @param comment
+   * @returns
    */
   updateHRComment(id: number, comment: string, userId: number, commentId: number = -1) {
     return this.serverService
@@ -66,22 +62,21 @@ export class HRCommentService {
         commentId,
         hrId: id,
         comment,
-        userId: userId || -1
+        userId: userId || -1,
       })
       .then((r) => {
-        const updateAt = new Date(r.data);
-        return updateAt;
-      });
+        const updateAt = new Date(r.data)
+        return updateAt
+      })
   }
 
   /**
    * API suppression d'un commentaire
    */
   deleteHRComment(commentId: number, hrId: number) {
-    return this.serverService
-      .post('hr-comment/delete-hr-comment', {
-        commentId,
-        hrId
-      })
+    return this.serverService.post('hr-comment/delete-hr-comment', {
+      commentId,
+      hrId,
+    })
   }
 }

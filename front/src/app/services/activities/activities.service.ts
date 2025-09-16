@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { ServerService } from '../http-server/server.service';
-import { ActivityInterface } from '../../interfaces/activity';
-import { setTimeToMidDay } from '../../utils/dates';
+import { inject, Injectable } from '@angular/core'
+import { BehaviorSubject } from 'rxjs'
+import { ServerService } from '../http-server/server.service'
+import { ActivityInterface } from '../../interfaces/activity'
+import { setTimeToMidDay } from '../../utils/dates'
 
 /**
  * Traitement des Activitiés (entrées, sorties, stock) avec le serveur
@@ -12,22 +12,22 @@ import { setTimeToMidDay } from '../../utils/dates';
   providedIn: 'root',
 })
 export class ActivitiesService {
-  serverService = inject(ServerService);
+  /**
+   * Service de communication avec le serveur
+   */
+  serverService = inject(ServerService)
   /**
    * List de l'ensemble des activités
    */
-  activities: BehaviorSubject<ActivityInterface[]> = new BehaviorSubject<
-    ActivityInterface[]
-  >([]);
+  activities: BehaviorSubject<ActivityInterface[]> = new BehaviorSubject<ActivityInterface[]>([])
   /**
    * Mois en cour
    */
-  activityMonth: BehaviorSubject<Date | null> =
-    new BehaviorSubject<Date | null>(null);
+  activityMonth: BehaviorSubject<Date | null> = new BehaviorSubject<Date | null>(null)
   /**
    * Id de la juridiction
    */
-  hrBackupId: number | null = null;
+  hrBackupId: number | null = null
 
   /**
    * API qui permet de mettre à jour l'entrée, sorties et stock d'un contentieux à un mois donnée
@@ -37,19 +37,14 @@ export class ActivitiesService {
    * @param nodeUpdated l'entrée ou la sortie ou stock mis à jour
    * @returns
    */
-  updateDatasAt(
-    contentieuxId: number,
-    date: Date,
-    values: any,
-    nodeUpdated: string
-  ) {
+  updateDatasAt(contentieuxId: number, date: Date, values: any, nodeUpdated: string) {
     return this.serverService.postWithoutError(`activities/update-by`, {
       contentieuxId,
       date: setTimeToMidDay(date),
       values,
       hrBackupId: this.hrBackupId,
       nodeUpdated,
-    });
+    })
   }
 
   /**
@@ -58,14 +53,10 @@ export class ActivitiesService {
    * @returns
    */
   getActivitiesByDate(date: Date) {
-    let activities = this.activities.getValue();
-    activities = activities.filter(
-      (a) =>
-        a.periode.getMonth() === date.getMonth() &&
-        a.periode.getFullYear() === date.getFullYear()
-    );
+    let activities = this.activities.getValue()
+    activities = activities.filter((a) => a.periode.getMonth() === date.getMonth() && a.periode.getFullYear() === date.getFullYear())
 
-    return activities;
+    return activities
   }
 
   /**
@@ -79,7 +70,7 @@ export class ActivitiesService {
         date: setTimeToMidDay(date),
         hrBackupId: this.hrBackupId,
       })
-      .then((data) => data.data || null);
+      .then((data) => data.data || null)
   }
 
   /**
@@ -91,7 +82,7 @@ export class ActivitiesService {
       .post(`activities/get-last-month`, {
         hrBackupId: this.hrBackupId,
       })
-      .then((data) => data.data.date || null);
+      .then((data) => data.data.date || null)
   }
 
   /**
@@ -103,7 +94,7 @@ export class ActivitiesService {
       .post(`activities/get-last-human-activities`, {
         hrBackupId: this.hrBackupId,
       })
-      .then((data) => data.data.list || []);
+      .then((data) => data.data.list || [])
   }
 
   /**
@@ -117,6 +108,6 @@ export class ActivitiesService {
         dateStart,
         dateEnd,
       })
-      .then((data) => data.data.list || []);
+      .then((data) => data.data.list || [])
   }
 }

@@ -655,7 +655,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       }),
     }))
     this.valuesFinded = valuesFinded.length === nbPerson ? null : valuesFinded
-    this.valuesFinded = this.valuesFinded?.filter((x:any)=> (this.humanResourceService.categoriesFilterListIds||[]).includes(x.category.id))||[]
+    this.valuesFinded = this.valuesFinded?.filter((x: any) => (this.humanResourceService.categoriesFilterListIds || []).includes(x.category.id)) || []
     this.indexValuesFinded = 0
 
     this.allPersonsFiltered = null
@@ -684,7 +684,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     console.log('this.allPersonsFiltered', this.allPersonsFiltered)
 
     this.allPersonsFilteredIsIn = this.filterFindedPerson(this.allPersonsFiltered, true)
-    this.allPersonsFilteredNotIn = this.humanResourceService.categoriesFilterListIds.length===3 ?this.filterFindedPerson(this.allPersonsFiltered, false):[]
+    this.allPersonsFilteredNotIn = this.humanResourceService.categoriesFilterListIds.length === 3 ? this.filterFindedPerson(this.allPersonsFiltered, false) : []
   }
 
   /**
@@ -803,7 +803,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
         this.orderListWithFiltersParams()
 
         this.isLoading = false
-        this.appService.appLoading.next(false);
+        this.appService.appLoading.next(false)
 
         const domContent = document.getElementById('container-list')
         if (domContent) {
@@ -813,7 +813,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
             domContent.scrollTop = 0
           }
         }
-      }).finally(() => {
+      })
+      .finally(() => {
         this.appService.appLoading.next(false)
       })
 
@@ -1131,7 +1132,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   async switchSubFilter(category: HRCategorySelectedInterface, poste: HRCategorypositionInterface) {
-    this.appService.appLoading.next(true);
+    this.appService.appLoading.next(true)
     const fonctions = await this.hrFonctionService.getAll()
     let fctFilterIds: number[] = this.getCurrentFilteredIds(fonctions)
 

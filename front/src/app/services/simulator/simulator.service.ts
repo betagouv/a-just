@@ -19,8 +19,17 @@ import { fixDecimal } from '../../utils/numbers'
   providedIn: 'root',
 })
 export class SimulatorService extends MainClass {
+  /**
+   * Service de communication avec le serveur
+   */
   serverService = inject(ServerService)
+  /**
+   * Service de gestion des fiches agents
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion des utilisateurs
+   */
   userService = inject(UserService)
   /**
    * Loader display boolean

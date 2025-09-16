@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
-import { ServerService } from '../http-server/server.service';
-import { HRCategoryInterface } from '../../interfaces/hr-category';
+import { inject, Injectable } from '@angular/core'
+import { ServerService } from '../http-server/server.service'
+import { HRCategoryInterface } from '../../interfaces/hr-category'
 
 /**
  * Service d'appel au serveur des différentes catégories existantes.
@@ -10,11 +10,14 @@ import { HRCategoryInterface } from '../../interfaces/hr-category';
   providedIn: 'root',
 })
 export class HRCategoryService {
-  serverService = inject(ServerService);
+  /**
+   * Service de communication avec le serveur
+   */
+  serverService = inject(ServerService)
   /**
    * Liste des catégories gardés en cache
    */
-  categories: HRCategoryInterface[] = [];
+  categories: HRCategoryInterface[] = []
 
   /**
    * Appel au serveur pour récupérer la liste de toutes les catégories
@@ -23,16 +26,16 @@ export class HRCategoryService {
   getAll(): Promise<HRCategoryInterface[]> {
     if (this.categories.length) {
       return new Promise((resolve) => {
-        resolve(this.categories);
-      });
+        resolve(this.categories)
+      })
     }
 
     return this.serverService
       .get('hr-categories/get-all')
       .then((r) => r.data || [])
       .then((list) => {
-        this.categories = list;
-        return list;
-      });
+        this.categories = list
+        return list
+      })
   }
 }
