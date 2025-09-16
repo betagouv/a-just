@@ -812,9 +812,12 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
             this.firstSituationData !== null &&
             !this.hasNoNullValue(this.firstSituationData) &&
             this.simulatorService.dateStop.getValue() &&
-            this.simulatorService.contentieuOrSubContentieuId.getValue()
+            this.simulatorService.contentieuOrSubContentieuId.getValue() &&
+            this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0
           ) {
-            alert('Les données en base ne permettent pas de calculer une simulation pour ce contentieux.')
+            alert(
+              "En l’absence de données d’activité renseignées pour les 12 derniers mois, cette simulation n’est pas possible. Veuillez renseigner préalablement les données manquantes pour ce contentieux dans l'écran de données d’activité",
+            )
           }
         }, 300)
       }),
