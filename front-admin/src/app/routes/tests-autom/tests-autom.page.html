@@ -21,7 +21,12 @@
     <ul class="results" *ngIf="results.length">
       <li *ngFor="let r of results; let i = index">
         <div class="header-row">
-          <div class="title">{{ r.title }}</div>
+          <div class="title">
+            {{ r.title }}
+            <span class="kind-badge" *ngIf="r.kind || r.source">
+              {{ r.kind || (r.source === 'api' ? 'unit test' : 'end to end test') }}
+            </span>
+          </div>
           <div class="score">{{ (r.score * 100) | number:'1.0-0' }}%</div>
         </div>
         <div class="chevron-row">

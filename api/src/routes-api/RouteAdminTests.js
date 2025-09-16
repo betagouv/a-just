@@ -12,19 +12,37 @@ const MODEL = 'BAAI/bge-small-en-v1.5'
 
 // Persist corpus within API tree, to remove dependency on end-to-end/exploration
 const CORPUS_FILE = path.resolve(__dirname, '..', 'var', 'tests-corpus', 'user-stories.txt')
+const CORPUS_EMB_FILE = path.resolve(__dirname, '..', 'var', 'tests-corpus', 'embeddings.json')
+
+// In-memory embeddings cache { items, vectors }
+let EMB_CACHE = null
+
+// Map short source tag to human-friendly kind
+function sourceToKind(source) {
+  return (source || 'cy') === 'api' ? 'unit test' : 'end to end test'
+}
 
 function parseCorpusLine(line) {
-  // "- title  [relative-file[:line]]"
+  // "- title  [source:relative-file[:line]]" or legacy "[relative-file[:line]]"
   const m = /^-\s+(.*?)\s+\[(.+?)\]$/.exec(line.trim())
   if (!m) return null
-  let file = m[2]
+  let raw = m[2]
+  let source = 'cy'
+  // source:file(:line)?
+  const srcMatch = /^(\w+?):(.+)$/.exec(raw)
+  if (srcMatch) {
+    source = srcMatch[1]
+    raw = srcMatch[2]
+  }
+
+  let file = raw
   let lineNum = undefined
   const fileMatch = /^(.*?):(\d+)$/.exec(file)
   if (fileMatch) {
     file = fileMatch[1]
     lineNum = parseInt(fileMatch[2], 10)
   }
-  return { title: m[1], file, line: lineNum }
+  return { title: m[1], source, file, line: lineNum }
 }
 
 function cosine(a, b) {
@@ -98,9 +116,9 @@ export default class RouteAdminTests extends Route {
       .map((l) => l.trim())
       .filter(Boolean)
     const items = []
-    for (const line of lines) {
-      const it = parseCorpusLine(line)
-      if (it) items.push(it)
+    for (const l of lines) {
+      const it = parseCorpusLine(l)
+      if (it) items.push({ ...it, kind: sourceToKind(it.source) })
     }
     this.sendOk(ctx, { items, exists: true, path: CORPUS_FILE })
   }
@@ -112,12 +130,26 @@ export default class RouteAdminTests extends Route {
   async reindex(ctx) {
     try {
       const items = buildTestCorpus()
-      const text = formatCorpusLines(items)
+      const body = formatCorpusLines(items)
       fs.mkdirSync(path.dirname(CORPUS_FILE), { recursive: true })
-      fs.writeFileSync(CORPUS_FILE, text, 'utf8')
-      this.sendOk(ctx, { ok: true, corpusPath: CORPUS_FILE, count: items.length })
+      fs.writeFileSync(CORPUS_FILE, body, 'utf8')
+
+      // Build and persist embeddings for the corpus so searches only embed the query
+      const titles = items.map((it) => it.title)
+      const vectors2d = await embedBatched(titles)
+      const vectors = vectors2d.map((v) => toVector(v))
+      fs.mkdirSync(path.dirname(CORPUS_EMB_FILE), { recursive: true })
+      fs.writeFileSync(
+        CORPUS_EMB_FILE,
+        JSON.stringify({ items, vectors, updatedAt: new Date().toISOString() }),
+        'utf8'
+      )
+      EMB_CACHE = { items, vectors }
+
+      this.sendOk(ctx, { ok: true, path: CORPUS_FILE })
     } catch (e) {
-      this.sendOk(ctx, { ok: false, error: e?.message, corpusPath: CORPUS_FILE })
+      console.error(e)
+      this.sendErr(ctx, e)
     }
   }
 
@@ -158,13 +190,42 @@ export default class RouteAdminTests extends Route {
       return
     }
 
-    // Embed corpus + query
-    const titles = items.map((it) => it.title)
-    const [Ecorpus, [EqRaw]] = await Promise.all([embedBatched(titles), hfEmbed([query])])
+    // Load or refresh embeddings cache
+    const ensureCache = async () => {
+      if (!EMB_CACHE) {
+        if (fs.existsSync(CORPUS_EMB_FILE)) {
+          try {
+            const raw = JSON.parse(fs.readFileSync(CORPUS_EMB_FILE, 'utf8'))
+            if (Array.isArray(raw?.items) && Array.isArray(raw?.vectors)) {
+              EMB_CACHE = { items: raw.items, vectors: raw.vectors }
+            }
+          } catch {}
+        }
+      }
+      // If cache missing or out of sync, rebuild now (one-time cost)
+      if (!EMB_CACHE || (EMB_CACHE.items?.length !== items.length)) {
+        const titlesNow = items.map((it) => it.title)
+        const vecs2d = await embedBatched(titlesNow)
+        const vecs = vecs2d.map((v) => toVector(v))
+        EMB_CACHE = { items, vectors: vecs }
+        try {
+          fs.mkdirSync(path.dirname(CORPUS_EMB_FILE), { recursive: true })
+          fs.writeFileSync(
+            CORPUS_EMB_FILE,
+            JSON.stringify({ items, vectors: vecs, updatedAt: new Date().toISOString() }),
+            'utf8'
+          )
+        } catch {}
+      }
+    }
+    await ensureCache()
+
+    // Embed only the query and compare against cached corpus vectors
+    const [[EqRaw]] = await Promise.all([hfEmbed([query])])
     const Eq = toVector(EqRaw)
 
     const ranked = items
-      .map((it, i) => ({ title: it.title, file: it.file, line: it.line, score: cosine(Ecorpus[i], Eq) }))
+      .map((it, i) => ({ title: it.title, source: it.source || 'cy', kind: sourceToKind(it.source), file: it.file, line: it.line, score: cosine(EMB_CACHE.vectors[i], Eq) }))
       .sort((a, b) => b.score - a.score)
       .slice(0, topK)
 
@@ -173,16 +234,19 @@ export default class RouteAdminTests extends Route {
 
   @Route.Get({
     path: '/snippet',
-    queryType: Types.object().keys({ file: Types.string().required(), line: Types.number().required() }),
+    queryType: Types.object().keys({ file: Types.string().required(), line: Types.number().required(), source: Types.string() }),
     accesses: [Access.isAdmin],
   })
   async snippet(ctx) {
     const q = ctx.request?.query || {}
     const file = q.file
     const line = parseInt(q.line, 10) || 1
-    // Resolve file under project root end-to-end folder
+    const source = (q.source || 'cy').toString()
+    // Resolve file under proper root
     const projectRoot = path.resolve(__dirname, '..', '..', '..')
-    const absPath = path.resolve(projectRoot, 'end-to-end', 'cypress', 'e2e', file)
+    const cyPath = path.resolve(projectRoot, 'end-to-end', 'cypress', 'e2e', file)
+    const apiPath = path.resolve(projectRoot, 'api', 'test', 'api', file)
+    const absPath = source === 'api' ? apiPath : cyPath
     if (!absPath.startsWith(path.resolve(projectRoot))) {
       ctx.throw(400, 'Bad file path')
       return

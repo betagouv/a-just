@@ -6,6 +6,8 @@ export interface TestSearchResult {
   title: string;
   file: string;
   line?: number;
+  source?: string; // 'cy' | 'api'
+  kind?: string; // 'end to end test' | 'unit test'
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,7 +26,7 @@ export class TestsAutomService {
       const resp = await this.server.post('/admin-tests/search', { query, topK: 20 });
       const payload = resp?.data ?? resp;
       const items = Array.isArray(payload?.items) ? payload.items : [];
-      return items.map((i: any) => ({ score: i.score ?? 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '', line: i.line }));
+      return items.map((i: any) => ({ score: i.score ?? 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '', line: i.line, source: i.source, kind: i.kind }));
     } catch (e) {
       // Fallback to mock if backend not available
       const q = (query || '').toLowerCase();
@@ -52,15 +54,17 @@ export class TestsAutomService {
       const resp = await this.server.get('/admin-tests/list');
       const payload = resp?.data ?? resp;
       const items = Array.isArray(payload?.items) ? payload.items : [];
-      return items.map((i: any) => ({ score: 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '', line: i.line }));
+      return items.map((i: any) => ({ score: 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '', line: i.line, source: i.source, kind: i.kind }));
     } catch {
       return [];
     }
   }
 
-  async getSnippet(file: string, line: number): Promise<{ snippet: string; start: number; end: number; includedBefores?: number } | null> {
+  async getSnippet(file: string, line: number, source?: string): Promise<{ snippet: string; start: number; end: number; includedBefores?: number } | null> {
     try {
-      const resp = await this.server.get(`/admin-tests/snippet?file=${encodeURIComponent(file)}&line=${encodeURIComponent(String(line || 1))}`);
+      const qs = new URLSearchParams({ file, line: String(line || 1) });
+      if (source) qs.set('source', source);
+      const resp = await this.server.get(`/admin-tests/snippet?${qs.toString()}`);
       const payload = resp?.data ?? resp;
       if (payload?.exists) {
         return { snippet: payload.snippet ?? '', start: payload.start ?? line, end: payload.end ?? line, includedBefores: payload.includedBefores };

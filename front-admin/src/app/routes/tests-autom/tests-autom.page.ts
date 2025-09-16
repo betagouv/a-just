@@ -13,6 +13,8 @@ import { TestsAutomService, TestSearchResult } from '../../services/tests-autom/
 export class TestsAutomPage implements OnInit {
   query = '';
   isSearching = false;
+  isIndexing = false;
+  hasSearched = false;
   results: TestSearchResult[] = [];
   error: string | null = null;
   snippets: Array<{ loading: boolean; content: string; start: number; end: number } | null> = [];
@@ -20,25 +22,34 @@ export class TestsAutomPage implements OnInit {
   constructor(private testsSvc: TestsAutomService) {}
 
   async ngOnInit() {
-    // Always reindex on page load to keep corpus fresh
+    // Reindex corpus on page load to ensure a fresh, deterministic state
+    this.isIndexing = true;
     try {
       await this.testsSvc.reindex();
-    } catch {}
+    } catch {
+      // ignore; UI will still be usable
+    } finally {
+      this.isIndexing = false;
+    }
   }
 
   async onSearch() {
+    if (this.isIndexing) return;
     this.error = null;
     const q = (this.query || '').trim();
     if (!q) {
       // If empty query, clear results
       this.results = [];
       this.snippets = [];
+      this.hasSearched = false;
       return;
     }
     this.isSearching = true;
+    this.hasSearched = true;
     try {
-      this.results = await this.testsSvc.search(q);
-      this.snippets = this.results.map(() => null);
+      const res = await this.testsSvc.search(q);
+      this.results = res || [];
+      this.snippets = new Array(this.results.length).fill(null);
       console.log('[Tests autom] Search results for', q, ':', this.results.length);
     } catch (e: any) {
       this.error = e?.message || 'Erreur lors de la recherche';
@@ -57,7 +68,7 @@ export class TestsAutomPage implements OnInit {
     }
     // expand and fetch
     this.snippets[index] = { loading: true, content: '', start: res.line || 1, end: res.line || 1 };
-    const snip = await this.testsSvc.getSnippet(res.file, res.line || 1);
+    const snip = await this.testsSvc.getSnippet(res.file, res.line || 1, res.source);
     if (snip) {
       this.snippets[index] = { loading: false, content: snip.snippet, start: snip.start, end: snip.end };
     } else {
