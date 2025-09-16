@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface pour les webinaires</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -212,6 +219,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Actions du webinaire</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -245,6 +258,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Contenu du webinaire</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -278,6 +297,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Image du webinaire</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -311,6 +336,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Rang du webinaire</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -344,6 +375,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Titre du webinaire</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -351,20 +388,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  inject,
-  OnInit,
-  Renderer2,
-  ViewChild,
-} from &#x27;@angular/core&#x27;;
-import { GitBookAPI } from &#x27;@gitbook/api&#x27;;
-import { WrapperComponent } from &#x27;../../components/wrapper/wrapper.component&#x27;;
-import { CommonModule } from &#x27;@angular/common&#x27;;
-import { InputButtonComponent } from &#x27;../../components/input-button/input-button.component&#x27;;
-import { DocCardInterface } from &#x27;../../components/doc-card/doc-card.component&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { AfterViewInit, Component, inject, OnInit, Renderer2, ViewChild } from &#x27;@angular/core&#x27;
+import { GitBookAPI } from &#x27;@gitbook/api&#x27;
+import { WrapperComponent } from &#x27;../../components/wrapper/wrapper.component&#x27;
+import { CommonModule } from &#x27;@angular/common&#x27;
+import { InputButtonComponent } from &#x27;../../components/input-button/input-button.component&#x27;
+import { DocCardInterface } from &#x27;../../components/doc-card/doc-card.component&#x27;
 import {
   CALCULATE_DOWNLOAD_URL,
   DATA_GITBOOK,
@@ -374,24 +403,42 @@ import {
   NOMENCLATURE_DOWNLOAD_URL,
   NOMENCLATURE_DOWNLOAD_URL_CA,
   NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
-} from &#x27;../../constants/documentation&#x27;;
-import { UserService } from &#x27;../../services/user/user.service&#x27;;
-import { ServerService } from &#x27;../../services/http-server/server.service&#x27;;
-import { AppService } from &#x27;../../services/app/app.service&#x27;;
-import { downloadFile } from &#x27;../../utils/system&#x27;;
-import { MatIconModule } from &#x27;@angular/material/icon&#x27;;
-import { SanitizeResourceUrlPipe } from &#x27;../../pipes/sanitize-resource-url/sanitize-resource-url.pipe&#x27;;
-import { BackButtonComponent } from &#x27;../../components/back-button/back-button.component&#x27;;
-import { FormsModule } from &#x27;@angular/forms&#x27;;
-import { ReferentielService } from &#x27;../../services/referentiel/referentiel.service&#x27;;
-import { MainClass } from &#x27;../../libs/main-class&#x27;;
+} from &#x27;../../constants/documentation&#x27;
+import { UserService } from &#x27;../../services/user/user.service&#x27;
+import { ServerService } from &#x27;../../services/http-server/server.service&#x27;
+import { AppService } from &#x27;../../services/app/app.service&#x27;
+import { downloadFile } from &#x27;../../utils/system&#x27;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;
+import { SanitizeResourceUrlPipe } from &#x27;../../pipes/sanitize-resource-url/sanitize-resource-url.pipe&#x27;
+import { BackButtonComponent } from &#x27;../../components/back-button/back-button.component&#x27;
+import { FormsModule } from &#x27;@angular/forms&#x27;
+import { ReferentielService } from &#x27;../../services/referentiel/referentiel.service&#x27;
+import { MainClass } from &#x27;../../libs/main-class&#x27;
 
+/**
+ * Interface pour les webinaires
+ */
 interface webinaire {
-  img: string;
-  title: string;
-  content: string;
-  action: string[];
-  rank: number;
+  /**
+   * Image du webinaire
+   */
+  img: string
+  /**
+   * Titre du webinaire
+   */
+  title: string
+  /**
+   * Contenu du webinaire
+   */
+  content: string
+  /**
+   * Actions du webinaire
+   */
+  action: string[]
+  /**
+   * Rang du webinaire
+   */
+  rank: number
 }
 /**
  * Contact
@@ -399,57 +446,63 @@ interface webinaire {
 
 @Component({
   standalone: true,
-  imports: [
-    WrapperComponent,
-    CommonModule,
-    InputButtonComponent,
-    MatIconModule,
-    SanitizeResourceUrlPipe,
-    BackButtonComponent,
-    FormsModule,
-  ],
+  imports: [WrapperComponent, CommonModule, InputButtonComponent, MatIconModule, SanitizeResourceUrlPipe, BackButtonComponent, FormsModule],
   templateUrl: &#x27;./help-center.page.html&#x27;,
   styleUrls: [&#x27;./help-center.page.scss&#x27;],
 })
 export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
-  @ViewChild(&#x27;searchInput&#x27;) searchInput!: any;
-  userService &#x3D; inject(UserService);
-  serverService &#x3D; inject(ServerService);
-  appService &#x3D; inject(AppService);
-  referentielService &#x3D; inject(ReferentielService);
+  /**
+   * Référence au champ de recherche
+   */
+  @ViewChild(&#x27;searchInput&#x27;) searchInput!: any
+  /**
+   * Service de gestion des utilisateurs
+   */
+  userService &#x3D; inject(UserService)
+  /**
+   * Service de gestion des serveurs
+   */
+  serverService &#x3D; inject(ServerService)
+  /**
+   * Service de gestion des applications
+   */
+  appService &#x3D; inject(AppService)
+  /**
+   * Service de gestion des référentiels
+   */
+  referentielService &#x3D; inject(ReferentielService)
   /**
    * Résultat de la recherche GitBook
    */
-  data: any &#x3D; null;
+  data: any &#x3D; null
   /**
    * Valeur de rechercher
    */
-  searchValue: string &#x3D; &#x27;&#x27;;
+  searchValue: string &#x3D; &#x27;&#x27;
   /**
    * Gitbook API
    */
-  gitbook;
+  gitbook
   /**
    * Focus barre de recherche
    */
-  focusOn &#x3D; false;
+  focusOn &#x3D; false
   /**
    * URL de la nomenclature
    */
-  NOMENCLATURE_DOWNLOAD_URL &#x3D; &#x27;/assets/nomenclature-A-Just.html&#x27;;
+  NOMENCLATURE_DOWNLOAD_URL &#x3D; &#x27;/assets/nomenclature-A-Just.html&#x27;
   /**
    * GitBook Token
    */
-  gitToken;
+  gitToken
   /** Carte guide utilisateur */
   userGuide &#x3D; {
     tag: &#x27;Documentation&#x27;,
     title: &#x27;Le guide utilisateur&#x27;,
-    description:
-      &#x27;Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!&#x27;,
+    description: &#x27;Retrouvez la présentation des grandes fonctionnalités d’A-JUST que vous soyez débutant ou utilisateur avancé!&#x27;,
     image: &#x27;/assets/images/avatar.svg&#x27;,
     url: this.userService.isCa() ? DOCUMENTATION_URL_CA : DOCUMENTATION_URL,
-  };
+  }
   /** Carte data book */
   dataBook &#x3D; {
     tag: &#x27;Documentation&#x27;,
@@ -458,7 +511,7 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
       &quot;Ce guide détaille la source, et les requêtes permettant la préalimentation de chacune des « données logiciel » de la rubrique « Données d&#x27;activité».&quot;,
     image: &#x27;/assets/images/data-visualization.svg&#x27;,
     url: this.userService.isCa() ? DATA_GITBOOK_CA : DATA_GITBOOK,
-  };
+  }
   /** Carte nomenclature */
   nomenclature &#x3D; {
     tag: &#x27;Documentation&#x27;,
@@ -469,19 +522,15 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
     url: this.userService.isCa()
       ? NOMENCLATURE_DOWNLOAD_URL_CA
       : this.referentielService.isDroitLocal()
-      ? NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL
-      : NOMENCLATURE_DOWNLOAD_URL,
+        ? NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL
+        : NOMENCLATURE_DOWNLOAD_URL,
     localUrl: false,
     download: true,
-  };
+  }
   /**
    * Cards documentation
    */
-  docCards: Array&lt;DocCardInterface&gt; &#x3D; [
-    this.userGuide,
-    this.dataBook,
-    this.nomenclature,
-  ];
+  docCards: Array&lt;DocCardInterface&gt; &#x3D; [this.userGuide, this.dataBook, this.nomenclature]
   /**
    * Cards outils
    */
@@ -510,28 +559,28 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
       url: &#x27;/dashboard&#x27;,
       localUrl: true,
     },
-  ];
+  ]
   /**
    * webinaire
    */
-  webinaires: Array&lt;webinaire&gt; | null &#x3D; null;
+  webinaires: Array&lt;webinaire&gt; | null &#x3D; null
 
   /**
    * Ouverture d&#x27;un iframe gitbook embeded
    */
-  openSuggestionPanel &#x3D; false;
+  openSuggestionPanel &#x3D; false
   /**
    * Ouverture de popin d appel
    */
-  popinCall &#x3D; false;
+  popinCall &#x3D; false
   /**
    * Appel demandé
    */
-  callValidated &#x3D; false;
+  callValidated &#x3D; false
   /**
    * Doc à afficher dans une IFRAME
    */
-  openToIframe &#x3D; { url: &#x27;&#x27;, title: &#x27;&#x27; };
+  openToIframe &#x3D; { url: &#x27;&#x27;, title: &#x27;&#x27; }
   /**
    * Liens vers la doc
    */
@@ -556,44 +605,47 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
       title: &#x27;Cas d’usage&#x27;,
       color: &#x27;yellow&#x27;,
     },
-  ];
+  ]
   /**
    * Cle date pour usage unique
    */
-  cleDate &#x3D; &#x27;?date&#x3D;&#x27; + new Date();
+  cleDate &#x3D; &#x27;?date&#x3D;&#x27; + new Date()
 
   /**
    * GITBOOK ID
    */
-  gitbookId &#x3D; import.meta.env.NG_APP_GITBOOK_ID;
+  gitbookId &#x3D; import.meta.env.NG_APP_GITBOOK_ID
   /**
    * Organisation ID gitbook
    */
-  organisationId &#x3D; import.meta.env.NG_APP_GITBOOK_ORG_ID;
+  organisationId &#x3D; import.meta.env.NG_APP_GITBOOK_ORG_ID
   /**
    * Bloqueur pour le prompteur en cas de valeur vide dans la barre de recherche
    */
-  lockPrompt &#x3D; true;
+  lockPrompt &#x3D; true
   /**
    * Affichage du résultat d&#x27;une question posée
    */
-  displayResult &#x3D; false;
+  displayResult &#x3D; false
   /**
    * Affichage du loader
    */
-  displayLoader &#x3D; false;
+  displayLoader &#x3D; false
   /**
    * Constructeur
    */
   constructor(private renderer: Renderer2) {
-    super();
-    this.gitToken &#x3D; import.meta.env.NG_APP_GITBOOK_TOKEN;
+    super()
+    this.gitToken &#x3D; import.meta.env.NG_APP_GITBOOK_TOKEN
     this.gitbook &#x3D; new GitBookAPI({
       authToken: this.gitToken,
-    });
-    this.sendLog();
+    })
+    this.sendLog()
   }
 
+  /**
+   * Initialisation
+   */
   ngOnInit() {
     if (this.userService.isCa())
       this.docTools &#x3D; [
@@ -605,33 +657,45 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
           image: &#x27;/assets/images/coding.svg&#x27;,
           url: CALCULATE_DOWNLOAD_URL,
         },
-      ];
-    this.loadWebinaires();
-  }
-  ngAfterViewInit(): void {
-    window.addEventListener(&#x27;click&#x27;, this.onClick.bind(this));
+      ]
+    this.loadWebinaires()
   }
 
-  loseFocus() {
-    console.log(this.searchInput);
-    this.searchInput.triggerBlur();
+  /**
+   * After view init
+   */
+  ngAfterViewInit(): void {
+    window.addEventListener(&#x27;click&#x27;, this.onClick.bind(this))
   }
+
+  /**
+   * Perte de focus
+   */
+  loseFocus() {
+    console.log(this.searchInput)
+    this.searchInput.triggerBlur()
+  }
+
+  /**
+   * Click
+   * @param e
+   */
   onClick(e: any) {
     if (document.getElementById(&#x27;help-center&#x27;)?.contains(e.target)) {
-      this.popinCall &#x3D; false;
+      this.popinCall &#x3D; false
     }
   }
 
+  /**
+   * Recherche par
+   */
   async onSearchBy() {
-    this.displayLoader &#x3D; true;
-    const { data } &#x3D; await this.gitbook.orgs.askInOrganization(
-      this.organisationId,
-      { query: this.searchValue }
-    );
-    console.log(this.gitbook);
-    console.log(data);
-    this.data &#x3D; data;
-    this.displayLoader &#x3D; false;
+    this.displayLoader &#x3D; true
+    const { data } &#x3D; await this.gitbook.orgs.askInOrganization(this.organisationId, { query: this.searchValue })
+    console.log(this.gitbook)
+    console.log(data)
+    this.data &#x3D; data
+    this.displayLoader &#x3D; false
 
     /**
     const { data } &#x3D; await this.gitbook.orgs.getOrganizationById(
@@ -646,78 +710,85 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
      */
   }
 
+  /**
+   * Get doc icon
+   * @param title
+   * @returns
+   */
   getDocIcon(title: string) {
     switch (title) {
       //case &quot;Guide d&#x27;utilisateur A-JUST CA&quot;:
       //return &#x27;supervised_user_circle&#x27;
       case &quot;Guide d&#x27;utilisateur A-JUST&quot;:
-        return &#x27;supervised_user_circle&#x27;;
+        return &#x27;supervised_user_circle&#x27;
       case &#x27;FAQ A-JUST&#x27;:
-        return &#x27;question_answer&#x27;;
+        return &#x27;question_answer&#x27;
       default:
-        return &#x27;face&#x27;;
+        return &#x27;face&#x27;
     }
   }
 
+  /**
+   * Go to
+   * @param researchRes
+   * @param title
+   */
   async goTo(researchRes: any, title: string) {
     await this.serverService
       .post(&#x27;centre-d-aide/log-documentation-link&#x27;, {
         value: researchRes.urls.app,
       })
       .then((r) &#x3D;&gt; {
-        return r.data;
-      });
+        return r.data
+      })
     await this.serverService
       .post(&#x27;centre-d-aide/log-documentation-recherche&#x27;, {
         value: this.searchValue,
       })
       .then((r) &#x3D;&gt; {
-        return r.data;
-      });
+        return r.data
+      })
 
     switch (title) {
       case &quot;Guide d&#x27;utilisateur A-JUST CA&quot;:
-        window.open(
-          &#x27;https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/&#x27; +
-            researchRes.path
-        );
-        break;
+        window.open(&#x27;https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/&#x27; + researchRes.path)
+        break
       case &quot;Guide d&#x27;utilisateur A-JUST&quot;:
-        window.open(
-          &#x27;https://docs.a-just.beta.gouv.fr/documentation-deploiement/&#x27; +
-            researchRes.path
-        );
-        break;
+        window.open(&#x27;https://docs.a-just.beta.gouv.fr/documentation-deploiement/&#x27; + researchRes.path)
+        break
       case &#x27;Le data-book&#x27;:
-        window.open(
-          &#x27;https://docs.a-just.beta.gouv.fr/le-data-book/&#x27; + researchRes.path
-        );
-        break;
+        window.open(&#x27;https://docs.a-just.beta.gouv.fr/le-data-book/&#x27; + researchRes.path)
+        break
       default:
-        break;
+        break
     }
   }
 
+  /**
+   * Is valid
+   * @param space
+   * @returns
+   */
   isValid(space: string) {
     if (this.userService.isCa()) {
       //console.log(&#x27;OK&#x27;)
       switch (space) {
         case &quot;Guide d&#x27;utilisateur A-JUST CA&quot;:
           //console.log(&#x27;isValid OK&#x27;)
-          return true;
+          return true
         default:
           //console.log(&#x27;isValid NOT OK&#x27;)
-          return false;
+          return false
       }
     } else {
       //console.log(&#x27;NOT OK&#x27;)
       switch (space) {
         case &quot;Guide d&#x27;utilisateur A-JUST&quot;:
-          return true;
+          return true
         case &#x27;Le data-book&#x27;:
-          return true;
+          return true
         default:
-          return false;
+          return false
       }
     }
   }
@@ -727,19 +798,17 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    */
   delay() {
     setTimeout(() &#x3D;&gt; {
-      this.focusOn &#x3D; false;
-    }, 200);
+      this.focusOn &#x3D; false
+    }, 200)
   }
 
   /**
    * Envoie de log
    */
   async sendLog() {
-    await this.serverService
-      .post(&#x27;centre-d-aide/log-documentation&#x27;)
-      .then((r) &#x3D;&gt; {
-        return r.data;
-      });
+    await this.serverService.post(&#x27;centre-d-aide/log-documentation&#x27;).then((r) &#x3D;&gt; {
+      return r.data
+    })
   }
 
   /**
@@ -747,7 +816,7 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @param phoneNumber
    */
   async sendForm(phoneNumber: string) {
-    let userId &#x3D; this.userService.user.getValue()?.id || null;
+    let userId &#x3D; this.userService.user.getValue()?.id || null
     if (userId)
       await this.serverService
         .post(&#x27;centre-d-aide/post-form-hubspot&#x27;, {
@@ -755,8 +824,8 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
           phoneNumber,
         })
         .then((r) &#x3D;&gt; {
-          return r.data;
-        });
+          return r.data
+        })
   }
 
   /**
@@ -770,19 +839,19 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
         value: url,
       })
       .then((r) &#x3D;&gt; {
-        return r.data;
-      });
+        return r.data
+      })
     if (CALCULATE_DOWNLOAD_URL &#x3D;&#x3D;&#x3D; url)
       this.appService.alert.next({
         text: &quot;Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu&#x27;à l&#x27;ouverture de votre fenêtre de téléchargement.&quot;,
-      });
+      })
 
-    if (url &#x3D;&#x3D;&#x3D; &#x27;/dashboard&#x27;) window.location.href &#x3D; url;
+    if (url &#x3D;&#x3D;&#x3D; &#x27;/dashboard&#x27;) window.location.href &#x3D; url
     else {
       if (download) {
-        downloadFile(url);
+        downloadFile(url)
       } else {
-        window.open(url);
+        window.open(url)
       }
     }
   }
@@ -792,49 +861,36 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @param url
    */
   openLink(url: string) {
-    window.open(url, &#x27;_blank&#x27;);
+    window.open(url, &#x27;_blank&#x27;)
   }
 
   /**
    * Chargement des webinaires
    */
   async loadWebinaires() {
-    this.webinaires &#x3D; new Array();
-    const { data } &#x3D; await this.gitbook.spaces.getPageByPath(
-      this.gitbookId,
-      &#x27;accueil/&#x27;
-    );
+    this.webinaires &#x3D; new Array()
+    const { data } &#x3D; await this.gitbook.spaces.getPageByPath(this.gitbookId, &#x27;accueil/&#x27;)
 
     await Promise.all(
       data.pages.map(async (page, index) &#x3D;&gt; {
-        const { data } &#x3D; (await this.gitbook.spaces.getPageById(
-          this.gitbookId,
-          page.id
-        )) as any;
+        const { data } &#x3D; (await this.gitbook.spaces.getPageById(this.gitbookId, page.id)) as any
         try {
           let webinaire &#x3D; {
             img: data.document?.nodes[0].data.url,
             title: data.title,
             content: data.document?.nodes[1].nodes[0].leaves[0].text,
-            action: [
-              data.document.nodes[2].data.url || null,
-              data.document.nodes[3]?.data.url || null,
-            ],
+            action: [data.document.nodes[2].data.url || null, data.document.nodes[3]?.data.url || null],
             rank: index,
-          };
-          if (data.title.includes(&#x27;[CACHER]&#x27;) &#x3D;&#x3D;&#x3D; false)
-            this.webinaires?.push(webinaire);
+          }
+          if (data.title.includes(&#x27;[CACHER]&#x27;) &#x3D;&#x3D;&#x3D; false) this.webinaires?.push(webinaire)
         } catch (error) {
-          console.log(
-            &quot;Le format du webinaire gitbook n&#x27;est pas conforme&quot;,
-            data
-          );
+          console.log(&quot;Le format du webinaire gitbook n&#x27;est pas conforme&quot;, data)
         }
-      })
+      }),
     ).then(() &#x3D;&gt; {
-      this.webinaires?.sort((a, b) &#x3D;&gt; a.rank - b.rank);
-      console.log(this.webinaires);
-    });
+      this.webinaires?.sort((a, b) &#x3D;&gt; a.rank - b.rank)
+      console.log(this.webinaires)
+    })
   }
 
   /**
@@ -843,12 +899,12 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @returns
    */
   validateNo(e: any) {
-    const charCode &#x3D; e.which ? e.which : e.keyCode;
-    if (charCode &#x3D;&#x3D;&#x3D; 46) return true;
+    const charCode &#x3D; e.which ? e.which : e.keyCode
+    if (charCode &#x3D;&#x3D;&#x3D; 46) return true
     if (charCode &gt; 31 &amp;&amp; (charCode &lt; 48 || charCode &gt; 57)) {
-      return false;
+      return false
     }
-    return true;
+    return true
   }
 
   /**
@@ -856,21 +912,21 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @returns
    */
   getIframeUrl() {
-    return this.openToIframe.url;
+    return this.openToIframe.url
   }
 
   /**
    * Recharge le contenu d&#x27;une page
    */
   reloadContent() {
-    this.openSuggestionPanel &#x3D; !this.openSuggestionPanel;
+    this.openSuggestionPanel &#x3D; !this.openSuggestionPanel
   }
   /**
    * Recupere la clef de doc
    * @returns
    */
   getDocKeys(): Array&lt;any&gt; {
-    return Object.keys(this.documentation);
+    return Object.keys(this.documentation)
   }
 
   /**
@@ -879,7 +935,7 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @returns
    */
   isBold(leaf: any): boolean {
-    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;bold&#x27;);
+    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;bold&#x27;)
   }
   /**
    * Mise en forme italic
@@ -887,7 +943,7 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @returns
    */
   isItalic(leaf: any): boolean {
-    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;itcalic&#x27;);
+    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;itcalic&#x27;)
   }
   /**
    * Mise en forme souligné
@@ -895,7 +951,7 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @returns
    */
   isUnderline(leaf: any): boolean {
-    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;underlined&#x27;);
+    return leaf.marks?.some((mark: any) &#x3D;&gt; mark.type &#x3D;&#x3D;&#x3D; &#x27;underlined&#x27;)
   }
   /**
    * recupère les sous éléments d&#x27;une liste non ordronnée
@@ -903,9 +959,7 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @returns
    */
   getUnorderedListNodes(item: any) {
-    return (
-      item.nodes?.find((n: any) &#x3D;&gt; n.type &#x3D;&#x3D;&#x3D; &#x27;list-unordered&#x27;)?.nodes || []
-    );
+    return item.nodes?.find((n: any) &#x3D;&gt; n.type &#x3D;&#x3D;&#x3D; &#x27;list-unordered&#x27;)?.nodes || []
   }
   /**
    * recupère les éléments d&#x27;une liste non ordronnée
@@ -913,7 +967,7 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    * @returns
    */
   hasUnorderedList(item: any): boolean {
-    return item.nodes?.some((n: any) &#x3D;&gt; n.type &#x3D;&#x3D;&#x3D; &#x27;list-unordered&#x27;);
+    return item.nodes?.some((n: any) &#x3D;&gt; n.type &#x3D;&#x3D;&#x3D; &#x27;list-unordered&#x27;)
   }
 
   /**
@@ -921,11 +975,11 @@ export class HelpCenterPage extends MainClass implements OnInit, AfterViewInit {
    */
   onKeyDown() {
     if (this.lockPrompt &#x3D;&#x3D;&#x3D; false) {
-      this.data &#x3D; null;
-      this.onSearchBy();
-      this.lockPrompt &#x3D; true;
-      this.displayResult &#x3D; true;
-      this.loseFocus();
+      this.data &#x3D; null
+      this.onSearchBy()
+      this.lockPrompt &#x3D; true
+      this.displayResult &#x3D; true
+      this.loseFocus()
     }
   }
 }

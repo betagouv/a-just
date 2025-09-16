@@ -247,7 +247,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/routes/contact/contact.page.ts:25</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/routes/contact/contact.page.ts:28</a></div>
                             </td>
                         </tr>
 
@@ -340,14 +340,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="39"
-                                    class="link-to-prism">src/app/routes/contact/contact.page.ts:39</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="45"
+                                    class="link-to-prism">src/app/routes/contact/contact.page.ts:45</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>After view init</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -387,7 +389,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/routes/contact/contact.page.ts:25</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/routes/contact/contact.page.ts:28</a></div>
                         </td>
                     </tr>
 
@@ -406,15 +408,18 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { AfterViewInit, Component } from &#x27;@angular/core&#x27;;
-import { Title } from &#x27;@angular/platform-browser&#x27;;
-import { ActivatedRoute } from &#x27;@angular/router&#x27;;
-import { loadFile } from &#x27;../../utils/js-loader&#x27;;
-import { AppService } from &#x27;../../services/app/app.service&#x27;;
-import { WrapperNoConnectedComponent } from &#x27;../../components/wrapper-no-connected/wrapper-no-connected.component&#x27;;
-import { BackButtonComponent } from &#x27;../../components/back-button/back-button.component&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { AfterViewInit, Component } from &#x27;@angular/core&#x27;
+import { Title } from &#x27;@angular/platform-browser&#x27;
+import { ActivatedRoute } from &#x27;@angular/router&#x27;
+import { loadFile } from &#x27;../../utils/js-loader&#x27;
+import { AppService } from &#x27;../../services/app/app.service&#x27;
+import { WrapperNoConnectedComponent } from &#x27;../../components/wrapper-no-connected/wrapper-no-connected.component&#x27;
+import { BackButtonComponent } from &#x27;../../components/back-button/back-button.component&#x27;
 
-declare const hbspt: any;
+/**
+ * Hubspot
+ */
+declare const hbspt: any
 
 /**
  * Contact
@@ -430,7 +435,7 @@ export class ContactPage implements AfterViewInit {
   /**
    * Get Link to back
    */
-  routerLinkToGoBack: string[] &#x3D; [&#x27;/&#x27;];
+  routerLinkToGoBack: string[] &#x3D; [&#x27;/&#x27;]
 
   /**
    * Constructeur
@@ -439,11 +444,14 @@ export class ContactPage implements AfterViewInit {
   constructor(
     private title: Title,
     private route: ActivatedRoute,
-    private appService: AppService
+    private appService: AppService,
   ) {
-    this.title.setTitle(&#x27;Contact | A-Just&#x27;);
+    this.title.setTitle(&#x27;Contact | A-Just&#x27;)
   }
 
+  /**
+   * After view init
+   */
   ngAfterViewInit() {
     loadFile(&#x27;https://js-eu1.hsforms.net/forms/embed/v2.js&#x27;).then(() &#x3D;&gt; {
       hbspt.forms.create({
@@ -451,12 +459,12 @@ export class ContactPage implements AfterViewInit {
         portalId: &#x27;26493393&#x27;,
         formId: &#x27;0f776962-cddf-4ccb-b2a8-100936289ebb&#x27;,
         target: &#x27;#hubspotForm&#x27;,
-      });
-    });
+      })
+    })
 
-    const { backUrl } &#x3D; this.route.snapshot.queryParams;
+    const { backUrl } &#x3D; this.route.snapshot.queryParams
     if (backUrl &amp;&amp; backUrl &#x3D;&#x3D;&#x3D; &#x27;true&#x27; &amp;&amp; this.appService.previousUrl) {
-      this.routerLinkToGoBack &#x3D; [this.appService.previousUrl];
+      this.routerLinkToGoBack &#x3D; [this.appService.previousUrl]
     }
   }
 }

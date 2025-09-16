@@ -72,17 +72,51 @@ import { PopinGraphsDetailsComponent } from './popin-graphs-details/popin-graphs
   styleUrls: ['./calculator.page.scss'],
 })
 export class CalculatorPage extends MainClass implements OnDestroy, OnInit, AfterViewInit {
+  /**
+   * Service de gestion des ressources humaines
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion du calculateur
+   */
   calculatorService = inject(CalculatorService)
+  /**   service de gestion des référentiels  */
   referentielService = inject(ReferentielService)
+  /**
+   * Service de gestion des options de contentieux
+   */
   contentieuxOptionsService = inject(ContentieuxOptionsService)
+  /**
+   * Service de gestion des activités
+   */
   activitiesService = inject(ActivitiesService)
+  /**
+   * Service de gestion des utilisateurs
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion des sauvegardes
+   */
   backupSettingsService = inject(BackupSettingsService)
+  /**
+   * Service de navigation
+   */
   router = inject(Router)
+  /**
+   * Service de gestion des applications
+   */
   appService = inject(AppService)
+  /**
+   * Service de gestion des paramètres de l'URL
+   */
   route = inject(ActivatedRoute)
+  /**
+   * Service de gestion de la localisation
+   */
   location = inject(Location)
+  /**
+   * Service de gestion des KPIs
+   */
   kpiService = inject(KPIService)
   /**
    * Dom du wrapper
@@ -558,6 +592,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
+  /**
+   * After view init
+   */
   ngAfterViewInit() {
     this.watch(
       this.route.params.subscribe((params) => {
@@ -859,6 +896,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.getFctRealValue()
   }
 
+  /**
+   * Sélectionne toutes les fonctions
+   */
   selectAllFct() {
     this.selectedFonctionsIds = this.fonctions.map((x) => x.id)
     this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
@@ -924,6 +964,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     return ''
   }
 
+  /**
+   * Sauvegarde les données du calculateur
+   */
   calculatorSaver() {
     let refToSave = new Array()
 
@@ -1626,10 +1669,20 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.appService.notification('Les données du cockpit ont été mises à jour !')
   }
 
+  /**
+   * Retourne les heures
+   * @param value
+   * @returns
+   */
   getHours(value: number) {
     return Math.floor(value)
   }
 
+  /**
+   * Retourne les minutes
+   * @param value
+   * @returns
+   */
   getMinutes(value: number) {
     //return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0');
     let h = Math.floor(value)

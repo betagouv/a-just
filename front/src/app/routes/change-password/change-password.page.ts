@@ -18,9 +18,21 @@ import { MIN_PASSWORD_LENGTH } from '../../utils/user'
   styleUrls: ['./change-password.page.scss'],
 })
 export class ChangePassword extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service de gestion de l'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion des paramètres de l'URL
+   */
   route = inject(ActivatedRoute)
+  /**
+   * Service de navigation
+   */
   router = inject(Router)
+  /**
+   * Longueur minimale du mot de passe
+   */
   MIN_PASSWORD_LENGTH = MIN_PASSWORD_LENGTH
 
   /**

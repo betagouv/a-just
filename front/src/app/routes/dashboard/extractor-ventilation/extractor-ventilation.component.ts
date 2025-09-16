@@ -8,6 +8,9 @@ import { AppService } from '../../../services/app/app.service'
 import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from '../../../utils/user'
 import { MatIconModule } from '@angular/material/icon'
 
+/**
+ * Extractor ventilation
+ */
 @Component({
   selector: 'aj-extractor-ventilation',
   standalone: true,
@@ -57,7 +60,11 @@ export class ExtractorVentilationComponent extends MainClass {
    * Constructeur
    * @param excelService
    */
-  constructor(private excelService: ExcelService, private userService: UserService, private appService: AppService) {
+  constructor(
+    private excelService: ExcelService,
+    private userService: UserService,
+    private appService: AppService,
+  ) {
     super()
 
     this.watch(

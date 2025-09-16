@@ -1,15 +1,9 @@
-
-import { Component, inject } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
-import { PopupComponent } from '../../components/popup/popup.component';
-import { UserService } from '../../services/user/user.service';
+import { Component, inject } from '@angular/core'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { Router, RouterLink } from '@angular/router'
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
+import { PopupComponent } from '../../components/popup/popup.component'
+import { UserService } from '../../services/user/user.service'
 
 /**
  * Page de demande de nouveau mot de passe
@@ -17,48 +11,48 @@ import { UserService } from '../../services/user/user.service';
 
 @Component({
   standalone: true,
-  imports: [
-    FormsModule,
-    WrapperNoConnectedComponent,
-    PopupComponent,
-    RouterLink,
-    ReactiveFormsModule
-],
+  imports: [FormsModule, WrapperNoConnectedComponent, PopupComponent, RouterLink, ReactiveFormsModule],
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
 })
 export class ForgotPassword {
-  userService = inject(UserService);
-  router = inject(Router);
+  /**
+   * Service de gestion de l'utilisateur
+   */
+  userService = inject(UserService)
+  /**
+   * Service de navigation
+   */
+  router = inject(Router)
   /**
    * Formulaire
    */
   form = new FormGroup({
     email: new FormControl(),
-  });
+  })
   /**
    * Popin de confirmation
    */
-  openPopin = false;
+  openPopin = false
 
   /**
    * Demande de génération d'un code de changement de mot de passe
    */
   onSubmit() {
-    let { email } = this.form.value;
+    let { email } = this.form.value
 
     if (import.meta.env.NG_APP_NODE_ENV === 'test') {
       this.userService.forgotPasswordTest({ email }).then((res) => {
         if (res.msg) {
-          this.openPopin = true;
+          this.openPopin = true
         }
-      });
+      })
     } else {
       this.userService.forgotPassword({ email }).then((msg) => {
         if (msg) {
-          this.openPopin = true;
+          this.openPopin = true
         }
-      });
+      })
     }
   }
 
@@ -66,7 +60,7 @@ export class ForgotPassword {
    * Retour à la page login
    */
   onClosePopin() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login'])
   }
 
   /**
@@ -74,7 +68,7 @@ export class ForgotPassword {
    * @returns
    */
   getEmail() {
-    let { email } = this.form.value;
-    return email ? email : null;
+    let { email } = this.form.value
+    return email ? email : null
   }
 }
