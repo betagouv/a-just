@@ -48,7 +48,7 @@ jobs:
 
       - name: Upload Cypress test reports
         if: always()
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-reports
           path: ./end-to-end/cypress/reports
