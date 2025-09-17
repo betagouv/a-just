@@ -170,44 +170,22 @@ jobs:
               <div class="section">
                   <h2>📊 Rapports de Tests</h2>
                   <p>Voici les derniers rapports de tests end-to-end générés :</p>
-                  <div class="file-list" id="reports-list">
-                      <!-- Les rapports seront listés ici -->
+                  <div class="file-list">
+                      {{REPORTS_PLACEHOLDER}}
                   </div>
               </div>
 
               <div class="section">
                   <h2>🎥 Vidéos des Tests</h2>
                   <p>Enregistrements vidéo des tests exécutés :</p>
-                  <div class="file-list" id="videos-list">
-                      <!-- Les vidéos seront listées ici -->
+                  <div class="file-list">
+                      {{VIDEOS_PLACEHOLDER}}
                   </div>
               </div>
 
               <div class="timestamp">
-                  Page générée le : <span id="generation-time"></span>
+                  Page générée le : {{GENERATION_TIME}}
               </div>
-
-              <script>
-                  // Afficher la date de génération
-                  document.getElementById('generation-time').textContent = new Date().toLocaleString('fr-FR');
-
-                  // Fonction pour lister les fichiers dans un répertoire
-                  async function listFiles(directory, containerId, fileTypes = []) {
-                      const container = document.getElementById(containerId);
-                      
-                      try {
-                          // Cette fonction sera remplacée par la génération côté serveur
-                          // car nous ne pouvons pas lister les fichiers côté client
-                          container.innerHTML = '<p>Chargement des fichiers...</p>';
-                      } catch (error) {
-                          container.innerHTML = '<p>Aucun fichier trouvé dans ce répertoire.</p>';
-                      }
-                  }
-
-                  // Initialiser le listing des fichiers
-                  listFiles('./', 'reports-list', ['.html', '.json']);
-                  listFiles('./videos/', 'videos-list', ['.mp4', '.webm']);
-              </script>
           </body>
           </html>
           EOF
@@ -234,7 +212,9 @@ jobs:
           }
 
           function generateFileList(directory, extensions) {
-              if (!fs.existsSync(directory)) return '';
+              if (!fs.existsSync(directory)) {
+                  return '<p>Aucun fichier de ce type trouvé.</p>';
+              }
               
               const files = fs.readdirSync(directory, { withFileTypes: true });
               let html = '';
@@ -270,21 +250,18 @@ jobs:
           // Générer les listes de fichiers
           const reportsHtml = generateFileList('.', ['.html', '.json']);
           const videosHtml = generateFileList('./videos', ['.mp4', '.webm']);
+          const generationTime = new Date().toLocaleString('fr-FR');
 
           // Remplacer les placeholders
-          indexContent = indexContent.replace(
-              '<div class="file-list" id="reports-list">\n                      <!-- Les rapports seront listés ici -->\n                  </div>',
-              `<div class="file-list">${reportsHtml}</div>`
-          );
-
-          indexContent = indexContent.replace(
-              '<div class="file-list" id="videos-list">\n                      <!-- Les vidéos seront listées ici -->\n                  </div>',
-              `<div class="file-list">${videosHtml}</div>`
-          );
+          indexContent = indexContent.replace('{{REPORTS_PLACEHOLDER}}', reportsHtml);
+          indexContent = indexContent.replace('{{VIDEOS_PLACEHOLDER}}', videosHtml);
+          indexContent = indexContent.replace('{{GENERATION_TIME}}', generationTime);
 
           // Écrire le fichier mis à jour
           fs.writeFileSync('index.html', indexContent);
           console.log('Index.html mis à jour avec les fichiers disponibles');
+          console.log('Reports:', reportsHtml ? 'Found' : 'None');
+          console.log('Videos:', videosHtml ? 'Found' : 'None');
           EOFJS
 
           node update_index.js
