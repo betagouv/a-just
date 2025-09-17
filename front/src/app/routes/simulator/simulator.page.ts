@@ -687,6 +687,18 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           this.dateStop = now
           this.stopRealValue = findRealValue(this.dateStop)
         }
+
+        if (d && d.length === 0) {
+          this.onResetUserAction()
+          this.disabled = 'disabled'
+          this.simulatorService.disabled.next(this.disabled)
+          this.commentaire = ''
+          this.contentieuId = null
+          this.subList = []
+          this.simulatorService.situationProjected.next(null)
+          this.projectedSituationData = null
+          this.dateStop = null
+        }
       }),
     )
 
@@ -807,13 +819,16 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.simulatorService.situationProjected.subscribe((d) => {
         this.projectedSituationData = this.simulatorService.situationProjected.getValue()
 
+        let isEqualToZero = this.firstSituationData?.totalIn === 0 && this.firstSituationData?.totalOut === 0 && this.firstSituationData?.lastStock === 0
         setTimeout(() => {
           if (
-            this.firstSituationData !== null &&
-            !this.hasNoNullValue(this.firstSituationData) &&
-            this.simulatorService.dateStop.getValue() &&
-            this.simulatorService.contentieuOrSubContentieuId.getValue() &&
-            this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0
+            (this.firstSituationData !== null &&
+              (this.firstSituationData as any).countOfCalandarDays &&
+              !this.hasNoNullValue(this.firstSituationData) &&
+              this.simulatorService.dateStop.getValue() &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue() &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0) ||
+            isEqualToZero
           ) {
             alert(
               "En l’absence de données d’activité renseignées pour les 12 derniers mois, cette simulation n’est pas possible. Veuillez renseigner préalablement les données manquantes pour ce contentieux dans l'écran de données d’activité",
@@ -913,6 +928,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.subList = event
       const tmpRefLength = this.referentiel.find((v) => v.id === this.contentieuId)
 
+      console.log('la sublist', this.subList)
       if (!event.length) {
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
