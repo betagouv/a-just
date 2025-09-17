@@ -23,7 +23,7 @@ export class TestsAutomService {
   async search(query: string): Promise<TestSearchResult[]> {
     // Try real backend first
     try {
-      const resp = await this.server.post('/admin-tests/search', { query, topK: 20 });
+      const resp = await this.server.post('admin-tests/search', { query, topK: 20 });
       const payload = resp?.data ?? resp;
       const items = Array.isArray(payload?.items) ? payload.items : [];
       return items.map((i: any) => ({ score: i.score ?? 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '', line: i.line, source: i.source, kind: i.kind }));
@@ -41,7 +41,7 @@ export class TestsAutomService {
 
   async reindex(): Promise<{ ok: boolean }> {
     try {
-      const resp = await this.server.post('/admin-tests/reindex', {});
+      const resp = await this.server.post('admin-tests/reindex', {});
       const payload = resp?.data ?? resp;
       return { ok: !!payload?.ok };
     } catch {
@@ -51,7 +51,7 @@ export class TestsAutomService {
 
   async list(): Promise<TestSearchResult[]> {
     try {
-      const resp = await this.server.get('/admin-tests/list');
+      const resp = await this.server.get('admin-tests/list');
       const payload = resp?.data ?? resp;
       const items = Array.isArray(payload?.items) ? payload.items : [];
       return items.map((i: any) => ({ score: 0, title: i.title ?? i.file ?? 'Test', file: i.file ?? '', line: i.line, source: i.source, kind: i.kind }));
@@ -64,7 +64,7 @@ export class TestsAutomService {
     try {
       const qs = new URLSearchParams({ file, line: String(line || 1) });
       if (source) qs.set('source', source);
-      const resp = await this.server.get(`/admin-tests/snippet?${qs.toString()}`);
+      const resp = await this.server.get(`admin-tests/snippet?${qs.toString()}`);
       const payload = resp?.data ?? resp;
       if (payload?.exists) {
         return { snippet: payload.snippet ?? '', start: payload.start ?? line, end: payload.end ?? line, includedBefores: payload.includedBefores, summaryFr: payload.summaryFr ?? null };
