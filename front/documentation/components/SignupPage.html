@@ -1,0 +1,2496 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  SignupPage</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/routes/signup/signup.page.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Page d&#39;inscription</p>
+
+    </p>
+
+
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="../components/WrapperNoConnectedComponent.html" target="_self" >WrapperNoConnectedComponent</a></code>
+                            <code>FormsModule</code>
+                            <code>CommonModule</code>
+                            <code>RouterLink</code>
+                            <code>ReactiveFormsModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./signup.page.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./signup.page.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#canUseSSO" >canUseSSO</a>
+                            </li>
+                            <li>
+                                <a href="#fonctions" >fonctions</a>
+                            </li>
+                            <li>
+                                <a href="#form" >form</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#inputs" >inputs</a>
+                            </li>
+                            <li>
+                                <a href="#MIN_PASSWORD_LENGTH" >MIN_PASSWORD_LENGTH</a>
+                            </li>
+                            <li>
+                                <a href="#paramsUrl" >paramsUrl</a>
+                            </li>
+                            <li>
+                                <a href="#passwordStrength" >passwordStrength</a>
+                            </li>
+                            <li>
+                                <a href="#provider" >provider</a>
+                            </li>
+                            <li>
+                                <a href="#route" >route</a>
+                            </li>
+                            <li>
+                                <a href="#router" >router</a>
+                            </li>
+                            <li>
+                                <a href="#serverService" >serverService</a>
+                            </li>
+                            <li>
+                                <a href="#signUpStep" >signUpStep</a>
+                            </li>
+                            <li>
+                                <a href="#ssoIsActivate" >ssoIsActivate</a>
+                            </li>
+                            <li>
+                                <a href="#ssoService" >ssoService</a>
+                            </li>
+                            <li>
+                                <a href="#title" >title</a>
+                            </li>
+                            <li>
+                                <a href="#tjs" >tjs</a>
+                            </li>
+                            <li>
+                                <a href="#userService" >userService</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#checkStrength" >checkStrength</a>
+                            </li>
+                            <li>
+                                <a href="#focusNext" >focusNext</a>
+                            </li>
+                            <li>
+                                <a href="#getParamColor" >getParamColor</a>
+                            </li>
+                            <li>
+                                <a href="#getStepColor" >getStepColor</a>
+                            </li>
+                            <li>
+                                <a href="#loadTj" >loadTj</a>
+                            </li>
+                            <li>
+                                <a href="#onStepTwo" >onStepTwo</a>
+                            </li>
+                            <li>
+                                <a href="#onSubmit" >onSubmit</a>
+                            </li>
+                            <li>
+                                <a href="#onUseSSO" >onUseSSO</a>
+                            </li>
+                            <li>
+                                <a href="#preventSubmit" >preventSubmit</a>
+                            </li>
+                            <li>
+                                <a href="#setFonc" >setFonc</a>
+                            </li>
+                            <li>
+                                <a href="#setTj" >setTj</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/routes/signup/signup.page.ts:112</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="checkStrength"></a>
+                    <span class="name">
+                        <span ><b>checkStrength</b></span>
+                        <a href="#checkStrength"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>checkStrength(event: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="305"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:305</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Vérifie la robustesse du mot de passe</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="focusNext"></a>
+                    <span class="name">
+                        <span ><b>focusNext</b></span>
+                        <a href="#focusNext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>focusNext(event: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="392"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:392</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Permet à l&#39;utilisateur de passer d&#39;un input à un autre avec la touche &quot;Entrée&quot;</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getParamColor"></a>
+                    <span class="name">
+                        <span ><b>getParamColor</b></span>
+                        <a href="#getParamColor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getParamColor(val: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="332"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:332</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retourne la couleur des différents éléments de validation de mot de passe</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>val</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>&quot;#0063cb&quot; | &quot;red&quot;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStepColor"></a>
+                    <span class="name">
+                        <span ><b>getStepColor</b></span>
+                        <a href="#getStepColor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getStepColor()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="297"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:297</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retourne la couleur de l&#39;étape 2 (indicateur)</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>&quot;#eeeeee&quot; | &quot;#000091&quot;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadTj"></a>
+                    <span class="name">
+                        <span ><b>loadTj</b></span>
+                        <a href="#loadTj"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadTj()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="359"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:359</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Charge les TJ</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onStepTwo"></a>
+                    <span class="name">
+                        <span ><b>onStepTwo</b></span>
+                        <a href="#onStepTwo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onStepTwo()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="214"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:214</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Validation et verification des champs de l&#39;étape 1</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSubmit"></a>
+                    <span class="name">
+                        <span ><b>onSubmit</b></span>
+                        <a href="#onSubmit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onSubmit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="152"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:152</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Envoi des informations d&#39;inscriptions</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onUseSSO"></a>
+                    <span class="name">
+                        <span ><b>onUseSSO</b></span>
+                        <a href="#onUseSSO"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onUseSSO()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="378"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:378</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="preventSubmit"></a>
+                    <span class="name">
+                        <span ><b>preventSubmit</b></span>
+                        <a href="#preventSubmit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>preventSubmit(event: KeyboardEvent)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="407"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:407</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Empêche la soumission du formulaire lorsque l&#39;utilisateur presse la touche &quot;Entrée&quot;</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                        <code>KeyboardEvent</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setFonc"></a>
+                    <span class="name">
+                        <span ><b>setFonc</b></span>
+                        <a href="#setFonc"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setFonc(event: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="346"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:346</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Enregistre la fonction</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setTj"></a>
+                    <span class="name">
+                        <span ><b>setTj</b></span>
+                        <a href="#setTj"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setTj(event: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="370"
+                                    class="link-to-prism">src/app/routes/signup/signup.page.ts:370</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Enregistre la valeur de TJ choisie</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canUseSSO"></a>
+                    <span class="name">
+                        <span ><b>canUseSSO</b></span>
+                        <a href="#canUseSSO"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>true</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/routes/signup/signup.page.ts:73</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Can user SSO</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fonctions"></a>
+                    <span class="name">
+                        <span ><b>fonctions</b></span>
+                        <a href="#fonctions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+    this.userService.isCa() ? &#x27;Premier président&#x27; : &#x27;Président(e)&#x27;,
+    &#x27;Directeur/trice de greffe&#x27;,
+    &#x27;Secrétaire général(e)&#x27;,
+    &#x27;Chef(fe) de cabinet&#x27;,
+    &#x27;Chargé(e) de mission&#x27;,
+    this.userService.isCa()
+      ? &#x27;Secrétariat Première présidence&#x27;
+      : &#x27;Secrétaire administratif - présidence&#x27;,
+    &#x27;Secrétaire administratif - DG&#x27;,
+    &#x27;Directeur/trice de greffe adjoint(e)&#x27;,
+    &#x27;Directeur/trice des services de greffe judiciaires&#x27;,
+  ]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/routes/signup/signup.page.ts:90</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des fonctions (1VP, VP, ...)</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="form"></a>
+                    <span class="name">
+                        <span ><b>form</b></span>
+                        <a href="#form"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new FormGroup({
+    email: new FormControl(),
+    password: new FormControl(),
+    fonction: new FormControl(),
+    tj: new FormControl(),
+    firstName: new FormControl(),
+    lastName: new FormControl(),
+    passwordConf: new FormControl(),
+    checkbox: new FormControl(),
+    checkboxPassword: new FormControl(),
+    fonctionAutre: new FormControl(),
+    responsable: new FormControl(),
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/routes/signup/signup.page.ts:53</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Formulaire d&#39;inscription</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="inputs"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>inputs</b></span>
+                        <a href="#inputs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>QueryList&lt;ElementRef&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new QueryList&lt;ElementRef&gt;()</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChildren(&#x27;input&#x27;)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/routes/signup/signup.page.ts:47</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MIN_PASSWORD_LENGTH"></a>
+                    <span class="name">
+                        <span ><b>MIN_PASSWORD_LENGTH</b></span>
+                        <a href="#MIN_PASSWORD_LENGTH"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>MIN_PASSWORD_LENGTH</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/routes/signup/signup.page.ts:45</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="paramsUrl"></a>
+                    <span class="name">
+                        <span ><b>paramsUrl</b></span>
+                        <a href="#paramsUrl"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="109" class="link-to-prism">src/app/routes/signup/signup.page.ts:109</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Params</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="passwordStrength"></a>
+                    <span class="name">
+                        <span ><b>passwordStrength</b></span>
+                        <a href="#passwordStrength"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    length: false,
+    char: false,
+    number: false,
+    majuscule: false,
+  }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/routes/signup/signup.page.ts:81</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Mot de passe paramètres de validation</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="provider"></a>
+                    <span class="name">
+                        <span ><b>provider</b></span>
+                        <a href="#provider"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="104" class="link-to-prism">src/app/routes/signup/signup.page.ts:104</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="route"></a>
+                    <span class="name">
+                        <span ><b>route</b></span>
+                        <a href="#route"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(ActivatedRoute)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/routes/signup/signup.page.ts:43</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="router"></a>
+                    <span class="name">
+                        <span ><b>router</b></span>
+                        <a href="#router"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(Router)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/routes/signup/signup.page.ts:40</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="serverService"></a>
+                    <span class="name">
+                        <span ><b>serverService</b></span>
+                        <a href="#serverService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(ServerService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/routes/signup/signup.page.ts:42</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="signUpStep"></a>
+                    <span class="name">
+                        <span ><b>signUpStep</b></span>
+                        <a href="#signUpStep"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>1</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/routes/signup/signup.page.ts:77</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Step d&#39;inscription</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ssoIsActivate"></a>
+                    <span class="name">
+                        <span ><b>ssoIsActivate</b></span>
+                        <a href="#ssoIsActivate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>import.meta.env.NG_APP_ENABLE_SSO</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/routes/signup/signup.page.ts:69</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>SSO is activate to this env</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ssoService"></a>
+                    <span class="name">
+                        <span ><b>ssoService</b></span>
+                        <a href="#ssoService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(SSOService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/routes/signup/signup.page.ts:44</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="title"></a>
+                    <span class="name">
+                        <span ><b>title</b></span>
+                        <a href="#title"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(Title)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/routes/signup/signup.page.ts:41</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="tjs"></a>
+                    <span class="name">
+                        <span ><b>tjs</b></span>
+                        <a href="#tjs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>any[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/routes/signup/signup.page.ts:103</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userService"></a>
+                    <span class="name">
+                        <span ><b>userService</b></span>
+                        <a href="#userService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(UserService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/routes/signup/signup.page.ts:39</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  ViewChildren,
+  QueryList,
+  ElementRef,
+  inject,
+} from &#x27;@angular/core&#x27;;
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from &#x27;@angular/forms&#x27;;
+import { Title } from &#x27;@angular/platform-browser&#x27;;
+import { ActivatedRoute, Router, RouterLink } from &#x27;@angular/router&#x27;;
+import { WrapperNoConnectedComponent } from &#x27;../../components/wrapper-no-connected/wrapper-no-connected.component&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;;
+import { UserService } from &#x27;../../services/user/user.service&#x27;;
+import { ServerService } from &#x27;../../services/http-server/server.service&#x27;;
+import { SSOService } from &#x27;../../services/sso/sso.service&#x27;;
+import { MIN_PASSWORD_LENGTH } from &#x27;../../utils/user&#x27;;
+
+/**
+ * Page d&#x27;inscription
+ */
+@Component({
+  standalone: true,
+  imports: [
+    WrapperNoConnectedComponent,
+    FormsModule,
+    CommonModule,
+    RouterLink,
+    ReactiveFormsModule,
+  ],
+  templateUrl: &#x27;./signup.page.html&#x27;,
+  styleUrls: [&#x27;./signup.page.scss&#x27;],
+})
+export class SignupPage {
+  userService &#x3D; inject(UserService);
+  router &#x3D; inject(Router);
+  title &#x3D; inject(Title);
+  serverService &#x3D; inject(ServerService);
+  route &#x3D; inject(ActivatedRoute);
+  ssoService &#x3D; inject(SSOService);
+  MIN_PASSWORD_LENGTH &#x3D; MIN_PASSWORD_LENGTH;
+
+  @ViewChildren(&#x27;input&#x27;) inputs: QueryList&lt;ElementRef&gt; &#x3D;
+    new QueryList&lt;ElementRef&gt;();
+
+  /**
+   * Formulaire d&#x27;inscription
+   */
+  form &#x3D; new FormGroup({
+    email: new FormControl(),
+    password: new FormControl(),
+    fonction: new FormControl(),
+    tj: new FormControl(),
+    firstName: new FormControl(),
+    lastName: new FormControl(),
+    passwordConf: new FormControl(),
+    checkbox: new FormControl(),
+    checkboxPassword: new FormControl(),
+    fonctionAutre: new FormControl(),
+    responsable: new FormControl(),
+  });
+  /**
+   * SSO is activate to this env
+   */
+  ssoIsActivate: boolean &#x3D; import.meta.env.NG_APP_ENABLE_SSO;
+  /**
+   * Can user SSO
+   */
+  canUseSSO: boolean &#x3D; true;
+  /**
+   * Step d&#x27;inscription
+   */
+  signUpStep &#x3D; 1;
+  /**
+   * Mot de passe paramètres de validation
+   */
+  passwordStrength &#x3D; {
+    length: false,
+    char: false,
+    number: false,
+    majuscule: false,
+  };
+  /**
+   * Liste des fonctions (1VP, VP, ...)
+   */
+  fonctions: string[] &#x3D; [
+    this.userService.isCa() ? &#x27;Premier président&#x27; : &#x27;Président(e)&#x27;,
+    &#x27;Directeur/trice de greffe&#x27;,
+    &#x27;Secrétaire général(e)&#x27;,
+    &#x27;Chef(fe) de cabinet&#x27;,
+    &#x27;Chargé(e) de mission&#x27;,
+    this.userService.isCa()
+      ? &#x27;Secrétariat Première présidence&#x27;
+      : &#x27;Secrétaire administratif - présidence&#x27;,
+    &#x27;Secrétaire administratif - DG&#x27;,
+    &#x27;Directeur/trice de greffe adjoint(e)&#x27;,
+    &#x27;Directeur/trice des services de greffe judiciaires&#x27;,
+  ];
+  tjs: any[] &#x3D; [];
+  provider: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Params
+   */
+  paramsUrl: {
+    email: string;
+    provider: string;
+  } | null &#x3D; null;
+
+  /**
+   * Constructeur
+   */
+  constructor() {
+    this.title.setTitle(
+      (this.userService.isCa() ? &#x27;A-Just CA | &#x27; : &#x27;A-Just TJ | &#x27;) +
+        &#x27;Embarquement&#x27;
+    );
+    this.loadTj();
+
+    this.route.queryParams.subscribe((p: any) &#x3D;&gt; {
+      this.paramsUrl &#x3D; p;
+      if (p.email) {
+        this.form.get(&#x27;email&#x27;)?.setValue(p.email);
+        this.form.get(&#x27;email&#x27;)?.disable();
+      } else {
+        this.form.get(&#x27;email&#x27;)?.enable();
+      }
+
+      if (p.firstName) {
+        this.form.get(&#x27;firstName&#x27;)?.setValue(p.firstName);
+      }
+
+      if (p.lastName) {
+        this.form.get(&#x27;lastName&#x27;)?.setValue(p.lastName);
+      }
+
+      if (p.provider) {
+        this.provider &#x3D; p.provider;
+        this.signUpStep &#x3D; 2;
+      }
+    });
+  }
+
+  /**
+   * Envoi des informations d&#x27;inscriptions
+   * @returns
+   */
+  onSubmit() {
+    let {
+      email,
+      password,
+      firstName,
+      lastName,
+      passwordConf,
+      fonction,
+      tj,
+      checkbox,
+      fonctionAutre,
+      responsable,
+    } &#x3D; this.form.value;
+
+    if (this.paramsUrl?.email) {
+      email &#x3D; this.paramsUrl?.email;
+    }
+
+    if (!tj) {
+      if(this.userService.isCa()) {
+        alert(&#x27;Vous devez saisir une CA&#x27;);
+      } else {
+      alert(&#x27;Vous devez saisir un TJ&#x27;);
+    }
+      return;
+    }
+
+    if (!fonction) {
+      alert(&#x27;Vous devez saisir une fonction&#x27;);
+      return;
+    }
+
+    if (fonction &#x3D;&#x3D;&#x3D; &#x27;Autre&#x27; &amp;&amp; !fonctionAutre) {
+      alert(&#x27;Vous devez saisir un intitulé de fonction&#x27;);
+      return;
+    }
+
+    if (fonction &#x3D;&#x3D;&#x3D; &#x27;Autre&#x27; &amp;&amp; !responsable) {
+      alert(&quot;Vous devez saisir le nom d&#x27;un responsable hiérarchique&quot;);
+      return;
+    }
+
+    if (fonction &#x3D;&#x3D;&#x3D; &#x27;Autre&#x27;)
+      fonction &#x3D; fonctionAutre + &#x27; - Resp hiér : &#x27; + responsable;
+
+    this.userService
+      .register({ email, password, firstName, lastName, fonction, tj })
+      .then((returnLogin) &#x3D;&gt; {
+        if (returnLogin) {
+          this.router.navigate([
+            this.userService.getUserPageUrl(returnLogin.user),
+          ]);
+        } else {
+          this.router.navigate([&#x27;/login&#x27;]);
+        }
+      });
+  }
+
+  /**
+   * Validation et verification des champs de l&#x27;étape 1
+   * @returns
+   */
+  onStepTwo() {
+    let {
+      email,
+      password,
+      firstName,
+      lastName,
+      passwordConf,
+      fonction,
+      tj,
+      checkbox,
+    } &#x3D; this.form.value;
+
+    if (!firstName || !lastName) {
+      alert(&#x27;Vous devez saisir un nom et un prénom&#x27;);
+      return;
+    }
+
+    if (!email) {
+      alert(&#x27;Vous devez saisir un email&#x27;);
+      return;
+    }
+
+    if (
+      !this.paramsUrl?.email &amp;&amp;
+      email.includes(&#x27;@justice.fr&#x27;) &#x3D;&#x3D;&#x3D; false &amp;&amp;
+      email.includes(&#x27;.gouv.fr&#x27;) &#x3D;&#x3D;&#x3D; false &amp;&amp;
+      email.includes(&#x27;@a-just.fr&#x27;) &#x3D;&#x3D;&#x3D; false
+    ) {
+      alert(&#x27;Vous devez saisir une adresse e-mail professionnelle&#x27;);
+      return;
+    }
+
+
+    if (!password) {
+      alert(&#x27;Vous devez saisir un mot de passe&#x27;);
+      return;
+    }
+
+    if (!passwordConf) {
+      alert(&#x27;Vous devez confirmer votre mot de passe&#x27;);
+      return;
+    }
+
+
+    if (this.paramsUrl?.email) {
+      email &#x3D; this.paramsUrl?.email;
+    }
+
+    if (!checkbox) {
+      alert(&quot;Vous devez valider les conditions générales d&#x27;utilisation&quot;);
+      return;
+    }
+
+    var arrayOfSp &#x3D; [&#x27;!&#x27;, &#x27;@&#x27;, &#x27;#&#x27;, &#x27;$&#x27;, &#x27;%&#x27;, &#x27;&amp;&#x27;, &#x27;*&#x27;, &#x27;_&#x27;, &#x27;?&#x27;, &#x27;-&#x27;];
+    var regex &#x3D; &#x27;[&#x27; + arrayOfSp.join(&#x27;&#x27;) + &#x27;]&#x27;;
+
+    if (!this.paramsUrl?.provider) {
+      if (
+        !password ||
+        password.length &lt; MIN_PASSWORD_LENGTH ||
+        !password.match(/\d/) ||
+        !new RegExp(regex).test(password) ||
+        !password.match(/[A-Z]/g)
+      ) {
+        alert(
+          &#x27;Vous devez saisir un mot de passe qui remplit les critères obligatoires&#x27;
+        );
+        return;
+      }
+
+      if (password !&#x3D;&#x3D; passwordConf) {
+        alert(&#x27;Vos mots de passe ne sont pas identiques&#x27;);
+        return;
+      }
+    }
+
+    this.signUpStep &#x3D; 2;
+  }
+
+  /**
+   * Retourne la couleur de l&#x27;étape 2 (indicateur)
+   * @returns
+   */
+  getStepColor() {
+    return this.signUpStep &#x3D;&#x3D;&#x3D; 1 ? &#x27;#eeeeee&#x27; : &#x27;#000091&#x27;;
+  }
+
+  /**
+   * Vérifie la robustesse du mot de passe
+   * @param event
+   */
+  checkStrength(event: any) {
+    const password &#x3D; event.target.value;
+
+    if (password &amp;&amp; password.match(/\d/)) {
+      this.passwordStrength.number &#x3D; true;
+    } else this.passwordStrength.number &#x3D; false;
+
+    var arrayOfSp &#x3D; [&#x27;!&#x27;, &#x27;@&#x27;, &#x27;#&#x27;, &#x27;$&#x27;, &#x27;%&#x27;, &#x27;&amp;&#x27;, &#x27;*&#x27;, &#x27;_&#x27;, &#x27;?&#x27;, &#x27;-&#x27;];
+    var regex &#x3D; &#x27;[&#x27; + arrayOfSp.join(&#x27;&#x27;) + &#x27;]&#x27;;
+    if (password &amp;&amp; new RegExp(regex).test(password)) {
+      this.passwordStrength.char &#x3D; true;
+    } else this.passwordStrength.char &#x3D; false;
+
+    if (password &amp;&amp; password.length &gt; MIN_PASSWORD_LENGTH) {
+      this.passwordStrength.length &#x3D; true;
+    } else this.passwordStrength.length &#x3D; false;
+
+    if (password &amp;&amp; password.match(/[A-Z]/g)) {
+      this.passwordStrength.majuscule &#x3D; true;
+    } else this.passwordStrength.majuscule &#x3D; false;
+  }
+
+  /**
+   * Retourne la couleur des différents éléments de validation de mot de passe
+   * @param val
+   * @returns
+   */
+  getParamColor(val: number) {
+    const password &#x3D; this.form.controls[&#x27;password&#x27;].value;
+    const options &#x3D; [&#x27;length&#x27;, &#x27;char&#x27;, &#x27;number&#x27;, &#x27;majuscule&#x27;];
+
+    if (!password) return &#x27;#0063cb&#x27;;
+    // @ts-ignore
+    else if (this.passwordStrength[options[val]] &#x3D;&#x3D;&#x3D; false) return &#x27;red&#x27;;
+    else return &#x27;#0063cb&#x27;;
+  }
+
+  /**
+   * Enregistre la fonction
+   * @param event
+   */
+  setFonc(event: any) {
+    this.fonctions.map((fct) &#x3D;&gt; {
+      if (fct &#x3D;&#x3D;&#x3D; event.value) {
+        this.form.controls[&#x27;fonction&#x27;].setValue(fct);
+      }
+    });
+    if (event.value &#x3D;&#x3D;&#x3D; &#x27;Autre&#x27;)
+      this.form.controls[&#x27;fonction&#x27;].setValue(&#x27;Autre&#x27;);
+  }
+
+  /**
+   * Charge les TJ
+   */
+  loadTj() {
+    this.serverService.get(&#x27;juridictions/get-all-visibles&#x27;).then((data) &#x3D;&gt; {
+      this.tjs &#x3D; data.data;
+      //this.tjs &#x3D; data.data.map((x: any) &#x3D;&gt; { return { ...x, label: x.label.slice(3) } })
+    });
+  }
+
+  /**
+   * Enregistre la valeur de TJ choisie
+   * @param event
+   */
+  setTj(event: any) {
+    this.tjs.map((tj) &#x3D;&gt; {
+      if (tj.id &#x3D;&#x3D;&#x3D; +event.value) {
+        this.form.controls[&#x27;tj&#x27;].setValue(tj.label);
+      }
+    });
+  }
+
+  onUseSSO() {
+    //if (!this.canUseSSO) {
+    //  alert(
+    //    &quot;Vous devez être dans l&#x27;environement Justice pour utiliser page blanche !&quot;
+    //  )
+    //} else {
+    window.location.href &#x3D; this.ssoService.getSSOLogin();
+    //}
+  }
+
+  /**
+   * Permet à l&#x27;utilisateur de passer d&#x27;un input à un autre avec la touche &quot;Entrée&quot;
+   * @param event
+   */
+  focusNext(event: any) {
+    event.preventDefault();
+    const inputsArray &#x3D; this.inputs.toArray();
+    const currentIndex &#x3D; inputsArray.findIndex(
+      (input) &#x3D;&gt; input.nativeElement &#x3D;&#x3D;&#x3D; event.target
+    );
+    if (currentIndex &gt; -1 &amp;&amp; currentIndex &lt; inputsArray.length - 1) {
+      inputsArray[currentIndex + 1].nativeElement.focus();
+    }
+  }
+
+  /**
+   * Empêche la soumission du formulaire lorsque l&#x27;utilisateur presse la touche &quot;Entrée&quot;
+   * @param event
+   */
+  preventSubmit(event: KeyboardEvent) {
+    if (event.key &#x3D;&#x3D;&#x3D; &#x27;Enter&#x27;) {
+      event.preventDefault();
+    }
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;aj-wrapper-no-connected
+  [title]&#x3D;&quot;&#x27;Un outil d\&#x27;aide à la décision et&lt;br/&gt;de prospective pour piloter&lt;br/&gt;votre juridiction&#x27;&quot;&gt;
+  &lt;div class&#x3D;&quot;logo&quot;&gt;
+    &lt;img src&#x3D;&quot;/assets/icons/bloc-marque/bloc-marque-white@2x.svg&quot; alt&#x3D;&quot;ministère de la justice&quot; /&gt;
+    &lt;img src&#x3D;&quot;/assets/icons/logos/white-192x192@1x.svg&quot; alt&#x3D;&quot;a-just&quot; /&gt;
+  &lt;/div&gt;
+  &lt;form [formGroup]&#x3D;&quot;form&quot; (ngSubmit)&#x3D;&quot;onSubmit()&quot; (keydown)&#x3D;&quot;preventSubmit($event)&quot;&gt;
+    &lt;h3&gt;Embarquement A-JUST&lt;/h3&gt;
+    @if (ssoIsActivate &amp;&amp; signUpStep &#x3D;&#x3D;&#x3D; 1 &amp;&amp; !userService.isCa()) {
+    &lt;button class&#x3D;&quot;outline white strict-border sso-bt&quot; id&#x3D;&quot;signupSSO&quot; (click)&#x3D;&quot;onUseSSO()&quot; type&#x3D;&quot;button&quot;
+      [ngClass]&#x3D;&quot;{ disabled: !canUseSSO }&quot;&gt;
+      &lt;img src&#x3D;&quot;/assets/icons/bloc-marque/bloc-marque-white-light.svg&quot; /&gt;
+      Embarquer avec Pages Blanches
+    &lt;/button&gt;
+    &lt;div class&#x3D;&quot;or&quot;&gt;
+      &lt;p&gt;ou&lt;/p&gt;
+    &lt;/div&gt;
+    }
+    &lt;div class&#x3D;&quot;box-signup&quot;&gt;
+      @if (!provider) {
+      &lt;label class&#x3D;&quot;steps&quot;&gt;Étape {{ signUpStep }} sur 2&lt;/label&gt;
+      &lt;label class&#x3D;&quot;sub-title&quot;&gt;Tous les champs de ce formulaire sont obligatoires&lt;/label&gt;
+      }
+      &lt;p class&#x3D;&quot;step-title&quot;&gt;{{ signUpStep &#x3D;&#x3D;&#x3D; 1 ? &#x27;Je suis :&#x27; : &#x27;Ma fonction&#x27; }}&lt;/p&gt;
+      @if (!provider) {
+      &lt;div class&#x3D;&quot;bordure-steps&quot;&gt;
+        &lt;div class&#x3D;&quot;step-one&quot;&gt;&lt;/div&gt;
+        &lt;div class&#x3D;&quot;step-two&quot; [ngStyle]&#x3D;&quot;{ &#x27;background-color&#x27;: getStepColor() }&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      }
+      @if (signUpStep &#x3D;&#x3D;&#x3D; 1) {
+      &lt;div class&#x3D;&quot;grid-double&quot;&gt;
+        &lt;div&gt;
+          &lt;label&gt;Prénom&lt;/label&gt;
+          &lt;input #input class&#x3D;&quot;ethics-ui&quot; placeholder&#x3D;&quot;Prénom&quot; formControlName&#x3D;&quot;firstName&quot; type&#x3D;&quot;text&quot;
+            (keyup.enter)&#x3D;&quot;focusNext($event)&quot; autocomplete&#x3D;&quot;off&quot; /&gt;
+        &lt;/div&gt;
+        &lt;div&gt;
+          &lt;label&gt;NOM&lt;/label&gt;
+          &lt;input #input class&#x3D;&quot;ethics-ui&quot; placeholder&#x3D;&quot;Nom&quot; formControlName&#x3D;&quot;lastName&quot; type&#x3D;&quot;text&quot;
+            (keyup.enter)&#x3D;&quot;focusNext($event)&quot; autocomplete&#x3D;&quot;off&quot; /&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;label&gt;Courriel professionnel :&lt;/label&gt;
+      &lt;label class&#x3D;&quot;sub-label&quot;&gt;
+        Adresse nominative uniquement, ne pas utiliser de boîte générique ou structurelle
+      &lt;/label&gt;
+      &lt;input #input class&#x3D;&quot;ethics-ui&quot; placeholder&#x3D;&quot;&quot; formControlName&#x3D;&quot;email&quot; type&#x3D;&quot;email&quot;
+        (keyup.enter)&#x3D;&quot;focusNext($event)&quot; autocomplete&#x3D;&quot;off&quot; /&gt;
+      @if (!paramsUrl?.provider) {
+      &lt;div class&#x3D;&quot;password-line&quot;&gt;
+        &lt;div&gt;&lt;label&gt;Créer un mot de passe :&lt;/label&gt;&lt;/div&gt;
+        &lt;span class&#x3D;&quot;cursor-pointer&quot; (click)&#x3D;&quot;oncheck.click(); $event.stopPropagation()&quot;&gt;
+          &lt;input (click)&#x3D;&quot;$event.stopPropagation()&quot; class&#x3D;&quot;cursor-pointer&quot; #oncheck type&#x3D;&quot;checkbox&quot;
+            formControlName&#x3D;&quot;checkboxPassword&quot; /&gt;
+          Afficher
+        &lt;/span&gt;
+      &lt;/div&gt;
+      &lt;input #input class&#x3D;&quot;ethics-ui no-margin&quot; placeholder&#x3D;&quot;&quot; formControlName&#x3D;&quot;password&quot;
+        type&#x3D;&quot;{{ !form.controls[&#x27;checkboxPassword&#x27;].value ? &#x27;password&#x27; : &#x27;text&#x27; }}&quot; (keyup)&#x3D;&quot;checkStrength($event)&quot;
+        (keyup.enter)&#x3D;&quot;focusNext($event)&quot; autocomplete&#x3D;&quot;off&quot; /&gt;
+      &lt;label class&#x3D;&quot;sub-title no-margin&quot;&gt;Votre mot de passe doit contenir au moins :&lt;/label&gt;
+      &lt;label class&#x3D;&quot;sub-label password&quot; [ngStyle]&#x3D;&quot;{ color: getParamColor(0) }&quot;&gt;
+        &lt;span [ngStyle]&#x3D;&quot;{ &#x27;background-color&#x27;: getParamColor(0) }&quot;&gt;i&lt;/span&gt;
+        &amp;nbsp; {{ MIN_PASSWORD_LENGTH }} caractères minimum
+      &lt;/label&gt;
+      &lt;label class&#x3D;&quot;sub-label password&quot; [ngStyle]&#x3D;&quot;{ color: getParamColor(1) }&quot;&gt;
+        &lt;span [ngStyle]&#x3D;&quot;{ &#x27;background-color&#x27;: getParamColor(1) }&quot;&gt;i&lt;/span&gt;
+        &amp;nbsp; 1 caractère spécial
+      &lt;/label&gt;
+      &lt;label class&#x3D;&quot;sub-label password&quot; [ngStyle]&#x3D;&quot;{ color: getParamColor(2) }&quot;&gt;
+        &lt;span [ngStyle]&#x3D;&quot;{ &#x27;background-color&#x27;: getParamColor(2) }&quot;&gt;i&lt;/span&gt;
+        &amp;nbsp; 1 chiffre minimum
+      &lt;/label&gt;
+      &lt;label class&#x3D;&quot;sub-label password last&quot; [ngStyle]&#x3D;&quot;{ color: getParamColor(3) }&quot;&gt;
+        &lt;span [ngStyle]&#x3D;&quot;{ &#x27;background-color&#x27;: getParamColor(3) }&quot;&gt;i&lt;/span&gt;
+        &amp;nbsp; 1 majuscule
+      &lt;/label&gt;
+      &lt;label&gt;Confirmation de votre mot de passe :&lt;/label&gt;
+      &lt;input #input class&#x3D;&quot;ethics-ui&quot; placeholder&#x3D;&quot;&quot; formControlName&#x3D;&quot;passwordConf&quot; type&#x3D;&quot;password&quot;
+        (keyup.enter)&#x3D;&quot;focusNext($event)&quot; autocomplete&#x3D;&quot;off&quot; /&gt;
+      }
+      &lt;div class&#x3D;&quot;checkbox-container checkbox-row&quot;&gt;
+        &lt;input #checkbox class&#x3D;&quot;large&quot; type&#x3D;&quot;checkbox&quot; formControlName&#x3D;&quot;checkbox&quot; (keyup.enter)&#x3D;&quot;focusNext($event)&quot;
+          autocomplete&#x3D;&quot;off&quot; /&gt;
+        &lt;p (click)&#x3D;&quot;checkbox.click()&quot;&gt;
+          Je certifie avoir lu et accepté les
+          &lt;a [routerLink]&#x3D;&quot;[&#x27;/conditions-generales-d-utilisation&#x27;]&quot; [queryParams]&#x3D;&quot;{ noBack: true }&quot; target&#x3D;&quot;_blank&quot;
+            rel&#x3D;&quot;noopener&quot;&gt;Conditions
+            générales
+            d&#x27;utilisation&lt;/a&gt;
+          .
+        &lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class&#x3D;&quot;next-step&quot; (click)&#x3D;&quot;onStepTwo()&quot;&gt;
+        &lt;p&gt;Continuer mon embarquement&lt;/p&gt;
+      &lt;/div&gt;
+      }
+      @if (signUpStep &#x3D;&#x3D;&#x3D; 2) {
+      &lt;label&gt;{{ userService.interfaceType &#x3D;&#x3D;&#x3D; 1 ? &#x27;Ma cour&#x27; : &#x27;Mon tribunal&#x27; }} de rattachement :&lt;/label&gt;
+      &lt;div class&#x3D;&quot;tj&quot;&gt;
+        &lt;select (change)&#x3D;&quot;setTj($event.target)&quot;&gt;
+          &lt;!--&lt;option selected hidden&gt;&lt;/option&gt;--&gt;
+          &lt;option selected hidden&gt;Choisir {{ userService.interfaceType &#x3D;&#x3D;&#x3D; 1 ? &#x27;une CA&#x27; : &#x27;un TJ&#x27; }}&lt;/option&gt;
+          @for (tj of tjs; track tj.id) {
+          &lt;option [value]&#x3D;&quot;tj.id&quot;&gt;
+            {{ tj.label }}
+          &lt;/option&gt;
+          }
+        &lt;/select&gt;
+      &lt;/div&gt;
+      &lt;label&gt;Ma fonction :&lt;/label&gt;
+      &lt;select #fctSelect (change)&#x3D;&quot;setFonc($event.target)&quot;&gt;
+        &lt;option selected hidden&gt;Choisir une fonction&lt;/option&gt;
+        @for (fonc of fonctions; track fonc) {
+        &lt;option [value]&#x3D;&quot;fonc&quot;&gt;
+          {{ fonc }}
+        &lt;/option&gt;
+        }
+        &lt;option&gt;Autre&lt;/option&gt;
+      &lt;/select&gt;
+      @if (fctSelect.value &#x3D;&#x3D;&#x3D; &#x27;Autre&#x27;) {
+      &lt;label&gt;Intitulé de ma fonction :&lt;/label&gt;
+      &lt;input class&#x3D;&quot;ethics-ui&quot; placeholder&#x3D;&quot;Exemple&quot; formControlName&#x3D;&quot;fonctionAutre&quot; type&#x3D;&quot;text&quot; autocomplete&#x3D;&quot;off&quot; /&gt;
+      &lt;label&gt;Mon responsable hiérarchique :&lt;/label&gt;
+      &lt;label class&#x3D;&quot;sub-label&quot;&gt;Personne qui validera l&#x27;ouverture de mes droits&lt;/label&gt;
+      &lt;input class&#x3D;&quot;ethics-ui&quot; placeholder&#x3D;&quot;prénom nom et fonction&quot; formControlName&#x3D;&quot;responsable&quot; type&#x3D;&quot;text&quot;
+        autocomplete&#x3D;&quot;off&quot; /&gt;
+      }
+      &lt;div&gt;
+        &lt;input type&#x3D;&quot;submit&quot; class&#x3D;&quot;big-button&quot; value&#x3D;&quot;Valider mon embarquement&quot; /&gt;
+      &lt;/div&gt;
+      &lt;p (click)&#x3D;&quot;signUpStep &#x3D; 1&quot; class&#x3D;&quot;back-step&quot;&gt;
+        Retour
+      &lt;/p&gt;
+      }
+    &lt;/div&gt;
+
+    &lt;div class&#x3D;&quot;login&quot;&gt;
+      &lt;p&gt;&lt;b&gt;Vous avez déjà un compte&lt;/b&gt;&lt;/p&gt;
+      &lt;a routerLink&#x3D;&quot;/connexion&quot;&gt;
+        &lt;button class&#x3D;&quot;outline white strict-border&quot;&gt;
+          &lt;i class&#x3D;&quot;ri-login-box-line&quot;&gt;&lt;/i&gt;
+          Se connecter
+        &lt;/button&gt;
+      &lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+&lt;/aj-wrapper-no-connected&gt;</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./signup.page.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &#x27;../../styles/utils.scss&#x27; as utils;
+
+:host {
+  .logo {
+    height: 7em;
+
+    &gt;img {
+      height: 90px;
+      margin-right: 27px;
+    }
+  }
+
+  h3 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
+
+  select {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .tj {
+    display: flex;
+  }
+
+  .sub-label {
+    font-size: 12px;
+    color: utils.$colors-cgray;
+    margin-bottom: 12px;
+
+    &amp;.password {
+      display: flex;
+      font-size: 12px;
+      color: utils.$colors-cblue;
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+
+      &amp;.last {
+        margin-bottom: 24px;
+      }
+
+      span {
+        padding: -4px 0px;
+        text-align: center;
+        border-radius: 3px;
+        width: 13.3px;
+        height: 13.3px;
+        background-color: utils.$colors-cblue;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  .sub-title {
+    font-size: 12px;
+    color: utils.$colors-cgray;
+    margin-bottom: 24px;
+  }
+
+  .step-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: utils.$colors-cblack;
+    margin-bottom: 12px;
+  }
+
+  .steps {
+    margin-bottom: 12px;
+  }
+
+  .next-step {
+    cursor: pointer;
+    height: 48px;
+    background-color: utils.$colors-primary;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+      color: utils.$colors-bgProgressBar !important;
+    }
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .bordure-steps {
+    height: 8px;
+    margin-bottom: 24px;
+    display: flex;
+
+    .step-one {
+      flex: 1;
+      background-color: utils.$colors-primary;
+      margin-right: 3px;
+    }
+
+    .step-two {
+      flex: 1;
+      background-color: utils.$colors-cgraylightv3;
+      margin-left: 3px;
+    }
+  }
+
+  label {
+    margin-bottom: 8px;
+    display: block;
+
+    i {
+      font-size: 12px;
+    }
+  }
+
+  input[type&#x3D;text],
+  input[type&#x3D;email],
+  input[type&#x3D;password] {
+    margin-bottom: 24px;
+  }
+
+  .no-margin {
+    margin-bottom: 12px !important;
+  }
+
+  .password-line {
+    display: flex;
+
+    div {
+      &amp;:last-child {
+        display: flex;
+        justify-content: flex-end;
+
+        span {
+          font-size: 14px;
+
+          input {
+            position: relative;
+            top: 1px;
+          }
+        }
+      }
+
+      flex: 1;
+    }
+  }
+
+  .login {
+    margin-top: 2em;
+    padding: 16px 24px;
+    background-color: utils.$colors-bgProgressBar;
+
+    b {
+      font-size: 20px;
+    }
+
+    a {
+      margin-top: 16px;
+      display: block;
+    }
+
+    button {
+      width: 100%;
+      font-weight: bold;
+      font-size: 1.125em;
+      height: 48px;
+      line-height: 48px;
+
+      i {
+        margin-right: 12px;
+        position: relative;
+      }
+    }
+  }
+}
+
+.checkbox-row {
+  margin-bottom: 32px;
+  font-size: 16px;
+
+  a {
+    color: utils.$colors-cblack;
+  }
+
+  input.large {
+    top: 3px;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    border: 1px solid utils.$colors-cgraylightv3;
+  }
+
+  input[type&#x3D;&#x27;checkbox&#x27;] {
+    margin-right: 8px;
+    margin-bottom: 0;
+  }
+}
+
+.asterisque {
+  margin-bottom: 16px;
+}
+
+.sso-bt {
+  display: flex;
+  width: 100%;
+  margin-top: 1.5em;
+
+  &amp;.disabled {
+    opacity: 0.75;
+    border-color: utils.$colors-cblack;
+    color: utils.$colors-cblack;
+  }
+
+  img {
+    align-self: stretch;
+    margin-right: 16px;
+  }
+}
+
+.or {
+  margin: 1em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &amp;::before {
+    content: &#x27; &#x27;;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: utils.$colors-lightBorder;
+  }
+
+  p {
+    display: inline-block;
+    margin: 0;
+    padding: 8px;
+    background-color: utils.$colors-white;
+    z-index: 1;
+  }
+}
+
+.box-signup {
+  padding: 1.5em;
+  border: solid 1px utils.$colors-cgraylightv3;
+}
+
+.back-step {
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 1em;
+  color: utils.$colors-primary;
+  font-size: 14px;
+  font-weight: 500;
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><aj-wrapper-no-connected  [title]="\'Un outil d\\'aide à la décision et<br/>de prospective pour piloter<br/>votre juridiction\'">  <div class="logo">    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />    <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />  </div>  <form [formGroup]="form" (ngSubmit)="onSubmit()" (keydown)="preventSubmit($event)">    <h3>Embarquement A-JUST</h3>    @if (ssoIsActivate && signUpStep === 1 && !userService.isCa()) {    <button class="outline white strict-border sso-bt" id="signupSSO" (click)="onUseSSO()" type="button"      [ngClass]="{ disabled: !canUseSSO }">      <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />      Embarquer avec Pages Blanches    </button>    <div class="or">      <p>ou</p>    </div>    }    <div class="box-signup">      @if (!provider) {      <label class="steps">Étape {{ signUpStep }} sur 2</label>      <label class="sub-title">Tous les champs de ce formulaire sont obligatoires</label>      }      <p class="step-title">{{ signUpStep === 1 ? \'Je suis :\' : \'Ma fonction\' }}</p>      @if (!provider) {      <div class="bordure-steps">        <div class="step-one"></div>        <div class="step-two" [ngStyle]="{ \'background-color\': getStepColor() }"></div>      </div>      }      @if (signUpStep === 1) {      <div class="grid-double">        <div>          <label>Prénom</label>          <input #input class="ethics-ui" placeholder="Prénom" formControlName="firstName" type="text"            (keyup.enter)="focusNext($event)" autocomplete="off" />        </div>        <div>          <label>NOM</label>          <input #input class="ethics-ui" placeholder="Nom" formControlName="lastName" type="text"            (keyup.enter)="focusNext($event)" autocomplete="off" />        </div>      </div>      <label>Courriel professionnel :</label>      <label class="sub-label">        Adresse nominative uniquement, ne pas utiliser de boîte générique ou structurelle      </label>      <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"        (keyup.enter)="focusNext($event)" autocomplete="off" />      @if (!paramsUrl?.provider) {      <div class="password-line">        <div><label>Créer un mot de passe :</label></div>        <span class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()">          <input (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"            formControlName="checkboxPassword" />          Afficher        </span>      </div>      <input #input class="ethics-ui no-margin" placeholder="" formControlName="password"        type="{{ !form.controls[\'checkboxPassword\'].value ? \'password\' : \'text\' }}" (keyup)="checkStrength($event)"        (keyup.enter)="focusNext($event)" autocomplete="off" />      <label class="sub-title no-margin">Votre mot de passe doit contenir au moins :</label>      <label class="sub-label password" [ngStyle]="{ color: getParamColor(0) }">        <span [ngStyle]="{ \'background-color\': getParamColor(0) }">i</span>        &nbsp; {{ MIN_PASSWORD_LENGTH }} caractères minimum      </label>      <label class="sub-label password" [ngStyle]="{ color: getParamColor(1) }">        <span [ngStyle]="{ \'background-color\': getParamColor(1) }">i</span>        &nbsp; 1 caractère spécial      </label>      <label class="sub-label password" [ngStyle]="{ color: getParamColor(2) }">        <span [ngStyle]="{ \'background-color\': getParamColor(2) }">i</span>        &nbsp; 1 chiffre minimum      </label>      <label class="sub-label password last" [ngStyle]="{ color: getParamColor(3) }">        <span [ngStyle]="{ \'background-color\': getParamColor(3) }">i</span>        &nbsp; 1 majuscule      </label>      <label>Confirmation de votre mot de passe :</label>      <input #input class="ethics-ui" placeholder="" formControlName="passwordConf" type="password"        (keyup.enter)="focusNext($event)" autocomplete="off" />      }      <div class="checkbox-container checkbox-row">        <input #checkbox class="large" type="checkbox" formControlName="checkbox" (keyup.enter)="focusNext($event)"          autocomplete="off" />        <p (click)="checkbox.click()">          Je certifie avoir lu et accepté les          <a [routerLink]="[\'/conditions-generales-d-utilisation\']" [queryParams]="{ noBack: true }" target="_blank"            rel="noopener">Conditions            générales            d\'utilisation</a>          .        </p>      </div>      <div class="next-step" (click)="onStepTwo()">        <p>Continuer mon embarquement</p>      </div>      }      @if (signUpStep === 2) {      <label>{{ userService.interfaceType === 1 ? \'Ma cour\' : \'Mon tribunal\' }} de rattachement :</label>      <div class="tj">        <select (change)="setTj($event.target)">          <!--<option selected hidden></option>-->          <option selected hidden>Choisir {{ userService.interfaceType === 1 ? \'une CA\' : \'un TJ\' }}</option>          @for (tj of tjs; track tj.id) {          <option [value]="tj.id">            {{ tj.label }}          </option>          }        </select>      </div>      <label>Ma fonction :</label>      <select #fctSelect (change)="setFonc($event.target)">        <option selected hidden>Choisir une fonction</option>        @for (fonc of fonctions; track fonc) {        <option [value]="fonc">          {{ fonc }}        </option>        }        <option>Autre</option>      </select>      @if (fctSelect.value === \'Autre\') {      <label>Intitulé de ma fonction :</label>      <input class="ethics-ui" placeholder="Exemple" formControlName="fonctionAutre" type="text" autocomplete="off" />      <label>Mon responsable hiérarchique :</label>      <label class="sub-label">Personne qui validera l\'ouverture de mes droits</label>      <input class="ethics-ui" placeholder="prénom nom et fonction" formControlName="responsable" type="text"        autocomplete="off" />      }      <div>        <input type="submit" class="big-button" value="Valider mon embarquement" />      </div>      <p (click)="signUpStep = 1" class="back-step">        Retour      </p>      }    </div>    <div class="login">      <p><b>Vous avez déjà un compte</b></p>      <a routerLink="/connexion">        <button class="outline white strict-border">          <i class="ri-login-box-line"></i>          Se connecter        </button>      </a>    </div>  </form></aj-wrapper-no-connected></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'SignupPage'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'SignupPage.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

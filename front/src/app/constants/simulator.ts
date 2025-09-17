@@ -1,3 +1,14 @@
-export const SIMULATOR_DONNEES = 'donnees';
-export const SIMULATOR_OTHER_ACTIVITY = 'other-activity';
-export const REAFFECTATOR = 'reaffectator';
+/**
+ * Simulateur de données
+ */
+export const SIMULATOR_DONNEES = 'donnees'
+
+/**
+ * Simulateur d'autres activités
+ */
+export const SIMULATOR_OTHER_ACTIVITY = 'other-activity'
+
+/**
+ * Reaffectateur
+ */
+export const REAFFECTATOR = 'reaffectator'

@@ -1,3 +1,8 @@
+/**
+ * Chargement d'un fichier de type JavaScript
+ * @param url
+ * @returns
+ */
 export const loadFile = (url: string) => {
   return new Promise((resolve, reject) => {
     let script = document.createElement('script')
@@ -10,7 +15,7 @@ export const loadFile = (url: string) => {
       // @ts-ignore
       script.onreadystatechange = () => {
         if (
-            // @ts-ignore
+          // @ts-ignore
           script.readyState === 'loaded' ||
           // @ts-ignore
           script.readyState === 'complete'

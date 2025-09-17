@@ -1,0 +1,3600 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >HumanResourceService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/services/human-resource/human-resource.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service de récupération des fiches +</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#activitiesService" >activitiesService</a>
+                            </li>
+                            <li>
+                                <a href="#allIndisponibilityReferentiel" >allIndisponibilityReferentiel</a>
+                            </li>
+                            <li>
+                                <a href="#allIndisponibilityReferentielIds" >allIndisponibilityReferentielIds</a>
+                            </li>
+                            <li>
+                                <a href="#backupId" >backupId</a>
+                            </li>
+                            <li>
+                                <a href="#backups" >backups</a>
+                            </li>
+                            <li>
+                                <a href="#categories" >categories</a>
+                            </li>
+                            <li>
+                                <a href="#categoriesFilterListIds" >categoriesFilterListIds</a>
+                            </li>
+                            <li>
+                                <a href="#componentIdsCanBeView" >componentIdsCanBeView</a>
+                            </li>
+                            <li>
+                                <a href="#contentieuxReferentiel" >contentieuxReferentiel</a>
+                            </li>
+                            <li>
+                                <a href="#contentieuxReferentielOnly" >contentieuxReferentielOnly</a>
+                            </li>
+                            <li>
+                                <a href="#fonctions" >fonctions</a>
+                            </li>
+                            <li>
+                                <a href="#hrBackup" >hrBackup</a>
+                            </li>
+                            <li>
+                                <a href="#importedSituation" >importedSituation</a>
+                            </li>
+                            <li>
+                                <a href="#interfaceWatcherTmp" >interfaceWatcherTmp</a>
+                            </li>
+                            <li>
+                                <a href="#lastBackupId" >lastBackupId</a>
+                            </li>
+                            <li>
+                                <a href="#mainContentieuxReferentiel" >mainContentieuxReferentiel</a>
+                            </li>
+                            <li>
+                                <a href="#selectedReferentielIds" >selectedReferentielIds</a>
+                            </li>
+                            <li>
+                                <a href="#selectedSubReferentielIds" >selectedSubReferentielIds</a>
+                            </li>
+                            <li>
+                                <a href="#serverService" >serverService</a>
+                            </li>
+                            <li>
+                                <a href="#tmpComponentIdsCanBeView" >tmpComponentIdsCanBeView</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#calculateSubCategories" >calculateSubCategories</a>
+                            </li>
+                            <li>
+                                <a href="#controlIndisponibilities" >controlIndisponibilities</a>
+                            </li>
+                            <li>
+                                <a href="#createEmpyHR" >createEmpyHR</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createHumanResource" >createHumanResource</a>
+                            </li>
+                            <li>
+                                <a href="#distinctSituations" >distinctSituations</a>
+                            </li>
+                            <li>
+                                <a href="#duplicateBackup" >duplicateBackup</a>
+                            </li>
+                            <li>
+                                <a href="#filterActivitiesByDate" >filterActivitiesByDate</a>
+                            </li>
+                            <li>
+                                <a href="#findAllIndisponibilities" >findAllIndisponibilities</a>
+                            </li>
+                            <li>
+                                <a href="#findAllSituations" >findAllSituations</a>
+                            </li>
+                            <li>
+                                <a href="#findSituation" >findSituation</a>
+                            </li>
+                            <li>
+                                <a href="#formatHR" >formatHR</a>
+                            </li>
+                            <li>
+                                <a href="#getCurrentHR" >getCurrentHR</a>
+                            </li>
+                            <li>
+                                <a href="#getEtpByDateAndPerson" >getEtpByDateAndPerson</a>
+                            </li>
+                            <li>
+                                <a href="#loadRemoteHR" >loadRemoteHR</a>
+                            </li>
+                            <li>
+                                <a href="#needIdToLoad" >needIdToLoad</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#onFilterList" >onFilterList</a>
+                            </li>
+                            <li>
+                                <a href="#removeAlert" >removeAlert</a>
+                            </li>
+                            <li>
+                                <a href="#removeBackup" >removeBackup</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeHrById" >removeHrById</a>
+                            </li>
+                            <li>
+                                <a href="#removeSituation" >removeSituation</a>
+                            </li>
+                            <li>
+                                <a href="#startWatcherTmp" >startWatcherTmp</a>
+                            </li>
+                            <li>
+                                <a href="#stopWatcherTmp" >stopWatcherTmp</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updatePersonById" >updatePersonById</a>
+                            </li>
+                            <li>
+                                <a href="#updateRemoteHR" >updateRemoteHR</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:101</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur qui lance le chargement d&#39;une juridiction au chargement de la page</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateSubCategories"></a>
+                    <span class="name">
+                        <span ><b>calculateSubCategories</b></span>
+                        <a href="#calculateSubCategories"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>calculateSubCategories(list: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="651"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:651</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Calculate sub categories</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>list</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>[]</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>{ [key: string]: { etpt: number; total: number; }; }</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="controlIndisponibilities"></a>
+                    <span class="name">
+                        <span ><b>controlIndisponibilities</b></span>
+                        <a href="#controlIndisponibilities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>controlIndisponibilities(human: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface</a>, indisponibilities: RHActivityInterface[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="527"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:527</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Control de l&#39;ensemble des indispo qu&#39;il n&#39;y ai pas plus de 100% à une date donnée</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>human</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>indisponibilities</td>
+                                            <td>
+                                                        <code>RHActivityInterface[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createEmpyHR"></a>
+                    <span class="name">
+                        <span ><b>createEmpyHR</b></span>
+                        <a href="#createEmpyHR"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>createEmpyHR()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="248"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:248</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Création d&#39;une juridiction vide</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createHumanResource"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createHumanResource</b></span>
+                        <a href="#createHumanResource"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createHumanResource(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:166</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Création d&#39;une fiche vide</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#now" target="_self" >unknown</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="distinctSituations"></a>
+                    <span class="name">
+                        <span ><b>distinctSituations</b></span>
+                        <a href="#distinctSituations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>distinctSituations(situations: <a href="../interfaces/HRSituationInterface.html" target="_self">HRSituationInterface[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="293"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:293</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Suppression des doublons de situations</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>situations</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HRSituationInterface.html" target="_self" >HRSituationInterface[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="duplicateBackup"></a>
+                    <span class="name">
+                        <span ><b>duplicateBackup</b></span>
+                        <a href="#duplicateBackup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>duplicateBackup()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="204"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:204</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Dupplication d&#39;une juridiction</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filterActivitiesByDate"></a>
+                    <span class="name">
+                        <span ><b>filterActivitiesByDate</b></span>
+                        <a href="#filterActivitiesByDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>filterActivitiesByDate(list: RHActivityInterface[], date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="271"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:271</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Filtre des activités saisies à une date précise</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>list</td>
+                                            <td>
+                                                        <code>RHActivityInterface[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>RHActivityInterface[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAllIndisponibilities"></a>
+                    <span class="name">
+                        <span ><b>findAllIndisponibilities</b></span>
+                        <a href="#findAllIndisponibilities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>findAllIndisponibilities(hr: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface | null</a>, date?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="379"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:379</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Filtre des indispos d&#39;une fiche</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>hr</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAllSituations"></a>
+                    <span class="name">
+                        <span ><b>findAllSituations</b></span>
+                        <a href="#findAllSituations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>findAllSituations(hr: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface | null</a>, date?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, order: string | boolean, inFuture: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="346"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:346</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Liste de toutes les situations jusqu&#39;à une date saisie</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>hr</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>order</td>
+                                            <td>
+                                                        <code>string | boolean</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&#x27;desc&#x27;</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>inFuture</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findSituation"></a>
+                    <span class="name">
+                        <span ><b>findSituation</b></span>
+                        <a href="#findSituation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>findSituation(hr: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface | null</a>, date?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, order: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="315"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:315</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Filtre d&#39;une situation d&#39;une fiche à une date précise</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>hr</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>order</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&#x27;desc&#x27;</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="formatHR"></a>
+                    <span class="name">
+                        <span ><b>formatHR</b></span>
+                        <a href="#formatHR"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>formatHR(h: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="139"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:139</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Pour transformer les dates en vrais objets date</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>h</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getCurrentHR"></a>
+                    <span class="name">
+                        <span ><b>getCurrentHR</b></span>
+                        <a href="#getCurrentHR"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getCurrentHR(id: number | null)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="153"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:153</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Liste des fiches d&#39;une juridiction</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                        <code>number | null</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEtpByDateAndPerson"></a>
+                    <span class="name">
+                        <span ><b>getEtpByDateAndPerson</b></span>
+                        <a href="#getEtpByDateAndPerson"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getEtpByDateAndPerson(referentielId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, hr: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="485"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:485</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Calcul de l&#39;ETP à une date d&#39;une fiche (etp - indispos)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>referentielId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>hr</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>{ etp: number; situation: any; indisponibilities: any; } | { etp: any; situation: any; indisponibilities?: undefined; }</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRemoteHR"></a>
+                    <span class="name">
+                        <span ><b>loadRemoteHR</b></span>
+                        <a href="#loadRemoteHR"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadRemoteHR(hrId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="615"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:615</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API appel au serveur pour retourner les détails d&#39;une fiche</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>hrId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >Promise&lt;HumanResourceInterface | null&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="needIdToLoad"></a>
+                    <span class="name">
+                        <span ><b>needIdToLoad</b></span>
+                        <a href="#needIdToLoad"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>needIdToLoad(hrId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="619"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:619</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>hrId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onFilterList"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>onFilterList</b></span>
+                        <a href="#onFilterList"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onFilterList(backupId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, contentieuxIds: number[] | null, subContentieuxIds: number[] | null, categoriesIds: number[], endPeriodToCheck?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, extractor?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="581"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:581</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API appel au serveur pour lister les effectifs d&#39;une juridiction à une date précise</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>backupId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>contentieuxIds</td>
+                                            <td>
+                                                        <code>number[] | null</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>subContentieuxIds</td>
+                                            <td>
+                                                        <code>number[] | null</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>categoriesIds</td>
+                                            <td>
+                                                        <code>number[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>endPeriodToCheck</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>extractor</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#now" target="_self" >unknown</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeAlert"></a>
+                    <span class="name">
+                        <span ><b>removeAlert</b></span>
+                        <a href="#removeAlert"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeAlert(tag: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="690"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:690</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tag</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeBackup"></a>
+                    <span class="name">
+                        <span ><b>removeBackup</b></span>
+                        <a href="#removeBackup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeBackup()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:190</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Suppression d&#39;un jeu de donnée d&#39;une juridiction</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeHrById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeHrById</b></span>
+                        <a href="#removeHrById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeHrById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="227"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:227</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Suppression d&#39;une fiche d&#39;une juridiction</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#now" target="_self" >unknown</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeSituation"></a>
+                    <span class="name">
+                        <span ><b>removeSituation</b></span>
+                        <a href="#removeSituation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeSituation(situationId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, forceAlert: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="459"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:459</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API Suppression d&#39;une situation d&#39;une fiche</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>situationId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>forceAlert</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>true</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startWatcherTmp"></a>
+                    <span class="name">
+                        <span ><b>startWatcherTmp</b></span>
+                        <a href="#startWatcherTmp"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>startWatcherTmp()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="627"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:627</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="stopWatcherTmp"></a>
+                    <span class="name">
+                        <span ><b>stopWatcherTmp</b></span>
+                        <a href="#stopWatcherTmp"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>stopWatcherTmp()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="641"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:641</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updatePersonById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updatePersonById</b></span>
+                        <a href="#updatePersonById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updatePersonById(orignalObject: <a href="../interfaces/HumanResourceInterface.html" target="_self">HumanResourceInterface</a>, params: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank">Object</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="421"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:421</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mise à jour d&#39;une fiche avec son ID et sur le serveur</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>orignalObject</td>
+                                            <td>
+                                                            <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >HumanResourceInterface</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>params</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank" >Object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/HumanResourceInterface.html" target="_self" >Promise&lt;HumanResourceInterface | null&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateRemoteHR"></a>
+                    <span class="name">
+                        <span ><b>updateRemoteHR</b></span>
+                        <a href="#updateRemoteHR"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateRemoteHR(hr: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="434"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:434</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API mise à jour d&#39;une fiche sur le serveur</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>hr</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="activitiesService"></a>
+                    <span class="name">
+                        <span ><b>activitiesService</b></span>
+                        <a href="#activitiesService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(ActivitiesService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:25</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allIndisponibilityReferentiel"></a>
+                    <span class="name">
+                        <span ><b>allIndisponibilityReferentiel</b></span>
+                        <a href="#allIndisponibilityReferentiel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >ContentieuReferentielInterface[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:77</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste du référentiels des indispos</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allIndisponibilityReferentielIds"></a>
+                    <span class="name">
+                        <span ><b>allIndisponibilityReferentielIds</b></span>
+                        <a href="#allIndisponibilityReferentielIds"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Array&lt;number&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:81</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des id du référentiels des indispos</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="backupId"></a>
+                    <span class="name">
+                        <span ><b>backupId</b></span>
+                        <a href="#backupId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>BehaviorSubject&lt;number | null&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;number | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:45</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Id de la juridiction selectionnée</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="backups"></a>
+                    <span class="name">
+                        <span ><b>backups</b></span>
+                        <a href="#backups"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/BackupInterface.html" target="_self" >BehaviorSubject&lt;BackupInterface[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;BackupInterface[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:41</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des juridictions dont à accès l&#39;utilisateur</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="categories"></a>
+                    <span class="name">
+                        <span ><b>categories</b></span>
+                        <a href="#categories"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/HRCategoryInterface.html" target="_self" >BehaviorSubject&lt;HRCategoryInterface[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;HRCategoryInterface[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:53</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des catégories</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="categoriesFilterListIds"></a>
+                    <span class="name">
+                        <span ><b>categoriesFilterListIds</b></span>
+                        <a href="#categoriesFilterListIds"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:85</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des catégories sélectionnée dans l&#39;écran du ventilateur en cache</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="componentIdsCanBeView"></a>
+                    <span class="name">
+                        <span ><b>componentIdsCanBeView</b></span>
+                        <a href="#componentIdsCanBeView"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>BehaviorSubject&lt;number[]&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;number[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:61</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des id que l&#39;on peut affiche</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="contentieuxReferentiel"></a>
+                    <span class="name">
+                        <span ><b>contentieuxReferentiel</b></span>
+                        <a href="#contentieuxReferentiel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >BehaviorSubject&lt;ContentieuReferentielInterface[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;ContentieuReferentielInterface[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:33</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des contentieux + soutien + indispo</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="contentieuxReferentielOnly"></a>
+                    <span class="name">
+                        <span ><b>contentieuxReferentielOnly</b></span>
+                        <a href="#contentieuxReferentielOnly"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >BehaviorSubject&lt;ContentieuReferentielInterface[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;ContentieuReferentielInterface[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:37</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des contentieux uniquement</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fonctions"></a>
+                    <span class="name">
+                        <span ><b>fonctions</b></span>
+                        <a href="#fonctions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/HRFonctionInterface.html" target="_self" >BehaviorSubject&lt;HRFonctionInterface[]&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;HRFonctionInterface[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:57</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des fonctions</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hrBackup"></a>
+                    <span class="name">
+                        <span ><b>hrBackup</b></span>
+                        <a href="#hrBackup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/BackupInterface.html" target="_self" >BehaviorSubject&lt;BackupInterface | null&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;BackupInterface | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:49</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Juridiction selectionnée</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="importedSituation"></a>
+                    <span class="name">
+                        <span ><b>importedSituation</b></span>
+                        <a href="#importedSituation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/importedSituation.html" target="_self" >BehaviorSubject&lt;importedSituation | null&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;importedSituation | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:65</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Referentiel avec les activités importés sous excels</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="interfaceWatcherTmp"></a>
+                    <span class="name">
+                        <span ><b>interfaceWatcherTmp</b></span>
+                        <a href="#interfaceWatcherTmp"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:73</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Interface to catcher  can be view</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="lastBackupId"></a>
+                    <span class="name">
+                        <span ><b>lastBackupId</b></span>
+                        <a href="#lastBackupId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="97" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:97</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Last backup Id</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mainContentieuxReferentiel"></a>
+                    <span class="name">
+                        <span ><b>mainContentieuxReferentiel</b></span>
+                        <a href="#mainContentieuxReferentiel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;ContentieuReferentielInterface[]&gt;([])</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:29</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des contentieux sans soutien et indispo</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectedReferentielIds"></a>
+                    <span class="name">
+                        <span ><b>selectedReferentielIds</b></span>
+                        <a href="#selectedReferentielIds"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:89</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des référentiels sélectionnée dans l&#39;écran du ventilateur en cache</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectedSubReferentielIds"></a>
+                    <span class="name">
+                        <span ><b>selectedSubReferentielIds</b></span>
+                        <a href="#selectedSubReferentielIds"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number[] | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:93</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Liste des sous référentiels sélectionnée dans l&#39;écran du ventilateur en cache</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="serverService"></a>
+                    <span class="name">
+                        <span ><b>serverService</b></span>
+                        <a href="#serverService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(ServerService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="tmpComponentIdsCanBeView"></a>
+                    <span class="name">
+                        <span ><b>tmpComponentIdsCanBeView</b></span>
+                        <a href="#tmpComponentIdsCanBeView"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:69</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>temp ids to can view</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, Input, Signal, signal, WritableSignal } from &#x27;@angular/core&#x27;
+import { isNaN, maxBy, minBy, orderBy, sumBy, uniqBy } from &#x27;lodash&#x27;
+import { BehaviorSubject } from &#x27;rxjs&#x27;
+import { ActivitiesService } from &#x27;../activities/activities.service&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { ContentieuReferentielInterface } from &#x27;../../interfaces/contentieu-referentiel&#x27;
+import { BackupInterface } from &#x27;../../interfaces/backup&#x27;
+import { HRCategoryInterface } from &#x27;../../interfaces/hr-category&#x27;
+import { HRFonctionInterface } from &#x27;../../interfaces/hr-fonction&#x27;
+import { importedSituation } from &#x27;../../routes/human-resource/add-ventilation/add-ventilation.component&#x27;
+import { HumanResourceInterface } from &#x27;../../interfaces/human-resource-interface&#x27;
+import { RHActivityInterface } from &#x27;../../interfaces/rh-activity&#x27;
+import { getShortMonthString, today } from &#x27;../../utils/dates&#x27;
+import { HRSituationInterface } from &#x27;../../interfaces/hr-situation&#x27;
+
+/**
+ * Service de récupération des fiches +
+ */
+
+@Injectable({
+  providedIn: &#x27;root&#x27;,
+})
+export class HumanResourceService {
+  serverService &#x3D; inject(ServerService)
+  activitiesService &#x3D; inject(ActivitiesService)
+  /**
+   * Liste des contentieux sans soutien et indispo
+   */
+  mainContentieuxReferentiel &#x3D; signal&lt;ContentieuReferentielInterface[]&gt;([])
+  /**
+   * Liste des contentieux + soutien + indispo
+   */
+  contentieuxReferentiel: BehaviorSubject&lt;ContentieuReferentielInterface[]&gt; &#x3D; new BehaviorSubject&lt;ContentieuReferentielInterface[]&gt;([])
+  /**
+   * Liste des contentieux uniquement
+   */
+  contentieuxReferentielOnly: BehaviorSubject&lt;ContentieuReferentielInterface[]&gt; &#x3D; new BehaviorSubject&lt;ContentieuReferentielInterface[]&gt;([])
+  /**
+   * Liste des juridictions dont à accès l&#x27;utilisateur
+   */
+  backups: BehaviorSubject&lt;BackupInterface[]&gt; &#x3D; new BehaviorSubject&lt;BackupInterface[]&gt;([])
+  /**
+   * Id de la juridiction selectionnée
+   */
+  backupId: BehaviorSubject&lt;number | null&gt; &#x3D; new BehaviorSubject&lt;number | null&gt;(null)
+  /**
+   * Juridiction selectionnée
+   */
+  hrBackup: BehaviorSubject&lt;BackupInterface | null&gt; &#x3D; new BehaviorSubject&lt;BackupInterface | null&gt;(null)
+  /**
+   * Liste des catégories
+   */
+  categories: BehaviorSubject&lt;HRCategoryInterface[]&gt; &#x3D; new BehaviorSubject&lt;HRCategoryInterface[]&gt;([])
+  /**
+   * Liste des fonctions
+   */
+  fonctions: BehaviorSubject&lt;HRFonctionInterface[]&gt; &#x3D; new BehaviorSubject&lt;HRFonctionInterface[]&gt;([])
+  /**
+   * Liste des id que l&#x27;on peut affiche
+   */
+  componentIdsCanBeView: BehaviorSubject&lt;number[]&gt; &#x3D; new BehaviorSubject&lt;number[]&gt;([])
+  /**
+   * Referentiel avec les activités importés sous excels
+   */
+  importedSituation: BehaviorSubject&lt;importedSituation | null&gt; &#x3D; new BehaviorSubject&lt;importedSituation | null&gt;(null)
+  /**
+   * temp ids to can view
+   */
+  tmpComponentIdsCanBeView: number[] &#x3D; []
+  /**
+   * Interface to catcher  can be view
+   */
+  interfaceWatcherTmp: any &#x3D; null
+  /**
+   * Liste du référentiels des indispos
+   */
+  allIndisponibilityReferentiel: ContentieuReferentielInterface[] &#x3D; []
+  /**
+   * Liste des id du référentiels des indispos
+   */
+  allIndisponibilityReferentielIds: Array&lt;number&gt; &#x3D; []
+  /**
+   * Liste des catégories sélectionnée dans l&#x27;écran du ventilateur en cache
+   */
+  categoriesFilterListIds: number[] &#x3D; []
+  /**
+   * Liste des référentiels sélectionnée dans l&#x27;écran du ventilateur en cache
+   */
+  selectedReferentielIds: number[] &#x3D; []
+  /**
+   * Liste des sous référentiels sélectionnée dans l&#x27;écran du ventilateur en cache
+   */
+  selectedSubReferentielIds: number[] | null &#x3D; null
+  /**
+   * Last backup Id
+   */
+  lastBackupId: number | null &#x3D; null
+  /**
+   * Liste des alertes
+   */
+  @Input() alertList: WritableSignal&lt;string[]&gt; &#x3D; signal([])
+
+  /**
+   * Constructeur qui lance le chargement d&#x27;une juridiction au chargement de la page
+   */
+  constructor() {
+    if (localStorage.getItem(&#x27;backupId&#x27;)) {
+      const backupId &#x3D; localStorage.getItem(&#x27;backupId&#x27;) || 0
+      this.backupId.next(+backupId)
+    }
+
+    this.backupId.subscribe((id) &#x3D;&gt; {
+      this.activitiesService.hrBackupId &#x3D; id
+
+      if (id) {
+        localStorage.setItem(&#x27;backupId&#x27;, &#x27;&#x27; + id)
+      }
+
+      const bk: BackupInterface | undefined &#x3D; this.backups.getValue().find((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; id)
+      this.hrBackup.next(bk || null)
+    })
+
+    this.backups.subscribe((list) &#x3D;&gt; {
+      let backup &#x3D; list.find((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; this.backupId.getValue())
+      if (list.length &amp;&amp; !backup) {
+        this.backupId.next(list[0].id)
+        list.find((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; this.backupId.getValue())
+      }
+      const bk: BackupInterface | undefined &#x3D; list.find((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; this.backupId.getValue())
+      this.hrBackup.next(bk || null)
+    })
+  }
+
+  /**
+   * Pour transformer les dates en vrais objets date
+   * @param h
+   * @returns
+   */
+  formatHR(h: HumanResourceInterface) {
+    return {
+      ...h,
+      dateStart: h.dateStart ? new Date(h.dateStart) : undefined,
+      dateEnd: h.dateEnd ? new Date(h.dateEnd) : undefined,
+      updatedAt: new Date(h.updatedAt),
+    }
+  }
+
+  /**
+   * Liste des fiches d&#x27;une juridiction
+   * @param id
+   * @returns
+   */
+  getCurrentHR(id: number | null) {
+    return this.serverService
+      .post(&#x27;human-resources/get-current-hr&#x27;, {
+        backupId: id,
+      })
+      .then((r) &#x3D;&gt; r.data)
+  }
+
+  /**
+   * Création d&#x27;une fiche vide
+   * @param date
+   * @returns
+   */
+  async createHumanResource(date: Date) {
+    const activities: RHActivityInterface[] &#x3D; []
+
+    const hr &#x3D; {
+      id: -1,
+      firstName: null,
+      lastName: null,
+      activities,
+      situations: [],
+      indisponibilities: [],
+      updatedAt: new Date(),
+    }
+
+    //if (hr.firstName !&#x3D;&#x3D; &#x27;Prénom&#x27; &amp;&amp; hr.lastName !&#x3D;&#x3D; &#x27;Nom&#x27;) {
+    const newHR &#x3D; await this.updateRemoteHR(hr)
+    return newHR.id
+    return hr.id
+    //} else return null
+  }
+
+  /**
+   * Suppression d&#x27;un jeu de donnée d&#x27;une juridiction
+   * @returns
+   */
+  removeBackup() {
+    if (confirm(&#x27;Êtes-vous sûr de vouloir supprimer cette sauvegarde?&#x27;)) {
+      return this.serverService.delete(&#x60;human-resources/remove-backup/${this.backupId.getValue()}&#x60;).then(() &#x3D;&gt; {
+        this.backupId.next(null)
+      })
+    }
+
+    return Promise.resolve()
+  }
+
+  /**
+   * Dupplication d&#x27;une juridiction
+   * @returns
+   */
+  duplicateBackup() {
+    const backup &#x3D; this.backups.getValue().find((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; this.backupId.getValue())
+
+    const backupName &#x3D; prompt(&#x27;Sous quel nom ?&#x27;, &#x60;${backup?.label} - copie&#x60;)
+    if (backupName) {
+      return this.serverService
+        .post(&#x60;human-resources/duplicate-backup&#x60;, {
+          backupId: this.backupId.getValue(),
+          backupName,
+        })
+        .then((r) &#x3D;&gt; {
+          this.backupId.next(r.data)
+        })
+    }
+
+    return Promise.resolve()
+  }
+
+  /**
+   * Suppression d&#x27;une fiche d&#x27;une juridiction
+   * @param id
+   * @returns
+   */
+  async removeHrById(id: number) {
+    if (confirm(&#x27;Supprimer cette personne ?&#x27;)) {
+      return this.serverService.delete(&#x60;human-resources/remove-hr/${id}&#x60;).then(() &#x3D;&gt; {
+        // update date of backup after remove
+        const hrBackups &#x3D; this.backups.getValue()
+        const backupIndex &#x3D; hrBackups.findIndex((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; this.backupId.getValue())
+        if (backupIndex !&#x3D;&#x3D; -1) {
+          hrBackups[backupIndex].date &#x3D; new Date()
+          this.backups.next(hrBackups)
+        }
+        return true
+      })
+    }
+
+    return false
+  }
+
+  /**
+   * Création d&#x27;une juridiction vide
+   * @returns
+   */
+  createEmpyHR() {
+    let backupName &#x3D; prompt(&#x27;Sous quel nom ?&#x27;)
+
+    if (backupName) {
+      return this.serverService
+        .post(&#x60;human-resources/save-backup&#x60;, {
+          hrList: [],
+          backupName: backupName,
+        })
+        .then((r) &#x3D;&gt; {
+          this.backupId.next(r.data)
+        })
+    }
+
+    return Promise.resolve()
+  }
+
+  /**
+   * Filtre des activités saisies à une date précise
+   * @param list
+   * @param date
+   * @returns
+   */
+  filterActivitiesByDate(list: RHActivityInterface[], date: Date): RHActivityInterface[] {
+    list &#x3D; orderBy(list || [], [&#x27;dateStart&#x27;], [&#x27;desc&#x27;])
+    list &#x3D; list.filter((a: any) &#x3D;&gt; {
+      const dateStop &#x3D; a.dateStop ? today(a.dateStop) : null
+      const dateStart &#x3D; a.dateStart ? today(a.dateStart) : null
+
+      return (
+        (dateStart &#x3D;&#x3D;&#x3D; null &amp;&amp; dateStop &#x3D;&#x3D;&#x3D; null) ||
+        (dateStart &amp;&amp; dateStart.getTime() &lt;&#x3D; date.getTime() &amp;&amp; dateStop &#x3D;&#x3D;&#x3D; null) ||
+        (dateStart &#x3D;&#x3D;&#x3D; null &amp;&amp; dateStop &amp;&amp; dateStop.getTime() &gt;&#x3D; date.getTime()) ||
+        (dateStart &amp;&amp; dateStart.getTime() &lt;&#x3D; date.getTime() &amp;&amp; dateStop &amp;&amp; dateStop.getTime() &gt;&#x3D; date.getTime())
+      )
+    })
+
+    return uniqBy(list, &#x27;referentielId&#x27;)
+  }
+
+  /**
+   * Suppression des doublons de situations
+   * @param situations
+   * @returns
+   */
+  distinctSituations(situations: HRSituationInterface[]) {
+    const listTimeTamps: number[] &#x3D; []
+
+    return situations.reduce((previousValue: HRSituationInterface[], currentValue: HRSituationInterface) &#x3D;&gt; {
+      const d &#x3D; today(currentValue.dateStart)
+      const getTime &#x3D; d.getTime()
+      if (listTimeTamps.indexOf(getTime) &#x3D;&#x3D;&#x3D; -1) {
+        listTimeTamps.push(getTime)
+        previousValue.push(currentValue)
+      }
+
+      return previousValue
+    }, [])
+  }
+
+  /**
+   * Filtre d&#x27;une situation d&#x27;une fiche à une date précise
+   * @param hr
+   * @param date
+   * @param order
+   * @returns
+   */
+  findSituation(hr: HumanResourceInterface | null, date?: Date, order &#x3D; &#x27;desc&#x27;): any {
+    if (date) {
+      date &#x3D; today(date)
+    }
+
+    if (hr?.dateEnd &amp;&amp; date) {
+      // control de date when the person goone
+      const dateEnd &#x3D; today(hr.dateEnd)
+      if (dateEnd.getTime() &lt; date.getTime()) {
+        return {
+          id: 0,
+          etp: 0,
+          category: null,
+          fonction: null,
+          dateStart: dateEnd,
+          activities: [],
+        }
+      }
+    }
+    let situations &#x3D; this.findAllSituations(hr, date, order)
+    return situations.length ? situations[0] : null
+  }
+
+  /**
+   * Liste de toutes les situations jusqu&#x27;à une date saisie
+   * @param hr
+   * @param date
+   * @param order
+   * @param inFuture
+   * @returns
+   */
+  findAllSituations(hr: HumanResourceInterface | null, date?: Date, order: string | boolean &#x3D; &#x27;desc&#x27;, inFuture: boolean &#x3D; false) {
+    let situations &#x3D; orderBy(
+      hr?.situations || [],
+      [
+        function (o: HRSituationInterface) {
+          const date &#x3D; new Date(o.dateStart)
+          return date.getTime()
+        },
+      ],
+      // @ts-ignore
+      [order],
+    )
+
+    if (date) {
+      situations &#x3D; situations.filter((hra) &#x3D;&gt; {
+        const dateStart &#x3D; today(hra.dateStart)
+        if (!inFuture) {
+          return dateStart.getTime() &lt;&#x3D; date.getTime()
+        } else {
+          return dateStart.getTime() &gt; date.getTime()
+        }
+      })
+    }
+
+    return situations
+  }
+
+  /**
+   * Filtre des indispos d&#x27;une fiche
+   * @param hr
+   * @param date
+   * @returns
+   */
+  findAllIndisponibilities(hr: HumanResourceInterface | null, date?: Date) {
+    let indisponibilities &#x3D; orderBy(
+      hr?.indisponibilities || [],
+      [
+        function (o: RHActivityInterface) {
+          const date &#x3D; o.dateStart ? new Date(o.dateStart) : new Date()
+          return date.getTime()
+        },
+      ],
+      [&#x27;desc&#x27;],
+    )
+
+    if (date) {
+      date &#x3D; today(date)
+      indisponibilities &#x3D; indisponibilities.filter((hra) &#x3D;&gt; {
+        const dateStart &#x3D; today(hra.dateStart)
+
+        if (date &amp;&amp; dateStart.getTime() &lt;&#x3D; date.getTime()) {
+          if (hra.dateStop) {
+            const dateStop &#x3D; today(hra.dateStop)
+            if (dateStop.getTime() &gt;&#x3D; date.getTime()) {
+              return true
+            }
+          } else {
+            // return true if they are no end date
+            return true
+          }
+        }
+
+        return false
+      })
+    }
+
+    return indisponibilities
+  }
+
+  /**
+   * Mise à jour d&#x27;une fiche avec son ID et sur le serveur
+   * @param orignalObject
+   * @param params
+   * @returns
+   */
+  async updatePersonById(orignalObject: HumanResourceInterface, params: Object): Promise&lt;HumanResourceInterface | null&gt; {
+    orignalObject &#x3D; {
+      ...orignalObject,
+      ...params,
+    }
+    return await this.updateRemoteHR(orignalObject)
+  }
+
+  /**
+   * API mise à jour d&#x27;une fiche sur le serveur
+   * @param hr
+   * @returns
+   */
+  updateRemoteHR(hr: any) {
+    console.log(hr)
+    return this.serverService
+      .post(&#x60;human-resources/update-hr&#x60;, {
+        hr,
+        backupId: this.backupId.getValue(),
+      })
+      .then((response) &#x3D;&gt; {
+        const newHR &#x3D; this.formatHR(response.data)
+
+        const hrBackups &#x3D; this.backups.getValue()
+        const backupIndex &#x3D; hrBackups.findIndex((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; this.backupId.getValue())
+        if (backupIndex !&#x3D;&#x3D; -1) {
+          hrBackups[backupIndex].date &#x3D; newHR.updatedAt
+          this.backups.next(hrBackups)
+        }
+        return newHR
+      })
+  }
+
+  /**
+   * API Suppression d&#x27;une situation d&#x27;une fiche
+   * @param situationId
+   * @returns
+   */
+  removeSituation(situationId: number, forceAlert: boolean &#x3D; true) {
+    if (!forceAlert || confirm(&#x27;Supprimer cette situation ?&#x27;)) {
+      return this.serverService.delete(&#x60;human-resources/remove-situation/${situationId}&#x60;).then((response) &#x3D;&gt; {
+        const newHR &#x3D; this.formatHR(response.data)
+
+        const hrBackups &#x3D; this.backups.getValue()
+        const backupIndex &#x3D; hrBackups.findIndex((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; this.backupId.getValue())
+        if (backupIndex !&#x3D;&#x3D; -1) {
+          hrBackups[backupIndex].date &#x3D; newHR.updatedAt
+          this.backups.next(hrBackups)
+        }
+
+        return newHR
+      })
+    }
+
+    return false
+  }
+
+  /**
+   * Calcul de l&#x27;ETP à une date d&#x27;une fiche (etp - indispos)
+   * @param referentielId
+   * @param date
+   * @param hr
+   * @returns
+   */
+  getEtpByDateAndPerson(referentielId: number, date: Date, hr: HumanResourceInterface) {
+    const situation &#x3D; this.findSituation(hr, date)
+
+    if (situation &amp;&amp; situation.category &amp;&amp; situation.category.id) {
+      const activitiesFiltred &#x3D; (situation.activities || []).filter((a: any) &#x3D;&gt; a.contentieux &amp;&amp; a.contentieux.id &#x3D;&#x3D;&#x3D; referentielId)
+      const indispoFiltred &#x3D; this.findAllIndisponibilities(hr, date)
+      let reelEtp &#x3D; 0
+      const isIndispoRef &#x3D; this.allIndisponibilityReferentielIds.includes(referentielId)
+      if (isIndispoRef) {
+        reelEtp &#x3D; situation.etp
+      } else {
+        reelEtp &#x3D; 0
+        const isIndispoRef &#x3D; this.allIndisponibilityReferentielIds.includes(referentielId)
+        if (isIndispoRef) {
+          reelEtp &#x3D; situation.etp
+        } else {
+          reelEtp &#x3D; situation.etp - sumBy(indispoFiltred, &#x27;percent&#x27;) / 100
+        }
+      }
+      if (reelEtp &lt; 0) {
+        reelEtp &#x3D; 0
+      }
+
+      return {
+        etp: (reelEtp * sumBy(activitiesFiltred, &#x27;percent&#x27;)) / 100,
+        situation,
+        indisponibilities: indispoFiltred,
+      }
+    }
+
+    return {
+      etp: null,
+      situation: null,
+    }
+  }
+
+  /**
+   * Control de l&#x27;ensemble des indispo qu&#x27;il n&#x27;y ai pas plus de 100% à une date donnée
+   * @param human
+   * @param indisponibilities
+   * @returns
+   */
+  controlIndisponibilities(human: HumanResourceInterface, indisponibilities: RHActivityInterface[]) {
+    let listAllDates: Date[] &#x3D; []
+    listAllDates &#x3D; listAllDates.concat(indisponibilities.filter((i) &#x3D;&gt; i.dateStart).map((s) &#x3D;&gt; today(s.dateStart)))
+    listAllDates &#x3D; listAllDates.concat(indisponibilities.filter((i) &#x3D;&gt; i.dateStop).map((s) &#x3D;&gt; today(s.dateStop)))
+    const minDate &#x3D; minBy(listAllDates, (d) &#x3D;&gt; d.getTime())
+    let maxDate &#x3D; maxBy(listAllDates, (d) &#x3D;&gt; d.getTime())
+
+    if (!minDate || !maxDate) {
+      return null
+    }
+
+    const currentDate &#x3D; new Date(minDate)
+    let idOfIndisponibilities: number[] &#x3D; []
+    let errorsList &#x3D; []
+    while (currentDate.getTime() &lt;&#x3D; maxDate.getTime()) {
+      const findedIndispo &#x3D; human ? this.findAllIndisponibilities({ ...human, indisponibilities }, currentDate) : []
+
+      if (JSON.stringify(idOfIndisponibilities) !&#x3D;&#x3D; JSON.stringify(findedIndispo.map((f) &#x3D;&gt; f.id))) {
+        idOfIndisponibilities &#x3D; findedIndispo.map((f) &#x3D;&gt; f.id)
+
+        const totalPercent &#x3D; sumBy(findedIndispo, &#x27;percent&#x27;)
+        if (totalPercent &gt; 100) {
+          errorsList.push({
+            date: new Date(currentDate),
+            percent: totalPercent,
+          })
+        }
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+
+    return errorsList.length
+      ? errorsList
+          .map(
+            (r) &#x3D;&gt;
+              &#x60;Le ${(r.date.getDate() + &#x27;&#x27;).padStart(2, &#x27;0&#x27;)} ${getShortMonthString(r.date)} ${r.date.getFullYear()} vous seriez à ${
+                r.percent
+              }% d&#x27;indisponibilité.&#x60;,
+          )
+          .join(&#x27;, &#x27;)
+      : null
+  }
+
+  /**
+   * API appel au serveur pour lister les effectifs d&#x27;une juridiction à une date précise
+   * @param backupId
+   * @param date
+   * @param contentieuxIds
+   * @param categoriesIds
+   * @param endPeriodToCheck
+   * @param extractor
+   * @returns
+   */
+  async onFilterList(
+    backupId: number,
+    date: Date,
+    contentieuxIds: number[] | null,
+    subContentieuxIds: number[] | null,
+    categoriesIds: number[],
+    endPeriodToCheck?: Date,
+    extractor?: boolean,
+  ) {
+    return this.serverService
+      .post(&#x60;human-resources/filter-list&#x60;, {
+        backupId,
+        date,
+        contentieuxIds,
+        categoriesIds,
+        subContentieuxIds,
+        extractor: extractor ? extractor : false,
+        endPeriodToCheck,
+      })
+      .then((data) &#x3D;&gt; {
+        if (this.lastBackupId !&#x3D;&#x3D; backupId) {
+          this.tmpComponentIdsCanBeView &#x3D; []
+          this.componentIdsCanBeView.next([])
+          this.lastBackupId &#x3D; backupId
+        }
+        return data.data
+      })
+  }
+
+  /**
+   * API appel au serveur pour retourner les détails d&#x27;une fiche
+   * @param hrId
+   * @returns
+   */
+  loadRemoteHR(hrId: number): Promise&lt;HumanResourceInterface | null&gt; {
+    return this.serverService.get(&#x60;human-resources/read-hr/${hrId}&#x60;).then((response) &#x3D;&gt; this.formatHR(response.data))
+  }
+
+  needIdToLoad(hrId: number) {
+    this.tmpComponentIdsCanBeView.push(hrId)
+
+    if (!this.interfaceWatcherTmp) {
+      this.startWatcherTmp()
+    }
+  }
+
+  startWatcherTmp() {
+    this.interfaceWatcherTmp &#x3D; setInterval(() &#x3D;&gt; {
+      const nbFiche &#x3D; 20
+      const newIds &#x3D; this.tmpComponentIdsCanBeView.slice(0, nbFiche)
+      const oldIds &#x3D; this.componentIdsCanBeView.getValue()
+      this.componentIdsCanBeView.next([...oldIds, ...newIds])
+      this.tmpComponentIdsCanBeView &#x3D; this.tmpComponentIdsCanBeView.slice(nbFiche)
+
+      if (this.tmpComponentIdsCanBeView.length &#x3D;&#x3D;&#x3D; 0) {
+        this.stopWatcherTmp()
+      }
+    }, 100)
+  }
+
+  stopWatcherTmp() {
+    if (this.interfaceWatcherTmp) {
+      clearInterval(this.interfaceWatcherTmp)
+      this.interfaceWatcherTmp &#x3D; null
+    }
+  }
+
+  /**
+   * Calculate sub categories
+   */
+  calculateSubCategories(list: HumanResourceInterface[] &#x3D; []) {
+    let subTotalEtp: { [key: string]: { etpt: number; total: number } } &#x3D; {
+      titulaire: {
+        etpt: 0,
+        total: 0,
+      },
+      placé: {
+        etpt: 0,
+        total: 0,
+      },
+      contractuel: {
+        etpt: 0,
+        total: 0,
+      },
+    }
+    list.map((h: any) &#x3D;&gt; {
+      let realETP &#x3D; (h.etp || 0) - h.hasIndisponibility
+      if (realETP &lt; 0 || isNaN(realETP)) {
+        realETP &#x3D; 0
+      }
+      switch (h.fonction.position) {
+        case &#x27;Titulaire&#x27;:
+          subTotalEtp[&#x27;titulaire&#x27;].etpt +&#x3D; realETP
+          subTotalEtp[&#x27;titulaire&#x27;].total +&#x3D; 1
+          break
+        case &#x27;Placé&#x27;:
+          subTotalEtp[&#x27;placé&#x27;].etpt +&#x3D; realETP
+          subTotalEtp[&#x27;placé&#x27;].total +&#x3D; 1
+          break
+        case &#x27;Contractuel&#x27;:
+          subTotalEtp[&#x27;contractuel&#x27;].etpt +&#x3D; realETP
+          subTotalEtp[&#x27;contractuel&#x27;].total +&#x3D; 1
+          break
+      }
+    })
+
+    return subTotalEtp
+  }
+
+  removeAlert(tag: string) {
+    const index &#x3D; this.alertList().indexOf(tag)
+    if (index !&#x3D;&#x3D; -1) {
+      this.alertList.update((list) &#x3D;&gt; list.filter((t) &#x3D;&gt; t !&#x3D;&#x3D; tag))
+    }
+    console.log(&#x27;this.alertList&#x27;, this.alertList())
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'HumanResourceService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

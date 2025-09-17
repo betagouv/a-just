@@ -1,0 +1,3171 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >UserService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/services/user/user.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Service de sauvegarde de l&#39;utilisateur actuel</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#canViewRCockpit" >canViewRCockpit</a>
+                            </li>
+                            <li>
+                                <a href="#canViewReaffectator" >canViewReaffectator</a>
+                            </li>
+                            <li>
+                                <a href="#canViewSimulator" >canViewSimulator</a>
+                            </li>
+                            <li>
+                                <a href="#canViewTempsMoyens" >canViewTempsMoyens</a>
+                            </li>
+                            <li>
+                                <a href="#canViewWhiteSimulator" >canViewWhiteSimulator</a>
+                            </li>
+                            <li>
+                                <a href="#humanResourceService" >humanResourceService</a>
+                            </li>
+                            <li>
+                                <a href="#interfaceType" >interfaceType</a>
+                            </li>
+                            <li>
+                                <a href="#interfaceTypeValue" >interfaceTypeValue</a>
+                            </li>
+                            <li>
+                                <a href="#referentielService" >referentielService</a>
+                            </li>
+                            <li>
+                                <a href="#router" >router</a>
+                            </li>
+                            <li>
+                                <a href="#serverService" >serverService</a>
+                            </li>
+                            <li>
+                                <a href="#user" >user</a>
+                            </li>
+                            <li>
+                                <a href="#userOriginalS" >userOriginalS</a>
+                            </li>
+                            <li>
+                                <a href="#userS" >userS</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#canViewActivities" >canViewActivities</a>
+                            </li>
+                            <li>
+                                <a href="#canViewAverageTime" >canViewAverageTime</a>
+                            </li>
+                            <li>
+                                <a href="#canViewPanorama" >canViewPanorama</a>
+                            </li>
+                            <li>
+                                <a href="#canViewVentilation" >canViewVentilation</a>
+                            </li>
+                            <li>
+                                <a href="#changePassword" >changePassword</a>
+                            </li>
+                            <li>
+                                <a href="#forgotPassword" >forgotPassword</a>
+                            </li>
+                            <li>
+                                <a href="#forgotPasswordTest" >forgotPasswordTest</a>
+                            </li>
+                            <li>
+                                <a href="#getAllUserPageUrl" >getAllUserPageUrl</a>
+                            </li>
+                            <li>
+                                <a href="#getInitDatas" >getInitDatas</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getInterfaceType" >getInterfaceType</a>
+                            </li>
+                            <li>
+                                <a href="#getUserPageUrl" >getUserPageUrl</a>
+                            </li>
+                            <li>
+                                <a href="#initDatas" >initDatas</a>
+                            </li>
+                            <li>
+                                <a href="#isCa" >isCa</a>
+                            </li>
+                            <li>
+                                <a href="#isTJ" >isTJ</a>
+                            </li>
+                            <li>
+                                <a href="#logout" >logout</a>
+                            </li>
+                            <li>
+                                <a href="#me" >me</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#redirectToHome" >redirectToHome</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#referentielCAMappingName" >referentielCAMappingName</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#referentielMappingColor" >referentielMappingColor</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#referentielMappingColorActivity" >referentielMappingColorActivity</a>
+                            </li>
+                            <li>
+                                <a href="#referentielMappingColorActivityByInterface" >referentielMappingColorActivityByInterface</a>
+                            </li>
+                            <li>
+                                <a href="#referentielMappingColorByInterface" >referentielMappingColorByInterface</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#referentielMappingColorCAActivity" >referentielMappingColorCAActivity</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#referentielMappingName" >referentielMappingName</a>
+                            </li>
+                            <li>
+                                <a href="#referentielMappingNameByInterface" >referentielMappingNameByInterface</a>
+                            </li>
+                            <li>
+                                <a href="#register" >register</a>
+                            </li>
+                            <li>
+                                <a href="#setUser" >setUser</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/services/user/user.service.ts:112</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewActivities"></a>
+                    <span class="name">
+                        <span ><b>canViewActivities</b></span>
+                        <a href="#canViewActivities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>canViewActivities(user: <a href="../interfaces/UserInterface.html" target="_self">UserInterface | null</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="400"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:400</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Can view Activites</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserInterface.html" target="_self" >UserInterface | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>null</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewAverageTime"></a>
+                    <span class="name">
+                        <span ><b>canViewAverageTime</b></span>
+                        <a href="#canViewAverageTime"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>canViewAverageTime(user: <a href="../interfaces/UserInterface.html" target="_self">UserInterface | null</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="412"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:412</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Can view Activites</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserInterface.html" target="_self" >UserInterface | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>null</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewPanorama"></a>
+                    <span class="name">
+                        <span ><b>canViewPanorama</b></span>
+                        <a href="#canViewPanorama"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>canViewPanorama(user: <a href="../interfaces/UserInterface.html" target="_self">UserInterface | null</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="376"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:376</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Can view Ventilations</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserInterface.html" target="_self" >UserInterface | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>null</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewVentilation"></a>
+                    <span class="name">
+                        <span ><b>canViewVentilation</b></span>
+                        <a href="#canViewVentilation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>canViewVentilation(user: <a href="../interfaces/UserInterface.html" target="_self">UserInterface | null</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="388"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:388</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Can view Ventilations</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserInterface.html" target="_self" >UserInterface | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>null</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="changePassword"></a>
+                    <span class="name">
+                        <span ><b>changePassword</b></span>
+                        <a href="#changePassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>changePassword(params: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="307"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:307</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API changement du mot de passe avec code</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>params</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="forgotPassword"></a>
+                    <span class="name">
+                        <span ><b>forgotPassword</b></span>
+                        <a href="#forgotPassword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>forgotPassword(params: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="285"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:285</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API demande de nouveau mot de passe</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>params</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="forgotPasswordTest"></a>
+                    <span class="name">
+                        <span ><b>forgotPasswordTest</b></span>
+                        <a href="#forgotPasswordTest"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>forgotPasswordTest(params: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="296"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:296</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API demande de nouveau mot de passe</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>params</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllUserPageUrl"></a>
+                    <span class="name">
+                        <span ><b>getAllUserPageUrl</b></span>
+                        <a href="#getAllUserPageUrl"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAllUserPageUrl(user: <a href="../interfaces/UserInterface.html" target="_self">UserInterface</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="424"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:424</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retourne la liste des toutes les pages qu&#39;un utilisateur à accès</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserInterface.html" target="_self" >UserInterface</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>{}</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getInitDatas"></a>
+                    <span class="name">
+                        <span ><b>getInitDatas</b></span>
+                        <a href="#getInitDatas"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getInitDatas()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="328"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:328</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API demande des informations générale</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getInterfaceType"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getInterfaceType</b></span>
+                        <a href="#getInterfaceType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getInterfaceType()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:150</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get env variable of the interface type</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#now" target="_self" >unknown</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserPageUrl"></a>
+                    <span class="name">
+                        <span ><b>getUserPageUrl</b></span>
+                        <a href="#getUserPageUrl"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getUserPageUrl(user: <a href="../interfaces/UserInterface.html" target="_self">UserInterface</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="362"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:362</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retourne la page d&#39;accès d&#39;un utilisateur</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserInterface.html" target="_self" >UserInterface</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initDatas"></a>
+                    <span class="name">
+                        <span ><b>initDatas</b></span>
+                        <a href="#initDatas"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initDatas()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="337"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:337</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Traitement des informations générales comme les catégories, fonctions, juridictions dispo et référentiel</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isCa"></a>
+                    <span class="name">
+                        <span ><b>isCa</b></span>
+                        <a href="#isCa"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isCa()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="163"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:163</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isTJ"></a>
+                    <span class="name">
+                        <span ><b>isTJ</b></span>
+                        <a href="#isTJ"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isTJ()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="167"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:167</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logout"></a>
+                    <span class="name">
+                        <span ><b>logout</b></span>
+                        <a href="#logout"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>logout()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="317"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:317</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API Logout avec suppression du token coté serveur</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="me"></a>
+                    <span class="name">
+                        <span ><b>me</b></span>
+                        <a href="#me"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>me()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="260"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:260</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API Identification de qui est l&#39;utilisateur connecté</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="128"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:128</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="redirectToHome"></a>
+                    <span class="name">
+                        <span ><b>redirectToHome</b></span>
+                        <a href="#redirectToHome"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>redirectToHome()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="485"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:485</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Retourne la page d&#39;accès d&#39;un utilisateur</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielCAMappingName"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>referentielCAMappingName</b></span>
+                        <a href="#referentielCAMappingName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>referentielCAMappingName(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="219"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:219</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Methode de reprise des noms de référentiel CA</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingColor"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>referentielMappingColor</b></span>
+                        <a href="#referentielMappingColor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>referentielMappingColor(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, opacity: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="228"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:228</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Methode de reprise des couleur des référentiel</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>opacity</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>1</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingColorActivity"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>referentielMappingColorActivity</b></span>
+                        <a href="#referentielMappingColorActivity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>referentielMappingColorActivity(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, opacity: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="237"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:237</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Methode de reprise des couleur des référentiel pour l&#39;écran &quot;Données d&#39;activité&quot;</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>opacity</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>1</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingColorActivityByInterface"></a>
+                    <span class="name">
+                        <span ><b>referentielMappingColorActivityByInterface</b></span>
+                        <a href="#referentielMappingColorActivityByInterface"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>referentielMappingColorActivityByInterface(label: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, opacity: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="188"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:188</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mapping de la couleur des activités selon l&#39;interface</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>label</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>opacity</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>1</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingColorByInterface"></a>
+                    <span class="name">
+                        <span ><b>referentielMappingColorByInterface</b></span>
+                        <a href="#referentielMappingColorByInterface"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>referentielMappingColorByInterface(label: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, opacity: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="175"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:175</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mapping de la couleur du référentiel selon l&#39;interface</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>label</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>opacity</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>1</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingColorCAActivity"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>referentielMappingColorCAActivity</b></span>
+                        <a href="#referentielMappingColorCAActivity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>referentielMappingColorCAActivity(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, opacity: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="249"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:249</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Methode de reprise des couleur des référentiel pour l&#39;écran &quot;Données d&#39;activité&quot;</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>opacity</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>1</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingName"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>referentielMappingName</b></span>
+                        <a href="#referentielMappingName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>referentielMappingName(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="212"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:212</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Methode de reprise des noms de référentiel TJ</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielMappingNameByInterface"></a>
+                    <span class="name">
+                        <span ><b>referentielMappingNameByInterface</b></span>
+                        <a href="#referentielMappingNameByInterface"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>referentielMappingNameByInterface(label: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="204"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:204</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mapping des noms de contentieux selon l&#39;interface</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>label</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="register"></a>
+                    <span class="name">
+                        <span ><b>register</b></span>
+                        <a href="#register"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>register(params: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="271"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:271</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>API Inscription d&#39;un nouveau utilisateur</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>params</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setUser"></a>
+                    <span class="name">
+                        <span ><b>setUser</b></span>
+                        <a href="#setUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setUser(user: <a href="../interfaces/UserInterface.html" target="_self">UserInterface | null</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">src/app/services/user/user.service.ts:136</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sauvegarde d&#39;une utilisateur</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UserInterface.html" target="_self" >UserInterface | null</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewRCockpit"></a>
+                    <span class="name">
+                        <span ><b>canViewRCockpit</b></span>
+                        <a href="#canViewRCockpit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_CALCULATOR) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/services/user/user.service.ts:90</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>User can view cockpit</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewReaffectator"></a>
+                    <span class="name">
+                        <span ><b>canViewReaffectator</b></span>
+                        <a href="#canViewReaffectator"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_REAFFECTATOR) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/services/user/user.service.ts:79</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>User can view reaffectator</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewSimulator"></a>
+                    <span class="name">
+                        <span ><b>canViewSimulator</b></span>
+                        <a href="#canViewSimulator"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_SIMULATOR) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/services/user/user.service.ts:57</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>User can view simulator</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewTempsMoyens"></a>
+                    <span class="name">
+                        <span ><b>canViewTempsMoyens</b></span>
+                        <a href="#canViewTempsMoyens"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/services/user/user.service.ts:101</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>User can view white simulator</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canViewWhiteSimulator"></a>
+                    <span class="name">
+                        <span ><b>canViewWhiteSimulator</b></span>
+                        <a href="#canViewWhiteSimulator"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/services/user/user.service.ts:68</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>User can view white simulator</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="humanResourceService"></a>
+                    <span class="name">
+                        <span ><b>humanResourceService</b></span>
+                        <a href="#humanResourceService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(HumanResourceService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/services/user/user.service.ts:38</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="interfaceType"></a>
+                    <span class="name">
+                        <span ><b>interfaceType</b></span>
+                        <a href="#interfaceType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/services/user/user.service.ts:112</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Interface front TJ ou CA</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="interfaceTypeValue"></a>
+                    <span class="name">
+                        <span ><b>interfaceTypeValue</b></span>
+                        <a href="#interfaceTypeValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;boolean | number | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/services/user/user.service.ts:40</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referentielService"></a>
+                    <span class="name">
+                        <span ><b>referentielService</b></span>
+                        <a href="#referentielService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(ReferentielService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/services/user/user.service.ts:39</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="router"></a>
+                    <span class="name">
+                        <span ><b>router</b></span>
+                        <a href="#router"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(Router)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/services/user/user.service.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="serverService"></a>
+                    <span class="name">
+                        <span ><b>serverService</b></span>
+                        <a href="#serverService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(ServerService)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/services/user/user.service.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="user"></a>
+                    <span class="name">
+                        <span ><b>user</b></span>
+                        <a href="#user"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/UserInterface.html" target="_self" >BehaviorSubject&lt;UserInterface | null&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new BehaviorSubject&lt;UserInterface | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/services/user/user.service.ts:44</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Format de l&#39;utilisateur connecté</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userOriginalS"></a>
+                    <span class="name">
+                        <span ><b>userOriginalS</b></span>
+                        <a href="#userOriginalS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;UserInterface | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/services/user/user.service.ts:49</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>User infos to signal</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userS"></a>
+                    <span class="name">
+                        <span ><b>userS</b></span>
+                        <a href="#userS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;UserInterface | null&gt;(null)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/services/user/user.service.ts:53</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>User infos to signal</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { computed, inject, Injectable, OnInit, signal } from &#x27;@angular/core&#x27;;
+import { BehaviorSubject } from &#x27;rxjs&#x27;;
+import { ServerService } from &#x27;../http-server/server.service&#x27;;
+import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;;
+import { ReferentielService } from &#x27;../referentiel/referentiel.service&#x27;;
+import { Router } from &#x27;@angular/router&#x27;;
+import { UserInterface } from &#x27;../../interfaces/user-interface&#x27;;
+import {
+  referentielCAMappingName,
+  referentielMappingColor,
+  referentielMappingColorActivity,
+  referentielMappingColorCAActivity,
+  referentielMappingName,
+} from &#x27;../../utils/referentiel&#x27;;
+import { HRCategoryInterface } from &#x27;../../interfaces/hr-category&#x27;;
+import { BackupInterface } from &#x27;../../interfaces/backup&#x27;;
+import { NEED_BOOKING_PAGE } from &#x27;../../constants/pages&#x27;;
+import {
+  USER_ACCESS_ACTIVITIES,
+  USER_ACCESS_AVERAGE_TIME,
+  USER_ACCESS_CALCULATOR,
+  USER_ACCESS_DASHBOARD,
+  USER_ACCESS_REAFFECTATOR,
+  USER_ACCESS_SIMULATOR,
+  USER_ACCESS_VENTILATIONS,
+  USER_ACCESS_WHITE_SIMULATOR,
+} from &#x27;../../constants/user-access&#x27;;
+
+/**
+ * Service de sauvegarde de l&#x27;utilisateur actuel
+ */
+@Injectable({
+  providedIn: &#x27;root&#x27;,
+})
+export class UserService implements OnInit {
+  router &#x3D; inject(Router);
+  serverService &#x3D; inject(ServerService);
+  humanResourceService &#x3D; inject(HumanResourceService);
+  referentielService &#x3D; inject(ReferentielService);
+  interfaceTypeValue &#x3D; signal&lt;boolean | number | null&gt;(null);
+  /**
+   * Format de l&#x27;utilisateur connecté
+   */
+  user: BehaviorSubject&lt;UserInterface | null&gt; &#x3D;
+    new BehaviorSubject&lt;UserInterface | null&gt;(null);
+  /**
+   * User infos to signal
+   */
+  userOriginalS &#x3D; signal&lt;UserInterface | null&gt;(null);
+  /**
+   * User infos to signal
+   */
+  userS &#x3D; signal&lt;UserInterface | null&gt;(null);
+  /**
+   * User can view simulator
+   */
+  canViewSimulator &#x3D; computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_SIMULATOR) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  });
+  /**
+   * User can view white simulator
+   */
+  canViewWhiteSimulator &#x3D; computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  });
+  /**
+   * User can view reaffectator
+   */
+  canViewReaffectator &#x3D; computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_REAFFECTATOR) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  });
+  /**
+   * User can view cockpit
+   */
+  canViewRCockpit &#x3D; computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_CALCULATOR) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  });
+  /**
+   * User can view white simulator
+   */
+  canViewTempsMoyens &#x3D; computed(() &#x3D;&gt; {
+    const user &#x3D; this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  });
+  /**
+   * Interface front TJ ou CA
+   */
+  interfaceType: number | null &#x3D; null;
+
+  constructor() {
+    this.user.subscribe((s) &#x3D;&gt; {
+      this.userS.set(
+        s
+          ? {
+              ...s,
+              initials:
+                (s.firstName || &#x27;&#x27;).charAt(0) + (s.lastName || &#x27;&#x27;).charAt(0),
+            }
+          : s
+      );
+    });
+  }
+  
+  ngOnInit(): void {
+    this.getInterfaceType();
+  }
+
+  /**
+   * Sauvegarde d&#x27;une utilisateur
+   * @param user
+   */
+  setUser(user: UserInterface | null) {
+    this.user.next(user);
+
+    if (user &amp;&amp; user.token) {
+      this.serverService.setToken(user.token);
+
+      this.initDatas();
+    }
+  }
+
+  /**
+   * Get env variable of the interface type
+   * @returns
+   */
+  async getInterfaceType() {
+    if (this.interfaceTypeValue() !&#x3D;&#x3D; null) {
+      return Promise.resolve(this.interfaceTypeValue());
+    }
+
+    return this.serverService.get(&#x27;users/interface-type&#x27;).then((data) &#x3D;&gt; {
+      this.interfaceType &#x3D; [0, 1].includes(data.data) ? data.data : null;
+      this.interfaceType !&#x3D;&#x3D; null ? true : false
+      this.interfaceTypeValue.set(this.interfaceType);
+      return this.interfaceType;
+    });
+  }
+
+  isCa() {
+    return this.interfaceType &#x3D;&#x3D;&#x3D; 1;
+  }
+
+  isTJ() {
+    return this.interfaceType &#x3D;&#x3D;&#x3D; 0;
+  }
+  /**
+   * Mapping de la couleur du référentiel selon l&#x27;interface
+   * @param label
+   * @returns
+   */
+  referentielMappingColorByInterface(label: string, opacity: number &#x3D; 1) {
+    const name &#x3D; this.referentielMappingNameByInterface(label);
+
+    if (this.interfaceType &#x3D;&#x3D;&#x3D; 1)
+      return this.referentielMappingColorCAActivity(name, opacity);
+    else return this.referentielMappingColor(name, opacity);
+  }
+
+  /**
+   * Mapping de la couleur des activités selon l&#x27;interface
+   * @param label
+   * @returns
+   */
+  referentielMappingColorActivityByInterface(
+    label: string,
+    opacity: number &#x3D; 1
+  ) {
+    const name &#x3D; this.referentielMappingNameByInterface(label);
+
+    if (this.interfaceType &#x3D;&#x3D;&#x3D; 1)
+      return this.referentielMappingColorCAActivity(name, opacity);
+    else return this.referentielMappingColorActivity(name, opacity);
+  }
+
+  /**
+   * Mapping des noms de contentieux selon l&#x27;interface
+   * @param label
+   * @returns
+   */
+  referentielMappingNameByInterface(label: string) {
+    if (this.interfaceType &#x3D;&#x3D;&#x3D; 1) return this.referentielCAMappingName(label);
+    else return this.referentielMappingName(label);
+  }
+
+  /**
+   * Methode de reprise des noms de référentiel TJ
+   */
+  public referentielMappingName(name: string): string {
+    return referentielMappingName(name);
+  }
+
+  /**
+   * Methode de reprise des noms de référentiel CA
+   */
+  public referentielCAMappingName(name: string): string {
+    return referentielCAMappingName(name);
+  }
+
+  /**
+   * Methode de reprise des couleur des référentiel
+   * @param name
+   * @returns
+   */
+  public referentielMappingColor(name: string, opacity: number &#x3D; 1): string {
+    return referentielMappingColor(name, opacity);
+  }
+
+  /**
+   * Methode de reprise des couleur des référentiel pour l&#x27;écran &quot;Données d&#x27;activité&quot;
+   * @param name
+   * @returns
+   */
+  public referentielMappingColorActivity(
+    name: string,
+    opacity: number &#x3D; 1
+  ): string {
+    return referentielMappingColorActivity(name, opacity);
+  }
+
+  /**
+   * Methode de reprise des couleur des référentiel pour l&#x27;écran &quot;Données d&#x27;activité&quot;
+   * @param name
+   * @returns
+   */
+  public referentielMappingColorCAActivity(
+    name: string,
+    opacity: number &#x3D; 1
+  ): string {
+    return referentielMappingColorCAActivity(name, opacity);
+  }
+
+  /**
+   * API Identification de qui est l&#x27;utilisateur connecté
+   * @returns
+   */
+  me() {
+    return this.serverService
+      .getWithoutError(&#x27;users/me&#x27;)
+      .then((data) &#x3D;&gt; data.data || null);
+  }
+
+  /**
+   * API Inscription d&#x27;un nouveau utilisateur
+   * @param params
+   * @returns
+   */
+  register(params &#x3D; {}): Promise&lt;any&gt; {
+    return this.serverService
+      .post(&#x27;users/create-account&#x27;, params)
+      .then((data) &#x3D;&gt; {
+        this.serverService.setToken(data.token);
+        return data;
+      });
+  }
+
+  /**
+   * API demande de nouveau mot de passe
+   * @param params
+   * @returns
+   */
+  forgotPassword(params &#x3D; {}): Promise&lt;any&gt; {
+    return this.serverService
+      .post(&#x27;users/forgot-password&#x27;, params)
+      .then((data) &#x3D;&gt; data.data || null);
+  }
+
+  /**
+   * API demande de nouveau mot de passe
+   * @param params
+   * @returns
+   */
+  forgotPasswordTest(params &#x3D; {}): Promise&lt;any&gt; {
+    return this.serverService
+      .post(&#x27;users/forgot-password-test&#x27;, params)
+      .then((data) &#x3D;&gt; data.data || null);
+  }
+
+  /**
+   * API changement du mot de passe avec code
+   * @param params
+   * @returns
+   */
+  changePassword(params &#x3D; {}): Promise&lt;any&gt; {
+    return this.serverService
+      .post(&#x27;users/change-password&#x27;, params)
+      .then((data) &#x3D;&gt; data.data || null);
+  }
+
+  /**
+   * API Logout avec suppression du token coté serveur
+   * @returns
+   */
+  logout() {
+    return this.serverService.get(&#x27;auths/logout&#x27;).then(() &#x3D;&gt; {
+      this.user.next(null);
+      this.serverService.removeToken();
+    });
+  }
+
+  /**
+   * API demande des informations générale
+   * @returns
+   */
+  getInitDatas() {
+    return this.serverService
+      .get(&#x27;users/get-user-datas&#x27;)
+      .then((data) &#x3D;&gt; data.data || null);
+  }
+
+  /**
+   * Traitement des informations générales comme les catégories, fonctions, juridictions dispo et référentiel
+   */
+  initDatas() {
+    this.getInitDatas().then((result) &#x3D;&gt; {
+      this.humanResourceService.categoriesFilterListIds &#x3D; result.categories.map(
+        (c: HRCategoryInterface) &#x3D;&gt; c.id
+      );
+      this.humanResourceService.fonctions.next(result.fonctions);
+      this.humanResourceService.categories.next(result.categories);
+      this.humanResourceService.backups.next(
+        result.backups.map((b: BackupInterface) &#x3D;&gt; ({
+          ...b,
+          date: new Date(b.date),
+        }))
+      );
+
+      // if no backup we need onboarding
+      if (result.backups.length &#x3D;&#x3D;&#x3D; 0) {
+        this.serverService.removeToken(); // logout user without access
+        this.router.navigate([&#x27;/&#x27; + NEED_BOOKING_PAGE]);
+      }
+    });
+  }
+
+  /**
+   * Retourne la page d&#x27;accès d&#x27;un utilisateur
+   */
+  getUserPageUrl(user: UserInterface) {
+    if (user) {
+      const allPages &#x3D; this.getAllUserPageUrl(user);
+      if (allPages) {
+        return &#x60;/${allPages[0].path}&#x60;;
+      }
+    }
+
+    return &#x27;&#x27;;
+  }
+
+  /**
+   * Can view Ventilations
+   */
+  canViewPanorama(user: UserInterface | null &#x3D; null) {
+    user &#x3D; user || this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_DASHBOARD) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  }
+
+  /**
+   * Can view Ventilations
+   */
+  canViewVentilation(user: UserInterface | null &#x3D; null) {
+    user &#x3D; user || this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_VENTILATIONS) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  }
+
+  /**
+   * Can view Activites
+   */
+  canViewActivities(user: UserInterface | null &#x3D; null) {
+    user &#x3D; user || this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_ACTIVITIES) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  }
+
+  /**
+   * Can view Activites
+   */
+  canViewAverageTime(user: UserInterface | null &#x3D; null) {
+    user &#x3D; user || this.user.getValue();
+    return user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !&#x3D;&#x3D; -1
+      ? true
+      : false;
+  }
+
+  /**
+   * Retourne la liste des toutes les pages qu&#x27;un utilisateur à accès
+   */
+  getAllUserPageUrl(user: UserInterface) {
+    const menu &#x3D; [];
+
+    if (this.canViewPanorama(user)) {
+      menu.push({
+        label: &#x27;Panorama&#x27;,
+        path: &#x27;panorama&#x27;,
+      });
+    }
+
+    if (
+      user &amp;&amp;
+      user.access &amp;&amp;
+      user.access.indexOf(USER_ACCESS_CALCULATOR) !&#x3D;&#x3D; -1
+    ) {
+      menu.push({
+        label: &#x27;Cockpit&#x27;,
+        path: &#x27;cockpit&#x27;,
+      });
+    }
+    if (
+      user &amp;&amp;
+      user.access &amp;&amp;
+      (user.access.indexOf(USER_ACCESS_SIMULATOR) !&#x3D;&#x3D; -1 ||
+        user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !&#x3D;&#x3D; -1 ||
+        user.access.indexOf(USER_ACCESS_REAFFECTATOR) !&#x3D;&#x3D; -1)
+    ) {
+      menu.push({
+        label: &#x27;Simulateurs&#x27;,
+        path: &#x27;simulateur&#x27;,
+      });
+    }
+
+    if (this.canViewVentilation(user)) {
+      menu.push({
+        label: &#x27;Ventilateur&#x27;,
+        path: &#x27;ventilations&#x27;,
+      });
+    }
+
+    if (this.canViewActivities(user)) {
+      menu.push({
+        label: &quot;Données d&#x27;activité&quot;,
+        path: &#x27;donnees-d-activite&#x27;,
+      });
+    }
+
+    if (menu.length &#x3D;&#x3D;&#x3D; 0) {
+      this.serverService.removeToken(); // logout user without access
+      menu.push({
+        label: &#x27;Bienvenue&#x27;,
+        path: &#x27;bienvenue&#x27;,
+      });
+    }
+
+    return menu;
+  }
+
+  /**
+   * Retourne la page d&#x27;accès d&#x27;un utilisateur
+   */
+  redirectToHome() {
+    let urlToRedirect &#x3D; &#x27;&#x27;;
+
+    const user &#x3D; this.user.getValue();
+    if (user) {
+      urlToRedirect &#x3D; this.getUserPageUrl(user);
+    }
+
+    window.location.href &#x3D; urlToRedirect;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'UserService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

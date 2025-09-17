@@ -687,6 +687,18 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           this.dateStop = now
           this.stopRealValue = findRealValue(this.dateStop)
         }
+
+        if (d && d.length === 0) {
+          this.onResetUserAction()
+          this.disabled = 'disabled'
+          this.simulatorService.disabled.next(this.disabled)
+          this.commentaire = ''
+          this.contentieuId = null
+          this.subList = []
+          this.simulatorService.situationProjected.next(null)
+          this.projectedSituationData = null
+          this.dateStop = null
+        }
       }),
     )
 
@@ -806,6 +818,29 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.simulatorService.situationProjected.subscribe((d) => {
         this.projectedSituationData = this.simulatorService.situationProjected.getValue()
+
+        let isEqualToZero =
+          this.firstSituationData &&
+          this.firstSituationData?.totalIn === 0 &&
+          this.firstSituationData?.totalOut === 0 &&
+          this.firstSituationData?.lastStock === 0
+        setTimeout(() => {
+          if (
+            (this.firstSituationData !== null &&
+              !this.hasNoNullValue(this.firstSituationData) &&
+              this.simulatorService.dateStop.getValue() &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue() &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0) ||
+            (isEqualToZero &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue() &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0 &&
+              (this.firstSituationData as any).countOfCalandarDays === undefined)
+          ) {
+            alert(
+              "En l’absence de données d’activité renseignées pour les 12 derniers mois, cette simulation n’est pas possible. Veuillez renseigner préalablement les données manquantes pour ce contentieux dans l'écran de données d’activité",
+            )
+          }
+        }, 300)
       }),
     )
     this.watch(
@@ -899,6 +934,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.subList = event
       const tmpRefLength = this.referentiel.find((v) => v.id === this.contentieuId)
 
+      console.log('la sublist', this.subList)
       if (!event.length) {
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
@@ -1026,7 +1062,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.startRealValue = ''
     this.stopRealValue = ''
     this.mooveClass = ''
-    ;(this.documentation.path = this.documentationUrl.main), (this.toDisplaySimulation = false)
+    ;((this.documentation.path = this.documentationUrl.main), (this.toDisplaySimulation = false))
     //this.simulatorService.situationSimulated.next(null)
     document.getElementById('init-button')?.click()
 
@@ -1216,14 +1252,17 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         return
       }
 
-      if (['totalIn', 'totalOut','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))) {
+      if (
+        ['totalIn', 'totalOut', 'realCoverage', 'realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) &&
+        (parseFloat(volumeInput) <= 0 || isNaN(parseFloat(volumeInput)))
+      ) {
         alert('Le nombre total ne peut pas être inférieur ou égal à 0')
         return
       }
 
-      if (['lastStock'].includes(inputField.id) && (parseFloat(volumeInput) < 0||isNaN(parseFloat(volumeInput)))) {
-      alert('La valeur totale ne peut pas être inférieure 0')
-      return
+      if (['lastStock'].includes(inputField.id) && (parseFloat(volumeInput) < 0 || isNaN(parseFloat(volumeInput)))) {
+        alert('La valeur totale ne peut pas être inférieure 0')
+        return
       }
       // if param1 reset =>  reset all params
       if (inputField.id === this.paramsToAjust.param1.label) {
@@ -1265,11 +1304,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           ? this.buttonSelected.id === 'lastStock'
             ? 0
             : this.buttonSelected.id === 'realDTESInMonths'
-            ? 0
-            : -1
+              ? 0
+              : -1
           : parseFloat(volumeInput) >= 0
-          ? parseFloat(volumeInput)
-          : -1
+            ? parseFloat(volumeInput)
+            : -1
     else if (this.valueToAjust.value !== '' && String(this.valueToAjust.value) !== 'NaN') result = parseFloat(this.valueToAjust.value)
 
     // if result
@@ -1379,8 +1418,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         ? this.percantageWithSign(this.paramsToAjust.param1.percentage)
         : this.ratio(this.paramsToAjust.param1.value, projectedValue as string)
       : this.percantageWithSign(this.paramsToAjust.param2.percentage)
-      ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
-      : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
+        ? this.percantageWithSign(this.paramsToAjust.param2.percentage)
+        : this.ratio(this.paramsToAjust.param2.value, projectedValue as string)
   }
 
   /**
@@ -1481,7 +1520,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     }
 
     this.simulatorService.disabled.next('')
-
   }
 
   /**
@@ -1990,19 +2028,19 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
             this.popupActionToUse = this.popupAction.backBeforeSimulate
             this.userAction.isComingBack = true
           }
-          break;
+          break
         case this.action.leave:
           {
             this.popupActionToUse = this.popupAction.leaving
             this.userAction.isLeaving = true
           }
-          break;
+          break
         case this.action.closeTab:
-        {
-          this.popupActionToUse = this.popupAction.closeTab;
-          this.userAction.isClosingTab = true;
-        }
-          break;
+          {
+            this.popupActionToUse = this.popupAction.closeTab
+            this.userAction.isClosingTab = true
+          }
+          break
       }
     }
     return
@@ -2229,7 +2267,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.router.navigate(['/reaffectateur'], {
         relativeTo: this.route,
         queryParams: { b: 'simulateur' },
-        queryParamsHandling: 'merge'
+        queryParamsHandling: 'merge',
       })
     }
   }

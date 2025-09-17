@@ -1,0 +1,2134 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  CalculatorInterface</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/interfaces/calculator.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface du résultat d&#39;un calcul</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#childIsVisible" 
+>
+                                            childIsVisible
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#childrens" 
+>
+                                            childrens
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#contentieux" 
+>
+                                            contentieux
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpAffected" 
+>
+                                            etpAffected
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpCont" 
+>
+                                            etpCont
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpContAf" 
+>
+                                            etpContAf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpContBf" 
+>
+                                            etpContBf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpFon" 
+>
+                                            etpFon
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpFonAf" 
+>
+                                            etpFonAf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpFonBf" 
+>
+                                            etpFonBf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpMag" 
+>
+                                            etpMag
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpMagAf" 
+>
+                                            etpMagAf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#etpMagBf" 
+>
+                                            etpMagBf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#fonCalculateCoverage" 
+>
+                                            fonCalculateCoverage
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#fonCalculateDTESInMonths" 
+>
+                                            fonCalculateDTESInMonths
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#fonCalculateOut" 
+>
+                                            fonCalculateOut
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#fonCalculateTimePerCase" 
+>
+                                            fonCalculateTimePerCase
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#fonRealTimePerCase" 
+>
+                                            fonRealTimePerCase
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#lastStock" 
+>
+                                            lastStock
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#lastStockAf" 
+>
+                                            lastStockAf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#lastStockBf" 
+>
+                                            lastStockBf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#magCalculateCoverage" 
+>
+                                            magCalculateCoverage
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#magCalculateDTESInMonths" 
+>
+                                            magCalculateDTESInMonths
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#magCalculateOut" 
+>
+                                            magCalculateOut
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#magCalculateTimePerCase" 
+>
+                                            magCalculateTimePerCase
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#magRealTimePerCase" 
+>
+                                            magRealTimePerCase
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#nbMonth" 
+>
+                                            nbMonth
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#realCoverage" 
+>
+                                            realCoverage
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#realCoverageAf" 
+>
+                                            realCoverageAf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#realCoverageBf" 
+>
+                                            realCoverageBf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#realDTESInMonths" 
+>
+                                            realDTESInMonths
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#realDTESInMonthsStart" 
+>
+                                            realDTESInMonthsStart
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#totalIn" 
+>
+                                            totalIn
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#totalInAf" 
+>
+                                            totalInAf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#totalInBf" 
+>
+                                            totalInBf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#totalOut" 
+>
+                                            totalOut
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#totalOutAf" 
+>
+                                            totalOutAf
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#totalOutBf" 
+>
+                                            totalOutBf
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="childIsVisible"></a>
+                                        <span class="name "><b>childIsVisible</b>
+                                            <a href="#childIsVisible">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>childIsVisible:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Affiche ou non les enfants d&#39;un resultat sur la page calculateur</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="childrens"></a>
+                                        <span class="name "><b>childrens</b>
+                                            <a href="#childrens">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>childrens:         <code><a href="../interfaces/CalculatorInterface.html" target="_self" >CalculatorInterface[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/CalculatorInterface.html" target="_self" >CalculatorInterface[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Resultats des calculs des enfants d&#39;un contientieux</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="contentieux"></a>
+                                        <span class="name "><b>contentieux</b>
+                                            <a href="#contentieux">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>contentieux:         <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >ContentieuReferentielInterface</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/ContentieuReferentielInterface.html" target="_self" >ContentieuReferentielInterface</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Contentieux rataché</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpAffected"></a>
+                                        <span class="name "><b>etpAffected</b>
+                                            <a href="#etpAffected">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpAffected:         <code><a href="../interfaces/etpAffectedInterface.html" target="_self" >etpAffectedInterface[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/etpAffectedInterface.html" target="_self" >etpAffectedInterface[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP global</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpCont"></a>
+                                        <span class="name "><b>etpCont</b>
+                                            <a href="#etpCont">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpCont:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP Contractuel</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpContAf"></a>
+                                        <span class="name "><b>etpContAf</b>
+                                            <a href="#etpContAf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpContAf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP Contractuel after</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpContBf"></a>
+                                        <span class="name "><b>etpContBf</b>
+                                            <a href="#etpContBf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpContBf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP Contractuel before</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpFon"></a>
+                                        <span class="name "><b>etpFon</b>
+                                            <a href="#etpFon">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpFon:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP Fonctionnaires</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpFonAf"></a>
+                                        <span class="name "><b>etpFonAf</b>
+                                            <a href="#etpFonAf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpFonAf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP Fonctionnaires after</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpFonBf"></a>
+                                        <span class="name "><b>etpFonBf</b>
+                                            <a href="#etpFonBf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpFonBf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>ETP Fonctionnaires before</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpMag"></a>
+                                        <span class="name "><b>etpMag</b>
+                                            <a href="#etpMag">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpMag:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Calcul des ETP magistrat sur la période</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpMagAf"></a>
+                                        <span class="name "><b>etpMagAf</b>
+                                            <a href="#etpMagAf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpMagAf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Calcul des ETP magistrat sur la période after</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="etpMagBf"></a>
+                                        <span class="name "><b>etpMagBf</b>
+                                            <a href="#etpMagBf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>etpMagBf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Calcul des ETP magistrat sur la période before</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="fonCalculateCoverage"></a>
+                                        <span class="name "><b>fonCalculateCoverage</b>
+                                            <a href="#fonCalculateCoverage">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>fonCalculateCoverage:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Delai avant la cloture des dossiers par les fonctionnaires</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="fonCalculateDTESInMonths"></a>
+                                        <span class="name "><b>fonCalculateDTESInMonths</b>
+                                            <a href="#fonCalculateDTESInMonths">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>fonCalculateDTESInMonths:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Delai avant la cloture des dossiers par les fonctionnaires</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="fonCalculateOut"></a>
+                                        <span class="name "><b>fonCalculateOut</b>
+                                            <a href="#fonCalculateOut">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>fonCalculateOut:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sorties estimées des fonctionnaires</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="fonCalculateTimePerCase"></a>
+                                        <span class="name "><b>fonCalculateTimePerCase</b>
+                                            <a href="#fonCalculateTimePerCase">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>fonCalculateTimePerCase:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Temps de traitement calculé des fonctionnaires</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="fonRealTimePerCase"></a>
+                                        <span class="name "><b>fonRealTimePerCase</b>
+                                            <a href="#fonRealTimePerCase">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>fonRealTimePerCase:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Temps de traitement réel des fonctionnaires</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="lastStock"></a>
+                                        <span class="name "><b>lastStock</b>
+                                            <a href="#lastStock">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>lastStock:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Dernière valeure de stock</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="lastStockAf"></a>
+                                        <span class="name "><b>lastStockAf</b>
+                                            <a href="#lastStockAf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>lastStockAf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Dernière valeure de stock after</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="lastStockBf"></a>
+                                        <span class="name "><b>lastStockBf</b>
+                                            <a href="#lastStockBf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>lastStockBf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Dernière valeure de stock before</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="magCalculateCoverage"></a>
+                                        <span class="name "><b>magCalculateCoverage</b>
+                                            <a href="#magCalculateCoverage">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>magCalculateCoverage:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Couverture des entres / sorties des magistrats</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="magCalculateDTESInMonths"></a>
+                                        <span class="name "><b>magCalculateDTESInMonths</b>
+                                            <a href="#magCalculateDTESInMonths">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>magCalculateDTESInMonths:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Delai avant la cloture des dossiers par les magistrats</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="magCalculateOut"></a>
+                                        <span class="name "><b>magCalculateOut</b>
+                                            <a href="#magCalculateOut">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>magCalculateOut:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sorties estimées des magistrats</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="magCalculateTimePerCase"></a>
+                                        <span class="name "><b>magCalculateTimePerCase</b>
+                                            <a href="#magCalculateTimePerCase">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>magCalculateTimePerCase:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Temps de traitement calculé des magistrats</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="magRealTimePerCase"></a>
+                                        <span class="name "><b>magRealTimePerCase</b>
+                                            <a href="#magRealTimePerCase">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>magRealTimePerCase:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Temps de traitement réel des magistrats</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="nbMonth"></a>
+                                        <span class="name "><b>nbMonth</b>
+                                            <a href="#nbMonth">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>nbMonth:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nombre de mois selectionnés</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="realCoverage"></a>
+                                        <span class="name "><b>realCoverage</b>
+                                            <a href="#realCoverage">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>realCoverage:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Couverture global</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="realCoverageAf"></a>
+                                        <span class="name "><b>realCoverageAf</b>
+                                            <a href="#realCoverageAf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>realCoverageAf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Couverture global after</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="realCoverageBf"></a>
+                                        <span class="name "><b>realCoverageBf</b>
+                                            <a href="#realCoverageBf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>realCoverageBf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Couverture global before</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="realDTESInMonths"></a>
+                                        <span class="name "><b>realDTESInMonths</b>
+                                            <a href="#realDTESInMonths">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>realDTESInMonths:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>DTES glbal</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="realDTESInMonthsStart"></a>
+                                        <span class="name "><b>realDTESInMonthsStart</b>
+                                            <a href="#realDTESInMonthsStart">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>realDTESInMonthsStart:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>DTES au début</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="totalIn"></a>
+                                        <span class="name "><b>totalIn</b>
+                                            <a href="#totalIn">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>totalIn:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Entrées moyennes</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="totalInAf"></a>
+                                        <span class="name "><b>totalInAf</b>
+                                            <a href="#totalInAf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>totalInAf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Entrées moyennes after</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="totalInBf"></a>
+                                        <span class="name "><b>totalInBf</b>
+                                            <a href="#totalInBf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>totalInBf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Entrées moyennes before</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="totalOut"></a>
+                                        <span class="name "><b>totalOut</b>
+                                            <a href="#totalOut">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>totalOut:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sorties moyennes</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="totalOutAf"></a>
+                                        <span class="name "><b>totalOutAf</b>
+                                            <a href="#totalOutAf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>totalOutAf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sorties moyennes after</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="totalOutBf"></a>
+                                        <span class="name "><b>totalOutBf</b>
+                                            <a href="#totalOutBf">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>totalOutBf:     <code>number | null</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>number | null</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Sorties moyennes before</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ContentieuReferentielInterface } from &quot;./contentieu-referentiel&quot;;
+
+/**
+ * Interface d&#x27;un ETP
+ */
+export interface etpAffectedInterface {
+	/**
+	 * Nom de l&#x27;interface
+	 */
+	name: string;
+	/**
+	 * Somme de l&#x27;ETP
+	 */
+  totalEtp: number;
+	/**
+	 * Ordre de l&#x27;ETP
+	 */
+  rank: number;
+}
+
+/**
+ * Interface du résultat d&#x27;un calcul
+ */
+export interface CalculatorInterface {
+	/**
+	 * Entrées moyennes
+	 */
+	totalIn: number | null;
+	/**
+	 * Entrées moyennes after
+	 */
+	totalInAf: number | null;
+	/**
+	 * Entrées moyennes before
+	 */
+	totalInBf: number | null;
+	/**
+	 * Sorties moyennes
+	 */
+	totalOut: number | null;
+	/**
+	 * Sorties moyennes after
+	 */
+	totalOutAf: number | null;
+	/**
+	 * Sorties moyennes before
+	 */
+	totalOutBf: number | null;
+	/**
+	 * Dernière valeure de stock
+	 */
+	lastStock: number | null;
+	/**
+	 * Dernière valeure de stock after
+	 */
+	lastStockAf: number | null;
+	/**
+	 * Dernière valeure de stock before
+	 */
+	lastStockBf: number | null;
+	/**
+	 * Calcul des ETP magistrat sur la période
+	 */
+	etpMag: number | null;
+	/**
+	 * Calcul des ETP magistrat sur la période after
+	 */
+	etpMagAf: number | null;
+	/**
+	 * Calcul des ETP magistrat sur la période before
+	 */
+	etpMagBf: number | null;
+	/**
+	 * Temps de traitement réel des magistrats
+	 */
+	magRealTimePerCase: number | null;
+	/**
+	 * Temps de traitement calculé des magistrats
+	 */
+	magCalculateTimePerCase: number | null;
+	/**
+	 * Sorties estimées des magistrats
+	 */
+	magCalculateOut: number | null;
+	/**
+	 * Couverture des entres / sorties des magistrats
+	 */
+	magCalculateCoverage: number | null;
+	/**
+	 * Delai avant la cloture des dossiers par les magistrats
+	 */
+	magCalculateDTESInMonths: number | null;
+	/**
+	 * ETP Fonctionnaires
+	 */
+	etpFon: number | null;
+	/**
+	 * ETP Fonctionnaires after
+	 */
+	etpFonAf: number | null;
+	/**
+	 * ETP Fonctionnaires before
+	 */
+	etpFonBf: number | null;
+	/**
+	 * Temps de traitement réel des fonctionnaires
+	 */
+	fonRealTimePerCase: number | null;
+	/**
+	 * Temps de traitement calculé des fonctionnaires
+	 */
+	fonCalculateTimePerCase: number | null;
+	/**
+	 * Sorties estimées des fonctionnaires
+	 */
+	fonCalculateOut: number | null;
+	/**
+	 * Delai avant la cloture des dossiers par les fonctionnaires
+	 */
+	fonCalculateCoverage: number | null;
+	/**
+	 * Delai avant la cloture des dossiers par les fonctionnaires
+	 */
+	fonCalculateDTESInMonths: number | null;
+	/**
+	 * ETP Contractuel
+	 */
+	etpCont: number | null;
+	/**
+	 * ETP Contractuel before
+	 */
+	etpContBf: number | null;
+	/**
+	 * ETP Contractuel after
+	 */
+	etpContAf: number | null;
+	/**
+	 * Couverture global
+	 */
+	realCoverage: number | null;
+	/**
+	 * Couverture global before
+	 */
+	realCoverageBf: number | null;
+	/**
+	 * Couverture global after
+	 */
+	realCoverageAf: number | null;
+	/**
+	 * DTES glbal
+	 */
+	realDTESInMonths: number | null;
+	/**
+	 * DTES au début
+	 */
+	realDTESInMonthsStart: number | null;
+	/**
+	 * Contentieux rataché
+	 */
+	contentieux: ContentieuReferentielInterface;
+	/**
+	 * Nombre de mois selectionnés
+	 */
+	nbMonth: number;
+	/**
+	 * Resultats des calculs des enfants d&#x27;un contientieux
+	 */
+	childrens: CalculatorInterface[];
+	/**
+	 * ETP global
+	 */
+	etpAffected: etpAffectedInterface[];
+	/**
+	 * Affiche ou non les enfants d&#x27;un resultat sur la page calculateur
+	 */
+	childIsVisible: boolean;
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'CalculatorInterface.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

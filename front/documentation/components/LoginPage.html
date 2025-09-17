@@ -1,0 +1,1615 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  LoginPage</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/routes/login/login.page.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Page de connexion</p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                                <code><a href="../components/WrapperNoConnectedComponent.html" target="_self" >WrapperNoConnectedComponent</a></code>
+                            <code>RouterLink</code>
+                            <code>FormsModule</code>
+                                <code><a href="../components/PopupComponent.html" target="_self" >PopupComponent</a></code>
+                            <code>ReactiveFormsModule</code>
+                            <code>CommonModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./login.page.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./login.page.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#canUseSSO" >canUseSSO</a>
+                            </li>
+                            <li>
+                                <a href="#errorMessage" >errorMessage</a>
+                            </li>
+                            <li>
+                                <a href="#form" >form</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#inputs" >inputs</a>
+                            </li>
+                            <li>
+                                <a href="#isReady" >isReady</a>
+                            </li>
+                            <li>
+                                <a href="#needToGetCode" >needToGetCode</a>
+                            </li>
+                            <li>
+                                <a href="#ssoIsActivate" >ssoIsActivate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#userService" >userService</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#focusNext" >focusNext</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#onContinuToLogin" >onContinuToLogin</a>
+                            </li>
+                            <li>
+                                <a href="#onSubmit" >onSubmit</a>
+                            </li>
+                            <li>
+                                <a href="#onUseSSO" >onUseSSO</a>
+                            </li>
+                            <li>
+                                <a href="#preventSubmit" >preventSubmit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(authService: <a href="../injectables/AuthService.html" target="_self">AuthService</a>, userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, router: Router, title: Title, ssoService: <a href="../injectables/SSOService.html" target="_self">SSOService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/routes/login/login.page.ts:55</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Constructeur</p>
+</div>
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>authService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AuthService.html" target="_self" >AuthService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>router</td>
+                                                  
+                                                        <td>
+                                                                    <code>Router</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>title</td>
+                                                  
+                                                        <td>
+                                                                    <code>Title</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>ssoService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SSOService.html" target="_self" >SSOService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="focusNext"></a>
+                    <span class="name">
+                        <span ><b>focusNext</b></span>
+                        <a href="#focusNext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>focusNext(event: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="160"
+                                    class="link-to-prism">src/app/routes/login/login.page.ts:160</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Permet à l&#39;utilisateur de passer d&#39;un input à un autre avec la touche &quot;Entrée&quot;</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/app/routes/login/login.page.ts:71</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Vérificiation si l&#39;utilisateur est connecté</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onContinuToLogin"></a>
+                    <span class="name">
+                        <span ><b>onContinuToLogin</b></span>
+                        <a href="#onContinuToLogin"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onContinuToLogin(action: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, input: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="137"
+                                    class="link-to-prism">src/app/routes/login/login.page.ts:137</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSubmit"></a>
+                    <span class="name">
+                        <span ><b>onSubmit</b></span>
+                        <a href="#onSubmit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onSubmit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/routes/login/login.page.ts:105</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Demande connexion</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onUseSSO"></a>
+                    <span class="name">
+                        <span ><b>onUseSSO</b></span>
+                        <a href="#onUseSSO"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onUseSSO()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="127"
+                                    class="link-to-prism">src/app/routes/login/login.page.ts:127</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="preventSubmit"></a>
+                    <span class="name">
+                        <span ><b>preventSubmit</b></span>
+                        <a href="#preventSubmit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>preventSubmit(event: KeyboardEvent)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="173"
+                                    class="link-to-prism">src/app/routes/login/login.page.ts:173</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Empêche la soumission du formulaire lorsque l&#39;utilisateur presse la touche &quot;Entrée&quot;</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                        <code>KeyboardEvent</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canUseSSO"></a>
+                    <span class="name">
+                        <span ><b>canUseSSO</b></span>
+                        <a href="#canUseSSO"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>true</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/routes/login/login.page.ts:38</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Can user SSO</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorMessage"></a>
+                    <span class="name">
+                        <span ><b>errorMessage</b></span>
+                        <a href="#errorMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/routes/login/login.page.ts:34</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Error connection message on login</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="form"></a>
+                    <span class="name">
+                        <span ><b>form</b></span>
+                        <a href="#form"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new FormGroup({
+    email: new FormControl(),
+    password: new FormControl(),
+    remember: new FormControl(),
+    checkboxPassword: new FormControl(),
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/routes/login/login.page.ts:42</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Formulaire</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="inputs"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>inputs</b></span>
+                        <a href="#inputs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>QueryList&lt;ElementRef&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new QueryList&lt;ElementRef&gt;()</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChildren(&#x27;input&#x27;)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/routes/login/login.page.ts:25</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isReady"></a>
+                    <span class="name">
+                        <span ><b>isReady</b></span>
+                        <a href="#isReady"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/routes/login/login.page.ts:51</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Waiting screen to be ready</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="needToGetCode"></a>
+                    <span class="name">
+                        <span ><b>needToGetCode</b></span>
+                        <a href="#needToGetCode"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/routes/login/login.page.ts:55</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Popin to required code</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ssoIsActivate"></a>
+                    <span class="name">
+                        <span ><b>ssoIsActivate</b></span>
+                        <a href="#ssoIsActivate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>import.meta.env.NG_APP_ENABLE_SSO</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/routes/login/login.page.ts:30</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>SSO is activate to this env</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userService"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>userService</b></span>
+                        <a href="#userService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/routes/login/login.page.ts:64</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit, ViewChildren, QueryList, ElementRef } from &#x27;@angular/core&#x27;
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from &#x27;@angular/forms&#x27;
+import { Title } from &#x27;@angular/platform-browser&#x27;
+import { Router, RouterLink } from &#x27;@angular/router&#x27;
+import { WrapperNoConnectedComponent } from &#x27;../../components/wrapper-no-connected/wrapper-no-connected.component&#x27;
+import { PopupComponent } from &#x27;../../components/popup/popup.component&#x27;
+import { AuthService } from &#x27;../../services/auth/auth.service&#x27;
+import { UserService } from &#x27;../../services/user/user.service&#x27;
+import { SSOService } from &#x27;../../services/sso/sso.service&#x27;
+import { PROVIDER_JUSTICE_NAME, SAML_STATUS_PENDING } from &#x27;../../constants/saml&#x27;
+import { LOGIN_STATUS_GET_CODE } from &#x27;../../constants/login&#x27;
+import { CommonModule } from &#x27;@angular/common&#x27;
+
+/**
+ * Page de connexion
+ */
+
+@Component({
+  standalone: true,
+  imports: [WrapperNoConnectedComponent, RouterLink, FormsModule, PopupComponent, ReactiveFormsModule, CommonModule],
+  templateUrl: &#x27;./login.page.html&#x27;,
+  styleUrls: [&#x27;./login.page.scss&#x27;],
+})
+export class LoginPage implements OnInit {
+  @ViewChildren(&#x27;input&#x27;) inputs: QueryList&lt;ElementRef&gt; &#x3D; new QueryList&lt;ElementRef&gt;()
+
+  /**
+   * SSO is activate to this env
+   */
+  ssoIsActivate: boolean &#x3D; import.meta.env.NG_APP_ENABLE_SSO
+  /**
+   * Error connection message on login
+   */
+  errorMessage: string | null &#x3D; null
+  /**
+   * Can user SSO
+   */
+  canUseSSO: boolean &#x3D; true
+  /**
+   * Formulaire
+   */
+  form &#x3D; new FormGroup({
+    email: new FormControl(),
+    password: new FormControl(),
+    remember: new FormControl(),
+    checkboxPassword: new FormControl(),
+  })
+  /**
+   * Waiting screen to be ready
+   */
+  isReady: boolean &#x3D; false
+  /**
+   * Popin to required code
+   */
+  needToGetCode: string | null &#x3D; null
+
+  /**
+   * Constructeur
+   * @param authService
+   * @param userService
+   * @param router
+   * @param title
+   */
+  constructor(private authService: AuthService, public userService: UserService, private router: Router, private title: Title, private ssoService: SSOService) {
+    this.title.setTitle((this.userService.isCa() ? &#x27;A-Just CA | &#x27; : &#x27;A-Just TJ | &#x27;) + &#x27;Se connecter&#x27;)
+  }
+
+  /**
+   * Vérificiation si l&#x27;utilisateur est connecté
+   */
+  ngOnInit() {
+    if (this.ssoIsActivate) {
+      //this.ssoService.canUseSSO().then((d) &#x3D;&gt; (this.canUseSSO &#x3D; d))
+    }
+
+    this.userService.me().then((data) &#x3D;&gt; {
+      if (data) {
+        this.router.navigate([this.userService.getUserPageUrl(data)])
+      }
+    })
+
+    this.ssoService.getSSOStatus().then((s) &#x3D;&gt; {
+      this.isReady &#x3D; true
+      if (s.token) {
+        this.router.navigate([this.userService.getUserPageUrl(s.user)])
+        return
+      }
+      if (s &amp;&amp; s &amp;&amp; s.status &#x3D;&#x3D;&#x3D; SAML_STATUS_PENDING) {
+        // we need to complete to signin
+        this.router.navigate([&#x27;/inscription&#x27;], {
+          queryParams: {
+            email: s.datas.email,
+            firstName: s.datas.firstName,
+            lastName: s.datas.lastName,
+            provider: PROVIDER_JUSTICE_NAME,
+          },
+        })
+      }
+    })
+  }
+
+  /**
+   * Demande connexion
+   */
+  onSubmit() {
+    let { email, password, remember } &#x3D; this.form.value
+    this.errorMessage &#x3D; null
+    this.authService
+      .login({ email, password, remember: Number(remember) }, { noAlert: true })
+      .then((returnLogin) &#x3D;&gt; {
+        if (returnLogin &amp;&amp; returnLogin.data &amp;&amp; returnLogin.data.status &#x3D;&#x3D;&#x3D; LOGIN_STATUS_GET_CODE) {
+          this.needToGetCode &#x3D; returnLogin.data.datas.code || &#x27;&#x27;
+        } else {
+          if (this.authService.redirectUrl) {
+            window.location.href &#x3D; this.authService.redirectUrl
+            return
+          }
+
+          this.router.navigate([this.userService.getUserPageUrl(returnLogin.user)])
+        }
+      })
+      .catch((err) &#x3D;&gt; {
+        this.errorMessage &#x3D; err
+      })
+  }
+
+  onUseSSO() {
+    //if (!this.canUseSSO) {
+    //  alert(
+    //    &quot;Vous devez être dans l&#x27;environement Justice pour utiliser page blanche !&quot;
+    //  )
+    //} else {
+    window.location.href &#x3D; this.ssoService.getSSOLogin()
+    //}
+  }
+
+  onContinuToLogin(action: any, input: any) {
+    console.log(action, input.value)
+    switch (action.id) {
+      case &#x27;connect&#x27;:
+        this.authService.completeLogin({ code: input.value }).then((returnLogin) &#x3D;&gt; {
+          if (this.authService.redirectUrl) {
+            window.location.href &#x3D; this.authService.redirectUrl
+            return
+          }
+
+          this.router.navigate([this.userService.getUserPageUrl(returnLogin.user)])
+        })
+        break
+      default:
+        this.needToGetCode &#x3D; null
+        break
+    }
+  }
+
+  /**
+   * Permet à l&#x27;utilisateur de passer d&#x27;un input à un autre avec la touche &quot;Entrée&quot;
+   * @param event
+   */
+  focusNext(event: any) {
+    event.preventDefault()
+    const inputsArray &#x3D; this.inputs.toArray()
+    const currentIndex &#x3D; inputsArray.findIndex((input) &#x3D;&gt; input.nativeElement &#x3D;&#x3D;&#x3D; event.target)
+    if (currentIndex &gt; -1 &amp;&amp; currentIndex &lt; inputsArray.length - 1) {
+      inputsArray[currentIndex + 1].nativeElement.focus()
+    }
+  }
+
+  /**
+   * Empêche la soumission du formulaire lorsque l&#x27;utilisateur presse la touche &quot;Entrée&quot;
+   * @param event
+   */
+  preventSubmit(event: KeyboardEvent) {
+    if (event.key &#x3D;&#x3D;&#x3D; &#x27;Enter&#x27;) {
+      event.preventDefault()
+    }
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">@if (isReady) {
+  &lt;aj-wrapper-no-connected
+    [title]&#x3D;&quot;&#x27;Un outil d\&#x27;aide à la décision et&lt;br/&gt;de prospective pour piloter&lt;br/&gt;votre juridiction&#x27;&quot;
+  &gt;
+    &lt;div class&#x3D;&quot;logo&quot;&gt;
+      &lt;img src&#x3D;&quot;/assets/icons/bloc-marque/bloc-marque-white@2x.svg&quot; alt&#x3D;&quot;ministère de la justice&quot; /&gt;
+      &lt;img src&#x3D;&quot;/assets/icons/logos/white-192x192@1x.svg&quot; alt&#x3D;&quot;a-just&quot; /&gt;
+    &lt;/div&gt;
+    &lt;div class&#x3D;&quot;signup&quot;&gt;
+      &lt;p class&#x3D;&quot;intro-step-1&quot;&gt;Vous n’avez pas encore de compte&lt;/p&gt;
+      &lt;p&gt;&lt;b&gt;Rejoindre A-JUST&lt;/b&gt;&lt;/p&gt;
+      &lt;a routerLink&#x3D;&quot;/inscription&quot;&gt;
+        &lt;button class&#x3D;&quot;outline white strict-border intro-step-2&quot;&gt;
+          &lt;i class&#x3D;&quot;ri-login-box-line&quot;&gt;&lt;/i&gt;
+          Demander votre embarquement
+        &lt;/button&gt;
+      &lt;/a&gt;
+    &lt;/div&gt;
+    &lt;form [formGroup]&#x3D;&quot;form&quot; (ngSubmit)&#x3D;&quot;onSubmit()&quot; (keydown)&#x3D;&quot;preventSubmit($event)&quot;&gt;
+      &lt;p&gt;Vous avez déjà un compte&lt;/p&gt;
+      @if (ssoIsActivate) {
+        &lt;button
+          class&#x3D;&quot;outline white strict-border sso-bt&quot;
+          (click)&#x3D;&quot;onUseSSO()&quot;
+          type&#x3D;&quot;button&quot;
+          [ngClass]&#x3D;&quot;{ disabled: !canUseSSO }&quot;
+        &gt;
+          &lt;img src&#x3D;&quot;/assets/icons/bloc-marque/bloc-marque-white-light.svg&quot; /&gt;
+          Se connecter avec Pages Blanches
+        &lt;/button&gt;
+        &lt;div class&#x3D;&quot;or&quot;&gt;
+          &lt;p&gt;ou&lt;/p&gt;
+        &lt;/div&gt;
+      }
+      &lt;h3 class&#x3D;&quot;intro-step-3&quot;&gt;Se connecter avec son compte&lt;/h3&gt;
+      &lt;label&gt;Email&lt;/label&gt;
+      &lt;input
+        #input
+        class&#x3D;&quot;ethics-ui&quot;
+        placeholder&#x3D;&quot;&quot;
+        formControlName&#x3D;&quot;email&quot;
+        type&#x3D;&quot;email&quot;
+        (keyup.enter)&#x3D;&quot;focusNext($event)&quot;
+      /&gt;
+      &lt;div class&#x3D;&quot;password-line&quot;&gt;
+        &lt;label&gt;Mot de passe&lt;/label&gt;
+        &lt;div&gt;
+          &lt;span id&#x3D;&quot;printPassword&quot; class&#x3D;&quot;cursor-pointer&quot; (click)&#x3D;&quot;oncheck.click(); $event.stopPropagation()&quot;&gt;
+            &lt;input
+              (click)&#x3D;&quot;$event.stopPropagation()&quot;
+              class&#x3D;&quot;cursor-pointer&quot;
+              #oncheck
+              type&#x3D;&quot;checkbox&quot;
+              formControlName&#x3D;&quot;checkboxPassword&quot;
+            /&gt;
+            Afficher
+          &lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;input
+        #input
+        class&#x3D;&quot;ethics-ui&quot;
+        placeholder&#x3D;&quot;&quot;
+        formControlName&#x3D;&quot;password&quot;
+        [type]&#x3D;&quot;form.get(&#x27;checkboxPassword&#x27;)?.value ? &#x27;text&#x27; : &#x27;password&#x27;&quot;
+        (keyup.enter)&#x3D;&quot;focusNext($event)&quot;
+      /&gt;
+      &lt;span class&#x3D;&quot;remember-me&quot;&gt;
+        &lt;input type&#x3D;&quot;checkbox&quot; formControlName&#x3D;&quot;remember&quot; class&#x3D;&quot;remember-check&quot; /&gt;
+        &lt;label&gt;Se souvenir de moi&lt;/label&gt;
+      &lt;/span&gt;
+      @if (errorMessage) {
+        &lt;p class&#x3D;&quot;error-message&quot;&gt;{{ errorMessage }}&lt;/p&gt;
+      }
+      &lt;div class&#x3D;&quot;remember-row&quot;&gt;
+        &lt;!--&lt;div&gt;&lt;input type&#x3D;&quot;checkbox&quot;&gt;
+      &lt;p&gt;Se souvenir de moi&lt;/p&gt;
+    &lt;/div&gt;--&gt;
+        &lt;div&gt;&lt;/div&gt;
+        &lt;a routerLink&#x3D;&quot;/mot-de-passe-oublie&quot;&gt;Mot de passe oublié&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;input type&#x3D;&quot;submit&quot; class&#x3D;&quot;big-button&quot; value&#x3D;&quot;Se connecter&quot; /&gt;
+    &lt;/form&gt;
+    @if (needToGetCode !&#x3D;&#x3D; null) {
+      &lt;aj-popup
+        [actions]&#x3D;&quot;[
+          { id: &#x27;close&#x27;, content: &#x27;Annuler&#x27; },
+          { id: &#x27;connect&#x27;, content: &#x27;Se connecter&#x27;, fill: true },
+        ]&quot;
+        [closeIcon]&#x3D;&quot;true&quot;
+        (onClose)&#x3D;&quot;needToGetCode &#x3D; null&quot;
+        title&#x3D;&quot;Connexion&quot;
+        (selectedAction)&#x3D;&quot;onContinuToLogin($event, codeInput)&quot;
+      &gt;
+        &lt;div class&#x3D;&quot;popin-code&quot;&gt;
+          &lt;p&gt;Vous devez saisir le code envoyé par mail pour confirmer votre connexion.&lt;/p&gt;
+          &lt;input #codeInput class&#x3D;&quot;ethics-ui&quot; placeholder&#x3D;&quot;Code&quot; type&#x3D;&quot;text&quot; [value]&#x3D;&quot;needToGetCode&quot; autofocus /&gt;
+        &lt;/div&gt;
+      &lt;/aj-popup&gt;
+    }
+  &lt;/aj-wrapper-no-connected&gt;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./login.page.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &#x27;../../styles/utils.scss&#x27; as utils;
+
+:host {
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    label {
+      flex: 1;
+      margin: initial;
+    }
+  }
+
+  .logo {
+    height: 7em;
+
+    &gt;img {
+      height: 90px;
+      margin-right: 27px;
+    }
+  }
+
+  form {
+    padding: 1.5em;
+    border: solid 1px utils.$colors-cgraylightv3;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 24px;
+  }
+
+  label {
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  input {
+    margin-bottom: 24px;
+  }
+
+  .actions {
+    display: block;
+    margin-top: 16px;
+  }
+
+  a {
+    color: utils.$colors-primary;
+  }
+
+  .remember-check {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    margin-bottom: 0;
+  }
+
+  .remember-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+
+    &gt;div {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.signup {
+  margin-bottom: 24px;
+  padding: 1.5em;
+  background-color: utils.$colors-bgProgressBar;
+
+  p:last-child {
+    margin-top: 2px;
+    margin-bottom: 14px;
+  }
+
+  b {
+    font-size: 20px;
+  }
+
+  a {
+    margin-top: 16px;
+    display: block;
+  }
+
+  button {
+    width: 100%;
+    font-size: 1.125em;
+    font-weight: 500;
+    height: 48px;
+    line-height: 42px;
+
+    i {
+      margin-right: 12px;
+      position: relative;
+      top: 0px;
+    }
+  }
+}
+
+.sso-bt {
+  display: flex;
+  width: 100%;
+  margin-top: 1em;
+  font-size: 1.125em;
+
+  &amp;.disabled {
+    opacity: 0.75;
+    border-color: utils.$colors-cblack;
+    color: utils.$colors-cblack;
+  }
+
+  img {
+    align-self: stretch;
+    margin-right: 16px;
+  }
+}
+
+.or {
+  margin: 1em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &amp;::before {
+    content: &quot; &quot;;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: utils.$colors-lightBorder;
+  }
+
+  p {
+    display: inline-block;
+    margin: 0;
+    padding: 8px;
+    background-color: utils.$colors-white;
+    z-index: 1;
+  }
+}
+
+.popin-code {
+  p {
+    margin-bottom: 16px;
+  }
+
+  input {
+    margin-bottom: 0;
+  }
+}
+
+.password-line {
+  display: flex;
+
+  div {
+    &amp;:last-child {
+      display: flex;
+      justify-content: flex-end;
+
+      span {
+        font-size: 14px;
+
+        input {
+          position: relative;
+          top: 1px;
+        }
+      }
+    }
+
+    flex: 1;
+  }
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div>@if (isReady) {  <aj-wrapper-no-connected    [title]="\'Un outil d\\'aide à la décision et<br/>de prospective pour piloter<br/>votre juridiction\'"  >    <div class="logo">      <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />      <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />    </div>    <div class="signup">      <p class="intro-step-1">Vous n’avez pas encore de compte</p>      <p><b>Rejoindre A-JUST</b></p>      <a routerLink="/inscription">        <button class="outline white strict-border intro-step-2">          <i class="ri-login-box-line"></i>          Demander votre embarquement        </button>      </a>    </div>    <form [formGroup]="form" (ngSubmit)="onSubmit()" (keydown)="preventSubmit($event)">      <p>Vous avez déjà un compte</p>      @if (ssoIsActivate) {        <button          class="outline white strict-border sso-bt"          (click)="onUseSSO()"          type="button"          [ngClass]="{ disabled: !canUseSSO }"        >          <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />          Se connecter avec Pages Blanches        </button>        <div class="or">          <p>ou</p>        </div>      }      <h3 class="intro-step-3">Se connecter avec son compte</h3>      <label>Email</label>      <input        #input        class="ethics-ui"        placeholder=""        formControlName="email"        type="email"        (keyup.enter)="focusNext($event)"      />      <div class="password-line">        <label>Mot de passe</label>        <div>          <span id="printPassword" class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()">            <input              (click)="$event.stopPropagation()"              class="cursor-pointer"              #oncheck              type="checkbox"              formControlName="checkboxPassword"            />            Afficher          </span>        </div>      </div>      <input        #input        class="ethics-ui"        placeholder=""        formControlName="password"        [type]="form.get(\'checkboxPassword\')?.value ? \'text\' : \'password\'"        (keyup.enter)="focusNext($event)"      />      <span class="remember-me">        <input type="checkbox" formControlName="remember" class="remember-check" />        <label>Se souvenir de moi</label>      </span>      @if (errorMessage) {        <p class="error-message">{{ errorMessage }}</p>      }      <div class="remember-row">        <!--<div><input type="checkbox">      <p>Se souvenir de moi</p>    </div>-->        <div></div>        <a routerLink="/mot-de-passe-oublie">Mot de passe oublié</a>      </div>      <input type="submit" class="big-button" value="Se connecter" />    </form>    @if (needToGetCode !== null) {      <aj-popup        [actions]="[          { id: \'close\', content: \'Annuler\' },          { id: \'connect\', content: \'Se connecter\', fill: true },        ]"        [closeIcon]="true"        (onClose)="needToGetCode = null"        title="Connexion"        (selectedAction)="onContinuToLogin($event, codeInput)"      >        <div class="popin-code">          <p>Vous devez saisir le code envoyé par mail pour confirmer votre connexion.</p>          <input #codeInput class="ethics-ui" placeholder="Code" type="text" [value]="needToGetCode" autofocus />        </div>      </aj-popup>    }  </aj-wrapper-no-connected>}</div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'LoginPage'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'LoginPage.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
