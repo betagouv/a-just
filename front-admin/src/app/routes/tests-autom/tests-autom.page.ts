@@ -17,7 +17,7 @@ export class TestsAutomPage implements OnInit {
   hasSearched = false;
   results: TestSearchResult[] = [];
   error: string | null = null;
-  snippets: Array<{ loading: boolean; content: string; start: number; end: number } | null> = [];
+  snippets: Array<{ loading: boolean; content: string; start: number; end: number; summaryFr?: string | null } | null> = [];
 
   constructor(private testsSvc: TestsAutomService) {}
 
@@ -67,12 +67,12 @@ export class TestsAutomPage implements OnInit {
       return;
     }
     // expand and fetch
-    this.snippets[index] = { loading: true, content: '', start: res.line || 1, end: res.line || 1 };
+    this.snippets[index] = { loading: true, content: '', start: res.line || 1, end: res.line || 1, summaryFr: null };
     const snip = await this.testsSvc.getSnippet(res.file, res.line || 1, res.source);
     if (snip) {
-      this.snippets[index] = { loading: false, content: snip.snippet, start: snip.start, end: snip.end };
+      this.snippets[index] = { loading: false, content: snip.snippet, start: snip.start, end: snip.end, summaryFr: snip.summaryFr };
     } else {
-      this.snippets[index] = { loading: false, content: 'Snippet indisponible', start: res.line || 1, end: res.line || 1 };
+      this.snippets[index] = { loading: false, content: 'Snippet indisponible', start: res.line || 1, end: res.line || 1, summaryFr: null };
     }
   }
 }

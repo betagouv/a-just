@@ -1,4 +1,4 @@
-<aj-wrapper title="Tests autom">
+<aj-wrapper title="Recherche de tests automatisés">
   <div class="tests-autom-container">
     <div class="search-bar">
       <input
@@ -23,8 +23,8 @@
         <div class="header-row">
           <div class="title">
             {{ r.title }}
-            <span class="kind-badge" *ngIf="r.kind || r.source">
-              {{ r.kind || (r.source === 'api' ? 'unit test' : 'end to end test') }}
+            <span class="kind-badge" *ngIf="r.kind || r.source" [ngClass]="r.source === 'api' ? 'badge-backend' : 'badge-e2e'">
+              {{ r.kind || (r.source === 'api' ? 'unit test backend' : 'end to end test') }}
             </span>
           </div>
           <div class="score">{{ (r.score * 100) | number:'1.0-0' }}%</div>
@@ -33,8 +33,11 @@
           <span class="chevron" (click)="onToggleSnippet(i)">{{ snippets[i] ? '▼' : '▶' }}</span>
         </div>
         <div class="snippet" *ngIf="snippets[i]">
-          <div class="snippet-meta">{{ r.file }}:{{ r.line || snippets[i]?.start }}</div>
           <div class="loading" *ngIf="snippets[i]?.loading">Chargement…</div>
+          <div class="snippet-summary" *ngIf="!snippets[i]?.loading && snippets[i]?.summaryFr">
+            <p class="summary-text">{{ snippets[i]?.summaryFr }}</p>
+          </div>
+          <div class="snippet-meta">{{ r.file }}:{{ r.line || snippets[i]?.start }}</div>
           <pre class="code-block" *ngIf="!snippets[i]?.loading" [innerText]="snippets[i]?.content"></pre>
         </div>
       </li>

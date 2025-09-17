@@ -72,6 +72,20 @@
   vertical-align: middle;
 }
 
+/* Blue for backend unit tests */
+.kind-badge.badge-backend {
+  background: #e7f1ff; /* light blue */
+  color: #0b5ed7;      /* bootstrap primary-ish */
+  border: 1px solid #cfe2ff;
+}
+
+/* Yellow for end-to-end tests */
+.kind-badge.badge-e2e {
+  background: #fff3cd; /* light yellow */
+  color: #997404;
+  border: 1px solid #ffec99;
+}
+
 .header-row .score {
   color: #555;
 }
@@ -97,6 +111,16 @@
   font-size: 12px;
   color: #666;
   margin-bottom: 4px;
+}
+
+.snippet-summary {
+  margin-bottom: 6px;
+}
+
+.snippet-summary .summary-text {
+  color: #666;      /* same grey as file name */
+  font-size: 13px;  /* slightly bigger, still subtle */
+  margin: 0;
 }
 
 .code-block {

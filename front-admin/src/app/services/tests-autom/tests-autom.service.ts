@@ -60,14 +60,14 @@ export class TestsAutomService {
     }
   }
 
-  async getSnippet(file: string, line: number, source?: string): Promise<{ snippet: string; start: number; end: number; includedBefores?: number } | null> {
+  async getSnippet(file: string, line: number, source?: string): Promise<{ snippet: string; start: number; end: number; includedBefores?: number; summaryFr?: string | null } | null> {
     try {
       const qs = new URLSearchParams({ file, line: String(line || 1) });
       if (source) qs.set('source', source);
       const resp = await this.server.get(`/admin-tests/snippet?${qs.toString()}`);
       const payload = resp?.data ?? resp;
       if (payload?.exists) {
-        return { snippet: payload.snippet ?? '', start: payload.start ?? line, end: payload.end ?? line, includedBefores: payload.includedBefores };
+        return { snippet: payload.snippet ?? '', start: payload.start ?? line, end: payload.end ?? line, includedBefores: payload.includedBefores, summaryFr: payload.summaryFr ?? null };
       }
       return null;
     } catch {

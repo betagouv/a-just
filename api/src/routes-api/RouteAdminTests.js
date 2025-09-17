@@ -8,6 +8,7 @@ import { Types } from '../utils/types'
 import { spawn } from 'child_process'
 // path already imported above
 import fs from 'fs'
+import crypto from 'crypto'
 import axios from 'axios'
 import { buildTestCorpus, formatCorpusLines } from '../utils/tests-corpus'
 import os from 'os'
@@ -28,6 +29,8 @@ const HF_MODEL = ENV('HF_EMBEDDINGS_MODEL', 'BAAI/bge-small-en-v1.5')
 const ALBERT_API_BASE = ENV('ALBERT_BASE_URL', 'https://albert.api.etalab.gouv.fr')
 const ALBERT_API_KEY = ENV('ALBERT_API_KEY', '')
 const ALBERT_MODEL = ENV('ALBERT_EMBEDDINGS_MODEL', 'embeddings-small') // alias of BAAI/bge-m3
+// Albert chat model for summaries (must be a text-generation model id)
+const ALBERT_CHAT_MODEL = ENV('ALBERT_CHAT_MODEL', '')
 
 // One-time diagnostic log to confirm active provider/model
 try {
@@ -547,6 +550,96 @@ export default class RouteAdminTests extends Route {
     try {
       console.log('[snippet]', { file, requestedLine: line, itStartLine, itEndLine, includedBefores: scopedBefores.length })
     } catch {}
-    this.sendOk(ctx, { exists: true, file, line: itStartLine, start: itStartLine, end: itEndLine, snippet, includedBefores: scopedBefores.length, debug: { requestedLine: line, requestedOffset, tokenPos: targetIt.tokenPos ?? targetIt.startChar } })
+    // Generate or load cached French summary using Albert chat API
+    const summary = await generateSnippetSummaryFr(snippet).catch(() => null)
+    this.sendOk(ctx, { exists: true, file, line: itStartLine, start: itStartLine, end: itEndLine, snippet, summaryFr: summary, includedBefores: scopedBefores.length, debug: { requestedLine: line, requestedOffset, tokenPos: targetIt.tokenPos ?? targetIt.startChar } })
+  }
+}
+
+// === Summarization helpers ===
+function summariesDir() {
+  return path.resolve(__dirname, '..', 'var', 'tests-corpus', 'summaries')
+}
+
+function safeFsMkdir(p) {
+  try { fs.mkdirSync(p, { recursive: true }) } catch {}
+}
+
+function summaryCachePath(hash, provider, model) {
+  const dir = summariesDir()
+  safeFsMkdir(dir)
+  const p = (provider || '').toString().trim() || 'unknown'
+  const m = (model || '').toString().trim() || 'unknown'
+  return path.join(dir, `fr-${safeName(p)}-${safeName(m)}-${hash}.txt`)
+}
+
+async function generateSnippetSummaryFr(snippet) {
+  const text = (snippet || '').toString().trim()
+  if (!text) return null
+  // Only generate with Albert chat if configured
+  if (!ALBERT_API_KEY || !ALBERT_CHAT_MODEL) return null
+  const prov = 'albert'
+  const mod = ALBERT_CHAT_MODEL
+  const hash = crypto.createHash('sha256').update(text).digest('hex')
+  const cacheFile = summaryCachePath(hash, prov, mod)
+  try {
+    if (fs.existsSync(cacheFile)) {
+      const cached = fs.readFileSync(cacheFile, 'utf8')
+      if (cached && cached.trim()) return cached
+    }
+  } catch {}
+
+  try {
+    const summary = await albertChatSummarize(text)
+    if (summary && summary.trim()) {
+      try { fs.writeFileSync(cacheFile, summary, 'utf8') } catch {}
+      return summary
+    }
+  } catch (e) {
+    try { console.warn('[summary] failed to generate:', e?.response?.status || '', e?.message || e) } catch {}
+  }
+  return null
+}
+
+async function albertChatSummarize(codeSnippet) {
+  const systemPrompt = 'Vous êtes un expert en programmation.'
+  const userPrompt = [
+    'Résumez le code suivant en français afin qu\'un utilisateur non technique, qui connaît le produit, comprenne ce qui est testé.',
+    'Présentez le résumé en 1 ou 2 lignes, dans un style direct et concis, sans mots introductif de type "Résumé", "voici un résumé". Pas besoin de guillements.',
+    '# Début du code',
+    codeSnippet,
+    '# Fin du code',
+  ].join('\n')
+
+  const url = `${ALBERT_API_BASE.replace(/\/$/, '')}/v1/chat/completions`
+  const body = {
+    model: ALBERT_CHAT_MODEL,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    temperature: 0.2,
+    stream: false,
+  }
+  try {
+    const { data, status } = await axios.post(url, body, {
+      headers: { Authorization: `Bearer ${ALBERT_API_KEY}`, 'Content-Type': 'application/json' },
+      timeout: 30000,
+    })
+    // OpenAI-like response: choices[0].message.content
+    const content = data?.choices?.[0]?.message?.content
+    return typeof content === 'string' ? content : null
+  } catch (e) {
+    try {
+      const status = e?.response?.status
+      const respData = e?.response?.data
+      // Truncate large payloads
+      const bodyPreview = typeof respData === 'string' ? respData.slice(0, 2000) : JSON.stringify(respData)?.slice(0, 2000)
+      console.error('[albert-chat] error', {
+        status,
+        body: bodyPreview,
+      })
+    } catch {}
+    throw e
   }
 }
