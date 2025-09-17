@@ -53,17 +53,20 @@ jobs:
           name: cypress-reports
           path: ./end-to-end/cypress/reports
 
-      - name: Publish Test Results
-        if: always()
-        continue-on-error: true
-        run: |
-          if [ -f "./end-to-end/cypress/reports/"*.html ]; then
-            echo "✅ Cypress E2E test reports generated successfully"
-            echo "📊 Reports available in artifacts: cypress-reports"
-            ls -la ./end-to-end/cypress/reports/
-          else
-            echo "❌ No test reports found"
-          fi
+  deploy:
+    needs: start-tests
+    runs-on: ubuntu-latest
+    if: always()
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
 
       - name: Deploy to GitHub Pages
         id: deployment
