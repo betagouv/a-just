@@ -819,16 +819,22 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.simulatorService.situationProjected.subscribe((d) => {
         this.projectedSituationData = this.simulatorService.situationProjected.getValue()
 
-        let isEqualToZero = this.firstSituationData?.totalIn === 0 && this.firstSituationData?.totalOut === 0 && this.firstSituationData?.lastStock === 0
+        let isEqualToZero =
+          this.firstSituationData &&
+          this.firstSituationData?.totalIn === 0 &&
+          this.firstSituationData?.totalOut === 0 &&
+          this.firstSituationData?.lastStock === 0
         setTimeout(() => {
           if (
             (this.firstSituationData !== null &&
-              (this.firstSituationData as any).countOfCalandarDays &&
               !this.hasNoNullValue(this.firstSituationData) &&
               this.simulatorService.dateStop.getValue() &&
               this.simulatorService.contentieuOrSubContentieuId.getValue() &&
               this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0) ||
-            isEqualToZero
+            (isEqualToZero &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue() &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0 &&
+              (this.firstSituationData as any).countOfCalandarDays === undefined)
           ) {
             alert(
               "En l’absence de données d’activité renseignées pour les 12 derniers mois, cette simulation n’est pas possible. Veuillez renseigner préalablement les données manquantes pour ce contentieux dans l'écran de données d’activité",
