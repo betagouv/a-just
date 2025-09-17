@@ -1,0 +1,720 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  IntroJSStep</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/components/intro-js/intro-js.component.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#actions" 
+>
+                                            actions
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#beforeLoad" 
+>
+                                            beforeLoad
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#intro" 
+>
+                                            intro
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#options" 
+>
+                                            options
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#target" 
+>
+                                            target
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#title" 
+>
+                                            title
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="actions"></a>
+                                        <span class="name "><b>actions</b>
+                                            <a href="#actions">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>actions:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="beforeLoad"></a>
+                                        <span class="name "><b>beforeLoad</b>
+                                            <a href="#beforeLoad">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>beforeLoad:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" >Function</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="intro"></a>
+                                        <span class="name "><b>intro</b>
+                                            <a href="#intro">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>intro:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="options"></a>
+                                        <span class="name "><b>options</b>
+                                            <a href="#options">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>options:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="target"></a>
+                                        <span class="name "><b>target</b>
+                                            <a href="#target">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>target:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="title"></a>
+                                        <span class="name "><b>title</b>
+                                            <a href="#title">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>title:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  HostListener,
+  inject,
+  Input,
+  Output,
+} from &#x27;@angular/core&#x27;;
+import { KPIService } from &#x27;../../services/kpi/kpi.service&#x27;;
+import {
+  HELP_AUTOSTART,
+  HELP_AUTOSTART_AND_STOP,
+  HELP_START,
+  HELP_STOP,
+} from &#x27;../../constants/log-codes&#x27;;
+import { today } from &#x27;../../utils/dates&#x27;;
+
+declare const introJs: any;
+declare const window: any;
+
+export interface IntroJSStep {
+  target: string;
+  title?: string;
+  intro?: string;
+  options?: object;
+  actions?: object;
+  beforeLoad?: Function;
+}
+
+/** sample step
+[{
+  element: document.querySelector(&#x27;.intro-step-1&#x27;),
+  title: &#x27;Welcome&#x27;,
+  intro: &#x27;Hello World! 👋&#x27;
+}*/
+
+/**
+ * Composant s&#x27;occupe d&#x27;Intro JS
+ */
+
+@Component({
+  selector: &#x27;aj-intro-js&#x27;,
+  standalone: true,
+  imports: [],
+  templateUrl: &#x27;./intro-js.component.html&#x27;,
+  styleUrls: [&#x27;./intro-js.component.scss&#x27;],
+})
+export class IntroJSComponent implements AfterViewInit {
+  kpiService &#x3D; inject(KPIService);
+  /**
+   * Etapes d&#x27;intros text dans l&#x27;alerte
+   */
+  @Input() steps: IntroJSStep[] &#x3D; [];
+  /**
+   * Identifiant unique
+   */
+  @Input() typeId: string | undefined;
+  /**
+   * Rejouer systématiquement
+   */
+  @Input() playEachTime: boolean &#x3D; false;
+  /**
+   * Event de fin du tour
+   */
+  @Output() close &#x3D; new EventEmitter();
+  /**
+   * has complete form
+   */
+  hasCompleteForm: boolean &#x3D; false;
+  /**
+   * Intro JS instance
+   */
+  intro: any;
+
+  nodeEnv &#x3D; import.meta.env.NG_APP_NODE_ENV;
+
+  @HostListener(&#x27;window:popstate&#x27;, [&#x27;$event&#x27;])
+  onPopState() {
+    if (this.intro) {
+      this.intro.exit();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.steps &amp;&amp; this.nodeEnv !&#x3D;&#x3D; &#x27;test&#x27;) {
+      let canStartPlayer &#x3D; true;
+      if (this.typeId &amp;&amp; this.playEachTime &#x3D;&#x3D;&#x3D; false) {
+        const idUsed &#x3D; localStorage.getItem(&#x27;INTRO_JS_&#x27; + this.typeId);
+        if (idUsed) {
+          this.hasCompleteForm &#x3D; true;
+          canStartPlayer &#x3D; false;
+        }
+      }
+
+      if (canStartPlayer) {
+        this.startPlayer(false);
+      }
+    }
+  }
+
+  startPlayer(log &#x3D; true) {
+    if (log) {
+      this.kpiService.register(HELP_START, &#x27;&#x27;);
+    } else {
+      this.kpiService.register(HELP_AUTOSTART, &#x27;&#x27;);
+    }
+
+    setTimeout(() &#x3D;&gt; {
+      this.hasCompleteForm &#x3D; false;
+
+      let listFunctions: string[] &#x3D; [];
+      const formatActionsToHtml &#x3D; (actions: any) &#x3D;&gt; {
+        actions &#x3D; actions || {};
+        let html &#x3D; &#x27;&#x27;;
+        let allActions &#x3D; Object.keys(actions).filter(
+          (a) &#x3D;&gt; actions[a].enable &#x3D;&#x3D;&#x3D; &#x27;undefined&#x27; || actions[a].enable &#x3D;&#x3D;&#x3D; true
+        );
+        if (allActions.length) {
+          html +&#x3D; &#x27;&lt;div class&#x3D;&quot;intro-js-action&quot;&gt;&#x27;;
+          allActions.map((key) &#x3D;&gt; {
+            // ne fonctionne pas a cause du CSP
+            html +&#x3D; &#x60;&lt;button onclick&#x3D;&quot;window.INTROJS_AJ_${key}()&quot;&gt;${actions[key].label}&lt;/button&gt;&#x60;;
+          });
+
+          html +&#x3D; &#x27;&#x27;;
+        }
+
+        return html;
+      };
+
+      const allStep &#x3D; this.steps.map((s) &#x3D;&gt; {
+        return {
+          ...s,
+          element: document.querySelector(s.target),
+          intro: (s.intro || &#x27;&#x27;) + formatActionsToHtml(s.actions),
+          ...(s.options || {}),
+        };
+      });
+      this.intro &#x3D; introJs().setOptions({
+        nextLabel: &#x27;Suivant&#x27;,
+        prevLabel: &#x27;Précédent&#x27;,
+        doneLabel: &#x27;Terminer la présentation&#x27;,
+        steps: allStep,
+      });
+      this.intro.onchange(() &#x3D;&gt; {
+        const currentStep &#x3D; allStep[this.intro.currentStep()];
+
+        if (currentStep.actions) {
+          Object.keys(currentStep.actions).map((key) &#x3D;&gt; {
+            window[&#x27;INTROJS_AJ_&#x27; + key] &#x3D; () &#x3D;&gt; {
+              // @ts-ignore
+              currentStep.actions[key].call.apply(null, arguments);
+              this.intro.exit();
+            };
+            listFunctions.push(&#x27;INTROJS_AJ_&#x27; + key);
+          });
+        }
+      });
+      this.intro.onbeforechange(async () &#x3D;&gt; {
+        const currentStep &#x3D; allStep[this.intro.currentStep()];
+        currentStep.element &#x3D; document.querySelector(currentStep.target);
+
+        let interval &#x3D; setInterval(() &#x3D;&gt; {
+          const introTooltip: any &#x3D; document.querySelector(&#x27;.introjs-tooltip&#x27;);
+          if (introTooltip) {
+            clearInterval(interval);
+            introTooltip.scrollTo({ top: 0, behavior: &#x27;smooth&#x27; });
+          }
+        }, 600);
+
+        if (currentStep.beforeLoad) {
+          await currentStep.beforeLoad(this.intro);
+        }
+
+        const domElement &#x3D; document.querySelector(currentStep.target);
+        if (domElement) {
+          this.intro._introItems[this.intro.currentStep()].element &#x3D; domElement;
+          this.intro.refresh(); // NE MARCHE PAS !!!!
+        }
+
+        listFunctions.map((f) &#x3D;&gt; {
+          window[f] &#x3D; null;
+        });
+        listFunctions &#x3D; [];
+      });
+      this.intro.onexit(() &#x3D;&gt; {
+        console.log(&#x27;on close&#x27;);
+        this.close.emit();
+
+        if (log) {
+          this.kpiService.register(
+            HELP_STOP,
+            (this.typeId ? this.typeId + &#x27;_&#x27; : &#x27;&#x27;) +
+              (this.intro.currentStep() + 1)
+          );
+        } else {
+          this.kpiService.register(
+            HELP_AUTOSTART_AND_STOP,
+            (this.typeId ? this.typeId + &#x27;_&#x27; : &#x27;&#x27;) +
+              (this.intro.currentStep() + 1)
+          );
+        }
+
+        if (this.typeId) {
+          localStorage.setItem(
+            &#x27;INTRO_JS_&#x27; + this.typeId,
+            today().getTime() + &#x27;&#x27;
+          );
+          this.hasCompleteForm &#x3D; true;
+        }
+      });
+      this.intro.start();
+    }, 200);
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'IntroJSStep.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
