@@ -1,18 +1,51 @@
+import dotenv from 'dotenv'
+import path from 'path'
+// Ensure we always load the API-level .env regardless of the process working directory
+// and override any pre-set process.env so local api/.env is the single source of truth
+dotenv.config({ path: path.resolve(__dirname, '..', '.env'), override: true })
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { spawn } from 'child_process'
-import path from 'path'
+// path already imported above
 import fs from 'fs'
 import axios from 'axios'
 import { buildTestCorpus, formatCorpusLines } from '../utils/tests-corpus'
 import os from 'os'
 
-const HF_TOKEN = process.env.HF_TOKEN || process.env.HUGGINGFACE_TOKEN || ''
-const MODEL = 'BAAI/bge-small-en-v1.5'
+// Small helper to read envs robustly (trim whitespace)
+const ENV = (k, d = '') => {
+  const v = process.env[k]
+  if (typeof v === 'string') return v.trim()
+  return v ?? d
+}
+
+// Embeddings provider configuration
+const EMBEDDINGS_PROVIDER = (ENV('EMBEDDINGS_PROVIDER', 'hf') || 'hf').toLowerCase() // 'hf' | 'albert'
+// HF configuration
+const HF_TOKEN = ENV('HF_TOKEN') || ENV('HUGGINGFACE_TOKEN') || ''
+const HF_MODEL = ENV('HF_EMBEDDINGS_MODEL', 'BAAI/bge-small-en-v1.5')
+// Albert configuration
+const ALBERT_API_BASE = ENV('ALBERT_BASE_URL', 'https://albert.api.etalab.gouv.fr')
+const ALBERT_API_KEY = ENV('ALBERT_API_KEY', '')
+const ALBERT_MODEL = ENV('ALBERT_EMBEDDINGS_MODEL', 'embeddings-small') // alias of BAAI/bge-m3
+
+// One-time diagnostic log to confirm active provider/model
+try {
+  const activeModel = EMBEDDINGS_PROVIDER === 'albert' ? ALBERT_MODEL : HF_MODEL
+  // keep it short; appears once at module load
+  console.info('[embeddings] provider=%s model=%s', EMBEDDINGS_PROVIDER, activeModel)
+} catch {}
 
 // Persist corpus within API tree, to remove dependency on end-to-end/exploration
 const CORPUS_FILE = path.resolve(__dirname, '..', 'var', 'tests-corpus', 'user-stories.txt')
-const CORPUS_EMB_FILE = path.resolve(__dirname, '..', 'var', 'tests-corpus', 'embeddings.json')
+function safeName(s) { return (s || '').toString().replace(/[^A-Za-z0-9_.-]+/g, '_') }
+function embeddingsFilePath() {
+  const provider = EMBEDDINGS_PROVIDER
+  const model = EMBEDDINGS_PROVIDER === 'albert' ? ALBERT_MODEL : HF_MODEL
+  const embDir = path.resolve(__dirname, '..', 'var', 'tests-corpus')
+  const file = `embeddings-${safeName(provider)}-${safeName(model)}.json`
+  return path.join(embDir, file)
+}
 
 // In-memory embeddings cache { items, vectors }
 let EMB_CACHE = null
@@ -63,13 +96,37 @@ async function hfEmbed(texts) {
   if (!HF_TOKEN) {
     throw new Error('HF_TOKEN is not set on server')
   }
-  const url = `https://api-inference.huggingface.co/models/${encodeURIComponent(MODEL)}`
+  const url = `https://api-inference.huggingface.co/models/${encodeURIComponent(HF_MODEL)}`
   const { data } = await axios.post(
     url,
     { inputs: texts, options: { wait_for_model: true } },
     { headers: { Authorization: `Bearer ${HF_TOKEN}` } },
   )
   return data
+}
+
+// Call Albert embeddings endpoint and return an array of vectors (shape compatible with toVector consumer)
+async function albertEmbed(texts) {
+  if (!ALBERT_API_KEY) {
+    throw new Error('ALBERT_API_KEY is not set on server')
+  }
+  const url = `${ALBERT_API_BASE.replace(/\/$/, '')}/v1/embeddings`
+  const payload = {
+    model: ALBERT_MODEL,
+    input: texts,
+    // encoding_format: 'float' // default, explicit not required
+  }
+  const { data } = await axios.post(url, payload, {
+    headers: {
+      Authorization: `Bearer ${ALBERT_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+  })
+  // data: { data: [{ embedding, index, object }, ...] }
+  if (!data || !Array.isArray(data.data)) {
+    throw new Error('Invalid response from Albert embeddings API')
+  }
+  return data.data.map((d) => d.embedding)
 }
 
 function toVector(arr) {
@@ -88,8 +145,15 @@ async function embedBatched(texts, batchSize = 32) {
   const out = []
   for (let i = 0; i < texts.length; i += batchSize) {
     const batch = texts.slice(i, i + batchSize)
-    const res = await hfEmbed(batch)
-    for (const emb of res) out.push(toVector(emb))
+    let vectors
+    if (EMBEDDINGS_PROVIDER === 'albert') {
+      vectors = await albertEmbed(batch)
+    } else {
+      // default: hf
+      const res = await hfEmbed(batch)
+      vectors = res
+    }
+    for (const emb of vectors) out.push(toVector(emb))
   }
   return out
 }
@@ -120,7 +184,32 @@ export default class RouteAdminTests extends Route {
       const it = parseCorpusLine(l)
       if (it) items.push({ ...it, kind: sourceToKind(it.source) })
     }
-    this.sendOk(ctx, { items, exists: true, path: CORPUS_FILE })
+    // Ensure cache exists for current provider/model on first page load
+    const filePath = embeddingsFilePath()
+    await (async () => {
+      // Build if missing
+      if (!fs.existsSync(filePath)) {
+        const titles = items.map((it) => it.title)
+        const vectors2d = await embedBatched(titles)
+        const vectors = vectors2d.map((v) => toVector(v))
+        fs.mkdirSync(path.dirname(filePath), { recursive: true })
+        fs.writeFileSync(
+          filePath,
+          JSON.stringify({ items, vectors, updatedAt: new Date().toISOString(), meta: { provider: EMBEDDINGS_PROVIDER, model: EMBEDDINGS_PROVIDER === 'albert' ? ALBERT_MODEL : HF_MODEL } }),
+          'utf8'
+        )
+        EMB_CACHE = { items, vectors }
+      }
+    })()
+    // Report cache status to the UI (no sensitive data)
+    let cache = { exists: fs.existsSync(filePath), path: filePath }
+    try {
+      if (cache.exists) {
+        const raw = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+        cache = { ...cache, meta: raw?.meta || null, size: Array.isArray(raw?.vectors) ? raw.vectors.length : 0, updatedAt: raw?.updatedAt || null }
+      }
+    } catch {}
+    this.sendOk(ctx, { items, exists: true, path: CORPUS_FILE, cache })
   }
 
   @Route.Post({
@@ -138,10 +227,11 @@ export default class RouteAdminTests extends Route {
       const titles = items.map((it) => it.title)
       const vectors2d = await embedBatched(titles)
       const vectors = vectors2d.map((v) => toVector(v))
-      fs.mkdirSync(path.dirname(CORPUS_EMB_FILE), { recursive: true })
+      const filePath = embeddingsFilePath()
+      fs.mkdirSync(path.dirname(filePath), { recursive: true })
       fs.writeFileSync(
-        CORPUS_EMB_FILE,
-        JSON.stringify({ items, vectors, updatedAt: new Date().toISOString() }),
+        filePath,
+        JSON.stringify({ items, vectors, updatedAt: new Date().toISOString(), meta: { provider: EMBEDDINGS_PROVIDER, model: EMBEDDINGS_PROVIDER === 'albert' ? ALBERT_MODEL : HF_MODEL } }),
         'utf8'
       )
       EMB_CACHE = { items, vectors }
@@ -192,11 +282,17 @@ export default class RouteAdminTests extends Route {
 
     // Load or refresh embeddings cache
     const ensureCache = async () => {
+      const filePath = embeddingsFilePath()
       if (!EMB_CACHE) {
-        if (fs.existsSync(CORPUS_EMB_FILE)) {
+        if (fs.existsSync(filePath)) {
           try {
-            const raw = JSON.parse(fs.readFileSync(CORPUS_EMB_FILE, 'utf8'))
-            if (Array.isArray(raw?.items) && Array.isArray(raw?.vectors)) {
+            const raw = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+            const cacheProvider = raw?.meta?.provider
+            const cacheModel = raw?.meta?.model
+            const currentModel = EMBEDDINGS_PROVIDER === 'albert' ? ALBERT_MODEL : HF_MODEL
+            const providerMatch = cacheProvider === EMBEDDINGS_PROVIDER
+            const modelMatch = cacheModel === currentModel
+            if (Array.isArray(raw?.items) && Array.isArray(raw?.vectors) && providerMatch && modelMatch) {
               EMB_CACHE = { items: raw.items, vectors: raw.vectors }
             }
           } catch {}
@@ -209,10 +305,10 @@ export default class RouteAdminTests extends Route {
         const vecs = vecs2d.map((v) => toVector(v))
         EMB_CACHE = { items, vectors: vecs }
         try {
-          fs.mkdirSync(path.dirname(CORPUS_EMB_FILE), { recursive: true })
+          fs.mkdirSync(path.dirname(filePath), { recursive: true })
           fs.writeFileSync(
-            CORPUS_EMB_FILE,
-            JSON.stringify({ items, vectors: vecs, updatedAt: new Date().toISOString() }),
+            filePath,
+            JSON.stringify({ items, vectors: vecs, updatedAt: new Date().toISOString(), meta: { provider: EMBEDDINGS_PROVIDER, model: EMBEDDINGS_PROVIDER === 'albert' ? ALBERT_MODEL : HF_MODEL } }),
             'utf8'
           )
         } catch {}
@@ -221,8 +317,16 @@ export default class RouteAdminTests extends Route {
     await ensureCache()
 
     // Embed only the query and compare against cached corpus vectors
-    const [[EqRaw]] = await Promise.all([hfEmbed([query])])
-    const Eq = toVector(EqRaw)
+    let queryVec
+    if (EMBEDDINGS_PROVIDER === 'albert') {
+      const res = await albertEmbed([query])
+      queryVec = res[0]
+    } else {
+      const res = await hfEmbed([query])
+      // hf returns nested arrays in some cases; toVector handles averaging
+      queryVec = Array.isArray(res) && res.length ? res[0] : res
+    }
+    const Eq = toVector(queryVec)
 
     const ranked = items
       .map((it, i) => ({ title: it.title, source: it.source || 'cy', kind: sourceToKind(it.source), file: it.file, line: it.line, score: cosine(EMB_CACHE.vectors[i], Eq) }))
