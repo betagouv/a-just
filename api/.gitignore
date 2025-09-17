@@ -14,3 +14,8 @@ src/public/tmp
 .output
 .error.log
 htaccess.txt
+
+# Embeddings and summaries caches (generated)
+src/var/tests-corpus/embeddings.json
+src/var/tests-corpus/embeddings-*.json
+src/var/tests-corpus/summaries/
