@@ -65,8 +65,237 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Configure Pages
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download Cypress reports artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cypress-reports
+          path: ./cypress-reports
+
+      - name: Download Cypress videos artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cypress-video
+          path: ./cypress-videos
+
+      - name: Create site directory structure
+        run: |
+          mkdir -p site
+          cp -r cypress-reports/* site/ 2>/dev/null || echo "No reports to copy"
+          mkdir -p site/videos
+          cp -r cypress-videos/* site/videos/ 2>/dev/null || echo "No videos to copy"
+
+      - name: Create index.html
+        run: |
+          cat > site/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>A-JUST - Rapports de Tests E2E</title>
+              <style>
+                  body {
+                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                      max-width: 1200px;
+                      margin: 0 auto;
+                      padding: 20px;
+                      background-color: #f5f5f5;
+                  }
+                  .header {
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      padding: 30px;
+                      border-radius: 10px;
+                      text-align: center;
+                      margin-bottom: 30px;
+                      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                  }
+                  .section {
+                      background: white;
+                      padding: 20px;
+                      margin-bottom: 20px;
+                      border-radius: 8px;
+                      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                  }
+                  .file-list {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                      gap: 15px;
+                      margin-top: 15px;
+                  }
+                  .file-item {
+                      background: #f8f9fa;
+                      border: 1px solid #e9ecef;
+                      border-radius: 6px;
+                      padding: 15px;
+                      transition: all 0.3s ease;
+                  }
+                  .file-item:hover {
+                      transform: translateY(-2px);
+                      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                  }
+                  .file-item a {
+                      text-decoration: none;
+                      color: #495057;
+                      font-weight: 500;
+                  }
+                  .file-item a:hover {
+                      color: #007bff;
+                  }
+                  .file-size {
+                      font-size: 0.9em;
+                      color: #6c757d;
+                      margin-top: 5px;
+                  }
+                  .timestamp {
+                      font-size: 0.9em;
+                      color: #6c757d;
+                      text-align: center;
+                      margin-top: 20px;
+                  }
+                  .icon {
+                      margin-right: 8px;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="header">
+                  <h1>🧪 A-JUST - Rapports de Tests E2E</h1>
+                  <p>Rapports générés automatiquement par Cypress</p>
+              </div>
+
+              <div class="section">
+                  <h2>📊 Rapports de Tests</h2>
+                  <p>Voici les derniers rapports de tests end-to-end générés :</p>
+                  <div class="file-list" id="reports-list">
+                      <!-- Les rapports seront listés ici -->
+                  </div>
+              </div>
+
+              <div class="section">
+                  <h2>🎥 Vidéos des Tests</h2>
+                  <p>Enregistrements vidéo des tests exécutés :</p>
+                  <div class="file-list" id="videos-list">
+                      <!-- Les vidéos seront listées ici -->
+                  </div>
+              </div>
+
+              <div class="timestamp">
+                  Page générée le : <span id="generation-time"></span>
+              </div>
+
+              <script>
+                  // Afficher la date de génération
+                  document.getElementById('generation-time').textContent = new Date().toLocaleString('fr-FR');
+
+                  // Fonction pour lister les fichiers dans un répertoire
+                  async function listFiles(directory, containerId, fileTypes = []) {
+                      const container = document.getElementById(containerId);
+                      
+                      try {
+                          // Cette fonction sera remplacée par la génération côté serveur
+                          // car nous ne pouvons pas lister les fichiers côté client
+                          container.innerHTML = '<p>Chargement des fichiers...</p>';
+                      } catch (error) {
+                          container.innerHTML = '<p>Aucun fichier trouvé dans ce répertoire.</p>';
+                      }
+                  }
+
+                  // Initialiser le listing des fichiers
+                  listFiles('./', 'reports-list', ['.html', '.json']);
+                  listFiles('./videos/', 'videos-list', ['.mp4', '.webm']);
+              </script>
+          </body>
+          </html>
+          EOF
+
+      - name: List available files and update index
+        run: |
+          cd site
+          echo "Available files in site directory:"
+          find . -type f -name "*.html" -o -name "*.json" -o -name "*.mp4" -o -name "*.webm" | sort
+
+          # Créer un script pour mettre à jour l'index avec les vrais fichiers
+          cat > update_index.js << 'EOFJS'
+          const fs = require('fs');
+          const path = require('path');
+
+          function getFileSize(filePath) {
+              const stats = fs.statSync(filePath);
+              const bytes = stats.size;
+              if (bytes === 0) return '0 B';
+              const k = 1024;
+              const sizes = ['B', 'KB', 'MB', 'GB'];
+              const i = Math.floor(Math.log(bytes) / Math.log(k));
+              return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+          }
+
+          function generateFileList(directory, extensions) {
+              if (!fs.existsSync(directory)) return '';
+              
+              const files = fs.readdirSync(directory, { withFileTypes: true });
+              let html = '';
+              
+              files.forEach(file => {
+                  if (file.isFile()) {
+                      const ext = path.extname(file.name).toLowerCase();
+                      if (extensions.includes(ext)) {
+                          const filePath = path.join(directory, file.name);
+                          const relativePath = path.relative('.', filePath);
+                          const size = getFileSize(filePath);
+                          const icon = ext === '.html' ? '📄' : ext === '.json' ? '📋' : '🎥';
+                          
+                          html += `
+                              <div class="file-item">
+                                  <a href="${relativePath}" target="_blank">
+                                      <span class="icon">${icon}</span>
+                                      ${file.name}
+                                  </a>
+                                  <div class="file-size">${size}</div>
+                              </div>
+                          `;
+                      }
+                  }
+              });
+              
+              return html || '<p>Aucun fichier de ce type trouvé.</p>';
+          }
+
+          // Lire le fichier index.html
+          let indexContent = fs.readFileSync('index.html', 'utf8');
+
+          // Générer les listes de fichiers
+          const reportsHtml = generateFileList('.', ['.html', '.json']);
+          const videosHtml = generateFileList('./videos', ['.mp4', '.webm']);
+
+          // Remplacer les placeholders
+          indexContent = indexContent.replace(
+              '<div class="file-list" id="reports-list">\n                      <!-- Les rapports seront listés ici -->\n                  </div>',
+              `<div class="file-list">${reportsHtml}</div>`
+          );
+
+          indexContent = indexContent.replace(
+              '<div class="file-list" id="videos-list">\n                      <!-- Les vidéos seront listées ici -->\n                  </div>',
+              `<div class="file-list">${videosHtml}</div>`
+          );
+
+          // Écrire le fichier mis à jour
+          fs.writeFileSync('index.html', indexContent);
+          console.log('Index.html mis à jour avec les fichiers disponibles');
+          EOFJS
+
+          node update_index.js
+
+      - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
 
       - name: Deploy to GitHub Pages
         id: deployment
