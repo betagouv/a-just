@@ -7,6 +7,6 @@ WORKDIR /e2e
 
 CMD ./scripts/wait-for-it.sh api:8081 --timeout=300 && \
      ./scripts/wait-for-it.sh front:4200 --timeout=300 && \ 
-     npm install && npx cypress install && npm run cy:run:reports
+     yarn install && npx cypress install && yarn cy:run:report
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
 #sleep infinity;
