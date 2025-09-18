@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
-import { BackButtonComponent } from '../../components/back-button/back-button.component';
+import { Component, inject } from '@angular/core'
+import { Title } from '@angular/platform-browser'
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
+import { BackButtonComponent } from '../../components/back-button/back-button.component'
 
 /**
  * Page de qui sommes nous
@@ -14,12 +14,15 @@ import { BackButtonComponent } from '../../components/back-button/back-button.co
   styleUrls: ['./about-us.page.scss'],
 })
 export class AboutUsPage {
-  title = inject(Title);
+  /**
+   * Service de gestion du titre
+   */
+  title = inject(Title)
   /**
    * Constructeur
    * @param title
    */
   constructor() {
-    this.title.setTitle('Qui sommes-nous ? | A-Just');
+    this.title.setTitle('Qui sommes-nous ? | A-Just')
   }
 }

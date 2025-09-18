@@ -2456,14 +2456,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="1861"
-                                    class="link-to-prism">src/app/routes/calculator/calculator.page.ts:1861</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="1866"
+                                    class="link-to-prism">src/app/routes/calculator/calculator.page.ts:1866</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Arrondi à 2 décimales</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -7432,6 +7434,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     return super.addMonthsToDate(date, months)
   }
 
+  /**
+   * Arrondi à 2 décimales
+   * @param num
+   * @returns
+   */
   round2(num: number) {
     return Math.round(num * 100) / 100
   }

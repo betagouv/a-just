@@ -136,6 +136,9 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     super()
   }
 
+  /**
+   * Initialisation du composant
+   */
   ngOnInit() {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
@@ -170,6 +173,9 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     this.watcherDestroy()
   }
 
+  /**
+   * Changement des propriétés
+   */
   ngOnChanges() {
     const list = [...this.datasFilted].filter(
       (r) => this.referentielService.idsIndispo.indexOf(r.contentieux.id) === -1 && this.referentielService.idsSoutien.indexOf(r.contentieux.id) === -1,
@@ -191,6 +197,11 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     this.eamMax = (Math.max(...allEAM) || 0) * 1.1
   }
 
+  /**
+   * Met à jour la valeur maximale
+   * @param param0
+   * @returns
+   */
   onUpdateMax({ type, max }: { type: string; max: number }) {
     switch (type) {
       case 'stocks': {
@@ -232,10 +243,20 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     }
   }
 
+  /**
+   * Récupère les heures arrondies
+   * @param value
+   * @returns
+   */
   getHours(value: number) {
     return Math.floor(value)
   }
 
+  /**
+   * Récupère les minutes arrondies
+   * @param value
+   * @returns
+   */
   getMinutes(value: number) {
     //return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0');
     let h = Math.floor(value)
@@ -281,10 +302,19 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     return valueToCheck.every((v: boolean) => v === true)
   }
 
+  /**
+   * Log l'ouverture des détails
+   * @param open
+   */
   logOpenDetails(open: boolean = true) {
     if (open === true) this.kpiService.register(CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW, '')
   }
 
+  /**
+   * Arrondi
+   * @param num
+   * @returns
+   */
   round(num: number) {
     return Math.round(num)
   }

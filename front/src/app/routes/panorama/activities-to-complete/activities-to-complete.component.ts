@@ -41,12 +41,21 @@ interface ContentieuxSelected extends ContentieuReferentielInterface {
  */
 const now = new Date()
 now.setDate(10)
+/**
+ * Dernier douze mois
+ */
 const lastTwelve = new Date(now)
 lastTwelve.setFullYear(lastTwelve.getFullYear() - 1)
 lastTwelve.setDate(lastTwelve.getDate() + 1)
+/**
+ * Dernier trimestre
+ */
 const lastTrimestre = new Date(now)
 lastTrimestre.setMonth(lastTrimestre.getMonth() - 3)
 lastTrimestre.setDate(lastTrimestre.getDate() + 1)
+/**
+ * Dernier mois
+ */
 const lastMonth = new Date(now)
 lastMonth.setMonth(lastMonth.getMonth() - 1)
 lastMonth.setDate(lastMonth.getDate() + 1)

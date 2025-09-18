@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface des lignes d&#39;analyse</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -233,6 +240,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Type de données</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -271,6 +284,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Description de la ligne</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -304,6 +323,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Valeur maximale de la ligne</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -342,6 +367,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Options visibles</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -375,6 +406,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Titre de la ligne</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -408,6 +445,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Type de la ligne</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -446,6 +489,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Valeurs de la ligne</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -479,6 +528,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Variations de la ligne</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -486,44 +541,98 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CommonModule } from &#x27;@angular/common&#x27;;
-import { Component, inject, Input, OnDestroy, OnInit } from &#x27;@angular/core&#x27;;
-import { GraphsVerticalsLinesComponent } from &#x27;../view-analytics/graphs-verticals-lines/graphs-verticals-lines.component&#x27;;
-import { GraphsNumbersComponent } from &#x27;../view-analytics/graphs-numbers/graphs-numbers.component&#x27;;
-import { MainClass } from &#x27;../../../libs/main-class&#x27;;
-import { ContentieuReferentielInterface } from &#x27;../../../interfaces/contentieu-referentiel&#x27;;
-import { OPACITY_20 } from &#x27;../../../constants/colors&#x27;;
-import { HumanResourceService } from &#x27;../../../services/human-resource/human-resource.service&#x27;;
-import { ReferentielService } from &#x27;../../../services/referentiel/referentiel.service&#x27;;
-import { UserService } from &#x27;../../../services/user/user.service&#x27;;
-import { SanitizeHtmlPipe } from &#x27;../../../pipes/sanitize-html/sanitize-html.pipe&#x27;;
-import { GraphsProgressComponent } from &#x27;../view-analytics/graphs-progress/graphs-progress.component&#x27;;
-import { CalculatorService } from &#x27;../../../services/calculator/calculator.service&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CommonModule } from &#x27;@angular/common&#x27;
+import { Component, inject, Input, OnDestroy, OnInit } from &#x27;@angular/core&#x27;
+import { GraphsVerticalsLinesComponent } from &#x27;../view-analytics/graphs-verticals-lines/graphs-verticals-lines.component&#x27;
+import { GraphsNumbersComponent } from &#x27;../view-analytics/graphs-numbers/graphs-numbers.component&#x27;
+import { MainClass } from &#x27;../../../libs/main-class&#x27;
+import { ContentieuReferentielInterface } from &#x27;../../../interfaces/contentieu-referentiel&#x27;
+import { OPACITY_20 } from &#x27;../../../constants/colors&#x27;
+import { HumanResourceService } from &#x27;../../../services/human-resource/human-resource.service&#x27;
+import { ReferentielService } from &#x27;../../../services/referentiel/referentiel.service&#x27;
+import { UserService } from &#x27;../../../services/user/user.service&#x27;
+import { SanitizeHtmlPipe } from &#x27;../../../pipes/sanitize-html/sanitize-html.pipe&#x27;
+import { GraphsProgressComponent } from &#x27;../view-analytics/graphs-progress/graphs-progress.component&#x27;
+import { CalculatorService } from &#x27;../../../services/calculator/calculator.service&#x27;
 
+/**
+ * Interface des lignes d&#x27;analyse
+ */
 export interface AnalyticsLine {
-  title: string;
-  description?: string;
-  dataType: string;
-  type: string;
-  values?: any[][];
-  lineMax: number | null;
+  /**
+   * Titre de la ligne
+   */
+  title: string
+  /**
+   * Description de la ligne
+   */
+  description?: string
+  /**
+   * Type de données
+   */
+  dataType: string
+  /**
+   * Type de la ligne
+   */
+  type: string
+  /**
+   * Valeurs de la ligne
+   */
+  values?: any[][]
+  /**
+   * Valeur maximale de la ligne
+   */
+  lineMax: number | null
+  /**
+   * Variations de la ligne
+   */
   variations: {
-    label: string;
-    isOption?: boolean;
-    values: (number | string | null)[];
-    subTitle?: string;
-    showArrow?: boolean;
-    type?: string;
-    dateStart?: Date;
-    dateStop?: Date;
+    label: string
+    isOption?: boolean
+    /**
+     * Valeurs de la variation
+     */
+    values: (number | string | null)[]
+    subTitle?: string
+    /**
+     * Afficher l&#x27;arrow
+     */
+    showArrow?: boolean
+    type?: string
+    /**
+     * Date de début
+     */
+    dateStart?: Date
+    /**
+     * Date de fin
+     */
+    dateStop?: Date
+    /**
+     * Graphique
+     */
     graph?: {
-      type: string;
-      dateStart: Date;
-      dateStop: Date;
-      color: string;
-    };
-  }[];
-  optionsVisibles?: boolean;
+      /**
+       * Type du graphique
+       */
+      type: string
+      /**
+       * Date de début
+       */
+      dateStart: Date
+      /**
+       * Date de fin
+       */
+      dateStop: Date
+      /**
+       * Couleur du graphique
+       */
+      color: string
+    }
+  }[]
+  /**
+   * Options visibles
+   */
+  optionsVisibles?: boolean
 }
 
 /**
@@ -532,89 +641,100 @@ export interface AnalyticsLine {
 
 @Component({
   standalone: true,
-  imports: [
-    CommonModule,
-    GraphsVerticalsLinesComponent,
-    GraphsNumbersComponent,
-    SanitizeHtmlPipe,
-    GraphsProgressComponent,
-  ],
+  imports: [CommonModule, GraphsVerticalsLinesComponent, GraphsNumbersComponent, SanitizeHtmlPipe, GraphsProgressComponent],
   selector: &#x27;aj-template-analytics&#x27;,
   templateUrl: &#x27;./template-analytics.component.html&#x27;,
   styleUrls: [&#x27;./template-analytics.component.scss&#x27;],
 })
-export class TemplateAnalyticsComponent
-  extends MainClass
-  implements OnInit, OnDestroy
-{
-  calculatorService &#x3D; inject(CalculatorService);
-  private humanResourceService &#x3D; inject(HumanResourceService);
-  private referentielService &#x3D; inject(ReferentielService);
-  public userService &#x3D; inject(UserService);
+export class TemplateAnalyticsComponent extends MainClass implements OnInit, OnDestroy {
+  calculatorService &#x3D; inject(CalculatorService)
+  private humanResourceService &#x3D; inject(HumanResourceService)
+  private referentielService &#x3D; inject(ReferentielService)
+  public userService &#x3D; inject(UserService)
   /**
    * Référentiel
    */
-  referentiel: ContentieuReferentielInterface[] &#x3D; [];
+  referentiel: ContentieuReferentielInterface[] &#x3D; []
   /**
    * Opacité background des contentieux
    */
-  OPACITY &#x3D; OPACITY_20;
+  OPACITY &#x3D; OPACITY_20
   /**
    * Templates
    */
-  @Input() lines: AnalyticsLine[] &#x3D; [];
+  @Input() lines: AnalyticsLine[] &#x3D; []
 
   /**
    * Constructor
    */
   constructor() {
-    super();
+    super()
   }
 
+  /**
+   * Initialisation du composant
+   */
   ngOnInit() {
     this.watch(
       this.humanResourceService.contentieuxReferentiel.subscribe((c) &#x3D;&gt; {
-        this.referentiel &#x3D; c.filter(
-          (r) &#x3D;&gt;
-            this.referentielService.idsIndispo.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1 &amp;&amp;
-            this.referentielService.idsSoutien.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1
-        );
-      })
-    );
+        this.referentiel &#x3D; c.filter((r) &#x3D;&gt; this.referentielService.idsIndispo.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1 &amp;&amp; this.referentielService.idsSoutien.indexOf(r.id) &#x3D;&#x3D;&#x3D; -1)
+      }),
+    )
   }
 
   /**
    * Suppresion des observables lors de la suppression du composant
    */
   ngOnDestroy() {
-    this.watcherDestroy();
+    this.watcherDestroy()
   }
 
+  /**
+   * Changement des propriétés
+   */
   ngOnChanges() {}
 
+  /**
+   * Récupère les options visibles
+   * @param line Ligne d&#x27;analyse
+   * @returns
+   */
   getOptionsToShow(line: AnalyticsLine) {
-    const options &#x3D; line.variations || [];
+    const options &#x3D; line.variations || []
     return line.optionsVisibles
       ? options.filter((o) &#x3D;&gt; o.isOption &#x3D;&#x3D;&#x3D; true || o.isOption &#x3D;&#x3D;&#x3D; undefined)
-      : options.filter((o) &#x3D;&gt; o.isOption &#x3D;&#x3D;&#x3D; false || o.isOption &#x3D;&#x3D;&#x3D; undefined);
+      : options.filter((o) &#x3D;&gt; o.isOption &#x3D;&#x3D;&#x3D; false || o.isOption &#x3D;&#x3D;&#x3D; undefined)
   }
 
+  /**
+   * Récupère les options visibles
+   * @param line
+   * @returns
+   */
   hasOption(line: AnalyticsLine) {
-    const options &#x3D; line.variations || [];
-    return options.filter((o) &#x3D;&gt; o.isOption &#x3D;&#x3D;&#x3D; true).length;
+    const options &#x3D; line.variations || []
+    return options.filter((o) &#x3D;&gt; o.isOption &#x3D;&#x3D;&#x3D; true).length
   }
 
-  getGraphs(
-    line: AnalyticsLine
-  ): { type: string; dateStart: Date; dateStop: Date; color: string }[] {
+  /**
+   * Récupère les graphiques
+   * @param line
+   * @returns
+   */
+  getGraphs(line: AnalyticsLine): { type: string; dateStart: Date; dateStop: Date; color: string }[] {
     // @ts-ignore
     return this.getOptionsToShow(line)
       .filter((o) &#x3D;&gt; o.graph)
-      .map((o) &#x3D;&gt; o.graph);
+      .map((o) &#x3D;&gt; o.graph)
   }
 
+  /**
+   * Vérifie si la valeur est infinie
+   * @param value
+   * @returns
+   */
   isInfinity(value: any): boolean {
-    return value &#x3D;&#x3D;&#x3D; Infinity || value &#x3D;&#x3D;&#x3D; -Infinity;  
+    return value &#x3D;&#x3D;&#x3D; Infinity || value &#x3D;&#x3D;&#x3D; -Infinity
   }
 }
 </code></pre>

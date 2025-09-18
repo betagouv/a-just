@@ -28,10 +28,25 @@ import { RouterModule } from '@angular/router'
   styleUrls: ['./popin-graphs-details.component.scss'],
 })
 export class PopinGraphsDetailsComponent extends MainClass implements AfterViewInit {
+  /**
+   * Service de gestion des utilisateurs
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion des ressources humaines
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion du calculateur
+   */
   calculatorService = inject(CalculatorService)
+  /**
+   * Service de gestion des KPIs
+   */
   kpiService = inject(KPIService)
+  /**
+   * Service de gestion des applications
+   */
   appService = inject(AppService)
   /**
    * Canvas html dom
@@ -89,15 +104,25 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
     super()
   }
 
+  /**
+   * After view init
+   */
   ngAfterViewInit() {
     this.onLoadDatas()
   }
 
+  /**
+   * Sélectionne un référentiel
+   * @param ref
+   */
   selectReferentiel(ref: ContentieuReferentielInterface) {
     this.calculatorService.selectedRefGraphDetail = ref.id
     this.onLoadDatas()
   }
 
+  /**
+   * Charge les données
+   */
   async onLoadDatas() {
     this.appService.appLoading.next(true)
     if (this.calculatorService.selectedRefGraphDetail) {

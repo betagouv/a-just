@@ -1620,8 +1620,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="710"
-                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:710</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="712"
+                                    class="link-to-prism">src/app/services/human-resource/human-resource.service.ts:712</a></div>
                         </td>
                     </tr>
 
@@ -3519,19 +3519,21 @@ export class HumanResourceService {
       if (realETP &lt; 0 || isNaN(realETP)) {
         realETP &#x3D; 0
       }
-      switch (h.fonction.position) {
-        case &#x27;Titulaire&#x27;:
-          subTotalEtp[&#x27;titulaire&#x27;].etpt +&#x3D; realETP
-          subTotalEtp[&#x27;titulaire&#x27;].total +&#x3D; 1
-          break
-        case &#x27;Placé&#x27;:
-          subTotalEtp[&#x27;placé&#x27;].etpt +&#x3D; realETP
-          subTotalEtp[&#x27;placé&#x27;].total +&#x3D; 1
-          break
-        case &#x27;Contractuel&#x27;:
-          subTotalEtp[&#x27;contractuel&#x27;].etpt +&#x3D; realETP
-          subTotalEtp[&#x27;contractuel&#x27;].total +&#x3D; 1
-          break
+      if (h.fonction) {
+        switch (h.fonction.position) {
+          case &#x27;Titulaire&#x27;:
+            subTotalEtp[&#x27;titulaire&#x27;].etpt +&#x3D; realETP
+            subTotalEtp[&#x27;titulaire&#x27;].total +&#x3D; 1
+            break
+          case &#x27;Placé&#x27;:
+            subTotalEtp[&#x27;placé&#x27;].etpt +&#x3D; realETP
+            subTotalEtp[&#x27;placé&#x27;].total +&#x3D; 1
+            break
+          case &#x27;Contractuel&#x27;:
+            subTotalEtp[&#x27;contractuel&#x27;].etpt +&#x3D; realETP
+            subTotalEtp[&#x27;contractuel&#x27;].total +&#x3D; 1
+            break
+        }
       }
     })
 

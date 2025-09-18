@@ -277,7 +277,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="96" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:96</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:105</a></div>
                             </td>
                         </tr>
 
@@ -370,8 +370,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="148"
-                                    class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:148</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="157"
+                                    class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:157</a></div>
                         </td>
                     </tr>
 
@@ -409,8 +409,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:121</a></div>
                         </td>
                     </tr>
 
@@ -448,8 +448,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="165"
-                                    class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:165</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="174"
+                                    class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:174</a></div>
                         </td>
                     </tr>
 
@@ -487,8 +487,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="156"
-                                    class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:156</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="165"
+                                    class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:165</a></div>
                         </td>
                     </tr>
 
@@ -566,7 +566,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:91</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:100</a></div>
                         </td>
                     </tr>
 
@@ -597,7 +597,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="96" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:96</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -653,7 +653,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -686,7 +686,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:102</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="111" class="link-to-prism">src/app/routes/panorama/activities-to-complete/activities-to-complete.component.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -742,12 +742,21 @@ interface ContentieuxSelected extends ContentieuReferentielInterface {
  */
 const now &#x3D; new Date()
 now.setDate(10)
+/**
+ * Dernier douze mois
+ */
 const lastTwelve &#x3D; new Date(now)
 lastTwelve.setFullYear(lastTwelve.getFullYear() - 1)
 lastTwelve.setDate(lastTwelve.getDate() + 1)
+/**
+ * Dernier trimestre
+ */
 const lastTrimestre &#x3D; new Date(now)
 lastTrimestre.setMonth(lastTrimestre.getMonth() - 3)
 lastTrimestre.setDate(lastTrimestre.getDate() + 1)
+/**
+ * Dernier mois
+ */
 const lastMonth &#x3D; new Date(now)
 lastMonth.setMonth(lastMonth.getMonth() - 1)
 lastMonth.setDate(lastMonth.getDate() + 1)

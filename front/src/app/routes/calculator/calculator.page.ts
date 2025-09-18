@@ -1858,6 +1858,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     return super.addMonthsToDate(date, months)
   }
 
+  /**
+   * Arrondi à 2 décimales
+   * @param num
+   * @returns
+   */
   round2(num: number) {
     return Math.round(num * 100) / 100
   }

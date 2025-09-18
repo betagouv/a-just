@@ -102,15 +102,15 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
    */
   dataBook = 'https://docs.a-just.beta.gouv.fr/le-data-book/'
   /**
-   *
+   * Lien vers le tooltip a-just
    */
   totalUrl = 'https://docs.a-just.beta.gouv.fr/tooltips-a-just/'
   /**
-   *
+   * Lien vers le guide de la donnée logiciel
    */
   logicielDataUrl = 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/donnees-dactivite/donnees-dactivite-logiciel'
   /**
-   *
+   * Lien vers le guide de la donnée a-justée
    */
   calculatedDataUrl = 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/donnees-dactivite/donnees-dactivite-a-justees'
 
@@ -138,6 +138,9 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     super()
   }
 
+  /**
+   * After view init
+   */
   ngAfterViewInit() {
     this.checkIfNextMonthHasValue()
     // Mise en gris du background du sous-contentieux sélectionné et scroll automatique au niveau de ce contentieux
@@ -179,6 +182,10 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     }
   }
 
+  /**
+   * On changes referentiel
+   * @param changes
+   */
   ngOnChanges(changes: SimpleChanges) {
     if (changes['referentiel']) {
       this.updateTotal()
@@ -845,6 +852,12 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     }
   }
 
+  /**
+   * Has value pour une donnée avec une mise en cache
+   * @param cont
+   * @param node
+   * @returns
+   */
   hasValue(cont: ContentieuReferentielInterface, node: string) {
     if (this.updates[`${cont.id}-${node}`] && this.updates[`${cont.id}-${node}`].value === null) return false
     switch (node) {

@@ -203,19 +203,24 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="15"
-                                    class="link-to-prism">src/app/routes/type.guard.ts:15</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">src/app/routes/type.guard.ts:24</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Vérifie le type de l&#39;interface</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#now" target="_self" >unknown</a></code>
 
                         </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -244,10 +249,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/routes/type.guard.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/routes/type.guard.ts:19</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de navigation</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -269,10 +280,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/routes/type.guard.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/routes/type.guard.ts:15</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de gestion de l&#39;utilisateur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -282,9 +299,9 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;;
-import { Router, CanActivateFn } from &#x27;@angular/router&#x27;;
-import { UserService } from &#x27;../services/user/user.service&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;
+import { Router, CanActivateFn } from &#x27;@angular/router&#x27;
+import { UserService } from &#x27;../services/user/user.service&#x27;
 
 /**
  * Guard de protection qui demande si l&#x27;application concernée est de type CA ou TJ
@@ -293,18 +310,33 @@ import { UserService } from &#x27;../services/user/user.service&#x27;;
   providedIn: &#x27;root&#x27;,
 })
 class TypeGuardService {
-  userService &#x3D; inject(UserService);
-  router &#x3D; inject(Router);
-
+  /**
+   * Service de gestion de l&#x27;utilisateur
+   */
+  userService &#x3D; inject(UserService)
+  /**
+   * Service de navigation
+   */
+  router &#x3D; inject(Router)
+  /**
+   * Vérifie le type de l&#x27;interface
+   * @returns
+   */
   async checkInterfaceType() {
     await this.userService.getInterfaceType()
     return true
   }
 }
 
+/**
+ * Guard de protection qui demande si l&#x27;application concernée est de type CA ou TJ
+ * @param route
+ * @param state
+ * @returns
+ */
 export const typeGuard: CanActivateFn &#x3D; (route, state) &#x3D;&gt; {
-  return inject(TypeGuardService).checkInterfaceType();
-};
+  return inject(TypeGuardService).checkInterfaceType()
+}
 </code></pre>
     </div>
 

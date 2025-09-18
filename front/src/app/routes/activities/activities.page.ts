@@ -46,12 +46,33 @@ import { AppService } from '../../services/app/app.service'
   styleUrls: ['./activities.page.scss'],
 })
 export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service de gestion des activités
+   */
   activitiesService = inject(ActivitiesService)
+  /**
+   * Service de gestion des ressources humaines
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion des référentiels
+   */
   referentielService = inject(ReferentielService)
+  /**
+   * Service de gestion de l'activité
+   */
   route = inject(ActivatedRoute)
+  /**
+   * Service de gestion de l'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion des KPIs
+   */
   kpiService = inject(KPIService)
+  /**
+   * Service de gestion de l'application
+   */
   appService = inject(AppService)
   /**
    * Dom du wrapper
@@ -158,7 +179,6 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Intro JS Steps
    */
-
   introSteps: IntroJSStep[] = this.userService.isTJ()
     ? [
         {
@@ -371,6 +391,9 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     this.userService.isCa() ? (this.dateSelector.minDate = MIN_DATE_SELECT_CA) : (this.dateSelector.minDate = MIN_DATE_SELECT_TJ)
   }
 
+  /**
+   * On init control access
+   */
   ngOnInit() {
     if (!this.userService.canViewActivities()) {
       this.userService.redirectToHome()
@@ -451,6 +474,10 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     }, 500)
   }
 
+  /**
+   * On focus input
+   * @param startTimeout
+   */
   onFocusInput(startTimeout = true) {
     // save datas
     if (this.timeoutOnFocus) {
@@ -468,6 +495,11 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Compare date activity updated
+   * @param firstAct
+   * @param secondAct
+   */
   compareDateActivityUpdated({
     firstAct,
     secondAct,
@@ -754,6 +786,11 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Download asset betwenn TJ et CA
+   * @param type
+   * @param download
+   */
   downloadAsset(type: string, download = false) {
     let url = null
 
@@ -784,10 +821,20 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Get acivity percent color
+   * @param value
+   * @returns
+   */
   getAcivityPercentColor(value: number) {
     return activityPercentColor(value)
   }
 
+  /**
+   * Get completion status
+   * @param item
+   * @returns
+   */
   getCompletionStatus(item: ContentieuReferentielInterface) {
     const quality = {
       in: {
@@ -825,6 +872,12 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     return 'A-JUSTer'
   }
 
+  /**
+   * Set item bg color
+   * @param label
+   * @param elementId
+   * @param remove
+   */
   setItemBgColor(label: string, elementId: number, remove: boolean = false) {
     const element = document.querySelector(`#item-${elementId}`) as HTMLElement
     const tmpColor = this.userService
@@ -841,6 +894,11 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Check if blue
+   * @param param0
+   * @returns
+   */
   checkIfBlue({ cont, node, isForBulbOrBottom }: { cont: ContentieuReferentielInterface; node: string; isForBulbOrBottom: boolean }) {
     switch (node) {
       case 'entrees':
@@ -860,6 +918,11 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     return false
   }
 
+  /**
+   * Is value updated
+   * @param param0
+   * @returns
+   */
   isValueUpdated({ cont, node }: { cont: ContentieuReferentielInterface; node: string }) {
     switch (node) {
       case 'entrees':
@@ -881,6 +944,11 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     return false
   }
 
+  /**
+   * Is value to verify setted
+   * @param param0
+   * @returns
+   */
   isValueToVerifySetted({ value, contentieux, node }: { value: number | null; contentieux: ContentieuReferentielInterface; node: string }) {
     if (value !== null) {
       switch (node) {
@@ -900,6 +968,11 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     return false
   }
 
+  /**
+   * Is stock calculated
+   * @param cont
+   * @returns
+   */
   isStockCalculated(cont: ContentieuReferentielInterface) {
     if (
       (cont.stock !== null &&
@@ -913,12 +986,20 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     return false
   }
 
+  /**
+   * On show level 4
+   * @param cont
+   */
   onShowLevel4(cont: ContentieuReferentielActivitiesInterface) {
     if (cont.showActivityGroup) {
       this.kpiService.register(ACTIVITIES_SHOW_LEVEL_4, cont.id + '')
     }
   }
 
+  /**
+   * Show cont comment
+   * @param cont
+   */
   showContComment(cont: ContentieuReferentielActivitiesInterface) {
     this.contentieuxToUpdate = cont
 
