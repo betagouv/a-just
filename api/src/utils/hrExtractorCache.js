@@ -105,7 +105,7 @@ export const upsertManyAgentsExtraction = async (backupId, start, end, agentsMap
  * Invalidation d’un agent dans TOUTES les périodes d’une juridiction (backupId).
  * Sans index : SCAN + MATCH + COUNT, puis HDEL en pipeline.
  */
-export const invalidateAgentEverywhere = async (backupId, agentId, scanCount = 1000) => {
+export const invalidateAgentEverywhere = async (backupId, agentId, scanCount = 10) => {
   const c = getRedisClient()
   if (!c) return
 
@@ -119,7 +119,8 @@ export const invalidateAgentEverywhere = async (backupId, agentId, scanCount = 1
       for (const k of keys) p.hDel(k, agentId.toString())
       await p.exec()
     }
-  } while (cursor !== '0')
+    console.log('WHILE')
+  } while (cursor !== '0' && cursor !== 0)
 }
 
 /**
@@ -143,15 +144,27 @@ export const invalidateBackup = async (backupId, scanCount = 1000) => {
 
   const match = `${PREFIX}:${backupId}:*`
   let cursor = '0'
+  let iterations = 0
+
   do {
     const { cursor: next, keys } = await c.scan(cursor, { MATCH: match, COUNT: scanCount })
-    cursor = next
+
+    // ⚠️ Normalise le type pour éviter la boucle infinie
+    cursor = String(next) // ← clé du problème
+
     if (keys.length) {
       const p = c.multi()
       for (const k of keys) p.unlink(k)
       await p.exec()
     }
-  } while (cursor !== '0')
+
+    // filet de sécurité (optionnel)
+    if (++iterations > 1e6) {
+      console.warn('🛑 Abort SCAN: too many iterations')
+      break
+    }
+    console.log('WHILE')
+  } while (cursor !== '0' && cursor !== 0)
 }
 
 /** Vérifie si une période existe (au moins un champ). */

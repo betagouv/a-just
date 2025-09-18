@@ -541,6 +541,7 @@ export const handleAbsenteisme = (refObj, isCa, isTj) => {
 import pLimit from 'p-limit'
 import { loadOrWarmHR } from './redis'
 import { getHumanRessourceList } from './humanServices'
+import { readExtraction, upsertAgentExtraction } from './hrExtractorCache'
 
 export const computeExtractDdgv5 = async (
   models,
@@ -795,8 +796,9 @@ export const computeExtractDdg = async (
   dateStart,
   dateStop,
   isJirs,
-  signal = null,
+  backupId,
 ) => {
+  const map = await readExtraction(backupId, dateStart, dateStop)
   let onglet2 = []
   dateStart = setTimeToMidDay(dateStart)
   dateStop = setTimeToMidDay(dateStop)
@@ -805,7 +807,14 @@ export const computeExtractDdg = async (
   console.time('extractor-5.2')
   await Promise.all(
     allHuman.map(async (human) => {
-      const { currentSituation } = findSituation(human, undefined, signal)
+      const id = String(human.id)
+      if (Object.hasOwn(map, id)) {
+        const value = map[id]
+        onglet2.push(value)
+        return
+      }
+
+      const { currentSituation } = findSituation(human, undefined)
 
       let categoryName = currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
       let fonctionName = currentSituation && currentSituation.fonction && currentSituation.fonction.code ? currentSituation.fonction.code : 'pas de fonction'
@@ -849,7 +858,7 @@ export const computeExtractDdg = async (
                 return indisponibility.contentieux.id === referentiel.id
               })
             ) {
-              const etpAffected = getHRVentilationOld(human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels, signal)
+              const etpAffected = getHRVentilationOld(human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels)
 
               const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
                 ...(await countEtp({ ...etpAffected }, referentiel)),
@@ -987,7 +996,7 @@ export const computeExtractDdg = async (
               ['Ecart JI → détails manquants, à rajouter dans A-JUST']: null,
             }
           }
-          onglet2.push({
+          const res = {
             ['Réf.']: String(human.id),
             Arrondissement: juridictionName.label,
             Jirs: isJirs ? 'x' : '',
@@ -1013,7 +1022,9 @@ export const computeExtractDdg = async (
             ...absenteismeDetails,
             ['TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)']: absenteisme,
             ...(isCa() ? delegation : {}),
-          })
+          }
+          onglet2.push(res)
+          await upsertAgentExtraction(backupId, dateStart, dateStop, human.id, res)
         }
     }),
   )
@@ -1155,6 +1166,7 @@ export async function runExtractsInParallel({
   isJirs,
   signal,
   old,
+  backupId,
 }) {
   let [onglet1, onglet2] = await Promise.all([
     old == false
@@ -1183,7 +1195,7 @@ export async function runExtractsInParallel({
           signal,
           old,
         ),
-    computeExtractDdg(indexes, cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop, isJirs, signal),
+    computeExtractDdg(indexes, cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop, isJirs, backupId),
   ])
   //if (old)
   return { onglet1, onglet2 }
@@ -1534,7 +1546,7 @@ async function computeHumanExtract(params) {
         const isUsedInIndispo = indisponibilities.some((indisponibility) => indisponibility.contentieux.id === referentiel.id)
 
         if (isUsedInSituation || isUsedInIndispo) {
-          const localEtpAffected = getHRVentilationOld(human, referentiel.id, [...categories], dateStart, dateStop, undefined, undefined, signal)
+          const localEtpAffected = getHRVentilationOld(human, referentiel.id, [...categories], dateStart, dateStop, undefined, undefined)
 
           const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
             ...(await countEtp({ ...localEtpAffected }, referentiel)),

@@ -125,6 +125,7 @@ export default class RouteExtractor extends Route {
       dateStop,
       isJirs,
       old: true, // mettre une condition si supérioeur à 10 mois ou non,
+      backupId,
     })
     console.timeEnd('extractor-5')
 
@@ -153,7 +154,7 @@ export default class RouteExtractor extends Route {
 
     console.timeEnd('extractor-6')
 
-    console.log(dateStart, dateStop, getWorkingDaysCount(dateStart, dateStop))
+    //printKeys('*')
     this.sendOk(ctx, {
       fonctions: formatedFunctions,
       referentiels,
