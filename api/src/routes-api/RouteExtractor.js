@@ -293,6 +293,10 @@ export default class RouteExtractor extends Route {
       return ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
+    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
+
+    this.sendOk(ctx, result)
+    /**
     // ✅ jobId depuis le jobStore Redis (async)
     const jobId = await createJob(userId, { backupId, dateStart, dateStop, categoryFilter })
 
@@ -321,6 +325,7 @@ export default class RouteExtractor extends Route {
 
     ctx.status = 202
     ctx.body = { jobId }
+    */
   }
 
   @Route.Post({
