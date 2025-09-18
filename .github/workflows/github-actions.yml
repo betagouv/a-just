@@ -64,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mocha-report
-          path: ./api/test/reports
+          path: ./api/test/
 
   deploy:
     needs: start-tests
