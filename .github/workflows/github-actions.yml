@@ -53,6 +53,13 @@ jobs:
           name: cypress-reports
           path: ./end-to-end/cypress/reports
 
+      - name: Upload Mocha test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mocha-report
+          path: ./api/test/report
+
   deploy:
     needs: start-tests
     runs-on: ubuntu-latest
@@ -80,12 +87,20 @@ jobs:
           name: cypress-video
           path: ./cypress-videos
 
+      - name: Download Mocha report artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: mocha-report
+          path: ./mocha-report
+
       - name: Create site directory structure
         run: |
           mkdir -p site
-          cp -r cypress-reports/* site/ 2>/dev/null || echo "No reports to copy"
+          cp -r cypress-reports/* site/ 2>/dev/null || echo "No cypress reports to copy"
           mkdir -p site/videos
           cp -r cypress-videos/* site/videos/ 2>/dev/null || echo "No videos to copy"
+          mkdir -p site/api-tests
+          cp -r mocha-report/* site/api-tests/ 2>/dev/null || echo "No mocha test reports to copy"
 
       - name: Create index.html
         run: |
@@ -95,7 +110,7 @@ jobs:
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>A-JUST - Rapports de Tests E2E</title>
+              <title>A-JUST - Rapports de Tests</title>
               <style>
                   body {
                       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -163,21 +178,28 @@ jobs:
           </head>
           <body>
               <div class="header">
-                  <h1>🧪 A-JUST - Rapports de Tests E2E</h1>
-                  <p>Rapports générés automatiquement par Cypress</p>
+                  <h1>A-JUST - Rapports de Tests</h1>
               </div>
 
               <div class="section">
-                  <h2>📊 Rapports de Tests</h2>
-                  <p>Voici les derniers rapports de tests end-to-end générés :</p>
+                  <h2>📊 Tests API</h2>
+                  <p>Rapports de tests unitaires :</p>
                   <div class="file-list">
-                      {{REPORTS_PLACEHOLDER}}
+                      {{API_REPORTS_PLACEHOLDER}}
+                  </div>
+              </div>
+
+              <div class="section">
+                  <h2>📊 Tests E2E</h2>
+                  <p>Rapports de tests E2E :</p>
+                  <div class="file-list">
+                      {{E2E_REPORTS_PLACEHOLDER}}
                   </div>
               </div>
 
               <div class="section">
                   <h2>🎥 Vidéos des Tests</h2>
-                  <p>Enregistrements vidéo des tests exécutés :</p>
+                  <p>Enregistrements vidéo des tests E2E exécutés :</p>
                   <div class="file-list">
                       {{VIDEOS_PLACEHOLDER}}
                   </div>
@@ -211,7 +233,7 @@ jobs:
               return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
           }
 
-          function generateFileList(directory, extensions) {
+          function generateFileList(directory, extensions, testType = '') {
               if (!fs.existsSync(directory)) {
                   return '<p>Aucun fichier de ce type trouvé.</p>';
               }
@@ -248,19 +270,22 @@ jobs:
           let indexContent = fs.readFileSync('index.html', 'utf8');
 
           // Générer les listes de fichiers
-          const reportsHtml = generateFileList('.', ['.html', '.json']);
+          const apiReportsHtml = generateFileList('./api-tests', ['.html', '.json']);
+          const e2eReportsHtml = generateFileList('./e2e-tests', ['.html', '.json']);
           const videosHtml = generateFileList('./videos', ['.mp4', '.webm']);
           const generationTime = new Date().toLocaleString('fr-FR');
 
           // Remplacer les placeholders
-          indexContent = indexContent.replace('{{REPORTS_PLACEHOLDER}}', reportsHtml);
+          indexContent = indexContent.replace('{{API_REPORTS_PLACEHOLDER}}', apiReportsHtml);
+          indexContent = indexContent.replace('{{E2E_REPORTS_PLACEHOLDER}}', e2eReportsHtml);
           indexContent = indexContent.replace('{{VIDEOS_PLACEHOLDER}}', videosHtml);
           indexContent = indexContent.replace('{{GENERATION_TIME}}', generationTime);
 
           // Écrire le fichier mis à jour
           fs.writeFileSync('index.html', indexContent);
           console.log('Index.html mis à jour avec les fichiers disponibles');
-          console.log('Reports:', reportsHtml ? 'Found' : 'None');
+          console.log('API Reports:', apiReportsHtml ? 'Found' : 'None');
+          console.log('E2E Reports:', e2eReportsHtml ? 'Found' : 'None');
           console.log('Videos:', videosHtml ? 'Found' : 'None');
           EOFJS
 
