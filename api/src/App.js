@@ -20,6 +20,7 @@ import * as Sentry from '@sentry/node'
 import authBasic from 'http-auth'
 import { writeFileSync } from 'fs'
 import { getFullKey, getRedisClient, loadOrWarmHR, waitForRedis } from './utils/redis'
+import { invalidateBackup } from './utils/hrExtractorCache'
 
 const cspConfig = {
   // https://github.com/helmetjs/helmet
@@ -439,6 +440,7 @@ export default class App extends AppBase {
 
             if (force) {
               await redis.del(fullKey)
+              await invalidateBackup(jurId)
             }
 
             await loadOrWarmHR(jurId, this.models)
