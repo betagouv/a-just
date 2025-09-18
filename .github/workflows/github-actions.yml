@@ -58,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mocha-report
-          path: ./api/test/report
+          path: ./api/test/
 
   deploy:
     needs: start-tests
@@ -77,18 +77,21 @@ jobs:
 
       - name: Download Cypress reports artifacts
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: cypress-reports
           path: ./cypress-reports
 
       - name: Download Cypress videos artifacts
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: cypress-video
           path: ./cypress-videos
 
       - name: Download Mocha report artifacts
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: mocha-report
           path: ./mocha-report
@@ -271,7 +274,7 @@ jobs:
 
           // Générer les listes de fichiers
           const apiReportsHtml = generateFileList('./api-tests', ['.html', '.json']);
-          const e2eReportsHtml = generateFileList('./e2e-tests', ['.html', '.json']);
+          const e2eReportsHtml = generateFileList('.', ['.html', '.json']);
           const videosHtml = generateFileList('./videos', ['.mp4', '.webm']);
           const generationTime = new Date().toLocaleString('fr-FR');
 
