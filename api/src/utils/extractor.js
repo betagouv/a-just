@@ -1534,7 +1534,7 @@ async function computeHumanExtract(params) {
         const isUsedInIndispo = indisponibilities.some((indisponibility) => indisponibility.contentieux.id === referentiel.id)
 
         if (isUsedInSituation || isUsedInIndispo) {
-          const localEtpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop, undefined, undefined, signal)
+          const localEtpAffected = getHRVentilationOld(human, referentiel.id, [...categories], dateStart, dateStop, undefined, undefined, signal)
 
           const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
             ...(await countEtp({ ...localEtpAffected }, referentiel)),

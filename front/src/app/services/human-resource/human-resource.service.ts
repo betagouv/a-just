@@ -684,19 +684,21 @@ export class HumanResourceService {
       if (realETP < 0 || isNaN(realETP)) {
         realETP = 0
       }
-      switch (h.fonction.position) {
-        case 'Titulaire':
-          subTotalEtp['titulaire'].etpt += realETP
-          subTotalEtp['titulaire'].total += 1
-          break
-        case 'Placé':
-          subTotalEtp['placé'].etpt += realETP
-          subTotalEtp['placé'].total += 1
-          break
-        case 'Contractuel':
-          subTotalEtp['contractuel'].etpt += realETP
-          subTotalEtp['contractuel'].total += 1
-          break
+      if (h.fonction) {
+        switch (h.fonction.position) {
+          case 'Titulaire':
+            subTotalEtp['titulaire'].etpt += realETP
+            subTotalEtp['titulaire'].total += 1
+            break
+          case 'Placé':
+            subTotalEtp['placé'].etpt += realETP
+            subTotalEtp['placé'].total += 1
+            break
+          case 'Contractuel':
+            subTotalEtp['contractuel'].etpt += realETP
+            subTotalEtp['contractuel'].total += 1
+            break
+        }
       }
     })
 
