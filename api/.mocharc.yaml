@@ -6,8 +6,11 @@ require: '@babel/register'
 bail: true
 reporter: 'mochawesome'
 reporterOptions:
-  reportDir: 'test'
-  reportFilename: 'reports'
+  reportDir: test/reports
+  reportFilename: test-results
   html: true
   json: true
   overwrite: true
+  quiet: true
+  charts: true
+  code: false
