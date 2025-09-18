@@ -5,7 +5,13 @@ import { PopupComponent } from '../../../components/popup/popup.component'
 import { DateSelectComponent } from '../../../components/date-select/date-select.component'
 import { CommonModule } from '@angular/common'
 import { WrapperComponent } from '../../../components/wrapper/wrapper.component'
-import { DATA_GITBOOK, NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA, NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL } from '../../../constants/documentation'
+import {
+  DATA_GITBOOK,
+  DATA_GITBOOK_CA,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
+} from '../../../constants/documentation'
 import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel'
 import { ActivitiesService } from '../../../services/activities/activities.service'
 import { AppService } from '../../../services/app/app.service'
@@ -996,7 +1002,13 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
           url = NOMENCLATURE_DOWNLOAD_URL
         }
       }
-    } else if (type === 'dataBook') url = this.dataBook
+    } else if (type === 'dataBook') {
+      if (this.userService.isCa()) {
+        url = DATA_GITBOOK_CA
+      } else {
+        url = DATA_GITBOOK
+      }
+    }
 
     if (url) {
       if (download) {
