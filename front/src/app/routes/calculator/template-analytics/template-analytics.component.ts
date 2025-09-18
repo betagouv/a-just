@@ -44,17 +44,29 @@ export interface AnalyticsLine {
    * Variations de la ligne
    */
   variations: {
+    /**
+     * Label de la variation
+     */
     label: string
+    /**
+     * Est une option
+     */
     isOption?: boolean
     /**
      * Valeurs de la variation
      */
     values: (number | string | null)[]
+    /**
+     * Sous-titre de la variation
+     */
     subTitle?: string
     /**
      * Afficher l'arrow
      */
     showArrow?: boolean
+    /**
+     * Type de la variation
+     */
     type?: string
     /**
      * Date de début
@@ -104,9 +116,21 @@ export interface AnalyticsLine {
   styleUrls: ['./template-analytics.component.scss'],
 })
 export class TemplateAnalyticsComponent extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service de gestion du calculateur
+   */
   calculatorService = inject(CalculatorService)
+  /**
+   * Service de gestion des ressources
+   */
   private humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion des référentiels
+   */
   private referentielService = inject(ReferentielService)
+  /**
+   * Service de gestion des utilisateurs
+   */
   public userService = inject(UserService)
   /**
    * Référentiel

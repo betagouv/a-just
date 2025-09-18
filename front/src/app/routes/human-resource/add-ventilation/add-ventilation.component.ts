@@ -63,6 +63,9 @@ export interface importedSituation {
    * Index
    */
   index: number | null
+  /**
+   * Ventillation
+   */
   ventillation: importedVentillation[]
 }
 

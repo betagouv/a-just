@@ -207,6 +207,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Catégorie de l&#39;EAM</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -240,6 +246,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Catégorie de la greffe</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -273,6 +285,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Catégorie de la juridiction</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -280,15 +298,25 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HRCategorySelectedInterface } from &quot;./hr-category&quot;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HRCategorySelectedInterface } from &#x27;./hr-category&#x27;
 /**
-  * Interface pour les données effectifs à afficher sur le panorama
-  */
+ * Interface pour les données effectifs à afficher sur le panorama
+ */
 export interface IWorkforcePanorama {
-  siege: HRCategorySelectedInterface,
-  greffe: HRCategorySelectedInterface,
-  eam: HRCategorySelectedInterface,
-}</code></pre>
+  /**
+   * Catégorie de la juridiction
+   */
+  siege: HRCategorySelectedInterface
+  /**
+   * Catégorie de la greffe
+   */
+  greffe: HRCategorySelectedInterface
+  /**
+   * Catégorie de l&#x27;EAM
+   */
+  eam: HRCategorySelectedInterface
+}
+</code></pre>
     </div>
 </div>
 

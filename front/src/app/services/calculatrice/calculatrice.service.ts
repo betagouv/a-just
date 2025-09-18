@@ -7,12 +7,18 @@ import { basicEtptData } from '../../constants/etpt-calculation'
  * Données périodiques des magistrats et fonctionnaires
  */
 const periodicData: { [key: string]: any } = {
+  /**
+   * Magistrat
+   */
   Magistrat: {
     jour: 208,
     semaine: 41.6,
     mois: 12,
     an: 1,
   },
+  /**
+   * Fonctionnaire
+   */
   Fonctionnaire: {
     jour: 229.57,
     semaine: 45.91,
@@ -25,9 +31,21 @@ const periodicData: { [key: string]: any } = {
  * Interface pour les périodes
  */
 interface periodInterface {
+  /**
+   * Jour
+   */
   jour: 'jour'
+  /**
+   * Semaine
+   */
   semaine: 'semaine'
+  /**
+   * Mois
+   */
   mois: 'mois'
+  /**
+   * Année
+   */
   an: 'an'
 }
 

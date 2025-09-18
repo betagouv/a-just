@@ -1,7 +1,10 @@
-import { Location } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Location } from '@angular/common'
+import { Component, inject, Input } from '@angular/core'
+import { RouterLink } from '@angular/router'
 
+/**
+ * Back button generic component
+ */
 @Component({
   selector: 'aj-back-button',
   standalone: true,
@@ -10,14 +13,29 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./back-button.component.scss'],
 })
 export class BackButtonComponent {
-  _location = inject(Location);
-  @Input() routerLink: any;
-  @Input() fragment: any;
-  @Input() text: string = 'Retour';
+  /**
+   * Location
+   */
+  _location = inject(Location)
+  /**
+   * Router link
+   */
+  @Input() routerLink: any
+  /**
+   * Fragment
+   */
+  @Input() fragment: any
+  /**
+   * Text
+   */
+  @Input() text: string = 'Retour'
 
+  /**
+   * On click
+   */
   onClick() {
     if (this.routerLink === 'back') {
-      this._location.back();
+      this._location.back()
     }
   }
 }

@@ -1,9 +1,18 @@
-import { HRCategorySelectedInterface } from "./hr-category"
+import { HRCategorySelectedInterface } from './hr-category'
 /**
-  * Interface pour les données effectifs à afficher sur le panorama
-  */
+ * Interface pour les données effectifs à afficher sur le panorama
+ */
 export interface IWorkforcePanorama {
-  siege: HRCategorySelectedInterface,
-  greffe: HRCategorySelectedInterface,
-  eam: HRCategorySelectedInterface,
+  /**
+   * Catégorie de la juridiction
+   */
+  siege: HRCategorySelectedInterface
+  /**
+   * Catégorie de la greffe
+   */
+  greffe: HRCategorySelectedInterface
+  /**
+   * Catégorie de l'EAM
+   */
+  eam: HRCategorySelectedInterface
 }

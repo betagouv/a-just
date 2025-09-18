@@ -123,6 +123,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Pipe pour afficher la date en fonction de la date passée en paramètre</p>
+
+            </p>
 
 
         <section data-compodoc="block-metadata">
@@ -166,8 +173,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="44"
-                                    class="link-to-prism">src/app/pipes/date-ago/date-ago.pipe.ts:44</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/app/pipes/date-ago/date-ago.pipe.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -235,14 +242,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="9"
-                                    class="link-to-prism">src/app/pipes/date-ago/date-ago.pipe.ts:9</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="18"
+                                    class="link-to-prism">src/app/pipes/date-ago/date-ago.pipe.ts:18</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Transforme la date en fonction de la date passée en paramètre</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -300,20 +309,29 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Pipe, PipeTransform } from &#x27;@angular/core&#x27;;
-import { getMonthString } from &#x27;../../utils/dates&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Pipe, PipeTransform } from &#x27;@angular/core&#x27;
+import { getMonthString } from &#x27;../../utils/dates&#x27;
 
+/**
+ * Pipe pour afficher la date en fonction de la date passée en paramètre
+ */
 @Pipe({
   standalone: true,
   name: &#x27;dateAgo&#x27;,
 })
 export class DateAgoPipe implements PipeTransform {
+  /**
+   * Transforme la date en fonction de la date passée en paramètre
+   * @param value
+   * @param args
+   * @returns
+   */
   transform(value: any, args?: any): any {
     if (value) {
-      const seconds &#x3D; Math.floor((+new Date() - +new Date(value)) / 1000);
+      const seconds &#x3D; Math.floor((+new Date() - +new Date(value)) / 1000)
       if (seconds &lt; 29)
         // less than 30 seconds ago will show as &#x27;Just now&#x27;
-        return &quot;A l&#x27;instant&quot;;
+        return &quot;A l&#x27;instant&quot;
       const intervals &#x3D; {
         //&#x27;an&#x27;: 31536000,
         //&#x27;mois&#x27;: 2592000,
@@ -322,20 +340,20 @@ export class DateAgoPipe implements PipeTransform {
         heure: 3600,
         minute: 60,
         seconde: 1,
-      };
-      if (seconds &gt; 604800) return this.getRealValue(value);
-      let counter;
+      }
+      if (seconds &gt; 604800) return this.getRealValue(value)
+      let counter
       for (const i in intervals) {
-        counter &#x3D; Math.floor(seconds / intervals[i as keyof typeof intervals]);
+        counter &#x3D; Math.floor(seconds / intervals[i as keyof typeof intervals])
         if (counter &gt; 0)
           if (counter &#x3D;&#x3D;&#x3D; 1) {
-            return &#x27;Il y a &#x27; + counter + &#x27; &#x27; + i; // singular (1 day ago)
+            return &#x27;Il y a &#x27; + counter + &#x27; &#x27; + i // singular (1 day ago)
           } else {
-            return &#x27;Il y a &#x27; + counter + &#x27; &#x27; + i + (i &#x3D;&#x3D;&#x3D; &#x27;mois&#x27; ? &#x27;&#x27; : &#x27;s&#x27;); // plural (2 days ago)
+            return &#x27;Il y a &#x27; + counter + &#x27; &#x27; + i + (i &#x3D;&#x3D;&#x3D; &#x27;mois&#x27; ? &#x27;&#x27; : &#x27;s&#x27;) // plural (2 days ago)
           }
       }
     }
-    return value;
+    return value
   }
 
   /**
@@ -345,11 +363,9 @@ export class DateAgoPipe implements PipeTransform {
    */
   getRealValue(date: Date | null) {
     if (date !&#x3D;&#x3D; null) {
-      date &#x3D; new Date(date);
-      return &#x60;${(date.getDate() + &#x27;&#x27;).padStart(2, &#x27;0&#x27;)} ${getMonthString(
-        date
-      )} ${date.getFullYear()}&#x60;;
-    } else return &#x27;&#x27;;
+      date &#x3D; new Date(date)
+      return &#x60;${(date.getDate() + &#x27;&#x27;).padStart(2, &#x27;0&#x27;)} ${getMonthString(date)} ${date.getFullYear()}&#x60;
+    } else return &#x27;&#x27;
   }
 }
 </code></pre>

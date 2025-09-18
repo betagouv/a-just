@@ -18,7 +18,7 @@ import { InOutChartComponent } from './charts/in-out-chart/in-out-chart.componen
 import { LoadersWidgetComponent } from './widgets/loaders-widget/loaders-widget.component'
 import { FiguresWidgetComponent } from '../../components/figures-widget/figures-widget.component'
 import { DialWidgetComponent } from './widgets/dial-widget/dial-widget.component'
-import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
+import { IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { MainClass } from '../../libs/main-class'
 import { dataInterface } from '../../components/select/select.component'
 import { SimulatorInterface } from '../../interfaces/simulator'
@@ -111,15 +111,42 @@ export const etpFonToDefine = '[un volume moyen de]'
   ],
 })
 export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
+  /**
+   * Service de gestion des fiches agents
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion des référentiels
+   */
   referentielService = inject(ReferentielService)
+  /**
+   * Service de gestion de la simulation
+   */
   simulatorService = inject(SimulatorService)
+  /**
+   * Service de gestion de l'utilisateur
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion des options de contentieux
+   */
   contentieuxOptionsService = inject(ContentieuxOptionsService)
+  /**
+   * Service de navigation
+   */
   router = inject(Router)
+  /**
+   * Service de gestion de la route
+   */
   route = inject(ActivatedRoute)
+  /**
+   * Service de communication avec le serveur
+   */
   serverService = inject(ServerService)
 
+  /**
+   * Sélecteur de période
+   */
   @ViewChild('periodSelector') periodSelector: PeriodSelectorComponent | undefined
   /**
    * Wrapper de page contenant le simulateur
@@ -141,6 +168,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Indicateur d'affichage du titre pour export PDF
    */
   printTitle: string = ''
+
   /**
    * Contentieux selectionné
    */
@@ -267,6 +295,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   nextState: string | null = null
 
+  /**
+   * Force de désactivation de la page
+   */
   forceDeactivate: boolean = false
 
   /**
@@ -321,12 +352,18 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     { id: '', content: '', fill: true },
   ]
 
+  /**
+   * Affichage de la popup de détail
+   */
   printPopup: boolean = false
 
   /**
    * Paramètres de simulation
    */
   paramsToAjust = {
+    /**
+     * Paramètre 1
+     */
     param1: {
       label: '',
       value: '',
@@ -335,6 +372,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       addition: null,
       button: { value: '' },
     },
+    /**
+     * Paramètre 2
+     */
     param2: {
       label: '',
       value: '',
@@ -352,7 +392,13 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Liste de(s) paramètre(s) selectionnés à garder constant lors de la simulation
    */
   paramsToLock = {
+    /**
+     * Paramètre 1
+     */
     param1: { label: '', value: '' },
+    /**
+     * Paramètre 2
+     */
     param2: { label: '', value: '' },
   }
   /**
@@ -430,6 +476,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   chooseScreen = true
 
+  /**
+   * Rechargement de la page
+   */
   onReloadAction = false
   /**
    * Intro JS Steps par défaut
@@ -770,6 +819,10 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Détection de la fermeture de la fenêtre
+   * @param event
+   */
   @HostListener('window:popstate', ['$event'])
   onPopState(event: Event) {
     if (!this.chooseScreen) {
@@ -1444,6 +1497,12 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     return roundedValue >= 0 ? '+' + roundedValue : roundedValue
   }
 
+  /**
+   * Retourne une valeur en % ou NA
+   * @param result
+   * @param initialValue
+   * @returns
+   */
   ratioStr(result: string, initialValue: string) {
     let res = this.ratio(result, initialValue)
     if (res === 'NA') return 'NA'
@@ -1964,6 +2023,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     return res === 'NA' ? 'NA' : res + '%'
   }
 
+  /**
+   * Désactivation de la page and save works in progress
+   * @param nextState
+   * @returns
+   */
   canDeactivate(nextState: string) {
     if (this.toDisplaySimulation || this.projectedSituationData) {
       this.userAction.isLeaving = true
@@ -1973,6 +2037,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     return true
   }
 
+  /**
+   * Retour à l'écran précédent
+   */
   onReturn() {
     if (this.toDisplaySimulation) {
       this.onUserActionClick(this.action.return)
@@ -1984,6 +2051,12 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Action de l'utilisateur
+   * @param button
+   * @param paramsToInit
+   * @returns
+   */
   onUserActionClick(button: string, paramsToInit?: any) {
     if (this.toDisplaySimulation) {
       this.printPopup = true
@@ -2046,6 +2119,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     return
   }
 
+  /**
+   * Réinitialisation des actions de l'utilisateur
+   */
   onResetUserAction() {
     this.userAction.isLeaving = false
     this.userAction.isReseting = false
@@ -2054,6 +2130,10 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.userAction.isClosingTab = false
   }
 
+  /**
+   * Action de la popup de détail
+   * @param action
+   */
   async onPopupDetailAction(action: any) {
     if (this.userAction.isComingBack) {
       switch (action.id) {

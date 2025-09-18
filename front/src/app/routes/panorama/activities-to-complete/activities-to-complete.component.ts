@@ -76,21 +76,60 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
    */
   tags: TagInterface[] = [
     {
+      /**
+       * Date de début
+       */
       dateStart: lastTwelve,
+      /**
+       * Date de fin
+       */
       dateEnd: now,
+      /**
+       * Indicateur de sélection
+       */
       selected: true,
+      /**
+       * Label du tag
+       */
       label: 'Les 12 derniers mois disponible',
     },
     {
+      /**
+       * Date de début
+       */
       dateStart: lastTrimestre,
+      /**
+       * Date de fin
+       */
       dateEnd: now,
+      /**
+       * Indicateur de sélection
+       */
       selected: false,
+      /**
+       * Label du tag
+       */
       label: 'Dernier trimestre disponible',
+      /**
+       * Label du tag
+       */
     },
     {
+      /**
+       * Date de début
+       */
       dateStart: lastMonth,
+      /**
+       * Date de fin
+       */
       dateEnd: now,
+      /**
+       * Indicateur de sélection
+       */
       selected: false,
+      /**
+       * Label du tag
+       */
       label: 'Dernier mois',
     },
   ]
@@ -108,7 +147,13 @@ export class ActivitiesToCompleteComponent extends MainClass implements OnInit, 
    * Constructor
    */
   constructor(
+    /**
+     * Service de gestion des utilisateurs
+     */
     public userService: UserService,
+    /**
+     * Service de gestion des ressources humaines
+     */
     private humanResourceService: HumanResourceService,
     private activitiesService: ActivitiesService,
   ) {

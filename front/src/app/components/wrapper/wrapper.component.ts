@@ -91,14 +91,41 @@ interface ExportPDFInterface {
   styleUrls: ['./wrapper.component.scss'],
 })
 export class WrapperComponent extends MainClass implements OnDestroy {
+  /**
+   * Service de navigation
+   */
   router = inject(Router)
+  /**
+   * Service de gestion des routes
+   */
   route = inject(ActivatedRoute)
+  /**
+   * Service de gestion des utilisateurs
+   */
   userService = inject(UserService)
+  /**
+   * Service de gestion des ressources humaines
+   */
   humanResourceService = inject(HumanResourceService)
+  /**
+   * Service de gestion des applications
+   */
   appService = inject(AppService)
+  /**
+   * Service de gestion des titres
+   */
   titlePlatform = inject(Title)
+  /**
+   * Service de gestion des activités
+   */
   activitiesService = inject(ActivitiesService)
+  /**
+   * Service de gestion des serveurs
+   */
   serverService = inject(ServerService)
+  /**
+   * Service de gestion des excel
+   */
   excelService = inject(ExcelService)
   /**
    * Service de log des KPIs
@@ -288,7 +315,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       }),
     )
 
-    if(this.route.snapshot.queryParams['b']) {
+    if (this.route.snapshot.queryParams['b']) {
       this.backUrl = `/${this.route.snapshot.queryParams['b']}`
     }
   }
@@ -315,6 +342,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.router.navigate(['/logout'])
   }
 
+  /**
+   * Bouton déconnecter
+   * @param event
+   */
   onSelectAction(event: any) {
     this.onDisconnect()
   }
@@ -547,10 +578,20 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     })
   }
 
+  /**
+   * Bouton d'ouverture d'une page
+   * @param path
+   */
   onSelect(path: string) {
     this.pageSelected.emit(path)
   }
 
+  /**
+   * Téléchargement d'un asset
+   * @param type
+   * @param download
+   * @returns
+   */
   async downloadAsset(type: string, download = false) {
     this.kPIService.register(REQUEST_USER_MANUAL, type)
 

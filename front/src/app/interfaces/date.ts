@@ -2,9 +2,24 @@
  * Interface pour
  */
 export interface DateSelectorinterface {
-  title: string;
-  dateType: string;
-  value: Date | string | undefined | null;
-  minDate?: Date;
-  showArrow: boolean;
+  /**
+   * Titre du bouton
+   */
+  title: string
+  /**
+   * Type de date
+   */
+  dateType: string
+  /**
+   * Valeur de la date
+   */
+  value: Date | string | undefined | null
+  /**
+   * Date minimale
+   */
+  minDate?: Date
+  /**
+   * Affiche l'arrow
+   */
+  showArrow: boolean
 }

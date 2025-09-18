@@ -40,10 +40,16 @@ export class AppService {
    */
   scrollPosition = signal<number>(0)
 
+  /**
+   * Constructeur
+   */
   constructor() {
     this.initToastrConfig()
   }
 
+  /**
+   * Initialisation du toastr
+   */
   initToastrConfig() {
     toastr.options = {
       closeButton: false,
@@ -64,6 +70,10 @@ export class AppService {
     }
   }
 
+  /**
+   * Notification
+   * @param message
+   */
   notification(message: string) {
     toastr.warning(message)
   }

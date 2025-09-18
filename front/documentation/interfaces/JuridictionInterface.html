@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface d&#39;une juridiction</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -234,6 +241,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Si la juridiction est activée</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -267,6 +280,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Id de la juridiction</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -305,6 +324,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Code ELST de la juridiction</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -338,6 +363,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom de la juridiction</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -376,6 +407,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Latitude de la juridiction</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -414,6 +451,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Longitude de la juridiction</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -452,6 +495,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Population de la juridiction</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -460,13 +509,34 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface JuridictionInterface {
-	id: number;
-	label: string;	
-	iElst?: string;
-	latitude?: number;
-	longitude?: number;
-	population?: number;
-	enabled?: boolean;
+  /**
+   * Id de la juridiction
+   */
+  id: number
+  /**
+   * Nom de la juridiction
+   */
+  label: string
+  /**
+   * Code ELST de la juridiction
+   */
+  iElst?: string
+  /**
+   * Latitude de la juridiction
+   */
+  latitude?: number
+  /**
+   * Longitude de la juridiction
+   */
+  longitude?: number
+  /**
+   * Population de la juridiction
+   */
+  population?: number
+  /**
+   * Si la juridiction est activée
+   */
+  enabled?: boolean
 }
 </code></pre>
     </div>

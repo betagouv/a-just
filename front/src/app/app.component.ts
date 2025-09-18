@@ -7,7 +7,6 @@ import { ContentieuxOptionsService } from './services/contentieux-options/conten
 import { UserService } from './services/user/user.service'
 import { iIOS } from './utils/system'
 import { filter } from 'rxjs'
-
 import { AlertComponent } from './components/alert/alert.component'
 import { BigLoaderComponent } from './components/big-loader/big-loader.component'
 
@@ -55,7 +54,12 @@ export class AppComponent implements AfterViewInit {
    * @param contentieuxOptionsService
    * @param appService
    */
-  constructor(router: Router, private userService: UserService, private contentieuxOptionsService: ContentieuxOptionsService, private appService: AppService) {
+  constructor(
+    router: Router,
+    private userService: UserService,
+    private contentieuxOptionsService: ContentieuxOptionsService,
+    private appService: AppService,
+  ) {
     this.crispChat()
     if (iIOS()) {
       document.body.classList.add('iIOS')
@@ -123,6 +127,9 @@ export class AppComponent implements AfterViewInit {
     this.userService.getInterfaceType()
   }
 
+  /**
+   * After view init
+   */
   ngAfterViewInit(): void {
     this.listenSelectElement()
   }
@@ -149,6 +156,9 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+  /**
+   * Crisp chat
+   */
   crispChat() {
     window.$crisp = []
     window.CRISP_WEBSITE_ID = import.meta.env.NG_APP_CRISP
@@ -159,6 +169,9 @@ export class AppComponent implements AfterViewInit {
     d.getElementsByTagName('head')[0].appendChild(s)
   }
 
+  /**
+   * Listen select element
+   */
   listenSelectElement() {
     /*const elementToObserve = document.body;
 

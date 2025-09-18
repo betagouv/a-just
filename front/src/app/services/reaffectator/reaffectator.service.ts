@@ -9,6 +9,9 @@ import { setTimeToMidDay } from '../../utils/dates'
   providedIn: 'root',
 })
 export class ReaffectatorService {
+  /**
+   * Service de communication avec le serveur
+   */
   serverService = inject(ServerService)
   /**
    * Liste des référentiels sélectionnés et mise en cache

@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
-import { ServerService } from '../http-server/server.service';
-import { HumanResourceService } from '../human-resource/human-resource.service';
+import { inject, Injectable } from '@angular/core'
+import { ServerService } from '../http-server/server.service'
+import { HumanResourceService } from '../human-resource/human-resource.service'
 
 /**
  * Service de gestion des commentaires globaux
@@ -9,10 +9,14 @@ import { HumanResourceService } from '../human-resource/human-resource.service';
   providedIn: 'root',
 })
 export class CommentService {
-  // service d'appel au serveur
-  serverService = inject(ServerService);
-  // service de gestion des ressources
-  humanResourceService = inject(HumanResourceService);
+  /**
+   * Service d'appel au serveur
+   */
+  serverService = inject(ServerService)
+  /**
+   * Service de gestion des ressources
+   */
+  humanResourceService = inject(HumanResourceService)
 
   /**
    * API appel au serveur pour récuperer les commentaires en fonction d'un type
@@ -25,7 +29,7 @@ export class CommentService {
         type,
         juridictionId: this.humanResourceService.backupId.getValue(),
       })
-    )?.data || [];
+    )?.data || []
 
   /**
    * API mise à jour d'un commentaire
@@ -34,17 +38,13 @@ export class CommentService {
    * @param commentId
    * @returns
    */
-  updateComment = async (
-    type: string,
-    comment: string,
-    commentId: number | null = null
-  ) =>
+  updateComment = async (type: string, comment: string, commentId: number | null = null) =>
     this.serverService.post('comment/update-comment', {
       type,
       juridictionId: this.humanResourceService.backupId.getValue(),
       commentId,
       comment,
-    });
+    })
 
   /**
    * API suppression d'un commentaire
@@ -53,5 +53,5 @@ export class CommentService {
     this.serverService.post('comment/delete-comment', {
       commentId,
       juridictionId: this.humanResourceService.backupId.getValue(),
-    });
+    })
 }

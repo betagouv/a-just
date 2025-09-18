@@ -19,9 +19,13 @@ import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-r
   styleUrls: ['./comment-activities.component.scss'],
 })
 export class CommentActivitiesComponent implements OnChanges {
-  // service utilisateur
+  /**
+   * Service utilisateur
+   */
   userService = inject(UserService)
-  // service de gestion des commentaires
+  /**
+   * Service de gestion des commentaires
+   */
   commentService = inject(CommentService)
   /**
    * Type of comment to categories

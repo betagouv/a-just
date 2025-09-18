@@ -124,6 +124,13 @@
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Checkbox component</p>
+
+    </p>
 
 
     <p class="comment">
@@ -268,24 +275,6 @@
     </table>
 </section>
 
-    <section data-compodoc="block-constructor">
-    <h3 id="constructor">Constructor</h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-<code>constructor()</code>
-                    </td>
-                </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:31</a></div>
-                            </td>
-                        </tr>
-
-            </tbody>
-        </table>
-</section>
 
     <section data-compodoc="block-inputs">
     <h3 id="inputs">Inputs</h3>
@@ -310,7 +299,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:27</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:23</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -340,7 +329,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:31</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:27</a></div>
                             </td>
                         </tr>
                 <tr>
@@ -387,6 +376,8 @@
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>After view init</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -416,14 +407,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="35"
-                                    class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:35</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:33</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>On changes</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -483,14 +476,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="43"
-                                    class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:43</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="47"
+                                    class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:47</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Toogle</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -535,10 +530,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/components/checkbox/checkbox.component.ts:18</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Dom de selection</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -548,19 +549,12 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from &#x27;@angular/core&#x27;;
-import { FormsModule } from &#x27;@angular/forms&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from &#x27;@angular/core&#x27;
+import { FormsModule } from &#x27;@angular/forms&#x27;
 
+/**
+ * Checkbox component
+ */
 @Component({
   selector: &#x27;aj-checkbox&#x27;,
   standalone: true,
@@ -569,29 +563,40 @@ import { FormsModule } from &#x27;@angular/forms&#x27;;
   styleUrls: [&#x27;./checkbox.component.scss&#x27;],
 })
 export class CheckboxComponent implements AfterViewInit, OnChanges {
-  @ViewChild(&#x27;checkbox&#x27;) input!: ElementRef&lt;HTMLInputElement&gt;;
+  /**
+   * Dom de selection
+   */
+  @ViewChild(&#x27;checkbox&#x27;) input!: ElementRef&lt;HTMLInputElement&gt;
 
   /**
    * Initial value
    */
-  @Input() value: boolean &#x3D; false;
+  @Input() value: boolean &#x3D; false
   /**
    * Event lors de la sauvegarde
    */
-  @Output() valueChange &#x3D; new EventEmitter();
+  @Output() valueChange &#x3D; new EventEmitter()
 
-  constructor() {}
-
+  /**
+   * On changes
+   * @param change
+   */
   ngOnChanges(change: SimpleChanges) {
-    if (change[&#x27;value&#x27;].previousValue !&#x3D;&#x3D; undefined)
-      this.input.nativeElement.checked &#x3D; this.value;
+    if (change[&#x27;value&#x27;].previousValue !&#x3D;&#x3D; undefined) this.input.nativeElement.checked &#x3D; this.value
   }
 
+  /**
+   * After view init
+   */
   ngAfterViewInit(): void {
-    this.input.nativeElement.checked &#x3D; this.value;
+    this.input.nativeElement.checked &#x3D; this.value
   }
+
+  /**
+   * Toogle
+   */
   toogle() {
-    this.valueChange.emit(this.input.nativeElement.checked);
+    this.valueChange.emit(this.input.nativeElement.checked)
   }
 }
 </code></pre>

@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { MainClass } from '../../../libs/main-class';
-import { UserService } from '../../../services/user/user.service';
-
+import { Component, inject } from '@angular/core'
+import { MainClass } from '../../../libs/main-class'
+import { UserService } from '../../../services/user/user.service'
 
 /**
  * Footer à afficher quand on est pas connecté
@@ -15,11 +14,14 @@ import { UserService } from '../../../services/user/user.service';
   styleUrls: ['./footer-no-connected.component.scss'],
 })
 export class FooterNoConnectedComponent extends MainClass {
-  userService = inject(UserService);
+  /**
+   * Service de gestion des utilisateurs
+   */
+  userService = inject(UserService)
   /**
    * Constructeur
    */
   constructor() {
-    super();
+    super()
   }
 }

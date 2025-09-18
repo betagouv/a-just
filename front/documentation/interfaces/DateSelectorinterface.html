@@ -220,6 +220,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Type de date</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -258,6 +264,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date minimale</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -291,6 +303,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Affiche l&#39;arrow</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -324,6 +342,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Titre du bouton</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -357,6 +381,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Valeur de la date</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -365,11 +395,26 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface DateSelectorinterface {
-  title: string;
-  dateType: string;
-  value: Date | string | undefined | null;
-  minDate?: Date;
-  showArrow: boolean;
+  /**
+   * Titre du bouton
+   */
+  title: string
+  /**
+   * Type de date
+   */
+  dateType: string
+  /**
+   * Valeur de la date
+   */
+  value: Date | string | undefined | null
+  /**
+   * Date minimale
+   */
+  minDate?: Date
+  /**
+   * Affiche l&#x27;arrow
+   */
+  showArrow: boolean
 }
 </code></pre>
     </div>

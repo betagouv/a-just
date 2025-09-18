@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface de mise à jour</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -194,6 +201,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Date de mise à jour</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -227,6 +240,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Utilisateur de mise à jour</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -234,52 +253,61 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ContentieuReferentielInterface } from &quot;./contentieu-referentiel&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ContentieuReferentielInterface } from &#x27;./contentieu-referentiel&#x27;
 /**
  * Interface des sauvegardes (Juridictions / Temps moyens par dossier ...)
  */
 export interface BackupInterface {
-	/**
-	 * Id de sauvegarde
-	 */
-	id: number;
-	/**
-	 * Intitulé de sauvegarde
-	 */
-	label: string;
-	/**
-	 * Status local ou importé
-	 */
-	status: string;
-	/**
-	 * Type siege ou greffe
-	 */
-	type: string;
-	/**
-	 * Date de création
-	 */
-	date: Date;
-	/**
- * Date de dernière mise à jour de lui ou de ses enfants
- */
-	update: UpdateInterface;
-	/**
-	 * Interface du référentiel associé à la juridiction &#x3D; contentieux
-	 */
-	referentiels: ContentieuReferentielInterface[]
-	/**
-	 * Nom du créateur du referentiel
-	 */
-	userName?: string
-	/**
-	 * Selectionné à l&#x27;affichage ou non
-	 */
-	selected?: boolean
+  /**
+   * Id de sauvegarde
+   */
+  id: number
+  /**
+   * Intitulé de sauvegarde
+   */
+  label: string
+  /**
+   * Status local ou importé
+   */
+  status: string
+  /**
+   * Type siege ou greffe
+   */
+  type: string
+  /**
+   * Date de création
+   */
+  date: Date
+  /**
+   * Date de dernière mise à jour de lui ou de ses enfants
+   */
+  update: UpdateInterface
+  /**
+   * Interface du référentiel associé à la juridiction &#x3D; contentieux
+   */
+  referentiels: ContentieuReferentielInterface[]
+  /**
+   * Nom du créateur du referentiel
+   */
+  userName?: string
+  /**
+   * Selectionné à l&#x27;affichage ou non
+   */
+  selected?: boolean
 }
 
+/**
+ * Interface de mise à jour
+ */
 export interface UpdateInterface {
-	date: Date;
-	user: Object;
+  /**
+   * Date de mise à jour
+   */
+  date: Date
+  /**
+   * Utilisateur de mise à jour
+   */
+  user: Object
 }
 </code></pre>
     </div>

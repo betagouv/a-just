@@ -1,5 +1,4 @@
-
-import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core'
 
 /**
  * Composant bouton d'aide
@@ -13,6 +12,12 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./help-button.component.scss'],
 })
 export class HelpButtonComponent {
-  @Input() text: string | undefined;
-  isChildVisible: boolean = false;
+  /**
+   * Text
+   */
+  @Input() text: string | undefined
+  /**
+   * Is child visible
+   */
+  isChildVisible: boolean = false
 }

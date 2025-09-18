@@ -285,6 +285,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Volume</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -293,38 +299,42 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface CalculatriceInterface {
-	/**
-	 * Donnée de vacation
-	 */
-	vacation : { 
-		/**
-		 * Valeur en nombre de vacation
-		 */
-		value : string|null, 
-		/**
-		 * Période semaine mois année
-		 */
-		option: string|null,
-		/**
-		 * Valeur d&#x27;une vacation en heure
-		 */
-		unit: string|null
-	},
-	volume : { 
-		/**
-		 * Valeur en nombre d&#x27;heure
-		 */
-		value :  string|null, 
-		/**
-		* Période semaine mois année
-		 */
-		option: string|null
-	},
-	/**
-	 * Type de calcul
-	 */
-	selectedTab : string
-}</code></pre>
+  /**
+   * Donnée de vacation
+   */
+  vacation: {
+    /**
+     * Valeur en nombre de vacation
+     */
+    value: string | null
+    /**
+     * Période semaine mois année
+     */
+    option: string | null
+    /**
+     * Valeur d&#x27;une vacation en heure
+     */
+    unit: string | null
+  }
+  /**
+   * Volume
+   */
+  volume: {
+    /**
+     * Valeur en nombre d&#x27;heure
+     */
+    value: string | null
+    /**
+     * Période semaine mois année
+     */
+    option: string | null
+  }
+  /**
+   * Type de calcul
+   */
+  selectedTab: string
+}
+</code></pre>
     </div>
 </div>
 

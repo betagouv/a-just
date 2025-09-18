@@ -69,7 +69,10 @@ export class ServerService {
     }
   }
 
-  /* TOKEN */
+  /**
+   * TOKEN
+   * @returns
+   */
   getToken(): any {
     if (this.userToken.getValue() == null) {
       try {
@@ -81,6 +84,7 @@ export class ServerService {
 
     return this.userToken.getValue()
   }
+
   /**
    * Définition du token
    * @param t
@@ -98,7 +102,12 @@ export class ServerService {
     localStorage.removeItem('token')
   }
 
-  /* HTTPs request */
+  /**
+   * HTTPs request
+   * @param url
+   * @param options
+   * @returns
+   */
   get(url: string, options = {}): Promise<any> {
     console.log('HTTP GET ' + this.getUrl(url))
     //this.appService.setIsLoading(true);

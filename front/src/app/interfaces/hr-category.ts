@@ -5,31 +5,31 @@ export interface HRCategoryInterface {
   /**
    * Id de la base
    */
-	id: number;
+  id: number
   /**
    * Nom
    */
-	label: string;
+  label: string
   /**
    * Ordre pour trier en base
    */
-	rank?: number;
+  rank?: number
   /**
    * Couleur du texte de la catégorie
    */
-	textColor: string;
+  textColor: string
   /**
    * Couleur de fond de la catégorie
    */
-	bgColor: string;
-    /**
+  bgColor: string
+  /**
    * Couleur de fond de la catégorie au survol
    */
-	hoverColor: string;
+  hoverColor: string
   /**
    * Ouverture du sous menu de filtre
    */
-  openSubMenu?: boolean;
+  openSubMenu?: boolean
 }
 
 /**
@@ -39,45 +39,49 @@ export interface HRCategorySelectedInterface extends HRCategoryInterface {
   /**
    * Selectionnée ou non
    */
-  selected: boolean;
+  selected: boolean
   /**
    * Somme des ETPT calculé
    */
-  etpt: number;
+  etpt: number
   /**
    * Nom de personne de la catégorie
    */
-  nbPersonal: number;
+  nbPersonal: number
   /**
    * String pour afficher au pluriel ou non
    */
-  labelPlural: string;
+  labelPlural: string
   /**
    * String pour afficher le nom de substitution
    */
-  headerLabel?: string;
+  headerLabel?: string
   /**
    * Fonction role
    */
-  poste: HRCategorypositionInterface[];
+  poste: HRCategorypositionInterface[]
   /**
    * Pourcent ventilé de la catégorie
    */
-  percentAllocated?: number;
+  percentAllocated?: number
 }
 
+/**
+ * Position de la catégorie
+ */
 export interface HRCategorypositionInterface {
   /** Nom de la position */
-  name: string;
+  name: string
   /**
    * Selectionnée ou non
    */
-  selected: boolean;
+  selected: boolean
   /**
    * Somme des ETPT calculé
    */
-  etpt: number;
+  etpt: number
   /**
    * Nom de personne de la catégorie
    */
-  nbPersonal: number;}
+  nbPersonal: number
+}

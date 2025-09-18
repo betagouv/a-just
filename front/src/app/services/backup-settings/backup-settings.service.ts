@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { ServerService } from '../http-server/server.service';
-import { HumanResourceService } from '../human-resource/human-resource.service';
-import { MainClass } from '../../libs/main-class';
-import { BackupSettingInterface } from '../../interfaces/backup-setting';
+import { Injectable } from '@angular/core'
+import { ServerService } from '../http-server/server.service'
+import { HumanResourceService } from '../human-resource/human-resource.service'
+import { MainClass } from '../../libs/main-class'
+import { BackupSettingInterface } from '../../interfaces/backup-setting'
 
 /**
  * Gestion des settings liés à un bakcup
@@ -19,9 +19,9 @@ export class BackupSettingsService extends MainClass {
    */
   constructor(
     private serverService: ServerService,
-    private humanResourceService: HumanResourceService
+    private humanResourceService: HumanResourceService,
   ) {
-    super();
+    super()
   }
 
   /**
@@ -35,7 +35,7 @@ export class BackupSettingsService extends MainClass {
         backupId: this.humanResourceService.backupId.getValue(),
         types,
       })
-      .then((data) => data.data || []);
+      .then((data) => data.data || [])
   }
 
   /**
@@ -54,7 +54,7 @@ export class BackupSettingsService extends MainClass {
         datas,
         id,
       })
-      .then((data) => data.data || null);
+      .then((data) => data.data || null)
   }
 
   /**
@@ -63,8 +63,6 @@ export class BackupSettingsService extends MainClass {
    * @returns
    */
   removeSetting(id: number) {
-    return this.serverService
-      .delete(`hr-backup-settings/remove-setting/${id}`)
-      .then((data) => data.data || null);
+    return this.serverService.delete(`hr-backup-settings/remove-setting/${id}`).then((data) => data.data || null)
   }
 }

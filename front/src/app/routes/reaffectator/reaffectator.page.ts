@@ -210,9 +210,6 @@ interface ContentieuReferentielCalculateInterface
   templateUrl: './reaffectator.page.html',
   styleUrls: ['./reaffectator.page.scss'],
 })
-/**
- * Page de réaffectation
- */
 export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Service de gestion des fiches agents

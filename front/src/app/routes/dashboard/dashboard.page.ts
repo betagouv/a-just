@@ -1,6 +1,5 @@
 import { Component } from '@angular/core'
 import { MainClass } from '../../libs/main-class'
-
 import { WrapperComponent } from '../../components/wrapper/wrapper.component'
 import { ExtractorActivityComponent } from './extractor-activity/extractor-activity.component'
 import { ExtractorVentilationComponent } from './extractor-ventilation/extractor-ventilation.component'
@@ -46,7 +45,10 @@ export class DashboardPage extends MainClass {
   /**
    * Constructor
    */
-  constructor(public userService: UserService, private excelService: ExcelService) {
+  constructor(
+    public userService: UserService,
+    private excelService: ExcelService,
+  ) {
     super()
     this.watch(
       this.userService.user.subscribe((u) => {

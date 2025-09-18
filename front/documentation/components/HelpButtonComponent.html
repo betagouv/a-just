@@ -246,9 +246,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/components/help-button/help-button.component.ts:16</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/components/help-button/help-button.component.ts:18</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Text</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 </section>
@@ -285,10 +291,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/components/help-button/help-button.component.ts:17</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/components/help-button/help-button.component.ts:22</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Is child visible</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -298,7 +310,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input } from &#x27;@angular/core&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input } from &#x27;@angular/core&#x27;
 
 /**
  * Composant bouton d&#x27;aide
@@ -312,8 +324,14 @@
   styleUrls: [&#x27;./help-button.component.scss&#x27;],
 })
 export class HelpButtonComponent {
-  @Input() text: string | undefined;
-  isChildVisible: boolean &#x3D; false;
+  /**
+   * Text
+   */
+  @Input() text: string | undefined
+  /**
+   * Is child visible
+   */
+  isChildVisible: boolean &#x3D; false
 }
 </code></pre>
     </div>

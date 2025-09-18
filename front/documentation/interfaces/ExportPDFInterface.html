@@ -442,14 +442,41 @@ interface ExportPDFInterface {
   styleUrls: [&#x27;./wrapper.component.scss&#x27;],
 })
 export class WrapperComponent extends MainClass implements OnDestroy {
+  /**
+   * Service de navigation
+   */
   router &#x3D; inject(Router)
+  /**
+   * Service de gestion des routes
+   */
   route &#x3D; inject(ActivatedRoute)
+  /**
+   * Service de gestion des utilisateurs
+   */
   userService &#x3D; inject(UserService)
+  /**
+   * Service de gestion des ressources humaines
+   */
   humanResourceService &#x3D; inject(HumanResourceService)
+  /**
+   * Service de gestion des applications
+   */
   appService &#x3D; inject(AppService)
+  /**
+   * Service de gestion des titres
+   */
   titlePlatform &#x3D; inject(Title)
+  /**
+   * Service de gestion des activités
+   */
   activitiesService &#x3D; inject(ActivitiesService)
+  /**
+   * Service de gestion des serveurs
+   */
   serverService &#x3D; inject(ServerService)
+  /**
+   * Service de gestion des excel
+   */
   excelService &#x3D; inject(ExcelService)
   /**
    * Service de log des KPIs
@@ -639,7 +666,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       }),
     )
 
-    if(this.route.snapshot.queryParams[&#x27;b&#x27;]) {
+    if (this.route.snapshot.queryParams[&#x27;b&#x27;]) {
       this.backUrl &#x3D; &#x60;/${this.route.snapshot.queryParams[&#x27;b&#x27;]}&#x60;
     }
   }
@@ -666,6 +693,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     this.router.navigate([&#x27;/logout&#x27;])
   }
 
+  /**
+   * Bouton déconnecter
+   * @param event
+   */
   onSelectAction(event: any) {
     this.onDisconnect()
   }
@@ -898,10 +929,20 @@ export class WrapperComponent extends MainClass implements OnDestroy {
     })
   }
 
+  /**
+   * Bouton d&#x27;ouverture d&#x27;une page
+   * @param path
+   */
   onSelect(path: string) {
     this.pageSelected.emit(path)
   }
 
+  /**
+   * Téléchargement d&#x27;un asset
+   * @param type
+   * @param download
+   * @returns
+   */
   async downloadAsset(type: string, download &#x3D; false) {
     this.kPIService.register(REQUEST_USER_MANUAL, type)
 

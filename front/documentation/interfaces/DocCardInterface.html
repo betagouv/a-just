@@ -126,6 +126,13 @@
         </p>
 
 
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface for the doc card</p>
+
+            </p>
 
 
         <section data-compodoc="block-index">
@@ -226,6 +233,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Description</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -264,6 +277,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Download</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -297,6 +316,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Image</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -335,6 +360,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Local url</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -368,6 +399,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Tag</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -401,6 +438,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Title</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -434,6 +477,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Url</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -441,22 +490,49 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, Input } from &#x27;@angular/core&#x27;;
-import { ServerService } from &#x27;../../services/http-server/server.service&#x27;;
-import { downloadFile } from &#x27;../../utils/system&#x27;;
-import { MatIconModule } from &#x27;@angular/material/icon&#x27;;
-import { RouterLink } from &#x27;@angular/router&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, Input } from &#x27;@angular/core&#x27;
+import { ServerService } from &#x27;../../services/http-server/server.service&#x27;
+import { downloadFile } from &#x27;../../utils/system&#x27;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;
+import { RouterLink } from &#x27;@angular/router&#x27;
 
+/**
+ * Interface for the doc card
+ */
 export interface DocCardInterface {
-  title: string;
-  description: string;
-  image: string;
-  tag: string;
-  url: string;
-  localUrl?: boolean;
-  download?: boolean;
+  /**
+   * Title
+   */
+  title: string
+  /**
+   * Description
+   */
+  description: string
+  /**
+   * Image
+   */
+  image: string
+  /**
+   * Tag
+   */
+  tag: string
+  /**
+   * Url
+   */
+  url: string
+  /**
+   * Local url
+   */
+  localUrl?: boolean
+  /**
+   * Download
+   */
+  download?: boolean
 }
 
+/**
+ * Composant de la carte de documentation
+ */
 @Component({
   selector: &#x27;aj-doc-card&#x27;,
   standalone: true,
@@ -465,7 +541,10 @@ export interface DocCardInterface {
   styleUrls: [&#x27;./doc-card.component.scss&#x27;],
 })
 export class DocCardComponent {
-  serverService &#x3D; inject(ServerService);
+  /**
+   * Server service
+   */
+  serverService &#x3D; inject(ServerService)
   /**
    * Data card
    */
@@ -476,27 +555,30 @@ export class DocCardComponent {
     tag: &#x27;&#x27;,
     url: &#x27;&#x27;,
     download: false,
-  };
+  }
   /**
    * Localisation du fichier nomenclature
    */
-  CALCULATRICE_DOWNLOAD_URL &#x3D;
-    &#x27;/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx&#x27;;
+  CALCULATRICE_DOWNLOAD_URL &#x3D; &#x27;/assets/Calculatrice_de_ventilation_du_temps_par_activité_A-JUST_MAG_et_GRF.xlsx&#x27;
 
+  /**
+   * Go to
+   * @param url
+   */
   async goTo(url: string) {
     await this.serverService
       .post(&#x27;centre-d-aide/log-documentation-link&#x27;, {
         value: url,
       })
       .then((r) &#x3D;&gt; {
-        return r.data;
-      });
+        return r.data
+      })
 
-    console.log(this.data);
+    console.log(this.data)
     if (this.data.download) {
-      downloadFile(url);
+      downloadFile(url)
     } else {
-      window.open(url);
+      window.open(url)
     }
   }
 }

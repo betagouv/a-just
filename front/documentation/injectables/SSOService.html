@@ -212,8 +212,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="25"
-                                    class="link-to-prism">src/app/services/sso/sso.service.ts:25</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="28"
+                                    class="link-to-prism">src/app/services/sso/sso.service.ts:28</a></div>
                         </td>
                     </tr>
 
@@ -251,8 +251,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/services/sso/sso.service.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="69"
+                                    class="link-to-prism">src/app/services/sso/sso.service.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -290,8 +290,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="42"
-                                    class="link-to-prism">src/app/services/sso/sso.service.ts:42</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="45"
+                                    class="link-to-prism">src/app/services/sso/sso.service.ts:45</a></div>
                         </td>
                     </tr>
 
@@ -329,8 +329,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="49"
-                                    class="link-to-prism">src/app/services/sso/sso.service.ts:49</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/app/services/sso/sso.service.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -368,8 +368,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="18"
-                                    class="link-to-prism">src/app/services/sso/sso.service.ts:18</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="21"
+                                    class="link-to-prism">src/app/services/sso/sso.service.ts:21</a></div>
                         </td>
                     </tr>
 
@@ -414,10 +414,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/services/sso/sso.service.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/services/sso/sso.service.ts:15</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de communication avec le serveur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -427,9 +433,9 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;;
-import { ServerService } from &#x27;../http-server/server.service&#x27;;
-import { ping } from &#x27;../../utils/system&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { ping } from &#x27;../../utils/system&#x27;
 
 /**
  * Service en lien avec le SSO
@@ -438,14 +444,17 @@ import { ping } from &#x27;../../utils/system&#x27;;
   providedIn: &#x27;root&#x27;,
 })
 export class SSOService {
-  serverService &#x3D; inject(ServerService);
+  /**
+   * Service de communication avec le serveur
+   */
+  serverService &#x3D; inject(ServerService)
 
   /**
    * Récupération du serveur SSO justice
    * @returns
    */
   serverGetUrl() {
-    return this.serverService.get(&#x27;saml/get-test-url&#x27;).then((d) &#x3D;&gt; d.data);
+    return this.serverService.get(&#x27;saml/get-test-url&#x27;).then((d) &#x3D;&gt; d.data)
   }
 
   /**
@@ -453,23 +462,23 @@ export class SSOService {
    */
   async canUseSSO() {
     try {
-      const url &#x3D; await this.serverGetUrl();
+      const url &#x3D; await this.serverGetUrl()
 
       if (url) {
-        const pingDelay &#x3D; await ping(url);
+        const pingDelay &#x3D; await ping(url)
         if (pingDelay) {
-          return true;
+          return true
         }
       }
     } catch (err) {}
-    return false;
+    return false
   }
 
   /**
    * Récuparation de l&#x27;url de login SSO coté A-Just
    */
   getSSOLogin() {
-    return this.serverService.getUrl(&#x27;saml/login&#x27;);
+    return this.serverService.getUrl(&#x27;saml/login&#x27;)
   }
 
   /**
@@ -478,22 +487,22 @@ export class SSOService {
   getSSOStatus() {
     return this.serverService.get(&#x27;saml/status&#x27;).then((s) &#x3D;&gt; {
       if (s &amp;&amp; s.token) {
-        this.serverService.setToken(s.token);
-        return s;
+        this.serverService.setToken(s.token)
+        return s
       }
       if (s.data) {
-        return s.data;
+        return s.data
       }
 
-      return s;
-    });
+      return s
+    })
   }
 
   /**
    * Récuparation de l&#x27;url de login SSO coté A-Just
    */
   clearSession() {
-    return this.serverService.get(&#x27;saml/clean-session&#x27;);
+    return this.serverService.get(&#x27;saml/clean-session&#x27;)
   }
 }
 </code></pre>

@@ -1,9 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { CalculatriceInterface } from '../../interfaces/calculatrice';
-import { CalculatriceService } from '../../services/calculatrice/calculatrice.service';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common'
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'
+import { CalculatriceInterface } from '../../interfaces/calculatrice'
+import { CalculatriceService } from '../../services/calculatrice/calculatrice.service'
+import { FormsModule } from '@angular/forms'
 
+/**
+ * Composant de la calculatrice
+ */
 @Component({
   selector: 'aj-calculatrice',
   standalone: true,
@@ -12,11 +15,14 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./calculatrice.component.scss'],
 })
 export class CalculatriceComponent implements OnInit, OnDestroy {
-  calculatriceService = inject(CalculatriceService);
+  /**
+   * Service de gestion du calculateur
+   */
+  calculatriceService = inject(CalculatriceService)
   /**
    * Option radio button
    */
-  radioItems = 'jour mois an'.split(' ');
+  radioItems = 'jour mois an'.split(' ')
 
   /**
    * Model utilisé pour les calculs d'ETPT
@@ -25,13 +31,13 @@ export class CalculatriceComponent implements OnInit, OnDestroy {
     vacation: { value: null, option: null, unit: null },
     volume: { value: null, option: null },
     selectedTab: '',
-  };
+  }
 
   /**
    * Déclenchemet à la création du composent
    */
   ngOnInit(): void {
-    this.model = this.calculatriceService.dataCalculatrice.value;
+    this.model = this.calculatriceService.dataCalculatrice.value
   }
 
   /**
@@ -42,17 +48,17 @@ export class CalculatriceComponent implements OnInit, OnDestroy {
       vacation: { value: null, option: 'jour', unit: null },
       volume: { value: null, option: 'jour' },
       selectedTab: 'vacation',
-    };
+    }
     setTimeout(() => {
-      this.calculatriceService.dataCalculatrice.next(this.model);
-    }, 100);
+      this.calculatriceService.dataCalculatrice.next(this.model)
+    }, 100)
   }
   /**
    * Ouvre l'onglet cliqué
    * @param tabName
    */
   openTab(tabName: string) {
-    this.model.selectedTab = tabName;
+    this.model.selectedTab = tabName
   }
 
   /**
@@ -61,22 +67,18 @@ export class CalculatriceComponent implements OnInit, OnDestroy {
    * @returns boolean si chiffre ou non
    */
   validateNumber(e: any) {
-    const charCode = e.which ? e.which : e.keyCode;
-    if (
-      e.code !== 'KeyM' &&
-      charCode > 31 &&
-      (charCode < 48 || charCode > 57)
-    ) {
-      if (charCode === 46) return true;
-      return false;
+    const charCode = e.which ? e.which : e.keyCode
+    if (e.code !== 'KeyM' && charCode > 31 && (charCode < 48 || charCode > 57)) {
+      if (charCode === 46) return true
+      return false
     }
-    return true;
+    return true
   }
 
   /**
    * Update le model de donnée de la calculatrice
    */
   updateModel() {
-    this.calculatriceService.dataCalculatrice.next(this.model);
+    this.calculatriceService.dataCalculatrice.next(this.model)
   }
 }

@@ -1,16 +1,9 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core'
+import { FormsModule } from '@angular/forms'
 
+/**
+ * Checkbox component
+ */
 @Component({
   selector: 'aj-checkbox',
   standalone: true,
@@ -19,28 +12,39 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./checkbox.component.scss'],
 })
 export class CheckboxComponent implements AfterViewInit, OnChanges {
-  @ViewChild('checkbox') input!: ElementRef<HTMLInputElement>;
+  /**
+   * Dom de selection
+   */
+  @ViewChild('checkbox') input!: ElementRef<HTMLInputElement>
 
   /**
    * Initial value
    */
-  @Input() value: boolean = false;
+  @Input() value: boolean = false
   /**
    * Event lors de la sauvegarde
    */
-  @Output() valueChange = new EventEmitter();
+  @Output() valueChange = new EventEmitter()
 
-  constructor() {}
-
+  /**
+   * On changes
+   * @param change
+   */
   ngOnChanges(change: SimpleChanges) {
-    if (change['value'].previousValue !== undefined)
-      this.input.nativeElement.checked = this.value;
+    if (change['value'].previousValue !== undefined) this.input.nativeElement.checked = this.value
   }
 
+  /**
+   * After view init
+   */
   ngAfterViewInit(): void {
-    this.input.nativeElement.checked = this.value;
+    this.input.nativeElement.checked = this.value
   }
+
+  /**
+   * Toogle
+   */
   toogle() {
-    this.valueChange.emit(this.input.nativeElement.checked);
+    this.valueChange.emit(this.input.nativeElement.checked)
   }
 }

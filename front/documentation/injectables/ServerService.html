@@ -233,8 +233,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="185"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:185</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:194</a></div>
                         </td>
                     </tr>
 
@@ -320,14 +320,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="102"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:102</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:111</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>HTTPs request</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -405,19 +407,24 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="73"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:73</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:76</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>TOKEN</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -511,8 +518,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="119"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:119</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="128"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:128</a></div>
                         </td>
                     </tr>
 
@@ -667,8 +674,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="135"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:135</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:144</a></div>
                         </td>
                     </tr>
 
@@ -784,8 +791,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="153"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:153</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="162"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:162</a></div>
                         </td>
                     </tr>
 
@@ -886,8 +893,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="168"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:168</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="177"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:177</a></div>
                         </td>
                     </tr>
 
@@ -988,8 +995,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="96"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:96</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="100"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:100</a></div>
                         </td>
                     </tr>
 
@@ -1027,8 +1034,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="88"
-                                    class="link-to-prism">src/app/services/http-server/server.service.ts:88</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/app/services/http-server/server.service.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -1264,7 +1271,10 @@ export class ServerService {
     }
   }
 
-  /* TOKEN */
+  /**
+   * TOKEN
+   * @returns
+   */
   getToken(): any {
     if (this.userToken.getValue() &#x3D;&#x3D; null) {
       try {
@@ -1276,6 +1286,7 @@ export class ServerService {
 
     return this.userToken.getValue()
   }
+
   /**
    * Définition du token
    * @param t
@@ -1293,7 +1304,12 @@ export class ServerService {
     localStorage.removeItem(&#x27;token&#x27;)
   }
 
-  /* HTTPs request */
+  /**
+   * HTTPs request
+   * @param url
+   * @param options
+   * @returns
+   */
   get(url: string, options &#x3D; {}): Promise&lt;any&gt; {
     console.log(&#x27;HTTP GET &#x27; + this.getUrl(url))
     //this.appService.setIsLoading(true);

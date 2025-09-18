@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
-import { ServerService } from '../http-server/server.service';
-import { ping } from '../../utils/system';
+import { inject, Injectable } from '@angular/core'
+import { ServerService } from '../http-server/server.service'
+import { ping } from '../../utils/system'
 
 /**
  * Service en lien avec le SSO
@@ -9,14 +9,17 @@ import { ping } from '../../utils/system';
   providedIn: 'root',
 })
 export class SSOService {
-  serverService = inject(ServerService);
+  /**
+   * Service de communication avec le serveur
+   */
+  serverService = inject(ServerService)
 
   /**
    * Récupération du serveur SSO justice
    * @returns
    */
   serverGetUrl() {
-    return this.serverService.get('saml/get-test-url').then((d) => d.data);
+    return this.serverService.get('saml/get-test-url').then((d) => d.data)
   }
 
   /**
@@ -24,23 +27,23 @@ export class SSOService {
    */
   async canUseSSO() {
     try {
-      const url = await this.serverGetUrl();
+      const url = await this.serverGetUrl()
 
       if (url) {
-        const pingDelay = await ping(url);
+        const pingDelay = await ping(url)
         if (pingDelay) {
-          return true;
+          return true
         }
       }
     } catch (err) {}
-    return false;
+    return false
   }
 
   /**
    * Récuparation de l'url de login SSO coté A-Just
    */
   getSSOLogin() {
-    return this.serverService.getUrl('saml/login');
+    return this.serverService.getUrl('saml/login')
   }
 
   /**
@@ -49,21 +52,21 @@ export class SSOService {
   getSSOStatus() {
     return this.serverService.get('saml/status').then((s) => {
       if (s && s.token) {
-        this.serverService.setToken(s.token);
-        return s;
+        this.serverService.setToken(s.token)
+        return s
       }
       if (s.data) {
-        return s.data;
+        return s.data
       }
 
-      return s;
-    });
+      return s
+    })
   }
 
   /**
    * Récuparation de l'url de login SSO coté A-Just
    */
   clearSession() {
-    return this.serverService.get('saml/clean-session');
+    return this.serverService.get('saml/clean-session')
   }
 }

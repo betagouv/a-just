@@ -35,8 +35,8 @@ export interface ChartAnnotationBoxInterface {
    */
   simulatedCont?: number | null
   /**
- * Valeur projetée EAM
- */
+   * Valeur projetée EAM
+   */
   projectedCont?: number | null
   /**
    * Valeur simulée fonctionnaire
@@ -103,4 +103,3 @@ export interface ChartAnnotationBoxInterface {
    */
   enableTooltip?: boolean | null
 }
-

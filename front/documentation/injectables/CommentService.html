@@ -225,7 +225,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/services/comment/comment.service.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/services/comment/comment.service.ts:26</a></div>
                         </td>
                     </tr>
 
@@ -275,10 +275,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/services/comment/comment.service.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/services/comment/comment.service.ts:19</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service de gestion des ressources</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -300,10 +306,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/services/comment/comment.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/services/comment/comment.service.ts:15</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Service d&#39;appel au serveur</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -325,7 +337,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/services/comment/comment.service.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/services/comment/comment.service.ts:41</a></div>
                         </td>
                     </tr>
 
@@ -369,9 +381,9 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;;
-import { ServerService } from &#x27;../http-server/server.service&#x27;;
-import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &#x27;@angular/core&#x27;
+import { ServerService } from &#x27;../http-server/server.service&#x27;
+import { HumanResourceService } from &#x27;../human-resource/human-resource.service&#x27;
 
 /**
  * Service de gestion des commentaires globaux
@@ -380,10 +392,14 @@ import { HumanResourceService } from &#x27;../human-resource/human-resource.serv
   providedIn: &#x27;root&#x27;,
 })
 export class CommentService {
-  // service d&#x27;appel au serveur
-  serverService &#x3D; inject(ServerService);
-  // service de gestion des ressources
-  humanResourceService &#x3D; inject(HumanResourceService);
+  /**
+   * Service d&#x27;appel au serveur
+   */
+  serverService &#x3D; inject(ServerService)
+  /**
+   * Service de gestion des ressources
+   */
+  humanResourceService &#x3D; inject(HumanResourceService)
 
   /**
    * API appel au serveur pour récuperer les commentaires en fonction d&#x27;un type
@@ -396,7 +412,7 @@ export class CommentService {
         type,
         juridictionId: this.humanResourceService.backupId.getValue(),
       })
-    )?.data || [];
+    )?.data || []
 
   /**
    * API mise à jour d&#x27;un commentaire
@@ -405,17 +421,13 @@ export class CommentService {
    * @param commentId
    * @returns
    */
-  updateComment &#x3D; async (
-    type: string,
-    comment: string,
-    commentId: number | null &#x3D; null
-  ) &#x3D;&gt;
+  updateComment &#x3D; async (type: string, comment: string, commentId: number | null &#x3D; null) &#x3D;&gt;
     this.serverService.post(&#x27;comment/update-comment&#x27;, {
       type,
       juridictionId: this.humanResourceService.backupId.getValue(),
       commentId,
       comment,
-    });
+    })
 
   /**
    * API suppression d&#x27;un commentaire
@@ -424,7 +436,7 @@ export class CommentService {
     this.serverService.post(&#x27;comment/delete-comment&#x27;, {
       commentId,
       juridictionId: this.humanResourceService.backupId.getValue(),
-    });
+    })
 }
 </code></pre>
     </div>

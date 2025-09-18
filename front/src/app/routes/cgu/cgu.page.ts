@@ -8,7 +8,6 @@ import { BackButtonComponent } from '../../components/back-button/back-button.co
 /**
  * CGU
  */
-
 @Component({
   standalone: true,
   imports: [WrapperNoConnectedComponent, BackButtonComponent],

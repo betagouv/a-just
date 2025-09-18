@@ -207,6 +207,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Année</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -234,6 +240,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Jour</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -261,6 +273,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Mois</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-sm table-bordered">
@@ -288,6 +306,12 @@
 
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Semaine</p>
+</div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
             </section>
@@ -304,12 +328,18 @@ import { basicEtptData } from &#x27;../../constants/etpt-calculation&#x27;
  * Données périodiques des magistrats et fonctionnaires
  */
 const periodicData: { [key: string]: any } &#x3D; {
+  /**
+   * Magistrat
+   */
   Magistrat: {
     jour: 208,
     semaine: 41.6,
     mois: 12,
     an: 1,
   },
+  /**
+   * Fonctionnaire
+   */
   Fonctionnaire: {
     jour: 229.57,
     semaine: 45.91,
@@ -322,9 +352,21 @@ const periodicData: { [key: string]: any } &#x3D; {
  * Interface pour les périodes
  */
 interface periodInterface {
+  /**
+   * Jour
+   */
   jour: &#x27;jour&#x27;
+  /**
+   * Semaine
+   */
   semaine: &#x27;semaine&#x27;
+  /**
+   * Mois
+   */
   mois: &#x27;mois&#x27;
+  /**
+   * Année
+   */
   an: &#x27;an&#x27;
 }
 

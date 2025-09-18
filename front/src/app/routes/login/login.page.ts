@@ -14,7 +14,6 @@ import { CommonModule } from '@angular/common'
 /**
  * Page de connexion
  */
-
 @Component({
   standalone: true,
   imports: [WrapperNoConnectedComponent, RouterLink, FormsModule, PopupComponent, ReactiveFormsModule, CommonModule],
@@ -43,9 +42,21 @@ export class LoginPage implements OnInit {
    * Formulaire
    */
   form = new FormGroup({
+    /**
+     * Email
+     */
     email: new FormControl(),
+    /**
+     * Mot de passe
+     */
     password: new FormControl(),
+    /**
+     * Se souvenir de moi
+     */
     remember: new FormControl(),
+    /**
+     * Afficher le mot de passe
+     */
     checkboxPassword: new FormControl(),
   })
   /**

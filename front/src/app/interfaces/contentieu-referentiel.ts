@@ -1,9 +1,24 @@
-import { NodeActivityUpdatedInterface } from './activity';
+import { NodeActivityUpdatedInterface } from './activity'
 
+/**
+ * Enum des qualités de la donnée
+ */
 export enum ValueQualityEnum {
+  /**
+   * Facultatif
+   */
   ptional = 'facultatif',
+  /**
+   * Good
+   */
   good = 'good',
+  /**
+   * To complete
+   */
   toComplete = 'to_complete',
+  /**
+   * To verify
+   */
   toVerify = 'to_verify',
 }
 
@@ -14,162 +29,159 @@ export interface ContentieuReferentielInterface {
   /**
    * Id d'un contentieux
    */
-  id: number;
+  id: number
   /**
    * Nom des contentieux
    */
-  label: string;
+  label: string
   /**
    * Contentieux niveau 4
    */
-  childrens?: ContentieuReferentielInterface[];
+  childrens?: ContentieuReferentielInterface[]
   /**
    *  Taux de completion de la donnée
    */
-  completion?: number;
+  completion?: number
   /**
    *  Code import
    */
-  code_import?: string;
+  code_import?: string
   /**
    * Boolean qui permet de voir si on calcul des ventilations en rapport des indispo
    */
-  checkVentilation?: boolean;
+  checkVentilation?: boolean
   /**
    * Element à compter ou non dans le calcul de complétion des données
    */
-  compter?: boolean;
+  compter?: boolean
   /**
    * Element permettant de spécifier un niveau de détail pour les indisponibilités
    */
-  category?: boolean;
+  category?: boolean
   /**
    * Somme des ETP du contentieux
    */
-  totalAffected?: number;
+  totalAffected?: number
   /**
    * Pourcentage d'affectation
    */
-  percent?: number;
+  percent?: number
   /**
    * Si c'est selectionnée
    */
-  selected?: boolean;
+  selected?: boolean
   /**
    * Rank pour le trie
    */
-  rank?: number;
+  rank?: number
   /**
    * Entrées
    */
-  in?: number | null;
+  in?: number | null
   /**
    * Entrées envoyées de la SDSE
    */
-  originalIn?: number | null;
+  originalIn?: number | null
   /**
    * Sorties du mois
    */
-  out?: number | null;
+  out?: number | null
   /**
    * Sorties du mois de la SDSE
    */
-  originalOut?: number | null;
+  originalOut?: number | null
   /**
    * Stock recalculé
    */
-  stock?: number | null;
+  stock?: number | null
   /**
    * Stock de la SDSE
    */
-  originalStock?: number | null;
+  originalStock?: number | null
   /**
    * Voir les activité du contentieux (propre à une page)
    */
-  showActivityGroup?: boolean;
+  showActivityGroup?: boolean
   /**
    * Voir les options du contentieux (propre à une page)
    */
-  showOptionGroup?: boolean;
+  showOptionGroup?: boolean
   /**
    * Voir les temps moyens des magistrats
    */
-  averageProcessingTime: number | null;
+  averageProcessingTime: number | null
   /**
    * Parent en cas d'héritage
    */
-  parent?: ContentieuReferentielInterface;
+  parent?: ContentieuReferentielInterface
   /**
    * Affiche ou non ses enfants (page calculateur)
    */
-  childIsVisible?: boolean;
+  childIsVisible?: boolean
   /**
    * Si un magistrat à été modifié
    */
-  isModified?: boolean;
+  isModified?: boolean
   /**
    * Si un fonctionnaire à été modifié
    */
-  isModifiedFonc?: boolean;
+  isModifiedFonc?: boolean
   /**
    * Temps moyen par défaut magistrat
    */
-  defaultValue?: any;
+  defaultValue?: any
   /**
    * Temps moyen par défaut des greffier
    */
-  defaultValueFonc?: any;
+  defaultValueFonc?: any
   /**
    * Niveau de qualité de la donnée d'entrées
    */
-  valueQualityIn?: ValueQualityEnum | null;
+  valueQualityIn?: ValueQualityEnum | null
   /**
    * Niveau de qualité de la donnée de sorties
    */
-  valueQualityOut?: ValueQualityEnum | null;
+  valueQualityOut?: ValueQualityEnum | null
   /**
    * Niveau de qualité de la donnée de stock
    */
-  valueQualityStock?: ValueQualityEnum | null;
+  valueQualityStock?: ValueQualityEnum | null
   /**
    * Url d'aide de la donnée
    */
-  helpUrl?: string | null;
+  helpUrl?: string | null
   /**
    * Possible gain sur le taux de complétion si complété par l'utilistateur
    */
-  possibleGainCompletion?: number;
+  possibleGainCompletion?: number
   /**
    * Log de mise à jour de donnée d'activité
    */
-  activityUpdated?: NodeActivityUpdatedInterface | null;
+  activityUpdated?: NodeActivityUpdatedInterface | null
   /**
    * Nombre de commentaire pour le contentieux
    */
-  nbComments?: number;
+  nbComments?: number
 }
 
 /**
  * Interface d'un référentiel spécifique à la page
  */
-export interface ContentieuReferentielActivitiesInterface
-  extends ContentieuReferentielInterface {
+export interface ContentieuReferentielActivitiesInterface extends ContentieuReferentielInterface {
   /**
    * Contentieux niveau 4
    */
-  childrens?:
-    | ContentieuReferentielActivitiesInterface[]
-    | ContentieuReferentielInterface[];
+  childrens?: ContentieuReferentielActivitiesInterface[] | ContentieuReferentielInterface[]
   /**
    * Log de mise à jour de donnée d'activité
    */
-  activityUpdated: NodeActivityUpdatedInterface | null;
+  activityUpdated: NodeActivityUpdatedInterface | null
   /**
    * Auto focus value
    */
-  autoFocusInput?: string;
+  autoFocusInput?: string
   /**
    * Possible gain sur le taux de complétion si complété par l'utilistateur
    */
-  possibleGainCompletion?: number;
+  possibleGainCompletion?: number
 }

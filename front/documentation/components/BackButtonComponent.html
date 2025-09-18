@@ -124,6 +124,13 @@
 </p>
 
 
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Back button generic component</p>
+
+    </p>
 
 
 
@@ -265,9 +272,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/components/back-button/back-button.component.ts:15</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/components/back-button/back-button.component.ts:27</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Fragment</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
@@ -286,9 +299,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/components/back-button/back-button.component.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/components/back-button/back-button.component.ts:23</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Router link</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <table class="table table-sm table-bordered">
@@ -312,9 +331,15 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/components/back-button/back-button.component.ts:16</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/components/back-button/back-button.component.ts:31</a></div>
                             </td>
                         </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Text</p>
+</div>
+                    </td>
+                </tr>
             </tbody>
         </table>
 </section>
@@ -346,14 +371,16 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="18"
-                                    class="link-to-prism">src/app/components/back-button/back-button.component.ts:18</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/app/components/back-button/back-button.component.ts:36</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>On click</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -387,10 +414,16 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/components/back-button/back-button.component.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/components/back-button/back-button.component.ts:19</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Location</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -400,10 +433,13 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Location } from &#x27;@angular/common&#x27;;
-import { Component, inject, Input } from &#x27;@angular/core&#x27;;
-import { RouterLink } from &#x27;@angular/router&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Location } from &#x27;@angular/common&#x27;
+import { Component, inject, Input } from &#x27;@angular/core&#x27;
+import { RouterLink } from &#x27;@angular/router&#x27;
 
+/**
+ * Back button generic component
+ */
 @Component({
   selector: &#x27;aj-back-button&#x27;,
   standalone: true,
@@ -412,14 +448,29 @@ import { RouterLink } from &#x27;@angular/router&#x27;;
   styleUrls: [&#x27;./back-button.component.scss&#x27;],
 })
 export class BackButtonComponent {
-  _location &#x3D; inject(Location);
-  @Input() routerLink: any;
-  @Input() fragment: any;
-  @Input() text: string &#x3D; &#x27;Retour&#x27;;
+  /**
+   * Location
+   */
+  _location &#x3D; inject(Location)
+  /**
+   * Router link
+   */
+  @Input() routerLink: any
+  /**
+   * Fragment
+   */
+  @Input() fragment: any
+  /**
+   * Text
+   */
+  @Input() text: string &#x3D; &#x27;Retour&#x27;
 
+  /**
+   * On click
+   */
   onClick() {
     if (this.routerLink &#x3D;&#x3D;&#x3D; &#x27;back&#x27;) {
-      this._location.back();
+      this._location.back()
     }
   }
 }
