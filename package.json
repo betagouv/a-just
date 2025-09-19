@@ -15,6 +15,6 @@
     "build:front-admin": "cd front-admin && npm i --force && npm i --force --save-dev && npm run build && mv dist/browser ../api/dist/front-admin && cd ..",
     "build:front": "cd front && npm i --force && npm run build && mv dist/browser ../api/dist/front && cd ..",
     "build:package": "cp package.json ./api/dist/.",
-    "start:production": "cd api && yarn start:production"
+    "start:production": "cd api && npm run start:production"
   }
 }
