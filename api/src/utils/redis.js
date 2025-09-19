@@ -166,7 +166,7 @@ export const getObjectSizeInMB = (obj) => {
 export const loadOrWarmHR = async (backupId, models) => {
   const cacheKey = 'hrBackup'
   let hr = await getCacheValue(backupId, cacheKey)
-  console.log('ICI')
+
   if (!hr) {
     //console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
     hr = await models.HumanResources.getCurrentHrNew(backupId)
@@ -234,10 +234,17 @@ export async function listKeys(pattern = '*', count = 1000) {
 
   const keys = []
   let cursor = '0'
+  let iterations = 0
+
   do {
     const { cursor: next, keys: batch } = await c.scan(cursor, { MATCH: pattern, COUNT: count })
     if (batch?.length) keys.push(...batch)
     cursor = next
+    // filet de sécurité
+    if (++iterations > 1e6) {
+      console.warn('🛑 Abort SCAN: too many iterations')
+      break
+    }
   } while (cursor !== '0' && cursor !== 0)
 
   return keys

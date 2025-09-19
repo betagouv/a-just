@@ -111,6 +111,8 @@ export const invalidateAgentEverywhere = async (backupId, agentId, scanCount = 1
 
   const match = `${PREFIX}:${backupId}:*`
   let cursor = '0'
+  let iterations = 0
+
   do {
     const { cursor: next, keys } = await c.scan(cursor, { MATCH: match, COUNT: scanCount })
     cursor = next
@@ -119,7 +121,11 @@ export const invalidateAgentEverywhere = async (backupId, agentId, scanCount = 1
       for (const k of keys) p.hDel(k, agentId.toString())
       await p.exec()
     }
-    console.log('WHILE')
+    // filet de sécurité
+    if (++iterations > 1e6) {
+      console.warn('🛑 Abort SCAN: too many iterations')
+      break
+    }
   } while (cursor !== '0' && cursor !== 0)
 }
 
@@ -158,12 +164,11 @@ export const invalidateBackup = async (backupId, scanCount = 1000) => {
       await p.exec()
     }
 
-    // filet de sécurité (optionnel)
+    // filet de sécurité
     if (++iterations > 1e6) {
       console.warn('🛑 Abort SCAN: too many iterations')
       break
     }
-    console.log('WHILE')
   } while (cursor !== '0' && cursor !== 0)
 }
 
