@@ -21,6 +21,7 @@ import authBasic from 'http-auth'
 import { writeFileSync } from 'fs'
 import { getFullKey, getRedisClient, loadOrWarmHR, waitForRedis } from './utils/redis'
 import { invalidateBackup } from './utils/hrExtractorCache'
+import { invalidateAjustBackup } from './utils/hrExtAjustCache'
 
 const cspConfig = {
   // https://github.com/helmetjs/helmet
@@ -444,6 +445,7 @@ export default class App extends AppBase {
             if (force) {
               await redis.del(fullKey)
               await invalidateBackup(jurId)
+              await invalidateAjustBackup(jurId)
             }
 
             await loadOrWarmHR(jurId, this.models)

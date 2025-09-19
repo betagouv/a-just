@@ -104,7 +104,7 @@ export const upsertManyAgentsExtraction = async (backupId, start, end, agentsMap
  * Invalidation d’un agent dans TOUTES les périodes d’une juridiction (backupId).
  * Sans index : SCAN + MATCH + COUNT, puis HDEL en pipeline.
  */
-export const invalidateAgentEverywhere = async (backupId, agentId, scanCount = 10) => {
+export const invalidateAgentEverywhere = async (backupId, agentId, scanCount = 100) => {
   const c = getRedisClient()
   if (!c) return
 
@@ -143,7 +143,7 @@ export const deletePeriod = async (backupId, start, end) => {
  * Purge complète d’une juridiction (toutes les périodes).
  * SCAN sur l’espace hrExt:{backupId}:* puis UNLINK en pipeline.
  */
-export const invalidateBackup = async (backupId, scanCount = 1000) => {
+export const invalidateBackup = async (backupId, scanCount = 100) => {
   const c = getRedisClient()
   if (!c) return
 
