@@ -318,7 +318,6 @@ export default class App extends AppBase {
       addDefaultBody(),
       compress({}),
       givePassword,
-      honeyTrap,
       helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
@@ -338,6 +337,10 @@ export default class App extends AppBase {
         }
       },
     ])
+
+    this.koaApp.use(async (ctx, next) => {
+      return await honeyTrap(ctx, next, this.models)
+    })
 
     super.addMiddlewares([config.corsUrl ? cors({ origin: config.corsUrl, credentials: true }) : cors({ credentials: true })])
   }
