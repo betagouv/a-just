@@ -819,6 +819,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.simulatorService.situationProjected.subscribe((d) => {
         this.projectedSituationData = this.simulatorService.situationProjected.getValue()
 
+        /**
         let isEqualToZero =
           this.firstSituationData &&
           this.firstSituationData?.totalIn === 0 &&
@@ -841,6 +842,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
             )
           }
         }, 300)
+         */
       }),
     )
     this.watch(
