@@ -173,6 +173,7 @@ export const loadOrWarmHR = async (backupId, models) => {
     hr = await models.HumanResources.getCurrentHrNew(backupId)
     await setCacheValue(backupId, hr, cacheKey, 3600)
     await invalidateBackup(backupId)
+    await invalidateAjustBackup(backupId)
   } else {
     //console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
   }
@@ -219,6 +220,7 @@ export const removeCacheListItem = async (key, cacheName, itemId) => {
   const newList = list.filter((el) => el.id != itemId)
   await setCacheValue(key, newList, cacheName)
   await invalidateAgentEverywhere(key, itemId)
+  await invalidateAjustBackup(key)
 }
 
 /**
