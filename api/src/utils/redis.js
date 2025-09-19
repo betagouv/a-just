@@ -3,6 +3,7 @@ import config from 'config'
 import zlib from 'zlib'
 import { promisify } from 'util'
 import { invalidateAgentEverywhere, invalidateBackup } from './hrExtractorCache'
+import { invalidateAjustBackup } from './hrExtAjustCache'
 
 const gzip = promisify(zlib.gzip)
 const gunzip = promisify(zlib.gunzip)
@@ -204,6 +205,7 @@ export const updateCacheListItem = async (key, cacheName, item, ttl = defaultTTL
 
   await setCacheValue(key, list, cacheName, ttl)
   await invalidateAgentEverywhere(key, item.id)
+  await invalidateAjustBackup(key)
 }
 
 /**

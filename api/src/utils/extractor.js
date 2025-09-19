@@ -542,6 +542,7 @@ import pLimit from 'p-limit'
 import { loadOrWarmHR } from './redis'
 import { getHumanRessourceList } from './humanServices'
 import { readExtraction, upsertAgentExtraction } from './hrExtractorCache'
+import { getAgentFromSchema, readJurisdictionSchema, saveJurisdictionArray } from './hrExtAjustCache'
 
 export const computeExtractDdgv5 = async (
   models,
@@ -1194,6 +1195,7 @@ export async function runExtractsInParallel({
           isJirs,
           signal,
           old,
+          backupId,
         ),
     computeExtractDdg(indexes, cloneDeep(allHuman), flatReferentielsList, categories, categoryFilter, juridictionName, dateStart, dateStop, isJirs, backupId),
   ])
@@ -1459,6 +1461,7 @@ export const computeExtractv2 = async (
   isJirs,
   signal = null,
   old = true,
+  backupId,
 ) => {
   console.time('extractor-5.2bis')
 
@@ -1467,6 +1470,8 @@ export const computeExtractv2 = async (
 
   const allIndispRefIds = getIndispoDetails(flatReferentielsList).allIndispRefIds
   const refIndispo = getIndispoDetails(flatReferentielsList).refIndispo
+
+  const schema = await readJurisdictionSchema(backupId, dateStart, dateStop)
 
   const humanTasks = allHuman.map((human) =>
     limit(() =>
@@ -1484,6 +1489,7 @@ export const computeExtractv2 = async (
         refIndispo,
         indexes,
         old,
+        schema,
       }),
     ),
   )
@@ -1494,7 +1500,11 @@ export const computeExtractv2 = async (
 
   results = orderBy(results, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
 
-  return results.filter(Boolean)
+  results = results.filter(Boolean)
+
+  await saveJurisdictionArray(backupId, dateStart, dateStop, results)
+
+  return results
 }
 
 /**
@@ -1515,10 +1525,15 @@ async function computeHumanExtract(params) {
     signal,
     allIndispRefIds,
     refIndispo,
+    schema,
   } = params
 
   checkAbort(signal)
 
+  if (schema) {
+    const agent = getAgentFromSchema(schema, human.id) // objet agent | null
+    if (agent) return agent
+  }
   const dateStart = today(originalDateStart)
   const dateStop = today(originalDateStop)
 
