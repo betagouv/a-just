@@ -11,6 +11,7 @@ import { checkAbort } from '../utils/abordTimeout'
 import { generateHRIndexes, loadFonctionsForCategory, loadFonctionsForMultiCategoryFiltered, loadReferentiels } from '../utils/human-resource'
 import { cleanCalculationItemForUser } from '../utils/hrAccess'
 import { getFullKey, getRedisClient, loadOrWarmHR, removeCacheListItem, updateCacheListItem, waitForRedis } from '../utils/redis'
+import { invalidateBackup } from '../utils/hrExtractorCache'
 
 export default (sequelizeInstance, Model) => {
   Model.asyncForEach = async (array, fn) => {
@@ -44,6 +45,7 @@ export default (sequelizeInstance, Model) => {
 
           // Suppression du cache existant
           await redis.del(fullKey)
+          await invalidateBackup(jurId)
 
           // Recalcul et stockage dans le cache
           await loadOrWarmHR(jurId, Model.models)

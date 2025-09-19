@@ -18,7 +18,7 @@ import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
 import { completePeriod, fillMissingContentieux, updateAndMerge, updateLabels } from '../utils/referentiel'
 import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
 import { getHRPositions } from '../utils/calculator'
-import { loadOrWarmHR } from '../utils/redis'
+import { loadOrWarmHR, printKeys } from '../utils/redis'
 import { createJob, getJob, setJobProgress, setJobResult, setJobError, cleanupOld } from '../utils/jobStore'
 
 /**
@@ -81,6 +81,7 @@ export default class RouteExtractor extends Route {
   })
   async filterList(ctx) {
     const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
+    printKeys('*')
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
@@ -154,7 +155,6 @@ export default class RouteExtractor extends Route {
 
     console.timeEnd('extractor-6')
 
-    //printKeys('*')
     this.sendOk(ctx, {
       fonctions: formatedFunctions,
       referentiels,

@@ -3,12 +3,11 @@
 //   - Clé : hrExt:{backupId}:{start}:{end} (HASH)
 //   - Champ : agentId
 //   - Valeur : payload compressé (gzip -> base64)
-//
-// Dépendances : redis.js (getRedisClient), Node 18+, ESM
 
 import { getRedisClient } from './redis.js'
 import zlib from 'zlib'
 import { promisify } from 'util'
+import { invalidateAjustBackup } from './hrExtAjustCache.js'
 
 const gzip = promisify(zlib.gzip)
 const gunzip = promisify(zlib.gunzip)
@@ -19,7 +18,7 @@ const PREFIX = 'hrExt'
 const d = (iso) => {
   // Accepte Date, string ISO, etc. — on force YYYY-MM-DD
   if (iso instanceof Date) return iso.toISOString().slice(0, 10)
-  // déjà au bon format ? on s’en contente
+  // si déjà au bon format ?
   if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso
   // fallback : new Date(string)
   return new Date(iso).toISOString().slice(0, 10)
@@ -62,7 +61,7 @@ export const readExtraction = async (backupId, start, end) => {
   if (!entries || Object.keys(entries).length === 0) return {}
 
   const result = {}
-  // Décodage séquentiel (suffisant). Si besoin, on peut paralléliser.
+  // Décodage séquentiel (suffisant)
   for (const [agentId, b64] of Object.entries(entries)) {
     result[agentId] = await decode(b64)
   }
@@ -170,6 +169,8 @@ export const invalidateBackup = async (backupId, scanCount = 1000) => {
       break
     }
   } while (cursor !== '0' && cursor !== 0)
+
+  await invalidateAjustBackup(backupId)
 }
 
 /** Vérifie si une période existe (au moins un champ). */
