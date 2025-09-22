@@ -5,12 +5,14 @@ color: true
 require: '@babel/register'
 bail: true
 reporter: 'mochawesome'
-reporterOptions:
-  reportDir: ./test/reports
-  reportFilename: test-results
-  html: true
-  json: true
-  overwrite: true
-  quiet: true
-  charts: true
-  code: false
+reporter-option:
+  - reportDir=./test/reports
+  - reportFilename=test-results
+  - html=true
+  - json=true
+  - overwrite=true
+  - quiet=true
+  - charts=true
+  - code=false
+
+inline-diffs: true
