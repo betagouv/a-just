@@ -5,6 +5,7 @@ module.exports = {
   frontUrl: process.env.FRONT_URL || 'http://localhost:4200',
   preloadHumanResourcesDatas: true,
   nbMaxDayCanBeInactive: null,
+  redis: process.env.REDIS_URL,
   sendingBlue: {
     usersListId: 7,
   },
