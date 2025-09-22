@@ -179,7 +179,6 @@ export default (sequelizeInstance, Model) => {
               id: sit.id,
               etp: sit.etp,
               dateStart: today(dateS),
-              dateStartTimesTamps: dateKey,
               category: sit.HRCategory
                 ? {
                     id: sit.HRCategory.id,
@@ -223,7 +222,6 @@ export default (sequelizeInstance, Model) => {
             id: ind.id,
             percent: ind.percent,
             dateStart: ind.date_start,
-            dateStartTimesTamps: today(ind.date_start).getTime(),
             dateStop: ind.date_stop,
             dateStopTimesTamps: ind.date_stop ? today(ind.date_stop).getTime() : null,
             contentieux: {
