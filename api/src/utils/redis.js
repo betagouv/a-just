@@ -4,6 +4,7 @@ import zlib from 'zlib'
 import { promisify } from 'util'
 import { invalidateAgentEverywhere, invalidateBackup } from './hrExtractorCache'
 import { invalidateAjustBackup } from './hrExtAjustCache'
+import { cloneDeep } from 'lodash'
 
 const gzip = promisify(zlib.gzip)
 const gunzip = promisify(zlib.gunzip)
@@ -199,7 +200,7 @@ export const updateCacheListItem = async (key, cacheName, item, ttl = defaultTTL
   const index = list.findIndex((el) => el.id == item.id)
 
   if (index !== -1) {
-    list[index] = item
+    list[index] = cloneDeep(item)
   } else {
     list.push(item)
   }
