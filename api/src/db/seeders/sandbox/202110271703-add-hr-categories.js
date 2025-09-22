@@ -1,3 +1,5 @@
+const { isTj } = require('../../../utils/ca')
+
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
     if (isTj()) {

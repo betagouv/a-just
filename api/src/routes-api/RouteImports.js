@@ -5,6 +5,8 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs'
 import { join } from 'path'
 import config from 'config'
 import { setCacheValue } from '../utils/redis'
+import { invalidateBackup } from '../utils/hrExtractorCache'
+import { invalidateAjustBackup } from '../utils/hrExtAjustCache'
 
 /**
  * Route des imports
@@ -47,6 +49,8 @@ export default class RouteImports extends Route {
       const hr = await models.HumanResources.getCurrentHrNew(backupId)
 
       await setCacheValue(backupId, hr, cacheKey, 3600)
+      await invalidateBackup(backupId)
+      await invalidateAjustBackup(backupId)
     }
     console.log(backupIds, uniqueBackupIds.length)
     this.sendOk(ctx, 'OK')
