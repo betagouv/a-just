@@ -75,7 +75,7 @@
     "eslint": "^9.13.0",
     "expect": "^29.7.0",
     "jsdoc": "^4.0.4",
-    "mocha": "^11.1.0",
+    "mocha": "^9",
     "mochawesome": "^7.1.4",
     "mochawesome-report-generator": "^6.3.0",
     "nock": "^13.5.5",
