@@ -25,3 +25,9 @@ api/certificats-sso
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Test reports
+test/reports/
+*.log
+coverage/
+.nyc_output/
