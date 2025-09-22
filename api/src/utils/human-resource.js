@@ -48,7 +48,7 @@ export function getEtpByDateAndPerson(referentielId, date, hr, ddgFilter = false
     }
 
     const indispos = hr.indisponibilities || []
-    let listAllDatesIndispoStart = indispos.filter((i) => i.dateStartTimesTamps && i.dateStartTimesTamps > getTime(date)).map((i) => i.dateStartTimesTamps)
+    let listAllDatesIndispoStart = indispos.filter((i) => getTime(i.dateStart) && getTime(i.dateStart) > getTime(date)).map((i) => getTime(i.dateStart))
     if (listAllDatesIndispoStart.length && (minBy(listAllDatesIndispoStart) <= getTime(nextIndispoDate) || !nextIndispoDate)) {
       const min = minBy(listAllDatesIndispoStart)
       nextIndispoDate = new Date(min)
@@ -195,7 +195,7 @@ export async function getEtpByDateAndPersonSimu(referentielId, date, hr, signal 
 export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
   dateSelected = today(dateSelected).getTime()
   const indispos = hr.indisponibilities || []
-  let listAllDates = indispos.filter((i) => i.dateStartTimesTamps).map((i) => i.dateStartTimesTamps)
+  let listAllDates = indispos.filter((i) => getTime(i.dateStart)).map((i) => getTime(i.dateStart))
   listAllDates = listAllDates.concat(indispos.filter((i) => i.dateStopTimesTamps).map((i) => i.dateStopTimesTamps))
 
   listAllDates = listAllDates.filter((date) => date > dateSelected)
@@ -248,9 +248,9 @@ export const findAllFuturSituations = (hr, date) => {
   let situations = hr && hr.situations && hr.situations.length ? hr.situations : []
 
   if (date) {
-    const getTime = date.getTime()
+    const getTime2 = date.getTime()
     const findedSituations = situations.filter((hra) => {
-      return hra.dateStartTimesTamps > getTime
+      return getTime(hra.dateStart) > getTime2
     })
 
     situations = findedSituations.slice(0)
@@ -326,128 +326,6 @@ const findAllIndisponibilities = (hr, date, ddgFilter = false, absLabels = []) =
   }
 
   return indisponibilities
-}
-
-/**
- * TESTS
- * */
-const HR_TO_TEST = {
-  id: 1748,
-  firstName: 'Aurélie',
-  lastName: 'Lallart',
-  matricule: '45661',
-  dateStart: new Date('2019-09-01T22:00:00.000Z'),
-  dateEnd: null,
-  coverUrl: null,
-  updatedAt: new Date('2024-04-02T08:16:48.377Z'),
-  backupId: 16,
-  juridiction: null,
-  comment: '<p>Présidence 6ème chambre correctionnelle + "autre civil NS" = présidence de la Comex 1 mois sur 2</p>',
-  situations: [
-    {
-      id: 15001,
-      etp: 1,
-      dateStart: new Date('2025-09-01T23:00:00.000Z'),
-      dateStartTimesTamps: 1756767600000,
-      category: { id: 1, rank: 1, label: 'Magistrat' },
-      fonction: { id: 15, rank: 16, code: 'J', label: 'JUGE', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false },
-      activities: [
-        { id: 56031, percent: 22.5, contentieux: { id: 486, label: 'Siège Pénal' } },
-        { id: 56030, percent: 67.5, contentieux: { id: 448, label: "Départage prud'homal" } },
-        { id: 56034, percent: 10, contentieux: { id: 497, label: 'Autres activités' } },
-        { id: 56032, percent: 12.5, contentieux: { id: 487, label: 'Collégiales hors JIRS' } },
-        { id: 56033, percent: 10, contentieux: { id: 492, label: 'Tribunal de police' } },
-        { id: 56029, percent: 67.5, contentieux: { id: 447, label: 'Contentieux Social' } },
-        { id: 56035, percent: 10, contentieux: { id: 498, label: 'Soutien (hors formations suivies)' } },
-      ],
-    },
-    {
-      id: 15000,
-      etp: 1,
-      dateStart: new Date('2025-07-01T23:00:00.000Z'),
-      dateStartTimesTamps: 1751410800000,
-      category: { id: 1, rank: 1, label: 'Magistrat' },
-      fonction: { id: 15, rank: 16, code: 'J', label: 'JUGE', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false },
-      activities: [
-        { id: 56031, percent: 22.5, contentieux: { id: 486, label: 'Siège Pénal' } },
-        { id: 56030, percent: 67.5, contentieux: { id: 448, label: "Départage prud'homal" } },
-        { id: 56034, percent: 10, contentieux: { id: 497, label: 'Autres activités' } },
-        { id: 56032, percent: 12.5, contentieux: { id: 487, label: 'Collégiales hors JIRS' } },
-        { id: 56033, percent: 10, contentieux: { id: 492, label: 'Tribunal de police' } },
-        { id: 56029, percent: 67.5, contentieux: { id: 447, label: 'Contentieux Social' } },
-        { id: 56035, percent: 10, contentieux: { id: 498, label: 'Soutien (hors formations suivies)' } },
-      ],
-    },
-    {
-      id: 14388,
-      etp: 1,
-      dateStart: new Date('2023-01-01T23:00:00.000Z'),
-      dateStartTimesTamps: 1672660800000,
-      category: { id: 1, rank: 1, label: 'Magistrat' },
-      fonction: { id: 15, rank: 16, code: 'J', label: 'JUGE', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false },
-      activities: [
-        { id: 56031, percent: 22.5, contentieux: { id: 486, label: 'Siège Pénal' } },
-        { id: 56030, percent: 67.5, contentieux: { id: 448, label: "Départage prud'homal" } },
-        { id: 56034, percent: 10, contentieux: { id: 497, label: 'Autres activités' } },
-        { id: 56032, percent: 12.5, contentieux: { id: 487, label: 'Collégiales hors JIRS' } },
-        { id: 56033, percent: 10, contentieux: { id: 492, label: 'Tribunal de police' } },
-        { id: 56029, percent: 67.5, contentieux: { id: 447, label: 'Contentieux Social' } },
-        { id: 56035, percent: 10, contentieux: { id: 498, label: 'Soutien (hors formations suivies)' } },
-      ],
-    },
-    {
-      id: 14387,
-      etp: 1,
-      dateStart: new Date('2022-01-02T23:00:00.000Z'),
-      dateStartTimesTamps: 1641211200000,
-      category: { id: 1, rank: 1, label: 'Magistrat' },
-      fonction: { id: 15, rank: 16, code: 'J', label: 'JUGE', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false },
-      activities: [
-        { id: 56031, percent: 22.5, contentieux: { id: 486, label: 'Siège Pénal' } },
-        { id: 56030, percent: 67.5, contentieux: { id: 448, label: "Départage prud'homal" } },
-        { id: 56034, percent: 10, contentieux: { id: 497, label: 'Autres activités' } },
-        { id: 56032, percent: 12.5, contentieux: { id: 487, label: 'Collégiales hors JIRS' } },
-        { id: 56033, percent: 10, contentieux: { id: 492, label: 'Tribunal de police' } },
-        { id: 56029, percent: 67.5, contentieux: { id: 447, label: 'Contentieux Social' } },
-        { id: 56035, percent: 10, contentieux: { id: 498, label: 'Soutien (hors formations suivies)' } },
-      ],
-    },
-    {
-      id: 2819,
-      etp: 1,
-      dateStart: new Date('2020-12-31T23:00:00.000Z'),
-      dateStartTimesTamps: 1609502400000,
-      category: { id: 1, rank: 1, label: 'Magistrat' },
-      fonction: { id: 15, rank: 16, code: 'J', label: 'JUGE', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false },
-      activities: [
-        { id: 56031, percent: 22.5, contentieux: { id: 486, label: 'Siège Pénal' } },
-        { id: 56030, percent: 67.5, contentieux: { id: 448, label: "Départage prud'homal" } },
-        { id: 56034, percent: 10, contentieux: { id: 497, label: 'Autres activités' } },
-        { id: 56032, percent: 12.5, contentieux: { id: 487, label: 'Collégiales hors JIRS' } },
-        { id: 56033, percent: 10, contentieux: { id: 492, label: 'Tribunal de police' } },
-        { id: 56029, percent: 67.5, contentieux: { id: 447, label: 'Contentieux Social' } },
-        { id: 56035, percent: 10, contentieux: { id: 498, label: 'Soutien (hors formations suivies)' } },
-      ],
-    },
-    {
-      id: 2376,
-      etp: 1,
-      dateStart: new Date('2019-09-01T22:00:00.000Z'),
-      dateStartTimesTamps: 1567425600000,
-      category: { id: 1, rank: 1, label: 'Magistrat' },
-      fonction: { id: 15, rank: 16, code: 'J', label: 'JUGE', category_detail: 'M-TIT', position: 'Titulaire', calculatriceIsActive: false },
-      activities: [
-        { id: 56031, percent: 22.5, contentieux: { id: 486, label: 'Siège Pénal' } },
-        { id: 56030, percent: 67.5, contentieux: { id: 448, label: "Départage prud'homal" } },
-        { id: 56034, percent: 10, contentieux: { id: 497, label: 'Autres activités' } },
-        { id: 56032, percent: 12.5, contentieux: { id: 487, label: 'Collégiales hors JIRS' } },
-        { id: 56033, percent: 10, contentieux: { id: 492, label: 'Tribunal de police' } },
-        { id: 56029, percent: 67.5, contentieux: { id: 447, label: 'Contentieux Social' } },
-        { id: 56035, percent: 10, contentieux: { id: 498, label: 'Soutien (hors formations suivies)' } },
-      ],
-    },
-  ],
-  indisponibilities: [],
 }
 
 const { setImmediate: setImmediatePromise } = require('timers/promises')
