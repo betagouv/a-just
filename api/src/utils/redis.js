@@ -2,6 +2,8 @@ import { createClient } from 'redis'
 import config from 'config'
 import zlib from 'zlib'
 import { promisify } from 'util'
+import { invalidateAgentEverywhere, invalidateBackup } from './hrExtractorCache'
+import { invalidateAjustBackup } from './hrExtAjustCache'
 
 const gzip = promisify(zlib.gzip)
 const gunzip = promisify(zlib.gunzip)
@@ -170,6 +172,8 @@ export const loadOrWarmHR = async (backupId, models) => {
     //console.log(`⚠️  Cache manquant pour ${cacheKey}:${backupId} → recalcul`)
     hr = await models.HumanResources.getCurrentHrNew(backupId)
     await setCacheValue(backupId, hr, cacheKey, 3600)
+    await invalidateBackup(backupId)
+    await invalidateAjustBackup(backupId)
   } else {
     //console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
   }
@@ -201,6 +205,8 @@ export const updateCacheListItem = async (key, cacheName, item, ttl = defaultTTL
   }
 
   await setCacheValue(key, list, cacheName, ttl)
+  await invalidateAgentEverywhere(key, item.id)
+  await invalidateAjustBackup(key)
 }
 
 /**
@@ -213,6 +219,47 @@ export const removeCacheListItem = async (key, cacheName, itemId) => {
   const list = (await getCacheValue(key, cacheName)) || []
   const newList = list.filter((el) => el.id != itemId)
   await setCacheValue(key, newList, cacheName)
+  await invalidateAgentEverywhere(key, itemId)
+  await invalidateAjustBackup(key)
+}
+
+/**
+ * Liste toutes les clés correspondant à un pattern glob.
+ * @param {string} pattern ex: '*' ou 'hrExt:42:*'
+ * @param {number} count   taille de lot suggérée pour SCAN (200–2000)
+ * @returns {Promise<string[]>}
+ */
+export async function listKeys(pattern = '*', count = 1000) {
+  const c = getRedisClient()
+  if (!c) {
+    console.warn('Redis non prêt')
+    return []
+  }
+
+  const keys = []
+  let cursor = '0'
+  let iterations = 0
+
+  do {
+    const { cursor: next, keys: batch } = await c.scan(cursor, { MATCH: pattern, COUNT: count })
+    if (batch?.length) keys.push(...batch)
+    cursor = next
+    // filet de sécurité
+    if (++iterations > 1e6) {
+      console.warn('🛑 Abort SCAN: too many iterations')
+      break
+    }
+  } while (cursor !== '0' && cursor !== 0)
+
+  return keys
+}
+
+/** Affiche joliment et retourne le nombre de clés */
+export async function printKeys(pattern = '*') {
+  const ks = await listKeys(pattern)
+  console.log(`Pattern "${pattern}" → ${ks.length} clé(s)`)
+  ks.forEach((k) => console.log(' -', k))
+  return ks.length
 }
 
 // Initialisation immédiate si config présente

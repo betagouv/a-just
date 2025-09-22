@@ -20,6 +20,8 @@ import * as Sentry from '@sentry/node'
 import authBasic from 'http-auth'
 import { writeFileSync } from 'fs'
 import { getFullKey, getRedisClient, loadOrWarmHR, waitForRedis } from './utils/redis'
+import { invalidateBackup } from './utils/hrExtractorCache'
+import { invalidateAjustBackup } from './utils/hrExtAjustCache'
 
 const cspConfig = {
   // https://github.com/helmetjs/helmet
@@ -317,7 +319,6 @@ export default class App extends AppBase {
       addDefaultBody(),
       compress({}),
       givePassword,
-      honeyTrap,
       helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
@@ -337,6 +338,10 @@ export default class App extends AppBase {
         }
       },
     ])
+
+    this.koaApp.use(async (ctx, next) => {
+      return await honeyTrap(ctx, next, this.models)
+    })
 
     super.addMiddlewares([config.corsUrl ? cors({ origin: config.corsUrl, credentials: true }) : cors({ credentials: true })])
   }
@@ -439,6 +444,8 @@ export default class App extends AppBase {
 
             if (force) {
               await redis.del(fullKey)
+              await invalidateBackup(jurId)
+              await invalidateAjustBackup(jurId)
             }
 
             await loadOrWarmHR(jurId, this.models)
