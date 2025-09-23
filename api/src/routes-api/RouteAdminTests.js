@@ -550,7 +550,7 @@ export default class RouteAdminTests extends Route {
     try {
       console.log('[snippet]', { file, requestedLine: line, itStartLine, itEndLine, includedBefores: scopedBefores.length })
     } catch {}
-    // Generate or load cached French summary using Albert chat API
+    // Generate or load cached French summary using Albert chat API (LLM detects commented tests)
     const summary = await generateSnippetSummaryFr(snippet).catch(() => null)
     this.sendOk(ctx, { exists: true, file, line: itStartLine, start: itStartLine, end: itEndLine, snippet, summaryFr: summary, includedBefores: scopedBefores.length, debug: { requestedLine: line, requestedOffset, tokenPos: targetIt.tokenPos ?? targetIt.startChar } })
   }
@@ -580,6 +580,7 @@ async function generateSnippetSummaryFr(snippet) {
   if (!ALBERT_API_KEY || !ALBERT_CHAT_MODEL) return null
   const prov = 'albert'
   const mod = ALBERT_CHAT_MODEL
+  // Cache keyed only by snippet text so the LLM decides comment status
   const hash = crypto.createHash('sha256').update(text).digest('hex')
   const cacheFile = summaryCachePath(hash, prov, mod)
   try {
@@ -602,11 +603,13 @@ async function generateSnippetSummaryFr(snippet) {
 }
 
 async function albertChatSummarize(codeSnippet) {
-  const systemPrompt = 'Vous êtes un expert en programmation.'
+  const systemPrompt = 'Vous êtes un expert en programmation et en communication claire. Votre rôle est d’\u00e9xpliquer des tests automatis\u00e9s en fran\u00e7ais de mani\u00e8re concise et accessible.'
   const userPrompt = [
-    'Résumez le code suivant en français afin qu\'un utilisateur non technique, qui connaît le produit, comprenne ce qui est testé.',
-    'Présentez le résumé en 1 ou 2 lignes, dans un style direct et concis, sans mots introductif de type "Résumé", "voici un résumé". Pas besoin de guillements.',
-    '# Début du code',
+    'R\u00e9sumez le test ci-dessous en 1 \u00e0 2 phrases, en fran\u00e7ais, pour un utilisateur non technique qui conna\u00eet le produit. N\u2019ajoutez pas d\u2019introduction (pas de "R\u00e9sum\u00e9"). N\u2019utilisez pas de guillemets.',
+    'Analysez d\'abord si le test a \u00e9t\u00e9 rendu inop\u00e9rant (par ex. si toutes les assertions et v\u00e9rifications sont comment\u00e9es, si le test est neutralis\u00e9 via xit/skip, ou si la logique est enti\u00e8rement comment\u00e9e) — c\'est-\u00e0-dire s\'il r\u00e9ussit toujours car aucune v\u00e9rification r\u00e9elle n\'est ex\u00e9cut\u00e9e.',
+    'Si c\'est le cas, commencez votre reponse par: "Test comment\u00e9 " \u2014. ',
+    'Ignorez les console.log. Style direct et concis.',
+    '# D\u00e9but du code',
     codeSnippet,
     '# Fin du code',
   ].join('\n')
