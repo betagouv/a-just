@@ -48,7 +48,7 @@ export function getEtpByDateAndPerson(referentielId, date, hr, ddgFilter = false
     }
 
     const indispos = hr.indisponibilities || []
-    let listAllDatesIndispoStart = indispos.filter((i) => getTime(i.dateStart) && getTime(i.dateStart) > getTime(date)).map((i) => getTime(i.dateStart))
+    let listAllDatesIndispoStart = indispos.filter((i) => i.dateStartTimesTamps && i.dateStartTimesTamps > getTime(date)).map((i) => i.dateStartTimesTamps)
     if (listAllDatesIndispoStart.length && (minBy(listAllDatesIndispoStart) <= getTime(nextIndispoDate) || !nextIndispoDate)) {
       const min = minBy(listAllDatesIndispoStart)
       nextIndispoDate = new Date(min)
@@ -195,7 +195,7 @@ export async function getEtpByDateAndPersonSimu(referentielId, date, hr, signal 
 export const getNextIndisponiblitiesDate = (hr, dateSelected) => {
   dateSelected = today(dateSelected).getTime()
   const indispos = hr.indisponibilities || []
-  let listAllDates = indispos.filter((i) => getTime(i.dateStart)).map((i) => getTime(i.dateStart))
+  let listAllDates = indispos.filter((i) => i.dateStartTimesTamps).map((i) => i.dateStartTimesTamps)
   listAllDates = listAllDates.concat(indispos.filter((i) => i.dateStopTimesTamps).map((i) => i.dateStopTimesTamps))
 
   listAllDates = listAllDates.filter((date) => date > dateSelected)
@@ -248,9 +248,9 @@ export const findAllFuturSituations = (hr, date) => {
   let situations = hr && hr.situations && hr.situations.length ? hr.situations : []
 
   if (date) {
-    const getTime2 = date.getTime()
+    const getTime = date.getTime()
     const findedSituations = situations.filter((hra) => {
-      return getTime(hra.dateStart) > getTime2
+      return hra.dateStartTimesTamps > getTime
     })
 
     situations = findedSituations.slice(0)
