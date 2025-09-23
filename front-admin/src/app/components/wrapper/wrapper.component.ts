@@ -55,7 +55,7 @@ const MENU = [
     isSuperAdmin: false,
   },
   {
-    label: 'Tests autom',
+    label: '🔍 Tests Automs',
     path: 'tests-autom',
     isSuperAdmin: false,
   },
