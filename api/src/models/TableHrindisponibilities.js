@@ -32,6 +32,7 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         percent: list[i].percent,
         dateStart: list[i].date_start,
+        dateStartTimesTamps: list[i].date_start ? today(list[i].date_start).getTime() : null,
         dateStop: list[i].date_stop,
         dateStopTimesTamps: list[i].date_stop ? today(list[i].date_stop).getTime() : null,
         createdAt: list[i].created_at,

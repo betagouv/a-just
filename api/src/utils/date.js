@@ -405,7 +405,7 @@ export function getNextDay(date) {
   return nextDay
 }
 
-export function getTime(date) {
+export function getTime(date = new Date()) {
   date = new Date(date)
   return date.getTime()
 }

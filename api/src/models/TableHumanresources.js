@@ -1,7 +1,7 @@
 import { Op } from 'sequelize'
 import { posad } from '../constants/hr'
 import { ETP_NEED_TO_BE_UPDATED } from '../constants/referentiel'
-import { getNbMonth, today } from '../utils/date'
+import { getNbMonth, getTime, today } from '../utils/date'
 import { snakeToCamelObject } from '../utils/utils'
 import config from 'config'
 import { EXECUTE_CALCULATOR } from '../constants/log-codes'
@@ -222,8 +222,9 @@ export default (sequelizeInstance, Model) => {
             id: ind.id,
             percent: ind.percent,
             dateStart: ind.date_start,
+            dateStartTimesTamps: ind.date_start ? getTime(ind.date_start) : null,
             dateStop: ind.date_stop,
-            dateStopTimesTamps: ind.date_stop ? today(ind.date_stop).getTime() : null,
+            dateStopTimesTamps: ind.date_stop ? getTime(ind.date_stop) : null,
             contentieux: {
               id: ind.ContentieuxReferentiel.id,
               label: ind.ContentieuxReferentiel.label,

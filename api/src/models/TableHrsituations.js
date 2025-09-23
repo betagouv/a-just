@@ -47,6 +47,7 @@ export default (sequelizeInstance, Model) => {
           id: list[i].id,
           etp: list[i].etp,
           dateStart: dateS,
+          dateStartTimesTamps: dateS.getTime(),
           category: {
             id: list[i]['HRCategory.id'],
             rank: list[i]['HRCategory.rank'],
