@@ -8,7 +8,6 @@ module.exports = {
   nbMaxDayCanBeInactive: null,
   sentEmail: false,
   maxQueryLimit: 10000000,
-  redis: process.env.REDIS_URL,
   login: {
     shareAuthCode: true,
     enable2Auth: true,
