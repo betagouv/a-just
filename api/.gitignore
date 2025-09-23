@@ -19,3 +19,4 @@ htaccess.txt
 src/var/tests-corpus/embeddings.json
 src/var/tests-corpus/embeddings-*.json
 src/var/tests-corpus/summaries/
+src/var/tests-corpus/user-stories.txt
