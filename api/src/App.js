@@ -136,7 +136,7 @@ const cspConfig = {
   },
   crossOriginEmbedderPolicy: true,
   crossOriginOpenerPolicy: true,
-  crossOriginResourcePolicy: true,
+  crossOriginResourcePolicy: false,
   originAgentCluster: false,
   referrerPolicy: false,
   strictTransportSecurity: {
