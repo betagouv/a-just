@@ -30,6 +30,10 @@ Sentry.init({
       const pathname = window?.location?.pathname || ''
       const op = (event as any)?.contexts?.trace?.op
       const transactionName = (event as any)?.transaction as string | undefined
+      // Compute produit tag once per transaction
+      const produit = fullUrl && fullUrl.includes('a-just-ca') ? 'CA' : 'TJ'
+      // Jurisdiction title mirrored by AppComponent
+      const juridictionTitle = (window as any)?.__ajust_juridiction_title || null
 
       // Prefer any pre-existing tag set on the scope/transaction
       let latencyEvent: string | null = ((event as any)?.tags?.latency_event as string) || null
@@ -88,11 +92,15 @@ Sentry.init({
       event.tags = {
         ...event.tags,
         ...(fullUrl ? { full_url: fullUrl } : {}),
+        ...(produit ? { produit } : {}),
+        ...(juridictionTitle ? { juridiction_title: juridictionTitle } : {}),
         ...(latencyEvent ? { latency_event: latencyEvent } : {}),
       }
       event.extra = {
         ...event.extra,
         ...(fullUrl ? { full_url: fullUrl } : {}),
+        ...(produit ? { produit } : {}),
+        ...(juridictionTitle ? { juridiction_title: juridictionTitle } : {}),
         ...(latencyEvent ? { latency_event: latencyEvent } : {}),
       }
       return event
