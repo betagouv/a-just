@@ -1,4 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import * as Sentry from '@sentry/browser'
 import { cloneDeep, isNaN, orderBy, sortBy, sumBy } from 'lodash'
 import { Router } from '@angular/router'
 import { HumanResourceInterface } from '../../interfaces/human-resource-interface'
@@ -331,6 +332,52 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   isDestroyed: boolean = false
 
+  /**
+   * Sentry transaction pour le premier chargement (depuis Ventilations)
+   */
+  private _reaffInitialTxn: any | undefined
+  private _reaffInitialStartAt: number | undefined
+  private _reaffInitialPending = true
+
+  /**
+   * Transactions Sentry pour recalculs suite aux actions utilisateur
+   */
+  private _reaffTxn: any | undefined
+  private _reaffStartAt: number | undefined
+  private _reaffLabel: string | undefined
+
+  private _startReaffTxn(label: string) {
+    try {
+      // Si une transaction est déjà en cours, la finaliser avant d'en démarrer une nouvelle
+      if (this._reaffTxn && this._reaffStartAt) {
+        const ms = Math.max(0, performance.now() - this._reaffStartAt)
+        try { Sentry.getActiveSpan()?.setAttribute('latency_ms', ms as any) } catch {}
+        try { (this._reaffTxn as any)?.finish?.() } catch {}
+      }
+    } catch {}
+    this._reaffLabel = label
+    try { (window as any).__ajust_last_latency_event = label } catch {}
+    this._reaffStartAt = performance.now()
+    this._reaffTxn = Sentry.startSpan(
+      { name: 'reaffectateur: compute', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } },
+      async () => {}
+    )
+    try { Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label) } catch {}
+  }
+
+  private _finishReaffTxn() {
+    if (this._reaffTxn && this._reaffStartAt) {
+      try {
+        const ms = Math.max(0, performance.now() - this._reaffStartAt)
+        Sentry.getActiveSpan()?.setAttribute('latency_ms', ms as any)
+      } catch {}
+      try { (this._reaffTxn as any)?.finish?.() } catch {}
+    }
+    this._reaffTxn = undefined
+    this._reaffStartAt = undefined
+    this._reaffLabel = undefined
+  }
+
   introSteps: IntroJSStep[] = [
     {
       target: '#wrapper-contener',
@@ -382,6 +429,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   ngOnInit() {
     this.watch(
       this.humanResourceService.backupId.subscribe(() => {
+        // Démarre une transaction Sentry pour le premier chargement uniquement
+        if (this._reaffInitialPending && !this._reaffInitialTxn) {
+          const label = 'Chargement du reaffectateur'
+          try { (window as any).__ajust_last_latency_event = label } catch {}
+          this._reaffInitialStartAt = performance.now()
+          this._reaffInitialTxn = Sentry.startSpan(
+            { name: 'reaffectateur: compute', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } },
+            async () => {}
+          )
+          try { Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label) } catch {}
+        }
         this.onFilterList()
       }),
     )
@@ -598,6 +656,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       })
       .finally(() => {
         this.appService.appLoading.next(false)
+        // Finalise la transaction de premier chargement si en cours
+        if (this._reaffInitialPending && this._reaffInitialTxn) {
+          try {
+            const ms = this._reaffInitialStartAt ? Math.max(0, performance.now() - this._reaffInitialStartAt) : undefined
+            Sentry.getActiveSpan()?.setAttribute('latency_ms', ms as any)
+          } catch {}
+          try { (this._reaffInitialTxn as any)?.finish?.() } catch {}
+          this._reaffInitialTxn = undefined
+          this._reaffInitialStartAt = undefined
+          this._reaffInitialPending = false
+        }
+        // Finaliser une éventuelle transaction d'action utilisateur
+        this._finishReaffTxn()
       })
   }
 
@@ -792,7 +863,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
     if (list.length === 0) {
       this.listFormated = []
-    } else this.onFilterList()
+    } else {
+      // Démarrer une transaction pour filtre contentieux
+      const n = list.length
+      this._startReaffTxn(`Chargement du reaffectateur après filtre par contentieux, ${n} sélectionné(s)`) 
+      this.onFilterList()
+    }
   }
 
   /**
@@ -802,6 +878,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
+    // Démarrer une transaction pour changement de date
+    this._startReaffTxn(`Chargement du reaffectateur après changement de date`)
     this.onFilterList()
     this.kpiService.register(DATE_REAFECTATOR, date)
   }
@@ -860,6 +938,11 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       value: f.code || f.label,
     }))
 
+    // Démarrer une transaction Sentry pour le recalcul suite au choix de catégorie
+    const selectedCat = this.formFilterSelect.find((c) => c.id === this.reaffectatorService.selectedCategoriesId)
+    const catLabel = selectedCat?.orignalValuePlurial || selectedCat?.orignalValue || 'catégorie'
+    this._startReaffTxn(`Chargement du reaffectateur après choix de catégorie, ${catLabel}`)
+
     this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id))
   }
 
@@ -869,7 +952,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    */
   onSelectedFonctionsIdsChanged(list: string[] | number[]) {
     this.reaffectatorService.selectedFonctionsIds = list.map((i) => +i)
-
+    // Démarrer une transaction pour filtre fonctions
+    const n = this.reaffectatorService.selectedFonctionsIds.length
+    this._startReaffTxn(`Chargement du reaffectateur après filtre par fonction, ${n} sélectionnée(s)`)    
     this.onFilterList()
   }
 

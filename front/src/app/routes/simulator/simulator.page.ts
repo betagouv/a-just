@@ -1,5 +1,4 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import * as Sentry from '@sentry/browser'
 import { Component, OnInit, HostListener, ViewChild, OnDestroy, inject } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { PeriodSelectorComponent } from './period-selector/period-selector.component'
@@ -387,10 +386,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   simulateButton = 'disabled'
 
-  /**
-   * Horodatage du démarrage du calcul de simulation (pour mesure de latence)
-   */
-  private _computeStartAt: number | null = null
 
   /**
    * Backup hr à traiter lors de la simulation
@@ -1676,26 +1671,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
       this.logRunSimulator(params)
 
-      // Measure latency based on isLoading lifecycle (true -> false) to catch every run
-      let started = false
-      const sub = this.simulatorService.isLoading.subscribe((val) => {
-        try {
-          if (!started && val === true) {
-            this._computeStartAt = performance.now()
-            started = true
-          } else if (started && val === false) {
-            const end = performance.now()
-            const ms = this._computeStartAt ? Math.max(0, end - this._computeStartAt) : undefined
-            const latencyEvent = this._buildLatencyEventLabel(params)
-            Sentry.captureMessage('simulateur: compute finished', {
-              level: 'info',
-              tags: { latency_event: latencyEvent },
-              extra: { latency_event: latencyEvent, latency_ms: ms },
-            })
-            try { sub.unsubscribe() } catch {}
-          }
-        } catch {}
-      })
+      // Service-level logging now handles latency measurement for each run
 
       this.simulatorService.toSimulate(params, simulation)
     } else {
