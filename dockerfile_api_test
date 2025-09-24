@@ -1,13 +1,14 @@
-FROM node:16.15.1
+FROM node:22
 
 COPY ./api /home/api
 WORKDIR /home/api
 
 #RUN apt-get -y install iptables cron
+RUN mkdir -p test/reports coverage
 
 CMD echo "NODE_ENV = $NODE_ENV"; \
-    npm install --include=dev && \
-    npm run build:test && \ 
-    npm run test;
+    yarn install --frozen-lockfile && \
+    yarn run build:test && \ 
+    yarn run test;
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
 #sleep infinity;

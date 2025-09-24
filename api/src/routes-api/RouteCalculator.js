@@ -1,17 +1,13 @@
-import Route, { Access } from "./Route";
-import { Types } from "../utils/types";
-import { month, today } from "../utils/date";
-import { preformatHumanResources } from "../utils/ventilator";
-import { getHumanRessourceList } from "../utils/humanServices";
-import { sumBy } from "lodash";
-import {
-  computeCoverage,
-  computeDTES,
-  computeRealTimePerCase,
-} from "../utils/simulator";
-import { fixDecimal } from "../utils/number";
-import config from "config";
-import { withAbortTimeout } from "../utils/abordTimeout";
+import Route, { Access } from './Route'
+import { Types } from '../utils/types'
+import { month, today } from '../utils/date'
+import { preformatHumanResources } from '../utils/ventilator'
+import { getHumanRessourceList } from '../utils/humanServices'
+import { sumBy } from 'lodash'
+import { loadOrWarmHR } from '../utils/redis'
+import { fixDecimal } from '../utils/number'
+import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
+import { getEtpByCategory } from '../utils/simulator'
 
 /**
  * Route des calculs de la page calcule
@@ -19,16 +15,16 @@ import { withAbortTimeout } from "../utils/abordTimeout";
 
 export default class RouteCalculator extends Route {
   // model de BDD
-  model;
+  model
 
   /**
    * Constructeur
    * @param {*} params
    */
   constructor(params) {
-    super(params);
+    super(params)
 
-    this.model = params.models.HumanResources;
+    this.model = params.models.HumanResources
   }
 
   /**
@@ -55,26 +51,13 @@ export default class RouteCalculator extends Route {
     accesses: [Access.canVewCalculator],
   })
   async filterList(ctx) {
-    try {
-      await withAbortTimeout(async (signal) => {
-        const { backupId } = this.body(ctx);
+    const { backupId } = this.body(ctx)
 
-        if (
-          !(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))
-        ) {
-          ctx.throw(401, "Vous n'avez pas accès à cette juridiction !");
-        }
-
-        this.sendOk(
-          ctx,
-          await this.model.onCalculate(this.body(ctx), ctx.state.user, signal)
-        );
-      }, 60000); // timeout en ms
-    } catch (err) {
-      console.error("❌ Traitement interrompu :", err.message);
-      ctx.status = 503;
-      ctx.body = { error: err.message };
+    if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
+      ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
+
+    this.sendOk(ctx, await this.model.onCalculate(this.body(ctx), ctx.state.user))
   }
 
   /**
@@ -100,160 +83,118 @@ export default class RouteCalculator extends Route {
     accesses: [Access.canVewCalculator],
   })
   async rangeValues(ctx) {
-    let {
-      backupId,
-      dateStart,
-      dateStop,
-      contentieuxId,
-      type,
-      fonctionsIds,
-      categorySelected,
-    } = this.body(ctx);
+    let { backupId, dateStart, dateStop, contentieuxId, type, fonctionsIds, categorySelected } = this.body(ctx)
 
-    dateStart = today(dateStart);
-    dateStop = today(dateStop);
+    dateStart = today(dateStart)
+    dateStop = today(dateStop)
 
-    const hrList = await this.model.getCache(backupId);
-    let endOfTheMonth = dateStart;
+    let endOfTheMonth = dateStart
 
-    const list = [];
+    const list = []
 
     do {
-      let endOfTheMonth = today(dateStart);
-      endOfTheMonth = month(endOfTheMonth, 0, "lastday");
+      let endOfTheMonth = today(dateStart)
+      endOfTheMonth = month(endOfTheMonth, 0, 'lastday')
 
       switch (type) {
-        case "entrees":
+        case 'entrees':
           {
-            const activites = await this.models.Activities.getByMonth(
-              dateStart,
-              backupId,
-              contentieuxId,
-              false
-            );
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites.length) {
-              const acti = activites[0];
+              const acti = activites[0]
               if (acti.entrees !== null) {
-                list.push({ value: acti.entrees, date: new Date(dateStart) });
+                list.push({ value: acti.entrees, date: today(dateStart) })
               } else if (acti.originalEntrees !== null) {
                 list.push({
                   value: acti.originalEntrees,
-                  date: new Date(dateStart),
-                });
+                  date: today(dateStart),
+                })
               } else {
                 list.push({
                   value: null,
-                  date: new Date(dateStart),
-                });
+                  date: today(dateStart),
+                })
               }
             }
           }
-          break;
-        case "sorties":
+          break
+        case 'sorties':
           {
-            const activites = await this.models.Activities.getByMonth(
-              dateStart,
-              backupId,
-              contentieuxId,
-              false
-            );
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites.length) {
-              const acti = activites[0];
+              const acti = activites[0]
               if (acti.sorties !== null) {
-                list.push({ value: acti.sorties, date: new Date(dateStart) });
+                list.push({ value: acti.sorties, date: today(dateStart) })
               } else if (acti.originalSorties !== null) {
                 list.push({
                   value: acti.originalSorties,
-                  date: new Date(dateStart),
-                });
+                  date: today(dateStart),
+                })
               } else {
                 list.push({
                   value: null,
-                  date: new Date(dateStart),
-                });
+                  date: today(dateStart),
+                })
               }
             }
           }
-          break;
-        case "stock":
-        case "stocks":
+          break
+        case 'stock':
+        case 'stocks':
           {
-            const activites = await this.models.Activities.getByMonth(
-              dateStart,
-              backupId,
-              contentieuxId,
-              false
-            );
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites && activites.length) {
-              const acti = activites[0];
+              const acti = activites[0]
               if (acti.stock !== null) {
-                list.push({ value: acti.stock, date: new Date(dateStart) });
+                list.push({ value: acti.stock, date: today(dateStart) })
               } else if (acti.originalStock !== null) {
                 list.push({
                   value: acti.originalStock,
-                  date: new Date(dateStart),
-                });
+                  date: today(dateStart),
+                })
               } else {
                 list.push({
                   value: null,
-                  date: new Date(dateStart),
-                });
+                  date: today(dateStart),
+                })
               }
             }
           }
-          break;
-        case "ETPTEam":
-        case "ETPTGreffe":
-        case "ETPTSiege":
+          break
+        case 'ETPTEam':
+        case 'ETPTGreffe':
+        case 'ETPTSiege':
           {
-            const catId =
-              type === "ETPTSiege" ? 1 : type === "ETPTGreffe" ? 2 : 3;
-            const fonctions = (await this.models.HRFonctions.getAll()).filter(
-              (v) => v.categoryId === catId
-            );
-            let newFonctions = fonctionsIds;
-            if (
-              (newFonctions || []).every(
-                (fonctionId) => !fonctions.find((f) => f.id === fonctionId)
-              )
-            ) {
-              newFonctions = null;
+            const catId = type === 'ETPTSiege' ? 1 : type === 'ETPTGreffe' ? 2 : 3
+            const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === catId)
+            let newFonctions = fonctionsIds
+            if ((newFonctions || []).every((fonctionId) => !fonctions.find((f) => f.id === fonctionId))) {
+              newFonctions = null
             }
 
-            const preformatedAllHumanResource = preformatHumanResources(
-              hrList,
-              dateStart,
-              null,
-              newFonctions
-            );
-            let hList = await getHumanRessourceList(
-              preformatedAllHumanResource,
-              [contentieuxId],
-              undefined,
-              [catId],
-              dateStart,
-              endOfTheMonth
-            );
-            let totalAffected = 0;
-            hList.map((agent) => {
-              const activities = (agent.currentActivities || []).filter(
-                (r) => r.contentieux && r.contentieux.id === contentieuxId
-              );
-              const timeAffected = sumBy(activities, "percent");
-              if (timeAffected) {
-                let realETP = (agent.etp || 0) - agent.hasIndisponibility;
-                if (realETP < 0) {
-                  realETP = 0;
-                }
-                totalAffected += (timeAffected / 100) * realETP;
-              }
-            });
-            list.push({ value: totalAffected, date: new Date(dateStart) });
+            const hrList = await loadOrWarmHR(backupId, this.models)
+            const indexes = await generateHRIndexes(hrList)
+            const categories = await this.models.HRCategories.getAll()
+
+            const etp = calculateETPForContentieux(
+              indexes,
+              {
+                start: dateStart,
+                end: endOfTheMonth,
+                category: undefined,
+                fonctions: newFonctions,
+                contentieux: contentieuxId,
+              },
+              categories,
+            )
+
+            let { etpMag, etpFon, etpCon } = getEtpByCategory(etp)
+            list.push({ value: type === 'ETPTSiege' ? etpMag : type === 'ETPTGreffe' ? etpFon : etpCon, date: today(dateStart) })
           }
-          break;
-        case "dtes":
+          break
+        case 'dtes':
           {
-            const catId = categorySelected === "magistrats" ? 1 : 2;
+            const catId = categorySelected === 'magistrats' ? 1 : 2
             const datas = await this.model.onCalculate(
               {
                 backupId,
@@ -265,18 +206,18 @@ export default class RouteCalculator extends Route {
                 loadChildrens: false,
               },
               ctx.state.user,
-              false
-            );
+              false,
+            )
 
             list.push({
               value: datas.list[0].realDTESInMonths,
-              date: new Date(dateStart),
-            });
+              date: today(dateStart),
+            })
           }
-          break;
-        case "temps-moyen":
+          break
+        case 'temps-moyen':
           {
-            const catId = categorySelected === "magistrats" ? 1 : 2;
+            const catId = categorySelected === 'magistrats' ? 1 : 2
             const datas = await this.model.onCalculate(
               {
                 backupId,
@@ -288,67 +229,59 @@ export default class RouteCalculator extends Route {
                 loadChildrens: false,
               },
               ctx.state.user,
-              false
-            );
+              false,
+            )
 
             list.push({
-              value:
-                catId === 1
-                  ? datas.list[0].magRealTimePerCase
-                  : datas.list[0].fonRealTimePerCase,
-              date: new Date(dateStart),
-            });
+              value: catId === 1 ? datas.list[0].magRealTimePerCase : datas.list[0].fonRealTimePerCase,
+              date: today(dateStart),
+            })
           }
-          break;
-        case "taux-couverture":
+          break
+        case 'taux-couverture':
           {
-            const activites = await this.models.Activities.getByMonth(
-              dateStart,
-              backupId,
-              contentieuxId,
-              false
-            );
+            const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites.length) {
-              const acti = activites[0];
+              const acti = activites[0]
 
-              let sorties = null;
+              let sorties = null
               if (acti.sorties !== null) {
-                sorties = acti.sorties;
+                sorties = acti.sorties
               } else if (acti.originalSorties !== null) {
-                sorties = acti.originalSorties;
+                sorties = acti.originalSorties
               }
 
-              let entrees = null;
+              let entrees = null
               if (acti.entrees !== null) {
-                entrees = acti.entrees;
+                entrees = acti.entrees
               } else if (acti.originalEntrees !== null) {
-                entrees = acti.originalEntrees;
+                entrees = acti.originalEntrees
               }
 
               if (sorties !== null && entrees !== null) {
                 list.push({
-                  value: 100 * (sorties / entrees),
-                  date: new Date(dateStart),
-                });
+                  value: Math.floor(fixDecimal(sorties / entrees, 100) * 100),
+                  date: today(dateStart),
+                })
               } else {
                 list.push({
                   value: null,
-                  date: new Date(dateStart),
-                });
+                  date: today(dateStart),
+                })
               }
             }
           }
-          break;
+          break
         default:
           {
-            console.log("type", type);
+            console.log('type', type)
           }
-          break;
+          break
       }
 
-      dateStart = month(dateStart, 1);
-    } while (dateStart.getTime() <= dateStop.getTime());
+      dateStart = month(dateStart, 1)
+    } while (dateStart.getTime() <= dateStop.getTime())
 
-    this.sendOk(ctx, list);
+    this.sendOk(ctx, list)
   }
 }

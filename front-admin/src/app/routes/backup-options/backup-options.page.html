@@ -26,22 +26,24 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <aj-popup *ngIf="backup" class="large" title="Modification des accès" [actions]="popupAction"
+  @if (backup) {
+  <aj-popup class="large" title="Modification des accès" [actions]="popupAction"
     (selectedAction)="onPopupDetailAction($event)">
     <div class="content-popup">
       <div>
         <p>Nom: {{ backup.label }}</p>
-
         <div class="item item-left">
           <p><b>Liste des juridictions</b></p>
-
-          <p *ngFor="let j of juridictions">
+          @for (j of juridictions; track j.id) {
+          <p>
             <input type="checkbox" #acDom [ngModel]="backup.juridictions.indexOf(j.id) !== -1"
               (ngModelChange)="onChangeSelection(j.id, $event)" /> <label (click)="acDom.click()">{{ j.label
               }}</label>
           </p>
+          }
         </div>
       </div>
     </div>
   </aj-popup>
+  }
 </aj-wrapper>

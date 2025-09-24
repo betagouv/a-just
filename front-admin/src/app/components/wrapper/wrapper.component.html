@@ -4,11 +4,13 @@
     <img src="assets/images/logo-ajust.png" class="logo-ajust" />
   </div>
 
-  <div class="menu-item" *ngFor="let item of menu">
+  @for (item of menu; track item.path) {
+  <div class="menu-item">
     <a [routerLink]="['/' + item.path]">
       {{ item.label }}
     </a>
   </div>
+  }
   <div class="menu-item disconnect" (click)="onDisconnect()">
     <p>Déconnexion</p>
   </div>

@@ -2,74 +2,52 @@ import { cloneDeep, groupBy, sortBy, sumBy } from 'lodash'
 import { getTime, isSameMonthAndYear, month, nbWorkingDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
-import { getEtpByDateAndPerson, getEtpByDateAndPersonOld } from './human-resource'
+import { calculateETPForContentieux, getEtpByDateAndPerson, getEtpByDateAndPersonOld } from './human-resource'
 import { appendFileSync } from 'fs'
 import { checkAbort } from './abordTimeout'
 
 /**
- * Création d'un tableau vide du calculateur de tout les contentieux et sous contentieux
- * @param {*} referentiels
- * @returns
+ * Création d'un tableau vide du calculateur de tous les contentieux et sous-contentieux
+ * @param {Array} referentiels
+ * @returns {Array}
  */
 export const emptyCalulatorValues = (referentiels) => {
-  const list = []
-  for (let i = 0; i < referentiels.length; i++) {
-    const childrens = (referentiels[i].childrens || []).map((c) => {
-      const cont = { ...c, parent: referentiels[i] }
-
-      return {
-        totalIn: null,
-        totalOut: null,
-        lastStock: null,
-        etpMag: null,
-        magRealTimePerCase: null,
-        magCalculateTimePerCase: null,
-        magCalculateOut: null,
-        magCalculateCoverage: null,
-        magCalculateDTESInMonths: null,
-        etpFon: null,
-        fonRealTimePerCase: null,
-        fonCalculateTimePerCase: null,
-        fonCalculateOut: null,
-        fonCalculateCoverage: null,
-        fonCalculateDTESInMonths: null,
-        etpCont: null,
-        realCoverage: null,
-        realDTESInMonths: null,
-        etpAffected: [],
-        childrens: [],
-        contentieux: cont,
-        nbMonth: 0,
-      }
-    })
-
-    list.push({
-      totalIn: null,
-      totalOut: null,
-      lastStock: null,
-      etpMag: null,
-      magRealTimePerCase: null,
-      magCalculateTimePerCase: null,
-      magCalculateOut: null,
-      magCalculateCoverage: null,
-      magCalculateDTESInMonths: null,
-      etpFon: null,
-      fonRealTimePerCase: null,
-      fonCalculateTimePerCase: null,
-      fonCalculateOut: null,
-      fonCalculateCoverage: null,
-      fonCalculateDTESInMonths: null,
-      etpCont: null,
-      realCoverage: null,
-      realDTESInMonths: null,
-      etpAffected: [],
-      childrens,
-      contentieux: referentiels[i],
-      nbMonth: 0,
-    })
+  const baseValues = {
+    totalIn: null,
+    totalOut: null,
+    lastStock: null,
+    etpMag: null,
+    magRealTimePerCase: null,
+    magCalculateTimePerCase: null,
+    magCalculateOut: null,
+    magCalculateCoverage: null,
+    magCalculateDTESInMonths: null,
+    etpFon: null,
+    fonRealTimePerCase: null,
+    fonCalculateTimePerCase: null,
+    fonCalculateOut: null,
+    fonCalculateCoverage: null,
+    fonCalculateDTESInMonths: null,
+    etpCont: null,
+    realCoverage: null,
+    realDTESInMonths: null,
+    etpAffected: [],
+    childrens: [],
+    nbMonth: 0,
   }
 
-  return list
+  return referentiels.map((parent) => {
+    const childrens = (parent.childrens || []).map((child) => ({
+      ...baseValues,
+      contentieux: { ...child, parent },
+    }))
+
+    return {
+      ...baseValues,
+      contentieux: parent,
+      childrens,
+    }
+  })
 }
 
 /**
@@ -84,51 +62,34 @@ export const emptyCalulatorValues = (referentiels) => {
  * @param {*} optionsBackups
  * @returns
  */
-export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart, dateStop, hr, categories, optionsBackups, loadChildrens, signal = null) => {
-  const prefiltersActivities = groupBy(activities, 'contentieux.id')
+export const syncCalculatorDatas = (
+  indexes,
+  list,
+  nbMonth,
+  activities,
+  dateStart,
+  dateStop,
+  hr,
+  categories,
+  optionsBackups,
+  selectedFonctionsIds,
+  signal = null,
+) => {
+  const prefilters = groupBy(activities, 'contentieux.id')
 
-  for (let i = 0; i < list.length; i++) {
-    checkAbort(signal)
-
-    const childrens = !loadChildrens
-      ? []
-      : (list[i].childrens || []).map((c) => ({
-          ...c,
-          nbMonth,
-          ...getActivityValues(
-            models,
-            dateStart,
-            dateStop,
-            prefiltersActivities[c.contentieux.id] || [],
-            c.contentieux.id,
-            nbMonth,
-            hr,
-            categories,
-            optionsBackups,
-            false,
-          ),
-        }))
-
-    list[i] = {
-      ...list[i],
-      ...getActivityValues(
-        models,
-        dateStart,
-        dateStop,
-        prefiltersActivities[list[i].contentieux.id] || [],
-        list[i].contentieux.id,
-        nbMonth,
-        hr,
-        categories,
-        optionsBackups,
-        true,
-      ),
-      childrens,
-      nbMonth,
-    }
+  const compute = (item, isParent) => {
+    const id = item.contentieux.id
+    const values = getActivityValues(indexes, dateStart, dateStop, prefilters[id] || [], id, nbMonth, hr, categories, optionsBackups, selectedFonctionsIds)
+    return { ...item, ...values, nbMonth }
   }
 
-  return list
+  return list.map((parent) => {
+    checkAbort(signal)
+    return {
+      ...compute(parent, true),
+      childrens: (parent.childrens || []).map((child) => compute(child, false)),
+    }
+  })
 }
 
 /**
@@ -143,16 +104,28 @@ export const syncCalculatorDatas = (models, list, nbMonth, activities, dateStart
  * @param {*} optionsBackups
  * @returns
  */
-const getActivityValues = (models, dateStart, dateStop, activities, referentielId, nbMonth, hr, categories, optionsBackups, loadDetails) => {
+const getActivityValues = (
+  indexes,
+  dateStart,
+  dateStop,
+  activities,
+  referentielId,
+  nbMonth,
+  hr,
+  categories,
+  optionsBackups,
+  selectedFonctionsIds,
+  old = false,
+) => {
   let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
-    models,
+    indexes,
     dateStart,
     dateStop,
     activities,
     referentielId,
     hr,
     categories,
-    loadDetails,
+    old,
   )
 
   activities = activities.filter((a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime())
@@ -179,11 +152,23 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
   const realDTESInMonthsStart = lastStockBf !== null && meanOutBf !== null ? fixDecimal(lastStockBf / meanOutBf, 100) : null
 
   // ETP moyen sur la période
+  const etpAffected = old
+    ? getHRPositions(models, hr, categories, referentielId, dateStart, dateStop)
+    : calculateETPForContentieux(
+        indexes,
+        {
+          start: dateStart,
+          end: dateStop,
+          category: undefined,
+          fonctions: selectedFonctionsIds,
+          contentieux: referentielId,
+        },
+        categories,
+      )
 
-  const etpAffected = getHRPositions(models, hr, categories, referentielId, dateStart, dateStop)
-  const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 100) : 0
-  const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 100) : 0
-  const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 100) : 0
+  const etpMag = etpAffected.length > 0 ? fixDecimal(etpAffected[0].totalEtp, 1000) : 0
+  const etpFon = etpAffected.length > 1 ? fixDecimal(etpAffected[1].totalEtp, 1000) : 0
+  const etpCont = etpAffected.length > 2 ? fixDecimal(etpAffected[2].totalEtp, 1000) : 0
 
   let etpAffectedBf = []
   let etpMagBf = null
@@ -198,22 +183,48 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
   let oneMonthBeforeEnd = today(dateStop)
   oneMonthBeforeEnd.setDate(1)
 
-  if (loadDetails === true) {
-    // ETP début
-    etpAffectedBf = getHRPositions(models, hr, categories, referentielId, dateStart, oneMonthAfterStart)
-    etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 100) : 0
-    etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 100) : 0
-    etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 100) : 0
+  // ETP début
+  etpAffectedBf = old
+    ? getHRPositions(models, hr, categories, referentielId, dateStart, oneMonthAfterStart)
+    : calculateETPForContentieux(
+        indexes,
+        {
+          start: dateStart,
+          end: oneMonthAfterStart,
+          category: undefined,
+          fonctions: selectedFonctionsIds,
+          contentieux: referentielId,
+        },
+        categories,
+      )
 
-    // ETP fin
-    etpAffectedAf = getHRPositions(models, hr, categories, referentielId, oneMonthBeforeEnd, dateStop)
-    etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 100) : 0
-    etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 100) : 0
-    etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 100) : 0
-  }
+  etpMagBf = etpAffectedBf.length > 0 ? fixDecimal(etpAffectedBf[0].totalEtp, 1000) : 0
+  etpFonBf = etpAffectedBf.length > 1 ? fixDecimal(etpAffectedBf[1].totalEtp, 1000) : 0
+  etpContBf = etpAffectedBf.length > 2 ? fixDecimal(etpAffectedBf[2].totalEtp, 1000) : 0
+
+  // ETP fin
+  etpAffectedAf = old
+    ? getHRPositions(models, hr, categories, referentielId, oneMonthBeforeEnd, dateStop)
+    : calculateETPForContentieux(
+        indexes,
+        {
+          start: oneMonthBeforeEnd,
+          end: dateStop,
+          category: undefined,
+          fonctions: selectedFonctionsIds,
+          contentieux: referentielId,
+        },
+        categories,
+      )
+
+  etpMagAf = etpAffectedAf.length > 0 ? fixDecimal(etpAffectedAf[0].totalEtp, 1000) : 0
+  etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 1000) : 0
+  etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 1000) : 0
+
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
-  const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (meanOutCs / etpMagCs), 100)
-  const fonRealTimePerCase = fixDecimal(((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (meanOutCs / etpFonCs), 100)
+  const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (meanOutCs / etpMagCs), 1000)
+  const fonRealTimePerCase = fixDecimal(((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (meanOutCs / etpFonCs), 1000)
+  if (referentielId === 471) console.log(fonRealTimePerCase, meanOutCs, etpFonCs)
   return {
     ...calculateActivities(referentielId, totalIn, lastStock, etpMag, etpFon, optionsBackups),
     // entrée sorties et taux de couverture moyen sur la période avec stock de fin
@@ -258,7 +269,7 @@ const getActivityValues = (models, dateStart, dateStop, activities, referentielI
 /**
  *
  */
-const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentielId, hr, categories, computeAll) => {
+const getLastTwelveMonths = (indexes, dateStart, dateStop, activities, referentielId, hr, categories, old) => {
   /**
    * Calcul sur les 12 derniers mois avant date de fin
    */
@@ -295,50 +306,59 @@ const getLastTwelveMonths = (models, dateStart, dateStop, activities, referentie
 
   // Calcul des sorties moyennes 12 derniers mois à compter de la date de fin selectionnée dans le calculateur
   const meanOutCs = (activitesEnd || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesEnd, 'sorties') / 12 : null
-  const etpByCategory = getHRPositions(models, hr, categories, referentielId, startCs, endCs)
-  const etpMagCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[0].totalEtp, 100) : 0
-  const etpFonCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[1].totalEtp, 100) : 0
+  const etpByCategory = old
+    ? getHRPositions(models, hr, categories, referentielId, startCs, endCs)
+    : calculateETPForContentieux(
+        indexes,
+        {
+          start: startCs,
+          end: endCs,
+          category: undefined,
+          fonctions: undefined,
+          contentieux: referentielId,
+        },
+        categories,
+      )
+
+  const etpMagCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[0].totalEtp, 1000) : 0
+  const etpFonCs = etpByCategory.length > 0 ? fixDecimal(etpByCategory[1].totalEtp, 1000) : 0
 
   let lastStockBf = null
   let totalInBf = null
   let totalOutBf = null
   let meanOutBf = null
 
-  if (computeAll === true) {
-    /**
-     * Calcul sur les 12 derniers mois avant date de début
-     */
-    // Date début de période selecitonnée dans le calculateur (fin du mois)
-    const endBf = month(today(dateStart), 0, 'lastday')
+  /**
+   * Calcul sur les 12 derniers mois avant date de début
+   */
+  // Date début de période selecitonnée dans le calculateur (fin du mois)
+  const endBf = month(today(dateStart), 0, 'lastday')
 
-    // Date 12 mois avant la date de début selectionnée dans le calculateur (début du mois)
-    const startBf = month(today(endBf), -11)
-    startBf.setDate(startBf.getDate() + 1)
-    startBf.setMinutes(startBf.getMinutes() + 1)
+  // Date 12 mois avant la date de début selectionnée dans le calculateur (début du mois)
+  const startBf = month(today(endBf), -11)
+  startBf.setDate(startBf.getDate() + 1)
+  startBf.setMinutes(startBf.getMinutes() + 1)
 
-    // Clone de l'objet activities et filtre par date
-    let activitesStart = cloneDeep(activities)
-    activitesStart = activitesStart.filter(
-      (a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime(),
-    )
+  // Clone de l'objet activities et filtre par date
+  let activitesStart = cloneDeep(activities)
+  activitesStart = activitesStart.filter((a) => month(a.periode).getTime() >= month(startBf).getTime() && month(a.periode).getTime() <= month(endBf).getTime())
 
-    // Calcul des sorties moyennes 12 derniers mois à compter de la date de début selectionnée dans le calculateur
-    meanOutBf = (activitesStart || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesStart, 'sorties') / 12 : null
+  // Calcul des sorties moyennes 12 derniers mois à compter de la date de début selectionnée dans le calculateur
+  meanOutBf = (activitesStart || []).filter((e) => e.sorties !== null).length !== 0 ? sumBy(activitesStart, 'sorties') / 12 : null
 
-    if (activitesStart.length) {
-      const lastActivities = activitesStart[activitesStart.length - 1]
-      if (isSameMonthAndYear(lastActivities.periode, endBf)) {
-        if (lastActivities.stock !== null) {
-          lastStockBf = lastActivities.stock
-        }
+  if (activitesStart.length) {
+    const lastActivities = activitesStart[activitesStart.length - 1]
+    if (isSameMonthAndYear(lastActivities.periode, endBf)) {
+      if (lastActivities.stock !== null) {
+        lastStockBf = lastActivities.stock
+      }
 
-        if (lastActivities.entrees !== null) {
-          totalInBf = lastActivities.entrees
-        }
+      if (lastActivities.entrees !== null) {
+        totalInBf = lastActivities.entrees
+      }
 
-        if (lastActivities.sorties !== null) {
-          totalOutBf = lastActivities.sorties
-        }
+      if (lastActivities.sorties !== null) {
+        totalOutBf = lastActivities.sorties
       }
     }
   }
@@ -411,54 +431,24 @@ export const getHRPositions = (models, hr, categories, referentielId, dateStart,
   return sortBy(list, 'rank')
 }
 
-export const getHRPositionsOld = (models, hr, categories, referentielId, dateStart, dateStop) => {
-  const hrCategories = {}
+export const getNbDaysGone = (hr, dateStart, dateStop) => {
+  let nbDaysGone = 0
+  let now = today(dateStart)
 
-  categories.map((c) => {
-    hrCategories[c.label] = hrCategories[c.label] || {
-      totalEtp: 0,
-      list: [],
-      rank: c.rank,
+  do {
+    // only working day
+    if (workingDay(now)) {
+      if (hr.dateEnd && getTime(hr.dateEnd) < dateStop.getTime() && now.getTime() > getTime(hr.dateEnd)) nbDaysGone++
+      if (hr.dateStart && getTime(hr.dateStart) > dateStart.getTime() && now.getTime() < getTime(dateStart)) nbDaysGone++
     }
-  })
 
-  for (let i = 0; i < hr.length; i++) {
-    const situtations = hr[i].situations || []
-    if (
-      situtations.some((s) => {
-        const activities = s.activities || []
-        return activities.some((s) => s.contentieux.id === referentielId)
-      })
-    ) {
-      const etptAll = getHRVentilationOld(models, hr[i], referentielId, categories, dateStart, dateStop)
+    now.setDate(now.getDate() + 1)
+  } while (now.getTime() <= dateStop.getTime())
 
-      Object.values(etptAll).map((c) => {
-        if (c.etpt) {
-          hrCategories[c.label].list.push(hr[i])
-          hrCategories[c.label].totalEtp += fixDecimal(c.etpt, 1000)
-        }
-      })
-    }
-  }
-
-  const list = []
-  for (const [key, value] of Object.entries(hrCategories)) {
-    list.push({
-      name: key,
-      totalEtp: value.totalEtp,
-      rank: value.rank,
-    })
-  }
-
-  return sortBy(list, 'rank')
+  return nbDaysGone
 }
 
-export const getHRVentilationOld = (models, hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
-  const cache = models.HumanResources.cacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels })
-  if (cache) {
-    return cache
-  }
-
+export const getHRVentilationOld = (hr, referentielId, categories, dateStart, dateStop, ddgFilter = false, absLabels = null) => {
   const list = new Object()
   categories.map((c) => {
     list[c.id] = new Object({
@@ -476,6 +466,9 @@ export const getHRVentilationOld = (models, hr, referentielId, categories, dateS
     let nextDateFinded = null
     let lastEtpAdded = null
     let lastSituationId = null
+
+    hr.dateEnd = hr.dateEnd ? today(hr.dateEnd) : hr.dateEnd
+    hr.dateStart = hr.dateStart ? today(hr.dateStart) : hr.dateStart
 
     // only working day
     if (workingDay(now)) {
@@ -566,25 +559,7 @@ export const getHRVentilationOld = (models, hr, referentielId, categories, dateS
     list[property].nbDay = nbDay
   }
 
-  models.HumanResources.updateCacheAgent(hr.id, { referentielId, categories, dateStart, dateStop, ddgFilter, absLabels }, list)
   return list
-}
-
-export const getNbDaysGone = (hr, dateStart, dateStop) => {
-  let nbDaysGone = 0
-  let now = today(dateStart)
-
-  do {
-    // only working day
-    if (workingDay(now)) {
-      if (hr.dateEnd && getTime(hr.dateEnd) < dateStop.getTime() && now.getTime() > getTime(hr.dateEnd)) nbDaysGone++
-      if (hr.dateStart && getTime(hr.dateStart) > dateStart.getTime() && now.getTime() < getTime(dateStart)) nbDaysGone++
-    }
-
-    now.setDate(now.getDate() + 1)
-  } while (now.getTime() <= dateStop.getTime())
-
-  return nbDaysGone
 }
 /**
  * Calcul du temps de ventilation d'un magistrat et d'un contentieux
@@ -653,7 +628,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
         lastSituationId = categoryId
       }
 
-      //console.log('nextDateFinded', now, nextDateFinded, lastEtpAdded, lastSituationId)
       if (nextDateFinded) {
         if (nextDateFinded.getTime() > dateStop.getTime()) {
           nextDateFinded = today(dateStop)
@@ -689,7 +663,6 @@ export const getHRVentilation = (hr, referentielId, categories, dateStart, dateS
       now.setDate(now.getDate() + 1)
     }
 
-    //console.log('getHRVentilation', now, hr.id, dateStop, nextDeltaDate, nbDay)
     const testNextDay = new Date(now)
     if (testNextDay.getTime() >= dateStop.getTime()) {
       continueLoop = false

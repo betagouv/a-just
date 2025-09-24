@@ -1,6 +1,16 @@
 spec:
-  - "test/index.test.js"
-timeout: "20000"
+  - 'test/index.test.js'
+timeout: 20000
 color: true
-require: "@babel/register"
+require: '@babel/register'
 bail: true
+reporter: 'mochawesome'
+reporterOptions:
+  reportDir: ./test/reports
+  reportFilename: test-results
+  html: true
+  json: true
+  overwrite: true
+  quiet: true
+  charts: true
+  code: false

@@ -1,4 +1,4 @@
-@import "../../../../styles/utils.scss";
+@use "../../../../styles/utils.scss";
 
 :host {
     background-color: white;
@@ -8,13 +8,14 @@
     display: flex;
     flex-direction: column;
 
-        .print-shadow{
+    .print-shadow {
         border: solid 1px rgb(207, 207, 207);
     }
-    .print-shadow-bottom{
+
+    .print-shadow-bottom {
         border-bottom: solid 1px rgb(207, 207, 207);
     }
-    
+
     .space-flex {
         flex: 1;
     }

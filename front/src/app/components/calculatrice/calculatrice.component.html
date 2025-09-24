@@ -1,47 +1,77 @@
 <div class="headers">
-  <div class="header" [ngClass]="{'selected': model.selectedTab === 'vacation'}" (click)="openTab('vacation')">
+  <div class="header" [ngClass]="{ selected: model.selectedTab === 'vacation' }" (click)="openTab('vacation')">
     <label>Vacations</label>
   </div>
-  <div class="header" [ngClass]="{'selected': model.selectedTab === 'volume'}" (click)="openTab('volume')">
+  <div class="header" [ngClass]="{ selected: model.selectedTab === 'volume' }" (click)="openTab('volume')">
     <label>Volume horaire</label>
   </div>
 </div>
 
-<div *ngIf="model.selectedTab === 'vacation'; else volume">
-  <div class="rectangle">
-    <span>L’agent effectue</span>
-    <input (keypress)="validateNumber($event)" type="text" [(ngModel)]="model.vacation.value"
-      [value]="model.vacation.value" (ngModelChange)="updateModel()" />
-    <span>vacations par</span>
-    <div class="radio-container">
-      <div class="radio-button" *ngFor="let item of radioItems; first as isFirst;">
-        <input type="radio" id="{{item}}" name="radios" [(ngModel)]="model.vacation.option" [value]="item"
-          [checked]="isFirst">
-        <label for="{{item}}">{{item}}</label>
+@if (model.selectedTab === 'vacation') {
+  <div>
+    <div class="rectangle">
+      <span>L’agent effectue</span>
+      <input
+        (keypress)="validateNumber($event)"
+        type="text"
+        [(ngModel)]="model.vacation.value"
+        [value]="model.vacation.value"
+        (ngModelChange)="updateModel()"
+      />
+      <span>vacations par</span>
+      <div class="radio-container">
+        @for (item of radioItems; track item; let isFirst = $first) {
+          <div class="radio-button">
+            <input
+              type="radio"
+              id="{{ item }}"
+              name="radios"
+              [(ngModel)]="model.vacation.option"
+              [value]="item"
+              [checked]="isFirst"
+            />
+            <label for="{{ item }}">{{ item }}</label>
+          </div>
+        }
       </div>
     </div>
+    <div class="rectangle">
+      <span>Une vacation dure :</span>
+      <input
+        (keypress)="validateNumber($event)"
+        type="text"
+        [(ngModel)]="model.vacation.unit"
+        [value]="model.vacation.unit"
+        (ngModelChange)="updateModel()"
+      />
+      <span>heures</span>
+    </div>
   </div>
-
-  <div class="rectangle">
-    <span>Une vacation dure :</span>
-    <input (keypress)="validateNumber($event)" type="text" [(ngModel)]="model.vacation.unit"
-      [value]="model.vacation.unit" (ngModelChange)="updateModel()" />
-    <span>heures</span>
-  </div>
-</div>
-
-<ng-template #volume>
+} @else {
   <div class="rectangle">
     <span>L’agent effectue</span>
-    <input (keypress)="validateNumber($event)" type="text" [(ngModel)]="model.volume.value" [value]="model.volume.value"
-      (ngModelChange)="updateModel()" />
+    <input
+      (keypress)="validateNumber($event)"
+      type="text"
+      [(ngModel)]="model.volume.value"
+      [value]="model.volume.value"
+      (ngModelChange)="updateModel()"
+    />
     <span>heures par</span>
     <div class="radio-container">
-      <div class="radio-button" *ngFor="let item of radioItems; first as isFirst;">
-        <input type="radio" id="{{item}}" name="radios" [(ngModel)]="model.volume.option" [value]="item"
-          [checked]="isFirst">
-        <label for="{{item}}">{{item}}</label>
-      </div>
+      @for (item of radioItems; track item; let isFirst = $first) {
+        <div class="radio-button">
+          <input
+            type="radio"
+            id="{{ item }}"
+            name="radios"
+            [(ngModel)]="model.volume.option"
+            [value]="item"
+            [checked]="isFirst"
+          />
+          <label for="{{ item }}">{{ item }}</label>
+        </div>
+      }
     </div>
   </div>
-</ng-template>
+}

@@ -1,11 +1,11 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
 
   p {
     font-size: 14px;
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     font-weight: bold;
     line-height: 24px;
   }
@@ -18,8 +18,8 @@
       .new-ventilation {
         display: flex;
         flex-direction: column;
-        border: solid 1px fColor(cgrayDefault);
-        background-color: fColor(popupLightBg);
+        border: solid 1px utils.$colors-cgrayDefault;
+        background-color: utils.$colors-popupLightBg;
         border-radius: 8px;
         gap: 8px !important;
       }
@@ -39,25 +39,15 @@
       width: 24px;
       font-size: 24px;
       margin-right: 8px;
-      fill: fColor(primary);
+      fill: utils.$colors-primary;
     }
 
     p {
       font-size: 18px;
       font-weight: bold;
-      color: fColor(cblack);
+      color: utils.$colors-cblack;
     }
   }
-
-  // .error-to-complete {
-  //   border: 1px solid #0063CB;
-  //   background-color: #F5F5FE !important;
-  // }
-
-  // .error {
-  //   background-color: #fef5e8 !important;
-  //   border: solid 1px #f4be30 !important;
-  // }
 
   .alert {
     display: flex;
@@ -69,10 +59,10 @@
     left: 0;
     z-index: 100;
     padding: 16px;
-    border: 2px solid #CE0500;
+    border: 2px solid utils.$colors-creddark;
     border-radius: 8px;
     background-color: white;
-    color: #CE0500;
+    color: utils.$colors-creddark;
     width: 300px;
     font-size: 14px;
     line-height: 24px;
@@ -86,7 +76,7 @@
       border-radius: 4px;
       font-size: 16px;
       cursor: pointer;
-      background-color: #FDDEDE;
+      background-color: utils.$colors-credlight;
     }
   }
 
@@ -97,11 +87,11 @@
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  border: solid 1px fColor(lightBorder);
+  border: solid 1px utils.$colors-lightBorder;
   padding: 0 12px 3px 6px;
   font-size: 14px;
-  color: #18753c;
-  background-color: #b8fec9;
+  color: utils.$colors-cgreen;
+  background-color: utils.$colors-cgreenlight;
   margin-left: 12px;
 
   i {
@@ -120,7 +110,7 @@ input[type="number"] {
 .drop-down {
   display: flex;
   border-radius: 4px;
-  border: 1px solid fColor(lightBorder);
+  border: 1px solid utils.$colors-lightBorder;
   background-color: white;
   justify-content: center;
   align-items: center;
@@ -154,7 +144,7 @@ input[type="number"] {
     top: 44px;
     border-radius: 4px;
     box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: utils.$colors-white;
     z-index: 100;
 
     .download {
@@ -198,11 +188,11 @@ input[type="number"] {
     align-items: center;
     padding: 8px 16px;
     gap: 10px;
-    background-color: fColor(bgSelect);
+    background-color: utils.$colors-bgSelect;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 
-    border-bottom: solid 1px fColor(lightBorder);
+    border-bottom: solid 1px utils.$colors-lightBorder;
 
     pre {
       flex: 1;
@@ -211,7 +201,7 @@ input[type="number"] {
     p {
       font-weight: bold;
       font-size: 20px;
-      color: fColor(cblack) !important;
+      color: utils.$colors-cblack !important;
     }
 
     .tags {
@@ -222,9 +212,9 @@ input[type="number"] {
         font-size: 14px;
         padding: 4px 14px;
         border-radius: 29px;
-        color: fColor(cgray);
+        color: utils.$colors-cgray;
         font-weight: normal;
-        background-color: fColor(cgrayDefault);
+        background-color: utils.$colors-cgrayDefault;
         margin-right: 0;
         margin-left: 8px;
       }
@@ -238,8 +228,8 @@ input[type="number"] {
 
     .administration {
       border-radius: 8px;
-      border: solid 1px fColor(lightBorder);
-      background-color: #fff;
+      border: solid 1px utils.$colors-lightBorder;
+      background-color: utils.$colors-white;
 
       >div {
         display: flex;
@@ -276,16 +266,16 @@ input[type="number"] {
         padding: 4px 2px 6px 2px;
 
         &.error {
-          background-color: #fef5e8;
-          border: solid 1px #f4be30;
+          background-color: utils.$colors-dataNotSettedBg;
+          border: solid 1px utils.$colors-cyellow;
         }
       }
     }
 
     >.activities {
       border-radius: 8px;
-      border: solid 1px fColor(lightBorder);
-      background-color: #fff;
+      border: solid 1px utils.$colors-lightBorder;
+      background-color: utils.$colors-white;
 
 
       >panel-activities {
@@ -293,8 +283,7 @@ input[type="number"] {
       }
 
       >.top {
-        border-bottom: 1px solid fColor(lightBorder);
-        // height: 48px;
+        border-bottom: 1px solid utils.$colors-lightBorder;
         margin: initial;
         padding: 4px 16px;
         display: flex;
@@ -321,7 +310,7 @@ input[type="number"] {
             align-items: center;
             gap: 4px;
             border-radius: 4px;
-            background-color: #F5F5FE;
+            background-color: utils.$colors-bgProgressBar;
             padding: 4px 8px;
             font-size: 12px;
             font-weight: 700;
@@ -351,8 +340,8 @@ input[type="number"] {
       flex: 1;
       height: fit-content;
       border-radius: 8px;
-      border: solid 1px fColor(lightBorder);
-      background-color: #fff;
+      border: solid 1px utils.$colors-lightBorder;
+      background-color: utils.$colors-white;
 
       .header {
         height: 48px;
@@ -362,11 +351,11 @@ input[type="number"] {
         gap: 10px;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
-        border-bottom: solid 1px fColor(lightBorder);
+        border-bottom: solid 1px utils.$colors-lightBorder;
       }
 
       p {
-        color: fColor(cblackdark);
+        color: utils.$colors-cblackdark;
       }
 
       .date-start-content {
@@ -384,8 +373,8 @@ input[type="number"] {
       }
 
       >.error {
-        background-color: #fef5e8;
-        border: solid 1px #f4be30;
+        background-color: utils.$colors-dataNotSettedBg;
+        border: solid 1px utils.$colors-cyellow;
       }
 
       >.alert {
@@ -396,8 +385,8 @@ input[type="number"] {
 
     >.indisponibilities {
       border-radius: 8px;
-      border: solid 1px fColor(lightBorder);
-      background-color: #fff;
+      border: solid 1px utils.$colors-lightBorder;
+      background-color: utils.$colors-white;
       flex: 1;
 
       .indispo-content {
@@ -419,16 +408,16 @@ input[type="number"] {
         gap: 4px;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
-        border-bottom: solid 1px fColor(lightBorder);
+        border-bottom: solid 1px utils.$colors-lightBorder;
 
 
         p {
-          color: fColor(cblack) !important;
+          color: utils.$colors-cblack !important;
         }
 
         label {
           font-size: 12px;
-          color: #18753c;
+          color: utils.$colors-cgreen;
         }
 
         button {
@@ -438,16 +427,16 @@ input[type="number"] {
           padding: 4px 8px;
           gap: 4px;
           border-radius: 4px;
-          border: solid 1px fColor(lightBorder);
-          background-color: #fff;
-          color: fColor(cblackdark);
+          border: solid 1px utils.$colors-lightBorder;
+          background-color: utils.$colors-white;
+          color: utils.$colors-cblackdark;
           font-size: 14px;
           font-weight: bold;
         }
       }
 
       .indispo-error {
-        color: fColor(cred);
+        color: utils.$colors-cred;
         font-weight: bold;
       }
     }
@@ -456,7 +445,7 @@ input[type="number"] {
 
 
   >.actions {
-    background-color: fColor(cgrayDefault);
+    background-color: utils.$colors-cgrayDefault;
     padding: 10px;
     display: flex;
     align-items: center;
@@ -493,14 +482,14 @@ input[type="number"] {
     height: 40px;
     margin-right: 6px;
     padding: 8px 12px 8px 16px;
-    border: solid 1px fColor(cbluedark);
+    border: solid 1px utils.$colors-cbluedark;
     text-align: center;
-    color: fColor(cbluedark);
+    color: utils.$colors-cbluedark;
     align-items: center;
     justify-content: center;
 
     svg {
-      fill: fColor(cbluedark);
+      fill: utils.$colors-cbluedark;
       height: 18px;
       width: 18px;
       margin-left: 8px;

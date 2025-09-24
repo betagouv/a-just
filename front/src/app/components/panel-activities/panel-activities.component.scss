@@ -1,16 +1,16 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
   display: block;
 
   &.dark-mode {
     p {
-      color: fColor(grayRow);
+      color: utils.$colors-grayRow;
     }
 
     .progress-bar {
       p {
-        color: fColor(grayRow);
+        color: utils.$colors-grayRow;
       }
     }
   }
@@ -19,7 +19,6 @@
 .header-panel {
   display: flex;
   height: 87px;
-  // box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   margin-bottom: 8px;
 
   &.ca {
@@ -33,10 +32,6 @@
     align-self: stretch;
     display: flex;
     flex-direction: column;
-
-    // &:first-child div.text {
-    //   border-left: 1px solid rgba(0, 0, 0, 0.1);
-    // }
 
     &:last-child div.text {
       border-right: none;
@@ -57,7 +52,7 @@
 
         &.label {
           flex: 2;
-          color: fColor(cblackdark);
+          color: utils.$colors-cblackdark;
           text-transform: uppercase;
           display: flex;
           align-items: flex-end;
@@ -67,7 +62,7 @@
           flex: 1;
 
           >p {
-            color: fColor(headerNumberColor) !important;
+            color: utils.$colors-headerNumberColor !important;
           }
         }
       }
@@ -111,41 +106,41 @@
 
   &.low-completion {
     p {
-      color: fColor(cred);
+      color: utils.$colors-cred;
     }
 
     .progress-bar-line>div {
-      background-color: fColor(cred);
+      background-color: utils.$colors-cred;
     }
   }
 
   &.placeholder {
     p {
-      color: fColor(cplaceholder);
+      color: utils.$colors-cplaceholder;
     }
 
     .progress-bar-line,
     .progress-bar-line>div {
-      background-color: fColor(cplaceholder);
+      background-color: utils.$colors-cplaceholder;
     }
   }
 
   p {
     width: 271px;
     font-size: 12px;
-    color: fColor(cgray);
+    color: utils.$colors-cgray;
   }
 
   .progress-bar-line {
     flex: 1;
-    background-color: fColor(bgProgressBar);
+    background-color: utils.$colors-bgProgressBar;
     height: 6px;
     border-radius: 8px;
     margin-left: 8px;
 
     >div {
       height: 100%;
-      background-color: fColor(lineProgressBar);
+      background-color: utils.$colors-lineProgressBar;
       border-radius: 8px;
     }
   }
@@ -156,7 +151,7 @@
   margin-top: 16px;
   padding-top: 8px;
   margin-bottom: 16px;
-  border-top: 2px solid fColor(cgray);
+  border-top: 2px solid utils.$colors-cgray;
   position: relative;
 
   .arrow-block {
@@ -235,7 +230,7 @@
       .arrow-top {
         width: 15px;
         height: 15px;
-        background-color: #33569e;
+        background-color: utils.$colors-cblue;
         display: inline-block;
         margin-left: 75%;
         transform: rotate(-135deg);
@@ -244,15 +239,15 @@
       }
 
       .title {
-        background-color: #33569e;
-        color: #fff;
+        background-color: utils.$colors-cblue;
+        color: utils.$colors-white;
         font-size: 16px;
         padding: 16px;
       }
 
       .texte {
         background-color: #f3f6fe;
-        color: #29437c;
+        color: utils.$colors-cblue;
         padding: 16px;
       }
     }

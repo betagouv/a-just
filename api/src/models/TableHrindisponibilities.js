@@ -32,9 +32,9 @@ export default (sequelizeInstance, Model) => {
         id: list[i].id,
         percent: list[i].percent,
         dateStart: list[i].date_start,
-        dateStartTimesTamps: today(list[i].date_start).getTime(),
+        dateStartTimesTamps: list[i].date_start ? today(list[i].date_start).getTime() : null,
         dateStop: list[i].date_stop,
-        dateStopTimesTamps: today(list[i].date_stop).getTime(),
+        dateStopTimesTamps: list[i].date_stop ? today(list[i].date_stop).getTime() : null,
         createdAt: list[i].created_at,
         updatedAt: list[i].updated_at,
         contentieux: {
@@ -63,8 +63,8 @@ export default (sequelizeInstance, Model) => {
         nac_id: indispo.contentieux.id,
         hr_id: hRId,
         percent: indispo.percent,
-        date_start: indispo.dateStart,
-        date_stop: indispo.dateStop,
+        date_start: indispo.dateStart || null,
+        date_stop: indispo.dateStop || null,
       }
       let findToBdd
 

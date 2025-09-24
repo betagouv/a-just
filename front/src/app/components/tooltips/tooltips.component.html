@@ -1,14 +1,23 @@
-<div class="tooltip-text animate__animated" *ngIf="tooltipsIsVisible && (title || content || footer)"
-  [ngStyle]="{visibility: tooltipsIsVisible ? 'visible' : 'hidden', animate__fadeIn: tooltipsIsVisible}">
-  <div>
-    <div class="triangle"></div>
-    <mat-icon (click)="tooltipsIsVisible = false; $event.stopPropagation();">close</mat-icon>
-    <div class="title" *ngIf="title" [ngClass]="{'radius' : content.length === 0}" [innerHTML]="title | sanitizeHtml">
+@if (tooltipsIsVisible && (title || content || footer)) {
+  <div
+    class="tooltip-text animate__animated"
+    [ngStyle]="{ visibility: tooltipsIsVisible ? 'visible' : 'hidden', animate__fadeIn: tooltipsIsVisible }"
+  >
+    <div>
+      <div class="triangle"></div>
+      <mat-icon (click)="tooltipsIsVisible = false; $event.stopPropagation()">close</mat-icon>
+      @if (title) {
+        <div class="title" [ngClass]="{ radius: content.length === 0 }" [innerHTML]="title | sanitizeHtml"></div>
+      }
+      @if (content) {
+        <div class="content">
+          <div [innerHTML]="content | sanitizeHtml"></div>
+          <ng-content></ng-content>
+        </div>
+      }
+      @if (footer) {
+        <div class="footer" [innerHTML]="footer | sanitizeHtml"></div>
+      }
     </div>
-    <div class="content" *ngIf="content">
-      <div [innerHTML]="content | sanitizeHtml"></div>
-      <ng-content></ng-content>
-    </div>
-    <div class="footer" *ngIf="footer" [innerHTML]="footer | sanitizeHtml"></div>
   </div>
-</div>
+}

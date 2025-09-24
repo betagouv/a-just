@@ -71,6 +71,7 @@ import { FiguresWidgetComponent } from '../../../components/figures-widget/figur
 import { DialWidgetComponent } from '../widgets/dial-widget/dial-widget.component';
 import { BackButtonComponent } from '../../../components/back-button/back-button.component';
 import { AppService } from '../../../services/app/app.service';
+import { isNaN } from 'lodash';
 
 /**
  * Composant page simulateur
@@ -1195,13 +1196,15 @@ export class WhiteSimulatorPage
       }
 
       if (
-        ['totalIn', 'totalOut', 'realCoverage', 'magRealTimePerCase'].includes(
-          inputField.id
-        ) &&
-        parseFloat(volumeInput) <= 0
+        ['totalIn', 'totalOut','realCoverage','realDTESInMonths', 'magRealTimePerCase'].includes(inputField.id) && (parseFloat(volumeInput) <= 0||isNaN(parseFloat(volumeInput)))
       ) {
         alert('Le nombre total ne peut pas être inférieur ou égal à 0');
         return;
+      }
+
+      if (['lastStock'].includes(inputField.id) && (parseFloat(volumeInput) < 0||isNaN(parseFloat(volumeInput)))) {
+      alert('La valeur totale ne peut pas être inférieure 0')
+      return
       }
 
       // if param1 reset =>  reset all params
@@ -1896,6 +1899,13 @@ export class WhiteSimulatorPage
         editButton.style.display = 'none';
       else if (title) title.classList.add('display-none');
 
+      const tooltips = document.querySelectorAll('[id="chartjs-tooltip"]');
+      if (tooltips) {
+        tooltips.forEach((tooltip) => {
+          (tooltip as HTMLElement).style.marginLeft = '200px';
+        });
+      }
+
       const exportButton = document.getElementById('export-button');
       if (exportButton) {
         exportButton.classList.add('display-none');
@@ -1904,6 +1914,11 @@ export class WhiteSimulatorPage
       const exportButton1 = document.getElementById('export-button-1');
       if (exportButton1) {
         exportButton1.classList.add('display-none');
+      }
+
+      const exportButton2 = document.getElementById('export-button-2');
+      if (exportButton2) {
+        exportButton2.classList.add('display-none');
       }
 
       const ajWrapper = document.getElementById('simu-wrapper');
@@ -1916,6 +1931,7 @@ export class WhiteSimulatorPage
       if (commentArea) commentArea.classList.add('display-none');
 
       this.onPrint = true;
+      await this.wait(2000);
 
       this.wrapper
         ?.exportAsPdf(filename, true, false, null, false /*true*/)
@@ -1927,8 +1943,13 @@ export class WhiteSimulatorPage
 
           if (exportButton) exportButton.classList.remove('display-none');
           if (exportButton1) exportButton1.classList.remove('display-none');
+          if (exportButton2) exportButton2.classList.remove('display-none');
           if (initButton) initButton.classList.remove('display-none');
           if (backButton) backButton.classList.remove('display-none');
+          if (tooltips)
+            tooltips.forEach((tooltip) => {
+              (tooltip as HTMLElement).style.marginLeft = '0px';
+            });
 
           if (commentArea) {
             commentArea.style.display = 'block';
@@ -1955,6 +1976,13 @@ export class WhiteSimulatorPage
         setTimeout(() => reject('Comment too long'), 100);
       });
     }
+  }
+
+  /**
+   * Interrompt le code pendant X temps
+   */
+  wait(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -2164,6 +2192,12 @@ export class WhiteSimulatorPage
           {
             this.popupActionToUse = this.popupAction.leaving;
             this.userAction.isLeaving = true;
+          }
+          break;
+        case this.action.closeTab:
+          {
+            this.popupActionToUse = this.popupAction.closeTab;
+            this.userAction.isClosingTab = true;
           }
           break;
       }

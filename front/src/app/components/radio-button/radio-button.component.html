@@ -1,8 +1,16 @@
-<div class="border-area" [ngStyle]="{borderColor: bgColor, borderRadius: borderRadius}">
-</div>
-<div class="panel" [ngClass]="{'selected': o.checked}">
-  <div class="indicator"
-    [ngStyle]="{'background-color': switchColor, width: indicatorWidth+'px', height: indicatorHeight+'px', borderColor: bgColor}">
-    <i *ngIf="icon" class="ri-{{icon}}" [ngStyle]="{color: bgColor, opacity: value ? 1 : 0}"></i>
+<div class="border-area" [ngStyle]="{ borderColor: bgColor, borderRadius: borderRadius }"></div>
+<div class="panel" [ngClass]="{ selected: o.checked }">
+  <div
+    class="indicator"
+    [ngStyle]="{
+      'background-color': switchColor,
+      width: indicatorWidth + 'px',
+      height: indicatorHeight + 'px',
+      borderColor: bgColor,
+    }"
+  >
+    @if (icon) {
+      <i class="ri-{{ icon }}" [ngStyle]="{ color: bgColor, opacity: value ? 1 : 0 }"></i>
+    }
   </div>
 </div>

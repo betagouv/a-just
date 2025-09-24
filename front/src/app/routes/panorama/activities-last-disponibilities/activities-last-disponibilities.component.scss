@@ -1,12 +1,12 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
-  border-bottom: solid 1px fColor(lightBorder);
+  border-bottom: solid 1px utils.$colors-lightBorder;
   padding: 24px;
 
   h3 {
-    color: fColor(primary);
+    color: utils.$colors-primary;
     font-size: 20px;
     margin-bottom: 15px;
   }
@@ -20,8 +20,8 @@
       text-decoration: none;
       height: 20px;
       border-radius: 4px;
-      background-color: fColor(bgSelect);
-      color: fColor(grayRow);
+      background-color: utils.$colors-bgSelect;
+      color: utils.$colors-cgray;
       font-size: 12px;
       font-weight: bold;
       padding: 0 6px;
@@ -30,13 +30,13 @@
       text-transform: uppercase;
 
       &.is-active {
-        background-color: fColor(bgBlueTag);
-        color: fColor(textBlueTag);
+        background-color: utils.$colors-bgBlueTag;
+        color: utils.$colors-textBlueTag;
       }
 
       &.is-current {
-        background-color: fColor(bgYellowTag);
-        color: fColor(textYellowTag);
+        background-color: utils.$colors-bgYellowTag;
+        color: utils.$colors-textYellowTag;
       }
     }
   }

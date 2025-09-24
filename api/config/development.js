@@ -1,4 +1,7 @@
+import 'dotenv/config' // ✅ Correct
+
 module.exports = {
+  isDev: true,
   envName: 'DEV',
   displayEnvName: '[DEV] ',
   logsPassword: 'FXM',

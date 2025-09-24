@@ -6,7 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { MainClass } from '../../../libs/main-class';
-import { CommonModule } from '@angular/common';
+
 import { UserService } from '../../../services/user/user.service';
 import {
   REAFFECTATOR,
@@ -22,7 +22,7 @@ import { AppService } from '../../../services/app/app.service';
 @Component({
   standalone: true,
   selector: 'app-choose-simulator',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './choose-simulator.component.html',
   styleUrls: ['./choose-simulator.component.scss'],
 })

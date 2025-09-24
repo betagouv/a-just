@@ -1,45 +1,53 @@
-<div id="comment-area" [ngClass]="{'close': !showAll, 'drop-down-display': this.comments.length}"
-  (click)="showAll=true">
+<div id="comment-area" [ngClass]="{ close: !showAll, 'drop-down-display': this.comments.length }"
+  (click)="showAll = true">
   <div class="header-panel" (click)="$event.stopPropagation()" #target>
     <i id="logo-1" class="ri-message-3-line"></i>
     <div>
       <p class="com">Commentaires</p>
-      <p *ngIf="commentUpdatedAt" class="com-at">Enregistré {{ formatDate(commentUpdatedAt) }}</p>
-
+      @if (commentUpdatedAt) {
+      <p class="com-at">Enregistré {{ formatDate(commentUpdatedAt) }}</p>
+      }
     </div>
     <div class="sep"></div>
-    <div id="logo-4" class="displayer" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop()"
-      *ngIf="this.comments.length">
-      {{ showAll ? 'Réduire':'Tout déplier'}}
+    @if (this.comments.length) {
+    <div id="logo-4" class="displayer" (click)="showAll = !showAll; $event.stopPropagation(); scrollToTop()">
+      {{ showAll ? 'Réduire' : 'Tout déplier' }}
     </div>
+    }
   </div>
-  <div class="properties" *ngIf="isEditing">
-    <div class="number-circle">{{currentUser.initials}}</div>
-    <label>{{currentUser.firstName + ' ' + currentUser.lastName}}</label>
+  @if (isEditing) {
+  <div class="properties">
+    <div class="number-circle">{{ currentUser.initials }}</div>
+    <label>{{ currentUser.firstName + ' ' + currentUser.lastName }}</label>
   </div>
+  }
   <div id="panel-content" class="panel-content">
-    <div class="placeholder" *ngIf="!isEditing">
-      <mat-icon>drive_file_rename_outline</mat-icon>Pour écrire un nouveau
-      commentaire, cliquez ici
+    @if (!isEditing) {
+    <div class="placeholder">
+      <mat-icon>drive_file_rename_outline</mat-icon>
+      Pour écrire un nouveau commentaire, cliquez ici
     </div>
-    <aj-text-editor id="new-comment-editor" #editor [value]="comment || ''" class="no-main-style"
+    }
+    <aj-text-editor id="new-comment-editor" #editor [value]="comment || ''" class="no-main-style"
       (valueChange)="updateComment($event)" placeholder="" [hideToolbar]="true" (focusField)="getFocusOn($event)"
-      [resetEditor]="resetEditor" (resetField)="resetEditor = false" (click)="$event.stopPropagation()">
-    </aj-text-editor>
+      [resetEditor]="resetEditor" (resetField)="resetEditor = false"
+      (click)="$event.stopPropagation()"></aj-text-editor>
   </div>
-  <div class="footer-panel" *ngIf="isEditing">
-    <div class="back" (click)="back();$event.stopPropagation()">Annuler</div>
-    <div class="save" [ngClass]="{'disabled': !currentComment.length}" (click)="save(); $event.stopPropagation()">
-      Enregistrer</div>
+  @if (isEditing) {
+  <div class="footer-panel">
+    <div class="back" (click)="back(); $event.stopPropagation()">Annuler</div>
+    <div class="save" [ngClass]="{ disabled: !currentComment.length }" (click)="save(); $event.stopPropagation()">
+      Enregistrer
+    </div>
   </div>
-
-  <passed-comment *ngFor="let com of comments" [comment]="com" [currentHR]="currentHR"
-    (deletedComment)="reloadCheck($event)"></passed-comment>
-
-  <div id="logo-2" class="fixed-button" (click)="showAll=!showAll;$event.stopPropagation();scrollToTop();"
-    *ngIf="this.comments.length">
-    <mat-icon class="arrow-list">{{
-      showAll ? 'expand_less' : 'expand_more'
-      }}</mat-icon>{{ showAll ? 'Réduire':'Tout déplier'}}
+  }
+  @for (com of comments; track com) {
+  <passed-comment [comment]="com" [currentHR]="currentHR" (deletedComment)="reloadCheck($event)"></passed-comment>
+  }
+  @if (this.comments.length) {
+  <div id="logo-2" class="fixed-button" (click)="showAll = !showAll; $event.stopPropagation(); scrollToTop()">
+    <mat-icon class="arrow-list">{{ showAll ? 'expand_less' : 'expand_more' }}</mat-icon>
+    {{ showAll ? 'Réduire' : 'Tout déplier' }}
   </div>
+  }
 </div>

@@ -124,4 +124,8 @@ export class TemplateAnalyticsComponent
       .filter((o) => o.graph)
       .map((o) => o.graph);
   }
+
+  isInfinity(value: any): boolean {
+    return value === Infinity || value === -Infinity;  
+  }
 }

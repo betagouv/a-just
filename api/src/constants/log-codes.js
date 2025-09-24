@@ -57,6 +57,13 @@ export const HONEY_IP_BLOCK_AGAIN = 10002
 
 export const REFERENCE_REQUEST_URL = 10003
 
+export const WHITE_SIMULATOR_START = 20000
+
+export const REQUET_HELP_PAGE = 30000
+export const REQUEST_USER_MANUAL = 30001
+
+export const REAFFECTOR_UPDATE_AGENT = 40000
+
 export const CODES = {
   [USER_USER_SIGN_IN]: '[UTILISATEUR] Inscription utilisateur ${email}',
   [USER_USER_FORGOT_PASSWORD]: '[UTILISATEUR] Mot de passe oublié utilisateur ${email}',

@@ -27,7 +27,7 @@ export default class RouteUsers extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.Users
@@ -37,7 +37,7 @@ export default class RouteUsers extends Route {
    * Interface qui retourne l'utilisateur connecté
    */
   @Route.Get()
-  async me (ctx) {
+  async me(ctx) {
     if (ctx.state && ctx.state.user) {
       const user = await this.model.userPreview(ctx.state.user.id)
       this.sendOk(ctx, user)
@@ -50,7 +50,7 @@ export default class RouteUsers extends Route {
    * Interface qui retourne le process.env
    */
   @Route.Get()
-  async interfaceType (ctx) {
+  async interfaceType(ctx) {
     this.sendOk(ctx, Number(process.env.TYPE_ID))
   }
 
@@ -73,17 +73,13 @@ export default class RouteUsers extends Route {
       fonction: Types.string(),
     }),
   })
-  async createAccount (ctx) {
+  async createAccount(ctx) {
     const { firstName, lastName, tj, fonction } = this.body(ctx)
     let { email } = this.body(ctx)
 
     email = (email || '').toLowerCase() // force to lower case email
 
-    if(
-      !email.includes('@justice.fr') &&
-      !email.includes('.gouv.fr') &&
-      !email.includes('@a-just.fr')
-    ) {
+    if (!email.includes('@justice.fr') && !email.includes('.gouv.fr') && !email.includes('@a-just.fr')) {
       ctx.throw(401, 'Vous devez saisir une adresse e-mail professionnelle')
       return
     }
@@ -100,7 +96,7 @@ export default class RouteUsers extends Route {
           serverUrl: config.frontUrl,
           tj,
           fonction,
-        }
+        },
       )
       await sentEmail(
         {
@@ -109,7 +105,7 @@ export default class RouteUsers extends Route {
         TEMPLATE_USER_ONBOARDING,
         {
           serverUrl: config.frontUrl,
-        }
+        },
       )
       await this.models.Logs.addLog(USER_USER_SIGN_IN, null, {
         email,
@@ -125,7 +121,7 @@ export default class RouteUsers extends Route {
         if (email.indexOf((firstName || '').toLowerCase()) === -1 || email.indexOf((lastName || '').toLowerCase()) === -1) {
           await this.models.Notifications.toSupport(
             "Control du mail d'un agent",
-            `Il est recommandé de contrôler le mail de l'agent <b>${email}</b> afin d'être sûr qu'il soit valide !<br/><br/>Les informations nominatives de l’utilisateur saisies par l’utilisateur ne correspondent pas exactement au courriel renseigné.`
+            `Il est recommandé de contrôler le mail de l'agent <b>${email}</b> afin d'être sûr qu'il soit valide !<br/><br/>Les informations nominatives de l’utilisateur saisies par l’utilisateur ne correspondent pas exactement au courriel renseigné.`,
           )
         }
       }
@@ -150,7 +146,12 @@ export default class RouteUsers extends Route {
     path: 'remove-account-test/:id',
     accesses: [Access.isAdmin],
   })
-  async removeAccountTest (ctx) {
+  async removeAccountTest(ctx) {
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible")
+      return
+    }
+
     const { id } = ctx.params
 
     const user = this.model.findOne({
@@ -180,7 +181,7 @@ export default class RouteUsers extends Route {
     path: 'remove-account/:id',
     accesses: [Access.isAdmin],
   })
-  async removeAccount (ctx) {
+  async removeAccount(ctx) {
     const { id } = ctx.params
     const user = this.model.findOne({
       where: { id: id },
@@ -208,7 +209,7 @@ export default class RouteUsers extends Route {
   @Route.Get({
     accesses: [Access.isAdmin],
   })
-  async getAll (ctx) {
+  async getAll(ctx) {
     const list = await this.model.getAll()
 
     this.sendOk(ctx, {
@@ -226,13 +227,13 @@ export default class RouteUsers extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      userId: Types.number().required(),
-      access: Types.any().required(),
-      ventilations: Types.any().required(),
+      userId: Types.number(),
+      access: Types.any(),
+      ventilations: Types.any(),
     }),
     accesses: [Access.isAdmin],
   })
-  async updateAccount (ctx) {
+  async updateAccount(ctx) {
     const { userId } = this.body(ctx)
     const userToUpdate = await this.model.userPreview(userId)
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
@@ -254,10 +255,10 @@ export default class RouteUsers extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      email: Types.string().required(),
+      email: Types.string(),
     }),
   })
-  async forgotPassword (ctx) {
+  async forgotPassword(ctx) {
     let { email } = this.body(ctx)
     email = (email || '').trim().toLowerCase()
 
@@ -277,14 +278,14 @@ export default class RouteUsers extends Route {
           {
             code: key,
             serverUrl: `${config.frontUrl}/nouveau-mot-de-passe?p=${key}`,
-          }
+          },
         )
         await this.models.Logs.addLog(USER_USER_FORGOT_PASSWORD, null, {
           email,
         })
         this.sendOk(
           ctx,
-          "Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d'ici quelques minutes, un e-mail de réinitialisation à l'adresse correspondant à votre compte d'inscription."
+          "Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d'ici quelques minutes, un e-mail de réinitialisation à l'adresse correspondant à votre compte d'inscription.",
         )
         return
       }
@@ -293,45 +294,41 @@ export default class RouteUsers extends Route {
     ctx.throw(401, ctx.state.__('Information de contact non valide!'))
   }
 
-
-    /**
+  /**
    * Interface pour générer une demande d'un mail pour changer de mot de passe (TEST ONLY)
    * @param {*} email
    * @returns
    */
-    @Route.Post({
-      bodyType: Types.object().keys({
-        email: Types.string().required(),
-      }),
-    })
-    async forgotPasswordTest (ctx) {
-      if (process.env.NODE_ENV !== 'test') {
-        ctx.throw(401, "Cette route n'est pas disponible en dehors des tests")
+  @Route.Post({
+    bodyType: Types.object().keys({
+      email: Types.string(),
+    }),
+  })
+  async forgotPasswordTest(ctx) {
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible")
+      return
+    }
+    let { email } = this.body(ctx)
+    email = (email || '').trim().toLowerCase()
+
+    if (validateEmail(email)) {
+      // send message by email
+      const user = await this.model.findOne({ where: { email } })
+      if (user) {
+        const key = crypt.generateRandomNumber(6)
+        await user.update({ new_password_token: key })
+
+        this.sendOk(ctx, {
+          code: key,
+          msg: "Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d'ici quelques minutes, un e-mail de réinitialisation à l'adresse correspondant à votre compte d'inscription.",
+        })
         return
       }
-      let { email } = this.body(ctx)
-      email = (email || '').trim().toLowerCase()
-  
-      if (validateEmail(email)) {
-        // send message by email
-        const user = await this.model.findOne({ where: { email } })
-        if (user) {
-          const key = crypt.generateRandomNumber(6)
-          await user.update({ new_password_token: key })
-  
-          this.sendOk(
-            ctx,
-            {
-              code: key,
-              msg: "Votre demande de changement de mot de passe a bien été transmise. Vous aller recevoir, d'ici quelques minutes, un e-mail de réinitialisation à l'adresse correspondant à votre compte d'inscription."
-            }
-          )
-          return
-        }
-      }
-  
-      ctx.throw(401, ctx.state.__('Information de contact non valide!'))
     }
+
+    ctx.throw(401, ctx.state.__('Information de contact non valide!'))
+  }
 
   /**
    * Interface pour changer le mot de passe à la suite à une demande de changement de mot passe
@@ -342,12 +339,12 @@ export default class RouteUsers extends Route {
    */
   @Route.Post({
     bodyType: Types.object().keys({
-      email: Types.string().required(),
-      code: Types.string().required(),
-      password: Types.string().required(),
+      email: Types.string(),
+      code: Types.string(),
+      password: Types.string(),
     }),
   })
-  async changePassword (ctx) {
+  async changePassword(ctx) {
     let { email, code, password } = this.body(ctx)
     email = (email || '').trim().toLowerCase()
 
@@ -369,7 +366,7 @@ export default class RouteUsers extends Route {
       return
     }
 
-    ctx.throw(401, ctx.state.__('Information de contact non valide!'))
+    ctx.throw(401, ctx.state.__('Information de contact ou code de vérification non valide!'))
   }
 
   /**
@@ -378,7 +375,7 @@ export default class RouteUsers extends Route {
   @Route.Get({
     accesses: [Access.isLogin],
   })
-  async getUserDatas (ctx) {
+  async getUserDatas(ctx) {
     const backups = await this.models.HRBackups.list(ctx.state.user.id)
     const categories = getCategoriesByUserAccess(await this.models.HRCategories.getAll(), ctx.state.user)
     const fonctions = await this.models.HRFonctions.getAll()

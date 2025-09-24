@@ -1,5 +1,11 @@
 <canvas #canvas></canvas>
-<div class="title" [ngClass]="{'alert':percent !== null && percent < 80, 'good':percent !== null && percent > 120}">{{
-    percentString }}</div>
-<aj-tooltips *ngIf="percentString === 'N/R'" title="Donnée non renseignée" class="small"
-    content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+<div class="title" [ngClass]="{ alert: percent !== null && percent < 80, good: percent !== null && percent > 120 }">
+  {{ percentString }}
+</div>
+@if (percentString === 'N/R') {
+  <aj-tooltips
+    title="Donnée non renseignée"
+    class="small"
+    content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."
+  ></aj-tooltips>
+}

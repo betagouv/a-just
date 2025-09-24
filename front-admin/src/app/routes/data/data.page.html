@@ -24,9 +24,11 @@
         <div>
           <label>Modifier la liste une sauvegarde d'activité</label>
           <select name="backupId">
-            <option *ngFor="let o of HRBackupList" [value]="o.id">
+            @for (o of HRBackupList; track o.id) {
+            <option [value]="o.id">
               {{o.label}} du {{o.date | date:"dd/MM/yyyy"}}
             </option>
+            }
           </select>
         </div>
         <div>
@@ -46,8 +48,10 @@
       <div class="select-juridictions">
         <label>Juridiction:</label>
         <select name="juridiction">
-          <option *ngFor="let j of juridictionList" [value]="j.id">{{
+          @for (j of juridictionList; track j.id) {
+          <option [value]="j.id">{{
             j.label }}</option>
+          }
         </select>
       </div>
       <div class="select-period">
@@ -68,8 +72,10 @@
       <div class="select-juridictions">
         <label>Juridiction:</label>
         <select name="juridiction">
-          <option *ngFor="let j of juridictionList" [value]="j.id">{{
+          @for (j of juridictionList; track j.id) {
+          <option [value]="j.id">{{
             j.label }}</option>
+          }
         </select>
       </div>
       <div class="select-period">
@@ -85,7 +91,8 @@
     <button (click)='onCompareData(formComparatif)'>Télécharger le fichier au format Excel</button>
   </div>
 
-  <div class="section" *ngIf="printDataImportIssues">
+  @if (printDataImportIssues) {
+  <div class="section">
     <h2>Problèmes Import Data</h2>
     <br /><br />
     <table>
@@ -101,7 +108,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let elem of dataIssues">
+        @for (elem of dataIssues; track elem.type) {
+        <tr>
           <td>{{ elem.hr_backup_label }}</td>
           <td>{{ elem.contentieux_label }}</td>
           <td>{{ elem.last }}</td>
@@ -110,6 +118,7 @@
           <td>{{ elem.newPeriode }}</td>
           <td>{{ elem.type }}</td>
         </tr>
+        }
       </tbody>
     </table>
     <div class="action">
@@ -118,4 +127,5 @@
       <button (click)="onCancelDataImport()">Annuler</button>
     </div>
   </div>
+  }
 </aj-wrapper>

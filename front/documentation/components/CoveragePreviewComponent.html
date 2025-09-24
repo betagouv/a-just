@@ -1,0 +1,1659 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  CoveragePreviewComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Cadran affichant le taux de couverture du widget associé dans le simulateur</p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+                <code>OnChanges</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>aj-coverage-preview</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./coverage-preview.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./coverage-preview.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#borderWidth" >borderWidth</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#domCanvas" >domCanvas</a>
+                            </li>
+                            <li>
+                                <a href="#margin" >margin</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#draw_aiguille" >draw_aiguille</a>
+                            </li>
+                            <li>
+                                <a href="#drawPoint" >drawPoint</a>
+                            </li>
+                            <li>
+                                <a href="#generateBackground" >generateBackground</a>
+                            </li>
+                            <li>
+                                <a href="#getRadiusPosition" >getRadiusPosition</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnChanges" >ngOnChanges</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#onDraw" >onDraw</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#coverageRate" >coverageRate</a>
+                            </li>
+                            <li>
+                                <a href="#height" >height</a>
+                            </li>
+                            <li>
+                                <a href="#oldCoverageRate" >oldCoverageRate</a>
+                            </li>
+                            <li>
+                                <a href="#width" >width</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="coverageRate"></a>
+                        <b>coverageRate</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>240</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:45</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Taux de couverture 2</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="height"></a>
+                        <b>height</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>180</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:53</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Hauteur du composant</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="oldCoverageRate"></a>
+                        <b>oldCoverageRate</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:41</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Taux de couverture 1</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="width"></a>
+                        <b>width</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>180</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:49</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Longueur du composant</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="draw_aiguille"></a>
+                    <span class="name">
+                        <span ><b>draw_aiguille</b></span>
+                        <a href="#draw_aiguille"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>draw_aiguille(ctx: CanvasRenderingContext2D, lgd: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, cl_int: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, cl_bord: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, angle: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="263"
+                                    class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:263</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Génération de l&#39;aiguille</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>ctx</td>
+                                            <td>
+                                                        <code>CanvasRenderingContext2D</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>objet de contexte</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>lgd</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>taille de l&#39;aiguille</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>cl_int</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>style de remplissage</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>cl_bord</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>style de bordure</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>angle</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>angle de l&#39;aiguille</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="drawPoint"></a>
+                    <span class="name">
+                        <span ><b>drawPoint</b></span>
+                        <a href="#drawPoint"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>drawPoint(ctx: CanvasRenderingContext2D, coverageRatio: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, label: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, center_x: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, center_y: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, color: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="302"
+                                    class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:302</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Dessiner un point</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>ctx</td>
+                                            <td>
+                                                        <code>CanvasRenderingContext2D</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>objet de context</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>coverageRatio</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>taux de couverture</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>label</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>label</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>center_x</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>abscisse</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>center_y</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>ordonné</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>color</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>couleur</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateBackground"></a>
+                    <span class="name">
+                        <span ><b>generateBackground</b></span>
+                        <a href="#generateBackground"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>generateBackground()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:97</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Génération de la zone coloré dépliée</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getRadiusPosition"></a>
+                    <span class="name">
+                        <span ><b>getRadiusPosition</b></span>
+                        <a href="#getRadiusPosition"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getRadiusPosition(degree: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="251"
+                                    class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:251</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Conversion de degré en radian</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>degree</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>position de l&#39;aiguille en degrés</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>la position de l&#39;aiguille en radian</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnChanges"></a>
+                    <span class="name">
+                        <span ><b>ngOnChanges</b></span>
+                        <a href="#ngOnChanges"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnChanges(change: SimpleChanges)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="74"
+                                    class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:74</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Modification du composant</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>change</td>
+                                            <td>
+                                                        <code>SimpleChanges</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>evenement externe de changement</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:66</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Initialisation du composant</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onDraw"></a>
+                    <span class="name">
+                        <span ><b>onDraw</b></span>
+                        <a href="#onDraw"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onDraw()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:81</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Génération du cadran</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="borderWidth"></a>
+                    <span class="name">
+                        <span ><b>borderWidth</b></span>
+                        <a href="#borderWidth"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>12</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:61</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Epaisseur de bordure</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="domCanvas"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>domCanvas</b></span>
+                        <a href="#domCanvas"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>ElementRef&lt;HTMLCanvasElement&gt; | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChild(&#x27;canvas&#x27;, {static: false})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:37</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Element HTML du canvas</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="margin"></a>
+                    <span class="name">
+                        <span ><b>margin</b></span>
+                        <a href="#margin"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>35</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/routes/simulator/widgets/coverage-preview/coverage-preview.component.ts:57</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Marge autour du cadran</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from &#x27;@angular/core&#x27;;
+import { animate, style, transition, trigger } from &#x27;@angular/animations&#x27;;
+import { degreesToRadians } from &#x27;../../../../utils/geometry&#x27;;
+
+/**
+ * Cadran affichant le taux de couverture du widget associé dans le simulateur
+ */
+@Component({
+  selector: &#x27;aj-coverage-preview&#x27;,
+  standalone: true,
+  imports: [],
+  templateUrl: &#x27;./coverage-preview.component.html&#x27;,
+  styleUrls: [&#x27;./coverage-preview.component.scss&#x27;],
+  animations: [
+    trigger(&#x27;fadeInOut&#x27;, [
+      transition(&#x27;:enter&#x27;, [
+        style({ opacity: 0 }),
+        animate(500, style({ opacity: 1 })),
+      ]),
+      transition(&#x27;:leave&#x27;, [animate(500, style({ opacity: 0 }))]),
+    ]),
+  ],
+})
+export class CoveragePreviewComponent implements OnInit, OnChanges {
+  /**
+   * Element HTML du canvas
+   */
+  @ViewChild(&#x27;canvas&#x27;, { static: false })
+  domCanvas: ElementRef&lt;HTMLCanvasElement&gt; | null &#x3D; null;
+  /**
+   * Taux de couverture 1
+   */
+  @Input() oldCoverageRate: number | null &#x3D; null;
+  /**
+   * Taux de couverture 2
+   */
+  @Input() coverageRate: number &#x3D; 240;
+  /**
+   * Longueur du composant
+   */
+  @Input() width: number &#x3D; 180;
+  /**
+   * Hauteur du composant
+   */
+  @Input() height: number &#x3D; 180;
+  /**
+   * Marge autour du cadran
+   */
+  margin: number &#x3D; 35;
+  /**
+   * Epaisseur de bordure
+   */
+  borderWidth: number &#x3D; 12;
+
+  /**
+   * Initialisation du composant
+   */
+  ngOnInit(): void {
+    this.onDraw();
+  }
+
+  /**
+   * Modification du composant
+   * @param change evenement externe de changement
+   */
+  ngOnChanges(change: SimpleChanges): void {
+    this.onDraw();
+  }
+
+  /**
+   * Génération du cadran
+   */
+  onDraw(): void {
+    const ctx &#x3D; this.domCanvas?.nativeElement.getContext(&#x27;2d&#x27;);
+
+    if (ctx) {
+      //ctx.clearRect(0, 0, this.width, this.height)
+      this.generateBackground();
+    } else {
+      setTimeout(() &#x3D;&gt; {
+        this.onDraw();
+      }, 0);
+    }
+  }
+
+  /**
+   * Génération de la zone coloré dépliée
+   */
+  generateBackground() {
+    const canvas &#x3D; this.domCanvas?.nativeElement as HTMLCanvasElement;
+    const ctx &#x3D; canvas?.getContext(&#x27;2d&#x27;) as CanvasRenderingContext2D;
+
+    let redValue &#x3D; 0;
+    let yellowValue &#x3D; 0;
+    let lightGreenValue &#x3D; 0;
+    let GreenValue &#x3D; 0;
+
+    let needleBorderColor &#x3D; &#x27;&#x27;;
+    let needleColor &#x3D; &#x27;&#x27;;
+    let endDotColor &#x3D; &#x27;&#x27;;
+    if (this.coverageRate &gt; 300) {
+      GreenValue &#x3D; 300;
+      needleBorderColor &#x3D; &#x27;#309557d2&#x27;;
+      needleColor &#x3D; &#x27;#45a96b&#x27;;
+      endDotColor &#x3D; &#x27;#1dd884&#x27;;
+    } else if (this.coverageRate &lt;&#x3D; 300) {
+      GreenValue &#x3D; this.coverageRate;
+      needleBorderColor &#x3D; &#x27;#309557d2&#x27;;
+      needleColor &#x3D; &#x27;#45a96b&#x27;;
+      endDotColor &#x3D; &#x27;#1dd884&#x27;;
+    } else GreenValue &#x3D; 300;
+
+    if (this.coverageRate &lt;&#x3D; 210) {
+      lightGreenValue &#x3D; this.coverageRate;
+      needleBorderColor &#x3D; &#x27;#2c9a69&#x27;;
+      needleColor &#x3D; &#x27;#1dd884&#x27;;
+      endDotColor &#x3D; &#x27;#60efaf&#x27;;
+    } else lightGreenValue &#x3D; 210;
+
+    if (this.coverageRate &lt;&#x3D; 110) {
+      yellowValue &#x3D; this.coverageRate;
+      needleBorderColor &#x3D; &#x27;#fdd90ab7&#x27;;
+      needleColor &#x3D; &#x27;#f8df4fee&#x27;;
+      endDotColor &#x3D; &#x27;#f0dd63ef&#x27;;
+    } else yellowValue &#x3D; 110;
+
+    if (this.coverageRate &lt;&#x3D; 80) {
+      redValue &#x3D; this.coverageRate;
+      needleBorderColor &#x3D; &#x27;#ce0300b7&#x27;;
+      needleColor &#x3D; &#x27;#ce0300b7&#x27;;
+      endDotColor &#x3D; &#x27;#f13a3787&#x27;;
+    } else redValue &#x3D; 80;
+
+    // fix resolution of arc
+    canvas.style.width &#x3D; this.width + this.margin * 2 + &#x27;px&#x27;;
+    canvas.style.height &#x3D; this.height + this.margin * 2 + &#x27;px&#x27;;
+    const scale &#x3D; window.devicePixelRatio * 2;
+    canvas.width &#x3D; Math.floor((this.width + this.margin * 2) * scale);
+    canvas.height &#x3D; Math.floor((this.height + this.margin * 2) * scale);
+    ctx.scale(scale, scale);
+
+    ctx.beginPath(); // fill grey
+    ctx.lineCap &#x3D; &#x27;round&#x27;;
+    ctx.lineWidth &#x3D; this.borderWidth;
+    ctx.strokeStyle &#x3D; &#x27;#e3e3fd&#x27;;
+    ctx.arc(
+      this.width / 2 + this.margin,
+      this.height / 2 + this.margin,
+      this.width / 2,
+      this.getRadiusPosition(0),
+      this.getRadiusPosition(300)
+    );
+    ctx.stroke();
+
+    ctx.beginPath(); //vert
+    ctx.strokeStyle &#x3D; &#x27;#45a96b&#x27;;
+    ctx.arc(
+      this.width / 2 + this.margin,
+      this.height / 2 + this.margin,
+      this.width / 2,
+      this.getRadiusPosition(0),
+      this.getRadiusPosition(GreenValue)
+    );
+    ctx.stroke();
+
+    ctx.beginPath(); //jaune vert
+    ctx.strokeStyle &#x3D; &#x27;#1dd884&#x27;;
+    ctx.arc(
+      this.width / 2 + this.margin,
+      this.height / 2 + this.margin,
+      this.width / 2,
+      this.getRadiusPosition(0),
+      this.getRadiusPosition(lightGreenValue)
+    );
+    ctx.stroke();
+
+    ctx.beginPath(); //jaune
+    ctx.strokeStyle &#x3D; &#x27;#ffe552&#x27;;
+    ctx.arc(
+      this.width / 2 + this.margin,
+      this.height / 2 + this.margin,
+      this.width / 2,
+      this.getRadiusPosition(0),
+      this.getRadiusPosition(yellowValue)
+    );
+    ctx.stroke();
+
+    ctx.beginPath(); // rouge
+    ctx.strokeStyle &#x3D; &#x27;#ce0500&#x27;;
+    ctx.arc(
+      this.width / 2 + this.margin,
+      this.height / 2 + this.margin,
+      this.width / 2,
+      this.getRadiusPosition(0),
+      this.getRadiusPosition(redValue)
+    );
+    ctx.stroke();
+
+    if (this.oldCoverageRate)
+      this.drawPoint(
+        ctx,
+        this.oldCoverageRate,
+        this.oldCoverageRate + &#x27;%&#x27;,
+        this.width / 2 + this.margin,
+        this.height / 2 + this.margin,
+        &#x27;grey&#x27;
+      );
+
+    if (this.coverageRate &lt;&#x3D; 300 &amp;&amp; this.coverageRate &gt;&#x3D; 0) {
+      ctx.translate(
+        this.width / 2 + this.margin,
+        this.height / 2 + this.margin
+      );
+      this.draw_aiguille(
+        ctx,
+        55,
+        needleColor,
+        needleBorderColor,
+        this.coverageRate
+      );
+    } else if (this.coverageRate &lt;&#x3D; 0) {
+      ctx.translate(
+        this.width / 2 + this.margin,
+        this.height / 2 + this.margin
+      );
+      this.draw_aiguille(ctx, 55, needleColor, needleBorderColor, 0);
+    } else {
+      ctx.translate(
+        this.width / 2 + this.margin,
+        this.height / 2 + this.margin
+      );
+      this.draw_aiguille(ctx, 55, needleColor, needleBorderColor, 300);
+    }
+
+    let myReq: any &#x3D; null;
+  }
+
+  /**
+   * Conversion de degré en radian
+   * @param degree position de l&#x27;aiguille en degrés
+   * @returns la position de l&#x27;aiguille en radian
+   */
+  getRadiusPosition(degree: number) {
+    return degreesToRadians(180 + (degree * 9) / 10);
+  }
+
+  /**
+   * Génération de l&#x27;aiguille
+   * @param ctx objet de contexte
+   * @param lgd taille de l&#x27;aiguille
+   * @param cl_int style de remplissage
+   * @param cl_bord style de bordure
+   * @param angle angle de l&#x27;aiguille
+   */
+  draw_aiguille(
+    ctx: CanvasRenderingContext2D,
+    lgd: number,
+    cl_int: string,
+    cl_bord: string,
+    angle: number
+  ) {
+    ctx.rotate(degreesToRadians(270 + (angle * 9) / 10)); //+ this.counter / 1000)
+    //this.counter++
+    ctx.beginPath();
+    ctx.fillStyle &#x3D; cl_int;
+    ctx.lineWidth &#x3D; 2;
+    ctx.strokeStyle &#x3D; cl_bord;
+
+    const cp1x &#x3D; 8;
+    const cp1y &#x3D; 12;
+    const cp2x &#x3D; -8;
+    const cp2y &#x3D; 12;
+
+    ctx.moveTo(7, 0);
+    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, -7, 0);
+    ctx.lineTo(-3, -lgd);
+    ctx.bezierCurveTo(-2, -lgd - 3, 2, -lgd - 3, 3, -lgd);
+    ctx.lineTo(7, 0);
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+    ctx.rotate(-angle);
+  }
+
+  /**
+   * Dessiner un point
+   * @param ctx objet de context
+   * @param coverageRatio taux de couverture
+   * @param label label
+   * @param center_x abscisse
+   * @param center_y ordonné
+   * @param color couleur
+   */
+  drawPoint(
+    ctx: CanvasRenderingContext2D,
+    coverageRatio: number,
+    label: string,
+    center_x: number,
+    center_y: number,
+    color: string
+  ) {
+    var radius &#x3D; this.width / 2;
+    var point_size &#x3D; this.borderWidth / 4;
+    var font_size &#x3D; &#x27;20px&#x27;;
+    var x &#x3D; center_x + radius * Math.cos(this.getRadiusPosition(coverageRatio));
+    var y &#x3D; center_y + radius * Math.sin(this.getRadiusPosition(coverageRatio));
+
+    if (label &#x3D;&#x3D;&#x3D; &#x27;&#x27;) {
+      ctx.beginPath();
+      ctx.fillStyle &#x3D; color;
+      ctx.lineWidth &#x3D; 2;
+      ctx.strokeStyle &#x3D; color;
+      ctx.arc(x, y, point_size, 0, 2 * Math.PI);
+
+      ctx.fill();
+    }
+    if (label &amp;&amp; coverageRatio &lt;&#x3D; 300 &amp;&amp; coverageRatio &gt;&#x3D; 0) {
+      ctx.fillStyle &#x3D; color;
+      ctx.font &#x3D; font_size;
+      if (coverageRatio &lt;&#x3D; 50) ctx.fillText(label, x - 30, y);
+      else if (coverageRatio &gt; 50 &amp;&amp; coverageRatio &lt;&#x3D; 100)
+        ctx.fillText(label, x - 30, y - 8);
+      else if (coverageRatio &gt; 100 &amp;&amp; coverageRatio &lt;&#x3D; 200)
+        ctx.fillText(label, x + 8, y - 7);
+      else if (coverageRatio &gt; 200 &amp;&amp; coverageRatio &lt;&#x3D; 300)
+        ctx.fillText(label, x + 8, y + 15);
+      else ctx.fillText(label, x - 7, y - 10);
+    }
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;p class&#x3D;&quot;zero-percent&quot;&gt;0%&lt;/p&gt;
+&lt;p class&#x3D;&quot;cent-percent&quot;&gt;&amp;nbsp;100%&lt;/p&gt;
+&lt;p class&#x3D;&quot;deux-cent-percent&quot;&gt;200%&lt;/p&gt;
+&lt;p class&#x3D;&quot;trois-cent-percent&quot;&gt;&amp;nbsp;300%&lt;/p&gt;
+
+&lt;div class&#x3D;&quot;label-container&quot;&gt;
+  &lt;div class&#x3D;&quot;first-child&quot;&gt;
+    &lt;p class&#x3D;&quot;main-label&quot;&gt;{{ coverageRate }}%&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class&#x3D;&quot;second-child&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;canvas [@fadeInOut] #canvas [width]&#x3D;&quot;width&quot; [height]&#x3D;&quot;height&quot;&gt;&lt;/canvas&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./coverage-preview.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">:host {
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .zero-percent {
+        position: absolute;
+        left: -10px;
+    }
+
+
+    .cent-percent {
+        position: absolute;
+        top: -5px;
+    }
+
+    .deux-cent-percent {
+        position: absolute;
+        right: -30px;
+    }
+
+    .trois-cent-percent {
+        position: absolute;
+        bottom: -5px;
+    }
+
+    .label-container {
+        position: absolute;
+        bottom: 55px;
+        display: flex;
+        left: -15px;
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+
+        .first-child {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            width: 100%
+        }
+
+        .second-child {
+            flex: 1
+        }
+    }
+
+    .main-label {
+        font-family: Marianne;
+        font-size: 40px;
+        font-weight: bold;
+        line-height: 1.2;
+        text-align: center;
+        color: #18753c;
+
+    }
+
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><p class="zero-percent">0%</p><p class="cent-percent">&nbsp;100%</p><p class="deux-cent-percent">200%</p><p class="trois-cent-percent">&nbsp;300%</p><div class="label-container">  <div class="first-child">    <p class="main-label">{{ coverageRate }}%</p>  </div>  <div class="second-child"></div></div><canvas [@fadeInOut] #canvas [width]="width" [height]="height"></canvas></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'CoveragePreviewComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'CoveragePreviewComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

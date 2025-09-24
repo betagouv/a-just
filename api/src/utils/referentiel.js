@@ -30,39 +30,38 @@ export function referentielMappingName(name) {
 
 export function referentielCAMappingName(name) {
   switch (name) {
-    case "Contentieux Social":
-      return "Social";
-    case "Contentieux de la famille":
-      return "Famille";
-    case "Contentieux de la protection":
-      return "Protection";
-    case "Contentieux civil":
-      return "Civil NS";
-    case "Contentieux de la protection":
-      return "Civil NS";
-    case "Contentieux commercial":
-      return "Commercial";
-    case "Attributions du PP":
-      return "Attributions PP";
-    case "Contentieux civil JLD":
-      return "Jld Civil";
-    case "Contentieux des mineurs":
-      return "Mineurs";
-    case "Instruction et entraide":
-      return "Instruction / Entraide";
-    case "Correctionnel":
-      return "Correctionnel";
-    case "Contentieux criminel":
-      return "Criminel";
-    case "Application des peines":
-      return "Application des peines";
-    case "Autres activités":
-      return "Autres activités";
+    case 'Contentieux Social':
+      return 'Social'
+    case 'Contentieux de la famille':
+      return 'Famille'
+    case 'Contentieux de la protection':
+      return 'Protection'
+    case 'Contentieux civil':
+      return 'Civil NS'
+    case 'Contentieux de la protection':
+      return 'Civil NS'
+    case 'Contentieux commercial':
+      return 'Commercial'
+    case 'Attributions du PP':
+      return 'Attributions PP'
+    case 'Contentieux civil JLD':
+      return 'Jld Civil'
+    case 'Contentieux des mineurs':
+      return 'Mineurs'
+    case 'Instruction et entraide':
+      return 'Instruction / Entraide'
+    case 'Correctionnel':
+      return 'Correctionnel'
+    case 'Contentieux criminel':
+      return 'Criminel'
+    case 'Application des peines':
+      return 'Application des peines'
+    case 'Autres activités':
+      return 'Autres activités'
   }
 
-  return name;
+  return name
 }
-
 
 /**
  * Mapping des couleurs propres au référentiel
@@ -112,9 +111,9 @@ export function getIdsIndispo(list) {
   const idsIndispo = []
   if (refIndispo) {
     idsIndispo.push(refIndispo.id)
-      ; (refIndispo.childrens || []).map((c) => {
-        idsIndispo.push(c.id)
-      })
+    ;(refIndispo.childrens || []).map((c) => {
+      idsIndispo.push(c.id)
+    })
   }
 
   return idsIndispo
@@ -140,146 +139,159 @@ export function extractCodeFromLabelImported(label) {
 
 /**
  * Modifie les labels d'un referentiel en fonction de la regle JIRS NON JIRS
- * @param {*} list 
- * @param {*} isJirs 
- * @returns 
+ * @param {*} list
+ * @param {*} isJirs
+ * @returns
  */
-export function jirsRules(list,isJirs) {
-  if (isJirs===false) {
+export function jirsRules(list, isJirs) {
+  if (isJirs === false) {
     list.map((elem) => {
       elem.childrens.map((child) => {
         switch (child.label) {
-          case "Contentieux collégial hors JIRS": //NEW CA
-            child.label = "Contentieux collégial";
-            break;
-          case "Contentieux JIRS éco-fi":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "Contentieux JIRS éco-fi"
-            );
-            break;
-          case "Contentieux JIRS crim-org":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "Contentieux JIRS crim-org"
-            );
-            break;
+          case 'Contentieux collégial hors JIRS': //NEW CA
+            child.label = 'Contentieux collégial'
+            break
+          case 'Contentieux JIRS éco-fi':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux JIRS éco-fi')
+            break
+          case 'Contentieux JIRS crim-org':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux JIRS crim-org')
+            break
 
-          case "Collégiales hors JIRS":
-            child.label = "Collégiales";
-            break;
+          case 'Collégiales hors JIRS':
+            child.label = 'Collégiales'
+            break
           case "Cour d'assises hors JIRS":
-            child.label = "Cour d'assises";
-            break;
+            child.label = "Cour d'assises"
+            break
           case "Cour d'assises JIRS":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "Cour d'assises JIRS"
-            );
-            break;
-          case "Collégiales JIRS crim-org":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "Collégiales JIRS crim-org"
-            );
-            break;
-          case "Collégiales JIRS éco-fi":
-            child.label = "Collégiales éco-fi";
-            break;
-          case "Eco-fi hors JIRS":
-            child.label = "Eco-fi";
-            break;
-          case "JIRS éco-fi":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "JIRS éco-fi"
-            );
-            break;
-          case "JIRS crim-org":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "JIRS crim-org"
-            );
-            break;
-          case "JIRS":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "JIRS"
-            );
-            break;
-          case "Assises JIRS":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "Assises JIRS"
-            );
-            break;
-          case "Contentieux JIRS":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "Contentieux JIRS"
-            );
-            break;
-          case "Contentieux de la détention JIRS":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "Contentieux de la détention JIRS"
-            );
-            break;
-          case "Contentieux du contrôle judiciaire JIRS":
-            elem.childrens = elem.childrens.filter(
-              (elem) =>
-                elem.label !== "Contentieux du contrôle judiciaire JIRS"
-            );
-            break;
-          case "Contentieux de fond JIRS":
-            elem.childrens = elem.childrens.filter(
-              (elem) => elem.label !== "Contentieux de fond JIRS"
-            );
-            break;
-          case "Contentieux général hors JIRS":
-            child.label = "Contentieux général";
-            break;
-          case "Contentieux spécialisés hors JIRS":
-            child.label = "Contentieux spécialisés";
-            break;
-          case "Contentieux de la détention hors JIRS":
-            child.label = "Contentieux de la détention";
-            break;
-          case "Contentieux du contrôle judiciaire hors JIRS":
-            child.label = "Contentieux du contrôle judiciaire";
-            break;
-          case "Contentieux de fond hors JIRS":
-            child.label = "Contentieux de fond";
-            break;
-          case "Assises hors JIRS":
-            child.label = "Assises";
-            break;
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== "Cour d'assises JIRS")
+            break
+          case 'Collégiales JIRS crim-org':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Collégiales JIRS crim-org')
+            break
+          case 'Collégiales JIRS éco-fi':
+            child.label = 'Collégiales éco-fi'
+            break
+          case 'Eco-fi hors JIRS':
+            child.label = 'Eco-fi'
+            break
+          case 'JIRS éco-fi':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'JIRS éco-fi')
+            break
+          case 'JIRS crim-org':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'JIRS crim-org')
+            break
+          case 'JIRS':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'JIRS')
+            break
+          case 'Assises JIRS':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Assises JIRS')
+            break
+          case 'Contentieux JIRS':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux JIRS')
+            break
+          case 'Contentieux de la détention JIRS':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux de la détention JIRS')
+            break
+          case 'Contentieux du contrôle judiciaire JIRS':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux du contrôle judiciaire JIRS')
+            break
+          case 'Contentieux de fond JIRS':
+            elem.childrens = elem.childrens.filter((elem) => elem.label !== 'Contentieux de fond JIRS')
+            break
+          case 'Contentieux général hors JIRS':
+            child.label = 'Contentieux général'
+            break
+          case 'Contentieux spécialisés hors JIRS':
+            child.label = 'Contentieux spécialisés'
+            break
+          case 'Contentieux de la détention hors JIRS':
+            child.label = 'Contentieux de la détention'
+            break
+          case 'Contentieux du contrôle judiciaire hors JIRS':
+            child.label = 'Contentieux du contrôle judiciaire'
+            break
+          case 'Contentieux de fond hors JIRS':
+            child.label = 'Contentieux de fond'
+            break
+          case 'Assises hors JIRS':
+            child.label = 'Assises'
+            break
         }
-      });
-    });
+      })
+    })
   }
   return list
 }
 
-
 function construireMapLabels(listeRef) {
-  const map = new Map();
+  const map = new Map()
 
   function parcourir(items) {
-    items.forEach(item => {
+    items.forEach((item) => {
       if (item.id && item.label) {
-        map.set(item.id, item.label);
+        map.set(item.id, item.label)
       }
       if (Array.isArray(item.childrens)) {
-        parcourir(item.childrens);
+        parcourir(item.childrens)
       }
-    });
+    })
   }
 
-  parcourir(listeRef);
-  return map;
+  parcourir(listeRef)
+  return map
 }
 
 export function updateLabels(listeA, listeReference) {
-  const mapLabels = construireMapLabels(listeReference);
+  const mapLabels = construireMapLabels(listeReference)
 
-  listeA.forEach(item => {
-    const idContentieux = item.contentieux?.id;
-    if (idContentieux && mapLabels.has(idContentieux)) {
-      item.contentieux.label = mapLabels.get(idContentieux);
-    }
-  });
+  const listeFiltree = listeA.filter((item) => {
+    const idContentieux = item.contentieux?.id
+    if (!idContentieux) return false
+    return mapLabels.has(idContentieux)
+  })
 
-  return listeA;
+  listeFiltree.forEach((item) => {
+    const idContentieux = item.contentieux.id
+    item.contentieux.label = mapLabels.get(idContentieux)
+  })
+
+  return listeFiltree
 }
 
+// ---- 1) Formatage d'un item "vide" au format GroupedList à partir d'un référentiel
+export function makeEmptyItemFromRef(ref, periode, fill = null) {
+  return {
+    periode,
+    id: undefined,
+    entrees: fill,
+    sorties: fill,
+    stock: null,
+    originalEntrees: fill,
+    originalSorties: fill,
+    originalStock: null,
+    idReferentiel: ref.id,
+    contentieux: {
+      id: ref.id,
+      label: ref.label ?? null,
+      code_import: ref.code_import ?? null,
+    },
+  }
+}
+
+// ---- 2) Compléter un tableau (pour UNE période) avec les référentiels manquants
+export function completePeriod(items, flatReferentielsList, periode, fill = null) {
+  const existingIds = new Set(items.map((i) => i?.contentieux?.id ?? i?.idReferentiel))
+  const completed = [...items, ...flatReferentielsList.filter((ref) => !existingIds.has(ref.id)).map((ref) => makeEmptyItemFromRef(ref, periode, fill))]
+  return completed
+}
+
+// ---- 3) Parcourir tout l'objet groupé par période et appliquer completePeriod
+export function fillMissingContentieux(GroupedList, flatReferentielsList) {
+  const out = {}
+  for (const [periode, items] of Object.entries(GroupedList || {})) {
+    out[periode] = completePeriod(items || [], flatReferentielsList || [], periode)
+  }
+  return out
+}

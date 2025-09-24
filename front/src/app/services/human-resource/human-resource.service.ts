@@ -1,5 +1,5 @@
 import { inject, Injectable, Input, Signal, signal, WritableSignal } from '@angular/core'
-import { maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
+import { isNaN, maxBy, minBy, orderBy, sumBy, uniqBy } from 'lodash'
 import { BehaviorSubject } from 'rxjs'
 import { ActivitiesService } from '../activities/activities.service'
 import { ServerService } from '../http-server/server.service'
@@ -665,22 +665,24 @@ export class HumanResourceService {
     }
     list.map((h: any) => {
       let realETP = (h.etp || 0) - h.hasIndisponibility
-      if (realETP < 0) {
+      if (realETP < 0 || isNaN(realETP)) {
         realETP = 0
       }
-      switch (h.fonction.position) {
-        case 'Titulaire':
-          subTotalEtp['titulaire'].etpt += realETP
-          subTotalEtp['titulaire'].total += 1
-          break
-        case 'Placé':
-          subTotalEtp['placé'].etpt += realETP
-          subTotalEtp['placé'].total += 1
-          break
-        case 'Contractuel':
-          subTotalEtp['contractuel'].etpt += realETP
-          subTotalEtp['contractuel'].total += 1
-          break
+      if (h.fonction) {
+        switch (h.fonction.position) {
+          case 'Titulaire':
+            subTotalEtp['titulaire'].etpt += realETP
+            subTotalEtp['titulaire'].total += 1
+            break
+          case 'Placé':
+            subTotalEtp['placé'].etpt += realETP
+            subTotalEtp['placé'].total += 1
+            break
+          case 'Contractuel':
+            subTotalEtp['contractuel'].etpt += realETP
+            subTotalEtp['contractuel'].total += 1
+            break
+        }
       }
     })
 
@@ -688,7 +690,6 @@ export class HumanResourceService {
   }
 
   removeAlert(tag: string) {
-    console.log('removeAlert', tag)
     const index = this.alertList().indexOf(tag)
     if (index !== -1) {
       this.alertList.update((list) => list.filter((t) => t !== tag))

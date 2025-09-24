@@ -1,11 +1,9 @@
 <div class="left-side">
   <div class="title">
     <p>
-      Evolution des entrées et sorties &nbsp;
-      <label
-        >{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }}
-        {{ startRealValue }} au {{ stopRealValue }}</label
-      >
+      Evolution des entrées et sorties moyennes mensuelles &nbsp;
+      <label>de {{ startRealValueShort }} à {{ stopRealValueShort
+        }}</label>
     </p>
   </div>
   <div class="container">
@@ -14,7 +12,8 @@
       <div id="chartjs-tooltip">
         <div class="popin-title-content">
           <p class="popin-title">
-            <b>Affaires</b> <br />
+            <b>Affaires</b>
+            <br />
             à {{ getRealMonth(realSelectedMonth) }}
           </p>
           <div class="low">Projetés</div>
@@ -24,7 +23,7 @@
         <div class="popin-raw">
           <div class="popin-title">
             <div _ngcontent-vmx-c83="" class="circle orange"></div>
-            <b> Entrées</b>
+            <b>Entrées</b>
           </div>
           <p class="low-value first">
             {{ getRounded(tooltip.projectedIn) || 0 }}
@@ -34,34 +33,21 @@
           </p>
           <div class="white-value">
             <div class="rounded-label">
-              <label
-                >{{
-                  getDeltaInPercent(tooltip.simulatedIn, tooltip.projectedIn) ||
-                    0
-                }}
-                %</label
-              >
+              <label>{{ getDeltaInPercent(tooltip.simulatedIn, tooltip.projectedIn) || 0 }} %</label>
             </div>
           </div>
         </div>
         <div class="popin-raw">
           <div class="popin-title">
             <div _ngcontent-vmx-c83="" class="circle turquoise"></div>
-            <b>Sorties</b> &nbsp;
+            <b>Sorties</b>
+            &nbsp;
           </div>
           <p class="low-value">{{ getRounded(tooltip.projectedOut) || 0 }}</p>
           <p class="hard-value">{{ getRounded(tooltip.simulatedOut) || 0 }}</p>
           <div class="white-value">
             <div class="rounded-label">
-              <label
-                >{{
-                  getDeltaInPercent(
-                    tooltip.simulatedOut,
-                    tooltip.projectedOut
-                  ) || 0
-                }}
-                %</label
-              >
+              <label>{{ getDeltaInPercent(tooltip.simulatedOut, tooltip.projectedOut) || 0 }} %</label>
             </div>
           </div>
         </div>
@@ -71,35 +57,15 @@
   </div>
 </div>
 <div class="right-side">
-  <aj-legend-label
-    [title]="'projectedIn'"
-    [label]="'Entrées (projeté)'"
-    [dotColor]="'#CB9F2D'"
-    [bgColor]="'#FCC63A'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'projectedIn'" [label]="'Entrées (projeté)'" [dotColor]="'#CB9F2D'" [bgColor]="'#FCC63A'"
+    (value)="display($event)"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedIn'"
-    [label]="'Entrées (simulé)'"
-    [dotColor]="'#FCC63A'"
-    [bgColor]="'#CB9F2D'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'simulatedIn'" [label]="'Entrées (simulé)'" [dotColor]="'#FCC63A'" [bgColor]="'#CB9F2D'"
+    (value)="display($event)"></aj-legend-label>
   <div class="space"></div>
-  <aj-legend-label
-    [title]="'projectedOut'"
-    [label]="'Sorties (projeté)'"
-    [dotColor]="'#49B6C0'"
-    [bgColor]="'#60E0EB'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'projectedOut'" [label]="'Sorties (projeté)'" [dotColor]="'#49B6C0'" [bgColor]="'#60E0EB'"
+    (value)="display($event)"></aj-legend-label>
 
-  <aj-legend-label
-    [title]="'simulatedOut'"
-    [label]="'Sorties (simulé)'"
-    [dotColor]="'#60E0EB'"
-    [bgColor]="'#49B6C0'"
-    (value)="display($event)"
-  ></aj-legend-label>
+  <aj-legend-label [title]="'simulatedOut'" [label]="'Sorties (simulé)'" [dotColor]="'#60E0EB'" [bgColor]="'#49B6C0'"
+    (value)="display($event)"></aj-legend-label>
 </div>

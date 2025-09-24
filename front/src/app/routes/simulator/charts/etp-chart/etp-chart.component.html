@@ -1,9 +1,9 @@
 <div class="left-side">
   <div class="title">
     <p>
-      Evolution des ETPT &nbsp;
-      <label>{{ startRealValue === '' ? "d'aujourd'hui" : 'du' }}
-        {{ startRealValue }} au {{ stopRealValue }}</label>
+      Evolution des ETPT mensuels moyens &nbsp;
+      <label>de {{ startRealValueShort }} à {{ stopRealValueShort
+      }}</label>
     </p>
   </div>
   <div class="container">
@@ -12,115 +12,162 @@
       <div id="chartjs-tooltip">
         <div class="popin-title-content">
           <p class="popin-title">
-            <b>Effectifs</b> <br />
+            <b>Effectifs</b>
+            <br />
             à {{ getRealMonth(realSelectedMonth) }}
           </p>
           <div class="low">Projetés</div>
           <p class="hard">Simulés</p>
           <p class="white">Variation</p>
         </div>
-        <div class="popin-raw" *ngIf="canViewMagistrat">
-          <div class="popin-title">
-            <div _ngcontent-vmx-c83="" class="circle pink"></div>
-            <b> Magistrats</b>
-          </div>
-          <p class="low-value first">
-            {{ getRounded(tooltip.projectedMag) || '' }}
-          </p>
-          <p class="hard-value first">
-            {{ this.categorySelected === 'MAGISTRAT' ? (getRounded(tooltip.simulatedMag) || ''):'' }}
-          </p>
-          <div class="white-value">
-            <div class="rounded-label" *ngIf="this.categorySelected === 'MAGISTRAT'">
-              <label>
-                {{
-                getDeltaInPercent(
-                tooltip.simulatedMag,
-                tooltip.projectedMag
-                ) || 0
-                }}
-                %</label>
+        @if (canViewMagistrat) {
+          <div class="popin-raw">
+            <div class="popin-title">
+              <div _ngcontent-vmx-c83="" class="circle pink"></div>
+              <b>Magistrats</b>
+            </div>
+            <p class="low-value first">
+              {{ getRounded(tooltip.projectedMag) || '' }}
+            </p>
+            <p class="hard-value first">
+              {{ this.categorySelected === 'MAGISTRAT' ? getRounded(tooltip.simulatedMag) || '' : '' }}
+            </p>
+            <div class="white-value">
+              @if (this.categorySelected === 'MAGISTRAT') {
+                <div class="rounded-label">
+                  <label>
+                    {{ getDeltaInPercent(tooltip.simulatedMag, tooltip.projectedMag) || 0 }}
+                    %
+                  </label>
+                </div>
+              }
             </div>
           </div>
-        </div>
-
-        <div class="popin-raw" *ngIf="canViewGreffier">
-          <div class="popin-title">
-            <div _ngcontent-vmx-c83="" class="circle light-pink"></div>
-            <b>Agents</b> &nbsp;
-          </div>
-          <p class="low-value">
-            {{ getRounded(tooltip.projectedFon) || '' }}
-          </p>
-          <p class="hard-value">
-            {{ this.categorySelected === 'MAGISTRAT' ? '':(getRounded(tooltip.simulatedFon) || '') }}
-          </p>
-          <div class="white-value">
-            <div class="rounded-label" *ngIf="this.categorySelected !== 'MAGISTRAT'">
-              <label>
-                {{
-                getDeltaInPercent(
-                tooltip.simulatedFon,
-                tooltip.projectedFon
-                ) || 0
-                }}
-                %
-              </label>
+        }
+        @if (canViewGreffier) {
+          <div class="popin-raw">
+            <div class="popin-title">
+              <div _ngcontent-vmx-c83="" class="circle light-pink"></div>
+              <b>Agents</b>
+              &nbsp;
+            </div>
+            <p class="low-value">
+              {{ getRounded(tooltip.projectedFon) || '' }}
+            </p>
+            <p class="hard-value">
+              {{ this.categorySelected === 'MAGISTRAT' ? '' : getRounded(tooltip.simulatedFon) || '' }}
+            </p>
+            <div class="white-value">
+              @if (this.categorySelected !== 'MAGISTRAT') {
+                <div class="rounded-label">
+                  <label>
+                    {{ getDeltaInPercent(tooltip.simulatedFon, tooltip.projectedFon) || 0 }}
+                    %
+                  </label>
+                </div>
+              }
             </div>
           </div>
-        </div>
-
-        <div class="popin-raw" *ngIf="canViewContractuel">
-          <div class="popin-title">
-            <div class="circle light-pink"></div>
-            <b>Autour du magistrat</b> &nbsp;
+        }
+        @if (canViewContractuel) {
+          <div class="popin-raw">
+            <div class="popin-title">
+              <div class="circle light-pink"></div>
+              <b>Autour du magistrat</b>
+              &nbsp;
+            </div>
+            <p class="low-value">
+              {{ getRounded(tooltip.projectedCont) || '' }}
+            </p>
+            <p class="hard-value"></p>
+            <div class="white-value"></div>
           </div>
-          <p class="low-value">
-            {{ getRounded(tooltip.projectedCont) || '' }}
-          </p>
-          <p class="hard-value">
-          </p>
-          <div class="white-value">
-
-          </div>
-        </div>
+        }
       </div>
       <div id="chartjs-tooltip-triangle"></div>
     </div>
   </div>
 </div>
 <div class="right-side">
-  <aj-legend-label *ngIf="!whiteSimulator || categorySelected === 'MAGISTRAT'" [title]="'projectedMag'"
-    [label]="'Siège (projeté)'" [dotColor]="'#e07dd8'" [bgColor]="'#fdc0f8'" [disabledEl]="!canViewMagistrat" [ngClass]="{
-      'disabled-label': !canViewMagistrat
-    }" (value)="display($event)"></aj-legend-label>
-
-  <aj-legend-label *ngIf="!whiteSimulator || categorySelected === 'MAGISTRAT'" [title]="'simulatedMag'"
-    [label]="'Siège (simulé)'" [dotColor]="'#fdc0f8'" [bgColor]="'#e07dd8'" (value)="display($event)" [disabledEl]="
-      !canViewMagistrat || categorySelected !== 'MAGISTRAT' ? true : false
-    " [ngClass]="{
-      'disabled-label': !canViewMagistrat || categorySelected !== 'MAGISTRAT'
-    }"></aj-legend-label>
+  @if (!whiteSimulator || categorySelected === 'MAGISTRAT') {
+    <aj-legend-label
+      [title]="'projectedMag'"
+      [label]="'Siège (projeté)'"
+      [dotColor]="'#e07dd8'"
+      [bgColor]="'#fdc0f8'"
+      [disabledEl]="!canViewMagistrat"
+      [ngClass]="{
+        'disabled-label': !canViewMagistrat,
+      }"
+      (value)="display($event)"
+    ></aj-legend-label>
+  }
+  @if (!whiteSimulator || categorySelected === 'MAGISTRAT') {
+    <aj-legend-label
+      [title]="'simulatedMag'"
+      [label]="'Siège (simulé)'"
+      [dotColor]="'#fdc0f8'"
+      [bgColor]="'#e07dd8'"
+      (value)="display($event)"
+      [disabledEl]="!canViewMagistrat || categorySelected !== 'MAGISTRAT' ? true : false"
+      [ngClass]="{
+        'disabled-label': !canViewMagistrat || categorySelected !== 'MAGISTRAT',
+      }"
+    ></aj-legend-label>
+  }
   <div class="space"></div>
 
-  <aj-legend-label *ngIf="!whiteSimulator || categorySelected === 'GREFFE'" [title]="'projectedGref'"
-    [label]="'Greffe (projeté)'" [dotColor]="'#f083a0'" [bgColor]="'#ffcade'" (value)="display($event)"
-    [disabledEl]="!canViewGreffier" [ngClass]="{
-      'disabled-label': !canViewGreffier
-    }"></aj-legend-label>
-
-  <aj-legend-label *ngIf="!whiteSimulator || categorySelected === 'GREFFE'" [title]="'simulatedGref'"
-    [label]="'Greffe (simulé)'" [dotColor]="'#ffcade'" [bgColor]="'#f083a0'" (value)="display($event)" [disabledEl]="
-      !canViewGreffier || categorySelected !== 'GREFFE' ? true : false
-    " [ngClass]="{
-      'disabled-label': !canViewGreffier || categorySelected !== 'GREFFE'
-    }"></aj-legend-label>
-
-  <div class="space" *ngIf="canViewContractuel"></div>
-  <aj-legend-label *ngIf="canViewContractuel" [title]="'projectedCont'" [label]="'EAM (projeté)'" [dotColor]="'#fdbfb7'"
-    [bgColor]="'#fcd7d3'" (value)="display($event)" [disabledEl]="!canViewContractuel" [ngClass]="{
-      'disabled-label': !canViewContractuel }"></aj-legend-label>
-
-  <aj-legend-label *ngIf="canViewContractuel" [title]="'simulatedCont'" [label]="'EAM (simulé)'" [dotColor]="'#fcd7d3'"
-    [bgColor]="'#eba89f'" (value)="display($event)" [disabledEl]="true" class="disabled-label"></aj-legend-label>
+  @if (!whiteSimulator || categorySelected === 'GREFFE') {
+    <aj-legend-label
+      [title]="'projectedGref'"
+      [label]="'Greffe (projeté)'"
+      [dotColor]="'#f083a0'"
+      [bgColor]="'#ffcade'"
+      (value)="display($event)"
+      [disabledEl]="!canViewGreffier"
+      [ngClass]="{
+        'disabled-label': !canViewGreffier,
+      }"
+    ></aj-legend-label>
+  }
+  @if (!whiteSimulator || categorySelected === 'GREFFE') {
+    <aj-legend-label
+      [title]="'simulatedGref'"
+      [label]="'Greffe (simulé)'"
+      [dotColor]="'#ffcade'"
+      [bgColor]="'#f083a0'"
+      (value)="display($event)"
+      [disabledEl]="!canViewGreffier || categorySelected !== 'GREFFE' ? true : false"
+      [ngClass]="{
+        'disabled-label': !canViewGreffier || categorySelected !== 'GREFFE',
+      }"
+    ></aj-legend-label>
+  }
+  @if (canViewContractuel) {
+    <div class="space"></div>
+  }
+  @if (canViewContractuel) {
+    <aj-legend-label
+      [title]="'projectedCont'"
+      [label]="'EAM (projeté)'"
+      [dotColor]="'#fdbfb7'"
+      [bgColor]="'#fcd7d3'"
+      (value)="display($event)"
+      [disabledEl]="!canViewContractuel"
+      [ngClass]="{
+        'disabled-label': !canViewContractuel,
+      }"
+    ></aj-legend-label>
+  }
+  @if (canViewContractuel) {
+    <aj-legend-label
+      [title]="'simulatedCont'"
+      [label]="'EAM (simulé)'"
+      [dotColor]="'#fcd7d3'"
+      [bgColor]="'#eba89f'"
+      (value)="display($event)"
+      [disabledEl]="true"
+      class="disabled-label"
+    ></aj-legend-label>
+  }
 </div>

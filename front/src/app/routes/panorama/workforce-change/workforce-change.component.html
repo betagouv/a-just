@@ -1,122 +1,102 @@
 <div class="header">
-  <h3>
-    {{ totalWorkforce }} changement{{ totalWorkforce > 1 ? 's' : '' }} dans les
-    effectifs
-  </h3>
+  <h3>{{ totalWorkforce }} changement{{ totalWorkforce > 1 ? 's' : '' }} dans les effectifs</h3>
   <p>au cours des 15 derniers et prochains jours</p>
 </div>
 <div class="buttons">
-  <div *ngFor="let button of categoryButtons">
+  @for (button of categoryButtons; track button.label) {
+  <div>
     <button [ngClass]="{ selected: button.isSelected }" (click)="changeButtonsState(button.label)">
       {{ button.label }}
       <span class="nb-sheets">
         {{ button.label === 'Départs' ? listDepartures.length : null }}
         {{ button.label === 'Arrivées' ? listArrivals.length : null }}
-        {{
-        button.label === 'Indisponibilités'
-        ? listUnavailabilities.length
-        : null
-        }}
+        {{ button.label === 'Indisponibilités' ? listUnavailabilities.length : null }}
       </span>
     </button>
   </div>
+  }
 </div>
 <div class="cards">
   <div class="filters">
     <div class="name">
       <button (click)="orderList('name')">
         <span>Nom</span>
-        <mat-icon>{{
-          sortButtonsStates[0].isReverse ? 'expand_less' : 'expand_more'
-          }}</mat-icon>
+        <mat-icon>{{ sortButtonsStates[0].isReverse ? 'expand_less' : 'expand_more' }}</mat-icon>
       </button>
     </div>
     <div class="assignment">
       <button (click)="orderList('assignment')">
         Affectation
-        <mat-icon>{{
-          sortButtonsStates[1].isReverse ? 'expand_less' : 'expand_more'
-          }}</mat-icon>
+        <mat-icon>{{ sortButtonsStates[1].isReverse ? 'expand_less' : 'expand_more' }}</mat-icon>
       </button>
     </div>
     <div class="date">
-      <button (click)="orderList('departures')" *ngIf="listToPrint.category === 'Départs'">
+      @if (listToPrint.category === 'Départs') {
+      <button (click)="orderList('departures')">
         Départ
-        <mat-icon>{{
-          sortButtonsStates[2].isReverse ? 'expand_less' : 'expand_more'
-          }}</mat-icon>
+        <mat-icon>{{ sortButtonsStates[2].isReverse ? 'expand_less' : 'expand_more' }}</mat-icon>
       </button>
-      <button (click)="orderList('arrivals')" *ngIf="listToPrint.category === 'Arrivées'">
+      }
+      @if (listToPrint.category === 'Arrivées') {
+      <button (click)="orderList('arrivals')">
         Arrivée
-        <mat-icon>{{
-          sortButtonsStates[3].isReverse ? 'expand_less' : 'expand_more'
-          }}</mat-icon>
+        <mat-icon>{{ sortButtonsStates[3].isReverse ? 'expand_less' : 'expand_more' }}</mat-icon>
       </button>
-      <button (click)="orderList('indispoStart')" *ngIf="listToPrint.category === 'Indisponibilités'">
+      }
+      @if (listToPrint.category === 'Indisponibilités') {
+      <button (click)="orderList('indispoStart')">
         Début d’indispo.
-        <mat-icon>{{
-          sortButtonsStates[4].isReverse ? 'expand_less' : 'expand_more'
-          }}</mat-icon>
+        <mat-icon>{{ sortButtonsStates[4].isReverse ? 'expand_less' : 'expand_more' }}</mat-icon>
       </button>
-      <button (click)="orderList('indispoEnd')" *ngIf="listToPrint.category === 'Indisponibilités'">
+      }
+      @if (listToPrint.category === 'Indisponibilités') {
+      <button (click)="orderList('indispoEnd')">
         Fin d’indispo.
-        <mat-icon>{{
-          sortButtonsStates[5].isReverse ? 'expand_less' : 'expand_more'
-          }}</mat-icon>
+        <mat-icon>{{ sortButtonsStates[5].isReverse ? 'expand_less' : 'expand_more' }}</mat-icon>
       </button>
+      }
     </div>
   </div>
   <ul>
-    <li *ngFor="
-        let workforce of listToPrint.hr
-          | paginate : { itemsPerPage: 10, currentPage: currentPage }
-      " class="category">
+    @for (workforce of listToPrint.hr | paginate: { itemsPerPage: 10, currentPage: currentPage }; track workforce.id) {
+    <li class="category">
       <div class="agent">
         <div class="identity-section">
-          <ng-template [ngIf]="listToPrint.category === 'Départs'">
+          @if (listToPrint.category === 'Départs') {
+          <div class="status-icon" [ngStyle]="{
+                  backgroundColor: categoryMappingColor(workforce.category?.label, 0.2),
+                }">
             <i class="ri-user-shared-line" [ngStyle]="{
-                color: categoryMappingColor(workforce.category?.label),
-                'background-color': categoryMappingColor(
-                  workforce.category?.label,
-                  0.2
-                )
-              }"></i>
-          </ng-template>
-          <ng-template [ngIf]="listToPrint.category === 'Arrivées'">
+                    color: categoryMappingColor(workforce.category?.label),
+                  }"></i>
+          </div>
+          }
+          @if (listToPrint.category === 'Arrivées') {
+          <div class="status-icon" [ngStyle]="{
+                  backgroundColor: categoryMappingColor(workforce.category?.label, 0.2),
+                }">
             <i class="ri-user-received-line" [ngStyle]="{
-                color: categoryMappingColor(workforce.category?.label),
-                'background-color': categoryMappingColor(
-                  workforce.category?.label,
-                  0.2
-                )
-              }"></i>
-          </ng-template>
-          <ng-template [ngIf]="listToPrint.category === 'Indisponibilités'">
+                    color: categoryMappingColor(workforce.category?.label),
+                  }"></i>
+          </div>
+          }
+          @if (listToPrint.category === 'Indisponibilités') {
+          <div class="status-icon" [ngStyle]="{
+                  backgroundColor: categoryMappingColor(workforce.category?.label, 0.2),
+                }">
             <i class="ri-ghost-2-line" [ngStyle]="{
-                color: categoryMappingColor(workforce.category?.label),
-                'background-color': categoryMappingColor(
-                  workforce.category?.label,
-                  0.2
-                )
-              }"></i>
-          </ng-template>
+                    color: categoryMappingColor(workforce.category?.label),
+                  }"></i>
+          </div>
+          }
           <div class="main-infos">
-            <span class="name">{{
-              workforce.firstName + ' ' + workforce.lastName
-              }}</span>
+            <span class="name">{{ workforce.firstName + ' ' + workforce.lastName }}</span>
             <div class="infos">
               <div class="category" [ngStyle]="{
-                  color: categoryMappingColor(workforce.category?.label),
-                  'background-color': categoryMappingColor(
-                    workforce.category?.label,
-                    0.2
-                  )
-                }">
-                {{
-                workforce.fonction
-                ? categoryMappingName(workforce.fonction.code)
-                : null
-                }}
+                    color: categoryMappingColor(workforce.category?.label),
+                    'background-color': categoryMappingColor(workforce.category?.label, 0.2),
+                  }">
+                {{ workforce.fonction ? categoryMappingName(workforce.fonction.code) : null }}
               </div>
               <div class="etp-label">
                 {{ workforce.etpLabel }}
@@ -130,86 +110,74 @@
             <mat-icon class="light-arrow">chevron_right</mat-icon>
           </div>
           <div class="activities">
-            <div *ngFor="let activity of workforce.currentActivities" class="activity"
-              [ngStyle]="{color: userService.referentielMappingColorByInterface(activity.contentieux.label)}">
-              {{
-              userService.referentielMappingNameByInterface(activity.contentieux.label).toUpperCase()
-              }}
+            @for (activity of workforce.currentActivities; track activity.id) {
+            <div class="activity"
+              [ngStyle]="{ color: userService.referentielMappingColorByInterface(activity.contentieux.label) }">
+              {{ userService.referentielMappingNameByInterface(activity.contentieux.label).toUpperCase() }}
               <div class="percent-card" [ngStyle]="{
-                  color: userService.referentielMappingColorByInterface(activity.contentieux.label),
-                  'background-color': userService.referentielMappingColorByInterface(
-                    activity.contentieux.label,
-                    0.2
-                  )
-                }">
+                      color: userService.referentielMappingColorByInterface(activity.contentieux.label),
+                      'background-color': userService.referentielMappingColorByInterface(
+                        activity.contentieux.label,
+                        0.2
+                      ),
+                    }">
                 {{ activity.percent }}%
               </div>
             </div>
+            }
           </div>
         </div>
         <div class="date-section">
-          <ng-template [ngIf]="listToPrint.category === 'Départs'">
-            <div [ngClass]="{
-                coming: isSituationComing(
-                  workforce.dateEnd ? workforce.dateEnd : null
-                ),
-                date: true
-              }">
-              {{ getDate(workforce.dateEnd) }}
-              {{ getShortMonthString(workforce.dateEnd) }}
-              {{ getFullYear(workforce.dateEnd) }}
-            </div>
-          </ng-template>
-          <ng-template [ngIf]="listToPrint.category === 'Arrivées'">
-            <div [ngClass]="{
-                coming: isSituationComing(
-                  workforce.dateStart ? workforce.dateStart : null
-                ),
-                date: true
-              }">
-              {{ getDate(workforce.dateStart) }}
-              {{ getShortMonthString(workforce.dateStart) }}
-              {{ getFullYear(workforce.dateStart) }}
-            </div>
-          </ng-template>
-          <ng-template [ngIf]="listToPrint.category === 'Indisponibilités'">
-            <div *ngIf="
-                workforce.indisponibilities[0].dateStart !== null;
-                else emptyDateStart
-              " [ngClass]="{
-                coming: isSituationComing(
-                  workforce.indisponibilities[0].dateStart
-                    ? workforce.indisponibilities[0].dateStart
-                    : null
-                ),
-                date: true
-              }">
-              {{ getDate(workforce.indisponibilities[0].dateStart) }}
-              {{
-              getShortMonthString(workforce.indisponibilities[0].dateStart)
-              }}
-              {{ getFullYear(workforce.indisponibilities[0].dateStart) }}
-            </div>
-            <ng-template #emptyDateStart> - </ng-template>
-            <div *ngIf="
-                workforce.indisponibilities[0].dateStop !== null;
-                else emptyDateStop
-              " [ngClass]="{
-                coming: isSituationComing(
-                  workforce.indisponibilities[0].dateStop
-                    ? workforce.indisponibilities[0].dateStop
-                    : null
-                ),
-                date: true
-              }">
-              {{ getDate(workforce.indisponibilities[0].dateStop) }}
-              {{
-              getShortMonthString(workforce.indisponibilities[0].dateStop)
-              }}
-              {{ getFullYear(workforce.indisponibilities[0].dateStop) }}
-            </div>
-            <ng-template #emptyDateStop> - </ng-template>
-          </ng-template>
+          @if (listToPrint.category === 'Départs') {
+          <div [ngClass]="{
+                  coming: isSituationComing(workforce.dateEnd ? workforce.dateEnd : null),
+                  date: true,
+                }">
+            {{ getDate(workforce.dateEnd) }}
+            {{ getShortMonthString(workforce.dateEnd) }}
+            {{ getFullYear(workforce.dateEnd) }}
+          </div>
+          }
+          @if (listToPrint.category === 'Arrivées') {
+          <div [ngClass]="{
+                  coming: isSituationComing(workforce.dateStart ? workforce.dateStart : null),
+                  date: true,
+                }">
+            {{ getDate(workforce.dateStart) }}
+            {{ getShortMonthString(workforce.dateStart) }}
+            {{ getFullYear(workforce.dateStart) }}
+          </div>
+          }
+          @if (listToPrint.category === 'Indisponibilités') {
+          @if (workforce.indisponibilities[0].dateStart !== null) {
+          <div [ngClass]="{
+                    coming: isSituationComing(
+                      workforce.indisponibilities[0].dateStart ? workforce.indisponibilities[0].dateStart : null
+                    ),
+                    date: true,
+                  }">
+            {{ getDate(workforce.indisponibilities[0].dateStart) }}
+            {{ getShortMonthString(workforce.indisponibilities[0].dateStart) }}
+            {{ getFullYear(workforce.indisponibilities[0].dateStart) }}
+          </div>
+          } @else {
+          -
+          }
+          @if (workforce.indisponibilities[0].dateStop !== null) {
+          <div [ngClass]="{
+                    coming: isSituationComing(
+                      workforce.indisponibilities[0].dateStop ? workforce.indisponibilities[0].dateStop : null
+                    ),
+                    date: true,
+                  }">
+            {{ getDate(workforce.indisponibilities[0].dateStop) }}
+            {{ getShortMonthString(workforce.indisponibilities[0].dateStop) }}
+            {{ getFullYear(workforce.indisponibilities[0].dateStop) }}
+          </div>
+          } @else {
+          -
+          }
+          }
         </div>
         <div class="actions">
           <a [routerLink]="['/resource-humaine', workforce.id]">
@@ -218,8 +186,8 @@
         </div>
       </div>
     </li>
+    }
   </ul>
   <pagination-controls (pageChange)="currentPage = $event" previousLabel="Précédent" nextLabel="Suivant"
-    class="page-controler">
-  </pagination-controls>
+    class="page-controler"></pagination-controls>
 </div>

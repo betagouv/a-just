@@ -1,83 +1,94 @@
 <div class="header-panel">
   <div class="left-side">
     <div class="tags" [ngClass]="{ 'past-tag': isPast }">
-      <ng-template [ngIf]="isPast">
-        <p *ngIf="dateStart" class="date">
-          Du {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
-          {{ getFullYear(dateStart) }}
-        </p>
-        <p *ngIf="dateStop" class="date">
-          Au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
-          {{ getFullYear(dateStop) }}
-        </p>
-      </ng-template>
-
-      <ng-template [ngIf]="!isPast">
-        <p *ngIf="dateStart" class="date">
-          {{
-          dateStart && dateStart.getTime() > getToday().getTime()
-          ? 'À partir du'
-          : 'Depuis le'
-          }} {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
-          {{ getFullYear(dateStart) }}
-        </p>
-        <p *ngIf="dateStop" class="date">
-          Jusqu'au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
-          {{ getFullYear(dateStop) }}
-        </p>
-      </ng-template>
-      <p *ngIf="fonction" class="fonction">{{ fonction.code }}</p>
-      <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+      @if (isPast) {
+      @if (dateStart) {
+      <p class="date">
+        Du {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+        {{ getFullYear(dateStart) }}
+      </p>
+      }
+      @if (dateStop) {
+      <p class="date">
+        Au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
+        {{ getFullYear(dateStop) }}
+      </p>
+      }
+      }
+      @if (!isPast) {
+      @if (dateStart) {
+      <p class="date">
+        {{ dateStart && dateStart.getTime() > getToday().getTime() ? 'À partir du' : 'Depuis le' }}
+        {{ dateStart | date: 'dd' }} {{ getShortMonthString(dateStart) }}
+        {{ getFullYear(dateStart) }}
+      </p>
+      }
+      @if (dateStop) {
+      <p class="date">
+        Jusqu'au {{ dateStop | date: 'dd' }} {{ getShortMonthString(dateStop) }}
+        {{ getFullYear(dateStop) }}
+      </p>
+      }
+      }
+      @if (fonction) {
+      <p class="fonction">{{ fonction.code }}</p>
+      }
+      @if (timeWorked) {
+      <p class="time-worked">{{ timeWorked }}</p>
+      }
     </div>
-    <div [ngClass]="{alert: warningETP}" class="etpt">
+    <div [ngClass]="{ alert: warningETP }" class="etpt">
       <p>ETPTravaillé :</p>
       <etp-preview [etp]="(etp || 0) - indisponibility" [realETP]="etp"
         [indisponibility]="indisponibility"></etp-preview>
     </div>
   </div>
   <div class="actions-panel">
-    <button *ngIf="canEditSituation" (click)="onEditSituation()" class="outline small primary">
-      Corriger cette situation
-    </button>
-    <button *ngIf="canRemoveSituation" (click)="onRemove.emit()" class="outline small red">
-      Supprimer la situation
-    </button>
+    @if (canEditSituation) {
+    <button (click)="onEditSituation()" class="outline small primary">Corriger cette situation</button>
+    }
+    @if (canRemoveSituation) {
+    <button (click)="onRemove.emit()" class="outline small red">Supprimer la situation</button>
+    }
   </div>
 </div>
 
-<div *ngIf="indisponibilities.length" class="indisponibility-panel indispo-content">
-  <div *ngFor="let indisp of indisponibilities" class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
+@if (indisponibilities.length) {
+<div class="indisponibility-panel indispo-content">
+  @for (indisp of indisponibilities; track indisp.id) {
+  <div class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
     <div class="icon">
       <mat-icon>event_busy</mat-icon>
     </div>
     <div class="text">
+      <p>{{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{ indisp.percent || 0 }}%)</p>
       <p>
-        {{ indisp.contentieux ? indisp.contentieux.label : indisp.label }} ({{
-        indisp.percent || 0
-        }}%)
-      </p>
-      <p>
-        <ng-template [ngIf]="indisp.dateStart">du {{ indisp.dateStart | date: 'dd' }}
-          {{ getShortMonthString(indisp.dateStart) }}
-          {{ getFullYear(indisp.dateStart) }}</ng-template>
-        <ng-template [ngIf]="indisp.dateStart && indisp.dateStop">
-          au
-        </ng-template>
-        <ng-template [ngIf]="!indisp.dateStart && indisp.dateStop">
-          jusqu'au
-        </ng-template>
-        <ng-template [ngIf]="indisp.dateStop">{{ indisp.dateStop | date: 'dd' }}
-          {{ getShortMonthString(indisp.dateStop) }}
-          {{ getFullYear(indisp.dateStop) }}</ng-template>
+        @if (indisp.dateStart) {
+        du {{ indisp.dateStart | date: 'dd' }}
+        {{ getShortMonthString(indisp.dateStart) }}
+        {{ getFullYear(indisp.dateStart) }}
+        }
+        @if (indisp.dateStart && indisp.dateStop) {
+        au
+        }
+        @if (!indisp.dateStart && indisp.dateStop) {
+        jusqu'au
+        }
+        @if (indisp.dateStop) {
+        {{ indisp.dateStop | date: 'dd' }}
+        {{ getShortMonthString(indisp.dateStop) }}
+        {{ getFullYear(indisp.dateStop) }}
+        }
       </p>
     </div>
     <div class="action no-print">
       <mat-icon>drive_file_rename_outline</mat-icon>
     </div>
   </div>
+  }
 </div>
-
+}
 <div class="activities-panel">
-  <panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
+  <panel-activities [category]="category" [etp]="(etp || 0) - indisponibility" [activities]="activities"
     [forceToShowContentieuxDetail]="forceToShowContentieuxDetail"></panel-activities>
 </div>

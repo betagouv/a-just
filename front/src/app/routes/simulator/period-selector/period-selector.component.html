@@ -3,25 +3,25 @@
   <p>Période choisie :</p>
   <div class="container-timeline">
     <div class="container-timeline-button">
-      <aj-date-select-blue class="select-disabled {{mooveClass}} {{disabled}}" [value]="dateStart"
-        [ngClass]="{'start-white-sim': whiteSimulator}" (valueChange)="updateDateSelected('dateStart', $event)"
-        [max]="dateStop" [min]="today" [side]="mooveClass==='future' ? 'right' : ''">
-      </aj-date-select-blue>
+      <aj-date-select-blue class="select-disabled {{ mooveClass }} {{ disabled }}" [value]="dateStart"
+        [ngClass]="{ 'start-white-sim': whiteSimulator }" (valueChange)="updateDateSelected('dateStart', $event)"
+        [max]="dateStop" [min]="today" [side]="mooveClass === 'future' ? 'right' : ''"></aj-date-select-blue>
       <div class="space"></div>
-      <aj-date-select-blue id="bt-white-simulator" class="{{disabled}}" [title]="'Fin de période'" [value]="dateStop"
-        (valueChange)="updateDateSelected('dateStop', $event)" [min]="getMin()" [side]="'right'">
-      </aj-date-select-blue>
+      <aj-date-select-blue id="bt-white-simulator" class="{{ disabled }}" [title]="'Fin de période'" [value]="dateStop"
+        (valueChange)="updateDateSelected('dateStop', $event)" [min]="getMin()" [side]="'right'"></aj-date-select-blue>
     </div>
     <div class="rec-container">
-      <div class="separator">
-      </div>
+      <div class="separator"></div>
       <div class="Rectangle">
-        <div class="dot {{mooveClass}}"></div>
-        <div class="blue-line {{mooveClass}}">
-          <div *ngFor="let d of nbOfMonthWithinPeriod" class="dot-generated-container">
+        <div class="dot {{ mooveClass }}"></div>
+        <div class="blue-line {{ mooveClass }}">
+          @for (d of nbOfMonthWithinPeriod; track d) {
+          <div class="dot-generated-container">
             <div class="dot-generated"></div>
           </div>
+          }
         </div>
       </div>
     </div>
   </div>
+</div>

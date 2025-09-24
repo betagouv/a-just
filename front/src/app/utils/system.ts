@@ -4,14 +4,7 @@
  */
 export function iIOS() {
   return (
-    [
-      'iPad Simulator',
-      'iPhone Simulator',
-      'iPod Simulator',
-      'iPad',
-      'iPhone',
-      'iPod',
-    ].includes(navigator.platform) ||
+    ['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(navigator.platform) ||
     // iPad on iOS 13 detection
     navigator.userAgent.includes('Mac')
   )
@@ -28,9 +21,13 @@ export function downloadFile(filePath: string) {
   link.click()
 }
 
+/**
+ * Ping d'un host pour vérifier si il est accessible
+ * @param host
+ * @returns
+ */
 export function ping(host: string) {
   return new Promise((resolve, reject) => {
-
     var http = new XMLHttpRequest()
 
     http.open('GET', host, /*async*/ true)

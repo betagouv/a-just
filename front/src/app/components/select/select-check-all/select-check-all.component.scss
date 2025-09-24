@@ -1,8 +1,8 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 ::ng-deep .mdc-form-field {
   font-size: 16px;
-  color: black;
+  color: utils.$colors-cblack;
 
   .mdc-label {
     font-size: 16px !important;

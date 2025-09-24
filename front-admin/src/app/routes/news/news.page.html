@@ -47,14 +47,15 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <aj-popup *ngIf="newsToEdit" class="large"
-    title="{{newsToEdit.id < 0 ? 'Ajout ' : 'Modification '}} d'une notification" [actions]="popupAction"
-    (selectedAction)="onPopupDetailAction($event)">
-    <div *ngIf="editor">
+  @if (newsToEdit) {
+  <aj-popup class="large" title="{{newsToEdit.id < 0 ? 'Ajout ' : 'Modification '}} d'une notification"
+    [actions]="popupAction" (selectedAction)="onPopupDetailAction($event)">
+    @if (editor) {
+    <div>
       <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
       <ngx-editor [editor]="editor" [placeholder]="'Enter text here...'" [(ngModel)]="newsToEdit.html"></ngx-editor>
     </div>
-
+    }
     <div class="grid-triple">
       <div>
         <mat-form-field>
@@ -68,7 +69,7 @@
       <div>
         <mat-form-field>
           <mat-label>Date de début de diffusion</mat-label>
-          <input matInput [ngModel]="newsToEdit.dateStart" [matDatepicker]="pickerDateStart"
+          <input matInput [ngModel]="newsToEdit.dateStart" [matDatepicker]="pickerDateStart" [max]="newsToEdit.dateStop"
             (ngModelChange)="onDateChanged('dateStart', $event)" [readonly]="true" (click)="pickerDateStart.open()" />
           <mat-datepicker #pickerDateStart></mat-datepicker>
         </mat-form-field>
@@ -76,13 +77,12 @@
       <div>
         <mat-form-field>
           <mat-label>Date de fin de diffusion</mat-label>
-          <input matInput [ngModel]="newsToEdit.dateStop" [matDatepicker]="pickerDateStop"
+          <input matInput [ngModel]="newsToEdit.dateStop" [matDatepicker]="pickerDateStop" [min]="newsToEdit.dateStart"
             (ngModelChange)="onDateChanged('dateStop', $event)" [readonly]="true" (click)="pickerDateStop.open()" />
           <mat-datepicker #pickerDateStop></mat-datepicker>
         </mat-form-field>
       </div>
     </div>
-
     <div class="grid-triple">
       <div>
         <mat-form-field hintLabel="Ne rien mettre pour ne pas afficher de bouton.">
@@ -104,7 +104,6 @@
         </mat-form-field>
       </div>
     </div>
-
     <div class="grid-triple">
       <div>
         <mat-form-field>
@@ -113,8 +112,10 @@
             <mat-select-trigger>
               <i class="ri-{{newsToEdit.icon}}"></i>
             </mat-select-trigger>
-            <mat-option *ngFor="let ico of REMIXICONLIST" [value]="ico"><i class="ri-{{ico}}"></i>
+            @for (ico of REMIXICONLIST; track ico) {
+            <mat-option [value]="ico"><i class="ri-{{ico}}"></i>
             </mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -134,4 +135,5 @@
       </div>
     </div>
   </aj-popup>
+  }
 </aj-wrapper>

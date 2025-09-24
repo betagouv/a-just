@@ -148,7 +148,8 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    tag: string
+    tag: string,
+    remove?: boolean
   }>()
   /**
    * Réferentiel des indispo
@@ -211,6 +212,10 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Afficher erreur date de début
    */
   printErrorDateStart: boolean = false
+  /**
+   * Import
+   */
+  imported=false
 
   /**
    * Constructeur
@@ -229,17 +234,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     private referentielService: ReferentielService,
   ) {
     super()
-
-    effect(() => {
-      console.log('this.alertSet', this.alertSet)
-    })
   }
 
   /**
    * Au chargement charger les catégories et fonctions
    */
   ngOnInit() {
-    console.log('editId', this.editId)
     window.addEventListener('click', this.onclick.bind(this))
     window.addEventListener('click', this.onclick2.bind(this))
     this.watch(this.hrFonctionService.getAll().then(() => this.loadCategories()))
@@ -261,15 +261,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           this.form.get('fonctionId')?.setValue(fct?.id || null)
           if (fct) this.calculatriceIsActive = fct.calculatrice_is_active || false
 
-          // Suprpession de l'alerte
+          // // Suprpession de l'alerte
           let index = -1
           index = this.humanResourceService.alertList().indexOf('category')
           if (index !== -1) {
-            this.alertSet.emit({ tag: 'category' })
+            this.alertSet.emit({ tag: 'category', remove: true })
           }
           index = this.humanResourceService.alertList().indexOf('fonction')
           if (index !== -1) {
-            this.alertSet.emit({ tag: 'fonction' })
+            this.alertSet.emit({ tag: 'fonction', remove: true })
           }
         })
       }),
@@ -279,6 +279,20 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.form.get('etp')?.valueChanges.subscribe((value) => {
         console.log('value', value)
         if (value) {
+
+          const valueFormated =
+            parseFloat((value || '')+''.replace(/,/, '.'));
+    
+          if (valueFormated < 0) {
+            alert('Le pourcentage ne peut pas être négatif');
+            return;
+          }
+    
+          if (Number.isNaN(valueFormated)) {
+            alert('La valeur saisie n\'est pas un nombre');
+            return;
+          }
+
           if (value > 1) value = 1
           else if (value < 0) value = 0
           let str_value = value?.toString()
@@ -297,7 +311,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
         let index = -1
         index = this.humanResourceService.alertList().indexOf('etp')
         if (index !== -1) {
-          this.alertSet.emit({ tag: 'etp' })
+          this.alertSet.emit({ tag: 'etp', remove: true })
         }
       }),
     )
@@ -305,10 +319,11 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     this.watch(
       this.form.get('activitiesStartDate')?.valueChanges.subscribe((value) => {
         if (value) {
+          // Suppression de l'alert
           let index = -1
           index = this.humanResourceService.alertList().indexOf('activitiesStartDate')
           if (index !== -1) {
-            this.alertSet.emit({ tag: 'activitiesStartDate' })
+            this.alertSet.emit({ tag: 'activitiesStartDate', remove: true })
           }
         }
       }),
@@ -388,8 +403,12 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const cat = categories.find((c) => categoryId && c.id == categoryId)
     const fonct = fonctions.find((c) => c.id == fonctionId)
 
-    const indisponibilites = this.human?.indisponibilities || []
-    const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some((c) => c.contentieux.checkVentilation === false)
+    //const indisponibilites = this.human?.indisponibilities || []
+    
+    /***
+     * Je supprime le check si l'indisponibilité est ignorée pour la ventilation car on ne sais plus pourquoi on a fait ce check
+     */
+    //const checkIfIndispoIgnoreControlPercentVentilation = indisponibilites.some((c) => c.contentieux.checkVentilation === false)
 
     this.humanResourceService.alertList.set([])
 
@@ -432,6 +451,9 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
 
     if (this.humanResourceService.alertList().length > 0) {
       console.log('alertList', this.humanResourceService.alertList)
+      this.humanResourceService.alertList().map((tag) => {
+        this.alertSet.emit({ tag })
+      })
       return
     }
 
@@ -461,7 +483,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       return
     }
 
-    if (!checkIfIndispoIgnoreControlPercentVentilation && !withoutPercentControl) {
+    if (!withoutPercentControl) {
       const totalAffected = fixDecimal(sumBy(this.updatedReferentiels, 'percent'))
       if (totalAffected > 100) {
         this.appService.alert.next({
@@ -618,6 +640,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels = referentiels
+    this.sumPercentImported =  this.updatedReferentiels.reduce((sum, c) => sum + (c.percent || 0), 0) 
   }
 
   /**
@@ -728,6 +751,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     this.fileReader(file, classe, event)
+    this.imported=true
     element.value = ''
   }
 
@@ -904,8 +928,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
   }
 
+  /**
+   * Remove an alert item from the list
+   * @param tag
+   */
   removeAlertItem(tag: string) {
-    this.alertSet.emit({ tag })
+    let index = -1
+    index = this.humanResourceService.alertList().indexOf(tag)
+    if (index !== -1) {
+      this.alertSet.emit({ tag, remove: true })
+    }
   }
 
   scrollToBottomElement() {

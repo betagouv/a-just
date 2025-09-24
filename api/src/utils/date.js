@@ -36,20 +36,20 @@ export const dayName = (date) => {
   }
 
   switch (date.getDay()) {
-  case 1:
-    return 'lundi'
-  case 2:
-    return 'mardi'
-  case 3:
-    return 'mercredi'
-  case 4:
-    return 'jeudi'
-  case 5:
-    return 'vendredi'
-  case 6:
-    return 'samedi'
-  case 0:
-    return 'dimanche'
+    case 1:
+      return 'lundi'
+    case 2:
+      return 'mardi'
+    case 3:
+      return 'mercredi'
+    case 4:
+      return 'jeudi'
+    case 5:
+      return 'vendredi'
+    case 6:
+      return 'samedi'
+    case 0:
+      return 'dimanche'
   }
 }
 
@@ -64,30 +64,30 @@ export const monthName = (date) => {
   }
 
   switch (date.getMonth()) {
-  case 0:
-    return 'janvier'
-  case 1:
-    return 'février'
-  case 2:
-    return 'mars'
-  case 3:
-    return 'avril'
-  case 4:
-    return 'mai'
-  case 5:
-    return 'juin'
-  case 6:
-    return 'juillet'
-  case 7:
-    return 'aout'
-  case 8:
-    return 'septembre'
-  case 9:
-    return 'octobre'
-  case 10:
-    return 'novembre'
-  case 11:
-    return 'décembre'
+    case 0:
+      return 'janvier'
+    case 1:
+      return 'février'
+    case 2:
+      return 'mars'
+    case 3:
+      return 'avril'
+    case 4:
+      return 'mai'
+    case 5:
+      return 'juin'
+    case 6:
+      return 'juillet'
+    case 7:
+      return 'aout'
+    case 8:
+      return 'septembre'
+    case 9:
+      return 'octobre'
+    case 10:
+      return 'novembre'
+    case 11:
+      return 'décembre'
   }
 }
 
@@ -96,14 +96,14 @@ export const monthName = (date) => {
  * @param {*} date
  * @returns date
  */
-export function today (date = new Date(), deltaDays = 0) {
+export function today(date = new Date(), deltaDays = 0) {
   date = setTimeToMidDay(date)
   const now = new Date(date)
   let newRef = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  if(deltaDays !== 0) {
+  if (deltaDays !== 0) {
     newRef.setDate(newRef.getDate() + deltaDays)
   }
-  return  setTimeToMidDay(newRef)
+  return setTimeToMidDay(newRef)
 }
 
 /**
@@ -113,7 +113,7 @@ export function today (date = new Date(), deltaDays = 0) {
  * @param {*} lastDay
  * @returns date modifiée
  */
-export function month (date = new Date(), monthToAdd, lastDay) {
+export function month(date = new Date(), monthToAdd, lastDay) {
   if (lastDay) {
     date = today(endOfMonth(date))
   } else {
@@ -133,7 +133,7 @@ export function month (date = new Date(), monthToAdd, lastDay) {
  * @param {*} dateStop
  * @returns nombre
  */
-export function getNbMonth (dateStart, dateStop) {
+export function getNbMonth(dateStart, dateStop) {
   let totalMonth = 0
 
   const now = today(dateStart)
@@ -155,7 +155,7 @@ export function getNbMonth (dateStart, dateStop) {
  * @param {*} dateStop
  * @returns nombre
  */
-export function getNbDay (dateStart, dateStop) {
+export function getNbDay(dateStart, dateStop) {
   let totalMonth = 0
 
   const now = today(dateStart)
@@ -177,7 +177,7 @@ export function getNbDay (dateStart, dateStop) {
  * @param {*} date2
  * @returns
  */
-export function isSameMonthAndYear (date1, date2) {
+export function isSameMonthAndYear(date1, date2) {
   date1 = today(date1)
   date2 = today(date2)
 
@@ -189,7 +189,7 @@ export function isSameMonthAndYear (date1, date2) {
  * @param {*} date
  * @returns boolean
  */
-export function workingDay (date) {
+export function workingDay(date) {
   return [1, 2, 3, 4, 5].indexOf(date.getDay()) !== -1
 }
 
@@ -199,7 +199,7 @@ export function workingDay (date) {
  * @param {*} secondDate
  * @returns boolean
  */
-export function isDateBiggerThan (firstDate, secondDate) {
+export function isDateBiggerThan(firstDate, secondDate) {
   firstDate = today(firstDate)
   secondDate = today(secondDate)
 
@@ -209,7 +209,7 @@ export function isDateBiggerThan (firstDate, secondDate) {
 /**
  * Retourne un objet vide avec pour propriété les mois_années compris entre 2 dates
  */
-export function getRangeOfMonthsAsObject (startDate, endDate, asObject = false) {
+export function getRangeOfMonthsAsObject(startDate, endDate, asObject = false) {
   const dates = new Array()
   const dateCounter = today(startDate)
   let monthlyL = {}
@@ -239,7 +239,7 @@ export function getRangeOfMonthsAsObject (startDate, endDate, asObject = false) 
  * @param {*} date
  * @returns string
  */
-export function getShortMonthString (date) {
+export function getShortMonthString(date) {
   if (typeof date === 'string') {
     date = today(date)
   }
@@ -270,7 +270,7 @@ const convertMsToDays = (ms) => {
  * @param {*} endDate
  * @returns nb de jour
  */
-export function nbOfDays (startDate, endDate) {
+export function nbOfDays(startDate, endDate) {
   startDate = today(startDate)
   endDate = today(endDate)
   let differenceInMs = startDate.getTime() - endDate.getTime()
@@ -288,7 +288,7 @@ export function nbOfDays (startDate, endDate) {
  * @param {*} endDate
  * @returns nb de jour ouvrés
  */
-export function nbWorkingDays (startDate, endDate) {
+export function nbWorkingDays(startDate, endDate) {
   startDate = today(startDate)
   endDate = today(endDate)
   const start = today(startDate)
@@ -298,7 +298,7 @@ export function nbWorkingDays (startDate, endDate) {
       nbOfDay++
     }
     start.setDate(start.getDate() + 1)
-  } while (isDateGreaterOrEqual(endDate,start))
+  } while (isDateGreaterOrEqual(endDate, start))
   return nbOfDay
 }
 
@@ -307,7 +307,7 @@ export function nbWorkingDays (startDate, endDate) {
  * @param {*} date
  * @returns boolean
  */
-export function checkIfDateIsNotToday (date) {
+export function checkIfDateIsNotToday(date) {
   const ty = today()
   return date && (date.getDate() !== ty.getDate() || date.getMonth() !== ty.getMonth() || date.getFullYear() !== ty.getFullYear())
 }
@@ -317,7 +317,7 @@ export function checkIfDateIsNotToday (date) {
  * @param {*} str
  * @returns nombre d'heure
  */
-export function stringToDecimalDate (str) {
+export function stringToDecimalDate(str) {
   if (str !== null || str !== '') {
     const strArray = str.split('h')
     return (parseInt(strArray[0]) * 60 + parseInt(strArray[1])) / 60
@@ -329,7 +329,7 @@ export function stringToDecimalDate (str) {
  * @param {*} decimal
  * @returns string hh:mm
  */
-export function decimalToStringDate (decimal) {
+export function decimalToStringDate(decimal) {
   if (decimal != null) {
     const strArray = String(decimal).split('.')
     const decimalMinute = strArray[1] && +strArray[1].length === 1 ? +strArray[1] * 10 : +strArray[1]
@@ -346,17 +346,17 @@ export function decimalToStringDate (decimal) {
  * @param dateTo
  * @returns
  */
-export function monthDiffList (dateFrom, dateTo) {
+export function monthDiffList(dateFrom, dateTo) {
   if (dateTo) return [...Array(1 + dateTo.getMonth() - dateFrom.getMonth() + 12 * (dateTo.getFullYear() - dateFrom.getFullYear())).keys()]
   else return []
 }
 
 /**
  * Met l'heure à midi
- * @param {*} date 
- * @returns 
+ * @param {*} date
+ * @returns
  */
-export function setTimeToMidDay (date) {
+export function setTimeToMidDay(date) {
   if (date === undefined || date === null) return undefined
   date = new Date(date)
   date.setHours(12)
@@ -372,40 +372,95 @@ export function setTimeToMidDay (date) {
 
 /**
  * Compare 2 dates and return true if the first is greater than the second
- * @param {*} date1 
- * @param {*} date2 
- * @returns 
+ * @param {*} date1
+ * @param {*} date2
+ * @returns
  */
-export function isDateGreaterOrEqual (date1, date2) {
-  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
-  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+export function isDateGreaterOrEqual(date1, date2) {
+  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate())
+  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate())
 
-  return d1 >= d2;
+  return d1 >= d2
 }
 
 /**
  * Compare 2 dates and return true if the first is greater than the second
- * @param {*} date1 
- * @param {*} date2 
- * @returns 
+ * @param {*} date1
+ * @param {*} date2
+ * @returns
  */
-export function isDateEqual (date1, date2) {
-  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
-  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+export function isDateEqual(date1, date2) {
+  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate())
+  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate())
 
-  return d1 === d2;
+  return d1 === d2
 }
 
 /**
  * Retourne le jour suivant une date
  */
 export function getNextDay(date) {
-  const nextDay = today(date);
-  nextDay.setDate(date.getDate() + 1);
-  return nextDay;
+  const nextDay = today(date)
+  nextDay.setDate(nextDay.getDate() + 1)
+  return nextDay
 }
 
-export function getTime(date) {
-  date = new Date(date);
-  return date.getTime();
+export function getTime(date = new Date()) {
+  date = new Date(date)
+  return date.getTime()
+}
+
+/**
+ * Compte le nombre de jour ouvré entre 2 dates
+ * @param {*} startDate
+ * @param {*} endDate
+ * @returns
+ */
+export const getWorkingDaysCount = (startDate, endDate) => {
+  let start = today(startDate)
+  let end = today(endDate)
+
+  if (start > end) {
+    // Si la date de début est après la date de fin, échanger les dates
+    ;[start, end] = [end, start]
+  }
+
+  // Calcul du nombre de jours entre les deux dates
+  const totalDays = (end - start) / (1000 * 3600 * 24)
+
+  // Nombre de semaines complètes
+  const completeWeeks = Math.floor(totalDays / 7)
+
+  // Nombre de jours ouvrés dans les semaines complètes
+  let workingDays = completeWeeks * 5
+
+  // Gérer les jours partiels avant la fin de la période
+  let remainingDays = totalDays % 7
+  let currentDay = start.getDay()
+
+  for (let i = 0; i <= remainingDays; i++) {
+    // Si le jour courant est un jour ouvré (lundi à vendredi)
+    if (currentDay >= 1 && currentDay <= 5) {
+      workingDays++
+    }
+
+    // Passer au jour suivant
+    currentDay = (currentDay + 1) % 7
+  }
+
+  if (comparerDatesJourMoisAnnee(start, end)) {
+    return 1
+  }
+
+  return workingDays
+}
+
+/**
+ * Compare deux dates sur jour, mois et année uniquement
+ * @param {Date} date1 - Première date
+ * @param {Date} date2 - Deuxième date
+ * @returns {boolean} true si mêmes jour, mois et année, sinon false
+ */
+export const comparerDatesJourMoisAnnee = (date1, date2) => {
+  return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()
 }

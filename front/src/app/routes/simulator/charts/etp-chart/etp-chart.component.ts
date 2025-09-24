@@ -1,22 +1,11 @@
-import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  NgZone,
-  OnDestroy,
-} from '@angular/core';
-import { Chart, ChartItem, registerables } from 'chart.js';
-import annotationPlugin from 'chartjs-plugin-annotation';
-import { LegendLabelComponent } from '../legend-label/legend-label.component';
-import { SimulatorService } from '../../../../services/simulator/simulator.service';
-import {
-  findRealValue,
-  getLongMonthString,
-  getRangeOfMonths,
-} from '../../../../utils/dates';
-import { fixDecimal } from '../../../../utils/numbers';
+import { CommonModule } from '@angular/common'
+import { AfterViewInit, Component, ElementRef, Input, NgZone, OnDestroy } from '@angular/core'
+import { Chart, ChartItem, registerables } from 'chart.js'
+import annotationPlugin from 'chartjs-plugin-annotation'
+import { LegendLabelComponent } from '../legend-label/legend-label.component'
+import { SimulatorService } from '../../../../services/simulator/simulator.service'
+import { findRealValue, findRealValueCustom, getLongMonthString, getRangeOfMonths } from '../../../../utils/dates'
+import { fixDecimal } from '../../../../utils/numbers'
 
 /**
  * Composant graphique etp du simulateur
@@ -32,59 +21,67 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
   /**
    * Date de début de simulation
    */
-  dateStart: Date = new Date();
+  dateStart: Date = new Date()
   /**
    * Date de fin de simulation
    */
-  dateStop: Date | null = null;
+  dateStop: Date | null = null
   /**
    * Valeur de début de simulation
    */
-  startRealValue = '';
+  startRealValue = ''
+   /**
+   * Valeur de début de simulation mois année
+   */
+   startRealValueShort = ''
   /**
    * Valeur de fin de simulation
    */
-  stopRealValue = '';
+  stopRealValue = ''
+    /**
+   * Valeur de fin de simulation mois année
+   */
+    stopRealValueShort = ''
   /**
    * Element html du graphique
    */
-  elementRef: HTMLElement | undefined;
+  elementRef: HTMLElement | undefined
   /**
    * Objet Chart JS correspondant au graphique
    */
-  myChart: any = null;
+  myChart: any = null
   /**
    * Catégorie selectionnée (magistrat, fonctionnaire...)
    */
-  @Input() categorySelected = '';
+  @Input() categorySelected = ''
   /**
    * Peux voir l'interface magistrat
    */
-  @Input() canViewMagistrat: boolean = false;
+  @Input() canViewMagistrat: boolean = false
   /**
    * Peux voir l'interface greffier
    */
-  @Input() canViewGreffier: boolean = false;
+  @Input() canViewGreffier: boolean = false
   /**
    * Peux voir l'interface contractuel
    */
-  @Input() canViewContractuel: boolean = false;
-    /**
+  @Input() canViewContractuel: boolean = false
+  /**
    * Peux voir l'interface contractuel
    */
-    @Input() whiteSimulator: boolean = false;
+  @Input() whiteSimulator: boolean = false
   /**
    * Labels sur l'axe des abscisse
    */
-  labels: string[] | null = null;
+  labels: string[] | null = null
   /**
    * Affichage du tooltip au survol
    */
-  tooltip: any = { display: false };
+  tooltip: any = { display: false }
   /**
    * Mois selectionné
    */
-  realSelectedMonth = '';
+  realSelectedMonth = ''
 
   /**
    * Caractéristiques du graphique
@@ -120,116 +117,85 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
       dotColor: '#fcd7d3',
       bgColor: '#eba89f',
     },
-  };
+  }
 
   /**
    * Constructeur
    * @param element element html
    * @param simulatorService service simulateur
    */
-  constructor(
-    private element: ElementRef<HTMLElement>,
-    private simulatorService: SimulatorService,
-    private ngZone: NgZone
-  ) {
+  constructor(private element: ElementRef<HTMLElement>, private simulatorService: SimulatorService, private ngZone: NgZone) {
     simulatorService.dateStop.subscribe((value) => {
       if (value !== undefined) {
-        this.stopRealValue = findRealValue(value);
-        this.dateStop = value;
-        this.labels = getRangeOfMonths(
-          new Date(this.dateStart),
-          new Date(this.dateStop)
-        );
+        this.stopRealValue = findRealValue(value)
+        this.stopRealValueShort = findRealValueCustom(value,false,true)
+        this.dateStop = value
+        this.labels = getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))
       }
-    });
+    })
     simulatorService.dateStart.subscribe((value) => {
-      this.startRealValue = findRealValue(value);
-      this.dateStart = value;
+      this.startRealValue = findRealValue(value)
+      this.startRealValueShort = findRealValueCustom(value,false,true)
+      this.dateStart = value
       if (this.dateStop !== null) {
-        this.labels = getRangeOfMonths(
-          new Date(this.dateStart),
-          new Date(this.dateStop)
-        );
+        this.labels = getRangeOfMonths(new Date(this.dateStart), new Date(this.dateStop))
       }
-    });
+    })
     simulatorService.situationSimulated.subscribe((value) => {
-      console.log(this.labels, value);
+      console.log(this.labels, value)
       if (this.labels !== null) {
-        this.data.simulatedMag.values = simulatorService.generateLinearData(
-          value?.etpMag as number,
-          value?.etpMag as number,
-          this.labels.length
-        );
-        this.data.simulatedGref.values = simulatorService.generateLinearData(
-          value?.etpFon as number,
-          value?.etpFon as number,
-          this.labels.length
-        );
-        this.data.simulatedCont.values = simulatorService.generateLinearData(
-          value?.etpCont as number,
-          value?.etpCont as number,
-          this.labels.length
-        );
+        this.data.simulatedMag.values = simulatorService.generateLinearData(value?.etpMag as number, value?.etpMag as number, this.labels.length)
+        this.data.simulatedGref.values = simulatorService.generateLinearData(value?.etpFon as number, value?.etpFon as number, this.labels.length)
+        this.data.simulatedCont.values = simulatorService.generateLinearData(value?.etpCont as number, value?.etpCont as number, this.labels.length)
 
-        let monthlyMagValues: any = undefined;
-        let monthlyContValues: any = undefined;
-        let monthlyFonValues: any = undefined;
+        let monthlyMagValues: any = undefined
+        let monthlyContValues: any = undefined
+        let monthlyFonValues: any = undefined
 
-        console.log(simulatorService.situationProjected.getValue());
+        console.log(simulatorService.situationProjected.getValue())
 
-        if (
-          simulatorService.situationProjected.getValue()!.monthlyReport !==
-          undefined
-        ) {
-          simulatorService.situationProjected
-            .getValue()!
-            .monthlyReport!.forEach((x: any) => {
-              if (x.name === 'Magistrat') monthlyMagValues = x.values;
-              if (x.name === 'Greffe') monthlyFonValues = x.values;
-              if (x.name === 'Autour du magistrat')
-                monthlyContValues = x.values;
-            });
+        if (simulatorService.situationProjected.getValue()!.monthlyReport !== undefined) {
+          simulatorService.situationProjected.getValue()!.monthlyReport!.forEach((x: any) => {
+            if (x.name === 'Magistrat') monthlyMagValues = x.values
+            if (x.name === 'Greffe') monthlyFonValues = x.values
+            if (x.name === 'Autour du magistrat') monthlyContValues = x.values
+          })
 
-          this.data.projectedMag.values = new Array();
-          this.data.projectedGref.values = new Array();
-          this.data.projectedCont.values = new Array();
+          this.data.projectedMag.values = new Array()
+          this.data.projectedGref.values = new Array()
+          this.data.projectedCont.values = new Array()
 
           Object.keys(monthlyMagValues).forEach((x: any) => {
-            this.data.projectedMag.values.push(monthlyMagValues[x].etpt);
-            this.data.projectedGref.values.push(monthlyFonValues[x].etpt);
-            this.data.projectedCont.values.push(monthlyContValues[x].etpt);
-          });
+            this.data.projectedMag.values.push(monthlyMagValues[x].etpt)
+            this.data.projectedGref.values.push(monthlyFonValues[x].etpt)
+            this.data.projectedCont.values.push(monthlyContValues[x].etpt)
+          })
         } else {
           this.data.projectedMag.values = simulatorService.generateLinearData(
             simulatorService.situationProjected.getValue()?.etpMag as number,
             simulatorService.situationProjected.getValue()?.etpMag as number,
-            this.labels.length
-          );
+            this.labels.length,
+          )
           this.data.projectedGref.values = simulatorService.generateLinearData(
             simulatorService.situationProjected.getValue()?.etpFon as number,
             simulatorService.situationProjected.getValue()?.etpFon as number,
-            this.labels.length
-          );
+            this.labels.length,
+          )
         }
 
-        console.log(this.data.projectedMag);
+        console.log(this.data.projectedMag)
         if (this.myChart !== null) {
-          this.myChart.config.data.labels = this.labels;
+          this.myChart.config.data.labels = this.labels
           if (this.canViewMagistrat) {
-            this.myChart._metasets[0]._dataset.data =
-              this.data.projectedMag.values;
-            this.myChart._metasets[1]._dataset.data =
-              this.data.simulatedMag.values;
+            this.myChart._metasets[0]._dataset.data = this.data.projectedMag.values
+            this.myChart._metasets[1]._dataset.data = this.data.simulatedMag.values
           }
           if (this.canViewGreffier) {
-            this.myChart._metasets[2]._dataset.data =
-              this.data.projectedGref.values;
-            this.myChart._metasets[3]._dataset.data =
-              this.data.simulatedGref.values;
+            this.myChart._metasets[2]._dataset.data = this.data.projectedGref.values
+            this.myChart._metasets[3]._dataset.data = this.data.simulatedGref.values
           }
           if (this.canViewContractuel) {
-            this.myChart._metasets[5]._dataset.data =
-              this.data.projectedCont.values;
+            this.myChart._metasets[5]._dataset.data = this.data.projectedCont.values
             //this.myChart._metasets[6]._dataset.data =
             //this.data.simulatedCont.values
           }
@@ -246,44 +212,44 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           }
  */
           if (this.categorySelected === 'MAGISTRAT') {
-            this.myChart.hide(3);
+            this.myChart.hide(3)
           }
           if (this.categorySelected === 'GREFFE') {
-            this.myChart.hide(1);
+            this.myChart.hide(1)
           }
 
           if (!this.canViewMagistrat) {
-            this.myChart.hide(0);
-            this.myChart.hide(1);
+            this.myChart.hide(0)
+            this.myChart.hide(1)
           }
           if (!this.canViewGreffier) {
-            this.myChart.hide(2);
-            this.myChart.hide(3);
+            this.myChart.hide(2)
+            this.myChart.hide(3)
           }
           if (!this.canViewContractuel) {
-            this.myChart.hide(4);
-            this.myChart.hide(5);
+            this.myChart.hide(4)
+            this.myChart.hide(5)
           }
 
           //this.myChart.hide(4)
-          this.myChart.hide(5);
-          this.myChart.update();
+          this.myChart.hide(5)
+          this.myChart.update()
         }
       }
-    });
+    })
 
-    this.elementRef = element.nativeElement;
-    Chart.register(...registerables);
-    Chart.register(annotationPlugin);
+    this.elementRef = element.nativeElement
+    Chart.register(...registerables)
+    Chart.register(annotationPlugin)
   }
 
   /**
    * Génération du graphique après l'initialisation du composant
    */
   ngAfterViewInit(): void {
-    const labels = this.labels;
+    const labels = this.labels
 
-    console.log('load Chart ETP');
+    console.log('load Chart ETP')
 
     const data = {
       labels: labels,
@@ -331,136 +297,111 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           data: this.data.simulatedCont.values,
         },
       ],
-    };
+    }
 
     const yScaleTextStock = {
       id: 'yScaleTextStock',
       afterDraw(chart: any, args: any, options: any) {
-        const ctx = chart.ctx;
-        const top = chart.chartArea.top;
-        ctx.save();
-        ctx.font = '14px Arial';
-        ctx.fillStyle = '#666';
-        ctx.fillText('ETPT', -1, top - 2);
-        ctx.restore();
+        const ctx = chart.ctx
+        const top = chart.chartArea.top
+        ctx.save()
+        ctx.font = '14px Arial'
+        ctx.fillStyle = '#666'
+        ctx.fillText('ETPT', -1, top - 2)
+        ctx.restore()
       },
-    };
+    }
 
     function localeParseFloat(s: string, locale?: any) {
       // Get the thousands and decimal separator characters used in the locale.
-      let [, thousandsSeparator, , , , decimalSeparator] =
-        (1111.1).toLocaleString(locale);
+      let [, thousandsSeparator, , , , decimalSeparator] = (1111.1).toLocaleString(locale)
       // Remove thousand separators, and put a point where the decimal separator occurs
-      s = Array.from(s, (c) =>
-        c === thousandsSeparator ? '' : c === decimalSeparator ? '.' : c
-      ).join('');
+      s = Array.from(s, (c) => (c === thousandsSeparator ? '' : c === decimalSeparator ? '.' : c)).join('')
       // Now it can be parsed
-      return parseFloat(s);
+      return parseFloat(s)
     }
 
     const label = (context: any) => {
-      let sufix = '';
+      let sufix = ''
       switch (context.dataset.label) {
         case 'projectedMag':
-          sufix = 'magistrats (projeté)';
-          break;
+          sufix = 'magistrats (projeté)'
+          break
         case 'simulatedMag':
-          sufix = 'magistrats (simulé)';
-          break;
+          sufix = 'magistrats (simulé)'
+          break
         case 'projectedGref':
-          sufix = 'agents de greffe (projeté)';
-          break;
+          sufix = 'agents de greffe (projeté)'
+          break
         case 'simulatedGref':
-          sufix = 'agents de greffe (simulé)';
-          break;
+          sufix = 'agents de greffe (simulé)'
+          break
         case 'projectedCont':
-          sufix = 'contractuels (projeté)';
-          break;
+          sufix = 'contractuels (projeté)'
+          break
         case 'simulatedCont':
-          sufix = 'contractuels (simulé)';
-          break;
+          sufix = 'contractuels (simulé)'
+          break
       }
-      let lbl =
-        '  ' +
-        fixDecimal(
-          localeParseFloat(context.formattedValue.replace(/\s/g, ''))
-        ) +
-        ' ' +
-        sufix;
-      return lbl;
-    };
+      let lbl = '  ' + fixDecimal(localeParseFloat(context.formattedValue.replace(/\s/g, ''))) + ' ' + sufix
+      return lbl
+    }
 
-    let $this = this;
+    let $this = this
 
     const externalTooltipHandler = (context: any) => {
-      const { chart, tooltip } = context;
+      const { chart, tooltip } = context
 
-      const { offsetLeft: positionX, offsetTop: positionY } =
-        $this.myChart.canvas;
+      const { offsetLeft: positionX, offsetTop: positionY } = $this.myChart.canvas
 
       $this.tooltip = {
         offsetLeft: positionX,
         offsetTop: positionY,
         ...$this.tooltip,
         ...tooltip,
-      };
-    };
+      }
+    }
 
     const config: any = {
       type: 'line',
       data: data,
       options: {
         onClick: function (e: any, items: any) {
-          if (items.length == 0) return;
+          if (items.length == 0) return
 
-          var firstPoint = items[0].index;
-          const projectedMag = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'projectedMag';
-            }
-          );
-          const simulatedMag = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'simulatedMag';
-            }
-          );
-          const projectedFon = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'projectedFon';
-            }
-          );
-          const simulatedFon = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'simulatedFon';
-            }
-          );
-          const projectedCont = e.chart.config._config.data.datasets.find(
-            (x: any) => {
-              return x.label === 'projectedCont';
-            }
-          );
+          var firstPoint = items[0].index
+          const projectedMag = e.chart.config._config.data.datasets.find((x: any) => {
+            return x.label === 'projectedMag'
+          })
+          const simulatedMag = e.chart.config._config.data.datasets.find((x: any) => {
+            return x.label === 'simulatedMag'
+          })
+          const projectedFon = e.chart.config._config.data.datasets.find((x: any) => {
+            return x.label === 'projectedFon'
+          })
+          const simulatedFon = e.chart.config._config.data.datasets.find((x: any) => {
+            return x.label === 'simulatedFon'
+          })
+          const projectedCont = e.chart.config._config.data.datasets.find((x: any) => {
+            return x.label === 'projectedCont'
+          })
 
-          const tooltipEl =
-            $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip');
-          const tooltipElTriangle =
-            $this.myChart.canvas.parentNode.querySelector(
-              '#chartjs-tooltip-triangle'
-            );
+          const tooltipEl = $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
+          const tooltipElTriangle = $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip-triangle')
 
           const yValues = items.map((object: any) => {
-            return object.element.y;
-          });
+            return object.element.y
+          })
 
-          const min = Math.min(...yValues);
-          tooltipEl.style.opacity = 1;
+          const min = Math.min(...yValues)
+          tooltipEl.style.opacity = 1
 
-          tooltipEl.style.left =
-            (items[0].element.x > 175 ? items[0].element.x : 175) + 'px';
-          tooltipEl.style.top = min - 162 + 'px';
+          tooltipEl.style.left = (items[0].element.x > 175 ? items[0].element.x : 175) + 'px'
+          tooltipEl.style.top = min - 162 + 'px'
 
-          tooltipElTriangle.style.opacity = 1;
-          tooltipElTriangle.style.left = items[0].element.x + 8 + 'px';
-          tooltipElTriangle.style.top = min + 'px';
+          tooltipElTriangle.style.opacity = 1
+          tooltipElTriangle.style.left = items[0].element.x + 8 + 'px'
+          tooltipElTriangle.style.top = min + 'px'
 
           $this.affectTooltipValues({
             projectedMag: projectedMag.data[firstPoint],
@@ -475,96 +416,71 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             pointIndex: firstPoint,
             selectedLabelValue: e.chart.data.labels[firstPoint],
             enableTooltip: false,
-          });
+          })
 
-          const colorArray = [];
+          const colorArray = []
 
-          if (
-            e.chart.options.plugins.annotation.annotations.box1.content ===
-            undefined
-          ) {
-            if (
-              e.chart.options.plugins.annotation.annotations.box1.display ===
-              false
-            ) {
-              e.chart.options.plugins.annotation.annotations.box1.display =
-                true;
-              $this.updateAnnotationBox(true, 0, 0);
+          if (e.chart.options.plugins.annotation.annotations.box1.content === undefined) {
+            if (e.chart.options.plugins.annotation.annotations.box1.display === false) {
+              e.chart.options.plugins.annotation.annotations.box1.display = true
+              $this.updateAnnotationBox(true, 0, 0)
             }
             if (firstPoint === 0) {
-              e.chart.options.plugins.annotation.annotations.box1.xMin = 0;
-              e.chart.options.plugins.annotation.annotations.box1.xMax = 0.5;
-              $this.updateAnnotationBox(true, 0, 0.5);
+              e.chart.options.plugins.annotation.annotations.box1.xMin = 0
+              e.chart.options.plugins.annotation.annotations.box1.xMax = 0.5
+              $this.updateAnnotationBox(true, 0, 0.5)
             } else if (firstPoint === e.chart.scales.x.max) {
-              e.chart.options.plugins.annotation.annotations.box1.xMin =
-                e.chart.scales.x.max - 0.5;
-              e.chart.options.plugins.annotation.annotations.box1.xMax =
-                e.chart.scales.x.max;
-              $this.updateAnnotationBox(
-                true,
-                e.chart.scales.x.max - 0.5,
-                e.chart.scales.x.max
-              );
+              e.chart.options.plugins.annotation.annotations.box1.xMin = e.chart.scales.x.max - 0.5
+              e.chart.options.plugins.annotation.annotations.box1.xMax = e.chart.scales.x.max
+              $this.updateAnnotationBox(true, e.chart.scales.x.max - 0.5, e.chart.scales.x.max)
             } else {
-              e.chart.options.plugins.annotation.annotations.box1.xMin =
-                firstPoint - 0.5;
-              e.chart.options.plugins.annotation.annotations.box1.xMax =
-                firstPoint + 0.5;
-              $this.updateAnnotationBox(
-                true,
-                firstPoint - 0.5,
-                firstPoint + 0.5
-              );
+              e.chart.options.plugins.annotation.annotations.box1.xMin = firstPoint - 0.5
+              e.chart.options.plugins.annotation.annotations.box1.xMax = firstPoint + 0.5
+              $this.updateAnnotationBox(true, firstPoint - 0.5, firstPoint + 0.5)
             }
-            e.chart.options.plugins.annotation.annotations.box1.yMax =
-              e.chart.scales.A.max;
+            e.chart.options.plugins.annotation.annotations.box1.yMax = e.chart.scales.A.max
 
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
               if (firstPoint === i) {
-                $this.realSelectedMonth = $this.labels![i];
-                $this.myChart.update();
-                colorArray.push('#0a76f6');
+                $this.realSelectedMonth = $this.labels![i]
+                $this.myChart.update()
+                colorArray.push('#0a76f6')
               } else {
-                colorArray.push('rgb(109, 109, 109)');
+                colorArray.push('rgb(109, 109, 109)')
               }
             }
-            e.chart.options.plugins.tooltip.enabled = false;
+            e.chart.options.plugins.tooltip.enabled = false
           } else {
-            e.chart.options.plugins.tooltip.enabled = true;
+            e.chart.options.plugins.tooltip.enabled = true
             $this.affectTooltipValues({
               pointIndex: null,
               enableTooltip: true,
-            });
+            })
             for (let i = 0; i < e.chart.data.datasets[0].data.length; i++) {
-              colorArray.push('rgb(109, 109, 109)');
+              colorArray.push('rgb(109, 109, 109)')
             }
-            e.chart.options.plugins.annotation.annotations.box1.content =
-              undefined;
-            $this.updateAnnotationBox(false, 0, 0, undefined);
-            tooltipEl.style.opacity = 0;
-            tooltipElTriangle.style.opacity = 0;
+            e.chart.options.plugins.annotation.annotations.box1.content = undefined
+            $this.updateAnnotationBox(false, 0, 0, undefined)
+            tooltipEl.style.opacity = 0
+            tooltipElTriangle.style.opacity = 0
           }
 
-          e.chart.config.options.scales.x.ticks.color = colorArray;
-          e.chart.update();
+          e.chart.config.options.scales.x.ticks.color = colorArray
+          e.chart.update()
         },
         tooltips: {
           events: ['click'],
           callbacks: {
             title: function (tooltipItem: any, data: any) {
-              return data['labels'][tooltipItem[0]['index']];
+              return data['labels'][tooltipItem[0]['index']]
             },
             label: function (tooltipItem: any, data: any) {
-              return data['datasets'][0]['data'][tooltipItem['index']];
+              return data['datasets'][0]['data'][tooltipItem['index']]
             },
             afterLabel: function (tooltipItem: any, data: any) {
-              var dataset = data['datasets'][0];
-              var percent = Math.round(
-                (dataset['data'][tooltipItem['index']] /
-                  dataset['_meta'][0]['total']) *
-                  100
-              );
-              return '(' + percent + '%)';
+              var dataset = data['datasets'][0]
+              var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset['_meta'][0]['total']) * 100)
+              return '(' + percent + '%)'
             },
           },
         },
@@ -602,8 +518,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
               display: true,
               min: 0,
               max: 100,
-              callback: (value: any, index: any, values: any) =>
-                index == values.length - 1 ? '' : value,
+              callback: (value: any, index: any, values: any) => (index == values.length - 1 ? '' : value),
             },
             grid: {
               drawTicks: false,
@@ -615,12 +530,11 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
           autocolors: false,
           annotation: {
             click: function (e: any, items: any) {
-              if (items.length == 0) return;
-              items.chart.options.plugins.annotation.annotations.box1.display =
-                false;
-              e.chart.options.plugins.annotation.annotations.box1.content = '';
-              $this.updateAnnotationBox(false, undefined, undefined, '');
-              items.chart.update();
+              if (items.length == 0) return
+              items.chart.options.plugins.annotation.annotations.box1.display = false
+              e.chart.options.plugins.annotation.annotations.box1.content = ''
+              $this.updateAnnotationBox(false, undefined, undefined, '')
+              items.chart.update()
             },
             annotations: {
               box1: {
@@ -657,10 +571,10 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
             },
             callbacks: {
               title: function () {
-                return null;
+                return null
               },
               labelTextColor: (content: any) => {
-                return 'black';
+                return 'black'
               },
               label: label,
             },
@@ -668,118 +582,93 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         },
       },
       plugins: [yScaleTextStock],
-    };
+    }
 
     this.ngZone.runOutsideAngular(() => {
-      this.myChart = new Chart(
-        document.getElementById('etp-chart') as ChartItem,
-        config
-      );
-    });
+      this.myChart = new Chart(document.getElementById('etp-chart') as ChartItem, config)
+    })
 
     this.simulatorService.chartAnnotationBox.subscribe((value) => {
       if (this.myChart !== null) {
-        this.myChart.options.plugins.annotation.annotations.box1.yMax =
-          this.myChart.scales.A.max;
-        this.myChart.options.plugins.annotation.annotations.box1.display =
-          value.display;
-        this.myChart.options.plugins.annotation.annotations.box1.xMin =
-          value.xMin;
-        this.myChart.options.plugins.annotation.annotations.box1.xMax =
-          value.xMax;
-        this.myChart.options.plugins.annotation.annotations.box1.content =
-          value.content;
+        this.myChart.options.plugins.annotation.annotations.box1.yMax = this.myChart.scales.A.max
+        this.myChart.options.plugins.annotation.annotations.box1.display = value.display
+        this.myChart.options.plugins.annotation.annotations.box1.xMin = value.xMin
+        this.myChart.options.plugins.annotation.annotations.box1.xMax = value.xMax
+        this.myChart.options.plugins.annotation.annotations.box1.content = value.content
 
-        this.myChart.options.plugins.tooltip.enabled = value.enableTooltip;
+        this.myChart.options.plugins.tooltip.enabled = value.enableTooltip
 
-        this.tooltip.projectedMag = value.projectedMag;
-        this.tooltip.simulatedMag = value.simulatedMag;
+        this.tooltip.projectedMag = value.projectedMag
+        this.tooltip.simulatedMag = value.simulatedMag
 
-        this.tooltip.projectedFon = value.projectedFon;
-        this.tooltip.simulatedFon = value.simulatedFon;
+        this.tooltip.projectedFon = value.projectedFon
+        this.tooltip.simulatedFon = value.simulatedFon
 
-        this.tooltip.projectedCont = value.projectedCont;
-        this.tooltip.simulatedCont = value.simulatedCont;
+        this.tooltip.projectedCont = value.projectedCont
+        this.tooltip.simulatedCont = value.simulatedCont
 
-        const tooltipEl =
-          $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip');
-        const tooltipElTriangle = $this.myChart.canvas.parentNode.querySelector(
-          '#chartjs-tooltip-triangle'
-        );
+        const tooltipEl = $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip')
+        const tooltipElTriangle = $this.myChart.canvas.parentNode.querySelector('#chartjs-tooltip-triangle')
 
-        const colorArray = [];
+        const colorArray = []
 
         if (value.x) {
-          let higuerYPosition = value.y ? value.y : 0;
-          let higuerXPosition = value.x ? value.x : 0;
+          let higuerYPosition = value.y ? value.y : 0
+          let higuerXPosition = value.x ? value.x : 0
 
           if (value.pointIndex !== null) {
             // xScale.top
             higuerYPosition = Math.min(
-              this.myChart.getDatasetMeta(0).data[value.pointIndex as number]
-                .y | 0,
-              this.myChart.getDatasetMeta(1).data[value.pointIndex as number]
-                .y | 0,
-              this.myChart.getDatasetMeta(2).data[value.pointIndex as number]
-                .y | 0,
-              this.myChart.getDatasetMeta(3).data[value.pointIndex as number]
-                .y | 0
-            );
-            higuerXPosition =
-              this.myChart.getDatasetMeta(0).data[value.pointIndex as number]
-                .x | 0;
+              this.myChart.getDatasetMeta(0).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(1).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(2).data[value.pointIndex as number].y | 0,
+              this.myChart.getDatasetMeta(3).data[value.pointIndex as number].y | 0,
+            )
+            higuerYPosition = higuerYPosition < 20 ? 20 : higuerYPosition
+            higuerXPosition = this.myChart.getDatasetMeta(0).data[value.pointIndex as number].x | 0
           }
 
-          this.myChart.tooltip.active = false;
-          this.realSelectedMonth = value.selectedLabelValue as string;
-          tooltipEl.style.opacity = 1;
-          tooltipEl.style.left = value.x;
-          tooltipEl.style.top = higuerYPosition - 130 + 'px';
-          tooltipElTriangle.style.opacity = 1;
-          tooltipElTriangle.style.left =
-            Number(String(higuerXPosition).replace('px', '')) + 10 + 'px';
-          tooltipElTriangle.style.top =
-            Number(String(higuerYPosition - 130 + 'px').replace('px', '')) +
-            160 +
-            'px';
+          this.myChart.tooltip.active = false
+          this.realSelectedMonth = value.selectedLabelValue as string
+          tooltipEl.style.opacity = 1
+          tooltipEl.style.left = value.x
+          tooltipEl.style.top = higuerYPosition - 130 + 'px'
+          tooltipElTriangle.style.opacity = 1
+          tooltipElTriangle.style.left = Number(String(higuerXPosition).replace('px', '')) + 10 + 'px'
+          tooltipElTriangle.style.top = Number(String(higuerYPosition - 130 + 'px').replace('px', '')) + 160 + 'px'
 
-          this.tooltip.projectedMag =
-            this.myChart.data.datasets[0].data[value.pointIndex as number];
-          this.tooltip.simulatedMag =
-            this.myChart.data.datasets[1].data[value.pointIndex as number];
+          this.tooltip.projectedMag = this.myChart.data.datasets[0].data[value.pointIndex as number]
+          this.tooltip.simulatedMag = this.myChart.data.datasets[1].data[value.pointIndex as number]
 
-          this.tooltip.projectedFon =
-            this.myChart.data.datasets[2].data[value.pointIndex as number];
-          this.tooltip.simulatedFon =
-            this.myChart.data.datasets[3].data[value.pointIndex as number];
+          this.tooltip.projectedFon = this.myChart.data.datasets[2].data[value.pointIndex as number]
+          this.tooltip.simulatedFon = this.myChart.data.datasets[3].data[value.pointIndex as number]
 
-          this.tooltip.projectedCont =
-            this.myChart.data.datasets[4].data[value.pointIndex as number];
+          this.tooltip.projectedCont = this.myChart.data.datasets[4].data[value.pointIndex as number]
 
           for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
             if ((value.pointIndex as number) === i) {
-              colorArray.push('#0a76f6');
+              colorArray.push('#0a76f6')
             } else {
-              colorArray.push('rgb(109, 109, 109)');
+              colorArray.push('rgb(109, 109, 109)')
             }
           }
-          this.myChart.config.options.scales.x.ticks.color = colorArray;
+          this.myChart.config.options.scales.x.ticks.color = colorArray
         }
         if (value.display === false) {
-          tooltipEl.style.opacity = 0;
-          tooltipElTriangle.style.opacity = 0;
+          tooltipEl.style.opacity = 0
+          tooltipElTriangle.style.opacity = 0
 
           for (let i = 0; i < this.myChart.data.datasets[0].data.length; i++) {
-            colorArray.push('rgb(109, 109, 109)');
+            colorArray.push('rgb(109, 109, 109)')
           }
-          this.myChart.config.options.scales.x.ticks.color = colorArray;
+          this.myChart.config.options.scales.x.ticks.color = colorArray
         }
-        this.myChart.update();
+        this.myChart.update()
         this.ngZone.run(() => {
-          this.myChart.update();
-        });
+          this.myChart.update()
+        })
       }
-    });
+    })
   }
 
   /**
@@ -787,18 +676,18 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @param event évenement de click sur le toogle bouton en légende
    */
   display(event: any) {
-    let index: number | undefined = undefined;
-    if (event.label === 'projectedMag') index = 0;
-    if (event.label === 'simulatedMag') index = 1;
-    if (event.label === 'projectedGref') index = 2;
-    if (event.label === 'simulatedGref') index = 3;
-    if (event.label === 'projectedCont') index = 4;
-    if (event.label === 'simulatedCont') index = 5;
+    let index: number | undefined = undefined
+    if (event.label === 'projectedMag') index = 0
+    if (event.label === 'simulatedMag') index = 1
+    if (event.label === 'projectedGref') index = 2
+    if (event.label === 'simulatedGref') index = 3
+    if (event.label === 'projectedCont') index = 4
+    if (event.label === 'simulatedCont') index = 5
     if (this.myChart !== null) {
-      const isDataShown = this.myChart.isDatasetVisible(index);
+      const isDataShown = this.myChart.isDatasetVisible(index)
 
-      if (isDataShown === true) this.myChart.hide(index);
-      else this.myChart.show(index);
+      if (isDataShown === true) this.myChart.hide(index)
+      else this.myChart.show(index)
     }
   }
 
@@ -810,7 +699,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
     this.simulatorService.chartAnnotationBox.next({
       ...this.simulatorService.chartAnnotationBox.getValue(),
       ...obj,
-    });
+    })
   }
   /**
    * Maj de la popin
@@ -819,19 +708,14 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @param xMax Abscisse max popin
    * @param content Contenue de la popin
    */
-  updateAnnotationBox(
-    display?: boolean,
-    xMin?: number | undefined,
-    xMax?: number,
-    content?: any
-  ) {
+  updateAnnotationBox(display?: boolean, xMin?: number | undefined, xMax?: number, content?: any) {
     this.simulatorService.chartAnnotationBox.next({
       ...this.simulatorService.chartAnnotationBox.getValue(),
       display,
       xMin,
       xMax,
       content,
-    });
+    })
   }
 
   /**
@@ -842,9 +726,9 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    */
   getDeltaInPercent(value1: number, value2: number): number {
     if (value1 !== undefined && value2 !== undefined) {
-      return fixDecimal(((value1 - value2) / value2) * 100) as number;
+      return fixDecimal(((value1 - value2) / value2) * 100) as number
     }
-    return 0;
+    return 0
   }
 
   /**
@@ -853,19 +737,19 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @returns Retourne l'arrondi d'un nombre
    */
   getRounded(value: number): number {
-    return fixDecimal(value);
+    return fixDecimal(value)
   }
 
   /**
    * Réinitialisation lors de la destruction du composant
    */
   ngOnDestroy(): void {
-    this.myChart.destroy();
-    this.dateStart = new Date();
-    this.dateStop = null;
-    this.myChart = null;
-    this.labels = null;
-    this.tooltip = { display: false };
+    this.myChart.destroy()
+    this.dateStart = new Date()
+    this.dateStop = null
+    this.myChart = null
+    this.labels = null
+    this.tooltip = { display: false }
 
     this.data = {
       projectedMag: {
@@ -898,7 +782,7 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
         dotColor: '#fcd7d3',
         bgColor: '#eba89f',
       },
-    };
+    }
   }
 
   /**
@@ -907,8 +791,6 @@ export class EtpChartComponent implements AfterViewInit, OnDestroy {
    * @returns Retourne le nom de mois entier
    */
   getRealMonth(month: string) {
-    return (
-      getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
-    );
+    return getLongMonthString(month.split(' ')[0]) + ' 20' + month.split(' ')[1]
   }
 }

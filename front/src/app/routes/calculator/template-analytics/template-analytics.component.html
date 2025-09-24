@@ -1,58 +1,86 @@
 <div class="header-refs window-scrool-width-margin">
-    <div>
+  <div></div>
+  <div>
+    @for (ref of referentiel; track ref.id) {
+    <div class="flex-1" [style.color]="userService.referentielMappingColorByInterface(ref.label)"
+      [style.background-color]="userService.referentielMappingColorByInterface(ref.label, OPACITY)">
+      {{ userService.referentielMappingNameByInterface(ref.label) }}
     </div>
-    <div>
-        <div *ngFor="let ref of referentiel" class="flex-1"
-            [style.color]="userService.referentielMappingColorByInterface(ref.label)"
-            [style.background-color]="userService.referentielMappingColorByInterface(ref.label, OPACITY)">
-            {{ userService.referentielMappingNameByInterface(ref.label) }}
-        </div>
-    </div>
+    }
+  </div>
 </div>
 
-<div class="scroll-container" *ngIf="lines && lines.length">
-    <div *ngFor="let line of lines">
-        <div class="container-colum cursor-pointer" (click)=" calculatorService.selectedRefGraphDetail=referentiel[0].id;
-            calculatorService.showGraphDetailTypeLineTitle=line.title;
-            calculatorService.showGraphDetailType=line.dataType">
-            <p *ngIf="line.title" class="title-section">{{line.title}}</p>
-            <p *ngIf="line.description" class="description-section" [innerHTML]="line.description | sanitizeHtml"></p>
-            <div class="flex-1"></div>
-            <button *ngIf="hasOption(line)" class="details" (click)="line.optionsVisibles = !line.optionsVisibles">
-                <i [class]="
-                !line.optionsVisibles === false ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'
-          "></i>{{ !line.optionsVisibles === false ? 'Masquer les détails' :
-                'Voir les détails' }}
-            </button>
-            <div *ngFor="let variation of getOptionsToShow(line); let index=index"
-                [ngClass]="{'first-empty-block': index === 0 && getOptionsToShow(line).length !== 1, 'end-empty-block': index === getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1, 'middle-empty-block': getOptionsToShow(line).length === 1 || (index < getOptionsToShow(line).length - 1 && index >= 1)}">
-                <p>{{variation.label}}</p>
-            </div>
-        </div>
-        <div class="container-elements">
-            <div *ngFor="let ref of referentiel; let refIndex = index" class="flex-1">
-                <aj-graphs-verticals-lines *ngIf="line.type === 'verticals-lines'" class="cursor-pointer"
-                    [referentielName]="ref.label" [referentielId]="ref.id"
-                    [values]="line.values ? line.values[refIndex] : []" [maxValue]="line.lineMax || null"
-                    [graphs]="getGraphs(line)"
-                    (click)="calculatorService.selectedRefGraphDetail = ref.id; calculatorService.showGraphDetailTypeLineTitle = line.title; calculatorService.showGraphDetailType = line.dataType"></aj-graphs-verticals-lines>
-                <ng-template [ngIf]="line.type === 'progress'">
-                    <div class="flex-1"></div>
-                    <aj-graphs-progress [referentielName]="ref.label"
-                        [percent]="line.values ? line.values[refIndex][0] : null"></aj-graphs-progress>
-                    <div class="flex-1"></div>
-                </ng-template>
-                <ng-template ngFor let-variant [ngForOf]="getOptionsToShow(line)" let-variantIndex="index">
-                    <aj-graphs-numbers [referentielName]="ref.label"
-                        [title]="variant.values[refIndex] === null ? 'N/R' : variant.values[refIndex]+''"
-                        [subTitle]="variant.subTitle"
-                        [ngClass]="{'no-border-bottom': variantIndex < getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1, 'no-border-top': variantIndex > 0 && getOptionsToShow(line).length !== 1, 'cursor-pointer': true}"
-                        [isWhite]="variantIndex === getOptionsToShow(line).length - 1"
-                        [showArrow]="variant.showArrow === true" [type]="line.title"
-                        [isTransparent]="variant.showArrow === true"
-                        (click)="calculatorService.selectedRefGraphDetail = ref.id; calculatorService.showGraphDetailTypeLineTitle = line.title; calculatorService.showGraphDetailType = line.dataType"></aj-graphs-numbers>
-                </ng-template>
-            </div>
-        </div>
+@if (lines && lines.length) {
+<div class="scroll-container">
+  @for (line of lines; track line.title) {
+  <div>
+    <div class="container-colum cursor-pointer" (click)="
+            calculatorService.selectedRefGraphDetail = referentiel[0].id;
+            calculatorService.showGraphDetailTypeLineTitle = line.title;
+            calculatorService.showGraphDetailType = line.dataType
+          ">
+      @if (line.title) {
+      <p class="title-section">{{ line.title }}</p>
+      }
+      @if (line.description) {
+      <p class="description-section" [innerHTML]="line.description | sanitizeHtml"></p>
+      }
+      <div class="flex-1"></div>
+      @if (hasOption(line)) {
+      <button class="details" (click)="line.optionsVisibles = !line.optionsVisibles">
+        <i [class]="!line.optionsVisibles === false ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+        {{ !line.optionsVisibles === false ? 'Masquer les détails' : 'Voir les détails' }}
+      </button>
+      }
+      @for (variation of getOptionsToShow(line); track variation.label; let index = $index) {
+      <div [ngClass]="{
+                'first-empty-block': index === 0 && getOptionsToShow(line).length !== 1,
+                'end-empty-block': index === getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1,
+                'middle-empty-block':
+                  getOptionsToShow(line).length === 1 || (index < getOptionsToShow(line).length - 1 && index >= 1),
+              }">
+        <p>{{ variation.label }}</p>
+      </div>
+      }
     </div>
+    <div class="container-elements">
+      @for (ref of referentiel; track ref.id; let refIndex = $index) {
+      <div class="flex-1">
+        @if (line.type === 'verticals-lines') {
+        <aj-graphs-verticals-lines class="cursor-pointer" [referentielName]="ref.label" [referentielId]="ref.id"
+          [values]="line.values ? line.values[refIndex] : []" [maxValue]="line.lineMax || null"
+          [graphs]="getGraphs(line)" (click)="
+                    calculatorService.selectedRefGraphDetail = ref.id;
+                    calculatorService.showGraphDetailTypeLineTitle = line.title;
+                    calculatorService.showGraphDetailType = line.dataType
+                  "></aj-graphs-verticals-lines>
+        }
+        @if (line.type === 'progress') {
+        <div class="flex-1"></div>
+        <aj-graphs-progress [referentielName]="ref.label"
+          [percent]="line.values ? line.values[refIndex][0] : null"></aj-graphs-progress>
+        <div class="flex-1"></div>
+        }
+        @for (variant of getOptionsToShow(line); track variant.label; let variantIndex = $index) {
+        <aj-graphs-numbers [referentielName]="ref.label"
+          [title]="variant.values[refIndex] === null || isInfinity(variant.values[refIndex]) ? 'N/R' : variant.values[refIndex] + ''"
+          [subTitle]="variant.subTitle" [ngClass]="{
+                    'no-border-bottom':
+                      variantIndex < getOptionsToShow(line).length - 1 && getOptionsToShow(line).length !== 1,
+                    'no-border-top': variantIndex > 0 && getOptionsToShow(line).length !== 1,
+                    'cursor-pointer': true,
+                  }" [isWhite]="variantIndex === getOptionsToShow(line).length - 1"
+          [showArrow]="variant.showArrow === true" [type]="line.title" [isTransparent]="variant.showArrow === true"
+          (click)="
+                    calculatorService.selectedRefGraphDetail = ref.id;
+                    calculatorService.showGraphDetailTypeLineTitle = line.title;
+                    calculatorService.showGraphDetailType = line.dataType
+                  "></aj-graphs-numbers>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
 </div>
+}

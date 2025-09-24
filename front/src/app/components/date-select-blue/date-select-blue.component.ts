@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   HostBinding,
@@ -18,7 +18,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 @Component({
   selector: 'aj-date-select-blue',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatDatepickerModule],
+  imports: [FormsModule, MatIconModule, MatDatepickerModule],
   templateUrl: './date-select-blue.component.html',
   styleUrls: ['./date-select-blue.component.scss'],
 })

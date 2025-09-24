@@ -85,7 +85,6 @@
         }
 
         &.future {
-            //margin-left: 158px;
             left: 9.5px;
         }
 
@@ -220,27 +219,20 @@
             right: -3px;
         }
 
-
         .top-bar-container {
-            //z-index: 1;
             flex: 1;
             display: flex;
             align-items: flex-end;
             position: relative;
-            //border-bottom: 1px solid #f9f6f2;
             background-color: white;
             padding: 0px 0px 0px 0px;
-            //box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
-            //0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
             p {
                 white-space: nowrap;
                 padding-bottom: 16px;
                 z-index: 1;
                 margin-right: 24px;
-
             }
-
 
             .container-timeline {
                 display: block;

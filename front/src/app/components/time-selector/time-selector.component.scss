@@ -1,5 +1,6 @@
-:host {
+@use '../../styles/utils.scss' as utils;
 
+:host {
     &.disabled-tmd {
         div>form>input {
             background-color: rgba(185, 184, 182, 0.2901960784);
@@ -14,6 +15,7 @@
             pointer-events: none;
         }
     }
+
 
     &.white-bg {
         form {
@@ -49,6 +51,7 @@
         }
     }
 
+
     form {
         position: relative;
         text-align: center;
@@ -64,7 +67,8 @@
             max-width: 140px;
 
             &:focus {
-                border-bottom: 2px solid black;
+                outline: none;
+                border-bottom: solid 2px utils.$colors-cblack !important;
             }
         }
 
@@ -74,18 +78,10 @@
             margin: auto;
             top: 0px;
             bottom: 0px;
-
-            &.disabled {
-                //display: none;
-            }
         }
 
         input:invalid {
             background: rgba(255, 0, 0, 0.282);
-        }
-
-        input:valid {
-            //background: rgba(0, 128, 0, 0.2);
         }
     }
 

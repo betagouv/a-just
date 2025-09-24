@@ -1,4 +1,6 @@
 <div (mouseenter)="isChildVisible = true" (mouseleave)="isChildVisible = false">
   <i class="ri-lightbulb-flash-line"></i>
-  <span *ngIf="isChildVisible">{{ text || 'Comment ça marche ?' }}</span>
+  @if (isChildVisible) {
+    <span>{{ text || 'Comment ça marche ?' }}</span>
+  }
 </div>

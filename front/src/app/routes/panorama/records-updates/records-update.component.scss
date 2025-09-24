@@ -1,4 +1,4 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
   display: block;
@@ -8,12 +8,13 @@
     width: 100%;
   }
 
-  th, td {
+  th,
+  td {
     white-space: nowrap;
   }
-  
+
   h3 {
-    color: fColor(primary);
+    color: utils.$colors-primary;
     font-size: 20px;
     margin-bottom: 22px;
   }
@@ -27,7 +28,7 @@
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    color: #929292;
+    color: utils.$colors-cgray;
     font-size: 14px;
     line-height: 1.71;
     padding: 4px 14px;

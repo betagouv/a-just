@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   AfterViewInit,
   Component,
@@ -43,7 +43,7 @@ export interface IntroJSStep {
 @Component({
   selector: 'aj-intro-js',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './intro-js.component.html',
   styleUrls: ['./intro-js.component.scss'],
 })

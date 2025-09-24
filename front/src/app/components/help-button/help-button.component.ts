@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
 
 /**
@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'aj-help-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './help-button.component.html',
   styleUrls: ['./help-button.component.scss'],
 })
