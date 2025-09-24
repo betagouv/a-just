@@ -351,25 +351,28 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       // Si une transaction est déjà en cours, la finaliser avant d'en démarrer une nouvelle
       if (this._reaffTxn && this._reaffStartAt) {
         const ms = Math.max(0, performance.now() - this._reaffStartAt)
-        try { Sentry.getActiveSpan()?.setAttribute('latency_ms', ms as any) } catch {}
+        try { (this._reaffTxn as any)?.setAttribute?.('latency_ms', ms as any) } catch {}
         try { (this._reaffTxn as any)?.finish?.() } catch {}
       }
     } catch {}
     this._reaffLabel = label
-    try { (window as any).__ajust_last_latency_event = label } catch {}
     this._reaffStartAt = performance.now()
-    this._reaffTxn = Sentry.startSpan(
-      { name: 'reaffectateur: compute', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } },
-      async () => {}
-    )
-    try { Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label) } catch {}
+    // Démarrer une transaction manuelle pour garantir que la durée = fin - début
+    try {
+      const tx: any = (Sentry as any).startTransaction
+        ? (Sentry as any).startTransaction({ name: 'reaffectateur: compute', op: 'task', forceTransaction: true })
+        : null
+      this._reaffTxn = tx || this._reaffTxn
+      try { (Sentry as any).getCurrentHub?.().configureScope?.((scope: any) => scope.setSpan?.(tx)) } catch {}
+      try { (this._reaffTxn as any)?.setAttribute?.('sentry.tag.latency_event', label) } catch {}
+    } catch {}
   }
 
   private _finishReaffTxn() {
     if (this._reaffTxn && this._reaffStartAt) {
       try {
         const ms = Math.max(0, performance.now() - this._reaffStartAt)
-        Sentry.getActiveSpan()?.setAttribute('latency_ms', ms as any)
+        ;(this._reaffTxn as any)?.setAttribute?.('latency_ms', ms as any)
       } catch {}
       try { (this._reaffTxn as any)?.finish?.() } catch {}
     }
@@ -432,7 +435,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         // Démarre une transaction Sentry pour le premier chargement uniquement
         if (this._reaffInitialPending && !this._reaffInitialTxn) {
           const label = 'Chargement du reaffectateur'
-          try { (window as any).__ajust_last_latency_event = label } catch {}
           this._reaffInitialStartAt = performance.now()
           this._reaffInitialTxn = Sentry.startSpan(
             { name: 'reaffectateur: compute', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } },
@@ -943,18 +945,21 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     const catLabel = selectedCat?.orignalValuePlurial || selectedCat?.orignalValue || 'catégorie'
     this._startReaffTxn(`Chargement du reaffectateur après choix de catégorie, ${catLabel}`)
 
-    this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id))
+    // Appliquer la mise à jour des fonctions sans démarrer une seconde transaction
+    this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id), { silent: true })
   }
 
   /**
    * Event lors du changement des fonctions
    * @param list
    */
-  onSelectedFonctionsIdsChanged(list: string[] | number[]) {
+  onSelectedFonctionsIdsChanged(list: string[] | number[], opts?: { silent?: boolean }) {
     this.reaffectatorService.selectedFonctionsIds = list.map((i) => +i)
-    // Démarrer une transaction pour filtre fonctions
-    const n = this.reaffectatorService.selectedFonctionsIds.length
-    this._startReaffTxn(`Chargement du reaffectateur après filtre par fonction, ${n} sélectionnée(s)`)    
+    // Démarrer une transaction pour filtre fonctions (sauf si appel silencieux depuis changement de catégorie)
+    if (!opts?.silent) {
+      const n = this.reaffectatorService.selectedFonctionsIds.length
+      this._startReaffTxn(`Chargement du reaffectateur après filtre par fonction, ${n} sélectionnée(s)`)   
+    }
     this.onFilterList()
   }
 

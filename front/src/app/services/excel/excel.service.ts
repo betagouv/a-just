@@ -82,6 +82,7 @@ export class ExcelService extends MainClass {
   private _excelStartAt: number | undefined
   private _excelLabel: string | undefined
   private _excelSpan: any | undefined
+  private _excelDefer: { resolve?: () => void } = {}
 
   private _startExcelTxn(label: string) {
     // Close any dangling transaction
@@ -94,16 +95,31 @@ export class ExcelService extends MainClass {
     } catch {}
     this._excelLabel = label
     this._excelStartAt = performance.now()
-    // Start a manual transaction so transaction.duration matches true end time
+    // Prefer a manual transaction to guarantee duration = finish - start
     try {
       const tx: any = (Sentry as any).startTransaction
         ? (Sentry as any).startTransaction({ name: 'extracteur: export excel (effectifs)', op: 'task', forceTransaction: true })
         : null
       this._excelTxn = tx || this._excelTxn
-      this._excelSpan = this._excelTxn
+      // Make this transaction current so breadcrumbs/spans attach under it
       try { (Sentry as any).getCurrentHub?.().configureScope?.((scope: any) => scope.setSpan?.(tx)) } catch {}
-      try { (this._excelTxn as any)?.setAttribute?.('sentry.tag.latency_event', label) } catch {}
+      this._excelSpan = tx || this._excelSpan
+      try { this._excelSpan?.setAttribute?.('sentry.tag.latency_event', label) } catch {}
     } catch {}
+    // Fallback: if manual transaction is not available, keep previous deferred model
+    if (!this._excelTxn) {
+      const promise = new Promise<void>((resolve) => {
+        this._excelDefer.resolve = resolve
+      })
+      Sentry.startSpan(
+        { name: 'extracteur: export excel (effectifs)', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } },
+        async () => {
+          try { this._excelSpan = Sentry.getActiveSpan() } catch {}
+          try { this._excelSpan?.setAttribute?.('sentry.tag.latency_event', label) } catch {}
+          await promise
+        }
+      )
+    }
     // Emit a scoped start message for discoverability
     try {
       Sentry.withScope((scope) => {
@@ -118,13 +134,16 @@ export class ExcelService extends MainClass {
   }
 
   private _finishExcelTxn(result: 'success' | 'timeout' | 'error') {
-    if (this._excelTxn && this._excelStartAt) {
+    if (this._excelStartAt) {
       try {
         const ms = Math.max(0, performance.now() - this._excelStartAt)
+        this._excelSpan?.setAttribute?.('latency_ms', ms as any)
+        this._excelSpan?.setAttribute?.('result', result)
         ;(this._excelTxn as any)?.setAttribute?.('latency_ms', ms as any)
         ;(this._excelTxn as any)?.setAttribute?.('result', result)
       } catch {}
-      try { (this._excelTxn as any)?.finish?.() } catch {}
+      try { this._excelTxn?.finish?.() } catch {}
+      try { this._excelDefer.resolve && this._excelDefer.resolve() } catch {}
     }
     this._excelTxn = undefined
     this._excelStartAt = undefined
@@ -188,6 +207,16 @@ export class ExcelService extends MainClass {
     // Start Sentry transaction for Excel export
     const label = "Préparation de l'extracteur Excel de données d'effectifs"
     this._startExcelTxn(label)
+    try {
+      Sentry.withScope((scope) => {
+        try {
+          scope.setTag('latency_event', label)
+          scope.setExtra('latency_event', label)
+          scope.setFingerprint(['extracteur-excel-effectifs-start', String(Date.now())])
+        } catch {}
+        Sentry.captureMessage('extracteur: export excel started', 'info')
+      })
+    } catch {}
     let startExtract = true
     setTimeout(() => {
       if (startExtract) this.appService.appLoading.next(true)
