@@ -77,6 +77,8 @@ Sentry.init({
           latencyEvent = 'Chargement du ventilateur'
         } else if (pathLike.startsWith('/cockpit')) {
           latencyEvent = 'Chargement du cockpit'
+        } else if (pathLike.startsWith('/dashboard')) {
+          latencyEvent = "Chargement de l'extracteur"
         } else if (pathLike.startsWith('/reaffectateur')) {
           latencyEvent = 'Chargement du reaffectateur'
         } else if (pathLike.startsWith('/donnees-d-activite')) {

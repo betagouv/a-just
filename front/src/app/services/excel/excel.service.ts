@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import * as Sentry from '@sentry/browser'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { BehaviorSubject } from 'rxjs'
 import { UserService } from '../user/user.service'
@@ -75,6 +76,63 @@ export class ExcelService extends MainClass {
   }
 
   /**
+   * Sentry instrumentation for Excel export
+   */
+  private _excelTxn: any | undefined
+  private _excelStartAt: number | undefined
+  private _excelLabel: string | undefined
+  private _excelSpan: any | undefined
+
+  private _startExcelTxn(label: string) {
+    // Close any dangling transaction
+    try {
+      if (this._excelTxn && this._excelStartAt) {
+        const ms = Math.max(0, performance.now() - this._excelStartAt)
+        try { (this._excelTxn as any)?.setAttribute?.('latency_ms', ms as any) } catch {}
+        try { (this._excelTxn as any)?.finish?.() } catch {}
+      }
+    } catch {}
+    this._excelLabel = label
+    this._excelStartAt = performance.now()
+    // Start a manual transaction so transaction.duration matches true end time
+    try {
+      const tx: any = (Sentry as any).startTransaction
+        ? (Sentry as any).startTransaction({ name: 'extracteur: export excel (effectifs)', op: 'task', forceTransaction: true })
+        : null
+      this._excelTxn = tx || this._excelTxn
+      this._excelSpan = this._excelTxn
+      try { (Sentry as any).getCurrentHub?.().configureScope?.((scope: any) => scope.setSpan?.(tx)) } catch {}
+      try { (this._excelTxn as any)?.setAttribute?.('sentry.tag.latency_event', label) } catch {}
+    } catch {}
+    // Emit a scoped start message for discoverability
+    try {
+      Sentry.withScope((scope) => {
+        try {
+          scope.setTag('latency_event', label)
+          scope.setExtra('latency_event', label)
+          scope.setFingerprint(['extracteur-excel-effectifs-start', String(Date.now())])
+        } catch {}
+        Sentry.captureMessage('extracteur: export excel started', 'info')
+      })
+    } catch {}
+  }
+
+  private _finishExcelTxn(result: 'success' | 'timeout' | 'error') {
+    if (this._excelTxn && this._excelStartAt) {
+      try {
+        const ms = Math.max(0, performance.now() - this._excelStartAt)
+        ;(this._excelTxn as any)?.setAttribute?.('latency_ms', ms as any)
+        ;(this._excelTxn as any)?.setAttribute?.('result', result)
+      } catch {}
+      try { (this._excelTxn as any)?.finish?.() } catch {}
+    }
+    this._excelTxn = undefined
+    this._excelStartAt = undefined
+    this._excelLabel = undefined
+    this._excelSpan = undefined
+  }
+
+  /**
    * Constructeur
    * @param humanResourceService
    * @param serverService
@@ -127,87 +185,190 @@ export class ExcelService extends MainClass {
    * @returns
    */
   exportExcel() {
+    // Start Sentry transaction for Excel export
+    const label = "Préparation de l'extracteur Excel de données d'effectifs"
+    this._startExcelTxn(label)
     let startExtract = true
     setTimeout(() => {
       if (startExtract) this.appService.appLoading.next(true)
     }, 5000)
-    return this.serverService
-      .postWithoutError(`extractor/filter-list`, {
-        backupId: this.humanResourceService.backupId.getValue(),
-        dateStart: setTimeToMidDay(this.dateStart.getValue()),
-        dateStop: setTimeToMidDay(this.dateStop.getValue()),
-        categoryFilter: this.selectedCategory.getValue(),
-      })
-      .then(async (data) => {
-        this.tabs = data.data
+    const backupId = this.humanResourceService.backupId.getValue()
+    if (!backupId) {
+      try { Sentry.addBreadcrumb({ category: 'extractor', level: 'warning', message: 'missing backupId' }) } catch {}
+      alert("Impossible de démarrer l’export (juridiction manquante)")
+      this._finishExcelTxn('error')
+      return
+    }
+    const payload = {
+      backupId,
+      dateStart: setTimeToMidDay(this.dateStart.getValue()),
+      dateStop: setTimeToMidDay(this.dateStop.getValue()),
+      categoryFilter: this.selectedCategory.getValue(),
+    }
+    try { Sentry.addBreadcrumb({ category: 'extractor', level: 'info', message: 'start-filter-list payload', data: { ...payload, dateStart: String(payload.dateStart), dateStop: String(payload.dateStop) } }) } catch {}
 
-        let viewModel = {
-          ...this.tabs.viewModel,
-          fonctions: data.data.fonctions,
-          firstLink: {
-            label: 'Consultez notre documentation en ligne ici.',
-            url: this.userService.isTJ()
-              ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs'
-              : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deffectifs/le-fichier-excel-de-lextracteur-deffectifs',
-          },
-          secondLink: {
-            label: 'Pour une présentation de la méthodologie à suivre, consultez la documentation ici.',
-            url: this.userService.isTJ()
-              ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes'
-              : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
-          },
-          thirdLink: {
-            label: 'Pour une présentation détaillée de la méthodologie à suivre, consultez la documentation en ligne, disponible ici.',
-            url: this.userService.isTJ()
-              ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes'
-              : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
-          },
-          daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue()).toLocaleDateString()}`,
-        }
-        viewModel = {
-          ...viewModel,
-          subtitles1: viewModel.subtitles1.slice(11),
-        }
-        fetch(this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx')
-          // 2. Get template as ArrayBuffer.
-          .then((response) => response.arrayBuffer())
-          // 3. Fill the template with data (generate a report).
-          .then((buffer) => {
-            return new Renderer().renderFromArrayBuffer(buffer, viewModel)
-          })
-          // 4. Get a report as buffer.
-          .then(async (report) => {
-            report = await this.getReport(report, viewModel)
-            if (this.tabs.onglet1.values.length === 0) {
-              alert('Une erreur est survenue lors de la génération de votre fichier.')
-              throw 'no values'
+    this.serverService
+      .postWithoutError('extractor/start-filter-list', payload)
+      .then(async (resp) => {
+        const jobId = (resp && resp.jobId) || null
+        const directData = (resp && (resp.result || resp.data)) || null
+        // If backend returned data synchronously, skip polling and proceed
+        if (!jobId && directData) {
+          try {
+            const data = { data: directData } as any
+            this.tabs = data.data
+
+            let viewModel: any = {
+              ...this.tabs.viewModel,
+              fonctions: data.data.fonctions,
+              firstLink: {
+                label: 'Consultez notre documentation en ligne ici.',
+                url: this.userService.isTJ()
+                  ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deeffectifs/le-fichier-excel-de-lextracteur-deeffectifs'
+                  : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deeffectifs/le-fichier-excel-de-lextracteur-deeffectifs',
+              },
+              secondLink: {
+                label: 'Pour une présentation de la méthodologie à suivre, consultez la documentation ici.',
+                url: this.userService.isTJ()
+                  ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deeffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes'
+                  : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deeffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
+              },
+              thirdLink: {
+                label: 'Pour une présentation détaillée de la méthodologie à suivre, consultez la documentation en ligne, disponible ici.',
+                url: this.userService.isTJ()
+                  ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deeffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes'
+                  : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deeffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
+              },
+              daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue()).toLocaleDateString()}`,
             }
-            return report.xlsx.writeBuffer()
-          })
-          // 5. Use `saveAs` to download on browser site.
-          .then((buffer) => {
+            viewModel = { ...viewModel, subtitles1: viewModel.subtitles1.slice(11) }
+
+            const tplBuf = await fetch(this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx').then((resp) => resp.arrayBuffer())
+            let report = await new Renderer().renderFromArrayBuffer(tplBuf, viewModel)
+            report = await this.getReport(report, viewModel)
+            if (this.tabs.onglet1.values.length === 0) throw new Error('no values')
+            const out = await report.xlsx.writeBuffer()
             const filename = this.getFileName()
-            return FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION)
-          })
-          .catch((err) => {
-            console.log('Error writing excel export', err)
-          })
-          .finally(() => {
+            await FileSaver.saveAs(new Blob([out]), filename + EXCEL_EXTENSION)
+            this._finishExcelTxn('success')
+          } catch (e2) {
+            console.error('[extractor] direct flow failed', e2)
+            alert('Erreur génération fichier')
+            this._finishExcelTxn('error')
+          } finally {
             this.isLoading.next(false)
             startExtract = false
             this.appService.appLoading.next(false)
-          })
+          }
+          return
+        }
+
+        if (!jobId) {
+          throw new Error('no jobId')
+        }
+
+        let finished = false
+        const t0 = Date.now()
+        const HARD_DEADLINE_MS = 180000 // 3 minutes max
+        let intervalId: any = null
+
+        const cleanAll = () => {
+          this.isLoading.next(false)
+          startExtract = false
+          this.appService.appLoading.next(false)
+          if (intervalId) clearInterval(intervalId)
+        }
+
+        const checkStatus = async () => {
+          if (Date.now() - t0 > HARD_DEADLINE_MS) {
+            finished = true
+            cleanAll()
+            alert('Polling timeout')
+            this._finishExcelTxn('timeout')
+            return
+          }
+
+          try {
+            const r: any = await this.serverService.postWithoutError('extractor/status-filter-list-post', { jobId })
+            if (finished) return
+            if (r.status === 'done') {
+              finished = true
+              cleanAll()
+
+              const data = { data: r.result } as any
+              this.tabs = data.data
+
+              let viewModel: any = {
+                ...this.tabs.viewModel,
+                fonctions: data.data.fonctions,
+                firstLink: {
+                  label: 'Consultez notre documentation en ligne ici.',
+                  url: this.userService.isTJ()
+                    ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deeffectifs/le-fichier-excel-de-lextracteur-deeffectifs'
+                    : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deeffectifs/le-fichier-excel-de-lextracteur-deeffectifs',
+                },
+                secondLink: {
+                  label: 'Pour une présentation de la méthodologie à suivre, consultez la documentation ici.',
+                  url: this.userService.isTJ()
+                    ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deeffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes'
+                    : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deeffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
+                },
+                thirdLink: {
+                  label: 'Pour une présentation détaillée de la méthodologie à suivre, consultez la documentation en ligne, disponible ici.',
+                  url: this.userService.isTJ()
+                    ? 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/extraire-ses-donnees-deeffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes'
+                    : 'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/extraire-ses-donnees-deeffectifs/remplir-ses-tableaux-detpt-pour-les-ddg-en-quelques-minutes',
+                },
+                daydate: `- du ${new Date(this.dateStart.getValue()).toLocaleDateString()} au ${new Date(this.dateStop.getValue()).toLocaleDateString()}`,
+              }
+              viewModel = { ...viewModel, subtitles1: viewModel.subtitles1.slice(11) }
+
+              try {
+                const tplBuf = await fetch(this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx').then((resp) =>
+                  resp.arrayBuffer(),
+                )
+                let report = await new Renderer().renderFromArrayBuffer(tplBuf, viewModel)
+                report = await this.getReport(report, viewModel)
+                if (this.tabs.onglet1.values.length === 0) throw new Error('no values')
+                const out = await report.xlsx.writeBuffer()
+                const filename = this.getFileName()
+                await FileSaver.saveAs(new Blob([out]), filename + EXCEL_EXTENSION)
+                this._finishExcelTxn('success')
+              } catch (err) {
+                console.error(err)
+                alert('Erreur génération fichier')
+                this._finishExcelTxn('error')
+              }
+              return
+            }
+
+            if (r.status === 'error') {
+              finished = true
+              cleanAll()
+              alert('Erreur serveur : ' + (r.error || 'Job error'))
+              this._finishExcelTxn('error')
+              return
+            }
+            // else queued/running → wait for next tick
+          } catch (err) {
+            finished = true
+            cleanAll()
+            console.error('[extractor] polling error', err)
+            alert('Erreur de communication avec le serveur')
+            this._finishExcelTxn('error')
+          }
+        }
+
+        // start polling
+        intervalId = setInterval(checkStatus, 2000)
+        checkStatus()
       })
       .catch((err) => {
-        console.log('Error writing excel export', err)
-        alert(
-          'L’extraction n’a pas pu être générée car le chargement a été trop long. Vous pouvez renouveler l’opération. Si le problème persiste, n’hésitez pas à contacter notre support.',
-        )
-      })
-      .finally(() => {
-        this.isLoading.next(false)
-        startExtract = false
-        this.appService.appLoading.next(false)
+        try { Sentry.addBreadcrumb({ category: 'extractor', level: 'error', message: 'start-filter-list failed', data: { status: err?.status, statusText: err?.statusText, url: err?.url, body: String(err?.error || '') } }) } catch {}
+        console.error('Error export', err)
+        const detail = err?.status ? ` (HTTP ${err.status}${err?.statusText ? ' ' + err.statusText : ''})` : ''
+        alert(`Impossible de démarrer l’export${detail}`)
+        this._finishExcelTxn('error')
       })
   }
 

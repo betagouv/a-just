@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import * as Sentry from '@sentry/browser';
 import * as FileSaver from 'file-saver';
 import { orderBy } from 'lodash';
 import * as xlsx from 'xlsx';
@@ -300,6 +301,12 @@ export class ExtractorActivityComponent extends MainClass {
    * @returns
    */
   exportActDate() {
+    // Start Sentry transaction for Activity Excel export
+    const label = "Préparation de l'extracteur Excel de données d'activités";
+    const startAt = performance.now();
+    (window as any).__ajust_last_latency_event = label;
+    const txn = Sentry.startSpan({ name: 'extracteur: export excel', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } }, async () => {});
+    try { Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label) } catch {}
     this.appService.alert.next({
       text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     });
@@ -362,12 +369,23 @@ export class ExtractorActivityComponent extends MainClass {
           // 5. Use `saveAs` to download on browser site.
           .then((buffer) => {
             const filename = this.getExportFileName() + EXCEL_EXTENSION;
-            return FileSaver.saveAs(
-              new Blob([buffer]),
-              filename + EXCEL_EXTENSION
-            );
+            FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION);
+            try {
+              const ms = Math.max(0, performance.now() - startAt);
+              Sentry.getActiveSpan()?.setAttribute('latency_ms', ms as any);
+            } catch {}
+            try { (txn as any)?.finish?.() } catch {}
+            return;
           })
-          .catch((err) => console.log('Error writing excel export', err));
+          .catch((err) => {
+            console.log('Error writing excel export', err);
+            try {
+              const ms = Math.max(0, performance.now() - startAt);
+              Sentry.getActiveSpan()?.setAttribute('latency_ms', ms as any);
+              Sentry.getActiveSpan()?.setAttribute('result', 'error');
+            } catch {}
+            try { (txn as any)?.finish?.() } catch {}
+          });
       });
   }
 
