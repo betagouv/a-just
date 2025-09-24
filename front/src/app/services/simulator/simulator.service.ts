@@ -222,7 +222,7 @@ export class SimulatorService extends MainClass {
    * en fonction des choix de l'utilisateur.
    */
   private _buildLatencyEventLabel(params: any, white: boolean): string {
-    const base = white ? 'Simulateur sans données pré-alimentées' : "Simulateur avec les données d'A-JUST"
+    const base = white ? "Calcul du simulateur sans données pré-alimentées" : "Calcul du simulateur avec les données d'A-JUST"
     const l1 = params?.lockedParams?.param1?.label || ''
     const l2 = params?.lockedParams?.param2?.label || ''
     const s = new Set([l1, l2].filter(Boolean))

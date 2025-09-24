@@ -87,6 +87,10 @@ Sentry.init({
           latencyEvent = 'Chargement du reaffectateur'
         } else if (pathLike.startsWith('/donnees-d-activite')) {
           latencyEvent = "Chargement des données d'activité"
+        } else if (pathLike.startsWith('/simulateur-sans-donnees')) {
+          latencyEvent = 'Chargement du simulateur sans données pré-alimentées'
+        } else if (pathLike.startsWith('/simulateur')) {
+          latencyEvent = 'Chargement du simulateur'
         }
       }
       event.tags = {
