@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common'
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import * as Sentry from '@sentry/browser'
 import { GraphsVerticalsLinesComponent } from './graphs-verticals-lines/graphs-verticals-lines.component'
 import { GraphsNumbersComponent } from './graphs-numbers/graphs-numbers.component'
 import { GraphsProgressComponent } from './graphs-progress/graphs-progress.component'
@@ -121,6 +122,11 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
    * End date
    */
   dateStop: Date | null = null
+
+  /**
+   * Mesure de latence pour l'affichage des graphes de détail
+   */
+  private detailLoadState: Record<string, { expected: number; completed: number; startAt: number; endTx?: () => void; label: string }> = {}
 
   /**
    * Constructor
@@ -283,6 +289,103 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
 
   logOpenDetails(open: boolean = true) {
     if (open === true) this.kpiService.register(CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW, '')
+  }
+
+  /**
+   * Début d'un chronométrage Sentry pour une section de détails (ex: ETPT Siège)
+   */
+  logOpenDetailsFor(sectionKey: string, open: boolean) {
+    this.logOpenDetails(open)
+    if (!open) {
+      // Si fermeture prématurée, on réinitialise l'état
+      delete this.detailLoadState[sectionKey]
+      return
+    }
+    const expected = this.referentiel?.length || 0
+    const label = this.buildLatencyEventForSection(sectionKey)
+    
+    // Démarre une transaction dédiée via startSpan et une promesse différée
+    const deferred: { resolve?: () => void } = {}
+    const promise = new Promise<void>((resolve) => {
+      deferred.resolve = resolve
+    })
+    Sentry.startSpan(
+      { name: 'cockpit: detail graphs', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } },
+      async () => {
+        try {
+          Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label)
+          Sentry.setTag('latency_event', label)
+        } catch {}
+        await promise
+      },
+    )
+    // Tagger également la transaction active (probablement /cockpit) pour qu'elle hérite du latency_event
+    try { Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label) } catch {}
+    try { (window as any).__ajust_last_latency_event = label } catch {}
+    this.detailLoadState[sectionKey] = {
+      expected,
+      completed: 0,
+      startAt: performance.now(),
+      endTx: () => { try { deferred.resolve && deferred.resolve() } catch {} },
+      label,
+    }
+  }
+
+  /**
+   * Appelé par les sous-graphes quand ils terminent leur chargement de lignes de détail
+   */
+  onDetailGraphLoadComplete(sectionKey: string) {
+    const st = this.detailLoadState[sectionKey]
+    if (!st) return
+    st.completed += 1
+    
+    if (st.completed >= st.expected) {
+      const ms = Math.max(0, performance.now() - st.startAt)
+      
+      try {
+        Sentry.withScope((scope) => {
+          try {
+            scope.setTag('latency_event', st.label)
+            scope.setExtra('latency_event', st.label)
+            scope.setExtra('latency_ms', ms)
+            scope.setExtra('section', sectionKey)
+            // Ensure uniqueness to bypass Dedupe dropping identical messages
+            scope.setFingerprint(['cockpit-detail-graphs', sectionKey, String(ms), String(Date.now())])
+          } catch {}
+          Sentry.captureMessage('cockpit: detail graphs displayed', 'info')
+        })
+      } catch {}
+      try { st.endTx && st.endTx() } catch {}
+      delete this.detailLoadState[sectionKey]
+    }
+  }
+
+  private buildLatencyEventForSection(sectionKey: string): string {
+    const base = 'Cockpit graphiques'
+    let section = ''
+    switch (sectionKey) {
+      case 'ETPTSiege':
+        section = 'ETPT Siège'
+        break
+      case 'ETPTGreffe':
+        section = 'ETPT Greffe'
+        break
+      case 'ETPTEam':
+        section = 'ETPT EAM'
+        break
+      case 'Stocks':
+        section = 'Stocks'
+        break
+      case 'Entrees':
+        section = 'Entrées'
+        break
+      case 'Sorties':
+        section = 'Sorties'
+        break
+      default:
+        section = sectionKey
+    }
+    return `${base}, ${section}, affichage des graphes de détail`
   }
 
   round(num: number) {
