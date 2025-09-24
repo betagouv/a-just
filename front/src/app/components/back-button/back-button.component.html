@@ -1,4 +1,12 @@
-<a *ngIf="routerLink !== 'back'" [routerLink]="routerLink" (click)="onClick()" [fragment]="fragment" class="no-print"><i
-    class="ri-arrow-left-s-line"></i> {{ text }}</a>
-<a *ngIf="routerLink === 'back'" (click)="onClick()" class="no-print"><i class="ri-arrow-left-s-line"></i> {{ text
-  }}</a>
+@if (routerLink !== 'back') {
+  <a [routerLink]="routerLink" (click)="onClick()" [fragment]="fragment" class="no-print">
+    <i class="ri-arrow-left-s-line"></i>
+    {{ text }}
+  </a>
+}
+@if (routerLink === 'back') {
+  <a (click)="onClick()" class="no-print">
+    <i class="ri-arrow-left-s-line"></i>
+    {{ text }}
+  </a>
+}

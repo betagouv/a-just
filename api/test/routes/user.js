@@ -2,7 +2,7 @@ import { instanceAxios } from '../utils/axios'
 
 export const onLoginAdminApi = async ({ email, password }) => {
   return await instanceAxios
-    .post('/auths/login-admin', {
+    .post('/auths/login-admin-test', {
       email,
       password,
     })
@@ -30,7 +30,7 @@ export const onLoginApi = async ({ email, password }) => {
 
 export const onSignUpApi = async ({ email, password, firstName, lastName, fonction }) => {
   return await instanceAxios
-    .post('/users/create-account', {
+    .post('users/create-account', {
       email: email,
       password: password,
       firstName: firstName,
@@ -41,14 +41,29 @@ export const onSignUpApi = async ({ email, password, firstName, lastName, foncti
       return res
     })
     .catch((err) => {
-      return err.response
+      return err
     })
 }
 
 export const onForgotPasswordApi = async ({ email }) => {
   return await instanceAxios
-    .post('/users/forgot-password', {
+    .post('/users/forgot-password-test', {
       email,
+    })
+    .then((res) => {
+      return res
+    })
+    .catch((err) => {
+      return err.response
+    })
+}
+
+export const onChangePasswordApi = async ({ email, password, code }) => {
+  return await instanceAxios
+    .post('/users/change-password', {
+      email,
+      password,
+      code,
     })
     .then((res) => {
       return res
@@ -99,7 +114,7 @@ export const onGetUserListApi = async ({ userToken }) => {
       return res
     })
     .catch((err) => {
-      return err.response
+      return err
     })
 }
 

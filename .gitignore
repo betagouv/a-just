@@ -5,6 +5,8 @@ api/.nyc_output
 api/coverage
 api/S06_men_20220224-002021_RGC-CA_f05.csv
 api/S06_men_20220224-002021_RGC-CA_f05.xml
+api/S06_men_20220224-002021_RGC-CA_f05.xml
+api/computeExtract-differences.json
 front/.angular
 front-admin/.angular
 format-datas/outputs*
@@ -16,3 +18,16 @@ api/certificats-sso
 *.key
 *.pem
 *.crt
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Test reports
+test/reports/
+*.log
+coverage/
+.nyc_output/

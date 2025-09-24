@@ -1,0 +1,1052 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  ExportPDFInterface</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/components/wrapper/wrapper.component.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Interface de génération d&#39;un commentaire</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#exportName" 
+>
+                                            exportName
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#filename" 
+>
+                                            filename
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#header" 
+>
+                                            header
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#noPopup" 
+>
+                                            noPopup
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="exportName"></a>
+                                        <span class="name "><b>exportName</b>
+                                            <a href="#exportName">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>exportName:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Ajoute un text dans la page d&#39;intro de l&#39;export</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="filename"></a>
+                                        <span class="name "><b>filename</b>
+                                            <a href="#filename">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>filename:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Nom du fichier d&#39;export</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="header"></a>
+                                        <span class="name "><b>header</b>
+                                            <a href="#header">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>header:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Prend en compte le header pour l&#39;export</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="noPopup"></a>
+                                        <span class="name "><b>noPopup</b>
+                                            <a href="#noPopup">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>noPopup:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>Show hide popup</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, ElementRef, EventEmitter, HostBinding, inject, Input, OnDestroy, Output, TemplateRef, ViewChild } from &#x27;@angular/core&#x27;
+import * as Sentry from &#x27;@sentry/browser&#x27;
+import { ActivatedRoute, Router, RouterLink } from &#x27;@angular/router&#x27;
+import html2canvas from &#x27;html2canvas&#x27;
+import jsPDF from &#x27;jspdf&#x27;
+import { ActionsInterface, PopupComponent } from &#x27;../popup/popup.component&#x27;
+import { Title } from &#x27;@angular/platform-browser&#x27;
+import { NewsComponent } from &#x27;./news/news.component&#x27;
+import { MainClass } from &#x27;../../libs/main-class&#x27;
+import { DocumentationInterface } from &#x27;../../interfaces/documentation&#x27;
+import { DateSelectorinterface } from &#x27;../../interfaces/date&#x27;
+import { BackupInterface } from &#x27;../../interfaces/backup&#x27;
+import {
+  CALCULATE_DOWNLOAD_URL,
+  DATA_GITBOOK,
+  DATA_GITBOOK_CA,
+  DOCUMENTATION_URL,
+  DOCUMENTATION_URL_CA,
+  IMPORT_ETP_TEMPLATE,
+  IMPORT_ETP_TEMPLATE_CA,
+  NOMENCLATURE_DOWNLOAD_URL,
+  NOMENCLATURE_DOWNLOAD_URL_CA,
+  NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL,
+} from &#x27;../../constants/documentation&#x27;
+import { UserService } from &#x27;../../services/user/user.service&#x27;
+import { HumanResourceService } from &#x27;../../services/human-resource/human-resource.service&#x27;
+import { AppService } from &#x27;../../services/app/app.service&#x27;
+import { ServerService } from &#x27;../../services/http-server/server.service&#x27;
+import { ActivitiesService } from &#x27;../../services/activities/activities.service&#x27;
+import { UserInterface } from &#x27;../../interfaces/user-interface&#x27;
+import { addHTML } from &#x27;../../utils/js-pdf&#x27;
+import { downloadFile } from &#x27;../../utils/system&#x27;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;
+import { CommonModule } from &#x27;@angular/common&#x27;
+import { TextEditorComponent } from &#x27;../text-editor/text-editor.component&#x27;
+import { SanitizeResourceUrlPipe } from &#x27;../../pipes/sanitize-resource-url/sanitize-resource-url.pipe&#x27;
+import { MatMenuModule } from &#x27;@angular/material/menu&#x27;
+import { HelpButtonComponent } from &#x27;../help-button/help-button.component&#x27;
+import { DateSelectComponent } from &#x27;../date-select/date-select.component&#x27;
+import { MatProgressBarModule } from &#x27;@angular/material/progress-bar&#x27;
+import { BackButtonComponent } from &#x27;../back-button/back-button.component&#x27;
+import { ReferentielService } from &#x27;../../services/referentiel/referentiel.service&#x27;
+import { ExcelService } from &#x27;../../services/excel/excel.service&#x27;
+import { KPIService } from &#x27;../../services/kpi/kpi.service&#x27;
+import { REQUEST_USER_MANUAL, REQUET_HELP_PAGE } from &#x27;../../constants/log-codes&#x27;
+
+/**
+ * Interface de génération d&#x27;un commentaire
+ */
+interface ExportPDFInterface {
+  /**
+   * Nom du fichier d&#x27;export
+   */
+  filename: string
+  /**
+   * Prend en compte le header pour l&#x27;export
+   */
+  header: boolean
+  /**
+   * Ajoute un text dans la page d&#x27;intro de l&#x27;export
+   */
+  exportName: string
+  /**
+   * Show hide popup
+   */
+  noPopup?: boolean
+}
+
+/**
+ * Composent de mise en page en mode connecté
+ */
+
+@Component({
+  selector: &#x27;aj-wrapper&#x27;,
+  standalone: true,
+  imports: [
+    NewsComponent,
+    MatIconModule,
+    CommonModule,
+    PopupComponent,
+    TextEditorComponent,
+    SanitizeResourceUrlPipe,
+    MatMenuModule,
+    RouterLink,
+    HelpButtonComponent,
+    DateSelectComponent,
+    MatProgressBarModule,
+    BackButtonComponent,
+  ],
+  templateUrl: &#x27;./wrapper.component.html&#x27;,
+  styleUrls: [&#x27;./wrapper.component.scss&#x27;],
+})
+export class WrapperComponent extends MainClass implements OnDestroy {
+  router &#x3D; inject(Router)
+  route &#x3D; inject(ActivatedRoute)
+  userService &#x3D; inject(UserService)
+  humanResourceService &#x3D; inject(HumanResourceService)
+  appService &#x3D; inject(AppService)
+  titlePlatform &#x3D; inject(Title)
+  activitiesService &#x3D; inject(ActivitiesService)
+  serverService &#x3D; inject(ServerService)
+  excelService &#x3D; inject(ExcelService)
+  /**
+   * Service de log des KPIs
+   */
+  kPIService &#x3D; inject(KPIService)
+  /**
+   * Service to referentiel
+   */
+  referentielService &#x3D; inject(ReferentielService)
+
+  /**
+   * DOM qui pointe sur le conteneur
+   */
+  @ViewChild(&#x27;contener&#x27;) contener: ElementRef&lt;HTMLElement&gt; | null &#x3D; null
+  /**
+   * DOM qui pointe sur le content
+   */
+  @ViewChild(&#x27;content&#x27;) content: ElementRef&lt;HTMLElement&gt; | null &#x3D; null
+  /**
+   * Attache de la css print pour formater la page quand elle est activé
+   */
+  @HostBinding(&#x27;class.print&#x27;) duringPrint: boolean &#x3D; false
+  /**
+   * Class css dit sur c&#x27;est le mode dark
+   */
+  @Input() @HostBinding(&#x27;class.dark-screen&#x27;) isDarkScreen &#x3D; false
+  /**
+   * Paramétrage d&#x27;un ng-template pour les boutons
+   */
+  @Input() actionTemplate: TemplateRef&lt;any&gt; | undefined
+  /**
+   * Paramétrage d&#x27;un ng-template pour les boutons (partie bottom du header)
+   */
+  @Input() actionTemplateBottom: TemplateRef&lt;any&gt; | undefined
+  /**
+   * Parmétrage d&#x27;un ng-template pour le titre et remplace le titre normal
+   */
+  @Input() titleTemplate: TemplateRef&lt;any&gt; | undefined
+  /**
+   * Parmétrage au niveau des boutons d&#x27;actions en haut à gauche
+   */
+  @Input() actionsLeftTemplate: TemplateRef&lt;any&gt; | undefined
+  /**
+   * Titre de page
+   */
+  @Input() title: string &#x3D; &#x27;&#x27;
+  /**
+   * Sous titre de page
+   */
+  @Input() subtitle: string &#x3D; &#x27;&#x27;
+  /**
+   * Nom complémentaire en sous titre
+   */
+  @Input() subtitleName: string &#x3D; &#x27;&#x27;
+  /**
+   * Paramétrage d&#x27;un ng-template pour surcharger le sous titre
+   */
+  @Input() subtitleTemplate: TemplateRef&lt;any&gt; | undefined | null
+  /**
+   * Ajout d&#x27;un bouton &quot;back&quot; avec un url
+   */
+  @Input() backUrl: string &#x3D; &#x27;&#x27;
+  /**
+   * Ajouter d&#x27;une ancre sur le lien de retour
+   */
+  @Input() backAnchor: string | undefined
+  /**
+   * Suppresion de la marge gauche
+   */
+  @Input() alignLeft: boolean | undefined
+  /**
+   * Affiche un loader ou non
+   */
+  @Input() isLoading: boolean &#x3D; false
+  /**
+   * Affiche une bulle d&#x27;aide avec une doc derriere
+   */
+  @Input() documentation: DocumentationInterface | undefined | null
+  /**
+   * Affichage d&#x27;un calendreier pour choisir un mois de données à affihcer sur l&#x27;écran des données d&#x27;activités
+   */
+  @Input() dateSelector: DateSelectorinterface | undefined
+  /**
+   * Output pour recharger la page
+   */
+  @Output() pageSelected &#x3D; new EventEmitter&lt;string&gt;()
+  /**
+   * Doc d&#x27;aide à afficher
+   */
+  documentationToShow: DocumentationInterface | undefined
+  /**
+   * Popup open
+   */
+  popin &#x3D; false
+  /**
+   * Dit si le paneau d&#x27;aide est visible ou non
+   */
+  panelHelper: boolean &#x3D; false
+  /**
+   * Récupération du numéro de version de l&#x27;app
+   */
+  versionNumber: string &#x3D; import.meta.env.NG_APP_VERSION
+  /**
+   * Juridiction sélectionnée
+   */
+  hrBackup: BackupInterface | undefined
+  /**
+   * Id de juridiction sélectionnée
+   */
+  hrBackupId: number | null &#x3D; null
+  /**
+   * Liste des juridictions à disposition de l&#x27;utilisateur
+   */
+  hrBackups: BackupInterface[] &#x3D; []
+  /**
+   * URL de la documentation
+   */
+  DOCUMENTATION_URL &#x3D; DOCUMENTATION_URL
+  /**
+   * URL de la doc de la calculatrice pour le calcul des ETP
+   */
+  CALCULATE_DOWNLOAD_URL &#x3D; CALCULATE_DOWNLOAD_URL
+  /**
+   * Menu de gauche
+   */
+  menu: { label: string; path: string }[] &#x3D; []
+  /**
+   * Answer of question
+   */
+  promptComment: boolean &#x3D; false
+  /**
+   * Export PDF temp var
+   */
+  exportPDFTemp: ExportPDFInterface | null &#x3D; null
+  /**
+   * Quill editor
+   */
+  quillEditor: any &#x3D; null
+  /**
+   * Promise resolve export
+   */
+  exportAsPdfPromiseResolve: Function | null &#x3D; null
+  /**
+   * Ouverture du menu
+   */
+  openTools: boolean &#x3D; false
+  /**
+   * Constructeur
+   * @param authService
+   * @param router
+   * @param userService
+   * @param humanResourceService
+   * @param appService
+   * @param activitiesService
+   */
+  constructor() {
+    super()
+    this.appService.appLoading.next(true)
+    this.watch(
+      this.userService.user.subscribe((u) &#x3D;&gt; {
+        this.updateMenu(u)
+      }),
+    )
+
+    this.watch(
+      this.humanResourceService.backups.subscribe((backups) &#x3D;&gt; {
+        this.hrBackups &#x3D; backups
+        this.hrBackup &#x3D; this.hrBackups.find((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; this.hrBackupId)
+        if (backups.length) this.appService.appLoading.next(false)
+      }),
+    )
+
+    this.watch(
+      this.humanResourceService.backupId.subscribe((backupId) &#x3D;&gt; {
+        this.hrBackupId &#x3D; backupId
+        this.hrBackup &#x3D; this.hrBackups.find((b) &#x3D;&gt; b.id &#x3D;&#x3D;&#x3D; backupId)
+      }),
+    )
+
+    // Keep Sentry tag in sync with selected juridiction title
+    this.watch(
+      this.humanResourceService.hrBackup.subscribe((bk) &#x3D;&gt; {
+        const title &#x3D; bk?.label?.toString().trim()
+        if (title) {
+          Sentry.setTag(&#x27;juridiction_title&#x27;, title)
+        }
+      }),
+    )
+
+    if(this.route.snapshot.queryParams[&#x27;b&#x27;]) {
+      this.backUrl &#x3D; &#x60;/${this.route.snapshot.queryParams[&#x27;b&#x27;]}&#x60;
+    }
+  }
+
+  /**
+   * On Changes titles
+   */
+  ngOnChanges() {
+    this.titlePlatform.setTitle((this.userService.isCa() ? &#x27;A-Just CA | &#x27; : &#x27;A-Just TJ | &#x27;) + this.title)
+  }
+
+  /**
+   * A la destruction du composant supprimer les watcher
+   */
+  ngOnDestroy() {
+    this.appService.scrollPosition.set(0)
+    this.watcherDestroy()
+  }
+
+  /**
+   * Bouton déconnecter
+   */
+  onDisconnect() {
+    this.router.navigate([&#x27;/logout&#x27;])
+  }
+
+  onSelectAction(event: any) {
+    this.onDisconnect()
+  }
+
+  /**
+   * Mise à jour du menu qui affiche les pages accéssibles
+   * @param user
+   */
+  updateMenu(user: UserInterface | null) {
+    this.menu &#x3D; user ? this.userService.getAllUserPageUrl(user) : []
+  }
+
+  /**
+   * Retourne si un url est le même que celui de la page actuelle
+   * @param item
+   * @returns
+   */
+  isSelected(item: any) {
+    return &#x60;/${item.path}&#x60; &#x3D;&#x3D;&#x3D; window.location.pathname
+  }
+
+  /**
+   * Changement de la juridiction
+   * @param id
+   */
+  onChangeHRBackup(id: number) {
+    this.humanResourceService.backupId.next(id)
+    this.router.navigate([&#x27;/panorama&#x27;])
+  }
+
+  /**
+   * Export PDF du contenu et aussi au besoin du header
+   * @param filename
+   * @param header
+   * @returns
+   */
+  async exportAsPdf(
+    filename: string,
+    header: boolean &#x3D; true,
+    promptComment: boolean &#x3D; false,
+    exportName: string | null &#x3D; null,
+    noPopup: boolean &#x3D; false,
+  ): Promise&lt;any&gt; {
+    this.exportPDFTemp &#x3D; {
+      filename,
+      header,
+      exportName: exportName || &#x27;&#x27;,
+      noPopup,
+    }
+
+    const newPro &#x3D; new Promise((resolve) &#x3D;&gt; {
+      this.exportAsPdfPromiseResolve &#x3D; resolve
+    })
+
+    if (promptComment) {
+      this.promptComment &#x3D; true
+    } else {
+      this.askExportAsPdf()
+    }
+
+    return newPro
+  }
+
+  /**
+   * Export PDF du contenu et aussi au besoin du header
+   * @param comment
+   * @returns
+   */
+  async askExportAsPdf(comment?: string): Promise&lt;any&gt; {
+    if (!this.exportPDFTemp || !this.exportAsPdfPromiseResolve) {
+      return
+    }
+
+    const { header, filename, exportName, noPopup } &#x3D; this.exportPDFTemp
+    this.duringPrint &#x3D; true
+
+    const element &#x3D; this[header ? &#x27;contener&#x27; : &#x27;content&#x27;]?.nativeElement
+
+    if (!element) {
+      this.exportAsPdfPromiseResolve(true)
+      return
+    }
+
+    document.body.classList.add(&#x27;remove-height&#x27;)
+    document.body.classList.add(&#x27;on-print&#x27;)
+    if (!noPopup)
+      this.appService.alert.next({
+        text: &quot;Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu&#x27;à l&#x27;ouverture de votre fenêtre de téléchargement.&quot;,
+      })
+
+    setTimeout(() &#x3D;&gt; {
+      html2canvas(element, {
+        scale: 1.5,
+      }).then(async (canvas) &#x3D;&gt; {
+        var width &#x3D; canvas.width
+        var height &#x3D; canvas.height
+        var doc
+
+        if (comment) {
+          const mainHtmlContainer &#x3D; document.createElement(&#x27;div&#x27;)
+          mainHtmlContainer.style.position &#x3D; &#x27;absolute&#x27;
+          mainHtmlContainer.style.left &#x3D; &#x27;200%&#x27;
+          mainHtmlContainer.style.width &#x3D; &#x27;400px&#x27;
+
+          const htmlContainer &#x3D; document.createElement(&#x27;div&#x27;)
+          htmlContainer.style.position &#x3D; &#x27;relative&#x27;
+          htmlContainer.style.padding &#x3D; &#x27;16px 32px 32px 32px&#x27;
+
+          const logo &#x3D; document.createElement(&#x27;img&#x27;)
+          logo.src &#x3D; &#x27;/assets/icons/logos/white-192x192.png&#x27;
+          logo.style.width &#x3D; &#x27;50px&#x27;
+          logo.style.height &#x3D; &#x27;50px&#x27;
+          logo.style.position &#x3D; &#x27;absolute&#x27;
+          logo.style.top &#x3D; &#x27;20px&#x27;
+          logo.style.left &#x3D; &#x27;30px&#x27;
+
+          const title &#x3D; document.createElement(&#x27;p&#x27;)
+          title.style.fontSize &#x3D; &#x27;18px&#x27;
+          title.style.textAlign &#x3D; &#x27;left&#x27;
+          title.style.fontFamily &#x3D; &#x27;Helvetica&#x27;
+          title.style.marginTop &#x3D; &#x27;64px&#x27;
+          title.style.fontWeight &#x3D; &#x27;bold&#x27;
+          title.innerHTML &#x3D; exportName || &#x27;&#x27;
+
+          const pCom &#x3D; document.createElement(&#x27;p&#x27;)
+          pCom.style.marginTop &#x3D; &#x27;32px&#x27;
+          pCom.style.fontSize &#x3D; &#x27;14px&#x27;
+          pCom.style.textAlign &#x3D; &#x27;left&#x27;
+          pCom.style.fontFamily &#x3D; &#x27;Helvetica&#x27;
+          pCom.innerHTML &#x3D; &#x27;Commentaire :&#x27;
+
+          const commentDom &#x3D; document.createElement(&#x27;p&#x27;)
+          commentDom.style.fontSize &#x3D; &#x27;10px&#x27;
+          commentDom.style.textAlign &#x3D; &#x27;left&#x27;
+          commentDom.style.fontFamily &#x3D; &#x27;Helvetica&#x27;
+          commentDom.classList.add(&#x27;p-with-child-Helvetica&#x27;)
+          comment &#x3D; comment || &#x27;&#x27;
+          if (comment.includes(&#x27;&lt;ol&gt;&#x27;)) {
+            comment &#x3D; comment.replace(/&lt;ol&gt;/gm, &#x27;&lt;ul&gt;&#x27;)
+            comment &#x3D; comment.replace(/&lt;\/ol&gt;/gm, &#x27;&lt;/ul&gt;&#x27;)
+            comment &#x3D; comment.replace(/&lt;span class&#x3D;&quot;ql-ui&quot; contenteditable&#x3D;&quot;false&quot;&gt;&lt;\/span&gt;/gm, &#x27;&#x27;)
+            comment &#x3D; comment.replace(/&lt;li data-list&#x3D;&quot;bullet&quot;&gt;/gm, &#x27;&lt;li&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; • &#x27;)
+            for (let i &#x3D; 1; i &lt; 10; i++) {
+              const newCheck &#x3D; new RegExp(&#x60;&lt;li([^&gt;]*)ql-indent-${i}([^&gt;]*)&gt;&#x60;, &#x27;gm&#x27;)
+              const nbspList &#x3D; &#x27;&amp;nbsp;&#x27;.repeat(i * 3)
+              comment &#x3D; comment.replace(newCheck, &#x60;&lt;li style&#x3D;&quot;margin-left:${i * 30}px&quot;&gt;${nbspList} • &#x60;)
+            }
+          }
+          commentDom.innerHTML &#x3D; comment
+          //console.log(&#x27;comment&#x27;, comment);
+
+          htmlContainer.appendChild(logo)
+          htmlContainer.appendChild(title)
+          htmlContainer.appendChild(pCom)
+          htmlContainer.appendChild(commentDom)
+          mainHtmlContainer.appendChild(htmlContainer)
+          document.body.appendChild(mainHtmlContainer)
+
+          const { width: w, height: h } &#x3D; mainHtmlContainer.getBoundingClientRect()
+          doc &#x3D; new jsPDF(w &gt; h ? &#x27;l&#x27; : &#x27;p&#x27;, &#x27;px&#x27;, [w, h + 50], true)
+          await addHTML(doc, htmlContainer)
+          mainHtmlContainer.remove()
+
+          doc.addPage([width / 2, height / 2], width &gt; height ? &#x27;l&#x27; : &#x27;p&#x27;)
+        } else {
+          doc &#x3D; new jsPDF(width &gt; height ? &#x27;l&#x27; : &#x27;p&#x27;, &#x27;px&#x27;, [width / 2, height / 2], true)
+        }
+
+        doc.addImage(canvas.toDataURL(&#x27;image/jpeg&#x27;, 1), &#x27;JPEG&#x27;, 0, 0, width / 2, height / 2, &#x27;&#x27;, &#x27;FAST&#x27;)
+        doc.save(filename)
+
+        this.duringPrint &#x3D; false
+        document.body.classList.remove(&#x27;remove-height&#x27;)
+        document.body.classList.remove(&#x27;on-print&#x27;)
+
+        if (this.exportAsPdfPromiseResolve) {
+          this.exportAsPdfPromiseResolve(true)
+        }
+      })
+    })
+  }
+
+  /**
+   * onActionComment
+   */
+  onActionComment(action: ActionsInterface, htmlComment?: string) {
+    switch (action.id) {
+      case &#x27;export&#x27;:
+        this.askExportAsPdf()
+        break
+      case &#x27;export-with-comment&#x27;:
+        this.askExportAsPdf(htmlComment)
+        break
+      default:
+        if (this.exportAsPdfPromiseResolve) {
+          this.exportAsPdfPromiseResolve(true)
+        }
+        break
+    }
+
+    this.promptComment &#x3D; false
+  }
+
+  /**
+   * Click de demande d&#x27;ouverture ou de fermeture de paneau d&#x27;aide
+   */
+  onTogglePanelHelper() {
+    this.panelHelper &#x3D; !this.panelHelper
+    if (this.documentation &amp;&amp; this.panelHelper) {
+      this.kPIService.register(REQUET_HELP_PAGE, this.documentation.path)
+      this.onForcePanelHelperToShow(this.documentation)
+    }
+  }
+
+  /**
+   * Methode à disposition pour forcer l&#x27;ouverture du paneau, pratique pour un appel exterieur du composant
+   * @param documentation
+   */
+  onForcePanelHelperToShow(documentation: DocumentationInterface | null, opened: boolean &#x3D; true) {
+    if (documentation) this.documentationToShow &#x3D; documentation
+    this.panelHelper &#x3D; opened
+  }
+
+  /**
+   * Demande de téléchargement du calculateur
+   */
+  onDownloadCalculator() {
+    this.appService.alert.next({
+      text: &quot;Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu&#x27;à l&#x27;ouverture de votre fenêtre de téléchargement.&quot;,
+    })
+  }
+
+  onSelect(path: string) {
+    this.pageSelected.emit(path)
+  }
+
+  async downloadAsset(type: string, download &#x3D; false) {
+    this.kPIService.register(REQUEST_USER_MANUAL, type)
+
+    let url &#x3D; null
+    if (type &#x3D;&#x3D;&#x3D; &#x27;guide-utilisateur&#x27;) {
+      url &#x3D; this.userService.isCa() ? DOCUMENTATION_URL_CA : DOCUMENTATION_URL
+    } else if (type &#x3D;&#x3D;&#x3D; &#x27;data-book&#x27;) {
+      if (this.userService.isCa()) {
+        url &#x3D; DATA_GITBOOK_CA
+      } else {
+        url &#x3D; DATA_GITBOOK
+      }
+    } else if (type &#x3D;&#x3D;&#x3D; &#x27;nomenclature&#x27;) {
+      if (this.userService.isCa()) {
+        url &#x3D; NOMENCLATURE_DOWNLOAD_URL_CA
+      } else {
+        if (this.referentielService.isDroitLocal()) {
+          url &#x3D; NOMENCLATURE_DROIT_LOCAL_DOWNLOAD_URL
+        } else {
+          url &#x3D; NOMENCLATURE_DOWNLOAD_URL
+        }
+      }
+    } else if (type &#x3D;&#x3D;&#x3D; &#x27;calculatrice&#x27;) url &#x3D; this.CALCULATE_DOWNLOAD_URL
+    else if (type &#x3D;&#x3D;&#x3D; &#x27;fiche-agent&#x27;) {
+      this.excelService.generateAgentFile()
+      await this.serverService.post(&#x27;centre-d-aide/log-documentation-link&#x27;, {
+        value: this.userService.isCa() ? IMPORT_ETP_TEMPLATE_CA : IMPORT_ETP_TEMPLATE,
+      })
+    }
+
+    if (url) {
+      await this.serverService.post(&#x27;centre-d-aide/log-documentation-link&#x27;, {
+        value: url,
+      })
+      if (download) {
+        downloadFile(url)
+      } else {
+        window.open(url)
+      }
+    }
+  }
+
+  /**
+   * Changement de la date via le selecteur
+   * @param date
+   */
+  changeMonth(date: Date) {
+    this.activitiesService.activityMonth.next(date)
+  }
+
+  /**
+   * Resize le wrapper lorsqu&#x27;il n&#x27;y a plus de news active
+   * @param elem
+   */
+  refreshHeight(elem: any) {
+    elem.style[&#x27;padding-top&#x27;] &#x3D; &#x27;0px&#x27;
+  }
+
+  /**
+   * Save scroll position
+   * @param event
+   */
+  onScroll(event: any) {
+    this.appService.scrollPosition.set(event.target.scrollTop)
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'ExportPDFInterface.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

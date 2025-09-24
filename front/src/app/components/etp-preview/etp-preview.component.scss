@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
   display: block;
@@ -6,7 +6,7 @@
 
   &.dark-mode {
     .preview {
-      background-color: fColor(darkModeBgMenu);
+      background-color: utils.$colors-darkModeBgMenu;
     }
   }
 
@@ -18,13 +18,13 @@
     line-height: 40px;
     text-align: center;
     font-size: 12px;
-    color: fColor(cgreen);
+    color: utils.$colors-cgreen;
     margin: 8px;
     font-weight: bold;
 
     &.alert {
-      color: fColor(cred);
-      background-color: rgba(fColor(cred), 0.2);
+      color: utils.$colors-cred;
+      background-color: rgba(utils.$colors-cred, 0.2);
     }
   }
 

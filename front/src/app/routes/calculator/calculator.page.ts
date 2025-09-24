@@ -97,6 +97,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    */
   referentielIds: number[] = this.calculatorService.referentielIds.getValue()
   /**
+   * Liste des référentiels filtrés
+   */
+  _filteredReferentiels: any[] = []
+  /**
    * Date de début du calcul
    */
   dateStart: Date | null = null
@@ -124,6 +128,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Filtre des lignes du calculateur visible
    */
   datasFilted: CalculatorInterface[] = []
+  /**
+   * Données filtrées dédiées aux analytics
+   */
+  datasAnalytics: CalculatorInterface[] = []
   /**
    * En chargement
    */
@@ -543,10 +551,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           ({
             id: f.id,
             value: f.code,
-          } as dataInterface),
+          }) as dataInterface,
       )
     this.lastCategorySelected = this.categorySelected
     this.selectedFonctionsIds = this.fonctions.map((a) => a.id)
+    this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
   ngAfterViewInit() {
@@ -658,6 +667,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
 
       this.referentiels = [...refs]
       this.backupSettingSaved = l
+
+      this.updateFilteredReferentiels()
     })
   }
 
@@ -675,7 +686,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
   /**
    * Chargement des données back
    */
-  onLoad() {
+  onLoad(loadDetail = true, changedCategory = false) {
     if (this.onTimeoutLoad) {
       clearTimeout(this.onTimeoutLoad)
     }
@@ -693,120 +704,36 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           this.onTimeoutLoad = null
           this.isLoading = true
           this.appService.appLoading.next(true)
-
-          console.time('onLoad')
-          const listPromise: Promise<any[]>[] = []
-          this.referentielIds.forEach((refId) => {
-            if (this.categorySelected) {
-              listPromise.push(
-                this.calculatorService.filterList(
-                  this.categorySelected,
-                  this.lastCategorySelected === this.categorySelected ? this.selectedFonctionsIds : null,
-                  this.dateStart,
-                  this.dateStop,
-                  false,
-                  [refId],
-                ),
-              )
-            }
-          })
-
-          Promise.all(listPromise)
-            .then((returnList) => {
-              console.log('list', returnList)
-              if (returnList.length) {
-                // @ts-ignore
-                const fonctions = returnList[0].fonctions
-                // @ts-ignore
-                const list = returnList.flatMap((l) => l.list)
-
-                if (this.lastCategorySelected !== this.categorySelected) {
-                  this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
-                    id: f.id,
-                    value: f.code,
-                  }))
-                  this.selectedFonctionsIds = fonctions.map((f: HRFonctionInterface) => f.id)
-                  this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
-                }
-                this.formatDatas(list)
-                this.lastCategorySelected = this.categorySelected
-
-                if (this.firstLoading === false && this.location.path() === '/cockpit') {
-                  this.appService.notification('Les données du cockpit ont été mises à jour !')
-                }
-                this.firstLoading = false
-                console.timeEnd('onLoad')
-              }
-            })
-            .finally(() => {
-              this.isLoading = false
-
-              const listPromiseAll: Promise<any[]>[] = []
-              this.referentielIds.forEach((refId) => {
-                if (this.categorySelected) {
-                  listPromiseAll.push(
-                    this.calculatorService.filterList(
-                      this.categorySelected,
-                      this.lastCategorySelected === this.categorySelected ? this.selectedFonctionsIds : null,
-                      this.dateStart,
-                      this.dateStop,
-                      true,
-                      [refId],
-                    ),
-                  )
-                }
-              })
-              Promise.all(listPromiseAll).then((returnList) => {
-                if (returnList.length) {
-                  // @ts-ignore
-                  const list = returnList.flatMap((l) => l.list)
-                  this.formatDatas(list)
-                }
-                this.appService.appLoading.next(false)
-              })
-            })
-
-          /*this.calculatorService
+          this.calculatorService
             .filterList(
               this.categorySelected,
-              this.lastCategorySelected === this.categorySelected
-                ? this.selectedFonctionsIds
-                : null,
+              this.lastCategorySelected === this.categorySelected && !changedCategory ? this.selectedFonctionsIds : null,
               this.dateStart,
               this.dateStop,
               true,
             )
             .then(({ list, fonctions }) => {
-              this.appService.appLoading.next(false);
+              this.appService.appLoading.next(false)
               if (this.lastCategorySelected !== this.categorySelected) {
                 this.fonctions = fonctions.map((f: HRFonctionInterface) => ({
                   id: f.id,
                   value: f.code,
-                }));
-                this.selectedFonctionsIds = fonctions.map(
-                  (f: HRFonctionInterface) => f.id
-                );
-                this.calculatorService.selectedFonctionsIds.next(
-                  this.selectedFonctionsIds
-                );
+                }))
+                this.selectedFonctionsIds = fonctions.map((f: HRFonctionInterface) => f.id)
+                this.calculatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
               }
-              this.formatDatas(list);
-              this.isLoading = false;
-              this.lastCategorySelected = this.categorySelected;
+              this.formatDatas(list)
+              this.isLoading = false
+              this.lastCategorySelected = this.categorySelected
 
-              if (
-                this.firstLoading === false &&
-                this.location.path() === '/cockpit'
-              ) {
-                this.appService.notification(
-                  'Les données du cockpit ont été mises à jour !'
-                );
+              if (this.firstLoading === false && this.location.path() === '/cockpit') {
+                this.appService.notification('Les données du cockpit ont été mis à jour !')
               }
-              this.firstLoading = false;
+              this.firstLoading = false
             })
             .catch(() => {
-              this.isLoading = false;
-            })*/
+              this.isLoading = false
+            })
         }
       },
       this.firstLoading ? 0 : 1500,
@@ -823,6 +750,8 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     backupLabel && filterReferentielCalculator(list, backupLabel)*/
 
     this.datas = list.map((l) => ({ ...l, childIsVisible: false }))
+    this.datasFilted = [...this.datas]
+    this.datasAnalytics = [...this.datas]
     this.filtredDatas()
   }
 
@@ -848,7 +777,11 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
       )
     }
 
-    this.datasFilted = list
+    if (this.tabSelected === 0) {
+      this.datasFilted = list
+    } else {
+      this.datasAnalytics = list
+    }
   }
 
   /**
@@ -910,7 +843,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.calculatorService.categorySelected.next(this.categorySelected)
     this.fonctionRealValue = ''
     this.loadFunctions()
+    this.onLoad(false, true)
     if (this.categorySelected === this.FONCTIONNAIRES) this.kpiService.register(CALCULATOR_SELECT_GREFFE, '')
+    this.updateFilteredReferentiels()
   }
 
   /**
@@ -1170,23 +1105,25 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    */
   async onLoadCompare() {
     if (this.categorySelected && this.isLoading === false) {
+      const datas = this.tabSelected === 0 ? this.datasFilted : this.datasAnalytics
+
       this.onEdit = false
       const actualRangeString = `${this.getRealValue(this.dateStart)} - ${this.getRealValue(this.dateStop)}`
       const list: AnalyticsLine[] = []
-      const value1TempsMoyen = (this.datasFilted || []).map((d) => (this.categorySelected === MAGISTRATS ? d.magRealTimePerCase : d.fonRealTimePerCase))
+      const value1TempsMoyen = (datas || []).map((d) => (this.categorySelected === MAGISTRATS ? d.magRealTimePerCase : d.fonRealTimePerCase))
       const stringValue1TempsMoyen = (value1TempsMoyen || []).map((d) => (d === null ? 'N/R' : `${this.getHours(d) || 0}h${this.getMinutes(d) || 0} `))
 
-      const value1DTES = (this.datasFilted || []).map((d) => d.realDTESInMonths)
-      const value1TauxCouverture = (this.datasFilted || []).map((d) => d.realCoverage)
-      const value1Sorties = (this.datasFilted || []).map((d) => (d.totalOut ? Math.floor(d.totalOut) : d.totalOut))
-      const value1Entrees = (this.datasFilted || []).map((d) => (d.totalIn ? Math.floor(d.totalIn) : d.totalIn))
-      const value1Stock = (this.datasFilted || []).map((d) => d.lastStock)
-      const value1ETPTSiege = (this.datasFilted || []).map((d) => d.etpMag)
-      const value1ETPTGreffe = (this.datasFilted || []).map((d) => d.etpFon)
-      const value1ETPTEam = (this.datasFilted || []).map((d) => d.etpCont)
+      const value1DTES = (datas || []).map((d) => d.realDTESInMonths)
+      const value1TauxCouverture = (datas || []).map((d) => d.realCoverage)
+      const value1Sorties = (datas || []).map((d) => (d.totalOut ? Math.round(d.totalOut) : d.totalOut))
+      const value1Entrees = (datas || []).map((d) => (d.totalIn ? Math.round(d.totalIn) : d.totalIn))
+      const value1Stock = (datas || []).map((d) => d.lastStock)
+      const value1ETPTSiege = (datas || []).map((d) => (d.etpMag ? this.round2(d.etpMag) : d.etpMag))
+      const value1ETPTGreffe = (datas || []).map((d) => (d.etpFon ? this.round2(d.etpFon) : d.etpFon))
+      const value1ETPTEam = (datas || []).map((d) => (d.etpCont ? this.round2(d.etpCont) : d.etpCont))
       const getVariations = (tab2: any[], tab1: any[], isPercentComparaison = true) =>
         tab2.map((d: any, index: number) => {
-          if (d === null || tab1[index] === null) {
+          if (d === null || tab1[index] === null || d === Infinity) {
             return 'N/R'
           }
 
@@ -1234,15 +1171,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         if (!dateEndIsPast && this.optionDateStop && this.maxDateSelectionDate) {
           dateEndIsPast = isDateBiggerThan(this.optionDateStop, this.maxDateSelectionDate, true)
         }
-        console.log(
-          dateEndIsPast,
-          this.dateStop,
-          this.maxDateSelectionDate,
-          isDateBiggerThan(this.dateStop || new Date(), this.maxDateSelectionDate || new Date(), true),
-          this.optionDateStop,
-          this.maxDateSelectionDate,
-          isDateBiggerThan(this.optionDateStop || new Date(), this.maxDateSelectionDate || new Date(), true),
-        )
 
         this.appService.appLoading.next(false)
         const nextRangeString = `${this.getRealValue(this.optionDateStart)} - ${this.getRealValue(this.optionDateStop)}`
@@ -1411,7 +1339,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewMagistrat) {
-          const value2ETPTSiege: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpMag)
+          const value2ETPTSiege: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => (d.etpMag ? this.round2(d.etpMag) : d.etpMag))
           const variationsETPTSiege = getVariations(value2ETPTSiege, value1ETPTSiege)
           list.push({
             title: 'ETPT Siège',
@@ -1452,7 +1380,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewGreffier) {
-          const value2ETPTGreffe: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpFon)
+          const value2ETPTGreffe: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => (d.etpFon ? this.round2(d.etpFon) : d.etpFon))
           const variationsETPTGreffe = getVariations(value2ETPTGreffe, value1ETPTGreffe)
           list.push({
             title: 'ETPT Greffe',
@@ -1493,7 +1421,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
         }
 
         if (this.canViewContractuel) {
-          const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => d.etpCont)
+          const value2ETPTEam: (number | null)[] = (resultCalcul.list || []).map((d: CalculatorInterface) => (d.etpCont ? this.round2(d.etpCont) : d.etpCont))
           const variationsETPTEam = getVariations(value2ETPTEam, value1ETPTEam)
           list.push({
             title: 'ETPT EAM',
@@ -1642,6 +1570,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
           }),
         ]
 
+        console.log('fx', value2TauxCouverture, value1TauxCouverture)
         const variationsCouverture = getVariations(value2TauxCouverture, value1TauxCouverture, false)
         list.push({
           title: 'Taux de couverture',
@@ -1702,7 +1631,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
   }
 
   getMinutes(value: number) {
-    return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0')
+    //return (Math.floor((value - Math.floor(value)) * 60) + '').padStart(2, '0');
+    let h = Math.floor(value)
+    return (Math.round((value - h) * 60) + '').padStart(2, '0')
   }
 
   /** Retourne la derniere date de maj si elle existe ou date de creation */
@@ -1755,6 +1686,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     this.kpiService.register(CALCULATOR_OPEN_CHARTS_VIEW, '')
   }
 
+  /**
+   * Obtenir la liste des referentiels filtrés
+   */
+  get filteredReferentiels() {
+    return this._filteredReferentiels
+  }
+
   filterReferentiels(referentiels: any[]) {
     let refsList = referentiels.reduce((previous, current) => {
       if (current.datas && current.datas && current.datas.referentielId) {
@@ -1790,6 +1728,13 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     }
 
     return refsList
+  }
+
+  /**
+   * Mets à jour la liste des référentiels filtrés
+   */
+  updateFilteredReferentiels() {
+    this._filteredReferentiels = this.filterReferentiels(this.referentiels)
   }
 
   saveCurrentAvgTime() {
@@ -1858,5 +1803,9 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    */
   override addMonthsToDate(date: Date | null, months: number): Date | null {
     return super.addMonthsToDate(date, months)
+  }
+
+  round2(num: number) {
+    return Math.round(num * 100) / 100
   }
 }

@@ -1,4 +1,4 @@
-@import "../../../styles/utils.scss";
+@use "../../../styles/utils.scss" as utils;
 
 
 :host {
@@ -34,7 +34,7 @@
 
     a {
       padding: 16px;
-      color: fColor(titleEtpGraph);
+      color: utils.$colors-cblack;
       cursor: pointer;
     }
   }
@@ -56,7 +56,6 @@
       padding: 8px 24px 8px 24px;
       display: flex;
       flex-direction: column;
-      //justify-content: space-between;
       text-decoration: none;
 
       &.ca {
@@ -70,11 +69,11 @@
 
         p {
           font-weight: bold;
-          //color: fColor(titleSelect);
+          color: utils.$colors-titleSelect;
           flex: 1;
           overflow: hidden;
           word-wrap: break-word;
-          color: #161616;
+          color: utils.$colors-cblack;
         }
 
         .tooltip {
@@ -86,12 +85,12 @@
           }
 
           mat-icon {
-            color: fColor(borderProgressBar);
+            color: utils.$colors-borderProgressBar;
           }
 
           .tooltiptext {
             visibility: hidden;
-            background-color: fColor(borderProgressBar);
+            background-color: utils.$colors-borderProgressBar;
             color: #fff;
             padding: 8px;
             font-size: 14px;
@@ -119,19 +118,19 @@
 
           &.function {
             color: white;
-            background-color: fColor(cbluelight);
+            background-color: utils.$colors-cbluelight;
 
             mat-icon {
-              color: fColor(white);
+              color: utils.$colors-white;
             }
           }
 
           &.etp {
-            color: fColor(cblack);
-            background-color: fColor(cgrayDefault);
+            color: utils.$colors-cblack;
+            background-color: utils.$colors-cgrayDefault;
 
             mat-icon {
-              color: fColor(cblack);
+              color: utils.$colors-cblack;
             }
           }
 
@@ -158,13 +157,13 @@
       .updated-at {
         font-size: 12px;
         line-height: 20px;
-        color: fColor(grayRow);
+        color: utils.$colors-cgray;
       }
     }
 
     .read-etp {
       width: 100px !important;
-      background-color: fColor(bgSelect);
+      background-color: utils.$colors-bgSelect;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -173,10 +172,10 @@
       .label {
         margin: 16px 0px 8px 0px;
         font-size: 14px;
-        color: fColor(cgreen);
+        color: utils.$colors-cgreen;
 
         &.red {
-          color: fColor(cred);
+          color: utils.$colors-cred;
         }
       }
     }
@@ -197,11 +196,11 @@
 }
 
 .unavailable {
-  color: fColor(titleIndisponibilitiesPanel);
+  color: utils.$colors-titleIndisponibilitiesPanel;
   margin-bottom: 8px;
 
   mat-icon {
-    color: fColor(titleIndisponibilitiesPanel);
+    color: utils.$colors-titleIndisponibilitiesPanel;
     width: 20px;
     height: 20px;
     font-size: 20px;

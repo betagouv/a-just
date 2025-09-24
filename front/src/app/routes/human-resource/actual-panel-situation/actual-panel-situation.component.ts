@@ -101,6 +101,10 @@ export class ActualPanelSituationComponent
    * Liste des activités de la situation
    */
   activities: RHActivityInterface[] = [];
+  /**
+   * Detection d'une destruction de la composante
+   */
+  isDestroyed: boolean = false;
 
   /**
    * Constructeur
@@ -152,5 +156,9 @@ export class ActualPanelSituationComponent
         window.open(url);
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.isDestroyed = true
   }
 }

@@ -1,4 +1,4 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 .before-subtitle {
     border-radius: 12px;
@@ -9,7 +9,7 @@
 
 .subtitle-name {
     border-radius: 12px;
-    background-color: #eee;
+    background-color: utils.$colors-bgSelect;
     padding: 3px 6px;
 }
 
@@ -57,7 +57,7 @@ aj-back-button {
 
     .export-button {
         margin-left: 6px;
-        background-color: #000091;
+        background-color: utils.$colors-primary;
         height: 55px;
         padding: 6px;
         display: flex;
@@ -67,7 +67,7 @@ aj-back-button {
 
         p {
             font-size: 12px;
-            color: #f6f6f6;
+            color: utils.$colors-bgSelect;
         }
     }
 
@@ -85,7 +85,7 @@ aj-back-button {
 
     input {
         &.modified {
-            color: #000091;
+            color: utils.$colors-primary;
         }
     }
 
@@ -96,11 +96,7 @@ aj-back-button {
 
     .item-grouped {
         min-height: 56px;
-        //margin: 8px 16px 0 16px;
         background-color: white;
-        //border-radius: 8px;
-        //box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        //padding: 15px;
         border-bottom: solid 1px white;
 
         .no-margin {
@@ -146,12 +142,9 @@ aj-back-button {
                 height: 56px;
 
                 .label {
-                    //width: 254px;
-
                     &.head {
                         width: 300px;
 
-                        //border-right: solid 1px white;
                         p {
                             font-size: 14px;
                         }
@@ -186,7 +179,7 @@ aj-back-button {
         height: 80px;
         box-shadow: 0 -10px 10px -5px rgba(0, 0, 0, 0.04),
             0 -20px 25px -5px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
+        background-color: utils.$colors-bgSelect;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -212,7 +205,7 @@ aj-back-button {
             align-items: center;
             padding: 0 16px;
             cursor: pointer;
-            border: solid 1px fColor(cgraylightv3);
+            border: solid 1px utils.$colors-cgraylightv3;
 
             &.alone {
                 border-radius: 4px;
@@ -222,7 +215,7 @@ aj-back-button {
                 font-size: 14px;
                 line-height: 1.5;
                 margin-left: 8px;
-                color: fColor(colorTag);
+                color: utils.$colors-colorTag;
             }
         }
 
@@ -231,8 +224,8 @@ aj-back-button {
             border-bottom-left-radius: 4px;
 
             &.selected {
-                border: solid 1px fColor(cbluedark);
-                background-color: fColor(cbluemiddle);
+                border: solid 1px utils.$colors-cbluedark;
+                background-color: utils.$colors-cbluemiddle;
             }
         }
 
@@ -241,8 +234,8 @@ aj-back-button {
             border-bottom-right-radius: 4px;
 
             &.selected {
-                border: solid 1px fColor(cpink);
-                background-color: fColor(cpinkmiddle);
+                border: solid 1px utils.$colors-cpink;
+                background-color: utils.$colors-cpinkmiddle;
             }
         }
     }
@@ -250,7 +243,7 @@ aj-back-button {
     .header-list {
         height: 80px;
         padding: 16px 24px 40px 16px;
-        background-color: #f6f6f6 !important;
+        background-color: utils.$colors-bgSelect !important;
 
         .label {
             &.col {
@@ -258,13 +251,13 @@ aj-back-button {
                 font-size: 12px;
                 font-weight: bold;
                 line-height: 2;
-                color: #161616;
+                color: utils.$colors-cblack;
                 flex: 1;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                border-left: solid 1px white;
+                border-left: solid 1px utils.$colors-bgSelect;
             }
         }
     }
@@ -274,7 +267,7 @@ aj-back-button {
 
         .label {
             &.col {
-                border-left: solid 1px white;
+                border-left: solid 1px utils.$colors-bgSelect;
 
                 font-size: 14px;
                 font-weight: bold;
@@ -286,7 +279,6 @@ aj-back-button {
                 align-items: center;
                 justify-content: flex-end;
                 height: 100%;
-                //margin-right: 18px;
                 padding-right: 18px;
             }
         }
@@ -304,7 +296,7 @@ aj-back-button {
                 font-size: 12px;
                 line-height: 2;
                 letter-spacing: normal;
-                color: #3a3a3a;
+                color: utils.$colors-cblack;
                 padding: 16px;
             }
 
@@ -319,23 +311,17 @@ aj-back-button {
 
     .header-list {
         padding: 0px 0px 0px 0px;
-        border-bottom: 2px solid white;
+        border-bottom: 2px solid utils.$colors-bgSelect;
         display: flex;
         align-items: center;
-        background-color: white;
+        background-color: utils.$colors-bgSelect;
 
         .current-month {
             margin: 0 16px;
         }
-
-        /** 
-        .activities.is-not-ios {
-            margin-right: 16px;
-        }*/
     }
 
     .item {
-        //padding: 8px 0;
         display: flex;
         height: 56px;
 
@@ -392,7 +378,6 @@ aj-back-button {
         }
 
         input {
-            //margin-right: 16px;
             max-width: 160px;
         }
     }
@@ -407,28 +392,21 @@ aj-back-button {
             &.enable {
                 height: inherit;
                 overflow: inherit;
-                //display: table;
-                //margin-left: 15px;
-                //padding-bottom: 16px;
             }
 
             .group-item {
                 display: flex;
                 align-items: center;
-                background-color: white;
-                //padding: 8px 0;
-                //border-left: 3px solid gray;
+                background-color: utils.$colors-bgSelect;
 
                 .label {
-                    //width: 296px;
-                    //padding-left: 8px;
                     padding-left: 51px;
                 }
 
                 .column-item {
                     flex: 1;
                     text-align: center;
-                    border-left: solid 1px white;
+                    border-left: solid 1px utils.$colors-bgSelect;
                 }
             }
         }
@@ -444,12 +422,12 @@ aj-back-button {
             &.subtitle {
                 margin: 0 0 38px;
                 font-size: 16px;
-                color: #929292;
+                color: utils.$colors-cgray;
             }
 
             &.content {
                 font-size: 16px;
-                color: #3a3a3a;
+                color: utils.$colors-cblack;
             }
         }
     }
@@ -457,7 +435,7 @@ aj-back-button {
     #circle {
         width: 60px;
         height: 60px;
-        background: #ececfe;
+        background: utils.$colors-bgSelect;
         border-radius: 70px;
         margin: auto;
         display: flex;
@@ -467,7 +445,7 @@ aj-back-button {
 
         i {
             font-size: 24px;
-            color: #8585f6;
+            color: utils.$colors-primary;
         }
 
         img {
@@ -481,7 +459,7 @@ aj-back-button {
             font-size: 18px;
             font-weight: bold;
             text-align: center;
-            color: #3a3a3a;
+            color: utils.$colors-cblack;
         }
 
         .content {
@@ -490,7 +468,7 @@ aj-back-button {
 
             .subtitle {
                 font-size: 18px;
-                color: #929292;
+                color: utils.$colors-cgray;
                 font-weight: normal;
                 text-align: left;
             }

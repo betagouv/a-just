@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
   display: flex;
@@ -25,8 +25,8 @@
     font-size: 18px;
     font-weight: 500;
     background-color: white;
-    color: #000091;
-    border: solid 1px #000091;
+    color: utils.$colors-primary;
+    border: solid 1px utils.$colors-primary;
   }
 
   .no-margin {
@@ -40,8 +40,8 @@
 
   .white-button {
     background-color: white;
-    color: #000091;
-    border: solid 1px #000091;
+    color: utils.$colors-primary;
+    border: solid 1px utils.$colors-primary;
     font-size: 18px;
     font-weight: 500;
     text-align: center;
@@ -69,15 +69,15 @@ input[type='file'] {
 }
 
 .enable {
-  background-color: #000091 !important;
+  background-color: utils.$colors-primary !important;
   color: white !important;
 
   border: solid 1px;
 
   &.empty {
     background-color: white !important;
-    color: #000091 !important;
-    border: solid 1px #000091;
+    color: utils.$colors-primary !important;
+    border: solid 1px utils.$colors-primary;
   }
 }
 

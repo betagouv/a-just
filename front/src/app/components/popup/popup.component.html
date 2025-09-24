@@ -1,41 +1,57 @@
-<div *ngIf="visible" class="animate__animated animate__fadeIn popup">
+@if (visible) {
+  <div class="animate__animated animate__fadeIn popup">
     <div>
-        <div class="title">
-            <ng-container *ngTemplateOutlet="titleTemplate || defaultTitleTemplate"></ng-container>
-            <div class="flex-1"></div>
-            <div *ngIf="closeIcon" class="close" (click)="onClose.emit()">
-                <label>Fermer</label><i class="material-icons pointer">close</i>
-            </div>
-        </div>
-        <div class="content">
-            <ng-content></ng-content>
-        </div>
-        <div class="actions {{ removeShadow }}" *ngIf="actions.length + actionsLeft.length > 0">
-            <button *ngFor="let action of actionsLeft" (click)="onSelectAction(action)"
-                class="{{action.size ? action.size : 'small'}}" [ngClass]="{
-                    'material-icons': action.type && action.type === 'icon',
-                    red: action.red && action.red === true,
-                    primary: !action.red,
-                    fill: action.fill && action.fill === true,
-                    outline: !action.fill
-                    }">
-                {{ action.content }}
+      <div class="title">
+        <ng-container *ngTemplateOutlet="titleTemplate || defaultTitleTemplate"></ng-container>
+        <div class="flex-1"></div>
+        @if (closeIcon) {
+          <div class="close" (click)="onClose.emit()">
+            <label>Fermer</label>
+            <i class="material-icons pointer">close</i>
+          </div>
+        }
+      </div>
+      <div class="content">
+        <ng-content></ng-content>
+      </div>
+      @if (actions.length + actionsLeft.length > 0) {
+        <div class="actions {{ removeShadow }}">
+          @for (action of actionsLeft; track action.id) {
+            <button
+              (click)="onSelectAction(action)"
+              class="{{ action.size ? action.size : 'small' }}"
+              [ngClass]="{
+                'material-icons': action.type && action.type === 'icon',
+                red: action.red && action.red === true,
+                primary: !action.red,
+                fill: action.fill && action.fill === true,
+                outline: !action.fill,
+              }"
+            >
+              {{ action.content }}
             </button>
-            <div class="flex-1"></div>
-            <button *ngFor="let action of actions" (click)="onSelectAction(action)"
-                class="{{action.size ? action.size : 'small'}}" [ngClass]="{
-                    'material-icons': action.type && action.type === 'icon',
-                    red: action.red && action.red === true,
-                    primary: !action.red,
-                    fill: action.fill && action.fill === true,
-                    outline: !action.fill
-                }">
-                {{ action.content }}
+          }
+          <div class="flex-1"></div>
+          @for (action of actions; track action.id) {
+            <button
+              (click)="onSelectAction(action)"
+              class="{{ action.size ? action.size : 'small' }}"
+              [ngClass]="{
+                'material-icons': action.type && action.type === 'icon',
+                red: action.red && action.red === true,
+                primary: !action.red,
+                fill: action.fill && action.fill === true,
+                outline: !action.fill,
+              }"
+            >
+              {{ action.content }}
             </button>
+          }
         </div>
+      }
     </div>
-</div>
-
+  </div>
+}
 <ng-template #defaultTitleTemplate>
-    {{ title }}
+  {{ title }}
 </ng-template>

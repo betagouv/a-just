@@ -16,6 +16,8 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       on("task", verifyDownloadTasks);
+      // Configuration pour mochawesome reporter
+      require("cypress-mochawesome-reporter/plugin")(on);
     },
     baseUrl: process.env.CYPRESS_BASE_URL
       ? process.env.CYPRESS_BASE_URL
@@ -25,5 +27,27 @@ export default defineConfig({
     videosFolder: "cypress/videos",
     downloadsFolder: "cypress/downloads",
     defaultCommandTimeout: 10000,
+    // Configuration du reporter
+    reporter: "cypress-mochawesome-reporter",
+    reporterOptions: {
+      charts: true,
+      reportPageTitle: "A-JUST E2E Tests Report",
+      embeddedScreenshots: true,
+      inlineAssets: true,
+      saveAllAttempts: false,
+      reportDir: "cypress/reports",
+      reportFilename: "report",
+      overwrite: false,
+      html: true,
+      json: true,
+      timestamp: "mmddyyyy_HHMMss",
+      // Force la génération du fichier JSON
+      generateReport: true,
+      quiet: false,
+    },
+    env: {
+      NG_APP_SERVER_URL:
+        process.env.NG_APP_SERVER_URL || "http://localhost:8081/api",
+    },
   },
 });

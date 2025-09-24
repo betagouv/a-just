@@ -13,7 +13,7 @@ export default class RouteActivities extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.Activities
@@ -24,7 +24,7 @@ export default class RouteActivities extends Route {
   /**
    * Fonction de dev pour forcer de supprimer les doublons d'activités
    */
-  async cleanDatas () {
+  async cleanDatas() {
     const backups = await this.models.HRBackups.getAll()
 
     for (let i = 0; i < backups.length; i++) {
@@ -51,7 +51,7 @@ export default class RouteActivities extends Route {
     }),
     accesses: [Access.canVewActivities],
   })
-  async updateBy (ctx) {
+  async updateBy(ctx) {
     const { contentieuxId, date, values, hrBackupId, nodeUpdated } = this.body(ctx)
     await this.model.updateBy(contentieuxId, date, values, hrBackupId, ctx.state.user.id, nodeUpdated)
     this.sendOk(ctx, 'Ok')
@@ -69,14 +69,18 @@ export default class RouteActivities extends Route {
     }),
     accesses: [Access.canVewActivities],
   })
-  async getByMonth (ctx) {
+  async getByMonth(ctx) {
     const { date, hrBackupId } = this.body(ctx)
 
     if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) || Access.isAdmin(ctx)) {
       const dateLastMonth = await this.model.getLastMonth(hrBackupId)
       this.models.Logs.addLog(today(dateLastMonth).getTime() === today(date).getTime() ? ACTIVITIES_PAGE_LOAD : ACTIVITIES_CHANGE_DATE, ctx.state.user.id)
 
-      const list = await this.model.getByMonth(date, hrBackupId)
+      console.time('new')
+      console.log('LA DATE', date)
+      const list = await this.model.getByMonthNew(date, hrBackupId)
+      console.timeEnd('new')
+
       this.sendOk(ctx, {
         list,
         lastUpdate: await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id)),
@@ -97,7 +101,7 @@ export default class RouteActivities extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async getLastMonth (ctx) {
+  async getLastMonth(ctx) {
     const { hrBackupId } = this.body(ctx)
     if ((await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) || Access.isAdmin(ctx)) {
       const date = await this.model.getLastMonth(hrBackupId)
@@ -119,7 +123,7 @@ export default class RouteActivities extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async getLastHumanActivities (ctx) {
+  async getLastHumanActivities(ctx) {
     const { hrBackupId } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
       const list = await this.models.HistoriesActivitiesUpdate.getLasHumanActivites(hrBackupId)
@@ -143,7 +147,7 @@ export default class RouteActivities extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async getNotCompleteActivities (ctx) {
+  async getNotCompleteActivities(ctx) {
     const { hrBackupId, dateStart, dateEnd } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
       const list = await this.model.getNotCompleteActivities(hrBackupId, dateStart, dateEnd)

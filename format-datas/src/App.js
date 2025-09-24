@@ -55,16 +55,16 @@ export default class App {
       if (response) {
         // CIVIL
         await this.getGroupByJuridiction(tmpFolder, inputFolder, response);
-        // await this.formatAndGroupJuridiction(
-        //   tmpFolder,
-        //   outputFolder,
-        //   outputAllFolder,
-        //   categoriesOfRules,
-        //   referentiel,
-        //   response
-        //);
+        await this.formatAndGroupJuridiction(
+          tmpFolder,
+          outputFolder,
+          outputAllFolder,
+          categoriesOfRules,
+          referentiel,
+          response
+        );
         // WIP datas pénal
-        // await this.getGroupByJuridictionPenal(tmpFolder, inputFolder, response);
+        // await this.getGroupByJuridictionPenalAndSpe(tmpFolder, inputFolder, response);
         // await this.formatAndGroupJuridictionPenal(
         //   tmpFolder,
         //   outputFolder,
@@ -72,6 +72,19 @@ export default class App {
         //   categoriesOfRules,
         //   response
         // );
+
+        // DATA AMALIA (LivreFoncier)/ AMALFI (Association)
+        await this.getGroupByJuridictionPenalAndSpe(
+          tmpFolder,
+          inputFolder,
+          response
+        );
+        this.formatAndGroupJuridictionSpecialise(
+          tmpFolder,
+          outputFolder,
+          outputAllFolder,
+          response
+        );
       }
     });
   }
@@ -164,6 +177,40 @@ export default class App {
 
   getCsvOutputPathPenal(tmpFolder, juridiction, type) {
     return `${tmpFolder}/export-activities-${juridiction}-${type}.csv`;
+  }
+
+  /**
+   * Supprime le BOM UTF-8 d'une chaîne de caractères ou d'un buffer
+   * @param {string|Buffer} content - Le contenu du fichier
+   * @returns {string} - Le contenu sans BOM
+   */
+  removeBOM(content) {
+    let contentStr;
+
+    // Si c'est un Buffer, on le convertit en string
+    if (Buffer.isBuffer(content)) {
+      // Vérifier si les 3 premiers octets correspondent au BOM UTF-8 (EF BB BF)
+      if (
+        content.length >= 3 &&
+        content[0] === 0xef &&
+        content[1] === 0xbb &&
+        content[2] === 0xbf
+      ) {
+        // Supprimer les 3 premiers octets et convertir en string
+        contentStr = content.slice(3).toString("utf8");
+      } else {
+        contentStr = content.toString("utf8");
+      }
+    } else {
+      // Si c'est une string, vérifier le caractère Unicode BOM
+      if (content.charCodeAt(0) === 0xfeff) {
+        contentStr = content.slice(1);
+      } else {
+        contentStr = content;
+      }
+    }
+
+    return contentStr;
   }
 
   async getGroupByJuridiction(tmpFolder, inputFolder, I_ELST_LIST) {
@@ -297,21 +344,21 @@ export default class App {
     }
   }
 
-  async getGroupByJuridictionPenal(tmpFolder, inputFolder, I_ELST_LIST) {
+  async getGroupByJuridictionPenalAndSpe(tmpFolder, inputFolder, I_ELST_LIST) {
     const files = readdirSync(inputFolder).filter((f) => f.endsWith(".csv"));
 
     // generate header
     let header = null;
     let codeJuridiction = null;
-    const ielstNames = ["tj", "tgi_code", "id_jur"];
+    const ielstNames = ["tj", "tgi_code", "id_jur", "code_i_elst"];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
       let liner = new lineByLine(`${inputFolder}/${file}`);
-      let line = null;
-      // get header
+      let line = null; // get header
       line = liner.next();
-      header = line.toString("ascii");
+      header = this.removeBOM(line); // Passer le buffer directement
+
       //let getTypeOfJuridiction
       while ((line = liner.next().toString()) !== "false") {
         line = line.split(" ").join("");
@@ -449,7 +496,7 @@ export default class App {
           );
           //  -> Utile pour supprimer un mois spécifique sur les données
           // const tmp = formatMonthDataFromRules.filter(
-          //   (elem) => elem.periode !== "202412"
+          //   (elem) => elem.periode !== "202504"
           // );
           // list = list.concat(tmp);
 
@@ -814,7 +861,7 @@ export default class App {
               rulesToApply
             );
             //  -> Utile pour supprimer un mois spécifique sur les données
-            // const tmp = formatMonthDataFromRules.filter(elem => elem.periode !== '202412');
+            // const tmp = formatMonthDataFromRules.filter(elem => elem.periode !== '202504');
             // list = list.concat(tmp);
             list = list.concat(formatMonthDataFromRules);
           }
@@ -891,59 +938,128 @@ export default class App {
     }
   }
 
-  /*getKeysToConsider(rules) {
-    const keys = []
-    rules.map(rule => {
-      if (rule.filtres) {
-        Object.keys(rule.filtres).map(type => {
-          Object.keys(rule.filtres[type]).map(key => {
-            if (key !== 'TOTAL' && keys.indexOf(key) === -1) {
-              keys.push(key)
-            }
-          })
-        })
+  formatAndGroupJuridictionSpecialise(
+    tmpFolder,
+    outputFolder,
+    outputAllFolder,
+    I_ELST_LIST
+  ) {
+    const files = readdirSync(tmpFolder).filter((f) => f.endsWith(".csv"));
+
+    const groupedFiles = files.reduce((acc, file) => {
+      const ielst = file.match(/^export-activities-([^\-]+)-/);
+
+      if (ielst) {
+        const number = ielst[1];
+
+        if (!acc[number]) {
+          acc[number] = [];
+        }
+        acc[number].push(file);
       }
-    })
+      return acc;
+    }, {});
 
-    return keys
-  }*/
+    writeFileSync(
+      `${outputAllFolder}/AllJuridictionsDroitLocal.csv`,
+      `${["juridiction,code_import,periode,entrees,sorties,stock,\n"]}`
+    );
 
+    for (const tj in groupedFiles) {
+      const ielst = Object.keys(I_ELST_LIST).find(
+        (key) => I_ELST_LIST[key] === tj
+      );
+
+      if (!ielst) return;
+
+      for (let i = 0; i < groupedFiles[tj].length; i++) {
+        const fileName = groupedFiles[tj][i];
+        const tj_label = fileName
+          .replace(/^export-activities-/, "")
+          .replace(/-.*/, "")
+          .replace("_", " ");
+
+        let code_import = null;
+
+        if (fileName.toLowerCase().includes("association"))
+          code_import = "13.11.";
+        else if (fileName.toLowerCase().includes("livrefoncier"))
+          code_import = "13.13.";
+
+        const liner = new lineByLine(`${tmpFolder}/${fileName}`);
+        // On saute la première ligne qui correspond au header
+        liner.next();
+        let periode = null;
+        let line = null;
+        let totalIn = 0;
+        let totalOut = 0;
+        let totalStock = 0;
+
+        while ((line = liner.next())) {
+          const tmp = line.toString("ascii").trim().split(/[,;]/);
+
+          const entrees = tmp[2] ? parseInt(tmp[2]) : 0;
+          const sorties = tmp[3] ? parseInt(tmp[3]) : 0;
+          const stock = tmp[4] ? parseInt(tmp[4]) : 0;
+
+          if (!periode) periode = tmp[1];
+          totalIn += entrees;
+          totalOut += sorties;
+          totalStock += stock;
+        }
+
+        const res =
+          tj_label +
+          `,${code_import}` +
+          `,${periode}` +
+          "," +
+          totalIn +
+          `,` +
+          totalOut +
+          `,` +
+          totalStock +
+          `,`;
+
+        appendFileSync(
+          `${outputAllFolder}/AllJuridictionsDroitLocal.csv`,
+          res + "\n"
+        );
+      }
+    }
+  }
 
   catchXMLFileHeader(liner) {
-    const header = []
+    const header = [];
     let line = null;
     let nbLine = 0;
-    
-    while((line = liner.next()) !== false) {
+
+    while ((line = liner.next()) !== false) {
       let lineFormated = line.toString("ascii").trim();
-      
+
       if (nbLine === 2) {
-        const firstTag = this.getTagName(lineFormated)
-        let currentTag = null 
-               
+        const firstTag = this.getTagName(lineFormated);
+        let currentTag = null;
 
         while (true) {
           line = liner.next();
-          
-          if (line === false) 
-            break
+
+          if (line === false) break;
 
           lineFormated = line.toString("ascii").trim();
           currentTag = this.getTagName(lineFormated);
 
-          if (currentTag == `/${firstTag}` )
-            break            
-          header.push(currentTag); 
+          if (currentTag == `/${firstTag}`) break;
+          header.push(currentTag);
         }
-        break
+        break;
       }
-      nbLine++
+      nbLine++;
     }
-    return header
+    return header;
   }
 
   checkDataUsage(inputFolder, outputAllFolder, referentiel, categoriesOfRules) {
-      console.time("Time 1000 rows");
+    console.time("Time 1000 rows");
     // Récupération des fichiers de données
     const dataFiles = readdirSync(inputFolder)
       .filter(
@@ -961,7 +1077,6 @@ export default class App {
       });
     console.log(dataFiles);
 
-
     console.log(new Date(), 0);
     console.time("Time for 1000 rows");
 
@@ -970,7 +1085,7 @@ export default class App {
       // attention on est obligé de faire ligne par ligne
 
       if (file.endsWith(".xml")) {
-        const outputFileName = `check-datas-${file.replace(".xml", '')}.csv`;
+        const outputFileName = `check-datas-${file.replace(".xml", "")}.csv`;
         // complete file
         const liner = new lineByLine(`${inputFolder}/${file}`);
         const linerTmp = new lineByLine(`${inputFolder}/${file}`);
@@ -1012,7 +1127,7 @@ export default class App {
           nbLine++;
         }
       } else if (file.endsWith(".csv")) {
-        const outputFileName = `check-datas-${file.replace(".csv", '')}.csv`;
+        const outputFileName = `check-datas-${file.replace(".csv", "")}.csv`;
         let header = null;
         let headerTab = [];
 
@@ -1042,7 +1157,7 @@ export default class App {
               categoriesOfRules,
               outputAllFolder,
               outputFileName,
-              file,
+              file
             );
           }
         }
@@ -1050,7 +1165,14 @@ export default class App {
     }
   }
 
-  checkDataUsageToOneRow(line, referentiel, rules, outputAllFolder, outputFileName, fileName) {
+  checkDataUsageToOneRow(
+    line,
+    referentiel,
+    rules,
+    outputAllFolder,
+    outputFileName,
+    fileName
+  ) {
     this.nbLine++;
     if (this.nbLine % 1000 === 0) {
       console.log(new Date(), this.nbLine);
@@ -1064,7 +1186,7 @@ export default class App {
       fileName
     );
 
-    const tmpLine = Object.values(line) 
+    const tmpLine = Object.values(line);
     if (checkControl.length) {
       //type,quantité,trouvé dans
       appendFileSync(

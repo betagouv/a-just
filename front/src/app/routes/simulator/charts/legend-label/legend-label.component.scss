@@ -1,4 +1,4 @@
-@import "../../../../styles/utils.scss";
+@use "../../../../styles/utils.scss" as utils;
 
 :host {
 
@@ -17,7 +17,7 @@
             margin: 0 0 0 8px;
             font-size: 14px;
             line-height: 1;
-            color: #161616;
+            color: utils.$colors-cblack;
         }
 
         .circle {

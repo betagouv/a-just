@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { UserService } from '../../services/user/user.service';
 import { LOGIN_STATUS_GET_CODE } from '../../constants/login';
 import { PopupComponent } from '../../components/popup/popup.component';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   standalone: true,
@@ -18,9 +18,8 @@ import { CommonModule } from '@angular/common';
     PopupComponent,
     FormsModule,
     ReactiveFormsModule,
-    PopupComponent,
-    CommonModule,
-  ],
+    PopupComponent
+],
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })

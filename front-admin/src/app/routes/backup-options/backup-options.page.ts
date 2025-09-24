@@ -9,7 +9,7 @@ import { MainClass } from '../../libs/main-class';
 import { JuridictionInterface } from '../../interfaces/juridiction';
 import { ContentieuxOptionsService } from '../../services/contentieux-options/contentieux-options.service';
 import { MatTableModule } from '@angular/material/table';
-import { CommonModule } from '@angular/common';
+
 import { PopupComponent } from '../../components/popup/popup.component';
 import { FormsModule } from '@angular/forms';
 import { WrapperComponent } from '../../components/wrapper/wrapper.component';
@@ -23,12 +23,11 @@ interface BackupOptionSelection {
 @Component({
   standalone: true,
   imports: [
-    CommonModule,
     MatTableModule,
     PopupComponent,
     FormsModule,
-    WrapperComponent,
-  ],
+    WrapperComponent
+],
   templateUrl: './backup-options.page.html',
   styleUrls: ['./backup-options.page.scss'],
 })

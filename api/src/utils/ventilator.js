@@ -18,9 +18,7 @@ export const preformatHumanResources = (list, dateSelected, referentielList, fon
       let currentSituation
       let etp = 0
       if (dateSelected) {
-        checkAbort(signal)
         const s = findSituation(h, dateSelected, signal)
-        checkAbort(signal)
         currentSituation = s.currentSituation
         etp = (currentSituation && currentSituation.etp) || 0
         if (etp < 0) {

@@ -6,7 +6,11 @@
   [style.font-size.px]="(height * 12) / 40"
   [ngClass]="{ alert: needToBeUpdated }"
 >
-  <ng-template [ngIf]="needToBeUpdated">?</ng-template>
-  <ng-template [ngIf]="!needToBeUpdated">{{ etp }}</ng-template>
+  @if (needToBeUpdated) {
+    ?
+  }
+  @if (!needToBeUpdated) {
+    {{ etp }}
+  }
 </div>
 <canvas #canvas [width]="width" [height]="height"></canvas>

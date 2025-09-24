@@ -123,7 +123,7 @@ export class ExcelService extends MainClass {
   }
 
   /**
-   * API retourne les données de ventilations aggrégées pour l'ensemble des ressources présentes sur une date choisie
+   * Extraction DDG
    * @returns
    */
   exportExcel() {
@@ -1212,8 +1212,8 @@ export class ExcelService extends MainClass {
     const indexTab = this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0
 
     report.worksheets[indexTab].getCell(this.getExcelFormulaFormat(['Fonction recodée'], indexCell, viewModel.days)).value = {
-      formula: "='ETPT Format DDG'!" + this.getExcelFormulaFormat(['Fonction recodée'], indexCell, viewModel.days1),
-      result: '',
+      formula: '=IFERROR(VLOOKUP(A' + indexCell + ',\'ETPT Format DDG\'!A:J,10,FALSE),"")',
+      result: '0',
     }
 
     return report

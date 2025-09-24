@@ -1,4 +1,4 @@
-@import "../../../styles/utils.scss";
+@use "../../../styles/utils.scss" as utils;
 
 :host {
   position: fixed;
@@ -18,7 +18,7 @@
 
 .background {
   position: absolute;
-  background-color: rgba(fColor(cblackdark), 0.37);
+  background-color: rgba(utils.$colors-cblackdark, 0.37);
   top: 0;
   left: 0;
   right: 0;
@@ -43,7 +43,7 @@
 
 .filter-group {
   margin-top: 16px;
-  color: fColor(cblack);
+  color: utils.$colors-cblack;
   font-weight: bold;
 }
 

@@ -1,4 +1,4 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
   display: flex;
@@ -7,14 +7,14 @@
 
 .menu {
   width: 200px;
-  border-right: 1px solid rgba(fColor(cblack), 0.2);
+  border-right: 1px solid rgba(utils.$colors-cblack, 0.2);
 
   .images {
     display: flex;
     align-items: center;
     margin-bottom: 32px;
 
-    > img {
+    >img {
       width: 50%;
     }
   }
@@ -45,7 +45,7 @@
   height: 77px;
   min-height: 77px;
   padding: 0 24px;
-  border-bottom: 1px solid rgba(fColor(cblack), 0.2);
+  border-bottom: 1px solid rgba(utils.$colors-cblack, 0.2);
   display: flex;
   align-items: center;
 }

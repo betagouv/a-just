@@ -1,8 +1,11 @@
-<div *ngFor="let item of values; let index=index"
-    [style.height.%]="item === 0 ? 0 : ((item / localMaxValue) < 0.01 ? 0.01 : (item / localMaxValue)) * 100"
-    class="bar"
-    [style.background-color]="userService.referentielMappingColorByInterface(this.referentielName, (values.length === 1 || (values.length !== 1 && index !== 0)) ? 1 : 0.4)">
-</div>
-
+@for (item of values; track $index; let index = $index) {
+<div [style.height.%]="item === 0 ? 0 : (item / localMaxValue < 0.01 ? 0.01 : item / localMaxValue) * 100" class="bar"
+  [style.background-color]="
+      userService.referentielMappingColorByInterface(
+        this.referentielName,
+        values.length === 1 || (values.length !== 1 && index !== 0) ? 1 : 0.4
+      )
+    "></div>
+}
 <canvas #canvas></canvas>
 <canvas #canvasMultiple></canvas>

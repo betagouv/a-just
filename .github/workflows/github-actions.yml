@@ -14,13 +14,36 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - run: docker compose version
 
       - name: Install dependencies
         run: npm i
-      
+
       - name: Run tests
         run: npm run test
+
+      - name: Debug - List generated files
+        if: always()
+        run: |
+          echo "=== END-TO-END TESTS DEBUG ==="
+          echo "Listing end-to-end directory structure:"
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
+          echo "Reports directory content:"
+          ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
+          echo "=== API TESTS DEBUG ==="
+          echo "API test directory structure:"
+          find ./api -type f -name "*.json" -o -name "*.html" | head -20
+          echo "API test reports:"
+          ls -la ./api/test/ || echo "API test directory not found"
+          echo "Files in api/test/:"
+          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "No API test reports found"
+          echo "Mochawesome specific files:"
+          find ./api -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
 
       - name: Upload Cypress video
         if: always()
@@ -28,3 +51,263 @@ jobs:
         with:
           name: cypress-video
           path: ./end-to-end/cypress/videos
+
+      - name: Upload Cypress test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-reports
+          path: ./end-to-end/cypress/reports
+
+      - name: Upload Mocha test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mocha-report
+          path: ./api/test/reports
+
+  deploy:
+    needs: start-tests
+    runs-on: ubuntu-latest
+    if: always()
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download Cypress reports artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: cypress-reports
+          path: ./cypress-reports
+
+      - name: Download Cypress videos artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: cypress-video
+          path: ./cypress-videos
+
+      - name: Download Mocha report artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: mocha-report
+          path: ./mocha-report
+
+      - name: Create site directory structure
+        run: |
+          mkdir -p site
+          cp -r cypress-reports/* site/ 2>/dev/null || echo "No cypress reports to copy"
+          mkdir -p site/videos
+          cp -r cypress-videos/* site/videos/ 2>/dev/null || echo "No videos to copy"
+          mkdir -p site/api-tests
+          cp -r mocha-report/* site/api-tests/ 2>/dev/null || echo "No mocha test reports to copy"
+
+      - name: Create index.html
+        run: |
+          cat > site/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="fr">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>A-JUST - Rapports de Tests</title>
+              <style>
+                  body {
+                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                      max-width: 1200px;
+                      margin: 0 auto;
+                      padding: 20px;
+                      background-color: #f5f5f5;
+                  }
+                  .header {
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      padding: 30px;
+                      border-radius: 10px;
+                      text-align: center;
+                      margin-bottom: 30px;
+                      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                  }
+                  .section {
+                      background: white;
+                      padding: 20px;
+                      margin-bottom: 20px;
+                      border-radius: 8px;
+                      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                  }
+                  .file-list {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                      gap: 15px;
+                      margin-top: 15px;
+                  }
+                  .file-item {
+                      background: #f8f9fa;
+                      border: 1px solid #e9ecef;
+                      border-radius: 6px;
+                      padding: 15px;
+                      transition: all 0.3s ease;
+                  }
+                  .file-item:hover {
+                      transform: translateY(-2px);
+                      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                  }
+                  .file-item a {
+                      text-decoration: none;
+                      color: #495057;
+                      font-weight: 500;
+                  }
+                  .file-item a:hover {
+                      color: #007bff;
+                  }
+                  .file-size {
+                      font-size: 0.9em;
+                      color: #6c757d;
+                      margin-top: 5px;
+                  }
+                  .timestamp {
+                      font-size: 0.9em;
+                      color: #6c757d;
+                      text-align: center;
+                      margin-top: 20px;
+                  }
+                  .icon {
+                      margin-right: 8px;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="header">
+                  <h1>A-JUST - Rapports de Tests</h1>
+              </div>
+
+              <div class="section">
+                  <h2>📊 Tests API</h2>
+                  <p>Rapports de tests unitaires :</p>
+                  <div class="file-list">
+                      {{API_REPORTS_PLACEHOLDER}}
+                  </div>
+              </div>
+
+              <div class="section">
+                  <h2>📊 Tests E2E</h2>
+                  <p>Rapports de tests E2E :</p>
+                  <div class="file-list">
+                      {{E2E_REPORTS_PLACEHOLDER}}
+                  </div>
+              </div>
+
+              <div class="section">
+                  <h2>🎥 Vidéos des Tests</h2>
+                  <p>Enregistrements vidéo des tests E2E exécutés :</p>
+                  <div class="file-list">
+                      {{VIDEOS_PLACEHOLDER}}
+                  </div>
+              </div>
+
+              <div class="timestamp">
+                  Page générée le : {{GENERATION_TIME}}
+              </div>
+          </body>
+          </html>
+          EOF
+
+      - name: List available files and update index
+        run: |
+          cd site
+          echo "Available files in site directory:"
+          find . -type f -name "*.html" -o -name "*.json" -o -name "*.mp4" -o -name "*.webm" | sort
+
+          # Créer un script pour mettre à jour l'index avec les vrais fichiers
+          cat > update_index.js << 'EOFJS'
+          const fs = require('fs');
+          const path = require('path');
+
+          function getFileSize(filePath) {
+              const stats = fs.statSync(filePath);
+              const bytes = stats.size;
+              if (bytes === 0) return '0 B';
+              const k = 1024;
+              const sizes = ['B', 'KB', 'MB', 'GB'];
+              const i = Math.floor(Math.log(bytes) / Math.log(k));
+              return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+          }
+
+          function generateFileList(directory, extensions, testType = '') {
+              if (!fs.existsSync(directory)) {
+                  return '<p>Aucun fichier de ce type trouvé.</p>';
+              }
+              
+              const files = fs.readdirSync(directory, { withFileTypes: true });
+              let html = '';
+              
+              files.forEach(file => {
+                  if (file.isFile()) {
+                      const ext = path.extname(file.name).toLowerCase();
+                      if (extensions.includes(ext)) {
+                          const filePath = path.join(directory, file.name);
+                          const relativePath = path.relative('.', filePath);
+                          const size = getFileSize(filePath);
+                          const icon = ext === '.html' ? '📄' : ext === '.json' ? '📋' : '🎥';
+                          
+                          html += `
+                              <div class="file-item">
+                                  <a href="${relativePath}" target="_blank">
+                                      <span class="icon">${icon}</span>
+                                      ${file.name}
+                                  </a>
+                                  <div class="file-size">${size}</div>
+                              </div>
+                          `;
+                      }
+                  }
+              });
+              
+              return html || '<p>Aucun fichier de ce type trouvé.</p>';
+          }
+
+          // Lire le fichier index.html
+          let indexContent = fs.readFileSync('index.html', 'utf8');
+
+          // Générer les listes de fichiers
+          const apiReportsHtml = generateFileList('./api-tests', ['.html', '.json']);
+          const e2eReportsHtml = generateFileList('.', ['.html', '.json']);
+          const videosHtml = generateFileList('./videos', ['.mp4', '.webm']);
+          const generationTime = new Date().toLocaleString('fr-FR');
+
+          // Remplacer les placeholders
+          indexContent = indexContent.replace('{{API_REPORTS_PLACEHOLDER}}', apiReportsHtml);
+          indexContent = indexContent.replace('{{E2E_REPORTS_PLACEHOLDER}}', e2eReportsHtml);
+          indexContent = indexContent.replace('{{VIDEOS_PLACEHOLDER}}', videosHtml);
+          indexContent = indexContent.replace('{{GENERATION_TIME}}', generationTime);
+
+          // Écrire le fichier mis à jour
+          fs.writeFileSync('index.html', indexContent);
+          console.log('Index.html mis à jour avec les fichiers disponibles');
+          console.log('API Reports:', apiReportsHtml ? 'Found' : 'None');
+          console.log('E2E Reports:', e2eReportsHtml ? 'Found' : 'None');
+          console.log('Videos:', videosHtml ? 'Found' : 'None');
+          EOFJS
+
+          node update_index.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

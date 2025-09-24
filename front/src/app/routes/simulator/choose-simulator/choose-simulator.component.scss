@@ -1,4 +1,4 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 :host {
     display: flex;
@@ -41,7 +41,7 @@
             transition: border-color 0.75s ease, box-shadow 0.75s ease;
 
             &:hover {
-                border-color: fColor(primary);
+                border-color: utils.$colors-primary;
 
                 .cursor-tooltip {
                     opacity: 1;
@@ -97,7 +97,7 @@
 
             &.selected {
                 box-shadow: 0px 6px 18px 0px rgba(0, 0, 18, 0.16);
-                border-color: fColor(primary);
+                border-color: utils.$colors-primary;
             }
 
             .header {
@@ -116,7 +116,7 @@
                     font-weight: 700;
                     line-height: 28px;
                     position: relative;
-                    color: fColor(primary);
+                    color: utils.$colors-primary;
                     transition: background-color 0.75s ease;
                     padding-top: 14px;
                     padding-bottom: 14px;
@@ -162,7 +162,7 @@
                             width: 24px;
                             height: 24px;
                             border-radius: 24px;
-                            border: 1px solid fColor(primary);
+                            border: 1px solid utils.$colors-primary;
                             left: 17px;
                             top: 16px;
                         }
@@ -173,7 +173,7 @@
                             width: 14px;
                             height: 14px;
                             border-radius: 16px;
-                            background-color: fColor(primary);
+                            background-color: utils.$colors-primary;
                             left: 23px;
                             top: 22px;
                         }
@@ -211,7 +211,7 @@
     position: absolute;
     padding: 8px;
     border-radius: 4px;
-    background: fColor(primary);
+    background: utils.$colors-primary;
     color: white;
     transform: translate(-50%, 50%);
     opacity: 0;

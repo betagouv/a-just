@@ -7,45 +7,53 @@
       <div class="logo dark-mode block-marque-dark"></div>
       <div class="logo-ajust white-mode logo-white" [title]="'Déconnexion'" (click)="popin = true"></div>
 
-      <aj-popup *ngIf="popin" [closeIcon]="true" (onClose)="popin = false">
+      @if (popin) {
+      <aj-popup [closeIcon]="true" (onClose)="popin = false">
         <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
         <div class="content-popup">
           <button (click)="onSelectAction('logout')">Oui</button>
           <button (click)="popin = false">Non</button>
         </div>
       </aj-popup>
-
+      }
       <div class="logo-ajust dark-mode logo-dark" [title]="versionNumber" (click)="popin = true"></div>
     </div>
 
-    <div class="juridiction" *ngIf="hrBackups.length">
+    @if (hrBackups.length) {
+    <div class="juridiction">
       <div class="juridiction-title">
         <h6>{{ hrBackup && hrBackup.label }}</h6>
-        <mat-icon *ngIf="hrBackups && hrBackups.length > 1" [matMenuTriggerFor]="menu">expand_more</mat-icon>
+        @if (hrBackups && hrBackups.length > 1) {
+        <mat-icon [matMenuTriggerFor]="menu">expand_more</mat-icon>
+        }
         <mat-menu #menu="matMenu">
-          <button mat-menu-item *ngFor="let bu of hrBackups" (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
+          @for (bu of hrBackups; track bu.id) {
+          <button mat-menu-item (click)="onChangeHRBackup(bu.id)" [title]="bu.id">
             {{ bu.label }}
           </button>
+          }
         </mat-menu>
       </div>
     </div>
-
+    }
     <div class="menu-scrollable">
-      <a class="menu-item top" *ngFor="let item of menu" [routerLink]="['/' + item.path]"
-        [class.selected]="isSelected(item)" (click)="onSelect('/' + item.path)">
-        {{ item.label }}
-      </a>
-
+      @for (item of menu; track item.path) {
+      <div class="menu-item top" [class.selected]="isSelected(item)" [routerLink]="['/' + item.path]"
+        (click)="onSelect('/' + item.path)">
+        <a>
+          {{ item.label }}
+        </a>
+      </div>
+      }
       <div class="menu-item top">
         <div class="menu-item tools" (click)="openTools = !openTools">
           <a>Outils</a>
-          <mat-icon class="arrow-list">{{
-            openTools ? 'expand_less' : 'expand_more'
-            }}</mat-icon>
+          <mat-icon class="arrow-list">{{ openTools ? 'expand_less' : 'expand_more' }}</mat-icon>
         </div>
       </div>
 
-      <div *ngIf="openTools" class="sub-tools">
+      @if (openTools) {
+      <div class="sub-tools">
         <p (click)="downloadAsset('guide-utilisateur')">
           Le guide utilisateur
           <i class="ri-external-link-line"
@@ -59,28 +67,33 @@
           Le data-book
           <i class="ri-external-link-line" (click)="$event.stopPropagation(); downloadAsset('data-book', true)"></i>
         </p>
-        <p (click)="downloadAsset('calculatrice')">La calculatrice <i class="ri-download-line"></i></p>
-        <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">
-          Les extracteurs
-        </a>
-        <p (click)="downloadAsset('fiche-agent',true)">Modèle de feuille de temps <i class="ri-download-line"></i></p>
-        <a *ngIf="userService.canViewAverageTime()" [routerLink]="['/' + 'temps-moyens']">Référentiels de temps moyens
-        </a>
+        <p (click)="downloadAsset('calculatrice')">
+          La calculatrice
+          <i class="ri-download-line"></i>
+        </p>
+        @if (userService.canViewVentilation() || userService.canViewActivities()) {
+        <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">Les extracteurs</a>
+        }
+        <p (click)="downloadAsset('fiche-agent', true)">
+          Modèle de feuille de temps
+          <i class="ri-download-line"></i>
+        </p>
+        @if (userService.canViewAverageTime()) {
+        <a [routerLink]="['/' + 'temps-moyens']">Référentiels de temps moyens</a>
+        }
       </div>
-
+      }
       <div class="flex-1"></div>
       <div class="menu-item" [class.selected]="isSelected({ path: 'centre-d-aide' })">
-        <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">
-          Aide
-        </a>
+        <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">Aide</a>
         <a class="contact-us" href="/contact?backUrl=true">
           <p class="unselectable">Nous contacter</p>
         </a>
       </div>
 
       <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
-    <p>Déconnexion</p>
-  </div> -->
+      <p>Déconnexion</p>
+    </div> -->
     </div>
   </div>
 
@@ -88,57 +101,65 @@
     <div class="header">
       <div class="top-header" id="top">
         <div class="top-header-back-title">
-          <aj-back-button *ngIf="backUrl" [routerLink]="backUrl" [fragment]="backAnchor" class="back-url"
+          @if (backUrl) {
+          <aj-back-button [routerLink]="backUrl" [fragment]="backAnchor" class="back-url"
             [ngClass]="{ 'is-dark-screen': isDarkScreen }" />
-          <ng-template [ngIf]="actionsLeftTemplate">
-            <ng-container *ngTemplateOutlet="actionsLeftTemplate"></ng-container>
-          </ng-template>
+          }
+          @if (actionsLeftTemplate) {
+          <ng-container *ngTemplateOutlet="actionsLeftTemplate"></ng-container>
+          }
           <div>
             <div class="title-with-doc">
               <h3 [innerHTML]="title"></h3>
-              <aj-help-button *ngIf="documentation" (click)="onTogglePanelHelper()"
-                class="documentation"></aj-help-button>
+              @if (documentation) {
+              <aj-help-button (click)="onTogglePanelHelper()" class="documentation no-print"></aj-help-button>
+              }
             </div>
             <p class="subtitle">
               <ng-container *ngTemplateOutlet="subtitleTemplate || defaultSubtitleTemplate"></ng-container>
             </p>
           </div>
           <!-- <ng-template [ngIf]="dateSelector">
-            <aj-date-select
-              title={{dateSelector.title}}
-              dateType={{dateSelector.dateType}}
-              value={{dateSelector.value}}
-              (valueChange)=changeMonth($event)
-              class="date-selector"
-            >
-            </aj-date-select>
-          </ng-template> -->
-          <ng-template [ngIf]="titleTemplate">
-            <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
-          </ng-template>
-        </div>
-        <ng-template [ngIf]="dateSelector">
-          <aj-date-select [title]="dateSelector.title" [dateType]="dateSelector.dateType" [value]="dateSelector.value"
-            [min]="dateSelector.minDate" [showArrow]="dateSelector.showArrow" (valueChange)="changeMonth($event)"
-            class="date-selector">
-          </aj-date-select>
-        </ng-template>
-        <ng-template [ngIf]="titleTemplate">
+        <aj-date-select
+          title={{dateSelector.title}}
+          dateType={{dateSelector.dateType}}
+          value={{dateSelector.value}}
+          (valueChange)=changeMonth($event)
+          class="date-selector"
+          >
+        </aj-date-select>
+      </ng-template> -->
+          @if (titleTemplate) {
           <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
-        </ng-template>
-        <div *ngIf="!alignLeft" class="space"></div>
+          }
+        </div>
+        @if (dateSelector) {
+        <aj-date-select [title]="dateSelector.title" [dateType]="dateSelector.dateType" [value]="dateSelector.value"
+          [min]="dateSelector.minDate" [showArrow]="dateSelector.showArrow" (valueChange)="changeMonth($event)"
+          class="date-selector"></aj-date-select>
+        }
+        @if (titleTemplate) {
+        <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
+        }
+        @if (!alignLeft) {
+        <div class="space"></div>
+        }
         <div class="actions">
           <ng-container *ngTemplateOutlet="actionTemplate || defaultActionTemplate"></ng-container>
         </div>
       </div>
       <div class="bottom-header">
-        <ng-template [ngIf]="actionTemplateBottom" class="actions">
+        @if (actionTemplateBottom) {
+        <ng-template class="actions">
           <ng-container *ngTemplateOutlet="actionTemplateBottom"></ng-container>
         </ng-template>
+        }
       </div>
-      <div class="progress-bar" *ngIf="isLoading">
+      @if (isLoading) {
+      <div class="progress-bar">
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
+      }
     </div>
     <div class="content" #content id="content" (scroll)="onScroll($event)" [class.duringPrint]="duringPrint">
       <ng-content></ng-content>
@@ -146,46 +167,49 @@
   </div>
 </div>
 
-<div *ngIf="panelHelper" class="panel-helper animate__animated animate__bounceInLeft">
+@if (panelHelper) {
+<div class="panel-helper animate__animated animate__bounceInLeft">
   <div class="panel-header"
-    [ngStyle]="{'background-color' : documentationToShow?.bgColor ? documentationToShow?.bgColor  : '#33569e' }">
-    <div class="over-title" [ngClass]="{'over-title-small': !documentationToShow?.printSubTitle }">
+    [ngStyle]="{ 'background-color': documentationToShow?.bgColor ? documentationToShow?.bgColor : '#33569e' }">
+    <div class="over-title" [ngClass]="{ 'over-title-small': !documentationToShow?.printSubTitle }">
       <div class="panel-header-closing-row">
         <h6>{{ documentationToShow?.title }}</h6>
         <i class="ri-close-line"
-          [ngStyle]="{'color': documentationToShow?.closeColor ? documentationToShow?.closeColor : 'white'}"
+          [ngStyle]="{ color: documentationToShow?.closeColor ? documentationToShow?.closeColor : 'white' }"
           (click)="panelHelper = false"></i>
       </div>
-      <p *ngIf="documentationToShow?.printSubTitle">
+      @if (documentationToShow?.printSubTitle) {
+      <p>
         <i class="ri-lightbulb-flash-line"></i>
-        <span>{{
-          documentationToShow?.subTitle || 'Comment ça marche ?'
-          }}</span>
+        <span>{{ documentationToShow?.subTitle || 'Comment ça marche ?' }}</span>
       </p>
+      }
     </div>
   </div>
-
   <iframe [src]="documentationToShow?.path || '' | sanitizeResourceUrl"
-    [ngStyle]="{'margin' : documentationToShow?.printSubTitle ? '-148px 8px 8px 8px' : '-90px 8px 8px 8px' }"></iframe>
+    [ngStyle]="{ margin: documentationToShow?.printSubTitle ? '-148px 8px 8px 8px' : '-90px 8px 8px 8px' }"></iframe>
 </div>
-
+}
 <ng-template #defaultActionTemplate></ng-template>
 
-<ng-template #defaultSubtitleTemplate>{{ subtitle }}
-  <label *ngIf="subtitleName !== ''" class="subtitle-name">{{
-    subtitleName
-    }}</label>
+<ng-template #defaultSubtitleTemplate>
+  {{ subtitle }}
+  @if (subtitleName !== '') {
+  <label class="subtitle-name">{{ subtitleName }}</label>
+  }
 </ng-template>
 
-<aj-popup *ngIf="promptComment" [actions]="[
-    { id: 'close', content: 'Annuler' },
-    { id: 'export', content: 'Exporter sans commentaire', fill: true },
-    {
-      id: 'export-with-comment',
-      content: 'Export avec le commentaire',
-      fill: true
-    }
-  ]" [closeIcon]="true" (onClose)="onActionComment({ id: 'close', content: 'Annuler' })"
+@if (promptComment) {
+<aj-popup [actions]="[
+      { id: 'close', content: 'Annuler' },
+      { id: 'export', content: 'Exporter sans commentaire', fill: true },
+      {
+        id: 'export-with-comment',
+        content: 'Export avec le commentaire',
+        fill: true,
+      },
+    ]" [closeIcon]="true" (onClose)="onActionComment({ id: 'close', content: 'Annuler' })"
   (selectedAction)="onActionComment($event, editor.value)" title="Export en PDF">
   <aj-text-editor title="Souhaitez-vous ajouter un commentaire ?" #editor [acceptLink]="false"></aj-text-editor>
 </aj-popup>
+}

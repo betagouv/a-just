@@ -1,4 +1,4 @@
- @import "../../styles/utils.scss";
+ @use "../../styles/utils.scss" as utils;
 
  :host {
 
@@ -25,7 +25,7 @@
              position: absolute;
              font-size: 16px;
              letter-spacing: -0.25px;
-             color: #6a6af4;
+             color: utils.$colors-cbluedark;
              font-weight: 500;
              margin-left: -50px;
              z-index: 1;
@@ -35,16 +35,14 @@
          input {
              text-align: center;
              font-weight: normal;
-             background-color: #eeeeee;
              border: none;
              border-top-left-radius: 4px;
              border-top-right-radius: 4px;
              position: relative;
-             border-bottom: solid 2px #e5e5e5;
 
              &:focus {
                  outline: none;
-                 border-bottom: solid 2px #3a3a3a !important;
+                 border-bottom: solid 2px utils.$colors-cblack !important;
              }
          }
 

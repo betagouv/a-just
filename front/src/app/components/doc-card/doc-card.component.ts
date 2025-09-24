@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, Input } from '@angular/core';
 import { ServerService } from '../../services/http-server/server.service';
 import { downloadFile } from '../../utils/system';
@@ -18,7 +18,7 @@ export interface DocCardInterface {
 @Component({
   selector: 'aj-doc-card',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterLink],
+  imports: [MatIconModule, RouterLink],
   templateUrl: './doc-card.component.html',
   styleUrls: ['./doc-card.component.scss'],
 })

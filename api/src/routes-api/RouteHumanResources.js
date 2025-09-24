@@ -10,7 +10,7 @@ import { today } from '../utils/date'
 import { findAllSituations, findSituation } from '../utils/human-resource'
 import { orderBy } from 'lodash'
 import { etpLabel } from '../constants/referentiel'
-import { selfRouteToSyncAgent } from '../utils/docker'
+import { loadOrWarmHR } from '../utils/redis'
 
 /**
  * Route des fiches
@@ -96,7 +96,7 @@ export default class RouteHumanResources extends Route {
   }
 
   /**
-   * Interface qui permet d'une fiche
+   * Interface qui permet la creation ou maj d'une fiche
    * @param {*} backupId
    * @param {*} hr
    */
@@ -108,13 +108,17 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async updateHr(ctx) {
-    let { backupId, hr } = this.body(ctx)
+    const { backupId, hr } = this.body(ctx)
 
-    const responseUpdate = await this.model.updateHR(hr, backupId)
-    //await selfRouteToSyncJuridiction(backupId)
-    await selfRouteToSyncAgent(hr.id, backupId)
+    // Étape 1 : Mise à jour en base de données
+    const updatedAgent = await this.model.updateHR(hr, backupId)
 
-    this.sendOk(ctx, responseUpdate)
+    if (!updatedAgent?.id) {
+      console.error('❌ Impossible de récupérer un agent valide après updateHR', updatedAgent)
+      return this.sendError(ctx, "Erreur lors de la mise à jour de l'agent")
+    }
+
+    this.sendOk(ctx, updatedAgent)
   }
 
   /**
@@ -127,18 +131,17 @@ export default class RouteHumanResources extends Route {
   async removeHR(ctx) {
     const { hrId } = ctx.params
 
+    // Vérifie l'accès
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
-      const onRemoveHR = await this.model.removeHR(hrId)
+      const removedAgent = await this.model.removeHR(hrId)
 
-      if (onRemoveHR) {
+      if (removedAgent && removedAgent.backupId) {
+        // Log
+        await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, { hrId })
+
         this.sendOk(ctx, 'Ok')
-        //await selfRouteToSyncJuridiction(onRemoveHR.backupId)
-        await selfRouteToSyncAgent(hrId, onRemoveHR.backupId)
-        await this.models.Logs.addLog(USER_REMOVE_HR, ctx.state.user.id, {
-          hrId,
-        })
       } else {
-        ctx.throw(401, "Cette personne n'est pas supprimable !")
+        ctx.throw(401, "Cette personne n'est pas supprimable ou introuvable !")
       }
     } else {
       this.sendOk(ctx, null)
@@ -153,6 +156,11 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async removeHRTest(ctx) {
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible")
+      return
+    }
+
     const { hrId } = ctx.params
 
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
@@ -184,8 +192,6 @@ export default class RouteHumanResources extends Route {
     if (hrId) {
       if (await this.models.HRSituations.destroySituationId(situationId)) {
         const agent = await this.model.getHr(hrId)
-        //await selfRouteToSyncJuridiction(agent.backupId)
-        await selfRouteToSyncAgent(hrId, agent.backupId)
         this.sendOk(ctx, agent)
       }
     }
@@ -201,6 +207,11 @@ export default class RouteHumanResources extends Route {
     accesses: [Access.canVewHR],
   })
   async removeSituationTest(ctx) {
+    if (process.env.NODE_ENV !== 'test') {
+      ctx.throw(401, "Cette route n'est pas disponible")
+      return
+    }
+
     const { situationId } = ctx.params
     const hrId = await this.models.HRSituations.haveHRId(situationId, ctx.state.user.id)
     if (hrId) {
@@ -241,7 +252,7 @@ export default class RouteHumanResources extends Route {
     date = today(date)
 
     console.time('filter list 1')
-    let hr = await this.model.getCache(backupId)
+    let hr = await loadOrWarmHR(backupId, this.models)
     console.timeEnd('filter list 1')
 
     console.time('filter list 2')
@@ -334,6 +345,7 @@ export default class RouteHumanResources extends Route {
             dateEnd: person.dateEnd,
             situations: situations,
             etp,
+            comment: person.comment,
             etpLabel: etp ? etpLabel(etp) : null,
             categoryName: situations.length && situations[0].category ? situations[0].category.label : '',
             category: situations.length && situations[0].category ? situations[0].category : null,

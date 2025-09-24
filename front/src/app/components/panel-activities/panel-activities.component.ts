@@ -6,7 +6,7 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { sumBy } from 'lodash';
+import { cloneDeep, sumBy } from 'lodash';
 import { ProgressionBarComponent } from './progression-bar/progression-bar.component';
 import { MainClass } from '../../libs/main-class';
 import { RHActivityInterface } from '../../interfaces/rh-activity';
@@ -28,7 +28,6 @@ import { HumanResourceService } from '../../services/human-resource/human-resour
 import { UserService } from '../../services/user/user.service';
 import { importedVentillation } from '../../routes/human-resource/add-ventilation/add-ventilation.component';
 import { fixDecimal } from '../../utils/numbers';
-import { copyArray } from '../../utils/array';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -46,6 +45,7 @@ export class PanelActivitiesComponent
   extends MainClass
   implements OnChanges, OnDestroy
 {
+  @Input() id: number | null = null;
   /**
    * Valeure de l'ETP
    */
@@ -155,12 +155,20 @@ export class PanelActivitiesComponent
         }
       })
     );
+
+    this.referentiel = cloneDeep(
+      this.humanResourceService.contentieuxReferentielOnly.getValue()
+    );
+  }
+
+  ngOnInit() {
+    console.log('this.id', this.id);
   }
 
   /**
    * Détection d'un changement et génération des données du rendu
    */
-  ngOnChanges(change: any) {
+  ngOnChanges() {
     if (this.etp < 0) {
       this.etp = 0;
     }
@@ -203,9 +211,6 @@ export class PanelActivitiesComponent
    * Chargement du référentiel et calcul des pourcents
    */
   onLoadReferentiel() {
-    this.referentiel = copyArray(
-      this.humanResourceService.contentieuxReferentielOnly.getValue()
-    );
 
     /*const backupLabel = localStorage.getItem('backupLabel')
     backupLabel && filterReferentiels(this.referentiel, backupLabel)*/

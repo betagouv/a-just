@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   HostBinding,
@@ -18,7 +18,7 @@ import { OPACITY_20 } from '../../../../constants/colors';
 @Component({
   selector: 'aj-graphs-numbers',
   standalone: true,
-  imports: [CommonModule, TooltipsComponent],
+  imports: [TooltipsComponent],
   templateUrl: './graphs-numbers.component.html',
   styleUrls: ['./graphs-numbers.component.scss'],
 })

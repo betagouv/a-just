@@ -37,6 +37,7 @@ export class UserService implements OnInit {
   serverService = inject(ServerService);
   humanResourceService = inject(HumanResourceService);
   referentielService = inject(ReferentielService);
+  interfaceTypeValue = signal<boolean | number | null>(null);
   /**
    * Format de l'utilisateur connecté
    */
@@ -123,7 +124,7 @@ export class UserService implements OnInit {
       );
     });
   }
-
+  
   ngOnInit(): void {
     this.getInterfaceType();
   }
@@ -147,9 +148,15 @@ export class UserService implements OnInit {
    * @returns
    */
   async getInterfaceType() {
+    if (this.interfaceTypeValue() !== null) {
+      return Promise.resolve(this.interfaceTypeValue());
+    }
+
     return this.serverService.get('users/interface-type').then((data) => {
       this.interfaceType = [0, 1].includes(data.data) ? data.data : null;
-      return this.interfaceType !== null ? true : false;
+      this.interfaceType !== null ? true : false
+      this.interfaceTypeValue.set(this.interfaceType);
+      return this.interfaceType;
     });
   }
 

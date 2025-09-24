@@ -16,7 +16,26 @@
 // Import commands.js using ES2015 syntax:
 import "./commands";
 import addCustomCommand from "cy-verify-downloads";
+import "cypress-mochawesome-reporter/register";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 require("cy-verify-downloads").addCustomCommand();
+
+before(() => {
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.reload();
+});
+
+// Ignore ResizeObserver errors
+Cypress.on("uncaught:exception", (err, runnable) => {
+  if (
+    err.message.includes(
+      "ResizeObserver loop completed with undelivered notifications"
+    )
+  ) {
+    return false;
+  }
+  return true;
+});

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { listFormatedInterface, HumanResourceSelectedInterface } from '../workforce/workforce.page'
-import { sortBy, sumBy } from 'lodash'
+import { sumBy } from 'lodash'
 import { WrapperComponent } from '../../components/wrapper/wrapper.component'
 import { PanoramaAlertComponent } from './panorama-alert/panorama-alert.component'
 import { WorkforceCompositionComponent } from './workforce-composition/workforce-composition.component'
@@ -10,7 +10,7 @@ import { ActivitiesLastDisponibilitiesComponent } from './activities-last-dispon
 import { ActivitiesLastModificationsComponent } from './activities-last-modifications/activities-last-modifications.component'
 import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { MainClass } from '../../libs/main-class'
-import { dateAddDays, sortDates, today } from '../../utils/dates'
+import { dateAddDays, today } from '../../utils/dates'
 import { HRCategorySelectedInterface } from '../../interfaces/hr-category'
 import { UserService } from '../../services/user/user.service'
 import { HumanResourceService } from '../../services/human-resource/human-resource.service'
@@ -371,7 +371,7 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
 
     for (let i = 0; i < hrList.length; i++) {
       const hr = hrList[i]
-      if (!hr.firstName || !hr.lastName) {
+      if (!hr.firstName || !hr.lastName || (hr.situations && hr.situations.length === 0)) {
         continue
       }
 

@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { AppService } from './services/app/app.service';
-import { CommonModule } from '@angular/common';
+
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

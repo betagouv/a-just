@@ -5,5 +5,20 @@
   "printWidth": 160,
   "bracketSpacing": true,
   "arrowParens": "always",
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "htmlWhitespaceSensitivity": "ignore",
+  "bracketSameLine": false,
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular",
+        "printWidth": 120,
+        "tabWidth": 2,
+        "useTabs": false,
+        "bracketSameLine": false,
+        "htmlWhitespaceSensitivity": "ignore"
+      }
+    }
+  ]
 }

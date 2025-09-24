@@ -1,10 +1,10 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
   .logo {
     height: 135px;
 
-    > img {
+    >img {
       height: 90px;
       margin-right: 27px;
     }
@@ -23,7 +23,7 @@
 
     a {
       font-size: 18px;
-      color: fColor(primary);
+      color: utils.$colors-primary;
       text-decoration: none;
     }
   }
@@ -35,7 +35,7 @@
   }
 
   .block-info {
-    background-color: fColor(bgBlueTag);
+    background-color: utils.$colors-bgBlueTag;
     padding: 16px 8px 16px 23px;
 
     .icon-i {
@@ -46,7 +46,7 @@
       line-height: 13px;
       height: 13px;
       text-align: center;
-      background-color: fColor(textBlueTag);
+      background-color: utils.$colors-textBlueTag;
       float: left;
       margin-right: 5px;
       margin-top: 6px;
@@ -54,14 +54,14 @@
 
     p {
       font-size: 16px;
-      color: fColor(textBlueTag);
+      color: utils.$colors-textBlueTag;
     }
   }
 
   .block-text {
     padding: 24px 16px;
     border-radius: 8px;
-    border: solid 1px fColor(cgraylightv3);
+    border: solid 1px utils.$colors-cgraylightv3;
     margin-top: 24px;
     text-align: center;
   }

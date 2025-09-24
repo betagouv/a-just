@@ -23,3 +23,7 @@ export function getShortMonthString(date) {
       'Déc.',
     ][date.getMonth()]
   }
+
+export const normalizeDate = (date) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}

@@ -1,45 +1,65 @@
 <aj-popup [titleTemplate]="titleTemplate" class="light-background no-scroll" [closeIcon]="true"
-    (onClose)="calculatorService.showGraphDetailType = null">
-    <div class="popin-graphs-details">
-        <div class="header-popin"
-            [ngStyle]="{'grid-template-columns': 'repeat('+humanResourceService.mainContentieuxReferentiel().length+', 1fr)'}">
-            <div *ngFor="let ref of humanResourceService.mainContentieuxReferentiel()" class="flex-1"
-                [style.color]="calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id ? 'rgba(246, 246, 246, 1)' : userService.referentielMappingColorByInterface(ref.label)"
-                [style.background-color]="calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id ? userService.referentielMappingColorByInterface(ref.label) :  'rgba(246, 246, 246, 1)'"
-                (click)="selectReferentiel(ref)">
-                {{ userService.referentielMappingNameByInterface(ref.label) }}
-            </div>
-        </div>
-        <div class="compare-header-popin">
-            <div>
-                <p>sur la période de</p>
-                <img src="/assets/icons/point-graph-blue.svg" alt="point-graph">
-                <p>{{getShortMonthString(dateStart)}} {{getYearMonthString(dateStart)}} -
-                    {{getShortMonthString(dateStop)}} {{getYearMonthString(dateStop)}}</p>
-            </div>
-            <div>
-                <p>comparée à</p>
-                <img src="/assets/icons/point-graph-red.svg" alt="point-graph">
-                <p>{{compareAtString}}</p>
-            </div>
-        </div>
-        <p *ngIf="haveMissingDatas" class="have-missing-datas">Certaines données sont manquantes sur les périodes
-            sélectionnées</p>
-        <div class="canvas-zone">
-            <p class="error" *ngIf="showError">Aucune donnée d’activité n’est enregistrée sur cette période pour ce
-                contentieux : vous pouvez les compléter dans l'écran de <a routerLink="/donnees-d-activite">données
-                    d’activité</a></p>
-            <canvas #canvas></canvas>
-        </div>
+  (onClose)="calculatorService.showGraphDetailType = null">
+  <div class="popin-graphs-details">
+    <div class="header-popin" [ngStyle]="{
+        'grid-template-columns': 'repeat(' + humanResourceService.mainContentieuxReferentiel().length + ', 1fr)',
+      }">
+      @for (ref of humanResourceService.mainContentieuxReferentiel(); track ref.id) {
+      <div class="flex-1" [style.color]="
+            calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id
+              ? 'rgba(246, 246, 246, 1)'
+              : userService.referentielMappingColorByInterface(ref.label)
+          " [style.background-color]="
+            calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id
+              ? userService.referentielMappingColorByInterface(ref.label)
+              : 'rgba(246, 246, 246, 1)'
+          " (click)="selectReferentiel(ref)">
+        {{ userService.referentielMappingNameByInterface(ref.label) }}
+      </div>
+      }
     </div>
+    <div class="compare-header-popin">
+      <div>
+        <p>sur la période de</p>
+        <img src="/assets/icons/point-graph-blue.svg" alt="point-graph" />
+        <p>
+          {{ getShortMonthString(dateStart) }} {{ getYearMonthString(dateStart) }} -
+          {{ getShortMonthString(dateStop) }} {{ getYearMonthString(dateStop) }}
+        </p>
+      </div>
+      <div>
+        <p>comparée à</p>
+        <img src="/assets/icons/point-graph-red.svg" alt="point-graph" />
+        <p>{{ compareAtString }}</p>
+      </div>
+    </div>
+    @if (haveMissingDatas) {
+    <p class="have-missing-datas">Certaines données sont manquantes sur les périodes sélectionnées</p>
+    }
+    <div class="canvas-zone">
+      @if (showError) {
+      <p class="error">
+        Aucune donnée d’activité n’est enregistrée sur cette période pour ce contentieux : vous pouvez les compléter
+        dans l'écran de
+        <a routerLink="/donnees-d-activite">données d’activité</a>
+      </p>
+      }
+      <canvas #canvas></canvas>
+    </div>
+  </div>
 </aj-popup>
 
 <ng-template #titleTemplate>
-    <div class="title-popin">
-        <img src="/assets/icons/icon-graph.svg">
-        <p>Evolution des
-            {{calculatorService.showGraphDetailTypeLineTitle}}{{calculatorService.showGraphDetailTypeLineTitle ===
-            'Stock' || calculatorService.showGraphDetailTypeLineTitle ===
-            'Temps moyen' ? 's' : ''}}</p>
-    </div>
+  <div class="title-popin">
+    <img src="/assets/icons/icon-graph.svg" />
+    <p>
+      Evolution des {{ calculatorService.showGraphDetailTypeLineTitle
+      }}{{
+      calculatorService.showGraphDetailTypeLineTitle === 'Stock' ||
+      calculatorService.showGraphDetailTypeLineTitle === 'Temps moyen'
+      ? 's'
+      : ''
+      }}
+    </p>
+  </div>
 </ng-template>

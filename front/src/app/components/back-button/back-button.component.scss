@@ -1,14 +1,14 @@
-@import "../../styles/utils.scss";
+@use "../../styles/utils.scss" as utils;
 
 :host {
   &.is-dark-screen {
     a {
-      background-color: fColor(darkModeTitle);
+      background-color: utils.$colors-darkModeTitle;
     }
 
     a,
     i {
-      color: fColor(primary);
+      color: utils.$colors-primary;
     }
   }
 

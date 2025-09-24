@@ -1,49 +1,133 @@
 <div class="background animate__animated animate__fadeIn"></div>
 
-<div id="popin" class="popin animate__animated animate__fadeIn" #popin (click)="
-    $event.stopPropagation();
-    filterSelection.close();
-    sortSelection.close();
-    orderSelection.close()
-  " [ngStyle]="{ left: leftPosition + 'px', top: topPosition + 'px' }">
+<div
+  id="popin"
+  class="popin animate__animated animate__fadeIn"
+  #popin
+  (click)="$event.stopPropagation(); filterSelection.close(); sortSelection.close(); orderSelection.close()"
+  [ngStyle]="{ left: leftPosition + 'px', top: topPosition + 'px' }"
+>
   <i class="ri-close-fill close" (click)="close.emit()"></i>
   <p class="panel-title">Options d'affichage</p>
   <p class="filter-group">Filtrer par :</p>
-  <aj-list-selection labelPreviewText="Tous" #filterContentieuxSelection icon="filter-2-line" title="Contentieux"
-    [multiple]="true" [list]="contentieuxFilterList" [values]="referentielIds!"
-    (valuesChanged)="referentielIds=$event;updateSubcontentieux(true);updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close(); filterSubContentieuxSelection.close()"></aj-list-selection>
-  <aj-list-selection labelPreviewText="Tous" #filterSubContentieuxSelection icon="filter-2-line" class="large-drop"
-    title="Sous-contentieux" [multiple]="true" [list]="subContentieuxFilterList" [values]="subReferentielIds!"
-    (valuesChanged)="subReferentielIds=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterSelection.close(); displaySelection.close(); filterContentieuxSelection.close()"></aj-list-selection>
-  <aj-list-selection #filterSelection icon="filter-2-line" title="Fonctions" [multiple]="true" [list]="filterList"
-    [values]="filterValues!" (valuesChanged)="filterValues=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterIndispoSelection.close(); filterContentieuxSelection.close(); displaySelection.close(); filterSubContentieuxSelection.close()"></aj-list-selection>
-  <aj-list-selection #filterIndispoSelection icon="filter-2-line" title="Indisponibilités" [multiple]="true"
-    [list]="allIndisponibilityReferentiel" [values]="filterIndispoValues!"
-    (valuesChanged)="filterIndispoValues=$event;updateParams()"
-    (onOpen)="sortSelection.close(); orderSelection.close(); filterContentieuxSelection.close(); filterSelection.close(); displaySelection.close(); filterSubContentieuxSelection.close()"></aj-list-selection>
+  <aj-list-selection
+    labelPreviewText="Tous"
+    #filterContentieuxSelection
+    icon="filter-2-line"
+    title="Contentieux"
+    [multiple]="true"
+    [list]="contentieuxFilterList"
+    [values]="referentielIds!"
+    (valuesChanged)="referentielIds = $event; updateSubcontentieux(true); updateParams()"
+    (onOpen)="
+      sortSelection.close();
+      orderSelection.close();
+      filterIndispoSelection.close();
+      filterSelection.close();
+      displaySelection.close();
+      filterSubContentieuxSelection.close()
+    "
+  ></aj-list-selection>
+  <aj-list-selection
+    labelPreviewText="Tous"
+    #filterSubContentieuxSelection
+    icon="filter-2-line"
+    class="large-drop"
+    title="Sous-contentieux"
+    [multiple]="true"
+    [list]="subContentieuxFilterList"
+    [values]="subReferentielIds!"
+    (valuesChanged)="subReferentielIds = $event; updateParams()"
+    (onOpen)="
+      sortSelection.close();
+      orderSelection.close();
+      filterIndispoSelection.close();
+      filterSelection.close();
+      displaySelection.close();
+      filterContentieuxSelection.close()
+    "
+  ></aj-list-selection>
+  <aj-list-selection
+    #filterSelection
+    icon="filter-2-line"
+    title="Fonctions"
+    [multiple]="true"
+    [list]="filterList"
+    [values]="filterValues!"
+    (valuesChanged)="filterValues = $event; updateParams()"
+    (onOpen)="
+      sortSelection.close();
+      orderSelection.close();
+      filterIndispoSelection.close();
+      filterContentieuxSelection.close();
+      displaySelection.close();
+      filterSubContentieuxSelection.close()
+    "
+  ></aj-list-selection>
+  <aj-list-selection
+    #filterIndispoSelection
+    icon="filter-2-line"
+    title="Indisponibilités"
+    [multiple]="true"
+    [list]="allIndisponibilityReferentiel"
+    [values]="filterIndispoValues!"
+    (valuesChanged)="filterIndispoValues = $event; updateParams()"
+    (onOpen)="
+      sortSelection.close();
+      orderSelection.close();
+      filterContentieuxSelection.close();
+      filterSelection.close();
+      displaySelection.close();
+      filterSubContentieuxSelection.close()
+    "
+  ></aj-list-selection>
 
   <p class="filter-group">Trier par :</p>
-  <aj-list-selection #sortSelection title="Critère" [list]="sortList" [value]="sortValue"
-    (valueChanged)="sortValue = $event; updateParams()" (onOpen)="
-      filterSelection.close(); orderSelection.close(); displaySelection.close(); filterContentieuxSelection.close(); filterIndispoSelection.close(); filterSubContentieuxSelection.close()
-    ">
-  </aj-list-selection>
-  <aj-list-selection #orderSelection [list]="orderList" [value]="orderValue"
-    (valueChanged)="orderValue = $event; updateParams()" (onOpen)="
-      filterSelection.close(); sortSelection.close(); displaySelection.close(); filterContentieuxSelection.close(); filterIndispoSelection.close(); filterSubContentieuxSelection.close()
-    ">
-  </aj-list-selection>
+  <aj-list-selection
+    #sortSelection
+    title="Critère"
+    [list]="sortList"
+    [value]="sortValue"
+    (valueChanged)="sortValue = $event; updateParams()"
+    (onOpen)="
+      filterSelection.close();
+      orderSelection.close();
+      displaySelection.close();
+      filterContentieuxSelection.close();
+      filterIndispoSelection.close();
+      filterSubContentieuxSelection.close()
+    "
+  ></aj-list-selection>
+  <aj-list-selection
+    #orderSelection
+    [list]="orderList"
+    [value]="orderValue"
+    (valueChanged)="orderValue = $event; updateParams()"
+    (onOpen)="
+      filterSelection.close();
+      sortSelection.close();
+      displaySelection.close();
+      filterContentieuxSelection.close();
+      filterIndispoSelection.close();
+      filterSubContentieuxSelection.close()
+    "
+  ></aj-list-selection>
 
   <p class="filter-group">Afficher par :</p>
-  <aj-list-selection #displaySelection title="Affichage" [list]="displayList" [value]="displayValue"
-    (valueChanged)="displayValue = $event; updateParams()" (onOpen)="
-      sortSelection.close(); orderSelection.close(); filterSelection.close(); filterIndispoSelection.close(); filterContentieuxSelection.close();
-    ">
-  </aj-list-selection>
-
+  <aj-list-selection
+    #displaySelection
+    title="Affichage"
+    [list]="displayList"
+    [value]="displayValue"
+    (valueChanged)="displayValue = $event; updateParams()"
+    (onOpen)="
+      sortSelection.close();
+      orderSelection.close();
+      filterSelection.close();
+      filterIndispoSelection.close();
+      filterContentieuxSelection.close()
+    "
+  ></aj-list-selection>
 </div>
 <!--
 <ng-template #buttonTemplate>

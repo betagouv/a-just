@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
 import { MainClass } from '../../libs/main-class';
 
@@ -8,7 +8,7 @@ import { MainClass } from '../../libs/main-class';
 @Component({
   selector: 'aj-empty-input',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './empty-input.component.html',
   styleUrls: ['./empty-input.component.scss'],
 })

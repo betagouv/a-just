@@ -1,16 +1,11 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MainClass } from '../../libs/main-class';
-import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
-import { UserService } from '../../services/user/user.service';
-import { CommonModule } from '@angular/common';
-import { MIN_PASSWORD_LENGTH } from '../../utils/user';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { ActivatedRoute, Router, RouterLink } from '@angular/router'
+import { MainClass } from '../../libs/main-class'
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
+import { UserService } from '../../services/user/user.service'
+import { CommonModule } from '@angular/common'
+import { MIN_PASSWORD_LENGTH } from '../../utils/user'
 
 /**
  * Page changement du mot de passe
@@ -18,21 +13,15 @@ import { MIN_PASSWORD_LENGTH } from '../../utils/user';
 
 @Component({
   standalone: true,
-  imports: [
-    WrapperNoConnectedComponent,
-    FormsModule,
-    RouterLink,
-    ReactiveFormsModule,
-    CommonModule,
-  ],
+  imports: [WrapperNoConnectedComponent, FormsModule, RouterLink, ReactiveFormsModule, CommonModule],
   templateUrl: './change-password.page.html',
   styleUrls: ['./change-password.page.scss'],
 })
 export class ChangePassword extends MainClass implements OnInit, OnDestroy {
-  userService = inject(UserService);
-  route = inject(ActivatedRoute);
-  router = inject(Router);
-  MIN_PASSWORD_LENGTH = MIN_PASSWORD_LENGTH;
+  userService = inject(UserService)
+  route = inject(ActivatedRoute)
+  router = inject(Router)
+  MIN_PASSWORD_LENGTH = MIN_PASSWORD_LENGTH
 
   /**
    * Formulaire
@@ -43,7 +32,7 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
     password: new FormControl(),
     passwordConf: new FormControl(),
     checkboxPassword: new FormControl(),
-  });
+  })
   /**
    * Mot de passe paramètres de validation
    */
@@ -52,7 +41,7 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
     char: false,
     number: false,
     majuscule: false,
-  };
+  }
 
   /**
    * Constructeur
@@ -61,7 +50,7 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
    * @param router
    */
   constructor() {
-    super();
+    super()
   }
 
   /**
@@ -71,56 +60,51 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.route.queryParams.subscribe((params) => {
         if (params['p']) {
-          this.form.get('code')?.setValue(params['p']);
+          this.form.get('code')?.setValue(params['p'])
         }
-      })
-    );
+      }),
+    )
   }
 
   /**
    * On détruit les observables
    */
   ngOnDestroy() {
-    this.watcherDestroy();
+    this.watcherDestroy()
   }
 
   /**
    * Envoi du nouveau mot de passe au serveur
    */
   onSubmit() {
-    const { email, code, password, passwordConf } = this.form.value;
-    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-'];
-    var regex = '[' + arrayOfSp.join('') + ']';
+    const { email, code, password, passwordConf } = this.form.value
+    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-']
+    var regex = '[' + arrayOfSp.join('') + ']'
 
-    if (
-      !password ||
-      password.length < MIN_PASSWORD_LENGTH ||
-      !password.match(/\d/) ||
-      !new RegExp(regex).test(password) ||
-      !password.match(/[A-Z]/g)
-    ) {
-      alert(
-        'Vous devez saisir un mot de passe qui remplit les critères obligatoires'
-      );
-      return;
+    if (!password || password.length < MIN_PASSWORD_LENGTH || !password.match(/\d/) || !new RegExp(regex).test(password) || !password.match(/[A-Z]/g)) {
+      alert('Vous devez saisir un mot de passe qui remplit les critères obligatoires')
+      return
     }
 
     if (password !== passwordConf) {
-      alert('Vos mots de passe ne sont pas identiques');
-      return;
+      alert('Vos mots de passe ne sont pas identiques')
+      return
     }
 
-    this.userService
-      .changePassword({ email, code, password })
-      .then((result) => {
-        if (result.msg) {
-          alert(result.msg);
+    if ((email || '').length === 0) {
+      alert('Vous devez saisir votre email')
+      return
+    }
 
-          if (result.status) {
-            this.router.navigate(['/login']);
-          }
+    this.userService.changePassword({ email, code, password }).then((result) => {
+      if (result.msg) {
+        alert(result.msg)
+
+        if (result.status) {
+          this.router.navigate(['/login'])
         }
-      });
+      }
+    })
   }
 
   /**
@@ -128,25 +112,25 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
    * @param event
    */
   checkStrength(event: any) {
-    const password = event.target.value;
+    const password = event.target.value
 
     if (password && password.match(/\d/)) {
-      this.passwordStrength.number = true;
-    } else this.passwordStrength.number = false;
+      this.passwordStrength.number = true
+    } else this.passwordStrength.number = false
 
-    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-'];
-    var regex = '[' + arrayOfSp.join('') + ']';
+    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-']
+    var regex = '[' + arrayOfSp.join('') + ']'
     if (password && new RegExp(regex).test(password)) {
-      this.passwordStrength.char = true;
-    } else this.passwordStrength.char = false;
+      this.passwordStrength.char = true
+    } else this.passwordStrength.char = false
 
     if (password && password.length > MIN_PASSWORD_LENGTH) {
-      this.passwordStrength.length = true;
-    } else this.passwordStrength.length = false;
+      this.passwordStrength.length = true
+    } else this.passwordStrength.length = false
 
     if (password && password.match(/[A-Z]/g)) {
-      this.passwordStrength.majuscule = true;
-    } else this.passwordStrength.majuscule = false;
+      this.passwordStrength.majuscule = true
+    } else this.passwordStrength.majuscule = false
   }
 
   /**
@@ -155,12 +139,12 @@ export class ChangePassword extends MainClass implements OnInit, OnDestroy {
    * @returns
    */
   getParamColor(val: number) {
-    const password = this.form.get('password')?.value;
-    const options = ['length', 'char', 'number', 'majuscule'];
+    const password = this.form.get('password')?.value
+    const options = ['length', 'char', 'number', 'majuscule']
 
-    if (!password) return '#0063cb';
+    if (!password) return '#0063cb'
     // @ts-ignore
-    else if (this.passwordStrength[options[val]] === false) return 'red';
-    else return '#0063cb';
+    else if (this.passwordStrength[options[val]] === false) return 'red'
+    else return '#0063cb'
   }
 }

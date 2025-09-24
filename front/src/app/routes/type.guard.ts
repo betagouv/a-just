@@ -13,12 +13,8 @@ class TypeGuardService {
   router = inject(Router);
 
   async checkInterfaceType() {
-    if (await this.userService.getInterfaceType()) {
-      return true;
-    }
-
-    this.router.navigate(['/login']);
-    return false;
+    await this.userService.getInterfaceType()
+    return true
   }
 }
 

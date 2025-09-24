@@ -1,2 +1,9 @@
-export const MENU_WIDTH = 222;
-export const MENU_HEIGHT = 64;
+/**
+ * Largeur du menu
+ */
+export const MENU_WIDTH = 222
+
+/**
+ * Hauteur du menu
+ */
+export const MENU_HEIGHT = 64

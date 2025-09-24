@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 
 :host {
@@ -24,12 +24,12 @@
         padding: 0;
         line-height: normal;
         font-weight: bold;
-        color: fColor(cblack);
+        color: utils.$colors-cblack;
       }
 
       p {
-        color: fColor(primary);
-        border-bottom: 2px solid fColor(primary);
+        color: utils.$colors-primary;
+        border-bottom: 2px solid utils.$colors-primary;
         font-size: 0.875em;
       }
 
@@ -37,7 +37,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        color: fColor(cbluedark);
+        color: utils.$colors-cbluedark;
       }
 
       .element {
@@ -68,8 +68,8 @@
   .action-bar {
     height: 57px;
     padding: 11px 16px 14px 31px;
-    background-color: #f6f6f6;
-    border-top: solid 1px #eee4d9;
+    background-color: utils.$colors-ventilationCurrentSituationBg;
+    border-top: solid 1px utils.$colors-ventilationPastSituation;
     display: flex;
     align-items: center;
     font-size: 14px;
@@ -77,7 +77,7 @@
     label {
       font-size: 16px;
       font-weight: bold;
-      color: #3a3a3a;
+      color: utils.$colors-cblack;
     }
 
     .delete-action {
@@ -85,7 +85,7 @@
       height: 32px;
       margin-right: 32px;
       padding: 4px 12px 4px 8px;
-      border: solid 1px #ddd;
+      border: solid 1px utils.$colors-lightBorder;
       display: flex;
       align-items: center;
 
@@ -95,14 +95,14 @@
         font-weight: 500;
         line-height: 1.71;
         text-align: center;
-        color: #000091;
+        color: utils.$colors-primary;
         margin-left: 8px;
       }
 
       i {
         cursor: pointer;
         font-size: 16px;
-        color: #000091;
+        color: utils.$colors-primary;
       }
 
     }
@@ -112,8 +112,8 @@
       height: 32px;
       margin-right: 8px;
       padding: 4px 12px;
-      border: solid 1px #000091;
-      color: #000091;
+      border: solid 1px utils.$colors-primary;
+      color: utils.$colors-primary;
       align-items: center;
       display: flex;
     }
@@ -122,7 +122,7 @@
       cursor: pointer;
       height: 32px;
       padding: 4px 12px;
-      background-color: #000091;
+      background-color: utils.$colors-primary;
       color: white;
       align-items: center;
       display: flex;
@@ -132,13 +132,13 @@
   .header-bar {
     height: 40px;
     padding: 10px 0px 10px 16px;
-    border: solid 1px #ddd;
-    background-color: #eee;
+    border: solid 1px utils.$colors-lightBorder;
+    background-color: utils.$colors-ventilationPastSituation;
     display: flex;
     align-items: center;
     font-weight: bold;
     line-height: 1.67;
-    color: #666666;
+    color: utils.$colors-cgray;
     border-bottom: none;
     font-size: 12px;
   }
@@ -147,9 +147,9 @@
     cursor: pointer;
     min-height: 50px;
     padding-left: 16px;
-    border: solid 1px #ddd;
+    border: solid 1px utils.$colors-lightBorder;
     border-top: none;
-    background-color: #fff;
+    background-color: utils.$colors-white;
     display: flex;
     align-items: center;
     font-size: 12px;
@@ -211,18 +211,18 @@
       cursor: pointer;
       height: 32px;
       margin: 0 8px 0 0;
-      border: solid 1px #ddd;
+      border: solid 1px utils.$colors-lightBorder;
       display: flex;
       align-items: center;
       padding: 0 10px;
-      color: #000091;
+      color: utils.$colors-primary;
       font-size: 14px;
       font-weight: 500;
       line-height: 1.71;
 
       i {
         margin-right: 10px;
-        color: #000091;
+        color: utils.$colors-primary;
       }
     }
 
@@ -238,13 +238,13 @@
       padding: 0 8px;
       margin-top: 12px;
       font-size: 18px;
-      color: #929292;
+      color: utils.$colors-grayRow;
 
       .follow {
         margin-top: 32px;
         margin-bottom: 12px;
         display: block;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
       }
     }
 
@@ -261,10 +261,10 @@
         font-weight: 500;
         line-height: 35px;
         text-align: center;
-        color: #000091;
+        color: utils.$colors-primary;
         height: 40px;
         padding: 0 16px;
-        border: solid 1px #000091;
+        border: solid 1px utils.$colors-primary;
         margin-right: 8px;
       }
 
@@ -274,10 +274,10 @@
         &.enable {
           cursor: pointer;
           pointer-events: initial;
-          background-color: #000091;
+          background-color: utils.$colors-primary;
         }
 
-        background-color: #929292;
+        background-color: utils.$colors-grayRow;
         cursor: none;
         pointer-events: none;
         margin-top: 12px;
@@ -285,7 +285,7 @@
         font-weight: 500;
         line-height: 35px;
         text-align: center;
-        color: #f5f5fe;
+        color: utils.$colors-white;
         height: 40px;
         padding: 0 16px;
       }
@@ -295,7 +295,7 @@
     #circle {
       width: 70px;
       height: 70px;
-      background: #ececfe;
+      background: utils.$colors-bgReadETPDark;
       border-radius: 70px;
       margin: auto;
       display: flex;
@@ -305,7 +305,7 @@
 
       i {
         font-size: 24px;
-        color: #8585f6;
+        color: utils.$colors-primary;
       }
 
       img {
@@ -317,7 +317,7 @@
     p {
       font-size: 18px;
       font-weight: bold;
-      color: #3a3a3a;
+      color: utils.$colors-cblack;
       text-align: center;
       margin-bottom: 23px;
     }
@@ -326,18 +326,18 @@
       font-size: 10px;
       line-height: 2;
       text-align: right;
-      color: #666;
+      color: utils.$colors-cgray;
     }
 
 
     .container {
       padding: 4px 4px 4px 4px;
       border-radius: 8px;
-      background-color: #f6f6f6;
+      background-color: utils.$colors-ventilationCurrentSituationBg;
       margin-bottom: 4px;
       display: flex;
       align-items: center;
-      color: #3a3a3a;
+      color: utils.$colors-cblack;
       width: 100%;
 
       &.radio {
@@ -361,19 +361,19 @@
         align-items: center;
 
         label {
-          background-color: #fff;
-          border: solid 1px #e5e5e5;
+          background-color: utils.$colors-white;
+          border: solid 1px utils.$colors-dataNotSettedIsSetBg;
 
           &.selected-mag {
-            background-color: #e3e3fd;
-            border: solid 1px #6a6af4;
-            color: #000091;
+            background-color: utils.$colors-bgCategorySiege;
+            border: solid 1px utils.$colors-dataToCompleteBorder;
+            color: utils.$colors-primary;
           }
 
           &.selected-greffe {
-            color: #a558a0;
-            border: solid 1px #a558a0 !important;
-            background-color: #fee7fc !important;
+            color: utils.$colors-cpink;
+            border: solid 1px utils.$colors-cpink !important;
+            background-color: utils.$colors-cpinkmiddle !important;
           }
         }
 
@@ -397,8 +397,8 @@
           padding: 4px 1px;
           border-top-right-radius: 4px;
           border-bottom-right-radius: 4px;
-          border: solid 1px #e5e5e5;
-          background-color: #fff;
+          border: solid 1px utils.$colors-lightBorder;
+          background-color: utils.$colors-white;
         }
 
       }

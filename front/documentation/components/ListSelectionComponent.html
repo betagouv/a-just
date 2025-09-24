@@ -1,0 +1,1964 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>a-just-front documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">a-just-front documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  ListSelectionComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/components/list-selection/list-selection.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Comoposant liste</p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnChanges</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>aj-list-selection</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>CommonModule</code>
+                            <code>MatIconModule</code>
+                            <code>MatCheckboxModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./list-selection.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./list-selection.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#itemsSelected" >itemsSelected</a>
+                            </li>
+                            <li>
+                                <a href="#labelPreview" >labelPreview</a>
+                            </li>
+                            <li>
+                                <a href="#maxHeightDropdown" >maxHeightDropdown</a>
+                            </li>
+                            <li>
+                                <a href="#onOpenDropdown" >onOpenDropdown</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#selectArea" >selectArea</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#close" >close</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnChanges" >ngOnChanges</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#onClick" >onClick</a>
+                            </li>
+                            <li>
+                                <a href="#onSelect" >onSelect</a>
+                            </li>
+                            <li>
+                                <a href="#onSelectAll" >onSelectAll</a>
+                            </li>
+                            <li>
+                                <a href="#onSelectMultiple" >onSelectMultiple</a>
+                            </li>
+                            <li>
+                                <a href="#onToggleDropdown" >onToggleDropdown</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#icon" >icon</a>
+                            </li>
+                            <li>
+                                <a href="#labelPreviewText" >labelPreviewText</a>
+                            </li>
+                            <li>
+                                <a href="#list" >list</a>
+                            </li>
+                            <li>
+                                <a href="#multiple" >multiple</a>
+                            </li>
+                            <li>
+                                <a href="#title" >title</a>
+                            </li>
+                            <li>
+                                <a href="#value" >value</a>
+                            </li>
+                            <li>
+                                <a href="#values" >values</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#onOpen" >onOpen</a>
+                            </li>
+                            <li>
+                                <a href="#valueChanged" >valueChanged</a>
+                            </li>
+                            <li>
+                                <a href="#valuesChanged" >valuesChanged</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>HostListeners</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#document:click" >document:click</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="97" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:97</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div class="io-description"><p>Construteur</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="icon"></a>
+                        <b>icon</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:38</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Icon affiché sur la droite</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="labelPreviewText"></a>
+                        <b>labelPreviewText</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;Toutes&#x27;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:58</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Default all label</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="list"></a>
+                        <b>list</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ItemInterface.html" target="_self" >ItemInterface[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:42</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Liste des éléments de la liste</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="multiple"></a>
+                        <b>multiple</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:54</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Autorisation de la selection multiple</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="title"></a>
+                        <b>title</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:34</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Titre du bouton</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="value"></a>
+                        <b>value</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string | number | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:46</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Id de l&#39;élement selectionné</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="values"></a>
+                        <b>values</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>(string | number)[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:50</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Liste des id des élements selectionnés</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+    <section data-compodoc="block-outputs">
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="onOpen"></a>
+                        <b>onOpen</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>EventEmitter&lt;string&gt;</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:73</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Information au parent de l&#39;ouverture du panneau de la liste</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="valueChanged"></a>
+                        <b>valueChanged</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>EventEmitter&lt;string | number | null&gt;</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:62</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Valeur de l&#39;ID selectionnée changée</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="valuesChanged"></a>
+                        <b>valuesChanged</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>EventEmitter&lt;[]&gt;</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:67</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Valeurs des ID sélectionnées changées</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-methods">
+    <h3>HostListeners</h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="document:click"></a>
+                    <span class="name">
+                        <span ><b>document:click</b></span>
+                        <a href="#document:click"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <i>Arguments : </i><code>'$event' </code>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>document:click()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="95"
+                                    class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:95</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Détection d&#39;un click n&#39;importe où pour fermer</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="close"></a>
+                    <span class="name">
+                        <span ><b>close</b></span>
+                        <a href="#close"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>close()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="196"
+                                    class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:196</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Ferme la liste</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnChanges"></a>
+                    <span class="name">
+                        <span ><b>ngOnChanges</b></span>
+                        <a href="#ngOnChanges"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnChanges(changes: SimpleChanges)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="108"
+                                    class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:108</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Detection de la valeure selectionnée et formatage des données pour un rendu visuel</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>changes</td>
+                                            <td>
+                                                        <code>SimpleChanges</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onClick"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>onClick</b></span>
+                        <a href="#onClick"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>onClick()</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@HostListener(&#x27;document:click&#x27;, [&#x27;$event&#x27;])<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="95"
+                                    class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:95</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Détection d&#39;un click n&#39;importe où pour fermer</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSelect"></a>
+                    <span class="name">
+                        <span ><b>onSelect</b></span>
+                        <a href="#onSelect"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onSelect(item: string | number)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="138"
+                                    class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:138</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Remonter au parent le changement d&#39;état de l&#39;élement sélectionné</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>item</td>
+                                            <td>
+                                                        <code>string | number</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSelectAll"></a>
+                    <span class="name">
+                        <span ><b>onSelectAll</b></span>
+                        <a href="#onSelectAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onSelectAll()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="204"
+                                    class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:204</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Force la sélection de tout les éléments</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onSelectMultiple"></a>
+                    <span class="name">
+                        <span ><b>onSelectMultiple</b></span>
+                        <a href="#onSelectMultiple"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onSelectMultiple(item: string | number)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="148"
+                                    class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:148</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Remonter au parent le changement d&#39;état des élements sélectionnés</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>item</td>
+                                            <td>
+                                                        <code>string | number</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onToggleDropdown"></a>
+                    <span class="name">
+                        <span ><b>onToggleDropdown</b></span>
+                        <a href="#onToggleDropdown"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onToggleDropdown()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="171"
+                                    class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:171</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Ouvre ou ferme la liste</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="itemsSelected"></a>
+                    <span class="name">
+                        <span ><b>itemsSelected</b></span>
+                        <a href="#itemsSelected"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ItemInterface.html" target="_self" >ItemInterface[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:77</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Valeures internes des ids sélectionnées</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="labelPreview"></a>
+                    <span class="name">
+                        <span ><b>labelPreview</b></span>
+                        <a href="#labelPreview"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:89</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Renvu visuel des la liste des ID sélectionnées</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="maxHeightDropdown"></a>
+                    <span class="name">
+                        <span ><b>maxHeightDropdown</b></span>
+                        <a href="#maxHeightDropdown"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>number | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:85</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Limite de hauteur de la liste</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onOpenDropdown"></a>
+                    <span class="name">
+                        <span ><b>onOpenDropdown</b></span>
+                        <a href="#onOpenDropdown"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:81</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Boolean de la popin ouverte ou fermée</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectArea"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>selectArea</b></span>
+                        <a href="#selectArea"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>ElementRef&lt;HTMLElement&gt; | null</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>null</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChild(&#x27;selectArea&#x27;)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/components/list-selection/list-selection.component.ts:30</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Dom de selection</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { CommonModule } from &#x27;@angular/common&#x27;;
+import { ElementRef, HostListener, ViewChild } from &#x27;@angular/core&#x27;;
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnChanges,
+  SimpleChanges,
+} from &#x27;@angular/core&#x27;;
+import { ItemInterface } from &#x27;../../interfaces/item&#x27;;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;;
+import { MatCheckboxModule } from &#x27;@angular/material/checkbox&#x27;;
+
+/**
+ * Comoposant liste
+ */
+
+@Component({
+  selector: &#x27;aj-list-selection&#x27;,
+  standalone: true,
+  imports: [CommonModule, MatIconModule, MatCheckboxModule],
+  templateUrl: &#x27;./list-selection.component.html&#x27;,
+  styleUrls: [&#x27;./list-selection.component.scss&#x27;],
+})
+export class ListSelectionComponent implements OnChanges {
+  /**
+   * Dom de selection
+   */
+  @ViewChild(&#x27;selectArea&#x27;) selectArea: ElementRef&lt;HTMLElement&gt; | null &#x3D; null;
+  /**
+   * Titre du bouton
+   */
+  @Input() title: string &#x3D; &#x27;&#x27;;
+  /**
+   * Icon affiché sur la droite
+   */
+  @Input() icon: string &#x3D; &#x27;&#x27;;
+  /**
+   * Liste des éléments de la liste
+   */
+  @Input() list: ItemInterface[] &#x3D; [];
+  /**
+   * Id de l&#x27;élement selectionné
+   */
+  @Input() value: string | number | null &#x3D; null;
+  /**
+   * Liste des id des élements selectionnés
+   */
+  @Input() values: (string | number)[] &#x3D; [];
+  /**
+   * Autorisation de la selection multiple
+   */
+  @Input() multiple: boolean &#x3D; false;
+  /**
+   * Default all label
+   */
+  @Input() labelPreviewText: string &#x3D; &#x27;Toutes&#x27;;
+  /**
+   * Valeur de l&#x27;ID selectionnée changée
+   */
+  @Output() valueChanged: EventEmitter&lt;string | number | null&gt; &#x3D;
+    new EventEmitter&lt;string | number | null&gt;();
+  /**
+   * Valeurs des ID sélectionnées changées
+   */
+  @Output() valuesChanged: EventEmitter&lt;(string | number)[]&gt; &#x3D; new EventEmitter&lt;
+    (string | number)[]
+  &gt;();
+  /**
+   * Information au parent de l&#x27;ouverture du panneau de la liste
+   */
+  @Output() onOpen: EventEmitter&lt;string&gt; &#x3D; new EventEmitter&lt;string&gt;();
+  /**
+   * Valeures internes des ids sélectionnées
+   */
+  itemsSelected: ItemInterface[] &#x3D; [];
+  /**
+   * Boolean de la popin ouverte ou fermée
+   */
+  onOpenDropdown: boolean &#x3D; false;
+  /**
+   * Limite de hauteur de la liste
+   */
+  maxHeightDropdown: number | null &#x3D; null;
+  /**
+   * Renvu visuel des la liste des ID sélectionnées
+   */
+  labelPreview: string &#x3D; &#x27;&#x27;;
+
+  /**
+   * Détection d&#x27;un click n&#x27;importe où pour fermer
+   */
+  @HostListener(&#x27;document:click&#x27;, [&#x27;$event&#x27;])
+  onClick() {
+    this.onOpenDropdown &#x3D; false;
+  }
+
+  /**
+   * Construteur
+   */
+  constructor() {}
+
+  /**
+   * Detection de la valeure selectionnée et formatage des données pour un rendu visuel
+   * @param changes
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes[&#x27;value&#x27;] || changes[&#x27;list&#x27;] || changes[&#x27;values&#x27;]) {
+      if (this.multiple &#x3D;&#x3D;&#x3D; false) {
+        const value &#x3D; this.value
+          ? this.list.find((l) &#x3D;&gt; l.id &#x3D;&#x3D;&#x3D; this.value) || null
+          : null;
+
+        this.itemsSelected &#x3D; value ? [value] : [];
+      } else {
+        this.itemsSelected &#x3D; this.list.reduce(
+          (acc: ItemInterface[], cur: ItemInterface) &#x3D;&gt; {
+            if (this.values &amp;&amp; this.values.indexOf(cur.id) !&#x3D;&#x3D; -1) {
+              acc.push(cur);
+            }
+            return acc;
+          },
+          []
+        );
+      }
+    }
+
+    if (this.values &amp;&amp; this.values.length &#x3D;&#x3D;&#x3D; this.list.length)
+      this.labelPreview &#x3D; this.labelPreviewText;
+    else this.labelPreview &#x3D; this.itemsSelected.map((i) &#x3D;&gt; i.label).join(&#x27;, &#x27;);
+  }
+
+  /**
+   * Remonter au parent le changement d&#x27;état de l&#x27;élement sélectionné
+   * @param item
+   */
+  onSelect(item: string | number) {
+    this.onOpenDropdown &#x3D; false;
+    this.value &#x3D; item;
+    this.valueChanged.next(this.value);
+  }
+
+  /**
+   * Remonter au parent le changement d&#x27;état des élements sélectionnés
+   * @param item
+   */
+  onSelectMultiple(item: string | number) {
+    const findIndex &#x3D; this.values.findIndex((v) &#x3D;&gt; v &#x3D;&#x3D;&#x3D; item);
+    if (findIndex &#x3D;&#x3D;&#x3D; -1) {
+      this.values.push(item);
+    } else {
+      this.values.splice(findIndex, 1);
+    }
+    this.valuesChanged.next(this.values);
+    this.itemsSelected &#x3D; this.list.reduce(
+      (acc: ItemInterface[], cur: ItemInterface) &#x3D;&gt; {
+        if (this.values &amp;&amp; this.values.indexOf(cur.id) !&#x3D;&#x3D; -1) {
+          acc.push(cur);
+        }
+        return acc;
+      },
+      []
+    );
+    this.labelPreview &#x3D; this.itemsSelected.map((i) &#x3D;&gt; i.label).join(&#x27;, &#x27;);
+  }
+
+  /**
+   * Ouvre ou ferme la liste
+   */
+  onToggleDropdown() {
+    this.onOpenDropdown &#x3D; !this.onOpenDropdown;
+    this.maxHeightDropdown &#x3D; null;
+
+    if (this.onOpenDropdown) {
+      this.onOpen.emit(&#x27;open&#x27;);
+    }
+
+    setTimeout(() &#x3D;&gt; {
+      const domArea &#x3D; this.selectArea?.nativeElement;
+      if (domArea) {
+        const { bottom, height } &#x3D; domArea.getBoundingClientRect();
+        const windowHeight &#x3D; window.innerHeight;
+        const margin &#x3D; 16;
+
+        if (bottom &gt; windowHeight - margin) {
+          this.maxHeightDropdown &#x3D; height - margin + windowHeight - bottom;
+        }
+      }
+    }, 10);
+  }
+
+  /**
+   * Ferme la liste
+   */
+  close() {
+    this.onOpenDropdown &#x3D; false;
+    this.maxHeightDropdown &#x3D; null;
+  }
+
+  /**
+   * Force la sélection de tout les éléments
+   */
+  onSelectAll() {
+    if (this.values.length &#x3D;&#x3D;&#x3D; this.list.length) {
+      this.values &#x3D; [];
+    } else {
+      this.values &#x3D; this.list.map((i) &#x3D;&gt; i.id);
+    }
+
+    this.valuesChanged.next(this.values);
+
+    this.itemsSelected &#x3D; this.list.reduce(
+      (acc: ItemInterface[], cur: ItemInterface) &#x3D;&gt; {
+        if (this.values &amp;&amp; this.values.indexOf(cur.id) !&#x3D;&#x3D; -1) {
+          acc.push(cur);
+        }
+        return acc;
+      },
+      []
+    );
+    if (this.values.length &#x3D;&#x3D;&#x3D; this.list.length)
+      this.labelPreview &#x3D; this.labelPreviewText;
+    else this.labelPreview &#x3D; this.itemsSelected.map((i) &#x3D;&gt; i.label).join(&#x27;, &#x27;);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;list-selection&quot; (click)&#x3D;&quot;$event.stopPropagation(); onToggleDropdown()&quot;&gt;
+  @if (title) {
+    @if (icon) {
+      &lt;div class&#x3D;&quot;title-icon&quot;&gt;&lt;i class&#x3D;&quot;ri-{{ icon }}&quot;&gt;&lt;/i&gt;&lt;/div&gt;
+    }
+    &lt;p class&#x3D;&quot;title-list&quot;&gt;{{ title }}&lt;/p&gt;
+    &lt;div class&#x3D;&quot;value-selected stretched&quot;&gt;
+      @if (multiple) {
+        &lt;p class&#x3D;&quot;ellipis&quot;&gt;{{ labelPreview }}&lt;/p&gt;
+      }
+      @if (!multiple) {
+        &lt;ng-container *ngTemplateOutlet&#x3D;&quot;itemTemplate; context: { $implicit: itemsSelected }&quot;&gt;&lt;/ng-container&gt;
+      }
+    &lt;/div&gt;
+  }
+  @if (!title) {
+    &lt;div class&#x3D;&quot;value-selected normal&quot;&gt;
+      @if (multiple) {
+        &lt;p&gt;{{ labelPreview }}&lt;/p&gt;
+      }
+      @if (!multiple) {
+        &lt;ng-container *ngTemplateOutlet&#x3D;&quot;itemTemplate; context: { $implicit: itemsSelected }&quot;&gt;&lt;/ng-container&gt;
+      }
+    &lt;/div&gt;
+  }
+  &lt;mat-icon class&#x3D;&quot;arrow-list&quot;&gt;
+    {{ onOpenDropdown ? &#x27;expand_less&#x27; : &#x27;expand_more&#x27; }}
+  &lt;/mat-icon&gt;
+&lt;/div&gt;
+
+@if (onOpenDropdown) {
+  &lt;div
+    class&#x3D;&quot;select-area right&quot;
+    #selectArea
+    [ngClass]&#x3D;&quot;{ multiple }&quot;
+    [ngStyle]&#x3D;&quot;{ &#x27;max-height&#x27;: maxHeightDropdown ? maxHeightDropdown + &#x27;px&#x27; : null }&quot;
+  &gt;
+    @if (!multiple) {
+      @for (item of list; track item.id) {
+        &lt;div [ngClass]&#x3D;&quot;{ selected: item.id &#x3D;&#x3D;&#x3D; value }&quot; (click)&#x3D;&quot;$event.stopPropagation(); onSelect(item.id)&quot;&gt;
+          &lt;ng-container *ngTemplateOutlet&#x3D;&quot;itemTemplate; context: { $implicit: [item] }&quot;&gt;&lt;/ng-container&gt;
+        &lt;/div&gt;
+      }
+    }
+    @if (multiple) {
+      &lt;div [ngClass]&#x3D;&quot;{ selected: values.length &#x3D;&#x3D;&#x3D; list.length }&quot; (click)&#x3D;&quot;$event.stopPropagation(); onSelectAll()&quot;&gt;
+        &lt;mat-checkbox [checked]&#x3D;&quot;values.length &#x3D;&#x3D;&#x3D; list.length&quot;&gt;&lt;/mat-checkbox&gt;
+        &lt;div&gt;
+          &lt;p&gt;{{ labelPreviewText }}&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      @for (item of list; track item.id) {
+        &lt;div
+          [ngClass]&#x3D;&quot;{ selected: values.indexOf(item.id) !&#x3D;&#x3D; -1 }&quot;
+          (click)&#x3D;&quot;$event.stopPropagation(); onSelectMultiple(item.id)&quot;
+        &gt;
+          &lt;mat-checkbox [checked]&#x3D;&quot;values.indexOf(item.id) !&#x3D;&#x3D; -1&quot;&gt;&lt;/mat-checkbox&gt;
+          &lt;ng-container *ngTemplateOutlet&#x3D;&quot;itemTemplate; context: { $implicit: [item] }&quot;&gt;&lt;/ng-container&gt;
+        &lt;/div&gt;
+      }
+    }
+  &lt;/div&gt;
+}
+&lt;ng-template #itemTemplate let-items&gt;
+  @for (item of items; track item.id) {
+    &lt;div&gt;
+      @if (item.icon) {
+        &lt;i class&#x3D;&quot;ri-{{ item.icon }}&quot;&gt;&lt;/i&gt;
+      }
+      @if (item.label) {
+        &lt;p&gt;{{ item.label }}&lt;/p&gt;
+      }
+    &lt;/div&gt;
+  }
+&lt;/ng-template&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./list-selection.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &#x27;../../styles/utils.scss&#x27; as utils;
+
+::ng-deep .mdc-checkbox__ripple {
+  display: none;
+}
+
+:host {
+  .mdc-checkbox .mdc-checkbox__native-control:focus~.mdc-checkbox__ripple {
+    display: none !important;
+  }
+
+  .mdc-checkbox .mdc-checkbox__native-control:focus:checked~.mdc-checkbox__ripple {
+    display: none !important;
+  }
+
+
+
+  &amp;.button-filter {
+
+    position: relative;
+    display: block;
+    height: 55px;
+    width: 170px;
+    border-radius: 4px;
+    background-color: utils.$colors-bgSelect;
+    border: 1px solid utils.$colors-borderSelect;
+    padding: 4px 8px;
+    cursor: pointer;
+
+    .ri-filter-2-line {
+      display: none;
+    }
+
+    &gt;.list-selection {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .ellipis {
+        top: initial !important;
+        bottom: initial !important;
+        right: initial !important;
+        left: -8px !important;
+        width: 130px !important;
+        color: black !important;
+        font-weight: bold;
+      }
+
+      .title-list {
+        color: #666666;
+        white-space: nowrap;
+        font-size: 14px;
+        position: relative;
+        left: 0px;
+      }
+
+      mat-icon {
+        position: absolute;
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-left: 8px;
+        right: 8px;
+        bottom: 4px;
+      }
+    }
+  }
+
+  display: block;
+  padding: 8px 12px 8px 16px;
+  border-radius: 4px;
+  background-color: utils.$colors-bgSelect;
+  margin-bottom: 4px;
+  position: relative;
+
+  &amp;.large-drop {
+    .select-area {
+      width: 400px;
+    }
+  }
+
+  &gt;.list-selection {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &gt;.title-icon {
+      margin-right: 4px;
+    }
+
+    .title-list {
+      font-size: 16px;
+      color: utils.$colors-titleInput;
+      margin-right: 8px;
+    }
+
+    .value-selected {
+      font-size: 16px;
+      margin-left: 8px;
+      margin-right: 4px;
+      display: flex;
+
+      &amp;.stretched {
+        flex: 1;
+        position: relative;
+        align-self: stretch;
+
+        &gt;p {
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          color: utils.$colors-titleEtpGraph;
+        }
+
+        p {
+          width: 100%;
+        }
+      }
+
+      &amp;.normal {
+        flex: 1;
+
+        &gt;div {
+          margin-left: 0;
+          cursor: pointer;
+          flex: 1;
+
+          &gt;p,
+          i {
+            color: utils.$colors-cblack;
+          }
+        }
+      }
+
+      i {
+        margin-right: 4px;
+      }
+
+      p {
+        text-align: right;
+      }
+
+      &gt;div {
+        display: flex;
+        align-items: center;
+        flex: 1;
+
+        &gt;p,
+        i {
+          color: utils.$colors-titleEtpGraph;
+        }
+      }
+    }
+  }
+}
+
+.select-area {
+  position: absolute;
+  z-index: 2;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  border-radius: 4px;
+  background-color: utils.$colors-bgSelect;
+  overflow: auto;
+
+  &amp;:not(.multiple) {
+    .selected {
+      background-color: utils.$colors-bgSelectSelected;
+      color: white;
+
+      p {
+        color: white;
+      }
+    }
+  }
+
+  &amp;.right {
+    left: 100%;
+    margin-top: 0;
+    margin-left: 4px;
+    right: inherit;
+    top: 0;
+    width: 260px;
+  }
+
+  &gt;div {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    padding: 0 16px;
+    color: utils.$colors-cblack;
+    cursor: pointer;
+    transition: background-color 0.5s;
+
+    &gt;div {
+      display: flex;
+      align-items: center;
+    }
+
+    &amp;:hover {
+      background-color: rgba(utils.$colors-bgSelectSelected, 0.2);
+      color: #0063cb;
+
+      p {
+        color: #0063cb;
+      }
+    }
+
+    &amp;:first-child {
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+
+    &amp;:last-child {
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+
+    i {
+      margin-right: 4px;
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="list-selection" (click)="$event.stopPropagation(); onToggleDropdown()">  @if (title) {    @if (icon) {      <div class="title-icon"><i class="ri-{{ icon }}"></i></div>    }    <p class="title-list">{{ title }}</p>    <div class="value-selected stretched">      @if (multiple) {        <p class="ellipis">{{ labelPreview }}</p>      }      @if (!multiple) {        <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: itemsSelected }"></ng-container>      }    </div>  }  @if (!title) {    <div class="value-selected normal">      @if (multiple) {        <p>{{ labelPreview }}</p>      }      @if (!multiple) {        <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: itemsSelected }"></ng-container>      }    </div>  }  <mat-icon class="arrow-list">    {{ onOpenDropdown ? \'expand_less\' : \'expand_more\' }}  </mat-icon></div>@if (onOpenDropdown) {  <div    class="select-area right"    #selectArea    [ngClass]="{ multiple }"    [ngStyle]="{ \'max-height\': maxHeightDropdown ? maxHeightDropdown + \'px\' : null }"  >    @if (!multiple) {      @for (item of list; track item.id) {        <div [ngClass]="{ selected: item.id === value }" (click)="$event.stopPropagation(); onSelect(item.id)">          <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: [item] }"></ng-container>        </div>      }    }    @if (multiple) {      <div [ngClass]="{ selected: values.length === list.length }" (click)="$event.stopPropagation(); onSelectAll()">        <mat-checkbox [checked]="values.length === list.length"></mat-checkbox>        <div>          <p>{{ labelPreviewText }}</p>        </div>      </div>      @for (item of list; track item.id) {        <div          [ngClass]="{ selected: values.indexOf(item.id) !== -1 }"          (click)="$event.stopPropagation(); onSelectMultiple(item.id)"        >          <mat-checkbox [checked]="values.indexOf(item.id) !== -1"></mat-checkbox>          <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: [item] }"></ng-container>        </div>      }    }  </div>}<ng-template #itemTemplate let-items>  @for (item of items; track item.id) {    <div>      @if (item.icon) {        <i class="ri-{{ item.icon }}"></i>      }      @if (item.label) {        <p>{{ item.label }}</p>      }    </div>  }</ng-template></div>'
+    var COMPONENTS = [{'name': 'AboutUsPage', 'selector': ''},{'name': 'AccessibilitiesPage', 'selector': ''},{'name': 'ActivitiesLastDisponibilitiesComponent', 'selector': 'activities-last-disponibilities'},{'name': 'ActivitiesLastModificationsComponent', 'selector': 'activities-last-modifications'},{'name': 'ActivitiesPage', 'selector': ''},{'name': 'ActivitiesToCompleteComponent', 'selector': 'activities-to-complete'},{'name': 'ActualPanelSituationComponent', 'selector': 'actual-panel-situation'},{'name': 'AddVentilationComponent', 'selector': 'add-ventilation'},{'name': 'AlertComponent', 'selector': 'aj-alert'},{'name': 'AlertSmallComponent', 'selector': 'aj-alert-small'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'AverageEtpDisplayerPage', 'selector': ''},{'name': 'AverageEtpPage', 'selector': ''},{'name': 'BackButtonComponent', 'selector': 'aj-back-button'},{'name': 'BigEtpPreviewComponent', 'selector': 'big-etp-preview'},{'name': 'BigLoaderComponent', 'selector': 'aj-big-loader'},{'name': 'CalculatorPage', 'selector': ''},{'name': 'CalculatriceComponent', 'selector': 'aj-calculatrice'},{'name': 'CGUPage', 'selector': ''},{'name': 'ChangePassword', 'selector': ''},{'name': 'CheckboxComponent', 'selector': 'aj-checkbox'},{'name': 'ChooseSimulatorComponent', 'selector': 'app-choose-simulator'},{'name': 'CommentActivitiesComponent', 'selector': 'aj-comment-activities'},{'name': 'CommentProfilComponent', 'selector': 'comment-profil'},{'name': 'CompletionBarComponent', 'selector': 'aj-completion-bar'},{'name': 'ContactPage', 'selector': ''},{'name': 'CoveragePreviewComponent', 'selector': 'aj-coverage-preview'},{'name': 'CoverProfilDetailsComponent', 'selector': 'cover-profil-details'},{'name': 'DashboardPage', 'selector': ''},{'name': 'DateSelectBlueComponent', 'selector': 'aj-date-select-blue'},{'name': 'DateSelectComponent', 'selector': 'aj-date-select'},{'name': 'DialWidgetComponent', 'selector': 'aj-dial-widget'},{'name': 'DocCardComponent', 'selector': 'aj-doc-card'},{'name': 'DtesChartComponent', 'selector': 'aj-dtes-chart'},{'name': 'EditableSituationComponent', 'selector': 'aj-editable-situation'},{'name': 'EmptyInputComponent', 'selector': 'aj-empty-input'},{'name': 'EtpChartComponent', 'selector': 'aj-etp-chart'},{'name': 'EtpPreviewComponent', 'selector': 'etp-preview'},{'name': 'ExtractorActivityComponent', 'selector': 'aj-extractor-activity'},{'name': 'ExtractorVentilationComponent', 'selector': 'aj-extractor-ventilation'},{'name': 'FiguresWidgetComponent', 'selector': 'aj-figures-widget'},{'name': 'FilterPanelComponent', 'selector': 'filter-panel'},{'name': 'FooterNoConnectedComponent', 'selector': 'aj-footer-no-connected'},{'name': 'ForgotPassword', 'selector': ''},{'name': 'GraphsNumbersComponent', 'selector': 'aj-graphs-numbers'},{'name': 'GraphsProgressComponent', 'selector': 'aj-graphs-progress'},{'name': 'GraphsVerticalsLinesComponent', 'selector': 'aj-graphs-verticals-lines'},{'name': 'HeaderSelectorsComponent', 'selector': 'aj-header-selectors'},{'name': 'HelpButtonComponent', 'selector': 'aj-help-button'},{'name': 'HelpCenterPage', 'selector': ''},{'name': 'HomePage', 'selector': ''},{'name': 'HumanResourcePage', 'selector': ''},{'name': 'IndispoProfilComponent', 'selector': 'indispo-profil'},{'name': 'InOutChartComponent', 'selector': 'aj-in-out-chart'},{'name': 'InputAdditionComponent', 'selector': 'aj-input-addition'},{'name': 'InputButtonComponent', 'selector': 'aj-input-button'},{'name': 'InputPercentageComponent', 'selector': 'aj-input-percentage'},{'name': 'IntroJSComponent', 'selector': 'aj-intro-js'},{'name': 'JuridictionsInstalledPage', 'selector': ''},{'name': 'LegaleNoticePage', 'selector': ''},{'name': 'LegendLabelComponent', 'selector': 'aj-legend-label'},{'name': 'ListSelectionComponent', 'selector': 'aj-list-selection'},{'name': 'LoadersWidgetComponent', 'selector': 'aj-loaders-widget'},{'name': 'LoginPage', 'selector': ''},{'name': 'LogoutPage', 'selector': ''},{'name': 'NewsComponent', 'selector': 'aj-news'},{'name': 'OneCommentComponent', 'selector': 'one-comment'},{'name': 'OptionsBackupPanelComponent', 'selector': 'aj-options-backup-panel'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-activities'},{'name': 'PanelActivitiesComponent', 'selector': 'panel-effectif'},{'name': 'PanelHistoryVentilationComponent', 'selector': 'panel-history-ventilation'},{'name': 'PanoramaAlertComponent', 'selector': 'panorama-alert'},{'name': 'PanoramaPage', 'selector': ''},{'name': 'PassedCommentComponent', 'selector': 'passed-comment'},{'name': 'PeriodSelectorComponent', 'selector': 'aj-period-selector'},{'name': 'PersonPreviewComponent', 'selector': 'person-preview'},{'name': 'PopinEditActivitiesComponent', 'selector': 'aj-popin-edit-activities'},{'name': 'PopinGraphsDetailsComponent', 'selector': 'aj-popin-graphs-details'},{'name': 'PopupComponent', 'selector': 'aj-popup'},{'name': 'PrivacyPage', 'selector': ''},{'name': 'ProgressionBarComponent', 'selector': 'progression-bar'},{'name': 'RadioButtonComponent', 'selector': 'aj-radio-button'},{'name': 'ReaffectatorPage', 'selector': ''},{'name': 'RecordsUpdateComponent', 'selector': 'records-update'},{'name': 'ReferentielCalculatorComponent', 'selector': 'aj-referentiel-calculator'},{'name': 'SelectCheckAllComponent', 'selector': 'app-select-check-all'},{'name': 'SelectComponent', 'selector': 'aj-select'},{'name': 'SignupPage', 'selector': ''},{'name': 'SimulatorPage', 'selector': ''},{'name': 'SiteMapPage', 'selector': ''},{'name': 'SituationDisplayerComponent', 'selector': 'aj-situation-displayer'},{'name': 'SpeedometerComponent', 'selector': 'aj-speedometer'},{'name': 'StatsPage', 'selector': ''},{'name': 'TemplateAnalyticsComponent', 'selector': 'aj-template-analytics'},{'name': 'TextEditorComponent', 'selector': 'aj-text-editor'},{'name': 'TimeSelectorComponent', 'selector': 'app-time-selector'},{'name': 'TooltipsComponent', 'selector': 'aj-tooltips'},{'name': 'ViewAnalyticsComponent', 'selector': 'aj-view-analytics'},{'name': 'WelcomePage', 'selector': ''},{'name': 'WhiteSimulatorPage', 'selector': ''},{'name': 'WorkforceChangeComponent', 'selector': 'workforce-change'},{'name': 'WorkforceCompositionComponent', 'selector': 'workforce-composition'},{'name': 'WorkforcePage', 'selector': ''},{'name': 'WrapperComponent', 'selector': 'aj-wrapper'},{'name': 'WrapperNoConnectedComponent', 'selector': 'aj-wrapper-no-connected'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'ListSelectionComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'ListSelectionComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

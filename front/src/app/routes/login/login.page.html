@@ -1,72 +1,102 @@
-<aj-wrapper-no-connected
-  [title]="'Un outil d\'aide à la décision et<br/>de prospective pour piloter<br/>votre juridiction'" *ngIf="isReady">
-  <div class="logo">
-    <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
-    <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
-  </div>
-
-  <div class="signup">
-    <p class="intro-step-1">Vous n’avez pas encore de compte</p>
-    <p><b>Rejoindre A-JUST</b></p>
-    <a routerLink="/inscription"><button class="outline white strict-border intro-step-2">
-        <i class="ri-login-box-line"></i>Demander votre embarquement
-      </button></a>
-  </div>
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" (keydown)="preventSubmit($event)">
-    <p>Vous avez déjà un compte</p>
-    <ng-template [ngIf]="ssoIsActivate">
-      <button class="outline white strict-border sso-bt" (click)="onUseSSO()" type="button"
-        [ngClass]="{disabled: !canUseSSO}">
-        <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />
-        Se connecter avec Pages Blanches
-      </button>
-
-      <div class="or">
-        <p>ou</p>
+@if (isReady) {
+  <aj-wrapper-no-connected
+    [title]="'Un outil d\'aide à la décision et<br/>de prospective pour piloter<br/>votre juridiction'"
+  >
+    <div class="logo">
+      <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
+      <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
+    </div>
+    <div class="signup">
+      <p class="intro-step-1">Vous n’avez pas encore de compte</p>
+      <p><b>Rejoindre A-JUST</b></p>
+      <a routerLink="/inscription">
+        <button class="outline white strict-border intro-step-2">
+          <i class="ri-login-box-line"></i>
+          Demander votre embarquement
+        </button>
+      </a>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" (keydown)="preventSubmit($event)">
+      <p>Vous avez déjà un compte</p>
+      @if (ssoIsActivate) {
+        <button
+          class="outline white strict-border sso-bt"
+          (click)="onUseSSO()"
+          type="button"
+          [ngClass]="{ disabled: !canUseSSO }"
+        >
+          <img src="/assets/icons/bloc-marque/bloc-marque-white-light.svg" />
+          Se connecter avec Pages Blanches
+        </button>
+        <div class="or">
+          <p>ou</p>
+        </div>
+      }
+      <h3 class="intro-step-3">Se connecter avec son compte</h3>
+      <label>Email</label>
+      <input
+        #input
+        class="ethics-ui"
+        placeholder=""
+        formControlName="email"
+        type="email"
+        (keyup.enter)="focusNext($event)"
+      />
+      <div class="password-line">
+        <label>Mot de passe</label>
+        <div>
+          <span id="printPassword" class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()">
+            <input
+              (click)="$event.stopPropagation()"
+              class="cursor-pointer"
+              #oncheck
+              type="checkbox"
+              formControlName="checkboxPassword"
+            />
+            Afficher
+          </span>
+        </div>
       </div>
-    </ng-template>
-
-    <h3 class="intro-step-3">Se connecter avec son compte</h3>
-
-    <label>Email</label>
-    <input #input class="ethics-ui" placeholder="" formControlName="email" type="email"
-      (keyup.enter)="focusNext($event)" />
-    <div class="password-line">
-      <label>Mot de passe</label>
-      <div>
-        <span id="printPassword" class="cursor-pointer" (click)="oncheck.click(); $event.stopPropagation()"><input
-            (click)="$event.stopPropagation()" class="cursor-pointer" #oncheck type="checkbox"
-            formControlName="checkboxPassword" />
-          Afficher</span>
+      <input
+        #input
+        class="ethics-ui"
+        placeholder=""
+        formControlName="password"
+        [type]="form.get('checkboxPassword')?.value ? 'text' : 'password'"
+        (keyup.enter)="focusNext($event)"
+      />
+      <span class="remember-me">
+        <input type="checkbox" formControlName="remember" class="remember-check" />
+        <label>Se souvenir de moi</label>
+      </span>
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+      }
+      <div class="remember-row">
+        <!--<div><input type="checkbox">
+      <p>Se souvenir de moi</p>
+    </div>-->
+        <div></div>
+        <a routerLink="/mot-de-passe-oublie">Mot de passe oublié</a>
       </div>
-    </div>
-    <input #input class="ethics-ui" placeholder="" formControlName="password"
-      [type]="form.get('checkboxPassword')?.value?'text':'password'" (keyup.enter)="focusNext($event)" />
-    <span class="remember-me"><input type="checkbox" formControlName="remember" class="remember-check" /><label>Se
-        souvenir de
-        moi</label></span>
-    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-    <div class="remember-row">
-      <!--<div><input type="checkbox">
-        <p>Se souvenir de moi</p>
-      </div>-->
-      <div></div>
-      <a routerLink="/mot-de-passe-oublie">Mot de passe oublié</a>
-    </div>
-    <input type="submit" class="big-button" value="Se connecter" />
-  </form>
-
-  <aj-popup *ngIf="needToGetCode !== null" [actions]="[
-    { id: 'close', content: 'Annuler' },
-    { id: 'connect', content: 'Se connecter', fill: true }]" [closeIcon]="true" (onClose)="needToGetCode = null"
-    title="Connexion" (selectedAction)="onContinuToLogin($event, codeInput)">
-    <div class="popin-code">
-      <p>
-        Vous devez saisir le code envoyé par mail pour confirmer votre
-        connexion.
-      </p>
-      <input #codeInput class="ethics-ui" placeholder="Code" type="text" [value]="needToGetCode" autofocus />
-    </div>
-  </aj-popup>
-</aj-wrapper-no-connected>
+      <input type="submit" class="big-button" value="Se connecter" />
+    </form>
+    @if (needToGetCode !== null) {
+      <aj-popup
+        [actions]="[
+          { id: 'close', content: 'Annuler' },
+          { id: 'connect', content: 'Se connecter', fill: true },
+        ]"
+        [closeIcon]="true"
+        (onClose)="needToGetCode = null"
+        title="Connexion"
+        (selectedAction)="onContinuToLogin($event, codeInput)"
+      >
+        <div class="popin-code">
+          <p>Vous devez saisir le code envoyé par mail pour confirmer votre connexion.</p>
+          <input #codeInput class="ethics-ui" placeholder="Code" type="text" [value]="needToGetCode" autofocus />
+        </div>
+      </aj-popup>
+    }
+  </aj-wrapper-no-connected>
+}

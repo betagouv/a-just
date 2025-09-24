@@ -1,4 +1,4 @@
-@import "../../../../styles/utils.scss";
+@use '../../../../styles/utils.scss' as utils;
 
 :host {
 
@@ -9,22 +9,22 @@
       padding-top: 42px;
       background-color: white;
       border-radius: 8px;
-      border: solid 1px #ddd;
-      background-color: #fff;
-      border: solid 1px #6a6af4;
-      background-color: #fff;
+      border: solid 1px utils.$colors-lightBorder;
+      background-color: utils.$colors-white;
+      border: solid 1px utils.$colors-primary;
+      background-color: utils.$colors-white;
     }
 
     aj-text-editor {
       border-radius: 0px;
-      border: solid 1px #dddddd;
-      background-color: #fff;
+      border: solid 1px utils.$colors-lightBorder;
+      background-color: utils.$colors-white;
     }
   }
 
   >div {
     padding-bottom: 24px;
-    background-color: #f6f6f6;
+    background-color: utils.$colors-ventilationCurrentSituationBg;
 
     .properties {
       height: 40px;
@@ -33,28 +33,28 @@
       padding: 0 16px;
 
       .number-circle {
-        background-color: #ededed;
+        background-color: utils.$colors-ventilationPastSituation;
         border-radius: 50%;
         width: 25px;
         height: 25px;
         padding: 3px 4.5px;
         text-align: center;
         font-size: 12px;
-        color: #929292;
+        color: utils.$colors-grayRow;
         margin-right: 8px;
       }
 
       label {
         font-size: 14px;
         font-weight: bold;
-        color: #3a3a3a;
+        color: utils.$colors-cblack;
         bottom: 2px;
         position: relative;
         margin-right: 8px;
       }
 
       .com {
-        color: fColor(cblack);
+        color: utils.$colors-cblack;
         font-size: 16px;
         font-weight: bold;
         bottom: 1px;
@@ -62,13 +62,13 @@
       }
 
       .com-at {
-        color: fColor(titleSelect);
+        color: utils.$colors-titleSelect;
         font-size: 14px;
       }
     }
 
     .com-mod {
-      color: fColor(titleSelect);
+      color: utils.$colors-titleSelect;
       font-size: 14px;
       margin-left: 8px;
       font-style: italic;
@@ -86,8 +86,8 @@
 
     >div {
       &.active {
-        color: #929292;
-        border-color: #929292;
+        color: utils.$colors-grayRow;
+        border-color: utils.$colors-grayRow;
         cursor: pointer;
         pointer-events: initial;
 
@@ -95,22 +95,22 @@
     }
 
     .unsave {
-      border: solid 1px #dddddd;
-      color: #dddddd;
+      border: solid 1px utils.$colors-lightBorder;
+      color: utils.$colors-lightBorder;
       margin-right: 16px;
       height: 32px;
       padding: 4px 12px;
       font-size: 14px;
       line-height: 24px;
-      color: #929292;
-      border-color: #929292;
+      color: utils.$colors-grayRow;
+      border-color: utils.$colors-grayRow;
       cursor: pointer;
       pointer-events: initial;
     }
 
     .save {
       color: white;
-      background-color: fColor(primary);
+      background-color: utils.$colors-primary;
       height: 32px;
       padding: 4px 12px;
       font-size: 14px;
@@ -126,14 +126,14 @@
 
   .actions {
     font-size: 14px;
-    color: #929292;
+    color: utils.$colors-grayRow;
 
     .modify {
       margin-left: 48px;
       margin-right: 4px;
       line-height: 24px;
       display: inline-block;
-      border-bottom: solid 1px #929292;
+      border-bottom: solid 1px utils.$colors-grayRow;
       cursor: pointer;
     }
 
@@ -141,7 +141,7 @@
       margin-left: 4px;
       line-height: 24px;
       display: inline-block;
-      border-bottom: solid 1px #929292;
+      border-bottom: solid 1px utils.$colors-grayRow;
       cursor: pointer;
     }
   }

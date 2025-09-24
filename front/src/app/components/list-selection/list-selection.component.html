@@ -1,60 +1,75 @@
 <div class="list-selection" (click)="$event.stopPropagation(); onToggleDropdown()">
-    <ng-template [ngIf]="title">
-        <div *ngIf="icon" class="title-icon"><i class="ri-{{icon}}"></i></div>
-        <p class="title-list">{{ title }}</p>
-        <div class="value-selected stretched">
-            <ng-template [ngIf]="multiple">
-                <p class="ellipis">{{ labelPreview }}</p>
-            </ng-template>
-            <ng-template [ngIf]="!multiple">
-                <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: itemsSelected }"></ng-container>
-            </ng-template>
-        </div>
-    </ng-template>
-    <ng-template [ngIf]="!title">
-        <div class="value-selected normal">
-            <ng-template [ngIf]="multiple">
-                <p>{{ labelPreview }}</p>
-            </ng-template>
-            <ng-template [ngIf]="!multiple">
-                <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: itemsSelected }"></ng-container>
-            </ng-template>
-        </div>
-    </ng-template>
-    <mat-icon class="arrow-list">
-        {{ onOpenDropdown ? 'expand_less' : 'expand_more' }}
-    </mat-icon>
-</div>
-
-<div class="select-area right" #selectArea [ngClass]="{ multiple }"
-    [ngStyle]="{'max-height': maxHeightDropdown ? maxHeightDropdown+'px' : null}" *ngIf="onOpenDropdown">
-    <ng-template [ngIf]="!multiple">
-        <div *ngFor="let item of list" [ngClass]="{selected: item.id === value }"
-            (click)="$event.stopPropagation(); onSelect(item.id)">
-            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: [item] }"></ng-container>
-        </div>
-    </ng-template>
-    <ng-template [ngIf]="multiple">
-        <div [ngClass]="{selected: values.length === list.length}" (click)="$event.stopPropagation(); onSelectAll()">
-            <mat-checkbox [checked]="values.length === list.length">
-            </mat-checkbox>
-            <div>
-                <p>{{labelPreviewText}}</p>
-            </div>
-        </div>
-        <div *ngFor="let item of list" [ngClass]="{selected: values.indexOf(item.id) !== -1}"
-            (click)="$event.stopPropagation(); onSelectMultiple(item.id)">
-            <mat-checkbox [checked]="values.indexOf(item.id) !== -1">
-            </mat-checkbox>
-
-            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: [item] }"></ng-container>
-        </div>
-    </ng-template>
-</div>
-
-<ng-template #itemTemplate let-items>
-    <div *ngFor="let item of items">
-        <i *ngIf="item.icon" class="ri-{{item.icon}}"></i>
-        <p *ngIf="item.label">{{item.label}}</p>
+  @if (title) {
+    @if (icon) {
+      <div class="title-icon"><i class="ri-{{ icon }}"></i></div>
+    }
+    <p class="title-list">{{ title }}</p>
+    <div class="value-selected stretched">
+      @if (multiple) {
+        <p class="ellipis">{{ labelPreview }}</p>
+      }
+      @if (!multiple) {
+        <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: itemsSelected }"></ng-container>
+      }
     </div>
+  }
+  @if (!title) {
+    <div class="value-selected normal">
+      @if (multiple) {
+        <p>{{ labelPreview }}</p>
+      }
+      @if (!multiple) {
+        <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: itemsSelected }"></ng-container>
+      }
+    </div>
+  }
+  <mat-icon class="arrow-list">
+    {{ onOpenDropdown ? 'expand_less' : 'expand_more' }}
+  </mat-icon>
+</div>
+
+@if (onOpenDropdown) {
+  <div
+    class="select-area right"
+    #selectArea
+    [ngClass]="{ multiple }"
+    [ngStyle]="{ 'max-height': maxHeightDropdown ? maxHeightDropdown + 'px' : null }"
+  >
+    @if (!multiple) {
+      @for (item of list; track item.id) {
+        <div [ngClass]="{ selected: item.id === value }" (click)="$event.stopPropagation(); onSelect(item.id)">
+          <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: [item] }"></ng-container>
+        </div>
+      }
+    }
+    @if (multiple) {
+      <div [ngClass]="{ selected: values.length === list.length }" (click)="$event.stopPropagation(); onSelectAll()">
+        <mat-checkbox [checked]="values.length === list.length"></mat-checkbox>
+        <div>
+          <p>{{ labelPreviewText }}</p>
+        </div>
+      </div>
+      @for (item of list; track item.id) {
+        <div
+          [ngClass]="{ selected: values.indexOf(item.id) !== -1 }"
+          (click)="$event.stopPropagation(); onSelectMultiple(item.id)"
+        >
+          <mat-checkbox [checked]="values.indexOf(item.id) !== -1"></mat-checkbox>
+          <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: [item] }"></ng-container>
+        </div>
+      }
+    }
+  </div>
+}
+<ng-template #itemTemplate let-items>
+  @for (item of items; track item.id) {
+    <div>
+      @if (item.icon) {
+        <i class="ri-{{ item.icon }}"></i>
+      }
+      @if (item.label) {
+        <p>{{ item.label }}</p>
+      }
+    </div>
+  }
 </ng-template>

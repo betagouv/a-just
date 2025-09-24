@@ -2,10 +2,12 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { MainClass } from '../../../../libs/main-class';
 import { HumanResourceInterface } from '../../../../interfaces/human-resource-interface';
@@ -24,6 +26,13 @@ import { TextEditorComponent } from '../../../../components/text-editor/text-edi
   styleUrls: ['./passed-comment.component.scss'],
 })
 export class PassedCommentComponent extends MainClass implements OnChanges {
+  /**
+   * Editor
+   */
+  @ViewChild('editor') editor: TextEditorComponent | null = null;
+  /**
+   * Editor
+   */
   /**
    * Object commentaire contenant l'ensemble des informations
    */
@@ -122,7 +131,6 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    */
   updateComment(comment: string) {
     this.currentText = comment;
-    this.changeDetectorRef.detectChanges();
   }
 
   /**
@@ -138,12 +146,10 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
           this.currentUser.commentId
         )
         .then((result) => {
+          this.editor?.initValue(this.currentText);
           this.commentUpdatedAt = result ? new Date(result) : null;
-          this.commentContent = this.currentText;
-          this.valueToReset = this.currentText;
           this.isEditing = false;
           this.hRCommentService.mainEditing.next(false);
-          this.changeDetectorRef.detectChanges();
         });
     }
   }

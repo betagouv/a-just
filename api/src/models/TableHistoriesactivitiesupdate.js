@@ -213,7 +213,7 @@ export default (sequelizeInstance, Model) => {
         list.length ? list[list.length - 1].history.id : null,
         list.length ? list[list.length - 1].activity.id : null,
         list.length ? list[list.length - 1].activity.contentieuxId : null,
-        list.length ? list[list.length - 1].activity.periode : null
+        list.length ? list[list.length - 1].activity.periode : null,
       )
       if (elementHistoryElement) {
         list.push(elementHistoryElement)

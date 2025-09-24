@@ -200,11 +200,13 @@ export function findRealValue(date: Date) {
  * @param date
  * @returns
  */
-export function findRealValueCustom(date: Date | string | null | undefined, isTodayString = true) {
+export function findRealValueCustom(date: Date | string | null | undefined, isTodayString = true, monthAndYear = false) {
   date = new Date(date || '')
   const today = new Date()
   if (today.getDate() === date.getDate() && today.getMonth() === date.getMonth() && today.getFullYear() === date.getFullYear() && isTodayString) {
     return "Aujourd'hui"
+  } else if (date && typeof date.getMonth === 'function' && monthAndYear) {
+    return `${getMonthString(date)} ${date.getFullYear()}`
   } else if (date && typeof date.getMonth === 'function') {
     return `${(date.getDate() + '').padStart(2, '0')} ${getMonthString(date)} ${date.getFullYear()}`
   } else return ''
@@ -244,6 +246,22 @@ export function decimalToStringDate(d: number | string | null | undefined, s = '
   if (d == null || isNaN((d = +('' + d).replace(',', '.')))) return '0'
   let h = Math.floor(d),
     m = Math.round((d - h) * 60)
+  if (m === 60) {
+    h++
+    m = 0
+  }
+  return h + s + (m < 10 ? '0' : '') + m
+}
+
+/**
+ * Conversion d'une date en HH:MM
+ * @param decimal
+ * @returns
+ */
+export function decimalToStringDateFloor(d: number | string | null | undefined, s = 'h') {
+  if (d == null || isNaN((d = +('' + d).replace(',', '.')))) return '0'
+  let h = Math.floor(d),
+    m = Math.floor((d - h) * 60)
   if (m === 60) {
     h++
     m = 0
@@ -368,6 +386,11 @@ export function generalizeTimeZone(date: Date | undefined | null) {
   }
 }
 
+/**
+ * Définition de l'heure à midi
+ * @param date
+ * @returns
+ */
 export function setTimeToMidDay(date: Date | undefined | null) {
   if (date === undefined || date === null) return undefined
   date.setHours(12)

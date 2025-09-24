@@ -1,23 +1,31 @@
-<div *ngIf="visible" class="animate__animated animate__fadeIn popup">
+@if (visible) {
+<div class="animate__animated animate__fadeIn popup">
   <div>
     <div class="title">
       {{ title }}
-      <i class="material-icons close pointer" *ngIf="closeIcon" (click)="onClose.emit()">close</i>
+      @if (closeIcon) {
+      <i class="material-icons close pointer" (click)="onClose.emit()">close</i>
+      }
     </div>
     <div class="content">
       <ng-content></ng-content>
     </div>
-    <div class="actions" *ngIf="actions.length > 0">
+    @if (actions.length > 0) {
+    <div class="actions">
       <div class="border-actions"></div>
       <div class="row-actions">
-        <div *ngFor="let action of actions" (click)="onSelectAction(action)" class="pointer" [ngClass]="{
+        @for (action of actions; track action.id) {
+        <div (click)="onSelectAction(action)" class="pointer" [ngClass]="{
             'material-icons': action.type && action.type === 'icon',
             red: action.red && action.red === true,
             fill: action.fill && action.fill === true
           }">
           {{ action.content }}
         </div>
+        }
       </div>
     </div>
+    }
   </div>
 </div>
+}

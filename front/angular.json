@@ -55,7 +55,19 @@
               "src/app/styles/styles.scss",
               "node_modules/animate.css/animate.min.css",
               "node_modules/mapbox-gl/dist/mapbox-gl.css",
-              "node_modules/intro.js/minified/introjs.min.css"
+              "node_modules/intro.js/minified/introjs.min.css",
+              "node_modules/remixicon/fonts/remixicon.css",
+              "src/app/styles/popup.scss",
+              "src/app/styles/typography.scss",
+              "src/app/styles/form.scss",
+              "src/app/styles/material.scss",
+              "src/app/styles/button.scss",
+              "src/app/styles/popup.scss",
+              "src/app/styles/print.scss",
+              "src/app/styles/quill.scss",
+              "src/app/styles/toastr.scss",
+              "src/app/styles/design-system-gouv.scss",
+              "src/app/styles/introjs.scss"
             ],
             "scripts": [
               "node_modules/quill/dist/quill.js",
@@ -75,7 +87,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -94,7 +106,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -113,7 +125,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -132,7 +144,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -151,7 +163,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -170,7 +182,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "6mb",
-                  "maximumError": "7mb"
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -244,5 +256,31 @@
   },
   "cli": {
     "analytics": false
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }

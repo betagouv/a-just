@@ -1,10 +1,10 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss';
 
 :host {
   display: block;
   width: 100%;
 
-  &.small-left-panel .main-container > .title-panel {
+  &.small-left-panel .main-container>.title-panel {
     flex: 26;
   }
 }
@@ -15,11 +15,11 @@
   flex: 1;
   align-items: stretch;
 
-  > .title-panel {
+  >.title-panel {
     flex: 56;
   }
 
-  > .content-panel {
+  >.content-panel {
     flex: 44;
   }
 }
@@ -33,7 +33,7 @@
   justify-content: flex-end;
   padding: 56px;
 
-  > h2 {
+  >h2 {
     margin-top: 208px;
     font-size: 28px;
     font-weight: bold;
@@ -43,11 +43,11 @@
 }
 
 .content-panel {
-  padding: 40px 64px; 
+  padding: 40px 64px;
 }
 
 .no-padding {
   display: flex;
   flex-direction: row;
-  padding: 0 !important;  
+  padding: 0 !important;
 }

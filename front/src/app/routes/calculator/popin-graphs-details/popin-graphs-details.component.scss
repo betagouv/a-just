@@ -1,4 +1,4 @@
-@import '../../../styles/utils.scss';
+@use '../../../styles/utils.scss' as utils;
 
 .popin-graphs-details {
     .header-popin {
@@ -58,7 +58,7 @@
                 font-weight: 400;
 
                 &:first-child {
-                    color: fColor(cblack);
+                    color: utils.$colors-cblack;
                 }
             }
         }
@@ -91,17 +91,17 @@ canvas {
         transform: translate(-50%, -50%);
         font-size: 16px;
         font-weight: 700;
-        color: fColor(primary);
+        color: utils.$colors-primary;
         text-align: center;
 
         a {
-            color: fColor(primary);
+            color: utils.$colors-primary;
         }
     }
 }
 
 .have-missing-datas {
-    color: fColor(cblack);
+    color: utils.$colors-cblack;
     font-weight: 700;
     font-size: 14px;
 }

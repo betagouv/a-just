@@ -1,4 +1,4 @@
-@import "../../../../styles/utils.scss";
+@use "../../../../styles/utils.scss";
 
 :host {
     background-color: white;
@@ -67,15 +67,15 @@
                 font-size: 16px;
                 font-weight: bold;
                 line-height: 1.5;
-                color: #b0bbff;
+                color: #bfcdff;
                 margin-bottom: 8px;
 
                 &.medium {
-                    color: #6f80ec;
+                    color: #2d46e0;
                 }
 
                 &.hard {
-                    color: #2d46e0;
+                    color: #052e97;
                 }
             }
 
@@ -85,17 +85,17 @@
                 height: 226px;
                 border-radius: 34px;
                 border: solid 4px #e5e5e5;
-                background-color: #dde4ff;
+                background-color: #bfcdff;
                 position: relative;
                 display: flex;
                 align-items: flex-start;
 
                 &.medium {
-                    background-color: #bfcdff;
+                    background-color: #2d46e0;
                 }
 
                 &.hard {
-                    background-color: #7b99e4;
+                    background-color: #052e97;
                 }
 
                 .bar {

@@ -1,4 +1,4 @@
-@import '../../styles/utils.scss';
+@use '../../styles/utils.scss' as utils;
 
 :host {
     .hide-powered-by-gitbook {
@@ -15,8 +15,8 @@
         display: flex;
 
         justify-content: flex-start;
-        border: solid 1px #ddd;
-        background-color: #f6f6f6;
+        border: solid 1px utils.$colors-bgSelect;
+        background-color: utils.$colors-bgSelect;
 
         div {
             cursor: pointer;
@@ -32,7 +32,7 @@
             i {
                 margin-left: 4px;
                 font-size: 13px;
-                color: fColor(cblack);
+                color: utils.$colors-cblack;
             }
         }
 
@@ -48,8 +48,8 @@
         margin-bottom: 40px;
 
         div:hover {
-            outline: solid 1px #0a76f6;
-            background-color: #f5f5fe;
+            outline: solid 1px utils.$colors-primary;
+            background-color: utils.$colors-bgSelect;
         }
 
         div {
@@ -59,7 +59,7 @@
             justify-content: space-between;
             flex-direction: column;
             flex: 1;
-            background-color: #f6f6f6;
+            background-color: utils.$colors-bgSelect;
             margin-right: 4px;
             padding: 24px;
 
@@ -96,7 +96,7 @@
                 content: '';
                 height: 0px;
                 width: 100%;
-                border-bottom: 8px solid #96b8f0;
+                border-bottom: 8px solid utils.$colors-primary;
                 opacity: 0.4;
                 position: absolute;
                 bottom: 0px;
@@ -109,7 +109,7 @@
                 content: '';
                 height: 0px;
                 width: 100%;
-                border-bottom: 8px solid #00fb90;
+                border-bottom: 8px solid utils.$colors-primary;
                 position: absolute;
                 bottom: 0px;
                 left: 0px;
@@ -122,7 +122,7 @@
                 content: '';
                 height: 0px;
                 width: 100%;
-                border-bottom: 8px solid #a558a0;
+                border-bottom: 8px solid utils.$colors-primary;
                 opacity: 0.5;
                 position: absolute;
                 bottom: 0px;
@@ -135,7 +135,7 @@
                 content: '';
                 height: 0px;
                 width: 100%;
-                border-bottom: 8px solid #f6e157;
+                border-bottom: 8px solid utils.$colors-primary;
                 opacity: 0.5;
                 position: absolute;
                 bottom: 0px;
@@ -162,106 +162,12 @@
                 height: 56px;
                 margin-top: 16px;
             }
-
-            .result-area {
-                /** 
-                margin: 0 24px;
-                z-index: 1;
-                position: absolute;
-                top: 230px;
-                max-height: 400px;
-                width: -webkit-fill-available;
-                overflow-y: scroll;
-                border-radius: 4px;
-                border-top: none !important;
-                border-top-left-radius: none;
-                border-top-right-radius: none;
-                border-bottom-left-radius: 4px;
-                border-bottom-right-radius: 4px;
-                background-color: #f6f6f6;
-                border: 1px solid #eeeeee;
-                padding: 0px 12px 12px 12px;
-
-                p {
-                    //margin-top: 8px;
-                    display: flex;
-                    align-items: center;
-                    min-height: 40px;
-                    position: relative;
-                    cursor: pointer;
-                    font-size: 14px;
-
-                    mat-icon {
-                        position: relative;
-                        margin-left: 4px;
-                        margin-right: 4px;
-                        top: 2px;
-                    }
-
-                    &.spaces {
-                        font-size: 12px;
-                        font-weight: 400;
-                        color: rgba(0, 0, 0, 0.448);
-                    }
-
-                    &.pages {
-                        margin-left: 8px;
-                        margin-top: 4px;
-
-                        &:hover {
-                            background-color: #cdcbcb;
-                            border-radius: 4px;
-
-                            &::before {
-                                content: 'Ouvrir';
-                                position: absolute;
-                                right: 10px;
-                                font-size: 12px;
-                                color: black;
-                            }
-                        }
-                    }
-
-                    &.sections {
-                        margin-top: 4px;
-                        display: block;
-                        margin-left: 32px;
-                        overflow: hidden;
-                        display: -webkit-box;
-                        -webkit-line-clamp: 3;
-                        -webkit-box-orient: vertical;
-
-                        //margin-top: 8px;
-
-                        &:hover {
-                            background-color: #cdcbcb;
-                            border-radius: 4px;
-
-                            &::before {
-                                content: 'Ouvrir';
-                                position: absolute;
-                                right: 10px;
-                                top: -2px;
-                                font-size: 12px;
-                                color: black;
-                            }
-                        }
-                    }
-                }
-**/
-
-
-
-
-
-
-            }
         }
 
         .line {
             width: 0.5px;
             height: 208px;
-            border: solid 0.5px #ddd;
+            border: solid 0.5px utils.$colors-bgSelect;
         }
 
         .action-area {
@@ -278,8 +184,8 @@
                 height: 64px;
                 padding: 10px 32px 11px;
                 border-radius: 4px;
-                border: solid 1px #ddd;
-                background-color: #fff;
+                border: solid 1px utils.$colors-bgSelect;
+                background-color: utils.$colors-bgSelect;
                 font-size: 16px;
                 font-weight: bold;
                 margin-bottom: 8px;
@@ -292,17 +198,17 @@
 
             .blue {
                 margin-bottom: 0px;
-                background-color: #ececfe;
-                border: solid 1px #ececfe;
+                background-color: utils.$colors-bgSelect;
+                border: solid 1px utils.$colors-bgSelect;
                 position: relative;
 
                 &.validated {
-                    border: solid 1px #27a658;
-                    background-color: #dffee6;
+                    border: solid 1px utils.$colors-primary;
+                    background-color: utils.$colors-bgSelect;
 
                     p {
                         font-size: 14px;
-                        color: #18753c;
+                        color: utils.$colors-primary;
                         text-align: center;
                     }
 
@@ -312,7 +218,7 @@
                 }
 
                 p {
-                    color: #000091;
+                    color: utils.$colors-primary;
                 }
 
                 img {
@@ -328,13 +234,13 @@
                     padding: 16px;
                     display: flex;
                     flex-direction: column;
-                    background-color: white;
+                    background-color: utils.$colors-bgSelect;
                     right: -9px;
                     bottom: -150px;
                     border-radius: 8px;
                     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-                    border: solid 1px #ddd;
-                    background-color: #fff;
+                    border: solid 1px utils.$colors-bgSelect;
+                    background-color: utils.$colors-bgSelect;
 
                     .header {
                         display: inline-flex;
@@ -347,12 +253,12 @@
                         .title {
                             font-size: 16px;
                             font-weight: bold;
-                            color: #000091;
+                            color: utils.$colors-primary;
                             line-height: 16px;
                         }
 
                         i {
-                            color: #000091;
+                            color: utils.$colors-primary;
                             font-size: 16px;
                         }
                     }
@@ -360,7 +266,7 @@
                     .label {
                         margin-bottom: 8px;
                         font-size: 16px;
-                        color: #161616;
+                        color: utils.$colors-cblack;
                         font-weight: normal;
                     }
 
@@ -371,14 +277,14 @@
                         font-weight: normal;
                         border: none;
                         position: relative;
-                        border-bottom: solid 2px #e5e5e5;
+                        border-bottom: solid 2px utils.$colors-bgSelect;
                         border-top-left-radius: 4px;
                         border-top-right-radius: 4px;
                         margin-bottom: 8px;
 
                         &:focus {
                             outline: none;
-                            border-bottom: solid 2px #3a3a3a !important;
+                            border-bottom: solid 2px utils.$colors-cblack !important;
                         }
                     }
 
@@ -387,8 +293,8 @@
                         font-size: 14px;
                         line-height: 32px;
                         text-align: center;
-                        color: #f5f5fe;
-                        background-color: #000091;
+                        color: utils.$colors-bgSelect;
+                        background-color: utils.$colors-primary;
                     }
                 }
             }
@@ -404,12 +310,12 @@
     .content-area {
         margin-top: 16px;
         padding: 32px;
-        background-color: #f6f6f6;
+        background-color: utils.$colors-bgSelect;
 
         .webinaire {
             min-height: 224px;
             display: flex;
-            background-color: white;
+            background-color: utils.$colors-bgSelect;
             margin-bottom: 16px;
             position: relative;
             width: 100%;
@@ -445,8 +351,8 @@
                         line-height: 38px;
                         display: inline;
                         padding: 0 16px;
-                        border: solid 1px #000091;
-                        color: #000091;
+                        border: solid 1px utils.$colors-primary;
+                        color: utils.$colors-primary;
                         font-size: 14px;
                         text-align: center;
                         align-items: center;
@@ -463,7 +369,7 @@
         display: flex;
         flex-direction: column;
         position: absolute;
-        background-color: white;
+        background-color: utils.$colors-bgSelect;
 
         .back-title {
             z-index: 1;
@@ -471,7 +377,7 @@
             display: flex;
             align-items: center;
             padding-top: 14px;
-            background-color: white;
+            background-color: utils.$colors-bgSelect;
             position: absolute;
             width: 100%;
 
@@ -484,13 +390,13 @@
 
         .suggestion-header {
             .panel-header {
-                color: #666666;
+                color: utils.$colors-cgray;
                 font-size: 12px;
                 min-height: 50px;
                 padding-left: 24px;
-                border-bottom: 1px solid #eee4d9;
+                border-bottom: 1px solid utils.$colors-bgSelect;
                 position: absolute;
-                background: white;
+                background: utils.$colors-bgSelect;
                 width: 100%;
                 top: 48px;
                 display: flex;
@@ -501,20 +407,19 @@
                 .tab {
                     min-height: 40px;
                     padding: 8px 16px;
-                    background-color: #e3e3fd;
+                    background-color: utils.$colors-bgSelect;
                     margin-right: 2px;
                     font-size: 16px;
                     font-weight: bold;
-                    color: black;
+                    color: utils.$colors-cblack;
                     cursor: pointer;
                     position: relative;
 
                     &.selected {
-                        border: solid 1px #ddd;
-                        background-color: white;
-                        color: #000091;
-                        //outline:10px solid black;
-                        border-top: solid 2px #000091;
+                        border: solid 1px utils.$colors-bgSelect;
+                        background-color: utils.$colors-bgSelect;
+                        color: utils.$colors-primary;
+                        border-top: solid 2px utils.$colors-primary;
                         border-bottom: none;
                     }
 
@@ -523,7 +428,7 @@
                             content: '';
                             height: 0px;
                             width: 100%;
-                            border-bottom: 8px solid #96b8f0;
+                            border-bottom: 8px solid utils.$colors-primary;
                             opacity: 0.4;
                             position: absolute;
                             bottom: 0px;
@@ -536,7 +441,7 @@
                             content: '';
                             height: 0px;
                             width: 100%;
-                            border-bottom: 8px solid #00fb90;
+                            border-bottom: 8px solid utils.$colors-primary;
                             position: absolute;
                             bottom: 0px;
                             left: 0px;
@@ -549,7 +454,7 @@
                             content: '';
                             height: 0px;
                             width: 100%;
-                            border-bottom: 8px solid #a558a0;
+                            border-bottom: 8px solid utils.$colors-primary;
                             opacity: 0.5;
                             position: absolute;
                             bottom: 0px;
@@ -562,7 +467,7 @@
                             content: '';
                             height: 0px;
                             width: 100%;
-                            border-bottom: 8px solid #f6e157;
+                            border-bottom: 8px solid utils.$colors-primary;
                             opacity: 0.5;
                             position: absolute;
                             bottom: 0px;
@@ -584,8 +489,7 @@
             border-radius: 4px;
             box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.04),
                 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            //margin: -148px 8px 8px 8px;
+            background-color: utils.$colors-bgSelect;
             border: none;
             width: 100%;
         }
@@ -593,13 +497,13 @@
 
     /* Style général du composant */
     .gitbook-response {
-        background: #ffffff;
+        background: utils.$colors-bgSelect;
         border-radius: 12px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         padding: 24px;
         max-width: 800px;
         margin: 20px auto;
-        border: 1px solid #e0e0e0;
+        border: 1px solid utils.$colors-bgSelect;
         position: relative;
 
         .ri-close-line {
@@ -617,14 +521,14 @@
     .gitbook-response h2 {
         font-size: 18px;
         font-weight: bold;
-        color: #333;
+        color: utils.$colors-cblack;
         margin-bottom: 12px;
     }
 
     /* Paragraphe de réponse */
     .gitbook-response p {
         font-size: 16px;
-        color: #555;
+        color: utils.$colors-cgray;
         line-height: 1.6;
         margin-top: 8px;
         margin-bottom: 8px;
@@ -637,7 +541,7 @@
     .gitbook-response span {
         &.ordered-list-title {
             font-size: 16px;
-            color: #555;
+            color: utils.$colors-cgray;
             line-height: 1.6;
             margin-top: 8px;
             margin-bottom: 8px;
@@ -654,16 +558,16 @@
 
     /* Code block */
     .gitbook-response pre {
-        background-color: #f5f5f5;
+        background-color: utils.$colors-bgSelect;
         padding: 12px;
         border-radius: 8px;
         overflow-x: auto;
         margin-bottom: 12px;
-        border: 1px solid #ddd;
+        border: 1px solid utils.$colors-bgSelect;
     }
 
     .gitbook-response code {
-        color: #d6336c;
+        color: utils.$colors-primary;
         font-size: 14px;
     }
 
@@ -679,7 +583,7 @@
         padding-left: 24px;
         margin-bottom: 8px;
         font-size: 15px;
-        color: #444;
+        color: utils.$colors-cgray;
     }
 
     .gitbook-response ul li::before {
@@ -687,7 +591,7 @@
         position: absolute;
         left: 0;
         top: 2px;
-        color: #888;
+        color: utils.$colors-cgray;
         font-size: 12px;
     }
 
@@ -697,26 +601,25 @@
 
     /* Sources */
     .gitbook-response .source-container {
-        //background: #f9f9f9;
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid utils.$colors-bgSelect;
         padding-top: 12px;
         margin-top: 16px;
     }
 
     .gitbook-response .source-container p {
         font-size: 14px;
-        color: #666;
+        color: utils.$colors-cgray;
         margin: 4px 0;
     }
 
     .gitbook-response .source-container span {
         font-weight: bold;
-        color: #333;
+        color: utils.$colors-cblack;
     }
 
     /* Séparation */
     .gitbook-response .separator {
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid utils.$colors-bgSelect;
         margin-top: 16px;
         padding-top: 16px;
     }
@@ -742,16 +645,15 @@
     }
 
     .following {
-        background-color: white;
+        background-color: utils.$colors-bgSelect;
         border-radius: 4px;
         border: 1px solid transparent;
         cursor: pointer;
         padding: 12px 8px 12px 16px;
 
         &:hover {
-            background-color: lightgray;
-
-            border: 1px solid gray;
+            background-color: utils.$colors-bgSelect;
+            border: 1px solid utils.$colors-cgray;
         }
     }
 }
