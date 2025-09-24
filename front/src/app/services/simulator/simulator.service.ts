@@ -167,7 +167,7 @@ export class SimulatorService extends MainClass {
     console.log(this.userService.user)
 
     return Sentry.startSpan(
-      { name: 'simulateur: compute', op: 'task', forceTransaction: true, attributes: { latency_event: latencyEvent, 'sentry.tag.latency_event': latencyEvent } },
+      { name: 'Simulateur: compute', op: 'task', forceTransaction: true, attributes: { latency_event: latencyEvent, 'sentry.tag.latency_event': latencyEvent } },
       async () => {
         const startAt = performance.now()
         try { Sentry.setTag('latency_event', latencyEvent) } catch {}
@@ -207,7 +207,7 @@ export class SimulatorService extends MainClass {
           Sentry.getActiveSpan()?.setAttribute('latency_ms', ms)
           Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', latencyEvent)
           try { Sentry.setExtra('latency_ms', ms) } catch {}
-          Sentry.captureMessage('simulateur: compute finished', {
+          Sentry.captureMessage('Simulateur: compute finished', {
             level: 'info',
             tags: { latency_event: latencyEvent },
             extra: { latency_event: latencyEvent, latency_ms: ms },
@@ -222,7 +222,7 @@ export class SimulatorService extends MainClass {
    * en fonction des choix de l'utilisateur.
    */
   private _buildLatencyEventLabel(params: any, white: boolean): string {
-    const base = white ? 'simulateur sans données pré-alimentées' : "simulateur avec les données d'A-JUST"
+    const base = white ? 'Simulateur sans données pré-alimentées' : "Simulateur avec les données d'A-JUST"
     const l1 = params?.lockedParams?.param1?.label || ''
     const l2 = params?.lockedParams?.param2?.label || ''
     const s = new Set([l1, l2].filter(Boolean))
