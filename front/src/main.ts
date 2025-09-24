@@ -35,46 +35,59 @@ Sentry.init({
       // Jurisdiction title mirrored by AppComponent
       const juridictionTitle = (window as any)?.__ajust_juridiction_title || null
 
-      // Prefer any pre-existing tag set on the scope/transaction
-      let latencyEvent: string | null = ((event as any)?.tags?.latency_event as string) || null
+      // Do NOT trust global scope tag for pageload/navigation; we will override below.
+      let latencyEvent: string | null = null
       const pathLike = pathname || transactionName || ''
       const txName = (event as any)?.transaction || ''
 
       // 1) Try to read tag from span attributes for any task-like custom transaction
       const traceCtx = (event as any)?.contexts?.trace
-      const taggedAttr = (!latencyEvent && traceCtx && (traceCtx['sentry.tag.latency_event'] || (traceCtx as any)?.attributes?.['sentry.tag.latency_event'])) as
+      const taggedAttr = (!latencyEvent && traceCtx && (
+        traceCtx['sentry.tag.latency_event'] ||
+        (traceCtx as any)?.attributes?.['sentry.tag.latency_event'] ||
+        (traceCtx as any)?.attributes?.['latency_event'] ||
+        (traceCtx as any)?.data?.['sentry.tag.latency_event'] ||
+        (traceCtx as any)?.data?.['latency_event']
+      )) as
         | string
         | undefined
       if (typeof taggedAttr === 'string' && taggedAttr.length > 0) {
         latencyEvent = taggedAttr
       }
 
-      // 2) If not found yet, check for our named custom transactions by name
-      if (!latencyEvent && txName.includes('simulateur: compute')) {
-        const fromGlobal = (window as any)?.__ajust_last_latency_event
-        try { console.debug('[Sentry][beforeSendTransaction] simulateur:compute branch, fromGlobal=', fromGlobal) } catch {}
-        if (typeof fromGlobal === 'string' && fromGlobal.length > 0) {
-          latencyEvent = fromGlobal
-        }
+      // 1b) If still not found, scan child spans for a tagged latency_event
+      if (!latencyEvent && Array.isArray((event as any)?.spans)) {
+        try {
+          const spans: any[] = (event as any).spans
+          for (const s of spans) {
+            const d = (s as any)?.data || (s as any)?.attributes
+            const v = d?.['sentry.tag.latency_event'] || d?.['latency_event']
+            if (typeof v === 'string' && v.length > 0) {
+              latencyEvent = v
+              break
+            }
+          }
+        } catch {}
       }
-      if (!latencyEvent && txName.includes('cockpit: detail graphs')) {
-        const fromGlobal = (window as any)?.__ajust_last_latency_event
-        try { console.debug('[Sentry][beforeSendTransaction] cockpit:detail branch, fromGlobal=', fromGlobal) } catch {}
-        if (typeof fromGlobal === 'string' && fromGlobal.length > 0) {
-          latencyEvent = fromGlobal
+
+      // 2) Ensure custom Extracteur/Simulateur transactions are tagged by name as a fallback
+      if (!latencyEvent && typeof txName === 'string') {
+        if (txName.startsWith('extracteur: export excel')) {
+          latencyEvent = txName.includes('(effectifs)')
+            ? "Préparation de l'extracteur Excel de données d'effectifs"
+            : "Préparation de l'extracteur Excel de données d'activités"
+        } else if (txName.startsWith('Simulateur:')) {
+          // Specific fallback based on current URL path
+          const isWhite = (pathname || '').startsWith('/simulateur-sans-donnees')
+          latencyEvent = isWhite
+            ? 'Calcul du simulateur sans données pré-alimentées'
+            : "Calcul du simulateur avec les données d'A-JUST"
         }
       }
 
-      // 3) As a last resort, if this is a /cockpit transaction and we have a recent custom label, use it
-      if (!latencyEvent && (txName.startsWith('/cockpit') || pathLike.startsWith('/cockpit'))) {
-        const fromGlobal = (window as any)?.__ajust_last_latency_event
-        if (typeof fromGlobal === 'string' && fromGlobal.length > 0) {
-          latencyEvent = fromGlobal
-        }
-      }
-
-      // 4) Fallback: map page-load and SPA navigations only if nothing custom was found
-      if (!latencyEvent && (op === 'pageload' || op === 'navigation')) {
+      // 3) (Removed) do not read any global fallback for custom task names
+      // 4) For pageload/navigation, always map the page regardless of any scope tag
+      if (op === 'pageload' || op === 'navigation') {
         if (pathLike.startsWith('/panorama')) {
           latencyEvent = 'Chargement du panorama'
         } else if (pathLike.startsWith('/ventilations')) {

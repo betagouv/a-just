@@ -162,7 +162,6 @@ export class SimulatorService extends MainClass {
   toSimulate(params: any, simulation: SimulationInterface, white = false) {
     this.isLoading.next(true)
     const latencyEvent = this._buildLatencyEventLabel(params, white)
-    try { (window as any).__ajust_last_latency_event = latencyEvent } catch {}
     console.log(params)
     console.log(this.userService.user)
 
@@ -170,7 +169,6 @@ export class SimulatorService extends MainClass {
       { name: 'Simulateur: compute', op: 'task', forceTransaction: true, attributes: { latency_event: latencyEvent, 'sentry.tag.latency_event': latencyEvent } },
       async () => {
         const startAt = performance.now()
-        try { Sentry.setTag('latency_event', latencyEvent) } catch {}
         if (white === true) {
           await this.serverService
             .post(`simulator/to-simulate-white`, {
@@ -206,11 +204,15 @@ export class SimulatorService extends MainClass {
           const ms = Math.max(0, performance.now() - startAt)
           Sentry.getActiveSpan()?.setAttribute('latency_ms', ms)
           Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', latencyEvent)
-          try { Sentry.setExtra('latency_ms', ms) } catch {}
-          Sentry.captureMessage('Simulateur: compute finished', {
-            level: 'info',
-            tags: { latency_event: latencyEvent },
-            extra: { latency_event: latencyEvent, latency_ms: ms },
+          // Emit an info message with a local scope so it doesn't leak tags
+          Sentry.withScope((scope) => {
+            try {
+              scope.setTag('latency_event', latencyEvent)
+              scope.setExtra('latency_event', latencyEvent)
+              scope.setExtra('latency_ms', ms)
+              scope.setFingerprint(['simulateur-compute-finished', String(ms), String(Date.now())])
+            } catch {}
+            Sentry.captureMessage('Simulateur: compute finished', 'info')
           })
         } catch {}
       },

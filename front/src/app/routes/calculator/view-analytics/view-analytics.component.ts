@@ -314,14 +314,12 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
       async () => {
         try {
           Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label)
-          Sentry.setTag('latency_event', label)
         } catch {}
         await promise
       },
     )
     // Tagger également la transaction active (probablement /cockpit) pour qu'elle hérite du latency_event
     try { Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label) } catch {}
-    try { (window as any).__ajust_last_latency_event = label } catch {}
     this.detailLoadState[sectionKey] = {
       expected,
       completed: 0,

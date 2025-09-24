@@ -304,7 +304,6 @@ export class ExtractorActivityComponent extends MainClass {
     // Start Sentry transaction for Activity Excel export
     const label = "Préparation de l'extracteur Excel de données d'activités";
     const startAt = performance.now();
-    (window as any).__ajust_last_latency_event = label;
     const txn = Sentry.startSpan({ name: 'extracteur: export excel', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } }, async () => {});
     try { Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label) } catch {}
     this.appService.alert.next({
