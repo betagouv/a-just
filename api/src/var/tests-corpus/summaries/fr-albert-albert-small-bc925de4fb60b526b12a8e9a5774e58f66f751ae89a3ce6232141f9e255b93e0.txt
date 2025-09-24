@@ -1,0 +1,1 @@
+Test commenté car toutes les vérifications sont commentées. Le test devrait toujours réussir car aucune vérification réelle n'est exécutée.

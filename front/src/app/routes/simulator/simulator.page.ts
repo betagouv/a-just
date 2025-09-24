@@ -1,4 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations'
+import * as Sentry from '@sentry/browser'
 import { Component, OnInit, HostListener, ViewChild, OnDestroy, inject } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { PeriodSelectorComponent } from './period-selector/period-selector.component'
@@ -385,6 +386,11 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Activation du bouton simuler
    */
   simulateButton = 'disabled'
+
+  /**
+   * Horodatage du démarrage du calcul de simulation (pour mesure de latence)
+   */
+  private _computeStartAt: number | null = null
 
   /**
    * Backup hr à traiter lors de la simulation
@@ -1670,11 +1676,64 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
       this.logRunSimulator(params)
 
+      // Measure latency based on isLoading lifecycle (true -> false) to catch every run
+      let started = false
+      const sub = this.simulatorService.isLoading.subscribe((val) => {
+        try {
+          if (!started && val === true) {
+            this._computeStartAt = performance.now()
+            started = true
+          } else if (started && val === false) {
+            const end = performance.now()
+            const ms = this._computeStartAt ? Math.max(0, end - this._computeStartAt) : undefined
+            const latencyEvent = this._buildLatencyEventLabel(params)
+            Sentry.captureMessage('simulateur: compute finished', {
+              level: 'info',
+              tags: { latency_event: latencyEvent },
+              extra: { latency_event: latencyEvent, latency_ms: ms },
+            })
+            try { sub.unsubscribe() } catch {}
+          }
+        } catch {}
+      })
+
       this.simulatorService.toSimulate(params, simulation)
     } else {
       this.simulateButton = ''
       alert('Les données en base ne permettent pas de calculer une simulation pour ce contentieux')
     }
+  }
+
+  /**
+   * Construit un intitulé humain lisible pour le champ Sentry "latency_event"
+   * en fonction des choix de l'utilisateur.
+   * Exemples :
+   *  - "simulateur avec les données d'A-JUST à ETPT constant"
+   *  - "simulateur avec les données d'A-JUST à temps moyen par dossier constant"
+   */
+  private _buildLatencyEventLabel(params: any): string {
+    const base = this.whiteSimulator ? 'simulateur sans données pré-alimentées' : "simulateur avec les données d'A-JUST"
+    // Détecte le mode "constant" selon le paramètre verrouillé
+    const locked1 = params?.lockedParams?.param1?.label || ''
+    const locked2 = params?.lockedParams?.param2?.label || ''
+    const lockedSet = new Set([locked1, locked2].filter(Boolean))
+    let suffix = ''
+    if (lockedSet.has('etpMag') || lockedSet.has('etpFon') || lockedSet.has('etpCont')) {
+      suffix = 'à ETPT constant'
+    } else if (lockedSet.has('magRealTimePerCase')) {
+      suffix = 'à temps moyen par dossier constant'
+    } else if (lockedSet.has('totalIn')) {
+      suffix = "à entrées mensuelles constantes"
+    } else if (lockedSet.has('totalOut')) {
+      suffix = "à sorties mensuelles constantes"
+    } else if (lockedSet.has('lastStock')) {
+      suffix = 'à stock constant'
+    } else if (lockedSet.has('realCoverage')) {
+      suffix = 'à taux de couverture constant'
+    } else if (lockedSet.has('realDTESInMonths')) {
+      suffix = 'à DTES constant'
+    }
+    return suffix ? `${base} ${suffix}` : base
   }
 
   /**

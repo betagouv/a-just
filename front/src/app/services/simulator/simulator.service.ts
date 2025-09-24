@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core'
+import * as Sentry from '@sentry/browser'
 import { BehaviorSubject } from 'rxjs'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import * as _ from 'lodash'
@@ -160,40 +161,80 @@ export class SimulatorService extends MainClass {
    */
   toSimulate(params: any, simulation: SimulationInterface, white = false) {
     this.isLoading.next(true)
+    const latencyEvent = this._buildLatencyEventLabel(params, white)
+    try { (window as any).__ajust_last_latency_event = latencyEvent } catch {}
     console.log(params)
     console.log(this.userService.user)
-    if (white === true) {
-      //console.log(params, simulation);
-      this.serverService
-        .post(`simulator/to-simulate-white`, {
-          backupId: this.humanResourceService.backupId.getValue(),
-          params: params,
-          simulation: simulation,
-          dateStart: setTimeToMidDay(this.dateStart.getValue()),
-          dateStop: setTimeToMidDay(this.dateStop.getValue()),
-          selectedCategoryId: this.selectedCategory.getValue()?.id,
-        })
-        .then((data) => {
-          console.log('simu', data.data)
-          this.situationSimulated.next(data.data)
-          this.isLoading.next(false)
-        })
-    } else {
-      this.serverService
-        .post(`simulator/to-simulate`, {
-          backupId: this.humanResourceService.backupId.getValue(),
-          params: params,
-          simulation: simulation,
-          dateStart: setTimeToMidDay(this.dateStart.getValue()),
-          dateStop: setTimeToMidDay(this.dateStop.getValue()),
-          selectedCategoryId: this.selectedCategory.getValue()?.id,
-        })
-        .then((data) => {
-          console.log('simu', data.data)
-          this.situationSimulated.next(data.data)
-          this.isLoading.next(false)
-        })
-    }
+
+    return Sentry.startSpan(
+      { name: 'simulateur: compute', op: 'task', forceTransaction: true, attributes: { latency_event: latencyEvent, 'sentry.tag.latency_event': latencyEvent } },
+      async () => {
+        const startAt = performance.now()
+        try { Sentry.setTag('latency_event', latencyEvent) } catch {}
+        if (white === true) {
+          await this.serverService
+            .post(`simulator/to-simulate-white`, {
+              backupId: this.humanResourceService.backupId.getValue(),
+              params: params,
+              simulation: simulation,
+              dateStart: setTimeToMidDay(this.dateStart.getValue()),
+              dateStop: setTimeToMidDay(this.dateStop.getValue()),
+              selectedCategoryId: this.selectedCategory.getValue()?.id,
+            })
+            .then((data) => {
+              console.log('simu', data.data)
+              this.situationSimulated.next(data.data)
+            })
+        } else {
+          await this.serverService
+            .post(`simulator/to-simulate`, {
+              backupId: this.humanResourceService.backupId.getValue(),
+              params: params,
+              simulation: simulation,
+              dateStart: setTimeToMidDay(this.dateStart.getValue()),
+              dateStop: setTimeToMidDay(this.dateStop.getValue()),
+              selectedCategoryId: this.selectedCategory.getValue()?.id,
+            })
+            .then((data) => {
+              console.log('simu', data.data)
+              this.situationSimulated.next(data.data)
+            })
+        }
+
+        this.isLoading.next(false)
+        try {
+          const ms = Math.max(0, performance.now() - startAt)
+          Sentry.getActiveSpan()?.setAttribute('latency_ms', ms)
+          Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', latencyEvent)
+          try { Sentry.setExtra('latency_ms', ms) } catch {}
+          Sentry.captureMessage('simulateur: compute finished', {
+            level: 'info',
+            tags: { latency_event: latencyEvent },
+            extra: { latency_event: latencyEvent, latency_ms: ms },
+          })
+        } catch {}
+      },
+    )
+  }
+
+  /**
+   * Construit un intitulé humain lisible pour le champ Sentry "latency_event"
+   * en fonction des choix de l'utilisateur.
+   */
+  private _buildLatencyEventLabel(params: any, white: boolean): string {
+    const base = white ? 'simulateur sans données pré-alimentées' : "simulateur avec les données d'A-JUST"
+    const l1 = params?.lockedParams?.param1?.label || ''
+    const l2 = params?.lockedParams?.param2?.label || ''
+    const s = new Set([l1, l2].filter(Boolean))
+    let suffix = ''
+    if (s.has('etpMag') || s.has('etpFon') || s.has('etpCont')) suffix = 'à ETPT constant'
+    else if (s.has('magRealTimePerCase')) suffix = 'à temps moyen par dossier constant'
+    else if (s.has('totalIn')) suffix = 'à entrées mensuelles constantes'
+    else if (s.has('totalOut')) suffix = 'à sorties mensuelles constantes'
+    else if (s.has('lastStock')) suffix = 'à stock constant'
+    else if (s.has('realCoverage')) suffix = 'à taux de couverture constant'
+    else if (s.has('realDTESInMonths')) suffix = 'à DTES constant'
+    return suffix ? `${base} ${suffix}` : base
   }
 
   /**
