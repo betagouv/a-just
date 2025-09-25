@@ -314,12 +314,13 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./site
+          name: pages-site-${{ github.run_id }}
 
       - name: Deploy to GitHub Pages (preview on PRs)
         id: deployment
         uses: actions/deploy-pages@v4
         with:
-          artifact_id: ${{ steps.upload_pages.outputs.artifact_id }}
+          artifact_name: pages-site-${{ github.run_id }}
           preview: ${{ github.event_name == 'pull_request' }}
 
       - name: Comment PR with preview link
