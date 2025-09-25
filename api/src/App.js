@@ -23,6 +23,9 @@ import { getFullKey, getRedisClient, loadOrWarmHR, waitForRedis } from './utils/
 import { invalidateBackup } from './utils/hrExtractorCache'
 import { invalidateAjustBackup } from './utils/hrExtAjustCache'
 
+/**
+ * Configuration du CSP
+ */
 const cspConfig = {
   // https://github.com/helmetjs/helmet
   permissionsPolicy: {
@@ -183,6 +186,10 @@ export default class App extends AppBase {
     })
   }
 
+  /**
+   * Opérations de démarrage du serveur
+   * @returns 
+   */
   async start() {
     this._setupProcessSignals()
 
@@ -203,6 +210,9 @@ export default class App extends AppBase {
     return await this._startHttpServer()
   }
 
+  /**
+   * Gestion des erreurs
+   */
   _setupProcessSignals() {
     process.removeAllListeners('SIGINT')
 
@@ -236,6 +246,9 @@ export default class App extends AppBase {
     })
   }
 
+  /**
+   * Création d'une instance de bdd et initialisation des models
+   */
   _initializeModels() {
     this.models = db.initModels()
     this.routeParam.models = this.models
@@ -245,27 +258,24 @@ export default class App extends AppBase {
     this.dbInstance = db.instance
   }
 
+  /**
+   * Attend la bonne connexion à la base de donnée
+   */
   async _waitForPostgres() {
     await this.waitForPostgres(db.instance)
   }
 
+  /**
+   * Config Koa
+   */
   _configureKoa() {
     this.koaApp.keys = ['oldsdfsdfsder secdsfsdfsdfret key']
     this.koaApp.proxy = true
-    /**    const zlib = require('zlib')
-
-    // Active la compression pour les payloads JSON/text
-    this.koaApp.use(
-      compress({
-        threshold: 1024, // ne compresse pas les petites réponses (< 1ko)
-        br: { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } }, // Brotli si supporté
-        gzip: { level: 6 }, // fallback gzip
-        deflate: false, // optionnel, souvent inutile
-        filter: (type) => /json|text|javascript|css|svg|xml/.test(type), // types compressés
-      }),
-    )*/
   }
 
+  /**
+   * Démarrage et paramétrage de redis
+   */
   async _setupRedisSession() {
     const sessionConfig = { ...config.session }
 
@@ -298,6 +308,9 @@ export default class App extends AppBase {
     this.koaApp.use(session(sessionConfig, this.koaApp))
   }
 
+  /**
+   * Mise en place et paramétrage du middleware 
+   */
   _registerMiddlewares() {
     const limiter = RateLimit.middleware({
       interval: { min: 5 },
@@ -346,6 +359,9 @@ export default class App extends AppBase {
     super.addMiddlewares([config.corsUrl ? cors({ origin: config.corsUrl, credentials: true }) : cors({ credentials: true })])
   }
 
+  /**
+   * Montage des différentes routes de l'application
+   */
   _mountRoutes() {
     super.mountFolder(join(__dirname, 'routes-logs'), '/logs/')
     super.mountFolder(join(__dirname, 'routes-api'), '/api/')
@@ -353,6 +369,10 @@ export default class App extends AppBase {
     super.mountFolder(join(__dirname, 'routes'), '/')
   }
 
+  /**
+   * Lancement et execution des taches de la première instance (ne s'execute donc qu'une fois dans une infra scalingo)
+   * @returns 
+   */
   async _runIfPrimaryInstance() {
     const isPrimaryInstance = os.hostname().includes('web-1') || !os.hostname().includes('web')
 
@@ -376,6 +396,10 @@ export default class App extends AppBase {
     }, 10000)
   }
 
+  /**
+   * Lancement du serveur http
+   * @returns 
+   */
   async _startHttpServer() {
     try {
       this.httpServer = await super.start()
@@ -392,11 +416,19 @@ export default class App extends AppBase {
 
   isReady() {}
 
+  /**
+   * Envoie du signal de fermeture du serveur
+   */
   done() {
     console.log('--- DONE ---')
     process.exit()
   }
 
+  /**
+   * Préchargement de la donnée de cache dans redis qui récupère et stock en cache la liste des agents de chaque juridiction
+   * @param {*} force force le système à recalculer entièrement le cache
+   * @returns 
+   */
   async warmupRedisCache(force = false) {
     await waitForRedis()
     const redis = getRedisClient()
@@ -482,6 +514,13 @@ export default class App extends AppBase {
     }
   }
 
+  /**
+   * Fonction permettant d'attendre la connexion à la base de donnée
+   * @param {*} sequelizeInstance 
+   * @param {*} maxRetries 
+   * @param {*} delayMs 
+   * @returns 
+   */
   waitForPostgres = async (sequelizeInstance, maxRetries = 10, delayMs = 2000) => {
     let attempt = 0
 
@@ -500,14 +539,27 @@ export default class App extends AppBase {
     throw new Error(`❌ PostgreSQL inaccessible après ${maxRetries} tentatives`)
   }
 
+  /**
+   * Fonction de boucle for asynchrone
+   * @param {*} array 
+   * @param {*} fn 
+   */
   asyncForEach = async (array, fn) => {
     for (let i = 0; i < array.length; i++) {
       await fn(array[i], i)
     }
   }
 
+  /**
+   * Pause dans l'execution du code
+   * @param {*} ms 
+   * @returns 
+   */
   sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 
+  /**
+   * Ferme le serveur proprement
+   */
   async shutdown() {
     console.log('🛑 Arrêt du serveur demandé...')
 
