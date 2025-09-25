@@ -82,6 +82,7 @@ jobs:
       pages: write
       id-token: write
       contents: read
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -326,4 +327,6 @@ jobs:
           message: |
             🚀 Preview des rapports de tests disponible:
             ${{ steps.deployment.outputs.page_url }}
-          comment-tag: preview-reports-link
+          comment_tag: preview-reports-link
+          mode: recreate
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
