@@ -305,7 +305,7 @@ export class ExcelService extends MainClass {
   }
 
   /**
-   * Génère un model de données de référentiel
+   * Génère un model de donnée de référentiel
    * @returns
    */
   generateModel() {

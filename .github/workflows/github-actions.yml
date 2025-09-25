@@ -69,7 +69,12 @@ jobs:
   deploy:
     needs: start-tests
     runs-on: ubuntu-latest
-    if: always()
+    # Allow deployment on:
+    # - push to dev/sandbox (normal Pages deploy)
+    # - pull_request (preview deploy)
+    if: |
+      (github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'sandbox')) ||
+      (github.event_name == 'pull_request')
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -308,6 +313,17 @@ jobs:
         with:
           path: ./site
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages (preview on PRs)
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          preview: ${{ github.event_name == 'pull_request' }}
+
+      - name: Comment PR with preview link
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            🚀 Preview des rapports de tests disponible:
+            ${{ steps.deployment.outputs.page_url }}
+          comment-tag: preview-reports-link
