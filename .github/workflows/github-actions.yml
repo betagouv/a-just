@@ -310,6 +310,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
+        id: upload_pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./site
@@ -318,6 +319,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
         with:
+          artifact_id: ${{ steps.upload_pages.outputs.artifact_id }}
           preview: ${{ github.event_name == 'pull_request' }}
 
       - name: Comment PR with preview link
