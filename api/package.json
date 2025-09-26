@@ -9,7 +9,7 @@
     "build:documentation": "jsdoc -r src -d documentation",
     "build-prod": "babel src --out-dir dist --copy-files && babel config --out-dir dist/config --copy-files",
     "rm-build-prod": "rm -rf dist",
-    "test": "NODE_ENV=test node_modules/.bin/nyc --reporter=lcov --reporter=text-summary mocha --config .mocharc.yaml --reporter mochawesome --reporter-option reportDir=./test/reports --reporter-option reportFilename=test-results --reporter-option html=true --reporter-option json=true --reporter-option overwrite=true --reporter-option charts=true --reporter-option code=false --reporter-option quiet=false"
+    "test": "NODE_ENV=test node_modules/.bin/nyc --reporter=lcov --reporter=text-summary mocha --config .mocharc.yaml --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json"
   },
   "dependencies": {
     "@babel/cli": "^7.25.9",
@@ -76,6 +76,7 @@
     "expect": "^29.7.0",
     "jsdoc": "^4.0.4",
     "mocha": "^9",
+    "mocha-multi-reporters": "^1.5.1",
     "mochawesome": "^7.1.4",
     "mochawesome-report-generator": "^6.3.0",
     "nock": "^13.5.5",

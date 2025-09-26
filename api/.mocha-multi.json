@@ -1,0 +1,13 @@
+{
+  "reporterEnabled": "spec, mochawesome",
+  "mochawesomeReporterOptions": {
+    "reportDir": "./test/reports",
+    "reportFilename": "test-results",
+    "html": true,
+    "json": true,
+    "overwrite": true,
+    "charts": true,
+    "code": false,
+    "quiet": false
+  }
+}
