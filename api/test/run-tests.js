@@ -12,7 +12,11 @@ if (!fs.existsSync(reportsDir)) {
 
 console.log('Starting test runner with mochawesome...');
 
-// Run mocha with mochawesome reporter
+// Run mocha with mochawesome reporter - use absolute path to reporter
+const mochawesomePath = path.join(__dirname, '..', 'node_modules', 'mochawesome');
+console.log('Using mochawesome from:', mochawesomePath);
+console.log('Mochawesome exists:', fs.existsSync(mochawesomePath));
+
 const mocha = spawn(
   path.join(__dirname, '..', 'node_modules', '.bin', 'mocha'),
   [
@@ -21,13 +25,8 @@ const mocha = spawn(
     '--timeout', '20000',
     '--require', '@babel/register',
     '--bail',
-    '--reporter', 'mochawesome',
-    '--reporter-option', `reportDir=${reportsDir}`,
-    '--reporter-option', 'reportFilename=test-results',
-    '--reporter-option', 'html=true',
-    '--reporter-option', 'json=true',
-    '--reporter-option', 'overwrite=true',
-    '--reporter-option', 'charts=true'
+    '--reporter', mochawesomePath,  // Use absolute path
+    '--reporter-option', `reportDir=${reportsDir},reportFilename=test-results,html=true,json=true,overwrite=true,charts=true,quiet=false`
   ],
   {
     env: { ...process.env, NODE_ENV: 'test' },
