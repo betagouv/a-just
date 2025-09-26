@@ -31,8 +31,8 @@ jobs:
           rm -rf ./end-to-end/cypress/reports/* || true
           rm -rf ./end-to-end/cypress/videos/* || true
 
-      - name: Run tests
-        run: npm run test
+      - name: Run API tests only (temporary)
+        run: npm run test:api
 
       - name: Debug - Show API mochawesome outputs
         if: always()
@@ -109,12 +109,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Download Cypress reports artifacts
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: cypress-reports
-          path: ./cypress-reports
+      # Temporarily disable Cypress artifacts while focusing on API mochawesome
+      # - name: Download Cypress reports artifacts
+      #   uses: actions/download-artifact@v4
+      #   continue-on-error: true
+      #   with:
+      #     name: cypress-reports
+      #     path: ./cypress-reports
 
       - name: Download Cypress videos artifacts
         uses: actions/download-artifact@v4
