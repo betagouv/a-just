@@ -34,6 +34,14 @@ jobs:
       - name: Run tests
         run: npm run test
 
+      - name: Debug - Show API mochawesome outputs
+        if: always()
+        run: |
+          echo "Listing ./api/test/reports after tests:"
+          ls -la ./api/test/reports || true
+          echo "Listing ./api/coverage after tests:"
+          ls -la ./api/coverage || true
+
       - name: Debug - List generated files
         if: always()
         run: |
