@@ -8,11 +8,18 @@ RUN mkdir -p test/reports coverage
 
 CMD echo "NODE_ENV = $NODE_ENV"; \
     npm ci && \
-    echo "Mocha version:" && npx mocha --version || true && \
+    echo "=== Package verification ==="; \
+    echo "Mocha version:" && npx mocha --version || true; \
     node -e "try{console.log('mochawesome version:', require('mochawesome/package.json').version)}catch(e){console.log('mochawesome not found')};" && \
+    node -e "try{console.log('mocha-multi-reporters version:', require('mocha-multi-reporters/package.json').version)}catch(e){console.log('mocha-multi-reporters not found')};" && \
+    echo "=== Building ==="; \
     npm run build:test && \
-    npm test || true; \
+    echo "=== Running tests with diagnostics ==="; \
+    DEBUG=mochawesome:* npm test || true; \
+    echo "=== Post-test verification ==="; \
     echo "Contents of test/reports inside container:" && ls -la test/reports || true; \
-    echo "Contents of coverage inside container:" && ls -la coverage || true;
+    echo "Contents of mochawesome-report (default) inside container:" && ls -la mochawesome-report 2>/dev/null || echo "No default mochawesome-report folder"; \
+    echo "Contents of coverage inside container:" && ls -la coverage || true; \
+    echo "Looking for any mochawesome files:" && find . -name "mochawesome*" -type f 2>/dev/null | head -20 || echo "No mochawesome files found";
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
 #sleep infinity;
