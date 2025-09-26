@@ -38,9 +38,21 @@ try {
   
   console.log('Starting test run...');
   
-  // Force exit after tests to ensure mochawesome writes
+  // Set a hard timeout to force exit after tests should be done
+  // Your tests take about 33 seconds based on the logs
+  setTimeout(() => {
+    console.log('=== HARD TIMEOUT: Forcing exit after 35 seconds ===');
+    const reportDir = path.join(__dirname, 'reports');
+    if (fs.existsSync(reportDir)) {
+      const files = fs.readdirSync(reportDir);
+      console.log('Files in test/reports at timeout:', files);
+    }
+    process.exit(0);
+  }, 35000);
+  
+  // Also try the normal callbacks
   mocha.run(failures => {
-    console.log('=== Tests complete, waiting for mochawesome to write files ===');
+    console.log('=== Tests complete (callback), waiting for mochawesome to write files ===');
     console.log('Test failures:', failures);
     
     setTimeout(() => {
@@ -54,12 +66,6 @@ try {
       }
       process.exit(failures ? 1 : 0);
     }, 2000);
-  }).on('end', () => {
-    console.log('=== Mocha end event fired, forcing exit in 3 seconds ===');
-    setTimeout(() => {
-      console.log('=== Forcing process exit ===');
-      process.exit(0);
-    }, 3000);
   });
 } catch (error) {
   console.error('=== ERROR IN RUNNER ===');
