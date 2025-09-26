@@ -24,6 +24,13 @@ jobs:
       - name: Install dependencies
         run: npm i
 
+      - name: Cleanup previous test reports
+        if: always()
+        run: |
+          rm -rf ./api/test/reports/* || true
+          rm -rf ./end-to-end/cypress/reports/* || true
+          rm -rf ./end-to-end/cypress/videos/* || true
+
       - name: Run tests
         run: npm run test
 
