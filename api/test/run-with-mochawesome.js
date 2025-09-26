@@ -37,6 +37,8 @@ try {
   mocha.addFile(testFile);
   
   console.log('Starting test run...');
+  
+  // Force exit after tests to ensure mochawesome writes
   mocha.run(failures => {
     console.log('=== Tests complete, waiting for mochawesome to write files ===');
     console.log('Test failures:', failures);
@@ -52,6 +54,12 @@ try {
       }
       process.exit(failures ? 1 : 0);
     }, 2000);
+  }).on('end', () => {
+    console.log('=== Mocha end event fired, forcing exit in 3 seconds ===');
+    setTimeout(() => {
+      console.log('=== Forcing process exit ===');
+      process.exit(0);
+    }, 3000);
   });
 } catch (error) {
   console.error('=== ERROR IN RUNNER ===');
