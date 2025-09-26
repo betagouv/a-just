@@ -81,15 +81,22 @@ jobs:
           name: mocha-report
           path: ./api/test/reports
 
+      - name: Upload Mocha default report folder (fallback)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report-default
+          path: ./api/mochawesome-report
+
   deploy:
     needs: start-tests
     runs-on: ubuntu-latest
-    # Allow deployment on:
-    # - push to dev/sandbox (normal Pages deploy)
-    # - pull_request (preview deploy)
+    # Run even if tests failed, but only for push on dev/sandbox or pull_request events
     if: |
-      (github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'sandbox')) ||
-      (github.event_name == 'pull_request')
+      always() && (
+        (github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'sandbox')) ||
+        (github.event_name == 'pull_request')
+      )
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
