@@ -17,7 +17,10 @@ CMD echo "NODE_ENV = $NODE_ENV"; \
     echo "=== Building ==="; \
     npm run build:test && \
     echo "=== Running tests WITHOUT NYC (direct mochawesome) ==="; \
-    DEBUG=mochawesome:* npm test || true; \
+    echo "Current directory:" && pwd; \
+    echo "test/run-with-mochawesome.js exists?" && ls -la test/run-with-mochawesome.js || echo "File not found"; \
+    echo "Running: NODE_ENV=test node ./test/run-with-mochawesome.js"; \
+    NODE_ENV=test node ./test/run-with-mochawesome.js || echo "Direct run failed with exit code: $?"; \
     echo "=== Post-test verification ==="; \
     echo "Contents of test/reports inside container:" && ls -la test/reports || true; \
     echo "Contents of mochawesome-report (default) inside container:" && ls -la mochawesome-report 2>/dev/null || echo "No default mochawesome-report folder"; \
