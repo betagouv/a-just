@@ -34,7 +34,12 @@ jobs:
       # - name: Run e2e tests
       #   id: run_cypress_tests
       #   continue-on-error: true
-      #   run: npm run test:e2eapi
+      #   run: npm run test:e2e
+      
+      - name: Run API tests
+        id: run_api_tests
+        continue-on-error: true
+        run: npm run test:api
 
       - name: Debug - Show API mochawesome outputs
         if: always()
