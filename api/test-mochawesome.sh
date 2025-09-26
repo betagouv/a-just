@@ -15,17 +15,27 @@ describe('Minimal Test', function() {
 });
 EOF
 
-echo "Method 1: Using npx mocha with mochawesome..."
-npx mocha minimal.test.js --reporter mochawesome --reporter-option reportDir=./minimal-test-output,quiet=false 2>&1 | head -30
+echo "Method 1: Bypassing ALL config and babel with --no-config..."
+./node_modules/.bin/mocha minimal.test.js --no-config --reporter mochawesome --reporter-option reportDir=./minimal-test-output,quiet=false 2>&1 | head -50
 
 echo "Checking output directory 1..."
 ls -la ./minimal-test-output/ 2>/dev/null || echo "No minimal-test-output directory created"
 
-echo "Method 2: Using node_modules/.bin/mocha directly..."
-./node_modules/.bin/mocha minimal.test.js --reporter mochawesome --reporter-option reportDir=./minimal-test-output2,quiet=false 2>&1 | head -30
+echo "Method 2: Using spec reporter to verify mocha works..."
+./node_modules/.bin/mocha minimal.test.js --no-config --reporter spec 2>&1 | head -10
 
-echo "Checking output directory 2..."
-ls -la ./minimal-test-output2/ 2>/dev/null || echo "No minimal-test-output2 directory created"
+echo "Method 3: Trying JSON reporter as alternative..."
+./node_modules/.bin/mocha minimal.test.js --no-config --reporter json --reporter-option output=./test-output.json 2>&1 | head -20
+
+echo "Checking JSON output..."
+ls -la test-output.json 2>/dev/null || echo "No JSON file created"
+
+echo "Method 4: Direct require of mochawesome..."
+node -e "
+const Mocha = require('mocha');
+const mocha = new Mocha({ reporter: require('mochawesome') });
+mocha.addFile('./minimal.test.js');
+mocha.run();" 2>&1 | head -30
 
 echo "Method 3: Using absolute path to mochawesome..."
 ./node_modules/.bin/mocha minimal.test.js --reporter $(pwd)/node_modules/mochawesome --reporter-option reportDir=./minimal-test-output3,quiet=false 2>&1 | head -30
