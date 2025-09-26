@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
-const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+
+// Set NODE_ENV
+process.env.NODE_ENV = 'test';
 
 // Ensure reports directory exists
 const reportsDir = path.join(__dirname, 'reports');
@@ -11,57 +13,73 @@ if (!fs.existsSync(reportsDir)) {
 }
 
 console.log('Starting test runner with mochawesome...');
+console.log('Reports will be saved to:', reportsDir);
 
-// Run mocha with mochawesome reporter - use absolute path to reporter
-const mochawesomePath = path.join(__dirname, '..', 'node_modules', 'mochawesome');
-console.log('Using mochawesome from:', mochawesomePath);
-console.log('Mochawesome exists:', fs.existsSync(mochawesomePath));
+// Register babel
+require('@babel/register');
 
-const mocha = spawn(
-  path.join(__dirname, '..', 'node_modules', '.bin', 'mocha'),
-  [
-    path.join(__dirname, 'index.test.js'),
-    '--no-config',
-    '--timeout', '20000',
-    '--require', '@babel/register',
-    '--bail',
-    '--reporter', mochawesomePath,  // Use absolute path
-    '--reporter-option', `reportDir=${reportsDir},reportFilename=test-results,html=true,json=true,overwrite=true,charts=true,quiet=false`
-  ],
-  {
-    env: { ...process.env, NODE_ENV: 'test' },
-    stdio: 'inherit'
-  }
-);
+// Use Mocha programmatically
+const Mocha = require('mocha');
 
-mocha.on('close', (code) => {
-  console.log(`\nTests completed with exit code ${code}`);
+// Create mocha instance with mochawesome
+const mocha = new Mocha({
+  reporter: 'mochawesome',
+  reporterOptions: {
+    reportDir: reportsDir,
+    reportFilename: 'test-results',
+    html: true,
+    json: true,
+    overwrite: true,
+    charts: true,
+    quiet: false
+  },
+  timeout: 20000,
+  bail: true
+});
+
+// Add test file
+const testFile = path.join(__dirname, 'index.test.js');
+console.log('Adding test file:', testFile);
+mocha.addFile(testFile);
+
+// Run tests
+console.log('Running tests...');
+const runner = mocha.run((failures) => {
+  console.log(`\nTests completed with ${failures} failures`);
   
   // Give mochawesome time to write files
   setTimeout(() => {
     console.log('\nChecking for generated reports...');
     
-    const files = fs.readdirSync(reportsDir);
-    console.log('Files in reports directory:', files);
-    
-    if (files.includes('test-results.html')) {
-      console.log('✓ HTML report generated successfully');
+    if (fs.existsSync(reportsDir)) {
+      const files = fs.readdirSync(reportsDir);
+      console.log('Files in reports directory:', files);
+      
+      if (files.includes('test-results.html')) {
+        console.log('✓ HTML report generated successfully');
+      } else {
+        console.log('✗ HTML report not found');
+      }
+      
+      if (files.includes('test-results.json')) {
+        console.log('✓ JSON report generated successfully');
+      } else {
+        console.log('✗ JSON report not found');
+      }
     } else {
-      console.log('✗ HTML report not found');
+      console.log('✗ Reports directory does not exist!');
     }
     
-    if (files.includes('test-results.json')) {
-      console.log('✓ JSON report generated successfully');
-    } else {
-      console.log('✗ JSON report not found');
-    }
-    
-    // Exit with the same code as mocha
-    process.exit(code);
+    // Exit with appropriate code
+    process.exit(failures ? 1 : 0);
   }, 2000);
 });
 
-mocha.on('error', (err) => {
-  console.error('Failed to start test process:', err);
-  process.exit(1);
+// Add event listeners for debugging
+runner.on('start', () => {
+  console.log('Test runner started');
+});
+
+runner.on('end', () => {
+  console.log('Test runner ended');
 });
