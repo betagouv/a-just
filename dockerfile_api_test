@@ -14,8 +14,10 @@ CMD echo "NODE_ENV = $NODE_ENV"; \
     node -e "try{console.log('mocha-multi-reporters version:', require('mocha-multi-reporters/package.json').version)}catch(e){console.log('mocha-multi-reporters not found')};" && \
     echo "=== Building ==="; \
     npm run build:test && \
-    echo "=== Running tests with diagnostics ==="; \
+    echo "=== Running tests WITHOUT NYC (direct mochawesome) ==="; \
     DEBUG=mochawesome:* npm test || true; \
+    echo "=== NYC coverage (separate step) ==="; \
+    npx nyc --reporter=lcov --reporter=text-summary npm test || true; \
     echo "=== Post-test verification ==="; \
     echo "Contents of test/reports inside container:" && ls -la test/reports || true; \
     echo "Contents of mochawesome-report (default) inside container:" && ls -la mochawesome-report 2>/dev/null || echo "No default mochawesome-report folder"; \
