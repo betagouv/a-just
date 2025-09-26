@@ -391,17 +391,17 @@ export default class App extends AppBase {
   }
 
   isReady() {}
-
+ 
   async done() {
     console.log('--- DONE ---')
-    // In tests/CI do not force exit; allow reporters to flush
-    await this.shutdown()
+    // In tests, avoid hard process exit so reporters can flush outputs
+    const exitProcess = process.env.NODE_ENV !== 'test'
+    await this.shutdown(exitProcess)
   }
 
   async warmupRedisCache(force = false) {
     await waitForRedis()
     const redis = getRedisClient()
-
     if (!redis?.isReady) {
       console.warn('⚠️ Redis non prêt, warmup ignoré.')
       return
@@ -509,11 +509,10 @@ export default class App extends AppBase {
 
   sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 
-  async shutdown() {
+  async shutdown(exitProcess = true) {
     console.log('🛑 Arrêt du serveur demandé...')
-    const allowExit = !(process.env.NODE_ENV === 'test' || process.env.CI)
 
-    const forceKill = allowExit
+    const forceKill = exitProcess
       ? setTimeout(() => {
           console.warn('⏳ Forçage de l’arrêt après 5s')
           process.exit(1)
@@ -539,17 +538,15 @@ export default class App extends AppBase {
       }
 
       if (forceKill) clearTimeout(forceKill)
-      if (allowExit) {
-        process.stdout.write('\n✅ Shutdown terminé proprement.\n', () => {
+      process.stdout.write('\n✅ Shutdown terminé proprement.\n', () => {
+        if (exitProcess) {
           process.exit(0)
-        })
-      } else {
-        process.stdout.write('\n✅ Shutdown terminé proprement.\n')
-      }
+        }
+      })
     } catch (err) {
       console.error('❌ Erreur pendant la fermeture :', err)
       if (forceKill) clearTimeout(forceKill)
-      if (allowExit) {
+      if (exitProcess) {
         process.exit(1)
       }
     }
