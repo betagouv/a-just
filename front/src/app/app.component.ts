@@ -5,6 +5,7 @@ import { AlertInterface } from './interfaces/alert'
 import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
 import { UserService } from './services/user/user.service'
+import { HumanResourceService } from './services/human-resource/human-resource.service'
 import { iIOS } from './utils/system'
 import { filter } from 'rxjs'
 
@@ -55,7 +56,7 @@ export class AppComponent implements AfterViewInit {
    * @param contentieuxOptionsService
    * @param appService
    */
-  constructor(router: Router, private userService: UserService, private contentieuxOptionsService: ContentieuxOptionsService, private appService: AppService) {
+  constructor(router: Router, private userService: UserService, private contentieuxOptionsService: ContentieuxOptionsService, private appService: AppService, private humanResourceService: HumanResourceService) {
     this.crispChat()
     if (iIOS()) {
       document.body.classList.add('iIOS')
@@ -86,6 +87,15 @@ export class AppComponent implements AfterViewInit {
     })
 
     this.appService.appLoading.subscribe((a) => (this.appLoading = a))
+
+    // Mirror current jurisdiction title for Sentry tagging
+    try {
+      this.humanResourceService.hrBackup.subscribe((bk) => {
+        try {
+          window.__ajust_juridiction_title = bk?.label || null
+        } catch {}
+      })
+    } catch {}
 
     if (this.matomo !== null) {
       var _paq = (window._paq = window._paq || [])
