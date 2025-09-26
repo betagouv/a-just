@@ -146,7 +146,7 @@ const cspConfig = {
   xContentTypeOptions: 'nosniff',
   xDnsPrefetchControl: false,
   xDownloadOptions: false,
-  xFrameOptions: true,
+  xFrameOptions: false,
   xPermittedCrossDomainPolicies: false,
   xPoweredBy: false,
   //xXssProtection: 1, don't work
