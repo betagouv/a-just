@@ -25,14 +25,16 @@ jobs:
         run: npm i
 
       - name: Cleanup previous test reports
-        if: always()
         run: |
           rm -rf ./api/test/reports/* || true
           rm -rf ./end-to-end/cypress/reports/* || true
           rm -rf ./end-to-end/cypress/videos/* || true
 
-      - name: Run API tests only (temporary)
-        run: npm run test:api
+      # TEMPORARILY DISABLED FOR FASTER FEEDBACK ON API TESTS
+      # - name: Run e2e tests
+      #   id: run_cypress_tests
+      #   continue-on-error: true
+      #   run: npm run test:e2eapi
 
       - name: Debug - Show API mochawesome outputs
         if: always()
@@ -54,39 +56,35 @@ jobs:
           echo "API test directory structure:"
           find ./api -type f -name "*.json" -o -name "*.html" | head -20
           echo "API test reports:"
-          ls -la ./api/test/ || echo "API test directory not found"
           echo "Files in api/test/:"
           find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "No API test reports found"
           echo "Mochawesome specific files:"
           find ./api -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
 
-      - name: Upload Cypress video
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-video
-          path: ./end-to-end/cypress/videos
+      # TEMPORARILY DISABLED WHILE FOCUSING ON API TESTS
+      # - name: Upload Cypress videos
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: cypress-video
+      #     path: ./end-to-end/cypress/videos
 
-      - name: Upload Cypress test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-reports
-          path: ./end-to-end/cypress/reports
+      # - name: Upload Cypress test reports
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: cypress-reports
+      #     path: ./end-to-end/cypress/reports
 
-      - name: Upload Mocha test report
+      - name: Upload API test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mocha-report
-          path: ./api/test/reports
-
-      - name: Upload Mocha default report folder (fallback)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: mochawesome-report-default
-          path: ./api/mochawesome-report
+          name: api-test-reports
+          path: |
+            ./api/test/reports/
+            ./api/mochawesome-report/
+          if-no-files-found: warn
 
   deploy:
     needs: start-tests

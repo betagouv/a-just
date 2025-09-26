@@ -19,7 +19,9 @@ CMD echo "NODE_ENV = $NODE_ENV"; \
     echo "=== Running tests with mochawesome reporter ==="; \
     npm test || echo "Test failed with exit code: $?"; \
     echo "=== Post-test verification ==="; \
-    echo "Contents of test/reports inside container:" && ls -la test/reports || true; \
+    echo "Contents of test/reports inside container:" && ls -la test/reports 2>/dev/null || true; \
+    echo "Test results JSON preview:" && head -100 test/reports/test-results.json 2>/dev/null || echo "No JSON file"; \
+    echo "Test results HTML exists:" && test -f test/reports/test-results.html && echo "YES" || echo "NO"; \
     echo "Contents of mochawesome-report (default) inside container:" && ls -la mochawesome-report 2>/dev/null || echo "No default mochawesome-report folder"; \
     echo "Contents of coverage inside container:" && ls -la coverage || true; \
     echo "Looking for any mochawesome files:" && find . -name "mochawesome*" -type f 2>/dev/null | head -20 || echo "No mochawesome files found";
