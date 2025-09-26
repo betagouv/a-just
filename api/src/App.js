@@ -392,9 +392,10 @@ export default class App extends AppBase {
 
   isReady() {}
 
-  done() {
+  async done() {
     console.log('--- DONE ---')
-    process.exit()
+    // In tests/CI do not force exit; allow reporters to flush
+    await this.shutdown()
   }
 
   async warmupRedisCache(force = false) {
@@ -510,11 +511,14 @@ export default class App extends AppBase {
 
   async shutdown() {
     console.log('🛑 Arrêt du serveur demandé...')
+    const allowExit = !(process.env.NODE_ENV === 'test' || process.env.CI)
 
-    const forceKill = setTimeout(() => {
-      console.warn('⏳ Forçage de l’arrêt après 5s')
-      process.exit(1)
-    }, 5000)
+    const forceKill = allowExit
+      ? setTimeout(() => {
+          console.warn('⏳ Forçage de l’arrêt après 5s')
+          process.exit(1)
+        }, 5000)
+      : null
 
     try {
       if (this.httpServer && this.httpServer.listening) {
@@ -534,14 +538,20 @@ export default class App extends AppBase {
         console.log('✅ DB fermée')
       }
 
-      clearTimeout(forceKill)
-      process.stdout.write('\n✅ Shutdown terminé proprement.\n', () => {
-        process.exit(0)
-      })
+      if (forceKill) clearTimeout(forceKill)
+      if (allowExit) {
+        process.stdout.write('\n✅ Shutdown terminé proprement.\n', () => {
+          process.exit(0)
+        })
+      } else {
+        process.stdout.write('\n✅ Shutdown terminé proprement.\n')
+      }
     } catch (err) {
       console.error('❌ Erreur pendant la fermeture :', err)
-      clearTimeout(forceKill)
-      process.exit(1)
+      if (forceKill) clearTimeout(forceKill)
+      if (allowExit) {
+        process.exit(1)
+      }
     }
   }
 }

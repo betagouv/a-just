@@ -48,7 +48,7 @@ describe('Test server is ready', () => {
         },
       })
     }
-    server.done()
+    await server.done()
   })
 
   /**
