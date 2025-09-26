@@ -1,14 +1,29 @@
 FROM node:22
+# Force rebuild: 2024-09-26-14:23
 
 COPY ./api /home/api
 WORKDIR /home/api
 
 #RUN apt-get -y install iptables cron
-RUN mkdir -p test/reports coverage
+RUN mkdir -p test/reports coverage src/front && \
+    echo '<!DOCTYPE html><html><head></head><body></body></html>' > src/front/index.html
 
 CMD echo "NODE_ENV = $NODE_ENV"; \
-    yarn install --frozen-lockfile && \
-    yarn run build:test && \ 
-    yarn run test;
+    npm ci && \
+    echo "=== Package verification ==="; \
+    echo "Mocha version:" && npx mocha --version || true; \
+    node -e "try{console.log('mochawesome version:', require('mochawesome/package.json').version)}catch(e){console.log('mochawesome not found')};" && \
+    node -e "try{console.log('mocha-multi-reporters version:', require('mocha-multi-reporters/package.json').version)}catch(e){console.log('mocha-multi-reporters not found')};" && \
+    echo "=== Building ==="; \
+    npm run build:test && \
+    echo "=== Running tests with mochawesome reporter ==="; \
+    npm test || echo "Test failed with exit code: $?"; \
+    echo "=== Post-test verification ==="; \
+    echo "Contents of test/reports inside container:" && ls -la test/reports 2>/dev/null || true; \
+    echo "Test results JSON preview:" && head -100 test/reports/test-results.json 2>/dev/null || echo "No JSON file"; \
+    echo "Test results HTML exists:" && test -f test/reports/test-results.html && echo "YES" || echo "NO"; \
+    echo "Contents of mochawesome-report (default) inside container:" && ls -la mochawesome-report 2>/dev/null || echo "No default mochawesome-report folder"; \
+    echo "Contents of coverage inside container:" && ls -la coverage || true; \
+    echo "Looking for any mochawesome files:" && find . -name "mochawesome*" -type f 2>/dev/null | head -20 || echo "No mochawesome files found";
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
 #sleep infinity;
