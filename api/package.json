@@ -9,7 +9,7 @@
     "build:documentation": "jsdoc -r src -d documentation",
     "build-prod": "babel src --out-dir dist --copy-files && babel config --out-dir dist/config --copy-files",
     "rm-build-prod": "rm -rf dist",
-    "test": "NODE_ENV=test mocha test/index.test.js --no-config --timeout 20000 --require @babel/register --bail --exit --reporter mochawesome --reporter-option reportDir=./test/reports,reportFilename=test-results,html=true,json=true,overwrite=true,charts=true,code=false,quiet=false",
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha test/index.test.js --no-config --timeout 20000 --require @babel/register --bail --exit --reporter mochawesome --reporter-option reportDir=./test/reports,reportFilename=test-results,html=true,json=true,overwrite=true,charts=true",
     "test:coverage": "NODE_ENV=test node_modules/.bin/nyc --reporter=lcov --reporter=text-summary mocha --config .mocharc.yaml --require ./test/_diagnostic.js --reporter mochawesome --reporter-option reportDir=./test/reports --reporter-option reportFilename=test-results --reporter-option html=true --reporter-option json=true --reporter-option overwrite=true --reporter-option charts=true --reporter-option code=false --reporter-option quiet=false",
     "test:direct": "NODE_ENV=test mocha --config .mocharc.yaml --require ./test/_diagnostic.js --reporter mochawesome --reporter-option reportDir=./test/reports --reporter-option reportFilename=test-results --reporter-option quiet=false"
   },
