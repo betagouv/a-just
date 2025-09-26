@@ -4,13 +4,4 @@ timeout: 20000
 color: true
 require: '@babel/register'
 bail: true
-reporter: 'mochawesome'
-reporterOptions:
-  reportDir: ./test/reports
-  reportFilename: test-results
-  html: true
-  json: true
-  overwrite: true
-  quiet: true
-  charts: true
-  code: false
+# Reporter is specified via CLI to avoid conflicts
