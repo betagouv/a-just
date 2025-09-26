@@ -1,5 +1,8 @@
 {
-  "reporterEnabled": "spec, mochawesome",
+  "reporterEnabled": "spec,mochawesome",
+  "specReporterOptions": {
+    "displayStacktrace": "all"
+  },
   "mochawesomeReporterOptions": {
     "reportDir": "./test/reports",
     "reportFilename": "test-results",
