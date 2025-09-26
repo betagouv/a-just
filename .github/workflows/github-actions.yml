@@ -350,8 +350,9 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            🚀 Preview des rapports de tests disponible:
-            ${{ steps.deployment.outputs.page_url }}
+            🚀 Preview des rapports de tests disponible pour PR #${{ github.event.pull_request.number }}
+            URL: ${{ steps.deployment.outputs.preview_url || steps.deployment.outputs.page_url }}
+            (run ${{ github.run_id }} attempt ${{ github.run_attempt }})
           comment_tag: preview-reports-link
           mode: recreate
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
