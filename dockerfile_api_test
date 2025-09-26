@@ -16,9 +16,7 @@ CMD echo "NODE_ENV = $NODE_ENV"; \
     node -e "try{console.log('mocha-multi-reporters version:', require('mocha-multi-reporters/package.json').version)}catch(e){console.log('mocha-multi-reporters not found')};" && \
     echo "=== Building ==="; \
     npm run build:test && \
-    echo "=== Testing if mochawesome works at all ==="; \
-    chmod +x test-mochawesome.sh && ./test-mochawesome.sh; \
-    echo "=== Running actual tests ==="; \
+    echo "=== Running tests with mochawesome reporter ==="; \
     npm test || echo "Test failed with exit code: $?"; \
     echo "=== Post-test verification ==="; \
     echo "Contents of test/reports inside container:" && ls -la test/reports || true; \
