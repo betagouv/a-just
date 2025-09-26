@@ -4,4 +4,5 @@ timeout: 20000
 color: true
 require: '@babel/register'
 bail: true
+exit: true
 # Reporter is specified via CLI to avoid conflicts
