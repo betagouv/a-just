@@ -9,7 +9,7 @@
     "build:documentation": "jsdoc -r src -d documentation",
     "build-prod": "babel src --out-dir dist --copy-files && babel config --out-dir dist/config --copy-files",
     "rm-build-prod": "rm -rf dist",
-    "test": "NODE_ENV=test node_modules/.bin/nyc --reporter=lcov --reporter=text-summary mocha --config .mocharc.yaml && node test/force-mochawesome.js"
+    "test": "NODE_ENV=test node_modules/.bin/nyc --reporter=lcov --reporter=text-summary mocha --config .mocharc.yaml --require ./test/_force_mochawesome.js --reporter mocha-multi-reporters --reporter-options configFile=.mocha-multi.json"
   },
   "dependencies": {
     "@babel/cli": "^7.25.9",
