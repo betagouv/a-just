@@ -242,9 +242,9 @@ export const findSituation = (hr, date, signal = null) => {
 
 /**
  * Retourne la liste de toutes les situaitons futures
- * @param {*} hr 
- * @param {*} date 
- * @returns 
+ * @param {*} hr
+ * @param {*} date
+ * @returns
  */
 export const findAllFuturSituations = (hr, date) => {
   date = today(date)
@@ -341,7 +341,7 @@ const generateUniqueId = () => {
 /**
  * Création d'index divers pour faciliter la recherche
  * @param {*} agents objet contenant l'ensemble des agents (issu du cache)
- * @returns 
+ * @returns
  */
 export const generateAndIndexAllStableHRPeriods = async (agents) => {
   const resultMap = new Map() // Map pour stocker les périodes par agent
@@ -463,9 +463,9 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
 }
 
 /**
- * Génération de périodes à paramètres stables 
- * @param {*} agent 
- * @returns 
+ * Génération de périodes à paramètres stables
+ * @param {*} agent
+ * @returns
  */
 export const generateStableHRPeriods = (agent) => {
   // Déstructuration des données de l'agent
@@ -639,13 +639,13 @@ export const generateStableHRPeriods = (agent) => {
 
 /**
  * Fonction permettant de requetter toutes les périodes stables selon une selection de critère
- * @param {*} indexes 
- * @param {*} queryStart 
- * @param {*} queryEnd 
- * @param {*} queryCategory 
- * @param {*} queryFonctions 
- * @param {*} queryContentieux 
- * @returns 
+ * @param {*} indexes
+ * @param {*} queryStart
+ * @param {*} queryEnd
+ * @param {*} queryCategory
+ * @param {*} queryFonctions
+ * @param {*} queryContentieux
+ * @returns
  */
 export const searchPeriodsWithIndexes = (indexes, queryStart, queryEnd, queryCategory, queryFonctions, queryContentieux) => {
   let intervalTree = indexes.intervalTree // L'interval tree préalablement créé
@@ -730,10 +730,10 @@ export const searchPeriodsWithIndexes = (indexes, queryStart, queryEnd, queryCat
 
 /**
  * Calcul l'ETP sur une période donnée selon une selection de critère
- * @param {*} indexes 
- * @param {*} query 
- * @param {*} categories 
- * @returns 
+ * @param {*} indexes
+ * @param {*} query
+ * @param {*} categories
+ * @returns
  */
 export const calculateETPForContentieux = (indexes, query, categories) => {
   // Recherche des périodes filtrées
@@ -750,7 +750,10 @@ export const calculateETPForContentieux = (indexes, query, categories) => {
 
   // Calcul de l'ETP pour chaque période filtrée
   filteredPeriods.forEach((period) => {
-    const activityPercentage = period.activityIds.get(query.contentieux) || 0
+    const activityPercentage = Array.isArray(query.contentieux)
+      ? query.contentieux.reduce((s, id) => s + (period.activityIds.get(id) || 0), 0)
+      : period.activityIds.get(query.contentieux) || 0
+
     const effectiveETP = period.effectiveETP * (activityPercentage / 100)
 
     // Ajustement des dates en fonction de l'intervalle de requête
@@ -778,8 +781,8 @@ export const calculateETPForContentieux = (indexes, query, categories) => {
 
 /**
  * Retourne une liste d'indexe utile au calcul d'etp dans l'application
- * @param {*} hr 
- * @returns 
+ * @param {*} hr
+ * @returns
  */
 export const generateHRIndexes = async (hr) => {
   const { resultMap, periodsDatabase, categoryIndex, functionIndex, contentieuxIndex, agentIndex, intervalTree } = await generateAndIndexAllStableHRPeriods(hr)
@@ -797,8 +800,8 @@ export const generateHRIndexes = async (hr) => {
 
 /**
  * Récupère l'id d'une catégorie d'agent
- * @param {*} categoryLabel 
- * @returns 
+ * @param {*} categoryLabel
+ * @returns
  */
 export const getCategoryIdFromLabel = (categoryLabel) => {
   switch (categoryLabel) {
@@ -813,9 +816,9 @@ export const getCategoryIdFromLabel = (categoryLabel) => {
 
 /**
  * Récupère les fonctions pour une catégorie donnée
- * @param {*} categorySelected 
- * @param {*} models 
- * @returns 
+ * @param {*} categorySelected
+ * @param {*} models
+ * @returns
  */
 export const loadFonctionsForCategory = async (categorySelected, models) => {
   const all = await models.HRFonctions.getAll()
@@ -825,10 +828,10 @@ export const loadFonctionsForCategory = async (categorySelected, models) => {
 
 /**
  * Récupère les fonctions selon plusieurs catégorie données
- * @param {*} categorySelected 
- * @param {*} fctIdsFiltered 
- * @param {*} models 
- * @returns 
+ * @param {*} categorySelected
+ * @param {*} fctIdsFiltered
+ * @param {*} models
+ * @returns
  */
 export const loadFonctionsForMultiCategoryFiltered = async (categorySelected, fctIdsFiltered, models) => {
   if (fctIdsFiltered === null) return null
@@ -840,10 +843,10 @@ export const loadFonctionsForMultiCategoryFiltered = async (categorySelected, fc
 
 /**
  * Charge un référentiel d'une juridiction
- * @param {*} backupId 
- * @param {*} contentieuxIds 
- * @param {*} models 
- * @returns 
+ * @param {*} backupId
+ * @param {*} contentieuxIds
+ * @param {*} models
+ * @returns
  */
 export const loadReferentiels = async (backupId, contentieuxIds, models) => {
   const all = await models.ContentieuxReferentiels.getReferentiels(backupId)
@@ -852,8 +855,8 @@ export const loadReferentiels = async (backupId, contentieuxIds, models) => {
 
 /**
  * Retourne une liste d'agent filtré selon la catégorie et la fonction selon une date donnée
- * @param {*} param0 
- * @returns 
+ * @param {*} param0
+ * @returns
  */
 export const filterAgentsByDateCategoryFunction = ({ hr, date, categoryId, fonctionsIds, indexes }) => {
   const { intervalTree, periodsDatabase } = indexes
