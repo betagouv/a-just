@@ -4,6 +4,12 @@ on:
     branches: [dev, sandbox]
   pull_request:
     branches: [dev, sandbox]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to publish under reports/pr-<number>'
+        required: true
+        type: string
 
 jobs:
   api-tests:
@@ -119,7 +125,10 @@ jobs:
     needs: [api-tests, e2e-tests]
     runs-on: ubuntu-latest
     if: |
-      always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+      always() && (
+        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
+        (github.event_name == 'workflow_dispatch')
+      )
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -130,6 +139,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Determine PR number
+        id: prnum
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "pr=${{ github.event.number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "pr=${{ inputs.pr_number }}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Download Cypress reports artifacts
         uses: actions/download-artifact@v4
@@ -154,7 +172,7 @@ jobs:
 
       - name: Create site directory structure per PR
         env:
-          PR_NUM: ${{ github.event.number }}
+          PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
           set -e
           mkdir -p site/reports/pr-${PR_NUM}
@@ -168,7 +186,7 @@ jobs:
 
       - name: Create per-PR landing index.html
         env:
-          PR_NUM: ${{ github.event.number }}
+          PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
           cat > site/reports/pr-${PR_NUM}/index.html << 'EOF'
           <!DOCTYPE html>
