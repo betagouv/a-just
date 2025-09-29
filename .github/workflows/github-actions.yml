@@ -12,12 +12,52 @@ on:
         type: string
 
 jobs:
-  tests:
+  api-tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "RUNNING TESTS (NON-BLOCKING)"
+      - run: echo "API TESTS"
 
       - name: Checkout PR branch (candidate)
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: docker compose version
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run API tests (Mocha + Mochawesome)
+        run: npm run test:api
+
+      - name: Debug - List API generated files
+        if: always()
+        run: |
+          echo "API test directory structure:"
+          find ./api -type f -name "*.json" -o -name "*.html" | head -20
+          echo "API test reports:"
+          ls -la ./api/test/ || echo "API test directory not found"
+          echo "Files in api/test/:"
+          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "No API test reports found"
+          echo "Mochawesome specific files:"
+          find ./api -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
+
+      - name: Upload Mocha test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mocha-report
+          path: ./api/test/reports
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "E2E TESTS"
+
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Checkout sandbox branch (for local sandbox stack)
@@ -36,38 +76,21 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Run unit tests (API)
-        if: ${{ false }}
-        run: npm run test:api
-
-      - name: Run tests
+      - name: Run E2E tests (Cypress + mochawesome)
         env:
-          NODE_ENV: test
           SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
-        run: npm run test
+          CY_JSON_ONLY: "1"
+        run: npm run test:e2e
         continue-on-error: true
 
-      
-
-      - name: Debug - List generated files
+      - name: Debug - List E2E generated files
         if: always()
         run: |
           echo "=== END-TO-END TESTS DEBUG ==="
           echo "Listing end-to-end directory structure:"
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" -o -name "*.xlsx" -o -name "*.xls" | head -50
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
           echo "Reports directory content:"
           ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
-          echo "Downloads directory content:"
-          ls -la ./end-to-end/cypress/downloads/ || echo "Downloads directory not found"
-          echo "=== API TESTS DEBUG ==="
-          echo "API test directory structure:"
-          find ./api -type f -name "*.json" -o -name "*.html" | head -20
-          echo "API test reports:"
-          ls -la ./api/test/ || echo "API test directory not found"
-          echo "Files in api/test/:"
-          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "No API test reports found"
-          echo "Mochawesome specific files:"
-          find ./api -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
 
       - name: Upload Cypress video
         if: always()
@@ -76,14 +99,20 @@ jobs:
           name: cypress-video
           path: ./end-to-end/cypress/videos
 
+      - name: Upload Cypress screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: ./end-to-end/cypress/screenshots
+          if-no-files-found: warn
+
       - name: Upload Cypress test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-reports
           path: ./end-to-end/cypress/reports
-
-      
 
       - name: Upload Cypress downloads (Excel files)
         if: always()
@@ -95,14 +124,9 @@ jobs:
             ./end-to-end/cypress/downloads/*.xls
           if-no-files-found: warn
 
-      - name: Upload Mocha test report
-        if: ${{ false }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: mocha-report
-          path: ./api/test/reports
 
   deploy:
+    needs: [api-tests, e2e-tests]
     runs-on: ubuntu-latest
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
