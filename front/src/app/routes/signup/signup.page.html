@@ -99,7 +99,7 @@
       @if (signUpStep === 2) {
       <label>{{ userService.interfaceType === 1 ? 'Ma cour' : 'Mon tribunal' }} de rattachement :</label>
       <div class="tj">
-        <select (change)="setTj($event.target)">
+        <select #tjSelect (change)="setTj($event.target)">
           <!--<option selected hidden></option>-->
           <option selected hidden>Choisir {{ userService.interfaceType === 1 ? 'une CA' : 'un TJ' }}</option>
           @for (tj of tjs; track tj.id) {
