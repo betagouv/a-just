@@ -30,8 +30,15 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Run API tests (Mocha + Mochawesome)
-        run: npm run test:api
+      - name: Run API tests (Mocha + Mochawesome, no NYC)
+        run: |
+          set -e
+          docker compose -p test-api -f docker-compose.test.yml build
+          # Run Mocha directly in container to avoid NYC
+          docker compose -p test-api -f docker-compose.test.yml run --rm api sh -lc "NODE_ENV=test mocha --config .mocharc.yaml"
+          exitcode=$?
+          docker compose -p test-api -f docker-compose.test.yml down
+          exit ${exitcode}
 
       - name: Debug - List API generated files
         if: always()
@@ -221,3 +228,37 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  api-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "API COVERAGE (NYC)"
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: docker compose version
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run API coverage (NYC + Mocha)
+        run: |
+          set -e
+          docker compose -p test-api -f docker-compose.test.yml build
+          docker compose -p test-api -f docker-compose.test.yml run --rm api sh -lc "npm test"
+          exitcode=$?
+          docker compose -p test-api -f docker-compose.test.yml down
+          exit ${exitcode}
+
+      - name: Upload API coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-coverage
+          path: ./api/coverage
