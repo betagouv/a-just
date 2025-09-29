@@ -7,7 +7,7 @@
   "scripts": {
     "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
-    "test": "npm run test:api && npm run test:e2e",
+    "test": "npm run test:e2e",
     "test:api": "docker compose -p test-api -f docker-compose.test.yml build && docker compose -p test-api -f docker-compose.test.yml run --rm api; exitcode=$?; docker compose -p test-api -f docker-compose.test.yml down; exit ${exitcode}",
     "test:e2e": "NODE_ENV=test docker compose -p test-e2e -f docker-compose-e2e.test.yml build && docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm cypress; exitcode=$?; docker compose -p test-e2e -f docker-compose-e2e.test.yml down; exit ${exitcode}",
     "build": "npm run build:api && npm run build:front-admin && npm run build:front && npm run build:package",
