@@ -75,14 +75,7 @@ const cspConfig = {
         'https://image.crisp.chat',
         'https://storage.crisp.chat',
       ],
-      'frame-src': [
-        'https://app.videas.fr/',
-        'https://docs.a-just.beta.gouv.fr/',
-        'https://meta.a-just.beta.gouv.fr/',
-        'https://forms-eu1.hsforms.com/',
-        'https://calendly.com/',
-        'https://game.crisp.chat/',
-      ],
+      'frame-src': ['https://app.videas.fr/', 'https://*.beta.gouv.fr/', 'https://forms-eu1.hsforms.com/', 'https://calendly.com/', 'https://game.crisp.chat/'],
       'script-src': [
         "'self'",
         'https://*.hsforms.net',
@@ -134,7 +127,6 @@ const cspConfig = {
   crossOriginResourcePolicy: true,
   originAgentCluster: false,
   referrerPolicy: false,
-  xFrameOptions: { action: 'deny' },
   strictTransportSecurity: {
     maxAge: 31536000,
     includeSubDomains: false,
