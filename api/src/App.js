@@ -115,22 +115,7 @@ const cspConfig = {
         "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='",
       ],
       'worker-src': ['blob:'],
-      'frame-src': [
-        'https://app.videas.fr/',
-        'https://docs.a-just.beta.gouv.fr',
-        'https://meta.a-just.beta.gouv.fr',
-        'https://forms-eu1.hsforms.com/',
-        'https://calendly.com',
-        'https://game.crisp.chat',
-      ],
-      'worker-src': ['blob:'],
-      'frame-src': [
-        'https://app.videas.fr/',
-        'https://docs.a-just.beta.gouv.fr',
-        'https://meta.a-just.beta.gouv.fr',
-        'https://forms-eu1.hsforms.com/',
-        'https://calendly.com',
-      ],
+      'frame-src': ['*'],
       'object-src': ["'self'"],
       'base-uri': ["'self'"],
       'form-action': ["'self'", '*.hsforms.com'],
@@ -149,7 +134,6 @@ const cspConfig = {
   xContentTypeOptions: 'nosniff',
   xDnsPrefetchControl: false,
   xDownloadOptions: false,
-  xFrameOptions: { action: 'deny' },
   xPermittedCrossDomainPolicies: false,
   xPoweredBy: false,
   //xXssProtection: 1, don't work
@@ -332,7 +316,7 @@ export default class App extends AppBase {
       addDefaultBody(),
       compress({}),
       givePassword,
-      helmet(cspConfig),
+      //helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
