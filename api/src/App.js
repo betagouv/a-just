@@ -135,7 +135,7 @@ const cspConfig = {
   crossOriginResourcePolicy: true,
   originAgentCluster: false,
   referrerPolicy: false,
-  xFrameOptions: { action: 'sameorigin' },
+  xFrameOptions: { action: 'deny' },
   strictTransportSecurity: {
     maxAge: 31536000,
     includeSubDomains: false,
