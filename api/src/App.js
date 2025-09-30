@@ -75,6 +75,14 @@ const cspConfig = {
         'https://image.crisp.chat',
         'https://storage.crisp.chat',
       ],
+      'frame-src': [
+        'https://app.videas.fr/',
+        'https://docs.a-just.beta.gouv.fr',
+        'https://meta.a-just.beta.gouv.fr',
+        'https://forms-eu1.hsforms.com/',
+        'https://calendly.com',
+        'https://game.crisp.chat',
+      ],
       'script-src': [
         "'self'",
         'https://*.hsforms.net',
@@ -172,7 +180,7 @@ export default class App extends AppBase {
 
   /**
    * Opérations de démarrage du serveur
-   * @returns 
+   * @returns
    */
   async start() {
     this._setupProcessSignals()
@@ -293,7 +301,7 @@ export default class App extends AppBase {
   }
 
   /**
-   * Mise en place et paramétrage du middleware 
+   * Mise en place et paramétrage du middleware
    */
   _registerMiddlewares() {
     const limiter = RateLimit.middleware({
@@ -316,7 +324,7 @@ export default class App extends AppBase {
       addDefaultBody(),
       compress({}),
       givePassword,
-      //helmet(cspConfig),
+      helmet(cspConfig),
       async (ctx, next) => {
         ctx.set('x-xss-protection', '1')
         if (CSP_URL_IGNORE_RULES.find((u) => ctx.url.startsWith(u))) {
@@ -355,7 +363,7 @@ export default class App extends AppBase {
 
   /**
    * Lancement et execution des taches de la première instance (ne s'execute donc qu'une fois dans une infra scalingo)
-   * @returns 
+   * @returns
    */
   async _runIfPrimaryInstance() {
     const isPrimaryInstance = os.hostname().includes('web-1') || !os.hostname().includes('web')
@@ -382,7 +390,7 @@ export default class App extends AppBase {
 
   /**
    * Lancement du serveur http
-   * @returns 
+   * @returns
    */
   async _startHttpServer() {
     try {
@@ -411,7 +419,7 @@ export default class App extends AppBase {
   /**
    * Préchargement de la donnée de cache dans redis qui récupère et stock en cache la liste des agents de chaque juridiction
    * @param {*} force force le système à recalculer entièrement le cache
-   * @returns 
+   * @returns
    */
   async warmupRedisCache(force = false) {
     await waitForRedis()
@@ -500,10 +508,10 @@ export default class App extends AppBase {
 
   /**
    * Fonction permettant d'attendre la connexion à la base de donnée
-   * @param {*} sequelizeInstance 
-   * @param {*} maxRetries 
-   * @param {*} delayMs 
-   * @returns 
+   * @param {*} sequelizeInstance
+   * @param {*} maxRetries
+   * @param {*} delayMs
+   * @returns
    */
   waitForPostgres = async (sequelizeInstance, maxRetries = 10, delayMs = 2000) => {
     let attempt = 0
@@ -525,8 +533,8 @@ export default class App extends AppBase {
 
   /**
    * Fonction de boucle for asynchrone
-   * @param {*} array 
-   * @param {*} fn 
+   * @param {*} array
+   * @param {*} fn
    */
   asyncForEach = async (array, fn) => {
     for (let i = 0; i < array.length; i++) {
@@ -536,8 +544,8 @@ export default class App extends AppBase {
 
   /**
    * Pause dans l'execution du code
-   * @param {*} ms 
-   * @returns 
+   * @param {*} ms
+   * @returns
    */
   sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 
