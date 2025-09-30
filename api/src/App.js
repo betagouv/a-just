@@ -123,7 +123,6 @@ const cspConfig = {
         "'sha256-BUZLvafdn4L6W6euGkBpnDrFVzIGLdSRjgp2e2gC+NE='",
       ],
       'worker-src': ['blob:'],
-      'frame-src': ['*'],
       'object-src': ["'self'"],
       'base-uri': ["'self'"],
       'form-action': ["'self'", '*.hsforms.com'],
