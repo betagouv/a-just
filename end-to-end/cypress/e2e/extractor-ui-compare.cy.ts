@@ -124,31 +124,54 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
 
     // --- Local helpers (must be defined inside cy.origin) ---
     const selectSidebarExtractors = () => {
-      cy.contains('div.menu-item.tools a', /^Outils$/i, { timeout: 10000 }).click();
-      cy.contains('a[href="/dashboard"]', /^Les extracteurs$/i, { timeout: 10000 }).click();
+      // Try multiple selectors/strategies to reach the Extracteurs page
+      cy.contains('a,button', /^Outils$/i, { timeout: 10000 }).click({ force: true }).then(() => {
+        // Prefer explicit link if present
+        const tryPaths = [
+          'a[href="/dashboard"]',
+          'a[href*="extracteur"]',
+          'a',
+        ];
+        cy.wrap(tryPaths).each((sel) => {
+          cy.get(sel as string).then(($links) => {
+            const link = Array.from($links as unknown as HTMLElement[]).find((el) => /extracteur/i.test(el.textContent || ''));
+            if (link) {
+              cy.wrap(link).click({ force: true });
+              return false as any; // break
+            }
+            return undefined;
+          });
+        });
+      });
     };
 
     const selectBackup = (label: string) => {
       // Log current URL and list of visible TJ labels to help debugging
       cy.location('href').then((href) => cy.log(`Current URL: ${href}`));
-      cy.get('h6', { timeout: 20000 }).then(($els) => {
-        const labels = Array.from($els as unknown as HTMLElement[])
-          .map((el) => (el.textContent || '').trim())
+      // Dump DOM snapshot for this origin/state
+      const host = new URL(baseUrl).host.replace(/[^a-z0-9\.-]/gi, '_');
+      cy.document().then((doc) => {
+        cy.writeFile(`cypress/reports/dom-${host}.html`, doc.documentElement.outerHTML, { log: true });
+      });
+      // Gather labels from the DOM without relying on cy.get (avoids timeouts)
+      cy.document().then((doc) => {
+        const selector = 'h6, .mat-card h6, .card h6, [data-cy="backup-name"], [role="listitem"] h6';
+        const nodes = Array.from(doc.querySelectorAll(selector)) as HTMLElement[];
+        const labels = nodes
+          .map((el) => (el.textContent || '').replace(/\s+/g, ' ').trim())
           .filter(Boolean);
 
         // Persist labels to artifacts for CI debugging
-        const host = new URL(baseUrl).host.replace(/[^a-z0-9\.-]/gi, '_');
-        // Send to node via task (logged in CI) and also write a file as fallback
         cy.task('saveLabels', { host, labels }, { log: true }).catch(() => null);
         cy.writeFile(`cypress/reports/tj-labels-${host}.json`, labels, { log: true });
 
         const idx = labels.findIndex((t) => t.toLowerCase() === String(label).toLowerCase());
         if (idx === -1) {
-          throw new Error(`Backup label not found: "${label}". Available: ${labels.join(' | ')}`);
+          throw new Error(`Backup label not found: "${label}". Available: ${labels.join(' | ')}. See dom-${host}.html for snapshot.`);
         }
 
-        // Click by index to avoid cy.contains timeout masking our debug info
-        cy.wrap($els.eq(idx)).scrollIntoView().click({ force: true });
+        // Click the corresponding DOM node
+        cy.wrap(nodes[idx]).scrollIntoView().click({ force: true });
       });
     };
 
