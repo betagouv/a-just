@@ -6,7 +6,7 @@
 // Notes:
 // - Backup labels and date ranges are defined explicitly in this test (see BACKUP_LABELS and DATE_RANGES).
 
-import user from "../fixtures/user.json";
+import user from "../../fixtures/user.json";
 
 const EFFECTIF_SECTION_MARKER = "données d'effectifs"; // section text
 const ACTIVITIES_SECTION_MARKER = "données d'activité";
