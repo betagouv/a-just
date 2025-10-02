@@ -43,6 +43,19 @@ jobs:
         run: npm run test
         continue-on-error: true
 
+      - name: Debug - Print TJ labels (if any)
+        if: always()
+        run: |
+          echo "=== TJ LABELS DEBUG ==="
+          if ls ./end-to-end/cypress/reports/tj-labels-* 1> /dev/null 2>&1; then
+            for f in ./end-to-end/cypress/reports/tj-labels-*; do
+              echo "--- $f ---"
+              cat "$f" || true
+            done
+          else
+            echo "No TJ label files found"
+          fi
+
       - name: Debug - List generated files
         if: always()
         run: |
@@ -74,6 +87,14 @@ jobs:
         with:
           name: cypress-reports
           path: ./end-to-end/cypress/reports
+
+      - name: Upload TJ labels
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tj-labels
+          path: ./end-to-end/cypress/reports/tj-labels-*
+          if-no-files-found: ignore
 
       - name: Upload Mocha test report
         if: always()

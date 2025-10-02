@@ -16,6 +16,24 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       on("task", verifyDownloadTasks);
+      on("task", {
+        saveLabels({ host, labels }: { host: string; labels: string[] }) {
+          try {
+            const reportsDir = path.join(process.cwd(), "cypress", "reports");
+            fs.mkdirSync(reportsDir, { recursive: true });
+            const file = path.join(reportsDir, `tj-labels-${host}.json`);
+            fs.writeFileSync(file, JSON.stringify(labels, null, 2), "utf8");
+            // Also log to console for CI visibility
+            // eslint-disable-next-line no-console
+            console.log(`[TJ LABELS] ${host}:`, labels);
+            return file;
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error("Failed to save labels:", e);
+            return null;
+          }
+        },
+      });
       // Configuration pour mochawesome reporter
       require("cypress-mochawesome-reporter/plugin")(on);
     },

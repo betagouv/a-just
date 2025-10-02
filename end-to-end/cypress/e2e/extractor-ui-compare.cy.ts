@@ -132,20 +132,24 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
       // Log current URL and list of visible TJ labels to help debugging
       cy.location('href').then((href) => cy.log(`Current URL: ${href}`));
       cy.get('h6', { timeout: 20000 }).then(($els) => {
-        const labels = Array.from($els)
+        const labels = Array.from($els as unknown as HTMLElement[])
           .map((el) => (el.textContent || '').trim())
           .filter(Boolean);
-        cy.log(`Available TJ labels: ${labels.join(' | ')}`);
 
-        const match = labels.find((t) => t.toLowerCase() === String(label).toLowerCase());
-        if (!match) {
+        // Persist labels to artifacts for CI debugging
+        const host = new URL(baseUrl).host.replace(/[^a-z0-9\.-]/gi, '_');
+        // Send to node via task (logged in CI) and also write a file as fallback
+        cy.task('saveLabels', { host, labels }, { log: true }).catch(() => null);
+        cy.writeFile(`cypress/reports/tj-labels-${host}.json`, labels, { log: true });
+
+        const idx = labels.findIndex((t) => t.toLowerCase() === String(label).toLowerCase());
+        if (idx === -1) {
           throw new Error(`Backup label not found: "${label}". Available: ${labels.join(' | ')}`);
         }
-      });
 
-      cy.contains('h6', label, { matchCase: false, timeout: 20000 })
-        .scrollIntoView()
-        .click({ force: true });
+        // Click by index to avoid cy.contains timeout masking our debug info
+        cy.wrap($els.eq(idx)).scrollIntoView().click({ force: true });
+      });
     };
 
     const openDatepicker = (input: Cypress.Chainable<JQuery<HTMLElement>>) => {
