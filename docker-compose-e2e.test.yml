@@ -96,7 +96,6 @@ services:
       - "8081"
     depends_on:
       - "db"
-      - "redis"
     volumes:
       - "./api/coverage:/home/api/coverage"
     environment:
@@ -105,7 +104,6 @@ services:
       - JSON_WEB_TOKEN=123456789
       - PORT=8081
       - TYPE_ID=0
-      - REDIS_URL=redis://redis:6379
     healthcheck:
       test: ["CMD", "curl", "-f", "http://175.0.0.21:8081/api"]
       interval: 30s
