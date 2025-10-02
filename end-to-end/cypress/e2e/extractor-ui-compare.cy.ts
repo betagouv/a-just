@@ -133,7 +133,7 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
         const selector = 'h6, .mat-card h6, .card h6, [data-cy="backup-name"], [role="listitem"] h6';
         const nodes = Array.from(doc.querySelectorAll(selector)) as HTMLElement[];
         const labels = nodes.map((el) => (el.textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean);
-        cy.task('saveLabels', { host: `${host}-${tag}`, labels }, { log: true }).catch(() => null);
+        cy.task('saveLabels', { host: `${host}-${tag}`, labels }, { log: true }).then(() => undefined, () => undefined);
         return cy.writeFile(`cypress/reports/tj-labels-${host}-${tag}.json`, labels, { log: true });
       });
 
@@ -178,7 +178,7 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
           .filter(Boolean);
 
         // Persist labels to artifacts for CI debugging
-        cy.task('saveLabels', { host: `${host}-select`, labels }, { log: true }).catch(() => null);
+        cy.task('saveLabels', { host: `${host}-select`, labels }, { log: true }).then(() => undefined, () => undefined);
         cy.writeFile(`cypress/reports/tj-labels-${host}-select.json`, labels, { log: true });
 
         const idx = labels.findIndex((t) => t.toLowerCase() === String(label).toLowerCase());
