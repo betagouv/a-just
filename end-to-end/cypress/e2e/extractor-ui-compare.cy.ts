@@ -3,9 +3,8 @@
 // UI-driven comparison of extractor outputs between SANDBOX and PR stacks.
 // Required env:
 // - SANDBOX_FRONT_URL, CANDIDATE_FRONT_URL
-// - EXTRACTOR_BACKUP_LABEL (e.g., "TJ Lyon")
-// - EXTRACTOR_DATE_START (YYYY-MM-DD), EXTRACTOR_DATE_STOP (YYYY-MM-DD)
-// - TEST_EMAIL, TEST_PASSWORD (used by cy.login already)
+// Notes:
+// - Backup labels and date ranges are defined explicitly in this test (see BACKUP_LABELS and DATE_RANGES).
 
 const EFFECTIF_SECTION_MARKER = "données d'effectifs"; // section text
 const ACTIVITIES_SECTION_MARKER = "données d'activité";
@@ -101,11 +100,7 @@ function interceptSentry() {
   return () => cy.wrap(null).then(() => envelopeCount);
 }
 
-function runExtractorFlowForEnv(baseUrl: string) {
-  const startDate = Cypress.env('EXTRACTOR_DATE_START') || '2022-01-01';
-  const stopDate = Cypress.env('EXTRACTOR_DATE_STOP') || '2025-06-30';
-  const backupLabel = Cypress.env('EXTRACTOR_BACKUP_LABEL') || 'TJ Lyon';
-
+function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: string, backupLabel: string) {
   // Visit and login on the specific origin
   const origin = new URL(baseUrl).origin;
   cy.origin(origin, { args: { baseUrl, startDate, stopDate, backupLabel } }, ({ baseUrl, startDate, stopDate, backupLabel }) => {
@@ -189,6 +184,21 @@ function deepEqualOrDiff(a: any, b: any) {
   }
 }
 
+// Explicit parameters to cover multiple backups and date ranges
+const BACKUP_LABELS: string[] = [
+  // TODO: Replace with the three exact labels you want to validate (examples below)
+  'TJ Lyon',
+  'TJ Marseille',
+  'TJ Bordeaux',
+];
+
+const DATE_RANGES: Array<{ start: string; stop: string }> = [
+  // YYYY-MM-DD format; add/remove as needed
+  { start: '2022-01-01', stop: '2022-12-31' },
+  { start: '2023-01-01', stop: '2023-12-31' },
+  { start: '2024-01-01', stop: '2024-12-31' },
+];
+
 describe.only('UI Compare Extractors between SANDBOX and PR', () => {
   it('compares effectif and activities outputs across environments', () => {
     const sandbox = Cypress.env('SANDBOX_FRONT_URL');
@@ -198,26 +208,33 @@ describe.only('UI Compare Extractors between SANDBOX and PR', () => {
       throw new Error('SANDBOX_FRONT_URL and CANDIDATE_FRONT_URL must be provided');
     }
 
-    // Run SANDBOX flow
-    runExtractorFlowForEnv(sandbox);
+    // Iterate over backups and date ranges
+    cy.wrap(BACKUP_LABELS).each((backupLabel) => {
+      cy.wrap(DATE_RANGES).each((range) => {
+        const { start, stop } = range as { start: string; stop: string };
 
-    // Capture results from SANDBOX
-    cy.get('@effResults').then((effSandbox: any) => {
-      cy.get('@actResult').then((actSandbox: any) => {
-        // Run PR flow
-        runExtractorFlowForEnv(candidate);
+        // Run SANDBOX flow
+        runExtractorFlowForEnv(String(sandbox), start, stop, String(backupLabel));
 
-        // Compare with PR results
-        cy.get('@effResults').then((effCandidate: any) => {
-          cy.get('@actResult').then((actCandidate: any) => {
-            // Effectif: compare per category payloads (e.g., expect same onglet2)
-            const cats = Object.keys(effSandbox || {});
-            cats.forEach((c) => {
-              deepEqualOrDiff(effSandbox[c], effCandidate[c]);
+        // Capture results from SANDBOX
+        cy.get('@effResults').then((effSandbox: any) => {
+          cy.get('@actResult').then((actSandbox: any) => {
+            // Run PR flow
+            runExtractorFlowForEnv(String(candidate), start, stop, String(backupLabel));
+
+            // Compare with PR results
+            cy.get('@effResults').then((effCandidate: any) => {
+              cy.get('@actResult').then((actCandidate: any) => {
+                // Effectif: compare per category payloads (e.g., expect same onglet2)
+                const cats = Object.keys(effSandbox || {});
+                cats.forEach((c) => {
+                  deepEqualOrDiff(effSandbox[c], effCandidate[c]);
+                });
+
+                // Activities: compare overall payloads
+                deepEqualOrDiff(actSandbox, actCandidate);
+              });
             });
-
-            // Activities: compare overall payloads
-            deepEqualOrDiff(actSandbox, actCandidate);
           });
         });
       });

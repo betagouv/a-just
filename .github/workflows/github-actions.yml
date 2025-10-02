@@ -1,7 +1,7 @@
 name: GitHub Actions
 on:
   push:
-    branches: [dev, sandbox]
+    branches: [dev, sandbox, sentry-latency-improvements]
   pull_request:
     branches: [dev, sandbox]
   workflow_dispatch:
@@ -17,8 +17,14 @@ jobs:
     steps:
       - run: echo "RUNNING TESTS (NON-BLOCKING)"
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout PR branch (candidate)
+        uses: actions/checkout@v4
+
+      - name: Checkout sandbox branch (for local sandbox stack)
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+          path: sandbox-code
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,6 +37,9 @@ jobs:
         run: npm i
 
       - name: Run tests
+        env:
+          NODE_ENV: test
+          SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
         run: npm run test
         continue-on-error: true
 
