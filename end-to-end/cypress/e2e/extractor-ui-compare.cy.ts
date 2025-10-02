@@ -122,6 +122,25 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
     cy.get("form").submit();
     cy.wait(20000);
 
+    // Common debug helpers (inside origin)
+    const host = new URL(baseUrl).host.replace(/[^a-z0-9\.-]/gi, '_');
+    const persistDom = (tag: string) =>
+      cy.document().then((doc) => {
+        return cy.writeFile(`cypress/reports/dom-${tag}-${host}.html`, doc.documentElement.outerHTML, { log: true });
+      });
+    const dumpLabels = (tag: string) =>
+      cy.document().then((doc) => {
+        const selector = 'h6, .mat-card h6, .card h6, [data-cy="backup-name"], [role="listitem"] h6';
+        const nodes = Array.from(doc.querySelectorAll(selector)) as HTMLElement[];
+        const labels = nodes.map((el) => (el.textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+        cy.task('saveLabels', { host: `${host}-${tag}`, labels }, { log: true }).catch(() => null);
+        return cy.writeFile(`cypress/reports/tj-labels-${host}-${tag}.json`, labels, { log: true });
+      });
+
+    // Early snapshot right after login
+    persistDom('login');
+    dumpLabels('login');
+
     // --- Local helpers (must be defined inside cy.origin) ---
     const selectSidebarExtractors = () => {
       // Try multiple selectors/strategies to reach the Extracteurs page
@@ -149,10 +168,7 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
       // Log current URL and list of visible TJ labels to help debugging
       cy.location('href').then((href) => cy.log(`Current URL: ${href}`));
       // Dump DOM snapshot for this origin/state
-      const host = new URL(baseUrl).host.replace(/[^a-z0-9\.-]/gi, '_');
-      cy.document().then((doc) => {
-        cy.writeFile(`cypress/reports/dom-${host}.html`, doc.documentElement.outerHTML, { log: true });
-      });
+      persistDom('select');
       // Gather labels from the DOM without relying on cy.get (avoids timeouts)
       cy.document().then((doc) => {
         const selector = 'h6, .mat-card h6, .card h6, [data-cy="backup-name"], [role="listitem"] h6';
@@ -162,8 +178,8 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
           .filter(Boolean);
 
         // Persist labels to artifacts for CI debugging
-        cy.task('saveLabels', { host, labels }, { log: true }).catch(() => null);
-        cy.writeFile(`cypress/reports/tj-labels-${host}.json`, labels, { log: true });
+        cy.task('saveLabels', { host: `${host}-select`, labels }, { log: true }).catch(() => null);
+        cy.writeFile(`cypress/reports/tj-labels-${host}-select.json`, labels, { log: true });
 
         const idx = labels.findIndex((t) => t.toLowerCase() === String(label).toLowerCase());
         if (idx === -1) {
@@ -238,6 +254,10 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
 
     // Navigate to extractor UI
     selectSidebarExtractors();
+
+    // Snapshot after navigation and dump any labels seen
+    persistDom('extracteurs');
+    dumpLabels('extracteurs');
 
     // Ensure we select the correct TJ (e.g., TJ Lyon)
     selectBackup(backupLabel);

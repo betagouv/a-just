@@ -19,9 +19,9 @@ export default defineConfig({
       on("task", {
         saveLabels({ host, labels }: { host: string; labels: string[] }) {
           try {
-            const reportsDir = path.join(process.cwd(), "cypress", "reports");
-            fs.mkdirSync(reportsDir, { recursive: true });
-            const file = path.join(reportsDir, `tj-labels-${host}.json`);
+            const debugDir = path.join(process.cwd(), "cypress", "debug");
+            fs.mkdirSync(debugDir, { recursive: true });
+            const file = path.join(debugDir, `tj-labels-${host}.json`);
             fs.writeFileSync(file, JSON.stringify(labels, null, 2), "utf8");
             // Also log to console for CI visibility
             // eslint-disable-next-line no-console
