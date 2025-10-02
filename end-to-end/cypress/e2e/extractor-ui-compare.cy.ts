@@ -114,6 +114,86 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
     cy.get("form").submit();
     cy.wait(20000);
 
+    // --- Local helpers (must be defined inside cy.origin) ---
+    const selectSidebarExtractors = () => {
+      cy.contains('div.menu-item.tools a', /^Outils$/i, { timeout: 10000 }).click();
+      cy.contains('a[href="/dashboard"]', /^Les extracteurs$/i, { timeout: 10000 }).click();
+    };
+
+    const selectBackup = (label: string) => {
+      cy.contains('h6', label, { matchCase: false, timeout: 20000 }).scrollIntoView().click({ force: true });
+    };
+
+    const openDatepicker = (input: Cypress.Chainable<JQuery<HTMLElement>>) => {
+      input.scrollIntoView().click({ force: true });
+      cy.get('.mat-datepicker-content, .cdk-overlay-container', { timeout: 10000 }).should('be.visible');
+    };
+
+    const pickYear = (targetYear: number) => {
+      cy.get('button.mat-calendar-period-button', { timeout: 10000 }).click({ force: true });
+      const trySelectYear = (retry = 0) => {
+        cy.get('.mat-calendar-body').then(($body) => {
+          const bodyText = $body.text();
+          if (bodyText.includes(String(targetYear))) {
+            cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', String(targetYear), { matchCase: false }).click({ force: true });
+          } else if (retry < 6) {
+            cy.get('button.mat-calendar-previous-button').click({ force: true });
+            trySelectYear(retry + 1);
+          } else {
+            throw new Error(`Year ${targetYear} not visible in datepicker`);
+          }
+        });
+      };
+      trySelectYear();
+    };
+
+    const pickMonth = (targetMonthIndex1To12: number) => {
+      const idx0 = targetMonthIndex1To12 - 1;
+      cy.get('.mat-calendar-body .mat-calendar-body-cell').eq(idx0).click({ force: true });
+    };
+
+    const pickDay = (targetDay: number) => {
+      cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', String(targetDay)).click({ force: true });
+    };
+
+    const setDatesInSection = (sectionRoot: Cypress.Chainable<JQuery<HTMLElement>>, startISO: string, stopISO: string, useMonthPicker = false) => {
+      const inputs = sectionRoot.find('aj-date-select .mat-datepicker-input');
+      openDatepicker(cy.wrap(inputs.eq(0)));
+      const sY = Number(startISO.slice(0, 4));
+      const sM = Number(startISO.slice(5, 7));
+      const sD = useMonthPicker ? 1 : Number(startISO.slice(8, 10));
+      pickYear(sY);
+      pickMonth(sM);
+      if (!useMonthPicker) pickDay(sD);
+
+      openDatepicker(cy.wrap(inputs.eq(1)));
+      const eY = Number(stopISO.slice(0, 4));
+      const eM = Number(stopISO.slice(5, 7));
+      const eD = useMonthPicker ? 1 : Number(stopISO.slice(8, 10));
+      pickYear(eY);
+      pickMonth(eM);
+      if (!useMonthPicker) pickDay(eD);
+    };
+
+    const pickCategoryInSection = (sectionRoot: Cypress.Chainable<JQuery<HTMLElement>>, categoryLabel: string) => {
+      sectionRoot.contains(/Sélectionner la catégorie/i, { timeout: 10000 }).click({ force: true });
+      cy.contains('mat-option, [role="option"], .mat-select-panel .mat-option-text', new RegExp(`^${categoryLabel}$`, 'i'), { timeout: 10000 })
+        .click({ force: true });
+    };
+
+    const triggerExportInSection = (sectionRoot: Cypress.Chainable<JQuery<HTMLElement>>) => {
+      sectionRoot.find('#export-excel-button').first().click({ force: true });
+    };
+
+    const interceptSentry = () => {
+      let envelopeCount = 0;
+      cy.intercept('POST', '**/envelope/**', (req) => {
+        envelopeCount += 1;
+        req.reply(200);
+      });
+      return () => cy.wrap(null).then(() => envelopeCount);
+    };
+
     // Navigate to extractor UI
     selectSidebarExtractors();
 
