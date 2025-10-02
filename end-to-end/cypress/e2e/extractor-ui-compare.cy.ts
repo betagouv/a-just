@@ -179,25 +179,72 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
       });
     };
 
-    // Prefer typing dates directly for robustness
-    const setDatesByTyping = (sectionRoot: Cypress.Chainable<JQuery<HTMLElement>>, start: string, stop: string) => {
-      cy.wrap(sectionRoot).within(() => {
-        const selector = [
-          'aj-date-select .mat-datepicker-input',
-          'input.mat-datepicker-input',
-          'input.mat-input-element',
-          'input[type="text"]',
-          'input',
-        ].join(',');
-        cy.get(selector, { timeout: 10000 })
-          .filter(':visible')
-          .then(($all) => {
-            const enabled = $all.toArray().filter((el) => !(el as HTMLInputElement).disabled);
-            if (enabled.length < 2) {
-              throw new Error('Date inputs not found (need at least 2 visible, enabled inputs)');
+    // Angular Material datepicker helpers (click-based)
+    const openPicker = (inputEl: JQuery<HTMLElement>) => {
+      cy.wrap(inputEl).scrollIntoView().click({ force: true });
+      cy.get('.mat-datepicker-content, .cdk-overlay-container', { timeout: 10000 }).should('be.visible');
+    };
+
+    const selectYear = (year: number) => {
+      cy.get('button.mat-calendar-period-button', { timeout: 10000 }).click({ force: true });
+      // We may be in month view first; clicking again toggles year view if needed
+      cy.get('button.mat-calendar-period-button').then(($btn) => {
+        if ($btn.length) {
+          // ensure years are visible
+          cy.get('.mat-calendar-body').then(($body) => {
+            if (!$body.text().includes(String(year))) {
+              // navigate back several years if needed
+              cy.wrap(Array.from({ length: 12 })).each(() => {
+                cy.get('button.mat-calendar-previous-button').click({ force: true });
+              });
             }
-            cy.wrap(enabled[0]).clear({ force: true }).type(start + '{enter}', { force: true }).blur();
-            cy.wrap(enabled[1]).clear({ force: true }).type(stop + '{enter}', { force: true }).blur();
+          });
+        }
+      });
+      cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', String(year), { timeout: 10000 }).click({ force: true });
+    };
+
+    const selectMonthIndex = (month1to12: number) => {
+      const idx0 = month1to12 - 1;
+      cy.get('.mat-calendar-body .mat-calendar-body-cell').eq(idx0).click({ force: true });
+    };
+
+    const selectDay = (day: number) => {
+      cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', String(day), { timeout: 10000 }).click({ force: true });
+    };
+
+    // Set date range inside a section using clicks only
+    const setDatesByClicks = (
+      sectionRoot: Cypress.Chainable<JQuery<HTMLElement>>,
+      startISO: string,
+      stopISO: string,
+      monthPrecision = false
+    ) => {
+      cy.wrap(sectionRoot).within(() => {
+        cy.get('aj-date-select .mat-datepicker-input, input.mat-datepicker-input', { timeout: 10000 })
+          .filter(':visible')
+          .then(($inputs) => {
+            if ($inputs.length < 2) throw new Error('Date inputs not found (need at least 2)');
+
+            const sY = Number(startISO.slice(0, 4));
+            const sM = Number(startISO.slice(5, 7));
+            const sD = monthPrecision ? 1 : Number(startISO.slice(8, 10));
+
+            const eY = Number(stopISO.slice(0, 4));
+            const eM = Number(stopISO.slice(5, 7));
+            const eD = monthPrecision ? 1 : Number(stopISO.slice(8, 10));
+
+            // Start
+            openPicker($inputs.eq(0));
+            selectYear(sY);
+            selectMonthIndex(sM);
+            if (!monthPrecision) selectDay(sD);
+
+            // End
+            openPicker($inputs.eq(1));
+            selectYear(eY);
+            selectMonthIndex(eM);
+            if (!monthPrecision) selectDay(eD);
           });
       });
     };
@@ -211,10 +258,14 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
     };
 
     const triggerExportInSection = (sectionRoot: Cypress.Chainable<JQuery<HTMLElement>>) => {
-      // Try by id, then any button/link with Export text
+      // Try by id; if missing, fallback to label match, all within Cypress chain only
       cy.wrap(sectionRoot).within(() => {
-        cy.get('#export-excel-button').first().click({ force: true }).then(() => undefined, () => {
-          cy.contains('button, a', /export/i).first().click({ force: true });
+        cy.get('#export-excel-button').then(($btn) => {
+          if ($btn.length) {
+            cy.wrap($btn.first()).click({ force: true });
+          } else {
+            cy.contains('button, a', /export/i).first().click({ force: true });
+          }
         });
       });
     };
@@ -236,7 +287,7 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
       .first()
       .then(($section) => {
         const section = cy.wrap($section as unknown as JQuery<HTMLElement>);
-        setDatesByTyping(section, startDate, stopDate);
+        setDatesByClicks(section, startDate, stopDate, false);
 
         // Three categories to iterate
         const cats = ['Siège', "Équipe autour du magistrat", 'Greffe'];
@@ -261,7 +312,7 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
         const section = cy.wrap($section as unknown as JQuery<HTMLElement>);
         const startMonth = startDate.slice(0, 7); // YYYY-MM
         const stopMonth = stopDate.slice(0, 7);
-        setDatesByTyping(section, startMonth, stopMonth);
+        setDatesByClicks(section, startMonth, stopMonth, true);
 
         triggerExportInSection(section);
         cy.wait('@act-filter-list', { timeout: 180000 }).then(({ response }) => {
