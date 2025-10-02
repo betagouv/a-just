@@ -6,6 +6,8 @@
 // Notes:
 // - Backup labels and date ranges are defined explicitly in this test (see BACKUP_LABELS and DATE_RANGES).
 
+import user from "../fixtures/user.json";
+
 const EFFECTIF_SECTION_MARKER = "données d'effectifs"; // section text
 const ACTIVITIES_SECTION_MARKER = "données d'activité";
 
@@ -103,11 +105,14 @@ function interceptSentry() {
 function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: string, backupLabel: string) {
   // Visit and login on the specific origin
   const origin = new URL(baseUrl).origin;
-  cy.origin(origin, { args: { baseUrl, startDate, stopDate, backupLabel } }, ({ baseUrl, startDate, stopDate, backupLabel }) => {
-    cy.visit(baseUrl);
-
-    // UI login helper
-    cy.login();
+  cy.origin(origin, { args: { baseUrl, startDate, stopDate, backupLabel, user } }, ({ baseUrl, startDate, stopDate, backupLabel, user }) => {
+    // Visit login page and authenticate (custom commands are not available inside cy.origin)
+    cy.visit(`${baseUrl}/connexion`);
+    cy.get("input[type=email]").type(user.email);
+    cy.get("input[type=password]").type(user.password);
+    cy.get(".password-line").get("#printPassword").click();
+    cy.get("form").submit();
+    cy.wait(20000);
 
     // Navigate to extractor UI
     selectSidebarExtractors();
