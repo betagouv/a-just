@@ -143,24 +143,12 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
 
     // --- Local helpers (must be defined inside cy.origin) ---
     const selectSidebarExtractors = () => {
-      // Try multiple selectors/strategies to reach the Extracteurs page
-      cy.contains('a,button', /^Outils$/i, { timeout: 10000 }).click({ force: true }).then(() => {
-        // Prefer explicit link if present
-        const tryPaths = [
-          'a[href="/dashboard"]',
-          'a[href*="extracteur"]',
-          'a',
-        ];
-        cy.wrap(tryPaths).each((sel) => {
-          cy.get(sel as string).then(($links) => {
-            const link = Array.from($links as unknown as HTMLElement[]).find((el) => /extracteur/i.test(el.textContent || ''));
-            if (link) {
-              cy.wrap(link).click({ force: true });
-              return false as any; // break
-            }
-            return undefined;
-          });
-        });
+      // Navigate directly to the extractors dashboard to avoid menu flakiness
+      cy.visit(`${baseUrl}/dashboard`);
+      // Wait for backup tiles to be present
+      cy.document().should((doc) => {
+        const haveTiles = doc.querySelector('h6, .mat-card h6, .card h6, [data-cy="backup-name"], [role="listitem"] h6');
+        if (!haveTiles) throw new Error('Extractor dashboard not loaded yet');
       });
     };
 
