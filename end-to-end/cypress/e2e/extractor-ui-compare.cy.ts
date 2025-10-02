@@ -182,30 +182,23 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
     // Prefer typing dates directly for robustness
     const setDatesByTyping = (sectionRoot: Cypress.Chainable<JQuery<HTMLElement>>, start: string, stop: string) => {
       cy.wrap(sectionRoot).within(() => {
-        // Try common input selectors in order
-        const candidates = [
+        const selector = [
           'aj-date-select .mat-datepicker-input',
           'input.mat-datepicker-input',
           'input.mat-input-element',
           'input[type="text"]',
-          'input'
-        ];
-        cy.wrap(candidates).each((sel, idx, list) => {
-          const s = String(sel);
-          cy.get(s).then(($found) => {
-            if ($found.length >= 2) {
-              cy.wrap($found.eq(0)).clear({ force: true }).type(start + '{enter}', { delay: 0, force: true }).blur();
-              cy.wrap($found.eq(1)).clear({ force: true }).type(stop + '{enter}', { delay: 0, force: true }).blur();
-              // break the .each by throwing a controlled error swallowed below
-              throw new Error('__dates_set__');
+          'input',
+        ].join(',');
+        cy.get(selector, { timeout: 10000 })
+          .filter(':visible')
+          .then(($all) => {
+            const enabled = $all.toArray().filter((el) => !(el as HTMLInputElement).disabled);
+            if (enabled.length < 2) {
+              throw new Error('Date inputs not found (need at least 2 visible, enabled inputs)');
             }
+            cy.wrap(enabled[0]).clear({ force: true }).type(start + '{enter}', { force: true }).blur();
+            cy.wrap(enabled[1]).clear({ force: true }).type(stop + '{enter}', { force: true }).blur();
           });
-        }).then(() => {
-          // If we reached here, no inputs were found with our candidates
-          throw new Error('Date inputs not found in extractor section');
-        }).catch((e) => {
-          if ((e as Error).message !== '__dates_set__') throw e;
-        });
       });
     };
 
