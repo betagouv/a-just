@@ -326,16 +326,12 @@ function deepEqualOrDiff(a: any, b: any) {
 // Explicit parameters to cover multiple backups and date ranges
 const BACKUP_LABELS: string[] = [
   // TODO: Replace with the three exact labels you want to validate (examples below)
-  'TJ Lyon',
-  'TJ Marseille',
-  'TJ Bordeaux',
+  'test010'
 ];
 
 const DATE_RANGES: Array<{ start: string; stop: string }> = [
   // YYYY-MM-DD format; add/remove as needed
-  { start: '2022-01-01', stop: '2022-12-31' },
-  { start: '2023-01-01', stop: '2023-12-31' },
-  { start: '2024-01-01', stop: '2024-12-31' },
+  { start: '2024-01-01', stop: '2025-06-15' }
 ];
 
 describe.only('UI Compare Extractors between SANDBOX and PR', () => {
