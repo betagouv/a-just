@@ -110,7 +110,10 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
   const actAlias = 'act-filter-list';
   cy.intercept('POST', `${origin}/api/extractor/start-filter-list`).as(effAlias);
   cy.intercept('POST', `${origin}/api/extractor/filter-list-act`).as(actAlias);
-  cy.origin(origin, { args: { baseUrl, startDate, stopDate, backupLabel, user } }, ({ baseUrl, startDate, stopDate, backupLabel, user }) => {
+  cy.origin(
+    origin,
+    { args: { baseUrl, startDate, stopDate, backupLabel, user, EFFECTIF_SECTION_MARKER, ACTIVITIES_SECTION_MARKER } },
+    ({ baseUrl, startDate, stopDate, backupLabel, user, EFFECTIF_SECTION_MARKER, ACTIVITIES_SECTION_MARKER }) => {
     // Visit login page and authenticate (custom commands are not available inside cy.origin)
     cy.visit(`${baseUrl}/connexion`);
     cy.get("input[type=email]").type(user.email);
@@ -199,7 +202,8 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
     // Intercepts are defined outside cy.origin; we only wait on them here
 
     // -------- Effectif extractor block --------
-    cy.contains(new RegExp(EFFECTIF_SECTION_MARKER, 'i'), { timeout: 20000 })
+    const effMarker = EFFECTIF_SECTION_MARKER;
+    cy.contains(new RegExp(effMarker, 'i'), { timeout: 20000 })
       .parentsUntil('body')
       .filter((_, el) => /données d['’]effectifs/i.test(el.textContent || ''))
       .first()
@@ -214,7 +218,7 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
         cy.wrap(cats).each((cat) => {
           pickCategoryInSection(section, String(cat));
           triggerExportInSection(section);
-          cy.wait(`@${effAlias}`, { timeout: 180000 }).then(({ response }) => {
+          cy.wait('@eff-start-filter', { timeout: 180000 }).then(({ response }) => {
             results[String(cat)] = response?.body || null;
           });
         }).then(() => {
@@ -224,7 +228,8 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
       });
 
     // -------- Activities extractor block --------
-    cy.contains(new RegExp(ACTIVITIES_SECTION_MARKER, 'i'), { timeout: 20000 })
+    const actMarker = ACTIVITIES_SECTION_MARKER;
+    cy.contains(new RegExp(actMarker, 'i'), { timeout: 20000 })
       .parentsUntil('body')
       .filter((_, el) => /données d['’]activité/i.test(el.textContent || ''))
       .first()
@@ -236,7 +241,7 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
         setDatesInSection(section, startMonth, stopMonth, true);
 
         triggerExportInSection(section);
-        cy.wait(`@${actAlias}`, { timeout: 180000 }).then(({ response }) => {
+        cy.wait('@act-filter-list', { timeout: 180000 }).then(({ response }) => {
           cy.wrap(response?.body || null).as('actResult');
         });
       });
