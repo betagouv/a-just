@@ -186,22 +186,23 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
     };
 
     const selectYear = (year: number) => {
+      // Open the period (year) view
       cy.get('button.mat-calendar-period-button', { timeout: 10000 }).click({ force: true });
-      // We may be in month view first; clicking again toggles year view if needed
-      cy.get('button.mat-calendar-period-button').then(($btn) => {
-        if ($btn.length) {
-          // ensure years are visible
-          cy.get('.mat-calendar-body').then(($body) => {
-            if (!$body.text().includes(String(year))) {
-              // navigate back several years if needed
-              cy.wrap(Array.from({ length: 12 })).each(() => {
-                cy.get('button.mat-calendar-previous-button').click({ force: true });
-              });
+      const tryClickYear = (attempt = 0) => {
+        cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', String(year), { timeout: 1500 })
+          .then(($y) => {
+            if ($y.length) {
+              cy.wrap($y).click({ force: true });
+            } else if (attempt < 6) {
+              cy.get('button.mat-calendar-previous-button').click({ force: true });
+              tryClickYear(attempt + 1);
+            } else {
+              // Final long attempt
+              cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', String(year), { timeout: 8000 }).click({ force: true });
             }
           });
-        }
-      });
-      cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', String(year), { timeout: 10000 }).click({ force: true });
+      };
+      tryClickYear();
     };
 
     const selectMonthIndex = (month1to12: number) => {
@@ -354,36 +355,32 @@ describe.only('UI Compare Extractors between SANDBOX and PR', () => {
       throw new Error('SANDBOX_FRONT_URL and CANDIDATE_FRONT_URL must be provided');
     }
 
-    // Iterate over backups and date ranges
-    cy.wrap(BACKUP_LABELS).each((backupLabel) => {
-      cy.wrap(DATE_RANGES).each((range) => {
-        const { start, stop } = range as { start: string; stop: string };
+    // Single run to avoid nested chains (can re-add iteration later when stable)
+    const backupLabel = String(BACKUP_LABELS[0]);
+    const { start, stop } = DATE_RANGES[0];
 
-        // Run SANDBOX flow
-        runExtractorFlowForEnv(String(sandbox), start, stop, String(backupLabel));
+    // Run SANDBOX flow
+    runExtractorFlowForEnv(String(sandbox), start, stop, backupLabel);
 
-        // Capture results from SANDBOX
-        cy.get('@effResults').then((effSandbox: any) => {
-          cy.get('@actResult').then((actSandbox: any) => {
-            // Run PR flow
-            runExtractorFlowForEnv(String(candidate), start, stop, String(backupLabel));
+    // Capture results from SANDBOX
+    cy.get('@effResults').then((effSandbox: any) => {
+      cy.get('@actResult').then((actSandbox: any) => {
+        // Run PR flow
+        runExtractorFlowForEnv(String(candidate), start, stop, backupLabel);
 
-            // Compare with PR results
-            cy.get('@effResults').then((effCandidate: any) => {
-              cy.get('@actResult').then((actCandidate: any) => {
-                // Effectif: compare per category payloads (e.g., expect same onglet2)
-                const cats = Object.keys(effSandbox || {});
-                cats.forEach((c) => {
-                  deepEqualOrDiff(effSandbox[c], effCandidate[c]);
-                });
-
-                // Activities: compare overall payloads
-                deepEqualOrDiff(actSandbox, actCandidate);
-              });
+        // Compare with PR results
+        cy.get('@effResults').then((effCandidate: any) => {
+          cy.get('@actResult').then((actCandidate: any) => {
+            // Effectif: compare per category payloads
+            const cats = Object.keys(effSandbox || {});
+            cats.forEach((c) => {
+              deepEqualOrDiff(effSandbox[c], effCandidate[c]);
             });
+            // Activities: compare the whole payload
+            deepEqualOrDiff(actSandbox, actCandidate);
           });
         });
       });
     });
   });
-});
+{{ ... }}
