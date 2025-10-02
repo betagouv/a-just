@@ -129,7 +129,23 @@ function runExtractorFlowForEnv(baseUrl: string, startDate: string, stopDate: st
     };
 
     const selectBackup = (label: string) => {
-      cy.contains('h6', label, { matchCase: false, timeout: 20000 }).scrollIntoView().click({ force: true });
+      // Log current URL and list of visible TJ labels to help debugging
+      cy.location('href').then((href) => cy.log(`Current URL: ${href}`));
+      cy.get('h6', { timeout: 20000 }).then(($els) => {
+        const labels = Array.from($els)
+          .map((el) => (el.textContent || '').trim())
+          .filter(Boolean);
+        cy.log(`Available TJ labels: ${labels.join(' | ')}`);
+
+        const match = labels.find((t) => t.toLowerCase() === String(label).toLowerCase());
+        if (!match) {
+          throw new Error(`Backup label not found: "${label}". Available: ${labels.join(' | ')}`);
+        }
+      });
+
+      cy.contains('h6', label, { matchCase: false, timeout: 20000 })
+        .scrollIntoView()
+        .click({ force: true });
     };
 
     const openDatepicker = (input: Cypress.Chainable<JQuery<HTMLElement>>) => {
