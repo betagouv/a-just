@@ -47,6 +47,7 @@ import { MAGISTRATS } from '../../constants/category'
 import { fixDecimal } from '../../utils/numbers'
 import { ViewAnalyticsComponent } from './view-analytics/view-analytics.component'
 import { PopinGraphsDetailsComponent } from './popin-graphs-details/popin-graphs-details.component'
+import { NB_DAYS_BY_FONCTIONNAIRE, NB_DAYS_BY_MAGISTRAT, NB_HOURS_PER_DAY_AND_FONCTIONNAIRE, NB_HOURS_PER_DAY_AND_MAGISTRAT } from '../../constants/referentiel'
 
 /**
  * Page du calculateur
@@ -407,19 +408,19 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
   /**
    * Nombre de jours travaillé par magistrat
    */
-  nbDaysByMagistrat: number = import.meta.env.NG_APP_NB_DAYS_BY_MAGISTRAT
+  nbDaysByMagistrat: number = NB_DAYS_BY_MAGISTRAT
   /**
    * Nombre de jours travaillé par fonctionnaire
    */
-  nbDaysByFonctionnaire: number = import.meta.env.NG_APP_NB_DAYS_BY_FONCTIONNAIRE
+  nbDaysByFonctionnaire: number = NB_DAYS_BY_FONCTIONNAIRE
   /**
    * Nombre d'heures travaillé par jour par magistrat
    */
-  nbHoursPerDayAndMagistrat: number = import.meta.env.NG_APP_NB_HOURS_PER_DAY_AND_MAGISTRAT
+  nbHoursPerDayAndMagistrat: number = NB_HOURS_PER_DAY_AND_MAGISTRAT
   /**
    * Nombre d'heures travaillé par jour par fonctionnaire
    */
-  nbHoursPerDayAndFonctionnaire: number = import.meta.env.NG_APP_NB_HOURS_PER_DAY_AND_FONCTIONNAIRE
+  nbHoursPerDayAndFonctionnaire: number = NB_HOURS_PER_DAY_AND_FONCTIONNAIRE
   /** Date max cockpit */
   limitDate = this.addMonthsToDate(new Date(), 11)
 

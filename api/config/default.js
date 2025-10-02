@@ -49,10 +49,6 @@ module.exports = {
    */
   logsPassword: process.env.LOGS_PASSWORD,
   /**
-   * Email de l'administrateur
-   */
-  contactEmail: process.env.CONTACT_EMAIL,
-  /**
    * Email du support
    */
   supportEmail: process.env.SUPPORT_EMAIL,
