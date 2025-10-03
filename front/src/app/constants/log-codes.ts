@@ -104,6 +104,6 @@ export const REQUET_HELP_PAGE = 30000
 export const REQUEST_USER_MANUAL = 30001
 
 /**
- * Code de démarrage de la réaffectation
+ * Code de mise à jour de la réaffectation
  */
 export const REAFFECTOR_UPDATE_AGENT = 40000
