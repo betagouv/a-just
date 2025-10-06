@@ -136,9 +136,12 @@ export default (sequelizeInstance, Model) => {
     if (element) {
       await element.update(values)
 
-      if (values.enabled) {
+      if (element.dataValues.enabled) {
         // check and create juridiction
-        const juridicitionId = await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label)
+        const juridicitionId = await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label, element.dataValues.backup_id, element.dataValues.label)
+        await element.update({
+          backup_id: juridicitionId,
+        })
 
         await Model.models.HRBackups.addUserAccessToTeam(juridicitionId)
       }
