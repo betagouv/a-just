@@ -1,0 +1,24 @@
+version: "3.3"
+services:
+  front_host:
+    build:
+      context: .
+      dockerfile: dockerfile_front
+    networks:
+      - ajust_e2e_network
+    ports:
+      - "4202:4200"
+    environment:
+      - NG_APP_SERVER_URL=http://localhost:8081/api/
+
+  front_sandbox_host:
+    build:
+      context: .
+      dockerfile: dockerfile_front
+    networks:
+      - ajust_e2e_network
+    ports:
+      - "4203:4200"
+    environment:
+      - NG_APP_SERVER_URL=http://localhost:8082/api/
+
