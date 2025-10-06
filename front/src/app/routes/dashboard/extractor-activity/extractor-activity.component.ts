@@ -347,11 +347,14 @@ export class ExtractorActivityComponent extends MainClass {
           .then((response) => response.arrayBuffer())
           // 3. Fill the template with data (generate a report).
           .then((buffer) => {
+            try { window.dispatchEvent(new CustomEvent('excel-stage', { detail: 'template-ok' })); } catch {}
             return new Renderer().renderFromArrayBuffer(buffer, viewModel);
           })
-          // 4. Get a report as buffer.
+          // 4. Prepare workbook and write buffer.
           .then(async (report) => {
+            try { window.dispatchEvent(new CustomEvent('excel-stage', { detail: 'renderer-ok' })); } catch {}
             report = await this.getReport(report, viewModel);
+            try { window.dispatchEvent(new CustomEvent('excel-stage', { detail: 'getReport-ok' })); } catch {}
             if (this.sumTab.length === 0) {
               alert(
                 'Une erreur est survenue lors de la génération de votre fichier.'
@@ -367,7 +370,25 @@ export class ExtractorActivityComponent extends MainClass {
           })
           // 5. Use `saveAs` to download on browser site.
           .then((buffer) => {
-            const filename = this.getExportFileName() + EXCEL_EXTENSION;
+            const filename = this.getExportFileName();
+            try { window.dispatchEvent(new CustomEvent('excel-stage', { detail: 'writeBuffer-ok' })); } catch {}
+            // Test-only: expose buffer to Cypress so it can salvage file even if saveAs is blocked
+            try {
+              if ((window as any).Cypress) {
+                const blob = new Blob([buffer], { type: EXCEL_TYPE });
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  try {
+                    const res = String(reader.result || '');
+                    const base64 = res.includes(',') ? res.split(',')[1] : res;
+                    (window as any).__lastDownloadBase64 = base64;
+                    (window as any).__lastDownloadName = filename + EXCEL_EXTENSION;
+                    window.dispatchEvent(new CustomEvent('excel-stage', { detail: 'buffer-exposed' }));
+                  } catch {}
+                };
+                reader.readAsDataURL(blob);
+              }
+            } catch {}
             FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION);
             try {
               const ms = Math.max(0, performance.now() - startAt);
