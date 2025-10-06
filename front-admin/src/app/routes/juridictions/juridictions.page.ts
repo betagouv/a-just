@@ -54,8 +54,9 @@ export class JuridictionsPage extends MainClass implements OnInit {
     }
 
     if (getValue !== null) {
+      element[node] = !element[node];
       this.juridictionsService
-        .updateJuridiction(node, getValue, element.id)
+        .updateJuridiction(node, element[node], element.id)
         .then(() => this.onLoad());
     }
   }

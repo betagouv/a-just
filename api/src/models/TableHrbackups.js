@@ -365,6 +365,7 @@ export default (sequelizeInstance, Model) => {
       const newElement = await Model.create({
         label: newLabel || juridictionName,
       })
+      await Model.models.TJ.addIELST(0, newLabel || juridictionName, null, null, null, newElement.dataValues.id, true)
       return newElement.dataValues.id
     } else {
       await find.update({
