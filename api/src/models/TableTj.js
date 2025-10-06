@@ -5,7 +5,7 @@ import { loadOrWarmHR } from '../utils/redis'
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id'],
       where: {
         parent_id: null,
       },
@@ -184,7 +184,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} userId
    * @param {*} datas
    */
-  Model.addIELST = async (i_elst, label, latitude, longitude, population) => {
+  Model.addIELST = async (i_elst, label, latitude, longitude, population, backup_id = null, enabled = false) => {
     await Model.create({
       i_elst: Number(i_elst),
       label: label,

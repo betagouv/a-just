@@ -211,10 +211,21 @@ export default class RouteUsers extends Route {
   })
   async getAll(ctx) {
     const list = await this.model.getAll()
+    const allBackups = await this.model.models.HRBackups.getAll()
+    const allIelst = await this.model.models.TJ.getAll()
+
+    const activeBackupIdSet = new Set(
+      (Array.isArray(allIelst) ? allIelst : [])
+        .filter((tj) => tj && tj.enabled === true)
+        .map((tj) => tj.backup_id)
+        .filter((id) => id !== null && id !== undefined),
+    )
+
+    const filteredBackups = (Array.isArray(allBackups) ? allBackups : []).filter((b) => activeBackupIdSet.has(b.id))
 
     this.sendOk(ctx, {
       list,
-      ventilations: await this.model.models.HRBackups.getAll(),
+      ventilations: filteredBackups,
       access: accessList,
     })
   }
