@@ -127,14 +127,14 @@ export default (sequelizeInstance, Model) => {
    * Update juridiction value
    */
   Model.updateJuridiction = async (juridictionId, values) => {
-    const element = await Model.findOne({
+    let element = await Model.findOne({
       where: {
         id: juridictionId,
       },
     })
 
     if (element) {
-      await element.update(values)
+      element = await element.update(values)
 
       if (element.dataValues.enabled) {
         // check and create juridiction
