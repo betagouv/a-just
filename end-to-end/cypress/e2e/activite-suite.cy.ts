@@ -430,7 +430,6 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
   } else {
     it('SANDBOX: export activite', () => {
       if (!SANDBOX) throw new Error('SANDBOX_FRONT_URL must be provided');
-      if (!KEEP_ARTIFACTS) cy.task('wipeActiviteArtifacts');
       loginAndOpenDashboard(SANDBOX);
       cy.visit(`${SANDBOX}/dashboard`);
       cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should('exist');
