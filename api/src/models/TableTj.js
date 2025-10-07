@@ -149,6 +149,7 @@ export default (sequelizeInstance, Model) => {
           element.dataValues.label,
           element.dataValues.backup_id,
           node === 'label' ? values : null,
+          false,
         )
 
         if (!element.dataValues.backup_id) {
