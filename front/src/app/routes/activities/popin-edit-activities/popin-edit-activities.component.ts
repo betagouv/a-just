@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms'
 import { RadioButtonComponent } from '../../../components/radio-button/radio-button.component'
 import { CommentActivitiesComponent } from '../comment-activities/comment-activities.component'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
+import { MIN_DATE_SELECT_CA, MIN_DATE_SELECT_TJ } from '../../../constants/activities'
 
 /**
  * Composant page activité
@@ -37,6 +38,18 @@ import { ReferentielService } from '../../../services/referentiel/referentiel.se
   styleUrls: ['./popin-edit-activities.component.scss'],
 })
 export class PopinEditActivitiesComponent extends MainClass implements OnChanges, AfterViewInit {
+  /**
+   * Service app
+   */
+  appService: AppService = inject(AppService)
+  /**
+   * Service activities
+   */
+  activitiesService: ActivitiesService = inject(ActivitiesService)
+  /**
+   * Service user
+   */
+  userService: UserService = inject(UserService)
   /**
    * Referentiel service
    */
@@ -125,17 +138,32 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
   showComments: boolean = false
 
   /**
-   * Constructeur
-   * @param appService
-   * @param referentielService
-   * @param activitiesService
+   * Date minimum
    */
-  constructor(
-    private appService: AppService,
-    private activitiesService: ActivitiesService,
-    private userService: UserService,
-  ) {
+  minDate: Date | null = null
+
+  /**
+   * Date maximum
+   */
+  maxDate: Date | null = null
+
+  /**
+   * Constructeur
+   */
+  constructor() {
     super()
+  }
+
+  ngOnInit() {
+    this.userService.isCa() ? (this.minDate = MIN_DATE_SELECT_CA) : (this.minDate = MIN_DATE_SELECT_TJ)
+    this.onLoadMaxDate()
+  }
+
+  async onLoadMaxDate() {
+    const resp = await this.activitiesService.getLastMonthActivities()
+    if (resp) {
+      this.maxDate = new Date(resp)
+    }
   }
 
   ngAfterViewInit() {

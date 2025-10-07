@@ -135,8 +135,8 @@
         </div>
         @if (dateSelector) {
         <aj-date-select [title]="dateSelector.title" [dateType]="dateSelector.dateType" [value]="dateSelector.value"
-          [min]="dateSelector.minDate" [showArrow]="dateSelector.showArrow" (valueChange)="changeMonth($event)"
-          class="date-selector"></aj-date-select>
+          [min]="dateSelector.minDate" [max]="dateSelector.maxDate" [showArrow]="dateSelector.showArrow"
+          (valueChange)="changeMonth($event)" class="date-selector"></aj-date-select>
         }
         @if (titleTemplate) {
         <ng-container *ngTemplateOutlet="titleTemplate"></ng-container>
