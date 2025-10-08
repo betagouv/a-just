@@ -42,19 +42,29 @@ export class JuridictionsPage extends MainClass implements OnInit {
   }
 
   onUpdate(node: string, element: any) {
+    element = { ...element };
     let getValue = null;
 
     if (node !== 'enabled') {
-      getValue = prompt(
+      const newValue = prompt(
         `Remplacer le champ '${node}' par`,
         element[node] || ''
       );
+      console.log('newValue', newValue, element[node]);
+      if (newValue !== null && element[node] !== newValue) {
+        element[node] = newValue;
+        getValue = true;
+      }
     } else {
-      getValue = confirm('Activer ou non la juridiction ?');
+      if (confirm("Inverser l'activitation de la juridiction ?")) {
+        element[node] = !element[node];
+        element[node] = element[node] ? 'oui' : 'non';
+
+        getValue = true;
+      }
     }
 
     if (getValue !== null) {
-      element[node] = !element[node];
       this.juridictionsService
         .updateJuridiction(node, element[node], element.id)
         .then(() => this.onLoad());

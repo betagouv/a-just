@@ -344,7 +344,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} juridictionName
    * @returns
    */
-  Model.findOrCreateLabel = async (juridictionName, backupId = null, newLabel = null) => {
+  Model.findOrCreateLabel = async (juridictionName, backupId = null, newLabel = null, autoCreateTj = true) => {
     let find = null
     if (backupId) {
       find = await Model.findOne({
@@ -365,7 +365,9 @@ export default (sequelizeInstance, Model) => {
       const newElement = await Model.create({
         label: newLabel || juridictionName,
       })
-      await Model.models.TJ.addIELST(0, newLabel || juridictionName, null, null, null, newElement.dataValues.id, true)
+      if (autoCreateTj) {
+        await Model.models.TJ.addIELST(0, newLabel || juridictionName, null, null, null, newElement.dataValues.id, true)
+      }
       return newElement.dataValues.id
     } else {
       await find.update({
