@@ -358,28 +358,43 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
           } as any;
         }
       } catch {}
-      // Hook Blob to capture base64
+      // Intentionally DO NOT override Blob in Effectif to avoid brand/prototype issues in some environments.
+      // Capture via anchor click + fetch of blob URL and via saveAs wrapper below.
       try {
-        const OrigBlob = (win as any).Blob;
-        if (OrigBlob && !(win as any).__blobHooked) {
-          (win as any).__blobHooked = true;
-          (win as any).Blob = function(parts: any[], opts?: any) {
-            const b = new (OrigBlob as any)(parts, opts);
+        const proto = (win as any).HTMLAnchorElement && (win as any).HTMLAnchorElement.prototype;
+        if (proto && !(win as any).__aClickHooked) {
+          (win as any).__aClickHooked = true;
+          const origClick = proto.click;
+          proto.click = function(this: HTMLAnchorElement) {
             try {
-              const size = (b && (b as any).size) || 0;
-              if (size > 100) {
-                const reader = new (win as any).FileReader();
-                reader.onloadend = () => {
+              const nm = (this as any).download || '';
+              const href = (this as any).href || '';
+              if (nm) (win as any).__lastDownloadName = String(nm);
+              if (href) {
+                (win as any).__downloadStarted = true;
+                if (/^blob:/i.test(href)) {
                   try {
-                    const res = String(reader.result || '');
-                    const base64 = res.includes(',') ? res.split(',')[1] : res;
-                    (win as any).__lastDownloadBase64 = base64;
+                    (win as any)
+                      .fetch(href)
+                      .then((r: any) => (r && r.blob ? r.blob() : null))
+                      .then((b: any) => {
+                        if (!b) return;
+                        const reader = new (win as any).FileReader();
+                        reader.onloadend = () => {
+                          try {
+                            const res = String(reader.result || '');
+                            const base64 = res.includes(',') ? res.split(',')[1] : res;
+                            (win as any).__lastDownloadBase64 = base64;
+                          } catch {}
+                        };
+                        try { reader.readAsDataURL(b); } catch {}
+                      })
+                      .catch(() => {});
                   } catch {}
-                };
-                try { reader.readAsDataURL(b); } catch {}
+                }
               }
             } catch {}
-            return b;
+            return origClick.apply(this, arguments as any);
           } as any;
         }
       } catch {}
@@ -422,10 +437,8 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
     }
   });
   snapshot(prefix, labelSlug, 'step16-export-clicked');
-  // Wait for template fetch as the primary signal the export pipeline ran
-  cy.wait('@effTpl', { timeout: 180000 }).then(() => {
-    snapshot(prefix, labelSlug, 'step16b-network-complete');
-  });
+  // Do not wait on @effTpl for Effectif (it may not fetch a template). Proceed directly; hooks + polling will persist the file.
+  snapshot(prefix, labelSlug, 'step16b-continue-no-template-wait');
 
   const modalContainerSel = 'aj-alert, aj-popup, .cdk-overlay-pane .mat-mdc-dialog-container, .cdk-overlay-pane mat-dialog-container, .cdk-overlay-pane [role=dialog], .cdk-overlay-pane aj-popup';
   const modalButtonsSel = 'aj-alert button, aj-popup button, .cdk-overlay-pane [role=dialog] button, .cdk-overlay-pane .mat-mdc-dialog-container button, .cdk-overlay-pane mat-dialog-container button, .cdk-overlay-pane button';
