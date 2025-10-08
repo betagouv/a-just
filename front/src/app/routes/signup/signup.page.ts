@@ -1,51 +1,37 @@
-import {
-  Component,
-  ViewChildren,
-  QueryList,
-  ElementRef,
-  inject,
-} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component';
-import { CommonModule } from '@angular/common';
-import { UserService } from '../../services/user/user.service';
-import { ServerService } from '../../services/http-server/server.service';
-import { SSOService } from '../../services/sso/sso.service';
-import { MIN_PASSWORD_LENGTH } from '../../utils/user';
+import { Component, ViewChildren, QueryList, ElementRef, inject, ViewChild } from '@angular/core'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { Title } from '@angular/platform-browser'
+import { ActivatedRoute, Router, RouterLink } from '@angular/router'
+import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
+import { CommonModule } from '@angular/common'
+import { UserService } from '../../services/user/user.service'
+import { ServerService } from '../../services/http-server/server.service'
+import { SSOService } from '../../services/sso/sso.service'
+import { MIN_PASSWORD_LENGTH } from '../../utils/user'
 
 /**
  * Page d'inscription
  */
 @Component({
   standalone: true,
-  imports: [
-    WrapperNoConnectedComponent,
-    FormsModule,
-    CommonModule,
-    RouterLink,
-    ReactiveFormsModule,
-  ],
+  imports: [WrapperNoConnectedComponent, FormsModule, CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './signup.page.html',
   styleUrls: ['./signup.page.scss'],
 })
 export class SignupPage {
-  userService = inject(UserService);
-  router = inject(Router);
-  title = inject(Title);
-  serverService = inject(ServerService);
-  route = inject(ActivatedRoute);
-  ssoService = inject(SSOService);
-  MIN_PASSWORD_LENGTH = MIN_PASSWORD_LENGTH;
+  userService = inject(UserService)
+  router = inject(Router)
+  title = inject(Title)
+  serverService = inject(ServerService)
+  route = inject(ActivatedRoute)
+  ssoService = inject(SSOService)
+  MIN_PASSWORD_LENGTH = MIN_PASSWORD_LENGTH
 
-  @ViewChildren('input') inputs: QueryList<ElementRef> =
-    new QueryList<ElementRef>();
+  @ViewChildren('input') inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
+
+  @ViewChild('tjSelect') tjSelect!: ElementRef<HTMLSelectElement>
+  @ViewChild('fctSelect') fctSelect!: ElementRef<HTMLSelectElement>
+  @ViewChild('checkbox') checkboxEl!: ElementRef<HTMLInputElement>
 
   /**
    * Formulaire d'inscription
@@ -62,19 +48,19 @@ export class SignupPage {
     checkboxPassword: new FormControl(),
     fonctionAutre: new FormControl(),
     responsable: new FormControl(),
-  });
+  })
   /**
    * SSO is activate to this env
    */
-  ssoIsActivate: boolean = import.meta.env.NG_APP_ENABLE_SSO;
+  ssoIsActivate: boolean = import.meta.env.NG_APP_ENABLE_SSO
   /**
    * Can user SSO
    */
-  canUseSSO: boolean = true;
+  canUseSSO: boolean = true
   /**
    * Step d'inscription
    */
-  signUpStep = 1;
+  signUpStep = 1
   /**
    * Mot de passe paramètres de validation
    */
@@ -83,7 +69,7 @@ export class SignupPage {
     char: false,
     number: false,
     majuscule: false,
-  };
+  }
   /**
    * Liste des fonctions (1VP, VP, ...)
    */
@@ -93,56 +79,51 @@ export class SignupPage {
     'Secrétaire général(e)',
     'Chef(fe) de cabinet',
     'Chargé(e) de mission',
-    this.userService.isCa()
-      ? 'Secrétariat Première présidence'
-      : 'Secrétaire administratif - présidence',
+    this.userService.isCa() ? 'Secrétariat Première présidence' : 'Secrétaire administratif - présidence',
     'Secrétaire administratif - DG',
     'Directeur/trice de greffe adjoint(e)',
     'Directeur/trice des services de greffe judiciaires',
-  ];
-  tjs: any[] = [];
-  provider: string = '';
+  ]
+  tjs: any[] = []
+  provider: string = ''
 
   /**
    * Params
    */
   paramsUrl: {
-    email: string;
-    provider: string;
-  } | null = null;
+    email: string
+    provider: string
+  } | null = null
 
   /**
    * Constructeur
    */
   constructor() {
-    this.title.setTitle(
-      (this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') +
-        'Embarquement'
-    );
-    this.loadTj();
+    this.title.setTitle((this.userService.isCa() ? 'A-Just CA | ' : 'A-Just TJ | ') + 'Embarquement')
+    this.loadTj()
 
     this.route.queryParams.subscribe((p: any) => {
-      this.paramsUrl = p;
+      this.paramsUrl = p
       if (p.email) {
-        this.form.get('email')?.setValue(p.email);
-        this.form.get('email')?.disable();
+        this.form.get('email')?.setValue(p.email)
+        this.form.get('email')?.disable()
       } else {
-        this.form.get('email')?.enable();
+        this.form.get('email')?.enable()
       }
 
       if (p.firstName) {
-        this.form.get('firstName')?.setValue(p.firstName);
+        this.form.get('firstName')?.setValue(p.firstName)
       }
 
       if (p.lastName) {
-        this.form.get('lastName')?.setValue(p.lastName);
+        this.form.get('lastName')?.setValue(p.lastName)
       }
 
       if (p.provider) {
-        this.provider = p.provider;
-        this.signUpStep = 2;
+        this.provider = p.provider
+        this.signUpStep = 2
       }
-    });
+    })
   }
 
   /**
@@ -150,61 +131,50 @@ export class SignupPage {
    * @returns
    */
   onSubmit() {
-    let {
-      email,
-      password,
-      firstName,
-      lastName,
-      passwordConf,
-      fonction,
-      tj,
-      checkbox,
-      fonctionAutre,
-      responsable,
-    } = this.form.value;
+    let { email, password, firstName, lastName, passwordConf, fonction, tj, checkbox, fonctionAutre, responsable } = this.form.value
 
     if (this.paramsUrl?.email) {
-      email = this.paramsUrl?.email;
+      email = this.paramsUrl?.email
     }
 
     if (!tj) {
-      if(this.userService.isCa()) {
-        alert('Vous devez saisir une CA');
+      if (this.userService.isCa()) {
+        alert('Vous devez saisir une CA')
       } else {
-      alert('Vous devez saisir un TJ');
-    }
-      return;
+        alert('Vous devez saisir un TJ')
+      }
+      this.focusSoon(() => this.tjSelect?.nativeElement.focus())
+      return
     }
 
     if (!fonction) {
-      alert('Vous devez saisir une fonction');
-      return;
+      alert('Vous devez saisir une fonction')
+      this.focusSoon(() => this.fctSelect?.nativeElement.focus())
+      return
     }
 
     if (fonction === 'Autre' && !fonctionAutre) {
-      alert('Vous devez saisir un intitulé de fonction');
-      return;
+      alert('Vous devez saisir un intitulé de fonction')
+      this.focusSoon(() => this.focusByControlName('fonctionAutre'))
+
+      return
     }
 
     if (fonction === 'Autre' && !responsable) {
-      alert("Vous devez saisir le nom d'un responsable hiérarchique");
-      return;
+      alert("Vous devez saisir le nom d'un responsable hiérarchique")
+      this.focusSoon(() => this.focusByControlName('responsable'))
+      return
     }
 
-    if (fonction === 'Autre')
-      fonction = fonctionAutre + ' - Resp hiér : ' + responsable;
+    if (fonction === 'Autre') fonction = fonctionAutre + ' - Resp hiér : ' + responsable
 
-    this.userService
-      .register({ email, password, firstName, lastName, fonction, tj })
-      .then((returnLogin) => {
-        if (returnLogin) {
-          this.router.navigate([
-            this.userService.getUserPageUrl(returnLogin.user),
-          ]);
-        } else {
-          this.router.navigate(['/login']);
-        }
-      });
+    this.userService.register({ email, password, firstName, lastName, fonction, tj }).then((returnLogin) => {
+      if (returnLogin) {
+        this.router.navigate([this.userService.getUserPageUrl(returnLogin.user)])
+      } else {
+        this.router.navigate(['/login'])
+      }
+    })
   }
 
   /**
@@ -212,82 +182,66 @@ export class SignupPage {
    * @returns
    */
   onStepTwo() {
-    let {
-      email,
-      password,
-      firstName,
-      lastName,
-      passwordConf,
-      fonction,
-      tj,
-      checkbox,
-    } = this.form.value;
+    let { email, password, firstName, lastName, passwordConf, fonction, tj, checkbox } = this.form.value
 
     if (!firstName || !lastName) {
-      alert('Vous devez saisir un nom et un prénom');
-      return;
+      alert('Vous devez saisir un nom et un prénom')
+      this.focusSoon(() => this.focusByControlName(!firstName ? 'firstName' : 'lastName'))
+      return
     }
 
     if (!email) {
-      alert('Vous devez saisir un email');
-      return;
+      alert('Vous devez saisir un email')
+      this.focusSoon(() => this.focusByControlName('email'))
+      return
     }
 
-    if (
-      !this.paramsUrl?.email &&
-      email.includes('@justice.fr') === false &&
-      email.includes('.gouv.fr') === false &&
-      email.includes('@a-just.fr') === false
-    ) {
-      alert('Vous devez saisir une adresse e-mail professionnelle');
-      return;
+    if (!this.paramsUrl?.email && email.includes('@justice.fr') === false && email.includes('.gouv.fr') === false && email.includes('@a-just.fr') === false) {
+      alert('Vous devez saisir une adresse e-mail professionnelle')
+      this.focusSoon(() => this.focusByControlName('email'))
+      return
     }
-
 
     if (!password) {
-      alert('Vous devez saisir un mot de passe');
-      return;
+      alert('Vous devez saisir un mot de passe')
+      this.focusSoon(() => this.focusByControlName('password'))
+      return
     }
 
     if (!passwordConf) {
-      alert('Vous devez confirmer votre mot de passe');
-      return;
+      alert('Vous devez confirmer votre mot de passe')
+      this.focusSoon(() => this.focusByControlName('passwordConf'))
+      return
     }
 
-
     if (this.paramsUrl?.email) {
-      email = this.paramsUrl?.email;
+      email = this.paramsUrl?.email
     }
 
     if (!checkbox) {
-      alert("Vous devez valider les conditions générales d'utilisation");
-      return;
+      alert("Vous devez valider les conditions générales d'utilisation")
+      this.focusCheckboxSoon()
+      return
     }
 
-    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-'];
-    var regex = '[' + arrayOfSp.join('') + ']';
+    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-']
+    var regex = '[' + arrayOfSp.join('') + ']'
 
     if (!this.paramsUrl?.provider) {
-      if (
-        !password ||
-        password.length < MIN_PASSWORD_LENGTH ||
-        !password.match(/\d/) ||
-        !new RegExp(regex).test(password) ||
-        !password.match(/[A-Z]/g)
-      ) {
-        alert(
-          'Vous devez saisir un mot de passe qui remplit les critères obligatoires'
-        );
-        return;
+      if (!password || password.length < MIN_PASSWORD_LENGTH || !password.match(/\d/) || !new RegExp(regex).test(password) || !password.match(/[A-Z]/g)) {
+        alert('Vous devez saisir un mot de passe qui remplit les critères obligatoires')
+        this.focusSoon(() => this.focusByControlName('password'))
+        return
       }
 
       if (password !== passwordConf) {
-        alert('Vos mots de passe ne sont pas identiques');
-        return;
+        alert('Vos mots de passe ne sont pas identiques')
+        this.focusSoon(() => this.focusByControlName('passwordConf'))
+        return
       }
     }
 
-    this.signUpStep = 2;
+    this.signUpStep = 2
   }
 
   /**
@@ -295,7 +249,7 @@ export class SignupPage {
    * @returns
    */
   getStepColor() {
-    return this.signUpStep === 1 ? '#eeeeee' : '#000091';
+    return this.signUpStep === 1 ? '#eeeeee' : '#000091'
   }
 
   /**
@@ -303,25 +257,25 @@ export class SignupPage {
    * @param event
    */
   checkStrength(event: any) {
-    const password = event.target.value;
+    const password = event.target.value
 
     if (password && password.match(/\d/)) {
-      this.passwordStrength.number = true;
-    } else this.passwordStrength.number = false;
+      this.passwordStrength.number = true
+    } else this.passwordStrength.number = false
 
-    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-'];
-    var regex = '[' + arrayOfSp.join('') + ']';
+    var arrayOfSp = ['!', '@', '#', '$', '%', '&', '*', '_', '?', '-']
+    var regex = '[' + arrayOfSp.join('') + ']'
     if (password && new RegExp(regex).test(password)) {
-      this.passwordStrength.char = true;
-    } else this.passwordStrength.char = false;
+      this.passwordStrength.char = true
+    } else this.passwordStrength.char = false
 
     if (password && password.length > MIN_PASSWORD_LENGTH) {
-      this.passwordStrength.length = true;
-    } else this.passwordStrength.length = false;
+      this.passwordStrength.length = true
+    } else this.passwordStrength.length = false
 
     if (password && password.match(/[A-Z]/g)) {
-      this.passwordStrength.majuscule = true;
-    } else this.passwordStrength.majuscule = false;
+      this.passwordStrength.majuscule = true
+    } else this.passwordStrength.majuscule = false
   }
 
   /**
@@ -330,13 +284,13 @@ export class SignupPage {
    * @returns
    */
   getParamColor(val: number) {
-    const password = this.form.controls['password'].value;
-    const options = ['length', 'char', 'number', 'majuscule'];
+    const password = this.form.controls['password'].value
+    const options = ['length', 'char', 'number', 'majuscule']
 
-    if (!password) return '#0063cb';
+    if (!password) return '#0063cb'
     // @ts-ignore
-    else if (this.passwordStrength[options[val]] === false) return 'red';
-    else return '#0063cb';
+    else if (this.passwordStrength[options[val]] === false) return 'red'
+    else return '#0063cb'
   }
 
   /**
@@ -346,11 +300,10 @@ export class SignupPage {
   setFonc(event: any) {
     this.fonctions.map((fct) => {
       if (fct === event.value) {
-        this.form.controls['fonction'].setValue(fct);
+        this.form.controls['fonction'].setValue(fct)
       }
-    });
-    if (event.value === 'Autre')
-      this.form.controls['fonction'].setValue('Autre');
+    })
+    if (event.value === 'Autre') this.form.controls['fonction'].setValue('Autre')
   }
 
   /**
@@ -358,9 +311,9 @@ export class SignupPage {
    */
   loadTj() {
     this.serverService.get('juridictions/get-all-visibles').then((data) => {
-      this.tjs = data.data;
+      this.tjs = data.data
       //this.tjs = data.data.map((x: any) => { return { ...x, label: x.label.slice(3) } })
-    });
+    })
   }
 
   /**
@@ -370,9 +323,9 @@ export class SignupPage {
   setTj(event: any) {
     this.tjs.map((tj) => {
       if (tj.id === +event.value) {
-        this.form.controls['tj'].setValue(tj.label);
+        this.form.controls['tj'].setValue(tj.label)
       }
-    });
+    })
   }
 
   onUseSSO() {
@@ -381,7 +334,7 @@ export class SignupPage {
     //    "Vous devez être dans l'environement Justice pour utiliser page blanche !"
     //  )
     //} else {
-    window.location.href = this.ssoService.getSSOLogin();
+    window.location.href = this.ssoService.getSSOLogin()
     //}
   }
 
@@ -390,13 +343,11 @@ export class SignupPage {
    * @param event
    */
   focusNext(event: any) {
-    event.preventDefault();
-    const inputsArray = this.inputs.toArray();
-    const currentIndex = inputsArray.findIndex(
-      (input) => input.nativeElement === event.target
-    );
+    event.preventDefault()
+    const inputsArray = this.inputs.toArray()
+    const currentIndex = inputsArray.findIndex((input) => input.nativeElement === event.target)
     if (currentIndex > -1 && currentIndex < inputsArray.length - 1) {
-      inputsArray[currentIndex + 1].nativeElement.focus();
+      inputsArray[currentIndex + 1].nativeElement.focus()
     }
   }
 
@@ -406,7 +357,31 @@ export class SignupPage {
    */
   preventSubmit(event: KeyboardEvent) {
     if (event.key === 'Enter') {
-      event.preventDefault();
+      event.preventDefault()
     }
+  }
+
+  /**
+   * Trouve un <input> par formControlName via #input
+   * @param name
+   */
+  private focusByControlName(name: string) {
+    const ref = this.inputs.find((r) => r.nativeElement.getAttribute('formcontrolname') === name)
+    ref?.nativeElement.focus()
+  }
+
+  /**
+   * Evite problème de timing bloquant avec les alerts
+   * @param fn
+   */
+  private focusSoon(fn: () => void) {
+    setTimeout(fn, 0)
+  }
+
+  /**
+   * Fonction de selection pour checkbox
+   */
+  private focusCheckboxSoon() {
+    requestAnimationFrame(() => this.checkboxEl?.nativeElement?.focus())
   }
 }

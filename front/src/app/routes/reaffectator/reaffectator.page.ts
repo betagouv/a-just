@@ -25,7 +25,7 @@ import { UserService } from '../../services/user/user.service'
 import { KPIService } from '../../services/kpi/kpi.service'
 import { getCategoryTitle, getCategoryTitlePlurial } from '../../utils/category'
 import { fixDecimal } from '../../utils/numbers'
-import { DATE_REAFECTATOR } from '../../constants/log-codes'
+import { DATE_REAFECTATOR, REAFFECTOR_UPDATE_AGENT } from '../../constants/log-codes'
 import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
 import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe'
@@ -398,8 +398,8 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
           this.reaffectatorService.selectedCategoriesId !== null
             ? [this.reaffectatorService.selectedCategoriesId]
             : this.formFilterSelect.length
-            ? [this.formFilterSelect[0].id]
-            : [],
+              ? [this.formFilterSelect[0].id]
+              : [],
         )
       }),
     )
@@ -414,20 +414,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.humanResources = []
     this.referentiel = []
     this.allPersons = []
-    
+
     // Nettoyer les timeouts actifs
     if (this.timeoutUpdateSearch) {
       clearTimeout(this.timeoutUpdateSearch)
       this.timeoutUpdateSearch = null
     }
-    
+
     // Réinitialiser les variables de recherche
     this.valuesFinded = null
     this.searchValue = ''
-    
+
     // Marquer le composant comme détruit
     this.isDestroyed = true
-    
+
     // Détruire les observables
     this.watcherDestroy()
   }
@@ -520,7 +520,12 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
    * @returns list
    */
   onFilterList() {
-    if (this.isDestroyed || !this.formFilterSelect.length || this.humanResourceService.backupId.getValue() === null || this.reaffectatorService.selectedCategoriesId === null) {
+    if (
+      this.isDestroyed ||
+      !this.formFilterSelect.length ||
+      this.humanResourceService.backupId.getValue() === null ||
+      this.reaffectatorService.selectedCategoriesId === null
+    ) {
       return
     }
 
@@ -548,7 +553,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         if (this.isDestroyed) {
           return
         }
-        
+
         this.allPersons = allPersons
         this.listFormated = list.map((i: listFormatedInterface, index: number) => {
           if (index === 0) {
@@ -700,7 +705,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.indexValuesFinded = 0
 
     if (this.valuesFinded && this.valuesFinded.length) {
-      this.valuesFinded = this.valuesFinded.filter(x=>x.situations[0]?.category?.id===this.reaffectatorService.selectedCategoriesId)
+      this.valuesFinded = this.valuesFinded.filter((x) => x.situations[0]?.category?.id === this.reaffectatorService.selectedCategoriesId)
       this.onGoTo(this.valuesFinded[this.indexValuesFinded].id)
     } else {
       this.onGoTo(null)
@@ -921,24 +926,22 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         let etpt = 0
         switch (this.reaffectatorService.selectedCategoriesId) {
           case 1: {
-            etpt = (refFromItemList as any).etpMag ?? 0;
-            break;
+            etpt = (refFromItemList as any).etpMag ?? 0
+            break
           }
-          case 2:
-
-          {
-            etpt = (refFromItemList as any).etpFon ?? 0;
-            break;
+          case 2: {
+            etpt = (refFromItemList as any).etpFon ?? 0
+            break
           }
           case 3: {
-            etpt = (refFromItemList as any).etpCon ?? 0;
-            break;
+            etpt = (refFromItemList as any).etpCon ?? 0
+            break
           }
           default: {
-            etpt = refFromItemList.totalAffected ?? 0;
+            etpt = refFromItemList.totalAffected ?? 0
           }
-        } 
-        if (refFromItemList.etpUseToday!==refFromItemList.totalAffected) etpt=refFromItemList.totalAffected||0
+        }
+        if (refFromItemList.etpUseToday !== refFromItemList.totalAffected) etpt = refFromItemList.totalAffected || 0
         const nbWorkingHours = refFromItemList.nbWorkingHours || 0
         const nbWorkingDays = refFromItemList.nbWorkingDays || 0
         const lastStock = refFromItemList.lastStock || 0
@@ -946,25 +949,20 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
         let outValue = averageWorkingProcess === 0 ? 0 : (etpt * nbWorkingHours * nbWorkingDays) / averageWorkingProcess
 
-        let dtes = outValue && Number.isFinite(lastStock / outValue)
-        ? Math.max(0, fixDecimal(lastStock / outValue, 100))
-        : Infinity;
-        
-        let realDTESInMonths = outValue && Number.isFinite(ref.realDTESInMonths)
-          ? ref.realDTESInMonths
-          : Infinity;
-        
-        let coverage = outValue && refFromItemList.totalIn!==0?Math.round((outValue / inValue) * 100):NaN;
-        
-        let realCoverage = this.reaffectatorService.selectedReferentielIds.includes(ref.id) && outValue && refFromItemList.totalIn!==0
-          ? ref.realCoverage
-          : NaN;
-          
+        let dtes = outValue && Number.isFinite(lastStock / outValue) ? Math.max(0, fixDecimal(lastStock / outValue, 100)) : Infinity
+
+        let realDTESInMonths = outValue && Number.isFinite(ref.realDTESInMonths) ? ref.realDTESInMonths : Infinity
+
+        let coverage = outValue && refFromItemList.totalIn !== 0 ? Math.round((outValue / inValue) * 100) : NaN
+
+        let realCoverage =
+          this.reaffectatorService.selectedReferentielIds.includes(ref.id) && outValue && refFromItemList.totalIn !== 0 ? ref.realCoverage : NaN
+
         return {
           ...ref,
-          realDTESInMonths:this.noNegativValues(realDTESInMonths),
+          realDTESInMonths: this.noNegativValues(realDTESInMonths),
           coverage,
-          dtes:this.noNegativValues(dtes),
+          dtes: this.noNegativValues(dtes),
           etpUseToday: refFromItemList.etpUseToday,
           totalAffected: refFromItemList.totalAffected,
           realCoverage: realCoverage,
@@ -984,8 +982,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     if (this.isDestroyed) {
       return
     }
-    
+
     const list: RHActivityInterface[] = []
+    this.kpiService.register(REAFFECTOR_UPDATE_AGENT, hr.id.toString())
 
     referentiels
       .filter((r) => r.percent)
@@ -1112,18 +1111,18 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
 
   /**
    * Arrondir un nombre à l'entier le plus proche
-   * @param valeur 
-   * @returns 
+   * @param valeur
+   * @returns
    */
-  round(valeur:number){
-  return Math.round(valeur)
+  round(valeur: number) {
+    return Math.round(valeur)
   }
 
-  noNegativValues(value:number){
-  return value<0 ? 0: value
+  noNegativValues(value: number) {
+    return value < 0 ? 0 : value
   }
 
-  isInfinity(value:number){
-    return isNaN(value)|| !Number.isFinite(value)?true:false
+  isInfinity(value: number) {
+    return isNaN(value) || !Number.isFinite(value) ? true : false
   }
 }

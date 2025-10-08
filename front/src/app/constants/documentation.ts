@@ -27,10 +27,15 @@ export const DOCUMENTATION_CREATE_NEW_PERSON = 'https://docs.a-just.beta.gouv.fr
  */
 export const DOCUMENTATION_UPDATE_PERSON = 'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/enregistrer-une-nouvelle-situation'
 /**
- * Lien pour la ventilation
+ * Lien pour la ventilation TJ
  */
-export const DOCUMENTATION_VENTILATEUR_PERSON =
+export const DOCUMENTATION_VENTILATEUR_PERSON_TJ =
   'https://docs.a-just.beta.gouv.fr/documentation-deploiement/ventilateur/ventiler-ses-effectifs/la-ventilation-en-quelques-clics'
+/**
+ * Lien pour la ventilation CA
+ */
+export const DOCUMENTATION_VENTILATEUR_PERSON_CA =
+  'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/ventiler-ses-effectifs/la-ventilation-en-quelques-clics'
 /**
  * Lien pour le guide de la donnée
  */

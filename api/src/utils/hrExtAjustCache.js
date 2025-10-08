@@ -1,4 +1,8 @@
-// hrExtAjustCache.js
+import { getRedisClient } from './redis.js'
+import zlib from 'zlib'
+import { promisify } from 'util'
+import { createHash } from 'crypto'
+
 // Stockage A-JUST séparé, 1 clé par (backupId, période), format compact "schéma":
 //   Clé : hrExtAjust:{backupId}:{periodHash}  (String)
 //   Valeur : base64(gzip(JSON.stringify({ cols, rows, idCol: 'Réf.' })))
@@ -13,12 +17,6 @@
 // - readJurisdictionAsArray(backupId, start, end) -> agentObj[]
 // - getAgentFromSchema(schema, agentId) -> agentObj|null
 // - invalidateAjustBackup(backupId) -> supprime hrExtAjust:{backupId}:*
-//
-
-import { getRedisClient } from './redis.js'
-import zlib from 'zlib'
-import { promisify } from 'util'
-import { createHash } from 'crypto'
 
 const gzip = promisify(zlib.gzip)
 const gunzip = promisify(zlib.gunzip)
@@ -34,17 +32,36 @@ const toYmd = (iso) => {
   return new Date(iso).toISOString().slice(0, 10)
 }
 
+/**
+ * Normalisation des dates, gestion de l'ordre
+ * @param {*} start
+ * @param {*} end
+ * @returns
+ */
 const normalizePeriod = (start, end) => {
   const s = toYmd(start),
     e = toYmd(end)
   return s <= e ? [s, e] : [e, s]
 }
 
+/**
+ * Creation d'un hash pour une période date de debut date de fin
+ * @param {*} start
+ * @param {*} end
+ * @returns
+ */
 export const periodHash = (start, end) => {
   const [s, e] = normalizePeriod(start, end)
   return createHash('sha1').update(`${s}|${e}`).digest('hex').slice(0, 20)
 }
 
+/**
+ * Génération de la clef redis
+ * @param {*} backupId
+ * @param {*} start
+ * @param {*} end
+ * @returns
+ */
 export const ajustKey = (backupId, start, end) => `${PREFIX}:${backupId}:${periodHash(start, end)}`
 
 // ---------- Encodage ----------
@@ -58,6 +75,9 @@ const decode = async (b64) => JSON.parse((await gunzip(Buffer.from(b64, 'base64'
  * Construit { cols, rows, idCol } à partir d'un array d'agents (objets).
  * - Si `cols` est fourni, respecte l'ordre
  * - Sinon, dérive des clés du 1er agent (insertion order JS).
+ * @param {*} agentsArray
+ * @param {*} cols
+ * @returns
  */
 const buildSchemaFromAgents = (agentsArray, cols) => {
   const colsFinal = cols && cols.length ? cols.slice() : agentsArray?.length ? Object.keys(agentsArray[0]) : []
@@ -69,7 +89,12 @@ const buildSchemaFromAgents = (agentsArray, cols) => {
   return { cols: colsFinal, rows, idCol: ID_COL }
 }
 
-/** Remappe une ligne (row array) vers un objet aligné sur schema.cols */
+/**
+ * Remappe une ligne (row array) vers un objet aligné sur schema.cols
+ * @param {*} schema
+ * @param {*} row
+ * @returns
+ */
 export const rowToObject = (schema, row) => {
   const obj = {}
   const { cols } = schema
@@ -77,7 +102,11 @@ export const rowToObject = (schema, row) => {
   return obj
 }
 
-/** Construit un index Map(id -> rowIndex) pour des lookups O(1) */
+/**
+ * Construit un index Map(id -> rowIndex) pour des lookups O(1)
+ * @param {*} schema
+ * @returns
+ */
 export const buildRowIndex = (schema) => {
   const { cols, rows, idCol } = schema
   const idIdx = cols.indexOf(idCol)
@@ -91,10 +120,12 @@ export const buildRowIndex = (schema) => {
 
 /**
  * Écrit toute la juridiction (array d'objets agents) dans UNE clé.
- * - backupId : id de juridiction
- * - start/end : dates période (acceptent Date ou string)
- * - agentsArray : [{agent1}, {agent2}, ...]
- * - cols (optionnel) : string[] d'ordre de colonnes à figer
+ * @param {*} backupId id de juridiction
+ * @param {*} start dates période (acceptent Date ou string)
+ * @param {*} end dates période (acceptent Date ou string)
+ * @param {*} agentsArray [{agent1}, {agent2}, ...]
+ * @param {*} cols (optionnel) : string[] d'ordre de colonnes à figer
+ * @returns
  */
 export const saveJurisdictionArray = async (backupId, start, end, agentsArray, cols) => {
   const c = getRedisClient()
@@ -107,7 +138,13 @@ export const saveJurisdictionArray = async (backupId, start, end, agentsArray, c
 
 // ---------- LECTURE ----------
 
-/** Lit la juridiction (schéma compact) telle quelle. */
+/**
+ * Lit la juridiction (schéma compact) telle quelle
+ * @param {*} backupId
+ * @param {*} start
+ * @param {*} end
+ * @returns
+ */
 export const readJurisdictionSchema = async (backupId, start, end) => {
   const c = getRedisClient()
   if (!c) return null
@@ -117,14 +154,25 @@ export const readJurisdictionSchema = async (backupId, start, end) => {
   return await decode(b64) // { cols, rows, idCol }
 }
 
-/** Lit et remappe en array d'objets (gourmand en RAM). */
+/**
+ * Lit et remappe en array d'objets (gourmand en RAM)
+ * @param {*} backupId
+ * @param {*} start
+ * @param {*} end
+ * @returns
+ */
 export const readJurisdictionAsArray = async (backupId, start, end) => {
   const schema = await readJurisdictionSchema(backupId, start, end)
   if (!schema) return []
   return schema.rows.map((row) => rowToObject(schema, row))
 }
 
-/** Récupère l'agent par id (Réf.) sans remapper toute la table. */
+/**
+ * Récupère l'agent par id (Réf.) sans remapper toute la table
+ * @param {*} schema
+ * @param {*} agentId
+ * @returns
+ */
 export const getAgentFromSchema = (schema, agentId) => {
   if (!schema) return null
   const { index } = buildRowIndex(schema)
@@ -135,7 +183,12 @@ export const getAgentFromSchema = (schema, agentId) => {
 
 // ---------- INVALIDATION (clean juridiction entière) ----------
 
-/** Supprime toutes les périodes A-JUST d'une juridiction : hrExtAjust:{backupId}:* */
+/**
+ * Supprime toutes les périodes A-JUST d'une juridiction : hrExtAjust:{backupId}:*
+ * @param {*} backupId
+ * @param {*} scanCount
+ * @returns
+ */
 export const invalidateAjustBackup = async (backupId, scanCount = 1000) => {
   const c = getRedisClient()
   if (!c) return
@@ -160,7 +213,13 @@ export const invalidateAjustBackup = async (backupId, scanCount = 1000) => {
   }
 }
 
-/** Test d'existence d'une période */
+/**
+ * Test d'existence d'une période
+ * @param {*} backupId
+ * @param {*} start
+ * @param {*} end
+ * @returns
+ */
 export const periodExistsAjust = async (backupId, start, end) => {
   const c = getRedisClient()
   if (!c) return false

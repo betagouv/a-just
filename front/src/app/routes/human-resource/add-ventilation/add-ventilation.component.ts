@@ -24,7 +24,8 @@ import { fixDecimal } from '../../../utils/numbers'
 import { downloadFile } from '../../../utils/system'
 import {
   CALCULATE_DOWNLOAD_URL,
-  DOCUMENTATION_VENTILATEUR_PERSON,
+  DOCUMENTATION_VENTILATEUR_PERSON_CA,
+  DOCUMENTATION_VENTILATEUR_PERSON_TJ,
   IMPORT_ETP_TEMPLATE,
   IMPORT_ETP_TEMPLATE_CA,
   NOMENCLATURE_DOWNLOAD_URL,
@@ -148,7 +149,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    * Event pour afficher les alertes au niveau du formulaire
    */
   @Output() alertSet = new EventEmitter<{
-    tag: string,
+    tag: string
     remove?: boolean
   }>()
   /**
@@ -215,7 +216,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
   /**
    * Import
    */
-  imported=false
+  imported = false
 
   /**
    * Constructeur
@@ -279,18 +280,16 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
       this.form.get('etp')?.valueChanges.subscribe((value) => {
         console.log('value', value)
         if (value) {
+          const valueFormated = parseFloat((value || '') + ''.replace(/,/, '.'))
 
-          const valueFormated =
-            parseFloat((value || '')+''.replace(/,/, '.'));
-    
           if (valueFormated < 0) {
-            alert('Le pourcentage ne peut pas être négatif');
-            return;
+            alert('Le pourcentage ne peut pas être négatif')
+            return
           }
-    
+
           if (Number.isNaN(valueFormated)) {
-            alert('La valeur saisie n\'est pas un nombre');
-            return;
+            alert("La valeur saisie n'est pas un nombre")
+            return
           }
 
           if (value > 1) value = 1
@@ -404,7 +403,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     const fonct = fonctions.find((c) => c.id == fonctionId)
 
     //const indisponibilites = this.human?.indisponibilities || []
-    
+
     /***
      * Je supprime le check si l'indisponibilité est ignorée pour la ventilation car on ne sais plus pourquoi on a fait ce check
      */
@@ -496,7 +495,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
           title: 'La ventilation de cet agent est incomplète',
           text: `La ventilation de l’ensemble des activités d’un agent en poste dans la juridiction doit systématiquement atteindre 100% de son temps de travail, même en cas de temps partiel ou d’indisponibilité.<br/><br/>Il vous reste à compléter ${fixDecimal(
             100 - totalAffected,
-          )}% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${DOCUMENTATION_VENTILATEUR_PERSON}" target="_blank" rel="noreferrer">cliquez ici</a>`,
+          )}% de l’activité totale de cet agent.<br/><br/>Pour en savoir plus, <a href="${this.userService.isTJ() ? DOCUMENTATION_VENTILATEUR_PERSON_TJ : DOCUMENTATION_VENTILATEUR_PERSON_CA}" target="_blank" rel="noreferrer">cliquez ici</a>`,
           secondaryText: 'Compléter la situation',
           callbackSecondary: () => {
             this.scrollToBottomElement()
@@ -640,7 +639,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
    */
   onNewReferentiel(referentiels: ContentieuReferentielInterface[]) {
     this.updatedReferentiels = referentiels
-    this.sumPercentImported =  this.updatedReferentiels.reduce((sum, c) => sum + (c.percent || 0), 0) 
+    this.sumPercentImported = this.updatedReferentiels.reduce((sum, c) => sum + (c.percent || 0), 0)
   }
 
   /**
@@ -751,7 +750,7 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
     }
 
     this.fileReader(file, classe, event)
-    this.imported=true
+    this.imported = true
     element.value = ''
   }
 

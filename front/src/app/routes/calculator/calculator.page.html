@@ -100,7 +100,7 @@
                     'ri-sort-asc': sortBy.up === true,
                     'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realCoverage'),
                   }"></i>
-          <aj-tooltips title="TAUX DE CONVERTURE MOYEN SUR LA PÉRIODE"
+          <aj-tooltips title="TAUX DE COUVERTURE MOYEN SUR LA PÉRIODE"
             content="SORTIES /ENTREES de la période en %"></aj-tooltips>
         </div>
         <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{ selected: sortBy.type === 'lastStock' }">

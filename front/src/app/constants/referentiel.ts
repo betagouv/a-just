@@ -275,3 +275,8 @@ export const QUALITY_LIST = [
     key: VALUE_QUALITY_TO_VERIFY,
   },
 ]
+
+export const NB_DAYS_BY_FONCTIONNAIRE = 229.57
+export const NB_DAYS_BY_MAGISTRAT = 208
+export const NB_HOURS_PER_DAY_AND_FONCTIONNAIRE = 7
+export const NB_HOURS_PER_DAY_AND_MAGISTRAT = 8
