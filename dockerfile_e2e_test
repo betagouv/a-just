@@ -5,7 +5,9 @@ COPY ./end-to-end/scripts /scripts
 WORKDIR /e2e
 
 
-CMD ./scripts/wait-for-it.sh api:8081 --timeout=300 && \
+CMD node -v && npm -v && yarn -v || true; \
+    echo "[cypress-test] Starting waits..."; \
+    ./scripts/wait-for-it.sh api:8081 --timeout=300 && \
      ./scripts/wait-for-it.sh front:4200 --timeout=300 && \
      ./scripts/wait-for-it.sh api_sandbox:8081 --timeout=300 && \
      ./scripts/wait-for-it.sh front_sandbox:4200 --timeout=300 && \
