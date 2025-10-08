@@ -381,9 +381,9 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
 
   async onLoadMaxDate() {
     const resp = await this.activitiesService.getLastMonthActivities()
-    console.log('resp', resp)
     if (resp) {
-      this.dateSelector.maxDate = new Date(resp)
+      const date = new Date(resp)
+      this.dateSelector.maxDate = new Date(date.getFullYear(), 11, 31)
     }
   }
 
