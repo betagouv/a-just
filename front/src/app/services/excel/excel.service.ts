@@ -298,7 +298,21 @@ export class ExcelService extends MainClass {
 
         let finished = false
         const t0 = Date.now()
-        const HARD_DEADLINE_MS = 180000 // 3 minutes max
+        // Allow a test-only override of the hard deadline to accommodate slower CI
+        // Read from window.__AJ_E2E_EXPORT_MAX_MS or localStorage.__AJ_E2E_EXPORT_MAX_MS when present
+        const __e2eMax = (() => {
+          try {
+            const w = (window as any);
+            const fromWin = Number(w && w.__AJ_E2E_EXPORT_MAX_MS);
+            if (Number.isFinite(fromWin) && fromWin > 0) return fromWin;
+          } catch {}
+          try {
+            const fromLS = Number(localStorage.getItem('__AJ_E2E_EXPORT_MAX_MS'));
+            if (Number.isFinite(fromLS) && fromLS > 0) return fromLS;
+          } catch {}
+          return null as any;
+        })();
+        const HARD_DEADLINE_MS = Number.isFinite(__e2eMax) && __e2eMax > 0 ? Number(__e2eMax) : 180000 // 3 minutes max
         let intervalId: any = null
 
         const cleanAll = () => {
