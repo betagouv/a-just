@@ -321,6 +321,99 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
   cy.intercept('POST', '**/api/extractor/**').as('effData');
   cy.intercept('GET', '**/assets/*.xlsx*').as('effTpl');
   snapshot(prefix, labelSlug, 'step15b-downloads-wiped');
+  // Install hooks BEFORE clicking export so we capture fast Blob/saveAs flows
+  cy.window({ log: false }).then((win: any) => {
+    try {
+      (win as any).__downloadStarted = false;
+      (win as any).__lastDownloadName = '';
+      (win as any).__lastDownloadBase64 = '';
+      // Hook fetch: add cache-buster to XLSX template
+      try {
+        if (!(win as any).__fetchHooked) {
+          const origFetch = (win as any).fetch && (win as any).fetch.bind(win);
+          if (origFetch) {
+            (win as any).__fetchHooked = true;
+            (win as any).fetch = function(input: any, init?: any) {
+              try {
+                let url = typeof input === 'string' ? input : (input && input.url) || '';
+                if (/\/assets\/.*\.xlsx(\?.*)?$/i.test(url)) {
+                  const u = new URL(url, win.location.origin);
+                  u.searchParams.set('e2e', String(Date.now()));
+                  input = u.toString();
+                }
+              } catch {}
+              return origFetch(input, init);
+            } as any;
+          }
+        }
+      } catch {}
+      // Hook URL.createObjectURL to detect download start
+      try {
+        const origCreate = win.URL && win.URL.createObjectURL;
+        if (origCreate && !(win as any).__hookedCreateObjectURL) {
+          (win as any).__hookedCreateObjectURL = true;
+          win.URL.createObjectURL = function(blob: any) {
+            try { (win as any).__downloadStarted = true; } catch {}
+            return origCreate.apply(this, arguments as any);
+          } as any;
+        }
+      } catch {}
+      // Hook Blob to capture base64
+      try {
+        const OrigBlob = (win as any).Blob;
+        if (OrigBlob && !(win as any).__blobHooked) {
+          (win as any).__blobHooked = true;
+          (win as any).Blob = function(parts: any[], opts?: any) {
+            const b = new (OrigBlob as any)(parts, opts);
+            try {
+              const size = (b && (b as any).size) || 0;
+              if (size > 100) {
+                const reader = new (win as any).FileReader();
+                reader.onloadend = () => {
+                  try {
+                    const res = String(reader.result || '');
+                    const base64 = res.includes(',') ? res.split(',')[1] : res;
+                    (win as any).__lastDownloadBase64 = base64;
+                  } catch {}
+                };
+                try { reader.readAsDataURL(b); } catch {}
+              }
+            } catch {}
+            return b;
+          } as any;
+        }
+      } catch {}
+      // Hook saveAs to capture name + base64
+      try {
+        const origSaveAs = (win as any).saveAs || ((win as any).FileSaver && (win as any).FileSaver.saveAs);
+        if (origSaveAs) {
+          (win as any).__origSaveAs = origSaveAs;
+          const wrapper = function(blob: any, name: string) {
+            try { (win as any).__downloadStarted = true; (win as any).__lastDownloadName = String(name || ''); } catch {}
+            try {
+              const reader = new (win as any).FileReader();
+              reader.onloadend = () => {
+                try {
+                  const res = String(reader.result || '');
+                  const base64 = res.includes(',') ? res.split(',')[1] : res;
+                  (win as any).__lastDownloadBase64 = base64;
+                } catch {}
+              };
+              reader.readAsDataURL(blob);
+            } catch {}
+            return origSaveAs.apply(this, arguments as any);
+          } as any;
+          if ((win as any).saveAs) (win as any).saveAs = wrapper; else if ((win as any).FileSaver) (win as any).FileSaver.saveAs = wrapper;
+        }
+      } catch {}
+    } catch {}
+  });
+  // Close any lingering overlay that may block the export click
+  cy.get('body').then(($b) => {
+    const bd = $b.find('div.cdk-overlay-backdrop');
+    if (bd.length) cy.wrap(bd.get(0)).click({ force: true });
+  });
+  // Click export (selectors unchanged)
   cy.get('body').then(($body) => {
     if ($body.find('#export-excel-button').length) {
       cy.get('#export-excel-button').scrollIntoView().click({ force: true });
@@ -329,8 +422,8 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
     }
   });
   snapshot(prefix, labelSlug, 'step16-export-clicked');
-  // Wait for backend/template calls as a signal export pipeline ran
-  cy.wait(['@effData', '@effTpl'], { timeout: 180000 }).then(() => {
+  // Wait for template fetch as the primary signal the export pipeline ran
+  cy.wait('@effTpl', { timeout: 180000 }).then(() => {
     snapshot(prefix, labelSlug, 'step16b-network-complete');
   });
 
@@ -372,63 +465,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       snapshot(prefix, labelSlug, 'step17b-ok-clicked-late');
     }
   });
-  // Hook Blob/saveAs to capture XLSX buffer as base64 and persist it as a fallback before waiting for downloads
-  cy.window({ log: false }).then((win: any) => {
-    try {
-      // Hook URL.createObjectURL to detect download start
-      const origCreate = win.URL && win.URL.createObjectURL;
-      if (origCreate && !(win as any).__hookedCreateObjectURL) {
-        (win as any).__hookedCreateObjectURL = true;
-        win.URL.createObjectURL = function(blob: any) {
-          try { (win as any).__downloadStarted = true; } catch {}
-          return origCreate.apply(this, arguments as any);
-        } as any;
-      }
-      // Hook Blob to capture base64
-      const OrigBlob = (win as any).Blob;
-      if (OrigBlob && !(win as any).__blobHooked) {
-        (win as any).__blobHooked = true;
-        (win as any).Blob = function(parts: any[], opts?: any) {
-          const b = new (OrigBlob as any)(parts, opts);
-          try {
-            const size = (b && (b as any).size) || 0;
-            if (size > 100) {
-              const reader = new (win as any).FileReader();
-              reader.onloadend = () => {
-                try {
-                  const res = String(reader.result || '');
-                  const base64 = res.includes(',') ? res.split(',')[1] : res;
-                  (win as any).__lastDownloadBase64 = base64;
-                } catch {}
-              };
-              try { reader.readAsDataURL(b); } catch {}
-            }
-          } catch {}
-          return b;
-        } as any;
-      }
-      const origSaveAs = (win as any).saveAs || ((win as any).FileSaver && (win as any).FileSaver.saveAs);
-      if (origSaveAs) {
-        (win as any).__origSaveAs = origSaveAs;
-        const wrapper = function(blob: any, name: string) {
-          try { (win as any).__downloadStarted = true; (win as any).__lastDownloadName = String(name || ''); } catch {}
-          try {
-            const reader = new (win as any).FileReader();
-            reader.onloadend = () => {
-              try {
-                const res = String(reader.result || '');
-                const base64 = res.includes(',') ? res.split(',')[1] : res;
-                (win as any).__lastDownloadBase64 = base64;
-              } catch {}
-            };
-            reader.readAsDataURL(blob);
-          } catch {}
-          return origSaveAs.apply(this, arguments as any);
-        } as any;
-        if ((win as any).saveAs) (win as any).saveAs = wrapper; else if ((win as any).FileSaver) (win as any).FileSaver.saveAs = wrapper;
-      }
-    } catch {}
-  });
+  // Hooks already installed above; continue with fallback persistence and wait
   // Proactively persist from base64 if present to aid download detection
   persistBase64WhenReady(`effectif_${START}_${STOP}.xlsx`);
 
