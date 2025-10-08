@@ -1,4 +1,5 @@
 import { endOfMonth, startOfMonth } from 'date-fns'
+import { NB_HOURS_PER_DAY_AND_MAGISTRAT } from '../constants/referentiel'
 
 /**
  * Calcul du nombre de mois entre deux dates
@@ -359,7 +360,7 @@ export function isDateBiggerThan(firstDate: string | Date, secondDate: string | 
 export function nbHourInMonth(date: Date = new Date()) {
   const dateStart = new Date(date.getFullYear(), date.getMonth())
   const dateStop = new Date(dateStart)
-  const nbHoursPerDayAndMagistrat = import.meta.env.NG_APP_NB_HOURS_PER_DAY_AND_MAGISTRAT
+  const nbHoursPerDayAndMagistrat = NB_HOURS_PER_DAY_AND_MAGISTRAT
   dateStop.setMonth(dateStop.getMonth() + 1)
 
   let nbDay = 0

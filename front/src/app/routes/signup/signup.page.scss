@@ -266,3 +266,9 @@
   font-size: 14px;
   font-weight: 500;
 }
+
+.checkbox-container input.large:focus,
+.checkbox-container input.large:focus-visible {
+  outline: 2px solid #000091;
+  outline-offset: 2px;
+}

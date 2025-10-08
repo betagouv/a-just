@@ -15,18 +15,36 @@ const defaultTTL = 3600 // 1h
 
 const useCompression = true // mettre à false pour débug
 
+/**
+ * Formatage d'une clef redis
+ * @param {*} cacheName 
+ * @param {*} key 
+ * @returns 
+ */
 export const getFullKey = (cacheName, key) => `${cacheName}:${key}`
 
 let redisReady = Promise.resolve()
 
+/**
+ * retourne le client redis
+ * @returns le client ou null si pas de connexion
+ */
 export const getRedisClient = () => {
   if (client && client.isReady) return client
   console.warn('⚠️ Redis client non prêt ou indisponible')
   return null
 }
 
+/**
+ * Attend que la tentative de connexion a redis soit terminée qu'elle soit ok ou ko
+ * @returns
+ */
 export const waitForRedis = () => redisReady
 
+/**
+ * Initialisaton de redis avec gestion des erreurs
+ * @returns
+ */
 export const initRedis = () => {
   if (!config.redis) {
     console.warn('⚠️ Pas de config Redis')
@@ -87,7 +105,12 @@ export const initRedis = () => {
   return redisReady
 }
 
-// === GET ===
+/**
+ * Récuparation du cache
+ * @param {*} key backupId
+ * @param {*} cacheName type de cache (hrBackup, ExtAjust etc..)
+ * @returns
+ */
 export const getCacheValue = async (key, cacheName) => {
   const fullKey = getFullKey(cacheName, key)
 
@@ -112,7 +135,14 @@ export const getCacheValue = async (key, cacheName) => {
   }
 }
 
-// === SET ===
+/**
+ * Ecriture du cache pour une juridiction
+ * @param {*} key backupId
+ * @param {*} value liste des hr complète
+ * @param {*} cacheName type de cache
+ * @param {*} ttl
+ * @returns
+ */
 export const setCacheValue = async (key, value, cacheName, ttl = defaultTTL) => {
   const fullKey = getFullKey(cacheName, key)
 
@@ -143,7 +173,12 @@ export const setCacheValue = async (key, value, cacheName, ttl = defaultTTL) => 
   }
 }
 
-// === DELETE ===
+/**
+ * Suppression du cache d'une clef donnée
+ * @param {*} key 
+ * @param {*} cacheName 
+ * @returns 
+ */
 export const deleteCacheValue = async (key, cacheName) => {
   const fullKey = getFullKey(cacheName, key)
 
@@ -165,6 +200,12 @@ export const getObjectSizeInMB = (obj) => {
   return +(sizeInBytes / 1024 / 1024).toFixed(2) // en Mo
 }
 
+/**
+ * Charge ou calcule la cache de la liste complète d'agent pour une juridiction
+ * @param {*} backupId 
+ * @param {*} models objet d'acces bdd
+ * @returns 
+ */
 export const loadOrWarmHR = async (backupId, models) => {
   const cacheKey = 'hrBackup'
   let hr = await getCacheValue(backupId, cacheKey)
@@ -187,7 +228,7 @@ export const loadOrWarmHR = async (backupId, models) => {
  * @param {string} key - La clé simple (ex: backupId)
  * @param {string} cacheName - Le préfixe du cache (ex: hrBackup)
  * @param {object} item - L'élément à insérer ou remplacer (doit contenir un champ 'id')
- * @param {number} [ttl=defaultTTL] - TTL en secondes (optionnel)
+ * @param {number} [ttl=defaultTTL] - TTL en secondes pour l'instant pas utilisé, a voir à l'usage
  */
 export const updateCacheListItem = async (key, cacheName, item, ttl = defaultTTL) => {
   if (!item?.id) {
@@ -220,8 +261,8 @@ export const removeCacheListItem = async (key, cacheName, itemId) => {
   const list = (await getCacheValue(key, cacheName)) || []
   const newList = list.filter((el) => el.id != itemId)
   await setCacheValue(key, newList, cacheName)
-  await invalidateAgentEverywhere(key, itemId)
-  await invalidateAjustBackup(key)
+  await invalidateAgentEverywhere(key, itemId) // onglet DDG extracteur
+  await invalidateAjustBackup(key) // onglet AJUST extracteur
 }
 
 /**
@@ -255,7 +296,11 @@ export async function listKeys(pattern = '*', count = 1000) {
   return keys
 }
 
-/** Affiche joliment et retourne le nombre de clés */
+/**
+ * Fonction utilitaire de log pour le cache redis (clef et taille)
+ * @param {*} pattern
+ * @returns
+ */
 export async function printKeys(pattern = '*') {
   const ks = await listKeys(pattern)
   console.log(`Pattern "${pattern}" → ${ks.length} clé(s)`)

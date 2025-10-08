@@ -221,7 +221,7 @@ export async function getSituation(
           end: today(),
           category: undefined,
           fonctions: fonctionIds,
-          contentieux: referentielId[0],
+          contentieux: referentielId,
         },
         categories,
       )
@@ -240,7 +240,7 @@ export async function getSituation(
             end: new Date(endDateCs),
             category: undefined,
             fonctions: fonctionIds,
-            contentieux: referentielId[0],
+            contentieux: referentielId,
           },
           categories,
         )
@@ -265,7 +265,7 @@ export async function getSituation(
             end: new Date(),
             category: undefined,
             fonctions: fonctionIds,
-            contentieux: referentielId[0],
+            contentieux: referentielId,
           },
           categories,
         )
@@ -300,7 +300,7 @@ export async function getSituation(
               end: new Date(dateStart),
               category: undefined,
               fonctions: fonctionIds,
-              contentieux: referentielId[0],
+              contentieux: referentielId,
             },
             categories,
           )
@@ -319,7 +319,7 @@ export async function getSituation(
               end: new Date(dateStart),
               category: undefined,
               fonctions: fonctionIds,
-              contentieux: referentielId[0],
+              contentieux: referentielId,
             },
             categories,
           )
@@ -352,7 +352,7 @@ export async function getSituation(
               end: dateStop,
               category: undefined,
               fonctions: fonctionIds,
-              contentieux: referentielId[0],
+              contentieux: referentielId,
             },
             categories,
           )
@@ -378,7 +378,7 @@ export async function getSituation(
           end: dateStop,
           category: undefined,
           fonctions: fonctionIds,
-          contentieux: referentielId[0],
+          contentieux: referentielId,
         },
         categories,
       )

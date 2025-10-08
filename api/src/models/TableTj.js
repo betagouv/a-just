@@ -5,7 +5,7 @@ import { loadOrWarmHR } from '../utils/redis'
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
+      attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled', 'backup_id'],
       where: {
         parent_id: null,
       },
@@ -126,21 +126,38 @@ export default (sequelizeInstance, Model) => {
   /**
    * Update juridiction value
    */
-  Model.updateJuridiction = async (juridictionId, values) => {
-    const element = await Model.findOne({
+  Model.updateJuridiction = async (juridictionId, node, values) => {
+    let element = await Model.findOne({
       where: {
         id: juridictionId,
       },
     })
 
     if (element) {
-      await element.update(values)
+      if (node === 'enabled') {
+        element = await element.update({
+          enabled: values === 'oui' ? true : false,
+        })
+      } else {
+        element = await element.update({
+          [node]: values,
+        })
+      }
 
-      if (values.enabled) {
-        // check and create juridiction
-        const juridicitionId = await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label)
+      if (node === 'label' || !element.dataValues.backup_id) {
+        const juridicitionId = await Model.models.HRBackups.findOrCreateLabel(
+          element.dataValues.label,
+          element.dataValues.backup_id,
+          node === 'label' ? values : null,
+          false,
+        )
 
-        await Model.models.HRBackups.addUserAccessToTeam(juridicitionId)
+        if (!element.dataValues.backup_id) {
+          await element.update({
+            backup_id: juridicitionId,
+          })
+          await Model.models.HRBackups.addUserAccessToTeam(juridicitionId)
+        }
       }
     }
   }
@@ -181,7 +198,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} userId
    * @param {*} datas
    */
-  Model.addIELST = async (i_elst, label, latitude, longitude, population) => {
+  Model.addIELST = async (i_elst, label, latitude, longitude, population, backup_id = null, enabled = false) => {
     await Model.create({
       i_elst: Number(i_elst),
       label: label,

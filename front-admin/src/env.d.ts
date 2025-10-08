@@ -1,10 +1,7 @@
 // Define the type of the environment variables.
 declare interface Env {
   readonly NODE_ENV: string;
-  NG_APP_PRODUCTION: boolean;
   NG_APP_SERVER_URL: string;
-  NG_APP_NB_DAYS_BY_MAGISTRAT: number;
-  NG_APP_NB_HOURS_PER_DAY_AND_MAGISTRAT: number;
   // Replace the following with your own environment variables.
   // Example: NGX_VERSION: string;
   [key: string]: any;

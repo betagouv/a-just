@@ -37,6 +37,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
+      backup_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       type: {
         type: Sequelize.STRING(255),
         allowNull: true,
@@ -76,7 +80,7 @@ export default (sequelizeInstance) => {
           fields: ['parent_id'],
         },
       ],
-    }
+    },
   )
 
   Model.associate = function (models) {

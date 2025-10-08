@@ -1,20 +1,23 @@
-// hrExtractorCache.js
-// Cache d'extractions par juridiction/période :
-//   - Clé : hrExt:{backupId}:{start}:{end} (HASH)
-//   - Champ : agentId
-//   - Valeur : payload compressé (gzip -> base64)
-
 import { getRedisClient } from './redis.js'
 import zlib from 'zlib'
 import { promisify } from 'util'
 import { invalidateAjustBackup } from './hrExtAjustCache.js'
+
+// Cache d'extractions par juridiction/période :
+//   - Clé : hrExt:{backupId}:{start}:{end} (HASH)
+//   - Champ : agentId
+//   - Valeur : payload compressé (gzip -> base64)
 
 const gzip = promisify(zlib.gzip)
 const gunzip = promisify(zlib.gunzip)
 
 const PREFIX = 'hrExt'
 
-/** Normalise une date en YYYY-MM-DD */
+/**
+ * Normalisation d'une date en YYYY-MM-DD
+ * @param {*} iso 
+ * @returns 
+ */
 const d = (iso) => {
   // Accepte Date, string ISO, etc. — on force YYYY-MM-DD
   if (iso instanceof Date) return iso.toISOString().slice(0, 10)
@@ -24,34 +27,59 @@ const d = (iso) => {
   return new Date(iso).toISOString().slice(0, 10)
 }
 
-/** Force start <= end et renvoie [start,end] en YYYY-MM-DD */
+/**
+ * Force start <= end et renvoie [start,end] en YYYY-MM-DD
+ * @param {*} start 
+ * @param {*} end 
+ * @returns 
+ */
 export const normalizePeriod = (start, end) => {
   const s = d(start)
   const e = d(end)
   return s <= e ? [s, e] : [e, s]
 }
 
-/** Construit la clé HASH de période */
+/**
+ * Construit la clé HASH de période
+ * @param {*} backupId 
+ * @param {*} start 
+ * @param {*} end 
+ * @returns 
+ */
 export const periodKey = (backupId, start, end) => {
   const [s, e] = normalizePeriod(start, end)
   return `${PREFIX}:${backupId}:${s}:${e}`
 }
 
-/** Encode JSON -> gzip -> base64 */
+/**
+ * Encode JSON -> gzip -> base64
+ * @param {*} obj 
+ * @returns 
+ */
 const encode = async (obj) => {
   const json = JSON.stringify(obj)
   const gz = await gzip(json)
   return gz.toString('base64')
 }
 
-/** Decode base64 -> gunzip -> JSON */
+/**
+ * Decode base64 -> gunzip -> JSON
+ * @param {*} b64 
+ * @returns 
+ */
 const decode = async (b64) => {
   const buf = Buffer.from(b64, 'base64')
   const out = await gunzip(buf)
   return JSON.parse(out.toString())
 }
 
-/** Lit toute l’extraction (tous les agents) d’une période. */
+/**
+ * Lit toute l’extraction (tous les agents) d’une période
+ * @param {*} backupId 
+ * @param {*} start 
+ * @param {*} end 
+ * @returns 
+ */
 export const readExtraction = async (backupId, start, end) => {
   const c = getRedisClient()
   if (!c) return {} // fallback : pas de Redis prêt
@@ -70,7 +98,7 @@ export const readExtraction = async (backupId, start, end) => {
 
 /**
  * Upsert d’un agent pour une période.
- * payload = objet JSON (sera compressé).
+ * payload = objet JSON (compressé par la suite)
  */
 export const upsertAgentExtraction = async (backupId, start, end, agentId, payload) => {
   const c = getRedisClient()
@@ -81,11 +109,13 @@ export const upsertAgentExtraction = async (backupId, start, end, agentId, paylo
   // Un seul champ à poser
   await c.hSet(key, agentId.toString(), encoded)
 }
-
 /**
- * Upsert massif : plusieurs agents d’un coup pour une période.
- * agentsMap : { [agentId]: payload }
- * Pipeline pour réduire les RTT.
+ * Upsert massif : plusieurs agents d’un coup pour une période (Pipeline pour réduire les RTT)
+ * @param {*} backupId 
+ * @param {*} start 
+ * @param {*} end 
+ * @param {*} agentsMap { [agentId]: payload }
+ * @returns 
  */
 export const upsertManyAgentsExtraction = async (backupId, start, end, agentsMap) => {
   const c = getRedisClient()
