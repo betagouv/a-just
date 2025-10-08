@@ -80,6 +80,30 @@ function diffSheetsWithTolerance(a: any, b: any, eps = 1e-6): string[] {
   return diffs;
 }
 
+// Poll window.__lastDownloadBase64 and persist to downloads when available.
+// This is non-invasive and safeguards CI where the native download path may be flaky or very slow.
+function persistBase64WhenReady(defaultFileName: string, maxMs = 240000, intervalMs = 1000) {
+  const start = Date.now();
+  const loop = (): Cypress.Chainable<any> => {
+    return cy.window({ log: false }).then((win: any) => {
+      try {
+        const b64 = String((win && win.__lastDownloadBase64) || '');
+        const nm = String((win && win.__lastDownloadName) || '') || defaultFileName;
+        if (b64 && b64.length > 100) {
+          return cy
+            .task('writeBufferToDownloads', { base64: b64, fileName: nm }, { timeout: 200000 })
+            .then(() => undefined);
+        }
+      } catch {}
+      if (Date.now() - start >= maxMs) {
+        return cy.wrap(null, { log: false });
+      }
+      return cy.wait(intervalMs, { log: false }).then(loop);
+    });
+  };
+  return loop();
+}
+
 function loginAndOpenDashboard(baseUrl: string) {
   cy.clearAllLocalStorage();
   cy.clearCookies();
@@ -391,16 +415,8 @@ function exportAndPersistActivite(baseUrl: string, startISO: string, stopISO: st
   });
   // Extra snapshot after handling any modal timing
 
-  // Proactive fallback: check early for base64 and persist it to downloads to aid waitForDownloadedExcel
-  cy.window({ log: false }).then((win: any) => {
-    try {
-      const b64 = String((win && win.__lastDownloadBase64) || '');
-      const nm = String((win && win.__lastDownloadName) || '');
-      if (b64 && b64.length > 100) {
-        cy.task('writeBufferToDownloads', { base64: b64, fileName: nm || `activite_${START}_${STOP}.xlsx` }, { timeout: 200000 });
-      }
-    } catch {}
-  });
+  // Bounded polling fallback: persist from base64 once available to aid waitForDownloadedExcel
+  persistBase64WhenReady(`activite_${START}_${STOP}.xlsx`);
 
   // Wait longer to accommodate slower export in CI for PR builds
   cy.task('waitForDownloadedExcel', { timeoutMs: 300000 }, { timeout: 320000 }).then((fileName: string) => {
