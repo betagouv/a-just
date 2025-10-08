@@ -13,7 +13,7 @@ export default class RouteJuridictions extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.TJ
@@ -23,12 +23,10 @@ export default class RouteJuridictions extends Route {
    * Interface qui retourne toutes les juridictions
    */
   @Route.Get()
-  async getAllVisibles (ctx) {
+  async getAllVisibles(ctx) {
     let list = null
-    if(isCa())
-      list = await this.model.getAllWithUser()
-    else 
-      list = await this.model.getAllVisibles()
+    if (isCa()) list = await this.model.getAllWithUser()
+    else list = await this.model.getAllVisibles()
     this.sendOk(ctx, list)
   }
 
@@ -38,7 +36,7 @@ export default class RouteJuridictions extends Route {
   @Route.Get({
     accesses: [Access.isAdmin],
   })
-  async getAll (ctx) {
+  async getAll(ctx) {
     const list = await this.model.getAll()
     this.sendOk(ctx, list)
   }
@@ -49,7 +47,7 @@ export default class RouteJuridictions extends Route {
   @Route.Get({
     accesses: [Access.isAdmin],
   })
-  async getAllBackup (ctx) {
+  async getAllBackup(ctx) {
     const list = await this.model.models.HRBackups.getAll()
     this.sendOk(ctx, list)
   }
@@ -67,12 +65,10 @@ export default class RouteJuridictions extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async updateJuridiction (ctx) {
+  async updateJuridiction(ctx) {
     const { node, value, juridictionId } = this.body(ctx)
 
-    await this.model.updateJuridiction(juridictionId, {
-      [node]: value || null,
-    })
+    await this.model.updateJuridiction(juridictionId, node, value)
 
     this.sendOk(ctx, 'Ok')
   }
@@ -81,12 +77,12 @@ export default class RouteJuridictions extends Route {
    * Obtenir la liste de tout les TGI et TPRX avec leurs IELST
    */
   @Route.Get()
-  async getAllIelst (ctx) {
+  async getAllIelst(ctx) {
     const list = await this.model.getAllIelst()
     this.sendOk(ctx, list)
   }
 
-    /**
+  /**
    * Interface de résultat de simulation de la page de simulation
    * @param {*} backupId
    * @param {*} params
@@ -95,22 +91,20 @@ export default class RouteJuridictions extends Route {
    * @param {*} dateStop
    * @param {*} selectedCategoryId
    */
-    @Route.Post({
-      bodyType: Types.object().keys({
-        juridictionName: Types.string().required(),
-        backupId: Types.number().required(),
-        copyAct:Types.boolean().required(),
-        statExclusion:Types.boolean().required()
-      }),
-      accesses: [Access.isAdmin],
-    })
-    async duplicateJuridiction (ctx) {
-      const { juridictionName, backupId, copyAct, statExclusion } = this.body(ctx)
-  
-      await models.HRBackups.duplicateBackup(backupId,juridictionName,copyAct,statExclusion)
+  @Route.Post({
+    bodyType: Types.object().keys({
+      juridictionName: Types.string().required(),
+      backupId: Types.number().required(),
+      copyAct: Types.boolean().required(),
+      statExclusion: Types.boolean().required(),
+    }),
+    accesses: [Access.isAdmin],
+  })
+  async duplicateJuridiction(ctx) {
+    const { juridictionName, backupId, copyAct, statExclusion } = this.body(ctx)
 
-      this.sendOk(ctx, "En cours")
-    }
+    await models.HRBackups.duplicateBackup(backupId, juridictionName, copyAct, statExclusion)
 
-    
+    this.sendOk(ctx, 'En cours')
+  }
 }

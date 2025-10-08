@@ -126,7 +126,7 @@ export default (sequelizeInstance, Model) => {
   /**
    * Update juridiction value
    */
-  Model.updateJuridiction = async (juridictionId, values) => {
+  Model.updateJuridiction = async (juridictionId, node, values) => {
     let element = await Model.findOne({
       where: {
         id: juridictionId,
@@ -134,16 +134,30 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (element) {
-      element = await element.update(values)
-
-      if (element.dataValues.enabled) {
-        // check and create juridiction
-        const juridicitionId = await Model.models.HRBackups.findOrCreateLabel(element.dataValues.label, element.dataValues.backup_id, element.dataValues.label)
-        await element.update({
-          backup_id: juridicitionId,
+      if (node === 'enabled') {
+        element = await element.update({
+          enabled: values === 'oui' ? true : false,
         })
+      } else {
+        element = await element.update({
+          [node]: values,
+        })
+      }
 
-        await Model.models.HRBackups.addUserAccessToTeam(juridicitionId)
+      if (node === 'label' || !element.dataValues.backup_id) {
+        const juridicitionId = await Model.models.HRBackups.findOrCreateLabel(
+          element.dataValues.label,
+          element.dataValues.backup_id,
+          node === 'label' ? values : null,
+          false,
+        )
+
+        if (!element.dataValues.backup_id) {
+          await element.update({
+            backup_id: juridicitionId,
+          })
+          await Model.models.HRBackups.addUserAccessToTeam(juridicitionId)
+        }
       }
     }
   }
