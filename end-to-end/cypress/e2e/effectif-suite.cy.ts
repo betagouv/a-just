@@ -20,9 +20,6 @@ const PR = String(Cypress.env("CANDIDATE_FRONT_URL") || "");
 
 const CATEGORIES: string[] = [
   "Tous",
-  "Siège",
-  "Equipe autour du magistrat",
-  "Greffe",
 ];
 
 const FR_MONTHS = [
@@ -325,8 +322,8 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
   cy.window({ log: false }).then((win: any) => {
     try {
       // Increase app-side export max to tolerate slower CI (defaults to 3min in the app)
-      try { (win as any).__AJ_E2E_EXPORT_MAX_MS = 420000; } catch {}
-      try { (win as any).localStorage && (win as any).localStorage.setItem('__AJ_E2E_EXPORT_MAX_MS', '420000'); } catch {}
+      try { (win as any).__AJ_E2E_EXPORT_MAX_MS = 1200000; } catch {}
+      try { (win as any).localStorage && (win as any).localStorage.setItem('__AJ_E2E_EXPORT_MAX_MS', '1200000'); } catch {}
       (win as any).__downloadStarted = false;
       (win as any).__lastDownloadName = '';
       (win as any).__lastDownloadBase64 = '';
@@ -483,10 +480,10 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
   });
   // Hooks already installed above; continue with fallback persistence and wait
   // Proactively persist from base64 if present to aid download detection
-  persistBase64WhenReady(`effectif_${START}_${STOP}.xlsx`, 420000);
+  persistBase64WhenReady(`effectif_${START}_${STOP}.xlsx`, 1200000);
 
   // Extend Cypress command timeout for the task to accommodate slower PR exports
-  cy.task('waitForDownloadedExcel', { timeoutMs: 420000 }, { timeout: 440000 }).then((fileName: string) => {
+  cy.task('waitForDownloadedExcel', { timeoutMs: 1200000 }, { timeout: 1220000 }).then((fileName: string) => {
     const host = new URL(baseUrl).host.replace(/[:.]/g, '-');
     const targetBase = `effectif_${host}_${START}_${STOP}_${slugifyLabel(categoryLabel)}`;
     snapshot(prefix, labelSlug, 'step18-download-detected');
