@@ -298,6 +298,9 @@ function pickCategoryEffectif(categoryLabel: string, prefix: string, labelSlug: 
 
 function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, categoryLabel: string, prefix: string, labelSlug: string) {
   cy.task('wipeDownloads');
+  // Intercepts: data fetch and template fetch for XLSX
+  cy.intercept('POST', '**/api/extractor/**').as('effData');
+  cy.intercept('GET', '**/assets/*.xlsx*').as('effTpl');
   snapshot(prefix, labelSlug, 'step15b-downloads-wiped');
   cy.get('body').then(($body) => {
     if ($body.find('#export-excel-button').length) {
@@ -307,6 +310,10 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
     }
   });
   snapshot(prefix, labelSlug, 'step16-export-clicked');
+  // Wait for backend/template calls as a signal export pipeline ran
+  cy.wait(['@effData', '@effTpl'], { timeout: 180000 }).then(() => {
+    snapshot(prefix, labelSlug, 'step16b-network-complete');
+  });
 
   const modalContainerSel = 'aj-alert, aj-popup, .cdk-overlay-pane .mat-mdc-dialog-container, .cdk-overlay-pane mat-dialog-container, .cdk-overlay-pane [role=dialog], .cdk-overlay-pane aj-popup';
   const modalButtonsSel = 'aj-alert button, aj-popup button, .cdk-overlay-pane [role=dialog] button, .cdk-overlay-pane .mat-mdc-dialog-container button, .cdk-overlay-pane mat-dialog-container button, .cdk-overlay-pane button';
@@ -346,9 +353,76 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       snapshot(prefix, labelSlug, 'step17b-ok-clicked-late');
     }
   });
+  // Hook Blob/saveAs to capture XLSX buffer as base64 and persist it as a fallback before waiting for downloads
+  cy.window({ log: false }).then((win: any) => {
+    try {
+      // Hook URL.createObjectURL to detect download start
+      const origCreate = win.URL && win.URL.createObjectURL;
+      if (origCreate && !(win as any).__hookedCreateObjectURL) {
+        (win as any).__hookedCreateObjectURL = true;
+        win.URL.createObjectURL = function(blob: any) {
+          try { (win as any).__downloadStarted = true; } catch {}
+          return origCreate.apply(this, arguments as any);
+        } as any;
+      }
+      // Hook Blob to capture base64
+      const OrigBlob = (win as any).Blob;
+      if (OrigBlob && !(win as any).__blobHooked) {
+        (win as any).__blobHooked = true;
+        (win as any).Blob = function(parts: any[], opts?: any) {
+          const b = new (OrigBlob as any)(parts, opts);
+          try {
+            const size = (b && (b as any).size) || 0;
+            if (size > 100) {
+              const reader = new (win as any).FileReader();
+              reader.onloadend = () => {
+                try {
+                  const res = String(reader.result || '');
+                  const base64 = res.includes(',') ? res.split(',')[1] : res;
+                  (win as any).__lastDownloadBase64 = base64;
+                } catch {}
+              };
+              try { reader.readAsDataURL(b); } catch {}
+            }
+          } catch {}
+          return b;
+        } as any;
+      }
+      const origSaveAs = (win as any).saveAs || ((win as any).FileSaver && (win as any).FileSaver.saveAs);
+      if (origSaveAs) {
+        (win as any).__origSaveAs = origSaveAs;
+        const wrapper = function(blob: any, name: string) {
+          try { (win as any).__downloadStarted = true; (win as any).__lastDownloadName = String(name || ''); } catch {}
+          try {
+            const reader = new (win as any).FileReader();
+            reader.onloadend = () => {
+              try {
+                const res = String(reader.result || '');
+                const base64 = res.includes(',') ? res.split(',')[1] : res;
+                (win as any).__lastDownloadBase64 = base64;
+              } catch {}
+            };
+            reader.readAsDataURL(blob);
+          } catch {}
+          return origSaveAs.apply(this, arguments as any);
+        } as any;
+        if ((win as any).saveAs) (win as any).saveAs = wrapper; else if ((win as any).FileSaver) (win as any).FileSaver.saveAs = wrapper;
+      }
+    } catch {}
+  });
+  // Proactively persist from base64 if present to aid download detection
+  cy.window({ log: false }).then((win: any) => {
+    try {
+      const b64 = String((win && win.__lastDownloadBase64) || '');
+      const nm = String((win && win.__lastDownloadName) || '');
+      if (b64 && b64.length > 100) {
+        cy.task('writeBufferToDownloads', { base64: b64, fileName: nm || `effectif_${START}_${STOP}.xlsx` }, { timeout: 200000 });
+      }
+    } catch {}
+  });
 
   // Extend Cypress command timeout for the task to accommodate slower PR exports
-  cy.task('waitForDownloadedExcel', { timeoutMs: 180000 }, { timeout: 200000 }).then((fileName: string) => {
+  cy.task('waitForDownloadedExcel', { timeoutMs: 300000 }, { timeout: 320000 }).then((fileName: string) => {
     const host = new URL(baseUrl).host.replace(/[:.]/g, '-');
     const targetBase = `effectif_${host}_${START}_${STOP}_${slugifyLabel(categoryLabel)}`;
     snapshot(prefix, labelSlug, 'step18-download-detected');
@@ -405,8 +479,8 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       const slug = slugifyLabel(cat);
       const sbJson = `cypress/artifacts/effectif/effectif_${hostSB}_${START}_${STOP}_${slug}.json`;
       const prJson = `cypress/artifacts/effectif/effectif_${hostPR}_${START}_${STOP}_${slug}.json`;
-      cy.readFile(sbJson).then((sb) => {
-        cy.readFile(prJson).then((pr) => {
+      cy.readFile(sbJson, { timeout: 60000 }).then((sb) => {
+        cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
           const diffs = diffSheetsWithTolerance(sb, pr, 1e-6);
           if (diffs.length) {
             cy.writeFile(`cypress/artifacts/effectif/diff_${slug}.txt`, diffs.join('\n'));

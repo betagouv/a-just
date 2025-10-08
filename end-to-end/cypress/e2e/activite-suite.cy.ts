@@ -337,13 +337,16 @@ function exportAndPersistActivite(baseUrl: string, startISO: string, stopISO: st
     }
   });
   snapshot(prefix, 'act-export-clicked');
+  // Wait for backend data and template fetch to complete as a signal the export pipeline ran
+  cy.wait(['@actData', '@actTpl'], { timeout: 180000 }).then(() => {
+    snapshot(prefix, 'act-network-complete');
+  });
   // If the front triggered saveAs, we should see the flag flip
   cy.window({ log: false }).its('__downloadStarted', { timeout: 180000 }).should('be.oneOf', [true, false]).then((started) => {
     if (!started) {
       // Log last-known filename (may be empty if saveAs not called)
       cy.window({ log: false }).its('__lastDownloadName').then((nm) => cy.log(`download.name: ${nm}`));
     }
-    // no flag file output
   });
 
   const modalContainerSel = 'aj-alert, aj-popup, .cdk-overlay-pane .mat-mdc-dialog-container, .cdk-overlay-pane mat-dialog-container, .cdk-overlay-pane [role=dialog], .cdk-overlay-pane aj-popup';
@@ -388,8 +391,7 @@ function exportAndPersistActivite(baseUrl: string, startISO: string, stopISO: st
   });
   // Extra snapshot after handling any modal timing
 
-  // Fallback: if the browser did not place the file into cypress/downloads, salvage the buffer captured via FileReader
-  cy.wait(1500);
+  // Proactive fallback: check early for base64 and persist it to downloads to aid waitForDownloadedExcel
   cy.window({ log: false }).then((win: any) => {
     try {
       const b64 = String((win && win.__lastDownloadBase64) || '');
@@ -400,7 +402,8 @@ function exportAndPersistActivite(baseUrl: string, startISO: string, stopISO: st
     } catch {}
   });
 
-  cy.task('waitForDownloadedExcel', { timeoutMs: 240000 }, { timeout: 260000 }).then((fileName: string) => {
+  // Wait longer to accommodate slower export in CI for PR builds
+  cy.task('waitForDownloadedExcel', { timeoutMs: 300000 }, { timeout: 320000 }).then((fileName: string) => {
     const host = new URL(baseUrl).host.replace(/[:.]/g, '-');
     const targetBase = `activite_${host}_${START}_${STOP}`;
     snapshot(prefix, 'act-download-detected');
@@ -447,8 +450,8 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
       const sbJson = `cypress/artifacts/activite/activite_${hostSB}_${START}_${STOP}.json`;
       const prJson = `cypress/artifacts/activite/activite_${hostPR}_${START}_${STOP}.json`;
 
-      cy.readFile(sbJson).then((sb) => {
-        cy.readFile(prJson).then((pr) => {
+      cy.readFile(sbJson, { timeout: 60000 }).then((sb) => {
+        cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
           const diffs = diffSheetsWithTolerance(sb, pr, 1e-6);
           if (diffs.length) {
             cy.writeFile(`cypress/artifacts/activite/diff.txt`, diffs.join('\n'));

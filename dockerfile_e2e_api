@@ -7,6 +7,25 @@ RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --i
 COPY ./api /home/api
 RUN npm run build
 
+# Build front (Angular) and front-admin, and place their outputs where the API expects them at runtime
+WORKDIR /home/front
+COPY ./front/package*.json /home/front/
+RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --include=dev; fi
+COPY ./front /home/front
+RUN npm run build
+
+WORKDIR /home/front-admin
+COPY ./front-admin/package*.json /home/front-admin/
+RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --include=dev; fi
+COPY ./front-admin /home/front-admin
+RUN npm run build
+
+# Move built front apps into API dist paths expected by CSP/index serving
+WORKDIR /home
+RUN mkdir -p /home/api/dist/front /home/api/dist/front-admin && \
+    if [ -d /home/front/dist/browser ]; then cp -r /home/front/dist/browser/* /home/api/dist/front/; fi && \
+    if [ -d /home/front-admin/dist/browser ]; then cp -r /home/front-admin/dist/browser/* /home/api/dist/front-admin/; fi
+
 FROM node:22 AS runtime
 WORKDIR /home/api
 ENV NODE_ENV=production
