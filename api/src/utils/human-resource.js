@@ -680,7 +680,7 @@ export const searchPeriodsWithIndexes = (indexes, queryStart, queryEnd, queryCat
         queryFonctions.flatMap((fonctionId) => {
           const periods = functionIndex.get(fonctionId)
           if (!periods) {
-            console.warn(`⚠️ fonctionId ${fonctionId} not found in functionIndex`)
+            //console.warn(`⚠️ fonctionId ${fonctionId} not found in functionIndex`)
           }
           return periods || []
         }),
