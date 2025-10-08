@@ -162,7 +162,8 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
   async onLoadMaxDate() {
     const resp = await this.activitiesService.getLastMonthActivities()
     if (resp) {
-      this.maxDate = new Date(resp)
+      const date = new Date(resp)
+      this.maxDate = new Date(date.getFullYear(), 11, 31)
     }
   }
 
