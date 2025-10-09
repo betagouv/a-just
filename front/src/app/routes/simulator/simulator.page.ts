@@ -603,12 +603,12 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
             position: 'bottom',
           },
         },
-        /*{
-      target: 'body',
-      title: 'En savoir plus :',
-      intro:
-        '<p>Découvrez, en <b>vidéo</b>, comment jouer des scénarios alternatifs pour modifier vos trajectoires et apprécier les conséquences de changements à venir, subi ou choisis par la cour d'appel. </p><p>Nous vous y donnons également toutes les clés pour <b>analyser les résultats de ces simulations et prendre des décisions éclairées par leur impact prévisible.</b></p><video controls class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
-    },*/
+        {
+          target: 'body',
+          title: 'En savoir plus :',
+          intro:
+            '<p>Découvrez, en <b>vidéo</b>, comment jouer des scénarios alternatifs pour modifier vos trajectoires et apprécier les conséquences de changements à venir, subi ou choisis par la cour d\'appel. </p><p>Nous vous y donnons également toutes les clés pour <b>analyser les résultats de ces simulations et prendre des décisions éclairées par leur impact prévisible.</b></p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-simulateur-sans-donnees-prealimentes.mp4" type="video/mp4" /></video>',
+        },
       ]
 
   /**
