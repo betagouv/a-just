@@ -1336,8 +1336,7 @@
   }
 </ng-template>
 
-<!--
-<aj-intro-js
-  [steps]="whiteSimulator ? introStepsWhiteSimulator : (chooseScreen ? introStepsDefault : introStepsToCompleteDefault)"
-typeId="simulator"></aj-intro-js>
--->
+
+@if(!chooseScreen) {
+<aj-intro-js [steps]="introStepsToCompleteDefault" typeId="simulator"></aj-intro-js>
+}
