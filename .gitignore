@@ -31,3 +31,9 @@ test/reports/
 *.log
 coverage/
 .nyc_output/
+
+# Cypress E2E generated outputs
+end-to-end/cypress/downloads/
+end-to-end/cypress/reports/
+end-to-end/cypress/videos/
+end-to-end/cypress/artifacts/

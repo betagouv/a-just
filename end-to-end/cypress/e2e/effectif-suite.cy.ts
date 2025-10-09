@@ -107,8 +107,14 @@ function persistBase64WhenReady(defaultFileName: string, maxMs = 240000, interva
       try {
         const b64 = String((win && win.__lastDownloadBase64) || '');
         const nm = String((win && win.__lastDownloadName) || '') || defaultFileName;
+        const dlStarted = !!(win && win.__downloadStarted);
         if (b64 && b64.length > 100) {
           return cy.task('writeBufferToDownloads', { base64: b64, fileName: nm }, { timeout: 200000 }).then(() => undefined);
+        }
+        // If native download path is in use and we still don't have base64 after a short grace period,
+        // bail out so we don't block the queue; waitForDownloadedExcel will pick up the file.
+        if (dlStarted && Date.now() - start > 5000) {
+          return cy.wrap(null, { log: false });
         }
       } catch {}
       if (Date.now() - start >= maxMs) return cy.wrap(null, { log: false });
@@ -317,6 +323,17 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
   // Intercepts: data fetch and template fetch for XLSX
   cy.intercept('POST', '**/api/extractor/**').as('effData');
   cy.intercept('GET', '**/assets/*.xlsx*').as('effTpl');
+  // Targeted diagnostics: capture start payload and poll timeline
+  const pollLog: Array<any> = [];
+  cy.intercept('POST', '**/api/extractor/start-filter-list').as('effStart');
+  cy.intercept('POST', '**/api/extractor/status-filter-list-post', (req) => {
+    const t0 = Date.now();
+    req.on('response', (res) => {
+      try {
+        pollLog.push({ t: Date.now(), ms: Date.now() - t0, status: res?.statusCode, bodyStatus: (res as any)?.body?.status });
+      } catch {}
+    });
+  }).as('effStatus');
   snapshot(prefix, labelSlug, 'step15b-downloads-wiped');
   // Install hooks BEFORE clicking export so we capture fast Blob/saveAs flows
   cy.window({ log: false }).then((win: any) => {
@@ -324,6 +341,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       // Increase app-side export max to tolerate slower CI (defaults to 3min in the app)
       try { (win as any).__AJ_E2E_EXPORT_MAX_MS = 1200000; } catch {}
       try { (win as any).localStorage && (win as any).localStorage.setItem('__AJ_E2E_EXPORT_MAX_MS', '1200000'); } catch {}
+      try { cy.log(`dates=${startISO}..${stopISO} max=${(win as any).__AJ_E2E_EXPORT_MAX_MS}`); } catch {}
       (win as any).__downloadStarted = false;
       (win as any).__lastDownloadName = '';
       (win as any).__lastDownloadBase64 = '';
@@ -436,6 +454,17 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       cy.get('aj-extractor-ventilation > div.exportateur-container > div > p', { timeout: 15000 }).scrollIntoView().click({ force: true });
     }
   });
+  // Confirm the backend start call observed (payload contains dates/category)
+  cy.wait('@effStart', { timeout: 60000 }).then((interception) => {
+    try {
+      const body = (interception && (interception as any).request?.body) || {};
+      const ds = String(body?.dateStart || '');
+      const de = String(body?.dateStop || '');
+      cy.log(`start.payload dateStart=${ds} dateStop=${de}`);
+      // Persist start payload for diagnostics
+      cy.writeFile(`cypress/reports/${prefix}-${labelSlug}-start-body.json`, JSON.stringify(body, null, 2));
+    } catch {}
+  });
   snapshot(prefix, labelSlug, 'step16-export-clicked');
   // Do not wait on @effTpl for Effectif (it may not fetch a template). Proceed directly; hooks + polling will persist the file.
   snapshot(prefix, labelSlug, 'step16b-continue-no-template-wait');
@@ -479,8 +508,8 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
     }
   });
   // Hooks already installed above; continue with fallback persistence and wait
-  // Proactively persist from base64 if present to aid download detection
-  persistBase64WhenReady(`effectif_${START}_${STOP}.xlsx`, 1200000);
+  // Proactively persist from base64 if present; bail quickly if native download is already in flight
+  persistBase64WhenReady(`effectif_${START}_${STOP}.xlsx`, 15000);
 
   // Extend Cypress command timeout for the task to accommodate slower PR exports
   cy.task('waitForDownloadedExcel', { timeoutMs: 1200000 }, { timeout: 1220000 }).then((fileName: string) => {
@@ -490,6 +519,10 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
     return cy.task('moveAndNormalizeXlsx', { fileName, targetBase }).then(() => {
       snapshot(prefix, labelSlug, 'step19-artifacts-written');
     });
+  });
+  // Persist poll timeline for analysis
+  cy.then(() => {
+    try { cy.writeFile(`cypress/reports/${prefix}-${labelSlug}-polls.json`, JSON.stringify(pollLog, null, 2)); } catch {}
   });
 }
 
