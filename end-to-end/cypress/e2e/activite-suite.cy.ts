@@ -439,7 +439,25 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
     cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
       .scrollIntoView()
       .click({ force: true });
-    setDatesActivite(START, STOP, 'pr');
+    cy.window({ log: false }).then((win: any) => {
+      let ok = false;
+      try {
+        const host = Cypress.$('aj-extractor-activity').get(0);
+        const ng = (win as any).ng;
+        if (host && ng && typeof ng.getComponent === 'function') {
+          const cmp = ng.getComponent(host);
+          if (cmp && typeof cmp.selectDate === 'function') {
+            cmp.selectDate('start', new Date(START));
+            cmp.selectDate('stop', new Date(STOP));
+            ok = true;
+          }
+        }
+      } catch {}
+      if (!ok) {
+        setDatesActivite(START, STOP, 'pr');
+      }
+    });
+    cy.get('#export-excel-button').should('not.have.class', 'disabled');
     exportAndPersistActivite(PR, START, STOP, 'pr');
   });
 
@@ -455,7 +473,25 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
       cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
         .scrollIntoView()
         .click({ force: true });
-      setDatesActivite(START, STOP, 'sandbox');
+      cy.window({ log: false }).then((win: any) => {
+        let ok = false;
+        try {
+          const host = Cypress.$('aj-extractor-activity').get(0);
+          const ng = (win as any).ng;
+          if (host && ng && typeof ng.getComponent === 'function') {
+            const cmp = ng.getComponent(host);
+            if (cmp && typeof cmp.selectDate === 'function') {
+              cmp.selectDate('start', new Date(START));
+              cmp.selectDate('stop', new Date(STOP));
+              ok = true;
+            }
+          }
+        } catch {}
+        if (!ok) {
+          setDatesActivite(START, STOP, 'sandbox');
+        }
+      });
+      cy.get('#export-excel-button').should('not.have.class', 'disabled');
       exportAndPersistActivite(SANDBOX, START, STOP, 'sandbox');
     });
 

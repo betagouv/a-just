@@ -167,27 +167,45 @@ function setDatesEffectif(startISO: string, stopISO: string, prefix: string, lab
   cy.get('aj-extractor-ventilation', { timeout: 20000 }).first().as('eff');
 
   // START
-  cy.get('@eff').find('aj-date-select:nth-of-type(1) > div > p', { timeout: 15000 }).click({ force: true });
-  cy.get('mat-datepicker-content .mat-calendar, .cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible');
-  cy.get('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
+  cy.get('@eff').find('aj-date-select:nth-of-type(1) > div > p', { timeout: 15000 }).first().click({ force: true });
+  cy.get('.cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible').as('dpStart');
+  cy.get('@dpStart').find('button.mat-calendar-period-button', { timeout: 15000 }).first().click({ force: true });
   snapshot(prefix, labelSlug, 'step4-done');
-  cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', sY, { timeout: 15000 }).click({ force: true });
+  cy.get('@dpStart')
+    .find('.mat-calendar-body .mat-calendar-body-cell-content')
+    .contains(new RegExp(`^${sY}$`))
+    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
   snapshot(prefix, labelSlug, 'step5-done');
-  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', FR_MONTHS[sMIdx], { timeout: 15000 }).click({ force: true });
+  cy.get('@dpStart')
+    .find('.mat-calendar-body .mat-calendar-body-cell-content')
+    .contains(new RegExp(`^${FR_MONTHS[sMIdx]}$`))
+    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
   snapshot(prefix, labelSlug, 'step6-done');
-  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', sD, { timeout: 15000 }).click({ force: true });
+  cy.get('@dpStart')
+    .find('.mat-calendar-body .mat-calendar-body-cell-content')
+    .contains(new RegExp(`^${sD}$`))
+    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
   snapshot(prefix, labelSlug, 'step7-done');
 
   // END
-  cy.get('@eff').find('aj-date-select:nth-of-type(2) > div > p', { timeout: 15000 }).click({ force: true });
-  cy.get('mat-datepicker-content .mat-calendar, .cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible');
-  cy.get('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
+  cy.get('@eff').find('aj-date-select:nth-of-type(2) > div > p', { timeout: 15000 }).first().click({ force: true });
+  cy.get('.cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible').as('dpEnd');
+  cy.get('@dpEnd').find('button.mat-calendar-period-button', { timeout: 15000 }).first().click({ force: true });
   snapshot(prefix, labelSlug, 'step9-done');
-  cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', eY, { timeout: 15000 }).click({ force: true });
+  cy.get('@dpEnd')
+    .find('.mat-calendar-body .mat-calendar-body-cell-content')
+    .contains(new RegExp(`^${eY}$`))
+    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
   snapshot(prefix, labelSlug, 'step10-done');
-  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', FR_MONTHS[eMIdx], { timeout: 15000 }).click({ force: true });
+  cy.get('@dpEnd')
+    .find('.mat-calendar-body .mat-calendar-body-cell-content')
+    .contains(new RegExp(`^${FR_MONTHS[eMIdx]}$`))
+    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
   snapshot(prefix, labelSlug, 'step11-done');
-  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', eD, { timeout: 15000 }).click({ force: true });
+  cy.get('@dpEnd')
+    .find('.mat-calendar-body .mat-calendar-body-cell-content')
+    .contains(new RegExp(`^${eD}$`))
+    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
   snapshot(prefix, labelSlug, 'step12-done');
 }
 
@@ -514,8 +532,26 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
         .scrollIntoView()
         .click({ force: true });
-      setDatesEffectif(START, STOP, prefix, labelSlug);
+      cy.window({ log: false }).then((win: any) => {
+        let ok = false;
+        try {
+          const host = Cypress.$('aj-extractor-ventilation').get(0);
+          const ng = (win as any).ng;
+          if (host && ng && typeof ng.getComponent === 'function') {
+            const cmp = ng.getComponent(host);
+            if (cmp && typeof cmp.selectDate === 'function') {
+              cmp.selectDate('start', new Date(START));
+              cmp.selectDate('stop', new Date(STOP));
+              ok = true;
+            }
+          }
+        } catch {}
+        if (!ok) {
+          setDatesEffectif(START, STOP, prefix, labelSlug);
+        }
+      });
       pickCategoryEffectif(cat, prefix, labelSlug);
+      cy.get('#export-excel-button').should('not.have.class', 'disabled');
       exportAndPersist(PR, START, STOP, cat, prefix, labelSlug);
     });
   });
@@ -532,8 +568,26 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
         .scrollIntoView()
         .click({ force: true });
-      setDatesEffectif(START, STOP, prefix, labelSlug);
+      cy.window({ log: false }).then((win: any) => {
+        let ok = false;
+        try {
+          const host = Cypress.$('aj-extractor-ventilation').get(0);
+          const ng = (win as any).ng;
+          if (host && ng && typeof ng.getComponent === 'function') {
+            const cmp = ng.getComponent(host);
+            if (cmp && typeof cmp.selectDate === 'function') {
+              cmp.selectDate('start', new Date(START));
+              cmp.selectDate('stop', new Date(STOP));
+              ok = true;
+            }
+          }
+        } catch {}
+        if (!ok) {
+          setDatesEffectif(START, STOP, prefix, labelSlug);
+        }
+      });
       pickCategoryEffectif(cat, prefix, labelSlug);
+      cy.get('#export-excel-button').should('not.have.class', 'disabled');
       exportAndPersist(SANDBOX, START, STOP, cat, prefix, labelSlug);
     });
   });
