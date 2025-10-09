@@ -435,93 +435,181 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Intro JS Steps par défaut
    */
-  introStepsToCompleteDefault: IntroJSStep[] = [
-    {
-      target: '#content',
-      title: 'Configurez votre hypothèse :',
-      intro:
-        '<p>Commencez par choisir le type d’<b>effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe.</p><p>Ensuite, sélectionnez un <b>contentieux</b> dans le menu déroulant. Suivant votre besoin, vous pouvez affiner votre simulation en sélectionnant un sous-contentieux voire une fonction.</p>',
-      beforeLoad: async (intro: any) => {
-        if (this.periodSelector) {
-          const now = today()
-          now.setMonth(now.getMonth() + 12)
-          this.periodSelector.updateDateSelected('dateStop', now, false)
-        }
-      },
-    },
-    {
-      target: '#editable-sim-name',
-      title: 'Nommer votre simulation :',
-      intro:
-        '<p>C’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
-      beforeLoad: async (intro: any) => {
-        const introTooltip = document.querySelector('.introjs-tooltip')
-        if (introTooltip) {
-          // @ts-ignore
-          introTooltip.style.visibility = 'hidden'
-        }
-        setTimeout(() => {
-          const introTooltip = document.querySelector('.introjs-tooltip')
-          if (introTooltip) {
-            introTooltip.classList.add('introjs-bottom-left-aligned')
-            introTooltip.classList.remove('introjs-floating')
-            // @ts-ignore
-            introTooltip.style.left = '0px'
-            // @ts-ignore
-            introTooltip.style.top = '45px'
-            // @ts-ignore
-            introTooltip.style.marginLeft = '0'
-            // @ts-ignore
-            introTooltip.style.marginTop = '0'
-            // @ts-ignore
-            introTooltip.style.visibility = 'visible'
-          }
-        }, 380)
-      },
-      options: {
-        position: 'bottom',
-      },
-    },
-    {
-      target: '.date-bar-container',
-      title: 'La situation projetée de votre juridiction :',
-      intro:
-        '<p>Vous obtenez la situation projetée dans le futur de l’état du <b>contentieux ou sous-contentieux</b> sélectionné́ sur la base des dernières données disponibles dans l’outil  et toutes choses restant égales par ailleurs.</p><p>Une période d’un an à compter de la date du jour est sélectionnée par défaut mais vous pouvez, <b>si vous le souhaitez, modifier les dates de début et de fin de période</b> sur lesquelles vous souhaitez vous projeter.</p>',
-      beforeLoad: async (intro: any) => {
-        const introTooltip = document.querySelector('.introjs-tooltip')
-        if (introTooltip) {
-          // @ts-ignore
-          introTooltip.style.visibility = 'hidden'
-        }
-        setTimeout(() => {
-          const introTooltip = document.querySelector('.introjs-tooltip')
-          if (introTooltip) {
-            introTooltip.classList.add('introjs-bottom-left-aligned')
-            introTooltip.classList.remove('introjs-floating')
-            // @ts-ignore
-            introTooltip.style.left = '0px'
-            // @ts-ignore
-            introTooltip.style.top = '120px'
-            // @ts-ignore
-            introTooltip.style.marginLeft = '0'
-            // @ts-ignore
-            introTooltip.style.marginTop = '0'
-            // @ts-ignore
-            introTooltip.style.visibility = 'visible'
-          }
-        }, 380)
-      },
-      options: {
-        position: 'bottom',
-      },
-    },
-    {
+  introStepsToCompleteDefault: IntroJSStep[] = this.isTJ()
+    ? [
+        {
+          target: '#content',
+          title: 'Configurez votre hypothèse :',
+          intro:
+            '<p>Commencez par choisir le type d’<b>effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe.</p><p>Ensuite, sélectionnez un <b>contentieux</b> dans le menu déroulant. Suivant votre besoin, vous pouvez affiner votre simulation en sélectionnant un sous-contentieux voire une fonction.</p>',
+          beforeLoad: async (intro: any) => {
+            if (this.periodSelector) {
+              const now = today()
+              now.setMonth(now.getMonth() + 12)
+              this.periodSelector.updateDateSelected('dateStop', now, false)
+            }
+          },
+        },
+        {
+          target: '#editable-sim-name',
+          title: 'Nommer votre simulation :',
+          intro:
+            '<p>C’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+          beforeLoad: async (intro: any) => {
+            const introTooltip = document.querySelector('.introjs-tooltip')
+            if (introTooltip) {
+              // @ts-ignore
+              introTooltip.style.visibility = 'hidden'
+            }
+            setTimeout(() => {
+              const introTooltip = document.querySelector('.introjs-tooltip')
+              if (introTooltip) {
+                introTooltip.classList.add('introjs-bottom-left-aligned')
+                introTooltip.classList.remove('introjs-floating')
+                // @ts-ignore
+                introTooltip.style.left = '0px'
+                // @ts-ignore
+                introTooltip.style.top = '45px'
+                // @ts-ignore
+                introTooltip.style.marginLeft = '0'
+                // @ts-ignore
+                introTooltip.style.marginTop = '0'
+                // @ts-ignore
+                introTooltip.style.visibility = 'visible'
+              }
+            }, 380)
+          },
+          options: {
+            position: 'bottom',
+          },
+        },
+        {
+          target: '.date-bar-container',
+          title: 'La situation projetée de votre juridiction :',
+          intro:
+            '<p>Vous obtenez la situation projetée dans le futur de l’état du <b>contentieux ou sous-contentieux</b> sélectionné́ sur la base des dernières données disponibles dans l’outil  et toutes choses restant égales par ailleurs.</p><p>Une période d’un an à compter de la date du jour est sélectionnée par défaut mais vous pouvez, <b>si vous le souhaitez, modifier les dates de début et de fin de période</b> sur lesquelles vous souhaitez vous projeter.</p>',
+          beforeLoad: async (intro: any) => {
+            const introTooltip = document.querySelector('.introjs-tooltip')
+            if (introTooltip) {
+              // @ts-ignore
+              introTooltip.style.visibility = 'hidden'
+            }
+            setTimeout(() => {
+              const introTooltip = document.querySelector('.introjs-tooltip')
+              if (introTooltip) {
+                introTooltip.classList.add('introjs-bottom-left-aligned')
+                introTooltip.classList.remove('introjs-floating')
+                // @ts-ignore
+                introTooltip.style.left = '0px'
+                // @ts-ignore
+                introTooltip.style.top = '120px'
+                // @ts-ignore
+                introTooltip.style.marginLeft = '0'
+                // @ts-ignore
+                introTooltip.style.marginTop = '0'
+                // @ts-ignore
+                introTooltip.style.visibility = 'visible'
+              }
+            }, 380)
+          },
+          options: {
+            position: 'bottom',
+          },
+        },
+        {
+          target: 'body',
+          title: 'En savoir plus :',
+          intro:
+            '<p>Découvrez, en <b>vidéo</b>, comment jouer des scénarios alternatifs pour modifier vos trajectoires et apprécier les conséquences de changements à venir, subi ou choisis par la juridiction. </p><p>Nous vous y donnons également toutes les clés pour <b>analyser les résultats de ces simulations et prendre des décisions éclairées par leur impact prévisible.</b></p><video controls class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
+        },
+      ]
+    : [
+        {
+          target: '#content',
+          title: 'Configurez votre hypothèse :',
+          intro:
+            '<p>Commencez par choisir le type d’<b>effectifs</b> pour laquelle vous souhaitez jouer un scénario : les magistrats du siège ou les agents du greffe.</p><p>Ensuite, sélectionnez un <b>contentieux</b> dans le menu déroulant. Suivant votre besoin, vous pouvez affiner votre simulation en sélectionnant un sous-contentieux voire une fonction.</p>',
+          beforeLoad: async (intro: any) => {
+            if (this.periodSelector) {
+              const now = today()
+              now.setMonth(now.getMonth() + 12)
+              this.periodSelector.updateDateSelected('dateStop', now, false)
+            }
+          },
+        },
+        {
+          target: '#editable-sim-name',
+          title: 'Nommer votre simulation :',
+          intro:
+            '<p>C’est facultatif mais ça vous permettra de bien vous rappeler du champ sur lequel vous avez travaillé, notamment si vous enregistrez les résultats de votre simulation en PDF sur votre ordinateur.</p>',
+          beforeLoad: async (intro: any) => {
+            const introTooltip = document.querySelector('.introjs-tooltip')
+            if (introTooltip) {
+              // @ts-ignore
+              introTooltip.style.visibility = 'hidden'
+            }
+            setTimeout(() => {
+              const introTooltip = document.querySelector('.introjs-tooltip')
+              if (introTooltip) {
+                introTooltip.classList.add('introjs-bottom-left-aligned')
+                introTooltip.classList.remove('introjs-floating')
+                // @ts-ignore
+                introTooltip.style.left = '0px'
+                // @ts-ignore
+                introTooltip.style.top = '45px'
+                // @ts-ignore
+                introTooltip.style.marginLeft = '0'
+                // @ts-ignore
+                introTooltip.style.marginTop = '0'
+                // @ts-ignore
+                introTooltip.style.visibility = 'visible'
+              }
+            }, 380)
+          },
+          options: {
+            position: 'bottom',
+          },
+        },
+        {
+          target: '.date-bar-container',
+          title: 'La situation projetée de votre juridiction :',
+          intro:
+            '<p>Vous obtenez la situation projetée dans le futur de l’état du <b>contentieux ou sous-contentieux</b> sélectionné́ sur la base des dernières données disponibles dans l’outil  et toutes choses restant égales par ailleurs.</p><p>Une période d’un an à compter de la date du jour est sélectionnée par défaut mais vous pouvez, <b>si vous le souhaitez, modifier les dates de début et de fin de période</b> sur lesquelles vous souhaitez vous projeter.</p>',
+          beforeLoad: async (intro: any) => {
+            const introTooltip = document.querySelector('.introjs-tooltip')
+            if (introTooltip) {
+              // @ts-ignore
+              introTooltip.style.visibility = 'hidden'
+            }
+            setTimeout(() => {
+              const introTooltip = document.querySelector('.introjs-tooltip')
+              if (introTooltip) {
+                introTooltip.classList.add('introjs-bottom-left-aligned')
+                introTooltip.classList.remove('introjs-floating')
+                // @ts-ignore
+                introTooltip.style.left = '0px'
+                // @ts-ignore
+                introTooltip.style.top = '120px'
+                // @ts-ignore
+                introTooltip.style.marginLeft = '0'
+                // @ts-ignore
+                introTooltip.style.marginTop = '0'
+                // @ts-ignore
+                introTooltip.style.visibility = 'visible'
+              }
+            }, 380)
+          },
+          options: {
+            position: 'bottom',
+          },
+        },
+        /*{
       target: 'body',
       title: 'En savoir plus :',
       intro:
-        '<p>Consultez notre vidéo de présentation pour découvrir comment réaliser vos premières simulations ! À vous de jouer 😉</p><video controls class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
-    },
-  ]
+        '<p>Découvrez, en <b>vidéo</b>, comment jouer des scénarios alternatifs pour modifier vos trajectoires et apprécier les conséquences de changements à venir, subi ou choisis par la cour d'appel. </p><p>Nous vous y donnons également toutes les clés pour <b>analyser les résultats de ces simulations et prendre des décisions éclairées par leur impact prévisible.</b></p><video controls class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
+    },*/
+      ]
 
   /**
    * Constructeur
