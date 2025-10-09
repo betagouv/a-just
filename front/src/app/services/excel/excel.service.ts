@@ -412,6 +412,10 @@ export class ExcelService extends MainClass {
         const detail = err?.status ? ` (HTTP ${err.status}${err?.statusText ? ' ' + err.statusText : ''})` : ''
         alert(`Impossible de démarrer l’export${detail}`)
         this._finishExcelTxn('error')
+        // Ensure UI loading indicators are cleared even on start failure
+        try { this.isLoading.next(false) } catch {}
+        try { startExtract = false } catch {}
+        try { this.appService.appLoading.next(false) } catch {}
       })
   }
 

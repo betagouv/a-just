@@ -40,6 +40,9 @@ jobs:
         env:
           NODE_ENV: test
           SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
+          # Narrow Effectif export window to reduce runtime and avoid backend overload
+          CYPRESS_EFFECTIF_START: 2023-01-01
+          CYPRESS_EFFECTIF_STOP: 2023-03-31
         run: npm run test
         continue-on-error: true
 

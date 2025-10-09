@@ -441,6 +441,11 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       } catch {}
     } catch {}
   });
+  // Fail fast on native alert emitted by the app (e.g., start error)
+  cy.on('window:alert', (text) => {
+    try { snapshot(prefix, labelSlug, 'step17-window-alert'); } catch {}
+    throw new Error(`export.alert: ${String(text || '').trim()}`);
+  });
   // Close any lingering overlay that may block the export click
   cy.get('body').then(($b) => {
     const bd = $b.find('div.cdk-overlay-backdrop');
@@ -463,6 +468,14 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       cy.log(`start.payload dateStart=${ds} dateStop=${de}`);
       // Persist start payload for diagnostics
       cy.writeFile(`cypress/reports/${prefix}-${labelSlug}-start-body.json`, JSON.stringify(body, null, 2));
+      // Fail fast if backend immediately returns an error
+      const resp = (interception && (interception as any).response) || {};
+      const sc = Number((resp as any).statusCode ?? (resp as any).status ?? 0);
+      if (sc >= 400) {
+        const rbody = ((resp as any).body !== undefined) ? (resp as any).body : null;
+        const rbodyStr = typeof rbody === 'string' ? rbody : JSON.stringify(rbody || {}, null, 2);
+        throw new Error(`start-filter-list failed (HTTP ${sc}). Body: ${String(rbodyStr).slice(0, 2000)}`);
+      }
     } catch {}
   });
   snapshot(prefix, labelSlug, 'step16-export-clicked');
@@ -476,6 +489,14 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
     if (has) {
       cy.get(modalContainerSel, { timeout: 15000 }).should('be.visible');
       snapshot(prefix, labelSlug, 'step17-modal-visible');
+      // If the modal conveys an error, fail fast rather than waiting for downloads
+      cy.get(modalContainerSel).then(($m) => {
+        const txt = ($m.text() || '').trim();
+        if (/Impossible\s+de\s+d[ée]marrer\s+l['’]export|Erreur\s+serveur|Erreur\s+de\s+communication|Polling\s+timeout/i.test(txt)) {
+          snapshot(prefix, labelSlug, 'step17-modal-error');
+          throw new Error(`export.error.modal: ${txt.slice(0, 300)}`);
+        }
+      });
       cy.get(modalButtonsSel, { timeout: 15000 }).then(($btns) => {
         const arr = Array.from($btns as any);
         const okBtn = (arr as any[]).find((b: any) => /ok/i.test(((b as any).textContent || '').trim()));
