@@ -8,12 +8,12 @@ import user from "../../fixtures/user.json";
 // - CANDIDATE_FRONT_URL
 // Optional:
 // - BACKUP_LABEL (default: test010)
-// - START (default: 2023-01-01)
-// - STOP (default: 2024-06-01)
+// Dates are defined as in-file constants below for determinism across environments.
 // Recommendation: run with CYPRESS_DISABLE_SNAPSHOT_AFTER_EACH=1 to avoid global afterEach snapshots.
 
-const START = String(Cypress.env("START") || "2023-01-01");
-const STOP = String(Cypress.env("STOP") || "2024-06-01");
+// Fixed test window for Activité
+const START = '2023-01-01';
+const STOP = '2024-06-01';
 const ONLY_PR = !!Cypress.env("ONLY_PR");
 const BACKUP_LABEL = String(Cypress.env("BACKUP_LABEL") || "test010");
 const SANDBOX = String(Cypress.env("SANDBOX_FRONT_URL") || "");

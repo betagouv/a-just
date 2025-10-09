@@ -12,8 +12,9 @@ import user from "../../fixtures/user.json";
 // - STOP (default: 2024-06-15)
 // Recommendation: run with CYPRESS_DISABLE_SNAPSHOT_AFTER_EACH=1 to avoid global afterEach snapshots.
 
-const START = String(Cypress.env("EFFECTIF_START") || Cypress.env("START") || "2023-01-01");
-const STOP = String(Cypress.env("EFFECTIF_STOP") || Cypress.env("STOP") || "2024-06-15");
+// Fixed test window for Effectif (prefer in-file constants over environment)
+const START = '2023-01-01';
+const STOP = '2023-03-31';
 const BACKUP_LABEL = String(Cypress.env("BACKUP_LABEL") || "test010");
 const SANDBOX = String(Cypress.env("SANDBOX_FRONT_URL") || "");
 const PR = String(Cypress.env("CANDIDATE_FRONT_URL") || "");
