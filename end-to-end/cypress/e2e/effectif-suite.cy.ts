@@ -535,10 +535,20 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       cy.window({ log: false }).then((win: any) => {
         let ok = false;
         try {
-          const host = Cypress.$('aj-extractor-ventilation').get(0);
           const ng = (win as any).ng;
-          if (host && ng && typeof ng.getComponent === 'function') {
-            const cmp = ng.getComponent(host);
+          const selects = Cypress.$('aj-extractor-ventilation aj-date-select');
+          if (selects.length >= 2 && ng && typeof ng.getComponent === 'function') {
+            const startCmp = ng.getComponent(selects.get(0));
+            const stopCmp = ng.getComponent(selects.get(1));
+            if (startCmp && stopCmp && typeof startCmp.onDateChanged === 'function' && typeof stopCmp.onDateChanged === 'function') {
+              startCmp.onDateChanged(new Date(START));
+              stopCmp.onDateChanged(new Date(STOP));
+              ok = true;
+            }
+          }
+          if (!ok && ng && typeof ng.getComponent === 'function') {
+            const host = Cypress.$('aj-extractor-ventilation').get(0);
+            const cmp = host ? ng.getComponent(host) : null;
             if (cmp && typeof cmp.selectDate === 'function') {
               cmp.selectDate('start', new Date(START));
               cmp.selectDate('stop', new Date(STOP));
