@@ -470,8 +470,7 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
         cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
           const diffs = diffSheetsWithTolerance(sb, pr, 1e-6);
           if (diffs.length) {
-            cy.writeFile(`cypress/artifacts/activite/diff.txt`, diffs.join('\n'));
-            throw new Error(`Activite comparison mismatches: ${diffs.length} cells differ. See cypress/artifacts/activite/diff.txt`);
+            throw new Error(`Activite comparison mismatches: ${diffs.length} cells differ.`);
           }
         });
       });
