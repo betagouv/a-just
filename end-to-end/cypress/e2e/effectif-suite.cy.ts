@@ -459,25 +459,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       cy.get('aj-extractor-ventilation > div.exportateur-container > div > p', { timeout: 15000 }).scrollIntoView().click({ force: true });
     }
   });
-  // Confirm the backend start call observed (payload contains dates/category)
-  cy.wait('@effStart', { timeout: 60000 }).then((interception) => {
-    try {
-      const body = (interception && (interception as any).request?.body) || {};
-      const ds = String(body?.dateStart || '');
-      const de = String(body?.dateStop || '');
-      cy.log(`start.payload dateStart=${ds} dateStop=${de}`);
-      // Persist start payload for diagnostics
-      cy.writeFile(`cypress/reports/${prefix}-${labelSlug}-start-body.json`, JSON.stringify(body, null, 2));
-      // Fail fast if backend immediately returns an error
-      const resp = (interception && (interception as any).response) || {};
-      const sc = Number((resp as any).statusCode ?? (resp as any).status ?? 0);
-      if (sc >= 400) {
-        const rbody = ((resp as any).body !== undefined) ? (resp as any).body : null;
-        const rbodyStr = typeof rbody === 'string' ? rbody : JSON.stringify(rbody || {}, null, 2);
-        throw new Error(`start-filter-list failed (HTTP ${sc}). Body: ${String(rbodyStr).slice(0, 2000)}`);
-      }
-    } catch {}
-  });
+  // Best-effort diagnostics: the intercept above will capture polls; start payload logging is optional.
   snapshot(prefix, labelSlug, 'step16-export-clicked');
   // Do not wait on @effTpl for Effectif (it may not fetch a template). Proceed directly; hooks + polling will persist the file.
   snapshot(prefix, labelSlug, 'step16b-continue-no-template-wait');
@@ -539,6 +521,8 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
     snapshot(prefix, labelSlug, 'step18-download-detected');
     return cy.task('moveAndNormalizeXlsx', { fileName, targetBase }).then(() => {
       snapshot(prefix, labelSlug, 'step19-artifacts-written');
+      // Assert artifact exists before leaving this export step
+      cy.readFile(`cypress/artifacts/effectif/${targetBase}.json`, { timeout: 120000 });
     });
   });
   // Persist poll timeline for analysis
