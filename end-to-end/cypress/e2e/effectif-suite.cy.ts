@@ -40,9 +40,7 @@ const FR_MONTHS = [
 ];
 
 function snapshot(prefix: string, labelSlug: string, step: string) {
-  cy.document().then((doc) => {
-    cy.writeFile(`cypress/reports/${prefix}-${labelSlug}-${step}.html`, doc.documentElement.outerHTML);
-  });
+  // no-op: disable HTML snapshot files
 }
 
 function slugifyLabel(lbl: string): string {
@@ -129,27 +127,9 @@ function persistBase64WhenReady(defaultFileName: string, maxMs = 240000, interva
 function loginAndOpenDashboard(baseUrl: string) {
   cy.clearAllLocalStorage();
   cy.clearCookies();
-  // Enable console capture and API intercepts before visiting
-  const hostSafe = new URL(baseUrl).host.replace(/[:.]/g, '-');
-  cy.enableDebugLogging(`login-${hostSafe}` as any);
-  const netLogs: Array<{ method: string; url: string; status?: number }> = [];
-  cy.intercept('**/api/**', (req) => {
-    req.on('response', (res) => {
-      try { netLogs.push({ method: req.method, url: req.url, status: res.statusCode }); } catch {}
-    });
-  });
   cy.visit(`${baseUrl}/connexion`, { timeout: 60000 });
   cy.get('body', { timeout: 60000 }).should('be.visible');
   cy.url().should('include', '/connexion');
-  // Snapshot current login DOM for diagnostics (slow PR may render late)
-  cy.document().then((doc) => {
-    cy.writeFile(`cypress/reports/login-${hostSafe}.html`, doc.documentElement.outerHTML);
-  });
-  // Early flush of network + console logs so we capture issues even if login later times out
-  cy.then(() => {
-    return cy.task('saveDomHtml', { filename: `net-${hostSafe}.json`, html: JSON.stringify(netLogs, null, 2) });
-  });
-  cy.flushDebugLogs(`login-${hostSafe}`);
   // Mirror login.cy.js flow exactly
   cy.get('form', { timeout: 60000 }).then(($forms) => {
     if ($forms.length) {
@@ -170,11 +150,6 @@ function loginAndOpenDashboard(baseUrl: string) {
     }
   });
   cy.location('pathname', { timeout: 60000 }).should('include', '/panorama');
-  // Persist network logs and console logs for diagnostics
-  cy.then(() => {
-    return cy.task('saveDomHtml', { filename: `net-${hostSafe}.json`, html: JSON.stringify(netLogs, null, 2) });
-  });
-  cy.flushDebugLogs(`login-${hostSafe}`);
   cy.visit(`${baseUrl}/dashboard`);
   cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should('exist');
   cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
@@ -231,9 +206,6 @@ function pickCategoryEffectif(categoryLabel: string, prefix: string, labelSlug: 
   snapshot(prefix, labelSlug, 'step13-category-opened');
   const pat = categoryPattern(categoryLabel);
   cy.get('.cdk-overlay-pane', { timeout: 15000 }).last().then(($ov) => {
-    // Snapshot overlay DOM for debugging
-    const ovHtml = ($ov.get(0) as HTMLElement)?.innerHTML || '';
-    cy.task('saveDomHtml', { filename: `${prefix}-${labelSlug}-overlay.html`, html: ovHtml });
     // 0) Siège special-case: recorder shows first option pseudo-checkbox
     if (/^si[eè]ge$/i.test(categoryLabel)) {
       const siegeDirect = $ov.find('#mat-option-0 > mat-pseudo-checkbox');
@@ -326,16 +298,8 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
   cy.intercept('POST', '**/api/extractor/**').as('effData');
   cy.intercept('GET', '**/assets/*.xlsx*').as('effTpl');
   // Targeted diagnostics: capture start payload and poll timeline
-  const pollLog: Array<any> = [];
   cy.intercept('POST', '**/api/extractor/start-filter-list').as('effStart');
-  cy.intercept('POST', '**/api/extractor/status-filter-list-post', (req) => {
-    const t0 = Date.now();
-    req.on('response', (res) => {
-      try {
-        pollLog.push({ t: Date.now(), ms: Date.now() - t0, status: res?.statusCode, bodyStatus: (res as any)?.body?.status });
-      } catch {}
-    });
-  }).as('effStatus');
+  cy.intercept('POST', '**/api/extractor/status-filter-list-post').as('effStatus');
   snapshot(prefix, labelSlug, 'step15b-downloads-wiped');
   // Install hooks BEFORE clicking export so we capture fast Blob/saveAs flows
   cy.window({ log: false }).then((win: any) => {
@@ -461,7 +425,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       cy.get('aj-extractor-ventilation > div.exportateur-container > div > p', { timeout: 15000 }).scrollIntoView().click({ force: true });
     }
   });
-  // Best-effort diagnostics: the intercept above will capture polls; start payload logging is optional.
+  // Best-effort diagnostics: skip start payload logging
   snapshot(prefix, labelSlug, 'step16-export-clicked');
   // Do not wait on @effTpl for Effectif (it may not fetch a template). Proceed directly; hooks + polling will persist the file.
   snapshot(prefix, labelSlug, 'step16b-continue-no-template-wait');
@@ -527,10 +491,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       cy.readFile(`cypress/artifacts/effectif/${targetBase}.json`, { timeout: 120000 });
     });
   });
-  // Persist poll timeline for analysis
-  cy.then(() => {
-    try { cy.writeFile(`cypress/reports/${prefix}-${labelSlug}-polls.json`, JSON.stringify(pollLog, null, 2)); } catch {}
-  });
+  // No poll timeline writes
 }
 
 describe('Effectif Suite: PR and SANDBOX then compare', () => {

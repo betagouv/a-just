@@ -37,13 +37,8 @@ const FR_MONTHS = [
   "DÉC.",
 ];
 
-function snapshot(prefix: string, step: string) {
-  // no-op: disable HTML snapshot files in CI
-}
-
-function snapshotStep(n: number) {
-  // no-op
-}
+function snapshot(prefix: string, step: string) { /* no-op */ }
+function snapshotStep(n: number) { /* no-op */ }
 
 function diffSheetsWithTolerance(a: any, b: any, eps = 1e-6): string[] {
   const diffs: string[] = [];
@@ -472,8 +467,7 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
         cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
           const diffs = diffSheetsWithTolerance(sb, pr, 1e-6);
           if (diffs.length) {
-            cy.writeFile(`cypress/artifacts/activite/diff.txt`, diffs.join('\n'));
-            throw new Error(`Activite comparison mismatches: ${diffs.length} cells differ. See cypress/artifacts/activite/diff.txt`);
+            throw new Error(`Activite comparison mismatches: ${diffs.length} cells differ.`);
           }
         });
       });
