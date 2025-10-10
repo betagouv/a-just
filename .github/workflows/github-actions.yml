@@ -46,28 +46,7 @@ jobs:
         run: npm run test
         continue-on-error: true
 
-      - name: Debug - Print TJ labels (if any)
-        if: always()
-        run: |
-          echo "=== TJ LABELS DEBUG ==="
-          FOUND=false
-          if ls ./end-to-end/cypress/reports/tj-labels-* 1> /dev/null 2>&1; then
-            for f in ./end-to-end/cypress/reports/tj-labels-*; do
-              echo "--- $f ---"
-              cat "$f" || true
-            done
-            FOUND=true
-          fi
-          if ls ./end-to-end/cypress/debug/tj-labels-* 1> /dev/null 2>&1; then
-            for f in ./end-to-end/cypress/debug/tj-labels-*; do
-              echo "--- $f ---"
-              cat "$f" || true
-            done
-            FOUND=true
-          fi
-          if [ "$FOUND" = false ]; then
-            echo "No TJ label files found"
-          fi
+      
 
       - name: Debug - List generated files
         if: always()
@@ -103,23 +82,7 @@ jobs:
           name: cypress-reports
           path: ./end-to-end/cypress/reports
 
-      - name: Upload TJ labels
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: tj-labels
-          path: |
-            ./end-to-end/cypress/reports/tj-labels-*
-            ./end-to-end/cypress/debug/tj-labels-*
-          if-no-files-found: ignore
-
-      - name: Upload DOM snapshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dom-snapshots
-          path: ./end-to-end/cypress/reports/dom-*.html
-          if-no-files-found: ignore
+      
 
       - name: Upload Cypress downloads (Excel files)
         if: always()
