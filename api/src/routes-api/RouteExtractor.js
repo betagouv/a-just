@@ -305,9 +305,7 @@ export default class RouteExtractor extends Route {
       return ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    // Define a safe no-op progress callback to avoid ReferenceError when not using the async job flow
-    const onProgress = () => {}
-    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
+    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true })
 
     this.sendOk(ctx, result)
     /**
