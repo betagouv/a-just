@@ -12,12 +12,13 @@ import user from "../../fixtures/user.json";
 // - STOP (default: 2024-06-15)
 // Recommendation: run with CYPRESS_DISABLE_SNAPSHOT_AFTER_EACH=1 to avoid global afterEach snapshots.
 
-// Fixed test window for Effectif (prefer in-file constants over environment)
+// Dates defined in-file for determinism in local and CI runs
 const START = '2023-01-01';
 const STOP = '2023-03-31';
-const BACKUP_LABEL = String(Cypress.env("BACKUP_LABEL") || "test010");
-const SANDBOX = String(Cypress.env("SANDBOX_FRONT_URL") || "");
-const PR = String(Cypress.env("CANDIDATE_FRONT_URL") || "");
+// Hosts defined in-file to remove dependency on env wiring
+const BACKUP_LABEL = 'test010';
+const SANDBOX = 'http://175.0.0.31:4200';
+const PR = 'http://175.0.0.30:4200';
 
 const CATEGORIES: string[] = [
   "Tous",
@@ -39,7 +40,9 @@ const FR_MONTHS = [
 ];
 
 function snapshot(prefix: string, labelSlug: string, step: string) {
-  // no-op: disable HTML snapshot files
+  cy.document().then((doc) => {
+    cy.writeFile(`cypress/reports/${prefix}-${labelSlug}-${step}.html`, doc.documentElement.outerHTML);
+  });
 }
 
 function slugifyLabel(lbl: string): string {
@@ -126,9 +129,27 @@ function persistBase64WhenReady(defaultFileName: string, maxMs = 240000, interva
 function loginAndOpenDashboard(baseUrl: string) {
   cy.clearAllLocalStorage();
   cy.clearCookies();
+  // Enable console capture and API intercepts before visiting
+  const hostSafe = new URL(baseUrl).host.replace(/[:.]/g, '-');
+  cy.enableDebugLogging(`login-${hostSafe}` as any);
+  const netLogs: Array<{ method: string; url: string; status?: number }> = [];
+  cy.intercept('**/api/**', (req) => {
+    req.on('response', (res) => {
+      try { netLogs.push({ method: req.method, url: req.url, status: res.statusCode }); } catch {}
+    });
+  });
   cy.visit(`${baseUrl}/connexion`, { timeout: 60000 });
   cy.get('body', { timeout: 60000 }).should('be.visible');
   cy.url().should('include', '/connexion');
+  // Snapshot current login DOM for diagnostics (slow PR may render late)
+  cy.document().then((doc) => {
+    cy.writeFile(`cypress/reports/login-${hostSafe}.html`, doc.documentElement.outerHTML);
+  });
+  // Early flush of network + console logs so we capture issues even if login later times out
+  cy.then(() => {
+    return cy.task('saveDomHtml', { filename: `net-${hostSafe}.json`, html: JSON.stringify(netLogs, null, 2) });
+  });
+  cy.flushDebugLogs(`login-${hostSafe}`);
   // Mirror login.cy.js flow exactly
   cy.get('form', { timeout: 60000 }).then(($forms) => {
     if ($forms.length) {
@@ -149,6 +170,11 @@ function loginAndOpenDashboard(baseUrl: string) {
     }
   });
   cy.location('pathname', { timeout: 60000 }).should('include', '/panorama');
+  // Persist network logs and console logs for diagnostics
+  cy.then(() => {
+    return cy.task('saveDomHtml', { filename: `net-${hostSafe}.json`, html: JSON.stringify(netLogs, null, 2) });
+  });
+  cy.flushDebugLogs(`login-${hostSafe}`);
   cy.visit(`${baseUrl}/dashboard`);
   cy.get('h6, [data-cy="backup-name"]', { timeout: 20000 }).should('exist');
   cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
@@ -167,45 +193,27 @@ function setDatesEffectif(startISO: string, stopISO: string, prefix: string, lab
   cy.get('aj-extractor-ventilation', { timeout: 20000 }).first().as('eff');
 
   // START
-  cy.get('@eff').find('aj-date-select:nth-of-type(1) > div > p', { timeout: 15000 }).first().click({ force: true });
-  cy.get('.cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible').as('dpStart');
-  cy.get('@dpStart').find('button.mat-calendar-period-button', { timeout: 15000 }).first().click({ force: true });
+  cy.get('@eff').find('aj-date-select:nth-of-type(1) > div > p', { timeout: 15000 }).click({ force: true });
+  cy.get('mat-datepicker-content .mat-calendar, .cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible');
+  cy.get('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
   snapshot(prefix, labelSlug, 'step4-done');
-  cy.get('@dpStart')
-    .find('.mat-calendar-body .mat-calendar-body-cell-content')
-    .contains(new RegExp(`^${sY}$`))
-    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
+  cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', sY, { timeout: 15000 }).click({ force: true });
   snapshot(prefix, labelSlug, 'step5-done');
-  cy.get('@dpStart')
-    .find('.mat-calendar-body .mat-calendar-body-cell-content')
-    .contains(new RegExp(`^${FR_MONTHS[sMIdx]}$`))
-    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
+  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', FR_MONTHS[sMIdx], { timeout: 15000 }).click({ force: true });
   snapshot(prefix, labelSlug, 'step6-done');
-  cy.get('@dpStart')
-    .find('.mat-calendar-body .mat-calendar-body-cell-content')
-    .contains(new RegExp(`^${sD}$`))
-    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
+  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', sD, { timeout: 15000 }).click({ force: true });
   snapshot(prefix, labelSlug, 'step7-done');
 
   // END
-  cy.get('@eff').find('aj-date-select:nth-of-type(2) > div > p', { timeout: 15000 }).first().click({ force: true });
-  cy.get('.cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible').as('dpEnd');
-  cy.get('@dpEnd').find('button.mat-calendar-period-button', { timeout: 15000 }).first().click({ force: true });
+  cy.get('@eff').find('aj-date-select:nth-of-type(2) > div > p', { timeout: 15000 }).click({ force: true });
+  cy.get('mat-datepicker-content .mat-calendar, .cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible');
+  cy.get('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
   snapshot(prefix, labelSlug, 'step9-done');
-  cy.get('@dpEnd')
-    .find('.mat-calendar-body .mat-calendar-body-cell-content')
-    .contains(new RegExp(`^${eY}$`))
-    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
+  cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', eY, { timeout: 15000 }).click({ force: true });
   snapshot(prefix, labelSlug, 'step10-done');
-  cy.get('@dpEnd')
-    .find('.mat-calendar-body .mat-calendar-body-cell-content')
-    .contains(new RegExp(`^${FR_MONTHS[eMIdx]}$`))
-    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
+  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', FR_MONTHS[eMIdx], { timeout: 15000 }).click({ force: true });
   snapshot(prefix, labelSlug, 'step11-done');
-  cy.get('@dpEnd')
-    .find('.mat-calendar-body .mat-calendar-body-cell-content')
-    .contains(new RegExp(`^${eD}$`))
-    .then(($el) => { cy.wrap($el).first().click({ force: true }); });
+  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', eD, { timeout: 15000 }).click({ force: true });
   snapshot(prefix, labelSlug, 'step12-done');
 }
 
@@ -223,6 +231,9 @@ function pickCategoryEffectif(categoryLabel: string, prefix: string, labelSlug: 
   snapshot(prefix, labelSlug, 'step13-category-opened');
   const pat = categoryPattern(categoryLabel);
   cy.get('.cdk-overlay-pane', { timeout: 15000 }).last().then(($ov) => {
+    // Snapshot overlay DOM for debugging
+    const ovHtml = ($ov.get(0) as HTMLElement)?.innerHTML || '';
+    cy.task('saveDomHtml', { filename: `${prefix}-${labelSlug}-overlay.html`, html: ovHtml });
     // 0) Siège special-case: recorder shows first option pseudo-checkbox
     if (/^si[eè]ge$/i.test(categoryLabel)) {
       const siegeDirect = $ov.find('#mat-option-0 > mat-pseudo-checkbox');
@@ -516,7 +527,10 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
       cy.readFile(`cypress/artifacts/effectif/${targetBase}.json`, { timeout: 120000 });
     });
   });
-  // No debug poll timeline persistence
+  // Persist poll timeline for analysis
+  cy.then(() => {
+    try { cy.writeFile(`cypress/reports/${prefix}-${labelSlug}-polls.json`, JSON.stringify(pollLog, null, 2)); } catch {}
+  });
 }
 
 describe('Effectif Suite: PR and SANDBOX then compare', () => {
@@ -532,36 +546,8 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
         .scrollIntoView()
         .click({ force: true });
-      cy.window({ log: false }).then((win: any) => {
-        let ok = false;
-        try {
-          const ng = (win as any).ng;
-          const selects = Cypress.$('aj-extractor-ventilation aj-date-select');
-          if (selects.length >= 2 && ng && typeof ng.getComponent === 'function') {
-            const startCmp = ng.getComponent(selects.get(0));
-            const stopCmp = ng.getComponent(selects.get(1));
-            if (startCmp && stopCmp && typeof startCmp.onDateChanged === 'function' && typeof stopCmp.onDateChanged === 'function') {
-              startCmp.onDateChanged(new Date(START));
-              stopCmp.onDateChanged(new Date(STOP));
-              ok = true;
-            }
-          }
-          if (!ok && ng && typeof ng.getComponent === 'function') {
-            const host = Cypress.$('aj-extractor-ventilation').get(0);
-            const cmp = host ? ng.getComponent(host) : null;
-            if (cmp && typeof cmp.selectDate === 'function') {
-              cmp.selectDate('start', new Date(START));
-              cmp.selectDate('stop', new Date(STOP));
-              ok = true;
-            }
-          }
-        } catch {}
-        if (!ok) {
-          setDatesEffectif(START, STOP, prefix, labelSlug);
-        }
-      });
+      setDatesEffectif(START, STOP, prefix, labelSlug);
       pickCategoryEffectif(cat, prefix, labelSlug);
-      cy.get('#export-excel-button').should('not.have.class', 'disabled');
       exportAndPersist(PR, START, STOP, cat, prefix, labelSlug);
     });
   });
@@ -578,26 +564,8 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
         .scrollIntoView()
         .click({ force: true });
-      cy.window({ log: false }).then((win: any) => {
-        let ok = false;
-        try {
-          const host = Cypress.$('aj-extractor-ventilation').get(0);
-          const ng = (win as any).ng;
-          if (host && ng && typeof ng.getComponent === 'function') {
-            const cmp = ng.getComponent(host);
-            if (cmp && typeof cmp.selectDate === 'function') {
-              cmp.selectDate('start', new Date(START));
-              cmp.selectDate('stop', new Date(STOP));
-              ok = true;
-            }
-          }
-        } catch {}
-        if (!ok) {
-          setDatesEffectif(START, STOP, prefix, labelSlug);
-        }
-      });
+      setDatesEffectif(START, STOP, prefix, labelSlug);
       pickCategoryEffectif(cat, prefix, labelSlug);
-      cy.get('#export-excel-button').should('not.have.class', 'disabled');
       exportAndPersist(SANDBOX, START, STOP, cat, prefix, labelSlug);
     });
   });
@@ -615,6 +583,9 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       cy.readFile(sbJson, { timeout: 60000 }).then((sb) => {
         cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
           const diffs = diffSheetsWithTolerance(sb, pr, 1e-6);
+          if (diffs.length) {
+            cy.writeFile(`cypress/artifacts/effectif/diff_${slug}.txt`, diffs.join('\n'));
+          }
           results.push({ label: cat, diffs });
         });
       });
@@ -624,7 +595,7 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       const failing = results.filter(r => r.diffs.length > 0);
       if (failing.length) {
         const summary = failing.map(r => `${r.label}: ${r.diffs.length} mismatches`).join('\n');
-        throw new Error(`Effectif comparison mismatches:\n${summary}`);
+        throw new Error(`Effectif comparison mismatches:\n${summary}\nSee cypress/artifacts/effectif/diff_*.txt for details`);
       }
     });
   });

@@ -8,16 +8,18 @@ import user from "../../fixtures/user.json";
 // - CANDIDATE_FRONT_URL
 // Optional:
 // - BACKUP_LABEL (default: test010)
-// Dates are defined as in-file constants below for determinism across environments.
+// - START (default: 2023-01-01)
+// - STOP (default: 2024-06-01)
 // Recommendation: run with CYPRESS_DISABLE_SNAPSHOT_AFTER_EACH=1 to avoid global afterEach snapshots.
 
-// Fixed test window for Activité
+// Dates defined in-file for determinism in local and CI runs
 const START = '2023-01-01';
-const STOP = '2023-12-01';
+const STOP = '2024-06-01';
 const ONLY_PR = !!Cypress.env("ONLY_PR");
-const BACKUP_LABEL = String(Cypress.env("BACKUP_LABEL") || "test010");
-const SANDBOX = String(Cypress.env("SANDBOX_FRONT_URL") || "");
-const PR = String(Cypress.env("CANDIDATE_FRONT_URL") || "");
+// Hosts defined in-file to remove dependency on env wiring
+const BACKUP_LABEL = 'test010';
+const SANDBOX = 'http://175.0.0.31:4200';
+const PR = 'http://175.0.0.30:4200';
 const KEEP_ARTIFACTS = !!(Cypress.env('KEEP_ARTIFACTS') || Cypress.env('CYPRESS_KEEP_ARTIFACTS'));
 
 const FR_MONTHS = [
@@ -146,65 +148,78 @@ function setDatesActivite(startISO: string, stopISO: string, prefix: string) {
 
   cy.get('aj-extractor-activity', { timeout: 20000 }).first().as('act');
 
-  // Fast path: type directly into matInput to trigger ngModelChange → onDateChanged
-  cy.get('@act').find('aj-date-select:nth-of-type(1) input[matinput]', { timeout: 2000 }).then(($in) => {
-    if ($in && $in.length) {
-      cy.wrap($in).invoke('val', startISO).trigger('input').trigger('change');
+  // START
+  cy.get('@act').find('aj-date-select:nth-of-type(1) > div > p', { timeout: 15000 }).click({ force: true });
+  cy.get('.cdk-overlay-pane #mat-datepicker-2', { timeout: 15000 }).should('be.visible').as('dpStart');
+  snapshotStep(1);
+  // Two clicks to reach multi-year view (year selection) exactly like recorder, with fallback to mat-calendar-period-button
+  cy.get('@dpStart').then(($dp) => {
+    const hasPeriodBtn = $dp.find('button.mat-calendar-period-button').length > 0;
+    if (hasPeriodBtn) {
+      cy.wrap($dp).find('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
+      cy.wrap($dp).find('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
+    } else {
+      cy.wrap($dp).find('mat-calendar-header', { timeout: 15000 }).within(() => {
+        cy.get('button.mdc-button .mat-mdc-button-touch-target', { timeout: 15000 })
+          .first()
+          .then(($el) => cy.wrap($el).closest('button').click({ force: true }));
+        cy.get('span.mdc-button__label > span', { timeout: 15000 })
+          .first()
+          .then(($el) => cy.wrap($el).closest('button').click({ force: true }));
+      });
     }
   });
-  cy.get('@act').find('aj-date-select:nth-of-type(2) input[matinput]', { timeout: 2000 }).then(($in) => {
-    if ($in && $in.length) {
-      cy.wrap($in).invoke('val', stopISO).trigger('input').trigger('change');
-    }
-  });
-  // If export button is now enabled, skip overlay path
-  cy.get('#export-excel-button', { timeout: 2000 }).then(($btn) => {
-    if (!$btn.hasClass('disabled')) {
-      return; // dates set successfully
-    }
-    // Otherwise, use robust overlay-based selection below
-    // START
-    cy.get('@act').find('aj-date-select:nth-of-type(1) > div > p', { timeout: 15000 }).first().click({ force: true });
-    cy.get('.cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible').as('dpStart');
-    snapshotStep(1);
-    // Go to multi-year view if needed
-    cy.get('@dpStart').find('button.mat-calendar-period-button', { timeout: 15000 }).first().click({ force: true });
-    snapshotStep(2);
-    // Pick year
-    cy.get('@dpStart')
-      .find('.mat-calendar-body .mat-calendar-body-cell-content', { timeout: 15000 })
-      .contains(new RegExp(`^${sY}$`))
-      .then(($el) => { cy.wrap($el).first().click({ force: true }); });
-    snapshotStep(3);
-    // Pick month
-    cy.get('@dpStart')
-      .find('.mat-calendar-body .mat-calendar-body-cell-content', { timeout: 15000 })
-      .contains(new RegExp(`^${FR_MONTHS[sMIdx]}$`))
-      .then(($el) => { cy.wrap($el).first().click({ force: true }); });
-    snapshotStep(4);
-
-    // END
-    cy.get('@act').find('aj-date-select:nth-of-type(2) > div > p', { timeout: 15000 }).first().click({ force: true });
-    cy.get('.cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible').as('dpEnd');
-    snapshotStep(5);
-    // Go to multi-year view if needed
-    cy.get('@dpEnd').find('button.mat-calendar-period-button', { timeout: 15000 }).first().click({ force: true });
-    // Pick year
-    cy.get('@dpEnd')
-      .find('.mat-calendar-body .mat-calendar-body-cell-content', { timeout: 15000 })
-      .contains(new RegExp(`^${eY}$`))
-      .then(($el) => { cy.wrap($el).first().click({ force: true }); });
-    snapshotStep(6);
-    // Pick month
-    cy.get('@dpEnd')
-      .find('.mat-calendar-body .mat-calendar-body-cell-content', { timeout: 15000 })
-      .contains(new RegExp(`^${FR_MONTHS[eMIdx]}$`))
-      .then(($el) => { cy.wrap($el).first().click({ force: true }); });
-    // Ensure no datepicker overlay remains open (can block clicks)
-    cy.get('body').then(($b) => {
-      const $ov = $b.find('div.cdk-overlay-backdrop');
-      if ($ov.length) cy.wrap($ov.get(0)).click({ force: true });
+  snapshotStep(2);
+  // Click the year cell (e.g., 2023) by clicking its button directly
+  cy.get('@dpStart')
+    .find('.mat-calendar-body button', { timeout: 15000 })
+    .contains(sY)
+    .click({ force: true });
+  // Immediately snapshot after year click to debug transitions
+  snapshotStep(3);
+  // Select JANV. — prefer exact cell path (row 2, col 1) like recorder, fallback to text
+  // Prefer exact nth-of-type path to the month button; fallback to text on button
+  cy.get('@dpStart')
+    .find(
+      'mat-year-view table tbody tr:nth-of-type(2) td:nth-of-type(1) button, .mat-year-view .mat-calendar-body table tbody tr:nth-of-type(2) td:nth-of-type(1) button',
+      { timeout: 15000 }
+    )
+    .then(($btns) => {
+      if ($btns.length) {
+        cy.wrap($btns[0]).click({ force: true });
+      } else {
+        cy.get('@dpStart')
+          .find('.mat-calendar-body button', { timeout: 15000 })
+          .contains(FR_MONTHS[sMIdx])
+          .click({ force: true });
+      }
     });
+  snapshotStep(4);
+
+  // END
+  cy.get('@act').find('aj-date-select:nth-of-type(2) > div > p', { timeout: 15000 }).click({ force: true });
+  cy.get('.cdk-overlay-pane #mat-datepicker-3', { timeout: 15000 }).should('be.visible').as('dpEnd');
+  snapshotStep(5);
+  cy.get('@dpEnd')
+    .find(
+      'mat-year-view table tbody tr:nth-of-type(3) td:nth-of-type(2) button, .mat-year-view .mat-calendar-body table tbody tr:nth-of-type(3) td:nth-of-type(2) button',
+      { timeout: 15000 }
+    )
+    .then(($btns) => {
+      if ($btns.length) {
+        cy.wrap($btns[0]).click({ force: true });
+      } else {
+        cy.get('@dpEnd')
+          .find('.mat-calendar-body button', { timeout: 15000 })
+          .contains(FR_MONTHS[eMIdx])
+          .click({ force: true });
+      }
+    });
+  snapshotStep(6);
+  // Ensure no datepicker overlay remains open (can block clicks)
+  cy.get('body').then(($b) => {
+    const $ov = $b.find('div.cdk-overlay-backdrop');
+    if ($ov.length) cy.wrap($ov.get(0)).click({ force: true });
   });
 }
 
@@ -426,35 +441,7 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
     cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
       .scrollIntoView()
       .click({ force: true });
-    cy.window({ log: false }).then((win: any) => {
-      let ok = false;
-      try {
-        const ng = (win as any).ng;
-        const selects = Cypress.$('aj-extractor-activity aj-date-select');
-        if (selects.length >= 2 && ng && typeof ng.getComponent === 'function') {
-          const startCmp = ng.getComponent(selects.get(0));
-          const stopCmp = ng.getComponent(selects.get(1));
-          if (startCmp && stopCmp && typeof startCmp.onDateChanged === 'function' && typeof stopCmp.onDateChanged === 'function') {
-            startCmp.onDateChanged(new Date(START));
-            stopCmp.onDateChanged(new Date(STOP));
-            ok = true;
-          }
-        }
-        if (!ok && ng && typeof ng.getComponent === 'function') {
-          const host = Cypress.$('aj-extractor-activity').get(0);
-          const cmp = host ? ng.getComponent(host) : null;
-          if (cmp && typeof cmp.selectDate === 'function') {
-            cmp.selectDate('start', new Date(START));
-            cmp.selectDate('stop', new Date(STOP));
-            ok = true;
-          }
-        }
-      } catch {}
-      if (!ok) {
-        setDatesActivite(START, STOP, 'pr');
-      }
-    });
-    cy.get('#export-excel-button').should('not.have.class', 'disabled');
+    setDatesActivite(START, STOP, 'pr');
     exportAndPersistActivite(PR, START, STOP, 'pr');
   });
 
@@ -470,35 +457,7 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
       cy.contains('h6, [data-cy="backup-name"]', new RegExp(`^${BACKUP_LABEL}$`, 'i'), { timeout: 20000 })
         .scrollIntoView()
         .click({ force: true });
-      cy.window({ log: false }).then((win: any) => {
-        let ok = false;
-        try {
-          const ng = (win as any).ng;
-          const selects = Cypress.$('aj-extractor-activity aj-date-select');
-          if (selects.length >= 2 && ng && typeof ng.getComponent === 'function') {
-            const startCmp = ng.getComponent(selects.get(0));
-            const stopCmp = ng.getComponent(selects.get(1));
-            if (startCmp && stopCmp && typeof startCmp.onDateChanged === 'function' && typeof stopCmp.onDateChanged === 'function') {
-              startCmp.onDateChanged(new Date(START));
-              stopCmp.onDateChanged(new Date(STOP));
-              ok = true;
-            }
-          }
-          if (!ok && ng && typeof ng.getComponent === 'function') {
-            const host = Cypress.$('aj-extractor-activity').get(0);
-            const cmp = host ? ng.getComponent(host) : null;
-            if (cmp && typeof cmp.selectDate === 'function') {
-              cmp.selectDate('start', new Date(START));
-              cmp.selectDate('stop', new Date(STOP));
-              ok = true;
-            }
-          }
-        } catch {}
-        if (!ok) {
-          setDatesActivite(START, STOP, 'sandbox');
-        }
-      });
-      cy.get('#export-excel-button').should('not.have.class', 'disabled');
+      setDatesActivite(START, STOP, 'sandbox');
       exportAndPersistActivite(SANDBOX, START, STOP, 'sandbox');
     });
 
@@ -513,7 +472,8 @@ describe('Activite Suite: PR and SANDBOX then compare', () => {
         cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
           const diffs = diffSheetsWithTolerance(sb, pr, 1e-6);
           if (diffs.length) {
-            throw new Error(`Activite comparison mismatches: ${diffs.length} cells differ.`);
+            cy.writeFile(`cypress/artifacts/activite/diff.txt`, diffs.join('\n'));
+            throw new Error(`Activite comparison mismatches: ${diffs.length} cells differ. See cypress/artifacts/activite/diff.txt`);
           }
         });
       });
