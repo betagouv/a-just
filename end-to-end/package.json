@@ -5,7 +5,7 @@
     "start": "npm run cy:open",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
-    "cy:run:report": "cypress run --spec 'cypress/e2e/activite-suite.cy.ts,cypress/e2e/effectif-suite.cy.ts' --reporter cypress-mochawesome-reporter",
+    "cy:run:report": "cypress run --spec 'cypress/e2e/**/*.{cy.ts,cy.js}' --reporter cypress-mochawesome-reporter",
     "clean:reports": "rm -rf cypress/reports"
   },
   "private": true,
