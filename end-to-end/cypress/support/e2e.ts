@@ -1,4 +1,12 @@
 /// <reference types="cypress" />
+// Mirror sandbox: load custom commands and reporter, register cy-verify-downloads
+import '../../support/commands';
+import addCustomCommand from 'cy-verify-downloads';
+import 'cypress-mochawesome-reporter/register';
+
+// Also register via require to match sandbox behavior
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('cy-verify-downloads').addCustomCommand();
 
 // Debug helpers to capture AUT console logs into cypress/reports
 
@@ -45,3 +53,18 @@ Cypress.Commands.add('flushDebugLogs', (tag: string) => {
 });
 
 export {};
+
+// Sandbox parity: basic session cleanup before run
+before(() => {
+  try { cy.clearCookies(); } catch {}
+  try { cy.clearLocalStorage(); } catch {}
+  try { cy.reload(); } catch {}
+});
+
+// Ignore ResizeObserver noise like in sandbox
+Cypress.on('uncaught:exception', (err) => {
+  if (err && /ResizeObserver loop completed with undelivered notifications/i.test(String(err.message || ''))) {
+    return false;
+  }
+  return true;
+});
