@@ -1,1 +1,0 @@
-Test commenté : Le test vérifie si la moyenne des entrées mensuelles correspond à la valeur attendue, mais il est possible qu'il réussisse toujours car aucune vérification réelle n'est exécutée.
