@@ -37,6 +37,7 @@ end-to-end/cypress/downloads/
 end-to-end/cypress/reports/
 end-to-end/cypress/videos/
 end-to-end/cypress/artifacts/
+end-to-end/cypress/debug/
 
 # Local test corpus (do not commit)
 api/src/var/tests-corpus/
