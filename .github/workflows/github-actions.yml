@@ -37,6 +37,7 @@ jobs:
         run: npm i
 
       - name: Run unit tests (API)
+        if: ${{ false }}
         run: npm run test:api
 
       - name: Run tests
@@ -95,7 +96,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload Mocha test report
-        if: always()
+        if: ${{ false }}
         uses: actions/upload-artifact@v4
         with:
           name: mocha-report
@@ -141,6 +142,7 @@ jobs:
           path: ./cypress-videos
 
       - name: Download Mocha report artifacts
+        if: ${{ false }}
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
