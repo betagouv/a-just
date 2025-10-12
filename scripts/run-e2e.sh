@@ -34,9 +34,9 @@ docker exec -i "$PROJECT_NAME-db-1" psql -U ajust-user -d postgres -c "SELECT pg
 docker exec -i "$PROJECT_NAME-db-1" psql -U ajust-user -d postgres -c "DROP DATABASE IF EXISTS ajust_sandbox;" >/dev/null
 docker exec -i "$PROJECT_NAME-db-1" psql -U ajust-user -d postgres -c "CREATE DATABASE ajust_sandbox TEMPLATE ajust;" >/dev/null
 
-# 2) Run Cypress in a named container so we can fetch logs by name later
+# 2) Run Cypress via compose up so GA streams logs and we propagate Cypress exit code
 set +e
-docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" run --name cypress-run cypress
+docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" up --build --abort-on-container-exit --exit-code-from cypress cypress
 exitcode=$?
 set -e
 
@@ -46,7 +46,7 @@ if [ $exitcode -ne 0 ]; then
   docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" ps || true
 
   echo '=== logs: cypress ==='
-  docker logs cypress-run || true
+  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color cypress || true
 
   echo '=== logs: api_sandbox ==='
   docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color api_sandbox || true
@@ -64,8 +64,7 @@ if [ $exitcode -ne 0 ]; then
   docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color db || true
 fi
 
-# 4) Cleanup: remove the transient cypress container and tear down the stack
-docker rm -f cypress-run || true
+# 4) Cleanup: tear down the stack
 docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" down
 
 # 5) Propagate the test result
