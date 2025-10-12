@@ -19,6 +19,21 @@ export NODE_ENV=test
 # 1) Build images so we test the current sources
 docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" build
 
+# 1.1) Ensure DB is up, then clone sandbox DB from seeded DB to avoid migration collisions
+echo "[e2e] Preparing databases (ajust -> ajust_sandbox)"
+docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" up -d db
+echo "[e2e] Waiting for Postgres to accept connections..."
+ATTEMPTS=0
+until docker exec "$PROJECT_NAME-db-1" pg_isready -U ajust-user -d ajust >/dev/null 2>&1; do
+  ATTEMPTS=$((ATTEMPTS+1))
+  if [ $ATTEMPTS -gt 60 ]; then echo "[e2e] Postgres not ready after 60s"; exit 1; fi
+  sleep 1
+done
+echo "[e2e] DB is ready; cloning ajust_sandbox from ajust"
+docker exec -i "$PROJECT_NAME-db-1" psql -U ajust-user -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN ('ajust','ajust_sandbox') AND pid <> pg_backend_pid();" >/dev/null 2>&1 || true
+docker exec -i "$PROJECT_NAME-db-1" psql -U ajust-user -d postgres -c "DROP DATABASE IF EXISTS ajust_sandbox;" >/dev/null
+docker exec -i "$PROJECT_NAME-db-1" psql -U ajust-user -d postgres -c "CREATE DATABASE ajust_sandbox TEMPLATE ajust;" >/dev/null
+
 # 2) Run Cypress in a named container so we can fetch logs by name later
 set +e
 docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" run --name cypress-run cypress
