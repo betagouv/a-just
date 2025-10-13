@@ -90,50 +90,58 @@ export class ReferentielPage extends MainClass implements OnInit {
     node: string,
     value: any
   ) {
-    if (node === 'onlyToHrBackup' && Array.isArray(value)) {
-      let isOnAdd = null;
-      let deltaToUpdate = difference(value, item.onlyToHrBackup || []);
-      if (deltaToUpdate.length) {
-        isOnAdd = true;
-      }
-
-      if (isOnAdd === null) {
-        deltaToUpdate = difference(item.onlyToHrBackup || [], value);
+    if (
+      confirm(
+        'Voulez-vous vraiment modifier le referentiel ? Cela va prendre plusieurs minutes et monopoliser un docker. Seul la sandbox sera blocké car elle a un seul docker mais les autres seront toujours accessibles.'
+      )
+    ) {
+      if (node === 'onlyToHrBackup' && Array.isArray(value)) {
+        let isOnAdd: boolean | null = null;
+        let deltaToUpdate = difference(value, item.onlyToHrBackup || []);
         if (deltaToUpdate.length) {
-          isOnAdd = false;
+          isOnAdd = true;
         }
-      }
 
-      if (isOnAdd !== null) {
-        const backupElements = this.backups.filter((b) =>
-          deltaToUpdate.includes(b.id)
-        );
-        backupElements.map((backupElements) => {
-          const groups = backupElements.groups || [];
-          if (groups.length) {
-            groups.map((group) => {
-              const allids = this.backups
-                .filter((b) => (b.groups || []).some((g) => g.id === group.id))
-                .map((b) => b.id);
-              allids.map((id) => {
-                if (isOnAdd) {
-                  if (!value.includes(id)) {
-                    value.push(id);
-                  }
-                } else {
-                  if (value.includes(id)) {
-                    value = value.filter((v: number) => v !== id);
-                  }
-                }
-              });
-            });
+        if (isOnAdd === null) {
+          deltaToUpdate = difference(item.onlyToHrBackup || [], value);
+          if (deltaToUpdate.length) {
+            isOnAdd = false;
           }
-        });
+        }
+
+        if (isOnAdd !== null) {
+          const backupElements = this.backups.filter((b) =>
+            deltaToUpdate.includes(b.id)
+          );
+          backupElements.map((backupElements) => {
+            const groups = backupElements.groups || [];
+            if (groups.length) {
+              groups.map((group) => {
+                const allids = this.backups
+                  .filter((b) =>
+                    (b.groups || []).some((g) => g.id === group.id)
+                  )
+                  .map((b) => b.id);
+                allids.map((id) => {
+                  if (isOnAdd) {
+                    if (!value.includes(id)) {
+                      value.push(id);
+                    }
+                  } else {
+                    if (value.includes(id)) {
+                      value = value.filter((v: number) => v !== id);
+                    }
+                  }
+                });
+              });
+            }
+          });
+        }
+
+        item.onlyToHrBackup = [...value];
       }
 
-      item.onlyToHrBackup = [...value];
+      this.referentielService.update(item.id, node, value);
     }
-
-    this.referentielService.update(item.id, node, value);
   }
 }

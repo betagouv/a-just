@@ -226,7 +226,7 @@
           {{ filterParams && filterParams.display === 'nom/prénom' ? person.lastName : person.firstName }}
           {{ filterParams && filterParams.display === 'nom/prénom' ? person.firstName : person.lastName }}
         </p>
-        <i class="ri-user-follow-line" [style.background-color]="getCategoryColor(person.categoryName)"></i>
+        <i class="ri-user-follow-line" [style.background-color]="getLocalCategoryColor(person)"></i>
       </a>
       }
       @if (allPersonsFilteredNotIn.length) {
@@ -244,15 +244,15 @@
         @if (person.dateStart && isArriving(person.dateStart) && !hasLeft(person.dateEnd)) {
         <div class="agent-status" [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
           <i class="ri-user-received-line" [ngStyle]="{
-                    color: getCategoryColor(person.categoryName),
+                    color: getLocalCategoryColor(person),
                   }"></i>
           <p>Arrivée prévue</p>
         </div>
         }
         @if (person.dateEnd && hasLeft(person.dateEnd)) {
-        <div class="agent-status" [ngStyle]="{ backgroundColor: getBgCategoryColor(person.categoryName) }">
+        <div class="agent-status" [ngStyle]="{ backgroundColor: getLocalCategoryColor(person) }">
           <i class="ri-user-shared-line" [ngStyle]="{
-                    color: getCategoryColor(person.categoryName),
+                    color: getLocalCategoryColor(person),
                   }"></i>
           <p>Parti</p>
         </div>

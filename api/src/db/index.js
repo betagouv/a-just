@@ -3,7 +3,7 @@ import Umzug from 'umzug'
 import Bluebird from 'bluebird'
 import config from 'config'
 
-function addMethod (client) {
+function addMethod(client) {
   const queryInterface = client.getQueryInterface()
 
   queryInterface.bulkInsertAutoIncrement = async (tableName, data, options = {}) => {
@@ -32,7 +32,7 @@ function addMethod (client) {
   }
 }
 
-function getUmzug ({ tableName = 'migrations', folder = 'migrations' }, dbInstance) {
+function getUmzug({ tableName = 'migrations', folder = 'migrations' }, dbInstance) {
   const client = dbInstance
 
   addMethod(client)
@@ -42,7 +42,7 @@ function getUmzug ({ tableName = 'migrations', folder = 'migrations' }, dbInstan
       sequelize: client,
       tableName,
     },
-    logging: config.database.logging,
+    logging: console.log,
     migrations: {
       params: [client.getQueryInterface(), Sequelize, client.models],
       path: `${__dirname}/${folder}`,
@@ -57,7 +57,7 @@ function getUmzug ({ tableName = 'migrations', folder = 'migrations' }, dbInstan
   })
 }
 
-function runMigartions (dbInstance) {
+function runMigartions(dbInstance) {
   return () => {
     const client = dbInstance
     const migrator = getUmzug({}, dbInstance)
@@ -65,7 +65,7 @@ function runMigartions (dbInstance) {
   }
 }
 
-function runSeeders (dbInstance) {
+function runSeeders(dbInstance) {
   return () => {
     const client = dbInstance
     const folder = `seeders/${process.env.NODE_ENV || process.env.ENV || 'development'}`
