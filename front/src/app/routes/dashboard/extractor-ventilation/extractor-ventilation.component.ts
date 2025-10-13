@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core'
+import { Component } from '@angular/core'
 import { DateSelectComponent } from '../../../components/date-select/date-select.component'
 import { SelectComponent } from '../../../components/select/select.component'
 import { MainClass } from '../../../libs/main-class'
@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon'
   templateUrl: './extractor-ventilation.component.html',
   styleUrls: ['./extractor-ventilation.component.scss'],
 })
-export class ExtractorVentilationComponent extends MainClass implements AfterViewInit {
+export class ExtractorVentilationComponent extends MainClass {
   /**
    * Date de début selectionnée
    */
@@ -83,41 +83,6 @@ export class ExtractorVentilationComponent extends MainClass implements AfterVie
         if (this.canViewGreffier) this.categories.push({ id: 3, label: 'Greffe', value: 'Greffe' })
       }),
     )
-  }
-
-  /**
-   * E2E bridge: expose helpers on window to set dates without interacting with the calendar UI.
-   * Only registered when running under Cypress (window.Cypress) to avoid polluting prod runtime.
-   */
-  ngAfterViewInit(): void {
-    try {
-      const w: any = (window as any)
-      if (w && (w.Cypress || w.__AJ_E2E)) {
-        // Set both dates at once (ISO string or Date accepted)
-        w.__aj_setEffectifDates = (start: string | Date, stop: string | Date) => {
-          try {
-            const d1 = start instanceof Date ? start : new Date(start)
-            const d2 = stop instanceof Date ? stop : new Date(stop)
-            this.selectDate('start', d1)
-            this.selectDate('stop', d2)
-          } catch {}
-        }
-        // Set start date only
-        w.__aj_setEffectifStart = (start: string | Date) => {
-          try {
-            const d1 = start instanceof Date ? start : new Date(start)
-            this.selectDate('start', d1)
-          } catch {}
-        }
-        // Set stop date only
-        w.__aj_setEffectifStop = (stop: string | Date) => {
-          try {
-            const d2 = stop instanceof Date ? stop : new Date(stop)
-            this.selectDate('stop', d2)
-          } catch {}
-        }
-      }
-    } catch {}
   }
 
   /**
