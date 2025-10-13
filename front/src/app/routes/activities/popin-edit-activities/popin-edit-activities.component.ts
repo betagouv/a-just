@@ -682,44 +682,46 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
    */
   async selectMonth(date: any) {
     this.cleanAllInputs()
-    this.appService.appLoading.next(true)
-    await this.controlBeforeChange().then(() => {
-      this.activitiesService.loadMonthActivities(date).then((list: any) => {
-        this.appService.appLoading.next(false)
-        this.activityMonth = new Date(date)
-        this.checkIfNextMonthHasValue()
-        this.hasValuesToShow = list.list.length !== 0
-        console.log(list, this.activityMonth)
-        if (this.referentiel) {
-          this.referentiel = copy(this.referentiel)
-
+    setTimeout(() => {
+      this.appService.appLoading.next(true)
+      this.controlBeforeChange().then(() => {
+        this.activitiesService.loadMonthActivities(date).then((list: any) => {
+          this.appService.appLoading.next(false)
+          this.activityMonth = new Date(date)
+          this.checkIfNextMonthHasValue()
+          this.hasValuesToShow = list.list.length !== 0
+          console.log(list, this.activityMonth)
           if (this.referentiel) {
-            const getValuesFromList = (id: number) => {
-              const element = list.list.find((i: any) => i.contentieux.id === id)
+            this.referentiel = copy(this.referentiel)
 
-              return {
-                in: element ? element.entrees : null,
-                originalIn: element ? element.originalEntrees : null,
-                out: element ? element.sorties : null,
-                originalOut: element ? element.originalSorties : null,
-                stock: element ? element.stock : null,
-                originalStock: element ? element.originalStock : null,
-                activityUpdated: element ? element.updatedBy : null,
+            if (this.referentiel) {
+              const getValuesFromList = (id: number) => {
+                const element = list.list.find((i: any) => i.contentieux.id === id)
+
+                return {
+                  in: element ? element.entrees : null,
+                  originalIn: element ? element.originalEntrees : null,
+                  out: element ? element.sorties : null,
+                  originalOut: element ? element.originalSorties : null,
+                  stock: element ? element.stock : null,
+                  originalStock: element ? element.originalStock : null,
+                  activityUpdated: element ? element.updatedBy : null,
+                }
               }
+
+              this.referentiel = {
+                ...this.referentiel,
+                ...getValuesFromList(this.referentiel.id),
+              }
+
+              this.referentiel.childrens = (this.referentiel.childrens || []).map((child) => ({ ...child, ...getValuesFromList(child.id) }))
+
+              this.updateTotal()
             }
-
-            this.referentiel = {
-              ...this.referentiel,
-              ...getValuesFromList(this.referentiel.id),
-            }
-
-            this.referentiel.childrens = (this.referentiel.childrens || []).map((child) => ({ ...child, ...getValuesFromList(child.id) }))
-
-            this.updateTotal()
           }
-        }
+        })
       })
-    })
+    }, 100)
   }
 
   /**
