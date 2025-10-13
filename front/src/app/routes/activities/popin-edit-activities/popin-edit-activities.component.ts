@@ -669,11 +669,19 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     }
   }
 
+  cleanAllInputs() {
+    const inputs = document.querySelectorAll('.input-number-all-activities')
+    inputs.forEach((input) => {
+      ;(input as HTMLInputElement).value = ''
+    })
+  }
+
   /**
    *Permet de changer le mois sur lequel on visualise les données
    * @param date
    */
   async selectMonth(date: any) {
+    this.cleanAllInputs()
     this.appService.appLoading.next(true)
     await this.controlBeforeChange().then(() => {
       this.activitiesService.loadMonthActivities(date).then((list: any) => {

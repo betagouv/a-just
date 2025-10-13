@@ -1,10 +1,7 @@
-<aj-popup
-  class="medium no-padding-content no-title border-radius"
-  [ngClass]="{
+<aj-popup class="medium no-padding-content no-title border-radius" [ngClass]="{
     'overflow-visible': referentiel && referentiel.childrens && referentiel.childrens.length <= 4,
     'margin-left': wrapper?.panelHelper || showComments,
-  }"
->
+  }">
   <div id="header-popin">
     <div class="left-section">
       <div class="title-popin">
@@ -12,40 +9,30 @@
         <div>
           <h2>{{ referentiel?.label }}</h2>
           @if (referentiel && referentiel.helpUrl) {
-            <i
-              class="ri-lightbulb-flash-line cursor-pointer blue"
-              (click)="onShowHelpPanel({ url: referentiel.helpUrl })"
-            ></i>
+          <i class="ri-lightbulb-flash-line cursor-pointer blue"
+            (click)="onShowHelpPanel({ url: referentiel.helpUrl })"></i>
           }
         </div>
       </div>
       <div class="switch-comments">
         @if ((referentiel?.nbComments || 0) > 1) {
-          <p>
-            Afficher les
-            <b>{{ referentiel?.nbComments }}</b>
-            commentaires
-          </p>
+        <p>
+          Afficher les
+          <b>{{ referentiel?.nbComments }}</b>
+          commentaires
+        </p>
         }
         @if ((referentiel?.nbComments || 0) === 1) {
-          <p>Afficher le commentaire</p>
+        <p>Afficher le commentaire</p>
         }
         @if ((referentiel?.nbComments || 0) === 0) {
-          <p>Rédiger un commentaire</p>
+        <p>Rédiger un commentaire</p>
         }
-        <aj-radio-button
-          bgColor="#000091"
-          [switchColor]="showComments ? 'white' : '#000091'"
-          [value]="showComments"
-          (valueChange)="showComments = $event.checked; log($event.checked)"
-        ></aj-radio-button>
+        <aj-radio-button bgColor="#000091" [switchColor]="showComments ? 'white' : '#000091'" [value]="showComments"
+          (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
       </div>
-      <aj-date-select
-        title="Voir les données de"
-        [value]="activityMonth"
-        dateType="month"
-        (valueChange)="selectMonth($event)"
-      ></aj-date-select>
+      <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
+        (valueChange)="selectMonth($event)"></aj-date-select>
     </div>
 
     <div class="close-popin">
@@ -127,14 +114,13 @@
   </div>
 
   @if (referentiel && hasValuesToShow) {
-    <div class="contentieux-title" [ngStyle]="{ 'padding-right': getScrollbarWidth() }">
-      <div class="contentieux-title-label">
-        <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
-        <i class="ri-lightbulb-flash-line cursor-pointer" (click)="onShowHelpPanel({ url: totalUrl })"></i>
-      </div>
-      <div class="contentieux-title-label-entrees">
-        <ng-container
-          *ngTemplateOutlet="
+  <div class="contentieux-title" [ngStyle]="{ 'padding-right': getScrollbarWidth() }">
+    <div class="contentieux-title-label">
+      <p>Total au {{ referentielMappingName(referentiel.label) }}</p>
+      <i class="ri-lightbulb-flash-line cursor-pointer" (click)="onShowHelpPanel({ url: totalUrl })"></i>
+    </div>
+    <div class="contentieux-title-label-entrees">
+      <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
               $implicit: referentiel,
@@ -144,12 +130,10 @@
               type: 'entrees',
               updated: total.in.value !== null ? true : false,
             }
-          "
-        ></ng-container>
-      </div>
-      <div class="contentieux-title-label-sorties">
-        <ng-container
-          *ngTemplateOutlet="
+          "></ng-container>
+    </div>
+    <div class="contentieux-title-label-sorties">
+      <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
               $implicit: referentiel,
@@ -159,12 +143,10 @@
               type: 'sorties',
               updated: total.out.value !== null ? true : false,
             }
-          "
-        ></ng-container>
-      </div>
-      <div class="contentieux-title-label-stock">
-        <ng-container
-          *ngTemplateOutlet="
+          "></ng-container>
+    </div>
+    <div class="contentieux-title-label-stock">
+      <ng-container *ngTemplateOutlet="
             itemTemplate;
             context: {
               $implicit: referentiel,
@@ -174,27 +156,22 @@
               type: 'stock',
               updated: total.stock.value !== null ? true : false,
             }
-          "
-        ></ng-container>
-      </div>
+          "></ng-container>
     </div>
+  </div>
   }
   @if (hasValuesToShow) {
-    <div
-      id="contentieux-list"
-      [ngClass]="{
+  <div id="contentieux-list" [ngClass]="{
         'content-popin-scroll': referentiel && referentiel.childrens && referentiel.childrens.length > 4,
         'content-popin-no-scroll': referentiel && referentiel.childrens && referentiel.childrens.length <= 4,
-      }"
-    >
-      @for (item of referentiel?.childrens; track item.id) {
-        <div class="contentieux-item header-list" [id]="'contentieux-' + item.id">
-          <div class="contentieux-item-label">
-            <p>{{ item.label }}</p>
-          </div>
-          <div class="contentieux-item-label-entrees">
-            <ng-container
-              *ngTemplateOutlet="
+      }">
+    @for (item of referentiel?.childrens; track item.id) {
+    <div class="contentieux-item header-list" [id]="'contentieux-' + item.id">
+      <div class="contentieux-item-label">
+        <p>{{ item.label }}</p>
+      </div>
+      <div class="contentieux-item-label-entrees">
+        <ng-container *ngTemplateOutlet="
                 itemTemplate;
                 context: {
                   $implicit: item,
@@ -204,12 +181,10 @@
                   type: 'entrees',
                   updated: item.activityUpdated?.entrees ? item.activityUpdated?.entrees : null,
                 }
-              "
-            ></ng-container>
-          </div>
-          <div class="contentieux-item-label-sorties">
-            <ng-container
-              *ngTemplateOutlet="
+              "></ng-container>
+      </div>
+      <div class="contentieux-item-label-sorties">
+        <ng-container *ngTemplateOutlet="
                 itemTemplate;
                 context: {
                   $implicit: item,
@@ -219,12 +194,10 @@
                   type: 'sorties',
                   updated: item.activityUpdated?.sorties ? item.activityUpdated?.sorties : null,
                 }
-              "
-            ></ng-container>
-          </div>
-          <div class="contentieux-item-label-stock">
-            <ng-container
-              *ngTemplateOutlet="
+              "></ng-container>
+      </div>
+      <div class="contentieux-item-label-stock">
+        <ng-container *ngTemplateOutlet="
                 itemTemplate;
                 context: {
                   $implicit: item,
@@ -234,17 +207,16 @@
                   type: 'stock',
                   updated: item.activityUpdated?.stock ? item.activityUpdated?.stock : null,
                 }
-              "
-            ></ng-container>
-          </div>
-        </div>
-      }
+              "></ng-container>
+      </div>
     </div>
+    }
+  </div>
   }
   @if (!hasValuesToShow) {
-    <div class="no-values">
-      <p>Cet écran sera accessible dès l'import des données logiciel du mois.</p>
-    </div>
+  <div class="no-values">
+    <p>Cet écran sera accessible dès l'import des données logiciel du mois.</p>
+  </div>
   }
   <div class="bottom-popin">
     <button class="small outline blue" (click)="close()">Annuler</button>
@@ -252,65 +224,44 @@
     <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, -1))">
       {{ checkIfHasUpdates() ? 'Enregistrer puis mois précédent' : 'Aller au mois précédent' }}
     </button>
-    <button
-      class="small outline"
-      [ngClass]="{
+    <button class="small outline" [ngClass]="{
         gray: !hasNextMonth,
         blue: hasNextMonth,
-      }"
-      (click)="selectMonth(getMonth(activityMonth, 1))"
-      [disabled]="!hasNextMonth"
-    >
+      }" (click)="selectMonth(getMonth(activityMonth, 1))" [disabled]="!hasNextMonth">
       {{ checkIfHasUpdates() ? 'Enregistrer puis mois suivant' : 'Aller au mois suivant' }}
     </button>
-    <button
-      class="small"
-      [ngClass]="{
+    <button class="small" [ngClass]="{
         gray: !checkIfHasUpdates(),
         outline: !checkIfHasUpdates(),
         primary: checkIfHasUpdates(),
-      }"
-      (click)="onSave({ force: false, exit: true })"
-      [disabled]="!checkIfHasUpdates()"
-    >
+      }" (click)="onSave({ force: false, exit: true })" [disabled]="!checkIfHasUpdates()">
       Enregistrer
     </button>
   </div>
 </aj-popup>
 
-<ng-template
-  #itemTemplate
-  let-items
-  let-valueQuality="valueQuality"
-  let-original="original"
-  let-newValue="newValue"
-  let-type="type"
-  let-updated="updated"
->
+<ng-template #itemTemplate let-items let-valueQuality="valueQuality" let-original="original" let-newValue="newValue"
+  let-type="type" let-updated="updated">
   <div class="item-template">
-    <div
-      class="item-template-original"
-      [ngClass]="{
+    <div class="item-template-original" [ngClass]="{
         'grey-bg': valueQuality === VALUE_QUALITY_TO_COMPLETE && hasValue(items, type),
         'is-not-setted': valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
         'is-not-setted-set': valueQuality === VALUE_QUALITY_TO_VERIFY && hasValue(items, type),
-      }"
-    >
+      }">
       <div>
         <p>{{ original == null ? '-' : original }}</p>
       </div>
       @if (valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)) {
-        <span>
-          <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">
-            Confirmer
-          </p>
-        </span>
+      <span>
+        <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">
+          Confirmer
+        </p>
+      </span>
       }
     </div>
     @if (items.childrens) {
-      <div class="item-template-new-total" [ngClass]="{}">
-        <ng-container
-          *ngTemplateOutlet="
+    <div class="item-template-new-total" [ngClass]="{}">
+      <ng-container *ngTemplateOutlet="
             tooltip;
             context: {
               type: type,
@@ -319,21 +270,17 @@
               level: 3,
               updated: updated,
             }
-          "
-        ></ng-container>
-        <p
-          [ngClass]="{
+          "></ng-container>
+      <p [ngClass]="{
             blue: checkIfBlue({ level: 3, cont: items, node: type, isForBulbOrBottom: false }),
-          }"
-        >
-          {{ newValue !== null ? newValue : original !== null ? original : '-' }}
-        </p>
-      </div>
+          }">
+        {{ newValue !== null ? newValue : original !== null ? original : '-' }}
+      </p>
+    </div>
     }
     @if (!items.childrens) {
-      <div class="item-template-new">
-        <ng-container
-          *ngTemplateOutlet="
+    <div class="item-template-new">
+      <ng-container *ngTemplateOutlet="
             tooltip;
             context: {
               type: type,
@@ -343,43 +290,26 @@
               valueQuality: valueQuality,
               updated: updated,
             }
-          "
-        ></ng-container>
-        <input
-          #inputElement
-          type="number"
-          [ngModel]="newValue"
-          [placeholder]="original !== null ? original : '-'"
-          [ngClass]="{
+          "></ng-container>
+      <input #inputElement type="number" [ngModel]="newValue" class="input-number-all-activities"
+        [placeholder]="original !== null ? original : '-'" [ngClass]="{
             'to-confirm': valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
             'blue-bottom': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: true }),
             'blue-txt': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: false }),
             'is-not-setted-to-verify': valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
-          }"
-          [id]="'contentieux-' + items.id + '-' + type"
-          (keyup.enter)="onBlur(inputElement.value, type, items)"
-          (keypress)="validateNo($event)"
-          (blur)="onBlur(inputElement.value, type, items)"
-        />
-      </div>
+          }" [id]="'contentieux-' + items.id + '-' + type" (keyup.enter)="onBlur(inputElement.value, type, items)"
+        (keypress)="validateNo($event)" (blur)="onBlur(inputElement.value, type, items)" />
+    </div>
     }
   </div>
 </ng-template>
 
-<ng-template
-  #tooltip
-  let-type="type"
-  let-contentieux="contentieux"
-  let-value="value"
-  let-level="level"
-  let-valueQuality="valueQuality"
-  let-updated="updated"
->
+<ng-template #tooltip let-type="type" let-contentieux="contentieux" let-value="value" let-level="level"
+  let-valueQuality="valueQuality" let-updated="updated">
   @if (
-    level === 4 || (level === 3 && checkIfBlue({ level: 3, cont: contentieux, node: type, isForBulbOrBottom: false }))
+  level === 4 || (level === 3 && checkIfBlue({ level: 3, cont: contentieux, node: type, isForBulbOrBottom: false }))
   ) {
-    <i
-      class="{{
+  <i class="{{
         level === 4 &&
         (value === null || checkIfBlue({ level: level, cont: contentieux, node: type, isForBulbOrBottom: true }))
           ? 'ri-lightbulb-flash-fill'
@@ -387,18 +317,12 @@
       }}
     cursor-pointer
     {{ checkIfBlue({ level: level, cont: contentieux, node: type, isForBulbOrBottom: false }) ? 'blue' : 'grey' }}"
-      #light
-      [id]="'tooltip-icon-' + contentieux.id + '-' + type"
-      (click)="onShowHelpPanel({ level: level, cont: contentieux, node: type })"
-    ></i>
+    #light [id]="'tooltip-icon-' + contentieux.id + '-' + type"
+    (click)="onShowHelpPanel({ level: level, cont: contentieux, node: type })"></i>
   }
 </ng-template>
 
 @if (showComments && referentiel) {
-  <aj-comment-activities
-    class="animate__animated animate__bounceInLeft"
-    [type]="'activities_' + referentiel.id"
-    [referentiel]="referentiel"
-    (close)="showComments = false"
-  ></aj-comment-activities>
+<aj-comment-activities class="animate__animated animate__bounceInLeft" [type]="'activities_' + referentiel.id"
+  [referentiel]="referentiel" (close)="showComments = false"></aj-comment-activities>
 }
