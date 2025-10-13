@@ -291,8 +291,9 @@
               updated: updated,
             }
           "></ng-container>
-      <input #inputElement type="number" [ngModel]="newValue" [placeholder]="original !== null ? original : '-'"
-        [ngClass]="{
+
+      <input #inputElement type="number" [value]="newValue" class="input-number-all-activities"
+        [placeholder]="original !== null ? original : '-'" [ngClass]="{
             'to-confirm': valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
             'blue-bottom': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: true }),
             'blue-txt': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: false }),
