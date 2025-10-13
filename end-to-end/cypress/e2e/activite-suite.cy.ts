@@ -136,81 +136,35 @@ function loginAndOpenDashboard(baseUrl: string) {
 }
 
 function setDatesActivite(startISO: string, stopISO: string, prefix: string) {
-  const sY = startISO.slice(0, 4);
-  const sMIdx = Number(startISO.slice(5, 7)) - 1;
-  const eY = stopISO.slice(0, 4);
-  const eMIdx = Number(stopISO.slice(5, 7)) - 1;
-
   cy.get('aj-extractor-activity', { timeout: 20000 }).first().as('act');
 
-  // START
-  cy.get('@act').find('aj-date-select:nth-of-type(1) > div > p', { timeout: 15000 }).click({ force: true });
-  cy.get('.cdk-overlay-pane #mat-datepicker-2', { timeout: 15000 }).should('be.visible').as('dpStart');
+  // Programmatically set START month via inner matInput to trigger ngModelChange -> onDateChanged -> valueChange -> selectDate('start', ...)
+  cy.get('@act')
+    .find('aj-date-select')
+    .eq(0)
+    .find('input[matinput]', { timeout: 15000 })
+    .then(($in) => {
+      // Use first-of-month ISO string
+      const startMonth = `${startISO.slice(0,7)}-01`;
+      ($in[0] as HTMLInputElement).value = startMonth;
+      $in[0].dispatchEvent(new Event('input', { bubbles: true }));
+      $in[0].dispatchEvent(new Event('change', { bubbles: true }));
+    });
   snapshotStep(1);
-  // Two clicks to reach multi-year view (year selection) exactly like recorder, with fallback to mat-calendar-period-button
-  cy.get('@dpStart').then(($dp) => {
-    const hasPeriodBtn = $dp.find('button.mat-calendar-period-button').length > 0;
-    if (hasPeriodBtn) {
-      cy.wrap($dp).find('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
-      cy.wrap($dp).find('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
-    } else {
-      cy.wrap($dp).find('mat-calendar-header', { timeout: 15000 }).within(() => {
-        cy.get('button.mdc-button .mat-mdc-button-touch-target', { timeout: 15000 })
-          .first()
-          .then(($el) => cy.wrap($el).closest('button').click({ force: true }));
-        cy.get('span.mdc-button__label > span', { timeout: 15000 })
-          .first()
-          .then(($el) => cy.wrap($el).closest('button').click({ force: true }));
-      });
-    }
-  });
-  snapshotStep(2);
-  // Click the year cell (e.g., 2023) by clicking its button directly
-  cy.get('@dpStart')
-    .find('.mat-calendar-body button', { timeout: 15000 })
-    .contains(sY)
-    .click({ force: true });
-  // Immediately snapshot after year click to debug transitions
-  snapshotStep(3);
-  // Select JANV. — prefer exact cell path (row 2, col 1) like recorder, fallback to text
-  // Prefer exact nth-of-type path to the month button; fallback to text on button
-  cy.get('@dpStart')
-    .find(
-      'mat-year-view table tbody tr:nth-of-type(2) td:nth-of-type(1) button, .mat-year-view .mat-calendar-body table tbody tr:nth-of-type(2) td:nth-of-type(1) button',
-      { timeout: 15000 }
-    )
-    .then(($btns) => {
-      if ($btns.length) {
-        cy.wrap($btns[0]).click({ force: true });
-      } else {
-        cy.get('@dpStart')
-          .find('.mat-calendar-body button', { timeout: 15000 })
-          .contains(FR_MONTHS[sMIdx])
-          .click({ force: true });
-      }
-    });
-  snapshotStep(4);
 
-  // END
-  cy.get('@act').find('aj-date-select:nth-of-type(2) > div > p', { timeout: 15000 }).click({ force: true });
-  cy.get('.cdk-overlay-pane #mat-datepicker-3', { timeout: 15000 }).should('be.visible').as('dpEnd');
-  snapshotStep(5);
-  cy.get('@dpEnd')
-    .find(
-      'mat-year-view table tbody tr:nth-of-type(3) td:nth-of-type(2) button, .mat-year-view .mat-calendar-body table tbody tr:nth-of-type(3) td:nth-of-type(2) button',
-      { timeout: 15000 }
-    )
-    .then(($btns) => {
-      if ($btns.length) {
-        cy.wrap($btns[0]).click({ force: true });
-      } else {
-        cy.get('@dpEnd')
-          .find('.mat-calendar-body button', { timeout: 15000 })
-          .contains(FR_MONTHS[eMIdx])
-          .click({ force: true });
-      }
+  // Programmatically set STOP month similarly
+  cy.get('@act')
+    .find('aj-date-select')
+    .eq(1)
+    .find('input[matinput]', { timeout: 15000 })
+    .then(($in) => {
+      const stopMonth = `${stopISO.slice(0,7)}-01`;
+      ($in[0] as HTMLInputElement).value = stopMonth;
+      $in[0].dispatchEvent(new Event('input', { bubbles: true }));
+      $in[0].dispatchEvent(new Event('change', { bubbles: true }));
     });
-  snapshotStep(6);
+  snapshotStep(2);
+
   // Ensure no datepicker overlay remains open (can block clicks)
   cy.get('body').then(($b) => {
     const $ov = $b.find('div.cdk-overlay-backdrop');

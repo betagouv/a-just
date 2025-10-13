@@ -158,38 +158,38 @@ function loginAndOpenDashboard(baseUrl: string) {
 }
 
 function setDatesEffectif(startISO: string, stopISO: string, prefix: string, labelSlug: string) {
-  const sY = startISO.slice(0, 4);
-  const sMIdx = Number(startISO.slice(5, 7)) - 1;
-  const sD = startISO.slice(8, 10).replace(/^0/, '');
-  const eY = stopISO.slice(0, 4);
-  const eMIdx = Number(stopISO.slice(5, 7)) - 1;
-  const eD = stopISO.slice(8, 10).replace(/^0/, '');
-
   cy.get('aj-extractor-ventilation', { timeout: 20000 }).first().as('eff');
 
-  // START
-  cy.get('@eff').find('aj-date-select:nth-of-type(1) > div > p', { timeout: 15000 }).click({ force: true });
-  cy.get('mat-datepicker-content .mat-calendar, .cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible');
-  cy.get('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
-  snapshot(prefix, labelSlug, 'step4-done');
-  cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', sY, { timeout: 15000 }).click({ force: true });
-  snapshot(prefix, labelSlug, 'step5-done');
-  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', FR_MONTHS[sMIdx], { timeout: 15000 }).click({ force: true });
-  snapshot(prefix, labelSlug, 'step6-done');
-  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', sD, { timeout: 15000 }).click({ force: true });
-  snapshot(prefix, labelSlug, 'step7-done');
+  // Programmatically set START via inner matInput to trigger ngModelChange -> onDateChanged -> valueChange -> selectDate('start', ...)
+  cy.get('@eff')
+    .find('aj-date-select')
+    .eq(0)
+    .find('input[matinput]', { timeout: 15000 })
+    .then(($in) => {
+      // Use ISO yyyy-mm-dd which Angular Material parses with default DateAdapter
+      ($in[0] as HTMLInputElement).value = startISO;
+      $in[0].dispatchEvent(new Event('input', { bubbles: true }));
+      $in[0].dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  snapshot(prefix, labelSlug, 'step4-start-set');
 
-  // END
-  cy.get('@eff').find('aj-date-select:nth-of-type(2) > div > p', { timeout: 15000 }).click({ force: true });
-  cy.get('mat-datepicker-content .mat-calendar, .cdk-overlay-pane .mat-calendar', { timeout: 15000 }).should('be.visible');
-  cy.get('button.mat-calendar-period-button', { timeout: 15000 }).click({ force: true });
-  snapshot(prefix, labelSlug, 'step9-done');
-  cy.contains('.mat-calendar-body .mat-calendar-body-cell-content', eY, { timeout: 15000 }).click({ force: true });
-  snapshot(prefix, labelSlug, 'step10-done');
-  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', FR_MONTHS[eMIdx], { timeout: 15000 }).click({ force: true });
-  snapshot(prefix, labelSlug, 'step11-done');
-  cy.contains('mat-datepicker-content .mat-calendar .mat-calendar-body .mat-calendar-body-cell-content', eD, { timeout: 15000 }).click({ force: true });
-  snapshot(prefix, labelSlug, 'step12-done');
+  // Programmatically set STOP similarly
+  cy.get('@eff')
+    .find('aj-date-select')
+    .eq(1)
+    .find('input[matinput]', { timeout: 15000 })
+    .then(($in) => {
+      ($in[0] as HTMLInputElement).value = stopISO;
+      $in[0].dispatchEvent(new Event('input', { bubbles: true }));
+      $in[0].dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  snapshot(prefix, labelSlug, 'step5-stop-set');
+
+  // Close any lingering overlays that might have been open
+  cy.get('body').then(($b) => {
+    const bd = $b.find('div.cdk-overlay-backdrop');
+    if (bd.length) cy.wrap(bd.get(0)).click({ force: true });
+  });
 }
 
 function pickCategoryEffectif(categoryLabel: string, prefix: string, labelSlug: string) {

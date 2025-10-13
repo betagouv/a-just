@@ -64,6 +64,7 @@ services:
       - "8081"
     depends_on:
       - "db"
+      - "redis"
     volumes:
       - "./api/coverage:/home/api/coverage"
     environment:
@@ -72,6 +73,7 @@ services:
       - JSON_WEB_TOKEN=123456789
       - PORT=8081
       - TYPE_ID=0
+      - REDIS_URL=redis://redis:6379
     healthcheck:
       test: ["CMD", "curl", "-f", "http://175.0.0.20:8081/api"]
       interval: 30s
@@ -94,15 +96,17 @@ services:
     expose:
       - "8081"
     depends_on:
-      - "db"
+      - "db_sandbox"
+      - "redis_sandbox"
     volumes:
       - "./api/coverage:/home/api/coverage"
     environment:
-      - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust_sandbox
+      - DATABASE_URL=postgres://ajust-user:ajust-pass@db_sandbox:5432/ajust_sandbox
       - NODE_ENV=test
       - JSON_WEB_TOKEN=123456789
       - PORT=8081
       - TYPE_ID=0
+      - REDIS_URL=redis://redis_sandbox:6379
     healthcheck:
       test: ["CMD", "curl", "-f", "http://175.0.0.21:8081/api"]
       interval: 30s
@@ -160,6 +164,8 @@ services:
       - front
       - api_sandbox
       - front_sandbox
+      - redis
+      - redis_sandbox
     volumes:
       - ./end-to-end:/e2e
       - ./end-to-end/scripts:/scripts
@@ -175,6 +181,81 @@ services:
       # Optional per-spec date overrides for Effectif only
       - CYPRESS_EFFECTIF_START=${CYPRESS_EFFECTIF_START:-}
       - CYPRESS_EFFECTIF_STOP=${CYPRESS_EFFECTIF_STOP:-}
+
+  # Dedicated Redis for PR stack
+  redis:
+    image: redis:7
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.40
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+
+  # Dedicated Redis for Sandbox stack
+  redis_sandbox:
+    image: redis:7
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.41
+    ports:
+      - "6380:6379"
+    expose:
+      - "6379"
+
+  # Dedicated Postgres for Sandbox stack
+  db_sandbox:
+    image: postgres:15.11
+    restart: always
+    cpus: 2.0
+    mem_limit: 4G
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.51
+    ports:
+      - "5436:5432"
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_DB=ajust_sandbox
+      - POSTGRES_USER=ajust-user
+      - POSTGRES_PASSWORD=ajust-pass
+      - TZ=Europe/Paris
+    volumes:
+      - ./api/test/db/test_tmp.sql.gz:/docker-entrypoint-initdb.d/init.sql.gz
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "shared_buffers=2GB"
+      - "-c"
+      - "effective_cache_size=6GB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "checkpoint_completion_target=0.7"
+      - "-c"
+      - "wal_buffers=16MB"
+      - "-c"
+      - "default_statistics_target=100"
+      - "-c"
+      - "random_page_cost=4"
+      - "-c"
+      - "effective_io_concurrency=2"
+      - "-c"
+      - "work_mem=5242kB"
+      - "-c"
+      - "min_wal_size=1GB"
+      - "-c"
+      - "max_wal_size=4GB"
+      - "-c"
+      - "max_worker_processes=4"
+      - "-c"
+      - "max_parallel_workers_per_gather=2"
+      - "-c"
+      - "max_parallel_workers=4"
 
 
 networks:
