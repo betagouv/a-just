@@ -53,11 +53,14 @@ export class ReferentielService {
   }
 
   update(id: number, node: string, value: string) {
-    return this.serverService.put('contentieux-referentiels/update', {
-      id,
-      node,
-      value,
-    });
+    return this.serverService.putWithoutError(
+      'contentieux-referentiels/update',
+      {
+        id,
+        node,
+        value,
+      }
+    );
   }
 
   /**
