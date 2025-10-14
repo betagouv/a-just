@@ -702,7 +702,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     const inputs = document.querySelectorAll('.input-number-all-activities')
     inputs.forEach((input) => {
       // clean input if not blue (modified)
-      if ((input as HTMLInputElement).style.color !== '#0a76f6') {
+      if (!(input as HTMLInputElement).className.includes('blue-txt')) {
         ;(input as HTMLInputElement).value = ''
       }
     })
