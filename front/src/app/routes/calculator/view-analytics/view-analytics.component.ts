@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common'
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
-import * as Sentry from '@sentry/browser'
 import { startLatencyScope } from '../../../utils/sentry-latency'
 import { GraphsVerticalsLinesComponent } from './graphs-verticals-lines/graphs-verticals-lines.component'
 import { GraphsNumbersComponent } from './graphs-numbers/graphs-numbers.component'
@@ -321,33 +320,7 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     }
   }
 
-  private buildLatencyEventForSection(sectionKey: string): string {
-    const base = 'Cockpit graphiques'
-    let section = ''
-    switch (sectionKey) {
-      case 'ETPTSiege':
-        section = 'ETPT Siège'
-        break
-      case 'ETPTGreffe':
-        section = 'ETPT Greffe'
-        break
-      case 'ETPTEam':
-        section = 'ETPT EAM'
-        break
-      case 'Stocks':
-        section = 'Stocks'
-        break
-      case 'Entrees':
-        section = 'Entrées'
-        break
-      case 'Sorties':
-        section = 'Sorties'
-        break
-      default:
-        section = sectionKey
-    }
-    return `${base}, ${section}, affichage des graphes de détail`
-  }
+  
 
   round(num: number) {
     return Math.round(num)

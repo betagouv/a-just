@@ -1680,37 +1680,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Construit un intitulé humain lisible pour le champ Sentry "latency_event"
-   * en fonction des choix de l'utilisateur.
-   * Exemples :
-   *  - "simulateur avec les données d'A-JUST à ETPT constant"
-   *  - "simulateur avec les données d'A-JUST à temps moyen par dossier constant"
-   */
-  private _buildLatencyEventLabel(params: any): string {
-    const base = this.whiteSimulator ? 'simulateur sans données pré-alimentées' : "simulateur avec les données d'A-JUST"
-    // Détecte le mode "constant" selon le paramètre verrouillé
-    const locked1 = params?.lockedParams?.param1?.label || ''
-    const locked2 = params?.lockedParams?.param2?.label || ''
-    const lockedSet = new Set([locked1, locked2].filter(Boolean))
-    let suffix = ''
-    if (lockedSet.has('etpMag') || lockedSet.has('etpFon') || lockedSet.has('etpCont')) {
-      suffix = 'à ETPT constant'
-    } else if (lockedSet.has('magRealTimePerCase')) {
-      suffix = 'à temps moyen par dossier constant'
-    } else if (lockedSet.has('totalIn')) {
-      suffix = "à entrées mensuelles constantes"
-    } else if (lockedSet.has('totalOut')) {
-      suffix = "à sorties mensuelles constantes"
-    } else if (lockedSet.has('lastStock')) {
-      suffix = 'à stock constant'
-    } else if (lockedSet.has('realCoverage')) {
-      suffix = 'à taux de couverture constant'
-    } else if (lockedSet.has('realDTESInMonths')) {
-      suffix = 'à DTES constant'
-    }
-    return suffix ? `${base} ${suffix}` : base
-  }
+  
 
   /**
    * Valider un paramètre lorsque la touche ENTREE est pressée
