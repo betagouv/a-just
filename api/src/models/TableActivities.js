@@ -493,7 +493,7 @@ export default (sequelizeInstance, Model) => {
               (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null)
             ) {
               currentStock = currentStock
-            } else if (currentStock === findAllChild[i].original_stock && previousStockValue !== 'calculate') {
+            } else if (currentStock === findAllChild[i].original_stock && !previousStockValue) {
               currentStock = null
             }
 
