@@ -212,10 +212,6 @@ export class SimulatorService extends MainClass {
       })
   }
 
-  /**
-   * Construit un intitulé humain lisible pour le champ Sentry "latency_event"
-   * en fonction des choix de l'utilisateur.
-   */
   
 
   /**
