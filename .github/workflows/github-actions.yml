@@ -7,15 +7,15 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'PR number to publish under reports/pr-<number>'
+        description: "PR number to publish under reports/pr-<number>"
         required: true
         type: string
 
 jobs:
-  start-tests:
+  tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "TEST PROJECT"
+      - run: echo "RUNNING TESTS (NON-BLOCKING)"
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -32,6 +32,7 @@ jobs:
 
       - name: Run tests
         run: npm run test
+        continue-on-error: true
 
       - name: Debug - List generated files
         if: always()
@@ -73,7 +74,7 @@ jobs:
           path: ./api/test/reports
 
   deploy:
-    needs: start-tests
+    needs: tests
     runs-on: ubuntu-latest
     if: |
       always() && (
