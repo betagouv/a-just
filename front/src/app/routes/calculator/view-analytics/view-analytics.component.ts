@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
 import { startLatencyScope } from '../../../utils/sentry-latency'
+import { beginDetail, markDetailComplete, type DetailState } from '../../../utils/latency-detail'
 import { GraphsVerticalsLinesComponent } from './graphs-verticals-lines/graphs-verticals-lines.component'
 import { GraphsNumbersComponent } from './graphs-numbers/graphs-numbers.component'
 import { GraphsProgressComponent } from './graphs-progress/graphs-progress.component'
@@ -126,7 +127,7 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   /**
    * Mesure de latence pour l'affichage des graphes de détail
    */
-  private detailLoadState: Record<string, { expected: number; completed: number; txn?: { finish: (r?: any) => void } }> = {}
+  private detailLoadState: DetailState = {}
 
   /**
    * Constructor
@@ -302,22 +303,14 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
       return
     }
     const expected = this.referentiel?.length || 0
-    const txn = startLatencyScope('view-analytics')
-    this.detailLoadState[sectionKey] = { expected, completed: 0, txn }
+    beginDetail(this.detailLoadState, sectionKey, expected, 'view-analytics')
   }
 
   /**
    * Appelé par les sous-graphes quand ils terminent leur chargement de lignes de détail
    */
   onDetailGraphLoadComplete(sectionKey: string) {
-    const st = this.detailLoadState[sectionKey]
-    if (!st) return
-    st.completed += 1
-    
-    if (st.completed >= st.expected) {
-      try { st.txn?.finish('success') } catch {}
-      delete this.detailLoadState[sectionKey]
-    }
+    markDetailComplete(this.detailLoadState, sectionKey)
   }
 
   
