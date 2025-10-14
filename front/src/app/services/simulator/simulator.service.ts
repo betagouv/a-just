@@ -13,6 +13,7 @@ import { HRCategoryInterface } from '../../interfaces/hr-category'
 import { ChartAnnotationBoxInterface } from '../../interfaces/chart-annotation-box'
 import { decimalToStringDate, setTimeToMidDay } from '../../utils/dates'
 import { fixDecimal } from '../../utils/numbers'
+import { buildSimulatorLatencyEventLabel } from '../../utils/simulator-latency'
 
 /**
  * Service de la page du simulateur
@@ -162,7 +163,7 @@ export class SimulatorService extends MainClass {
    */
   toSimulate(params: any, simulation: SimulationInterface, white = false) {
     this.isLoading.next(true)
-    const latencyEvent = this._buildLatencyEventLabel(params, white)
+    const latencyEvent = buildSimulatorLatencyEventLabel(params, white)
     console.log(params)
     console.log(this.userService.user)
 
@@ -215,21 +216,7 @@ export class SimulatorService extends MainClass {
    * Construit un intitulé humain lisible pour le champ Sentry "latency_event"
    * en fonction des choix de l'utilisateur.
    */
-  private _buildLatencyEventLabel(params: any, white: boolean): string {
-    const base = white ? "Calcul du simulateur sans données pré-alimentées" : "Calcul du simulateur avec les données d'A-JUST"
-    const l1 = params?.lockedParams?.param1?.label || ''
-    const l2 = params?.lockedParams?.param2?.label || ''
-    const s = new Set([l1, l2].filter(Boolean))
-    let suffix = ''
-    if (s.has('etpMag') || s.has('etpFon') || s.has('etpCont')) suffix = 'à ETPT constant'
-    else if (s.has('magRealTimePerCase')) suffix = 'à temps moyen par dossier constant'
-    else if (s.has('totalIn')) suffix = 'à entrées mensuelles constantes'
-    else if (s.has('totalOut')) suffix = 'à sorties mensuelles constantes'
-    else if (s.has('lastStock')) suffix = 'à stock constant'
-    else if (s.has('realCoverage')) suffix = 'à taux de couverture constant'
-    else if (s.has('realDTESInMonths')) suffix = 'à DTES constant'
-    return suffix ? `${base} ${suffix}` : base
-  }
+  
 
   /**
    * Get the label of a field and return the full text name of the label
