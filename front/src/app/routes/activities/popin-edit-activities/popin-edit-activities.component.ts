@@ -701,7 +701,10 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
   cleanAllInputs() {
     const inputs = document.querySelectorAll('.input-number-all-activities')
     inputs.forEach((input) => {
-      ;(input as HTMLInputElement).value = ''
+      // clean input if not blue (modified)
+      if ((input as HTMLInputElement).style.color !== '#0a76f6') {
+        ;(input as HTMLInputElement).value = ''
+      }
     })
   }
 
@@ -710,7 +713,7 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
    * @param date
    */
   async selectMonth(date: any) {
-    this.cleanAllInputs()
+    //this.cleanAllInputs()
     this.appService.appLoading.next(true)
     this.controlBeforeChange().then(() => {
       this.activitiesService.loadMonthActivities(date).then((list: any) => {
