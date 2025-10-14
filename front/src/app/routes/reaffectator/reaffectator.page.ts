@@ -883,8 +883,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }))
 
     // Démarrer une transaction Sentry pour le recalcul suite au choix de catégorie
-    const selectedCat = this.formFilterSelect.find((c) => c.id === this.reaffectatorService.selectedCategoriesId)
-    const catLabel = selectedCat?.orignalValuePlurial || selectedCat?.orignalValue || 'catégorie'
     try { this._reaffTxn?.finish('success') } catch {}
     this._reaffTxn = startLatencyScope('reaffectator')
 

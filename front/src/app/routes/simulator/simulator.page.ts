@@ -1670,9 +1670,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       })
 
       this.logRunSimulator(params)
-
-      // Service-level logging now handles latency measurement for each run
-
+      
       this.simulatorService.toSimulate(params, simulation)
     } else {
       this.simulateButton = ''
