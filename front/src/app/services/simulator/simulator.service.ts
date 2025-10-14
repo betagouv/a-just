@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core'
 import * as Sentry from '@sentry/browser'
+import { startLatencyScope } from '../../utils/sentry-latency'
 import { BehaviorSubject } from 'rxjs'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import * as _ from 'lodash'
@@ -165,58 +166,49 @@ export class SimulatorService extends MainClass {
     console.log(params)
     console.log(this.userService.user)
 
-    return Sentry.startSpan(
-      { name: 'Simulateur: compute', op: 'task', forceTransaction: true, attributes: { latency_event: latencyEvent, 'sentry.tag.latency_event': latencyEvent } },
-      async () => {
-        const startAt = performance.now()
-        if (white === true) {
-          await this.serverService
-            .post(`simulator/to-simulate-white`, {
-              backupId: this.humanResourceService.backupId.getValue(),
-              params: params,
-              simulation: simulation,
-              dateStart: setTimeToMidDay(this.dateStart.getValue()),
-              dateStop: setTimeToMidDay(this.dateStop.getValue()),
-              selectedCategoryId: this.selectedCategory.getValue()?.id,
-            })
-            .then((data) => {
-              console.log('simu', data.data)
-              this.situationSimulated.next(data.data)
-            })
-        } else {
-          await this.serverService
-            .post(`simulator/to-simulate`, {
-              backupId: this.humanResourceService.backupId.getValue(),
-              params: params,
-              simulation: simulation,
-              dateStart: setTimeToMidDay(this.dateStart.getValue()),
-              dateStop: setTimeToMidDay(this.dateStop.getValue()),
-              selectedCategoryId: this.selectedCategory.getValue()?.id,
-            })
-            .then((data) => {
-              console.log('simu', data.data)
-              this.situationSimulated.next(data.data)
-            })
-        }
-
-        this.isLoading.next(false)
-        try {
-          const ms = Math.max(0, performance.now() - startAt)
-          Sentry.getActiveSpan()?.setAttribute('latency_ms', ms)
-          Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', latencyEvent)
-          // Emit an info message with a local scope so it doesn't leak tags
-          Sentry.withScope((scope) => {
-            try {
-              scope.setTag('latency_event', latencyEvent)
-              scope.setExtra('latency_event', latencyEvent)
-              scope.setExtra('latency_ms', ms)
-              scope.setFingerprint(['simulateur-compute-finished', String(ms), String(Date.now())])
-            } catch {}
-            Sentry.captureMessage('Simulateur: compute finished', 'info')
+    const l = startLatencyScope('simulator')
+    const startAt = performance.now()
+    const run = async () => {
+      if (white === true) {
+        await this.serverService
+          .post(`simulator/to-simulate-white`, {
+            backupId: this.humanResourceService.backupId.getValue(),
+            params: params,
+            simulation: simulation,
+            dateStart: setTimeToMidDay(this.dateStart.getValue()),
+            dateStop: setTimeToMidDay(this.dateStop.getValue()),
+            selectedCategoryId: this.selectedCategory.getValue()?.id,
           })
-        } catch {}
-      },
-    )
+          .then((data) => {
+            console.log('simu', data.data)
+            this.situationSimulated.next(data.data)
+          })
+      } else {
+        await this.serverService
+          .post(`simulator/to-simulate`, {
+            backupId: this.humanResourceService.backupId.getValue(),
+            params: params,
+            simulation: simulation,
+            dateStart: setTimeToMidDay(this.dateStart.getValue()),
+            dateStop: setTimeToMidDay(this.dateStop.getValue()),
+            selectedCategoryId: this.selectedCategory.getValue()?.id,
+          })
+          .then((data) => {
+            console.log('simu', data.data)
+            this.situationSimulated.next(data.data)
+          })
+      }
+    }
+    return run()
+      .then(() => {
+        this.isLoading.next(false)
+        try { l.finish('success') } catch {}
+      })
+      .catch((e) => {
+        this.isLoading.next(false)
+        try { l.finish('error') } catch {}
+        throw e
+      })
   }
 
   /**

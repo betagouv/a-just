@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
 import * as Sentry from '@sentry/browser'
+import { startLatencyScope } from '../../../utils/sentry-latency'
 import { GraphsVerticalsLinesComponent } from './graphs-verticals-lines/graphs-verticals-lines.component'
 import { GraphsNumbersComponent } from './graphs-numbers/graphs-numbers.component'
 import { GraphsProgressComponent } from './graphs-progress/graphs-progress.component'
@@ -126,7 +127,7 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   /**
    * Mesure de latence pour l'affichage des graphes de détail
    */
-  private detailLoadState: Record<string, { expected: number; completed: number; startAt: number; endTx?: () => void; label: string }> = {}
+  private detailLoadState: Record<string, { expected: number; completed: number; txn?: { finish: (r?: any) => void } }> = {}
 
   /**
    * Constructor
@@ -302,31 +303,8 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
       return
     }
     const expected = this.referentiel?.length || 0
-    const label = this.buildLatencyEventForSection(sectionKey)
-    
-    // Démarre une transaction dédiée via startSpan et une promesse différée
-    const deferred: { resolve?: () => void } = {}
-    const promise = new Promise<void>((resolve) => {
-      deferred.resolve = resolve
-    })
-    Sentry.startSpan(
-      { name: 'cockpit: detail graphs', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } },
-      async () => {
-        try {
-          Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label)
-        } catch {}
-        await promise
-      },
-    )
-    // Tagger également la transaction active (probablement /cockpit) pour qu'elle hérite du latency_event
-    try { Sentry.getActiveSpan()?.setAttribute('sentry.tag.latency_event', label) } catch {}
-    this.detailLoadState[sectionKey] = {
-      expected,
-      completed: 0,
-      startAt: performance.now(),
-      endTx: () => { try { deferred.resolve && deferred.resolve() } catch {} },
-      label,
-    }
+    const txn = startLatencyScope('view-analytics')
+    this.detailLoadState[sectionKey] = { expected, completed: 0, txn }
   }
 
   /**
@@ -338,22 +316,7 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
     st.completed += 1
     
     if (st.completed >= st.expected) {
-      const ms = Math.max(0, performance.now() - st.startAt)
-      
-      try {
-        Sentry.withScope((scope) => {
-          try {
-            scope.setTag('latency_event', st.label)
-            scope.setExtra('latency_event', st.label)
-            scope.setExtra('latency_ms', ms)
-            scope.setExtra('section', sectionKey)
-            // Ensure uniqueness to bypass Dedupe dropping identical messages
-            scope.setFingerprint(['cockpit-detail-graphs', sectionKey, String(ms), String(Date.now())])
-          } catch {}
-          Sentry.captureMessage('cockpit: detail graphs displayed', 'info')
-        })
-      } catch {}
-      try { st.endTx && st.endTx() } catch {}
+      try { st.txn?.finish('success') } catch {}
       delete this.detailLoadState[sectionKey]
     }
   }

@@ -1,5 +1,6 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import * as Sentry from '@sentry/browser'
+import { startLatencyScope } from '../../utils/sentry-latency'
 import { cloneDeep, isNaN, orderBy, sortBy, sumBy } from 'lodash'
 import { Router } from '@angular/router'
 import { HumanResourceInterface } from '../../interfaces/human-resource-interface'
@@ -342,43 +343,17 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   /**
    * Transactions Sentry pour recalculs suite aux actions utilisateur
    */
-  private _reaffTxn: any | undefined
-  private _reaffStartAt: number | undefined
-  private _reaffLabel: string | undefined
+  private _reaffTxn: { finish?: (r?: any) => void } | undefined
 
   private _startReaffTxn(label: string) {
-    try {
-      // Si une transaction est déjà en cours, la finaliser avant d'en démarrer une nouvelle
-      if (this._reaffTxn && this._reaffStartAt) {
-        const ms = Math.max(0, performance.now() - this._reaffStartAt)
-        try { (this._reaffTxn as any)?.setAttribute?.('latency_ms', ms as any) } catch {}
-        try { (this._reaffTxn as any)?.finish?.() } catch {}
-      }
-    } catch {}
-    this._reaffLabel = label
-    this._reaffStartAt = performance.now()
-    // Démarrer une transaction manuelle pour garantir que la durée = fin - début
-    try {
-      const tx: any = (Sentry as any).startTransaction
-        ? (Sentry as any).startTransaction({ name: 'reaffectateur: compute', op: 'task', forceTransaction: true })
-        : null
-      this._reaffTxn = tx || this._reaffTxn
-      try { (Sentry as any).getCurrentHub?.().configureScope?.((scope: any) => scope.setSpan?.(tx)) } catch {}
-      try { (this._reaffTxn as any)?.setAttribute?.('sentry.tag.latency_event', label) } catch {}
-    } catch {}
+    // Minimal route footprint: delegate to util (scope-based naming/payload)
+    try { this._reaffTxn?.finish?.('success') } catch {}
+    this._reaffTxn = startLatencyScope('reaffectator')
   }
 
   private _finishReaffTxn() {
-    if (this._reaffTxn && this._reaffStartAt) {
-      try {
-        const ms = Math.max(0, performance.now() - this._reaffStartAt)
-        ;(this._reaffTxn as any)?.setAttribute?.('latency_ms', ms as any)
-      } catch {}
-      try { (this._reaffTxn as any)?.finish?.() } catch {}
-    }
+    try { this._reaffTxn?.finish?.('success') } catch {}
     this._reaffTxn = undefined
-    this._reaffStartAt = undefined
-    this._reaffLabel = undefined
   }
 
   introSteps: IntroJSStep[] = [
