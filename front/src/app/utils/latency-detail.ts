@@ -29,3 +29,18 @@ export function markDetailComplete(state: DetailState, key: string): void {
     delete state[key]
   }
 }
+
+/**
+ * Toggle a detail section open/close with latency tracking centralized here.
+ * - When open=false: clears any existing state and returns false.
+ * - When open=true: begins a new detail scope and returns true.
+ */
+export function toggleDetail(state: DetailState, key: string, open: boolean, expected: number, scope = 'view-analytics'): boolean {
+  if (!open) {
+    try { state[key]?.txn?.finish?.('success') } catch {}
+    delete state[key]
+    return false
+  }
+  beginDetail(state, key, expected, scope)
+  return true
+}

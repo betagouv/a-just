@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
 import { startLatencyScope } from '../../../utils/sentry-latency'
-import { beginDetail, markDetailComplete, type DetailState } from '../../../utils/latency-detail'
+import { beginDetail, markDetailComplete, toggleDetail, type DetailState } from '../../../utils/latency-detail'
 import { GraphsVerticalsLinesComponent } from './graphs-verticals-lines/graphs-verticals-lines.component'
 import { GraphsNumbersComponent } from './graphs-numbers/graphs-numbers.component'
 import { GraphsProgressComponent } from './graphs-progress/graphs-progress.component'
@@ -297,13 +297,8 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
    */
   logOpenDetailsFor(sectionKey: string, open: boolean) {
     this.logOpenDetails(open)
-    if (!open) {
-      // Si fermeture prématurée, on réinitialise l'état
-      delete this.detailLoadState[sectionKey]
-      return
-    }
     const expected = this.referentiel?.length || 0
-    beginDetail(this.detailLoadState, sectionKey, expected, 'view-analytics')
+    toggleDetail(this.detailLoadState, sectionKey, open, expected, 'view-analytics')
   }
 
   /**
