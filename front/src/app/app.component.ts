@@ -8,6 +8,7 @@ import { UserService } from './services/user/user.service'
 import { HumanResourceService } from './services/human-resource/human-resource.service'
 import { iIOS } from './utils/system'
 import { filter } from 'rxjs'
+import { setJurisdictionTitle } from './utils/sentry-context'
 
 import { AlertComponent } from './components/alert/alert.component'
 import { BigLoaderComponent } from './components/big-loader/big-loader.component'
@@ -88,12 +89,10 @@ export class AppComponent implements AfterViewInit {
 
     this.appService.appLoading.subscribe((a) => (this.appLoading = a))
 
-    // Mirror current jurisdiction title for Sentry tagging
+    // Mirror current jurisdiction title for Sentry tagging (via util, no globals)
     try {
       this.humanResourceService.hrBackup.subscribe((bk) => {
-        try {
-          window.__ajust_juridiction_title = bk?.label || null
-        } catch {}
+        try { setJurisdictionTitle(bk?.label || null) } catch {}
       })
     } catch {}
 

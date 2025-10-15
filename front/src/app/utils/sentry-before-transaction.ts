@@ -1,5 +1,6 @@
 // Utility to build a beforeSendTransaction handler for Sentry
 // Centralizes how we compute and attach latency_event and context tags.
+import { getJurisdictionTitle } from './sentry-context'
 
 export function buildBeforeSendTransaction() {
   return function beforeSendTransaction(event: any) {
@@ -9,7 +10,7 @@ export function buildBeforeSendTransaction() {
       const op = (event as any)?.contexts?.trace?.op
       const transactionName = (event as any)?.transaction as string | undefined
       const produit = fullUrl && fullUrl.includes('a-just-ca') ? 'CA' : 'TJ'
-      const juridictionTitle = (typeof window !== 'undefined' ? (window as any).__ajust_juridiction_title : null) || null
+      const juridictionTitle = getJurisdictionTitle()
 
       let latencyEvent: string | null = null
       const pathLike = pathname || transactionName || ''
