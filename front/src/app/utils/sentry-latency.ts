@@ -60,6 +60,7 @@ export function startLatency(label: string, name = 'latency-op'): LatencyTxn {
   let startAt = 0
   let span: any | undefined
   let txn: any | undefined
+  let endSpanResolve: (() => void) | undefined
 
   // Start clock first to guarantee measurement even if Sentry fails
   try { startAt = performance.now() } catch { startAt = Date.now() }
@@ -72,16 +73,40 @@ export function startLatency(label: string, name = 'latency-op'): LatencyTxn {
       try { (Sentry as any).getCurrentHub?.().configureScope?.((scope: any) => scope.setSpan?.(txn)) } catch {}
       span = txn
     }
+    // Fallback: try starting from hub if global function is missing
+    if (!txn) {
+      const hub = (Sentry as any).getCurrentHub?.()
+      const hubStart = hub?.startTransaction
+      if (typeof hubStart === 'function') {
+        txn = hubStart.call(hub, { name, op: 'task', forceTransaction: true })
+        try { (Sentry as any).getCurrentHub?.().configureScope?.((scope: any) => scope.setSpan?.(txn)) } catch {}
+        span = txn
+      }
+    }
   } catch {}
 
-  // Otherwise, create a span using startSpan API
+  // Note: avoid startSpan(callback) here because it auto-finishes immediately,
+  // leading to 0ms durations. If startTransaction is not available, we will
+  // try to use startSpanManual to create a long-lived span; otherwise rely on
+  // manual timing and scope tags only.
   if (!span) {
     try {
-      Sentry.startSpan({ name, op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } }, async () => {})
-      // getActiveSpan is not in all builds; guard access
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const getActive = (Sentry as any).getActiveSpan
-      if (typeof getActive === 'function') span = getActive()
+      const startSpanManual = (Sentry as any).startSpanManual as any
+      if (typeof startSpanManual === 'function') {
+        span = startSpanManual({ name, op: 'task', attributes: { 'sentry.tag.latency_event': label } })
+      }
+    } catch {}
+  }
+
+  // Fallback: use startSpan with a pending promise to keep the span open until finish()
+  if (!span && !txn) {
+    try {
+      const startSpan = (Sentry as any).startSpan as any
+      if (typeof startSpan === 'function') {
+        const pending = new Promise<void>((resolve) => { endSpanResolve = resolve })
+        startSpan({ name, op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } }, () => pending)
+        // Active span will exist during the pending promise; attributes will be set via getActiveSpan in setAttribute
+      }
     } catch {}
   }
 
@@ -115,6 +140,8 @@ export function startLatency(label: string, name = 'latency-op'): LatencyTxn {
       setAttribute('result', result)
       txn?.finish?.()
       ;(span as any)?.finish?.()
+      ;(span as any)?.end?.()
+      endSpanResolve?.()
     } catch {}
   }
 
