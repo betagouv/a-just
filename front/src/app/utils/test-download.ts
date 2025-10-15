@@ -30,3 +30,19 @@ export function exposeDownloadToCypress(
     reader.readAsDataURL(blob)
   } catch {}
 }
+
+// Read an E2E override max milliseconds for operations that poll or have deadlines.
+// Looks for a number in window.__AJ_E2E_EXPORT_MAX_MS or localStorage.__AJ_E2E_EXPORT_MAX_MS.
+// Returns the provided defaultMs if nothing is configured.
+export function getE2EExportMaxMs(defaultMs: number): number {
+  try {
+    const w = (window as any)
+    const fromWin = Number(w && w.__AJ_E2E_EXPORT_MAX_MS)
+    if (Number.isFinite(fromWin) && fromWin > 0) return fromWin
+  } catch {}
+  try {
+    const fromLS = Number(localStorage.getItem('__AJ_E2E_EXPORT_MAX_MS'))
+    if (Number.isFinite(fromLS) && fromLS > 0) return fromLS
+  } catch {}
+  return defaultMs
+}

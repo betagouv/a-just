@@ -12,6 +12,7 @@ import { HRCategoryInterface } from '../../interfaces/hr-category'
 import { HRFonctionInterface } from '../../interfaces/hr-fonction'
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel'
 import { setTimeToMidDay } from '../../utils/dates'
+import { exposeDownloadToCypress, getE2EExportMaxMs } from '../../utils/test-download'
 
 /**
  * Excel file details
@@ -278,6 +279,8 @@ export class ExcelService extends MainClass {
             if (this.tabs.onglet1.values.length === 0) throw new Error('no values')
             const out = await report.xlsx.writeBuffer()
             const filename = this.getFileName()
+            // Test-only: expose buffer to Cypress
+            exposeDownloadToCypress(out as any, filename + EXCEL_EXTENSION)
             await FileSaver.saveAs(new Blob([out]), filename + EXCEL_EXTENSION)
             this._finishExcelTxn('success')
           } catch (e2) {
@@ -300,19 +303,7 @@ export class ExcelService extends MainClass {
         const t0 = Date.now()
         // Allow a test-only override of the hard deadline to accommodate slower CI
         // Read from window.__AJ_E2E_EXPORT_MAX_MS or localStorage.__AJ_E2E_EXPORT_MAX_MS when present
-        const __e2eMax = (() => {
-          try {
-            const w = (window as any);
-            const fromWin = Number(w && w.__AJ_E2E_EXPORT_MAX_MS);
-            if (Number.isFinite(fromWin) && fromWin > 0) return fromWin;
-          } catch {}
-          try {
-            const fromLS = Number(localStorage.getItem('__AJ_E2E_EXPORT_MAX_MS'));
-            if (Number.isFinite(fromLS) && fromLS > 0) return fromLS;
-          } catch {}
-          return null as any;
-        })();
-        const HARD_DEADLINE_MS = Number.isFinite(__e2eMax) && __e2eMax > 0 ? Number(__e2eMax) : 180000 // 3 minutes max
+        const HARD_DEADLINE_MS = getE2EExportMaxMs(180000) // 3 minutes max
         let intervalId: any = null
 
         const cleanAll = () => {
@@ -375,6 +366,8 @@ export class ExcelService extends MainClass {
                 if (this.tabs.onglet1.values.length === 0) throw new Error('no values')
                 const out = await report.xlsx.writeBuffer()
                 const filename = this.getFileName()
+                // Test-only: expose buffer to Cypress
+                exposeDownloadToCypress(out as any, filename + EXCEL_EXTENSION)
                 await FileSaver.saveAs(new Blob([out]), filename + EXCEL_EXTENSION)
                 this._finishExcelTxn('success')
               } catch (err) {
