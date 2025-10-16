@@ -83,12 +83,26 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Run E2E tests (Cypress + mochawesome)
-        env:
-          SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
-          CY_JSON_ONLY: "1"
-        run: npm run test:e2e
-        continue-on-error: true
+      - name: Run E2E tests (Cypress JSON-only, containerized)
+        run: |
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
+            -e CY_JSON_ONLY=1 \
+            -e SANDBOX_CODE_DIR=/work/sandbox-code \
+            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
+            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
+            -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
+            cypress sh -lc '
+              set -e
+              cd /e2e
+              npm ci
+              echo "Waiting for front at $CYPRESS_BASE_URL ..."
+              npx -y wait-on -t 180000 -i 2000 "$CYPRESS_BASE_URL"
+              rm -rf cypress/reports && mkdir -p cypress/reports
+              npx cypress run --spec "cypress/e2e/**/*.cy.*"
+              echo "=== E2E reports ==="; ls -la cypress/reports || true
+            '
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
 
       - name: Debug - List E2E generated files
         if: always()
@@ -193,6 +207,29 @@ jobs:
           mkdir -p site/reports/pr-${PR_NUM}/mocha
           cp -r mocha-report/* site/reports/pr-${PR_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
+      - name: Build combined Mochawesome HTML (merged)
+        env:
+          PR_NUM: ${{ steps.prnum.outputs.pr }}
+        run: |
+          set -e
+          docker run --rm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
+            set -e
+            npm i -g mochawesome-merge mochawesome-report-generator
+            mkdir -p site/reports/pr-${PR_NUM}/combined
+            # Merge any JSONs we have from artifacts
+            mochawesome-merge \
+              "mocha-report/**/*.json" \
+              "cypress-reports/**/*.json" \
+              > site/reports/pr-${PR_NUM}/combined/merged.json || true
+            # Only generate if merged.json exists and is non-empty
+            if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
+              node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
+              marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --overwrite
+            else
+              echo "No JSONs to merge for combined report"
+            fi
+          '
+
       - name: Create per-PR landing index.html
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
@@ -209,6 +246,7 @@ jobs:
           <body>
             <h1>Reports for PR ${PR_NUM}</h1>
             <ul>
+              <li><a href="./combined/a-just-tests-report.html" target="_blank">Combined (API + E2E)</a></li>
               <li><a href="./mocha/" target="_blank">Mocha (API)</a></li>
               <li><a href="./cypress/" target="_blank">Cypress (E2E)</a></li>
               <li><a href="./videos/" target="_blank">Cypress Videos</a></li>
@@ -228,6 +266,22 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Comment PR with Combined report URL
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pageUrl = core.getInput('page_url') || process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
+            const pr = '${{ steps.prnum.outputs.pr }}';
+            const url = `${pageUrl}reports/pr-${pr}/combined/a-just-tests-report.html`;
+            const body = `✅ Combined test report available: ${url}`;
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
 
   api-coverage:
     runs-on: ubuntu-latest
