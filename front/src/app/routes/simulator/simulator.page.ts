@@ -386,6 +386,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   simulateButton = 'disabled'
 
+
   /**
    * Backup hr à traiter lors de la simulation
    */
@@ -1669,13 +1670,15 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       })
 
       this.logRunSimulator(params)
-
+      
       this.simulatorService.toSimulate(params, simulation)
     } else {
       this.simulateButton = ''
       alert('Les données en base ne permettent pas de calculer une simulation pour ce contentieux')
     }
   }
+
+  
 
   /**
    * Valider un paramètre lorsque la touche ENTREE est pressée

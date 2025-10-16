@@ -305,7 +305,13 @@ export default class RouteExtractor extends Route {
       return ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
+    // Minimal fix: define a no-op progress callback to avoid ReferenceError
+    const onProgress = () => {}
+    const result = await computeExtractor(
+      this.models,
+      { backupId, dateStart, dateStop, categoryFilter, old: true },
+      onProgress,
+    )
 
     this.sendOk(ctx, result)
     /**
