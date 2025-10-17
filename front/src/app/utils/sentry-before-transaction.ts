@@ -79,15 +79,12 @@ export function buildBeforeSendTransaction() {
         }
       }
 
-      // Compute latency_event_type from the resolved latencyEvent
-      let latencyEventType: string | undefined
+      // Compute is_exctractor flag (present only for extracteur cases)
+      let isExtracteur: boolean | undefined
       try {
-        const isExtracteur =
+        isExtracteur =
           latencyEvent === "Préparation de l'extracteur Excel de données d'effectifs" ||
           latencyEvent === "Préparation de l'extracteur Excel de données d'activités"
-        if (latencyEvent) {
-          latencyEventType = isExtracteur ? 'extracteur' : 'hors_extracteur'
-        }
       } catch {}
 
       event.tags = {
@@ -96,7 +93,7 @@ export function buildBeforeSendTransaction() {
         ...(produit ? { produit } : {}),
         ...(juridictionTitle ? { juridiction_title: juridictionTitle } : {}),
         ...(latencyEvent ? { latency_event: latencyEvent } : {}),
-        ...(latencyEventType ? { latency_event_type: latencyEventType } : {}),
+        ...(isExtracteur ? { is_exctractor: 'true' } : {}),
       }
       event.extra = {
         ...event.extra,
@@ -104,7 +101,7 @@ export function buildBeforeSendTransaction() {
         ...(produit ? { produit } : {}),
         ...(juridictionTitle ? { juridiction_title: juridictionTitle } : {}),
         ...(latencyEvent ? { latency_event: latencyEvent } : {}),
-        ...(latencyEventType ? { latency_event_type: latencyEventType } : {}),
+        ...(isExtracteur ? { is_exctractor: true } : {}),
       }
       return event
     } catch {
