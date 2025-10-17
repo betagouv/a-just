@@ -386,7 +386,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    */
   simulateButton = 'disabled'
 
-
   /**
    * Backup hr à traiter lors de la simulation
    */
@@ -488,7 +487,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           target: '.date-bar-container',
           title: 'La situation projetée de votre juridiction :',
           intro:
-            '<p>Vous obtenez la situation projetée dans le futur de l’état du <b>contentieux ou sous-contentieux</b> sélectionné́ sur la base des dernières données disponibles dans l’outil  et toutes choses restant égales par ailleurs.</p><p>Une période d’un an à compter de la date du jour est sélectionnée par défaut mais vous pouvez, <b>si vous le souhaitez, modifier les dates de début et de fin de période</b> sur lesquelles vous souhaitez vous projeter.</p>',
+            '<p>Vous obtenez la situation projetée dans le futur de l’état du <b>contentieux ou sous-contentieux</b> sélectionné sur la base des dernières données disponibles dans l’outil  et toutes choses restant égales par ailleurs.</p><p>Une période d’un an à compter de la date du jour est sélectionnée par défaut mais vous pouvez, <b>si vous le souhaitez, modifier les dates de début et de fin de période</b> sur lesquelles vous souhaitez vous projeter.</p>',
           beforeLoad: async (intro: any) => {
             const introTooltip = document.querySelector('.introjs-tooltip')
             if (introTooltip) {
@@ -519,7 +518,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         },
         {
           target: 'body',
-          title: 'En savoir plus :',
+          title: 'Effectuer votre simulation :',
           intro:
             '<p>Découvrez, en <b>vidéo</b>, comment jouer des scénarios alternatifs pour modifier vos trajectoires et apprécier les conséquences de changements à venir, subi ou choisis par la juridiction. </p><p>Nous vous y donnons également toutes les clés pour <b>analyser les résultats de ces simulations et prendre des décisions éclairées par leur impact prévisible.</b></p><video controls class="intro-js-video small-video"><source src="/assets/videos/simulez-votre-trajectoire-de-vol-avec-a-just.mp4" type="video/mp4" /></video>',
         },
@@ -575,7 +574,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           target: '.date-bar-container',
           title: 'La situation projetée de votre juridiction :',
           intro:
-            '<p>Vous obtenez la situation projetée dans le futur de l’état du <b>contentieux ou sous-contentieux</b> sélectionné́ sur la base des dernières données disponibles dans l’outil  et toutes choses restant égales par ailleurs.</p><p>Une période d’un an à compter de la date du jour est sélectionnée par défaut mais vous pouvez, <b>si vous le souhaitez, modifier les dates de début et de fin de période</b> sur lesquelles vous souhaitez vous projeter.</p>',
+            '<p>Vous obtenez la situation projetée dans le futur de l’état du <b>contentieux ou sous-contentieux</b> sélectionné sur la base des dernières données disponibles dans l’outil  et toutes choses restant égales par ailleurs.</p><p>Une période d’un an à compter de la date du jour est sélectionnée par défaut mais vous pouvez, <b>si vous le souhaitez, modifier les dates de début et de fin de période</b> sur lesquelles vous souhaitez vous projeter.</p>',
           beforeLoad: async (intro: any) => {
             const introTooltip = document.querySelector('.introjs-tooltip')
             if (introTooltip) {
@@ -606,7 +605,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         },
         {
           target: 'body',
-          title: 'En savoir plus :',
+          title: 'Effectuer votre simulation :',
           intro:
             '<p>Découvrez, en <b>vidéo</b>, comment jouer des scénarios alternatifs pour modifier vos trajectoires et apprécier les conséquences de changements à venir, subi ou choisis par la cour d\'appel. </p><p>Nous vous y donnons également toutes les clés pour <b>analyser les résultats de ces simulations et prendre des décisions éclairées par leur impact prévisible.</b></p><video controls class="intro-js-video small-video"><source src="/assets/videos/decouvrez-le-simulateur-sans-donnees-prealimentes.mp4" type="video/mp4" /></video>',
         },
@@ -1670,15 +1669,13 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       })
 
       this.logRunSimulator(params)
-      
+
       this.simulatorService.toSimulate(params, simulation)
     } else {
       this.simulateButton = ''
       alert('Les données en base ne permettent pas de calculer une simulation pour ce contentieux')
     }
   }
-
-  
 
   /**
    * Valider un paramètre lorsque la touche ENTREE est pressée
