@@ -79,12 +79,19 @@ export function buildBeforeSendTransaction() {
         }
       }
 
+      // 4) Derive latency_event_type from latency_event
+      const isExtracteur =
+        latencyEvent === "Préparation de l'extracteur Excel de données d'effectifs" ||
+        latencyEvent === "Préparation de l'extracteur Excel de données d'activités"
+      const latencyEventType = isExtracteur ? 'extracteur' : 'hors_extracteur'
+
       event.tags = {
         ...event.tags,
         ...(fullUrl ? { full_url: fullUrl } : {}),
         ...(produit ? { produit } : {}),
         ...(juridictionTitle ? { juridiction_title: juridictionTitle } : {}),
         ...(latencyEvent ? { latency_event: latencyEvent } : {}),
+        latency_event_type: latencyEventType,
       }
       event.extra = {
         ...event.extra,
@@ -92,6 +99,7 @@ export function buildBeforeSendTransaction() {
         ...(produit ? { produit } : {}),
         ...(juridictionTitle ? { juridiction_title: juridictionTitle } : {}),
         ...(latencyEvent ? { latency_event: latencyEvent } : {}),
+        latency_event_type: latencyEventType,
       }
       return event
     } catch {
