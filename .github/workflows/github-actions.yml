@@ -16,8 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "API TESTS"
-
-      - name: Checkout PR branch (candidate)
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -30,15 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Run API tests (Mocha + Mochawesome, no NYC)
-        run: |
-          set -e
-          docker compose -p test-api -f docker-compose.test.yml build
-          # Run Mocha directly in container to avoid NYC
-          docker compose -p test-api -f docker-compose.test.yml run --rm api sh -lc "NODE_ENV=test mocha --config .mocharc.yaml"
-          exitcode=$?
-          docker compose -p test-api -f docker-compose.test.yml down
-          exit ${exitcode}
+      - name: Run API tests (Mocha + Mochawesome)
+        run: npm run test:api
 
       - name: Debug - List API generated files
         if: always()
@@ -63,7 +55,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "E2E TESTS"
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -82,7 +73,6 @@ jobs:
 
       - name: Install dependencies
         run: npm i
-
       - name: Run E2E tests (Cypress JSON-only, containerized)
         run: |
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
@@ -144,8 +134,6 @@ jobs:
             ./end-to-end/cypress/downloads/*.xlsx
             ./end-to-end/cypress/downloads/*.xls
           if-no-files-found: warn
-
-
   deploy:
     needs: [api-tests, e2e-tests]
     runs-on: ubuntu-latest
@@ -283,37 +271,3 @@ jobs:
               issue_number: context.issue.number,
               body
             });
-
-  api-coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "API COVERAGE (NYC)"
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - run: docker compose version
-
-      - name: Install dependencies
-        run: npm i
-
-      - name: Run API coverage (NYC + Mocha)
-        run: |
-          set -e
-          docker compose -p test-api -f docker-compose.test.yml build
-          docker compose -p test-api -f docker-compose.test.yml run --rm api sh -lc "npm test"
-          exitcode=$?
-          docker compose -p test-api -f docker-compose.test.yml down
-          exit ${exitcode}
-
-      - name: Upload API coverage
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-coverage
-          path: ./api/coverage
