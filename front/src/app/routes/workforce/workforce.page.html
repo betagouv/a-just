@@ -251,9 +251,7 @@
         }
         @if (person.dateEnd && hasLeft(person.dateEnd)) {
         <div class="agent-status" [ngStyle]="{ backgroundColor: getLocalCategoryColor(person) }">
-          <i class="ri-user-shared-line" [ngStyle]="{
-                    color: getLocalCategoryColor(person),
-                  }"></i>
+          <i class="ri-user-shared-line"></i>
           <p>Parti</p>
         </div>
         }
