@@ -18,7 +18,7 @@ jobs:
       - run: echo "API TESTS"
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,15 +30,8 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Run API tests (Mocha + Mochawesome, no NYC)
-        run: |
-          set -e
-          docker compose -p test-api -f docker-compose.test.yml build
-          # Run Mocha directly in container to avoid NYC
-          docker compose -p test-api -f docker-compose.test.yml run --rm api sh -lc "NODE_ENV=test mocha --config .mocharc.yaml"
-          exitcode=$?
-          docker compose -p test-api -f docker-compose.test.yml down
-          exit ${exitcode}
+      - name: Run API tests (Mocha + Mochawesome)
+        run: npm run test:api
 
       - name: Debug - List API generated files
         if: always()
@@ -64,8 +57,14 @@ jobs:
     steps:
       - run: echo "E2E TESTS"
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+
+      - name: Checkout sandbox branch (for local sandbox stack)
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+          path: sandbox-code
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -77,24 +76,10 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      - name: Run E2E tests (Cypress JSON-only, containerized)
-        run: |
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis-server-e2e || true
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
-            -e CY_JSON_ONLY=1 \
-            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
-            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
-            cypress sh -lc '
-              set -e
-              cd /e2e
-              npm ci
-              echo "Waiting for front at $CYPRESS_BASE_URL ..."
-              npx -y wait-on -t 180000 -i 2000 "$CYPRESS_BASE_URL"
-              rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --spec "cypress/e2e/**/*.cy.*"
-              echo "=== E2E reports ==="; ls -la cypress/reports || true
-            '
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
+      - name: Run E2E tests (Cypress + mochawesome)
+        env:
+          SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
+        run: npm run test:e2e
 
       - name: Debug - List E2E generated files
         if: always()
@@ -119,14 +104,21 @@ jobs:
           name: cypress-reports
           path: ./end-to-end/cypress/reports
 
+      - name: Upload Cypress downloads (Excel files)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-downloads
+          path: |
+            ./end-to-end/cypress/downloads/*.xlsx
+            ./end-to-end/cypress/downloads/*.xls
+          if-no-files-found: warn
   deploy:
     needs: [api-tests, e2e-tests]
     runs-on: ubuntu-latest
     if: |
-      always() && (
-        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
-        (github.event_name == 'workflow_dispatch')
-      )
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'workflow_dispatch')
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -257,37 +249,3 @@ jobs:
               issue_number: context.issue.number,
               body
             });
-
-  api-coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "API COVERAGE (NYC)"
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - run: docker compose version
-
-      - name: Install dependencies
-        run: npm i
-
-      - name: Run API coverage (NYC + Mocha)
-        run: |
-          set -e
-          docker compose -p test-api -f docker-compose.test.yml build
-          docker compose -p test-api -f docker-compose.test.yml run --rm api sh -lc "npm test"
-          exitcode=$?
-          docker compose -p test-api -f docker-compose.test.yml down
-          exit ${exitcode}
-
-      - name: Upload API coverage
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-coverage
-          path: ./api/coverage
