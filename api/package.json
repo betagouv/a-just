@@ -9,7 +9,7 @@
     "build:documentation": "jsdoc -r src -d documentation",
     "build-prod": "babel src --out-dir dist --copy-files && babel config --out-dir dist/config --copy-files",
     "rm-build-prod": "rm -rf dist",
-    "test": "NODE_ENV=test node_modules/.bin/nyc --reporter=lcov mocha --config .mocharc.yaml"
+    "test": "NODE_ENV=test mocha --config .mocharc.yaml"
   },
   "dependencies": {
     "@babel/cli": "^7.25.9",
