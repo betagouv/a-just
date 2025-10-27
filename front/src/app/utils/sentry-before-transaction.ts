@@ -87,6 +87,94 @@ export function buildBeforeSendTransaction() {
           latencyEvent === "Préparation de l'extracteur Excel de données d'activités"
       } catch {}
 
+      // Check for extractor latency alert (only for extractor operations)
+      if (isExtracteur) {
+        try {
+          const transactionDuration = (event as any)?.contexts?.trace?.data?.latency_ms || 
+                                    (event as any)?.extra?.latency_ms ||
+                                    (event as any)?.tags?.latency_ms
+          
+          if (transactionDuration && transactionDuration > 30000) { // 30s threshold
+            // Extract extractor parameters from breadcrumbs
+            let extractorParams: {
+              dateStart?: string;
+              dateStop?: string;
+              categoryFilter?: any;
+              backupId?: number;
+            } = {}
+            try {
+              const breadcrumbs = (event as any)?.breadcrumbs || []
+              const extractorBreadcrumb = breadcrumbs.find((crumb: any) => 
+                crumb.category === 'extractor' && 
+                crumb.message === 'start-filter-list payload' &&
+                crumb.data
+              )
+              if (extractorBreadcrumb?.data) {
+                extractorParams = {
+                  dateStart: extractorBreadcrumb.data.dateStart,
+                  dateStop: extractorBreadcrumb.data.dateStop,
+                  categoryFilter: extractorBreadcrumb.data.categoryFilter,
+                  backupId: extractorBreadcrumb.data.backupId
+                }
+              }
+            } catch (err) {
+              console.warn('Error extracting extractor parameters:', err)
+            }
+            
+            // Send alert asynchronously without blocking the transaction
+            setTimeout(() => {
+              try {
+                // Get user info from localStorage or session
+                const userInfo = typeof window !== 'undefined' ? 
+                  JSON.parse(localStorage.getItem('user') || '{}') : {}
+                
+                // Format date range for display
+                const formatDate = (dateStr: string) => {
+                  try {
+                    return new Date(dateStr).toLocaleDateString('fr-FR')
+                  } catch {
+                    return dateStr
+                  }
+                }
+                
+                // Send alert to latency team (separate from support)
+                fetch('/api/help-center/extractor-latency-alert', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                  },
+                  body: JSON.stringify({
+                    title: 'Alerte Latence Extracteur',
+                    content: `
+                      <h3>Extracteur lent détecté</h3>
+                      <p><strong>Durée:</strong> ${Math.round(transactionDuration)}ms (${Math.round(transactionDuration/1000)}s)</p>
+                      <p><strong>Opération:</strong> ${latencyEvent}</p>
+                      <p><strong>Transaction:</strong> ${txName}</p>
+                      <p><strong>Utilisateur:</strong> ${userInfo.email || 'N/A'} (ID: ${userInfo.id || 'N/A'})</p>
+                      <p><strong>Juridiction:</strong> ${juridictionTitle || 'N/A'}</p>
+                      <p><strong>Produit:</strong> ${produit || 'N/A'}</p>
+                      <p><strong>URL:</strong> ${fullUrl || 'N/A'}</p>
+                      ${extractorParams.dateStart ? `<p><strong>Période:</strong> Du ${formatDate(extractorParams.dateStart)} au ${formatDate(extractorParams.dateStop || '')}</p>` : ''}
+                      ${extractorParams.categoryFilter ? `<p><strong>Catégorie:</strong> ${extractorParams.categoryFilter}</p>` : ''}
+                      ${extractorParams.backupId ? `<p><strong>ID Juridiction:</strong> ${extractorParams.backupId}</p>` : ''}
+                      <p><strong>Seuil:</strong> 30s</p>
+                      <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
+                    `
+                  })
+                }).catch(err => {
+                  console.warn('Failed to send extractor latency alert:', err)
+                })
+              } catch (err) {
+                console.warn('Error sending extractor latency alert:', err)
+              }
+            }, 0)
+          }
+        } catch (err) {
+          console.warn('Error checking extractor latency:', err)
+        }
+      }
+
       event.tags = {
         ...event.tags,
         ...(fullUrl ? { full_url: fullUrl } : {}),

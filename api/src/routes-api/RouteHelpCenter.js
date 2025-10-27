@@ -3,7 +3,7 @@ import { Types } from '../utils/types'
 import { EXECUTE_HELPCENTER, EXECUTE_HELPCENTER_LINK, EXECUTE_HELPCENTER_SEARCH } from '../constants/log-codes'
 import { Client } from '@hubspot/api-client'
 import config from 'config'
-import { TEMPLATE_CALL_ME_BACK } from '../constants/email'
+import { TEMPLATE_CALL_ME_BACK, TEMPLATE_NOTIFICATION } from '../constants/email'
 import { sentEmail } from '../utils/email'
 
 /**
@@ -65,6 +65,78 @@ export default class RouteCentreDAide extends Route {
   async logDocumentation (ctx) {
     await this.models.Logs.addLog(EXECUTE_HELPCENTER, ctx.state.user.id)
     this.sendOk(ctx, 'Ok')
+  }
+
+  /**
+   * Envoyer une notification au support
+   */
+  @Route.Post({
+    path: 'to-support',
+    bodyType: Types.object().keys({
+      title: Types.string().required(),
+      content: Types.string().required(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async sendToSupport(ctx) {
+    const { title, content } = this.body(ctx)
+    
+    try {
+      await this.models.Notifications.toSupport(title, content)
+      this.sendOk(ctx, 'Notification sent to support')
+    } catch (error) {
+      console.error('Failed to send notification to support:', error)
+      ctx.throw(500, 'Failed to send notification')
+    }
+  }
+
+  /**
+   * Envoyer une alerte de latence extracteur
+   */
+  @Route.Post({
+    path: 'extractor-latency-alert',
+    bodyType: Types.object().keys({
+      title: Types.string().required(),
+      content: Types.string().required(),
+    }),
+    accesses: [Access.isLogin],
+  })
+  async sendExtractorLatencyAlert(ctx) {
+    const { title, content } = this.body(ctx)
+    
+    // Check if latency alert email is configured
+    if (!config.extractorLatencyAlertEmail) {
+      console.warn('EXTRACTOR_LATENCY_ALERT_EMAIL not configured - skipping alert')
+      this.sendOk(ctx, 'Alert skipped - email not configured')
+      return
+    }
+    
+    try {
+      // Send email directly to latency alert team (not support)
+      await sentEmail(
+        {
+          email: config.extractorLatencyAlertEmail,
+        },
+        TEMPLATE_NOTIFICATION,
+        {
+          title,
+          content,
+          name: 'Équipe latence',
+        }
+      )
+      
+      // Also log it for audit purposes
+      await this.models.Logs.addLog('EXTRACTOR_LATENCY_ALERT', ctx.state.user.id, {
+        title,
+        content,
+        alertEmail: config.extractorLatencyAlertEmail,
+      })
+      
+      this.sendOk(ctx, 'Latency alert sent')
+    } catch (error) {
+      console.error('Failed to send extractor latency alert:', error)
+      ctx.throw(500, 'Failed to send latency alert')
+    }
   }
 
   /**

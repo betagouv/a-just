@@ -53,6 +53,10 @@ module.exports = {
    */
   supportEmail: process.env.SUPPORT_EMAIL,
   /**
+   * Email pour les alertes de latence extracteur
+   */
+  extractorLatencyAlertEmail: process.env.EXTRACTOR_LATENCY_ALERT_EMAIL,
+  /**
    * Préchargement de toutes les jurictions ? (Prend 30s et de la mémoire)
    */
   preloadHumanResourcesDatas: false,
