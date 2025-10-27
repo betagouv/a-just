@@ -159,6 +159,7 @@ jobs:
       pages: write
       id-token: write
       contents: read
+      issues: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
