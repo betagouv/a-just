@@ -14,6 +14,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const crypto = require('crypto')
 
 const inPath = process.argv[2] || 'reports/combined/merged.json'
 const outPath = process.argv[3] || 'reports/combined/sectioned.json'
@@ -25,11 +26,18 @@ function readJson(p) {
 
 // RFC4122 version 4 UUID generator
 function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0
-    const v = c === 'x' ? r : (r & 0x3) | 0x8
-    return v.toString(16)
-  })
+  const bytes = crypto.randomBytes(16);
+  // Per RFC 4122 section 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4 (0b0100xxxx)
+  bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant 1 (0b10xxxxxx)
+  const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  return (
+    hex.slice(0, 8) + '-' +
+    hex.slice(8, 12) + '-' +
+    hex.slice(12, 16) + '-' +
+    hex.slice(16, 20) + '-' +
+    hex.slice(20)
+  );
 }
 
 function isE2E(result) {
