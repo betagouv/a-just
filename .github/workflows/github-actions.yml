@@ -170,7 +170,7 @@ jobs:
       pages: write
       id-token: write
       contents: read
-      pull-requests: read
+      pull-requests: write
       issues: write
     steps:
       - name: Checkout code
@@ -233,7 +233,8 @@ jobs:
           set -e
           mkdir -p site/reports/pr-${PR_NUM}
           mkdir -p site/reports/pr-${PR_NUM}/cypress
-          cp -r cypress-reports/* site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
+          cp -r cypress-reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
           mkdir -p site/reports/pr-${PR_NUM}/videos
           cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
           mkdir -p site/reports/pr-${PR_NUM}/mocha
@@ -244,17 +245,14 @@ jobs:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
           set -e
-          docker run --rm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
+          docker run --rm -e PR_NUM="$PR_NUM" -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
             npm i -g mochawesome-merge mochawesome-report-generator
             mkdir -p site/reports/pr-${PR_NUM}/combined
-            # Merge any JSONs we have from artifacts
-            mochawesome-merge \
-              "mocha-report/**/*.json" \
-              "cypress-reports/.jsons/*.json" \
-              "cypress-reports/*.json" \
-              > site/reports/pr-${PR_NUM}/combined/merged.json || true
-            # Only generate if merged.json exists and is non-empty
+            JSONS="$(find mocha-report -type f -name "*.json" 2>/dev/null; find cypress-reports -type f -name "*.json" 2>/dev/null)"
+            if [ -n "$JSONS" ]; then
+              mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
+            fi
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
               marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --overwrite
@@ -301,7 +299,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Comment PR with Combined report URL
-        if: ${{ steps.prnum.outputs.pr != '' }}
+        if: ${{ steps.prnum.outputs.pr != '' && (github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') }}
         uses: actions/github-script@v7
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
