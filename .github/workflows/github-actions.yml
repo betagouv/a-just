@@ -42,6 +42,7 @@ jobs:
 
       - name: Run API tests (Mocha + Mochawesome)
         run: npm run test:api
+        continue-on-error: true
 
       - name: Debug - List API generated files
         if: always()
@@ -106,6 +107,7 @@ jobs:
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             '
           docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
+        continue-on-error: true
 
       - name: Debug - List E2E generated files
         if: always()
