@@ -1,9 +1,20 @@
 name: GitHub Actions
 on:
   push:
-    branches: [dev, sandbox, sentry-latency-improvements]
+    branches:
+      - '**'
+    paths-ignore:
+      - 'site/**'
+      - '**/*.md'
   pull_request:
-    branches: [dev, sandbox]
+    branches:
+      - dev
+      - sandbox
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
   workflow_dispatch:
     inputs:
       pr_number:
@@ -260,17 +271,19 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Comment PR with Combined report URL
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ steps.prnum.outputs.pr != '' }}
         uses: actions/github-script@v7
+        env:
+          PR_NUM: ${{ steps.prnum.outputs.pr }}
         with:
           script: |
-            const pageUrl = core.getInput('page_url') || process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
-            const pr = '${{ steps.prnum.outputs.pr }}';
+            const pageUrl = process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
+            const pr = process.env.PR_NUM;
             const url = `${pageUrl}reports/pr-${pr}/combined/a-just-tests-report.html`;
             const body = `✅ Combined test report available: ${url}`;
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: Number(pr),
               body
             });
