@@ -183,6 +183,7 @@ services:
       - CYPRESS_EFFECTIF_STOP=${CYPRESS_EFFECTIF_STOP:-}
       # JSON-only mode toggle passed from CI or local
       - CY_JSON_ONLY
+      - SPEC
 
   # Dedicated Redis for PR stack
   redis:
