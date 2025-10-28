@@ -181,6 +181,8 @@ services:
       # Optional per-spec date overrides for Effectif only
       - CYPRESS_EFFECTIF_START=${CYPRESS_EFFECTIF_START:-}
       - CYPRESS_EFFECTIF_STOP=${CYPRESS_EFFECTIF_STOP:-}
+      # JSON-only mode toggle passed from CI or local
+      - CY_JSON_ONLY
 
   # Dedicated Redis for PR stack
   redis:

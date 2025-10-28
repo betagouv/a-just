@@ -75,6 +75,8 @@ jobs:
         run: npm i
       - name: Run E2E tests (Cypress JSON-only, containerized)
         run: |
+          set -e
+          export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
           docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
             -e CY_JSON_ONLY=1 \
@@ -208,7 +210,8 @@ jobs:
             # Merge any JSONs we have from artifacts
             mochawesome-merge \
               "mocha-report/**/*.json" \
-              "cypress-reports/**/*.json" \
+              "cypress-reports/.jsons/*.json" \
+              "cypress-reports/*.json" \
               > site/reports/pr-${PR_NUM}/combined/merged.json || true
             # Only generate if merged.json exists and is non-empty
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
