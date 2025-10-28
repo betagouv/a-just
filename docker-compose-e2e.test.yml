@@ -121,7 +121,6 @@ services:
       - CYPRESS_BASE_URL=http://175.0.0.30:4200
       - NG_APP_SERVER_URL=http://175.0.0.20:8081/api
       - CY_JSON_ONLY
-      - SPEC
 
   redis:
     image: redis:7
