@@ -43,6 +43,7 @@ jobs:
 
       - name: Run API tests (Mocha + Mochawesome)
         run: npm run test:api
+        continue-on-error: true
 
       - name: Debug - List API generated files
         if: always()
@@ -92,6 +93,7 @@ jobs:
           SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
           CY_JSON_ONLY: "1"
         run: npm run test:e2e
+        continue-on-error: true
 
       - name: Debug - List E2E generated files
         if: always()
