@@ -92,7 +92,7 @@ jobs:
       - name: Run E2E tests (Cypress + mochawesome)
         env:
           SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
-          CY_JSON_ONLY: "0"
+          CY_JSON_ONLY: "1"
           SPEC: "cypress/e2e/login.cy.js,cypress/e2e/signup.cy.js"
         run: npm run test:e2e
         continue-on-error: true
@@ -116,12 +116,12 @@ jobs:
         if: always()
         run: |
           set -e
-          mkdir -p ./end-to-end/cypress/reports/.jsons
-          echo "Collecting JSONs from cypress/reports and mochawesome-report into cypress/reports/.jsons"
-          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
+          mkdir -p ./cypress-jsons
+          echo "Collecting JSONs from cypress/reports and mochawesome-report into workspace cypress-jsons"
+          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./cypress-jsons/ \; 2>/dev/null || true
+          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./cypress-jsons/ \; 2>/dev/null || true
           echo "Final JSONs to upload:"
-          ls -la ./end-to-end/cypress/reports/.jsons || true
+          ls -la ./cypress-jsons || true
 
       - name: Upload Cypress video
         if: always()
@@ -136,7 +136,7 @@ jobs:
         with:
           name: cypress-reports
           path: |
-            ./end-to-end/cypress/reports/.jsons/*.json
+            ./cypress-jsons/*.json
             ./end-to-end/cypress/reports/*.json
             ./end-to-end/cypress/reports/**/*.json
             ./end-to-end/mochawesome-report/*.json
@@ -248,6 +248,7 @@ jobs:
           mkdir -p site/reports/pr-${PR_NUM}/cypress
           cp -r cypress-reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
+          cp -r cypress-reports/cypress-jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
           mkdir -p site/reports/pr-${PR_NUM}/videos
           cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
           mkdir -p site/reports/pr-${PR_NUM}/screenshots
