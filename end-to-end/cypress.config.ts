@@ -7,6 +7,38 @@ import * as xlsx from "xlsx";
 const jsonOnly = process.env.CY_JSON_ONLY === "1";
 
 export default defineConfig({
+  // Reporter must be top-level in Cypress >=10
+  reporter: "cypress-mochawesome-reporter",
+  reporterOptions: (process.env.CY_JSON_ONLY === "1")
+    ? {
+        reportDir: "cypress/reports",
+        reportFilename: "e2e",
+        overwrite: false,
+        html: false,
+        json: true,
+        keepJson: true,
+        embeddedScreenshots: true,
+        inlineAssets: true,
+        saveAllAttempts: false,
+        generateReport: false,
+        quiet: false,
+      }
+    : {
+        charts: true,
+        reportPageTitle: "A-JUST E2E Tests Report",
+        embeddedScreenshots: true,
+        inlineAssets: true,
+        saveAllAttempts: false,
+        reportDir: "cypress/reports",
+        reportFilename: "report",
+        overwrite: false,
+        html: false,
+        json: true,
+        keepJson: true,
+        timestamp: "mmddyyyy_HHMMss",
+        generateReport: false,
+        quiet: false,
+      },
   component: {
     devServer: {
       framework: "angular",
@@ -270,43 +302,10 @@ export default defineConfig({
     videosFolder: "cypress/videos",
     downloadsFolder: "cypress/downloads",
     defaultCommandTimeout: 10000,
-    // Reporter configuration
-    reporter: "cypress-mochawesome-reporter",
-    reporterOptions: jsonOnly
-      ? {
-          // JSON-only mode: keep a JSON per spec and do not generate HTML
-          reportDir: "cypress/reports",
-          reportFilename: "e2e",
-          overwrite: false,
-          html: false,
-          json: true,
-          keepJson: true,
-          embeddedScreenshots: true,
-          inlineAssets: true,
-          saveAllAttempts: false,
-          generateReport: false,
-          quiet: false,
-        }
-      : {
-          charts: true,
-          reportPageTitle: "A-JUST E2E Tests Report",
-          embeddedScreenshots: true,
-          inlineAssets: true,
-          saveAllAttempts: false,
-          reportDir: "cypress/reports",
-          reportFilename: "report",
-          overwrite: false,
-          html: true,
-          json: true,
-          keepJson: true,
-          timestamp: "mmddyyyy_HHMMss",
-          // Force la génération du fichier JSON (+ HTML aggregator)
-          generateReport: true,
-          quiet: false,
-        },
     env: {
       NG_APP_SERVER_URL:
         process.env.NG_APP_SERVER_URL || "http://localhost:8081/api",
     },
   },
-});
+})
+;
