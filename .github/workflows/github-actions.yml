@@ -79,6 +79,7 @@ jobs:
       - name: Run E2E tests (Cypress + mochawesome)
         env:
           SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
+          CY_JSON_ONLY: "1"
         run: npm run test:e2e
 
       - name: Debug - List E2E generated files
@@ -186,7 +187,8 @@ jobs:
             # Merge any JSONs we have from artifacts
             mochawesome-merge \
               "mocha-report/**/*.json" \
-              "cypress-reports/**/*.json" \
+              "cypress-reports/.jsons/*.json" \
+              "cypress-reports/*.json" \
               > site/reports/pr-${PR_NUM}/combined/merged.json || true
             # Only generate if merged.json exists and is non-empty
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then

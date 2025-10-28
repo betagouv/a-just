@@ -18,7 +18,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       on("task", verifyDownloadTasks);
-      // Configuration pour mochawesome reporter
+      // Load cypress-mochawesome-reporter plugin only when not in JSON-only mode
       if (!jsonOnly) {
         require("cypress-mochawesome-reporter/plugin")(on);
       }
@@ -26,20 +26,28 @@ export default defineConfig({
     baseUrl: process.env.CYPRESS_BASE_URL
       ? process.env.CYPRESS_BASE_URL
       : "http://localhost:4200",
-    supportFile: jsonOnly ? false : "support/e2e.ts",
+    // Always load support to keep custom commands (e.g., cy.login)
+    supportFile: "support/e2e.ts",
     video: true,
     videosFolder: "cypress/videos",
     downloadsFolder: "cypress/downloads",
     defaultCommandTimeout: 10000,
-    // Configuration du reporter
-    reporter: jsonOnly ? "mochawesome" : "cypress-mochawesome-reporter",
+    // Reporter configuration
+    reporter: "cypress-mochawesome-reporter",
     reporterOptions: jsonOnly
       ? {
+          // JSON-only mode: keep a JSON per spec and do not generate HTML
           reportDir: "cypress/reports",
-          reportFilename: "results",
-          overwrite: true,
+          reportFilename: "e2e",
+          overwrite: false,
           html: false,
           json: true,
+          keepJson: true,
+          embeddedScreenshots: true,
+          inlineAssets: true,
+          saveAllAttempts: false,
+          generateReport: false,
+          quiet: false,
         }
       : {
           charts: true,
@@ -52,8 +60,9 @@ export default defineConfig({
           overwrite: false,
           html: true,
           json: true,
+          keepJson: true,
           timestamp: "mmddyyyy_HHMMss",
-          // Force la génération du fichier JSON
+          // Force la génération du fichier JSON (+ HTML aggregator)
           generateReport: true,
           quiet: false,
         },
