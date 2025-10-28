@@ -118,6 +118,10 @@ jobs:
           find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
           echo "Reports directory content:"
           ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
+          echo "Videos directory content:"
+          ls -la ./end-to-end/cypress/videos/ || echo "Videos directory not found"
+          echo "Screenshots directory content:"
+          ls -la ./end-to-end/cypress/screenshots/ || echo "Screenshots directory not found"
 
       - name: Upload Cypress video
         if: always()
@@ -241,6 +245,7 @@ jobs:
           cp -r mocha-report/* site/reports/pr-${PR_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
       - name: Build combined Mochawesome HTML (merged)
+        continue-on-error: true
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
@@ -249,13 +254,16 @@ jobs:
             set -e
             npm i -g mochawesome-merge mochawesome-report-generator
             mkdir -p site/reports/pr-${PR_NUM}/combined
-            JSONS="$(find mocha-report -type f -name "*.json" 2>/dev/null; find cypress-reports -type f -name "*.json" 2>/dev/null)"
+            JSONS="$(
+              { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports -type f -name "*.json" 2>/dev/null || true; }
+            )"
             if [ -n "$JSONS" ]; then
               mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
             fi
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --overwrite
+              marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --overwrite || echo "marge failed, continuing without combined HTML"
             else
               echo "No JSONs to merge for combined report"
             fi
