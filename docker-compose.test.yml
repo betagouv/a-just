@@ -66,6 +66,7 @@ services:
       - "db"
     volumes:
       - "./api/coverage:/home/api/coverage"
+      - "./api/test/reports:/home/api/test/reports"
     environment:
       - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust
       - SERVER_URL=http://173.0.0.20:8080/api
