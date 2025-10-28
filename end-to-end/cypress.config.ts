@@ -50,10 +50,8 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       on("task", verifyDownloadTasks);
-      // Load cypress-mochawesome-reporter plugin only when not in JSON-only mode
-      if (!jsonOnly) {
-        require("cypress-mochawesome-reporter/plugin")(on);
-      }
+      // Always load reporter plugin so screenshot references are included in JSON
+      require("cypress-mochawesome-reporter/plugin")(on);
     },
     baseUrl: process.env.CYPRESS_BASE_URL
       ? process.env.CYPRESS_BASE_URL
