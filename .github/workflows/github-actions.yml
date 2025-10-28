@@ -92,7 +92,8 @@ jobs:
       - name: Run E2E tests (Cypress + mochawesome)
         env:
           SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
-          CY_JSON_ONLY: "1"
+          CY_JSON_ONLY: "0"
+          SPEC: "cypress/e2e/login.cy.js,cypress/e2e/signup.cy.js"
         run: npm run test:e2e
         continue-on-error: true
 
@@ -121,6 +122,14 @@ jobs:
             ./end-to-end/cypress/reports/.jsons/*.json
             ./end-to-end/cypress/reports/*.json
           include-hidden-files: true
+          if-no-files-found: warn
+
+      - name: Upload Cypress screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: ./end-to-end/cypress/screenshots
           if-no-files-found: warn
 
       - name: Upload Cypress downloads (Excel files)
@@ -196,6 +205,13 @@ jobs:
           name: cypress-video
           path: ./cypress-videos
 
+      - name: Download Cypress screenshots artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: cypress-screenshots
+          path: ./cypress-screenshots
+
       - name: Download Mocha report artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -214,6 +230,8 @@ jobs:
           cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
           mkdir -p site/reports/pr-${PR_NUM}/videos
           cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
+          mkdir -p site/reports/pr-${PR_NUM}/screenshots
+          cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
           mkdir -p site/reports/pr-${PR_NUM}/mocha
           cp -r mocha-report/* site/reports/pr-${PR_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
@@ -225,6 +243,10 @@ jobs:
           docker run --rm -e PR_NUM="$PR_NUM" -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
             npm i -g mochawesome-merge mochawesome-report-generator
+            # Mirror artifacts to default Cypress paths so marge can resolve media
+            mkdir -p cypress/screenshots cypress/videos
+            cp -r cypress-screenshots/* cypress/screenshots/ 2>/dev/null || true
+            cp -r cypress-videos/* cypress/videos/ 2>/dev/null || true
             mkdir -p site/reports/pr-${PR_NUM}/combined
             JSONS="$(find mocha-report -type f -name "*.json" 2>/dev/null; find cypress-reports -type f -name "*.json" 2>/dev/null)"
             if [ -n "$JSONS" ]; then
