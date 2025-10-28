@@ -151,8 +151,11 @@ jobs:
     needs: [api-tests, e2e-tests]
     runs-on: ubuntu-latest
     if: |
-      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
-      (github.event_name == 'workflow_dispatch')
+      always() && (
+        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
+        (github.event_name == 'workflow_dispatch') ||
+        (github.event_name == 'push')
+      )
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -160,18 +163,31 @@ jobs:
       pages: write
       id-token: write
       contents: read
+      pull-requests: read
       issues: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Find pull request for push event
+        id: findpr
+        if: ${{ github.event_name == 'push' }}
+        uses: peter-evans/find-pull-request@v3
+        with:
+          repository: ${{ github.repository }}
+          head-branch: ${{ github.ref_name }}
 
       - name: Determine PR number
         id: prnum
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "pr=${{ github.event.number }}" >> "$GITHUB_OUTPUT"
-          else
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "pr=${{ inputs.pr_number }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            echo "pr=${{ steps.findpr.outputs.pull-request-number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "pr=" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Download Cypress reports artifacts
