@@ -339,7 +339,20 @@ export default class App extends AppBase {
       return await honeyTrap(ctx, next, this.models)
     })
 
-    super.addMiddlewares([config.corsUrl ? cors({ origin: config.corsUrl, credentials: true }) : cors({ credentials: true })])
+    super.addMiddlewares([
+      config.corsUrl
+        ? cors({
+            origin: function (origin, callback) {
+              if (config.corsUrl.includes(origin)) {
+                callback(null, origin)
+              } else {
+                callback(new Error('Not allowed by CORS'))
+              }
+            },
+            credentials: true,
+          })
+        : cors({ credentials: true }),
+    ])
   }
 
   /**
