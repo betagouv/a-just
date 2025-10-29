@@ -50,7 +50,6 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       on("task", verifyDownloadTasks);
-      // Always load reporter plugin so screenshot references are included in JSON
       require("cypress-mochawesome-reporter/plugin")(on);
     },
     baseUrl: process.env.CYPRESS_BASE_URL
