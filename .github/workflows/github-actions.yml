@@ -264,9 +264,9 @@ jobs:
           set -e
           HOST_UID=$(id -u)
           HOST_GID=$(id -g)
-          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
+          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
-            npm i -g mochawesome-merge mochawesome-report-generator
+            mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
             # Mirror artifacts to default Cypress paths so marge can resolve media
             mkdir -p cypress/screenshots cypress/videos
             cp -r cypress-screenshots/* cypress/screenshots/ 2>/dev/null || true
@@ -277,11 +277,11 @@ jobs:
               { find cypress-reports -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
-              mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
+              npx -y mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
             fi
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
+              npx -y marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
             else
               echo "No JSONs to merge for combined report"
             fi
@@ -308,8 +308,10 @@ jobs:
               done
               echo "</ul>"
             } >> "$HTML"
+            echo "COMBINED_EXISTS=1" >> "$GITHUB_ENV"
           else
             echo "Combined HTML not found, skipping video section"
+            echo "COMBINED_EXISTS=0" >> "$GITHUB_ENV"
           fi
 
       - name: Create per-PR landing index.html
@@ -349,17 +351,22 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Comment PR with Combined report URL
-        if: ${{ steps.prnum.outputs.pr != '' }}
+      - name: Comment report link on PR
         uses: actions/github-script@v7
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
+          COMBINED_EXISTS: ${{ env.COMBINED_EXISTS }}
         with:
           script: |
-            const pageUrl = process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
+            const pageUrl = process.env.DEPLOYMENT_PAGE_URL || 'https://betagouv.github.io/a-just/';
             const pr = process.env.PR_NUM;
-            const url = `${pageUrl}reports/pr-${pr}/combined/a-just-tests-report.html`;
-            const body = `✅ Combined test report available: ${url}`;
+            const base = `${pageUrl}reports/pr-${pr}/`;
+            const combined = `${base}combined/a-just-tests-report.html`;
+            const indexUrl = `${base}index.html`;
+            const combinedExists = String(process.env.COMBINED_EXISTS || '').trim() === '1';
+            const body = combinedExists
+              ? `✅ Combined test report: ${combined}\n\nIndex: ${indexUrl}`
+              : `ℹ️ Combined report not generated this run. See PR report index: ${indexUrl}`;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
