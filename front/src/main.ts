@@ -3,6 +3,7 @@ import { browserTracingIntegration } from '@sentry/browser'
 import { bootstrapApplication } from '@angular/platform-browser'
 import { appConfig } from './app/app.config'
 import { AppComponent } from './app/app.component'
+import { buildBeforeSendTransaction } from './app/utils/sentry-before-transaction'
 
 // Initialize Sentry for frontend performance (page load, navigations)
 Sentry.init({
@@ -12,6 +13,8 @@ Sentry.init({
   integrations: [browserTracingIntegration()],
   // Propagate tracing headers only to our own backend
   tracePropagationTargets: [window.location.origin],
+  // Disable SDK debug logs (cleanup)
+  debug: false,
 
   tracesSampleRate: Math.max(
     0,
@@ -23,20 +26,7 @@ Sentry.init({
     ),
   ),
 
-  beforeSendTransaction: (event) => {
-    try {
-      const fullUrl = window?.location?.href
-      event.tags = {
-        ...event.tags,
-        ...(fullUrl ? { full_url: fullUrl } : {}),
-      }
-      event.extra = {
-        ...event.extra,
-        ...(fullUrl ? { full_url: fullUrl } : {}),
-      }
-    } catch {}
-    return event
-  },
+  beforeSendTransaction: buildBeforeSendTransaction(),
 })
 
 bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err))

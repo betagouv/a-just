@@ -1,4 +1,6 @@
 import { inject, Injectable } from '@angular/core'
+import * as Sentry from '@sentry/browser'
+import { startLatencyScope } from '../../utils/sentry-latency'
 import { BehaviorSubject } from 'rxjs'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import * as _ from 'lodash'
@@ -11,6 +13,7 @@ import { HRCategoryInterface } from '../../interfaces/hr-category'
 import { ChartAnnotationBoxInterface } from '../../interfaces/chart-annotation-box'
 import { decimalToStringDate, setTimeToMidDay } from '../../utils/dates'
 import { fixDecimal } from '../../utils/numbers'
+import { buildSimulatorLatencyEventLabel } from '../../utils/simulator-latency'
 
 /**
  * Service de la page du simulateur
@@ -160,41 +163,56 @@ export class SimulatorService extends MainClass {
    */
   toSimulate(params: any, simulation: SimulationInterface, white = false) {
     this.isLoading.next(true)
+    const latencyEvent = buildSimulatorLatencyEventLabel(params, white)
     console.log(params)
     console.log(this.userService.user)
-    if (white === true) {
-      //console.log(params, simulation);
-      this.serverService
-        .post(`simulator/to-simulate-white`, {
-          backupId: this.humanResourceService.backupId.getValue(),
-          params: params,
-          simulation: simulation,
-          dateStart: setTimeToMidDay(this.dateStart.getValue()),
-          dateStop: setTimeToMidDay(this.dateStop.getValue()),
-          selectedCategoryId: this.selectedCategory.getValue()?.id,
-        })
-        .then((data) => {
-          console.log('simu', data.data)
-          this.situationSimulated.next(data.data)
-          this.isLoading.next(false)
-        })
-    } else {
-      this.serverService
-        .post(`simulator/to-simulate`, {
-          backupId: this.humanResourceService.backupId.getValue(),
-          params: params,
-          simulation: simulation,
-          dateStart: setTimeToMidDay(this.dateStart.getValue()),
-          dateStop: setTimeToMidDay(this.dateStop.getValue()),
-          selectedCategoryId: this.selectedCategory.getValue()?.id,
-        })
-        .then((data) => {
-          console.log('simu', data.data)
-          this.situationSimulated.next(data.data)
-          this.isLoading.next(false)
-        })
+
+    const l = startLatencyScope('simulator')
+    const startAt = performance.now()
+    const run = async () => {
+      if (white === true) {
+        await this.serverService
+          .post(`simulator/to-simulate-white`, {
+            backupId: this.humanResourceService.backupId.getValue(),
+            params: params,
+            simulation: simulation,
+            dateStart: setTimeToMidDay(this.dateStart.getValue()),
+            dateStop: setTimeToMidDay(this.dateStop.getValue()),
+            selectedCategoryId: this.selectedCategory.getValue()?.id,
+          })
+          .then((data) => {
+            console.log('simu', data.data)
+            this.situationSimulated.next(data.data)
+          })
+      } else {
+        await this.serverService
+          .post(`simulator/to-simulate`, {
+            backupId: this.humanResourceService.backupId.getValue(),
+            params: params,
+            simulation: simulation,
+            dateStart: setTimeToMidDay(this.dateStart.getValue()),
+            dateStop: setTimeToMidDay(this.dateStop.getValue()),
+            selectedCategoryId: this.selectedCategory.getValue()?.id,
+          })
+          .then((data) => {
+            console.log('simu', data.data)
+            this.situationSimulated.next(data.data)
+          })
+      }
     }
+    return run()
+      .then(() => {
+        this.isLoading.next(false)
+        try { l.finish('success') } catch {}
+      })
+      .catch((e) => {
+        this.isLoading.next(false)
+        try { l.finish('error') } catch {}
+        throw e
+      })
   }
+
+  
 
   /**
    * Get the label of a field and return the full text name of the label

@@ -142,6 +142,8 @@ export class ReferentielPage extends MainClass implements OnInit {
       }
 
       this.referentielService.update(item.id, node, value);
+    } else {
+      this.onLoad();
     }
   }
 }
