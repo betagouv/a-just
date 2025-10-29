@@ -93,9 +93,9 @@ jobs:
         env:
           SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
           CY_JSON_ONLY: "1"
-          SPEC: "cypress/e2e/login.cy.js,cypress/e2e/signup.cy.js"
         run: npm run test:e2e
         continue-on-error: true
+      - name: Debug - List E2E generated files
 
       - name: Debug - List E2E generated files
         if: always()
