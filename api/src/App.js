@@ -1,7 +1,7 @@
 import { join } from 'path'
 import 'dotenv/config'
 import { App as AppBase, middlewares } from 'koa-smart'
-const { i18n, compress, cors, addDefaultBody, logger } = middlewares
+const { i18n, compress, addDefaultBody, logger } = middlewares
 import koaBody from 'koa-body'
 import config from 'config'
 import auth from './routes-api/middlewares/authentification'
@@ -22,6 +22,7 @@ import { writeFileSync } from 'fs'
 import { getFullKey, getRedisClient, loadOrWarmHR, waitForRedis } from './utils/redis'
 import { invalidateBackup } from './utils/hrExtractorCache'
 import { invalidateAjustBackup } from './utils/hrExtAjustCache'
+import cors from '@koa/cors'
 
 /**
  * Configuration du CSP
@@ -339,7 +340,22 @@ export default class App extends AppBase {
       return await honeyTrap(ctx, next, this.models)
     })
 
-    super.addMiddlewares([config.corsUrl ? cors({ origin: config.corsUrl, credentials: true }) : cors({ credentials: true })])
+    super.addMiddlewares([
+      config.corsUrl
+        ? cors({
+            origin: (ctx) => {
+              const requestOrigin = ctx.request.header.origin || config.frontUrl
+              if (config.corsUrl.includes(requestOrigin)) {
+                return requestOrigin
+              } else {
+                console.log('Not allowed by CORS', requestOrigin)
+                throw new Error('Not allowed by CORS')
+              }
+            },
+            credentials: true,
+          })
+        : cors({ credentials: true }),
+    ])
   }
 
   /**

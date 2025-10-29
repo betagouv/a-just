@@ -22,6 +22,7 @@
     "@babel/preset-env": "^7.26.0",
     "@babel/runtime": "^7.26.0",
     "@hubspot/api-client": "^12.0.1",
+    "@koa/cors": "^5.0.0",
     "@sentry/node": "^8.35.0",
     "@sentry/profiling-node": "^8.54.0",
     "@sentry/utils": "^8.35.0",

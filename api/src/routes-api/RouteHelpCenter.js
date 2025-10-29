@@ -17,7 +17,7 @@ export default class RouteCentreDAide extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
   }
 
@@ -32,7 +32,7 @@ export default class RouteCentreDAide extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async logDocumentationRecherche (ctx) {
+  async logDocumentationRecherche(ctx) {
     const { value } = this.body(ctx)
     await this.models.Logs.addLog(EXECUTE_HELPCENTER_SEARCH, ctx.state.user.id, { recherche: value })
     this.sendOk(ctx, 'Ok')
@@ -46,11 +46,10 @@ export default class RouteCentreDAide extends Route {
     bodyType: Types.object().keys({
       value: Types.any().required(),
     }),
-    accesses: [Access.isLogin],
   })
-  async logDocumentationLink (ctx) {
+  async logDocumentationLink(ctx) {
     const { value } = this.body(ctx)
-    await this.models.Logs.addLog(EXECUTE_HELPCENTER_LINK, ctx.state.user.id, { url: value })
+    await this.models.Logs.addLog(EXECUTE_HELPCENTER_LINK, null, { url: value })
     this.sendOk(ctx, 'Ok')
   }
 
@@ -59,11 +58,9 @@ export default class RouteCentreDAide extends Route {
    * @param {*} node
    * @param {*} juridictionId
    */
-  @Route.Post({
-    accesses: [Access.isLogin],
-  })
-  async logDocumentation (ctx) {
-    await this.models.Logs.addLog(EXECUTE_HELPCENTER, ctx.state.user.id)
+  @Route.Post()
+  async logDocumentation(ctx) {
+    await this.models.Logs.addLog(EXECUTE_HELPCENTER, null)
     this.sendOk(ctx, 'Ok')
   }
 
@@ -77,7 +74,7 @@ export default class RouteCentreDAide extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async postFormHubspot (ctx) {
+  async postFormHubspot(ctx) {
     const { userId, phoneNumber } = this.body(ctx)
 
     let user = await this.models.Users.findOne({
@@ -105,7 +102,7 @@ export default class RouteCentreDAide extends Route {
         TEMPLATE_CALL_ME_BACK,
         {
           info: str,
-        }
+        },
       )
       const hubspotClient = new Client({ accessToken: config.hubspotToken })
       await hubspotClient.apiRequest({
