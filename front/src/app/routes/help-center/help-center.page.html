@@ -1,10 +1,5 @@
-<aj-wrapper
-  id="help-center"
-  title="Aide"
-  [actionTemplate]="actions"
-  class="white-bg-help content-margin-null"
-  [ngClass]="{ 'help-center': openSuggestionPanel === true }"
->
+<aj-wrapper id="help-center" title="Aide" [actionTemplate]="actions" class="white-bg-help content-margin-null"
+  [ngClass]="{ 'help-center': openSuggestionPanel === true }">
   <ng-container *ngIf="openSuggestionPanel === false">
     <div id="toolbar" class="toolbar">
       <div *ngFor="let card of docTools">
@@ -18,7 +13,7 @@
       <div class="title-area">
         <img src="/assets/images/community.svg" alt="a-just" />
 
-        <p *ngIf="!userService.isCa()" class="sub-title">Saisissez votre question ci-dessous</p>
+        <!-- <p *ngIf="!userService.isCa()" class="sub-title">Saisissez votre question ci-dessous</p>
         <div *ngIf="!userService.isCa()" class="research-area"></div>
         <aj-input-button
           *ngIf="!userService.isCa()"
@@ -44,7 +39,7 @@
               [ngStyle]="{ color: searchValue.length > 0 && !lockPrompt ? '#3a3a3a' : 'lightgray' }"
             ></i>
           </div>
-        </aj-input-button>
+        </aj-input-button> -->
       </div>
       <div class="line"></div>
       <div class="action-area">
@@ -60,10 +55,10 @@
           <img src="/assets/images/call-center.png" alt="a-just" />
           <p class="title">
             {{
-              callValidated === false
-                ? 'Être recontacté'
-                : 'Votre demande de contact est bien prise
-                        en compte !'
+            callValidated === false
+            ? 'Être recontacté'
+            : 'Votre demande de contact est bien prise
+            en compte !'
             }}
           </p>
           <div *ngIf="popinCall === true" class="popin-call">
@@ -73,10 +68,8 @@
             </div>
             <p class="label">Numéro de téléphone :</p>
             <input #phone type="text" (keypress)="validateNo($event)" />
-            <div
-              class="button"
-              (click)="popinCall = !popinCall; callValidated = true; $event.stopPropagation(); sendForm(phone.value)"
-            >
+            <div class="button"
+              (click)="popinCall = !popinCall; callValidated = true; $event.stopPropagation(); sendForm(phone.value)">
               Rappelez-moi
             </div>
           </div>
@@ -86,10 +79,8 @@
 
     <div class="result-area" *ngIf="displayResult === true && data !== null">
       <div *ngIf="data?.answer" class="gitbook-response">
-        <i
-          class="ri-close-line close-tab"
-          (click)="displayResult = false; data = null; searchInput.value = ''; searchValue = ''"
-        ></i>
+        <i class="ri-close-line close-tab"
+          (click)="displayResult = false; data = null; searchInput.value = ''; searchValue = ''"></i>
         <p *ngIf="!data.answer.answer">Aucun résultat trouvé</p>
 
         <!-- Réponse Principale -->
@@ -107,11 +98,8 @@
                 <ng-container *ngIf="textNode.type === 'link'">
                   <ng-container *ngFor="let links of textNode.nodes">
                     <ng-container *ngFor="let leaf of links.leaves">
-                      <a
-                        target="_blank"
-                        href="{{ textNode.data.ref.url }}"
-                        [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
-                      >
+                      <a target="_blank" href="{{ textNode.data.ref.url }}"
+                        [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }">
                         {{ leaf.text }}
                       </a>
                     </ng-container>
@@ -132,11 +120,8 @@
                       <ng-container *ngIf="textNode.type === 'link'">
                         <ng-container *ngFor="let links of textNode.nodes">
                           <ng-container *ngFor="let leaf of links.leaves">
-                            <a
-                              target="_blank"
-                              href="{{ textNode.data.ref.url }}"
-                              [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
-                            >
+                            <a target="_blank" href="{{ textNode.data.ref.url }}"
+                              [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }">
                               {{ leaf.text }}
                             </a>
                           </ng-container>
@@ -147,11 +132,8 @@
                   <ng-container *ngIf="itemList.type === 'link'">
                     <ng-container *ngFor="let links of itemList.nodes">
                       <ng-container *ngFor="let leaf of links.leaves">
-                        <a
-                          target="_blank"
-                          href="{{ itemList.data.ref.url }}"
-                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
-                        >
+                        <a target="_blank" href="{{ itemList.data.ref.url }}"
+                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }">
                           {{ leaf.text }}
                         </a>
                       </ng-container>
@@ -171,11 +153,8 @@
                       <ng-container *ngIf="subItemList.type === 'link'">
                         <ng-container *ngFor="let links of subItemList.nodes">
                           <ng-container *ngFor="let leaf of links.leaves">
-                            <a
-                              target="_blank"
-                              href="{{ subItemList.data.ref.url }}"
-                              [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
-                            >
+                            <a target="_blank" href="{{ subItemList.data.ref.url }}"
+                              [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }">
                               {{ leaf.text }}
                             </a>
                           </ng-container>
@@ -193,11 +172,8 @@
                   <ng-container *ngIf="textNode.type === 'link'">
                     <ng-container *ngFor="let links of textNode.nodes">
                       <ng-container *ngFor="let leaf of links.leaves">
-                        <a
-                          target="_blank"
-                          href="{{ textNode.data.ref.url }}"
-                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
-                        >
+                        <a target="_blank" href="{{ textNode.data.ref.url }}"
+                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }">
                           {{ leaf.text }}
                         </a>
                       </ng-container>
@@ -221,11 +197,8 @@
                   <ng-container *ngIf="itemList.type === 'link'">
                     <ng-container *ngFor="let links of itemList.nodes">
                       <ng-container *ngFor="let leaf of links.leaves">
-                        <a
-                          target="_blank"
-                          href="{{ itemList.data.ref.url }}"
-                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }"
-                        >
+                        <a target="_blank" href="{{ itemList.data.ref.url }}"
+                          [ngClass]="{ bold: isBold(leaf), italic: isItalic(leaf), underline: isUnderline(leaf) }">
                           {{ leaf.text }}
                         </a>
                       </ng-container>
@@ -277,9 +250,7 @@
         <div *ngIf="data.answer.followupQuestions?.length" class="separator">
           <h2>Questions liées</h2>
           <ng-container *ngFor="let question of data.answer.followupQuestions">
-            <p
-              class="following"
-              (click)="
+            <p class="following" (click)="
                 searchValue = question;
                 displayResult = true;
                 data = null;
@@ -288,8 +259,7 @@
                 lockPrompt = true;
                 scrollTo('toolbar');
                 searchInput.value = question
-              "
-            >
+              ">
               <i class="ri-arrow-right-line"></i>
               {{ question }}
             </p>
@@ -393,40 +363,20 @@
         <p>Aide</p>
       </div>
       <div class="panel-header">
-        <p
-          class="tab {{ doc.color }}"
-          [ngClass]="{ selected: openToIframe.url === documentation[i].url }"
-          *ngFor="let doc of documentation; index as i"
-          (click)="openToIframe = documentation[i]"
-        >
+        <p class="tab {{ doc.color }}" [ngClass]="{ selected: openToIframe.url === documentation[i].url }"
+          *ngFor="let doc of documentation; index as i" (click)="openToIframe = documentation[i]">
           {{ doc.title }}
         </p>
       </div>
     </div>
-    <iframe
-      *ngSwitchCase="documentation[0].url"
-      id="iframe-doc"
-      loading="lazy"
-      [src]="documentation[0].url + cleDate || '' | sanitizeResourceUrl"
-    ></iframe>
-    <iframe
-      *ngSwitchCase="documentation[1].url"
-      id="iframe-doc"
-      loading="lazy"
-      [src]="documentation[1].url + cleDate || '' | sanitizeResourceUrl"
-    ></iframe>
-    <iframe
-      *ngSwitchCase="documentation[2].url"
-      id="iframe-doc"
-      loading="lazy"
-      [src]="documentation[2].url + cleDate || '' | sanitizeResourceUrl"
-    ></iframe>
-    <iframe
-      *ngSwitchCase="documentation[3].url"
-      id="iframe-doc"
-      loading="lazy"
-      [src]="documentation[3].url + cleDate || '' | sanitizeResourceUrl"
-    ></iframe>
+    <iframe *ngSwitchCase="documentation[0].url" id="iframe-doc" loading="lazy"
+      [src]="documentation[0].url + cleDate || '' | sanitizeResourceUrl"></iframe>
+    <iframe *ngSwitchCase="documentation[1].url" id="iframe-doc" loading="lazy"
+      [src]="documentation[1].url + cleDate || '' | sanitizeResourceUrl"></iframe>
+    <iframe *ngSwitchCase="documentation[2].url" id="iframe-doc" loading="lazy"
+      [src]="documentation[2].url + cleDate || '' | sanitizeResourceUrl"></iframe>
+    <iframe *ngSwitchCase="documentation[3].url" id="iframe-doc" loading="lazy"
+      [src]="documentation[3].url + cleDate || '' | sanitizeResourceUrl"></iframe>
 
     <div class="hide-powered-by-gitbook"></div>
   </div>
