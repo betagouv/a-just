@@ -342,12 +342,13 @@ export default class App extends AppBase {
     super.addMiddlewares([
       config.corsUrl
         ? cors({
-            origin: function (origin, callback) {
-              if (config.corsUrl.includes(origin)) {
-                callback(null, origin)
-              } else {
-                callback(new Error('Not allowed by CORS', origin, config.corsUrl))
+            origin: (ctx) => {
+              const requestOrigin = ctx.request.header.origin
+              if (config.corsUrl.includes(requestOrigin)) {
+                return true
               }
+              console.log('Not allowed by CORS', requestOrigin, config.corsUrl)
+              throw new Error('Not allowed by CORS')
             },
             credentials: true,
           })
