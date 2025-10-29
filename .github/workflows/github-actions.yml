@@ -95,8 +95,7 @@ jobs:
           CY_JSON_ONLY: "1"
         run: npm run test:e2e
         continue-on-error: true
-      - name: Debug - List E2E generated files
-
+      
       - name: Debug - List E2E generated files
         if: always()
         run: |
