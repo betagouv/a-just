@@ -1361,14 +1361,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @param opacity
    * @returns
    */
-  public getLocalCategoryColor(person: HumanResourceIsInInterface) {
+  public getLocalCategoryColor(person: HumanResourceIsInInterface, opacity: number = 1) {
     if (person.isIn) {
       const currentSituation = this.humanResourceService.findSituation(person, this.workforceService.dateSelected.getValue())
       if (currentSituation && currentSituation.category && currentSituation.category.label) {
-        return this.getCategoryColor(currentSituation.category.label || '', 1)
+        return this.getCategoryColor(currentSituation.category.label || '', opacity)
       }
     }
 
-    return this.getCategoryColor(person.categoryName || '', 1)
+    return this.getCategoryColor(person.categoryName || '', opacity)
   }
 }
