@@ -253,6 +253,9 @@ jobs:
           cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
           mkdir -p site/reports/pr-${PR_NUM}/screenshots
           cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
+          # Also publish screenshots under cypress/screenshots so combined HTML can resolve relative paths
+          mkdir -p site/reports/pr-${PR_NUM}/cypress/screenshots
+          cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/cypress/screenshots/ 2>/dev/null || true
           mkdir -p site/reports/pr-${PR_NUM}/mocha
           cp -r mocha-report/* site/reports/pr-${PR_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
@@ -281,7 +284,7 @@ jobs:
             fi
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              npx -y marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
+              npx -y mochawesome-report-generator site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
             else
               echo "No JSONs to merge for combined report"
             fi
@@ -317,27 +320,39 @@ jobs:
       - name: Create per-PR landing index.html
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
+          COMBINED_EXISTS: ${{ env.COMBINED_EXISTS }}
         run: |
+          set -e
           mkdir -p site/reports/pr-${PR_NUM}
-          cat > site/reports/pr-${PR_NUM}/index.html << 'EOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>PR Reports</title>
-          </head>
-          <body>
-            <h1>Reports for PR ${PR_NUM}</h1>
-            <ul>
-              <li><a href="./combined/a-just-tests-report.html" target="_blank">Combined (API + E2E)</a></li>
-              <li><a href="./mocha/" target="_blank">Mocha (API)</a></li>
-              <li><a href="./cypress/" target="_blank">Cypress (E2E)</a></li>
-              <li><a href="./videos/" target="_blank">Cypress Videos</a></li>
-            </ul>
-          </body>
-          </html>
-          EOF
+          if [ "${COMBINED_EXISTS}" = "1" ]; then
+            cat > site/reports/pr-${PR_NUM}/index.html << 'EOF'
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="UTF-8" />
+              <meta http-equiv="refresh" content="0; url=./combined/a-just-tests-report.html">
+              <title>Redirecting to Combined Report</title>
+            </head>
+            <body>
+              <p>Redirecting to <a href="./combined/a-just-tests-report.html">Combined Report</a>...</p>
+              <script>location.replace('./combined/a-just-tests-report.html');</script>
+            </body>
+            </html>
+            EOF
+          else
+            cat > site/reports/pr-${PR_NUM}/index.html << 'EOF'
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="UTF-8" />
+              <title>PR Reports</title>
+            </head>
+            <body>
+              <h1>No combined report generated for this run</h1>
+            </body>
+            </html>
+            EOF
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -362,11 +377,10 @@ jobs:
             const pr = process.env.PR_NUM;
             const base = `${pageUrl}reports/pr-${pr}/`;
             const combined = `${base}combined/a-just-tests-report.html`;
-            const indexUrl = `${base}index.html`;
             const combinedExists = String(process.env.COMBINED_EXISTS || '').trim() === '1';
             const body = combinedExists
-              ? `✅ Combined test report: ${combined}\n\nIndex: ${indexUrl}`
-              : `ℹ️ Combined report not generated this run. See PR report index: ${indexUrl}`;
+              ? `✅ Combined test report: ${combined}`
+              : `ℹ️ Combined report not generated this run.`;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
