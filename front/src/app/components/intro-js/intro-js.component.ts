@@ -89,7 +89,8 @@ export class IntroJSComponent implements AfterViewInit {
       if (this.typeId && this.playEachTime === false) {
         const idUsed = localStorage.getItem('INTRO_JS_' + this.typeId);
         if (idUsed) {
-          this.hasCompleteForm = true;
+          // Defer UI-bound state assignment to avoid ExpressionChangedAfterItHasBeenCheckedError
+          setTimeout(() => (this.hasCompleteForm = true), 0);
           canStartPlayer = false;
         }
       }
@@ -186,7 +187,6 @@ export class IntroJSComponent implements AfterViewInit {
         listFunctions = [];
       });
       this.intro.onexit(() => {
-        console.log('on close');
         this.close.emit();
 
         if (log) {

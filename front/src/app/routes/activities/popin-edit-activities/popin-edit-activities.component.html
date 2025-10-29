@@ -32,7 +32,7 @@
           (valueChange)="showComments = $event.checked; log($event.checked)"></aj-radio-button>
       </div>
       <aj-date-select title="Voir les données de" [value]="activityMonth" dateType="month"
-        (valueChange)="selectMonth($event)"></aj-date-select>
+        (valueChange)="selectMonth($event)" [min]="minDate" [max]="maxDate"></aj-date-select>
     </div>
 
     <div class="close-popin">
@@ -291,6 +291,7 @@
               updated: updated,
             }
           "></ng-container>
+
       <input #inputElement type="number" [value]="newValue" class="input-number-all-activities"
         [placeholder]="original !== null ? original : '-'" [ngClass]="{
             'to-confirm': valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),

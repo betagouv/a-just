@@ -115,7 +115,7 @@ export class ServerService {
     });
   }
 
-  put(url: string, params = {}, options = {}): Promise<any> {
+  async put(url: string, params = {}, options = {}): Promise<any> {
     console.log('HTTP PUT ' + this.getUrl(url));
     return this._http
       .put(this.getUrl(url), params, options)
@@ -124,6 +124,14 @@ export class ServerService {
         return r;
       })
       .catch(this.handleError);
+  }
+
+  async putWithoutError(url: string, params = {}, options = {}): Promise<any> {
+    console.log('HTTP GET ' + this.getUrl(url));
+    return this._http.put(this.getUrl(url), params, options).then((r) => {
+      //this.appService.setIsLoading(false);
+      return r;
+    });
   }
 
   delete(url: string, options = {}): Promise<any> {

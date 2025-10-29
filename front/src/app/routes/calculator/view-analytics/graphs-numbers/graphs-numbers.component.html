@@ -1,46 +1,34 @@
 <div>
   @if (showArrow && title !== '-' && title !== '0' && title !== 'N/R') {
-    <div class="zone-arrow">
-      <div class="background" [class.is-up]="getArrowSide(title)" [class.is-green]="getArrowColor(title)">
-        <i class="ri-arrow-up-line up"></i>
-        <i class="ri-arrow-down-line down"></i>
-      </div>
+  <div class="zone-arrow">
+    <div class="background" [class.is-up]="getArrowSide(title)" [class.is-green]="getArrowColor(title)">
+      <i class="ri-arrow-up-line up"></i>
+      <i class="ri-arrow-down-line down"></i>
     </div>
+  </div>
   }
 </div>
 <div class="text">
   @if (subTitle) {
-    <p
-      class="sub-title"
-      [style.color]="
+  <p class="sub-title" [style.color]="
         isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)
-      "
-    >
-      {{ subTitle }}
-    </p>
+      ">
+    {{ subTitle }}
+  </p>
   }
   @if (title) {
-    <p
-      class="title"
-      [style.color]="
+  <p class="title" [style.color]="
         isWhite && !isTransparent ? 'white' : userService.referentielMappingColorByInterface(referentielName)
-      "
-    >
-      {{ title }}
-      @if (title === 'N/R') {
-        <aj-tooltips
-          title="Donnée non renseignée"
-          class="small"
-          content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."
-        ></aj-tooltips>
-      }
-      @if (title === 'N/A') {
-        <aj-tooltips
-          title="Pourcentage non calculable"
-          content="L'une des données de référence étant égale à 0, la variation ne peut être calculée"
-          class="small"
-        ></aj-tooltips>
-      }
-    </p>
+      ">
+    {{ title }}
+    @if (title === 'N/R') {
+    <aj-tooltips title="Donnée non renseignée" class="small"
+      content="Chiffre non calculable à partir des données d’activité enregistrées à ce jour : si vous en disposez, veuillez les compléter dans l'écran “données d’activité”."></aj-tooltips>
+    }
+    @if (title === 'N/A') {
+    <aj-tooltips title="N/A" content="valeur non affichée car résultant d’une division par 0"
+      class="small"></aj-tooltips>
+    }
+  </p>
   }
 </div>

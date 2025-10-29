@@ -87,11 +87,15 @@ export default class RouteCalculator extends Route {
 
     dateStart = today(dateStart)
     dateStop = today(dateStop)
-
+    let hrList = null
+    let indexes = null
+    if (['ETPTEam', 'ETPTGreffe', 'ETPTSiege'].includes(type)) {
+      hrList = await loadOrWarmHR(backupId, this.models)
+      indexes = await generateHRIndexes(hrList)
+    }
     let endOfTheMonth = dateStart
 
     const list = []
-
     do {
       let endOfTheMonth = today(dateStart)
       endOfTheMonth = month(endOfTheMonth, 0, 'lastday')
@@ -172,8 +176,6 @@ export default class RouteCalculator extends Route {
               newFonctions = null
             }
 
-            const hrList = await loadOrWarmHR(backupId, this.models)
-            const indexes = await generateHRIndexes(hrList)
             const categories = await this.models.HRCategories.getAll()
 
             const etp = calculateETPForContentieux(
