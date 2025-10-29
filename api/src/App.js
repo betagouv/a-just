@@ -346,7 +346,7 @@ export default class App extends AppBase {
               if (config.corsUrl.includes(origin)) {
                 callback(null, origin)
               } else {
-                callback(new Error('Not allowed by CORS'))
+                callback(new Error('Not allowed by CORS', origin, config.corsUrl))
               }
             },
             credentials: true,
