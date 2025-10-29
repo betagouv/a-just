@@ -348,7 +348,7 @@ export default class App extends AppBase {
               if (config.corsUrl.includes(requestOrigin)) {
                 return requestOrigin
               } else {
-                console.log('Not allowed by CORS', requestOrigin, config.corsUrl)
+                console.log('Not allowed by CORS', requestOrigin)
                 throw new Error('Not allowed by CORS')
               }
             },

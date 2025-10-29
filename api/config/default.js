@@ -21,7 +21,14 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: [process.env.FRONT_URL, 'aide.a-just-ca.beta.gouv.fr', 'aide.a-just.incubateur.net', 'aide.a-just-ca.incubateur.net', 'aide.a-just.beta.gouv.fr'],
+  corsUrl: [
+    process.env.FRONT_URL,
+    process.env.SERVER_URL,
+    'aide.a-just-ca.beta.gouv.fr',
+    'aide.a-just.incubateur.net',
+    'aide.a-just-ca.incubateur.net',
+    'aide.a-just.beta.gouv.fr',
+  ],
   /**
    * Port utilisé pour démarrer le serveur
    */

@@ -18,6 +18,7 @@ module.exports = {
    */
   corsUrl: [
     process.env.FRONT_URL,
+    process.env.SERVER_URL,
     'http://localhost:4200',
     'http://localhost:' + (process.env.PORT || 8081),
     'aide.a-just-ca.beta.gouv.fr',
