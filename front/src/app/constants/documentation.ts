@@ -35,7 +35,7 @@ export const DOCUMENTATION_VENTILATEUR_PERSON_TJ =
  * Lien pour la ventilation CA
  */
 export const DOCUMENTATION_VENTILATEUR_PERSON_CA =
-  'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just/ventilateur/ventiler-ses-effectifs/la-ventilation-en-quelques-clics'
+  'https://docs.a-just.beta.gouv.fr/guide-dutilisateur-a-just-ca/ventilateur/ventiler-ses-effectifs/la-ventilation-en-quelques-clics'
 /**
  * Lien pour le guide de la donnée
  */
