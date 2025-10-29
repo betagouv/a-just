@@ -344,7 +344,7 @@ export default class App extends AppBase {
       config.corsUrl
         ? cors({
             origin: (ctx) => {
-              const requestOrigin = ctx.request.header.origin
+              const requestOrigin = ctx.request.header.origin || config.frontUrl
               if (config.corsUrl.includes(requestOrigin)) {
                 return requestOrigin
               } else {
