@@ -266,7 +266,9 @@ jobs:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
           set -e
-          docker run --rm -e PR_NUM="$PR_NUM" -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
+          HOST_UID=$(id -u)
+          HOST_GID=$(id -g)
+          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
             npm i -g mochawesome-merge mochawesome-report-generator
             mkdir -p site/reports/pr-${PR_NUM}/combined
@@ -279,7 +281,7 @@ jobs:
             fi
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --overwrite || echo "marge failed, continuing without combined HTML"
+              marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
             else
               echo "No JSONs to merge for combined report"
             fi
@@ -293,6 +295,7 @@ jobs:
           HTML="site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html"
           VIDEOS_DIR="site/reports/pr-${PR_NUM}/videos"
           if [ -f "$HTML" ]; then
+            chmod u+w "$HTML" || true
             echo "Appending Cypress Videos section to $HTML"
             {
               echo "\n<hr/>"

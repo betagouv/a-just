@@ -50,6 +50,7 @@ export default defineConfig({
     testIsolation: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here
+<<<<<<< HEAD
       const downloadsDir = path.join(config.projectRoot, "cypress", "downloads");
       const artifactsDir = path.join(config.projectRoot, "cypress", "artifacts");
       function wipeDownloads() {
@@ -293,6 +294,10 @@ export default defineConfig({
       if (!jsonOnly) {
         require("cypress-mochawesome-reporter/plugin")(on);
       }
+=======
+      on("task", verifyDownloadTasks);
+      require("cypress-mochawesome-reporter/plugin")(on);
+>>>>>>> 5ddc7709 (ci(e2e+deploy): keep JSON-only; inline screenshots via reporter + marge; append videos at bottom; fix file ownership during merge)
     },
     baseUrl: process.env.CYPRESS_BASE_URL
       ? process.env.CYPRESS_BASE_URL
