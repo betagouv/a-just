@@ -43,19 +43,38 @@ function buildSpecToTitleMap(report) {
 
   const results = Array.isArray(report.results) ? report.results : [];
 
+  const extractSpecFromContext = (ctx) => {
+    if (!ctx) return null;
+    try {
+      // ctx may be a JSON string like {"title":"cypress-mochawesome-reporter-videos-passed","value":"cypress/e2e/login.cy.js"}
+      const parsed = typeof ctx === 'string' ? JSON.parse(ctx) : ctx;
+      if (parsed && typeof parsed.value === 'string') return parsed.value;
+    } catch {}
+    // Fallback: regex search for cypress/e2e/*.cy.js
+    if (typeof ctx === 'string') {
+      const m = ctx.match(/cypress\/(?:e2e|integration)\/[\w-.]+\.cy\.js/);
+      if (m) return m[0];
+    }
+    return null;
+  };
+
   const visitSuite = (suite, titlePath) => {
     if (!suite || typeof suite !== 'object') return;
     const title = (suite.title || '').trim();
     const nextPath = title ? [...titlePath, title] : titlePath;
 
-    // tests may carry the file path
     const tests = Array.isArray(suite.tests) ? suite.tests : [];
     for (const t of tests) {
-      const file = (t && t.file) ? t.file : (suite.file || null);
-      if (!file) continue;
-      const base = path.basename(file);
+      let specPath = null;
+      // Prefer context (reliable in Cypress JSON-only runs)
+      if (t && t.context) specPath = extractSpecFromContext(t.context);
+      // Fallback to file fields if present
+      if (!specPath && t && t.file) specPath = t.file;
+      if (!specPath && suite && suite.file) specPath = suite.file;
+
+      if (!specPath) continue;
+      const base = path.basename(specPath);
       if (!map.has(base) && nextPath.length > 0) {
-        // Prefer the first top-level title encountered for this spec
         map.set(base, nextPath[0]);
       }
     }
@@ -129,14 +148,6 @@ function injectLinkForTitle(html, title, href) {
         injected++;
         continue;
       }
-    }
-    // Fallback: try injecting after the first occurrence of the spec base name if present
-    const safeSpec = escapeRegExp(specBase);
-    const textRe = new RegExp(`(${safeSpec})`);
-    if (textRe.test(html)) {
-      const link = ` <span class="video-link" style="margin-left:8px;font-size:0.9em;"><a href="${href}" target="_blank">▶ Video</a></span>`;
-      html = html.replace(textRe, `$1${link}`);
-      injected++;
     }
   }
 
