@@ -151,10 +151,19 @@ function injectLinkForTitle(html, title, href) {
     }
   }
 
-  if (injected > 0 && html !== htmlOrig) {
+  // Always add a small runtime injector so links appear even though the report is a SPA rendered via React
+  let appendedRuntime = false;
+  if (videos.length && !html.includes('id="video-injector-inline"')) {
+    const videoFiles = videos.map(v => v.file);
+    const runtimeScript = `\n<script id="video-injector-inline">(function(){\n  var videoFiles = ${JSON.stringify(videoFiles)};\n  var videoMap = {};\n  videoFiles.forEach(function(fname){ var base = fname.replace(/\\.mp4$/i,''); videoMap[base] = '../videos/' + fname; });\n  function injectOnce(){\n    var nodes = document.querySelectorAll('h6.filename');\n    if (!nodes || !nodes.length) return false;\n    var injected = false;\n    nodes.forEach(function(el){\n      var text = (el.textContent || '').trim();\n      var base = text.split('/').pop();\n      var href = videoMap[base];\n      if (href && !el.querySelector('a.video-link-inline')) {\n        var span = document.createElement('span');\n        span.style.marginLeft = '8px';\n        span.style.fontSize = '0.95em';\n        var a = document.createElement('a');\n        a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer';\n        a.className = 'video-link-inline'; a.textContent = '▶ Video';\n        span.appendChild(a);\n        el.appendChild(span);\n        injected = true;\n      }\n    });\n    return injected;\n  }\n  function start(){\n    var target = document.getElementById('report') || document.body;\n    if (!target){ setTimeout(start, 100); return; }\n    var tries = 0;\n    var tm = setInterval(function(){ if (injectOnce() || ++tries > 50) clearInterval(tm); }, 200);\n    var obs = new MutationObserver(function(){ injectOnce(); });\n    obs.observe(target, { childList: true, subtree: true });\n    document.addEventListener('visibilitychange', injectOnce, { once: false });\n  }\n  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();\n})();</script>\n`;
+    html += runtimeScript;
+    appendedRuntime = true;
+  }
+
+  if ((injected > 0 || appendedRuntime) && html !== htmlOrig) {
     fs.writeFileSync(htmlPath, html, 'utf8');
-    console.log(`Injected ${injected} video link(s) into HTML.`);
+    console.log(`Injected ${injected} static link(s); runtime injector appended: ${appendedRuntime}.`);
   } else {
-    console.log('No video links injected.');
+    console.log('No video links injected and no runtime injector appended.');
   }
 })();
