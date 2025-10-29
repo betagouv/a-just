@@ -325,33 +325,33 @@ jobs:
           set -e
           mkdir -p site/reports/pr-${PR_NUM}
           if [ "${COMBINED_EXISTS}" = "1" ]; then
-            cat > site/reports/pr-${PR_NUM}/index.html << 'EOF'
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-              <meta charset="UTF-8" />
-              <meta http-equiv="refresh" content="0; url=./combined/a-just-tests-report.html">
-              <title>Redirecting to Combined Report</title>
-            </head>
-            <body>
-              <p>Redirecting to <a href="./combined/a-just-tests-report.html">Combined Report</a>...</p>
-              <script>location.replace('./combined/a-just-tests-report.html');</script>
-            </body>
-            </html>
-            EOF
+            {
+              printf '%s\n' '<!DOCTYPE html>'
+              printf '%s\n' '<html lang="en">'
+              printf '%s\n' '<head>'
+              printf '%s\n' '  <meta charset="UTF-8" />'
+              printf '%s\n' '  <meta http-equiv="refresh" content="0; url=./combined/a-just-tests-report.html">'
+              printf '%s\n' '  <title>Redirecting to Combined Report</title>'
+              printf '%s\n' '</head>'
+              printf '%s\n' '<body>'
+              printf '%s\n' '  <p>Redirecting to <a href="./combined/a-just-tests-report.html">Combined Report</a>...</p>'
+              printf '%s\n' '  <script>location.replace('\''./combined/a-just-tests-report.html'\'');</script>'
+              printf '%s\n' '</body>'
+              printf '%s\n' '</html>'
+            } > "site/reports/pr-${PR_NUM}/index.html"
           else
-            cat > site/reports/pr-${PR_NUM}/index.html << 'EOF'
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-              <meta charset="UTF-8" />
-              <title>PR Reports</title>
-            </head>
-            <body>
-              <h1>No combined report generated for this run</h1>
-            </body>
-            </html>
-            EOF
+            {
+              printf '%s\n' '<!DOCTYPE html>'
+              printf '%s\n' '<html lang="en">'
+              printf '%s\n' '<head>'
+              printf '%s\n' '  <meta charset="UTF-8" />'
+              printf '%s\n' '  <title>PR Reports</title>'
+              printf '%s\n' '</head>'
+              printf '%s\n' '<body>'
+              printf '%s\n' '  <h1>No combined report generated for this run</h1>'
+              printf '%s\n' '</body>'
+              printf '%s\n' '</html>'
+            } > "site/reports/pr-${PR_NUM}/index.html"
           fi
 
       - name: Setup Pages
