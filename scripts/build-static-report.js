@@ -68,6 +68,28 @@ function collectTestsDeep(s, acc = []) {
   return acc;
 }
 
+function suiteKeyForDedupe(s, isE2E) {
+  const spec = specBaseFromSuiteDeep(s) || '';
+  const fileId = String(s.file || s.fullFile || '');
+  const title = s.title || spec || '';
+  return isE2E ? `${spec}__${title}` : `${fileId}__${title}`;
+}
+
+function countTestsDeep(s) {
+  return collectTestsDeep(s, []).length;
+}
+
+function dedupeTopSuites(list, isE2E) {
+  const map = new Map();
+  for (const s of (list || [])) {
+    const k = suiteKeyForDedupe(s, isE2E);
+    if (!map.has(k) || countTestsDeep(s) > countTestsDeep(map.get(k))) {
+      map.set(k, s);
+    }
+  }
+  return Array.from(map.values());
+}
+
 function toRelUrl(fromDir, absPath) {
   const rel = path.relative(fromDir, absPath).split(path.sep).join('/');
   return rel || '.';
@@ -134,7 +156,8 @@ function main() {
   function aggregateCounts(gs) {
     const list = [];
     for (const g of gs) {
-      for (const s of (g.suites || [])) collectTestsDeep(s, list);
+      const uniq = dedupeTopSuites(g.suites || [], g.isE2E);
+      for (const s of uniq) collectTestsDeep(s, list);
     }
     let passed = 0, failed = 0;
     for (const t of list) {
@@ -203,7 +226,8 @@ function main() {
 
   function renderGroup(g, groupId) {
     if (!g) return '';
-    const suitesHtml = (g.suites || []).map((s) => {
+    const uniqSuites = dedupeTopSuites(g.suites || [], g.isE2E);
+    const suitesHtml = uniqSuites.map((s) => {
       const specBase = specBaseFromSuiteDeep(s);
       const suiteTitle = s.title || specBase || '';
       const suiteId = `suite-${groupId}__${slugId(suiteTitle)}`;
@@ -237,7 +261,8 @@ function main() {
 
   function renderTOC(g, groupId) {
     if (!g) return '';
-    const suites = (g.suites || []).map((s) => {
+    const uniq = dedupeTopSuites(g.suites || [], /end to end/i.test(g.title || ''));
+    const suites = uniq.map((s) => {
       const suiteTitle = s.title || specBaseFromSuiteDeep(s) || '';
       const topId = suiteIdFromPath(groupId, [suiteTitle]);
       // Ensure top-level id matches the <section id>
