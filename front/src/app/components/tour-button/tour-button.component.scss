@@ -4,10 +4,12 @@
   height: 32px;
   min-width: 32px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  margin-right: 4px;
+
 
   >div {
-    background-color: utils.$colors-bgHelper;
+    background-color: #009081;
     position: absolute;
     top: 0;
     left: 0;
@@ -25,8 +27,13 @@
     >span {
       display: inline;
       white-space: nowrap;
-      margin-left: 6px;
-      margin-right: 4px;
+      margin-right: 6px;
+
+      svg {
+        position: relative;
+        top: 2px;
+        left: 2px;
+      }
     }
   }
 }

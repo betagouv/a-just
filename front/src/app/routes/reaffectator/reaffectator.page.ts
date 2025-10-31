@@ -19,7 +19,6 @@ import { CommonModule } from '@angular/common'
 import { PopupComponent } from '../../components/popup/popup.component'
 import { EtpPreviewComponent } from '../../components/etp-preview/etp-preview.component'
 import { PanelActivitiesComponent } from '../../components/panel-activities/panel-activities.component'
-import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { ReaffectatorService } from '../../services/reaffectator/reaffectator.service'
 import { HumanResourceService } from '../../services/human-resource/human-resource.service'
 import { WorkforceService } from '../../services/workforce/workforce.service'
@@ -34,6 +33,7 @@ import { SanitizeHtmlPipe } from '../../pipes/sanitize-html/sanitize-html.pipe'
 import { AppService } from '../../services/app/app.service'
 import { HumanResourceIsInInterface } from '../workforce/workforce.page'
 import { sortDates, today } from '../../utils/dates'
+import { IntroJSStep } from '../../services/tour/tour.service'
 
 /**
  * Interface d'une fiche surchargé avec des rendus visuels
@@ -204,7 +204,6 @@ interface ContentieuReferentielCalculateInterface
     PopupComponent,
     EtpPreviewComponent,
     PanelActivitiesComponent,
-    IntroJSComponent,
     MatIconModule,
     FormsModule,
     SanitizeHtmlPipe,
@@ -390,7 +389,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.backupId.subscribe(() => {
         // Start latency scope for initial load
-        try { this._reaffTxn?.finish('success') } catch {}
+        try {
+          this._reaffTxn?.finish('success')
+        } catch {}
         this._reaffTxn = startLatencyScope('reaffectator')
         this.onFilterList()
       }),
@@ -609,7 +610,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       .finally(() => {
         this.appService.appLoading.next(false)
         // Finish current latency scope
-        try { this._reaffTxn?.finish('success') } catch {}
+        try {
+          this._reaffTxn?.finish('success')
+        } catch {}
         this._reaffTxn = undefined
       })
   }
@@ -808,7 +811,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     } else {
       // Démarrer une transaction pour filtre contentieux
       const n = list.length
-      try { this._reaffTxn?.finish('success') } catch {}
+      try {
+        this._reaffTxn?.finish('success')
+      } catch {}
       this._reaffTxn = startLatencyScope('reaffectator')
       this.onFilterList()
     }
@@ -822,7 +827,9 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
     // Démarrer une transaction pour changement de date
-    try { this._reaffTxn?.finish('success') } catch {}
+    try {
+      this._reaffTxn?.finish('success')
+    } catch {}
     this._reaffTxn = startLatencyScope('reaffectator')
     this.onFilterList()
     this.kpiService.register(DATE_REAFECTATOR, date)
@@ -883,11 +890,16 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     }))
 
     // Démarrer une transaction Sentry pour le recalcul suite au choix de catégorie
-    try { this._reaffTxn?.finish('success') } catch {}
+    try {
+      this._reaffTxn?.finish('success')
+    } catch {}
     this._reaffTxn = startLatencyScope('reaffectator')
 
     // Appliquer la mise à jour des fonctions sans démarrer une seconde transaction
-    this.onSelectedFonctionsIdsChanged(fonctionList.map((f) => f.id), { silent: true })
+    this.onSelectedFonctionsIdsChanged(
+      fonctionList.map((f) => f.id),
+      { silent: true },
+    )
   }
 
   /**
@@ -899,8 +911,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
     // Démarrer une transaction pour filtre fonctions (sauf si appel silencieux depuis changement de catégorie)
     if (!opts?.silent) {
       const n = this.reaffectatorService.selectedFonctionsIds.length
-      try { this._reaffTxn?.finish('success') } catch {}
-      this._reaffTxn = startLatencyScope('reaffectator')  
+      try {
+        this._reaffTxn?.finish('success')
+      } catch {}
+      this._reaffTxn = startLatencyScope('reaffectator')
     }
     this.onFilterList()
   }

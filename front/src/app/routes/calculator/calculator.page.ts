@@ -17,7 +17,6 @@ import { MainClass } from '../../libs/main-class'
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel'
 import { CalculatorInterface } from '../../interfaces/calculator'
 import { DocumentationInterface } from '../../interfaces/documentation'
-import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { sleep } from '../../utils'
 import { BackupInterface } from '../../interfaces/backup'
 import { BackupSettingInterface } from '../../interfaces/backup-setting'
@@ -48,6 +47,7 @@ import { fixDecimal } from '../../utils/numbers'
 import { ViewAnalyticsComponent } from './view-analytics/view-analytics.component'
 import { PopinGraphsDetailsComponent } from './popin-graphs-details/popin-graphs-details.component'
 import { NB_DAYS_BY_FONCTIONNAIRE, NB_DAYS_BY_MAGISTRAT, NB_HOURS_PER_DAY_AND_FONCTIONNAIRE, NB_HOURS_PER_DAY_AND_MAGISTRAT } from '../../constants/referentiel'
+import { IntroJSStep } from '../../services/tour/tour.service'
 
 /**
  * Page du calculateur
@@ -65,7 +65,6 @@ import { NB_DAYS_BY_FONCTIONNAIRE, NB_DAYS_BY_MAGISTRAT, NB_HOURS_PER_DAY_AND_FO
     PopupComponent,
     TemplateAnalyticsComponent,
     FormsModule,
-    IntroJSComponent,
     ViewAnalyticsComponent,
     PopinGraphsDetailsComponent,
   ],

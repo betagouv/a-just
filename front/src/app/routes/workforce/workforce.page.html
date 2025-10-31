@@ -8,7 +8,7 @@
         hrBackup.date.getFullYear()
       : ''
   " [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
-  [isLoading]="isLoading">
+  [isLoading]="isLoading" [tours]="listFormated && listFormated.length ? introSteps : []">
   <div class="container step-3">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected"
@@ -267,7 +267,3 @@
     }
   </div>
 </ng-template>
-
-@if (listFormated && listFormated.length) {
-<aj-intro-js [steps]="introSteps" typeId="workforce"></aj-intro-js>
-}
