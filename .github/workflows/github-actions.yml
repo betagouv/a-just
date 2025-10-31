@@ -271,9 +271,14 @@ jobs:
             cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || true
             cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || true
             mkdir -p site/reports/pr-${PR_NUM}/combined
+            if [ -d cypress-reports/cypress-jsons ]; then
+              CYPRESS_DIR="cypress-reports/cypress-jsons"
+            else
+              CYPRESS_DIR="cypress-reports"
+            fi
             JSONS="$(
               { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress-jsons -type f -name "*.json" 2>/dev/null || true; }
+              { find "$CYPRESS_DIR" -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
               npx -y mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
