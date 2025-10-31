@@ -93,7 +93,7 @@ jobs:
         env:
           SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
           CY_JSON_ONLY: "1"
-          SPEC: "end-to-end/cypress/e2e/signup.cy.js,end-to-end/cypress/e2e/reaffectator.cy.js"
+          SPEC: "cypress/e2e/signup.cy.js,cypress/e2e/reaffectator.cy.js"
         run: npm run test:e2e
         continue-on-error: true
       
