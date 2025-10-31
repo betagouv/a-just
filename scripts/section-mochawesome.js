@@ -40,9 +40,47 @@ function uuidv4() {
   );
 }
 
+function isCySpecBaseName(name) {
+  return /\.cy\.(js|ts)$/i.test(String(name || ''))
+}
+
+function suiteLooksE2E(s) {
+  if (!s || typeof s !== 'object') return false
+  const f = String(s.file || s.fullFile || '')
+  if (
+    f.includes('cypress/') ||
+    f.includes('/e2e/') ||
+    f.includes('cypress\\') ||
+    isCySpecBaseName(path.basename(f))
+  ) return true
+  if (Array.isArray(s.tests)) {
+    for (const t of s.tests) {
+      const tf = String((t && t.file) || '')
+      if (
+        tf.includes('cypress/') ||
+        tf.includes('/e2e/') ||
+        tf.includes('cypress\\') ||
+        isCySpecBaseName(path.basename(tf))
+      ) return true
+    }
+  }
+  if (Array.isArray(s.suites)) {
+    for (const sub of s.suites) {
+      if (suiteLooksE2E(sub)) return true
+    }
+  }
+  return false
+}
+
 function isE2E(result) {
   const f = (result.fullFile || result.file || '').toString()
-  return f.includes('cypress/') || f.includes('/e2e/') || f.includes('cypress\\')
+  if (f.includes('cypress/') || f.includes('/e2e/') || f.includes('cypress\\')) return true
+  if (Array.isArray(result.suites)) {
+    for (const s of result.suites) {
+      if (suiteLooksE2E(s)) return true
+    }
+  }
+  return false
 }
 
 function flattenTopSuites(resultsArr) {
