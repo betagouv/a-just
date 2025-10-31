@@ -137,11 +137,7 @@ jobs:
           name: cypress-reports
           path: |
             ./cypress-jsons/*.json
-            ./end-to-end/cypress/reports/*.json
-            ./end-to-end/cypress/reports/**/*.json
-            ./end-to-end/mochawesome-report/*.json
-            ./end-to-end/mochawesome-report/**/*.json
-          include-hidden-files: true
+          include-hidden-files: false
           if-no-files-found: warn
 
       - name: Upload Cypress screenshots
@@ -277,7 +273,7 @@ jobs:
             mkdir -p site/reports/pr-${PR_NUM}/combined
             JSONS="$(
               { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress-jsons -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
               npx -y mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
