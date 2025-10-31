@@ -316,17 +316,17 @@ function main() {
   .stats .failed{color:#b91c1c}
   .hide-pass .test.passed{display:none}
   header .right{margin-left:auto;display:flex;gap:12px;align-items:center}
- .toc{position:fixed;left:0;top:64px;bottom:0;width:280px;overflow:auto;background:#fff;border-right:1px solid #eee;padding:8px 12px;z-index:10}
+ .toc{position:fixed;left:0;top:64px;bottom:0;width:308px;overflow:auto;background:#fff;border-right:1px solid #eee;padding:8px 12px;z-index:10}
  .toc .toc-h{font-weight:600;margin:6px 0}
  .toc ul{list-style:none;padding:0;margin:0}
- .toc li{margin:4px 0}
+ .toc li{margin:6px 0;line-height:1.35}
   .toc a{text-decoration:none;color:#0d47a1}
   .toc .cnt{color:#555;font-size:12px;margin-left:6px}
   .toc .passed{color:#1a7f37}
   .toc .failed{color:#b91c1c}
   .toc .toc-suites{margin-left:10px}
   .toc .toc-subsuites{margin-left:14px}
- .content{margin-left:300px}
+ .content{margin-left:328px}
   h2, h3, h4, h5, .suite{scroll-margin-top:72px}
   @media (max-width: 900px){.toc{display:none}.content{margin-left:0}}
   .suite h3 .vid{font-size:13px;margin-left:8px;opacity:0.85;text-decoration:none}
