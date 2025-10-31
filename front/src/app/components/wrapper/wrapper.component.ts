@@ -43,6 +43,9 @@ import { ReferentielService } from '../../services/referentiel/referentiel.servi
 import { ExcelService } from '../../services/excel/excel.service'
 import { KPIService } from '../../services/kpi/kpi.service'
 import { REQUEST_USER_MANUAL, REQUET_HELP_PAGE } from '../../constants/log-codes'
+import { findHelpCenter } from '../../utils/help-center'
+import { TourButtonComponent } from '../tour-button/tour-button.component'
+import { IntroJSStep } from '../../services/tour/tour.service'
 
 /**
  * Interface de génération d'un commentaire
@@ -86,6 +89,7 @@ interface ExportPDFInterface {
     DateSelectComponent,
     MatProgressBarModule,
     BackButtonComponent,
+    TourButtonComponent,
   ],
   templateUrl: './wrapper.component.html',
   styleUrls: ['./wrapper.component.scss'],
@@ -186,6 +190,10 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   @Output() pageSelected = new EventEmitter<string>()
   /**
+   * Tours à afficher
+   */
+  @Input() tours: IntroJSStep[] = []
+  /**
    * Doc d'aide à afficher
    */
   documentationToShow: DocumentationInterface | undefined
@@ -246,6 +254,15 @@ export class WrapperComponent extends MainClass implements OnDestroy {
    */
   openTools: boolean = false
   /**
+   * Fonction pour trouver le centre d'aide url
+   */
+  findHelpCenter = findHelpCenter
+  /**
+   * Dit si le paneau d'aide est visible ou non
+   */
+  helpSectionVisible: boolean = false
+
+  /**
    * Constructeur
    * @param authService
    * @param router
@@ -288,7 +305,7 @@ export class WrapperComponent extends MainClass implements OnDestroy {
       }),
     )
 
-    if(this.route.snapshot.queryParams['b']) {
+    if (this.route.snapshot.queryParams['b']) {
       this.backUrl = `/${this.route.snapshot.queryParams['b']}`
     }
   }

@@ -1,5 +1,6 @@
 <aj-wrapper #wrapper title="Simulation d’affectations" [actionTemplate]="actions"
-  class="content-margin-null header-border-none" [isDarkScreen]="true">
+  class="content-margin-null header-border-none" [isDarkScreen]="true"
+  [tours]="listFormated && listFormated.length ? introSteps : []">
   <div class="container" [ngClass]="{ print: duringPrint }">
     <div class="title">
       <aj-date-select title="A la date d'" class="dark-mode" [value]="dateSelected"
@@ -281,7 +282,3 @@
   </div>
   }
 </ng-template>
-
-@if (listFormated && listFormated.length) {
-<aj-intro-js [steps]="introSteps" typeId="reaffectator"></aj-intro-js>
-}
