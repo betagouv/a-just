@@ -111,6 +111,10 @@ jobs:
           docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
         continue-on-error: true
 
+      - name: Fix permissions for end-to-end artifacts
+        if: always()
+        run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
+
       - name: Debug - List E2E generated files
         if: always()
         run: |
@@ -273,14 +277,10 @@ jobs:
             set -e
             npm i -g mochawesome-merge mochawesome-report-generator
             mkdir -p site/reports/pr-${PR_NUM}/combined
-            if [ -d cypress-reports/cypress-jsons ]; then
-              CYPRESS_DIR="cypress-reports/cypress-jsons"
-            else
-              CYPRESS_DIR="cypress-reports"
-            fi
             JSONS="$(
               { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
-              { find "$CYPRESS_DIR" -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
               mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
