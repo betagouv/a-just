@@ -244,7 +244,6 @@ jobs:
           path: ./cypress-videos
 
       - name: Download Mocha report artifacts
-        if: ${{ false }}
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
@@ -258,6 +257,8 @@ jobs:
           set -e
           mkdir -p site/reports/pr-${PR_NUM}
           mkdir -p site/reports/pr-${PR_NUM}/cypress
+          cp -r cypress-reports/cypress/reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/cypress/reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
           mkdir -p site/reports/pr-${PR_NUM}/videos
@@ -273,21 +274,23 @@ jobs:
           set -e
           HOST_UID=$(id -u)
           HOST_GID=$(id -g)
-          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
+          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
-            npm i -g mochawesome-merge mochawesome-report-generator
+            mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
             mkdir -p site/reports/pr-${PR_NUM}/combined
             JSONS="$(
               { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
               { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
               { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
-              mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
+              npx -y mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
             fi
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
+              npx -y marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
             else
               echo "No JSONs to merge for combined report"
             fi
@@ -337,6 +340,17 @@ jobs:
             echo "Combined HTML not found, skipping video section"
           fi
 
+      - name: Check combined HTML exists
+        id: combined_exists
+        env:
+          PR_NUM: ${{ steps.prnum.outputs.pr }}
+        run: |
+          if [ -s "site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html" ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Create per-PR landing index.html
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
@@ -375,7 +389,7 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Comment PR with Combined report URL
-        if: ${{ steps.prnum.outputs.pr != '' }}
+        if: ${{ steps.prnum.outputs.pr != '' && steps.combined_exists.outputs.ok == 'true' }}
         uses: actions/github-script@v7
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
