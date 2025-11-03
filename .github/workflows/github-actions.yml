@@ -286,11 +286,11 @@ jobs:
               { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
-              npx -y mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
+              npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
             fi
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              npx -y marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
+              npx -y -p mochawesome-report-generator marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
             else
               echo "No JSONs to merge for combined report"
             fi
