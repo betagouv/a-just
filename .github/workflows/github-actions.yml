@@ -243,6 +243,13 @@ jobs:
           name: cypress-video
           path: ./cypress-videos
 
+      - name: Download Cypress screenshots artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: cypress-screenshots
+          path: ./cypress-screenshots
+
       - name: Download Mocha report artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -263,10 +270,12 @@ jobs:
           cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
           mkdir -p site/reports/pr-${PR_NUM}/videos
           cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
+          mkdir -p site/reports/pr-${PR_NUM}/screenshots
+          cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
           mkdir -p site/reports/pr-${PR_NUM}/mocha
           cp -r mocha-report/* site/reports/pr-${PR_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
-      - name: Build combined Mochawesome HTML (merged)
+      - name: Build combined static HTML (merged JSON -> bespoke report)
         continue-on-error: true
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
@@ -290,7 +299,7 @@ jobs:
             fi
             if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              npx -y -p mochawesome-report-generator marge site/reports/pr-${PR_NUM}/combined/sectioned.json -o site/reports/pr-${PR_NUM}/combined -f a-just-tests-report --inline --overwrite || echo "marge failed, continuing without combined HTML"
+              node scripts/build-static-report.js site/reports/pr-${PR_NUM}/combined/sectioned.json site/reports/pr-${PR_NUM}/videos site/reports/pr-${PR_NUM}/screenshots site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html || echo "Static report generation failed"
             else
               echo "No JSONs to merge for combined report"
             fi
