@@ -375,6 +375,16 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
     if (!this.userService.canViewActivities()) {
       this.userService.redirectToHome()
     }
+
+    this.onLoadMaxDate()
+  }
+
+  async onLoadMaxDate() {
+    const resp = await this.activitiesService.getLastMonthActivities()
+    if (resp) {
+      const date = new Date(resp)
+      this.dateSelector.maxDate = new Date(date.getFullYear(), 11, 31)
+    }
   }
 
   /**
