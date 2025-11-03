@@ -127,12 +127,13 @@ export class ExcelService extends MainClass {
    * @returns
    */
   exportExcel() {
+    const startTime = performance.now()
     let startExtract = true
     setTimeout(() => {
       if (startExtract) this.appService.appLoading.next(true)
     }, 5000)
     return this.serverService
-      .postWithoutError(`extractor/filter-list`, {
+      .postWithoutError(`extractor/filter-list-new`, {
         backupId: this.humanResourceService.backupId.getValue(),
         dateStart: setTimeToMidDay(this.dateStart.getValue()),
         dateStop: setTimeToMidDay(this.dateStop.getValue()),
@@ -208,6 +209,10 @@ export class ExcelService extends MainClass {
         this.isLoading.next(false)
         startExtract = false
         this.appService.appLoading.next(false)
+        const endTime = performance.now()
+        const duration = endTime - startTime
+
+        console.log('Durée de la requête generateExtraction (en ms):', duration.toFixed(2))
       })
   }
 
@@ -648,7 +653,7 @@ export class ExcelService extends MainClass {
     report.worksheets[etptAjustIndex].columns[9].width = 0
     report.worksheets[etptAjustIndex].columns[10].width = 0
 
-    const agregatIndex = this.findIndexByName(report.worksheets, 'Agrégats DDG') || 0
+    const agregatIndex = this.findIndexByName(report.worksheets, 'Synthèse ETPT') || 0
     report.worksheets[agregatIndex].columns[0].width = 20
 
     const fctIndex = this.findIndexByName(report.worksheets, 'Table_Fonctions') || 0
@@ -1156,7 +1161,7 @@ export class ExcelService extends MainClass {
     report.worksheets[3]['_rows'][6].height = 50
     report.worksheets[3].getCell('F7').value = {
       formula:
-        "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne R de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
+        "=IF(OR('Synthèse ETPT'!L6<>'Synthèse ETPT'!L7,'Synthèse ETPT'!S6<>'Synthèse ETPT'!S7,'Synthèse ETPT'!U6<>'Synthèse ETPT'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne R de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
       result:
         '"Temps ventilés sur la période (hors action 99) : Des ventilations sont incomplètes,",CHAR(10),"se référer à la colonne R de l’onglet ETPT format DDG"',
     }
@@ -1270,5 +1275,20 @@ export class ExcelService extends MainClass {
     }
 
     return report
+  }
+
+  getCache() {
+    const startTime = performance.now()
+    return this.serverService
+      .postWithoutError(`extractor/get-cache`, {
+        backupId: this.humanResourceService.backupId.getValue(),
+      })
+      .then(async (data) => {
+        const endTime = performance.now()
+        const duration = endTime - startTime
+
+        console.log('Durée de la requête getCache (en ms):', duration.toFixed(2))
+        console.log(data)
+      })
   }
 }
