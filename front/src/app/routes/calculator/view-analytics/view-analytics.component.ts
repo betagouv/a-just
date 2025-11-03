@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common'
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { startLatencyScope } from '../../../utils/sentry-latency'
+import { beginDetail, markDetailComplete, toggleDetail, type DetailState } from '../../../utils/latency-detail'
 import { GraphsVerticalsLinesComponent } from './graphs-verticals-lines/graphs-verticals-lines.component'
 import { GraphsNumbersComponent } from './graphs-numbers/graphs-numbers.component'
 import { GraphsProgressComponent } from './graphs-progress/graphs-progress.component'
@@ -121,6 +123,11 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
    * End date
    */
   dateStop: Date | null = null
+
+  /**
+   * Mesure de latence pour l'affichage des graphes de détail
+   */
+  private detailLoadState: DetailState = {}
 
   /**
    * Constructor
@@ -284,6 +291,24 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   logOpenDetails(open: boolean = true) {
     if (open === true) this.kpiService.register(CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW, '')
   }
+
+  /**
+   * Début d'un chronométrage Sentry pour une section de détails (ex: ETPT Siège)
+   */
+  logOpenDetailsFor(sectionKey: string, open: boolean) {
+    this.logOpenDetails(open)
+    const expected = this.referentiel?.length || 0
+    toggleDetail(this.detailLoadState, sectionKey, open, expected, 'view-analytics')
+  }
+
+  /**
+   * Appelé par les sous-graphes quand ils terminent leur chargement de lignes de détail
+   */
+  onDetailGraphLoadComplete(sectionKey: string) {
+    markDetailComplete(this.detailLoadState, sectionKey)
+  }
+
+  
 
   round(num: number) {
     return Math.round(num)

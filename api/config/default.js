@@ -21,7 +21,14 @@ module.exports = {
   /**
    * Url du cors
    */
-  corsUrl: process.env.FRONT_URL || null,
+  corsUrl: [
+    process.env.FRONT_URL,
+    process.env.SERVER_URL,
+    'https://aide.a-just-ca.beta.gouv.fr',
+    'https://aide.a-just.incubateur.net',
+    'https://aide.a-just-ca.incubateur.net',
+    'https://aide.a-just.beta.gouv.fr',
+  ],
   /**
    * Port utilisé pour démarrer le serveur
    */
@@ -31,8 +38,8 @@ module.exports = {
    */
   database: {
     url: process.env.DATABASE_URL,
-    //logging: (msg) => console.log(msg),
-    logging: false,
+    logging: (msg) => console.log(msg),
+    //logging: false,
   },
   /**
    * Code du cryptage JWT

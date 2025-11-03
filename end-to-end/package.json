@@ -20,6 +20,7 @@
   "devDependencies": {
     "cypress": "^13.17.0",
     "cypress-mochawesome-reporter": "^3.8.2",
+    "xlsx": "^0.18.5",
     "typescript": "~5.5.2"
   }
 }

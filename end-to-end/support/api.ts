@@ -9,6 +9,58 @@ export const loginApi = (email: string, password: string) => {
       email: email,
       password: password,
     },
+    // keep cookies-based session
+    withCredentials: true,
+  });
+};
+
+// ----------------- Helpers for extractor comparison (no backend changes) -----------------
+
+export const authLoginApi = (serverUrl: string, email: string, password: string) => {
+  return cy.request({
+    method: "POST",
+    url: `${serverUrl}/auths/login`,
+    withCredentials: true,
+    body: { email, password },
+    failOnStatusCode: false,
+  });
+};
+
+export const hrGetCurrentApi = (serverUrl: string, backupId?: number) => {
+  return cy.request({
+    method: "POST",
+    url: `${serverUrl}/human-resources/get-current-hr`,
+    withCredentials: true,
+    body: { backupId: backupId ?? null },
+  });
+};
+
+export const extractorStartApi = (serverUrl: string, params: {
+  backupId: number;
+  dateStart: string; // YYYY-MM-DD
+  dateStop: string;  // YYYY-MM-DD
+  categoryFilter: string[];
+}) => {
+  return cy.request({
+    method: "POST",
+    url: `${serverUrl}/extractor/start-filter-list`,
+    withCredentials: true,
+    body: params,
+    timeout: 180000,
+  });
+};
+
+export const extractorActivitiesApi = (serverUrl: string, params: {
+  backupId: number;
+  dateStart: string; // YYYY-MM-DD
+  dateStop: string;  // YYYY-MM-DD
+}) => {
+  return cy.request({
+    method: "POST",
+    url: `${serverUrl}/extractor/filter-list-act`,
+    withCredentials: true,
+    body: params,
+    timeout: 180000,
   });
 };
 
