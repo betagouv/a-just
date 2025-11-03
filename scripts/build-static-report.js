@@ -42,6 +42,18 @@ function isCySpecBase(b) {
   return /\.cy\.(js|ts)$/i.test(String(b || ''));
 }
 
+function extractSpecFromContext(ctx) {
+  try {
+    const parsed = typeof ctx === 'string' ? JSON.parse(ctx) : ctx;
+    if (parsed && typeof parsed.value === 'string') return parsed.value;
+  } catch {}
+  if (typeof ctx === 'string') {
+    const m = ctx.match(/[\\/](?:cypress[\\/](?:e2e|integration)[\\/])?[\w.-]+\.cy\.(?:js|ts)/i);
+    if (m && m[0]) return m[0];
+  }
+  return null;
+}
+
 function specBaseFromSuiteDeep(s) {
   if (!s || typeof s !== 'object') return null;
   const here = path.basename(s.file || s.fullFile || '');
@@ -50,6 +62,9 @@ function specBaseFromSuiteDeep(s) {
     for (const t of s.tests) {
       const tb = path.basename(t.file || '');
       if (isCySpecBase(tb)) return tb;
+      const ctx = extractSpecFromContext(t && t.context);
+      const tbc = ctx ? path.basename(ctx) : '';
+      if (isCySpecBase(tbc)) return tbc;
     }
   }
   if (Array.isArray(s.suites)) {
@@ -61,9 +76,21 @@ function specBaseFromSuiteDeep(s) {
   return null;
 }
 
+function getTestsOfSuite(s) {
+  const arr = [];
+  if (!s || typeof s !== 'object') return arr;
+  if (Array.isArray(s.tests)) arr.push(...s.tests);
+  if (Array.isArray(s.passes)) arr.push(...s.passes);
+  if (Array.isArray(s.failures)) arr.push(...s.failures);
+  if (Array.isArray(s.pending)) arr.push(...s.pending);
+  if (Array.isArray(s.skipped)) arr.push(...s.skipped);
+  return arr;
+}
+
 function collectTestsDeep(s, acc = []) {
   if (!s || typeof s !== 'object') return acc;
-  if (Array.isArray(s.tests)) acc.push(...s.tests);
+  const here = getTestsOfSuite(s);
+  if (here.length) acc.push(...here);
   if (Array.isArray(s.suites)) s.suites.forEach((x) => collectTestsDeep(x, acc));
   return acc;
 }
@@ -151,7 +178,14 @@ function main() {
   const e2eGroup = groups.find((g) => /end to end/i.test(g.title));
 
   function testStateOf(t) {
-    return t.state || (t.pass ? 'passed' : t.fail ? 'failed' : '');
+    const st = String(t.state || '').toLowerCase();
+    if (st === 'passed' || st === 'pass') return 'passed';
+    if (st === 'failed' || st === 'fail') return 'failed';
+    if (t.pass === true || t.passed === true) return 'passed';
+    if (t.fail === true || t.failed === true) return 'failed';
+    if (t.pending === true) return 'pending';
+    if (t.skipped === true || t.skip === true) return 'skipped';
+    return '';
   }
   function aggregateCounts(gs) {
     const list = [];
@@ -159,23 +193,30 @@ function main() {
       const uniq = dedupeTopSuites(g.suites || [], g.isE2E);
       for (const s of uniq) collectTestsDeep(s, list);
     }
-    let passed = 0, failed = 0;
+    let passed = 0, failed = 0, skipped = 0, pending = 0;
     for (const t of list) {
       const st = testStateOf(t);
-      if (st === 'passed') passed++; else if (st === 'failed') failed++;
+      if (st === 'passed') passed++;
+      else if (st === 'failed') failed++;
+      else if (st === 'skipped') skipped++;
+      else if (st === 'pending') pending++;
     }
-    return { total: list.length, passed, failed };
+    // Define total as all tests (including skipped/pending)
+    return { total: list.length, passed, failed, skipped, pending };
   }
   const totals = aggregateCounts(groups);
 
   function suiteCounts(s) {
     const tests = collectTestsDeep(s, []);
-    let failed = 0;
+    let passed = 0, failed = 0, skipped = 0, pending = 0;
     for (const t of tests) {
       const st = testStateOf(t);
-      if (st === 'failed') failed++;
+      if (st === 'passed') passed++;
+      else if (st === 'failed') failed++;
+      else if (st === 'skipped') skipped++;
+      else if (st === 'pending') pending++;
     }
-    return { total: tests.length, failed };
+    return { total: tests.length, passed, failed, skipped, pending };
   }
 
   const e2eId = e2eGroup ? `group-${slugId(e2eGroup.title)}` : '';
@@ -183,12 +224,12 @@ function main() {
 
   function renderSuiteRecursive(s, depth, g, specBase, groupId, pathTitles) {
     if (!s || typeof s !== 'object') return '';
-    const tests = Array.isArray(s.tests) ? s.tests.map((t) => ({
+    const tests = getTestsOfSuite(s).map((t) => ({
       title: t.title || '',
       fullTitle: t.fullTitle || '',
-      state: t.state || (t.pass ? 'passed' : t.fail ? 'failed' : ''),
+      state: testStateOf(t),
       err: t.err || {},
-    })) : [];
+    }));
     const tag = depth === 0 ? 'h3' : (depth === 1 ? 'h4' : 'h5');
     const title = s.title || (depth === 0 ? (specBase || '') : '');
     let videoHref = '';
@@ -249,10 +290,9 @@ function main() {
     const suiteTitle = s.title || specBase || '';
     const id = suiteIdFromPath(groupId, [...(pathTitles||[]), suiteTitle]);
     const c = suiteCounts(s);
-    const passed = c.total - c.failed;
     const cnt = c.failed === 0
-      ? `<span class="passed">${c.total} ✅</span>`
-      : `<span class="passed">${passed} ✅</span> / <span class="failed">${c.failed} ❌</span>`;
+      ? `<span class="passed">${c.passed} ✅</span>`
+      : `<span class="passed">${c.passed} ✅</span> / <span class="failed">${c.failed} ❌</span>${c.skipped?` / <span class="skipped">${c.skipped} ⏭</span>`:''}`;
     const kids = Array.isArray(s.suites) && s.suites.length
       ? `<ul class="toc-subsuites">${s.suites.map((sub)=>renderTOCSuiteRecursive(sub, groupId, [...(pathTitles||[]), suiteTitle])).join('')}</ul>`
       : '';
@@ -266,7 +306,7 @@ function main() {
       const suiteTitle = s.title || specBaseFromSuiteDeep(s) || '';
       const topId = suiteIdFromPath(groupId, [suiteTitle]);
       // Ensure top-level id matches the <section id>
-      const top = `<li><a href="#${topId}">${esc(suiteTitle)}</a> <span class="cnt">${(()=>{const c = suiteCounts(s); const p=c.total-c.failed; return c.failed===0?`<span class=\"passed\">${c.total} ✅</span>`:`<span class=\"passed\">${p} ✅</span> / <span class=\"failed\">${c.failed} ❌</span>`})()}</span>`
+      const top = `<li><a href="#${topId}">${esc(suiteTitle)}</a> <span class="cnt">${(()=>{const c = suiteCounts(s); return c.failed===0?`<span class=\"passed\">${c.passed} ✅</span>`:`<span class=\"passed\">${c.passed} ✅</span> / <span class=\"failed\">${c.failed} ❌</span>${c.skipped?` / <span class=\"skipped\">${c.skipped} ⏭</span>`:''}`})()}</span>`
         + (Array.isArray(s.suites) && s.suites.length ? `<ul class="toc-subsuites">${s.suites.map((sub)=>renderTOCSuiteRecursive(sub, groupId, [suiteTitle])).join('')}</ul>` : '')
         + `</li>`;
       return top;
@@ -303,6 +343,7 @@ function main() {
   .mark{display:inline-block;width:18px;text-align:center}
   .mark.passed{color:#1a7f37}
   .mark.failed{color:#b91c1c}
+  .mark.skipped{color:#666}
   details{margin:6px 0}
   .test details{margin:6px 0 6px 34px;padding-left:8px;border-left:2px solid #eee;color:#555;font-size:13px}
   .test details summary{color:#666;font-size:13px}
@@ -314,6 +355,7 @@ function main() {
   .stats{font-size:14px;display:flex;gap:12px;align-items:center}
   .stats .passed{color:#1a7f37}
   .stats .failed{color:#b91c1c}
+  .stats .skipped{color:#666}
   .hide-pass .test.passed{display:none}
   header .right{margin-left:auto;display:flex;gap:12px;align-items:center}
  .toc{position:fixed;left:0;top:64px;bottom:0;width:308px;overflow:auto;background:#fff;border-right:1px solid #eee;padding:8px 12px;z-index:10}
@@ -324,6 +366,7 @@ function main() {
   .toc .cnt{color:#555;font-size:12px;margin-left:6px}
   .toc .passed{color:#1a7f37}
   .toc .failed{color:#b91c1c}
+  .toc .skipped{color:#666}
   .toc .toc-suites{margin-left:10px}
   .toc .toc-subsuites{margin-left:14px}
  .content{margin-left:328px}
@@ -341,11 +384,11 @@ function main() {
  <body>
  <header>
    <h1>Global test report</h1>
-   <div class="right">
-     <div class="stats"><span class="total">Total: ${totals.total}</span> (<span class="passed">${totals.passed} ✅</span>&nbsp;&nbsp;/&nbsp;&nbsp;<span class="failed">${totals.failed} ❌</span>)</div>
-     <label class="filters"><input type="checkbox" onchange="toggleFailedOnly(this)"> Failed only</label>
-   </div>
- </header>
+  <div class="right">
+    <div class="stats"><span class="total">Total: ${totals.total}</span> (<span class="passed">${totals.passed} ✅</span> / <span class="failed">${totals.failed} ❌</span> / <span class="skipped">${totals.skipped} ⏭</span>)</div>
+    <label class="filters"><input type="checkbox" onchange="toggleFailedOnly(this)"> Failed only</label>
+  </div>
+</header>
  <nav class="toc">
    <div class="toc-h">Contents</div>
    <ul class="toc-groups">

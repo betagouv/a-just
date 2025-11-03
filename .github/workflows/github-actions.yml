@@ -305,25 +305,6 @@ jobs:
             fi
           '
 
-      - name: Inject per-spec Cypress video links into HTML
-        env:
-          PR_NUM: ${{ steps.prnum.outputs.pr }}
-        run: |
-          set -e
-          HOST_UID=$(id -u)
-          HOST_GID=$(id -g)
-          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
-            set -e
-            mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
-            # Inject video links near suite titles using the sectioned JSON
-            if [ -f site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html ]; then
-              node scripts/inject-videos-into-mochawesome-html.js \
-                site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html \
-                site/reports/pr-${PR_NUM}/videos \
-                site/reports/pr-${PR_NUM}/combined/sectioned.json || true
-            fi
-          '
-
       - name: Append Cypress Videos section to combined HTML
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
