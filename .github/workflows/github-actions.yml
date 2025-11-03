@@ -2,7 +2,8 @@ name: GitHub Actions
 on:
   push:
     branches:
-      - '**'
+      - sandbox
+      - dev
     paths-ignore:
       - 'site/**'
       - '**/*.md'
