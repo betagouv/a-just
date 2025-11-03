@@ -298,7 +298,7 @@ export default defineConfig({
     baseUrl: process.env.CYPRESS_BASE_URL
       ? process.env.CYPRESS_BASE_URL
       : "http://localhost:4200",
-    supportFile: jsonOnly ? false : "cypress/support/e2e.ts",
+    supportFile: "cypress/support/e2e.ts",
     video: true,
     videosFolder: "cypress/videos",
     downloadsFolder: "cypress/downloads",
