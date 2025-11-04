@@ -79,11 +79,13 @@ function specBaseFromSuiteDeep(s) {
 function getTestsOfSuite(s) {
   if (!s || typeof s !== 'object') return [];
   if (Array.isArray(s.tests) && s.tests.length) return s.tests;
+  // Fallback: some mochawesome JSONs keep only UUIDs in passes/failures/pending/skipped.
+  // Convert them into minimal test-like objects with explicit state so counters work reliably.
   const arr = [];
-  if (Array.isArray(s.passes)) arr.push(...s.passes);
-  if (Array.isArray(s.failures)) arr.push(...s.failures);
-  if (Array.isArray(s.pending)) arr.push(...s.pending);
-  if (Array.isArray(s.skipped)) arr.push(...s.skipped);
+  if (Array.isArray(s.passes)) arr.push(...s.passes.map(() => ({ title: '', fullTitle: '', state: 'passed' })));
+  if (Array.isArray(s.failures)) arr.push(...s.failures.map(() => ({ title: '', fullTitle: '', state: 'failed' })));
+  if (Array.isArray(s.pending)) arr.push(...s.pending.map(() => ({ title: '', fullTitle: '', state: 'pending' })));
+  if (Array.isArray(s.skipped)) arr.push(...s.skipped.map(() => ({ title: '', fullTitle: '', state: 'skipped' })));
   return arr;
 }
 
@@ -228,20 +230,17 @@ function main() {
   }
 
   function suiteCounts(s) {
-    let acc = countsOfSuiteOnly(s);
-    if (Array.isArray(s.suites)) {
-      for (const sub of s.suites) {
-        const c = suiteCounts(sub);
-        acc = {
-          total: acc.total + c.total,
-          passed: acc.passed + c.passed,
-          failed: acc.failed + c.failed,
-          skipped: acc.skipped + c.skipped,
-          pending: acc.pending + c.pending,
-        };
-      }
+    // Unified counting: collect all tests (real or fallback) and derive counts from their state.
+    const all = collectTestsDeep(s, []);
+    let passed = 0, failed = 0, skipped = 0, pending = 0;
+    for (const t of all) {
+      const st = testStateOf(t);
+      if (st === 'passed') passed++;
+      else if (st === 'failed') failed++;
+      else if (st === 'skipped') skipped++;
+      else if (st === 'pending') pending++;
     }
-    return acc;
+    return { total: all.length, passed, failed, skipped, pending };
   }
 
   const e2eId = e2eGroup ? `group-${slugId(e2eGroup.title)}` : '';
