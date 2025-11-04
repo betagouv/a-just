@@ -25,6 +25,7 @@ module.exports = {
     'https://aide.a-just.incubateur.net',
     'https://aide.a-just-ca.incubateur.net',
     'https://aide.a-just.beta.gouv.fr',
+    'https://nantes.sso.intranet.justice.gouv.fr',
   ],
   session: {
     key: 'koa.sess' /** (string) cookie key (default is koa.sess) */,
