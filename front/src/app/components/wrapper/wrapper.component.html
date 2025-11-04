@@ -220,11 +220,15 @@
       <p (click)="helpSectionVisible = false">x</p>
     </div>
     <div class="help-content-body">
-      <a [href]="findHelpCenter('/contact')" alt="Nous contacter" target="_blank">📨 Nous contacter</a>
-      <a [href]="findHelpCenter('/prendre-rendez-vous')" alt="Prendre rendez-vous" target="_blank">📆 Prendre
+      <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true': '')" alt="Nous contacter"
+        target="_blank">📨 Nous contacter</a>
+      <a [href]="findHelpCenter('/prendre-rendez-vous')+(referentielService.isDroitLocal() ? '?dl=true': '')"
+        alt="Prendre rendez-vous" target="_blank">📆 Prendre
         rendez-vous</a>
-      <a [href]="findHelpCenter('/')" alt="Accéder au centre d'aide" target="_blank">📚 Accéder au centre d'aide</a>
-      <a [href]="findHelpCenter('/etre-appele')" alt="Être rappelé" target="_blank">📞 Être rappelé</a>
+      <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true': '')"
+        alt="Accéder au centre d'aide" target="_blank">📚 Accéder au centre d'aide</a>
+      <a [href]="findHelpCenter('/etre-appele')+(referentielService.isDroitLocal() ? '?dl=true': '')" alt="Être rappelé"
+        target="_blank">📞 Être rappelé</a>
     </div>
   </div>
   }
