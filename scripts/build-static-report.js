@@ -206,17 +206,42 @@ function main() {
   }
   const totals = aggregateCounts(groups);
 
-  function suiteCounts(s) {
-    const tests = collectTestsDeep(s, []);
-    let passed = 0, failed = 0, skipped = 0, pending = 0;
-    for (const t of tests) {
-      const st = testStateOf(t);
-      if (st === 'passed') passed++;
-      else if (st === 'failed') failed++;
-      else if (st === 'skipped') skipped++;
-      else if (st === 'pending') pending++;
+  function countsOfSuiteOnly(s) {
+    let passed = 0, failed = 0, skipped = 0, pending = 0, total = 0;
+    if (Array.isArray(s.tests) && s.tests.length) {
+      for (const t of s.tests) {
+        if (!t || !(String((t.title || t.fullTitle || '')).trim().length > 0)) continue;
+        const st = testStateOf(t);
+        if (st === 'passed') passed++;
+        else if (st === 'failed') failed++;
+        else if (st === 'skipped') skipped++;
+        else if (st === 'pending') pending++;
+        total++;
+      }
+    } else {
+      if (Array.isArray(s.passes)) { passed += s.passes.length; total += s.passes.length; }
+      if (Array.isArray(s.failures)) { failed += s.failures.length; total += s.failures.length; }
+      if (Array.isArray(s.pending)) { pending += s.pending.length; total += s.pending.length; }
+      if (Array.isArray(s.skipped)) { skipped += s.skipped.length; total += s.skipped.length; }
     }
-    return { total: tests.length, passed, failed, skipped, pending };
+    return { total, passed, failed, skipped, pending };
+  }
+
+  function suiteCounts(s) {
+    let acc = countsOfSuiteOnly(s);
+    if (Array.isArray(s.suites)) {
+      for (const sub of s.suites) {
+        const c = suiteCounts(sub);
+        acc = {
+          total: acc.total + c.total,
+          passed: acc.passed + c.passed,
+          failed: acc.failed + c.failed,
+          skipped: acc.skipped + c.skipped,
+          pending: acc.pending + c.pending,
+        };
+      }
+    }
+    return acc;
   }
 
   const e2eId = e2eGroup ? `group-${slugId(e2eGroup.title)}` : '';
