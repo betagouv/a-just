@@ -70,6 +70,7 @@ services:
     environment:
       - DATABASE_URL=postgres://ajust-user:ajust-pass@db:5432/ajust
       - SERVER_URL=http://173.0.0.20:8080/api
+      - FRONT_URL=http://localhost:4200
       - NODE_ENV=test
       - JSON_WEB_TOKEN=123456789
       - PORT=8080

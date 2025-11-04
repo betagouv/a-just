@@ -538,7 +538,11 @@ export default class App extends AppBase {
    * @param {*} delayMs
    * @returns
    */
-  waitForPostgres = async (sequelizeInstance, maxRetries = 10, delayMs = 2000) => {
+  waitForPostgres = async (sequelizeInstance, maxRetries = 150, delayMs = 2000) => {
+    const envMax = parseInt(process.env.PG_WAIT_MAX_RETRIES || '', 10)
+    const envDelay = parseInt(process.env.PG_WAIT_DELAY_MS || '', 10)
+    if (!Number.isNaN(envMax) && envMax > 0) maxRetries = envMax
+    if (!Number.isNaN(envDelay) && envDelay > 0) delayMs = envDelay
     let attempt = 0
 
     while (attempt < maxRetries) {

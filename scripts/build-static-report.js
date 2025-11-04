@@ -77,9 +77,9 @@ function specBaseFromSuiteDeep(s) {
 }
 
 function getTestsOfSuite(s) {
+  if (!s || typeof s !== 'object') return [];
+  if (Array.isArray(s.tests) && s.tests.length) return s.tests;
   const arr = [];
-  if (!s || typeof s !== 'object') return arr;
-  if (Array.isArray(s.tests)) arr.push(...s.tests);
   if (Array.isArray(s.passes)) arr.push(...s.passes);
   if (Array.isArray(s.failures)) arr.push(...s.failures);
   if (Array.isArray(s.pending)) arr.push(...s.pending);
@@ -224,12 +224,14 @@ function main() {
 
   function renderSuiteRecursive(s, depth, g, specBase, groupId, pathTitles) {
     if (!s || typeof s !== 'object') return '';
-    const tests = getTestsOfSuite(s).map((t) => ({
-      title: t.title || '',
-      fullTitle: t.fullTitle || '',
-      state: testStateOf(t),
-      err: t.err || {},
-    }));
+    const tests = getTestsOfSuite(s)
+      .filter((t) => String(t && (t.title || t.fullTitle) || '').trim().length > 0)
+      .map((t) => ({
+        title: t.title || '',
+        fullTitle: t.fullTitle || '',
+        state: testStateOf(t),
+        err: t.err || {},
+      }));
     const tag = depth === 0 ? 'h3' : (depth === 1 ? 'h4' : 'h5');
     const title = s.title || (depth === 0 ? (specBase || '') : '');
     let videoHref = '';
@@ -290,9 +292,12 @@ function main() {
     const suiteTitle = s.title || specBase || '';
     const id = suiteIdFromPath(groupId, [...(pathTitles||[]), suiteTitle]);
     const c = suiteCounts(s);
-    const cnt = c.failed === 0
-      ? `<span class="passed">${c.passed} ✅</span>`
-      : `<span class="passed">${c.passed} ✅</span> / <span class="failed">${c.failed} ❌</span>${c.skipped?` / <span class="skipped">${c.skipped} ⏭</span>`:''}`;
+    const parts = [];
+    if (c.passed) parts.push(`<span class="passed">${c.passed} ✅</span>`);
+    if (c.failed) parts.push(`<span class="failed">${c.failed} ❌</span>`);
+    if (c.skipped) parts.push(`<span class="skipped">${c.skipped} ⏭</span>`);
+    if (c.pending) parts.push(`<span class="pending">${c.pending} ⏸</span>`);
+    const cnt = parts.join(' / ');
     const kids = Array.isArray(s.suites) && s.suites.length
       ? `<ul class="toc-subsuites">${s.suites.map((sub)=>renderTOCSuiteRecursive(sub, groupId, [...(pathTitles||[]), suiteTitle])).join('')}</ul>`
       : '';
@@ -305,14 +310,27 @@ function main() {
     const suites = uniq.map((s) => {
       const suiteTitle = s.title || specBaseFromSuiteDeep(s) || '';
       const topId = suiteIdFromPath(groupId, [suiteTitle]);
-      // Ensure top-level id matches the <section id>
-      const top = `<li><a href="#${topId}">${esc(suiteTitle)}</a> <span class="cnt">${(()=>{const c = suiteCounts(s); return c.failed===0?`<span class=\"passed\">${c.passed} ✅</span>`:`<span class=\"passed\">${c.passed} ✅</span> / <span class=\"failed\">${c.failed} ❌</span>${c.skipped?` / <span class=\"skipped\">${c.skipped} ⏭</span>`:''}`})()}</span>`
+      const c = suiteCounts(s);
+      const parts = [];
+      if (c.passed) parts.push(`<span class=\\"passed\\">${c.passed} ✅</span>`);
+      if (c.failed) parts.push(`<span class=\\"failed\\">${c.failed} ❌</span>`);
+      if (c.skipped) parts.push(`<span class=\\"skipped\\">${c.skipped} ⏭</span>`);
+      if (c.pending) parts.push(`<span class=\\"pending\\">${c.pending} ⏸</span>`);
+      const cnt = parts.join(' / ');
+      const top = `<li><a href=\"#${topId}\">${esc(suiteTitle)}</a> <span class=\"cnt\">${cnt}</span>`
         + (Array.isArray(s.suites) && s.suites.length ? `<ul class="toc-subsuites">${s.suites.map((sub)=>renderTOCSuiteRecursive(sub, groupId, [suiteTitle])).join('')}</ul>` : '')
         + `</li>`;
       return top;
     }).join('');
     return `<li class="toc-group"><a href="#${groupId}">${esc(g.title)}</a><ul class="toc-suites">${suites}</ul></li>`;
   }
+
+  const headerParts = [];
+  if (totals.passed) headerParts.push(`<span class="passed">${totals.passed} ✅</span>`);
+  if (totals.failed) headerParts.push(`<span class="failed">${totals.failed} ❌</span>`);
+  if (totals.skipped) headerParts.push(`<span class="skipped">${totals.skipped} ⏭</span>`);
+  if (totals.pending) headerParts.push(`<span class="pending">${totals.pending} ⏸</span>`);
+  const headerCounts = headerParts.join(' / ');
 
   const html = `<!doctype html>
 <html lang="en">
@@ -356,6 +374,7 @@ function main() {
   .stats .passed{color:#1a7f37}
   .stats .failed{color:#b91c1c}
   .stats .skipped{color:#666}
+  .stats .pending{color:#666}
   .hide-pass .test.passed{display:none}
   header .right{margin-left:auto;display:flex;gap:12px;align-items:center}
  .toc{position:fixed;left:0;top:64px;bottom:0;width:308px;overflow:auto;background:#fff;border-right:1px solid #eee;padding:8px 12px;z-index:10}
@@ -385,7 +404,7 @@ function main() {
  <header>
    <h1>Global test report</h1>
   <div class="right">
-    <div class="stats"><span class="total">Total: ${totals.total}</span> (<span class="passed">${totals.passed} ✅</span> / <span class="failed">${totals.failed} ❌</span> / <span class="skipped">${totals.skipped} ⏭</span>)</div>
+    <div class="stats"><span class="total">Total: ${totals.total}</span> (${headerCounts})</div>
     <label class="filters"><input type="checkbox" onchange="toggleFailedOnly(this)"> Failed only</label>
   </div>
 </header>
