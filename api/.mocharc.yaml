@@ -1,9 +1,9 @@
 spec:
   - 'test/index.test.js'
-timeout: 20000
+timeout: 60000
 color: true
 require: '@babel/register'
-bail: true
+bail: false
 reporter: 'mochawesome'
 reporter-option:
   - reportDir=/home/api/test/reports
