@@ -84,6 +84,11 @@ export default class RouteUsers extends Route {
       return
     }
 
+    if (!validateEmail(email)) {
+      ctx.throw(401, 'Vous devez saisir une adresse e-mail valide')
+      return
+    }
+
     try {
       const user = await this.model.createAccount({ ...this.body(ctx), email })
       await sentEmail(
