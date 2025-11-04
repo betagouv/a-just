@@ -53,15 +53,7 @@ module.exports = {
         },
       ]
 
-      for (let i = 0; i < list.length; i++) {
-        const item = list[i]
-        for (let j = 0; j < item.idAgents.length; j++) {
-          const findUser = await models.Users.findOne({ where: { id: item.idAgents[j] }, force: true })
-          if (findUser) {
-            await findUser.update({ fonction: item.label })
-          }
-        }
-      }
+      await Promise.all(list.map((item) => models.Users.update({ fonction: item.label }, { where: { id: { [Op.in]: item.idAgents } }, paranoid: false })))
     }
   },
   down: (/*queryInterface , Sequelize*/) => {},
