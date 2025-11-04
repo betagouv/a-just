@@ -28,6 +28,7 @@ module.exports = {
     'https://aide.a-just.incubateur.net',
     'https://aide.a-just-ca.incubateur.net',
     'https://aide.a-just.beta.gouv.fr',
+    'https://nantes.sso.intranet.justice.gouv.fr',
   ],
   /**
    * Port utilisé pour démarrer le serveur
