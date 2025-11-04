@@ -107,7 +107,7 @@
       <p class="title-section">Stock</p>
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
-      <button class="details no-print" (click)="showDetailStock = !showDetailStock; logOpenDetails(showDetailStock)">
+      <button class="details no-print" (click)="showDetailStock = !showDetailStock; logOpenDetailsFor('Stocks', showDetailStock)">
         <i [class]="showDetailStock ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
         {{ showDetailStock ? 'Masquer les détails' : 'Voir les détails' }}
       </button>
@@ -140,7 +140,8 @@
         }
         @if (showDetailStock) {
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id" [maxValue]="stockMax"
-          type="stocks" (updateMax)="onUpdateMax($event)" [showLines]="true"></aj-graphs-verticals-lines>
+          type="stocks" (updateMax)="onUpdateMax($event)" [showLines]="true"
+          (loadComplete)="onDetailGraphLoadComplete('Stocks')"></aj-graphs-verticals-lines>
         <aj-graphs-numbers [referentielName]="ref.label"
           [title]="datasFilted[index].lastStockBf === null ? 'N/R' : '' + (datasFilted[index].lastStockBf || 0)"
           class="text-center no-border-bottom"></aj-graphs-numbers>
@@ -160,7 +161,7 @@
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
-        (click)="showDetailEntrees = !showDetailEntrees; logOpenDetails(showDetailEntrees)">
+        (click)="showDetailEntrees = !showDetailEntrees; logOpenDetailsFor('Entrees', showDetailEntrees)">
         <i [class]="showDetailEntrees ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
         {{ showDetailEntrees ? 'Masquer les détails' : 'Voir les détails' }}
       </button>
@@ -194,7 +195,8 @@
       <div class="flex-1">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].totalIn || 0]" [showLines]="showDetailEntrees" [maxValue]="entreesMax"
-          type="entrees" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
+          type="entrees" (updateMax)="onUpdateMax($event)"
+          (loadComplete)="onDetailGraphLoadComplete('Entrees')"></aj-graphs-verticals-lines>
         @if (!showDetailEntrees) {
         <aj-graphs-numbers [referentielName]="ref.label"
           [title]="datasFilted[index].totalIn === null ? 'N/R' : '' + round(datasFilted[index].totalIn || 0)"
@@ -223,7 +225,7 @@
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
-        (click)="showDetailSorties = !showDetailSorties; logOpenDetails(showDetailSorties)">
+        (click)="showDetailSorties = !showDetailSorties; logOpenDetailsFor('Sorties', showDetailSorties)">
         <i [class]="showDetailSorties ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
         {{ showDetailSorties ? 'Masquer les détails' : 'Voir les détails' }}
       </button>
@@ -257,7 +259,8 @@
       <div class="flex-1">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].totalOut || 0]" [showLines]="showDetailSorties" [maxValue]="sortiesMax"
-          type="sorties" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
+          type="sorties" (updateMax)="onUpdateMax($event)"
+          (loadComplete)="onDetailGraphLoadComplete('Sorties')"></aj-graphs-verticals-lines>
         @if (!showDetailSorties) {
         <aj-graphs-numbers [referentielName]="ref.label"
           [title]="datasFilted[index].totalOut === null ? 'N/R' : '' + round(datasFilted[index].totalOut || 0)"
@@ -286,7 +289,7 @@
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
-        (click)="showDetailETPTSiege = !showDetailETPTSiege; logOpenDetails(showDetailETPTSiege)">
+        (click)="showDetailETPTSiege = !showDetailETPTSiege; logOpenDetailsFor('ETPTSiege', showDetailETPTSiege)">
         <i [class]="showDetailETPTSiege ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
         {{ showDetailETPTSiege ? 'Masquer les détails' : 'Voir les détails' }}
       </button>
@@ -320,7 +323,8 @@
       <div class="flex-1">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].etpMag || 0]" [showLines]="showDetailETPTSiege" [maxValue]="siegeMax"
-          type="ETPTSiege" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
+          type="ETPTSiege" (updateMax)="onUpdateMax($event)"
+          (loadComplete)="onDetailGraphLoadComplete('ETPTSiege')"></aj-graphs-verticals-lines>
         @if (!showDetailETPTSiege) {
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpMag === null
@@ -357,7 +361,7 @@
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
-        (click)="showDetailETPTGreffe = !showDetailETPTGreffe; logOpenDetails(showDetailETPTGreffe)">
+        (click)="showDetailETPTGreffe = !showDetailETPTGreffe; logOpenDetailsFor('ETPTGreffe', showDetailETPTGreffe)">
         <i [class]="showDetailETPTGreffe ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
         {{ showDetailETPTGreffe ? 'Masquer les détails' : 'Voir les détails' }}
       </button>
@@ -391,7 +395,8 @@
       <div class="flex-1">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].etpFon || 0]" [showLines]="showDetailETPTGreffe" [maxValue]="greffeMax"
-          type="ETPTGreffe" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
+          type="ETPTGreffe" (updateMax)="onUpdateMax($event)"
+          (loadComplete)="onDetailGraphLoadComplete('ETPTGreffe')"></aj-graphs-verticals-lines>
         @if (!showDetailETPTGreffe) {
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpFon === null
@@ -428,7 +433,7 @@
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
       <button class="details no-print"
-        (click)="showDetailETPTEam = !showDetailETPTEam; logOpenDetails(showDetailETPTEam)">
+        (click)="showDetailETPTEam = !showDetailETPTEam; logOpenDetailsFor('ETPTEam', showDetailETPTEam)">
         <i [class]="showDetailETPTEam ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
         {{ showDetailETPTEam ? 'Masquer les détails' : 'Voir les détails' }}
       </button>
@@ -462,7 +467,8 @@
       <div class="flex-1">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].etpCont || 0]" [showLines]="showDetailETPTEam" [maxValue]="eamMax"
-          type="ETPTEam" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
+          type="ETPTEam" (updateMax)="onUpdateMax($event)"
+          (loadComplete)="onDetailGraphLoadComplete('ETPTEam')"></aj-graphs-verticals-lines>
         @if (!showDetailETPTEam) {
         <aj-graphs-numbers [referentielName]="ref.label" title="{{
                     datasFilted[index].etpCont === null

@@ -17,7 +17,6 @@ import {
 } from '../../constants/documentation'
 import { DocumentationInterface } from '../../interfaces/documentation'
 import { OPACITY_20 } from '../../constants/colors'
-import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { sleep } from '../../utils'
 import { ActivitiesService } from '../../services/activities/activities.service'
 import { HumanResourceService } from '../../services/human-resource/human-resource.service'
@@ -35,13 +34,14 @@ import { CommonModule } from '@angular/common'
 import { TooltipsComponent } from '../../components/tooltips/tooltips.component'
 import { CompletionBarComponent } from '../../components/completion-bar/completion-bar.component'
 import { AppService } from '../../services/app/app.service'
+import { IntroJSStep } from '../../services/tour/tour.service'
 
 /**
  * Composant page activité
  */
 @Component({
   standalone: true,
-  imports: [PopinEditActivitiesComponent, MatIconModule, CommonModule, IntroJSComponent, WrapperComponent, TooltipsComponent, CompletionBarComponent],
+  imports: [PopinEditActivitiesComponent, MatIconModule, CommonModule, WrapperComponent, TooltipsComponent, CompletionBarComponent],
   templateUrl: './activities.page.html',
   styleUrls: ['./activities.page.scss'],
 })

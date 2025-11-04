@@ -34,11 +34,9 @@ import { SiteMapPage } from './sitemap/sitemap.page'
 import { LegaleNoticePage } from './legale-notice/legale-notice.page'
 import { PrivacyPage } from './privacy/privacy.page'
 import { AccessibilitiesPage } from './accessibilities/accessibilities.page'
-import { ContactPage } from './contact/contact.page'
 import { StatsPage } from './stats/stats.page'
 import { LogoutPage } from './logout/logout.page'
 import { CGUPage } from './cgu/cgu.page'
-import { HelpCenterPage } from './help-center/help-center.page'
 
 export const routes: Routes = [
   {
@@ -71,27 +69,27 @@ export const routes: Routes = [
   {
     path: 'ventilations',
     component: WorkforcePage,
-    canActivate: [authGuard, ventilationsGuard, typeGuard],
+    canActivate: [ventilationsGuard, typeGuard],
   },
   {
     path: 'donnees-d-activite',
     component: ActivitiesPage,
-    canActivate: [authGuard, activitiesGuard, typeGuard],
+    canActivate: [activitiesGuard, typeGuard],
   },
   {
     path: 'temps-moyens',
     component: AverageEtpPage,
-    canActivate: [authGuard, tempsMoyensGuard, typeGuard],
+    canActivate: [tempsMoyensGuard, typeGuard],
   },
   {
     path: 'cockpit',
     component: CalculatorPage,
-    canActivate: [authGuard, cockpitGuard, typeGuard],
+    canActivate: [cockpitGuard, typeGuard],
   },
   {
     path: 'resource-humaine/:id',
     component: HumanResourcePage,
-    canActivate: [authGuard, ventilationsGuard, typeGuard],
+    canActivate: [ventilationsGuard, typeGuard],
   },
   {
     path: 'signup',
@@ -113,31 +111,31 @@ export const routes: Routes = [
   {
     path: 'referentiel-de-temps/:id',
     component: AverageEtpDisplayerPage,
-    canActivate: [authGuard, tempsMoyensGuard, typeGuard],
+    canActivate: [tempsMoyensGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'simulateur',
     component: SimulatorPage,
-    canActivate: [authGuard, allSimulatorGuard, typeGuard],
+    canActivate: [allSimulatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'simulateur-sans-donnees',
     component: WhiteSimulatorPage,
-    canActivate: [authGuard, whiteSimulatorGuard, typeGuard],
+    canActivate: [whiteSimulatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'reaffectateur',
     component: ReaffectatorPage,
-    canActivate: [authGuard, reaffectatorGuard, typeGuard],
+    canActivate: [reaffectatorGuard, typeGuard],
     canDeactivate: [closeGuard],
   },
   {
     path: 'panorama',
     component: PanoramaPage,
-    canActivate: [authGuard, dashboardGuard, typeGuard],
+    canActivate: [dashboardGuard, typeGuard],
   },
   {
     path: 'carte-juridictions',
@@ -160,10 +158,6 @@ export const routes: Routes = [
     component: AccessibilitiesPage,
   },
   {
-    path: 'contact',
-    component: ContactPage,
-  },
-  {
     path: 'stats',
     component: StatsPage,
   },
@@ -174,11 +168,6 @@ export const routes: Routes = [
   {
     path: 'conditions-generales-d-utilisation',
     component: CGUPage,
-  },
-  {
-    path: 'centre-d-aide',
-    component: HelpCenterPage,
-    canActivate: [authGuard, typeGuard],
   },
   {
     path: '**',

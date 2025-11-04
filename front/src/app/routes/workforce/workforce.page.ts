@@ -15,7 +15,6 @@ import { RadioButtonComponent } from '../../components/radio-button/radio-button
 import { CommonModule } from '@angular/common'
 import { PersonPreviewComponent } from './person-preview/person-preview.component'
 import { InputButtonComponent } from '../../components/input-button/input-button.component'
-import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { MainClass } from '../../libs/main-class'
 import { childrenInterface, dataInterface } from '../../components/select/select.component'
 import { BackupInterface } from '../../interfaces/backup'
@@ -33,6 +32,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
 import { EmptyInputComponent } from '../../components/empty-input/empty-input.component'
 import { AppService } from '../../services/app/app.service'
+import { IntroJSStep } from '../../services/tour/tour.service'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -165,7 +165,6 @@ export interface listFormatedInterface {
     CommonModule,
     PersonPreviewComponent,
     InputButtonComponent,
-    IntroJSComponent,
     RouterLink,
     MatIconModule,
     FormsModule,
@@ -1361,14 +1360,14 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * @param opacity
    * @returns
    */
-  public getLocalCategoryColor(person: HumanResourceIsInInterface) {
+  public getLocalCategoryColor(person: HumanResourceIsInInterface, opacity: number = 1) {
     if (person.isIn) {
       const currentSituation = this.humanResourceService.findSituation(person, this.workforceService.dateSelected.getValue())
       if (currentSituation && currentSituation.category && currentSituation.category.label) {
-        return this.getCategoryColor(currentSituation.category.label || '', 1)
+        return this.getCategoryColor(currentSituation.category.label || '', opacity)
       }
     }
 
-    return this.getCategoryColor(person.categoryName || '', 1)
+    return this.getCategoryColor(person.categoryName || '', opacity)
   }
 }

@@ -94,6 +94,10 @@ export class GraphsVerticalsLinesComponent
    */
   @Output() updateMax = new EventEmitter();
   /**
+   * Emis lorsque le chargement des lignes de détails est terminé
+   */
+  @Output() loadComplete = new EventEmitter<{ type: string | undefined | null; referentielId: number | null }>();
+  /**
    * Degres of inclinaison
    */
   percentDelta: number = 0;
@@ -123,6 +127,10 @@ export class GraphsVerticalsLinesComponent
    * Wait serveur loading
    */
   isLoading: boolean = false;
+  /**
+   * Evite d'émettre plusieurs fois loadComplete pour le même affichage
+   */
+  private _notifiedLoadedOnce: boolean = false;
   /**
    * timeout
    */
@@ -191,14 +199,16 @@ export class GraphsVerticalsLinesComponent
       this.refreshDatas();
     }
 
-    if (
-      changes['showLines'] &&
-      changes['showLines'].currentValue &&
-      this.referentielId &&
-      this.type &&
-      this.line.getValue().length === 0
-    ) {
-      this.startLoading();
+    if (changes['showLines'] && changes['showLines'].currentValue && this.referentielId && this.type) {
+      if (this.line.getValue().length === 0) {
+        this.startLoading();
+      } else if (!this.isLoading && !this._notifiedLoadedOnce) {
+        // Les données sont déjà présentes: considérer comme chargé
+        try {
+          this.loadComplete.emit({ type: this.type, referentielId: this.referentielId });
+          this._notifiedLoadedOnce = true;
+        } catch {}
+      }
     }
 
     if (changes['maxValue'] || changes['showLines']) {
@@ -225,6 +235,7 @@ export class GraphsVerticalsLinesComponent
 
   refreshDatas() {
     this.line.next([]);
+    this._notifiedLoadedOnce = false;
     if (this.showLines && this.referentielId && this.type) {
       this.startLoading();
     }
@@ -232,6 +243,7 @@ export class GraphsVerticalsLinesComponent
 
   clearDatas() {
     this.line.next([]);
+    this._notifiedLoadedOnce = false;
     this.draw();
   }
 
@@ -253,6 +265,12 @@ export class GraphsVerticalsLinesComponent
             );
             this.updateLocalMaxValue(true);
             this.draw();
+            try {
+              if (!this._notifiedLoadedOnce) {
+                this.loadComplete.emit({ type: this.type, referentielId: this.referentielId });
+                this._notifiedLoadedOnce = true;
+              }
+            } catch {}
           });
       }
     }, getRandomInt(700));

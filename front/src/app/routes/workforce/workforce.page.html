@@ -8,7 +8,7 @@
         hrBackup.date.getFullYear()
       : ''
   " [actionTemplate]="actions" class="content-margin-null header-border-none" [documentation]="documentation"
-  [isLoading]="isLoading">
+  [isLoading]="isLoading" [tours]="listFormated && listFormated.length ? introSteps : []">
   <div class="container step-3">
     <div class="title">
       <aj-date-select title="A la date d'" [value]="dateSelected"
@@ -250,11 +250,11 @@
         </div>
         }
         @if (person.dateEnd && hasLeft(person.dateEnd)) {
-        <div class="agent-status" [ngStyle]="{ backgroundColor: getLocalCategoryColor(person) }">
+        <div class="agent-status" [ngStyle]="{ backgroundColor: getLocalCategoryColor(person, 0.2) }">
           <i class="ri-user-shared-line" [ngStyle]="{
-                    color: getLocalCategoryColor(person),
-                  }"></i>
-          <p>Parti</p>
+            color: getLocalCategoryColor(person),
+          }"></i>
+          <p [ngStyle]="{ color: getLocalCategoryColor(person), }">Parti</p>
         </div>
         }
       </a>
@@ -267,7 +267,3 @@
     }
   </div>
 </ng-template>
-
-@if (listFormated && listFormated.length) {
-<aj-intro-js [steps]="introSteps" typeId="workforce"></aj-intro-js>
-}

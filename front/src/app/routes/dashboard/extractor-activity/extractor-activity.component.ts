@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import * as Sentry from '@sentry/browser';
 import * as FileSaver from 'file-saver';
 import { orderBy } from 'lodash';
 import * as xlsx from 'xlsx';
@@ -18,6 +19,8 @@ import {
 } from '../../../utils/dates';
 import { MatIconModule } from '@angular/material/icon';
 import { Renderer } from 'xlsx-renderer';
+import { startLatencyScope } from '../../../utils/sentry-latency';
+import { exposeDownloadToCypress } from '../../../utils/test-download';
 
 /**
  * Excel file details
@@ -300,6 +303,8 @@ export class ExtractorActivityComponent extends MainClass {
    * @returns
    */
   exportActDate() {
+    // Start Sentry transaction for Activity Excel export (minimal footprint)
+    const l = startLatencyScope('activity-export');
     this.appService.alert.next({
       text: "Le téléchargement va démarrer : cette opération peut, selon votre ordinateur, prendre plusieurs secondes. Merci de patienter jusqu'à l'ouverture de votre fenêtre de téléchargement.",
     });
@@ -343,7 +348,7 @@ export class ExtractorActivityComponent extends MainClass {
           .then((buffer) => {
             return new Renderer().renderFromArrayBuffer(buffer, viewModel);
           })
-          // 4. Get a report as buffer.
+          // 4. Prepare workbook and write buffer.
           .then(async (report) => {
             report = await this.getReport(report, viewModel);
             if (this.sumTab.length === 0) {
@@ -361,13 +366,17 @@ export class ExtractorActivityComponent extends MainClass {
           })
           // 5. Use `saveAs` to download on browser site.
           .then((buffer) => {
-            const filename = this.getExportFileName() + EXCEL_EXTENSION;
-            return FileSaver.saveAs(
-              new Blob([buffer]),
-              filename + EXCEL_EXTENSION
-            );
+            const filename = this.getExportFileName();
+            // Test-only: expose buffer to Cypress so it can salvage file even if saveAs is blocked
+            exposeDownloadToCypress(buffer, filename + EXCEL_EXTENSION);
+            FileSaver.saveAs(new Blob([buffer]), filename + EXCEL_EXTENSION);
+            try { l.finish('success') } catch {}
+            return;
           })
-          .catch((err) => console.log('Error writing excel export', err));
+          .catch((err) => {
+            console.log('Error writing excel export', err);
+            try { l.finish('error') } catch {}
+          });
       });
   }
 

@@ -12,7 +12,6 @@ import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-r
 import { DocumentationInterface } from '../../../interfaces/documentation'
 import { tree } from '../simulator.tree'
 import { BackupInterface } from '../../../interfaces/backup'
-import { IntroJSComponent, IntroJSStep } from '../../../components/intro-js/intro-js.component'
 import { decimalToStringDate, findRealValue, monthDiffList, nbOfDays, setTimeToMidDay, stringToDecimalDate, today } from '../../../utils/dates'
 import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
 import { ReferentielService } from '../../../services/referentiel/referentiel.service'
@@ -41,6 +40,7 @@ import { DialWidgetComponent } from '../widgets/dial-widget/dial-widget.componen
 import { BackButtonComponent } from '../../../components/back-button/back-button.component'
 import { AppService } from '../../../services/app/app.service'
 import { isNaN } from 'lodash'
+import { IntroJSStep } from '../../../services/tour/tour.service'
 
 /**
  * Composant page simulateur
@@ -66,7 +66,6 @@ import { isNaN } from 'lodash'
     FiguresWidgetComponent,
     DialWidgetComponent,
     BackButtonComponent,
-    IntroJSComponent,
   ],
   templateUrl: './white-simulator.page.html',
   styleUrls: ['./white-simulator.page.scss'],

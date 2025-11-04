@@ -1,0 +1,39 @@
+@use '../../styles/utils.scss' as utils;
+
+:host {
+  height: 32px;
+  min-width: 32px;
+  position: relative;
+  z-index: 2;
+  margin-right: 4px;
+
+
+  >div {
+    background-color: #009081;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 14px;
+    color: white;
+    line-height: 32px;
+    padding: 0 6px;
+    border-radius: 32px;
+    min-width: 32px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+
+    >span {
+      display: inline;
+      white-space: nowrap;
+      margin-right: 6px;
+
+      svg {
+        position: relative;
+        top: 2px;
+        left: 2px;
+      }
+    }
+  }
+}

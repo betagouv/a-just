@@ -1,7 +1,7 @@
 name: GitHub Actions
 on:
   push:
-    branches: [dev, sandbox]
+    branches: [dev, sandbox, sentry-latency-improvements]
   pull_request:
     branches: [dev, sandbox]
   workflow_dispatch:
@@ -17,8 +17,14 @@ jobs:
     steps:
       - run: echo "RUNNING TESTS (NON-BLOCKING)"
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout PR branch (candidate)
+        uses: actions/checkout@v4
+
+      - name: Checkout sandbox branch (for local sandbox stack)
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+          path: sandbox-code
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,18 +36,29 @@ jobs:
       - name: Install dependencies
         run: npm i
 
+      - name: Run unit tests (API)
+        if: ${{ false }}
+        run: npm run test:api
+
       - name: Run tests
+        env:
+          NODE_ENV: test
+          SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
         run: npm run test
         continue-on-error: true
+
+      
 
       - name: Debug - List generated files
         if: always()
         run: |
           echo "=== END-TO-END TESTS DEBUG ==="
           echo "Listing end-to-end directory structure:"
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" -o -name "*.xlsx" -o -name "*.xls" | head -50
           echo "Reports directory content:"
           ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
+          echo "Downloads directory content:"
+          ls -la ./end-to-end/cypress/downloads/ || echo "Downloads directory not found"
           echo "=== API TESTS DEBUG ==="
           echo "API test directory structure:"
           find ./api -type f -name "*.json" -o -name "*.html" | head -20
@@ -66,8 +83,20 @@ jobs:
           name: cypress-reports
           path: ./end-to-end/cypress/reports
 
-      - name: Upload Mocha test report
+      
+
+      - name: Upload Cypress downloads (Excel files)
         if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-downloads
+          path: |
+            ./end-to-end/cypress/downloads/*.xlsx
+            ./end-to-end/cypress/downloads/*.xls
+          if-no-files-found: warn
+
+      - name: Upload Mocha test report
+        if: ${{ false }}
         uses: actions/upload-artifact@v4
         with:
           name: mocha-report
@@ -113,6 +142,7 @@ jobs:
           path: ./cypress-videos
 
       - name: Download Mocha report artifacts
+        if: ${{ false }}
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:

@@ -1,12 +1,14 @@
-import { AfterViewInit, Component } from '@angular/core'
+import { Component } from '@angular/core'
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router'
 import { USER_ACCESS_AVERAGE_TIME } from './constants/user-access'
 import { AlertInterface } from './interfaces/alert'
 import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
 import { UserService } from './services/user/user.service'
+import { HumanResourceService } from './services/human-resource/human-resource.service'
 import { iIOS } from './utils/system'
 import { filter } from 'rxjs'
+import { setJurisdictionTitle } from './utils/sentry-context'
 
 import { AlertComponent } from './components/alert/alert.component'
 import { BigLoaderComponent } from './components/big-loader/big-loader.component'
@@ -26,7 +28,7 @@ declare const window: any
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent {
   /**
    * Variable pour savoir si on change le serveur
    */
@@ -55,8 +57,13 @@ export class AppComponent implements AfterViewInit {
    * @param contentieuxOptionsService
    * @param appService
    */
-  constructor(router: Router, private userService: UserService, private contentieuxOptionsService: ContentieuxOptionsService, private appService: AppService) {
-    this.crispChat()
+  constructor(
+    router: Router,
+    private userService: UserService,
+    private contentieuxOptionsService: ContentieuxOptionsService,
+    private appService: AppService,
+    private humanResourceService: HumanResourceService,
+  ) {
     if (iIOS()) {
       document.body.classList.add('iIOS')
     }
@@ -86,6 +93,15 @@ export class AppComponent implements AfterViewInit {
     })
 
     this.appService.appLoading.subscribe((a) => (this.appLoading = a))
+
+    // Mirror current jurisdiction title for Sentry tagging (via util, no globals)
+    try {
+      this.humanResourceService.hrBackup.subscribe((bk) => {
+        try {
+          setJurisdictionTitle(bk?.label || null)
+        } catch {}
+      })
+    } catch {}
 
     if (this.matomo !== null) {
       var _paq = (window._paq = window._paq || [])
@@ -123,10 +139,6 @@ export class AppComponent implements AfterViewInit {
     this.userService.getInterfaceType()
   }
 
-  ngAfterViewInit(): void {
-    this.listenSelectElement()
-  }
-
   /**
    * Suppression de l'alert et du texte dans le service
    */
@@ -147,63 +159,5 @@ export class AppComponent implements AfterViewInit {
     if (clickToOk && alertObject && alertObject.callbackSecondary) {
       alertObject.callbackSecondary()
     }
-  }
-
-  crispChat() {
-    window.$crisp = []
-    window.CRISP_WEBSITE_ID = import.meta.env.NG_APP_CRISP
-    const d = document
-    const s: any = d.createElement('script')
-    s.src = 'https://client.crisp.chat/l.js'
-    s.async = 1
-    d.getElementsByTagName('head')[0].appendChild(s)
-  }
-
-  listenSelectElement() {
-    /*const elementToObserve = document.body;
-
-    const observer = new MutationObserver(r() => {
-      const element =
-        Array.from(
-          document.getElementsByClassName(
-            'cdk-overlay-pane'
-          ) as HTMLCollectionOf<HTMLElement>
-        )[0] || null
-      /*if (element !== null) {
-        const delta =
-          +element.style.left.replace('px', '') +
-          element.getBoundingClientRect().width -
-          window.innerWidth
-        if (delta > 0)
-          element.style.left =
-            +element.style.left.replace('px', '') - delta + 'px'
-      }
-    });
-
-
-    observer.observe(elementToObserve, { subtree: true, childList: true });
-    */
-    /* document.addEventListener(
-      'DOMNodeInserted',
-      () => {
-        console.log('oui')
-        const element =
-          Array.from(
-            document.getElementsByClassName(
-              'cdk-overlay-pane'
-            ) as HTMLCollectionOf<HTMLElement>
-          )[0] || null
-        if (element !== null) {
-          const delta =
-            +element.style.left.replace('px', '') +
-            element.getBoundingClientRect().width -
-            window.innerWidth
-          if (delta > 0)
-            element.style.left =
-              +element.style.left.replace('px', '') - delta + 'px'
-        }
-      },
-      false
-    ) */
   }
 }
