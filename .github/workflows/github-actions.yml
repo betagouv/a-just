@@ -126,7 +126,7 @@ jobs:
               echo "Waiting for API at $NG_APP_SERVER_URL ..."
               npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
               rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --spec "${SPEC:-cypress/e2e/**/*.cy.*}"
+              npx cypress run --spec "${SPEC:-cypress/e2e/**/*.cy.js}"
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             '
           docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
@@ -200,8 +200,112 @@ jobs:
             ./end-to-end/cypress/downloads/*.xlsx
             ./end-to-end/cypress/downloads/*.xls
           if-no-files-found: warn
+  # Non-regression calculation end-to-end tests (requires SANDBOX stack)
+  e2e-nonreg-vs-sandbox-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "E2E NON-REGRESSION TESTS"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Checkout sandbox branch (for local sandbox stack)
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+          path: sandbox-code
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - run: docker compose version
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run Non-Regression E2E tests (Cypress JSON-only, containerized)
+        run: |
+          set -e
+          export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
+            -e CY_JSON_ONLY=1 \
+            -e SANDBOX_CODE_DIR=/work/sandbox-code \
+            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
+            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
+            -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
+            cypress sh -lc '
+              set -e
+              cd /e2e
+              npm ci
+              echo "Waiting for PR front at http://175.0.0.30:4200 ..."
+              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.30:4200"
+              echo "Waiting for PR API at http://175.0.0.20:8081/api ..."
+              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.20:8081/api"
+              echo "Waiting for SANDBOX front at http://175.0.0.31:4200 ..."
+              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.31:4200"
+              echo "Waiting for SANDBOX API at http://175.0.0.21:8081/api ..."
+              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.21:8081/api"
+              rm -rf cypress/reports && mkdir -p cypress/reports
+              npx cypress run --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
+              echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
+            '
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml down || true
+        continue-on-error: true
+
+      - name: Fix permissions for end-to-end artifacts
+        if: always()
+        run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
+
+      - name: Debug - List E2E generated files (nonreg)
+        if: always()
+        run: |
+          echo "=== END-TO-END NONREG DEBUG ==="
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
+          ls -la ./end-to-end/cypress/reports/ || true
+          ls -la ./end-to-end/mochawesome-report/ || true
+
+      - name: Collect Cypress JSON reports (normalize, nonreg)
+        if: always()
+        run: |
+          set -e
+          mkdir -p ./end-to-end/cypress/reports/.jsons
+          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
+          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
+          ls -la ./end-to-end/cypress/reports/.jsons || true
+
+      - name: Upload Cypress video (nonreg)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-video-nonreg
+          path: ./end-to-end/cypress/videos
+
+      - name: Upload Cypress screenshots (nonreg)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-nonreg
+          path: ./end-to-end/cypress/screenshots
+          if-no-files-found: warn
+
+      - name: Upload Cypress test reports (nonreg)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-reports-nonreg
+          path: |
+            ./end-to-end/cypress/reports/.jsons/*.json
+            ./end-to-end/cypress/reports/*.json
+            ./end-to-end/cypress/reports/**/*.json
+            ./end-to-end/mochawesome-report/*.json
+            ./end-to-end/mochawesome-report/**/*.json
+          include-hidden-files: true
+          if-no-files-found: warn
+
   deploy:
-    needs: [api-tests, e2e-tests]
+    needs: [api-tests, e2e-tests, e2e-nonreg-vs-sandbox-tests]
     runs-on: ubuntu-latest
     if: |
       always() && (
@@ -257,6 +361,13 @@ jobs:
           name: cypress-reports
           path: ./cypress-reports
 
+      - name: Download Cypress reports artifacts (nonreg)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: cypress-reports-nonreg
+          path: ./cypress-reports-nonreg
+
       - name: Download Cypress videos artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -264,12 +375,26 @@ jobs:
           name: cypress-video
           path: ./cypress-videos
 
+      - name: Download Cypress videos artifacts (nonreg)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: cypress-video-nonreg
+          path: ./cypress-videos-nonreg
+
       - name: Download Cypress screenshots artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: cypress-screenshots
           path: ./cypress-screenshots
+
+      - name: Download Cypress screenshots artifacts (nonreg)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: cypress-screenshots-nonreg
+          path: ./cypress-screenshots-nonreg
 
       - name: Download Mocha report artifacts
         uses: actions/download-artifact@v4
@@ -289,10 +414,16 @@ jobs:
           cp -r cypress-reports/cypress/reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
+          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/cypress/reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
           mkdir -p site/reports/pr-${PR_NUM}/videos
           cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
+          cp -r cypress-videos-nonreg/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || true
           mkdir -p site/reports/pr-${PR_NUM}/screenshots
           cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
+          cp -r cypress-screenshots-nonreg/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || true
           mkdir -p site/reports/pr-${PR_NUM}/mocha
           cp -r mocha-report/* site/reports/pr-${PR_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
@@ -314,6 +445,10 @@ jobs:
               { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
               { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
               { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
               npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
