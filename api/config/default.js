@@ -22,7 +22,7 @@ module.exports = {
    * Url du cors
    */
   corsUrl: [
-    process.env.FRONT_URL,
+    process.env.FRONT_URL || 'http://localhost:4200',
     process.env.SERVER_URL,
     'https://aide.a-just-ca.beta.gouv.fr',
     'https://aide.a-just.incubateur.net',

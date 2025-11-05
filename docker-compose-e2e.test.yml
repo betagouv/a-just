@@ -74,6 +74,8 @@ services:
       - PORT=8081
       - TYPE_ID=0
       - REDIS_URL=redis://redis:6379
+      - FRONT_URL=http://175.0.0.30:4200
+      - SERVER_URL=http://175.0.0.20:8081/api
     healthcheck:
       test: ["CMD", "curl", "-f", "http://175.0.0.20:8081/api"]
       interval: 30s
@@ -107,6 +109,8 @@ services:
       - PORT=8081
       - TYPE_ID=0
       - REDIS_URL=redis://redis_sandbox:6379
+      - FRONT_URL=http://175.0.0.31:4200
+      - SERVER_URL=http://175.0.0.21:8081/api
     healthcheck:
       test: ["CMD", "curl", "-f", "http://175.0.0.21:8081/api"]
       interval: 30s
@@ -181,6 +185,9 @@ services:
       # Optional per-spec date overrides for Effectif only
       - CYPRESS_EFFECTIF_START=${CYPRESS_EFFECTIF_START:-}
       - CYPRESS_EFFECTIF_STOP=${CYPRESS_EFFECTIF_STOP:-}
+      # JSON-only mode toggle passed from CI or local
+      - CY_JSON_ONLY
+      - SPEC
 
   # Dedicated Redis for PR stack
   redis:
