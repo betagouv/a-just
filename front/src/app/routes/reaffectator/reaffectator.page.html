@@ -182,6 +182,7 @@
       </div>
       <div class="sub-content-list">
         @for (hr of list.hrFiltered; track hr.id; let index = $index) {
+        @if (canViewAgent(hr)) {
         @if (duringPrint && hr.isModify) {
         <ng-container *ngTemplateOutlet="
                     rowPerson;
@@ -198,6 +199,7 @@
                     rowPerson;
                     context: { hr: hr, list: list, mainIndex: mainIndex, isCheckable: !duringPrint }
                   "></ng-container>
+        }
         }
         }
       </div>
