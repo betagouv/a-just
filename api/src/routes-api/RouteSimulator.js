@@ -1,7 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
-import { copyArray } from '../utils/array'
+import { execSimulation, getSituation, mergeSituations } from '../utils/simulator'
 import {
   EXECUTE_LAUNCH_SIMULATOR,
   EXECUTE_LAUNCH_WHITE_SIMULATOR,

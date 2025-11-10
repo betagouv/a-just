@@ -13,13 +13,12 @@ import {
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
 import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
-import { getWorkingDaysCount, isDateGreaterOrEqual, month, today } from '../utils/date'
+import { isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
-import { completePeriod, fillMissingContentieux, updateAndMerge, updateLabels } from '../utils/referentiel'
-import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
-import { getHRPositions } from '../utils/calculator'
+import { completePeriod, fillMissingContentieux, updateLabels } from '../utils/referentiel'
+import { generateHRIndexes } from '../utils/human-resource'
 import { loadOrWarmHR, printKeys } from '../utils/redis'
-import { createJob, getJob, setJobProgress, setJobResult, setJobError, cleanupOld } from '../utils/jobStore'
+import { getJob } from '../utils/jobStore'
 import { checkAbort, withAbortTimeout } from '../utils/abordTimeout'
 
 /**
@@ -307,11 +306,7 @@ export default class RouteExtractor extends Route {
 
     // Minimal fix: define a no-op progress callback to avoid ReferenceError
     const onProgress = () => {}
-    const result = await computeExtractor(
-      this.models,
-      { backupId, dateStart, dateStop, categoryFilter, old: true },
-      onProgress,
-    )
+    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
 
     this.sendOk(ctx, result)
     /**

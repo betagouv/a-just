@@ -57,7 +57,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-backup/:backupId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeBackup(ctx) {
     const { backupId } = ctx.params
@@ -77,7 +77,7 @@ export default class RouteHumanResources extends Route {
       backupId: Types.number().required(),
       backupName: Types.string().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async duplicateBackup(ctx) {
     const { backupId, backupName } = this.body(ctx)
@@ -105,7 +105,7 @@ export default class RouteHumanResources extends Route {
       backupId: Types.number(),
       hr: Types.any(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async updateHr(ctx) {
     const { backupId, hr } = this.body(ctx)
@@ -126,7 +126,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-hr/:hrId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeHR(ctx) {
     const { hrId } = ctx.params
@@ -153,7 +153,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-hr-test/:hrId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeHRTest(ctx) {
     if (process.env.NODE_ENV !== 'test') {
@@ -184,7 +184,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-situation/:situationId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeSituation(ctx) {
     const { situationId } = ctx.params
@@ -204,7 +204,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-situation-test/:situationId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeSituationTest(ctx) {
     if (process.env.NODE_ENV !== 'test') {
