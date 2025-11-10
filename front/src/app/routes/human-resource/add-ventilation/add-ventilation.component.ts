@@ -558,6 +558,15 @@ export class AddVentilationComponent extends MainClass implements OnChanges {
             fonctionId: this.form.get('fonctionId')?.value,
             etp: this.form.get('etp')?.value,
           })
+        } else {
+          await this.serverService.post('human-resources/log-situation-update', {
+            hrId: this.human.id,
+            situationId: this.editId,
+            dateStart: activitiesStartDate?.toISOString(),
+            categoryId: this.form.get('categoryId')?.value,
+            fonctionId: this.form.get('fonctionId')?.value,
+            etp: this.form.get('etp')?.value,
+          })
         }
         this.onSaveConfirm.emit()
       }
