@@ -41,6 +41,8 @@ export const EXECUTE_SIMULATOR_PARAM = 315
 export const HUMAN_RESOURCE_PAGE_LOAD = 316
 export const HUMAN_RESOURCE_NEW_SITUATION_SAVED = 317
 export const HUMAN_RESOURCE_SITUATION_UPDATED = 318
+export const VENTILATION_DATE_CHANGE = 319
+export const VENTILATION_CATEGORY_CHANGE = 320
 
 export const START_DATE_SIMULATOR = 350
 export const END_DATE_SIMULATOR = 351
@@ -103,6 +105,8 @@ export const CODES = {
   [HUMAN_RESOURCE_PAGE_LOAD]: "[UTILISATEUR] Un utilisateur vient d'ouvrir une fiche agent",
   [HUMAN_RESOURCE_NEW_SITUATION_SAVED]: "[UTILISATEUR] Enregistrement de nouvelle situation",
   [HUMAN_RESOURCE_SITUATION_UPDATED]: "[UTILISATEUR] Modification d'une situation existante",
+  [VENTILATION_DATE_CHANGE]: "[UTILISATEUR] Changement de la date dans le ventilateur",
+  [VENTILATION_CATEGORY_CHANGE]: "[UTILISATEUR] Changement du filtre de catégorie dans le ventilateur",
   [START_DATE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de début dans le simulateur normal',
   [END_DATE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de fin dans le simulateur normal',
   [DATE_REAFECTATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date dans le réaffectateur',
