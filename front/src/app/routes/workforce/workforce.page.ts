@@ -752,6 +752,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       })
     })
 
+    const backup = this.humanResourceService.backupId.getValue()
+    if (backup) this.humanResourceService.trackVentilationCategoryChange(backup, category.id, category.selected)
     this.onFilterList()
   }
 

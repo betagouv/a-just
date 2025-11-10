@@ -188,7 +188,6 @@ export class HumanResourceService {
   ) {
     return this.serverService.post('human-resources/log-ventilation-options-change', { backupId, ...payload })
   }
-
   /**
    * Création d'une fiche vide
    * @param date
