@@ -1,6 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { EXECUTE_VENTILATION, USER_REMOVE_HR } from '../constants/log-codes'
+import { EXECUTE_VENTILATION, USER_REMOVE_HR, HUMAN_RESOURCE_PAGE_LOAD, HUMAN_RESOURCE_NEW_SITUATION_SAVED } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getBgCategoryColor, getCategoryColor, getHoverCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
@@ -385,6 +385,40 @@ export default class RouteHumanResources extends Route {
   async logVentilationView(ctx) {
     const { backupId } = this.body(ctx)
     await this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id, { backupId })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrId: Types.number().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logHumanResourceView(ctx) {
+    const { hrId } = this.body(ctx)
+    await this.models.Logs.addLog(HUMAN_RESOURCE_PAGE_LOAD, ctx.state.user.id, { hrId })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrId: Types.number().required(),
+      dateStart: Types.any(),
+      categoryId: Types.number(),
+      fonctionId: Types.number(),
+      etp: Types.any(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logSituationSave(ctx) {
+    const { hrId, dateStart, categoryId, fonctionId, etp } = this.body(ctx)
+    await this.models.Logs.addLog(HUMAN_RESOURCE_NEW_SITUATION_SAVED, ctx.state.user.id, {
+      hrId,
+      dateStart,
+      categoryId,
+      fonctionId,
+      etp,
+    })
     this.sendOk(ctx, 'Ok')
   }
 }

@@ -38,6 +38,9 @@ export const EXECUTE_WHITE_SIMULATOR = 312
 export const EXECUTE_LAUNCH_WHITE_SIMULATOR = 313
 export const EXECUTE_SIMULATOR_PARAM = 315
 
+export const HUMAN_RESOURCE_PAGE_LOAD = 316
+export const HUMAN_RESOURCE_NEW_SITUATION_SAVED = 317
+
 export const START_DATE_SIMULATOR = 350
 export const END_DATE_SIMULATOR = 351
 export const DATE_REAFECTATOR = 352
@@ -74,7 +77,7 @@ export const CODES = {
   [ADMIN_CHANGE_USER_ACCESS]: "[ADMIN] Changement des droits de l'utilisateur ${userId}",
   [ADMIN_REMOVE_HR]: '[ADMIN] Suppression de la resource ${hrId}',
 
-  [EXECUTE_VENTILATION]: '[UTILISATEUR] Un utilisateur vient de réaliser une ventilation',
+  [EXECUTE_VENTILATION]: '[UTILISATEUR] Un utilisateur vient de charger le ventilateur',
   [EXECUTE_CALCULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser un calcul',
   [EXECUTE_CALCULATOR_CHANGE_DATE]: "[UTILISATEUR] Un utilisateur vient de réaliser un calcul et à changé la date au lieu d'aujourd'hui",
 
@@ -96,6 +99,8 @@ export const CODES = {
   [EXECUTE_LAUNCH_WHITE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation à blanc',
   [EXECUTE_LAUNCH_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation',
   [EXECUTE_SIMULATOR_PARAM]: '[UTILISATEUR] Un utilisateur vient de réaliser une simulation avec des parametres',
+  [HUMAN_RESOURCE_PAGE_LOAD]: "[UTILISATEUR] Un utilisateur vient d'ouvrir une fiche agent",
+  [HUMAN_RESOURCE_NEW_SITUATION_SAVED]: "[UTILISATEUR] Enregistrement de nouvelle situation",
   [START_DATE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de début dans le simulateur normal',
   [END_DATE_SIMULATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date de fin dans le simulateur normal',
   [DATE_REAFECTATOR]: '[UTILISATEUR] Un utilisateur vient de changer la date dans le réaffectateur',

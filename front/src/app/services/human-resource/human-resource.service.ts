@@ -162,6 +162,10 @@ export class HumanResourceService {
     return this.serverService.post('human-resources/log-ventilation-view', { backupId })
   }
 
+  trackHumanResourceView(hrId: number) {
+    return this.serverService.post('human-resources/log-human-resource-view', { hrId })
+  }
+
   /**
    * Création d'une fiche vide
    * @param date
