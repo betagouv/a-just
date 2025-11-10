@@ -269,7 +269,6 @@ export default class RouteHumanResources extends Route {
 
     if (categoriesIds && categoriesIds.length === 3 && (!contentieuxIds || contentieuxIds.length === 0)) {
       // memorize first execution by user
-      this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
     }
 
     let listFiltered = [...list]
@@ -375,5 +374,17 @@ export default class RouteHumanResources extends Route {
     } else {
       this.sendOk(ctx, null)
     }
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logVentilationView(ctx) {
+    const { backupId } = this.body(ctx)
+    await this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id, { backupId })
+    this.sendOk(ctx, 'Ok')
   }
 }

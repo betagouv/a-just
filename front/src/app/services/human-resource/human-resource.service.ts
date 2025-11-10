@@ -158,6 +158,10 @@ export class HumanResourceService {
       .then((r) => r.data)
   }
 
+  trackVentilationView(backupId: number) {
+    return this.serverService.post('human-resources/log-ventilation-view', { backupId })
+  }
+
   /**
    * Création d'une fiche vide
    * @param date

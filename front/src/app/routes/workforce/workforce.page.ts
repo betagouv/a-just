@@ -281,6 +281,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Accès au réafectateur
    */
   canViewReaffectator: boolean = false
+  hasTrackedVentilationView: boolean = false
   /**
    * Documentation module
    */
@@ -512,6 +513,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) => {
         this.hrBackup = hrBackup
+        if (hrBackup && !this.hasTrackedVentilationView) {
+          this.hasTrackedVentilationView = true
+          this.humanResourceService.trackVentilationView(hrBackup.id)
+        }
         this.onFilterList()
       }),
     )
