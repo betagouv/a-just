@@ -158,6 +158,22 @@ export class HumanResourceService {
       .then((r) => r.data)
   }
 
+  trackVentilationView(backupId: number) {
+    return this.serverService.post('human-resources/log-ventilation-view', { backupId })
+  }
+
+  trackHumanResourceView(hrId: number) {
+    return this.serverService.post('human-resources/log-human-resource-view', { hrId })
+  }
+
+  trackVentilationDateChange(backupId: number, date: Date | string) {
+    return this.serverService.post('human-resources/log-ventilation-date-change', { backupId, date })
+  }
+
+  trackVentilationCategoryChange(backupId: number, categoryId: number, selected: boolean) {
+    return this.serverService.post('human-resources/log-ventilation-category-change', { backupId, categoryId, selected })
+  }
+
   /**
    * Création d'une fiche vide
    * @param date

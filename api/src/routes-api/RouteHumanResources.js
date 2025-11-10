@@ -1,6 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { EXECUTE_VENTILATION, USER_REMOVE_HR } from '../constants/log-codes'
+import { EXECUTE_VENTILATION, USER_REMOVE_HR, HUMAN_RESOURCE_PAGE_LOAD, HUMAN_RESOURCE_NEW_SITUATION_SAVED, HUMAN_RESOURCE_SITUATION_UPDATED, VENTILATION_DATE_CHANGE, VENTILATION_CATEGORY_CHANGE } from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getBgCategoryColor, getCategoryColor, getHoverCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
@@ -269,7 +269,6 @@ export default class RouteHumanResources extends Route {
 
     if (categoriesIds && categoriesIds.length === 3 && (!contentieuxIds || contentieuxIds.length === 0)) {
       // memorize first execution by user
-      this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id)
     }
 
     let listFiltered = [...list]
@@ -375,5 +374,102 @@ export default class RouteHumanResources extends Route {
     } else {
       this.sendOk(ctx, null)
     }
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logVentilationView(ctx) {
+    const { backupId } = this.body(ctx)
+    await this.models.Logs.addLog(EXECUTE_VENTILATION, ctx.state.user.id, { backupId })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrId: Types.number().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logHumanResourceView(ctx) {
+    const { hrId } = this.body(ctx)
+    await this.models.Logs.addLog(HUMAN_RESOURCE_PAGE_LOAD, ctx.state.user.id, { hrId })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrId: Types.number().required(),
+      dateStart: Types.any(),
+      categoryId: Types.number(),
+      fonctionId: Types.number(),
+      etp: Types.any(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logSituationSave(ctx) {
+    const { hrId, dateStart, categoryId, fonctionId, etp } = this.body(ctx)
+    await this.models.Logs.addLog(HUMAN_RESOURCE_NEW_SITUATION_SAVED, ctx.state.user.id, {
+      hrId,
+      dateStart,
+      categoryId,
+      fonctionId,
+      etp,
+    })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      hrId: Types.number().required(),
+      situationId: Types.number().required(),
+      dateStart: Types.any(),
+      categoryId: Types.number(),
+      fonctionId: Types.number(),
+      etp: Types.any(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logSituationUpdate(ctx) {
+    const { hrId, situationId, dateStart, categoryId, fonctionId, etp } = this.body(ctx)
+    await this.models.Logs.addLog(HUMAN_RESOURCE_SITUATION_UPDATED, ctx.state.user.id, {
+      hrId,
+      situationId,
+      dateStart,
+      categoryId,
+      fonctionId,
+      etp,
+    })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      date: Types.date().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logVentilationDateChange(ctx) {
+    const { backupId, date } = this.body(ctx)
+    await this.models.Logs.addLog(VENTILATION_DATE_CHANGE, ctx.state.user.id, { backupId, date })
+    this.sendOk(ctx, 'Ok')
+  }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      categoryId: Types.number().required(),
+      selected: Types.boolean().required(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logVentilationCategoryChange(ctx) {
+    const { backupId, categoryId, selected } = this.body(ctx)
+    await this.models.Logs.addLog(VENTILATION_CATEGORY_CHANGE, ctx.state.user.id, { backupId, categoryId, selected })
+    this.sendOk(ctx, 'Ok')
   }
 }
