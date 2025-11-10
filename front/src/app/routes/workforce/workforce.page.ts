@@ -281,6 +281,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Accès au réafectateur
    */
   canViewReaffectator: boolean = false
+  hasTrackedVentilationView: boolean = false
   /**
    * Documentation module
    */
@@ -512,6 +513,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) => {
         this.hrBackup = hrBackup
+        if (hrBackup && !this.hasTrackedVentilationView) {
+          this.hasTrackedVentilationView = true
+          this.humanResourceService.trackVentilationView(hrBackup.id)
+        }
         this.onFilterList()
       }),
     )
@@ -724,6 +729,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onSelectCategory(category: HRCategorySelectedInterface) {
     this.isLoading = true
+    const previousSelected = category.selected
     if (category.selected && this.filterParams && this.filterParams.filterValues) {
       const fonctions = await this.hrFonctionService.getAll()
       const getIdOfFonctions = fonctions.filter((f) => category.id === f.categoryId).map((f) => f.id)
@@ -746,6 +752,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       })
     })
 
+    const backup = this.humanResourceService.backupId.getValue()
+    if (backup) this.humanResourceService.trackVentilationCategoryChange(backup, category.id, category.selected)
     this.onFilterList()
   }
 
@@ -1015,6 +1023,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
+    const backup = this.humanResourceService.backupId.getValue()
+    if (backup) this.humanResourceService.trackVentilationDateChange(backup, date)
     this.onFilterList()
   }
 
