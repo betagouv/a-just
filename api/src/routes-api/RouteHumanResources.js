@@ -472,4 +472,23 @@ export default class RouteHumanResources extends Route {
     await this.models.Logs.addLog(VENTILATION_CATEGORY_CHANGE, ctx.state.user.id, { backupId, categoryId, selected })
     this.sendOk(ctx, 'Ok')
   }
+
+  @Route.Post({
+    bodyType: Types.object().keys({
+      backupId: Types.number().required(),
+      sort: Types.any(),
+      order: Types.any(),
+      display: Types.any(),
+      filterValues: Types.any(),
+      filterIndispoValues: Types.any(),
+      referentielIds: Types.any(),
+      subReferentielIds: Types.any(),
+    }),
+    accesses: [Access.canVewHR],
+  })
+  async logVentilationOptionsChange(ctx) {
+    const { backupId, ...changes } = this.body(ctx)
+    await this.models.Logs.addLog(VENTILATION_CATEGORY_CHANGE, ctx.state.user.id, { backupId, ...changes })
+    this.sendOk(ctx, 'Ok')
+  }
 }

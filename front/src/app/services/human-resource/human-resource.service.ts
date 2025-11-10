@@ -174,6 +174,20 @@ export class HumanResourceService {
     return this.serverService.post('human-resources/log-ventilation-category-change', { backupId, categoryId, selected })
   }
 
+  trackVentilationOptionsChange(
+    backupId: number,
+    payload: {
+      sort?: any
+      order?: any
+      display?: any
+      filterValues?: any
+      filterIndispoValues?: any
+      referentielIds?: any
+      subReferentielIds?: any
+    },
+  ) {
+    return this.serverService.post('human-resources/log-ventilation-options-change', { backupId, ...payload })
+  }
   /**
    * Création d'une fiche vide
    * @param date
