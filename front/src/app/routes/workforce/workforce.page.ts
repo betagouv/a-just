@@ -1398,6 +1398,74 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.filterPanelSnapshot = null
   }
 
+  onToggleFilterPanel() {
+    if (!this.showFilterPanel) {
+      this.captureFilterPanelSnapshot()
+      this.showFilterPanel = true
+    } else {
+      this.onFilterPanelClose()
+    }
+  }
+
+  private normalizeArray(a: any[] | null | undefined) {
+    if (!a) return null
+    return [...a].map((v) => +v).sort((x, y) => x - y)
+  }
+
+  private captureFilterPanelSnapshot() {
+    const fp = this.filterParams || ({} as any)
+    this.filterPanelSnapshot = {
+      sort: fp.sort || null,
+      order: fp.order || null,
+      display: fp.display || null,
+      filterValues: this.normalizeArray(fp.filterValues || null),
+      filterIndispoValues: this.normalizeArray(fp.filterIndispoValues || null),
+      referentielIds: this.normalizeArray(this.selectedReferentielIds || []),
+      subReferentielIds: this.normalizeArray(this.selectedSubReferentielIds || null),
+    }
+  }
+
+  onFilterPanelClose() {
+    const wasOpenSnapshot = this.filterPanelSnapshot
+    this.showFilterPanel = false
+    const fp = this.filterParams || ({} as any)
+    const current = {
+      sort: fp.sort || null,
+      order: fp.order || null,
+      display: fp.display || null,
+      filterValues: this.normalizeArray(fp.filterValues || null),
+      filterIndispoValues: this.normalizeArray(fp.filterIndispoValues || null),
+      referentielIds: this.normalizeArray(this.selectedReferentielIds || []),
+      subReferentielIds: this.normalizeArray(this.selectedSubReferentielIds || null),
+    }
+
+    const changed =
+      !wasOpenSnapshot ||
+      wasOpenSnapshot.sort !== current.sort ||
+      wasOpenSnapshot.order !== current.order ||
+      wasOpenSnapshot.display !== current.display ||
+      JSON.stringify(wasOpenSnapshot.filterValues) !== JSON.stringify(current.filterValues) ||
+      JSON.stringify(wasOpenSnapshot.filterIndispoValues) !== JSON.stringify(current.filterIndispoValues) ||
+      JSON.stringify(wasOpenSnapshot.referentielIds) !== JSON.stringify(current.referentielIds) ||
+      JSON.stringify(wasOpenSnapshot.subReferentielIds) !== JSON.stringify(current.subReferentielIds)
+
+    if (changed) {
+      const backup = this.humanResourceService.backupId.getValue()
+      if (backup)
+        this.humanResourceService.trackVentilationOptionsChange(backup, {
+          sort: current.sort,
+          order: current.order,
+          display: current.display,
+          filterValues: current.filterValues,
+          filterIndispoValues: current.filterIndispoValues,
+          referentielIds: current.referentielIds,
+          subReferentielIds: current.subReferentielIds,
+        })
+    }
+
+    this.filterPanelSnapshot = null
+  }
+
   /**
    * Supprimer le filtre des contentieux
    */
