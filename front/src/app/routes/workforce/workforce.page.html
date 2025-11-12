@@ -15,11 +15,11 @@
         (valueChange)="onDateChanged($event)"></aj-date-select>
       <div class="position-relative">
         <aj-empty-input title="Options d'affichage" [value]="getOptionAffichageString() ? 'Personnalisé' : 'Aucune'"
-          (click)="showFilterPanel = !showFilterPanel" class="cursor-pointer" icon="filter-2-line"></aj-empty-input>
+          (click)="onToggleFilterPanel()" class="cursor-pointer" icon="filter-2-line"></aj-empty-input>
         @if (showFilterPanel) {
         <filter-panel (update)="updateFilterParams($event)" [orderValue]="filterParams && filterParams.order"
           [sortValue]="filterParams && filterParams.sort" [categories]="humanResourceService.categoriesFilterListIds"
-          [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = false"
+          [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="onFilterPanelClose()"
           [filterIndispoValues]="(filterParams && filterParams.filterIndispoValues) || null"
           [referentielIds]="selectedReferentielIds" [subReferentielIds]="selectedSubReferentielIds"
           [referentiels]="formReferentiel"
