@@ -310,11 +310,7 @@ export default class RouteExtractor extends Route {
 
     // Minimal fix: define a no-op progress callback to avoid ReferenceError
     const onProgress = () => {}
-    const result = await computeExtractor(
-      this.models,
-      { backupId, dateStart, dateStop, categoryFilter, old: true },
-      onProgress,
-    )
+    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
 
     this.sendOk(ctx, result)
     /**
@@ -379,14 +375,15 @@ export default class RouteExtractor extends Route {
     let query = { start: new Date(dateStart), end: new Date(dateStop) }
     let logs = new Array()
     let hr = await loadOrWarmHR(backupId, this.models)
+    hr = hr.filter((h) => h.id === 25373)
     hr = hr.filter((h) => isHumanPresentOnInterval(h, query))
     const indexes = await generateHRIndexes(hr, true)
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
-    const mapRefIdsToLabels = buildIdToLabelMap(referentiels)
     const CETId = await this.models.ContentieuxReferentiels.getContentieuxIdByLabel(CET_LABEL)
     const juridictionName = await this.models.HRBackups.findById(backupId)
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
     const { flatReferentiel, ctxL3, indispoL3 } = await createFlatReferentiel([...referentiels])
+    const mapRefIdsToLabels = buildIdToLabelMap(flatReferentiel)
 
     let emptyFlatMapReferentiel = flatReferentiel.reduce((acc, item) => {
       acc.set(item.id, 0)
@@ -395,7 +392,11 @@ export default class RouteExtractor extends Route {
     const periodsByDate = indexes.intervalTree.search(query.start, query.end) //Récuparations de tous les segments sur un interval
 
     // ------------------------- 2) CALCULS -------------------------
-    const { onglet1: rawOnglet1, onglet2: rawOnglet2 } = generateOnglets({
+    const {
+      onglet1: rawOnglet1,
+      onglet2: rawOnglet2,
+      ongletLogs,
+    } = generateOnglets({
       hr,
       query,
       indexes,
@@ -415,8 +416,8 @@ export default class RouteExtractor extends Route {
     let onglet1 = orderBy(rawOnglet1, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
     let onglet2 = orderBy(rawOnglet2, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
 
-    onglet1 = onglet1.filter((x) => categoryFilter.includes(String(x['Catégorie'] || '').toLowerCase()))
-    onglet2 = onglet2.filter((x) => categoryFilter.includes(String(x['Catégorie'] || '').toLowerCase()))
+    onglet1 = onglet1.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
+    onglet2 = onglet2.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
 
     const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
     const functionList = await this.models.HRFonctions.getAllFormatDdg()
@@ -441,6 +442,7 @@ export default class RouteExtractor extends Route {
       onglet1: onglet1Data,
       onglet2: onglet2Data,
       allJuridiction,
+      ongletLogs,
     })
 
     console.timeEnd('NEW PERF')

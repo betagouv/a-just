@@ -168,6 +168,14 @@ export class ExcelService extends MainClass {
     this._excelSpan = undefined
   }
 
+  // Affiche un message d'erreur spécifique si pas de valeurs, sinon message générique
+  private showExtractionError(err: any) {
+    const msg = 'Aucunes données à exporter pour les critères sélectionnés'
+    console.error('[extractor] error', err)
+    const isNoValues = err && ((err.message && err.message === msg) || err === msg)
+    alert(isNoValues ? msg : 'Erreur génération fichier')
+  }
+
   /**
    * Constructeur
    * @param humanResourceService
@@ -274,7 +282,7 @@ export class ExcelService extends MainClass {
           try {
             const data = { data: directData } as any
             this.tabs = data.data
-
+            if (this.tabs.onglet1.values.length === 0) throw new Error('Aucunes données à exporter pour les critères sélectionnés')
             let viewModel: any = {
               ...this.tabs.viewModel,
               fonctions: data.data.fonctions,
@@ -313,8 +321,7 @@ export class ExcelService extends MainClass {
             await FileSaver.saveAs(new Blob([out]), filename + EXCEL_EXTENSION)
             this._finishExcelTxn('success')
           } catch (e2) {
-            console.error('[extractor] direct flow failed', e2)
-            alert('Erreur génération fichier')
+            this.showExtractionError(e2)
             this._finishExcelTxn('error')
           } finally {
             this.isLoading.next(false)
@@ -401,7 +408,7 @@ export class ExcelService extends MainClass {
                 this._finishExcelTxn('success')
               } catch (err) {
                 console.error(err)
-                alert('Erreur génération fichier')
+                this.showExtractionError(err)
                 this._finishExcelTxn('error')
               }
               return
@@ -510,8 +517,9 @@ export class ExcelService extends MainClass {
     const indexTabAjust = this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0
 
     report = this.userService.isTJ() ? await this.setJuridictionPickers(report, viewModel) : this.setMatriceJuridiction(report, viewModel)
-
+    //console.log(report.worksheets[this.findIndexByName(report.worksheets, 'ETPT Format DDG DETAIL') || 0])
     report = this.setRedGapConditionnalFormating(report, viewModel)
+    report = this.setYellowMainDetailsConditionnalFormating(report, viewModel)
     report = this.setColWidth(report)
 
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
@@ -1210,6 +1218,36 @@ export class ExcelService extends MainClass {
   }
 
   /**
+   * Définition du formatage conditionnel
+   * @param report
+   * @param viewModel
+   * @returns
+   */
+  setYellowMainDetailsConditionnalFormating(report: any, viewModel: any) {
+    const etptDDGIndex = this.findIndexByName(report.worksheets, 'ETPT Format DDG DETAIL') || 0
+
+    // nombre de lignes à couvrir (fallback robuste)
+    const logCount = Math.max(0, Object.keys(viewModel.ongletLogs || {}).length + 1)
+    // garantir au moins la ligne 2
+    const lastRow = Math.max(2, logCount)
+
+    console.log(report.worksheets[etptDDGIndex])
+    // listes des plages (préfixe jusqu'à la dernière ligne)
+    const ranges = ['A2:F', 'G2:N', 'I2:K', 'L2:L', 'N2:N', 'O2:O', 'O2:U', 'Q2:R', 'S2:S', 'U2:U']
+
+    ranges.forEach((prefix, idx) => {
+      const ref = `${prefix}${lastRow}`
+      const cf = report.worksheets[etptDDGIndex].conditionalFormattings[idx + 1]
+      if (cf) {
+        cf.ref = ref
+        if (cf.rules) cf.rules.ref = ref
+      }
+    })
+
+    return report
+  }
+
+  /**
    * Initie le selecteur de juridiction
    * @param report
    * @param indexCell
@@ -1513,20 +1551,5 @@ export class ExcelService extends MainClass {
     }
 
     return report
-  }
-
-  getCache() {
-    const startTime = performance.now()
-    return this.serverService
-      .postWithoutError(`extractor/get-cache`, {
-        backupId: this.humanResourceService.backupId.getValue(),
-      })
-      .then(async (data) => {
-        const endTime = performance.now()
-        const duration = endTime - startTime
-
-        console.log('Durée de la requête getCache (en ms):', duration.toFixed(2))
-        console.log(data)
-      })
   }
 }

@@ -710,6 +710,7 @@ export const getViewModel = async (params) => {
   }
 
   return {
+    ongletLogs: params.ongletLogs,
     tgilist,
     tpxlist,
     cphlist,
@@ -1445,12 +1446,63 @@ export const isHumanPresentOnInterval = (human, query) => {
   return he >= qs && hs <= qe
 }
 
-export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatReferentiel, isJirs, juridictionName) {
+function isolateAbsenteismeAndDelegation(obj) {
+  if (!obj || typeof obj !== 'object') return { remaining: {}, absOrdered: {}, delegationEntry: null }
+
+  const normalize = (s) =>
+    String(s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+  // Préparer une liste de tuples { key, value, nk } pour n'avoir qu'une normalization par clé
+  const entries = Object.keys(obj).map((k) => ({ k, v: obj[k], nk: normalize(k) }))
+
+  const absOrdered = {}
+  const removed = new Set()
+
+  // 1) extraire les absences selon ABSENTEISME_LABELS (ordre contrôlé par ABSENTEISME_LABELS)
+  for (const label of ABSENTEISME_LABELS) {
+    const nl = normalize(label)
+    // récupérer les clés correspondantes non encore retirées
+    const matches = entries.filter((e) => !removed.has(e.k) && e.nk.includes(nl)).sort((a, b) => a.k.localeCompare(b.k, 'fr'))
+    for (const m of matches) {
+      absOrdered[m.k] = m.v
+      removed.add(m.k)
+    }
+  }
+
+  // 3) délégation TJ (matching insensible à casse/accents)
+  const ndel = normalize(DELEGATION_TJ)
+  const delegationEntryKey = entries.find((e) => !removed.has(e.k) && (e.nk.includes(ndel) || e.nk.includes('delegation tj')))
+  let delegationEntry = null
+  if (delegationEntryKey) {
+    delegationEntry = { [delegationEntryKey.k]: delegationEntryKey.v }
+    removed.add(delegationEntryKey.k)
+  }
+
+  // remaining : reconstruire en conservant l'ordre d'origine pour les clés non retirées
+  const remaining = {}
+  for (const e of entries) {
+    if (!removed.has(e.k)) remaining[e.k] = e.v
+  }
+
+  return { remaining, absOrdered, delegationEntry }
+}
+
+export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatReferentiel, isJirs, juridictionName, logs, query, indispoL3) {
   let filledVentilations = mapIdToLabelObject(filledReferentiel, flatReferentiel)
   filledVentilations = Object.fromEntries(
     Object.entries(filledVentilations).filter(([k]) => !['14.2. COMPTE ÉPARGNE TEMPS', '12.2. COMPTE ÉPARGNE TEMPS'].includes(k)),
   )
   if (human.juridiction && human.juridiction.length !== 0) human.juridiction = human.juridiction.replaceAll('TPR ', 'TPRX ')
+
+  const { remaining, absOrdered, delegationEntry } = isolateAbsenteismeAndDelegation(filledVentilations)
+  //let remaining = filledVentilations
+  //let absOrdered = {}
+  //let delegationEntry = null
 
   let gaps = null
   if (isCa()) {
@@ -1465,7 +1517,7 @@ export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatRefer
       ['Ecart JI → détails manquants, à rajouter dans A-JUST']: null,
     }
   }
-  return {
+  const agentDdg = {
     ['Réf.']: String(human.id),
     Arrondissement: juridictionName.label,
     Jirs: isJirs ? 'x' : '',
@@ -1485,13 +1537,18 @@ export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatRefer
     ['Temps ventilés sur la période (hors action 99)']: abs.effectiveEtp ?? 0,
     ['Ecart → ventilations manquantes dans A-JUST']: abs.realEtp - abs.effectiveEtp,
     ...gaps,
-    ...filledVentilations,
+    ...remaining, //...filledVentilations,
     ['CET > 30 jours']: abs.CET ?? 0,
     ['CET < 30 jours']: abs['CET<30'] ?? 0,
-    // Mettre l'absenteisme ici
+    ...absOrdered, // Mettre l'absenteisme ici
     ['TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)']: abs.absenteisme ?? 0,
-    // Mettre la délégation TJ à la fin
+    ...delegationEntry, // Mettre la délégation TJ à la fin
   }
+
+  logs.push(
+    buildEmptyLogEntry(human, pData, abs.absenteisme, filledVentilations, filledReferentiel.get(indispoL3) ?? null, abs.realEtp, abs.effectiveEtp, true),
+  )
+  return { agentDdg, logs }
 }
 
 export function generateOnglets({
@@ -1533,6 +1590,19 @@ export function generateOnglets({
       const filteredPeriods = periodsByDate.filter((period) => segments.includes(period.periodId))
       const nbOfWorkingDaysQuery = getWorkingDaysCount(query.start, query.end)
 
+      // ajouter dans `logs` un "segment vide" si le 1er segment commence après le début de la requête
+      logs = pushMissingSegmentLog({
+        filteredPeriods,
+        human,
+        query,
+        nbOfWorkingDaysQuery,
+        logs,
+        totalCETWorkingDays,
+        emptyFlatMapReferentiel,
+        indispoL3,
+        pData,
+      })
+
       // Pour chaque période stable
       filteredPeriods.forEach((period) => {
         const periodStart = Math.max(today(period.start), today(query.start)) // Ajustement des dates en fonction de l'intervalle de requête
@@ -1543,8 +1613,10 @@ export function generateOnglets({
         let log = cloneDeep({ ventilations: [], indisponibilites: [] })
         let logAccVentilation = 0
         let logAccIndip = 0
+        let logAccAction99Ddg = 0
         let currentAbsEffectiveEtp = 0 // Effective ETP du segment avec abs réintégré
         let totalIndispoRate = 0
+        let absOnPeriod = 0
 
         // Exclure les période après un départ
         if (human?.dateEnd && (comparerDatesJourMoisAnnee(today(period.start), hrEndDate) || estApresJourMoisAnnee(today(period.start), hrEndDate))) {
@@ -1561,11 +1633,13 @@ export function generateOnglets({
 
           currentEffectiveAbs = periodDetails.indisponibilities.reduce((sum, i) => {
             const rate = ((i.percent || 0) / 100) * alpha
-            //console.log('indispo final', rate)
+            console.log('indispo final', rate)
             return absMap.has(i?.contentieux.label) ? sum + rate : sum
           }, 0)
 
-          abs.absenteisme = (abs.absenteisme ?? 0) + (currentEffectiveAbs * workingDays) / nbOfWorkingDaysQuery
+          absOnPeriod = (currentEffectiveAbs * workingDays) / nbOfWorkingDaysQuery
+          console.log(absOnPeriod)
+          abs.absenteisme = (abs.absenteisme ?? 0) + absOnPeriod
         }
         currentAbsEffectiveEtp = currentEffectiveAbs + period.effectiveETP
         //Ventilations
@@ -1576,13 +1650,12 @@ export function generateOnglets({
 
           let contentieux = (effectiveETP * workingDays) / nbOfWorkingDaysQuery
           let contentieuxDdg = (effectiveETPDdg * workingDays) / nbOfWorkingDaysQuery
-          //console.log('ACT', activityId, fixDecimal(contentieuxDdg, 1000))
           if (activityId !== indispoL3) {
-            log.ventilations.push({ ctx: mapRefIdsToLabels.get(String(activityId)), value: contentieux })
+            log.ventilations.push({ ctx: mapRefIdsToLabels.get(String(activityId)), value: contentieuxDdg })
             tmpAjustFlatMapReferentiel.set(activityId, (tmpAjustFlatMapReferentiel.get(activityId) ?? 0) + contentieux)
             tmpDdgFlatMapReferentiel.set(activityId, (tmpDdgFlatMapReferentiel.get(activityId) ?? 0) + contentieuxDdg)
             if (ctxL3.includes(activityId)) {
-              logAccVentilation += contentieux
+              logAccVentilation += contentieuxDdg
               etpts.effectiveEtp = (etpts.effectiveEtp ?? 0) + contentieux
               abs.effectiveEtp = (abs.effectiveEtp ?? 0) + contentieuxDdg
             }
@@ -1609,16 +1682,16 @@ export function generateOnglets({
 
             if (indispo.contentieux.label !== DELEGATION_TJ) {
               logAccIndip += indisponibilite
-              log.indisponibilites.push({ ctx: 'TOTAL INDISPONIBILITÉS', value: indisponibilite })
               tmpAjustFlatMapReferentiel.set(indispoL3, (tmpAjustFlatMapReferentiel.get(indispoL3) ?? 0) + indisponibilite)
             }
             if (indispo.contentieux.label !== INDISPO_L3) {
-              log.indisponibilites.push({ ctx: indispo.contentieux.label, value: indisponibilite })
+              log.indisponibilites.push({ ctx: indispo.contentieux.label, value: ddgIndisponibilite })
               tmpAjustFlatMapReferentiel.set(indispo.contentieux.id, (tmpAjustFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + indisponibilite)
               tmpDdgFlatMapReferentiel.set(indispo.contentieux.id, (tmpDdgFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + ddgIndisponibilite)
-              //console.log('indispo finals', CETLessThan30days, indispo.contentieux.label, ddgIndisponibilite)
             }
             if (![INDISPO_L3, DELEGATION_TJ, ...absLabels].includes(indispo.contentieux.label)) {
+              log.indisponibilites.push({ ctx: 'TOTAL INDISPONIBILITÉS', value: ddgIndisponibilite })
+              logAccAction99Ddg += ddgIndisponibilite
               tmpDdgFlatMapReferentiel.set(indispoL3, (tmpDdgFlatMapReferentiel.get(indispoL3) ?? 0) + ddgIndisponibilite)
             }
           })
@@ -1630,20 +1703,32 @@ export function generateOnglets({
         pData.fonctionCategory = periodDetails.fonction?.category_detail ?? pData.fonction
 
         //Add logs
-        logs.push({
-          periodStart: formatDate(periodStart),
-          periodEnd: formatDate(periodEnd),
-          nbOfWorkingDaysQuery,
-          workingDays,
-          etpts,
-          logAccVentilation,
-          period,
-          totalIndispo: logAccIndip,
-          effectiveETP: period.effectiveETP,
-          ventilations: log.ventilations,
-          indisponibilities: log.indisponibilites,
-        })
+        if (workingDays !== 0)
+          logs.push(
+            buildLogEntry({
+              human,
+              pData,
+              periodStart,
+              periodEnd,
+              nbOfWorkingDaysQuery,
+              workingDays,
+              period,
+              totalIndispoRate,
+              logAccIndip,
+              totalCETWorkingDays,
+              absOnPeriod,
+              indispoL3: logAccAction99Ddg,
+              currentAbsEffectiveEtp,
+              logAccVentilation,
+              log,
+            }),
+          )
       })
+
+      if (filteredPeriods.length === 0) {
+        // ajouter dans `logs` un "segment vide" si l'agent n'a pas de période stable sur la requête
+        logs.push(buildEmptyLogEntry(human))
+      }
     }
 
     //CET
@@ -1658,8 +1743,11 @@ export function generateOnglets({
     }
 
     let agent = fillAgentData(human, pData, etpts, tmpAjustFlatMapReferentiel, flatReferentiel, isJirs, juridictionName)
-    let agentDdg = fillAgentDataDdg(human, pData, abs, tmpDdgFlatMapReferentiel, flatReferentiel, isJirs, juridictionName)
+    let resultDdg = fillAgentDataDdg(human, pData, abs, tmpDdgFlatMapReferentiel, flatReferentiel, isJirs, juridictionName, logs, query, indispoL3)
+    let agentDdg = resultDdg.agentDdg
+    logs = resultDdg.logs
 
+    /**
     // Ajouter un formatage différent de l'extracteur DDG
     for (const [key, value] of Object.entries(agent)) {
       if (isNumber(value) && value !== 0) agent[key] = fixDecimal(value, 10000)
@@ -1671,10 +1759,172 @@ export function generateOnglets({
       if (key == 'Ecart → ventilations manquantes dans A-JUST' && [NaN, 0].includes(agentDdg[key])) agentDdg[key] = '-'
       if (key == 'TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)' && agentDdg[key] === null) agentDdg[key] = 0
     }
+    */
 
     onglet1.push(agent)
     onglet2.push(agentDdg)
   })
 
-  return { onglet1, onglet2 }
+  //logs.sort((a, b) => a.id - b.id || a.periodStart - b.periodStart)
+  logs = orderBy(logs, ['id', 'periodStartTimestamp'], ['asc', 'desc'])
+
+  return { onglet1, onglet2, ongletLogs: logs }
+}
+
+function formatCtxEntries(entries) {
+  // Sépare par un point intercalé pour meilleure lisibilité
+  return entries.map((x) => `${x.ctx} => ${fixDecimal(x.value, 1000)}`).join(' · ')
+}
+
+/**
+ * Transforme un objet en une chaîne de caractères formatée pour le contexte des logs
+ * @param {*} obj
+ * @returns
+ */
+export function mapObjectToCtxString(obj) {
+  if (!obj || typeof obj !== 'object') return ''
+  return Object.entries(obj)
+    .filter(([, v]) => v !== 0 && v !== null && v !== undefined)
+    .map(([k, v]) => {
+      const n = typeof v === 'number' ? v : parseFloat(String(v).replace(',', '.'))
+      const display = Number.isFinite(n) ? (Number.isInteger(n) ? String(n) : String(Math.round(n * 1000) / 1000)) : String(v)
+      return `${k} => ${display}`
+    })
+    .join(' · ')
+}
+
+/**
+ * Retourne une log entry ne contenant que l'id et le name (tout le reste null)
+ * @param {{ id: any, firstName?: string, lastName?: string, matricule?: string }} human
+ * @returns {Object}
+ */
+export function buildEmptyLogEntry(
+  human,
+  pData = null,
+  absOnPeriod = null,
+  tmpDdgFlatMapReferentiel = null,
+  action99 = null,
+  currentAbsEffectiveEtp = null,
+  logAccVentilation = null,
+  main = false,
+) {
+  return {
+    id: human.id,
+    name: `${human.firstName || ''} ${human.lastName || ''} ${human.matricule ?? ''}`.trim(),
+    category: pData?.category || null,
+    humanStart: human.dateStart ? formatDate(human.dateStart) : null,
+    humanEnd: human.dateEnd ? formatDate(human.dateEnd) : null,
+    periodStart: null, //query.start ? formatDate(query.start) : null,
+    periodEnd: null, // query.end ? formatDate(query.end) : null,
+    nbOfWorkingDaysQuery: null,
+    workingDays: null,
+    dayRate: null,
+    filledEtp: null,
+    queryEtpValue: null,
+    totalIndispo: null,
+    queryIndispoValue: null,
+    cetDays: null,
+    abs: absOnPeriod !== null && absOnPeriod !== 0 ? absOnPeriod : null,
+    action99: action99 !== null && action99 !== 0 ? action99 : null,
+    effectifEtp: currentAbsEffectiveEtp !== null ? (currentAbsEffectiveEtp ?? 0) : null,
+    logAccVentilation: logAccVentilation !== null ? logAccVentilation : null,
+    ctx: tmpDdgFlatMapReferentiel ? mapObjectToCtxString(tmpDdgFlatMapReferentiel) : null,
+    periodStartTimestamp: null,
+    main: main ? 'x' : '',
+  }
+}
+
+function buildLogEntry({
+  human,
+  pData,
+  periodStart,
+  periodEnd,
+  nbOfWorkingDaysQuery,
+  workingDays,
+  period,
+  totalIndispoRate,
+  logAccIndip,
+  totalCETWorkingDays,
+  absOnPeriod,
+  indispoL3,
+  currentAbsEffectiveEtp,
+  logAccVentilation,
+  log,
+}) {
+  return {
+    id: human.id,
+    name: `${human.firstName} ${human.lastName} ${human.matricule ?? ''}`,
+    category: pData.category,
+    humanStart: formatDate(human.dateStart),
+    humanEnd: human.dateEnd ? formatDate(human.dateEnd) : null,
+    periodStart: formatDate(periodStart),
+    periodEnd: formatDate(periodEnd),
+    nbOfWorkingDaysQuery,
+    workingDays,
+    dayRate: workingDays / nbOfWorkingDaysQuery,
+    filledEtp: period.etp,
+    queryEtpValue: (period.etp * workingDays) / nbOfWorkingDaysQuery,
+    totalIndispo: totalIndispoRate !== 0 ? totalIndispoRate : null,
+    queryIndispoValue: totalIndispoRate !== 0 ? logAccIndip : null,
+    cetDays: totalCETWorkingDays !== 0 ? totalCETWorkingDays : null,
+    abs: absOnPeriod !== 0 ? absOnPeriod : null,
+    action99: indispoL3 !== 0 ? indispoL3 : null,
+    effectifEtp: ((currentAbsEffectiveEtp ?? 0) * workingDays) / nbOfWorkingDaysQuery,
+    logAccVentilation: logAccVentilation,
+    ctx: formatCtxEntries([...log.ventilations, ...log.indisponibilites]),
+    periodStartTimestamp: today(periodStart).getTime(),
+    main: '',
+  }
+}
+
+function pushMissingSegmentLog({ filteredPeriods, human, query, nbOfWorkingDaysQuery, logs, totalCETWorkingDays, emptyFlatMapReferentiel, indispoL3, pData }) {
+  if (!filteredPeriods || !filteredPeriods.length) return logs
+
+  const sorted = [...filteredPeriods].sort((a, b) => today(a.start) - today(b.start))
+  const first = sorted[0]
+  const queryStartDate = today(query.start)
+  const agentArrival = human?.dateStart ? today(human.dateStart) : queryStartDate
+  const gapStart = Math.max(queryStartDate, agentArrival)
+  const firstStartDate = today(first.start)
+
+  if (firstStartDate.getTime() <= gapStart) return logs
+
+  // couvrir le trou depuis gapStart jusqu'au jour précédent le premier segment
+  const missingStart = gapStart
+  const missingEnd = new Date(firstStartDate)
+  missingEnd.setDate(missingEnd.getDate() - 1)
+
+  const missingWorkingDays = getWorkingDaysCount(missingStart, missingEnd)
+  if (missingWorkingDays <= 0) return logs
+
+  const syntheticPeriod = {
+    periodId: `missing-${human.id}-${today(missingStart).getTime()}`,
+    start: missingStart,
+    end: missingEnd,
+    etp: 0,
+    effectiveETP: 0,
+    activityIds: new Map(),
+  }
+  const syntheticLog = cloneDeep({ ventilations: [], indisponibilites: [] })
+
+  logs.push(
+    buildLogEntry({
+      human,
+      pData,
+      periodStart: missingStart,
+      periodEnd: missingEnd,
+      nbOfWorkingDaysQuery,
+      workingDays: missingWorkingDays,
+      period: syntheticPeriod,
+      totalIndispoRate: 0,
+      logAccIndip: 0,
+      totalCETWorkingDays,
+      absOnPeriod: 0,
+      indispoL3,
+      currentAbsEffectiveEtp: 0,
+      logAccVentilation: 0,
+      log: syntheticLog,
+    }),
+  )
+  return logs
 }
