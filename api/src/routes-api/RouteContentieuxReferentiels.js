@@ -12,7 +12,7 @@ export default class RouteContentieuxReferentiels extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.ContentieuxReferentiels
@@ -28,9 +28,12 @@ export default class RouteContentieuxReferentiels extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async getReferentiels (ctx) {
+  async getReferentiels(ctx) {
     const { backupId, isJirs } = this.body(ctx)
-    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null))
+    this.sendOk(ctx, {
+      referentiels: await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null),
+      isComplete: true,
+    })
   }
 
   /**
@@ -44,7 +47,7 @@ export default class RouteContentieuxReferentiels extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async update (ctx) {
+  async update(ctx) {
     const { id, node, value } = this.body(ctx)
     await this.models.ContentieuxReferentiels.updateRef(id, node, value || null)
 

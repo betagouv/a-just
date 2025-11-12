@@ -215,7 +215,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     private hrCategoryService: HRCategoryService,
     public appService: AppService,
     private hrCommentService: HRCommentService,
-    private userService: UserService,
+    public userService: UserService,
   ) {
     super()
 

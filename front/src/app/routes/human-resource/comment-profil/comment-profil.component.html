@@ -21,6 +21,7 @@
     <label>{{ currentUser.firstName + ' ' + currentUser.lastName }}</label>
   </div>
   }
+  @if(userService.canEditHR()) {
   <div id="panel-content" class="panel-content">
     @if (!isEditing) {
     <div class="placeholder">
@@ -33,7 +34,8 @@
       [resetEditor]="resetEditor" (resetField)="resetEditor = false"
       (click)="$event.stopPropagation()"></aj-text-editor>
   </div>
-  @if (isEditing) {
+  }
+  @if (isEditing && userService.canEditHR()) {
   <div class="footer-panel">
     <div class="back" (click)="back(); $event.stopPropagation()">Annuler</div>
     <div class="save" [ngClass]="{ disabled: !currentComment.length }" (click)="save(); $event.stopPropagation()">

@@ -22,8 +22,15 @@ import {
   USER_ACCESS_DASHBOARD_READER,
   USER_ACCESS_REAFFECTATOR_READER,
   USER_ACCESS_SIMULATOR_READER,
+  USER_ACCESS_SIMULATOR_WRITER,
+  USER_ACCESS_WHITE_SIMULATOR_WRITER,
   USER_ACCESS_VENTILATIONS_READER,
   USER_ACCESS_WHITE_SIMULATOR_READER,
+  USER_ACCESS_REAFFECTATOR_WRITER,
+  USER_ACCESS_CALCULATOR_WRITER,
+  USER_ACCESS_AVERAGE_TIME_WRITER,
+  USER_ACCESS_ACTIVITIES_WRITER,
+  USER_ACCESS_VENTILATIONS_WRITER,
 } from '../../constants/user-access'
 
 /**
@@ -84,6 +91,55 @@ export class UserService implements OnInit {
   canViewTempsMoyens = computed(() => {
     const user = this.user.getValue()
     return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
+  })
+  /**
+   * User can edit simulator
+   */
+  canEditSimulator = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1 ? true : false
+  })
+  /**
+   * User can edit white simulator
+   */
+  canEditWhiteSimulator = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1 ? true : false
+  })
+  /**
+   * User can edit reaffectator
+   */
+  canEditReaffectator = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1 ? true : false
+  })
+  /**
+   * User can edit average time
+   */
+  canEditTempsMoyens = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1 ? true : false
+  })
+  /**
+   * User can edit activities
+   */
+  canEditActivities = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_WRITER) !== -1 ? true : false
+  })
+  /**
+   * User can edit calculator
+   */
+  canEditCalculator = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR_WRITER) !== -1 ? true : false
+  })
+  /**
+   * User can edit HR
+   */
+  canEditHR = computed(() => {
+    const user = this.user.getValue()
+    return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_WRITER) !== -1 ? true : false
   })
   /**
    * Interface front TJ ou CA
