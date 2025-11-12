@@ -1357,6 +1357,9 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   }
 
   onFilterPanelClose() {
+    if (!this.showFilterPanel) {
+      return
+    }
     const wasOpenSnapshot = this.filterPanelSnapshot
     this.showFilterPanel = false
     const fp = this.filterParams || ({} as any)
