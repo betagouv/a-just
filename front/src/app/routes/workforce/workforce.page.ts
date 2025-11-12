@@ -1016,13 +1016,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     })
 
     this.onFilterList(true, false)
-
-    const backup = this.humanResourceService.backupId.getValue()
-    if (backup)
-      this.humanResourceService.trackVentilationOptionsChange(backup, {
-        referentielIds: this.selectedReferentielIds,
-        subReferentielIds: this.selectedSubReferentielIds,
-      })
   }
 
   /**
@@ -1060,15 +1053,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   updateFilterParams(event: FilterPanelInterface) {
     this.workforceService.filterParams = event // memorize in cache
     this.filterParams = event
-    const backup = this.humanResourceService.backupId.getValue()
-    if (backup)
-      this.humanResourceService.trackVentilationOptionsChange(backup, {
-        sort: event.sort,
-        order: event.order,
-        display: event.display,
-        filterValues: event.filterValues,
-        filterIndispoValues: event.filterIndispoValues,
-      })
     this.orderListWithFiltersParams()
   }
 
@@ -1343,12 +1327,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.filterParams.filterIndispoValues = []
       this.orderListWithFiltersParams()
     }
-
-    const backup = this.humanResourceService.backupId.getValue()
-    if (backup)
-      this.humanResourceService.trackVentilationOptionsChange(backup, {
-        filterIndispoValues: [],
-      })
   }
 
   onToggleFilterPanel() {
