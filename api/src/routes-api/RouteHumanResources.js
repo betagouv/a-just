@@ -279,7 +279,7 @@ export default class RouteHumanResources extends Route {
     console.timeEnd('filter list 5')
 
     console.time('filter list 6')
-    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
+    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId, false, null, false, false, ctx.state.user.id)
     console.timeEnd('filter list 6')
 
     console.time('filter list 7')

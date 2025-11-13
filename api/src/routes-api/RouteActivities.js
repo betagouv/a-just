@@ -112,7 +112,7 @@ export default class RouteActivities extends Route {
   async getLastHumanActivities(ctx) {
     const { hrBackupId } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
-      const list = await this.models.HistoriesActivitiesUpdate.getLasHumanActivites(hrBackupId)
+      const list = await this.models.HistoriesActivitiesUpdate.getLasHumanActivites(hrBackupId, ctx.state.user.id)
       this.sendOk(ctx, {
         list,
       })
@@ -136,7 +136,7 @@ export default class RouteActivities extends Route {
   async getNotCompleteActivities(ctx) {
     const { hrBackupId, dateStart, dateEnd } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
-      const list = await this.model.getNotCompleteActivities(hrBackupId, dateStart, dateEnd)
+      const list = await this.model.getNotCompleteActivities(hrBackupId, dateStart, dateEnd, ctx.state.user.id)
       this.sendOk(ctx, {
         list,
       })

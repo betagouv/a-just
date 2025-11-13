@@ -30,9 +30,10 @@ export default class RouteContentieuxReferentiels extends Route {
   })
   async getReferentiels(ctx) {
     const { backupId, isJirs } = this.body(ctx)
+    const userPreview = await this.models.Users.userPreview(ctx.state.user.id)
     this.sendOk(ctx, {
-      referentiels: await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null),
-      isComplete: true,
+      referentiels: await this.models.ContentieuxReferentiels.getReferentiels(backupId || null, isJirs || null, null, false, false, ctx.state.user.id),
+      isComplete: userPreview.referentielIds === null ? true : false,
     })
   }
 

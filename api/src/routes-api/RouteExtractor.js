@@ -94,7 +94,7 @@ export default class RouteExtractor extends Route {
         console.time('extractor-1')
         const juridictionName = await this.models.HRBackups.findById(backupId)
         const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-        const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
+        const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true, ctx.state.user.id)
         console.timeEnd('extractor-1')
 
         console.time('extractor-2')
@@ -234,7 +234,7 @@ export default class RouteExtractor extends Route {
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'activité' })
 
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined)
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined, false, ctx.state.user.id)
     const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
 
     const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
@@ -306,7 +306,7 @@ export default class RouteExtractor extends Route {
 
     // Minimal fix: define a no-op progress callback to avoid ReferenceError
     const onProgress = () => {}
-    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
+    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress, ctx.state.user.id)
 
     this.sendOk(ctx, result)
     /**
@@ -320,7 +320,7 @@ export default class RouteExtractor extends Route {
         // Progress callback asynchrone (fire-and-forget, ne bloque pas le calcul)
         const onProgress = (p, step) => setJobProgress(jobId, p, step)
 
-        const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
+        const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress, ctx.state.user.id)
 
         // ✅ marque comme terminé
         await setJobResult(jobId, result)
