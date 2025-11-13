@@ -1543,6 +1543,8 @@ export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatRefer
     ...absOrdered, // Mettre l'absenteisme ici
     ['TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)']: abs.absenteisme ?? 0,
     ...delegationEntry, // Mettre la délégation TJ à la fin
+    ['']: null,
+    ['ETPT global sur la période (incluant absentéisme et action 99)']: abs.realEtp + (filledReferentiel.get(indispoL3) ?? 0),
   }
 
   logs.push(
@@ -1831,6 +1833,7 @@ export function buildEmptyLogEntry(
     ctx: tmpDdgFlatMapReferentiel ? mapObjectToCtxString(tmpDdgFlatMapReferentiel) : null,
     periodStartTimestamp: null,
     main: main ? 'x' : '',
+    etptGlobal: main ? currentAbsEffectiveEtp + (action99 || 0) : null,
   }
 }
 
@@ -1874,6 +1877,7 @@ function buildLogEntry({
     ctx: formatCtxEntries([...log.ventilations, ...log.indisponibilites]),
     periodStartTimestamp: today(periodStart).getTime(),
     main: '',
+    etptGlobal: null,
   }
 }
 
@@ -1920,7 +1924,7 @@ function pushMissingSegmentLog({ filteredPeriods, human, query, nbOfWorkingDaysQ
       logAccIndip: 0,
       totalCETWorkingDays,
       absOnPeriod: 0,
-      indispoL3,
+      indispoL3: 0,
       currentAbsEffectiveEtp: 0,
       logAccVentilation: 0,
       log: syntheticLog,
