@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { PageAccessInterface } from '../../interfaces/page-access-interface';
 import { BackupInterface } from '../../interfaces/backup';
 import { compare } from '../../utils/array';
+import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
+import { ReferentielService } from '../../services/referentiel/referentiel.service';
 
 interface FormSelection {
   id: number;
@@ -19,19 +21,16 @@ interface FormSelection {
 
 @Component({
   standalone: true,
-  imports: [
-    PopupComponent,
-    WrapperComponent,
-    MatSortModule,
-    FormsModule
-],
+  imports: [PopupComponent, WrapperComponent, MatSortModule, FormsModule],
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
 })
 export class UsersPage extends MainClass implements OnInit, OnDestroy {
+  referentielService = inject(ReferentielService);
   userService = inject(UserService);
   datas: UserInterface[] = [];
   datasSource: UserInterface[] = [];
+  referentiels: FormSelection[] = [];
   access: FormSelection[] = [];
   ventilations: FormSelection[] = [];
   userEdit: UserInterface | null = null;
@@ -64,6 +63,15 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
   }
 
   onLoad() {
+    this.referentielService
+      .getReferentiels(true)
+      .then((r: ContentieuReferentielInterface[]) => {
+        this.referentiels = r.map((u) => ({
+          id: u.id,
+          label: u.label,
+          selected: false,
+        }));
+      });
     this.userService.getAll().then((l) => {
       this.datas = l.list.map((u: UserInterface) => ({
         ...u,
@@ -142,6 +150,17 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
           : false,
       };
     });
+
+    this.referentiels = this.referentiels.map((u) => {
+      return {
+        ...u,
+        selected:
+          (user.referentielIds || []).indexOf(u.id) !== -1 ||
+          user.referentielIds === null
+            ? true
+            : false,
+      };
+    });
   }
 
   onPopupDetailAction(action: any) {
@@ -155,6 +174,13 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
               ventilations: this.ventilations
                 .filter((a) => a.selected)
                 .map((a) => a.id),
+              referentielIds:
+                this.referentiels.filter((a) => a.selected).length ===
+                this.referentiels.length
+                  ? null
+                  : this.referentiels
+                      .filter((a) => a.selected)
+                      .map((a) => a.id),
             })
             .then(() => {
               this.userEdit = null;

@@ -38,6 +38,20 @@ export default class RouteContentieuxReferentiels extends Route {
   }
 
   /**
+   * Interface pour avoir une liste des referentiels
+   */
+  @Route.Post({
+    bodyType: Types.object().keys({
+      isJirs: Types.boolean(),
+    }),
+    accesses: [Access.isAdmin],
+  })
+  async getAllReferentiels(ctx) {
+    const { isJirs } = this.body(ctx)
+    this.sendOk(ctx, await this.models.ContentieuxReferentiels.getReferentiels(null, isJirs || null))
+  }
+
+  /**
    * Interface pour modifier un referentiel
    */
   @Route.Put({

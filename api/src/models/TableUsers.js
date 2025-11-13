@@ -204,7 +204,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getAll = async () => {
     const list = await Model.findAll({
-      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', 'tj', 'fonction'],
+      attributes: ['id', 'email', ['first_name', 'firstName'], ['last_name', 'lastName'], 'role', 'tj', 'fonction', ['referentiel_ids', 'referentielIds']],
       raw: true,
     })
 
@@ -222,7 +222,7 @@ export default (sequelizeInstance, Model) => {
    * Mise à jour des informations utilisateurs et informer en cas de changement d'attribution
    * @param {*} param0
    */
-  Model.updateAccount = async ({ userId, access, ventilations }) => {
+  Model.updateAccount = async ({ userId, access, ventilations, referentielIds }) => {
     const user = await Model.findOne({
       where: {
         id: userId,
@@ -231,6 +231,9 @@ export default (sequelizeInstance, Model) => {
     })
 
     if (user) {
+      await Model.updateById(user.id, {
+        referentiel_ids: referentielIds,
+      })
       const oldAccess = (await Model.models.UsersAccess.getUserAccess(userId)).sort()
       await Model.models.UsersAccess.updateAccess(userId, access)
       const newAccess = (await Model.models.UsersAccess.getUserAccess(userId)).sort()

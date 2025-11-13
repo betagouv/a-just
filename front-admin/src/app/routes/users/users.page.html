@@ -63,6 +63,16 @@
           </p>
           }
         </div>
+        <hr />
+        <div class="item">
+          <p><b>Liste des referentiels accessibles</b></p>
+          @for (ref of referentiels; track ref.id) {
+          <p>
+            <input type="checkbox" #refDom [(ngModel)]="ref.selected" />
+            <label (click)="refDom.click()">{{ ref.label }}</label>
+          </p>
+          }
+        </div>
       </div>
       <div class="item">
         <p><b>Liste des ventilations accessibles</b></p>
