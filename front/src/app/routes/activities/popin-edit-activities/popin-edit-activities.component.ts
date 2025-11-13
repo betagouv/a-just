@@ -721,6 +721,9 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         this.checkIfNextMonthHasValue()
         this.hasValuesToShow = list.list.length !== 0
         console.log(list, this.activityMonth)
+
+        this.cleanAllInputs()
+
         if (this.referentiel) {
           this.referentiel = copy(this.referentiel)
 
