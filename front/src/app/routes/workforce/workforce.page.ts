@@ -15,7 +15,6 @@ import { RadioButtonComponent } from '../../components/radio-button/radio-button
 import { CommonModule } from '@angular/common'
 import { PersonPreviewComponent } from './person-preview/person-preview.component'
 import { InputButtonComponent } from '../../components/input-button/input-button.component'
-import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { MainClass } from '../../libs/main-class'
 import { childrenInterface, dataInterface } from '../../components/select/select.component'
 import { BackupInterface } from '../../interfaces/backup'
@@ -33,6 +32,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { FormsModule } from '@angular/forms'
 import { EmptyInputComponent } from '../../components/empty-input/empty-input.component'
 import { AppService } from '../../services/app/app.service'
+import { IntroJSStep } from '../../services/tour/tour.service'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -165,7 +165,6 @@ export interface listFormatedInterface {
     CommonModule,
     PersonPreviewComponent,
     InputButtonComponent,
-    IntroJSComponent,
     RouterLink,
     MatIconModule,
     FormsModule,
@@ -275,6 +274,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   showFilterPanel: boolean = false
   /**
+   * Snapshot des options lorsque le panneau s'ouvre
+   */
+  private filterPanelSnapshot: any = null
+  /**
    * Paramètres de filtre selectionnés
    */
   filterParams: FilterPanelInterface | null = this.workforceService.filterParams
@@ -282,6 +285,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    * Accès au réafectateur
    */
   canViewReaffectator: boolean = false
+  hasTrackedVentilationView: boolean = false
   /**
    * Documentation module
    */
@@ -513,6 +517,10 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.humanResourceService.hrBackup.subscribe((hrBackup: BackupInterface | null) => {
         this.hrBackup = hrBackup
+        if (hrBackup && !this.hasTrackedVentilationView) {
+          this.hasTrackedVentilationView = true
+          this.humanResourceService.trackVentilationView(hrBackup.id)
+        }
         this.onFilterList()
       }),
     )
@@ -725,6 +733,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
    */
   async onSelectCategory(category: HRCategorySelectedInterface) {
     this.isLoading = true
+    const previousSelected = category.selected
     if (category.selected && this.filterParams && this.filterParams.filterValues) {
       const fonctions = await this.hrFonctionService.getAll()
       const getIdOfFonctions = fonctions.filter((f) => category.id === f.categoryId).map((f) => f.id)
@@ -1016,6 +1025,8 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
   onDateChanged(date: any) {
     this.dateSelected = date
     this.workforceService.dateSelected.next(date)
+    const backup = this.humanResourceService.backupId.getValue()
+    if (backup) this.humanResourceService.trackVentilationDateChange(backup, date)
     this.onFilterList()
   }
 
@@ -1056,7 +1067,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.filterParams.order = null
       this.filterParams.orderIcon = null
     }
-
     this.orderListWithFiltersParams()
   }
 
@@ -1069,7 +1079,6 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.filterParams.filterValues = null
       this.filterParams.filterFunction = null
     }
-
     this.orderListWithFiltersParams()
   }
 
@@ -1319,6 +1328,80 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
       this.orderListWithFiltersParams()
     }
   }
+
+  onToggleFilterPanel() {
+    if (!this.showFilterPanel) {
+      this.captureFilterPanelSnapshot()
+      this.showFilterPanel = true
+    } else {
+      this.onFilterPanelClose()
+    }
+  }
+
+  private normalizeArray(a: any[] | null | undefined) {
+    if (!a) return null
+    return [...a].map((v) => +v).sort((x, y) => x - y)
+  }
+
+  private captureFilterPanelSnapshot() {
+    const fp = this.filterParams || ({} as any)
+    this.filterPanelSnapshot = {
+      sort: fp.sort || null,
+      order: fp.order || null,
+      display: fp.display || null,
+      filterValues: this.normalizeArray(fp.filterValues || null),
+      filterIndispoValues: this.normalizeArray(fp.filterIndispoValues || null),
+      referentielIds: this.normalizeArray(this.selectedReferentielIds || []),
+      subReferentielIds: this.normalizeArray(this.selectedSubReferentielIds || null),
+    }
+  }
+
+  onFilterPanelClose() {
+    if (!this.showFilterPanel) {
+      return
+    }
+    const wasOpenSnapshot = this.filterPanelSnapshot
+    this.showFilterPanel = false
+    const fp = this.filterParams || ({} as any)
+    const current = {
+      sort: fp.sort || null,
+      order: fp.order || null,
+      display: fp.display || null,
+      filterValues: this.normalizeArray(fp.filterValues || null),
+      filterIndispoValues: this.normalizeArray(fp.filterIndispoValues || null),
+      referentielIds: this.normalizeArray(this.selectedReferentielIds || []),
+      subReferentielIds: this.normalizeArray(this.selectedSubReferentielIds || null),
+    }
+
+    const changed =
+      !!wasOpenSnapshot && (
+        wasOpenSnapshot.sort !== current.sort ||
+        wasOpenSnapshot.order !== current.order ||
+        wasOpenSnapshot.display !== current.display ||
+        JSON.stringify(wasOpenSnapshot.filterValues) !== JSON.stringify(current.filterValues) ||
+        JSON.stringify(wasOpenSnapshot.filterIndispoValues) !== JSON.stringify(current.filterIndispoValues) ||
+        JSON.stringify(wasOpenSnapshot.referentielIds) !== JSON.stringify(current.referentielIds) ||
+        JSON.stringify(wasOpenSnapshot.subReferentielIds) !== JSON.stringify(current.subReferentielIds)
+      )
+
+    if (changed) {
+      const backup = this.humanResourceService.backupId.getValue()
+      if (backup)
+        this.humanResourceService.trackVentilationOptionsChange(backup, {
+          sort: current.sort,
+          order: current.order,
+          display: current.display,
+          filterValues: current.filterValues,
+          filterIndispoValues: current.filterIndispoValues,
+          referentielIds: current.referentielIds,
+          subReferentielIds: current.subReferentielIds,
+        })
+    }
+
+    this.filterPanelSnapshot = null
+  }
+
+  
 
   /**
    * Supprimer le filtre des contentieux

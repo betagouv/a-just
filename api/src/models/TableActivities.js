@@ -487,14 +487,21 @@ export default (sequelizeInstance, Model) => {
               }
             }
 
-            if (
-              currentStock === findAllChild[i].original_stock &&
-              contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY &&
-              (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null)
-            ) {
-              currentStock = currentStock
-            } else if (currentStock === findAllChild[i].original_stock) {
-              currentStock = null
+            // Si le stock calculé est égal au stock original
+            if (currentStock === findAllChild[i].original_stock) {
+              // Si c'est un stock à vérifier ET qu'il y a des mouvements (entrées/sorties)
+              // alors on garde le stock calculé tel quel
+              if (
+                contentieuxRef.dataValues.value_quality_stock === VALUE_QUALITY_TO_VERIFY &&
+                (findAllChild[i].entrees !== null || findAllChild[i].sorties !== null)
+              ) {
+                // currentStock reste inchangé (pas d'action nécessaire)
+              }
+              // Sinon, si le stock précédent n'est pas calculé, on remet à null
+              else if (!previousStockValue || previousStockValue.type !== 'calculate') {
+                currentStock = null
+              }
+              // Si previousStockValue.type === 'calculate', currentStock reste inchangé
             }
 
             if (currentStock !== null && currentStock < 0) {

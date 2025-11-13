@@ -198,6 +198,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
   hasInitCalendars = false
   hasInitInputs = false
   calendarsOpened: number[] = []
+  lastLoggedHrId: number | null = null
 
   /**
    * Constructeur
@@ -266,6 +267,11 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
     this.watch(
       this.route.params.subscribe((params) => {
         if (params['id']) {
+          const currentId = +params['id']
+          if (this.lastLoggedHrId !== currentId) {
+            this.lastLoggedHrId = currentId
+            this.humanResourceService.trackHumanResourceView(currentId)
+          }
           this.onLoad()
         }
       }),

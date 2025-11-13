@@ -7,7 +7,7 @@
     getMonthString(now) +
     ' ' +
     now.getFullYear()
-  " [subtitleTemplate]="subTitle" class="content-margin-null print" [isLoading]="isLoading">
+  " [subtitleTemplate]="subTitle" class="content-margin-null print" [isLoading]="isLoading" [tours]="introSteps">
   <div class="panorama-container">
     <div class="header-panorama" #header>
       @if (canViewVentilation) {
@@ -81,5 +81,3 @@
     }
   </div>
 </ng-template>
-
-<aj-intro-js [steps]="introSteps" typeId="panorama"></aj-intro-js>

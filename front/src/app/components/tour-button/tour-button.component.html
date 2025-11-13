@@ -1,0 +1,12 @@
+<div (mouseenter)="isChildVisible = true" (mouseleave)="isChildVisible = false" (click)="startTour()">
+  <span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path
+        d="M10.9293 8.00015L6.66634 5.15815V10.8421L10.9293 8.00015ZM12.917 8.27748L5.85124 12.9879C5.69807 13.0901 5.49111 13.0487 5.38899 12.8955C5.35249 12.8407 5.33301 12.7764 5.33301 12.7106V3.28963C5.33301 3.10553 5.48225 2.9563 5.66634 2.9563C5.73215 2.9563 5.79649 2.97578 5.85124 3.01228L12.917 7.72275C13.0701 7.82488 13.1115 8.03188 13.0094 8.18501C12.985 8.22161 12.9536 8.25308 12.917 8.27748Z"
+        fill="#F5F5FE" />
+    </svg>
+  </span>
+  @if (isChildVisible) {
+  <span>{{ text || 'Voir le tour' }}</span>
+  }
+</div>

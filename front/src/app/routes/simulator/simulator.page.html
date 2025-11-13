@@ -1,5 +1,6 @@
 <aj-wrapper #wrapper class="no-padding" id="simu-wrapper" title="Simulateur" [actionTemplate]="actions"
-  [alignLeft]="true" [documentation]="documentation" (pageSelected)="reloadPage()" [actionsLeftTemplate]="actionsLeft">
+  [alignLeft]="true" [documentation]="documentation" (pageSelected)="reloadPage()" [actionsLeftTemplate]="actionsLeft"
+  [tours]="!chooseScreen ? introStepsToCompleteDefault : []">
   @if (isLoading) {
   <div class="progress-bar">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -1335,8 +1336,3 @@
   </div>
   }
 </ng-template>
-
-
-@if(!chooseScreen) {
-<aj-intro-js [steps]="introStepsToCompleteDefault" typeId="simulator"></aj-intro-js>
-}
