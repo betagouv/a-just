@@ -24,6 +24,7 @@ import { loadOrWarmHR, printKeys } from '../utils/redis'
 import { getJob } from '../utils/jobStore'
 import { checkAbort, withAbortTimeout } from '../utils/abordTimeout'
 import { CET_LABEL } from '../constants/referentiel'
+import { fixDecimal } from '../utils/number'
 
 /**
  * Route de la page extracteur
@@ -375,7 +376,7 @@ export default class RouteExtractor extends Route {
     let query = { start: new Date(dateStart), end: new Date(dateStop) }
     let logs = new Array()
     let hr = await loadOrWarmHR(backupId, this.models)
-    hr = hr.filter((h) => h.id === 25373)
+    //hr = hr.filter((h) => h.id === 39886)
     hr = hr.filter((h) => isHumanPresentOnInterval(h, query))
     const indexes = await generateHRIndexes(hr, true)
     const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
@@ -418,6 +419,13 @@ export default class RouteExtractor extends Route {
 
     onglet1 = onglet1.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
     onglet2 = onglet2.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
+
+    onglet2.forEach((a) => {
+      for (const [key, value] of Object.entries(a)) {
+        if (isNumber(value) && value !== 0) a[key] = fixDecimal(value, 10000)
+        if (key == 'ETPT sur la période (absentéisme et action 99 déduits)' && [undefined, null].includes(a[key])) a[key] = null
+      }
+    })
 
     const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
     const functionList = await this.models.HRFonctions.getAllFormatDdg()
