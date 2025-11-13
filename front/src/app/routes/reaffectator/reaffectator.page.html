@@ -8,9 +8,9 @@
       <aj-select title="Choisir une catégorie" class="dark-mode category-select"
         [value]="reaffectatorService.selectedCategoriesId !== null ? [reaffectatorService.selectedCategoriesId] : []"
         [multiple]="false" [datas]="formFilterSelect" (valueChange)="onSelectedCategoriesIdChanged($event)"></aj-select>
-      <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"
+      <!-- <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"
         [datas]="formFilterFonctionsSelect" (valueChange)="onSelectedFonctionsIdsChanged($event)"
-        [defaultAllValue]="'Toutes'"></aj-select>
+        [defaultAllValue]="'Toutes'"></aj-select> -->
       <aj-select title="Filtrer par contentieux" class="dark-mode" [value]="reaffectatorService.selectedReferentielIds"
         [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)"
         [defaultAllValue]="'Tous'"></aj-select>
