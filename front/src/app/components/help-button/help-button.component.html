@@ -1,6 +1,6 @@
 <div (mouseenter)="isChildVisible = true" (mouseleave)="isChildVisible = false">
-  <i class="ri-lightbulb-flash-line"></i>
+  <span>?</span>
   @if (isChildVisible) {
-    <span>{{ text || 'Comment ça marche ?' }}</span>
+  <span>{{ text || 'Comment ça marche ?' }}</span>
   }
 </div>

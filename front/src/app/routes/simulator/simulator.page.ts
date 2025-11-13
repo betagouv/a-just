@@ -18,7 +18,6 @@ import { InOutChartComponent } from './charts/in-out-chart/in-out-chart.componen
 import { LoadersWidgetComponent } from './widgets/loaders-widget/loaders-widget.component'
 import { FiguresWidgetComponent } from '../../components/figures-widget/figures-widget.component'
 import { DialWidgetComponent } from './widgets/dial-widget/dial-widget.component'
-import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { MainClass } from '../../libs/main-class'
 import { dataInterface } from '../../components/select/select.component'
 import { SimulatorInterface } from '../../interfaces/simulator'
@@ -45,6 +44,7 @@ import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat, user
 import { ChooseSimulatorComponent } from './choose-simulator/choose-simulator.component'
 import { REAFFECTATOR, SIMULATOR_DONNEES, SIMULATOR_OTHER_ACTIVITY } from '../../constants/simulator'
 import { isNaN } from 'lodash'
+import { IntroJSStep } from '../../services/tour/tour.service'
 
 /**
  * Variable ETP magistrat field name
@@ -101,7 +101,6 @@ export const etpFonToDefine = '[un volume moyen de]'
     BackButtonComponent,
     MatProgressBarModule,
     ChooseSimulatorComponent,
-    IntroJSComponent,
   ],
   styleUrls: ['./simulator.page.scss'],
   animations: [

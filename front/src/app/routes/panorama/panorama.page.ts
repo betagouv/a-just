@@ -8,7 +8,6 @@ import { RecordsUpdateComponent } from './records-updates/records-update.compone
 import { WorkforceChangeComponent } from './workforce-change/workforce-change.component'
 import { ActivitiesLastDisponibilitiesComponent } from './activities-last-disponibilities/activities-last-disponibilities.component'
 import { ActivitiesLastModificationsComponent } from './activities-last-modifications/activities-last-modifications.component'
-import { IntroJSComponent, IntroJSStep } from '../../components/intro-js/intro-js.component'
 import { MainClass } from '../../libs/main-class'
 import { dateAddDays, today } from '../../utils/dates'
 import { HRCategorySelectedInterface } from '../../interfaces/hr-category'
@@ -19,6 +18,7 @@ import { BackupInterface } from '../../interfaces/backup'
 import { CommonModule } from '@angular/common'
 import { ActivitiesToCompleteComponent } from './activities-to-complete/activities-to-complete.component'
 import { RHActivityInterface } from '../../interfaces/rh-activity'
+import { IntroJSStep } from '../../services/tour/tour.service'
 
 /**
  * Page de la liste des fiches (magistrats, greffier ...)
@@ -34,7 +34,6 @@ import { RHActivityInterface } from '../../interfaces/rh-activity'
     ActivitiesLastDisponibilitiesComponent,
     ActivitiesLastModificationsComponent,
     ActivitiesLastModificationsComponent,
-    IntroJSComponent,
     CommonModule,
     ActivitiesToCompleteComponent,
   ],
