@@ -13,7 +13,7 @@ export default class RouteHrComment extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.HRComments
@@ -29,7 +29,7 @@ export default class RouteHrComment extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async getHrComment (ctx) {
+  async getHrComment(ctx) {
     const { hrId } = this.body(ctx)
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getComment(hrId))
@@ -49,7 +49,7 @@ export default class RouteHrComment extends Route {
     }),
     accesses: [Access.canVewHR],
   })
-  async getHrCommentById (ctx) {
+  async getHrCommentById(ctx) {
     const { id, hrId } = this.body(ctx)
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getCommentById(id))
@@ -70,9 +70,9 @@ export default class RouteHrComment extends Route {
       userId: Types.number().required(),
       commentId: Types.number().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
-  async updateHrComment (ctx) {
+  async updateHrComment(ctx) {
     const { hrId, comment, userId, commentId } = this.body(ctx)
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.updateComment(hrId, comment, userId, commentId))
@@ -91,9 +91,9 @@ export default class RouteHrComment extends Route {
       hrId: Types.number().required(),
       commentId: Types.number().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
-  async deleteHrComment (ctx) {
+  async deleteHrComment(ctx) {
     const { hrId, commentId } = this.body(ctx)
     if (await this.models.HumanResources.haveAccess(hrId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.deleteComment(commentId, hrId))

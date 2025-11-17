@@ -1,9 +1,9 @@
-
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { MainClass } from '../../../../libs/main-class';
-import { CommentInterface } from '../../../../interfaces/comment';
-import { TextEditorComponent } from '../../../../components/text-editor/text-editor.component';
-import { CommentService } from '../../../../services/comment/comment.service';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core'
+import { MainClass } from '../../../../libs/main-class'
+import { CommentInterface } from '../../../../interfaces/comment'
+import { TextEditorComponent } from '../../../../components/text-editor/text-editor.component'
+import { CommentService } from '../../../../services/comment/comment.service'
+import { UserService } from '../../../../services/user/user.service'
 
 /**
  * Composant de prévisualisation des ETP
@@ -16,26 +16,27 @@ import { CommentService } from '../../../../services/comment/comment.service';
   styleUrls: ['./one-comment.component.scss'],
 })
 export class OneCommentComponent extends MainClass {
+  userService = inject(UserService)
   // service de gestion des commentaires
-  commentService = inject(CommentService);
+  commentService = inject(CommentService)
   /**
    * Object commentaire contenant l'ensemble des informations
    */
-  @Input() comment: CommentInterface | null = null;
+  @Input() comment: CommentInterface | null = null
   /**
    * Event to informe to remove comment
    */
-  @Output() deletedComment: EventEmitter<any> = new EventEmitter();
+  @Output() deletedComment: EventEmitter<any> = new EventEmitter()
   /**
    * Is editing
    */
-  isEditing: boolean = false;
+  isEditing: boolean = false
 
   /**
    * Constructeur
    */
   constructor() {
-    super();
+    super()
   }
 
   /**
@@ -43,13 +44,9 @@ export class OneCommentComponent extends MainClass {
    */
   async onSave(commentMsg: string) {
     if (commentMsg && this.comment) {
-      await this.commentService.updateComment(
-        this.comment.type,
-        commentMsg,
-        this.comment.id
-      );
-      this.comment.comment = commentMsg;
-      this.comment.updatedAt = new Date();
+      await this.commentService.updateComment(this.comment.type, commentMsg, this.comment.id)
+      this.comment.comment = commentMsg
+      this.comment.updatedAt = new Date()
     }
   }
 
@@ -58,8 +55,8 @@ export class OneCommentComponent extends MainClass {
    */
   async removeComment() {
     if (this.comment) {
-      await this.commentService.deleteComment(this.comment.id);
-      this.deletedComment.emit(true);
+      await this.commentService.deleteComment(this.comment.id)
+      this.deletedComment.emit(true)
     }
   }
 
@@ -69,13 +66,9 @@ export class OneCommentComponent extends MainClass {
    */
   compareCommentsDates() {
     if (this.comment && this.comment.createdAt && this.comment.updatedAt) {
-      if (
-        this.formatDate(this.comment.createdAt) ==
-        this.formatDate(this.comment.updatedAt)
-      )
-        return false;
+      if (this.formatDate(this.comment.createdAt) == this.formatDate(this.comment.updatedAt)) return false
     }
-    return true;
+    return true
   }
 
   /**
@@ -84,6 +77,6 @@ export class OneCommentComponent extends MainClass {
    * @returns
    */
   capitalize(s: string) {
-    return s && s[0].toUpperCase() + s.slice(1);
+    return s && s[0].toUpperCase() + s.slice(1)
   }
 }

@@ -33,6 +33,7 @@ import { FormsModule } from '@angular/forms'
 import { EmptyInputComponent } from '../../components/empty-input/empty-input.component'
 import { AppService } from '../../services/app/app.service'
 import { IntroJSStep } from '../../services/tour/tour.service'
+import { USER_ACCESS_REAFFECTATOR_READER } from '../../constants/user-access'
 
 /**
  * Interface d'une fiche avec ses valeurs rendu
@@ -545,7 +546,7 @@ export class WorkforcePage extends MainClass implements OnInit, OnDestroy {
     })
 
     const user = this.userService.user.getValue()
-    this.canViewReaffectator = user && user.access && user.access.indexOf(7) !== -1 ? true : false
+    this.canViewReaffectator = user && user.access && user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 ? true : false
   }
 
   /**

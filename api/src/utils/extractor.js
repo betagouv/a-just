@@ -1990,20 +1990,20 @@ function returnAIfClose(a, b, tol = TOL) {
     : b
 }
 
-export async function computeExtractor(models, params, onProgress) {
+export async function computeExtractor(models, params, onProgress, userId) {
   const { backupId, dateStart, dateStop, categoryFilter, old = true } = params
 
   onProgress?.(5, 'init')
 
   const juridictionName = await models.HRBackups.findById(backupId)
   const isJirs = await models.ContentieuxReferentiels.isJirs(backupId)
-  const referentiels = await models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
+  const referentiels = await models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true, userId)
   onProgress?.(15, 'referentiels')
 
   const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
   onProgress?.(25, 'flat')
 
-  let hr = await loadOrWarmHR(backupId, models)
+  let hr = await loadOrWarmHR(backupId, models, userId)
   onProgress?.(35, 'hr')
 
   const categories = await models.HRCategories.getAll()

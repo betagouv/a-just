@@ -36,6 +36,7 @@
       </div>
     </div>
   </div>
+  @if(userService.canEditHR()){
   <div class="right-panel">
     @if (canEdit) {
     <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">Corriger</button>
@@ -44,6 +45,7 @@
     }
     }
   </div>
+  }
 </div>
 <div class="ressources">
   <p>Ressources :</p>

@@ -71,7 +71,8 @@
           La calculatrice
           <i class="ri-download-line"></i>
         </p>
-        @if (userService.canViewVentilation() || userService.canViewActivities()) {
+        @if ((userService.canViewVentilation() || userService.canViewActivities()) &&
+        referentielService.referentielIsComplete()) {
         <a [routerLink]="['/' + 'dashboard']" (click)="onSelect('/' + '')">Les extracteurs</a>
         }
         <p (click)="downloadAsset('fiche-agent', true)">
