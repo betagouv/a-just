@@ -282,10 +282,14 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
    * Lancement d'alerte lors de la fermeture de la fenêtre d'édition et contrôle si il y a eu des données modifiés
    */
   close() {
-    this.controlBeforeChange(true).then(() => {
-      if (this.wrapper) this.wrapper?.onForcePanelHelperToShow(null, false)
+    if (this.userService.canEditActivities()) {
+      this.controlBeforeChange(true).then(() => {
+        if (this.wrapper) this.wrapper?.onForcePanelHelperToShow(null, false)
+        this.onClose.emit({ reload: true })
+      })
+    } else {
       this.onClose.emit({ reload: true })
-    })
+    }
   }
 
   /**
@@ -721,6 +725,9 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
         this.checkIfNextMonthHasValue()
         this.hasValuesToShow = list.list.length !== 0
         console.log(list, this.activityMonth)
+
+        this.cleanAllInputs()
+
         if (this.referentiel) {
           this.referentiel = copy(this.referentiel)
 

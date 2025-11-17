@@ -64,6 +64,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.DATE,
         allowNull: true,
       },
+      referentiel_ids: {
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -83,7 +87,7 @@ export default (sequelizeInstance) => {
       paranoid: true,
       underscored: true,
       tableName,
-    }
+    },
   )
 
   Model.associate = function (models) {

@@ -4,27 +4,22 @@ import {
   autofitColumns,
   buildExcelRef,
   computeExtractor,
-  createFlatReferentiel,
   flatListOfContentieuxAndSousContentieux,
   formatFunctions,
-  generateOnglets,
   getJuridictionData,
   getViewModel,
-  isHumanPresentOnInterval,
   replaceIfZero,
   runExtractsInParallel,
 } from '../utils/extractor'
 import { getHumanRessourceList } from '../utils/humanServices'
-import { cloneDeep, groupBy, isNumber, last, orderBy, sumBy } from 'lodash'
+import { cloneDeep, groupBy, last, orderBy, sumBy } from 'lodash'
 import { isDateGreaterOrEqual, month, today } from '../utils/date'
 import { EXECUTE_EXTRACTOR } from '../constants/log-codes'
-import { buildIdToLabelMap, completePeriod, fillMissingContentieux, updateAndMerge, updateLabels } from '../utils/referentiel'
+import { completePeriod, fillMissingContentieux, updateLabels } from '../utils/referentiel'
 import { generateHRIndexes } from '../utils/human-resource'
 import { loadOrWarmHR, printKeys } from '../utils/redis'
 import { getJob } from '../utils/jobStore'
 import { checkAbort, withAbortTimeout } from '../utils/abordTimeout'
-import { CET_LABEL } from '../constants/referentiel'
-import { fixDecimal } from '../utils/number'
 
 /**
  * Route de la page extracteur
@@ -99,7 +94,7 @@ export default class RouteExtractor extends Route {
         console.time('extractor-1')
         const juridictionName = await this.models.HRBackups.findById(backupId)
         const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-        const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
+        const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true, ctx.state.user.id)
         console.timeEnd('extractor-1')
 
         console.time('extractor-2')
@@ -107,7 +102,7 @@ export default class RouteExtractor extends Route {
         console.timeEnd('extractor-2')
 
         console.time('extractor-3')
-        let hr = await loadOrWarmHR(backupId, this.models)
+        let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
         console.timeEnd('extractor-3')
 
         console.time('extractor-4')
@@ -239,7 +234,7 @@ export default class RouteExtractor extends Route {
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'activité' })
 
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined)
+    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined, false, ctx.state.user.id)
     const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
 
     const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
@@ -311,7 +306,7 @@ export default class RouteExtractor extends Route {
 
     // Minimal fix: define a no-op progress callback to avoid ReferenceError
     const onProgress = () => {}
-    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
+    const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress, ctx.state.user.id)
 
     this.sendOk(ctx, result)
     /**
@@ -325,7 +320,7 @@ export default class RouteExtractor extends Route {
         // Progress callback asynchrone (fire-and-forget, ne bloque pas le calcul)
         const onProgress = (p, step) => setJobProgress(jobId, p, step)
 
-        const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress)
+        const result = await computeExtractor(this.models, { backupId, dateStart, dateStop, categoryFilter, old: true }, onProgress, ctx.state.user.id)
 
         // ✅ marque comme terminé
         await setJobResult(jobId, result)
@@ -357,112 +352,5 @@ export default class RouteExtractor extends Route {
     // si respondJobStatus est une méthode async de la classe :
     await this.respondJobStatus(ctx, jobId)
     // (sinon, remplace par la logique inline getJob/retours 200/202/500)
-  }
-
-  @Route.Post({
-    bodyType: Types.object().keys({
-      backupId: Types.number().required(),
-      dateStart: Types.date().required(),
-      dateStop: Types.date().required(),
-      categoryFilter: Types.any().required(),
-    }),
-    accesses: [Access.canVewHR],
-  })
-  async filterListNew(ctx) {
-    const { backupId, dateStart, dateStop, categoryFilter } = this.body(ctx)
-    console.time('NEW PERF')
-
-    // ------------------------- 1) INITIALISATION -------------------------
-    let query = { start: new Date(dateStart), end: new Date(dateStop) }
-    let logs = new Array()
-    let hr = await loadOrWarmHR(backupId, this.models)
-    //hr = hr.filter((h) => h.id === 39886)
-    hr = hr.filter((h) => isHumanPresentOnInterval(h, query))
-    const indexes = await generateHRIndexes(hr, true)
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
-    const CETId = await this.models.ContentieuxReferentiels.getContentieuxIdByLabel(CET_LABEL)
-    const juridictionName = await this.models.HRBackups.findById(backupId)
-    const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-    const { flatReferentiel, ctxL3, indispoL3 } = await createFlatReferentiel([...referentiels])
-    const mapRefIdsToLabels = buildIdToLabelMap(flatReferentiel)
-
-    let emptyFlatMapReferentiel = flatReferentiel.reduce((acc, item) => {
-      acc.set(item.id, 0)
-      return acc
-    }, new Map())
-    const periodsByDate = indexes.intervalTree.search(query.start, query.end) //Récuparations de tous les segments sur un interval
-
-    // ------------------------- 2) CALCULS -------------------------
-    const {
-      onglet1: rawOnglet1,
-      onglet2: rawOnglet2,
-      ongletLogs,
-    } = generateOnglets({
-      hr,
-      query,
-      indexes,
-      periodsByDate,
-      emptyFlatMapReferentiel,
-      mapRefIdsToLabels,
-      ctxL3,
-      indispoL3,
-      CETId,
-      flatReferentiel,
-      isJirs,
-      juridictionName,
-      logs,
-    })
-
-    // ------------------------- 3) FORMATAGE -------------------------
-    let onglet1 = orderBy(rawOnglet1, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
-    let onglet2 = orderBy(rawOnglet2, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
-
-    onglet1 = onglet1.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
-    onglet2 = onglet2.filter((x) => x['Catégorie'] == null || categoryFilter.includes(String(x['Catégorie']).toLowerCase()))
-
-    onglet2.forEach((a) => {
-      for (const [key, value] of Object.entries(a)) {
-        if (isNumber(value) && value !== 0) a[key] = fixDecimal(value, 10000)
-        if (key == 'ETPT sur la période (absentéisme et action 99 déduits)' && [undefined, null].includes(a[key])) a[key] = null
-      }
-    })
-
-    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
-    const functionList = await this.models.HRFonctions.getAllFormatDdg()
-    const formatedFunctions = await formatFunctions(functionList)
-    const excelRef = buildExcelRef(flatReferentielsList)
-    const { tproxs, allJuridiction } = await getJuridictionData(this.models, juridictionName)
-
-    const onglet1Data = {
-      values: onglet1,
-      columnSize: await autofitColumns(onglet1, true),
-    }
-
-    const onglet2Data = {
-      values: onglet2,
-      columnSize: await autofitColumns(onglet2, true, 13),
-      excelRef,
-    }
-
-    const viewModel = await getViewModel({
-      referentiels,
-      tproxs,
-      onglet1: onglet1Data,
-      onglet2: onglet2Data,
-      allJuridiction,
-      ongletLogs,
-    })
-
-    console.timeEnd('NEW PERF')
-
-    this.sendOk(ctx, {
-      fonctions: formatedFunctions,
-      referentiels,
-      tproxs,
-      onglet1: onglet1Data,
-      onglet2: onglet2Data,
-      allJuridiction,
-      viewModel,
-    })
   }
 }

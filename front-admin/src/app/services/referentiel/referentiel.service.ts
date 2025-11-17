@@ -45,7 +45,7 @@ export class ReferentielService {
 
   async getReferentiels(isJirs?: boolean) {
     return this.serverService
-      .post('contentieux-referentiels/get-referentiels', { isJirs })
+      .post('contentieux-referentiels/get-all-referentiels', { isJirs })
       .then((res) => {
         this.humanResourceService.contentieuxReferentiel.next(res.data);
         return res.data;

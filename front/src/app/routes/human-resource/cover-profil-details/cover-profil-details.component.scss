@@ -147,14 +147,18 @@
         color: utils.$colors-cgray;
       }
 
-      &:hover {
+      &:hover:not(:readonly) {
         border: 1px solid utils.$colors-cgraylightv3;
         background-color: utils.$colors-bgSelect;
       }
 
-      &:focus {
+      &:focus:not(:readonly) {
         border: 1px solid utils.$colors-cgraylightv3;
         background-color: utils.$colors-bgSelect;
+      }
+
+      &:read-only {
+        cursor: not-allowed !important;
       }
     }
 

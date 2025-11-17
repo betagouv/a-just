@@ -1,166 +1,140 @@
 <!--
 <app-avarage-etp-displayer></app-avarage-etp-displayer>
 -->
-<aj-wrapper
-  #wrapper
-  title="Référentiels de temps moyens"
-  [documentation]="documentation"
+<aj-wrapper #wrapper title="Référentiels de temps moyens" [documentation]="documentation"
   class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null large-actions"
-  [actionTemplate]="ressources"
-  [alignLeft]="false"
->
+  [actionTemplate]="ressources" [alignLeft]="false">
   <!-- POPUP CREATION -->
   @if (onCreation === true) {
-    <aj-popup
-      [closeIcon]="true"
-      (onClose)="onCreation = false; nameLength = 0; openedFromCockpit = false; this.enableImport = false"
-      [removeShadow]="'noShadow'"
-      class="border-radius fix-width-400"
-    >
-      <div id="circle">
-        <i class="ri-ball-pen-line"></i>
-      </div>
-      <p>Quel sera le nom du référentiel ?</p>
-      <label class="max-char">{{ nameLength }} / 48 caractères maximum</label>
-      <div class="container">
-        <textarea id="name" #name placeholder="Saisir un nom" maxlength="48" (keyup)="countLen(name.value)"></textarea>
-      </div>
-      <div class="container radio">
-        Appliqué au
-        <button id="type" #type class="radio-button" name="{{ this.canViewMagistrat ? 'SIEGE' : 'GREFFE' }}">
-          @if (this.canViewMagistrat) {
-            <label
-              class="left"
-              (click)="type.value = 'SIEGE'; type.name = 'SIEGE'"
-              [ngClass]="{ 'selected-mag': type.name === 'SIEGE' }"
-            >
-              Siège
+  <aj-popup [closeIcon]="true"
+    (onClose)="onCreation = false; nameLength = 0; openedFromCockpit = false; this.enableImport = false"
+    [removeShadow]="'noShadow'" class="border-radius fix-width-400">
+    <div id="circle">
+      <i class="ri-ball-pen-line"></i>
+    </div>
+    <p>Quel sera le nom du référentiel ?</p>
+    <label class="max-char">{{ nameLength }} / 48 caractères maximum</label>
+    <div class="container">
+      <textarea id="name" #name placeholder="Saisir un nom" maxlength="48" (keyup)="countLen(name.value)"></textarea>
+    </div>
+    <div class="container radio">
+      Appliqué au
+      <button id="type" #type class="radio-button" name="{{ this.canViewMagistrat ? 'SIEGE' : 'GREFFE' }}">
+        @if (this.canViewMagistrat) {
+        <label class="left" (click)="type.value = 'SIEGE'; type.name = 'SIEGE'"
+          [ngClass]="{ 'selected-mag': type.name === 'SIEGE' }">
+          Siège
+        </label>
+        }
+        @if (this.canViewGreffier) {
+        <label class="right" (click)="type.value = 'Greffe'; type.name = 'GREFFE'"
+          [ngClass]="{ 'selected-greffe': type.name === 'GREFFE' }">
+          Greffe
+        </label>
+        }
+      </button>
+    </div>
+    @if (onUpload) {
+    <button mat-menu-item (click)="openFilePicker(); $event.stopPropagation()">
+      <div class="form">
+        <form id="form" #formAllActivities>
+          <div>
+            <label class="custom-file-upload pointer-events-none">
+              <input id="filePicker" name="file" type="file" accept=".xlsx" class="pointer-events-none"
+                (change)="onSendAllActivity(formAllActivities)" (click)="$event.stopPropagation()" />
             </label>
-          }
-          @if (this.canViewGreffier) {
-            <label
-              class="right"
-              (click)="type.value = 'Greffe'; type.name = 'GREFFE'"
-              [ngClass]="{ 'selected-greffe': type.name === 'GREFFE' }"
-            >
-              Greffe
-            </label>
-          }
-        </button>
-      </div>
-      @if (onUpload) {
-        <button mat-menu-item (click)="openFilePicker(); $event.stopPropagation()">
-          <div class="form">
-            <form id="form" #formAllActivities>
-              <div>
-                <label class="custom-file-upload pointer-events-none">
-                  <input
-                    id="filePicker"
-                    name="file"
-                    type="file"
-                    accept=".xlsx"
-                    class="pointer-events-none"
-                    (change)="onSendAllActivity(formAllActivities)"
-                    (click)="$event.stopPropagation()"
-                  />
-                </label>
-              </div>
-            </form>
           </div>
-        </button>
-      }
-      <div class="actions">
-        @if (onUpload) {
-          <div [ngClass]="{ enable: enableImport === true }" class="save" (click)="import()">Importer</div>
-        }
-        @if (!onUpload) {
-          <div class="save enable" (click)="create(name.value, type.name)">Enregistrer</div>
-        }
+        </form>
       </div>
-    </aj-popup>
+    </button>
+    }
+    <div class="actions">
+      @if (onUpload) {
+      <div [ngClass]="{ enable: enableImport === true }" class="save" (click)="import()">Importer</div>
+      }
+      @if (!onUpload) {
+      <div class="save enable" (click)="create(name.value, type.name)">Enregistrer</div>
+      }
+    </div>
+  </aj-popup>
   }
   <!-- POPUP SUPPRESSION -->
   @if (onDelete === true) {
-    <aj-popup
-      [closeIcon]="true"
-      (onClose)="onDelete = false"
-      [removeShadow]="'noShadow'"
-      class="border-radius width-500"
-    >
-      <div id="circle">
-        <i class="ri-delete-bin-6-line"></i>
-      </div>
-      <p>Supprimer ce référentiel</p>
-      <div class="text">
-        Vous vous apprêtez à supprimer ce référentiel. Cela entraînera la suppression de l’ensemble des données
-        renseignées.
-        <label class="follow">👉 Souhaitez-vous poursuivre ?</label>
-      </div>
-      <div class="actions">
-        <div class="back" (click)="onDelete = false">Annuler</div>
-        <div class="save enable" (click)="remove()">Supprimer</div>
-      </div>
-    </aj-popup>
+  <aj-popup [closeIcon]="true" (onClose)="onDelete = false" [removeShadow]="'noShadow'" class="border-radius width-500">
+    <div id="circle">
+      <i class="ri-delete-bin-6-line"></i>
+    </div>
+    <p>Supprimer ce référentiel</p>
+    <div class="text">
+      Vous vous apprêtez à supprimer ce référentiel. Cela entraînera la suppression de l’ensemble des données
+      renseignées.
+      <label class="follow">👉 Souhaitez-vous poursuivre ?</label>
+    </div>
+    <div class="actions">
+      <div class="back" (click)="onDelete = false">Annuler</div>
+      <div class="save enable" (click)="remove()">Supprimer</div>
+    </div>
+  </aj-popup>
   }
   <div class="sticky-bar">
     <div class="action-bar">
       <label>Référentiels</label>
       <div class="flex-1"></div>
-      <div class="delete-action">
+      @if(userService.canEditTempsMoyens()){<div class="delete-action">
         <i class="ri-delete-bin-6-line"></i>
         <label (click)="onRemove()">Supprimer</label>
       </div>
       <div class="import-action" (click)="onCreation = true; onUpload = true">Importer un référentiel</div>
       <div class="create-action" (click)="onCreation = true; onUpload = false">Créer un référentiel</div>
+      }
     </div>
 
     <div class="header-bar">
-      <aj-checkbox class="black" (valueChange)="checkAll($event)" [value]="checkAll()"></aj-checkbox>
+      @if(userService.canEditTempsMoyens()){<aj-checkbox class="black" (valueChange)="checkAll($event)"
+        [value]="checkAll()"></aj-checkbox>}
       <label class="name">Nom</label>
       <label class="apply">Appliqué au</label>
       <label class="create">Date de création</label>
       <label class="modify">Dernière modification</label>
       <label class="status">Statut</label>
-      <div class="actions"></div>
+      @if(userService.canEditTempsMoyens()) {<div class="actions"></div>}
     </div>
   </div>
 
   @for (backup of backups; track backup.label; let i = $index) {
-    <div class="line-item" (click)="goTo(backup.id)">
-      <aj-checkbox [(value)]="checkList[i]" (click)="$event.stopPropagation()"></aj-checkbox>
-      <label class="name">{{ backup.label }}</label>
-      <div class="apply">
-        <label
-          class="tag"
-          [ngStyle]="{
+  <div class="line-item" (click)="goTo(backup.id)">
+    @if(userService.canEditTempsMoyens()){<aj-checkbox [(value)]="checkList[i]"
+      (click)="$event.stopPropagation()"></aj-checkbox>}
+    <label class="name">{{ backup.label }}</label>
+    <div class="apply">
+      <label class="tag" [ngStyle]="{
             'background-color': backup.type === 'GREFFE' ? '#fee7fc' : '#e3e3fd',
             color: backup.type === 'GREFFE' ? '#a558a0' : '#000091',
-          }"
-        >
-          {{ backup.type === 'GREFFE' ? 'Greffe' : 'Siège' }}
-        </label>
+          }">
+        {{ backup.type === 'GREFFE' ? 'Greffe' : 'Siège' }}
+      </label>
+    </div>
+    <label class="create">{{ realValue(backup.date) }}</label>
+    <label class="modify">{{ backup.update ? (backup.update.date | dateAgo) : '' }}</label>
+    <div class="status">
+      <label class="tag"
+        [ngStyle]="{ 'background-color': getBackgroundColor(backup.status), color: getColor(backup.status) }">
+        {{ backup.status }}
+      </label>
+    </div>
+    @if(userService.canEditTempsMoyens()) {
+    <div class="actions">
+      <div class="rename" (click)="rename(backup.id); $event.stopPropagation()">
+        <i class="ri-edit-line"></i>
+        Renommer
       </div>
-      <label class="create">{{ realValue(backup.date) }}</label>
-      <label class="modify">{{ backup.update ? (backup.update.date | dateAgo) : '' }}</label>
-      <div class="status">
-        <label
-          class="tag"
-          [ngStyle]="{ 'background-color': getBackgroundColor(backup.status), color: getColor(backup.status) }"
-        >
-          {{ backup.status }}
-        </label>
-      </div>
-      <div class="actions">
-        <div class="rename" (click)="rename(backup.id); $event.stopPropagation()">
-          <i class="ri-edit-line"></i>
-          Renommer
-        </div>
-        <div class="duplicate" (click)="duplicate(backup.id, backup.type); $event.stopPropagation()">
-          <i class="ri-file-copy-line"></i>
-          Dupliquer
-        </div>
+      <div class="duplicate" (click)="duplicate(backup.id, backup.type); $event.stopPropagation()">
+        <i class="ri-file-copy-line"></i>
+        Dupliquer
       </div>
     </div>
+    }
+  </div>
   }
 </aj-wrapper>
 
