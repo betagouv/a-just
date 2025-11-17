@@ -1318,6 +1318,66 @@ export const getAndDeleteAbsenteisme = (obj, labels, delegation = false) => {
   else return { refObj: obj, absenteismeDetails: absDetails }
 }
 
+/**
+export async function computeExtractor(models, params, onProgress) {
+  const { backupId, dateStart, dateStop, categoryFilter, old = true } = params
+
+  onProgress?.(5, 'init')
+
+  const juridictionName = await models.HRBackups.findById(backupId)
+  const isJirs = await models.ContentieuxReferentiels.isJirs(backupId)
+  const referentiels = await models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
+  onProgress?.(15, 'referentiels')
+
+  const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
+  onProgress?.(25, 'flat')
+
+  let hr = await loadOrWarmHR(backupId, models)
+  onProgress?.(35, 'hr')
+
+  const categories = await models.HRCategories.getAll()
+  const functionList = await models.HRFonctions.getAllFormatDdg()
+  const formatedFunctions = await formatFunctions(functionList)
+  const allHuman = await getHumanRessourceList(hr, undefined, undefined, undefined, today(dateStart), today(dateStop))
+  onProgress?.(45, 'prep')
+
+  const indexes = await generateHRIndexes(allHuman)
+  onProgress?.(50, 'index')
+
+  const { onglet1, onglet2 } = await runExtractsInParallel({
+    indexes,
+    allHuman,
+    flatReferentielsList,
+    categories,
+    categoryFilter,
+    juridictionName,
+    dateStart,
+    dateStop,
+    isJirs,
+    old,
+  })
+  onProgress?.(70, 'extracts')
+
+  const excelRef = buildExcelRef(flatReferentielsList)
+  const { tproxs, allJuridiction } = await getJuridictionData(models, juridictionName)
+
+  const onglet1Data = { values: onglet1, columnSize: await autofitColumns(onglet1, true) }
+  const onglet2Data = { values: onglet2, columnSize: await autofitColumns(onglet2, true, 13), excelRef }
+
+  const viewModel = await getViewModel({ referentiels, tproxs, onglet1: onglet1Data, onglet2: onglet2Data, allJuridiction })
+  onProgress?.(95, 'finalize')
+
+  return {
+    fonctions: formatedFunctions,
+    referentiels,
+    tproxs,
+    onglet1: onglet1Data,
+    onglet2: onglet2Data,
+    allJuridiction,
+    viewModel,
+  }
+}
+*/
 export function fillAgentData(human, pData, etpts, filledReferentiel, flatReferentiel, isJirs, juridictionName) {
   const filledVentilations = mapIdToLabelObject(filledReferentiel, flatReferentiel)
 

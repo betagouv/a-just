@@ -7,7 +7,6 @@
       <th mat-sort-header="lastName">Nom</th>
       <th mat-sort-header="tj">Tribunal de rattachement</th>
       <th mat-sort-header="fonction">Fonction</th>
-      <th mat-sort-header="referentiels">Referentiels</th>
       <th mat-sort-header="access">Accès</th>
       <th mat-sort-header="ventilationsName">Ventilations</th>
       <th mat-sort-header="actions">Actions</th>
@@ -21,7 +20,6 @@
       <td>{{element.lastName}}</td>
       <td>{{element.tj}}</td>
       <td>{{element.fonction}}</td>
-      <td [innerHTML]="element.referentielName"></td>
       <td [innerHTML]="element.accessName"></td>
       <td [innerHTML]="element.ventilationsName"></td>
       <td>
@@ -62,16 +60,6 @@
           <p>
             <input type="checkbox" #acDom [(ngModel)]="ac.selected" />
             <label (click)="acDom.click()">{{ ac.label }}</label>
-          </p>
-          }
-        </div>
-        <hr />
-        <div class="item">
-          <p><b>Liste des referentiels accessibles</b></p>
-          @for (ref of referentiels; track ref.id) {
-          <p>
-            <input type="checkbox" #refDom [(ngModel)]="ref.selected" />
-            <label (click)="refDom.click()">{{ ref.label }}</label>
           </p>
           }
         </div>

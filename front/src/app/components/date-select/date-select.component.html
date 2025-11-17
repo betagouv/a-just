@@ -1,28 +1,34 @@
-<p (click)="readonly ? null : onClick()" class="title-select">{{ title }}</p>
+<p (click)="onClick()" class="title-select">{{ title }}</p>
 <div>
   @if (onShowLeftArrow()) {
-  <mat-icon class="left cursor-pointer" (click)="readonly ? null : onChangeDate(-1)">chevron_left</mat-icon>
+    <mat-icon class="left cursor-pointer" (click)="onChangeDate(-1)">chevron_left</mat-icon>
   }
   <p (click)="onClick()">{{ realValue ? realValue : '-' }}</p>
   @if (value && clearable && !readOnly) {
-  <mat-icon (click)="readonly ? null : onDateChanged(null); $event.preventDefault(); $event.stopPropagation()"
-    class="cursor-pointer">
-    highlight_off
-  </mat-icon>
+    <mat-icon (click)="onDateChanged(null); $event.preventDefault(); $event.stopPropagation()" class="cursor-pointer">
+      highlight_off
+    </mat-icon>
   }
   @if (!(value && clearable && !readOnly) && icon !== 'none') {
-  <mat-icon (click)="readonly ? null : onClick()">{{ icon }}</mat-icon>
+    <mat-icon (click)="onClick()">{{ icon }}</mat-icon>
   }
   @if (onShowRightArrow()) {
-  <mat-icon class="right cursor-pointer" (click)="readonly ? null : onChangeDate(1)">chevron_right</mat-icon>
+    <mat-icon class="right cursor-pointer" (click)="onChangeDate(1)">chevron_right</mat-icon>
   }
 </div>
-@if(readonly) {
-<input [readonly]="readonly" [ngModel]="value" />
-} @else {
-<input matInput [readonly]="readonly" [ngModel]="value" [matDatepicker]="picker" (ngModelChange)="onDateChanged($event)"
-  [min]="min" [max]="max" />
-<mat-datepicker #picker (monthSelected)="setMonthAndYear($event, picker)"
-  [startView]="dateType === 'month' ? 'year' : 'month'" [dateClass]="dateClass" (opened)="isOpen.emit(true)"
-  (closed)="isOpen.emit(false)"></mat-datepicker>
-}
+<input
+  matInput
+  [ngModel]="value"
+  [matDatepicker]="picker"
+  (ngModelChange)="onDateChanged($event)"
+  [min]="min"
+  [max]="max"
+/>
+<mat-datepicker
+  #picker
+  (monthSelected)="setMonthAndYear($event, picker)"
+  [startView]="dateType === 'month' ? 'year' : 'month'"
+  [dateClass]="dateClass"
+  (opened)="isOpen.emit(true)"
+  (closed)="isOpen.emit(false)"
+></mat-datepicker>

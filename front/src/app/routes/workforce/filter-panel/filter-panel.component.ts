@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Component,
   Input,
+  HostListener,
   ElementRef,
   AfterViewInit,
   OnChanges,
@@ -256,7 +257,10 @@ export class FilterPanelComponent
   /**
    * Détection d'un click sur le composant
    */
-  // Removed global click close; close is now emitted only by background and close icon
+  @HostListener('click', ['$event'])
+  onClick() {
+    this.close.emit();
+  }
 
   /**
    * Constructeur

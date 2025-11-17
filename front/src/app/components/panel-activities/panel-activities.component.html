@@ -1,179 +1,227 @@
 @if (header) {
-<div class="header-panel" [ngClass]="{ ca: getInterfaceType() }">
-  @for (ref of referentiel; track ref.id) {
-  <div class="sub-item">
-    <div class="text">
-      <div class="label">
-        <p>
-          <b>{{ userService.referentielMappingNameByInterface(ref.label) }}</b>
-        </p>
-      </div>
-      <div class="etp">
-        <p>{{ ref.totalAffected | number: '0.2-2' }}</p>
-      </div>
-      <div class="flex-1"></div>
-    </div>
-    <div class="color" [ngStyle]="{
+  <div class="header-panel" [ngClass]="{ ca: getInterfaceType() }">
+    @for (ref of referentiel; track ref.id) {
+      <div class="sub-item">
+        <div class="text">
+          <div class="label">
+            <p>
+              <b>{{ userService.referentielMappingNameByInterface(ref.label) }}</b>
+            </p>
+          </div>
+          <div class="etp">
+            <p>{{ ref.totalAffected | number: '0.2-2' }}</p>
+          </div>
+          <div class="flex-1"></div>
+        </div>
+        <div
+          class="color"
+          [ngStyle]="{
             'background-color': userService.referentielMappingColorActivityByInterface(
               userService.referentielMappingNameByInterface(ref.label)
             ),
-          }"></div>
+          }"
+        ></div>
+      </div>
+    }
   </div>
-  }
-</div>
 }
 <div class="activities-panel" [ngStyle]="{ 'grid-template-columns': 'repeat(' + referentiel.length + ', 1fr)' }">
   @for (ref of referentiel; track ref.id; let index = $index) {
-  <div class="sub-item">
-    @if (showPlaceHolder) {
-    <progression-bar [readonly]="readonly" [color]="PLACEHOLDER_COLOR"
-      class="no-opacity-to-background"></progression-bar>
-    }
-    @if (!showPlaceHolder) {
-    <progression-bar [readonly]="readonly" [percent]="ref.percent" [selected]="canSelectedTopReferentiel" [color]="
+    <div class="sub-item">
+      @if (showPlaceHolder) {
+        <progression-bar [color]="PLACEHOLDER_COLOR" class="no-opacity-to-background"></progression-bar>
+      }
+      @if (!showPlaceHolder) {
+        <progression-bar
+          [percent]="ref.percent"
+          [selected]="canSelectedTopReferentiel"
+          [color]="
             userService.referentielMappingColorActivityByInterface(
               userService.referentielMappingNameByInterface(ref.label)
             )
-          " [colorOpacity]="
+          "
+          [colorOpacity]="
             userService.referentielMappingColorActivityByInterface(
               userService.referentielMappingNameByInterface(ref.label),
               OPACITY
             )
-          " (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
-      (percentChange)="onChangePercent(referentiel[index], $event)" class="dark-mode"></progression-bar>
-    }
-  </div>
+          "
+          (click)="canSelectedTopReferentiel ? null : onTogglePanel(index)"
+          (percentChange)="onChangePercent(referentiel[index], $event)"
+          class="dark-mode"
+        ></progression-bar>
+      }
+    </div>
   }
 </div>
 
 @if (!forceToShowContentieuxDetail && refIndexSelected !== -1) {
-<div class="sub-panel-activites" [ngStyle]="{
+  <div
+    class="sub-panel-activites"
+    [ngStyle]="{
       'border-top-color': userService.referentielMappingColorActivityByInterface(
         userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label)
       ),
-    }">
-  <div class="sub-item">
-    <progression-bar [readonly]="readonly" [percent]="referentiel[refIndexSelected].percent"
-      [ddg]="isDdgContentieux(referentiel[refIndexSelected].label)" [lockedMessage]="
+    }"
+  >
+    <div class="sub-item">
+      <progression-bar
+        [percent]="referentiel[refIndexSelected].percent"
+        [ddg]="isDdgContentieux(referentiel[refIndexSelected].label)"
+        [lockedMessage]="
           selected && REFERENTIELS_CANT_UPDATED.indexOf(referentiel[refIndexSelected].label) !== -1
             ? 'Pour les “' +
               referentiel[refIndexSelected].label +
               '”, il est impératif de renseigner la ou les sous-rubriques . Le total se calcule automatiquement.'
             : null
-        " [color]="
+        "
+        [color]="
           userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label)
           )
-        " [colorOpacity]="
+        "
+        [colorOpacity]="
           userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label),
             OPACITY
           )
-        " [selected]="selected" (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)"
-      class="dark-mode"></progression-bar>
-    <p>{{ referentiel[refIndexSelected].label }}</p>
-  </div>
-  @if ((referentiel[refIndexSelected].childrens || []).length) {
-  <div class="sub-item sub-item-or">
-    <p>Dont</p>
-  </div>
-  }
-  <div class="group-sub-item">
-    @for (ref of referentiel[refIndexSelected].childrens || []; track ref.id) {
-    @if (ref.label === 'Fonctionnaires affectés au CPH') {
-    <div class="sub-item"></div>
+        "
+        [selected]="selected"
+        (percentChange)="onChangePercent(referentiel[refIndexSelected], $event)"
+        class="dark-mode"
+      ></progression-bar>
+      <p>{{ referentiel[refIndexSelected].label }}</p>
+    </div>
+    @if ((referentiel[refIndexSelected].childrens || []).length) {
+      <div class="sub-item sub-item-or">
+        <p>Dont</p>
+      </div>
     }
-    <!-- Add element to put the next to an other line -->
-    <div class="sub-item" (mouseover)="setMouseHovering(userService.referentielMappingNameByInterface(ref.label))"
-      (mouseout)="setMouseHovering()">
-      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percent" [color]="
+    <div class="group-sub-item">
+      @for (ref of referentiel[refIndexSelected].childrens || []; track ref.id) {
+        @if (ref.label === 'Fonctionnaires affectés au CPH') {
+          <div class="sub-item"></div>
+        }
+        <!-- Add element to put the next to an other line -->
+        <div
+          class="sub-item"
+          (mouseover)="setMouseHovering(userService.referentielMappingNameByInterface(ref.label))"
+          (mouseout)="setMouseHovering()"
+        >
+          <progression-bar
+            [ddg]="isDdgContentieux(ref.label)"
+            [percent]="ref.percent"
+            [color]="
               userService.referentielMappingColorActivityByInterface(
                 userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label)
               )
-            " [colorOpacity]="
+            "
+            [colorOpacity]="
               userService.referentielMappingColorActivityByInterface(
                 userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label),
                 OPACITY
               )
-            " [selected]="selected" (percentChange)="onChangePercent(ref, $event, referentiel[refIndexSelected])"
-        class="dark-mode"></progression-bar>
-      <p>{{ userService.referentielMappingNameByInterface(ref.label) }}</p>
-      @if (this.mouseHovering === true && checkHoveredRef(ref.label)) {
-      <div class="tooltip">
-        <span><i class="arrow-top"></i></span>
-        <div class="title">{{ userService.referentielMappingNameByInterface(ref.label) }}</div>
-        <div class="texte">{{ this.hoveredReferentielDetail }}</div>
-      </div>
+            "
+            [selected]="selected"
+            (percentChange)="onChangePercent(ref, $event, referentiel[refIndexSelected])"
+            class="dark-mode"
+          ></progression-bar>
+          <p>{{ userService.referentielMappingNameByInterface(ref.label) }}</p>
+          @if (this.mouseHovering === true && checkHoveredRef(ref.label)) {
+            <div class="tooltip">
+              <span><i class="arrow-top"></i></span>
+              <div class="title">{{ userService.referentielMappingNameByInterface(ref.label) }}</div>
+              <div class="texte">{{ this.hoveredReferentielDetail }}</div>
+            </div>
+          }
+        </div>
       }
     </div>
-    }
-  </div>
-  <div class="arrow-block" [ngStyle]="{
+    <div
+      class="arrow-block"
+      [ngStyle]="{
         left: (refIndexSelected * 100) / referentiel.length + '%',
         width: 100 / referentiel.length + '%',
-      }">
-    <div class="arrow" [style.--border-color]="
+      }"
+    >
+      <div
+        class="arrow"
+        [style.--border-color]="
           userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(referentiel[refIndexSelected].label)
           )
-        "></div>
+        "
+      ></div>
+    </div>
   </div>
-</div>
 }
 @if (forceToShowContentieuxDetail) {
-@for (mainReferentiel of referentiel; track mainReferentiel.id) {
-@if (mainReferentiel.percent) {
-<div class="sub-panel-activites" [ngStyle]="{
+  @for (mainReferentiel of referentiel; track mainReferentiel.id) {
+    @if (mainReferentiel.percent) {
+      <div
+        class="sub-panel-activites"
+        [ngStyle]="{
           'border-top-color': userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(mainReferentiel.label)
           ),
-        }">
-  <div class="sub-item">
-    <progression-bar [readonly]="readonly"
-      [ddg]="isDdgContentieux(userService.referentielMappingNameByInterface(mainReferentiel.label))"
-      [percent]="mainReferentiel.percent" [color]="
+        }"
+      >
+        <div class="sub-item">
+          <progression-bar
+            [ddg]="isDdgContentieux(userService.referentielMappingNameByInterface(mainReferentiel.label))"
+            [percent]="mainReferentiel.percent"
+            [color]="
               userService.referentielMappingColorActivityByInterface(
                 userService.referentielMappingNameByInterface(mainReferentiel.label)
               )
-            " [colorOpacity]="
+            "
+            [colorOpacity]="
               userService.referentielMappingColorActivityByInterface(
                 userService.referentielMappingNameByInterface(mainReferentiel.label),
                 OPACITY
               )
-            " class="dark-mode"></progression-bar>
-    <p>{{ userService.referentielMappingNameByInterface(mainReferentiel.label) }}</p>
-  </div>
-  @if (countNbSubItem(mainReferentiel)) {
-  <div class="sub-item sub-item-or">
-    <p>Dont</p>
-  </div>
-  }
-  <div class="group-sub-item">
-    @for (ref of mainReferentiel.childrens || []; track ref.id) {
-    @if (ref.label === 'Fonctionnaires affectés au CPH') {
-    <div class="sub-item"></div>
-    }
-    <!-- Add element to put the next to an other line -->
-    @if (ref.percent) {
-    <div class="sub-item">
-      <progression-bar [readonly]="readonly" [ddg]="isDdgContentieux(ref.label)" [percent]="ref.percent" [color]="
+            "
+            class="dark-mode"
+          ></progression-bar>
+          <p>{{ userService.referentielMappingNameByInterface(mainReferentiel.label) }}</p>
+        </div>
+        @if (countNbSubItem(mainReferentiel)) {
+          <div class="sub-item sub-item-or">
+            <p>Dont</p>
+          </div>
+        }
+        <div class="group-sub-item">
+          @for (ref of mainReferentiel.childrens || []; track ref.id) {
+            @if (ref.label === 'Fonctionnaires affectés au CPH') {
+              <div class="sub-item"></div>
+            }
+            <!-- Add element to put the next to an other line -->
+            @if (ref.percent) {
+              <div class="sub-item">
+                <progression-bar
+                  [ddg]="isDdgContentieux(ref.label)"
+                  [percent]="ref.percent"
+                  [color]="
                     userService.referentielMappingColorActivityByInterface(
                       userService.referentielMappingNameByInterface(mainReferentiel.label)
                     )
-                  " [colorOpacity]="
+                  "
+                  [colorOpacity]="
                     userService.referentielMappingColorActivityByInterface(
                       userService.referentielMappingNameByInterface(mainReferentiel.label),
                       OPACITY
                     )
-                  " class="dark-mode"></progression-bar>
-      <p>{{ userService.referentielMappingNameByInterface(ref.label) }}</p>
-    </div>
+                  "
+                  class="dark-mode"
+                ></progression-bar>
+                <p>{{ userService.referentielMappingNameByInterface(ref.label) }}</p>
+              </div>
+            }
+          }
+        </div>
+      </div>
     }
-    }
-  </div>
-</div>
-}
-}
+  }
 }
 <div class="progress-bar" [ngClass]="{ 'low-completion': percentAffected !== 100, placeholder: showPlaceHolder }">
   <p>Taux d'affectation du temps disponible : {{ percentAffected | number: '0.0-2' }}%</p>

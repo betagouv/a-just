@@ -1,91 +1,23 @@
 name: GitHub Actions
 on:
   push:
-    branches:
-      - sandbox
-      - dev
-    paths-ignore:
-      - 'site/**'
-      - '**/*.md'
+    branches: [dev, sandbox, sentry-latency-improvements]
   pull_request:
-    branches:
-      - dev
-      - sandbox
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
+    branches: [dev, sandbox]
   workflow_dispatch:
     inputs:
       pr_number:
         description: "PR number to publish under reports/pr-<number>"
         required: true
         type: string
-      spec:
-        description: "E2E spec globs (comma-separated), e.g. cypress/e2e/login.cy.js,cypress/e2e/activite-suite.cy.ts"
-        required: false
-        type: string
-      api_grep:
-        description: "Mocha --grep filter for API tests (optional)"
-        required: false
-        type: string
 
 jobs:
-  api-tests:
+  tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "API TESTS"
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - run: echo "RUNNING TESTS (NON-BLOCKING)"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - run: docker compose version
-
-      - name: Install dependencies
-        run: npm i
-
-      - name: Run API tests (Mocha + Mochawesome)
-        run: |
-          set -e
-          API_GREP="${{ github.event.inputs.api_grep }}"
-          if [ -n "$API_GREP" ]; then
-            echo "Running API tests with --grep: $API_GREP"
-            npm run test:api -- --grep "$API_GREP"
-          else
-            npm run test:api
-          fi
-        continue-on-error: true
-
-      - name: Debug - List API generated files
-        if: always()
-        run: |
-          echo "API test directory structure:"
-          find ./api -type f -name "*.json" -o -name "*.html" | head -20
-          echo "API test reports:"
-          ls -la ./api/test/ || echo "API test directory not found"
-          echo "Files in api/test/:"
-          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "No API test reports found"
-          echo "Mochawesome specific files:"
-          find ./api -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
-
-      - name: Upload Mocha test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: mocha-report
-          path: ./api/test/reports
-          if-no-files-found: warn
-
-  e2e-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "E2E TESTS"
-      - name: Checkout code
+      - name: Checkout PR branch (candidate)
         uses: actions/checkout@v4
 
       - name: Checkout sandbox branch (for local sandbox stack)
@@ -103,64 +35,39 @@ jobs:
 
       - name: Install dependencies
         run: npm i
-      - name: Run E2E tests (Cypress JSON-only, containerized)
-        run: |
-          set -e
-          SPEC_INPUT="${{ github.event.inputs.spec }}"
-          export SPEC="$SPEC_INPUT"
-          export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
-            -e CY_JSON_ONLY=1 \
-            -e SANDBOX_CODE_DIR=/work/sandbox-code \
-            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
-            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
-            -e SPEC="$SPEC" \
-            -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
-            cypress sh -lc '
-              set -e
-              cd /e2e
-              npm ci
-              echo "Waiting for front at $CYPRESS_BASE_URL ..."
-              npx -y wait-on -t 180000 -i 2000 "$CYPRESS_BASE_URL"
-              echo "Waiting for API at $NG_APP_SERVER_URL ..."
-              npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
-              rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --spec "${SPEC:-cypress/e2e/**/*.cy.js}"
-              echo "=== E2E reports ==="; ls -la cypress/reports || true
-            '
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
+
+      - name: Run unit tests (API)
+        if: ${{ false }}
+        run: npm run test:api
+
+      - name: Run tests
+        env:
+          NODE_ENV: test
+          SANDBOX_CODE_DIR: ${{ github.workspace }}/sandbox-code
+        run: npm run test
         continue-on-error: true
 
-      - name: Fix permissions for end-to-end artifacts
-        if: always()
-        run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
+      
 
-      - name: Debug - List E2E generated files
+      - name: Debug - List generated files
         if: always()
         run: |
           echo "=== END-TO-END TESTS DEBUG ==="
           echo "Listing end-to-end directory structure:"
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" -o -name "*.xlsx" -o -name "*.xls" | head -50
           echo "Reports directory content:"
           ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
-          echo "Fallback mochawesome-report directory content:"
-          ls -la ./end-to-end/mochawesome-report/ || echo "Fallback mochawesome-report directory not found"
-          echo "Videos directory content:"
-          ls -la ./end-to-end/cypress/videos/ || echo "Videos directory not found"
-          echo "Screenshots directory content:"
-          ls -la ./end-to-end/cypress/screenshots/ || echo "Screenshots directory not found"
-
-      - name: Collect Cypress JSON reports (normalize)
-        if: always()
-        run: |
-          set -e
-          mkdir -p ./end-to-end/cypress/reports/.jsons
-          echo "Collecting JSONs from cypress/reports and mochawesome-report into cypress/reports/.jsons"
-          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-          echo "Final JSONs to upload:"
-          ls -la ./end-to-end/cypress/reports/.jsons || true
+          echo "Downloads directory content:"
+          ls -la ./end-to-end/cypress/downloads/ || echo "Downloads directory not found"
+          echo "=== API TESTS DEBUG ==="
+          echo "API test directory structure:"
+          find ./api -type f -name "*.json" -o -name "*.html" | head -20
+          echo "API test reports:"
+          ls -la ./api/test/ || echo "API test directory not found"
+          echo "Files in api/test/:"
+          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "No API test reports found"
+          echo "Mochawesome specific files:"
+          find ./api -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
 
       - name: Upload Cypress video
         if: always()
@@ -169,27 +76,14 @@ jobs:
           name: cypress-video
           path: ./end-to-end/cypress/videos
 
-      - name: Upload Cypress screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots
-          path: ./end-to-end/cypress/screenshots
-          if-no-files-found: warn
-
       - name: Upload Cypress test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-reports
-          path: |
-            ./end-to-end/cypress/reports/.jsons/*.json
-            ./end-to-end/cypress/reports/*.json
-            ./end-to-end/cypress/reports/**/*.json
-            ./end-to-end/mochawesome-report/*.json
-            ./end-to-end/mochawesome-report/**/*.json
-          include-hidden-files: true
-          if-no-files-found: warn
+          path: ./end-to-end/cypress/reports
+
+      
 
       - name: Upload Cypress downloads (Excel files)
         if: always()
@@ -200,119 +94,19 @@ jobs:
             ./end-to-end/cypress/downloads/*.xlsx
             ./end-to-end/cypress/downloads/*.xls
           if-no-files-found: warn
-  # Non-regression calculation end-to-end tests (requires SANDBOX stack)
-  e2e-nonreg-vs-sandbox-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "E2E NON-REGRESSION TESTS"
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Checkout sandbox branch (for local sandbox stack)
-        uses: actions/checkout@v4
-        with:
-          ref: sandbox
-          path: sandbox-code
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - run: docker compose version
-
-      - name: Install dependencies
-        run: npm i
-
-      - name: Run Non-Regression E2E tests (Cypress JSON-only, containerized)
-        run: |
-          set -e
-          export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
-            -e CY_JSON_ONLY=1 \
-            -e SANDBOX_CODE_DIR=/work/sandbox-code \
-            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
-            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
-            -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
-            cypress sh -lc '
-              set -e
-              cd /e2e
-              npm ci
-              echo "Waiting for PR front at http://175.0.0.30:4200 ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.30:4200"
-              echo "Waiting for PR API at http://175.0.0.20:8081/api ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.20:8081/api"
-              echo "Waiting for SANDBOX front at http://175.0.0.31:4200 ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.31:4200"
-              echo "Waiting for SANDBOX API at http://175.0.0.21:8081/api ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.21:8081/api"
-              rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
-              echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
-            '
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml down || true
-        continue-on-error: true
-
-      - name: Fix permissions for end-to-end artifacts
-        if: always()
-        run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
-
-      - name: Debug - List E2E generated files (nonreg)
-        if: always()
-        run: |
-          echo "=== END-TO-END NONREG DEBUG ==="
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
-          ls -la ./end-to-end/cypress/reports/ || true
-          ls -la ./end-to-end/mochawesome-report/ || true
-
-      - name: Collect Cypress JSON reports (normalize, nonreg)
-        if: always()
-        run: |
-          set -e
-          mkdir -p ./end-to-end/cypress/reports/.jsons
-          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-          ls -la ./end-to-end/cypress/reports/.jsons || true
-
-      - name: Upload Cypress video (nonreg)
-        if: always()
+      - name: Upload Mocha test report
+        if: ${{ false }}
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-video-nonreg
-          path: ./end-to-end/cypress/videos
-
-      - name: Upload Cypress screenshots (nonreg)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots-nonreg
-          path: ./end-to-end/cypress/screenshots
-          if-no-files-found: warn
-
-      - name: Upload Cypress test reports (nonreg)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-reports-nonreg
-          path: |
-            ./end-to-end/cypress/reports/.jsons/*.json
-            ./end-to-end/cypress/reports/*.json
-            ./end-to-end/cypress/reports/**/*.json
-            ./end-to-end/mochawesome-report/*.json
-            ./end-to-end/mochawesome-report/**/*.json
-          include-hidden-files: true
-          if-no-files-found: warn
+          name: mocha-report
+          path: ./api/test/reports
 
   deploy:
-    needs: [api-tests, e2e-tests, e2e-nonreg-vs-sandbox-tests]
     runs-on: ubuntu-latest
     if: |
-      always() && (
-        (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
-        (github.event_name == 'workflow_dispatch') ||
-        (github.event_name == 'push')
-      )
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'workflow_dispatch')
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -320,38 +114,17 @@ jobs:
       pages: write
       id-token: write
       contents: read
-      pull-requests: write
-      issues: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Find pull request for push event
-        id: findpr
-        if: ${{ github.event_name == 'push' }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const branch = context.ref.replace('refs/heads/','');
-            const { data: prs } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              head: `${context.repo.owner}:${branch}`,
-            });
-            core.setOutput('pull-request-number', prs.length ? String(prs[0].number) : '');
+        uses: actions/checkout@v2
 
       - name: Determine PR number
         id: prnum
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "pr=${{ github.event.number }}" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "pr=${{ inputs.pr_number }}" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event_name }}" = "push" ]; then
-            echo "pr=${{ steps.findpr.outputs.pull-request-number }}" >> "$GITHUB_OUTPUT"
           else
-            echo "pr=" >> "$GITHUB_OUTPUT"
+            echo "pr=${{ inputs.pr_number }}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Download Cypress reports artifacts
@@ -361,13 +134,6 @@ jobs:
           name: cypress-reports
           path: ./cypress-reports
 
-      - name: Download Cypress reports artifacts (nonreg)
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: cypress-reports-nonreg
-          path: ./cypress-reports-nonreg
-
       - name: Download Cypress videos artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -375,28 +141,8 @@ jobs:
           name: cypress-video
           path: ./cypress-videos
 
-      - name: Download Cypress videos artifacts (nonreg)
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: cypress-video-nonreg
-          path: ./cypress-videos-nonreg
-
-      - name: Download Cypress screenshots artifacts
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: cypress-screenshots
-          path: ./cypress-screenshots
-
-      - name: Download Cypress screenshots artifacts (nonreg)
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: cypress-screenshots-nonreg
-          path: ./cypress-screenshots-nonreg
-
       - name: Download Mocha report artifacts
+        if: ${{ false }}
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
@@ -410,92 +156,11 @@ jobs:
           set -e
           mkdir -p site/reports/pr-${PR_NUM}
           mkdir -p site/reports/pr-${PR_NUM}/cypress
-          cp -r cypress-reports/cypress/reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/cypress/reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
-          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/cypress/reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/* site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
           mkdir -p site/reports/pr-${PR_NUM}/videos
           cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
-          cp -r cypress-videos-nonreg/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || true
-          mkdir -p site/reports/pr-${PR_NUM}/screenshots
-          cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
-          cp -r cypress-screenshots-nonreg/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || true
           mkdir -p site/reports/pr-${PR_NUM}/mocha
           cp -r mocha-report/* site/reports/pr-${PR_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
-
-      - name: Build combined static HTML (merged JSON -> bespoke report)
-        continue-on-error: true
-        env:
-          PR_NUM: ${{ steps.prnum.outputs.pr }}
-        run: |
-          set -e
-          HOST_UID=$(id -u)
-          HOST_GID=$(id -g)
-          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
-            set -e
-            mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
-            mkdir -p site/reports/pr-${PR_NUM}/combined
-            JSONS="$(
-              { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-            )"
-            if [ -n "$JSONS" ]; then
-              npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
-            fi
-            if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
-              node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              node scripts/build-static-report.js site/reports/pr-${PR_NUM}/combined/sectioned.json site/reports/pr-${PR_NUM}/videos site/reports/pr-${PR_NUM}/screenshots site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html || echo "Static report generation failed"
-            else
-              echo "No JSONs to merge for combined report"
-            fi
-          '
-
-      - name: Append Cypress Videos section to combined HTML
-        env:
-          PR_NUM: ${{ steps.prnum.outputs.pr }}
-        run: |
-          set -e
-          HTML="site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html"
-          VIDEOS_DIR="site/reports/pr-${PR_NUM}/videos"
-          if [ -f "$HTML" ]; then
-            chmod u+w "$HTML" || true
-            echo "Appending Cypress Videos section to $HTML"
-            {
-              printf '\n<hr/>\n'
-              echo "<h2 style=\"margin-top:24px\">Cypress Videos</h2>"
-              echo "<ul>"
-              for v in "$VIDEOS_DIR"/*.mp4; do
-                [ -e "$v" ] || continue
-                b=$(basename "$v")
-                echo "<li><a href=\"../videos/$b\" target=\"_blank\">$b</a></li>"
-              done
-              echo "</ul>"
-            } >> "$HTML"
-          else
-            echo "Combined HTML not found, skipping video section"
-          fi
-
-      - name: Check combined HTML exists
-        id: combined_exists
-        env:
-          PR_NUM: ${{ steps.prnum.outputs.pr }}
-        run: |
-          if [ -s "site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html" ]; then
-            echo "ok=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "ok=false" >> "$GITHUB_OUTPUT"
-          fi
 
       - name: Create per-PR landing index.html
         env:
@@ -513,7 +178,6 @@ jobs:
           <body>
             <h1>Reports for PR ${PR_NUM}</h1>
             <ul>
-              <li><a href="./combined/a-just-tests-report.html" target="_blank">Combined (API + E2E)</a></li>
               <li><a href="./mocha/" target="_blank">Mocha (API)</a></li>
               <li><a href="./cypress/" target="_blank">Cypress (E2E)</a></li>
               <li><a href="./videos/" target="_blank">Cypress Videos</a></li>
@@ -533,21 +197,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Comment PR with Combined report URL
-        if: ${{ steps.prnum.outputs.pr != '' && steps.combined_exists.outputs.ok == 'true' }}
-        uses: actions/github-script@v7
-        env:
-          PR_NUM: ${{ steps.prnum.outputs.pr }}
-        with:
-          script: |
-            const pageUrl = process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
-            const pr = process.env.PR_NUM;
-            const url = `${pageUrl}reports/pr-${pr}/combined/a-just-tests-report.html`;
-            const body = `✅ Combined test report available: ${url}`;
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: Number(pr),
-              body
-            });

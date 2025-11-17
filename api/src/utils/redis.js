@@ -17,9 +17,9 @@ const useCompression = true // mettre à false pour débug
 
 /**
  * Formatage d'une clef redis
- * @param {*} cacheName
- * @param {*} key
- * @returns
+ * @param {*} cacheName 
+ * @param {*} key 
+ * @returns 
  */
 export const getFullKey = (cacheName, key) => `${cacheName}:${key}`
 
@@ -175,9 +175,9 @@ export const setCacheValue = async (key, value, cacheName, ttl = defaultTTL) => 
 
 /**
  * Suppression du cache d'une clef donnée
- * @param {*} key
- * @param {*} cacheName
- * @returns
+ * @param {*} key 
+ * @param {*} cacheName 
+ * @returns 
  */
 export const deleteCacheValue = async (key, cacheName) => {
   const fullKey = getFullKey(cacheName, key)
@@ -202,11 +202,11 @@ export const getObjectSizeInMB = (obj) => {
 
 /**
  * Charge ou calcule la cache de la liste complète d'agent pour une juridiction
- * @param {*} backupId
+ * @param {*} backupId 
  * @param {*} models objet d'acces bdd
- * @returns
+ * @returns 
  */
-export const loadOrWarmHR = async (backupId, models, userId) => {
+export const loadOrWarmHR = async (backupId, models) => {
   const cacheKey = 'hrBackup'
   let hr = await getCacheValue(backupId, cacheKey)
 
@@ -218,25 +218,6 @@ export const loadOrWarmHR = async (backupId, models, userId) => {
     await invalidateAjustBackup(backupId)
   } else {
     //console.log(`✅ Cache utilisé pour ${cacheKey}:${backupId}`)
-  }
-
-  // control if user has limited access to the contentieux
-  if (userId) {
-    const user = await models.Users.userPreview(userId)
-    if (user.referentielIds) {
-      // agent with activities who user can see
-      const listWithActivities = hr.filter((el) =>
-        el.situations.some((s) => (s.activities || []).some((a) => a.percent && a.contentieux && user.referentielIds.includes(a.contentieux.id))),
-      )
-
-      // agent without ventilations
-      const listWithoutSituations = hr.filter((el) => el.situations.length === 0)
-
-      // agent without activities
-      const listWithoutActivities = hr.filter((el) => el.situations.every((s) => s.activities.length === 0))
-
-      hr = [...listWithoutSituations, ...listWithoutActivities, ...listWithActivities]
-    }
   }
 
   return hr

@@ -819,7 +819,7 @@ export default (sequelizeInstance, Model) => {
     const categories = await Model.models.HRCategories.getAll()
     const fonctions = await loadFonctionsForCategory(categorySelected, Model.models)
     selectedFonctionsIds = await loadFonctionsForMultiCategoryFiltered(categorySelected, selectedFonctionsIds, Model.models)
-    const referentiels = await loadReferentiels(backupId, contentieuxIds, Model.models, user.id)
+    const referentiels = await loadReferentiels(backupId, contentieuxIds, Model.models)
     const activities = await Model.models.Activities.getAll(backupId)
     const optionsBackups = optionBackupId ? await Model.models.ContentieuxOptions.getAllById(optionBackupId) : [] // référentiel de temps moyen
     const nbMonth = getNbMonth(dateStart, dateStop)
@@ -827,7 +827,7 @@ export default (sequelizeInstance, Model) => {
     let list = emptyCalulatorValues(referentiels)
 
     console.time('Mise en cache')
-    const hr = await loadOrWarmHR(backupId, Model.models, user.id)
+    const hr = await loadOrWarmHR(backupId, Model.models)
     console.timeEnd('Mise en cache')
 
     console.time('🧩 Pré-formatage / Indexation')

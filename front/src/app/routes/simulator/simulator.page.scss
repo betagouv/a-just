@@ -777,8 +777,7 @@
         width: 120px !important;
         height: 40px;
         font-size: 18px;
-        //border-bottom: solid 2px utils.$colors-bgTag !important;
-        border-bottom: solid 2px utils.$colors-cblack !important;
+        border-bottom: solid 2px utils.$colors-bgTag !important;
 
         :focus {
           border-bottom: solid 2px utils.$colors-cblack !important;

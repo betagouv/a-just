@@ -1,4 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import * as Sentry from '@sentry/browser'
 import { startLatencyScope, type LatencyTxn } from '../../utils/sentry-latency'
 import { cloneDeep, isNaN, orderBy, sortBy, sumBy } from 'lodash'
 import { Router } from '@angular/router'
@@ -544,6 +545,10 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
       selectedReferentielIds = this.reaffectatorService.selectedReferentielIds
     }
 
+    let selectedFonctionsIds = null
+    if (this.reaffectatorService.selectedFonctionsIds.length !== this.formFilterFonctionsSelect.length) {
+      selectedFonctionsIds = [...this.reaffectatorService.selectedFonctionsIds]
+    }
     this.appService.appLoading.next(true)
 
     this.reaffectatorService
@@ -551,7 +556,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         this.humanResourceService.backupId.getValue() || 0,
         this.dateSelected,
         this.reaffectatorService.selectedCategoriesId || 0,
-        null,
+        selectedFonctionsIds,
         selectedReferentielIds,
       )
       .then(({ list, allPersons }) => {
@@ -610,20 +615,6 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
         } catch {}
         this._reaffTxn = undefined
       })
-  }
-
-  /**
-   * Agent can view to the page
-   */
-  canViewAgent(humanResource: HumanResourceSelectedInterface) {
-    let selectedFonctionsIds = null
-    if (this.reaffectatorService.selectedFonctionsIds.length !== this.formFilterFonctionsSelect.length) {
-      selectedFonctionsIds = [...this.reaffectatorService.selectedFonctionsIds]
-
-      return selectedFonctionsIds.indexOf(humanResource.fonction?.id || 0) !== -1 || humanResource.fonction?.id === null ? true : false
-    } else {
-      return true
-    }
   }
 
   /**

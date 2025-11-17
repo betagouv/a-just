@@ -23,16 +23,6 @@ input[type='email'] {
   &:focus {
     border-bottom: 2px solid black;
   }
-
-  &:read-only {
-    border: none;
-    opacity: 0.5;
-    cursor: not-allowed !important;
-
-    &:focus {
-      outline: none;
-    }
-  }
 }
 
 select {

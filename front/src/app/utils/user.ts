@@ -2,10 +2,10 @@ import {
   HAS_ACCESS_TO_CONTRACTUEL,
   HAS_ACCESS_TO_GREFFIER,
   HAS_ACCESS_TO_MAGISTRAT,
-  USER_ACCESS_ACTIVITIES_READER,
-  USER_ACCESS_SIMULATOR_READER,
-  USER_ACCESS_VENTILATIONS_READER,
-  USER_ACCESS_WHITE_SIMULATOR_READER,
+  USER_ACCESS_ACTIVITIES,
+  USER_ACCESS_SIMULATOR,
+  USER_ACCESS_VENTILATIONS,
+  USER_ACCESS_WHITE_SIMULATOR,
 } from '../constants/user-access'
 import { UserInterface } from '../interfaces/user-interface'
 
@@ -46,7 +46,7 @@ export const userCanViewContractuel = (user: UserInterface | null) => {
 export const userCanViewActivities = (user: UserInterface | null) => {
   const acces = user && user.access ? user.access : []
 
-  return acces.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1
+  return acces.indexOf(USER_ACCESS_ACTIVITIES) !== -1
 }
 
 /**
@@ -56,7 +56,7 @@ export const userCanViewActivities = (user: UserInterface | null) => {
 export const userCanViewVentilateur = (user: UserInterface | null) => {
   const acces = user && user.access ? user.access : []
 
-  return acces.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1
+  return acces.indexOf(USER_ACCESS_VENTILATIONS) !== -1
 }
 
 /**
@@ -66,7 +66,7 @@ export const userCanViewVentilateur = (user: UserInterface | null) => {
 export const userCanViewWhiteSimulator = (user: UserInterface | null) => {
   const acces = user && user.access ? user.access : []
 
-  return acces.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1
+  return acces.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1
 }
 
 /**
@@ -76,7 +76,7 @@ export const userCanViewWhiteSimulator = (user: UserInterface | null) => {
 export const userCanViewSimulator = (user: UserInterface | null) => {
   const acces = user && user.access ? user.access : []
 
-  return acces.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1
+  return acces.indexOf(USER_ACCESS_SIMULATOR) !== -1
 }
 
 /**

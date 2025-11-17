@@ -383,20 +383,16 @@ export default class App extends AppBase {
 
     await db.migrations()
     await db.seeders()
-    if (process.env.NODE_ENV !== 'test') {
-      startCrons(this)
-      console.log('--- IS READY ---', config.port)
-      this.isReady()
 
-      setTimeout(() => {
-        this.warmupRedisCache().catch((err) => {
-          console.error('❌ Erreur warmup Redis (décalé) :', err)
-        })
-      }, 10000)
-    } else {
-      console.log('--- IS READY ---', config.port)
-      this.isReady()
-    }
+    startCrons(this)
+    console.log('--- IS READY ---', config.port)
+    this.isReady()
+
+    setTimeout(() => {
+      this.warmupRedisCache().catch((err) => {
+        console.error('❌ Erreur warmup Redis (décalé) :', err)
+      })
+    }, 10000)
   }
 
   /**
@@ -424,20 +420,6 @@ export default class App extends AppBase {
    */
   done() {
     console.log('--- DONE ---')
-    if (process.env.NODE_ENV === 'test') {
-      try {
-        if (this.httpServer && this.httpServer.listening) {
-          this.httpServer.close()
-        }
-        if (this.redisClient?.status !== 'end') {
-          this.redisClient.quit()
-        }
-        if (this.dbInstance) {
-          this.dbInstance.close()
-        }
-      } catch (e) {}
-      return
-    }
     process.exit()
   }
 
@@ -538,7 +520,7 @@ export default class App extends AppBase {
    * @param {*} delayMs
    * @returns
    */
-  waitForPostgres = async (sequelizeInstance, maxRetries = 150, delayMs = 2000) => {
+  waitForPostgres = async (sequelizeInstance, maxRetries = 10, delayMs = 2000) => {
     let attempt = 0
 
     while (attempt < maxRetries) {

@@ -317,16 +317,6 @@
             text-align: center;
             border: none;
             width: 100%;
-
-            &:read-only {
-              border: none;
-              opacity: 0.5;
-              cursor: not-allowed;
-
-              &:focus {
-                outline: none;
-              }
-            }
           }
         }
 

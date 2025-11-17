@@ -294,7 +294,6 @@ export default class RouteAuths extends Route {
    */
   @Route.Get({})
   async autoLoginAdmin(ctx) {
-    console.log('autoLoginAdmin', ctx.state.user)
     if (this.userId(ctx) && [USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN].indexOf(ctx.state.user.role) !== -1) {
       await super.addUserInfoInBody(ctx)
       this.sendOk(ctx)

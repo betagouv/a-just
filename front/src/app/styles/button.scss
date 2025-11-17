@@ -127,10 +127,6 @@ button {
     display: inline-flex;
     position: relative;
 
-    &.not-clickable {
-      cursor: not-allowed !important;
-    }
-
 
     div.icon {
       margin-right: 16px;

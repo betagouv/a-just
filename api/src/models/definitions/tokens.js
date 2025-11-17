@@ -20,7 +20,7 @@ export default (sequelizeInstance) => {
         type: Sequelize.INTEGER,
       },
       token: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true,
       },
@@ -54,7 +54,7 @@ export default (sequelizeInstance) => {
       timestamps: true,
       paranoid: true,
       underscored: true,
-    },
+    }
   )
 
   Model.associate = function (models) {

@@ -1,79 +1,136 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
-  <div class="wrapper-content" *ngIf="contentieuxReferentiel.length"
+  <div
+    class="wrapper-content"
+    *ngIf="contentieuxReferentiel.length"
     [ngStyle]="{ 'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px' }"
-    [class.duringPrint]="duringPrint">
-    <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
+    [class.duringPrint]="duringPrint"
+  >
+    <cover-profil-details
+      *ngIf="currentHR"
+      [backUrl]="!duringPrint ? '/ventilations' : ''"
+      [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? '' + currentHR.id : undefined"
-      [onEditIndex]="onEditIndex" [etp]="currentETP" [indisponibilities]="
+      [onEditIndex]="onEditIndex"
+      [etp]="currentETP"
+      [indisponibilities]="
         indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].indisponibilities : []
-      " [fonction]="
+      "
+      [fonction]="
         indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].fonction : null
-      " [category]="
+      "
+      [category]="
         indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
-      " [basicHrInfo]="basicHrInfo" [dateStart]="actualHistoryDateStart" (exportPDF)="onExport()"
-      (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"
-      (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"
-      [class.duringPrint]="duringPrint"></cover-profil-details>
+      "
+      [basicHrInfo]="basicHrInfo"
+      [dateStart]="actualHistoryDateStart"
+      (exportPDF)="onExport()"
+      (onOpenHelpPanel)="openHelpPanel($event)"
+      (ficheIsUpdated)="onLoad($event, false)"
+      (alertSet)="onAlertsUpdated($event)"
+      (focusNext)="focusNext($event)"
+      [class.duringPrint]="duringPrint"
+    ></cover-profil-details>
 
     <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
       <div id="top-scroll-anchor" class="anchor"></div>
-      <indispo-profil [indisponibilities]="currentHR?.indisponibilities || []"
-        [indisponibilityError]="indisponibilityError" (onOpenHelpPanel)="openHelpPanel($event)"
-        (addIndispiniblity)="onAddIndispiniblity($event)"></indispo-profil>
+      <indispo-profil
+        [indisponibilities]="currentHR?.indisponibilities || []"
+        [indisponibilityError]="indisponibilityError"
+        (onOpenHelpPanel)="openHelpPanel($event)"
+        (addIndispiniblity)="onAddIndispiniblity($event)"
+      ></indispo-profil>
       <comment-profil id="comment-profil" [currentHR]="currentHR"></comment-profil>
     </div>
 
-    <actual-panel-situation *ngIf="currentHR && histories.length && showActuelPanel" [currentHR]="currentHR"
-      [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
-      [canEdit]="!duringPrint && indexOfTheFuture !== null" [canRemoveSituation]="
+    <actual-panel-situation
+      *ngIf="currentHR && histories.length && showActuelPanel"
+      [currentHR]="currentHR"
+      [dateStart]="actualHistoryDateStart"
+      [dateStop]="actualHistoryDateStop"
+      [canEdit]="!duringPrint && indexOfTheFuture !== null"
+      [canRemoveSituation]="
         !duringPrint && indexOfTheFuture !== null && histories[indexOfTheFuture].id !== -1
           ? histories[indexOfTheFuture].situationForTheFirstTime
           : false
-      " [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp || 0 : 0"
+      "
+      [etp]="indexOfTheFuture !== null ? histories[indexOfTheFuture].etp || 0 : 0"
       [indisponibilities]="indexOfTheFuture !== null ? histories[indexOfTheFuture].indisponibilities : []"
       (editVentilation)="indexOfTheFuture !== null ? onSelectSituationToEdit(histories[indexOfTheFuture]) : null"
       (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
-      [forceToShowContentieuxDetail]="duringPrint" [category]="
+      [forceToShowContentieuxDetail]="duringPrint"
+      [category]="
         indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
-      "></actual-panel-situation>
+      "
+    ></actual-panel-situation>
 
     <ng-template [ngIf]="!duringPrint">
       <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
-        @if(userService.canEditHR()){<button class="fill primary small" (click)="onSelectSituationToEdit()">
+        <button class="fill primary small" (click)="onSelectSituationToEdit()">
           Renseigner une nouvelle situation
-        </button>}
+        </button>
 
-        <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
-          text="Qu'est-ce que c'est ?"></aj-help-button>
+        <aj-help-button
+          (click)="openHelpPanel('nouvelle-situation')"
+          class="help-icon"
+          text="Qu'est-ce que c'est ?"
+        ></aj-help-button>
       </div>
     </ng-template>
 
-    <add-ventilation [ngClass]="{ 'existing-agent': histories.length !== 0 }" *ngIf="onEditIndex !== null"
-      #addDomVentilation [human]="currentHR" [activities]="
+    <add-ventilation
+      [ngClass]="{ 'existing-agent': histories.length !== 0 }"
+      *ngIf="onEditIndex !== null"
+      #addDomVentilation
+      [human]="currentHR"
+      [activities]="
         onEditIndex !== -1 ? histories[onEditIndex].activities : histories.length ? histories[0].activities : []
-      " [indisponibilities]="allIndisponibilities" [isEdit]="onEditIndex !== -1" [indexSituation]="onEditIndex"
-      [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null" [lastDateStart]="
+      "
+      [indisponibilities]="allIndisponibilities"
+      [isEdit]="onEditIndex !== -1"
+      [indexSituation]="onEditIndex"
+      [editId]="histories[onEditIndex] && histories[onEditIndex].id ? histories[onEditIndex].id : null"
+      [lastDateStart]="
         onEditIndex !== -1 ? histories[onEditIndex].dateStart : histories.length ? histories[0].dateStart : null
-      " [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null" (close)="onCancel()"
-      (onSaveConfirm)="onNewUpdate()" (addIndispiniblity)="onAddIndispiniblity($event)" [basicData]="basicHrInfo"
-      [indisponibilityError]="indisponibilityError" [saveActions]="histories.length !== 0"
-      (onOpenHelpPanel)="openHelpPanel($event)" [forceToShowContentieuxDetail]="duringPrint"
-      [class.empty-user]="histories.length === 0" [setValueEtp]="updateETP.bind(this)"
-      (alertSet)="onAlertsUpdated($event)"></add-ventilation>
+      "
+      [dateStop]="onEditIndex !== -1 ? histories[onEditIndex].dateStop : null"
+      (close)="onCancel()"
+      (onSaveConfirm)="onNewUpdate()"
+      (addIndispiniblity)="onAddIndispiniblity($event)"
+      [basicData]="basicHrInfo"
+      [indisponibilityError]="indisponibilityError"
+      [saveActions]="histories.length !== 0"
+      (onOpenHelpPanel)="openHelpPanel($event)"
+      [forceToShowContentieuxDetail]="duringPrint"
+      [class.empty-user]="histories.length === 0"
+      [setValueEtp]="updateETP.bind(this)"
+      (alertSet)="onAlertsUpdated($event)"
+    ></add-ventilation>
 
     <div *ngIf="historiesOfTheFutur.length" class="panel-history-group futur">
       <p class="title-history">
         Situation{{ historiesOfTheFutur.length >= 1 ? 's' : '' }} à venir pré-renseignée{{
-        historiesOfTheFutur.length >= 1 ? 's' : ''
+          historiesOfTheFutur.length >= 1 ? 's' : ''
         }}
       </p>
-      <panel-history-ventilation *ngFor="let h of historiesOfTheFutur" [category]="h.category" [id]="h.id"
-        [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-        [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      <panel-history-ventilation
+        *ngFor="let h of historiesOfTheFutur"
+        [category]="h.category"
+        [id]="h.id"
+        [fonction]="h.fonction"
+        [etp]="h.etp"
+        [indisponibilities]="h.indisponibilities"
+        [activities]="h.activities"
+        [dateStart]="h.dateStart"
+        [dateStop]="h.dateStop"
+        [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
-        (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
-        (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
-        [forceToShowContentieuxDetail]="duringPrint" [isPast]="false"></panel-history-ventilation>
+        (editVentilation)="onSelectSituationToEdit(h)"
+        [canEditSituation]="!duringPrint"
+        (addIndispiniblity)="onAddIndispiniblity($event)"
+        (onRemove)="onRemoveSituation(h.id)"
+        [forceToShowContentieuxDetail]="duringPrint"
+        [isPast]="false"
+      ></panel-history-ventilation>
     </div>
 
     <div *ngIf="historiesOfThePast.length" class="panel-history-group past">
@@ -82,19 +139,30 @@
         <!-- {{
         categoryName === 'magistrat' ? 'du magistrat' : 'de l\'agent' }} -->
       </p>
-      <panel-history-ventilation *ngFor="let h of historiesOfThePast" [id]="h.id" [category]="h.category"
-        [fonction]="h.fonction" [etp]="h.etp" [indisponibilities]="h.indisponibilities" [activities]="h.activities"
-        [dateStart]="h.dateStart" [dateStop]="h.dateStop" [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
+      <panel-history-ventilation
+        *ngFor="let h of historiesOfThePast"
+        [id]="h.id"
+        [category]="h.category"
+        [fonction]="h.fonction"
+        [etp]="h.etp"
+        [indisponibilities]="h.indisponibilities"
+        [activities]="h.activities"
+        [dateStart]="h.dateStart"
+        [dateStop]="h.dateStop"
+        [dateEndToJuridiction]="currentHR && currentHR.dateEnd"
         [canRemoveSituation]="!duringPrint && h.situationForTheFirstTime && h.id !== -1"
-        (editVentilation)="onSelectSituationToEdit(h)" [canEditSituation]="!duringPrint"
-        (addIndispiniblity)="onAddIndispiniblity($event)" (onRemove)="onRemoveSituation(h.id)"
-        [forceToShowContentieuxDetail]="duringPrint" [isPast]="true"></panel-history-ventilation>
+        (editVentilation)="onSelectSituationToEdit(h)"
+        [canEditSituation]="!duringPrint"
+        (addIndispiniblity)="onAddIndispiniblity($event)"
+        (onRemove)="onRemoveSituation(h.id)"
+        [forceToShowContentieuxDetail]="duringPrint"
+        [isPast]="true"
+      ></panel-history-ventilation>
     </div>
 
-    @if(userService.canEditHR() && currentHR && onEditIndex === null && histories.length === 0){<div
-      class="text-center">
+    <div *ngIf="currentHR && onEditIndex === null && histories.length === 0" class="text-center">
       <button class="small outline red strict-border" (click)="onDelete()">Supprimer cette fiche</button>
-    </div>}
+    </div>
 
     <div class="flex-1"></div>
 
@@ -106,11 +174,17 @@
   <div id="wrapper-printed"></div>
 </aj-wrapper>
 
-@if(updateIndisponiblity){<aj-popup [actions]="[
+<aj-popup
+  *ngIf="updateIndisponiblity"
+  [actions]="[
     { id: 'close', content: 'Annuler' },
     { id: 'modify', content: 'Enregistrer', fill: true },
-  ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
-  (onClose)="updateIndisponiblity = null" (selectedAction)="onEditIndisponibility($event)">
+  ]"
+  [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]"
+  [closeIcon]="true"
+  (onClose)="updateIndisponiblity = null"
+  (selectedAction)="onEditIndisponibility($event)"
+>
   <p class="title">
     {{ updateIndisponiblity.id > 0 ? "Modification de l'indisponibilité" : 'Nouvelle indisponibilité' }}
   </p>
@@ -126,15 +200,24 @@
       </mat-form-field>
     </div>
     <div class="grid-double">
-      <aj-date-select title="Date de début" [showToday]="false" [value]="updateIndisponiblity.dateStart"
-        (valueChange)="updateIndisponiblity.dateStart = setToMidDay($event)"></aj-date-select>
-      <aj-date-select title="Date de fin" [showToday]="false" [value]="updateIndisponiblity.dateStop"
-        (valueChange)="updateIndisponiblity.dateStop = setToMidDay($event)" [clearable]="true"></aj-date-select>
+      <aj-date-select
+        title="Date de début"
+        [showToday]="false"
+        [value]="updateIndisponiblity.dateStart"
+        (valueChange)="updateIndisponiblity.dateStart = setToMidDay($event)"
+      ></aj-date-select>
+      <aj-date-select
+        title="Date de fin"
+        [showToday]="false"
+        [value]="updateIndisponiblity.dateStop"
+        (valueChange)="updateIndisponiblity.dateStop = setToMidDay($event)"
+        [clearable]="true"
+      ></aj-date-select>
     </div>
     <div>
       <div class="label-aj">Indisponibilité (en % d'un plein temps) :</div>
       <input type="number" id="input-indispo" [(ngModel)]="updateIndisponiblity.percent" min="0" max="100" />
     </div>
   </div>
-</aj-popup>}
-@if(histories.length && onEditIndex !== null){<div class="black-screen"></div>}
+</aj-popup>
+<div class="black-screen" *ngIf="histories.length && onEditIndex !== null"></div>

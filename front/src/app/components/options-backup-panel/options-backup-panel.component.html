@@ -1,16 +1,24 @@
 @if (readOnly === false) {
-@if(userService.canEditTempsMoyens()){<button (click)="onBackBackup()" [disabled]="!optionsIsModify"
-  [ngClass]="{ enable: optionsIsModify }" class="left-margin blue-button empty">
-  Annuler
-</button>}
-<div class="flex-1"></div>
-<button class="left-margin white-button empty" (click)="downloadTemplate(); $event.stopPropagation()">
-  Exporter sous Excel
-</button>
-@if (selectedIds.length && userService.canEditTempsMoyens()) {
-<button [disabled]="!optionsIsModify" [ngClass]="{ enable: optionsIsModify }" class="left-margin blue-button"
-  (click)="onSaveHR(false)">
-  Enregistrer
-</button>
-}
+  <button
+    (click)="onBackBackup()"
+    [disabled]="!optionsIsModify"
+    [ngClass]="{ enable: optionsIsModify }"
+    class="left-margin blue-button empty"
+  >
+    Annuler
+  </button>
+  <div class="flex-1"></div>
+  <button class="left-margin white-button empty" (click)="downloadTemplate(); $event.stopPropagation()">
+    Exporter sous Excel
+  </button>
+  @if (selectedIds.length) {
+    <button
+      [disabled]="!optionsIsModify"
+      [ngClass]="{ enable: optionsIsModify }"
+      class="left-margin blue-button"
+      (click)="onSaveHR(false)"
+    >
+      Enregistrer
+    </button>
+  }
 }

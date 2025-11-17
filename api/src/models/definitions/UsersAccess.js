@@ -18,7 +18,7 @@ export default (sequelizeInstance) => {
         allowNull: false,
       },
       access_id: {
-        type: Sequelize.FLOAT,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       created_at: {
@@ -47,7 +47,7 @@ export default (sequelizeInstance) => {
           fields: ['user_id'],
         },
       ],
-    },
+    }
   )
 
   Model.associate = function (models) {

@@ -12,7 +12,7 @@ export default class RouteNews extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor(params) {
+  constructor (params) {
     super(params)
 
     this.model = params.models.News
@@ -21,13 +21,10 @@ export default class RouteNews extends Route {
   /**
    * Interface de la dernière news pour un utilisateur
    */
-  @Route.Get()
-  async last(ctx) {
-    if (!ctx.state.user) {
-      this.sendOk(ctx, null)
-      return
-    }
-
+  @Route.Get({
+    accesses: [Access.isLogin],
+  })
+  async last (ctx) {
     const lastNews = await this.model.getLastActiveNews(ctx.state.user.id)
 
     this.sendOk(ctx, lastNews)
@@ -43,7 +40,7 @@ export default class RouteNews extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async onClose(ctx) {
+  async onClose (ctx) {
     const { id } = this.body(ctx)
     await this.models.NewsUserLog.userCloseEvent(ctx.state.user.id, id)
 
@@ -56,7 +53,7 @@ export default class RouteNews extends Route {
   @Route.Get({
     accesses: [Access.isAdmin],
   })
-  async getAll(ctx) {
+  async getAll (ctx) {
     this.sendOk(ctx, await this.model.getAll())
   }
 
@@ -90,7 +87,7 @@ export default class RouteNews extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async updateCreate(ctx) {
+  async updateCreate (ctx) {
     if (this.model.updateCreate(this.body(ctx))) {
       this.sendOk(ctx, 'OK')
     } else {
@@ -108,7 +105,7 @@ export default class RouteNews extends Route {
     }),
     accesses: [Access.isAdmin],
   })
-  async remove(ctx) {
+  async remove (ctx) {
     const { newsId } = this.body(ctx)
     if (await this.model.destroyById(newsId)) {
       this.sendOk(ctx, 'OK')

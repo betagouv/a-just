@@ -939,8 +939,8 @@ export const loadFonctionsForMultiCategoryFiltered = async (categorySelected, fc
  * @param {*} models
  * @returns
  */
-export const loadReferentiels = async (backupId, contentieuxIds, models, userId) => {
-  const all = await models.ContentieuxReferentiels.getReferentiels(backupId, false, null, false, false, userId)
+export const loadReferentiels = async (backupId, contentieuxIds, models) => {
+  const all = await models.ContentieuxReferentiels.getReferentiels(backupId)
   return all.filter((c) => contentieuxIds.includes(c.id))
 }
 

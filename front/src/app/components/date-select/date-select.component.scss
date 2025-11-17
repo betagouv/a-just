@@ -11,10 +11,6 @@
   margin: auto 0;
   height: 55px;
 
-  &.not-read-only {
-    cursor: not-allowed !important;
-  }
-
   &.greffe {
     &.selected {
       .title-select {

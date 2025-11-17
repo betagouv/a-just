@@ -15,11 +15,11 @@
         (valueChange)="onDateChanged($event)"></aj-date-select>
       <div class="position-relative">
         <aj-empty-input title="Options d'affichage" [value]="getOptionAffichageString() ? 'Personnalisé' : 'Aucune'"
-          (click)="onToggleFilterPanel()" class="cursor-pointer" icon="filter-2-line"></aj-empty-input>
+          (click)="showFilterPanel = !showFilterPanel" class="cursor-pointer" icon="filter-2-line"></aj-empty-input>
         @if (showFilterPanel) {
         <filter-panel (update)="updateFilterParams($event)" [orderValue]="filterParams && filterParams.order"
           [sortValue]="filterParams && filterParams.sort" [categories]="humanResourceService.categoriesFilterListIds"
-          [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="onFilterPanelClose()"
+          [filterValues]="(filterParams && filterParams.filterValues) || null" (close)="showFilterPanel = false"
           [filterIndispoValues]="(filterParams && filterParams.filterIndispoValues) || null"
           [referentielIds]="selectedReferentielIds" [subReferentielIds]="selectedSubReferentielIds"
           [referentiels]="formReferentiel"
@@ -198,9 +198,7 @@
     <button class="white outline">Simuler des affectations</button>
   </a>
   }
-  @if(userService.canEditHR()) {
   <button class="primary add-collaborator" (click)="addHR()">Ajouter un agent</button>
-  }
 
   <div class="search-zone">
     <aj-input-button title="Rechercher un agent" placeholder="Rechercher" [ngModel]="searchValue"

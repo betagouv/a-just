@@ -13,7 +13,7 @@ export default class RouteComment extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor(params) {
+  constructor (params) {
     super(params)
 
     this.model = params.models.Comments
@@ -30,7 +30,7 @@ export default class RouteComment extends Route {
     }),
     accesses: [Access.canVewActivities],
   })
-  async getComments(ctx) {
+  async getComments (ctx) {
     const { type, juridictionId } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.getComments(type, juridictionId))
@@ -51,9 +51,9 @@ export default class RouteComment extends Route {
       comment: Types.string().required(),
       commentId: Types.number(),
     }),
-    accesses: [Access.canEditActivities],
+    accesses: [Access.canVewActivities],
   })
-  async updateComment(ctx) {
+  async updateComment (ctx) {
     const { type, juridictionId, comment, commentId } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.updateComment(type, juridictionId, comment, ctx.state.user.id, commentId))
@@ -72,9 +72,9 @@ export default class RouteComment extends Route {
       commentId: Types.number().required(),
       juridictionId: Types.number().required(),
     }),
-    accesses: [Access.canEditActivities],
+    accesses: [Access.canVewActivities],
   })
-  async deleteComment(ctx) {
+  async deleteComment (ctx) {
     const { juridictionId, commentId } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(juridictionId, ctx.state.user.id)) {
       this.sendOk(ctx, await this.model.deleteComment(commentId, juridictionId))

@@ -1,6 +1,9 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import { month, today } from '../utils/date'
+import { preformatHumanResources } from '../utils/ventilator'
+import { getHumanRessourceList } from '../utils/humanServices'
+import { sumBy } from 'lodash'
 import { loadOrWarmHR } from '../utils/redis'
 import { fixDecimal } from '../utils/number'
 import { calculateETPForContentieux, generateHRIndexes } from '../utils/human-resource'
@@ -87,9 +90,10 @@ export default class RouteCalculator extends Route {
     let hrList = null
     let indexes = null
     if (['ETPTEam', 'ETPTGreffe', 'ETPTSiege'].includes(type)) {
-      hrList = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
+      hrList = await loadOrWarmHR(backupId, this.models)
       indexes = await generateHRIndexes(hrList)
     }
+    let endOfTheMonth = dateStart
 
     const list = []
     do {

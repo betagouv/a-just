@@ -1,4 +1,4 @@
-describe("Reaffectator page", () => {
+describe("Panorama page", () => {
   before(() => {
     cy.login();
   });

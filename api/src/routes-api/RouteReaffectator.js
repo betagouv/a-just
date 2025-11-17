@@ -57,9 +57,7 @@ export default class RouteReaffectator extends Route {
     }
 
     console.time('Global reaffectator')
-    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupId, false, null, false, false, ctx.state.user.id)).filter(
-      (r) => r.label !== 'Indisponibilité',
-    )
+    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupId)).filter((r) => r.label !== 'Indisponibilité')
     if (referentielList && referentielList.length == referentiel.length) {
       referentielList = null
     }
@@ -78,7 +76,7 @@ export default class RouteReaffectator extends Route {
     const activities = await this.models.Activities.getAll(backupId)
 
     console.time('Mise en cache')
-    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
+    let hr = await loadOrWarmHR(backupId, this.models)
     console.timeEnd('Mise en cache')
 
     console.time('🧩 Pré-formatage / Indexation')

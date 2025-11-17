@@ -383,7 +383,7 @@ export default (sequelizeInstance, Model) => {
       else await Model.models.HistoriesActivitiesUpdate.addHistory(userId, findActivity.dataValues.id, nodeUpdated, values[nodeUpdated])
     }
 
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, false, null, false, false, userId)
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId)
     const ref = referentiels.find((r) => (r.childrens || []).find((c) => c.id === contentieuxId))
 
     if (ref) {
@@ -399,7 +399,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.updateTotalAndFuturValue = async (mainContentieuxId, date, hrBackupId) => {
     date = new Date(date) // detach date reference
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, false, null, false, false, userId)
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId)
     const ref = referentiels.find((r) => r.id === mainContentieuxId)
 
     if (ref) {
@@ -873,12 +873,12 @@ export default (sequelizeInstance, Model) => {
    * @param {*} dateEnd
    * @returns
    */
-  Model.getNotCompleteActivities = async (HrBackupId, dateStart, dateEnd, userId) => {
+  Model.getNotCompleteActivities = async (HrBackupId, dateStart, dateEnd) => {
     dateStart = new Date(dateStart)
     dateEnd = new Date(dateEnd)
 
-    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupId, false, null, false, false, userId)) || []
-    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupId, false, null, false, false, userId)) || [])
+    let allContentieux = (await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupId)) || []
+    let list = ((await Model.models.ContentieuxReferentiels.getReferentiels(HrBackupId)) || [])
       .filter((r) => r.label !== 'Indisponibilité' && r.label !== 'Autres activités')
       .map((c) => {
         const childrens = (c.childrens || [])

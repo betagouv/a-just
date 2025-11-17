@@ -1,4 +1,4 @@
-import { orderBy } from 'lodash'
+import { difference, orderBy } from 'lodash'
 import { Op } from 'sequelize'
 import { referentielCAMappingIndex, referentielMappingIndex } from '../constants/referentiel'
 import { extractCodeFromLabelImported, jirsRules } from '../utils/referentiel'
@@ -16,13 +16,7 @@ export default (sequelizeInstance, Model) => {
    * @param {*} isJirs
    * @returns
    */
-  Model.getReferentiels = async (backupId = null, isJirs = false, filterReferentielsId = null, displayAll = false, extractorMode = false, userId = null) => {
-    let refIds = null
-    if (userId) {
-      const userPreview = await Model.models.Users.userPreview(userId)
-      refIds = userPreview.referentielIds
-    }
-
+  Model.getReferentiels = async (backupId = null, isJirs = false, filterReferentielsId = null, displayAll = false, extractorMode = false) => {
     if (backupId) {
       const juridiction = await Model.models.HRBackups.findById(backupId)
       if (juridiction && !displayAll) {
@@ -49,14 +43,6 @@ export default (sequelizeInstance, Model) => {
         // filter by referentiel only for level 3
         if (filterReferentielsId && index === 2) {
           where.id = filterReferentielsId
-        }
-      }
-
-      if (refIds && index === 2) {
-        if (where.id) {
-          where.id = [...(Array.isArray(where.id) ? where.id : [where.id]), ...refIds]
-        } else {
-          where.id = refIds
         }
       }
 

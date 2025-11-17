@@ -1,11 +1,19 @@
-import { CommonModule } from '@angular/common'
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild, inject } from '@angular/core'
-import { MainClass } from '../../../../libs/main-class'
-import { HumanResourceInterface } from '../../../../interfaces/human-resource-interface'
-import { HRCommentService } from '../../../../services/hr-comment/hr-comment.service'
-import { FormsModule } from '@angular/forms'
-import { TextEditorComponent } from '../../../../components/text-editor/text-editor.component'
-import { UserService } from '../../../../services/user/user.service'
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { MainClass } from '../../../../libs/main-class';
+import { HumanResourceInterface } from '../../../../interfaces/human-resource-interface';
+import { HRCommentService } from '../../../../services/hr-comment/hr-comment.service';
+import { FormsModule } from '@angular/forms';
+import { TextEditorComponent } from '../../../../components/text-editor/text-editor.component';
 
 /**
  * Composant de prévisualisation des ETP
@@ -18,44 +26,41 @@ import { UserService } from '../../../../services/user/user.service'
   styleUrls: ['./passed-comment.component.scss'],
 })
 export class PassedCommentComponent extends MainClass implements OnChanges {
-  changeDetectorRef = inject(ChangeDetectorRef)
-  hRCommentService = inject(HRCommentService)
-  userService = inject(UserService)
   /**
    * Editor
    */
-  @ViewChild('editor') editor: TextEditorComponent | null = null
+  @ViewChild('editor') editor: TextEditorComponent | null = null;
   /**
    * Editor
    */
   /**
    * Object commentaire contenant l'ensemble des informations
    */
-  @Input() comment: any | null = null
+  @Input() comment: any | null = null;
   /**
    * Fiche courante
    */
-  @Input() currentHR: HumanResourceInterface | null = null
+  @Input() currentHR: HumanResourceInterface | null = null;
   /**
    * Suppression event
    */
-  @Output() deletedComment = new EventEmitter()
+  @Output() deletedComment = new EventEmitter();
   /**
    * Commentaire initial
    */
-  commentContent: string = ''
+  commentContent: string = '';
   /**
    * Commentaire modifié
    */
-  currentText: string = ''
+  currentText: string = '';
   /**
    * Date de création du commentaire
    */
-  commentUpdatedAt: Date | null = null
+  commentUpdatedAt: Date | null = null;
   /**
    * Date de mise à jours du commentaire
    */
-  commentCreatedAt: Date | null = null
+  commentCreatedAt: Date | null = null;
   /**
    * Utilisateur connecté
    */
@@ -63,18 +68,21 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
     firstName: null,
     lastName: null,
     initials: null,
-  }
+  };
   /**
    * focus commentaire
    */
-  isEditing: boolean = false
+  isEditing: boolean = false;
 
-  valueToReset: string | null = null
+  valueToReset: string | null = null;
   /**
    * Constructeur
    */
-  constructor() {
-    super()
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private hRCommentService: HRCommentService
+  ) {
+    super();
   }
 
   /**
@@ -88,9 +96,9 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
         initials: change['comment'].currentValue.editorInitials,
         id: change['comment'].currentValue['user_id'],
         commentId: change['comment'].currentValue.commentId,
-      }
+      };
     }
-    this.onLoadComment()
+    this.onLoadComment();
   }
 
   /**
@@ -98,18 +106,22 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    */
   onLoadComment() {
     if (this.comment !== null && this.currentHR) {
-      this.hRCommentService.getHRCommentByCommentId(this.comment.commentId, this.currentHR.id).then((result) => {
-        if (result) {
-          this.commentContent = (result && result.comment) || ''
-          this.currentText = this.commentContent
-          this.commentUpdatedAt = result && result.updatedAt ? new Date(result.updatedAt) : null
-          this.commentCreatedAt = result && result.createdAt ? new Date(result.createdAt) : null
-        } else {
-          this.comment = ''
-          this.commentUpdatedAt = null
-        }
-        this.changeDetectorRef.detectChanges()
-      })
+      this.hRCommentService
+        .getHRCommentByCommentId(this.comment.commentId, this.currentHR.id)
+        .then((result) => {
+          if (result) {
+            this.commentContent = (result && result.comment) || '';
+            this.currentText = this.commentContent;
+            this.commentUpdatedAt =
+              result && result.updatedAt ? new Date(result.updatedAt) : null;
+            this.commentCreatedAt =
+              result && result.createdAt ? new Date(result.createdAt) : null;
+          } else {
+            this.comment = '';
+            this.commentUpdatedAt = null;
+          }
+          this.changeDetectorRef.detectChanges();
+        });
     }
   }
 
@@ -118,7 +130,7 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    * @param comment
    */
   updateComment(comment: string) {
-    this.currentText = comment
+    this.currentText = comment;
   }
 
   /**
@@ -126,12 +138,19 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    */
   save() {
     if (this.currentHR) {
-      this.hRCommentService.updateHRComment(this.currentHR.id, this.currentText, this.currentUser.id, this.currentUser.commentId).then((result) => {
-        this.editor?.initValue(this.currentText)
-        this.commentUpdatedAt = result ? new Date(result) : null
-        this.isEditing = false
-        this.hRCommentService.mainEditing.next(false)
-      })
+      this.hRCommentService
+        .updateHRComment(
+          this.currentHR.id,
+          this.currentText,
+          this.currentUser.id,
+          this.currentUser.commentId
+        )
+        .then((result) => {
+          this.editor?.initValue(this.currentText);
+          this.commentUpdatedAt = result ? new Date(result) : null;
+          this.isEditing = false;
+          this.hRCommentService.mainEditing.next(false);
+        });
     }
   }
 
@@ -139,11 +158,16 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    * Suppression d'un commentaire
    */
   removeComment() {
-    if (this.currentHR && this.hRCommentService.mainEditing.getValue() === false) {
-      this.hRCommentService.deleteHRComment(this.currentUser.commentId, this.currentHR.id).then(() => {
-        this.hRCommentService.mainEditing.next(false)
-        this.deletedComment.emit(true)
-      })
+    if (
+      this.currentHR &&
+      this.hRCommentService.mainEditing.getValue() === false
+    ) {
+      this.hRCommentService
+        .deleteHRComment(this.currentUser.commentId, this.currentHR.id)
+        .then(() => {
+          this.hRCommentService.mainEditing.next(false);
+          this.deletedComment.emit(true);
+        });
     }
   }
 
@@ -153,9 +177,13 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    */
   compareCommentsDates() {
     if (this.commentCreatedAt && this.commentUpdatedAt) {
-      if (this.formatDate(this.commentCreatedAt) == this.formatDate(this.commentUpdatedAt)) return false
+      if (
+        this.formatDate(this.commentCreatedAt) ==
+        this.formatDate(this.commentUpdatedAt)
+      )
+        return false;
     }
-    return true
+    return true;
   }
 
   /**
@@ -164,18 +192,18 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    * @returns
    */
   capitalize(s: string) {
-    return s && s[0].toUpperCase() + s.slice(1)
+    return s && s[0].toUpperCase() + s.slice(1);
   }
 
   /**
    * Reset la valeur du commentaire non sauvegardé
    */
   setOldValue() {
-    this.currentText = this.commentContent
-    this.valueToReset = this.commentContent
-    this.isEditing = false
-    this.hRCommentService.mainEditing.next(false)
-    this.changeDetectorRef.detectChanges()
+    this.currentText = this.commentContent;
+    this.valueToReset = this.commentContent;
+    this.isEditing = false;
+    this.hRCommentService.mainEditing.next(false);
+    this.changeDetectorRef.detectChanges();
   }
 
   /**
@@ -183,10 +211,10 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    */
   reset() {
     setTimeout(() => {
-      this.valueToReset = null
-      this.isEditing = false
-      this.changeDetectorRef.detectChanges()
-    }, 100)
+      this.valueToReset = null;
+      this.isEditing = false;
+      this.changeDetectorRef.detectChanges();
+    }, 100);
   }
 
   /**
@@ -195,11 +223,11 @@ export class PassedCommentComponent extends MainClass implements OnChanges {
    */
   getFocusOn(event: any) {
     if (event === true && !this.hRCommentService.mainEditing.getValue()) {
-      this.isEditing = event
-      this.hRCommentService.mainEditing.next(true)
+      this.isEditing = event;
+      this.hRCommentService.mainEditing.next(true);
     }
     setTimeout(() => {
-      this.changeDetectorRef.detectChanges()
-    }, 50)
+      this.changeDetectorRef.detectChanges();
+    }, 50);
   }
 }

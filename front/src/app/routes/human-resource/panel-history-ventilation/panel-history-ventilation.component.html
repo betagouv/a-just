@@ -43,21 +43,20 @@
         [indisponibility]="indisponibility"></etp-preview>
     </div>
   </div>
-  @if(userService.canEditHR()){<div class="actions-panel">
+  <div class="actions-panel">
     @if (canEditSituation) {
     <button (click)="onEditSituation()" class="outline small primary">Corriger cette situation</button>
     }
     @if (canRemoveSituation) {
     <button (click)="onRemove.emit()" class="outline small red">Supprimer la situation</button>
     }
-  </div>}
+  </div>
 </div>
 
 @if (indisponibilities.length) {
 <div class="indisponibility-panel indispo-content">
   @for (indisp of indisponibilities; track indisp.id) {
-  <div class="cursor-pointer" (click)="userService.canEditHR() ? addIndispiniblity.emit(indisp) : null"
-    [class.not-clickable]="!userService.canEditHR()">
+  <div class="cursor-pointer" (click)="addIndispiniblity.emit(indisp)">
     <div class="icon">
       <mat-icon>event_busy</mat-icon>
     </div>
@@ -82,9 +81,9 @@
         }
       </p>
     </div>
-    @if(userService.canEditHR()){<div class="action no-print">
+    <div class="action no-print">
       <mat-icon>drive_file_rename_outline</mat-icon>
-    </div>}
+    </div>
   </div>
   }
 </div>

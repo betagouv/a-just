@@ -8,9 +8,9 @@
       <aj-select title="Choisir une catégorie" class="dark-mode category-select"
         [value]="reaffectatorService.selectedCategoriesId !== null ? [reaffectatorService.selectedCategoriesId] : []"
         [multiple]="false" [datas]="formFilterSelect" (valueChange)="onSelectedCategoriesIdChanged($event)"></aj-select>
-      <!-- <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"
+      <aj-select title="Filtrer par fonction" class="dark-mode" [value]="reaffectatorService.selectedFonctionsIds"
         [datas]="formFilterFonctionsSelect" (valueChange)="onSelectedFonctionsIdsChanged($event)"
-        [defaultAllValue]="'Toutes'"></aj-select> -->
+        [defaultAllValue]="'Toutes'"></aj-select>
       <aj-select title="Filtrer par contentieux" class="dark-mode" [value]="reaffectatorService.selectedReferentielIds"
         [datas]="formReferentiel" (valueChange)="onSelectedReferentielIdsChanged($event)"
         [defaultAllValue]="'Tous'"></aj-select>
@@ -106,8 +106,7 @@
             }
           </div>
           <div class="etp-target-row">
-            <input [readonly]="!userService.canEditReaffectator()" [(ngModel)]="firstETPTargetValue[index]"
-              placeholder="-" />
+            <input [(ngModel)]="firstETPTargetValue[index]" placeholder="-" />
           </div>
           <div class="flex-1"></div>
           <div class="total-etp-row">
@@ -183,7 +182,6 @@
       </div>
       <div class="sub-content-list">
         @for (hr of list.hrFiltered; track hr.id; let index = $index) {
-        @if (canViewAgent(hr)) {
         @if (duringPrint && hr.isModify) {
         <ng-container *ngTemplateOutlet="
                     rowPerson;
@@ -200,7 +198,6 @@
                     rowPerson;
                     context: { hr: hr, list: list, mainIndex: mainIndex, isCheckable: !duringPrint }
                   "></ng-container>
-        }
         }
         }
       </div>
@@ -247,10 +244,10 @@
           }
         </div>
         <div class="tags">
-          @if(hr.fonction && hr.fonction.code) {<p class="function">
+          <p *ngIf="hr.fonction && hr.fonction.code" class="function">
             {{ hr.fonction && hr.fonction.code }}
-          </p>}
-          @if(hr.etpLabel) {<p class="etp">{{ hr.etpLabel }}</p>}
+          </p>
+          <p class="etp" *ngIf="hr.etpLabel">{{ hr.etpLabel }}</p>
         </div>
         <div class="flex-1"></div>
         <div class="updated-at">
@@ -276,8 +273,7 @@
       @defer (on viewport; prefetch on idle;) {
       <panel-activities [activities]="hr.currentActivities" [id]="hr.id" [header]="false" [selected]="true"
         class="dark-mode" (referentielChange)="updateHRReferentiel(hr, $event, mainIndex)"
-        [updateRefentielOnLoad]="false" [canSelectedTopReferentiel]="true"
-        [readonly]="!userService.canEditReaffectator()"></panel-activities>
+        [updateRefentielOnLoad]="false" [canSelectedTopReferentiel]="true"></panel-activities>
       } @placeholder {
       <div class="flex-1"></div>
       }

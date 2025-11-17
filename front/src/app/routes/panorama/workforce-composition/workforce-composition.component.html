@@ -14,9 +14,8 @@
     </div>
     <div class="middle">
       Personnels CLE
-      <input [readonly]="!userService.canEditReaffectator()" id="cle-{{ category.categoryId }}" type="text"
-        placeholder="-" [value]="getCLE(category)"
-        (keyup)="!userService.canEditReaffectator() ? null : saveCLE($event.srcElement, category, i)" />
+      <input id="cle-{{ category.categoryId }}" type="text" placeholder="-" [value]="getCLE(category)"
+        (keyup)="saveCLE($event.srcElement, category, i)" />
     </div>
     <span [ngStyle]="{ 'border-bottom': '1px solid ' + category.textColor }" class="separation"></span>
     @for (subCategory of category.poste; track subCategory.label) {
