@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core'
 import { sumBy } from 'lodash'
 import { EtpPreviewComponent } from '../../../components/etp-preview/etp-preview.component'
 import { PanelActivitiesComponent } from '../../../components/panel-activities/panel-activities.component'
@@ -11,6 +11,7 @@ import { ETP_NEED_TO_BE_UPDATED } from '../../../constants/referentiel'
 import { fixDecimal } from '../../../utils/numbers'
 import { etpLabel } from '../../../utils/referentiel'
 import { MatIconModule } from '@angular/material/icon'
+import { UserService } from '../../../services/user/user.service'
 
 /**
  * Paneau d'une situation
@@ -24,6 +25,7 @@ import { MatIconModule } from '@angular/material/icon'
   styleUrls: ['./panel-history-ventilation.component.scss'],
 })
 export class PanelHistoryVentilationComponent extends MainClass implements OnChanges {
+  userService = inject(UserService)
   /**
    * Date de début de situation
    */

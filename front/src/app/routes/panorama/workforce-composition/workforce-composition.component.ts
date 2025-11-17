@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core'
+import { Component, Input, OnChanges, inject } from '@angular/core'
 import { listFormatedInterface } from '../../workforce/workforce.page'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
@@ -8,6 +8,7 @@ import { ServerService } from '../../../services/http-server/server.service'
 import { sortDates, today } from '../../../utils/dates'
 import { ucFirst } from '../../../utils/string'
 import { fixDecimal } from '../../../utils/numbers'
+import { UserService } from '../../../services/user/user.service'
 
 /**
  * Interface pour agencer la page
@@ -49,6 +50,10 @@ interface cleInterface {
 })
 export class WorkforceCompositionComponent extends MainClass implements OnChanges {
   /**
+   * Service de l'utilisateur
+   */
+  userService = inject(UserService)
+  /**
    * Filter categories to view
    */
   @Input() categoriesFiltered: number[] | null = null
@@ -72,7 +77,10 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
   /**
    * Constructor
    */
-  constructor(private humanResourceService: HumanResourceService, private serverService: ServerService) {
+  constructor(
+    private humanResourceService: HumanResourceService,
+    private serverService: ServerService,
+  ) {
     super()
   }
 

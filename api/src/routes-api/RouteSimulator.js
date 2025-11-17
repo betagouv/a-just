@@ -1,7 +1,6 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { execSimulation, filterByCategoryAndFonction, getSituation, mergeSituations } from '../utils/simulator'
-import { copyArray } from '../utils/array'
+import { execSimulation, getSituation, mergeSituations } from '../utils/simulator'
 import {
   EXECUTE_LAUNCH_SIMULATOR,
   EXECUTE_LAUNCH_WHITE_SIMULATOR,
@@ -58,7 +57,7 @@ export default class RouteSimulator extends Route {
     }
 
     console.time('simulator-1')
-    let hr = await loadOrWarmHR(backupId, this.models)
+    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
     console.timeEnd('simulator-1')
 
     console.time('🧩 Pré-formatage / Indexation')

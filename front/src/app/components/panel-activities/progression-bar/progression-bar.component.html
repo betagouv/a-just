@@ -1,24 +1,14 @@
-<div
-  class="background-bar white-background"
-  [style.backgroundColor]="colorOpacity"
-  (click)="changePercent()"
-  [class.seleted]="selected"
->
+<div class="background-bar white-background" [style.backgroundColor]="colorOpacity" [class.readonly]="readonly"
+  (click)="readonly ? null : changePercent()" [class.seleted]="selected">
   @if (ddg) {
-    <div class="ddg" [style.backgroundColor]="color">DDG</div>
+  <div class="ddg" [style.backgroundColor]="color">DDG</div>
   }
 </div>
-<div
-  class="progress-bar"
-  [style.height.%]="percent && percent > 100 ? 100 : percent || 0"
-  [style.backgroundColor]="color"
-  (click)="changePercent()"
-  [class.seleted]="selected"
->
+<div class="progress-bar" [style.height.%]="percent && percent > 100 ? 100 : percent || 0" [class.readonly]="readonly"
+  [style.backgroundColor]="color" (click)="readonly ? null : changePercent()" [class.seleted]="selected">
   @if (percent && percent >= 30) {
-    <p class="s inside">{{ percent || 0 | number: '.0-2' }}%</p>
+  <p class="s inside">{{ percent || 0 | number: '.0-2' }}%</p>
   }
-  @if (percent && percent < 30) {
-    <p [style.color]="color" class="s top">{{ percent || 0 | number: '.0-2' }}%</p>
-  }
+  @if (percent && percent < 30) { <p [style.color]="color" class="s top">{{ percent || 0 | number: '.0-2' }}%</p>
+    }
 </div>

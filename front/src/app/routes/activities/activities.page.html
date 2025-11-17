@@ -338,7 +338,7 @@
                           'yellow-txt': getCompletionStatus(itemGroup).includes('A vérifier'),
                           'blue-txt': getCompletionStatus(itemGroup).includes('A compléter'),
                         }" (click)="contentieuxToUpdate = ref; selectedReferentielId = itemGroup.id">
-                  @if (getCompletionStatus(itemGroup).includes('A compléter')) {
+                  @if(userService.canEditActivities()){@if (getCompletionStatus(itemGroup).includes('A compléter')) {
                   <p>
                     {{ getCompletionStatus(itemGroup) }}
                     <span class="pastille">+{{ itemGroup.possibleGainCompletion }}%</span>
@@ -351,7 +351,7 @@
                   }
                   <mat-icon>
                     {{ 'chevron_right' }}
-                  </mat-icon>
+                  </mat-icon>}
                 </div>
               </div>
             </div>

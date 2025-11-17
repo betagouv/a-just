@@ -1,6 +1,6 @@
 import { Component } from '@angular/core'
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router'
-import { USER_ACCESS_AVERAGE_TIME } from './constants/user-access'
+import { USER_ACCESS_AVERAGE_TIME_READER } from './constants/user-access'
 import { AlertInterface } from './interfaces/alert'
 import { AppService } from './services/app/app.service'
 import { ContentieuxOptionsService } from './services/contentieux-options/contentieux-options.service'
@@ -82,7 +82,7 @@ export class AppComponent {
         this.dbReady = true
 
         this.userService.initDatas()
-        if (user.access && user.access.includes(USER_ACCESS_AVERAGE_TIME)) {
+        if (user.access && user.access.includes(USER_ACCESS_AVERAGE_TIME_READER)) {
           this.contentieuxOptionsService.initDatas()
         }
       }

@@ -40,6 +40,10 @@
   padding: 0 16px;
   position: relative;
 
+  &.hideToolbar {
+    cursor: not-allowed !important;
+  }
+
   &.hideToolbar::ng-deep {
     .ql-toolbar {
       visibility: hidden !important;

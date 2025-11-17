@@ -65,6 +65,10 @@ export class DateSelectComponent extends MainClass implements OnChanges {
     return ''
   }
   /**
+   * Permet de savoir si le date-select est en lecture seule
+   */
+  @Input() @HostBinding('class.not-read-only') readonly: boolean = false
+  /**
    * Rémontée au parent en cas de changement de date sélectionnée
    */
   @Output() valueChange = new EventEmitter()

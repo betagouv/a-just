@@ -2,14 +2,14 @@ import { inject, Injectable } from '@angular/core'
 import { CanActivateFn, Router } from '@angular/router'
 import { AuthService } from '../services/auth/auth.service'
 import {
-  USER_ACCESS_ACTIVITIES,
-  USER_ACCESS_AVERAGE_TIME,
-  USER_ACCESS_CALCULATOR,
-  USER_ACCESS_DASHBOARD,
-  USER_ACCESS_REAFFECTATOR,
-  USER_ACCESS_SIMULATOR,
-  USER_ACCESS_VENTILATIONS,
-  USER_ACCESS_WHITE_SIMULATOR,
+  USER_ACCESS_ACTIVITIES_READER,
+  USER_ACCESS_AVERAGE_TIME_READER,
+  USER_ACCESS_CALCULATOR_READER,
+  USER_ACCESS_DASHBOARD_READER,
+  USER_ACCESS_REAFFECTATOR_READER,
+  USER_ACCESS_SIMULATOR_READER,
+  USER_ACCESS_VENTILATIONS_READER,
+  USER_ACCESS_WHITE_SIMULATOR_READER,
 } from '../constants/user-access'
 
 @Injectable({
@@ -45,7 +45,7 @@ class TempsMoyensPermissionsService {
 
   async canViewTempsMoyens() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
   }
 }
 
@@ -61,7 +61,7 @@ class ReaffectatorPermissionsService {
 
   async canViewReaffectator() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_REAFFECTATOR) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 ? true : false
   }
 }
 
@@ -77,7 +77,7 @@ class CockpitPermissionsService {
 
   async canViewCockpit() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR_READER) !== -1 ? true : false
   }
 }
 
@@ -93,7 +93,7 @@ class SimulatorPermissionsService {
 
   async canViewSimulator() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 ? true : false
   }
 }
 
@@ -109,7 +109,7 @@ class WhiteSimulatorPermissionsService {
 
   async canViewWhiteSimulator() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 ? true : false
   }
 }
 
@@ -127,9 +127,9 @@ class AllSimulatorPermissionsService {
     const user = await this.authService.userConnected()
     return user &&
       user.access &&
-      (user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1 ||
-        user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 ||
-        user.access.indexOf(USER_ACCESS_REAFFECTATOR) !== -1)
+      (user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 ||
+        user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 ||
+        user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1)
       ? true
       : false
   }
@@ -147,7 +147,7 @@ class DashboardPermissionsService {
 
   async canViewDashboard() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD_READER) !== -1 ? true : false
   }
 }
 
@@ -163,7 +163,7 @@ class VentilationsPermissionsService {
 
   async canViewVentilations() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS_READER) !== -1 ? true : false
   }
 }
 
@@ -179,7 +179,7 @@ class ActivitiesPermissionsService {
 
   async canViewActivities() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES) !== -1 ? true : false
+    return user && user.access && user.access.indexOf(USER_ACCESS_ACTIVITIES_READER) !== -1 ? true : false
   }
 }
 

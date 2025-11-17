@@ -1,40 +1,35 @@
 @if (comment) {
-  <div>
-    <div class="properties">
-      <div class="number-circle">{{ comment.editor.initials }}</div>
-      <label>{{ comment.editor.firstName + ' ' + comment.editor.lastName }}</label>
+<div>
+  <div class="properties">
+    <div class="number-circle">{{ comment.editor.initials }}</div>
+    <label>{{ comment.editor.firstName + ' ' + comment.editor.lastName }}</label>
+  </div>
+  <p class="com-date">
+    @if (comment.createdAt) {
+    {{ compareCommentsDates() ? 'Créé ' : ''
+    }}{{ compareCommentsDates() ? formatDate(comment.createdAt) : capitalize(formatDate(comment.createdAt)) }}
+    }
+    @if (comment.updatedAt && compareCommentsDates()) {
+    (Modifié {{ formatDate(comment.updatedAt) }})
+    }
+  </p>
+  <div class="panel-content">
+    <aj-text-editor #editor [value]="comment.comment || ''" class="no-main-style" placeholder="Écrivez un commentaire"
+      [hideToolbar]="true" [defaultReadOnly]="!userService.canEditActivities()"
+      (focusField)="isEditing = $event"></aj-text-editor>
+    @if (comment.comment !== editor.value || isEditing) {
+    <div class="footer-panel">
+      <div class="unsave" (click)="editor.setValue(comment.comment)">Annuler</div>
+      <div class="save" (click)="onSave(editor.value)">Enregistrer</div>
     </div>
-    <p class="com-date">
-      @if (comment.createdAt) {
-        {{ compareCommentsDates() ? 'Créé ' : ''
-        }}{{ compareCommentsDates() ? formatDate(comment.createdAt) : capitalize(formatDate(comment.createdAt)) }}
-      }
-      @if (comment.updatedAt && compareCommentsDates()) {
-        (Modifié {{ formatDate(comment.updatedAt) }})
-      }
-    </p>
-    <div class="panel-content">
-      <aj-text-editor
-        #editor
-        [value]="comment.comment || ''"
-        class="no-main-style"
-        placeholder="Écrivez un commentaire"
-        [hideToolbar]="true"
-        (focusField)="isEditing = $event"
-      ></aj-text-editor>
-      @if (comment.comment !== editor.value || isEditing) {
-        <div class="footer-panel">
-          <div class="unsave" (click)="editor.setValue(comment.comment)">Annuler</div>
-          <div class="save" (click)="onSave(editor.value)">Enregistrer</div>
-        </div>
-      }
-    </div>
-    @if (!isEditing) {
-      <div class="actions">
-        <label class="modify" (click)="editor.focus()">Modifier</label>
-        <span class="dot">•</span>
-        <label class="delete" (click)="removeComment()">Supprimer</label>
-      </div>
     }
   </div>
+  @if (!isEditing && userService.canEditActivities()) {
+  <div class="actions">
+    <label class="modify" (click)="editor.focus()">Modifier</label>
+    <span class="dot">•</span>
+    <label class="delete" (click)="removeComment()">Supprimer</label>
+  </div>
+  }
+</div>
 }

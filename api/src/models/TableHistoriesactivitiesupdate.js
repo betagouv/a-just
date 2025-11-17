@@ -120,8 +120,8 @@ export default (sequelizeInstance, Model) => {
    * @param {*} HRBackupId
    * @returns
    */
-  Model.getLasHumanActivites = async (HRBackupId) => {
-    const referentiel = (await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupId)) || []
+  Model.getLasHumanActivites = async (HRBackupId, userId) => {
+    const referentiel = (await Model.models.ContentieuxReferentiels.getReferentiels(HRBackupId, false, null, false, false, userId)) || []
 
     const getHistory = async (historyId = null, activityId = null, contentieuxId = null, activityDate = null) => {
       const whereActivity = {
@@ -220,7 +220,7 @@ export default (sequelizeInstance, Model) => {
       }
     } while (elementHistoryElement && list.length < 12)
 
-    return list
+    return list.filter((item) => item.contentieux.id)
   }
 
   return Model

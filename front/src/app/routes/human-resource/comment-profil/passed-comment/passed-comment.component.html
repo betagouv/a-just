@@ -2,46 +2,36 @@
   <div class="properties">
     <div class="number-circle">{{ currentUser.initials }}</div>
     @if (currentUser.firstName !== null && currentUser.lastName !== null) {
-      <label>{{ currentUser.firstName + ' ' + currentUser.lastName }}</label>
+    <label>{{ currentUser.firstName + ' ' + currentUser.lastName }}</label>
     }
     @if (commentCreatedAt) {
-      <p class="com-at">
-        {{ compareCommentsDates() ? 'Créé ' : ''
-        }}{{ compareCommentsDates() ? formatDate(commentCreatedAt) : capitalize(formatDate(commentCreatedAt)) }}
-      </p>
+    <p class="com-at">
+      {{ compareCommentsDates() ? 'Créé ' : ''
+      }}{{ compareCommentsDates() ? formatDate(commentCreatedAt) : capitalize(formatDate(commentCreatedAt)) }}
+    </p>
     }
   </div>
   @if (commentUpdatedAt && compareCommentsDates()) {
-    <p class="com-mod">(Modifié {{ formatDate(commentUpdatedAt) }})</p>
+  <p class="com-mod">(Modifié {{ formatDate(commentUpdatedAt) }})</p>
   }
   <div class="panel-content" [ngClass]="{ editing: isEditing }">
-    <aj-text-editor
-      #editor
-      [ngClass]="{ editing: isEditing }"
-      [value]="commentContent || ''"
-      class="no-main-style"
-      (valueChange)="updateComment($event)"
-      placeholder="Écrivez un commentaire"
-      [hideToolbar]="true"
-      (focusField)="getFocusOn($event)"
-      [previousValue]="valueToReset"
-      [askToModify]="isEditing"
-      (resetField)="reset()"
-      [defaultReadOnly]="false"
-    ></aj-text-editor>
+    <aj-text-editor #editor [ngClass]="{ editing: isEditing }" [value]="commentContent || ''" class="no-main-style"
+      (valueChange)="updateComment($event)" placeholder="Écrivez un commentaire" [hideToolbar]="true"
+      (focusField)="getFocusOn($event)" [previousValue]="valueToReset" [askToModify]="isEditing" (resetField)="reset()"
+      [defaultReadOnly]="!userService.canEditHR()"></aj-text-editor>
     @if (isEditing) {
-      <div class="footer-panel">
-        <div class="unsave" (click)="setOldValue()">Annuler</div>
-        <div class="save" (click)="save()">Enregistrer</div>
-      </div>
+    <div class="footer-panel">
+      <div class="unsave" (click)="setOldValue()">Annuler</div>
+      <div class="save" (click)="save()">Enregistrer</div>
+    </div>
     }
   </div>
 
-  @if (!isEditing) {
-    <div class="actions">
-      <label class="modify" (click)="getFocusOn(true)">Modifier</label>
-      <span class="dot">•</span>
-      <label class="delete" (click)="removeComment()">Supprimer</label>
-    </div>
+  @if (!isEditing && userService.canEditHR()) {
+  <div class="actions">
+    <label class="modify" (click)="getFocusOn(true)">Modifier</label>
+    <span class="dot">•</span>
+    <label class="delete" (click)="removeComment()">Supprimer</label>
+  </div>
   }
 </div>

@@ -57,7 +57,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-backup/:backupId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeBackup(ctx) {
     const { backupId } = ctx.params
@@ -77,7 +77,7 @@ export default class RouteHumanResources extends Route {
       backupId: Types.number().required(),
       backupName: Types.string().required(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async duplicateBackup(ctx) {
     const { backupId, backupName } = this.body(ctx)
@@ -105,7 +105,7 @@ export default class RouteHumanResources extends Route {
       backupId: Types.number(),
       hr: Types.any(),
     }),
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async updateHr(ctx) {
     const { backupId, hr } = this.body(ctx)
@@ -126,7 +126,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-hr/:hrId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeHR(ctx) {
     const { hrId } = ctx.params
@@ -153,7 +153,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-hr-test/:hrId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeHRTest(ctx) {
     if (process.env.NODE_ENV !== 'test') {
@@ -184,7 +184,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-situation/:situationId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeSituation(ctx) {
     const { situationId } = ctx.params
@@ -204,7 +204,7 @@ export default class RouteHumanResources extends Route {
    */
   @Route.Delete({
     path: 'remove-situation-test/:situationId',
-    accesses: [Access.canVewHR],
+    accesses: [Access.canEditHR],
   })
   async removeSituationTest(ctx) {
     if (process.env.NODE_ENV !== 'test') {
@@ -252,7 +252,7 @@ export default class RouteHumanResources extends Route {
     date = today(date)
 
     console.time('filter list 1')
-    let hr = await loadOrWarmHR(backupId, this.models)
+    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
     console.timeEnd('filter list 1')
 
     console.time('filter list 2')
@@ -278,7 +278,7 @@ export default class RouteHumanResources extends Route {
     console.timeEnd('filter list 5')
 
     console.time('filter list 6')
-    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId)
+    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId, false, null, false, false, ctx.state.user.id)
     console.timeEnd('filter list 6')
 
     console.time('filter list 7')
@@ -316,7 +316,7 @@ export default class RouteHumanResources extends Route {
 
     // if filter by user access to categories
     const ids = categories.map((c) => c.id)
-    hr = hr.filter((h) => h.situations.length === 0 || (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
+    hr = hr.filter((h) => (h.situations || []).length === 0 || (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
     console.timeEnd('filter list 7')
 
     this.sendOk(ctx, {

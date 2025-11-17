@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core'
+import { inject, Injectable, signal } from '@angular/core'
 import { HumanResourceService } from '../human-resource/human-resource.service'
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel'
 import { ServerService } from '../http-server/server.service'
@@ -12,6 +12,7 @@ import { ServerService } from '../http-server/server.service'
 export class ReferentielService {
   serverService = inject(ServerService)
   humanResourceService = inject(HumanResourceService)
+  referentielIsComplete = signal<boolean>(true)
   /**
    * Ids du référentiels des indispo
    */
@@ -35,8 +36,9 @@ export class ReferentielService {
   constructor() {
     this.humanResourceService.hrBackup.subscribe(async (backup) => {
       if (backup) {
-        const referentiels = await this.onGetReferentiel(backup.id)
-        this.formatDatas(referentiels)
+        const datas = await this.onGetReferentiel(backup.id)
+        this.formatDatas(datas.referentiels)
+        this.referentielIsComplete.set(datas.isComplete)
       }
     })
   }
