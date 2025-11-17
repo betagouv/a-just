@@ -57,7 +57,7 @@ export default class RouteSimulator extends Route {
     }
 
     console.time('simulator-1')
-    let hr = await loadOrWarmHR(backupId, this.models)
+    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
     console.timeEnd('simulator-1')
 
     console.time('🧩 Pré-formatage / Indexation')

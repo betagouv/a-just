@@ -7,6 +7,7 @@
       <th mat-sort-header="lastName">Nom</th>
       <th mat-sort-header="tj">Tribunal de rattachement</th>
       <th mat-sort-header="fonction">Fonction</th>
+      <th mat-sort-header="referentiels">Referentiels</th>
       <th mat-sort-header="access">Accès</th>
       <th mat-sort-header="ventilationsName">Ventilations</th>
       <th mat-sort-header="actions">Actions</th>
@@ -20,6 +21,7 @@
       <td>{{element.lastName}}</td>
       <td>{{element.tj}}</td>
       <td>{{element.fonction}}</td>
+      <td [innerHTML]="element.referentielName"></td>
       <td [innerHTML]="element.accessName"></td>
       <td [innerHTML]="element.ventilationsName"></td>
       <td>

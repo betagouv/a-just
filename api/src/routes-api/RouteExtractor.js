@@ -102,7 +102,7 @@ export default class RouteExtractor extends Route {
         console.timeEnd('extractor-2')
 
         console.time('extractor-3')
-        let hr = await loadOrWarmHR(backupId, this.models)
+        let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
         console.timeEnd('extractor-3')
 
         console.time('extractor-4')

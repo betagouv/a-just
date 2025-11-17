@@ -87,7 +87,7 @@ export default class RouteCalculator extends Route {
     let hrList = null
     let indexes = null
     if (['ETPTEam', 'ETPTGreffe', 'ETPTSiege'].includes(type)) {
-      hrList = await loadOrWarmHR(backupId, this.models)
+      hrList = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
       indexes = await generateHRIndexes(hrList)
     }
 

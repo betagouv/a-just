@@ -252,7 +252,7 @@ export default class RouteHumanResources extends Route {
     date = today(date)
 
     console.time('filter list 1')
-    let hr = await loadOrWarmHR(backupId, this.models)
+    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
     console.timeEnd('filter list 1')
 
     console.time('filter list 2')
@@ -317,7 +317,7 @@ export default class RouteHumanResources extends Route {
 
     // if filter by user access to categories
     const ids = categories.map((c) => c.id)
-    hr = hr.filter((h) => h.situations.length === 0 || (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
+    hr = hr.filter((h) => (h.situations || []).length === 0 || (h.situations || []).some((s) => ids.indexOf((s.category || { id: -1 }).id) !== -1))
     console.timeEnd('filter list 7')
 
     this.sendOk(ctx, {

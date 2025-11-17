@@ -171,18 +171,18 @@ export const accessList = [
     id: USER_ACCESS_SIMULATOR_READER,
     label: accessToString(USER_ACCESS_SIMULATOR_READER),
   },
-  {
+  /*{
     id: USER_ACCESS_SIMULATOR_WRITER,
     label: accessToString(USER_ACCESS_SIMULATOR_WRITER),
-  },
+  },*/
   {
     id: USER_ACCESS_WHITE_SIMULATOR_READER,
     label: accessToString(USER_ACCESS_WHITE_SIMULATOR_READER),
   },
-  {
+  /*{
     id: USER_ACCESS_WHITE_SIMULATOR_WRITER,
     label: accessToString(USER_ACCESS_WHITE_SIMULATOR_WRITER),
-  },
+  },*/
   {
     id: USER_ACCESS_REAFFECTATOR_READER,
     label: accessToString(USER_ACCESS_REAFFECTATOR_READER),

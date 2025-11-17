@@ -2003,7 +2003,7 @@ export async function computeExtractor(models, params, onProgress, userId) {
   const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
   onProgress?.(25, 'flat')
 
-  let hr = await loadOrWarmHR(backupId, models)
+  let hr = await loadOrWarmHR(backupId, models, userId)
   onProgress?.(35, 'hr')
 
   const categories = await models.HRCategories.getAll()

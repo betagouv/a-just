@@ -827,7 +827,7 @@ export default (sequelizeInstance, Model) => {
     let list = emptyCalulatorValues(referentiels)
 
     console.time('Mise en cache')
-    const hr = await loadOrWarmHR(backupId, Model.models)
+    const hr = await loadOrWarmHR(backupId, Model.models, user.id)
     console.timeEnd('Mise en cache')
 
     console.time('🧩 Pré-formatage / Indexation')

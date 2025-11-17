@@ -16,4 +16,5 @@ export interface UserInterface {
   ventilations?: BackupInterface[];
   ventilationsName?: string;
   referentielIds?: number[];
+  referentielName?: string;
 }

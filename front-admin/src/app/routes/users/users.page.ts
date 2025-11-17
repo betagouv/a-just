@@ -62,8 +62,8 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
     this.watcherDestroy();
   }
 
-  onLoad() {
-    this.referentielService
+  async onLoad() {
+    await this.referentielService
       .getReferentiels(true)
       .then((r: ContentieuReferentielInterface[]) => {
         this.referentiels = r.map((u) => ({
@@ -76,6 +76,12 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
       this.datas = l.list.map((u: UserInterface) => ({
         ...u,
         accessName: (u.accessName || '').replace(/, /g, ', <br/>'),
+        referentielName:
+          u.referentielIds === null
+            ? 'Tous'
+            : (u.referentielIds || [])
+                .map((id) => this.referentiels.find((r) => r.id === id)?.label)
+                .join(', <br/>'),
         ventilationsName: (u.ventilations || [])
           .map((j) => j.label)
           .join(', <br/>'),

@@ -78,7 +78,7 @@ export default class RouteReaffectator extends Route {
     const activities = await this.models.Activities.getAll(backupId)
 
     console.time('Mise en cache')
-    let hr = await loadOrWarmHR(backupId, this.models)
+    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
     console.timeEnd('Mise en cache')
 
     console.time('🧩 Pré-formatage / Indexation')

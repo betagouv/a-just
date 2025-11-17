@@ -52,15 +52,12 @@ export default (sequelizeInstance, Model) => {
         }
       }
 
-      console.log('refIds', refIds)
       if (refIds && index === 2) {
         if (where.id) {
           where.id = [...(Array.isArray(where.id) ? where.id : [where.id]), ...refIds]
         } else {
           where.id = refIds
         }
-
-        console.log('where', where)
       }
 
       let list = await Model.findAll({
