@@ -17,20 +17,6 @@ export default class RouteActivities extends Route {
     super(params)
 
     this.model = params.models.Activities
-
-    // this.cleanDatas() TO TEST
-  }
-
-  /**
-   * Fonction de dev pour forcer de supprimer les doublons d'activités
-   */
-  async cleanDatas() {
-    const backups = await this.models.HRBackups.getAll()
-
-    for (let i = 0; i < backups.length; i++) {
-      await this.models.Activities.removeDuplicateDatas(backups[i].id)
-      await this.models.Activities.cleanActivities(backups[i].id)
-    }
   }
 
   /**
@@ -49,7 +35,7 @@ export default class RouteActivities extends Route {
       hrBackupId: Types.number(),
       nodeUpdated: Types.string(),
     }),
-    accesses: [Access.canVewActivities],
+    accesses: [Access.canEditActivities],
   })
   async updateBy(ctx) {
     const { contentieuxId, date, values, hrBackupId, nodeUpdated } = this.body(ctx)
@@ -99,7 +85,7 @@ export default class RouteActivities extends Route {
     bodyType: Types.object().keys({
       hrBackupId: Types.number(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewActivities],
   })
   async getLastMonth(ctx) {
     const { hrBackupId } = this.body(ctx)
@@ -121,12 +107,12 @@ export default class RouteActivities extends Route {
     bodyType: Types.object().keys({
       hrBackupId: Types.number(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewActivities],
   })
   async getLastHumanActivities(ctx) {
     const { hrBackupId } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
-      const list = await this.models.HistoriesActivitiesUpdate.getLasHumanActivites(hrBackupId)
+      const list = await this.models.HistoriesActivitiesUpdate.getLasHumanActivites(hrBackupId, ctx.state.user.id)
       this.sendOk(ctx, {
         list,
       })
@@ -145,12 +131,12 @@ export default class RouteActivities extends Route {
       dateStart: Types.date(),
       dateEnd: Types.date(),
     }),
-    accesses: [Access.isLogin],
+    accesses: [Access.canVewActivities],
   })
   async getNotCompleteActivities(ctx) {
     const { hrBackupId, dateStart, dateEnd } = this.body(ctx)
     if (await this.models.HRBackups.haveAccess(hrBackupId, ctx.state.user.id)) {
-      const list = await this.model.getNotCompleteActivities(hrBackupId, dateStart, dateEnd)
+      const list = await this.model.getNotCompleteActivities(hrBackupId, dateStart, dateEnd, ctx.state.user.id)
       this.sendOk(ctx, {
         list,
       })

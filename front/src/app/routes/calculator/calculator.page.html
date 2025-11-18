@@ -352,7 +352,7 @@
         }
       </div>
       }
-      <label class="footer" (click)="
+      @if(userService.canEditCalculator()) {<label class="footer" (click)="
             onEdit = true;
             showPicker = false;
             filterBackupsByCategory();
@@ -362,6 +362,7 @@
           ">
         + Personnaliser
       </label>
+      }
     </div>
     }
   </button>

@@ -190,6 +190,7 @@ export default (sequelizeInstance, Model) => {
         delete hrList[x].id
         delete hrList[x]['first_name']
         delete hrList[x]['last_name']
+        delete hrList[x]['matricule']
         delete hrList[x]['juridiction']
 
         // Création de HR

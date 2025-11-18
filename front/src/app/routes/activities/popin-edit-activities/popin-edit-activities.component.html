@@ -22,10 +22,10 @@
           commentaires
         </p>
         }
-        @if ((referentiel?.nbComments || 0) === 1) {
+        @if ((referentiel?.nbComments || 0) === 1 || !userService.canEditActivities()) {
         <p>Afficher le commentaire</p>
         }
-        @if ((referentiel?.nbComments || 0) === 0) {
+        @if ((referentiel?.nbComments || 0) === 0 && userService.canEditActivities()) {
         <p>Rédiger un commentaire</p>
         }
         <aj-radio-button bgColor="#000091" [switchColor]="showComments ? 'white' : '#000091'" [value]="showComments"
@@ -219,7 +219,8 @@
   </div>
   }
   <div class="bottom-popin">
-    <button class="small outline blue" (click)="close()">Annuler</button>
+    <button class="small outline blue" (click)="close()">{{userService.canEditActivities() ? 'Annuler' :
+      'Fermer'}}</button>
     <div class="flex-1"></div>
     <button class="small outline blue" (click)="selectMonth(getMonth(activityMonth, -1))">
       {{ checkIfHasUpdates() ? 'Enregistrer puis mois précédent' : 'Aller au mois précédent' }}
@@ -230,13 +231,13 @@
       }" (click)="selectMonth(getMonth(activityMonth, 1))" [disabled]="!hasNextMonth">
       {{ checkIfHasUpdates() ? 'Enregistrer puis mois suivant' : 'Aller au mois suivant' }}
     </button>
-    <button class="small" [ngClass]="{
+    @if(userService.canEditActivities()){<button class="small" [ngClass]="{
         gray: !checkIfHasUpdates(),
         outline: !checkIfHasUpdates(),
         primary: checkIfHasUpdates(),
       }" (click)="onSave({ force: false, exit: true })" [disabled]="!checkIfHasUpdates()">
       Enregistrer
-    </button>
+    </button>}
   </div>
 </aj-popup>
 
@@ -251,7 +252,7 @@
       <div>
         <p>{{ original == null ? '-' : original }}</p>
       </div>
-      @if (valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type)) {
+      @if (valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type) && userService.canEditActivities()) {
       <span>
         <p class="confirm-btn" (click)="onUpdateValue(original !== null ? original.toString() : '', type, items)">
           Confirmer
@@ -292,14 +293,15 @@
             }
           "></ng-container>
 
-      <input #inputElement type="number" [value]="newValue" class="input-number-all-activities"
-        [placeholder]="original !== null ? original : '-'" [ngClass]="{
+      <input #inputElement type="number" [readonly]="!userService.canEditActivities()" [value]="newValue"
+        class="input-number-all-activities" [placeholder]="original !== null ? original : '-'" [ngClass]="{
             'to-confirm': valueQuality === VALUE_QUALITY_TO_COMPLETE && !hasValue(items, type),
             'blue-bottom': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: true }),
             'blue-txt': checkIfBlue({ level: 4, cont: items, node: type, isForBulbOrBottom: false }),
             'is-not-setted-to-verify': valueQuality === VALUE_QUALITY_TO_VERIFY && !hasValue(items, type),
           }" [id]="'contentieux-' + items.id + '-' + type" (keyup.enter)="onBlur(inputElement.value, type, items)"
-        (keypress)="validateNo($event)" (blur)="onBlur(inputElement.value, type, items)" />
+        (keypress)="userService.canEditActivities() ? validateNo($event) : null"
+        (blur)="userService.canEditActivities() ? onBlur(inputElement.value, type, items) : null" />
     </div>
     }
   </div>

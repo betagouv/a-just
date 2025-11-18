@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
-import { HumanResourceService } from '../human-resource/human-resource.service';
-import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
-import { ServerService } from '../http-server/server.service';
+import { inject, Injectable, signal } from '@angular/core'
+import { HumanResourceService } from '../human-resource/human-resource.service'
+import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel'
+import { ServerService } from '../http-server/server.service'
 
 /**
  * Service de centralisation des traitements lié au référentiel
@@ -10,24 +10,25 @@ import { ServerService } from '../http-server/server.service';
   providedIn: 'root',
 })
 export class ReferentielService {
-  serverService = inject(ServerService);
-  humanResourceService = inject(HumanResourceService);
+  serverService = inject(ServerService)
+  humanResourceService = inject(HumanResourceService)
+  referentielIsComplete = signal<boolean>(true)
   /**
    * Ids du référentiels des indispo
    */
-  idsIndispo: number[] = [];
+  idsIndispo: number[] = []
   /**
    * Id du référentiels niveau 3 des indispo
    */
-  idsMainIndispo: number = 0;
+  idsMainIndispo: number = 0
   /**
    * Ids des contentieux de type soutien et ses enfants
    */
-  idsSoutien: number[] = [];
+  idsSoutien: number[] = []
   /**
    * Ids des contentieux niveau 3
    */
-  mainActivitiesId: number[] = [];
+  mainActivitiesId: number[] = []
 
   /**
    * Constructor
@@ -35,10 +36,11 @@ export class ReferentielService {
   constructor() {
     this.humanResourceService.hrBackup.subscribe(async (backup) => {
       if (backup) {
-        const referentiels = await this.onGetReferentiel(backup.id);
-        this.formatDatas(referentiels);
+        const datas = await this.onGetReferentiel(backup.id)
+        this.formatDatas(datas.referentiels)
+        this.referentielIsComplete.set(datas.isComplete)
       }
-    });
+    })
   }
 
   /**
@@ -46,63 +48,58 @@ export class ReferentielService {
    * @param list
    */
   formatDatas(list: ContentieuReferentielInterface[]) {
-    const refIndispo = list.find((r) => r.label === 'Indisponibilité');
-    const idsIndispo: number[] = [];
-    this.humanResourceService.allIndisponibilityReferentiel = [];
+    const refIndispo = list.find((r) => r.label === 'Indisponibilité')
+    const idsIndispo: number[] = []
+    this.humanResourceService.allIndisponibilityReferentiel = []
     if (refIndispo) {
-      this.idsMainIndispo = refIndispo.id;
-      this.humanResourceService.allIndisponibilityReferentiel.push(refIndispo);
-      idsIndispo.push(refIndispo.id);
-      (refIndispo.childrens || []).map((c) => {
-        idsIndispo.push(c.id);
-        this.humanResourceService.allIndisponibilityReferentiel.push(c);
-      });
+      this.idsMainIndispo = refIndispo.id
+      this.humanResourceService.allIndisponibilityReferentiel.push(refIndispo)
+      idsIndispo.push(refIndispo.id)
+      ;(refIndispo.childrens || []).map((c) => {
+        idsIndispo.push(c.id)
+        this.humanResourceService.allIndisponibilityReferentiel.push(c)
+      })
     }
-    this.humanResourceService.allIndisponibilityReferentielIds =
-      this.humanResourceService.allIndisponibilityReferentiel.map(function (
-        obj
-      ) {
-        return obj.id;
-      });
+    this.humanResourceService.allIndisponibilityReferentielIds = this.humanResourceService.allIndisponibilityReferentiel.map(function (obj) {
+      return obj.id
+    })
 
-    this.idsIndispo = idsIndispo;
+    this.idsIndispo = idsIndispo
 
-    const refSoutien = list.find((r) => r.label === 'Autres activités');
-    const idsSoutien: number[] = [];
+    const refSoutien = list.find((r) => r.label === 'Autres activités')
+    const idsSoutien: number[] = []
     if (refSoutien) {
-      idsSoutien.push(refSoutien.id);
-      (refSoutien.childrens || []).map((c) => {
-        idsSoutien.push(c.id);
-      });
+      idsSoutien.push(refSoutien.id)
+      ;(refSoutien.childrens || []).map((c) => {
+        idsSoutien.push(c.id)
+      })
     }
-    this.idsSoutien = idsSoutien;
+    this.idsSoutien = idsSoutien
 
-    this.mainActivitiesId = list.map((r) => r.id);
+    this.mainActivitiesId = list.map((r) => r.id)
 
     this.humanResourceService.selectedReferentielIds = list
       .filter((r) => r.label !== 'Indisponibilité')
       .filter((a) => idsIndispo.indexOf(a.id) === -1)
-      .map((r) => r.id);
+      .map((r) => r.id)
 
     this.humanResourceService.mainContentieuxReferentiel.set(
       list
         .filter((r) => r.label !== 'Indisponibilité')
         .filter((a) => idsIndispo.indexOf(a.id) === -1)
-        .filter((a) => idsSoutien.indexOf(a.id) === -1)
-    );
+        .filter((a) => idsSoutien.indexOf(a.id) === -1),
+    )
 
-    this.humanResourceService.contentieuxReferentiel.next(list);
-    this.humanResourceService.contentieuxReferentielOnly.next(
-      list.filter((r) => idsIndispo.indexOf(r.id) === -1)
-    );
+    this.humanResourceService.contentieuxReferentiel.next(list)
+    this.humanResourceService.contentieuxReferentielOnly.next(list.filter((r) => idsIndispo.indexOf(r.id) === -1))
   }
 
   /**
    * Check if referentiels as "droit local"
    */
   isDroitLocal() {
-    const ref = this.humanResourceService.contentieuxReferentiel.getValue();
-    return ref.find((r) => r.code_import === '13.') ? true : false;
+    const ref = this.humanResourceService.contentieuxReferentiel.getValue()
+    return ref.find((r) => r.code_import === '13.') ? true : false
   }
 
   /**
@@ -116,7 +113,7 @@ export class ReferentielService {
         backupId,
       })
       .then((data) => {
-        return data.data;
-      });
+        return data.data
+      })
   }
 }

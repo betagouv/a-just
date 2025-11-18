@@ -1,14 +1,8 @@
 <div>
   <form [formGroup]="timeForm">
-    <input
-      [ngClass]="{ disabled: disabled === true, changed: changed === true }"
-      (keydown.enter)="updateVal($event); blur($event)"
-      (blur)="updateVal($event)"
-      type="text"
-      pattern="^([0-9]+|^1000)$|(([0-9]+|^1000):[0-5][0-9])$"
-      formControlName="time"
-      placeholder="hh:mn"
-    />
+    <input [readonly]="readonly" [ngClass]="{ disabled: disabled === true, changed: changed === true }"
+      (keydown.enter)="updateVal($event); blur($event)" (blur)="updateVal($event)" type="text"
+      pattern="^([0-9]+|^1000)$|(([0-9]+|^1000):[0-5][0-9])$" formControlName="time" placeholder="hh:mn" />
     <img class="no-margin" [src]="getImg()" />
   </form>
 </div>
