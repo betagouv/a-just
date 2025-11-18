@@ -1,12 +1,22 @@
-import { cloneDeep, orderBy, sortBy, sumBy } from 'lodash'
-import { ABSENTEISME_LABELS, CET_LABEL, DELEGATION_TJ } from '../constants/referentiel'
-import { getNextDay, nbOfDays, nbWorkingDays, setTimeToMidDay, today, workingDay } from './date'
+import { cloneDeep, isNumber, orderBy, sortBy, sumBy, toUpper } from 'lodash'
+import { ABSENTEISME_LABELS, CET_LABEL, DELEGATION_TJ, INDISPO_L3 } from '../constants/referentiel'
 import { findSituation, generateHRIndexes } from './human-resource'
 import { getHRVentilation, getHRVentilationOld } from '../utils/calculator'
 import { FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR, FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA } from '../constants/extractor'
 import { isCa, isTj } from './ca'
 import { checkAbort } from './abordTimeout'
-
+import { getWorkingDaysFromIndispos, searchAgentIndisposWithIndexes } from './indisponibilities'
+import {
+  comparerDatesJourMoisAnnee,
+  estApresJourMoisAnnee,
+  formatDate,
+  getWorkingDaysCount,
+  normalizeDate,
+  setTimeToMidDay,
+  timeOr,
+  today,
+} from '../utils/date'
+import { fixDecimal } from './number'
 /**
  * Tri par catégorie et par fonction
  * @param {*} a
@@ -62,36 +72,33 @@ export const flatListOfContentieuxAndSousContentieux = (allReferentiels) => {
   }
   return allReferentiels
 }
+
 /**
- * Calcule des d'ETP par catégorie optimisé
- * @param {*} etpAffected
- * @param {*} referentiel
- * @returns
+ * Retourne une liste "aplatie" (parent + enfants à la suite)
+ * @param {{ id: number|string, label: string, childrens?: any[] }[]} flatReferentiel
+ * @returns {{ flatReferentiel: any[], ctxL3: (number|string)[], indispoL3: number|string|null }}
  */
-export const countEtpNew = (etpAffected, referentiel) => {
-  let counterEtpTotal = 0
-  let counterEtpSubTotal = 0
-  let counterIndispo = 0
-  let counterReelEtp = 0
+export const createFlatReferentiel = (flatReferentiel) => {
+  const flat = []
+  const ctxL3 = []
+  let indispoL3 = null
 
-  for (const key in etpAffected) {
-    const { etpt, reelEtp, indispo } = etpAffected[key]
+  for (let i = 0; i < flatReferentiel.length; i++) {
+    const node = flatReferentiel[i]
 
-    if (referentiel.childrens !== undefined) {
-      counterEtpTotal += etpt
-      if (reelEtp > counterReelEtp) counterReelEtp = reelEtp
-    } else {
-      counterEtpSubTotal += etpt
-      counterIndispo += indispo
+    flat.push(node)
+    ctxL3.push(node.id)
+    if (node.label === INDISPO_L3) indispoL3 = node.id
+
+    const children = node.childrens
+    if (children && children.length) {
+      for (let y = 0; y < children.length; y++) {
+        flat.push(children[y])
+      }
     }
   }
 
-  return {
-    counterEtpTotal,
-    counterEtpSubTotal,
-    counterIndispo,
-    counterReelEtp,
-  }
+  return { flatReferentiel: flat, ctxL3, indispoL3 }
 }
 
 /**
@@ -125,10 +132,6 @@ export const countEtp = (etpAffected, referentiel) => {
 }
 
 /**
- * Récupère informations sur les indisponibilités
- * @param {*} referentiels
- * @returns objet d'indipos details
- */
 export const getIndispoDetails = (referentiels) => {
   const refIndispo = referentiels.find((r) => r.label === 'Indisponibilité')
 
@@ -150,7 +153,7 @@ export const getIndispoDetails = (referentiels) => {
   })
 
   return { refIndispo, allIndispRef, allIndispRefIds, idsMainIndispo }
-}
+}*/
 
 /**
  * Ajout d'une ligne faisant la somme des ETP totals dans notre data set
@@ -236,35 +239,6 @@ export const replaceZeroByDash = (data) => {
  */
 export const replaceIfZero = (value) => {
   return value === 0 ? null : value
-}
-
-export const computeCETDays = (indisponibilities, dateStart, dateStop) => {
-  let now = new Date(dateStart)
-  let nbDay = 0
-  do {
-    if (workingDay(now)) {
-      indisponibilities.filter((hra) => {
-        if (now && today(hra.dateStart).getTime() <= now.getTime()) {
-          if (hra.dateStop) {
-            if (today(hra.dateStop).getTime() >= now.getTime()) {
-              if (hra.contentieux.label === CET_LABEL) {
-                nbDay++
-                return true
-              }
-            }
-          } else {
-            if (hra.contentieux.label === CET_LABEL) {
-              nbDay++
-              return true
-            }
-          }
-        }
-        return false
-      })
-    }
-    now.setDate(now.getDate() + 1)
-  } while (now.getTime() <= dateStop.getTime())
-  return nbDay
 }
 
 /**
@@ -401,392 +375,7 @@ export const computeExtractDdgv2 = async (
 }
  */
 
-const buildOnglet2Entry = (
-  human,
-  categoryName,
-  fonctionName,
-  fonctionCategory,
-  reelEtp,
-  refObj,
-  jurLabel,
-  isJirs,
-  absenteismeDetails,
-  delegation,
-  dateStart,
-  dateStop,
-) => {
-  const round4 = (val) => Math.round((val + Number.EPSILON) * 10000) / 10000
-
-  const nbGlobalDaysCET = computeCETDays(human.indisponibilities, setTimeToMidDay(dateStart), setTimeToMidDay(dateStop))
-
-  // CET keys à exclure manuellement AVANT la somme
-  const refObjFiltered = { ...refObj }
-  delete refObjFiltered['14.2. COMPTE ÉPARGNE TEMPS']
-  delete refObjFiltered['12.2. COMPTE ÉPARGNE TEMPS']
-
-  const CETTotalEtp = refObj['14.2. COMPTE ÉPARGNE TEMPS'] || refObj['12.2. COMPTE ÉPARGNE TEMPS'] || 0
-
-  const tempsVentiles = round4(sumBy(Object.values(refObjFiltered), (v) => Number(v || 0)))
-
-  const ecartVentilation = round4(reelEtp - tempsVentiles)
-
-  const gaps = isCa()
-    ? {
-        ['Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST']: null,
-        ['___']: null,
-      }
-    : isTj()
-      ? {
-          ['Ecart JE → détails manquants, à rajouter dans A-JUST']: null,
-          ['Ecart JI → détails manquants, à rajouter dans A-JUST']: null,
-        }
-      : null
-
-  return {
-    ['Réf.']: String(human.id),
-    Arrondissement: jurLabel,
-    Jirs: isJirs ? 'x' : '',
-    Juridiction: jurLabel,
-    Nom: human.lastName,
-    Prénom: human.firstName,
-    Matricule: human.matricule,
-    Catégorie: categoryName,
-    Fonction: fonctionName,
-    ['Fonction recodée']: null,
-    ['Code fonction par défaut']: fonctionCategory,
-    ['Fonction agrégat']: null,
-    ['TJCPH']: null,
-    ["Date d'arrivée"]: human.dateStart ? setTimeToMidDay(human.dateStart).toISOString().split('T')[0] : null,
-    ['Date de départ']: human.dateEnd ? setTimeToMidDay(human.dateEnd).toISOString().split('T')[0] : null,
-    ['ETPT sur la période absentéisme non déduit (hors action 99)']: reelEtp < 0.0001 ? 0 : round4(reelEtp),
-    ['Temps ventilés sur la période (hors action 99)']: tempsVentiles,
-    ['Ecart → ventilations manquantes dans A-JUST']: ecartVentilation > 0.0001 ? ecartVentilation : '-',
-    ...gaps,
-    ...refObjFiltered,
-    ['CET > 30 jours']: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
-    ['CET < 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
-    ...absenteismeDetails,
-    ['TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)']: Object.entries(refObjFiltered)
-      .filter(([key]) => key.toLowerCase().includes('absent'))
-      .reduce((acc, [, v]) => acc + (v || 0), 0),
-    ...(isCa() ? delegation : {}),
-  }
-}
-
-export const buildReelEtp = (human, dateStart, dateStop) => {
-  const start = setTimeToMidDay(dateStart)
-  const stop = setTimeToMidDay(dateStop)
-
-  return (human.situations || []).flatMap((situation) => {
-    const from = setTimeToMidDay(situation.start)
-    const to = setTimeToMidDay(situation.end || dateStop)
-
-    if (to < start || from > stop) return []
-
-    const overlapStart = from < start ? start : from
-    const overlapEnd = to > stop ? stop : to
-    const nbDays = nbOfDays(overlapStart, overlapEnd)
-
-    return {
-      etp: situation.etp ?? 0,
-      countNbOfDays: nbDays,
-    }
-  })
-}
-
-export const computeFinalReelEtp = (human, dateStart, dateStop, sumEtp, sumDays, refKey, totalDays, totalPeriodDays) => {
-  // Si aucun jour mesuré, retourner 0 pour éviter une division par 0
-  if (sumDays === 0 || totalPeriodDays === 0) return 0
-
-  // Ratio des jours d'activité réels sur la période complète
-  const ratio = totalDays > 0 ? sumDays / totalDays : 1
-
-  // Calcul final de l’ETP en pondérant selon le ratio d'activité
-  const etp = (sumEtp + refKey) / totalPeriodDays
-
-  return Math.round(etp * ratio * 1000) / 1000
-}
-
-export const handleAbsenteisme = (refObj, isCa, isTj) => {
-  const absenteismeDetails = {}
-  const delegation = {}
-
-  Object.entries(refObj).forEach(([key, value]) => {
-    if (!value) return
-
-    const lowerKey = key.toLowerCase()
-
-    if (lowerKey.includes('congé maternité')) {
-      absenteismeDetails['Congé maternité'] = value
-    } else if (lowerKey.includes('cmo')) {
-      absenteismeDetails['CMO'] = value
-    } else if (lowerKey.includes('autre absentéisme')) {
-      absenteismeDetails['Autre absentéisme'] = value
-    } else if (lowerKey.includes('cet < 30 jours')) {
-      absenteismeDetails['CET < 30 jours'] = value
-    }
-
-    if (isCa && lowerKey.includes('délégation tj')) {
-      delegation[key] = value
-    }
-
-    if (isTj && lowerKey.includes('délégation parquet')) {
-      delegation[key] = value
-    }
-  })
-
-  return { absenteismeDetails, delegation }
-}
-
-import pLimit from 'p-limit'
-import { loadOrWarmHR } from './redis'
-import { getHumanRessourceList } from './humanServices'
-import { readExtraction, upsertAgentExtraction } from './hrExtractorCache'
-import { getAgentFromSchema, readJurisdictionSchema, saveJurisdictionArray } from './hrExtAjustCache'
-
-export const computeExtractDdgv5 = async (
-  models,
-  allHuman,
-  flatReferentielsList,
-  categories,
-  categoryFilter,
-  juridictionName,
-  dateStart,
-  dateStop,
-  isJirs,
-  signal = null,
-) => {
-  let onglet2 = []
-  const limit = pLimit(10)
-
-  dateStart = setTimeToMidDay(dateStart)
-  dateStop = setTimeToMidDay(dateStop)
-
-  console.time('extractor-5.2')
-
-  const processHuman = async (human) => {
-    checkAbort(signal)
-    const { currentSituation } = findSituation(human, undefined, signal)
-
-    let categoryName = currentSituation && currentSituation.category && currentSituation.category.label ? currentSituation.category.label : 'pas de catégorie'
-    let fonctionName = currentSituation && currentSituation.fonction && currentSituation.fonction.code ? currentSituation.fonction.code : 'pas de fonction'
-    let fonctionCategory =
-      currentSituation && currentSituation.fonction && currentSituation.fonction.category_detail ? currentSituation.fonction.category_detail : ''
-
-    let refObj = { ...emptyRefObj(flatReferentielsList) }
-    let totalEtpt = 0
-    let reelEtp = 0
-    let absenteisme = 0
-    let totalDaysGone = 0
-    let totalDays = 0
-    let indispoArray = new Array([])
-    let { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
-
-    let CETTotalEtp = 0
-    let nbGlobalDaysCET = 0
-
-    let nbCETDays = 0
-    let absLabels = [...ABSENTEISME_LABELS]
-
-    nbCETDays = computeCETDays(human.indisponibilities, dateStart, dateStop)
-    nbGlobalDaysCET = nbCETDays
-
-    if (nbGlobalDaysCET < 30) absLabels.push(CET_LABEL)
-
-    indispoArray = [
-      ...(await Promise.all(
-        flatReferentielsList.map(async (referentiel) => {
-          checkAbort(signal)
-          const situations = human.situations || []
-          const indisponibilities = human.indisponibilities || []
-
-          if (
-            situations.some((s) => {
-              const activities = s.activities || []
-              return activities.some((a) => a.contentieux.id === referentiel.id)
-            }) ||
-            indisponibilities.some((indisponibility) => {
-              return indisponibility.contentieux.id === referentiel.id
-            })
-          ) {
-            const etpAffected = getHRVentilation(human, referentiel.id, [...categories], dateStart, dateStop, true, absLabels, signal)
-
-            const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = {
-              ...(await countEtp({ ...etpAffected }, referentiel)),
-            }
-
-            checkAbort(signal)
-
-            Object.keys(etpAffected).map((key) => {
-              totalDaysGone = totalDaysGone === 0 && etpAffected[key].nbDaysGone > 0 ? etpAffected[key].nbDaysGone : totalDaysGone
-              totalDays = totalDays === 0 && etpAffected[key].nbDay > 0 ? etpAffected[key].nbDay : totalDays
-            })
-
-            reelEtp = reelEtp === 0 ? counterReelEtp : reelEtp
-
-            const isIndispoRef = await allIndispRefIds.includes(referentiel.id)
-
-            if (referentiel.childrens !== undefined && !isIndispoRef) {
-              const label = getExcelLabel(referentiel, true)
-              refObj[label] = counterEtpTotal
-              totalEtpt += counterEtpTotal
-            } else {
-              const label = getExcelLabel(referentiel, false)
-              if (isIndispoRef) {
-                refObj[label] = counterIndispo / 100
-                if (referentiel.label === CET_LABEL) CETTotalEtp = refObj[label]
-                if (absLabels.includes(referentiel.label)) absenteisme += refObj[label]
-                else
-                  return {
-                    indispo: counterIndispo / 100,
-                  }
-              } else {
-                refObj[label] = counterEtpSubTotal
-              }
-            }
-          }
-          return { indispo: 0 }
-        }),
-      )),
-    ]
-
-    const key = getExcelLabel(refIndispo, true)
-
-    refObj[key] = sumBy(indispoArray, 'indispo')
-
-    if (reelEtp === 0) {
-      let reelEtpObject = []
-
-      sortBy(human.situations, 'dateStart', 'asc').map((situation, index) => {
-        let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
-        nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
-        const middleDate = human.situations[index].dateStart <= dateStop ? today(human.situations[index].dateStart) : null
-        const nextEndDate = middleDate && index < human.situations.length - 1 ? middleDate : dateStop
-        let countNbOfDays = undefined
-        let countNbOfDaysGone = 0
-        if (nextDateStart && nextEndDate && today(nextDateStart) < today(nextEndDate)) {
-          countNbOfDays = nbWorkingDays(today(nextDateStart), today(nextEndDate))
-        }
-        if (human.dateEnd && getNextDay(human.dateEnd) <= nextEndDate) {
-          countNbOfDaysGone = nbWorkingDays(today(getNextDay(human.dateEnd)), today(nextEndDate))
-        }
-        if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate) {
-          reelEtpObject.push({
-            etp: situation.etp * (countNbOfDays - countNbOfDaysGone),
-            countNbOfDays: countNbOfDays - countNbOfDaysGone,
-          })
-        }
-      })
-
-      const isGone = dateStop > human.dateEnd && human.dateEnd > dateStart
-      const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop
-
-      if (human.dateEnd && isGone && hasArrived && dateStart) {
-        reelEtp =
-          ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - ((refObj[key] || 0) * totalDays) / sumBy(reelEtpObject, 'countNbOfDays')) *
-            nbOfDays(human.dateStart, human.dateEnd)) /
-          nbOfDays(dateStart, dateStop)
-      } else if (human.dateEnd && isGone) {
-        reelEtp =
-          ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - ((refObj[key] || 0) * totalDays) / sumBy(reelEtpObject, 'countNbOfDays')) *
-            nbOfDays(dateStart, human.dateEnd)) /
-          nbOfDays(dateStart, dateStop)
-      } else if (hasArrived && dateStart) {
-        reelEtp =
-          ((sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - ((refObj[key] || 0) * totalDays) / sumBy(reelEtpObject, 'countNbOfDays')) *
-            nbOfDays(human.dateStart, dateStop)) /
-          nbOfDays(dateStart, dateStop)
-      } else {
-        reelEtp = sumBy(reelEtpObject, 'etp') / sumBy(reelEtpObject, 'countNbOfDays') - ((refObj[key] || 0) * totalDays) / sumBy(reelEtpObject, 'countNbOfDays')
-      }
-    }
-
-    if (isCa()) {
-      Object.keys(refObj).map((k) => {
-        if (k.includes(DELEGATION_TJ.toUpperCase())) refObj[key] = refObj[key] - refObj[k]
-      })
-    }
-
-    ;['14.2. COMPTE ÉPARGNE TEMPS', '12.2. COMPTE ÉPARGNE TEMPS'].forEach((cle) => {
-      if (refObj.hasOwnProperty(cle)) {
-        delete refObj[cle]
-      }
-    })
-
-    let absenteismeDetails = null
-    let delegation = null
-    if (isCa()) {
-      ;({ refObj, delegation } = getAndDeleteAbsenteisme(refObj, ['14.13. DÉLÉGATION TJ'], true))
-      ;({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
-        '14.4. CONGÉ MALADIE ORDINAIRE',
-        '14.5. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION',
-        '14.14. AUTRE ABSENTÉISME',
-      ]))
-    }
-    if (isTj()) {
-      ;({ refObj, absenteismeDetails } = getAndDeleteAbsenteisme(refObj, [
-        '12.31. CONGÉ MALADIE ORDINAIRE',
-        '12.32. CONGÉ MATERNITÉ/PATERNITÉ/ADOPTION',
-        '12.8. AUTRE ABSENTÉISME',
-      ]))
-    }
-
-    if (categoryFilter.includes(categoryName.toLowerCase()))
-      if (categoryName !== 'pas de catégorie' || fonctionName !== 'pas de fonction') {
-        if (human.juridiction && human.juridiction.length !== 0) human.juridiction = human.juridiction.replaceAll('TPR ', 'TPRX ')
-
-        let gaps = null
-        if (isCa()) {
-          gaps = {
-            ['Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST']: null,
-            ['___']: null,
-          }
-        }
-        if (isTj()) {
-          gaps = {
-            ['Ecart JE → détails manquants, à rajouter dans A-JUST']: null,
-            ['Ecart JI → détails manquants, à rajouter dans A-JUST']: null,
-          }
-        }
-        onglet2.push({
-          ['Réf.']: String(human.id),
-          Arrondissement: juridictionName.label,
-          Jirs: isJirs ? 'x' : '',
-          Juridiction: (human.juridiction || juridictionName.label).toUpperCase(),
-          Nom: human.lastName,
-          Prénom: human.firstName,
-          Matricule: human.matricule,
-          Catégorie: categoryName,
-          Fonction: fonctionName,
-          ['Fonction recodée']: null,
-          ['Code fonction par défaut']: fonctionCategory,
-          ['Fonction agrégat']: null,
-          ['TJCPH']: null,
-          ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
-          ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
-          ['ETPT sur la période absentéisme non déduit (hors action 99)']: reelEtp < 0.0001 ? 0 : reelEtp || 0,
-          ['Temps ventilés sur la période (hors action 99)']: totalEtpt,
-          ['Ecart → ventilations manquantes dans A-JUST']: reelEtp - totalEtpt > 0.0001 ? reelEtp - totalEtpt : '-',
-          ...gaps,
-          ...refObj,
-          ['CET > 30 jours']: nbGlobalDaysCET >= 30 ? CETTotalEtp : 0,
-          ['CET < 30 jours']: nbGlobalDaysCET < 30 ? CETTotalEtp : 0,
-          ...absenteismeDetails,
-          ['TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)']: absenteisme,
-          ...(isCa() ? delegation : {}),
-        })
-      }
-  }
-
-  await Promise.all(allHuman.map((human) => limit(() => processHuman(human))))
-
-  console.timeEnd('extractor-5.2')
-
-  onglet2 = orderBy(onglet2, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
-
-  return onglet2
-}
-
+/**
 export const computeExtractDdg = async (
   models,
   allHuman,
@@ -1036,7 +625,7 @@ export const computeExtractDdg = async (
   onglet2 = orderBy(onglet2, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
 
   return onglet2
-}
+}*/
 
 export const getViewModel = async (params) => {
   const keys1 = params.onglet1.values != null && params.onglet1.values.length ? Object.keys(params.onglet1.values[0]) : []
@@ -1121,6 +710,7 @@ export const getViewModel = async (params) => {
   }
 
   return {
+    ongletLogs: params.ongletLogs,
     tgilist,
     tpxlist,
     cphlist,
@@ -1156,7 +746,7 @@ export const getViewModel = async (params) => {
     },
   }
 }
-
+/**
 export async function runExtractsInParallel({
   indexes,
   allHuman,
@@ -1172,33 +762,20 @@ export async function runExtractsInParallel({
   backupId,
 }) {
   let [onglet1, onglet2] = await Promise.all([
-    old == false
-      ? computeExtractUltraPerf(
-          indexes,
-          cloneDeep(allHuman),
-          flatReferentielsList,
-          categories,
-          categoryFilter,
-          juridictionName,
-          dateStart,
-          dateStop,
-          isJirs,
-          signal,
-        )
-      : computeExtractv2(
-          indexes,
-          cloneDeep(allHuman),
-          flatReferentielsList,
-          categories,
-          categoryFilter,
-          juridictionName,
-          dateStart,
-          dateStop,
-          isJirs,
-          signal,
-          old,
-          backupId,
-        ),
+    computeExtractv2(
+      indexes,
+      cloneDeep(allHuman),
+      flatReferentielsList,
+      categories,
+      categoryFilter,
+      juridictionName,
+      dateStart,
+      dateStop,
+      isJirs,
+      signal,
+      old,
+      backupId,
+    ),
     computeExtractDdg(
       indexes,
       cloneDeep(allHuman),
@@ -1217,7 +794,7 @@ export async function runExtractsInParallel({
   return { onglet1, onglet2 }
   //else return { onglet3: onglet1, onglet4: onglet2 }
 }
-
+*/
 export function buildExcelRef(flatReferentielsList) {
   const absenteismeList = []
 
@@ -1274,7 +851,7 @@ export const getJuridictionData = async (models, juridictionName) => {
 
   return { tproxs, allJuridiction }
 }
-
+/**
 export const computeExtract = async (
   models,
   allHuman,
@@ -1461,8 +1038,8 @@ export const computeExtract = async (
   data = orderBy(data, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
 
   return data
-}
-
+}*/
+/**
 export const computeExtractv2 = async (
   indexes,
   allHuman,
@@ -1520,13 +1097,8 @@ export const computeExtractv2 = async (
 
   return results
 }
-
-/**
- * Traitement pour un agent
- * @param {*} params
- * @returns
- */
-async function computeHumanExtract(params) {
+*/
+/**async function computeHumanExtract(params) {
   const {
     human,
     flatReferentielsList,
@@ -1673,7 +1245,7 @@ async function computeHumanExtract(params) {
   }
 
   checkAbort(signal)
-  console.log('go ajust')
+  //console.log('go ajust')
 
   if (!categoryFilter.includes(categoryName.toLowerCase())) return null
   if (categoryName === 'pas de catégorie' && fonctionName === 'pas de fonction') return null
@@ -1697,7 +1269,7 @@ async function computeHumanExtract(params) {
     ...(isCa() ? delegation : {}),
   }
 }
-
+*/
 export const formatFunctions = async (functionList) => {
   let list = [...functionList, ...(isCa() ? FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR_CA : FUNCTIONS_ONLY_FOR_DDG_EXTRACTOR)]
   list = list.map((fct) => {
@@ -1705,6 +1277,17 @@ export const formatFunctions = async (functionList) => {
   })
 
   return orderBy(list, ['category_label', 'rank', 'code'], ['desc', 'asc', 'asc'])
+}
+
+// tolérance typique pour tes données : 1e-4
+const TOL = 1e-4 + Number.EPSILON
+
+// Retourne `a` si |a - b| ≤ TOL, sinon `undefined`
+function returnAIfClose(a, b, tol = TOL) {
+  const d = a - b // 1 soustraction
+  return (d < 0 ? -d : d) <= tol // abs sans appel de fonction
+    ? a
+    : b
 }
 
 export const getObjectKeys = async (array) => {
@@ -1735,275 +1318,21 @@ export const getAndDeleteAbsenteisme = (obj, labels, delegation = false) => {
   else return { refObj: obj, absenteismeDetails: absDetails }
 }
 
-// BENCHMARK
-
-export const computeExtractUltraPerf = async (
-  indexes,
-  allHuman,
-  flatReferentielsList,
-  categories,
-  categoryFilter,
-  juridictionName,
-  dateStart,
-  dateStop,
-  isJirs,
-  signal = null,
-) => {
-  console.time('ultra-perf-extract')
-
-  const { allIndispRefIds, refIndispo } = getIndispoDetails(flatReferentielsList)
-  const start = today(dateStart)
-  const stop = today(dateStop)
-
-  const limit = require('p-limit')(10) // 10 agents en parallèle
-
-  let results = await Promise.all(
-    allHuman.map((human) =>
-      limit(() =>
-        processHumanExtract({
-          human,
-          flatReferentielsList,
-          categories,
-          categoryFilter,
-          juridictionName,
-          dateStart: start,
-          dateStop: stop,
-          isJirs,
-          signal,
-          allIndispRefIds,
-          refIndispo,
-          indexes,
-        }),
-      ),
-    ),
-  )
-
-  results = orderBy(results, ['Catégorie', 'Nom', 'Prénom', 'Matricule'], ['desc', 'asc', 'asc', 'asc'])
-
-  console.timeEnd('ultra-perf-extract')
-
-  return results.filter(Boolean)
-}
-
-async function processHumanExtract(params) {
-  const {
-    human,
-    flatReferentielsList,
-    categories,
-    categoryFilter,
-    juridictionName,
-    dateStart,
-    dateStop,
-    isJirs,
-    signal,
-    allIndispRefIds,
-    refIndispo,
-    indexes,
-  } = params
-
-  console.time('situation data ' + human.id)
-  const { currentSituation } = findSituation(human, undefined, signal)
-  const categoryName = currentSituation?.category?.label || 'pas de catégorie'
-  const fonctionName = currentSituation?.fonction?.code || 'pas de fonction'
-
-  if (!categoryFilter.includes(categoryName.toLowerCase())) return null
-  if (categoryName === 'pas de catégorie' && fonctionName === 'pas de fonction') return null
-  console.timeEnd('situation data ' + human.id)
-
-  console.time('calculation data' + human.id)
-  const { refObj, totalEtpt, reelEtp } = await computeReferentielStats(
-    human,
-    flatReferentielsList,
-    categories,
-    dateStart,
-    dateStop,
-    allIndispRefIds,
-    refIndispo,
-    signal,
-    indexes,
-  )
-  console.timeEnd('calculation data' + human.id)
-
-  console.time('format data' + human.id)
-  const finalLine = formatHumanLine({
-    human,
-    refObj,
-    reelEtp,
-    totalEtpt,
-    categoryName,
-    fonctionName,
-    juridictionName,
-    isJirs,
-    refIndispo,
-  })
-  console.timeEnd('format data' + human.id)
-
-  return finalLine
-}
-
-async function computeReferentielStats(human, flatReferentielsList, categories, dateStart, dateStop, allIndispRefIds, refIndispo, signal, indexes) {
-  const refObj = emptyRefObj(flatReferentielsList)
-  let totalEtpt = 0
-  let reelEtp = 0
-  const indispoArray = []
-
-  const situations = human.situations ?? []
-  const indispos = human.indisponibilities ?? []
-
-  for (const referentiel of flatReferentielsList) {
-    const refId = referentiel.id
-    const isUsed = situations.some((s) => s.activities?.some((a) => a.contentieux.id === refId)) || indispos.some((i) => i.contentieux.id === refId)
-    //indexes.agentIndex
-    if (!isUsed) continue
-
-    const etpAffected = getHRVentilation(human, refId, categories, dateStart, dateStop, undefined, undefined, signal)
-
-    const { counterEtpTotal, counterEtpSubTotal, counterIndispo, counterReelEtp } = await countEtp(etpAffected, referentiel)
-
-    reelEtp = reelEtp || counterReelEtp
-
-    const isIndispoRef = allIndispRefIds.includes(refId)
-    const label = getExcelLabel(referentiel, !isIndispoRef && referentiel.childrens)
-
-    if (referentiel.childrens && !isIndispoRef) {
-      refObj[label] = counterEtpTotal
-      totalEtpt += counterEtpTotal
-    } else {
-      if (isIndispoRef) {
-        refObj[label] = counterIndispo / 100
-        indispoArray.push({ indispo: counterIndispo / 100 })
-      } else {
-        refObj[label] = counterEtpSubTotal
-      }
-    }
-  }
-
-  const key = getExcelLabel(refIndispo, true)
-  refObj[key] = sumBy(indispoArray, 'indispo')
-
-  // recalcul reelEtp si manquant
-  if (!reelEtp) {
-    reelEtp = computeFallbackReelEtp(human, dateStart, dateStop, refObj[key] || 0)
-  }
-
-  return { refObj, totalEtpt, reelEtp }
-}
-
-function formatHumanLine({ human, refObj, reelEtp, totalEtpt, categoryName, fonctionName, juridictionName, isJirs, refIndispo }) {
-  //const key = getExcelLabel(refIndispo, true)
-  let delegation = null
-  const key = getExcelLabel(refIndispo, true)
-  if (isCa()) {
-    Object.keys(refObj).forEach((k) => {
-      if (k.includes(DELEGATION_TJ.toUpperCase())) refObj[key] -= refObj[k]
-    })
-    ;({ refObj, delegation } = getAndDeleteAbsenteisme(refObj, ['14.13. DÉLÉGATION TJ'], true))
-    const newKey = '14.13. DÉLÉGATION TJ'
-    const targetKey = '14. TOTAL INDISPONIBILITÉ'
-
-    const result = {}
-    for (const [k, v] of Object.entries(refObj)) {
-      if (k === targetKey) Object.assign(result, delegation)
-      result[k] = v
-    }
-    refObj = result
-  }
-
-  return {
-    ['Réf.']: String(human.id),
-    ...(isCa() ? { Juridiction: juridictionName.label } : { Arrondissement: juridictionName.label }),
-    Nom: human.lastName,
-    Prénom: human.firstName,
-    Matricule: human.matricule,
-    Catégorie: categoryName,
-    Fonction: fonctionName,
-    ['Fonction recodée']: null,
-    ...(isCa() ? { ['_']: null } : { TJCPH: null }),
-    ...(isCa() ? { ['__']: null } : { Juridiction: null }),
-    Jirs: isJirs ? 'x' : '',
-    ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
-    ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
-    ['ETPT sur la période (absentéisme et action 99 déduits)']: reelEtp < 0.0001 ? 0 : reelEtp,
-    ['Temps ventilés sur la période (absentéisme et action 99 déduits)']: totalEtpt,
-    ...refObj,
-    ...(isCa() ? delegation : {}),
-  }
-}
-
-function computeFallbackReelEtp(human, dateStart, dateStop, totalIndispo) {
-  const situations = sortBy(human.situations || [], 'dateStart', 'asc')
-  const reelEtpObject = []
-
-  for (let i = 0; i < situations.length; i++) {
-    const situation = situations[i]
-
-    let nextDateStart = situation.dateStart <= dateStart ? dateStart : situation.dateStart
-    nextDateStart = nextDateStart <= dateStop ? nextDateStart : null
-
-    const middleDate = situation.dateStart <= dateStop ? new Date(situation.dateStart) : null
-    const nextEndDate = middleDate && i < situations.length - 1 ? middleDate : dateStop
-
-    if (nextDateStart && nextEndDate && today(nextDateStart) < today(nextEndDate)) {
-      const countNbOfDays = nbWorkingDays(today(nextDateStart), today(nextEndDate))
-      if (typeof countNbOfDays === 'number' && nextDateStart <= nextEndDate) {
-        reelEtpObject.push({
-          etp: situation.etp * countNbOfDays,
-          countNbOfDays: countNbOfDays,
-        })
-      }
-    }
-  }
-
-  const isGone = dateStop > human.dateEnd && human.dateEnd > dateStart
-  const hasArrived = dateStart < human.dateStart && human.dateStart < dateStop
-
-  const totalEtp = sumBy(reelEtpObject, 'etp')
-  const totalDays = sumBy(reelEtpObject, 'countNbOfDays')
-
-  if (totalDays === 0) return 0
-
-  const base = totalEtp / totalDays
-
-  if (human.dateEnd && isGone && hasArrived && dateStart) {
-    return (base * nbOfDays(human.dateStart, human.dateEnd)) / nbOfDays(dateStart, dateStop) - totalIndispo
-  }
-
-  if (human.dateEnd && isGone) {
-    return (base * nbOfDays(dateStart, human.dateEnd)) / nbOfDays(dateStart, dateStop) - totalIndispo
-  }
-
-  if (hasArrived && dateStart) {
-    return (base * nbOfDays(human.dateStart, dateStop)) / nbOfDays(dateStart, dateStop) - totalIndispo
-  }
-
-  return base - totalIndispo
-}
-
-// tolérance typique pour tes données : 1e-4
-const TOL = 1e-4 + Number.EPSILON
-
-// Retourne `a` si |a - b| ≤ TOL, sinon `undefined`
-function returnAIfClose(a, b, tol = TOL) {
-  const d = a - b // 1 soustraction
-  return (d < 0 ? -d : d) <= tol // abs sans appel de fonction
-    ? a
-    : b
-}
-
-export async function computeExtractor(models, params, onProgress, userId) {
+/**
+export async function computeExtractor(models, params, onProgress) {
   const { backupId, dateStart, dateStop, categoryFilter, old = true } = params
 
   onProgress?.(5, 'init')
 
   const juridictionName = await models.HRBackups.findById(backupId)
   const isJirs = await models.ContentieuxReferentiels.isJirs(backupId)
-  const referentiels = await models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true, userId)
+  const referentiels = await models.ContentieuxReferentiels.getReferentiels(backupId, true, undefined, false, true)
   onProgress?.(15, 'referentiels')
 
   const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
   onProgress?.(25, 'flat')
 
-  let hr = await loadOrWarmHR(backupId, models, userId)
+  let hr = await loadOrWarmHR(backupId, models)
   onProgress?.(35, 'hr')
 
   const categories = await models.HRCategories.getAll()
@@ -2047,4 +1376,559 @@ export async function computeExtractor(models, params, onProgress, userId) {
     allJuridiction,
     viewModel,
   }
+}
+*/
+export function fillAgentData(human, pData, etpts, filledReferentiel, flatReferentiel, isJirs, juridictionName) {
+  const filledVentilations = mapIdToLabelObject(filledReferentiel, flatReferentiel)
+
+  return {
+    ['Réf.']: String(human.id),
+    ...(isCa() ? { Juridiction: juridictionName.label } : { Arrondissement: juridictionName.label }),
+    Nom: human.lastName,
+    Prénom: human.firstName,
+    Matricule: human.matricule,
+    Catégorie: pData.category,
+    Fonction: pData.fonction,
+    ['Fonction recodée']: null,
+    ...(isCa() ? { ['_']: null } : { TJCPH: null }),
+    ...(isCa() ? { ['__']: null } : { Juridiction: null }),
+    Jirs: isJirs ? 'x' : '',
+    ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
+    ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
+    ['ETPT sur la période (absentéisme et action 99 déduits)']: etpts.realEtp,
+    ['Temps ventilés sur la période (absentéisme et action 99 déduits)']: etpts.effectiveEtp ?? 0,
+    ...filledVentilations,
+    //METTRE DELEGATION TJ JUSTE AVANT LES INDISPOS...(isCa() ? delegation : {}),
+  }
+}
+
+export function mapIdToLabelObject(m, refs, merge) {
+  // 1) Index id -> label
+  const idToLabel = Object.create(null)
+  for (let i = 0, n = refs.length; i < n; i++) {
+    const r = refs[i]
+    // Clé stringifiée pour uniformiser string/number
+    if (r.childrens && r.childrens.length) idToLabel[r.id] = r.code_import + ' TOTAL ' + toUpper(r.label)
+    else idToLabel[r.id] = r.code_import + ' ' + toUpper(r.label)
+  }
+
+  // 2) Construire { label: value }
+  const out = Object.create(null)
+  for (const pair of m) {
+    const id = pair[0]
+    const value = pair[1]
+    const label = idToLabel[id]
+    if (label == null) continue // ignore les id inconnus
+
+    if (merge && out[label] !== undefined) {
+      out[label] = merge(out[label], value, id, label)
+    } else {
+      out[label] = value // par défaut : "dernier gagne"
+    }
+  }
+  //console.log(out)
+  return out
+}
+
+/**
+ * Garde les humans dont la période chevauche [query.start, query.dateStop] (bornes incluses).
+ */
+export function filterHumansOverlappingWindow(humans, query) {
+  return humans.filter((human) => !(normalizeDate(human.dateEnd) < normalizeDate(query.start) || normalizeDate(human.dateStart) > normalizeDate(query.end)))
+}
+
+// Predicate (chevauchement inclusif : présent même partiellement)
+export const isHumanPresentOnInterval = (human, query) => {
+  const qs = timeOr(query.start ?? query.dateStart, -Infinity)
+  const qe = timeOr(query.end ?? query.dateStop, +Infinity)
+  const hs = timeOr(human.dateStart, -Infinity)
+  const he = timeOr(human.dateEnd, +Infinity)
+  return he >= qs && hs <= qe
+}
+
+function isolateAbsenteismeAndDelegation(obj) {
+  if (!obj || typeof obj !== 'object') return { remaining: {}, absOrdered: {}, delegationEntry: null }
+
+  const normalize = (s) =>
+    String(s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+  // Préparer une liste de tuples { key, value, nk } pour n'avoir qu'une normalization par clé
+  const entries = Object.keys(obj).map((k) => ({ k, v: obj[k], nk: normalize(k) }))
+
+  const absOrdered = {}
+  const removed = new Set()
+
+  // 1) extraire les absences selon ABSENTEISME_LABELS (ordre contrôlé par ABSENTEISME_LABELS)
+  for (const label of ABSENTEISME_LABELS) {
+    const nl = normalize(label)
+    // récupérer les clés correspondantes non encore retirées
+    const matches = entries.filter((e) => !removed.has(e.k) && e.nk.includes(nl)).sort((a, b) => a.k.localeCompare(b.k, 'fr'))
+    for (const m of matches) {
+      absOrdered[m.k] = m.v
+      removed.add(m.k)
+    }
+  }
+
+  // 3) délégation TJ (matching insensible à casse/accents)
+  const ndel = normalize(DELEGATION_TJ)
+  const delegationEntryKey = entries.find((e) => !removed.has(e.k) && (e.nk.includes(ndel) || e.nk.includes('delegation tj')))
+  let delegationEntry = null
+  if (delegationEntryKey) {
+    delegationEntry = { [delegationEntryKey.k]: delegationEntryKey.v }
+    removed.add(delegationEntryKey.k)
+  }
+
+  // remaining : reconstruire en conservant l'ordre d'origine pour les clés non retirées
+  const remaining = {}
+  for (const e of entries) {
+    if (!removed.has(e.k)) remaining[e.k] = e.v
+  }
+
+  return { remaining, absOrdered, delegationEntry }
+}
+
+export function fillAgentDataDdg(human, pData, abs, filledReferentiel, flatReferentiel, isJirs, juridictionName, logs, query, indispoL3) {
+  let filledVentilations = mapIdToLabelObject(filledReferentiel, flatReferentiel)
+  filledVentilations = Object.fromEntries(
+    Object.entries(filledVentilations).filter(([k]) => !['14.2. COMPTE ÉPARGNE TEMPS', '12.2. COMPTE ÉPARGNE TEMPS'].includes(k)),
+  )
+  if (human.juridiction && human.juridiction.length !== 0) human.juridiction = human.juridiction.replaceAll('TPR ', 'TPRX ')
+
+  const { remaining, absOrdered, delegationEntry } = isolateAbsenteismeAndDelegation(filledVentilations)
+  //let remaining = filledVentilations
+  //let absOrdered = {}
+  //let delegationEntry = null
+
+  let gaps = null
+  if (isCa()) {
+    gaps = {
+      ['Ecart CTX MINEURS → détails manquants, à rajouter dans A-JUST']: null,
+      ['___']: null,
+    }
+  }
+  if (isTj()) {
+    gaps = {
+      ['Ecart JE → détails manquants, à rajouter dans A-JUST']: null,
+      ['Ecart JI → détails manquants, à rajouter dans A-JUST']: null,
+    }
+  }
+  const agentDdg = {
+    ['Réf.']: String(human.id),
+    Arrondissement: juridictionName.label,
+    Jirs: isJirs ? 'x' : '',
+    Juridiction: (human.juridiction || juridictionName.label).toUpperCase(),
+    Nom: human.lastName,
+    Prénom: human.firstName,
+    Matricule: human.matricule,
+    Catégorie: pData.category,
+    Fonction: pData.fonction,
+    ['Fonction recodée']: null,
+    ['Code fonction par défaut']: pData.fonctionCategory,
+    ['Fonction agrégat']: null,
+    ['TJCPH']: null,
+    ["Date d'arrivée"]: human.dateStart === null ? null : setTimeToMidDay(human.dateStart).toISOString().split('T')[0],
+    ['Date de départ']: human.dateEnd === null ? null : setTimeToMidDay(human.dateEnd).toISOString().split('T')[0],
+    ['ETPT sur la période absentéisme non déduit (hors action 99)']: abs.realEtp,
+    ['Temps ventilés sur la période (hors action 99)']: abs.effectiveEtp ?? 0,
+    ['Ecart → ventilations manquantes dans A-JUST']: abs.realEtp - abs.effectiveEtp,
+    ...gaps,
+    ...remaining, //...filledVentilations,
+    ['CET > 30 jours']: abs.CET ?? 0,
+    ['CET < 30 jours']: abs['CET<30'] ?? 0,
+    ...absOrdered, // Mettre l'absenteisme ici
+    ['TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)']: abs.absenteisme ?? 0,
+    ...delegationEntry, // Mettre la délégation TJ à la fin
+    ['']: null,
+    ['ETPT global sur la période (incluant absentéisme et action 99)']: abs.realEtp + (filledReferentiel.get(indispoL3) ?? 0),
+  }
+
+  logs.push(
+    buildEmptyLogEntry(human, pData, abs.absenteisme, filledVentilations, filledReferentiel.get(indispoL3) ?? null, abs.realEtp, abs.effectiveEtp, true),
+  )
+  return { agentDdg, logs }
+}
+
+export function generateOnglets({
+  hr,
+  query,
+  indexes,
+  periodsByDate,
+  emptyFlatMapReferentiel,
+  mapRefIdsToLabels,
+  ctxL3,
+  indispoL3,
+  CETId,
+  flatReferentiel,
+  isJirs,
+  juridictionName,
+  logs, // la fonction continue d'alimenter les logs (effet conservé)
+}) {
+  let onglet1 = new Array()
+  let onglet2 = new Array()
+  hr.forEach((human) => {
+    let etpts = { realEtp: null, effectiveEtp: null }
+    let pData = { category: null, fonction: null, fonctionCategory: null }
+    let abs = { realEtp: null, effectiveEtp: null, absenteisme: null, 'CET<30': null, CET: null } // absTotal sur toute la période pour 1 agent, effectiveEtp etp ventillé
+
+    let tmpAjustFlatMapReferentiel = cloneDeep(emptyFlatMapReferentiel)
+    let tmpDdgFlatMapReferentiel = cloneDeep(emptyFlatMapReferentiel)
+
+    const requestIndispo = searchAgentIndisposWithIndexes(indexes, query.start, query.end, human.id, CETId)
+    const totalCETWorkingDays = getWorkingDaysFromIndispos(requestIndispo)
+    const CETLessThan30days = totalCETWorkingDays <= 30
+    const absLabels = [...ABSENTEISME_LABELS, ...(CETLessThan30days ? [CET_LABEL] : [])]
+    const absMap = new Set(absLabels)
+
+    //Récupération des ids des segments d'un agent
+    const segments = indexes.agentIndex.get(human.id)
+
+    if (segments && segments.length) {
+      //Filtrer parmis toutes les périodes celles de l'agent pour avoir les détails de chaque segment
+      const filteredPeriods = periodsByDate.filter((period) => segments.includes(period.periodId))
+      const nbOfWorkingDaysQuery = getWorkingDaysCount(query.start, query.end)
+
+      // ajouter dans `logs` un "segment vide" si le 1er segment commence après le début de la requête
+      logs = pushMissingSegmentLog({
+        filteredPeriods,
+        human,
+        query,
+        nbOfWorkingDaysQuery,
+        logs,
+        totalCETWorkingDays,
+        emptyFlatMapReferentiel,
+        indispoL3,
+        pData,
+      })
+
+      // Pour chaque période stable
+      filteredPeriods.forEach((period) => {
+        const periodStart = Math.max(today(period.start), today(query.start)) // Ajustement des dates en fonction de l'intervalle de requête
+        const periodEnd = Math.min(today(period.end), today(query.end))
+        const workingDays = getWorkingDaysCount(periodStart, periodEnd) // Nombre de jours ouvrés dans la période ajustée
+        const hrEndDate = human?.dateEnd == null ? Infinity : today(human.dateEnd) // Ajustement de la date de fin
+        const periodDetails = indexes.periodsDatabase.get(period.periodId) // Récupère le segment avec indispo
+        let log = cloneDeep({ ventilations: [], indisponibilites: [] })
+        let logAccVentilation = 0
+        let logAccIndip = 0
+        let logAccAction99Ddg = 0
+        let currentAbsEffectiveEtp = 0 // Effective ETP du segment avec abs réintégré
+        let totalIndispoRate = 0
+        let absOnPeriod = 0
+
+        // Exclure les période après un départ
+        if (human?.dateEnd && (comparerDatesJourMoisAnnee(today(period.start), hrEndDate) || estApresJourMoisAnnee(today(period.start), hrEndDate))) {
+          return
+        }
+
+        let currentEffectiveAbs = 0 // Total absentéisme effectif sur la période 0.9*3jours/522 + 0.1*3jours/522
+        //Absentéisme
+        if (periodDetails.indisponibilities.length) {
+          totalIndispoRate = periodDetails.indisponibilities.reduce((s, i) => s + (i.percent || 0) / 100, 0) // somme des indispos
+          const R = totalIndispoRate
+          const E = period.etp
+          const alpha = R > E ? E / R : 1 // règle proportionnelle universelle
+
+          currentEffectiveAbs = periodDetails.indisponibilities.reduce((sum, i) => {
+            const rate = ((i.percent || 0) / 100) * alpha
+            console.log('indispo final', rate)
+            return absMap.has(i?.contentieux.label) ? sum + rate : sum
+          }, 0)
+
+          absOnPeriod = (currentEffectiveAbs * workingDays) / nbOfWorkingDaysQuery
+          console.log(absOnPeriod)
+          abs.absenteisme = (abs.absenteisme ?? 0) + absOnPeriod
+        }
+        currentAbsEffectiveEtp = currentEffectiveAbs + period.effectiveETP
+        //Ventilations
+        for (const activityId of period.activityIds.keys()) {
+          const activityPercentage = period.activityIds.get(activityId) || 0
+          const effectiveETP = period.effectiveETP * (activityPercentage / 100)
+          const effectiveETPDdg = currentAbsEffectiveEtp * (activityPercentage / 100)
+
+          let contentieux = (effectiveETP * workingDays) / nbOfWorkingDaysQuery
+          let contentieuxDdg = (effectiveETPDdg * workingDays) / nbOfWorkingDaysQuery
+          if (activityId !== indispoL3) {
+            log.ventilations.push({ ctx: mapRefIdsToLabels.get(String(activityId)), value: contentieuxDdg })
+            tmpAjustFlatMapReferentiel.set(activityId, (tmpAjustFlatMapReferentiel.get(activityId) ?? 0) + contentieux)
+            tmpDdgFlatMapReferentiel.set(activityId, (tmpDdgFlatMapReferentiel.get(activityId) ?? 0) + contentieuxDdg)
+            if (ctxL3.includes(activityId)) {
+              logAccVentilation += contentieuxDdg
+              etpts.effectiveEtp = (etpts.effectiveEtp ?? 0) + contentieux
+              abs.effectiveEtp = (abs.effectiveEtp ?? 0) + contentieuxDdg
+            }
+          }
+        }
+
+        //ETP total sur la periode de requete
+        etpts.realEtp = (etpts.realEtp ?? 0) + ((period.effectiveETP ?? 0) * workingDays) / nbOfWorkingDaysQuery
+        abs.realEtp = (abs.realEtp ?? 0) + ((currentAbsEffectiveEtp ?? 0) * workingDays) / nbOfWorkingDaysQuery
+
+        //Indisponibilités
+        if (periodDetails.indisponibilities.length) {
+          // RÈGLE PROPORTIONNELLE
+          const R = totalIndispoRate
+          const E = period.etp
+          const alpha = R > E ? E / R : 1
+          periodDetails.indisponibilities.forEach((indispo) => {
+            let indispoPercentage = indispo.percent / 100
+            const periodStart = Math.max(today(indispo.dateStart), today(period.start), today(query.start), today(human.dateStart))
+            const periodEnd = Math.min(today(indispo.dateStop ?? period.end), today(period.end), today(query.end), hrEndDate)
+            const workingDays = getWorkingDaysCount(periodStart, periodEnd)
+            const indisponibilite = (indispoPercentage * workingDays) / nbOfWorkingDaysQuery
+            const ddgIndisponibilite = indisponibilite * alpha
+
+            if (indispo.contentieux.label !== DELEGATION_TJ) {
+              logAccIndip += indisponibilite
+              tmpAjustFlatMapReferentiel.set(indispoL3, (tmpAjustFlatMapReferentiel.get(indispoL3) ?? 0) + indisponibilite)
+            }
+            if (indispo.contentieux.label !== INDISPO_L3) {
+              log.indisponibilites.push({ ctx: indispo.contentieux.label, value: ddgIndisponibilite })
+              tmpAjustFlatMapReferentiel.set(indispo.contentieux.id, (tmpAjustFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + indisponibilite)
+              tmpDdgFlatMapReferentiel.set(indispo.contentieux.id, (tmpDdgFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + ddgIndisponibilite)
+            }
+            if (![INDISPO_L3, DELEGATION_TJ, ...absLabels].includes(indispo.contentieux.label)) {
+              log.indisponibilites.push({ ctx: 'TOTAL INDISPONIBILITÉS', value: ddgIndisponibilite })
+              logAccAction99Ddg += ddgIndisponibilite
+              tmpDdgFlatMapReferentiel.set(indispoL3, (tmpDdgFlatMapReferentiel.get(indispoL3) ?? 0) + ddgIndisponibilite)
+            }
+          })
+        }
+
+        //Human details
+        pData.category = periodDetails.category?.label ?? pData.category
+        pData.fonction = periodDetails.fonction?.code ?? pData.fonction
+        pData.fonctionCategory = periodDetails.fonction?.category_detail ?? pData.fonction
+
+        //Add logs
+        if (workingDays !== 0)
+          logs.push(
+            buildLogEntry({
+              human,
+              pData,
+              periodStart,
+              periodEnd,
+              nbOfWorkingDaysQuery,
+              workingDays,
+              period,
+              totalIndispoRate,
+              logAccIndip,
+              totalCETWorkingDays,
+              absOnPeriod,
+              indispoL3: logAccAction99Ddg,
+              currentAbsEffectiveEtp,
+              logAccVentilation,
+              log,
+            }),
+          )
+      })
+
+      if (filteredPeriods.length === 0) {
+        // ajouter dans `logs` un "segment vide" si l'agent n'a pas de période stable sur la requête
+        logs.push(buildEmptyLogEntry(human))
+      }
+    }
+
+    //CET
+    if (!abs.absenteisme && tmpDdgFlatMapReferentiel.get(CETId)) abs.CET = tmpDdgFlatMapReferentiel.get(CETId)
+    else if (abs.absenteisme) {
+      if (CETLessThan30days) {
+        abs['CET<30'] = tmpDdgFlatMapReferentiel.get(CETId)
+      } else {
+        abs.CET = tmpDdgFlatMapReferentiel.get(CETId)
+      }
+      tmpDdgFlatMapReferentiel.delete(CETId)
+    }
+
+    let agent = fillAgentData(human, pData, etpts, tmpAjustFlatMapReferentiel, flatReferentiel, isJirs, juridictionName)
+    let resultDdg = fillAgentDataDdg(human, pData, abs, tmpDdgFlatMapReferentiel, flatReferentiel, isJirs, juridictionName, logs, query, indispoL3)
+    let agentDdg = resultDdg.agentDdg
+    logs = resultDdg.logs
+
+    /**
+    // Ajouter un formatage différent de l'extracteur DDG
+    for (const [key, value] of Object.entries(agent)) {
+      if (isNumber(value) && value !== 0) agent[key] = fixDecimal(value, 10000)
+      if (key == 'ETPT sur la période (absentéisme et action 99 déduits)' && [undefined, null].includes(agent[key])) agent[key] = null
+    }
+    for (const [key, value] of Object.entries(agentDdg)) {
+      if (isNumber(value) && value !== 0) agentDdg[key] = fixDecimal(value, 10000)
+      if (key == 'ETPT sur la période (absentéisme et action 99 déduits)' && [undefined, null].includes(agentDdg[key])) agentDdg[key] = null
+      if (key == 'Ecart → ventilations manquantes dans A-JUST' && [NaN, 0].includes(agentDdg[key])) agentDdg[key] = '-'
+      if (key == 'TOTAL absentéisme réintégré (CMO + Congé maternité + Autre absentéisme  + CET < 30 jours)' && agentDdg[key] === null) agentDdg[key] = 0
+    }
+    */
+
+    onglet1.push(agent)
+    onglet2.push(agentDdg)
+  })
+
+  //logs.sort((a, b) => a.id - b.id || a.periodStart - b.periodStart)
+  logs = orderBy(logs, ['id', 'periodStartTimestamp'], ['asc', 'desc'])
+
+  return { onglet1, onglet2, ongletLogs: logs }
+}
+
+function formatCtxEntries(entries) {
+  // Sépare par un point intercalé pour meilleure lisibilité
+  return entries.map((x) => `${x.ctx} => ${fixDecimal(x.value, 1000)}`).join(' · ')
+}
+
+/**
+ * Transforme un objet en une chaîne de caractères formatée pour le contexte des logs
+ * @param {*} obj
+ * @returns
+ */
+export function mapObjectToCtxString(obj) {
+  if (!obj || typeof obj !== 'object') return ''
+  return Object.entries(obj)
+    .filter(([, v]) => v !== 0 && v !== null && v !== undefined)
+    .map(([k, v]) => {
+      const n = typeof v === 'number' ? v : parseFloat(String(v).replace(',', '.'))
+      const display = Number.isFinite(n) ? (Number.isInteger(n) ? String(n) : String(Math.round(n * 1000) / 1000)) : String(v)
+      return `${k} => ${display}`
+    })
+    .join(' · ')
+}
+
+/**
+ * Retourne une log entry ne contenant que l'id et le name (tout le reste null)
+ * @param {{ id: any, firstName?: string, lastName?: string, matricule?: string }} human
+ * @returns {Object}
+ */
+export function buildEmptyLogEntry(
+  human,
+  pData = null,
+  absOnPeriod = null,
+  tmpDdgFlatMapReferentiel = null,
+  action99 = null,
+  currentAbsEffectiveEtp = null,
+  logAccVentilation = null,
+  main = false,
+) {
+  return {
+    id: human.id,
+    name: `${human.firstName || ''} ${human.lastName || ''} ${human.matricule ?? ''}`.trim(),
+    category: pData?.category || null,
+    humanStart: human.dateStart ? formatDate(human.dateStart) : null,
+    humanEnd: human.dateEnd ? formatDate(human.dateEnd) : null,
+    periodStart: null, //query.start ? formatDate(query.start) : null,
+    periodEnd: null, // query.end ? formatDate(query.end) : null,
+    nbOfWorkingDaysQuery: null,
+    workingDays: null,
+    dayRate: null,
+    filledEtp: null,
+    queryEtpValue: null,
+    totalIndispo: null,
+    queryIndispoValue: null,
+    cetDays: null,
+    abs: absOnPeriod !== null && absOnPeriod !== 0 ? absOnPeriod : null,
+    action99: action99 !== null && action99 !== 0 ? action99 : null,
+    effectifEtp: currentAbsEffectiveEtp !== null ? (currentAbsEffectiveEtp ?? 0) : null,
+    logAccVentilation: logAccVentilation !== null ? logAccVentilation : null,
+    ctx: tmpDdgFlatMapReferentiel ? mapObjectToCtxString(tmpDdgFlatMapReferentiel) : null,
+    periodStartTimestamp: null,
+    main: main ? 'x' : '',
+    etptGlobal: main ? currentAbsEffectiveEtp + (action99 || 0) : null,
+  }
+}
+
+function buildLogEntry({
+  human,
+  pData,
+  periodStart,
+  periodEnd,
+  nbOfWorkingDaysQuery,
+  workingDays,
+  period,
+  totalIndispoRate,
+  logAccIndip,
+  totalCETWorkingDays,
+  absOnPeriod,
+  indispoL3,
+  currentAbsEffectiveEtp,
+  logAccVentilation,
+  log,
+}) {
+  return {
+    id: human.id,
+    name: `${human.firstName} ${human.lastName} ${human.matricule ?? ''}`,
+    category: pData.category,
+    humanStart: formatDate(human.dateStart),
+    humanEnd: human.dateEnd ? formatDate(human.dateEnd) : null,
+    periodStart: formatDate(periodStart),
+    periodEnd: formatDate(periodEnd),
+    nbOfWorkingDaysQuery,
+    workingDays,
+    dayRate: workingDays / nbOfWorkingDaysQuery,
+    filledEtp: period.etp,
+    queryEtpValue: (period.etp * workingDays) / nbOfWorkingDaysQuery,
+    totalIndispo: totalIndispoRate !== 0 ? totalIndispoRate : null,
+    queryIndispoValue: totalIndispoRate !== 0 ? logAccIndip : null,
+    cetDays: totalCETWorkingDays !== 0 ? totalCETWorkingDays : null,
+    abs: absOnPeriod !== 0 ? absOnPeriod : null,
+    action99: indispoL3 !== 0 ? indispoL3 : null,
+    effectifEtp: ((currentAbsEffectiveEtp ?? 0) * workingDays) / nbOfWorkingDaysQuery,
+    logAccVentilation: logAccVentilation,
+    ctx: formatCtxEntries([...log.ventilations, ...log.indisponibilites]),
+    periodStartTimestamp: today(periodStart).getTime(),
+    main: '',
+    etptGlobal: null,
+  }
+}
+
+function pushMissingSegmentLog({ filteredPeriods, human, query, nbOfWorkingDaysQuery, logs, totalCETWorkingDays, emptyFlatMapReferentiel, indispoL3, pData }) {
+  if (!filteredPeriods || !filteredPeriods.length) return logs
+
+  const sorted = [...filteredPeriods].sort((a, b) => today(a.start) - today(b.start))
+  const first = sorted[0]
+  const queryStartDate = today(query.start)
+  const agentArrival = human?.dateStart ? today(human.dateStart) : queryStartDate
+  const gapStart = Math.max(queryStartDate, agentArrival)
+  const firstStartDate = today(first.start)
+
+  if (firstStartDate.getTime() <= gapStart) return logs
+
+  // couvrir le trou depuis gapStart jusqu'au jour précédent le premier segment
+  const missingStart = gapStart
+  const missingEnd = new Date(firstStartDate)
+  missingEnd.setDate(missingEnd.getDate() - 1)
+
+  const missingWorkingDays = getWorkingDaysCount(missingStart, missingEnd)
+  if (missingWorkingDays <= 0) return logs
+
+  const syntheticPeriod = {
+    periodId: `missing-${human.id}-${today(missingStart).getTime()}`,
+    start: missingStart,
+    end: missingEnd,
+    etp: 0,
+    effectiveETP: 0,
+    activityIds: new Map(),
+  }
+  const syntheticLog = cloneDeep({ ventilations: [], indisponibilites: [] })
+
+  logs.push(
+    buildLogEntry({
+      human,
+      pData,
+      periodStart: missingStart,
+      periodEnd: missingEnd,
+      nbOfWorkingDaysQuery,
+      workingDays: missingWorkingDays,
+      period: syntheticPeriod,
+      totalIndispoRate: 0,
+      logAccIndip: 0,
+      totalCETWorkingDays,
+      absOnPeriod: 0,
+      indispoL3: 0,
+      currentAbsEffectiveEtp: 0,
+      logAccVentilation: 0,
+      log: syntheticLog,
+    }),
+  )
+  return logs
 }

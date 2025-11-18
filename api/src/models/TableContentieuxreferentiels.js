@@ -408,5 +408,22 @@ export default (sequelizeInstance, Model) => {
     return isJirs
   }
 
+  /**
+   * Retourne l'id d'un contentieux à partir de son label
+   * @param {string} label - le label du contentieux
+   * @returns {Promise<number|null>} - l'id du contentieux, ou null si non trouvé
+   */
+  Model.getContentieuxIdByLabel = async (label) => {
+    if (!label) return null
+
+    const contentieux = await Model.findOne({
+      where: { label },
+      attributes: ['id'],
+      raw: true,
+    })
+
+    return contentieux ? contentieux.id : null
+  }
+
   return Model
 }

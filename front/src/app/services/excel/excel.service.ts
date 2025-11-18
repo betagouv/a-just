@@ -90,8 +90,12 @@ export class ExcelService extends MainClass {
     try {
       if (this._excelTxn && this._excelStartAt) {
         const ms = Math.max(0, performance.now() - this._excelStartAt)
-        try { (this._excelTxn as any)?.setAttribute?.('latency_ms', ms as any) } catch {}
-        try { (this._excelTxn as any)?.finish?.() } catch {}
+        try {
+          ;(this._excelTxn as any)?.setAttribute?.('latency_ms', ms as any)
+        } catch {}
+        try {
+          ;(this._excelTxn as any)?.finish?.()
+        } catch {}
       }
     } catch {}
     this._excelLabel = label
@@ -103,9 +107,13 @@ export class ExcelService extends MainClass {
         : null
       this._excelTxn = tx || this._excelTxn
       // Make this transaction current so breadcrumbs/spans attach under it
-      try { (Sentry as any).getCurrentHub?.().configureScope?.((scope: any) => scope.setSpan?.(tx)) } catch {}
+      try {
+        ;(Sentry as any).getCurrentHub?.().configureScope?.((scope: any) => scope.setSpan?.(tx))
+      } catch {}
       this._excelSpan = tx || this._excelSpan
-      try { this._excelSpan?.setAttribute?.('sentry.tag.latency_event', label) } catch {}
+      try {
+        this._excelSpan?.setAttribute?.('sentry.tag.latency_event', label)
+      } catch {}
     } catch {}
     // Fallback: if manual transaction is not available, keep previous deferred model
     if (!this._excelTxn) {
@@ -115,10 +123,14 @@ export class ExcelService extends MainClass {
       Sentry.startSpan(
         { name: 'extracteur: export excel (effectifs)', op: 'task', forceTransaction: true, attributes: { 'sentry.tag.latency_event': label } },
         async () => {
-          try { this._excelSpan = Sentry.getActiveSpan() } catch {}
-          try { this._excelSpan?.setAttribute?.('sentry.tag.latency_event', label) } catch {}
+          try {
+            this._excelSpan = Sentry.getActiveSpan()
+          } catch {}
+          try {
+            this._excelSpan?.setAttribute?.('sentry.tag.latency_event', label)
+          } catch {}
           await promise
-        }
+        },
       )
     }
     // Emit a scoped start message for discoverability
@@ -143,13 +155,25 @@ export class ExcelService extends MainClass {
         ;(this._excelTxn as any)?.setAttribute?.('latency_ms', ms as any)
         ;(this._excelTxn as any)?.setAttribute?.('result', result)
       } catch {}
-      try { this._excelTxn?.finish?.() } catch {}
-      try { this._excelDefer.resolve && this._excelDefer.resolve() } catch {}
+      try {
+        this._excelTxn?.finish?.()
+      } catch {}
+      try {
+        this._excelDefer.resolve && this._excelDefer.resolve()
+      } catch {}
     }
     this._excelTxn = undefined
     this._excelStartAt = undefined
     this._excelLabel = undefined
     this._excelSpan = undefined
+  }
+
+  // Affiche un message d'erreur spécifique si pas de valeurs, sinon message générique
+  private showExtractionError(err: any) {
+    const msg = 'Aucunes données à exporter pour les critères sélectionnés'
+    console.error('[extractor] error', err)
+    const isNoValues = err && ((err.message && err.message === msg) || err === msg)
+    alert(isNoValues ? msg : 'Erreur génération fichier')
   }
 
   /**
@@ -205,6 +229,7 @@ export class ExcelService extends MainClass {
    * @returns
    */
   exportExcel() {
+    const startTime = performance.now()
     // Start Sentry transaction for Excel export
     const label = "Préparation de l'extracteur Excel de données d'effectifs"
     this._startExcelTxn(label)
@@ -222,10 +247,13 @@ export class ExcelService extends MainClass {
     setTimeout(() => {
       if (startExtract) this.appService.appLoading.next(true)
     }, 5000)
+
     const backupId = this.humanResourceService.backupId.getValue()
     if (!backupId) {
-      try { Sentry.addBreadcrumb({ category: 'extractor', level: 'warning', message: 'missing backupId' }) } catch {}
-      alert("Impossible de démarrer l’export (juridiction manquante)")
+      try {
+        Sentry.addBreadcrumb({ category: 'extractor', level: 'warning', message: 'missing backupId' })
+      } catch {}
+      alert('Impossible de démarrer l’export (juridiction manquante)')
       this._finishExcelTxn('error')
       return
     }
@@ -235,10 +263,17 @@ export class ExcelService extends MainClass {
       dateStop: setTimeToMidDay(this.dateStop.getValue()),
       categoryFilter: this.selectedCategory.getValue(),
     }
-    try { Sentry.addBreadcrumb({ category: 'extractor', level: 'info', message: 'start-filter-list payload', data: { ...payload, dateStart: String(payload.dateStart), dateStop: String(payload.dateStop) } }) } catch {}
+    try {
+      Sentry.addBreadcrumb({
+        category: 'extractor',
+        level: 'info',
+        message: 'start-filter-list payload',
+        data: { ...payload, dateStart: String(payload.dateStart), dateStop: String(payload.dateStop) },
+      })
+    } catch {}
 
-    this.serverService
-      .postWithoutError('extractor/start-filter-list', payload)
+    return this.serverService
+      .postWithoutError(`extractor/filter-list-new`, payload)
       .then(async (resp) => {
         const jobId = (resp && resp.jobId) || null
         const directData = (resp && (resp.result || resp.data)) || null
@@ -247,7 +282,7 @@ export class ExcelService extends MainClass {
           try {
             const data = { data: directData } as any
             this.tabs = data.data
-
+            if (this.tabs.onglet1.values.length === 0) throw new Error('Aucunes données à exporter pour les critères sélectionnés')
             let viewModel: any = {
               ...this.tabs.viewModel,
               fonctions: data.data.fonctions,
@@ -273,7 +308,9 @@ export class ExcelService extends MainClass {
             }
             viewModel = { ...viewModel, subtitles1: viewModel.subtitles1.slice(11) }
 
-            const tplBuf = await fetch(this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx').then((resp) => resp.arrayBuffer())
+            const tplBuf = await fetch(this.userService.isCa() === false ? '/assets/template4.xlsx' : '/assets/template4CA.xlsx').then((resp) =>
+              resp.arrayBuffer(),
+            )
             let report = await new Renderer().renderFromArrayBuffer(tplBuf, viewModel)
             report = await this.getReport(report, viewModel)
             if (this.tabs.onglet1.values.length === 0) throw new Error('no values')
@@ -284,8 +321,7 @@ export class ExcelService extends MainClass {
             await FileSaver.saveAs(new Blob([out]), filename + EXCEL_EXTENSION)
             this._finishExcelTxn('success')
           } catch (e2) {
-            console.error('[extractor] direct flow failed', e2)
-            alert('Erreur génération fichier')
+            this.showExtractionError(e2)
             this._finishExcelTxn('error')
           } finally {
             this.isLoading.next(false)
@@ -372,7 +408,7 @@ export class ExcelService extends MainClass {
                 this._finishExcelTxn('success')
               } catch (err) {
                 console.error(err)
-                alert('Erreur génération fichier')
+                this.showExtractionError(err)
                 this._finishExcelTxn('error')
               }
               return
@@ -400,15 +436,28 @@ export class ExcelService extends MainClass {
         checkStatus()
       })
       .catch((err) => {
-        try { Sentry.addBreadcrumb({ category: 'extractor', level: 'error', message: 'start-filter-list failed', data: { status: err?.status, statusText: err?.statusText, url: err?.url, body: String(err?.error || '') } }) } catch {}
+        try {
+          Sentry.addBreadcrumb({
+            category: 'extractor',
+            level: 'error',
+            message: 'start-filter-list failed',
+            data: { status: err?.status, statusText: err?.statusText, url: err?.url, body: String(err?.error || '') },
+          })
+        } catch {}
         console.error('Error export', err)
         const detail = err?.status ? ` (HTTP ${err.status}${err?.statusText ? ' ' + err.statusText : ''})` : ''
         alert(`Impossible de démarrer l’export${detail}`)
         this._finishExcelTxn('error')
         // Ensure UI loading indicators are cleared even on start failure
-        try { this.isLoading.next(false) } catch {}
-        try { startExtract = false } catch {}
-        try { this.appService.appLoading.next(false) } catch {}
+        try {
+          this.isLoading.next(false)
+        } catch {}
+        try {
+          startExtract = false
+        } catch {}
+        try {
+          this.appService.appLoading.next(false)
+        } catch {}
       })
   }
 
@@ -468,8 +517,9 @@ export class ExcelService extends MainClass {
     const indexTabAjust = this.findIndexByName(report.worksheets, 'ETPT A-JUST') || 0
 
     report = this.userService.isTJ() ? await this.setJuridictionPickers(report, viewModel) : this.setMatriceJuridiction(report, viewModel)
-
+    //console.log(report.worksheets[this.findIndexByName(report.worksheets, 'ETPT Format DDG DETAIL') || 0])
     report = this.setRedGapConditionnalFormating(report, viewModel)
+    report = this.setYellowMainDetailsConditionnalFormating(report, viewModel)
     report = this.setColWidth(report)
 
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
@@ -849,7 +899,7 @@ export class ExcelService extends MainClass {
     report.worksheets[etptAjustIndex].columns[9].width = 0
     report.worksheets[etptAjustIndex].columns[10].width = 0
 
-    const agregatIndex = this.findIndexByName(report.worksheets, 'Agrégats DDG') || 0
+    const agregatIndex = this.findIndexByName(report.worksheets, 'Synthèse ETPT') || 0
     report.worksheets[agregatIndex].columns[0].width = 20
 
     const fctIndex = this.findIndexByName(report.worksheets, 'Table_Fonctions') || 0
@@ -1168,6 +1218,36 @@ export class ExcelService extends MainClass {
   }
 
   /**
+   * Définition du formatage conditionnel
+   * @param report
+   * @param viewModel
+   * @returns
+   */
+  setYellowMainDetailsConditionnalFormating(report: any, viewModel: any) {
+    const etptDDGIndex = this.findIndexByName(report.worksheets, 'ETPT Format DDG DETAIL') || 0
+
+    // nombre de lignes à couvrir (fallback robuste)
+    const logCount = Math.max(0, Object.keys(viewModel.ongletLogs || {}).length + 1)
+    // garantir au moins la ligne 2
+    const lastRow = Math.max(2, logCount)
+
+    console.log(report.worksheets[etptDDGIndex])
+    // listes des plages (préfixe jusqu'à la dernière ligne)
+    const ranges = ['A2:F', 'G2:N', 'I2:K', 'L2:L', 'N2:N', 'O2:O', 'O2:U', 'Q2:R', 'S2:S', 'U2:U']
+
+    ranges.forEach((prefix, idx) => {
+      const ref = `${prefix}${lastRow}`
+      const cf = report.worksheets[etptDDGIndex].conditionalFormattings[idx + 1]
+      if (cf) {
+        cf.ref = ref
+        if (cf.rules) cf.rules.ref = ref
+      }
+    })
+
+    return report
+  }
+
+  /**
    * Initie le selecteur de juridiction
    * @param report
    * @param indexCell
@@ -1357,7 +1437,7 @@ export class ExcelService extends MainClass {
     report.worksheets[3]['_rows'][6].height = 50
     report.worksheets[3].getCell('F7').value = {
       formula:
-        "=IF(OR('Agrégats DDG'!L6<>'Agrégats DDG'!L7,'Agrégats DDG'!S6<>'Agrégats DDG'!S7,'Agrégats DDG'!U6<>'Agrégats DDG'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne R de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
+        "=IF(OR('Synthèse ETPT'!L6<>'Synthèse ETPT'!L7,'Synthèse ETPT'!S6<>'Synthèse ETPT'!S7,'Synthèse ETPT'!U6<>'Synthèse ETPT'!U7),CONCATENATE(\"Temps ventilés sur la période (hors action 99) :\",CHAR(10),\"ℹ️ Des ventilations sont incomplètes, se référer à la colonne R de l’onglet ETPT format DDG\"),\"Temps ventilés sur la période (hors action 99)\")",
       result:
         '"Temps ventilés sur la période (hors action 99) : Des ventilations sont incomplètes,",CHAR(10),"se référer à la colonne R de l’onglet ETPT format DDG"',
     }
