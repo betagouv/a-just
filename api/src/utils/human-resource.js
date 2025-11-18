@@ -1,5 +1,5 @@
 import { minBy, orderBy, sumBy } from 'lodash'
-import { getTime, getWorkingDaysCount, isDateGreaterOrEqual, today } from '../utils/date'
+import { comparerDatesJourMoisAnnee, getTime, getWorkingDaysCount, isDateGreaterOrEqual, today } from '../utils/date'
 import { checkAbort } from './abordTimeout'
 import { fixDecimal } from './number'
 import { IntervalTree } from './intervalTree'
@@ -343,7 +343,7 @@ const generateUniqueId = () => {
  * @param {*} agents objet contenant l'ensemble des agents (issu du cache)
  * @returns
  */
-export const generateAndIndexAllStableHRPeriods = async (agents) => {
+export const generateAndIndexAllStableHRPeriods = async (agents, indexIndispo = false) => {
   const resultMap = new Map() // Map pour stocker les périodes par agent
   const periodsDatabase = new Map() // Base de données centrale pour stocker les périodes avec un ID unique <stableSituationIds> : [...AgentIds]
   const categoryIndex = new Map()
@@ -351,6 +351,12 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
   const contentieuxIndex = new Map() // <contentieuxId> : [...stableSituationIds]
   const agentIndex = new Map() // Index par agentId pour faciliter l'accès aux périodes par agent
   const intervalTree = new IntervalTree() // Arbre d'intervalle
+
+  // --- structures d'indisponibilités ---
+  const indispoDatabase = new Map() // indispoId -> { ...indispo }
+  const agentIndispoIndex = new Map() // agentId -> [indispoId...]
+  const indispoTypeIndex = new Map() // contentieuxId -> [indispoId...]
+  const indispoIntervalTree = new IntervalTree() // interval global des indispos
 
   await Promise.all(
     agents.map(async (agent, index) => {
@@ -395,15 +401,17 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
         }
 
         // Ajouter cette période à l'index du contentieux (si applicable)
-        period.activities.forEach((activity) => {
-          if (activity.contentieux && activity.contentieux.id) {
-            const contentieuxId = activity.contentieux.id
-            if (!contentieuxIndex.has(contentieuxId)) {
-              contentieuxIndex.set(contentieuxId, [])
+        if (period.activities) {
+          period.activities.forEach((activity) => {
+            if (activity.contentieux && activity.contentieux.id) {
+              const contentieuxId = activity.contentieux.id
+              if (!contentieuxIndex.has(contentieuxId)) {
+                contentieuxIndex.set(contentieuxId, [])
+              }
+              contentieuxIndex.get(contentieuxId).push(periodId)
             }
-            contentieuxIndex.get(contentieuxId).push(periodId)
-          }
-        })
+          })
+        }
 
         // Ajouter cette période à l'index de l'agentId
         if (!agentIndex.has(agent.id)) {
@@ -415,18 +423,20 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
         const contentieuxMap = new Map()
 
         // Ajouter chaque activité à l'index des contentieux
-        period.activities.forEach((activity) => {
-          if (activity.contentieux && activity.contentieux.id) {
-            const contentieuxId = activity.contentieux.id
-            contentieuxMap.set(contentieuxId, activity.percent) // Ajouter dans le map avec contentieuxId comme clé et percent comme valeur
+        if (period.activities) {
+          period.activities.forEach((activity) => {
+            if (activity.contentieux && activity.contentieux.id) {
+              const contentieuxId = activity.contentieux.id
+              contentieuxMap.set(contentieuxId, activity.percent) // Ajouter dans le map avec contentieuxId comme clé et percent comme valeur
 
-            // Ajouter cette période à l'index du contentieux
-            if (!contentieuxIndex.has(contentieuxId)) {
-              contentieuxIndex.set(contentieuxId, [])
+              // Ajouter cette période à l'index du contentieux
+              if (!contentieuxIndex.has(contentieuxId)) {
+                contentieuxIndex.set(contentieuxId, [])
+              }
+              contentieuxIndex.get(contentieuxId).push(periodId)
             }
-            contentieuxIndex.get(contentieuxId).push(periodId)
-          }
-        })
+          })
+        }
 
         // Insérer cette période dans l'IntervalTree
         const start = today(period.start)
@@ -443,6 +453,47 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
           etp: period.etp,
           activityIds: contentieuxMap,
         })
+
+        // =========================
+        // Index des indispos
+        // =========================
+        if (indexIndispo && Array.isArray(period.indisponibilities) && period.indisponibilities.length) {
+          period.indisponibilities.forEach((indispo) => {
+            if (!indispo || indispo.id == null) return
+
+            // 1) Base : on enregistre l'indispo une seule fois
+            if (!indispoDatabase.has(indispo.id)) {
+              indispoDatabase.set(indispo.id, {
+                ...indispo,
+                agentId: agent.id,
+              })
+
+              // 2) IntervalTree des indispos (même style que pour les périodes)
+              const s = today(indispo.dateStart)
+              const e = today(indispo.dateStop)
+              indispoIntervalTree.insert(s, e, {
+                indispoId: indispo.id,
+                agentId: agent.id,
+                start: indispo.dateStart,
+                end: indispo.dateStop,
+                rate: indispo.percent / 100,
+                contentieuxId: indispo.contentieux && indispo.contentieux.id ? indispo.contentieux.id : null,
+                contentieuxLabel: indispo.contentieux && indispo.contentieux.label ? indispo.contentieux.label : null,
+              })
+            }
+
+            // 3) Index par agent (push unique)
+            pushUniqueIndex(agentIndispoIndex, agent.id, indispo.id)
+
+            // 4) Index par type (contentieux.id) (push unique)
+            if (indispo.contentieux && indispo.contentieux.id != null) {
+              pushUniqueIndex(indispoTypeIndex, indispo.contentieux.id, indispo.id)
+            }
+          })
+        }
+        // =========================
+        // /FIN indispos
+        // =========================
       })
 
       // Stocker les périodes de l'agent dans le Map resultMap
@@ -459,7 +510,19 @@ export const generateAndIndexAllStableHRPeriods = async (agents) => {
     contentieuxIndex, // Index par contentieux
     agentIndex, // Index par agentId (pas encore utilisé mais peut servir pour certaines fonctionnalités)
     intervalTree, // L'IntervalTree des périodes
+    // --- exposer les index indispos ---
+    indispoDatabase,
+    agentIndispoIndex,
+    indispoTypeIndex,
+    indispoIntervalTree,
   }
+}
+
+// Push dans map[key] en évitant les doublons
+function pushUniqueIndex(map, key, value) {
+  if (!map.has(key)) map.set(key, [])
+  const arr = map.get(key)
+  if (!arr.includes(value)) arr.push(value)
 }
 
 /**
@@ -533,6 +596,8 @@ export const generateStableHRPeriods = (agent) => {
   const periods = [] // Tableau pour stocker les périodes générées
   let lastWasIndispoStop = false // Variable pour vérifier si la période précédente était causée par une indisponibilité
   let lastWasOneDayIndispoStop = false // Variable pour vérifier si la période précédente était causée par une indisponibilité
+  let lastSegmentSkiped = false
+  let currentSegmentIsOneDayIndispo = false
 
   // On parcourt chaque paire de points de rupture pour générer les périodes
   for (let i = 0; i < sorted.length - 1; i++) {
@@ -542,14 +607,6 @@ export const generateStableHRPeriods = (agent) => {
     // Trouver la situation active pour cette période
     const currentSituation = situations.sort((a, b) => new Date(b.dateStart) - new Date(a.dateStart)).find((s) => normalizeDate(s.dateStart) <= start)
 
-    if (!currentSituation) {
-      //console.warn(`⛔ Aucune situation trouvée pour la période ${start.toISOString()} → ${end.toISOString()}`)
-      continue
-    }
-
-    // Déstructuration de la situation courante (ETP, fonction, catégorie, etc.)
-    const { etp, fonction, category, activities } = currentSituation
-
     // Filtrage des indisponibilités qui affectent la période en cours
     const indispoInPeriod = indisponibilities.filter((i) => {
       const iStart = normalizeDate(i.dateStart)
@@ -557,7 +614,9 @@ export const generateStableHRPeriods = (agent) => {
       if (i.dateStop) {
         iEnd = normalizeDate(i.dateStop)
         if (i.dateStart && i.dateStop && new Date(i.dateStart).getTime() === new Date(i.dateStop).getTime()) {
-          iEnd = new Date(iEnd.getTime() + 24 * 60 * 60 * 1000) // Cas des indisponibilités d'une journée
+          iEnd = end.getTime() === new Date(i.dateStop).getTime() ? end.getTime() : new Date(iEnd.getTime() + 24 * 60 * 60 * 1000) // Cas des indisponibilités d'une journée
+          if (new Date(i.dateStart).getTime() === new Date(i.dateStop).getTime() && comparerDatesJourMoisAnnee(start, new Date(i.dateStart)))
+            currentSegmentIsOneDayIndispo = true
         }
       } else {
         iEnd = agentEnd ? normalizeDate(agentEnd) : new Date(9999, 11, 31, 12)
@@ -571,6 +630,13 @@ export const generateStableHRPeriods = (agent) => {
       return sum + rate
     }, 0)
 
+    if (!currentSituation) {
+      //console.warn(`⛔ Aucune situation trouvée pour la période ${start.toISOString()} → ${end.toISOString()}`)
+      continue
+    }
+
+    // Déstructuration de la situation courante (ETP, fonction, catégorie, etc.)
+    const { etp, fonction, category, activities } = currentSituation
     // Calcul de l'ETP effectif en fonction des indisponibilités
     const effectiveETP = Math.max(0, etp - totalIndispoRate)
 
@@ -589,13 +655,19 @@ export const generateStableHRPeriods = (agent) => {
     if (!isEndFromIndispoStop && !isEndFromAgentDeparture) {
       end.setUTCDate(end.getUTCDate() - 1) // Réduire d'un jour pour éviter de dépasser la fin de la période
     }
-
     // Si la période précédente était due à une indisponibilité, on commence la période suivante au lendemain
     if (lastWasIndispoStop && !lastWasOneDayIndispoStop) {
       start.setUTCDate(start.getUTCDate() + 1)
     }
-    lastWasOneDayIndispoStop = false
     lastWasIndispoStop = isEndFromIndispoStop // Met à jour la variable pour la prochaine période
+
+    const sameDay = comparerDatesJourMoisAnnee(start, end)
+    if (sameDay && (currentSegmentIsOneDayIndispo || lastWasOneDayIndispoStop)) {
+      //console.warn(`⚠️ Période ignorée car indispo de 1 successive, cas particulier: ${start.toISOString()} → ${end.toISOString()}`)
+      continue
+    }
+
+    lastWasOneDayIndispoStop = lastSegmentSkiped ? lastWasOneDayIndispoStop : false
 
     // Ajustement spécifique pour les indisponibilités d'une seule journée : fin de la période
     for (const indispo of indispoInPeriod) {
@@ -608,8 +680,11 @@ export const generateStableHRPeriods = (agent) => {
       }
     }
 
+    currentSegmentIsOneDayIndispo = false
+    lastSegmentSkiped = false
     // Si le début de la période est après la fin, on l'ignore
     if (start > end) {
+      lastSegmentSkiped = true
       //console.warn(`⚠️ Période ignorée car start > end après ajustement: ${start.toISOString()} → ${end.toISOString()}`)
       continue
     }
@@ -784,8 +859,20 @@ export const calculateETPForContentieux = (indexes, query, categories) => {
  * @param {*} hr
  * @returns
  */
-export const generateHRIndexes = async (hr) => {
-  const { resultMap, periodsDatabase, categoryIndex, functionIndex, contentieuxIndex, agentIndex, intervalTree } = await generateAndIndexAllStableHRPeriods(hr)
+export const generateHRIndexes = async (hr, indexIndispo = false) => {
+  const {
+    resultMap,
+    periodsDatabase,
+    categoryIndex,
+    functionIndex,
+    contentieuxIndex,
+    agentIndex,
+    intervalTree,
+    indispoDatabase,
+    agentIndispoIndex,
+    indispoTypeIndex,
+    indispoIntervalTree,
+  } = await generateAndIndexAllStableHRPeriods(hr, indexIndispo)
 
   return {
     resultMap,
@@ -795,6 +882,10 @@ export const generateHRIndexes = async (hr) => {
     contentieuxIndex,
     agentIndex,
     intervalTree,
+    indispoDatabase,
+    agentIndispoIndex,
+    indispoTypeIndex,
+    indispoIntervalTree,
   }
 }
 

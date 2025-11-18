@@ -295,3 +295,30 @@ export function fillMissingContentieux(GroupedList, flatReferentielsList) {
   }
   return out
 }
+
+function toUpper(s) {
+  return (s ?? '').toString().toUpperCase()
+}
+
+/**
+ * Construit un Map<id, label> à partir d'une liste de refs.
+ *
+ * @param {Array<{id:string|number, label:string, code_import:string, childrens?:Array<any>}>} refs
+ * @param {{ stringifyKeys?: boolean }} [options] - si true, force les clés en string (évite les confusions "1" vs 1)
+ * @returns {Map<string|number, string>}
+ */
+export function buildIdToLabelMap(refs, { stringifyKeys = true } = {}) {
+  const idToLabel = new Map()
+
+  for (let i = 0, n = refs?.length || 0; i < n; i++) {
+    const r = refs[i]
+    if (!r || r.id == null) continue
+
+    const label = r.childrens && r.childrens.length ? `${r.code_import} TOTAL ${toUpper(r.label)}` : `${r.code_import} ${toUpper(r.label)}`
+
+    const key = stringifyKeys ? String(r.id) : r.id
+    idToLabel.set(key, label)
+  }
+
+  return idToLabel
+}

@@ -136,40 +136,115 @@ import fs from 'fs'
 import deepEqual from 'fast-deep-equal' // Ou ta fonction deepEqual existante
 
 /**
- * Compare deux listes d'objets et détecte les différences
- * @param {Array} oldResult - Ancien tableau d'objets
- * @param {Array} newResult - Nouveau tableau d'objets
- * @param {string} [exportPath] - Chemin du fichier JSON à créer si des différences sont détectées
+ * Compare deux listes d'objets et retourne uniquement les éléments différents.
+ *
+ * @param {Array<object>} oldResult - Ancien tableau d'objets (comparé par index, comme ta version)
+ * @param {Array<object>} newResult - Nouveau tableau d'objets (comparé par index)
+ * @param {object} [opts]
+ * @param {boolean} [opts.detailed=false] - Si true, inclut old/new complets en plus des changements.
+ * @param {string}  [opts.exportPath='./computeExtract-differences.json'] - Chemin du JSON à écrire si différences.
+ * @param {boolean} [opts.writeFile=true] - Ecrit le fichier JSON quand des différences existent.
+ * @param {boolean} [opts.throwOnDiff=true] - Lève une erreur si des différences existent.
+ * @param {string[]} [opts.ignoreKeys=[]] - Clés à ignorer dans la comparaison (ex: dates de génération, etc.).
+ * @returns {{ allEqual: boolean, differences: Array<object> }}
  */
-export const compareResults = (oldResult, newResult, exportPath = './computeExtract-differences.json') => {
+export const compareResults = (
+  oldResult,
+  newResult,
+  { detailed = false, exportPath = './computeExtract-differences.json', writeFile = true, throwOnDiff = true, ignoreKeys = [] } = {},
+) => {
   let allEqual = true
   const differences = []
 
+  // Log longueur (on garde le check de ta version)
   if (oldResult.length !== newResult.length) {
     console.error(`❌ Nombre d'éléments différents : ${oldResult.length} vs ${newResult.length}`)
     allEqual = false
   }
 
-  for (let i = 0; i < Math.min(oldResult.length, newResult.length); i++) {
+  const len = Math.min(oldResult.length, newResult.length)
+
+  for (let i = 0; i < len; i++) {
     const oldItem = oldResult[i]
     const newItem = newResult[i]
 
-    if (!deepEqual(oldItem, newItem)) {
+    if (!shallowDeepEqualFiltered(oldItem, newItem, ignoreKeys)) {
       allEqual = false
-      differences.push({
-        index: i,
-        id: oldItem['Réf.'] || newItem['Réf.'],
-        old: oldItem,
-        new: newItem,
-      })
+      const changes = diffObject(oldItem, newItem, ignoreKeys)
+
+      // On ne retourne que les éléments "posant problème"
+      differences.push(
+        detailed
+          ? {
+              index: i,
+              id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
+              changes, // { clé: [old, new] }
+              old: oldItem,
+              new: newItem,
+            }
+          : {
+              index: i,
+              id: oldItem?.['Réf.'] ?? newItem?.['Réf.'],
+              changes, // minimal et actionnable
+            },
+      )
     }
   }
 
   if (!allEqual) {
-    console.error(`❌ ${differences.length} différences trouvées !`)
-    fs.writeFileSync(exportPath, JSON.stringify(differences, null, 2), 'utf-8')
-    throw new Error(`Non-régression échouée ! Différences enregistrées dans ${exportPath}`)
+    console.error(`❌ ${differences.length} différence(s) trouvée(s).`)
+    if (writeFile) {
+      fs.writeFileSync(exportPath, JSON.stringify(differences, null, 2), 'utf-8')
+      console.error(`📝 Différences enregistrées dans ${exportPath}`)
+    }
+    if (throwOnDiff) {
+      throw new Error('Non-régression échouée.')
+    }
+  } else {
+    console.log('✅ Test de non-régression réussi. Les deux versions donnent des résultats identiques.')
   }
 
-  console.log('✅ Test de non-régression réussi. Les deux versions donnent des résultats identiques.')
+  return { allEqual, differences }
+}
+
+/** Retourne un objet { cle: [oldVal, newVal], ... } pour les seules clés différentes. */
+function diffObject(a = {}, b = {}, ignoreKeys = []) {
+  const changes = {}
+  const skip = new Set(ignoreKeys)
+  const keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})])
+
+  for (const k of keys) {
+    if (skip.has(k)) continue
+    const av = a?.[k]
+    const bv = b?.[k]
+
+    const bothNaN = Number.isNaN(av) && Number.isNaN(bv)
+    const sameType = typeof av === typeof bv
+
+    if (!bothNaN && (av !== bv || !sameType)) {
+      changes[k] = [av, bv]
+    }
+  }
+  return changes
+}
+
+/**
+ * Égalité "deep" simplifiée mais filtrée par clés ignorées.
+ * Ici on fait une comparaison clé à clé (profil tableau d'objets plats),
+ * stricte sur valeur et type, en ignorant ignoreKeys.
+ */
+function shallowDeepEqualFiltered(a = {}, b = {}, ignoreKeys = []) {
+  const skip = new Set(ignoreKeys)
+  const keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})])
+
+  for (const k of keys) {
+    if (skip.has(k)) continue
+    const av = a?.[k]
+    const bv = b?.[k]
+    const bothNaN = Number.isNaN(av) && Number.isNaN(bv)
+    if (!bothNaN && (av !== bv || typeof av !== typeof bv)) {
+      return false
+    }
+  }
+  return true
 }

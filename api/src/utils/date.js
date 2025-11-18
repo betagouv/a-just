@@ -449,10 +449,15 @@ export const getWorkingDaysCount = (startDate, endDate) => {
   }
 
   if (comparerDatesJourMoisAnnee(start, end)) {
-    return 1
+    return isWeekday(start) ? 1 : 0
   }
 
   return workingDays
+}
+
+const isWeekday = (d) => {
+  const day = d.getDay() // 0=dim, 6=sam
+  return day >= 1 && day <= 5
 }
 
 /**
@@ -463,4 +468,58 @@ export const getWorkingDaysCount = (startDate, endDate) => {
  */
 export const comparerDatesJourMoisAnnee = (date1, date2) => {
   return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()
+}
+
+/**
+ * Retourne true si `date1` est strictement après `date2`
+ * en comparant uniquement jour, mois et année (ignore l'heure).
+ * @param {Date} date1
+ * @param {Date} date2
+ * @returns {boolean}
+ */
+export const estApresJourMoisAnnee = (date1, date2) => {
+  if (!(date1 instanceof Date) || isNaN(date1) || !(date2 instanceof Date) || isNaN(date2)) return false
+
+  const key = (d) => d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate()
+  return key(date1) > key(date2)
+}
+
+/**
+ * Normalise une date à midi
+ * @param {*} date
+ * @returns
+ */
+export const normalizeDate = (date) => {
+  const d = new Date(date)
+  // Si l'heure est 22h, on incrémente d'un jour pour éviter des erreurs de date
+  if (d.getUTCHours() === 22 || d.getUTCHours() === 23) {
+    d.setUTCDate(d.getUTCDate() + 1)
+  }
+  d.setUTCHours(12, 0, 0, 0) // On met l'heure à 12h00 pour les calculs
+  return d
+}
+
+/**
+ * Gestion des cas d'erreur pour date
+ * @param {*} date
+ * @param {*} fallback
+ * @returns
+ */
+export const timeOr = (date, fallback) => {
+  if (date == null) return fallback // null/undefined
+  const t = normalizeDate(date).getTime() // Date -> timestamp (ms)
+  return t === t ? t : fallback // évite Number.isNaN (NaN !== NaN)
+}
+
+export const formatDate = (date) => {
+  date = today(date)
+  if (!(date instanceof Date) || isNaN(date)) {
+    throw new Error("L'argument doit être un objet Date valide.")
+  }
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // +1 car les mois commencent à 0
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
 }
