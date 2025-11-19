@@ -505,6 +505,91 @@ export class ExcelService extends MainClass {
   }
 
   /**
+   * Préserve la protection des cellules en déverrouillant les cellules spécifiées
+   * @param report
+   * @param worksheetName Nom de l'onglet à protéger
+   * @param unlockedCells Liste des cellules ou plages de cellules à déverrouiller (ex: ['A1', 'B2:C5', 'D10'])
+   * @returns
+   */
+  preserveCellProtection(report: any, worksheetName: string, unlockedCells: string[] = []) {
+    const worksheetIndex = this.findIndexByName(report.worksheets, worksheetName)
+    if (worksheetIndex === null) {
+      console.warn(`Worksheet "${worksheetName}" not found`)
+      return report
+    }
+
+    const worksheet = report.worksheets[worksheetIndex]
+    const workbook = report.xlsx
+
+    unlockedCells.forEach((cellRef) => {
+      try {
+        if (cellRef.includes(':')) {
+          const [startCell, endCell] = cellRef.split(':')
+          const startCol = this.excelColumnToNumber(startCell.match(/[A-Z]+/)?.[0] || '')
+          const startRow = parseInt(startCell.match(/\d+/)?.[0] || '0')
+          const endCol = this.excelColumnToNumber(endCell.match(/[A-Z]+/)?.[0] || '')
+          const endRow = parseInt(endCell.match(/\d+/)?.[0] || '0')
+
+          for (let row = startRow; row <= endRow; row++) {
+            for (let col = startCol; col <= endCol; col++) {
+              const colLetter = this.numberToExcelColumn(col)
+              const cell = worksheet.getCell(colLetter + row)
+              if (cell) {
+                // Dans ExcelJS, la protection se définit directement sur la cellule
+                cell.protection = cell.protection || {}
+                cell.protection.locked = false
+              }
+            }
+          }
+        } else {
+          // Cellule unique
+          const cell = worksheet.getCell(cellRef)
+          if (cell) {
+            // Dans ExcelJS, la protection se définit directement sur la cellule
+            cell.protection = cell.protection || {}
+            cell.protection.locked = false
+          }
+        }
+      } catch (error) {
+        console.warn(`Erreur lors du déverrouillage de la cellule ${cellRef}:`, error)
+      }
+    })
+
+    if (!worksheet.sheetProtection || !worksheet.sheetProtection.sheet) {
+      worksheet.protect('', {
+        selectLockedCells: true,
+        selectUnlockedCells: true,
+        formatCells: false,
+        formatColumns: false,
+        formatRows: false,
+        insertColumns: false,
+        insertRows: false,
+        insertHyperlinks: false,
+        deleteColumns: false,
+        deleteRows: false,
+        sort: false,
+        autoFilter: false,
+        pivotTables: false,
+      })
+    }
+
+    return report
+  }
+
+  /**
+   * Convertit une colonne Excel (lettres) en nombre
+   * @param column Lettres de la colonne (ex: 'A', 'AB', 'ZZ')
+   * @returns Numéro de la colonne (1-based)
+   */
+  excelColumnToNumber(column: string): number {
+    let result = 0
+    for (let i = 0; i < column.length; i++) {
+      result = result * 26 + (column.charCodeAt(i) - 64)
+    }
+    return result
+  }
+
+  /**
    * Mise en forme du ficher DDG
    * @param report
    * @param viewModel
@@ -521,6 +606,10 @@ export class ExcelService extends MainClass {
     report = this.setRedGapConditionnalFormating(report, viewModel)
     report = this.setYellowMainDetailsConditionnalFormating(report, viewModel)
     report = this.setColWidth(report)
+    
+    // Configurer l'autoFilter pour les en-têtes (ligne 2 par défaut)
+    report = this.setAutoFilter(report, 'ETPT Format DDG', 2, viewModel.days1, 'A')
+    report = this.setAutoFilter(report, 'ETPT A-JUST', 2, viewModel.days, 'A')
 
     this.tabs.onglet2.values.forEach((element: any, index: number) => {
       const indexCell = +(+index + 3)
@@ -549,6 +638,9 @@ export class ExcelService extends MainClass {
     })
 
     report = this.setAgregatAffichage(report, viewModel)
+
+    const headerLength = Object.keys(viewModel.stats1).length
+    report = this.preserveCellProtection(report,  'ETPT Format DDG', ['D3:I'+ headerLength,'I3:D'+headerLength])
 
     viewModel = this.exceptionsJuridiction(viewModel)
 
@@ -1200,6 +1292,33 @@ export class ExcelService extends MainClass {
   }
 
   /**
+   * Configure l'autoFilter pour les en-têtes de colonne sur une ligne spécifique
+   * @param report
+   * @param worksheetName Nom de l'onglet
+   * @param headerRow Numéro de la ligne d'en-tête (par défaut 2)
+   * @param viewModel
+   * @param startColumn Colonne de début (par défaut 'A')
+   * @returns
+   */
+  setAutoFilter(report: any, worksheetName: string, headerRow: number = 2, viewModel: any, startColumn: string = 'A') {
+    const worksheetIndex = this.findIndexByName(report.worksheets, worksheetName)
+    if (worksheetIndex === null) {
+      console.warn(`Worksheet "${worksheetName}" not found`)
+      return report
+    }
+
+    const worksheet = report.worksheets[worksheetIndex]
+    
+    // Calculer la dernière colonne dynamiquement basée sur le nombre de colonnes dans days1
+    const lastColumn = this.numberToExcelColumn(Object.keys(viewModel).length)
+    
+    // Configurer l'autoFilter de la colonne de début jusqu'à la dernière colonne sur la ligne spécifiée
+    worksheet.autoFilter = `${startColumn}${headerRow}:${lastColumn}${headerRow}`
+    
+    return report
+  }
+
+  /**
    * Définition du formatage conditionnel
    * @param report
    * @param viewModel
@@ -1208,9 +1327,10 @@ export class ExcelService extends MainClass {
   setRedGapConditionnalFormating(report: any, viewModel: any) {
     const etptDDGIndex = this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0
 
-    report.worksheets[etptDDGIndex].conditionalFormattings[0].ref =
-      'A3:' + this.numberToExcelColumn(Object.keys(viewModel.days1).length) + (Object.keys(viewModel.stats1).length + 3) + ' A2:EZ2 A1:G1 I1:EY1'
-
+      report.worksheets[etptDDGIndex].conditionalFormattings[0].ref =
+      'A3:' + this.numberToExcelColumn(Object.keys(viewModel.days1).length) + (Object.keys(viewModel.stats1).length + 3) + 
+      ' A2:' + this.numberToExcelColumn(Object.keys(viewModel.days1).length) + '2 A1:G1 I1:EY1'
+    
     report.worksheets[etptDDGIndex].conditionalFormattings[0].rules.ref =
       'A3:' + this.numberToExcelColumn(Object.keys(viewModel.days1).length) + (Object.keys(viewModel.stats1).length + 3) + ' A2:EZ2 A1:G1 I1:EY1'
 
