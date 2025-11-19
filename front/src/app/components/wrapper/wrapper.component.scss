@@ -697,29 +697,70 @@
       p:last-child {
         cursor: pointer;
         font-size: 12px;
-        color: #0063CB;
+        color: white;
       }
     }
 
     .help-content-body {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 16px;
+      flex-direction: row;
 
-      a {
+      >div {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        color: white;
-        background-color: #000091;
-        font-size: 14px;
-        font-weight: 400;
-        gap: 4px;
-        padding: 4px 8px;
-        border-radius: 4px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 16px;
+
+        &:first-child {
+          flex: 2;
+
+          a:first-child {
+            margin-bottom: 8px;
+            color: #000091;
+            border: 1px solid #000091;
+            background: #F5F5FE;
+          }
+        }
+
+
+        &.help-support-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex: 1;
+
+          >a {
+            background-color: transparent;
+
+
+            img {
+              width: 32px;
+              height: 32px;
+              border-radius: 32px;
+              border: 1px solid white;
+
+              &:last-child {
+                margin-left: -10px;
+                z-index: 1;
+              }
+            }
+          }
+        }
+
+        a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          color: white;
+          background-color: #000091;
+          font-size: 14px;
+          font-weight: 400;
+          gap: 4px;
+          border-radius: 4px;
+          padding: 4px 8px;
+        }
       }
     }
   }
