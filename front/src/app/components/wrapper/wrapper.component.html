@@ -220,15 +220,25 @@
       <p (click)="helpSectionVisible = false">x</p>
     </div>
     <div class="help-content-body">
-      <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true': '')" alt="Nous contacter"
-        target="_blank">📨 Nous contacter</a>
-      <a [href]="findHelpCenter('/prendre-rendez-vous')+(referentielService.isDroitLocal() ? '?dl=true': '')"
-        alt="Prendre rendez-vous" target="_blank">📆 Prendre
-        rendez-vous</a>
-      <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true': '')"
-        alt="Accéder au centre d'aide" target="_blank">📚 Accéder au centre d'aide</a>
-      <a [href]="findHelpCenter('/etre-appele')+(referentielService.isDroitLocal() ? '?dl=true': '')" alt="Être rappelé"
-        target="_blank">📞 Être rappelé</a>
+      <div>
+        <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
+          alt="Nous contacter" target="_blank">⏺️ Echanger avec l'équipe</a>
+        <a [href]="findHelpCenter('/etre-appele')+(referentielService.isDroitLocal() ? '?dl=true': '')"
+          alt="Être rappelé" target="_blank">📞 Être rappelé</a>
+        <a [href]="findHelpCenter('/prendre-rendez-vous')+(referentielService.isDroitLocal() ? '?dl=true': '')"
+          alt="Prendre rendez-vous" target="_blank">📆 Prendre
+          rendez-vous</a>
+        <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true': '')"
+          alt="Accéder au centre d'aide" target="_blank">📚 Accéder au centre d'aide</a>
+
+      </div>
+      <div class="help-support-icon">
+        <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
+          alt="Accéder au centre d'aide" target="_blank">
+          <img src="assets/icons/victor.webp" alt="victor">
+          <img src="assets/icons/andre.webp" alt="andre">
+        </a>
+      </div>
     </div>
   </div>
   }
