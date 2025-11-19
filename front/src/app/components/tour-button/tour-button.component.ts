@@ -20,7 +20,7 @@ export class TourButtonComponent {
   /**
    * Text du tour
    */
-  @Input() text: string = 'Voir le tour'
+  @Input() text: string = 'Démo.'
   /**
    * Boolean de visibilité du tour
    */
