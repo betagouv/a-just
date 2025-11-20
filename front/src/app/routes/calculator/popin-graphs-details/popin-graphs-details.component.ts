@@ -81,7 +81,10 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
    * Have missing datas
    */
   haveMissingDatas = false
-
+  /**
+   * Referentiel selected
+   */
+  ref: ContentieuReferentielInterface | null = null
   /**
    * Constructor
    */
@@ -99,11 +102,12 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
   }
 
   async onLoadDatas() {
+    this.ref = null
     this.appService.appLoading.next(true)
     if (this.calculatorService.selectedRefGraphDetail) {
-      const ref = this.humanResourceService.contentieuxReferentiel.getValue().find((c) => c.id === this.calculatorService.selectedRefGraphDetail)
-      if (ref) {
-        this.kpiService.register(CALCULATOR_OPEN_POPIN_GRAPH_DETAILS, this.calculatorService.showGraphDetailType + ' - ' + ref.label)
+      this.ref = this.humanResourceService.contentieuxReferentiel.getValue().find((c) => c.id === this.calculatorService.selectedRefGraphDetail) || null
+      if (this.ref) {
+        this.kpiService.register(CALCULATOR_OPEN_POPIN_GRAPH_DETAILS, this.calculatorService.showGraphDetailType + ' - ' + this.ref.label)
       }
     }
     /*console.log(
@@ -116,55 +120,57 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
     );*/
 
     let firstValues: { value: number | null; date: Date }[] = []
-    let secondValues: { value: number | null; date: Date }[] = []
-    let middleValues: { value: number | null; date: Date }[] = []
+    let secondValues: { value: number | null; date: Date }[] | null = null
+    let middleValues: { value: number | null; date: Date }[] | null = null
 
     if (this.calculatorService.selectedRefGraphDetail && this.calculatorService.showGraphDetailType) {
       firstValues = (
         await this.calculatorService.rangeValues(+this.calculatorService.selectedRefGraphDetail, this.calculatorService.showGraphDetailType)
       ).filter((v: any) => v)
 
-      secondValues = (
-        await this.calculatorService.rangeValues(
-          +this.calculatorService.selectedRefGraphDetail,
-          this.calculatorService.showGraphDetailType,
-          this.optionDateStart,
-          this.optionDateStop,
-        )
-      ).filter((v: any) => v)
-
-      if (
-        this.calculatorService.dateStop.getValue() &&
-        this.optionDateStart &&
-        this.getMonth(this.calculatorService.dateStop.getValue()).getTime() < this.getMonth(this.optionDateStart).getTime()
-      ) {
-        middleValues = (
+      if (this.optionDateStart) {
+        secondValues = (
           await this.calculatorService.rangeValues(
             +this.calculatorService.selectedRefGraphDetail,
             this.calculatorService.showGraphDetailType,
-            this.getMonth(this.calculatorService.dateStop.getValue()),
-            this.getMonth(this.optionDateStart),
+            this.optionDateStart,
+            this.optionDateStop,
           )
         ).filter((v: any) => v)
-      }
 
-      if (
-        this.optionDateStop &&
-        this.calculatorService.dateStart.getValue() &&
-        this.getMonth(this.optionDateStop).getTime() < this.getMonth(this.calculatorService.dateStart.getValue()).getTime()
-      ) {
-        middleValues = (
-          await this.calculatorService.rangeValues(
-            +this.calculatorService.selectedRefGraphDetail,
-            this.calculatorService.showGraphDetailType,
-            this.getMonth(this.optionDateStop),
-            this.getMonth(this.calculatorService.dateStart.getValue()),
-          )
-        ).filter((v: any) => v)
+        if (
+          this.calculatorService.dateStop.getValue() &&
+          this.optionDateStart &&
+          this.getMonth(this.calculatorService.dateStop.getValue()).getTime() < this.getMonth(this.optionDateStart).getTime()
+        ) {
+          middleValues = (
+            await this.calculatorService.rangeValues(
+              +this.calculatorService.selectedRefGraphDetail,
+              this.calculatorService.showGraphDetailType,
+              this.getMonth(this.calculatorService.dateStop.getValue()),
+              this.getMonth(this.optionDateStart),
+            )
+          ).filter((v: any) => v)
+        }
+
+        if (
+          this.optionDateStop &&
+          this.calculatorService.dateStart.getValue() &&
+          this.getMonth(this.optionDateStop).getTime() < this.getMonth(this.calculatorService.dateStart.getValue()).getTime()
+        ) {
+          middleValues = (
+            await this.calculatorService.rangeValues(
+              +this.calculatorService.selectedRefGraphDetail,
+              this.calculatorService.showGraphDetailType,
+              this.getMonth(this.optionDateStop),
+              this.getMonth(this.calculatorService.dateStart.getValue()),
+            )
+          ).filter((v: any) => v)
+        }
       }
     }
 
-    if (firstValues.find((v) => v.value === null) || secondValues.find((v) => v.value === null)) {
+    if (firstValues.find((v) => v.value === null) || (secondValues && secondValues.find((v) => v.value === null))) {
       this.haveMissingDatas = true
     } else {
       this.haveMissingDatas = false
@@ -192,7 +198,10 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
             const firstIndexOfLastValues = findLastIndex(this.allValues, (a) => a.first !== null)
 
             if (firstIndexOfFirstValues !== -1 && firstIndexOfLastValues !== -1) {
-              ctx.fillStyle = 'rgba(106, 106, 244, 0.2)'
+              ctx.fillStyle =
+                secondValues === null
+                  ? this.userService.referentielMappingColorByInterface(this.ref?.label || '', OPACITY_20 * 1.001)
+                  : 'rgba(106, 106, 244, 0.2)' // 1.001 pour avoir la transparence car sinon si je mes juste OPACITY_20, il n'y a pas de transparence
               ctx.fillRect(left + firstIndexOfFirstValues * widthOneItem, top, (firstIndexOfLastValues - firstIndexOfFirstValues + 1) * widthOneItem, height)
             }
 
@@ -225,8 +234,8 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
 
     const mergeTab: { value: number | null; date: Date }[] = [
       ...firstValues.filter((v) => v && v.value !== null),
-      ...secondValues.filter((v) => v && v.value !== null),
-      ...middleValues.filter((v) => v && v.value !== null),
+      ...(secondValues ? secondValues.filter((v) => v && v.value !== null) : []),
+      ...(middleValues ? middleValues.filter((v) => v && v.value !== null) : []),
     ]
     const mergeTabValues: number[] = mergeTab.map((v) => +(v.value || 0))
 
@@ -487,23 +496,35 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
         // datas before
         ...defaultDataset,
         data: [],
-        borderColor: '#6A6AF4',
+        borderColor: secondValues === null ? this.userService.referentielMappingColorByInterface(this.ref?.label || '') : '#6A6AF4',
       },
-      {
+    ]
+
+    if (secondValues !== null) {
+      datasets.push({
         // datas to compare
         ...defaultDataset,
         data: [],
         borderColor: '#E4794A',
-      },
-      {
+      })
+    }
+
+    if (middleValues !== null) {
+      datasets.push({
         // datas in the middle
         ...defaultDataset,
         data: [],
         borderColor: '#929292',
-      },
-    ]
+      })
+    }
 
-    const configurationsDates = [this.dateStart, this.dateStop, this.optionDateStart, this.optionDateStop]
+    const configurationsDates = [this.dateStart, this.dateStop]
+    if (this.optionDateStart) {
+      configurationsDates.push(this.optionDateStart)
+    }
+    if (this.optionDateStop) {
+      configurationsDates.push(this.optionDateStop)
+    }
     const getFirstDate = minBy(configurationsDates, function (o) {
       o = today(o)
       return o.getTime()
@@ -531,19 +552,23 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
           datasets[0].data.push(NaN)
         }
 
-        const value2 = secondValues.find((v) => this.getMonth(v.date).getTime() === now.getTime())
-        if (value2 && value2.value !== null) {
-          this.allValues[this.allValues.length - 1].second = value2.value || 0
-          datasets[1].data.push(value2.value || 0)
-        } else {
-          datasets[1].data.push(NaN)
+        if (secondValues !== null) {
+          const value2 = secondValues.find((v) => this.getMonth(v.date).getTime() === now.getTime())
+          if (value2 && value2.value !== null) {
+            this.allValues[this.allValues.length - 1].second = value2.value || 0
+            datasets[1].data.push(value2.value || 0)
+          } else {
+            datasets[1].data.push(NaN)
+          }
         }
 
-        const value1 = middleValues.find((v) => this.getMonth(v.date).getTime() === now.getTime())
-        if (value1 && value1.value !== null) {
-          datasets[2].data.push(value1.value || 0)
-        } else {
-          datasets[2].data.push(NaN)
+        if (middleValues !== null) {
+          const value1 = middleValues.find((v) => this.getMonth(v.date).getTime() === now.getTime())
+          if (value1 && value1.value !== null) {
+            datasets[2].data.push(value1.value || 0)
+          } else {
+            datasets[2].data.push(NaN)
+          }
         }
 
         now.setMonth(now.getMonth() + 1)

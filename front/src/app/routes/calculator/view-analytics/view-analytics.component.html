@@ -31,7 +31,11 @@
     </div>
     <div class="container-elements">
       @for (ref of referentiel; track ref.id; let index = $index) {
-      <div class="flex-1">
+      <div class="flex-1 cursor-pointer" (click)="
+        calculatorService.selectedRefGraphDetail = ref.id;
+        calculatorService.showGraphDetailTypeLineTitle = 'DTES';
+        calculatorService.showGraphDetailType = 'dtes'
+      ">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].realDTESInMonthsStart || 0, datasFilted[index].realDTESInMonths || 0]"
           [maxValue]="dtesMax" type="dtes" (updateMax)="onUpdateMax($event)"></aj-graphs-verticals-lines>
@@ -75,7 +79,11 @@
             'container-to-bottom': showDetailCover,
           }">
       @for (ref of referentiel; track ref.id; let index = $index) {
-      <div class="flex-1">
+      <div class="flex-1 cursor-pointer" (click)="
+        calculatorService.selectedRefGraphDetail = ref.id;
+        calculatorService.showGraphDetailTypeLineTitle = 'Taux de couverture';
+        calculatorService.showGraphDetailType = 'coverage'
+      ">
         <aj-graphs-progress [referentielName]="ref.label" [percent]="
                   datasFilted[index].realCoverage === null ? null : round((datasFilted[index].realCoverage || 0) * 100)
                 "></aj-graphs-progress>
@@ -107,7 +115,8 @@
       <p class="title-section">Stock</p>
       <p class="details-section">sur la période</p>
       <div class="flex-1"></div>
-      <button class="details no-print" (click)="showDetailStock = !showDetailStock; logOpenDetailsFor('Stocks', showDetailStock)">
+      <button class="details no-print"
+        (click)="showDetailStock = !showDetailStock; logOpenDetailsFor('Stocks', showDetailStock)">
         <i [class]="showDetailStock ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
         {{ showDetailStock ? 'Masquer les détails' : 'Voir les détails' }}
       </button>
@@ -129,7 +138,11 @@
     </div>
     <div class="container-elements">
       @for (ref of referentiel; track ref.id; let index = $index) {
-      <div class="flex-1">
+      <div class="flex-1 cursor-pointer" (click)="
+        calculatorService.selectedRefGraphDetail = ref.id;
+        calculatorService.showGraphDetailTypeLineTitle = 'Stock';
+        calculatorService.showGraphDetailType = 'stocks'
+      ">
         @if (!showDetailStock) {
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].lastStock || 0]" [maxValue]="stockMax" type="stocks"
@@ -192,7 +205,11 @@
     </div>
     <div class="container-elements">
       @for (ref of referentiel; track ref.id; let index = $index) {
-      <div class="flex-1">
+      <div class="flex-1 cursor-pointer" (click)="
+        calculatorService.selectedRefGraphDetail = ref.id;
+        calculatorService.showGraphDetailTypeLineTitle = 'Entrées';
+        calculatorService.showGraphDetailType = 'entrees'
+      ">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].totalIn || 0]" [showLines]="showDetailEntrees" [maxValue]="entreesMax"
           type="entrees" (updateMax)="onUpdateMax($event)"
@@ -256,7 +273,11 @@
     </div>
     <div class="container-elements">
       @for (ref of referentiel; track ref.id; let index = $index) {
-      <div class="flex-1">
+      <div class="flex-1 cursor-pointer" (click)="
+        calculatorService.selectedRefGraphDetail = ref.id;
+        calculatorService.showGraphDetailTypeLineTitle = 'Sorties';
+        calculatorService.showGraphDetailType = 'sorties'
+      ">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].totalOut || 0]" [showLines]="showDetailSorties" [maxValue]="sortiesMax"
           type="sorties" (updateMax)="onUpdateMax($event)"
@@ -320,7 +341,11 @@
     </div>
     <div class="container-elements">
       @for (ref of referentiel; track ref.id; let index = $index) {
-      <div class="flex-1">
+      <div class="flex-1 cursor-pointer" (click)="
+        calculatorService.selectedRefGraphDetail = ref.id;
+        calculatorService.showGraphDetailTypeLineTitle = 'ETPT Siège';
+        calculatorService.showGraphDetailType = 'ETPTSiege'
+      ">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].etpMag || 0]" [showLines]="showDetailETPTSiege" [maxValue]="siegeMax"
           type="ETPTSiege" (updateMax)="onUpdateMax($event)"
@@ -392,7 +417,11 @@
     </div>
     <div class="container-elements">
       @for (ref of referentiel; track ref.id; let index = $index) {
-      <div class="flex-1">
+      <div class="flex-1 cursor-pointer" (click)="
+        calculatorService.selectedRefGraphDetail = ref.id;
+        calculatorService.showGraphDetailTypeLineTitle = 'ETPT Greffe';
+        calculatorService.showGraphDetailType = 'ETPTGreffe'
+      ">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].etpFon || 0]" [showLines]="showDetailETPTGreffe" [maxValue]="greffeMax"
           type="ETPTGreffe" (updateMax)="onUpdateMax($event)"
@@ -464,7 +493,11 @@
     </div>
     <div class="container-elements">
       @for (ref of referentiel; track ref.id; let index = $index) {
-      <div class="flex-1">
+      <div class="flex-1 cursor-pointer" (click)="
+        calculatorService.selectedRefGraphDetail = ref.id;
+        calculatorService.showGraphDetailTypeLineTitle = 'ETPT EAM';
+        calculatorService.showGraphDetailType = 'ETPTEam'
+      ">
         <aj-graphs-verticals-lines [referentielName]="ref.label" [referentielId]="ref.id"
           [values]="[datasFilted[index].etpCont || 0]" [showLines]="showDetailETPTEam" [maxValue]="eamMax"
           type="ETPTEam" (updateMax)="onUpdateMax($event)"

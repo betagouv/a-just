@@ -19,19 +19,25 @@
       }
     </div>
     <div class="compare-header-popin">
-      <div>
-        <p>sur la période de</p>
+      <div
+        [style.background-color]="optionDateStart === null ? userService.referentielMappingColorByInterface(ref?.label || '', OPACITY_20) : '#E8EDFF'">
+        <p
+          [style.color]="optionDateStart === null ? userService.referentielMappingColorByInterface(ref?.label || '') : 'rgba(0, 99, 203, 1)'">
+          sur la période de</p>
         <img src="/assets/icons/point-graph-blue.svg" alt="point-graph" />
-        <p>
+        <p
+          [style.color]="optionDateStart === null ? userService.referentielMappingColorByInterface(ref?.label || '') : 'rgba(228, 121, 74, 1)'">
           {{ getShortMonthString(dateStart) }} {{ getYearMonthString(dateStart) }} -
           {{ getShortMonthString(dateStop) }} {{ getYearMonthString(dateStop) }}
         </p>
       </div>
+      @if(optionDateStart) {
       <div>
         <p>comparée à</p>
         <img src="/assets/icons/point-graph-red.svg" alt="point-graph" />
         <p>{{ compareAtString }}</p>
       </div>
+      }
     </div>
     @if (haveMissingDatas) {
     <p class="have-missing-datas">Certaines données sont manquantes sur les périodes sélectionnées</p>
