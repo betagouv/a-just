@@ -33,7 +33,7 @@
       <div class="flex-1"></div>
       <div class="switch-tab">
         <div class="brut" [ngClass]="{ selected: tabSelected === 0 && !compareTemplates }"
-          (click)="tabSelected = 0; unselectTemplate(); documentation.path = docLinks[0]; $event.stopPropagation()">
+          (click)="tabSelected = 0; unselectTemplate(); documentation.path = docLinks[0]; $event.stopPropagation(); optionDateStart = null">
           <i class="ri-table-view no-print"></i>
           <p>Données brutes</p>
         </div>
@@ -43,6 +43,7 @@
               unselectTemplate();
               logChartView();
               documentation.path = docLinks[1];
+              optionDateStart = null;
               $event.stopPropagation()
             ">
           <i class="ri-bar-chart-box-line no-print"></i>
@@ -419,7 +420,7 @@
 
 <ng-template #subTitleTemplate><label class="grey">(option)</label></ng-template>
 
-@if (calculatorService.showGraphDetailType && compareOption === 1) {
+@if (calculatorService.showGraphDetailType) {
 <aj-popin-graphs-details [compareAtString]="compareAtString" [dateStart]="dateStart" [dateStop]="dateStop"
   [optionDateStart]="optionDateStart" [optionDateStop]="optionDateStop"></aj-popin-graphs-details>
 }

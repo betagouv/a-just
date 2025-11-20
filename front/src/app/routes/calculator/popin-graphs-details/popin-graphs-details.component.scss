@@ -33,16 +33,6 @@
             gap: 8px;
             border-radius: 4px;
 
-            &:first-child {
-                background-color: #E8EDFF;
-
-                p {
-                    &:last-child {
-                        color: rgba(0, 99, 203, 1);
-                    }
-                }
-            }
-
             &:last-child {
                 background-color: #FEF4F2;
 

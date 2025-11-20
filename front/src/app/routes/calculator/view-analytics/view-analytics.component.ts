@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common'
-import { Component, Input, OnDestroy, OnInit } from '@angular/core'
-import { startLatencyScope } from '../../../utils/sentry-latency'
-import { beginDetail, markDetailComplete, toggleDetail, type DetailState } from '../../../utils/latency-detail'
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core'
+import { markDetailComplete, toggleDetail, type DetailState } from '../../../utils/latency-detail'
 import { GraphsVerticalsLinesComponent } from './graphs-verticals-lines/graphs-verticals-lines.component'
 import { GraphsNumbersComponent } from './graphs-numbers/graphs-numbers.component'
 import { GraphsProgressComponent } from './graphs-progress/graphs-progress.component'
@@ -31,6 +30,12 @@ import { CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW } from '../../../constants/log-c
   styleUrls: ['./view-analytics.component.scss'],
 })
 export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestroy {
+  private humanResourceService = inject(HumanResourceService)
+  private referentielService = inject(ReferentielService)
+  private kpiService = inject(KPIService)
+  public userService = inject(UserService)
+  private activitiesService = inject(ActivitiesService)
+  public calculatorService = inject(CalculatorService)
   /**
    * Référentiel
    */
@@ -132,14 +137,7 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   /**
    * Constructor
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService,
-    private kpiService: KPIService,
-    public userService: UserService,
-    private calculatorService: CalculatorService,
-    private activitiesService: ActivitiesService,
-  ) {
+  constructor() {
     super()
   }
 
@@ -307,8 +305,6 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
   onDetailGraphLoadComplete(sectionKey: string) {
     markDetailComplete(this.detailLoadState, sectionKey)
   }
-
-  
 
   round(num: number) {
     return Math.round(num)
