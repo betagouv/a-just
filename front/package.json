@@ -22,7 +22,6 @@
   },
   "private": true,
   "dependencies": {
-    "@sentry/browser": "^8.55.0",
     "@angular/animations": "^20.1.2",
     "@angular/cdk": "^20.1.2",
     "@angular/common": "^20.1.2",
@@ -35,9 +34,9 @@
     "@angular/platform-browser-dynamic": "^20.1.2",
     "@angular/router": "^20.1.2",
     "@compodoc/compodoc": "^1.1.26",
-    "@gitbook/api": "^0.74.0",
     "@juggle/resize-observer": "^3.4.0",
     "@ngx-env/builder": "^19.0.4",
+    "@sentry/browser": "^8.55.0",
     "@types/file-saver": "^2.0.7",
     "@types/lodash": "^4.17.13",
     "animate.css": "^4.1.1",
