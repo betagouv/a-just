@@ -1,7 +1,7 @@
 <aj-wrapper #wrapper title="Données d'activité" [subtitleTemplate]="!canEditActivities ? null : subTitleTemplate"
   [documentation]="documentation"
   class="content-margin-null title-margin-right-null title-margin-top-null title-margin-bottom-null large-actions"
-  [actionTemplate]="ressources" [alignLeft]="false" [dateSelector]="dateSelector">
+  [actionTemplate]="ressources" [alignLeft]="false" [dateSelector]="dateSelector" [tours]="introSteps">
   <div class="container">
     <div class="header-list">
       <!--<ng-template [ngIf]="canEditActivities">-->
@@ -431,4 +431,3 @@ let-year="year"
   [activityMonth]="activityMonth" [selectedReferentielId]="selectedReferentielId"
   (onClose)="onCloseEditedPopin($event)"></aj-popin-edit-activities>
 }
-<aj-intro-js [steps]="introSteps" typeId="activities"></aj-intro-js>

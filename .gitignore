@@ -41,3 +41,5 @@ end-to-end/cypress/debug/
 
 # Local test corpus (do not commit)
 api/src/var/tests-corpus/
+api/test/reports/
+site/reports/

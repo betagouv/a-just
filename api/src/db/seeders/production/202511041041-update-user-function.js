@@ -53,7 +53,9 @@ module.exports = {
         },
       ]
 
-      await Promise.all(list.map((item) => models.Users.update({ fonction: item.label }, { where: { id: { [Op.in]: item.idAgents } }, paranoid: false })))
+      await Promise.all(
+        list.map((item) => models.Users.update({ fonction: item.label }, { where: { id: { [Op.in]: item.idAgents } }, paranoid: false, force: true })),
+      )
     }
   },
   down: (/*queryInterface , Sequelize*/) => {},

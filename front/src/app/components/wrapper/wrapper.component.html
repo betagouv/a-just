@@ -84,12 +84,6 @@
       </div>
       }
       <div class="flex-1"></div>
-      <div class="menu-item" [class.selected]="isSelected({ path: 'centre-d-aide' })">
-        <a (click)="onSelect('/' + 'centre-d-aide')" [routerLink]="['/centre-d-aide']">Aide</a>
-        <a class="contact-us" href="/contact?backUrl=true">
-          <p class="unselectable">Nous contacter</p>
-        </a>
-      </div>
 
       <!-- <div class="menu-item disconnect" (click)="onDisconnect()">
       <p>Déconnexion</p>
@@ -111,6 +105,9 @@
           <div>
             <div class="title-with-doc">
               <h3 [innerHTML]="title"></h3>
+              @if(tours && tours.length) {
+              <aj-tour-button class="no-print" [tours]="tours"></aj-tour-button>
+              }
               @if (documentation) {
               <aj-help-button (click)="onTogglePanelHelper()" class="documentation no-print"></aj-help-button>
               }
@@ -213,3 +210,36 @@
   <aj-text-editor title="Souhaitez-vous ajouter un commentaire ?" #editor [acceptLink]="false"></aj-text-editor>
 </aj-popup>
 }
+
+<div class="help-section" alt="">
+  <button class="help-button" (click)="helpSectionVisible = !helpSectionVisible">Besoin d'aide ?</button>
+  @if (helpSectionVisible) {
+  <div class="help-content animate__animated animate__fadeIn">
+    <div class="help-content-header">
+      <p>Bonjour, comment l’équipe A-JUST peut vous aider ?</p>
+      <p (click)="helpSectionVisible = false">x</p>
+    </div>
+    <div class="help-content-body">
+      <div>
+        <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
+          alt="Nous contacter" target="_blank">⏺️ Echanger avec l'équipe</a>
+        <a [href]="findHelpCenter('/etre-appele')+(referentielService.isDroitLocal() ? '?dl=true': '')"
+          alt="Être rappelé" target="_blank">📞 Être rappelé</a>
+        <a [href]="findHelpCenter('/prendre-rendez-vous')+(referentielService.isDroitLocal() ? '?dl=true': '')"
+          alt="Prendre rendez-vous" target="_blank">📆 Prendre
+          rendez-vous</a>
+        <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true': '')"
+          alt="Accéder au centre d'aide" target="_blank">📚 Accéder au centre d'aide</a>
+
+      </div>
+      <div class="help-support-icon">
+        <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
+          alt="Accéder au centre d'aide" target="_blank">
+          <img src="assets/icons/victor.webp" alt="victor">
+          <img src="assets/icons/andre.webp" alt="andre">
+        </a>
+      </div>
+    </div>
+  </div>
+  }
+</div>

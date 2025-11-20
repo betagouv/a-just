@@ -1,8 +1,8 @@
 @use '../../styles/utils.scss' as utils;
 
 :host {
-  height: 26px;
-  min-width: 26px;
+  height: 32px;
+  min-width: 32px;
   position: relative;
   z-index: 1;
 
@@ -13,10 +13,10 @@
     left: 0;
     font-size: 14px;
     color: white;
-    line-height: 26px;
+    line-height: 32px;
     padding: 0 6px;
-    border-radius: 26px;
-    min-width: 26px;
+    border-radius: 32px;
+    min-width: 32px;
     display: inline-flex;
     align-items: center;
     cursor: pointer;
@@ -25,7 +25,7 @@
     >span {
       display: inline;
       white-space: nowrap;
-      margin-left: 4px;
+      margin-left: 6px;
       margin-right: 4px;
     }
   }

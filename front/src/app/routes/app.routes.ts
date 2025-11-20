@@ -34,11 +34,9 @@ import { SiteMapPage } from './sitemap/sitemap.page'
 import { LegaleNoticePage } from './legale-notice/legale-notice.page'
 import { PrivacyPage } from './privacy/privacy.page'
 import { AccessibilitiesPage } from './accessibilities/accessibilities.page'
-import { ContactPage } from './contact/contact.page'
 import { StatsPage } from './stats/stats.page'
 import { LogoutPage } from './logout/logout.page'
 import { CGUPage } from './cgu/cgu.page'
-import { HelpCenterPage } from './help-center/help-center.page'
 
 export const routes: Routes = [
   {
@@ -160,10 +158,6 @@ export const routes: Routes = [
     component: AccessibilitiesPage,
   },
   {
-    path: 'contact',
-    component: ContactPage,
-  },
-  {
     path: 'stats',
     component: StatsPage,
   },
@@ -174,11 +168,6 @@ export const routes: Routes = [
   {
     path: 'conditions-generales-d-utilisation',
     component: CGUPage,
-  },
-  {
-    path: 'centre-d-aide',
-    component: HelpCenterPage,
-    canActivate: [authGuard, typeGuard],
   },
   {
     path: '**',
