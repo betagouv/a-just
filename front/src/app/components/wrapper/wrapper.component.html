@@ -221,7 +221,7 @@
     </div>
     <div class="help-content-body">
       <div>
-        <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
+        <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
           alt="Nous contacter" target="_blank">⏺️ Echanger avec l'équipe</a>
         <a [href]="findHelpCenter('/etre-appele')+(referentielService.isDroitLocal() ? '?dl=true': '')"
           alt="Être rappelé" target="_blank">📞 Être rappelé</a>
@@ -233,7 +233,7 @@
 
       </div>
       <div class="help-support-icon">
-        <a [href]="findHelpCenter('/')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
+        <a [href]="findHelpCenter('/contact')+(referentielService.isDroitLocal() ? '?dl=true&contact=true': '?contact=true')"
           alt="Accéder au centre d'aide" target="_blank">
           <img src="assets/icons/victor.webp" alt="victor">
           <img src="assets/icons/andre.webp" alt="andre">
