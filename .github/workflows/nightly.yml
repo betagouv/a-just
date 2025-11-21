@@ -474,9 +474,5 @@ jobs:
           fi
           URL="${PAGE_URL}reports/sandbox/nightly/${DATE_PARIS}/combined/a-just-tests-report.html"
           TEXT="Nightly tests for ${DATE_PARIS} (Europe/Paris): ${URL}\nTotal: ${TOTAL} | Passed: ${PASSED} | Failed: ${FAILED} | Skipped: ${SKIPPED} | Pending: ${PENDING}"
-          payload=$(python3 - <<'PY'
-import os, json
-print(json.dumps({"text": os.environ.get("TEXT", "")}))
-PY
-)
+          payload=$(python3 -c 'import os, json; print(json.dumps({"text": os.environ.get("TEXT", "")}))')
           curl -sS -X POST -H 'Content-Type: application/json' -d "$payload" "$WEBHOOK" || echo "Mattermost notify failed"
