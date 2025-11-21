@@ -42,10 +42,18 @@ export const authGuard: CanActivateFn = (route, state) => {
 })
 class TempsMoyensPermissionsService {
   authService = inject(AuthService)
+  router = inject(Router)
 
   async canViewTempsMoyens() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1 ? true : false
+    const canView = user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME) !== -1 ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
@@ -58,10 +66,18 @@ export const tempsMoyensGuard: CanActivateFn = (route, state) => {
 })
 class ReaffectatorPermissionsService {
   authService = inject(AuthService)
+  router = inject(Router)
 
   async canViewReaffectator() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_REAFFECTATOR) !== -1 ? true : false
+    const canView = user && user.access && user.access.indexOf(USER_ACCESS_REAFFECTATOR) !== -1 ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
@@ -74,10 +90,18 @@ export const reaffectatorGuard: CanActivateFn = (route, state) => {
 })
 class CockpitPermissionsService {
   authService = inject(AuthService)
+  router = inject(Router)
 
   async canViewCockpit() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1 ? true : false
+    const canView = user && user.access && user.access.indexOf(USER_ACCESS_CALCULATOR) !== -1 ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
@@ -90,10 +114,18 @@ export const cockpitGuard: CanActivateFn = (route, state) => {
 })
 class SimulatorPermissionsService {
   authService = inject(AuthService)
+  router = inject(Router)
 
   async canViewSimulator() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1 ? true : false
+    const canView = user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1 ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
@@ -106,10 +138,18 @@ export const simulatorGuard: CanActivateFn = (route, state) => {
 })
 class WhiteSimulatorPermissionsService {
   authService = inject(AuthService)
+  router = inject(Router)
 
   async canViewWhiteSimulator() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 ? true : false
+    const canView = user && user.access && user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
@@ -122,16 +162,24 @@ export const whiteSimulatorGuard: CanActivateFn = (route, state) => {
 })
 class AllSimulatorPermissionsService {
   authService = inject(AuthService)
-
+  router = inject(Router)
   async canAllWhiteSimulator() {
     const user = await this.authService.userConnected()
-    return user &&
+    const canView =
+      user &&
       user.access &&
       (user.access.indexOf(USER_ACCESS_SIMULATOR) !== -1 ||
         user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR) !== -1 ||
         user.access.indexOf(USER_ACCESS_REAFFECTATOR) !== -1)
-      ? true
-      : false
+        ? true
+        : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
@@ -144,10 +192,18 @@ export const allSimulatorGuard: CanActivateFn = (route, state) => {
 })
 class DashboardPermissionsService {
   authService = inject(AuthService)
+  router = inject(Router)
 
   async canViewDashboard() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1 ? true : false
+    const canView = user && user.access && user.access.indexOf(USER_ACCESS_DASHBOARD) !== -1 ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
@@ -159,11 +215,19 @@ export const dashboardGuard: CanActivateFn = (route, state) => {
   providedIn: 'root',
 })
 class VentilationsPermissionsService {
+  router = inject(Router)
   authService = inject(AuthService)
 
   async canViewVentilations() {
     const user = await this.authService.userConnected()
-    return user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1 ? true : false
+    const canView = user && user.access && user.access.indexOf(USER_ACCESS_VENTILATIONS) !== -1 ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
   }
 }
 
