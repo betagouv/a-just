@@ -16,6 +16,11 @@ import { ADMIN_CHANGE_USER_ACCESS, USER_USER_FORGOT_PASSWORD, USER_USER_PASSWORD
 import { getCategoriesByUserAccess } from '../utils/hr-catagories'
 import { USER_ROLE_ADMIN, USER_ROLE_SUPER_ADMIN } from '../constants/roles'
 
+const isWhitelistedDomain = (email) => {
+  const e = (email || '').toLowerCase()
+  return e.includes('@justice.fr') || e.includes('.gouv.fr') || e.includes('@a-just.fr')
+}
+
 /**
  * Route de la gestion des utilisateurs
  */
@@ -79,13 +84,9 @@ export default class RouteUsers extends Route {
 
     email = (email || '').toLowerCase() // force to lower case email
 
-    if (!email.includes('@justice.fr') && !email.includes('.gouv.fr') && !email.includes('@a-just.fr')) {
+    const isPro = isWhitelistedDomain(email)
+    if (!isPro) {
       ctx.throw(401, 'Vous devez saisir une adresse e-mail professionnelle')
-      return
-    }
-
-    if (!validateEmail(email)) {
-      ctx.throw(401, 'Vous devez saisir une adresse e-mail valide')
       return
     }
 
@@ -279,7 +280,7 @@ export default class RouteUsers extends Route {
     let { email } = this.body(ctx)
     email = (email || '').trim().toLowerCase()
 
-    if (validateEmail(email)) {
+    if (validateEmail(email) || isWhitelistedDomain(email)) {
       // send message by email
       const user = await this.model.findOne({ where: { email } })
       if (user) {
@@ -329,7 +330,7 @@ export default class RouteUsers extends Route {
     let { email } = this.body(ctx)
     email = (email || '').trim().toLowerCase()
 
-    if (validateEmail(email)) {
+    if (validateEmail(email) || isWhitelistedDomain(email)) {
       // send message by email
       const user = await this.model.findOne({ where: { email } })
       if (user) {
