@@ -89,6 +89,11 @@ export const CALCULATOR_OPEN_DETAILS_IN_CHARTS_VIEW = 3017
 export const CALCULATOR_OPEN_POPIN_GRAPH_DETAILS = 3018
 
 /**
+ * Code de démarrage de la des graph
+ */
+export const CALCULATOR_OPEN_POPIN_GRAPH_DETAILS_ALONE = 3019
+
+/**
  * Code de démarrage de la simulation à blanc
  */
 export const WHITE_SIMULATOR_START = 20000
