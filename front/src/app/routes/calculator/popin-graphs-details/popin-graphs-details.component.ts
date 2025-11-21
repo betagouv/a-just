@@ -11,7 +11,7 @@ import { Chart, ChartItem } from 'chart.js/auto'
 import { findLastIndex, maxBy, minBy } from 'lodash'
 import { today } from '../../../utils/dates'
 import { KPIService } from '../../../services/kpi/kpi.service'
-import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS } from '../../../constants/log-codes'
+import { CALCULATOR_OPEN_POPIN_GRAPH_DETAILS, CALCULATOR_OPEN_POPIN_GRAPH_DETAILS_ALONE } from '../../../constants/log-codes'
 import { fixDecimal } from '../../../utils/numbers'
 import { AppService } from '../../../services/app/app.service'
 import { RouterModule } from '@angular/router'
@@ -107,7 +107,10 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
     if (this.calculatorService.selectedRefGraphDetail) {
       this.ref = this.humanResourceService.contentieuxReferentiel.getValue().find((c) => c.id === this.calculatorService.selectedRefGraphDetail) || null
       if (this.ref) {
-        this.kpiService.register(CALCULATOR_OPEN_POPIN_GRAPH_DETAILS, this.calculatorService.showGraphDetailType + ' - ' + this.ref.label)
+        this.kpiService.register(
+          this.optionDateStart ? CALCULATOR_OPEN_POPIN_GRAPH_DETAILS : CALCULATOR_OPEN_POPIN_GRAPH_DETAILS_ALONE,
+          this.calculatorService.showGraphDetailType + ' - ' + this.ref.label,
+        )
       }
     }
     /*console.log(
@@ -118,6 +121,13 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
       this.optionDateStart,
       this.optionDateStop
     );*/
+
+    /**
+     * clean datas
+     */
+    if (!this.optionDateStart) {
+      this.optionDateStop = null
+    }
 
     let firstValues: { value: number | null; date: Date }[] = []
     let secondValues: { value: number | null; date: Date }[] | null = null
@@ -525,6 +535,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
     if (this.optionDateStop) {
       configurationsDates.push(this.optionDateStop)
     }
+    console.log('configurationsDates', configurationsDates)
     const getFirstDate = minBy(configurationsDates, function (o) {
       o = today(o)
       return o.getTime()
