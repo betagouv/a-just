@@ -1,0 +1,482 @@
+name: Nightly Tests
+
+on:
+  schedule:
+    - cron: '30 2 * * *' # 02:30 UTC daily (middle of the night in Europe/Paris)
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-sandbox
+  cancel-in-progress: true
+
+jobs:
+  compute-ref:
+    name: Compute yesterday sandbox ref (Europe/Paris)
+    runs-on: ubuntu-latest
+    outputs:
+      ref_sha: ${{ steps.set.outputs.ref_sha }}
+      paris_date: ${{ steps.set.outputs.paris_date }}
+    steps:
+      - name: Checkout sandbox (full history)
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+          fetch-depth: 0
+
+      - name: Compute yesterday 00:00 Europe/Paris and resolve SHA
+        id: set
+        run: |
+          set -e
+          git fetch origin sandbox --prune
+          REF_ISO=$(TZ=Europe/Paris date -d "yesterday 00:00" +"%Y-%m-%d %H:%M:%S %z")
+          REF_SHA=$(git rev-list -n 1 --first-parent --before="$REF_ISO" origin/sandbox || true)
+          if [ -z "$REF_SHA" ]; then
+            echo "No ref found before $REF_ISO; using previous commit on sandbox"
+            REF_SHA=$(git rev-parse origin/sandbox~1)
+          fi
+          PARIS_DATE=$(TZ=Europe/Paris date +%F)
+          echo "ref_sha=$REF_SHA" >> "$GITHUB_OUTPUT"
+          echo "paris_date=$PARIS_DATE" >> "$GITHUB_OUTPUT"
+
+  api-tests-nightly:
+    name: API tests (sandbox HEAD)
+    runs-on: ubuntu-latest
+    needs: compute-ref
+    steps:
+      - name: Checkout sandbox
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Docker compose version
+        run: docker compose version
+      - name: Install dependencies
+        run: npm i
+      - name: Run API tests (Mocha + Mochawesome)
+        run: |
+          set -e
+          npm run test:api
+        continue-on-error: true
+      - name: Upload Mocha test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mocha-report
+          path: ./api/test/reports
+          if-no-files-found: warn
+
+  e2e-tests-nightly:
+    name: E2E tests (sandbox HEAD, all specs)
+    runs-on: ubuntu-latest
+    needs: compute-ref
+    steps:
+      - name: Checkout sandbox
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Docker compose version
+        run: docker compose version
+      - name: Install dependencies
+        run: npm i
+      - name: Run E2E tests (Cypress JSON-only, containerized)
+        run: |
+          set -e
+          export SPEC=""
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
+            -e CY_JSON_ONLY=1 \
+            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
+            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
+            -e SPEC="$SPEC" \
+            cypress sh -lc '
+              set -e
+              cd /e2e
+              npm ci
+              echo "Waiting for front at $CYPRESS_BASE_URL ..."
+              npx -y wait-on -t 180000 -i 2000 "$CYPRESS_BASE_URL"
+              echo "Waiting for API at $NG_APP_SERVER_URL ..."
+              npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
+              rm -rf cypress/reports && mkdir -p cypress/reports
+              npx cypress run --spec "${SPEC:-cypress/e2e/**/*.cy.js,cypress/e2e/**/*.cy.ts}"
+              echo "=== E2E reports ==="; ls -la cypress/reports || true
+            '
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
+        continue-on-error: true
+      - name: Fix permissions for end-to-end artifacts
+        if: always()
+        run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
+      - name: Collect Cypress JSON reports (normalize)
+        if: always()
+        run: |
+          set -e
+          mkdir -p ./end-to-end/cypress/reports/.jsons
+          echo "Collecting JSONs from cypress/reports and mochawesome-report into cypress/reports/.jsons"
+          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
+          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
+          echo "Final JSONs to upload:"; ls -la ./end-to-end/cypress/reports/.jsons || true
+      - name: Upload Cypress video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-video
+          path: ./end-to-end/cypress/videos
+      - name: Upload Cypress screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: ./end-to-end/cypress/screenshots
+          if-no-files-found: warn
+      - name: Upload Cypress test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-reports
+          path: |
+            ./end-to-end/cypress/reports/.jsons/*.json
+            ./end-to-end/cypress/reports/*.json
+            ./end-to-end/cypress/reports/**/*.json
+            ./end-to-end/mochawesome-report/*.json
+            ./end-to-end/mochawesome-report/**/*.json
+          include-hidden-files: true
+          if-no-files-found: warn
+
+  e2e-nonreg-nightly:
+    name: E2E non-regression (sandbox HEAD vs yesterday)
+    runs-on: ubuntu-latest
+    needs: compute-ref
+    steps:
+      - name: Checkout sandbox (candidate)
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+      - name: Checkout sandbox (yesterday reference)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.compute-ref.outputs.ref_sha }}
+          path: sandbox-code-yesterday
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Docker compose version
+        run: docker compose version
+      - name: Install dependencies
+        run: npm i
+      - name: Run Non-Regression E2E tests (JSON-only)
+        run: |
+          set -e
+          export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code-yesterday"
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
+            -e CY_JSON_ONLY=1 \
+            -e SANDBOX_CODE_DIR=/work/sandbox-code \
+            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
+            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
+            -v "$GITHUB_WORKSPACE/sandbox-code-yesterday:/work/sandbox-code:ro" \
+            cypress sh -lc '
+              set -e
+              cd /e2e
+              npm ci
+              echo "Waiting for PR front at http://175.0.0.30:4200 ..."
+              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.30:4200"
+              echo "Waiting for PR API at http://175.0.0.20:8081/api ..."
+              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.20:8081/api"
+              echo "Waiting for SANDBOX front at http://175.0.0.31:4200 ..."
+              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.31:4200"
+              echo "Waiting for SANDBOX API at http://175.0.0.21:8081/api ..."
+              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.21:8081/api"
+              rm -rf cypress/reports && mkdir -p cypress/reports
+              npx cypress run --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
+              echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
+            '
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml down || true
+        continue-on-error: true
+      - name: Fix permissions for end-to-end artifacts (nonreg)
+        if: always()
+        run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
+      - name: Collect Cypress JSON reports (normalize, nonreg)
+        if: always()
+        run: |
+          set -e
+          mkdir -p ./end-to-end/cypress/reports/.jsons
+          find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
+          find ./end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
+          ls -la ./end-to-end/cypress/reports/.jsons || true
+      - name: Upload Cypress video (nonreg)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-video-nonreg
+          path: ./end-to-end/cypress/videos
+      - name: Upload Cypress screenshots (nonreg)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-nonreg
+          path: ./end-to-end/cypress/screenshots
+          if-no-files-found: warn
+      - name: Upload Cypress test reports (nonreg)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-reports-nonreg
+          path: |
+            ./end-to-end/cypress/reports/.jsons/*.json
+            ./end-to-end/cypress/reports/*.json
+            ./end-to-end/cypress/reports/**/*.json
+            ./end-to-end/mochawesome-report/*.json
+            ./end-to-end/mochawesome-report/**/*.json
+          include-hidden-files: true
+          if-no-files-found: warn
+
+  deploy-nightly:
+    name: Publish nightly report + Mattermost notify
+    runs-on: ubuntu-latest
+    needs: [api-tests-nightly, e2e-tests-nightly, e2e-nonreg-nightly, compute-ref]
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifacts (API/E2E/E2E-nonreg)
+        uses: actions/download-artifact@v4
+        with:
+          name: mocha-report
+          path: ./mocha-report
+      - name: Download Cypress reports (E2E)
+        uses: actions/download-artifact@v4
+        with:
+          name: cypress-reports
+          path: ./cypress-reports
+      - name: Download Cypress reports (nonreg)
+        uses: actions/download-artifact@v4
+        with:
+          name: cypress-reports-nonreg
+          path: ./cypress-reports-nonreg
+      - name: Download Cypress videos (E2E)
+        uses: actions/download-artifact@v4
+        with:
+          name: cypress-video
+          path: ./cypress-videos
+      - name: Download Cypress videos (nonreg)
+        uses: actions/download-artifact@v4
+        with:
+          name: cypress-video-nonreg
+          path: ./cypress-videos-nonreg
+      - name: Download Cypress screenshots (E2E)
+        uses: actions/download-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: ./cypress-screenshots
+      - name: Download Cypress screenshots (nonreg)
+        uses: actions/download-artifact@v4
+        with:
+          name: cypress-screenshots-nonreg
+          path: ./cypress-screenshots-nonreg
+
+      - name: Create nightly site directory structure
+        env:
+          DATE_PARIS: ${{ needs.compute-ref.outputs.paris_date }}
+        run: |
+          set -e
+          ROOT="site/reports/sandbox/nightly/${DATE_PARIS}"
+          mkdir -p "$ROOT/cypress" "$ROOT/videos" "$ROOT/screenshots" "$ROOT/mocha" "$ROOT/combined"
+          # Copy reports
+          cp -r cypress-reports/cypress/reports/.jsons "$ROOT/cypress/" 2>/dev/null || true
+          cp -r cypress-reports/cypress/reports/*.json "$ROOT/cypress/" 2>/dev/null || true
+          cp -r cypress-reports/.jsons "$ROOT/cypress/" 2>/dev/null || true
+          cp -r cypress-reports/*.json "$ROOT/cypress/" 2>/dev/null || true
+          cp -r cypress-reports-nonreg/cypress/reports/.jsons "$ROOT/cypress/" 2>/dev/null || true
+          cp -r cypress-reports-nonreg/cypress/reports/*.json "$ROOT/cypress/" 2>/dev/null || true
+          cp -r cypress-reports-nonreg/.jsons "$ROOT/cypress/" 2>/dev/null || true
+          cp -r cypress-reports-nonreg/*.json "$ROOT/cypress/" 2>/dev/null || true
+          # Videos and screenshots
+          cp -r cypress-videos/* "$ROOT/videos/" 2>/dev/null || echo "No E2E videos"
+          cp -r cypress-videos-nonreg/* "$ROOT/videos/" 2>/dev/null || true
+          cp -r cypress-screenshots/* "$ROOT/screenshots/" 2>/dev/null || echo "No E2E screenshots"
+          cp -r cypress-screenshots-nonreg/* "$ROOT/screenshots/" 2>/dev/null || true
+          # Mocha (API)
+          cp -r mocha-report/* "$ROOT/mocha/" 2>/dev/null || echo "No mocha reports"
+
+      - name: Build combined static HTML (merged JSON -> bespoke report)
+        env:
+          DATE_PARIS: ${{ needs.compute-ref.outputs.paris_date }}
+        run: |
+          set -e
+          ROOT="site/reports/sandbox/nightly/${DATE_PARIS}"
+          HOST_UID=$(id -u)
+          HOST_GID=$(id -g)
+          docker run --rm --user "$HOST_UID:$HOST_GID" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
+            set -e
+            mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
+            JSONS="$(
+              { find "$ROOT/mocha" -type f -name "*.json" 2>/dev/null || true; }
+              { find "$ROOT/cypress/.jsons" -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find "$ROOT/cypress" -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+            )"
+            if [ -n "$JSONS" ]; then
+              npx -y -p mochawesome-merge mochawesome-merge $JSONS > "$ROOT/combined/merged.json" || true
+            fi
+            if [ -s "$ROOT/combined/merged.json" ]; then
+              node scripts/section-mochawesome.js "$ROOT/combined/merged.json" "$ROOT/combined/sectioned.json" || cp "$ROOT/combined/merged.json" "$ROOT/combined/sectioned.json"
+              node scripts/build-static-report.js "$ROOT/combined/sectioned.json" "$ROOT/videos" "$ROOT/screenshots" "$ROOT/combined/a-just-tests-report.html" || echo "Static report generation failed"
+            else
+              echo "No JSONs to merge for combined report"
+            fi
+          '
+
+      - name: Append Cypress Videos section to combined HTML
+        env:
+          DATE_PARIS: ${{ needs.compute-ref.outputs.paris_date }}
+        run: |
+          set -e
+          HTML="site/reports/sandbox/nightly/${DATE_PARIS}/combined/a-just-tests-report.html"
+          VIDEOS_DIR="site/reports/sandbox/nightly/${DATE_PARIS}/videos"
+          if [ -f "$HTML" ]; then
+            chmod u+w "$HTML" || true
+            {
+              printf '\n<hr/>\n'
+              echo "<h2 style=\"margin-top:24px\">Cypress Videos</h2>"
+              echo "<ul>"
+              for v in "$VIDEOS_DIR"/*.mp4; do
+                [ -e "$v" ] || continue
+                b=$(basename "$v")
+                echo "<li><a href=\"../videos/$b\" target=\"_blank\">$b</a></li>"
+              done
+              echo "</ul>"
+            } >> "$HTML"
+          else
+            echo "Combined HTML not found, skipping video section"
+          fi
+
+      - name: Create per-day landing index.html
+        env:
+          DATE_PARIS: ${{ needs.compute-ref.outputs.paris_date }}
+        run: |
+          set -e
+          ROOT="site/reports/sandbox/nightly/${DATE_PARIS}"
+          mkdir -p "$ROOT"
+          cat > "$ROOT/index.html" << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Nightly Reports</title>
+          </head>
+          <body>
+            <h1>Nightly</h1>
+            <ul>
+              <li><a href="./combined/a-just-tests-report.html" target="_blank">Combined (API + E2E)</a></li>
+              <li><a href="./mocha/" target="_blank">Mocha (API)</a></li>
+              <li><a href="./cypress/" target="_blank">Cypress (E2E)</a></li>
+              <li><a href="./videos/" target="_blank">Cypress Videos</a></li>
+              <li><a href="./screenshots/" target="_blank">Cypress Screenshots</a></li>
+            </ul>
+          </body>
+          </html>
+          EOF
+
+      - name: Create top-level nightly index.html
+        run: |
+          set -e
+          mkdir -p site/reports/sandbox/nightly
+          DIR=site/reports/sandbox/nightly
+          # Build the index with up to the latest 30 days (descending)
+          DAYS=$(ls -1 "$DIR" 2>/dev/null | grep -E '^20[0-9]{2}-[01][0-9]-[0-3][0-9]$' | sort -r | head -n 30)
+          {
+            printf '%s\n' '<!DOCTYPE html>'
+            printf '%s\n' '<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Nightly Reports</title></head>'
+            printf '%s\n' '<body>'
+            printf '%s\n' '<h1>Nightly Reports</h1>'
+            printf '%s\n' '<ul>'
+            for d in $DAYS; do
+              printf '<li><a href="./%s/" target="_blank">%s</a></li>\n' "$d" "$d"
+            done
+            printf '%s\n' '</ul>'
+            printf '%s\n' '</body></html>'
+          } > "$DIR/index.html"
+
+      - name: Prune nightly folders to last 30 days
+        run: |
+          set -e
+          DIR=site/reports/sandbox/nightly
+          mkdir -p "$DIR"
+          DAYS=$(ls -1 "$DIR" 2>/dev/null | grep -E '^20[0-9]{2}-[01][0-9]-[0-3][0-9]$' | sort -r)
+          # Skip first 30, delete the rest
+          echo "$DAYS" | tail -n +31 | while read d; do [ -n "$d" ] && rm -rf "$DIR/$d" || true; done
+
+      - name: Compute summary from merged JSON (if available)
+        id: summary
+        env:
+          DATE_PARIS: ${{ needs.compute-ref.outputs.paris_date }}
+        run: |
+          set -e
+          ROOT="site/reports/sandbox/nightly/${DATE_PARIS}"
+          if [ -s "$ROOT/combined/merged.json" ]; then
+            node -e '
+              const fs=require("fs");
+              try{
+                const p=process.argv[1];
+                const j=JSON.parse(fs.readFileSync(p,"utf8"));
+                const s=j.stats || (j.results && j.results[0] && j.results[0].stats) || {};
+                const out={total:s.tests||0,passed:s.passes||0,failed:s.failures||0,skipped:s.skipped||0,pending:s.pending||0};
+                console.log(`TOTAL=${out.total}`);console.log(`PASSED=${out.passed}`);console.log(`FAILED=${out.failed}`);console.log(`SKIPPED=${out.skipped}`);console.log(`PENDING=${out.pending}`);
+              }catch(e){console.log("TOTAL=0\nPASSED=0\nFAILED=0\nSKIPPED=0\nPENDING=0");}
+            ' "$ROOT/combined/merged.json" >> "$GITHUB_OUTPUT" 2>/dev/null || true
+          else
+            echo "TOTAL=0" >> "$GITHUB_OUTPUT"
+            echo "PASSED=0" >> "$GITHUB_OUTPUT"
+            echo "FAILED=0" >> "$GITHUB_OUTPUT"
+            echo "SKIPPED=0" >> "$GITHUB_OUTPUT"
+            echo "PENDING=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact (Pages)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Notify Mattermost (always)
+        if: always()
+        env:
+          DATE_PARIS: ${{ needs.compute-ref.outputs.paris_date }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          WEBHOOK: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+          TOTAL: ${{ steps.summary.outputs.TOTAL }}
+          PASSED: ${{ steps.summary.outputs.PASSED }}
+          FAILED: ${{ steps.summary.outputs.FAILED }}
+          SKIPPED: ${{ steps.summary.outputs.SKIPPED }}
+          PENDING: ${{ steps.summary.outputs.PENDING }}
+        run: |
+          set -e
+          if [ -z "$WEBHOOK" ]; then
+            echo "MATTERMOST_WEBHOOK_URL is not set; skipping notification"; exit 0;
+          fi
+          URL="${PAGE_URL}reports/sandbox/nightly/${DATE_PARIS}/combined/a-just-tests-report.html"
+          TEXT="Nightly tests for ${DATE_PARIS} (Europe/Paris): ${URL}\nTotal: ${TOTAL} | Passed: ${PASSED} | Failed: ${FAILED} | Skipped: ${SKIPPED} | Pending: ${PENDING}"
+          payload=$(python3 - <<'PY'
+import os, json
+print(json.dumps({"text": os.environ.get("TEXT", "")}))
+PY
+)
+          curl -sS -X POST -H 'Content-Type: application/json' -d "$payload" "$WEBHOOK" || echo "Mattermost notify failed"
