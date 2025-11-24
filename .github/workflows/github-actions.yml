@@ -123,12 +123,16 @@ jobs:
               set -e
               cd /e2e
               npm ci
-              echo "Waiting for front at $CYPRESS_BASE_URL ..."
-              npx -y wait-on -t 180000 -i 2000 "$CYPRESS_BASE_URL"
-              echo "Waiting for API at $NG_APP_SERVER_URL ..."
-              npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
+              echo "Waiting for front at front:4200 ..."
+              /scripts/wait-for-it.sh front:4200 --timeout=600
+              echo "Waiting for API at api:8081 ..."
+              /scripts/wait-for-it.sh api:8081 --timeout=300
               rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --browser chrome --headless --spec "${SPEC:-cypress/e2e/login.cy.js}"
+              if [ -n "$SPEC" ]; then
+                npx cypress run --browser chrome --headless --spec "$SPEC"
+              else
+                npx cypress run --browser chrome --headless
+              fi
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             '
           docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
