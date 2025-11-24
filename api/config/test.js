@@ -8,6 +8,10 @@ module.exports = {
     max2AuthByMonth: 1,
   },
   /**
+   * Url du cors
+   */
+  corsUrl: null,
+  /**
    * Path de la base
    */
   database: {
