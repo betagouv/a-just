@@ -175,6 +175,7 @@ services:
       - ./end-to-end/scripts:/scripts
     # working_dir: /e2e
     # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
+    shm_size: "1gb"
     environment:
       - CYPRESS_BASE_URL=http://175.0.0.30:4200
       - NG_APP_SERVER_URL=http://175.0.0.20:8081/api

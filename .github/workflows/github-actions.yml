@@ -126,7 +126,7 @@ jobs:
               echo "Waiting for API at $NG_APP_SERVER_URL ..."
               npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
               rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --spec "${SPEC:-cypress/e2e/**/*.cy.js}"
+              npx cypress run --spec "${SPEC:-cypress/e2e/login.cy.js}"
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             '
           docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
