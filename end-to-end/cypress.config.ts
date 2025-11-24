@@ -50,6 +50,17 @@ export default defineConfig({
     testIsolation: false,
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      on('before:browser:launch', (browser, launchOptions) => {
+        try {
+          if (browser && browser.family === 'chromium') {
+            launchOptions.args.push('--disable-dev-shm-usage');
+            launchOptions.args.push('--no-sandbox');
+            launchOptions.args.push('--disable-gpu');
+            launchOptions.args.push('--disable-software-rasterizer');
+          }
+        } catch {}
+        return launchOptions;
+      });
       
       const downloadsDir = path.join(config.projectRoot, "cypress", "downloads");
       const artifactsDir = path.join(config.projectRoot, "cypress", "artifacts");
