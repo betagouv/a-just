@@ -36,6 +36,21 @@ module.exports = {
       const newPassword = crypt.encryptPassword('123456')
       users[i].update({ password : newPassword })
     }
+
+    const [e2eUser, createdE2e] = await models.Users.findOrCreate({
+      where: { email: 'utilisateurtest@a-just.fr' },
+      defaults: {
+        email: 'utilisateurtest@a-just.fr',
+        first_name: 'Utilisateur',
+        last_name: 'Test',
+        password: crypt.encryptPassword('3Bv6%BzX'),
+        status: 1,
+        role: 2,
+      },
+    })
+    if (!createdE2e) {
+      await e2eUser.update({ password: crypt.encryptPassword('3Bv6%BzX'), status: 1, role: 2 })
+    }
   },
   down: (/*queryInterface , Sequelize*/) => {},
 }
