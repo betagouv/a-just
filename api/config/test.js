@@ -2,6 +2,8 @@ module.exports = {
   envName: '[TEST] ',
   preLoad: false,
   redis: process.env.REDIS_URL,
+  // Disable origin whitelist in test to bypass CORS restrictions
+  corsUrl: null,
   login: {
     shareAuthCode: true,
     enable2Auth: false,
