@@ -111,13 +111,14 @@ jobs:
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
           docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
+            --entrypoint /bin/sh \
             -e CY_JSON_ONLY=1 \
             -e SANDBOX_CODE_DIR=/work/sandbox-code \
             -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
             -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
             -e SPEC="$SPEC" \
             -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
-            cypress sh -lc '
+            cypress -lc '
               set -e
               cd /e2e
               npm ci
@@ -230,12 +231,13 @@ jobs:
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
+            --entrypoint /bin/sh \
             -e CY_JSON_ONLY=1 \
             -e SANDBOX_CODE_DIR=/work/sandbox-code \
             -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
             -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
             -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
-            cypress sh -lc '
+            cypress -lc '
               set -e
               cd /e2e
               npm ci
