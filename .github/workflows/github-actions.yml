@@ -231,7 +231,11 @@ jobs:
           set -e
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
+          # Free disk by clearing builder cache (images in use are kept)
+          docker builder prune -af || true
+          docker system df || true
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
+            --no-deps \
             --entrypoint /bin/sh \
             -e CY_JSON_ONLY=1 \
             -e SANDBOX_CODE_DIR=/work/sandbox-code \
@@ -242,14 +246,14 @@ jobs:
               set -e
               cd /e2e
               npm ci
-              echo "Waiting for PR front at http://175.0.0.30:4200 ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.30:4200"
-              echo "Waiting for PR API at http://175.0.0.20:8081/api ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.20:8081/api"
-              echo "Waiting for SANDBOX front at http://175.0.0.31:4200 ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.31:4200"
-              echo "Waiting for SANDBOX API at http://175.0.0.21:8081/api ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.21:8081/api"
+              echo "Waiting for PR front at front:4200 ..."
+              /scripts/wait-for-it.sh front:4200 --timeout=600
+              echo "Waiting for PR API at api:8081 ..."
+              /scripts/wait-for-it.sh api:8081 --timeout=300
+              echo "Waiting for SANDBOX front at front_sandbox:4200 ..."
+              /scripts/wait-for-it.sh front_sandbox:4200 --timeout=600
+              echo "Waiting for SANDBOX API at api_sandbox:8081 ..."
+              /scripts/wait-for-it.sh api_sandbox:8081 --timeout=300
               rm -rf cypress/reports && mkdir -p cypress/reports
               npx cypress run --browser chrome --headless --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
               echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
