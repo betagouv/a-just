@@ -43,13 +43,13 @@ module.exports = {
         email: 'utilisateurtest@a-just.fr',
         first_name: 'Utilisateur',
         last_name: 'Test',
-        password: crypt.encryptPassword('3Bv6%BzX'),
+        password: crypt.encryptPassword('@bUgGD25gX1b'),
         status: 1,
         role: 2,
       },
     })
     if (!createdE2e) {
-      await e2eUser.update({ password: crypt.encryptPassword('3Bv6%BzX'), status: 1, role: 2 })
+      await e2eUser.update({ password: crypt.encryptPassword('@bUgGD25gX1b'), status: 1, role: 2 })
     }
   },
   down: (/*queryInterface , Sequelize*/) => {},
