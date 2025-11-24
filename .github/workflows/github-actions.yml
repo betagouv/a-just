@@ -111,6 +111,7 @@ jobs:
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
           docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
+            --no-deps \
             --entrypoint /bin/sh \
             -e CY_JSON_ONLY=1 \
             -e SANDBOX_CODE_DIR=/work/sandbox-code \
