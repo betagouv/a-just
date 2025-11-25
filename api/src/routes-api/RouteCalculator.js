@@ -237,6 +237,7 @@ export default class RouteCalculator extends Route {
           }
           break
         case 'taux-couverture':
+        case 'coverage':
           {
             const activites = await this.models.Activities.getByMonthNew(dateStart, backupId, contentieuxId, false)
             if (activites.length) {
