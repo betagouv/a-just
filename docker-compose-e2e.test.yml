@@ -174,7 +174,7 @@ services:
       - ./end-to-end:/e2e
       - ./end-to-end/scripts:/scripts
     # working_dir: /e2e
-    # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm install && npx cypress install && npm run cy:run"
+    # entrypoint: /bin/sh -c "/scripts/wait-for-it.sh api:8081 --timeout=300 && /scripts/wait-for-it.sh front:4200 --timeout=300 && npm ci && npx cypress install && npm run cy:run"
     environment:
       - CYPRESS_BASE_URL=http://175.0.0.30:4200
       - NG_APP_SERVER_URL=http://175.0.0.20:8081/api
@@ -263,7 +263,6 @@ services:
       - "max_parallel_workers_per_gather=2"
       - "-c"
       - "max_parallel_workers=4"
-
 
 networks:
   ajust_e2e_network:

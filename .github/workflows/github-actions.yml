@@ -5,8 +5,8 @@ on:
       - sandbox
       - dev
     paths-ignore:
-      - 'site/**'
-      - '**/*.md'
+      - "site/**"
+      - "**/*.md"
   pull_request:
     branches:
       - dev
@@ -47,7 +47,7 @@ jobs:
       - run: docker compose version
 
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
       - name: Run API tests (Mocha + Mochawesome)
         run: |
@@ -102,7 +102,7 @@ jobs:
       - run: docker compose version
 
       - name: Install dependencies
-        run: npm i
+        run: npm ci
       - name: Run E2E tests (Cypress JSON-only, containerized)
         run: |
           set -e
@@ -222,7 +222,7 @@ jobs:
       - run: docker compose version
 
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
       - name: Run Non-Regression E2E tests (Cypress JSON-only, containerized)
         run: |
