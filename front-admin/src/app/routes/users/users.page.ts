@@ -81,6 +81,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
             ? 'Tous'
             : (u.referentielIds || [])
                 .map((id) => this.referentiels.find((r) => r.id === id)?.label)
+                .filter((label) => label !== 'Indisponibilité')
                 .join(', <br/>'),
         ventilationsName: (u.ventilations || [])
           .map((j) => j.label)

@@ -1,20 +1,13 @@
-import { Component } from '@angular/core';
-import {
-  dataInterface,
-  SelectComponent,
-} from '../../../components/select/select.component';
-import { MainClass } from '../../../libs/main-class';
-import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel';
-import { SimulatorService } from '../../../services/simulator/simulator.service';
-import { UserService } from '../../../services/user/user.service';
-import { HumanResourceService } from '../../../services/human-resource/human-resource.service';
-import { ReferentielService } from '../../../services/referentiel/referentiel.service';
-import {
-  userCanViewContractuel,
-  userCanViewGreffier,
-  userCanViewMagistrat,
-} from '../../../utils/user';
-import { HRFonctionInterface } from '../../../interfaces/hr-fonction';
+import { Component } from '@angular/core'
+import { dataInterface, SelectComponent } from '../../../components/select/select.component'
+import { MainClass } from '../../../libs/main-class'
+import { ContentieuReferentielInterface } from '../../../interfaces/contentieu-referentiel'
+import { SimulatorService } from '../../../services/simulator/simulator.service'
+import { UserService } from '../../../services/user/user.service'
+import { HumanResourceService } from '../../../services/human-resource/human-resource.service'
+import { ReferentielService } from '../../../services/referentiel/referentiel.service'
+import { userCanViewContractuel, userCanViewGreffier, userCanViewMagistrat } from '../../../utils/user'
+import { HRFonctionInterface } from '../../../interfaces/hr-fonction'
 
 @Component({
   selector: 'aj-header-selectors',
@@ -27,97 +20,93 @@ export class HeaderSelectorsComponent extends MainClass {
   /**
    * Contentieux selectionné
    */
-  contentieuId: number | null = null;
+  contentieuId: number | null = null
   /**
    * Tous les référentiel
    */
-  formReferentiel: dataInterface[] = [];
+  formReferentiel: dataInterface[] = []
 
   /**
    * Liste des fonctions pour la catégorie selectionnée
    */
-  functionsList: Array<any> = [];
+  functionsList: Array<any> = []
   /**
    * Identifiant(s) de fonction selectionnée(s)
    */
-  selectedFonctionsIds: number[] = [];
+  selectedFonctionsIds: number[] = []
 
   /**
    * Référentiel selectionné
    */
-  referentiel: ContentieuReferentielInterface[] = [];
+  referentiel: ContentieuReferentielInterface[] = []
   /**
    * Sous-contentieux selectionné(s)
    */
-  subList: number[] = [];
+  subList: number[] = []
 
   /**
    * Indicateur de selection de paramètre de simulation
    */
-  disabled: string = 'disabled';
+  disabled: string = 'disabled'
 
   /**
    * Peux voir l'interface magistrat
    */
-  canViewMagistrat: boolean = false;
+  canViewMagistrat: boolean = false
   /**
    * Peux voir l'interface greffier
    */
-  canViewGreffier: boolean = false;
+  canViewGreffier: boolean = false
   /**
    * Peux voir l'interface contractuel
    */
-  canViewContractuel: boolean = false;
+  canViewContractuel: boolean = false
 
   constructor(
     private simulatorService: SimulatorService,
     private userService: UserService,
     private humanResourceService: HumanResourceService,
-    private referentielService: ReferentielService
+    private referentielService: ReferentielService,
   ) {
-    super();
-    this.loadFunctions();
+    super()
+    this.loadFunctions()
 
     this.watch(
       this.simulatorService.disabled.subscribe((disabled) => {
-        this.disabled = disabled;
-      })
-    );
+        this.disabled = disabled
+      }),
+    )
     this.watch(
       this.userService.user.subscribe((u) => {
-        this.canViewMagistrat = userCanViewMagistrat(u);
-        this.canViewGreffier = userCanViewGreffier(u);
-        this.canViewContractuel = userCanViewContractuel(u);
-      })
-    );
+        this.canViewMagistrat = userCanViewMagistrat(u)
+        this.canViewGreffier = userCanViewGreffier(u)
+        this.canViewContractuel = userCanViewContractuel(u)
+      }),
+    )
     this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
-        this.referentiel = c.filter(
-          (r) =>
-            this.referentielService.idsIndispo.indexOf(r.id) === -1 &&
-            this.referentielService.idsSoutien.indexOf(r.id) === -1
-        );
-        this.formatReferentiel();
-      })
-    );
+      this.humanResourceService.contentieuxReferentielOnlyFiltered.subscribe((c) => {
+        this.referentiel = c.filter((r) => this.referentielService.idsSoutien.indexOf(r.id) === -1)
+        this.formatReferentiel()
+      }),
+    )
     this.watch(
       this.simulatorService.selectedCategory.subscribe((u) => {
-        this.loadFunctions();
-      })
-    );
+        this.loadFunctions()
+      }),
+    )
     this.watch(
       this.simulatorService.contentieuOrSubContentieuId.subscribe((values) => {
         if (values === null) {
-          this.contentieuId = null;
-          this.subList = [];
-          this.loadFunctions();
+          this.contentieuId = null
+          this.subList = []
+          this.loadFunctions()
         }
-      })
-    );
+      }),
+    )
 
     this.simulatorService.selectedCategory.subscribe(() => {
-      this.loadFunctions();
-    });
+      this.loadFunctions()
+    })
   }
 
   /**
@@ -126,17 +115,14 @@ export class HeaderSelectorsComponent extends MainClass {
   loadFunctions() {
     const finalList = this.humanResourceService.fonctions
       .getValue()
-      .filter(
-        (v) =>
-          v.categoryId === this.simulatorService.selectedCategory.getValue()?.id
-      )
+      .filter((v) => v.categoryId === this.simulatorService.selectedCategory.getValue()?.id)
       .map((f: HRFonctionInterface) => ({
         id: f.id,
         value: f.code,
-      }));
-    this.selectedFonctionsIds = finalList.map((a) => a.id);
-    this.functionsList = finalList;
-    this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds);
+      }))
+    this.selectedFonctionsIds = finalList.map((a) => a.id)
+    this.functionsList = finalList
+    this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
   /**
@@ -151,7 +137,7 @@ export class HeaderSelectorsComponent extends MainClass {
         value: s.label,
         parentId: r.id,
       })),
-    }));
+    }))
   }
 
   /**
@@ -159,8 +145,8 @@ export class HeaderSelectorsComponent extends MainClass {
    * @param fonctionsId identifiant de la fonction choisie
    */
   onChangeFonctionsSelected(fonctionsId: string[] | number[]) {
-    this.selectedFonctionsIds = fonctionsId.map((f) => +f);
-    this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds);
+    this.selectedFonctionsIds = fonctionsId.map((f) => +f)
+    this.simulatorService.selectedFonctionsIds.next(this.selectedFonctionsIds)
   }
 
   /**
@@ -171,38 +157,28 @@ export class HeaderSelectorsComponent extends MainClass {
   updateReferentielSelected(type: string = '', event: any = null) {
     if (type === 'referentiel') {
       if (this.canViewMagistrat || this.canViewGreffier) {
-        this.subList = [];
-        const fnd = this.referentiel.find((o) => o.id === event[0]);
-        fnd?.childrens?.map((value) => this.subList.push(value.id));
-        this.contentieuId = event[0];
-        this.simulatorService.contentieuOrSubContentieuId.next([
-          this.contentieuId as number,
-        ]);
-        this.disabled = '';
-        this.simulatorService.disabled.next(this.disabled);
+        this.subList = []
+        const fnd = this.referentiel.find((o) => o.id === event[0])
+        fnd?.childrens?.map((value) => this.subList.push(value.id))
+        this.contentieuId = event[0]
+        this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
+        this.disabled = ''
+        this.simulatorService.disabled.next(this.disabled)
       } else {
-        alert(
-          "Vos droits ne vous permettent pas d'exécuter une simulation, veuillez contacter un administrateur."
-        );
+        alert("Vos droits ne vous permettent pas d'exécuter une simulation, veuillez contacter un administrateur.")
       }
     } else if (type === 'subList') {
-      this.subList = event;
-      const tmpRefLength = this.referentiel.find(
-        (v) => v.id === this.contentieuId
-      );
+      this.subList = event
+      const tmpRefLength = this.referentiel.find((v) => v.id === this.contentieuId)
       if (!event.length) {
-        this.disabled = 'disabled';
-        this.simulatorService.disabled.next(this.disabled);
-        this.simulatorService.contentieuOrSubContentieuId.next([]);
+        this.disabled = 'disabled'
+        this.simulatorService.disabled.next(this.disabled)
+        this.simulatorService.contentieuOrSubContentieuId.next([])
       } else {
-        if (event.length === tmpRefLength?.childrens?.length)
-          this.simulatorService.contentieuOrSubContentieuId.next([
-            this.contentieuId as number,
-          ]);
-        else
-          this.simulatorService.contentieuOrSubContentieuId.next(this.subList);
-        this.disabled = '';
-        this.simulatorService.disabled.next(this.disabled);
+        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
+        else this.simulatorService.contentieuOrSubContentieuId.next(this.subList)
+        this.disabled = ''
+        this.simulatorService.disabled.next(this.disabled)
       }
     }
   }
@@ -211,7 +187,7 @@ export class HeaderSelectorsComponent extends MainClass {
    * Récuperer le type de l'app
    */
   getInterfaceType() {
-    return this.userService.interfaceType === 1;
+    return this.userService.interfaceType === 1
   }
 
   /**
@@ -220,8 +196,7 @@ export class HeaderSelectorsComponent extends MainClass {
    * @returns
    */
   referentielMappingNameByInterface(label: string) {
-    if (this.getInterfaceType() === true)
-      return this.referentielCAMappingName(label);
-    else return this.referentielMappingName(label);
+    if (this.getInterfaceType() === true) return this.referentielCAMappingName(label)
+    else return this.referentielMappingName(label)
   }
 }

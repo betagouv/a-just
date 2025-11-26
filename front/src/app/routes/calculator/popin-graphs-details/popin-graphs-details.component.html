@@ -2,9 +2,9 @@
   (onClose)="calculatorService.showGraphDetailType = null">
   <div class="popin-graphs-details">
     <div class="header-popin" [ngStyle]="{
-        'grid-template-columns': 'repeat(' + humanResourceService.mainContentieuxReferentiel().length + ', 1fr)',
+        'grid-template-columns': 'repeat(' + humanResourceService.mainContentieuxReferentielFiltered().length + ', 1fr)',
       }">
-      @for (ref of humanResourceService.mainContentieuxReferentiel(); track ref.id) {
+      @for (ref of humanResourceService.mainContentieuxReferentielFiltered(); track ref.id) {
       <div class="flex-1" [style.color]="
             calculatorService.selectedRefGraphDetail && calculatorService.selectedRefGraphDetail === ref.id
               ? 'rgba(246, 246, 246, 1)'

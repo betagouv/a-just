@@ -1,6 +1,14 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
-import { EXECUTE_VENTILATION, USER_REMOVE_HR, HUMAN_RESOURCE_PAGE_LOAD, HUMAN_RESOURCE_NEW_SITUATION_SAVED, HUMAN_RESOURCE_SITUATION_UPDATED, VENTILATION_DATE_CHANGE, VENTILATION_CATEGORY_CHANGE } from '../constants/log-codes'
+import {
+  EXECUTE_VENTILATION,
+  USER_REMOVE_HR,
+  HUMAN_RESOURCE_PAGE_LOAD,
+  HUMAN_RESOURCE_NEW_SITUATION_SAVED,
+  HUMAN_RESOURCE_SITUATION_UPDATED,
+  VENTILATION_DATE_CHANGE,
+  VENTILATION_CATEGORY_CHANGE,
+} from '../constants/log-codes'
 import { preformatHumanResources } from '../utils/ventilator'
 import { getBgCategoryColor, getCategoryColor, getHoverCategoryColor } from '../constants/categories'
 import { copyArray } from '../utils/array'
@@ -278,7 +286,7 @@ export default class RouteHumanResources extends Route {
     console.timeEnd('filter list 5')
 
     console.time('filter list 6')
-    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId, false, null, false, false, ctx.state.user.id)
+    const originalReferentiel = await this.models.ContentieuxReferentiels.getReferentiels(backupId, false, null, false, false)
     console.timeEnd('filter list 6')
 
     console.time('filter list 7')

@@ -143,8 +143,8 @@ export class ViewAnalyticsComponent extends MainClass implements OnInit, OnDestr
 
   ngOnInit() {
     this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
-        this.referentiel = c.filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1 && this.referentielService.idsSoutien.indexOf(r.id) === -1)
+      this.humanResourceService.contentieuxReferentielOnlyFiltered.subscribe((c) => {
+        this.referentiel = c.filter((r) => this.referentielService.idsSoutien.indexOf(r.id) === -1)
       }),
     )
 
