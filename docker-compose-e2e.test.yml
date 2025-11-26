@@ -158,7 +158,7 @@ services:
       retries: 5
 
   cypress:
-    image: cypress/browsers:node-22.12.0-chrome-131
+    image: cypress/browsers:node-22.12.0-chrome-131.0.6778.108-1-ff-133.0-edge-131.0.2903.70-1
     networks:
       - ajust_e2e_network
     depends_on:
