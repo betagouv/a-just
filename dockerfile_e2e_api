@@ -3,7 +3,7 @@ ARG SKIP_FRONT_ADMIN=0
 WORKDIR /home/api
 # Install dependencies first to leverage Docker layer caching
 COPY ./api/package*.json /home/api/
-RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --include=dev; fi
+RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm ci --include=dev; fi
 # Copy source and build
 COPY ./api /home/api
 RUN npm run build
@@ -11,7 +11,7 @@ RUN npm run build
 # Build front (Angular) and front-admin, and place their outputs where the API expects them at runtime
 WORKDIR /home/front
 COPY ./front/package*.json /home/front/
-RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --include=dev; fi
+RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm ci --include=dev; fi
 # Ensure esbuild native binary matches the library version inside this image
 RUN npm rebuild esbuild || true
 COPY ./front /home/front
@@ -19,7 +19,7 @@ RUN npm run build
 
 WORKDIR /home/front-admin
 COPY ./front-admin/package*.json /home/front-admin/
-RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --include=dev; fi
+RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm ci --include=dev; fi
 # Ensure esbuild native binary matches the library version inside this image
 RUN npm rebuild esbuild || true
 COPY ./front-admin /home/front-admin

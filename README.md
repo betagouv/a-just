@@ -27,7 +27,7 @@ npm run db:start
 
 ```
 cd api
-npm i
+npm ci
 npm run start
 
 accéssible http://localhost:8080/api
@@ -37,7 +37,7 @@ accéssible http://localhost:8080/api
 
 ```
 cd front
-npm i
+npm ci
 npm run start
 
 accéssible http://localhost:4200

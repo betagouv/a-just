@@ -1,15 +1,18 @@
 # a-just
+
 Formatage des données
 
 # 1. Installation
+
 ```
 cd format-datas
-npm i
+npm ci
 ```
 
 # 2. Utilisation
 
 Mettre ses fichier xml de la SDSE dans le dossier inputs
+
 ```
 cd format-datas
 npm start

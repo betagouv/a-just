@@ -4,7 +4,7 @@ COPY ./api /home/api
 WORKDIR /home/api
 
 CMD echo "$NODE_ENV"; && \
-    npm i --production=false && \
+    npm ci --production=false && \
     if [ "$NODE_ENV" = "production" ] || [ "$NODE_ENV" = "recette" ] || [ "$NODE_ENV" = "test" ]; then \
         npm run build:production && \ 
 	    npm run start:production; \
