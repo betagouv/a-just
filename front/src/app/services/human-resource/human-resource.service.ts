@@ -28,6 +28,10 @@ export class HumanResourceService {
    */
   mainContentieuxReferentiel = signal<ContentieuReferentielInterface[]>([])
   /**
+   * Liste des contentieux uniquement filtré
+   */
+  mainContentieuxReferentielFiltered = signal<ContentieuReferentielInterface[]>([])
+  /**
    * Liste des contentieux + soutien + indispo
    */
   contentieuxReferentiel: BehaviorSubject<ContentieuReferentielInterface[]> = new BehaviorSubject<ContentieuReferentielInterface[]>([])
@@ -35,6 +39,10 @@ export class HumanResourceService {
    * Liste des contentieux uniquement
    */
   contentieuxReferentielOnly: BehaviorSubject<ContentieuReferentielInterface[]> = new BehaviorSubject<ContentieuReferentielInterface[]>([])
+  /**
+   * Liste des contentieux uniquement filtré
+   */
+  contentieuxReferentielOnlyFiltered: BehaviorSubject<ContentieuReferentielInterface[]> = new BehaviorSubject<ContentieuReferentielInterface[]>([])
   /**
    * Liste des juridictions dont à accès l'utilisateur
    */

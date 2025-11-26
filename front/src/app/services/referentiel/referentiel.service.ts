@@ -37,7 +37,7 @@ export class ReferentielService {
     this.humanResourceService.hrBackup.subscribe(async (backup) => {
       if (backup) {
         const datas = await this.onGetReferentiel(backup.id)
-        this.formatDatas(datas.referentiels)
+        this.formatDatas(datas.referentielsComplete, datas.referentiels)
         this.referentielIsComplete.set(datas.isComplete)
       }
     })
@@ -47,7 +47,7 @@ export class ReferentielService {
    * Récupération des informations de type référentiel et prétraitement pour gagner du temps dans les scripts
    * @param list
    */
-  formatDatas(list: ContentieuReferentielInterface[]) {
+  formatDatas(list: ContentieuReferentielInterface[], filteredList: ContentieuReferentielInterface[]) {
     const refIndispo = list.find((r) => r.label === 'Indisponibilité')
     const idsIndispo: number[] = []
     this.humanResourceService.allIndisponibilityReferentiel = []
@@ -90,8 +90,16 @@ export class ReferentielService {
         .filter((a) => idsSoutien.indexOf(a.id) === -1),
     )
 
+    this.humanResourceService.mainContentieuxReferentielFiltered.set(
+      filteredList
+        .filter((r) => r.label !== 'Indisponibilité')
+        .filter((a) => idsIndispo.indexOf(a.id) === -1)
+        .filter((a) => idsSoutien.indexOf(a.id) === -1),
+    )
+
     this.humanResourceService.contentieuxReferentiel.next(list)
     this.humanResourceService.contentieuxReferentielOnly.next(list.filter((r) => idsIndispo.indexOf(r.id) === -1))
+    this.humanResourceService.contentieuxReferentielOnlyFiltered.next(filteredList.filter((r) => idsIndispo.indexOf(r.id) === -1))
   }
 
   /**

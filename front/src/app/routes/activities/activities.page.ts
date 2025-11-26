@@ -496,7 +496,7 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
    * Chargement de la liste des activités d'un mois sélectionné
    */
   onLoadMonthActivities() {
-    if (this.humanResourceService.contentieuxReferentiel.getValue().length === 0) {
+    if (this.humanResourceService.contentieuxReferentielOnlyFiltered.getValue().length === 0) {
       // wait datas
       setTimeout(() => {
         this.onLoadMonthActivities()
@@ -523,7 +523,7 @@ export class ActivitiesPage extends MainClass implements OnInit, OnDestroy {
           this.canEditActivities = true
         }
 
-        const referentiels = [...this.humanResourceService.contentieuxReferentiel.getValue()]
+        const referentiels = [...this.humanResourceService.contentieuxReferentielOnlyFiltered.getValue()]
         const oldReferentielSetted = [...this.referentiel]
         let autoFocusId = null
         // todo set in, out, stock for each

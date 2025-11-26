@@ -748,8 +748,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
     this.simulatorService.selectedCategory.next(findCategory)
 
     this.watch(
-      this.humanResourceService.contentieuxReferentiel.subscribe((c) => {
-        this.referentiel = c.filter((r) => this.referentielService.idsIndispo.indexOf(r.id) === -1 && this.referentielService.idsSoutien.indexOf(r.id) === -1)
+      this.humanResourceService.contentieuxReferentielOnlyFiltered.subscribe((c) => {
+        this.referentiel = c.filter((r) => this.referentielService.idsSoutien.indexOf(r.id) === -1)
         this.formatReferentiel()
       }),
     )
@@ -844,6 +844,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Formatage du référentiel
    */
   formatReferentiel() {
+    console.log('referentiel', this.referentiel)
     this.formReferentiel = this.referentiel.map((r) => ({
       id: r.id,
       value: this.referentielMappingNameByInterface(r.label),
