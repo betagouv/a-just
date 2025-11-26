@@ -1,6 +1,7 @@
 import { groupBy, sumBy } from 'lodash'
 import { listCategories } from '../utils/ventilator'
 import { loadOrWarmHR } from '../utils/redis'
+import { Op } from 'sequelize'
 
 export default (sequelizeInstance, Model) => {
   Model.getAll = async () => {
@@ -37,6 +38,7 @@ export default (sequelizeInstance, Model) => {
       where: {
         enabled: true,
         parent_id: null,
+        i_elst: { [Op.ne]: 0 },
       },
       order: [['label', 'asc']],
     })
