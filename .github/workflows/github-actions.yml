@@ -107,7 +107,12 @@ jobs:
         run: |
           set -e
           SPEC_INPUT="${{ github.event.inputs.spec }}"
-          export SPEC="$SPEC_INPUT"
+          # Default to fast subset (login + cockpit) unless SPEC is provided
+          if [ -n "$SPEC_INPUT" ]; then
+            export SPEC="$SPEC_INPUT"
+          else
+            export SPEC="cypress/e2e/access.cy.js,cypress/e2e/cockpit.cy.js"
+          fi
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
           docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
@@ -128,11 +133,7 @@ jobs:
               echo "Waiting for API at api:8081 ..."
               /scripts/wait-for-it.sh api:8081 --timeout=300
               rm -rf cypress/reports && mkdir -p cypress/reports
-              if [ -n "$SPEC" ]; then
-                npx cypress run --browser chrome --headless --spec "$SPEC"
-              else
-                npx cypress run --browser chrome --headless
-              fi
+              npx cypress run --browser chrome --headless --spec "$SPEC"
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             '
           docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true

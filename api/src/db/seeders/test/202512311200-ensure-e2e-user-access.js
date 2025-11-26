@@ -56,11 +56,24 @@ module.exports = {
     await models.UsersAccess.updateAccess(user.dataValues.id, accessIds)
 
     // Ensure the user has at least one TJ/HRBackup via UserVentilations
+    // Try a known label first, otherwise fall back to the first available backup
     const BACKUP_LABEL = 'test010'
-    let backupId = await models.HRBackups.findByLabel(BACKUP_LABEL)
+    let backup = await models.HRBackups.findOne({
+      attributes: ['id', 'label'],
+      where: { label: BACKUP_LABEL },
+      raw: true,
+    })
 
-    if (backupId) {
-      await models.UserVentilations.pushVentilation(user.dataValues.id, backupId)
+    if (!backup) {
+      backup = await models.HRBackups.findOne({
+        attributes: ['id', 'label'],
+        order: [['id', 'ASC']],
+        raw: true,
+      })
+    }
+
+    if (backup?.id) {
+      await models.UserVentilations.pushVentilation(user.dataValues.id, backup.id)
     }
   },
   down: (/*queryInterface , Sequelize*/) => {},
