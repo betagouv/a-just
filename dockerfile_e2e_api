@@ -10,6 +10,25 @@ RUN npm run build
 
 # Build front (Angular) and front-admin, and place their outputs where the API expects them at runtime
 WORKDIR /home/front
+# Build-time env for Angular front
+ARG NG_APP_SERVER_URL
+ARG NG_APP_NODE_ENV=test
+ARG NG_APP_VERSION=local
+ARG NG_APP_MATOMO
+ARG NG_APP_MATOMO_TM
+ARG NG_APP_SENTRY_DSN
+ARG NG_APP_SENTRY_TRACES_SAMPLE_RATE=0
+
+# Expose them to the build steps (used by @ngx-env/builder)
+ENV NG_APP_SERVER_URL=${NG_APP_SERVER_URL}
+ENV NG_APP_NODE_ENV=${NG_APP_NODE_ENV}
+ENV NG_APP_VERSION=${NG_APP_VERSION}
+ENV NG_APP_MATOMO=${NG_APP_MATOMO}
+ENV NG_APP_MATOMO_TM=${NG_APP_MATOMO_TM}
+ENV NG_APP_SENTRY_DSN=${NG_APP_SENTRY_DSN}
+ENV NG_APP_SENTRY_TRACES_SAMPLE_RATE=${NG_APP_SENTRY_TRACES_SAMPLE_RATE}
+# Ensure Angular uses the test configuration (base href '/')
+ENV NODE_ENV=${NG_APP_NODE_ENV}
 COPY ./front/package*.json /home/front/
 RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --include=dev; fi
 # Ensure esbuild native binary matches the library version inside this image
@@ -18,6 +37,7 @@ COPY ./front /home/front
 RUN npm run build
 
 WORKDIR /home/front-admin
+ENV NODE_ENV=${NG_APP_NODE_ENV}
 COPY ./front-admin/package*.json /home/front-admin/
 RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm install --include=dev; fi
 # Ensure esbuild native binary matches the library version inside this image
@@ -40,3 +60,4 @@ COPY --from=builder /home/api/node_modules /home/api/node_modules
 COPY ./api/package*.json /home/api/
 # Start fast: no install/build at runtime
 CMD echo "NODE_ENV = $NODE_ENV"; npm run start:production;
+

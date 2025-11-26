@@ -8,10 +8,12 @@ import { BehaviorSubject } from 'rxjs'
 export class ServerService {
   _http = inject(HttpService)
   userToken: BehaviorSubject<any> = new BehaviorSubject<any>(null)
-  serverUrl: string = import.meta.env.NG_APP_SERVER_URL
+  serverUrl: string = (import.meta.env.NG_APP_SERVER_URL || '').trim()
 
   getUrl(url: string): string {
-    return this.serverUrl + url
+    const base = this.serverUrl.endsWith('/') ? this.serverUrl : this.serverUrl + '/'
+    const path = url.startsWith('/') ? url.slice(1) : url
+    return base + path
   }
 
   handleError(error: any) {

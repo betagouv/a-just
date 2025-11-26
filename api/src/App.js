@@ -105,6 +105,7 @@ const cspConfig = {
         "'self'",
         ...styleSha1Generate([`${__dirname}/front/index.html`]),
         'cdnjs.cloudflare.com',
+        'https://fonts.googleapis.com',
         "'sha256-Ks+4bfA56EzWbsVt5/a+A7rCibdXWRQVb7y2dkDLIZM='",
         "'sha256-MKASWYfd3dGFQes9nQT5XnslE3xYlnUb4cHpxhk4fag='",
         "'sha256-eK2nDKvEyw7RbvnsAc4UTeSvLsouV8qnHxl0X48dCbs='",

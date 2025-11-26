@@ -27,7 +27,7 @@ export class LoginPage implements OnInit {
   /**
    * SSO is activate to this env
    */
-  ssoIsActivate: boolean = import.meta.env.NG_APP_ENABLE_SSO
+  ssoIsActivate: boolean = !!((import.meta as any)?.env?.NG_APP_ENABLE_SSO)
   /**
    * Error connection message on login
    */
