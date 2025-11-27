@@ -67,30 +67,40 @@ describe("Test d'accés aux pages", () => {
   };
 
   it("User with access to specific pages should not have access to others", () => {
+    console.log("🔵 [TEST] Starting test - calling cy.login()");
     cy.login();
+    console.log("🔵 [TEST] cy.login() completed, proceeding to access list");
 
     // Convert forEach to sequential cy.wrap chain to ensure proper Cypress queueing
     cy.wrap(accessUrlList).each((access) => {
       const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
+      console.log(`🔵 [TEST] accessIds being set: ${JSON.stringify(accessIds)} for ${access.url}`);
 
       if (access.url !== undefined) {
         cy.log(`🔄 Starting: Testing access for ${access.url}`);
+        console.log(`🔵 [TEST] ===== Starting iteration for ${access.url} =====`);
         cy.wait(1000); // Small wait to see the log
         
         // Mettre à jour les droits d'accès pour l'utilisateur
         cy.wrap(null).then(() => {
+          console.log(`🔵 [TEST] BEFORE updateUserAccounatApi for ${access.url} - userId: ${userId}, accessIds: ${JSON.stringify(accessIds)}, ventilations: ${JSON.stringify(ventilations)}`);
           return updateUserAccounatApi({
             userId,
             accessIds,
             ventilations,
             token,
+          }).then((resp) => {
+            console.log(`🔵 [TEST] AFTER updateUserAccounatApi completed for ${access.url}, status: ${resp.status}`);
+            return resp;
           });
         });
         
         cy.log(`✅ Permissions updated, waiting before visiting...`);
+        console.log(`🔵 [TEST] Waiting 4 seconds before visiting ${access.url}...`);
         cy.wait(4000); // 4 second wait after permission update
         
         cy.log(`🌐 Visiting allowed page: ${access.url}`);
+        console.log(`🔵 [TEST] NOW visiting ${access.url}`);
         // Vérifier que l'utilisateur peut accéder à la page autorisée
         cy.visit(`${access.url}`)
           .location("pathname")
