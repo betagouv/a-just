@@ -37,40 +37,41 @@ export const accessUrlList = [
     url: "/panorama",
     label: accessUrlToString(USER_ACCESS_DASHBOARD),
   },
-  {
-    id: USER_ACCESS_VENTILATIONS,
-    url: "/ventilations",
-    label: accessUrlToString(USER_ACCESS_VENTILATIONS),
-  },
-  {
-    id: USER_ACCESS_ACTIVITIES,
-    url: "/donnees-d-activite",
-    label: accessUrlToString(USER_ACCESS_ACTIVITIES),
-  },
-  {
-    id: USER_ACCESS_AVERAGE_TIME,
-    label: accessUrlToString(USER_ACCESS_AVERAGE_TIME),
-  },
-  {
-    id: USER_ACCESS_CALCULATOR,
-    url: "/cockpit",
-    label: accessUrlToString(USER_ACCESS_CALCULATOR),
-  },
-  {
-    id: USER_ACCESS_SIMULATOR,
-    url: "/simulateur",
-    label: accessUrlToString(USER_ACCESS_SIMULATOR),
-  },
-  {
-    id: USER_ACCESS_WHITE_SIMULATOR,
-    url: "/simulateur-sans-donnees",
-    label: accessUrlToString(USER_ACCESS_WHITE_SIMULATOR),
-  },
-  {
-    id: USER_ACCESS_REAFFECTATOR,
-    url: "/reaffectateur",
-    label: accessUrlToString(USER_ACCESS_REAFFECTATOR),
-  },
+  // TEMPORARILY COMMENTED OUT FOR DEBUGGING - only test panorama
+  // {
+  //   id: USER_ACCESS_VENTILATIONS,
+  //   url: "/ventilations",
+  //   label: accessUrlToString(USER_ACCESS_VENTILATIONS),
+  // },
+  // {
+  //   id: USER_ACCESS_ACTIVITIES,
+  //   url: "/donnees-d-activite",
+  //   label: accessUrlToString(USER_ACCESS_ACTIVITIES),
+  // },
+  // {
+  //   id: USER_ACCESS_AVERAGE_TIME,
+  //   label: accessUrlToString(USER_ACCESS_AVERAGE_TIME),
+  // },
+  // {
+  //   id: USER_ACCESS_CALCULATOR,
+  //   url: "/cockpit",
+  //   label: accessUrlToString(USER_ACCESS_CALCULATOR),
+  // },
+  // {
+  //   id: USER_ACCESS_SIMULATOR,
+  //   url: "/simulateur",
+  //   label: accessUrlToString(USER_ACCESS_SIMULATOR),
+  // },
+  // {
+  //   id: USER_ACCESS_WHITE_SIMULATOR,
+  //   url: "/simulateur-sans-donnees",
+  //   label: accessUrlToString(USER_ACCESS_WHITE_SIMULATOR),
+  // },
+  // {
+  //   id: USER_ACCESS_REAFFECTATOR,
+  //   url: "/reaffectateur",
+  //   label: accessUrlToString(USER_ACCESS_REAFFECTATOR),
+  // },
 ];
 
 export const accessFonctionsToString = (roleId) => {
