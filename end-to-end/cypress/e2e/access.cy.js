@@ -14,13 +14,13 @@ describe("Test d'accés aux pages", () => {
 
   before(() => {
     //Login to get the admin user token so we can retireve user data
-    loginApi(user.email, user.password).then((resp) => {
+    return loginApi(user.email, user.password).then((resp) => {
       cy.log("Login API response:", resp.body); // Debug log
       userId = resp.body.user.id;
       token = resp.body.token;
 
       // Get user data to check access
-      getUserDataApi(token).then((resp) => {
+      return getUserDataApi(token).then((resp) => {
         // Give all access to the user
 
         ventilations = resp.body.data.backups.map((v) => v.id);
@@ -28,7 +28,7 @@ describe("Test d'accés aux pages", () => {
         const accessFonctions = accessFonctionsList.map((access) => access.id);
         const accessIds = [...accessUrls, ...accessFonctions];
 
-        updateUserAccounatApi({
+        return updateUserAccounatApi({
           userId,
           accessIds,
           ventilations,
