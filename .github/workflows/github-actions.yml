@@ -111,8 +111,8 @@ jobs:
           docker compose -p test-e2e -f docker-compose-e2e.test.yml ps
           
           echo ""
-          echo "=== API Container Logs (last 150 lines) ==="
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=150 api
+          echo "=== API Container Logs (last 300 lines) ==="
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=300 api
           echo "=== End of API Logs ==="
           echo ""
           

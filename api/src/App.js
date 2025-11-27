@@ -381,8 +381,14 @@ export default class App extends AppBase {
       return
     }
 
+    console.log('🔧 [DB INIT] Running migrations...')
     await db.migrations()
+    console.log('✅ [DB INIT] Migrations complete')
+    
+    console.log(`🌱 [DB INIT] Running seeders for NODE_ENV=${process.env.NODE_ENV}...`)
     await db.seeders()
+    console.log('✅ [DB INIT] Seeders complete')
+    
     if (process.env.NODE_ENV !== 'test') {
       startCrons(this)
       console.log('--- IS READY ---', config.port)
