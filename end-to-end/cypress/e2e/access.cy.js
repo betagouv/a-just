@@ -95,11 +95,14 @@ describe("Test d'accés aux pages", () => {
           });
         });
         
-        cy.log(`✅ Permissions updated, reloading to clear cache...`);
-        console.log(`🔵 [TEST] Permissions updated, reloading page to clear Angular cache`);
-        cy.reload();
-        console.log(`🔵 [TEST] Page reloaded, waiting before visiting ${access.url}...`);
-        cy.wait(2000); // Wait after reload
+        cy.log(`✅ Permissions updated, logging out and back in...`);
+        console.log(`🔵 [TEST] Permissions updated, clearing session and re-logging in`);
+        cy.clearCookies();
+        cy.clearLocalStorage();
+        console.log(`🔵 [TEST] Session cleared, re-logging in with new permissions`);
+        cy.login(); // Re-login to establish fresh session with updated permissions
+        console.log(`🔵 [TEST] Re-login complete, waiting before visiting ${access.url}...`);
+        cy.wait(2000); // Wait after login
         
         cy.log(`🌐 Visiting allowed page: ${access.url}`);
         console.log(`🔵 [TEST] NOW visiting ${access.url}`);
