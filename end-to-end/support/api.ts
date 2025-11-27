@@ -9,8 +9,6 @@ export const loginApi = (email: string, password: string) => {
       email: email,
       password: password,
     },
-    // keep cookies-based session
-    withCredentials: true,
   });
 };
 
