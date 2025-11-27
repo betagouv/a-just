@@ -74,24 +74,17 @@ describe("Test d'accés aux pages", () => {
 
       if (access.url !== undefined) {
         cy.log(`🔄 Starting: Testing access for ${access.url}`);
-        console.log(`🔵 [TEST] ===== Starting iteration for ${access.url} =====`);
         
         // Mettre à jour les droits d'accès pour l'utilisateur
-        cy.wrap(null).then(() => {
-          console.log(`🔵 [TEST] BEFORE updateUserAccounatApi for ${access.url} - userId: ${userId}, accessIds: ${JSON.stringify(accessIds)}, ventilations: ${JSON.stringify(ventilations)}`);
-          return updateUserAccounatApi({
-            userId,
-            accessIds,
-            ventilations,
-            token,
-          }).then((resp) => {
-            console.log(`🔵 [TEST] AFTER updateUserAccounatApi completed for ${access.url}, status: ${resp.status}`);
-            return resp;
-          });
+        updateUserAccounatApi({
+          userId,
+          accessIds,
+          ventilations,
+          token,
         });
         
+        cy.wait(3000); // Wait for permission update to complete
         cy.log(`✅ Permissions updated, logging out...`);
-        console.log(`🔵 [TEST] Permissions updated, clearing session (logout)`);
         cy.clearCookies();
         cy.clearLocalStorage();
         
