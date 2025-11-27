@@ -114,21 +114,28 @@ module.exports = {
       console.log(`   ✓ ${accessToString(accessId)}`)
     }
 
-    // Associate user with an HR backup (find the first available one)
+    // Associate user with an HR backup (prefer test010, fallback to first available)
     console.log('🔍 [E2E SEEDER] Looking for HR backup to associate with user...')
-    const firstBackup = await models.HRBackups.findOne({
-      order: [['id', 'ASC']],
+    let targetBackup = await models.HRBackups.findOne({
+      where: { label: 'test010' },
     })
 
-    if (firstBackup) {
+    if (!targetBackup) {
+      console.log('⚠️  [E2E SEEDER] test010 not found, using first available backup')
+      targetBackup = await models.HRBackups.findOne({
+        order: [['id', 'ASC']],
+      })
+    }
+
+    if (targetBackup) {
       await models.UserVentilations.create({
         user_id: testUser.id,
-        hr_backup_id: firstBackup.id,
+        hr_backup_id: targetBackup.id,
       })
       console.log(`✅ [E2E SEEDER] User associated with HR backup:`)
-      console.log(`   - ID: ${firstBackup.id}`)
-      console.log(`   - Label: ${firstBackup.label}`)
-      console.log(`   - Type: ${firstBackup.type || 'N/A'}`)
+      console.log(`   - ID: ${targetBackup.id}`)
+      console.log(`   - Label: ${targetBackup.label}`)
+      console.log(`   - Type: ${targetBackup.type || 'N/A'}`)
     } else {
       console.warn('⚠️  [E2E SEEDER] No HR backup found - user will not have access to any jurisdiction')
     }
