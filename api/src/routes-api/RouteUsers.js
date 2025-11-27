@@ -251,16 +251,24 @@ export default class RouteUsers extends Route {
     accesses: [Access.isAdmin],
   })
   async updateAccount(ctx) {
+    console.log('🔧 [UPDATE ACCOUNT] Request received:', JSON.stringify(this.body(ctx)))
     const { userId, referentielIds } = this.body(ctx)
+    console.log(`🔧 [UPDATE ACCOUNT] userId=${userId}, referentielIds=${referentielIds}`)
     const userToUpdate = await this.model.userPreview(userId)
+    console.log(`🔧 [UPDATE ACCOUNT] userToUpdate:`, userToUpdate ? `id=${userToUpdate.id}, role=${userToUpdate.role}` : 'null')
     if (userToUpdate && userToUpdate.role === USER_ROLE_SUPER_ADMIN && ctx.state.user.role !== USER_ROLE_SUPER_ADMIN) {
+      console.log('❌ [UPDATE ACCOUNT] Blocked: Cannot modify super admin')
       ctx.throw(401, "Vous ne pouvez pas modifier les droits d'un super administrateur.")
     }
     try {
+      console.log('🔧 [UPDATE ACCOUNT] Calling model.updateAccount...')
       await this.model.updateAccount(this.body(ctx))
+      console.log('✅ [UPDATE ACCOUNT] model.updateAccount completed')
       await this.models.Logs.addLog(ADMIN_CHANGE_USER_ACCESS, ctx.state.user.id, { userId })
       this.sendOk(ctx, 'OK')
     } catch (err) {
+      console.error('❌ [UPDATE ACCOUNT] Error:', err)
+      console.error('❌ [UPDATE ACCOUNT] Error stack:', err.stack)
       ctx.throw(401, err)
     }
   }
