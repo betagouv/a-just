@@ -102,7 +102,7 @@ jobs:
           set -e
           SPEC_INPUT="${{ github.event.inputs.spec }}"
           export SPEC="$SPEC_INPUT"
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d --build db front api redis
           
           echo "=== Waiting for API to initialize (30s to allow seeders to complete) ==="
           sleep 30
@@ -232,7 +232,7 @@ jobs:
         run: |
           set -e
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d --build db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
             -e CY_JSON_ONLY=1 \
             -e SANDBOX_CODE_DIR=/work/sandbox-code \
