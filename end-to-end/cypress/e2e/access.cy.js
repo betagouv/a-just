@@ -103,8 +103,8 @@ describe("Test d'accés aux pages", () => {
         console.log(`🔵 [TEST] At login page (redirected from ${access.url}), filling form`);
         
         // Manually fill login form (don't use cy.login() which uses cy.session())
-        cy.get('input[formControlName="email"]').type(user.email);
-        cy.get('input[formControlName="password"]').type(user.password);
+        cy.get('input[formcontrolname="email"]').type(user.email);
+        cy.get('input[formcontrolname="password"]').type(user.password);
         cy.get('input[type="submit"]').click();
         
         console.log(`🔵 [TEST] Form submitted, waiting for redirect to ${access.url}`);
