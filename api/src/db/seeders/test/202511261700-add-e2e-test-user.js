@@ -136,6 +136,28 @@ module.exports = {
       console.log(`   - ID: ${targetBackup.id}`)
       console.log(`   - Label: ${targetBackup.label}`)
       console.log(`   - Type: ${targetBackup.type || 'N/A'}`)
+
+      // Check if this backup is visible via TJ.isVisible
+      console.log('🔍 [E2E SEEDER] Checking TJ visibility for this backup...')
+      const tjRecord = await models.TJ.findOne({
+        where: { label: targetBackup.label },
+        raw: true,
+      })
+      if (tjRecord) {
+        console.log(`   - TJ record found: ID=${tjRecord.id}, enabled=${tjRecord.enabled}`)
+        console.log(`   - Will be visible: ${!tjRecord || tjRecord.enabled ? 'YES' : 'NO'}`)
+      } else {
+        console.log(`   - No TJ record found (will default to visible: YES)`)
+      }
+
+      // Verify the association was created
+      const ventilationCheck = await models.UserVentilations.findOne({
+        where: {
+          user_id: testUser.id,
+          hr_backup_id: targetBackup.id,
+        },
+      })
+      console.log(`   - UserVentilations association created: ${ventilationCheck ? 'YES' : 'NO'}`)
     } else {
       console.warn('⚠️  [E2E SEEDER] No HR backup found - user will not have access to any jurisdiction')
     }
