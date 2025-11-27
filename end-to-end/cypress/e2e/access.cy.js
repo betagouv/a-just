@@ -74,7 +74,7 @@ describe("Test d'accés aux pages", () => {
       const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
 
       if (access.url !== undefined) {
-        cy.log(`🔄 forEach: Starting iteration for ${access.url}`);
+        console.log(`🔄 forEach: Starting iteration for ${access.url}`);
         
         // Mettre à jour les droits d'accès pour l'utilisateur
         updateUserAccounatApi({
@@ -83,7 +83,7 @@ describe("Test d'accés aux pages", () => {
           ventilations,
           token,
         }).then(() => {
-          cy.log(`✅ API call completed for ${access.url}, now visiting page`);
+          console.log(`✅ API call completed for ${access.url}, now visiting page`);
           
           // Vérifier que l'utilisateur peut accéder à la page autorisée
           cy.visit(`${access.url}`)
