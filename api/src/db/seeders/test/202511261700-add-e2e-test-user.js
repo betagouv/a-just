@@ -115,6 +115,7 @@ module.exports = {
     }
 
     // Associate user with an HR backup (find the first available one)
+    console.log('🔍 [E2E SEEDER] Looking for HR backup to associate with user...')
     const firstBackup = await models.HRBackups.findOne({
       order: [['id', 'ASC']],
     })
@@ -124,7 +125,10 @@ module.exports = {
         user_id: testUser.id,
         hr_backup_id: firstBackup.id,
       })
-      console.log(`✅ [E2E SEEDER] User associated with HR backup: ${firstBackup.label} (ID: ${firstBackup.id})`)
+      console.log(`✅ [E2E SEEDER] User associated with HR backup:`)
+      console.log(`   - ID: ${firstBackup.id}`)
+      console.log(`   - Label: ${firstBackup.label}`)
+      console.log(`   - Type: ${firstBackup.type || 'N/A'}`)
     } else {
       console.warn('⚠️  [E2E SEEDER] No HR backup found - user will not have access to any jurisdiction')
     }

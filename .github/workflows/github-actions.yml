@@ -103,6 +103,11 @@ jobs:
           SPEC_INPUT="${{ github.event.inputs.spec }}"
           export SPEC="$SPEC_INPUT"
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
+          echo "=== Waiting for API to initialize (10s) ==="
+          sleep 10
+          echo "=== API Container Logs (last 100 lines) ==="
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=100 api || true
+          echo "=== End of API Logs ==="
           docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm --no-deps \
             -e CY_JSON_ONLY=1 \
             -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
