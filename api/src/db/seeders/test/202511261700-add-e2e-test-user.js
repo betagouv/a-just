@@ -29,26 +29,58 @@ import {
  */
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
-    console.log('🧪 [E2E SEEDER] Creating test user: utilisateurtest@a-just.fr')
+    console.log('🧪 [E2E SEEDER] Setting up test user: utilisateurtest@a-just.fr')
 
-    // Create the test user
-    const testUser = await models.Users.create(
-      {
-        email: 'utilisateurtest@a-just.fr',
+    // Check if user already exists
+    let testUser = await models.Users.findOne({
+      where: { email: 'utilisateurtest@a-just.fr' },
+    })
+
+    if (testUser) {
+      console.log(`ℹ️  [E2E SEEDER] Test user already exists (ID: ${testUser.id}), updating...`)
+      
+      // Delete all existing access rights to ensure clean state
+      await models.UsersAccess.destroy({
+        where: { user_id: testUser.id },
+      })
+      console.log('   🗑️  Deleted existing access rights')
+      
+      // Delete existing HR backup associations
+      await models.UserVentilations.destroy({
+        where: { user_id: testUser.id },
+      })
+      console.log('   🗑️  Deleted existing HR backup associations')
+      
+      // Update user details
+      const encryptedPassword = crypt.encryptPassword('@bUgGD25gX1b')
+      await testUser.update({
         first_name: 'utilisateur',
         last_name: 'test',
-        password: '@bUgGD25gX1b',
+        password: encryptedPassword,
         status: 1,
-        role: null, // Not admin, not super admin - regular user
-      },
-      true
-    )
+        role: null,
+      })
+      console.log('   ✅ Updated user details')
+    } else {
+      // Create the test user
+      testUser = await models.Users.create(
+        {
+          email: 'utilisateurtest@a-just.fr',
+          first_name: 'utilisateur',
+          last_name: 'test',
+          password: '@bUgGD25gX1b',
+          status: 1,
+          role: null, // Not admin, not super admin - regular user
+        },
+        true
+      )
 
-    // Encrypt the password
-    const encryptedPassword = crypt.encryptPassword('@bUgGD25gX1b')
-    await testUser.update({ password: encryptedPassword })
+      // Encrypt the password
+      const encryptedPassword = crypt.encryptPassword('@bUgGD25gX1b')
+      await testUser.update({ password: encryptedPassword })
 
-    console.log(`✅ [E2E SEEDER] Test user created with ID: ${testUser.id}`)
+      console.log(`✅ [E2E SEEDER] Test user created with ID: ${testUser.id}`)
+    }
 
     // Grant all access rights (reader + writer for all tools)
     const allAccessRights = [
