@@ -21,6 +21,7 @@ import {
   HAS_ACCESS_TO_CONTRACTUEL,
   accessToString,
 } from '../../../constants/access'
+import { USER_ROLE_ADMIN } from '../../../constants/roles'
 
 /**
  * Seeder for E2E test user
@@ -58,7 +59,7 @@ module.exports = {
         last_name: 'test',
         password: encryptedPassword,
         status: 1,
-        role: null,
+        role: USER_ROLE_ADMIN,
       })
       console.log('   ✅ Updated user details')
     } else {
@@ -70,7 +71,7 @@ module.exports = {
           last_name: 'test',
           password: '@bUgGD25gX1b',
           status: 1,
-          role: null, // Not admin, not super admin - regular user
+          role: USER_ROLE_ADMIN, // Admin role required for access.cy.js tests
         },
         true
       )
