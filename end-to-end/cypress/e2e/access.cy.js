@@ -69,39 +69,50 @@ describe("Test d'accés aux pages", () => {
   it("User with access to specific pages should not have access to others", () => {
     cy.login();
 
-    // Parcourir toutes les URLs définies dans accessUrlList
-    accessUrlList.forEach((access) => {
+    // Convert forEach to sequential cy.wrap chain to ensure proper Cypress queueing
+    cy.wrap(accessUrlList).each((access) => {
       const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
 
       if (access.url !== undefined) {
-        console.log(`🔄 forEach: Starting iteration for ${access.url}`);
+        cy.log(`🔄 Starting: Testing access for ${access.url}`);
+        cy.wait(1000); // Small wait to see the log
         
         // Mettre à jour les droits d'accès pour l'utilisateur
-        updateUserAccounatApi({
-          userId,
-          accessIds,
-          ventilations,
-          token,
-        }).then(() => {
-          console.log(`✅ API call completed for ${access.url}, now visiting page`);
-          
-          // Vérifier que l'utilisateur peut accéder à la page autorisée
-          cy.visit(`${access.url}`)
-            .location("pathname")
-            .should("contain", access.url);
-
-          // Vérifier que l'utilisateur ne peut pas accéder aux autres pages
-          accessUrlList.forEach((otherAccess) => {
-            if (
-              otherAccess.url !== undefined &&
-              otherAccess.url !== access.url
-            ) {
-              cy.visit(`${otherAccess.url}`, { failOnStatusCode: false })
-                .location("pathname")
-                .should("not.contain", otherAccess.label);
-            }
+        cy.wrap(null).then(() => {
+          return updateUserAccounatApi({
+            userId,
+            accessIds,
+            ventilations,
+            token,
           });
         });
+        
+        cy.log(`✅ Permissions updated, waiting before visiting...`);
+        cy.wait(4000); // 4 second wait after permission update
+        
+        cy.log(`🌐 Visiting allowed page: ${access.url}`);
+        // Vérifier que l'utilisateur peut accéder à la page autorisée
+        cy.visit(`${access.url}`)
+          .location("pathname")
+          .should("contain", access.url);
+
+        cy.log(`✅ Access confirmed for ${access.url}`);
+
+        // Vérifier que l'utilisateur ne peut pas accéder aux autres pages
+        cy.wrap(accessUrlList).each((otherAccess) => {
+          if (
+            otherAccess.url !== undefined &&
+            otherAccess.url !== access.url
+          ) {
+            cy.log(`🚫 Testing blocked access: ${otherAccess.url}`);
+            cy.visit(`${otherAccess.url}`, { failOnStatusCode: false })
+              .location("pathname")
+              .should("not.contain", otherAccess.label);
+          }
+        });
+        
+        cy.log(`✅ Completed testing for ${access.url}`);
+        cy.wait(2000); // Wait between major iterations
       }
     });
   });
