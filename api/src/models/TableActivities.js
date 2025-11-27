@@ -399,7 +399,7 @@ export default (sequelizeInstance, Model) => {
    */
   Model.updateTotalAndFuturValue = async (mainContentieuxId, date, hrBackupId) => {
     date = new Date(date) // detach date reference
-    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, false, null, false, false, userId)
+    const referentiels = await Model.models.ContentieuxReferentiels.getReferentiels(hrBackupId, false, null, false, false)
     const ref = referentiels.find((r) => r.id === mainContentieuxId)
 
     if (ref) {
