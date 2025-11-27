@@ -49,6 +49,9 @@ Cypress.Commands.add("login", () => {
     cy.get(".password-line").get("#printPassword").click();
     cy.get("form").submit();
 
-    cy.wait(20000);
+    // Wait for the token to be stored in localStorage (confirms login succeeded)
+    cy.window().its("localStorage").invoke("getItem", "token").should("exist");
+    // Also wait for navigation away from login page
+    cy.url().should("not.include", "/connexion");
   });
 });
