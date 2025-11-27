@@ -95,9 +95,11 @@ describe("Test d'accés aux pages", () => {
           });
         });
         
-        cy.log(`✅ Permissions updated, waiting before visiting...`);
-        console.log(`🔵 [TEST] Waiting 4 seconds before visiting ${access.url}...`);
-        cy.wait(4000); // 4 second wait after permission update
+        cy.log(`✅ Permissions updated, reloading to clear cache...`);
+        console.log(`🔵 [TEST] Permissions updated, reloading page to clear Angular cache`);
+        cy.reload();
+        console.log(`🔵 [TEST] Page reloaded, waiting before visiting ${access.url}...`);
+        cy.wait(2000); // Wait after reload
         
         cy.log(`🌐 Visiting allowed page: ${access.url}`);
         console.log(`🔵 [TEST] NOW visiting ${access.url}`);
