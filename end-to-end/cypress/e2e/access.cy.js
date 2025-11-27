@@ -13,27 +13,16 @@ describe("Test d'accés aux pages", () => {
   let ventilations = [];
 
   before(() => {
-    //Login to get the admin user token so we can retireve user data
+    //Login to get the admin user token so we can retrieve user data
     return loginApi(user.email, user.password).then((resp) => {
       cy.log("Login API response:", resp.body); // Debug log
       userId = resp.body.user.id;
       token = resp.body.token;
 
-      // Get user data to check access
+      // Get user data to retrieve ventilations list
       return getUserDataApi(token).then((resp) => {
-        // Give all access to the user
-
         ventilations = resp.body.data.backups.map((v) => v.id);
-        const accessUrls = accessUrlList.map((access) => access.id);
-        const accessFonctions = accessFonctionsList.map((access) => access.id);
-        const accessIds = [...accessUrls, ...accessFonctions];
-
-        return updateUserAccounatApi({
-          userId,
-          accessIds,
-          ventilations,
-          token,
-        });
+        // Note: User already has full access from seeder, no need to update permissions here
       });
     });
   });
