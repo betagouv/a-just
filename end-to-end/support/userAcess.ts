@@ -37,7 +37,12 @@ export const accessUrlList = [
     url: "/panorama",
     label: accessUrlToString(USER_ACCESS_DASHBOARD),
   },
-  // TEMPORARILY COMMENTED OUT FOR DEBUGGING - only test panorama
+  {
+    id: USER_ACCESS_CALCULATOR,
+    url: "/cockpit",
+    label: accessUrlToString(USER_ACCESS_CALCULATOR),
+  },
+  // TEMPORARILY COMMENTED OUT FOR DEBUGGING
   // {
   //   id: USER_ACCESS_VENTILATIONS,
   //   url: "/ventilations",
@@ -51,11 +56,6 @@ export const accessUrlList = [
   // {
   //   id: USER_ACCESS_AVERAGE_TIME,
   //   label: accessUrlToString(USER_ACCESS_AVERAGE_TIME),
-  // },
-  // {
-  //   id: USER_ACCESS_CALCULATOR,
-  //   url: "/cockpit",
-  //   label: accessUrlToString(USER_ACCESS_CALCULATOR),
   // },
   // {
   //   id: USER_ACCESS_SIMULATOR,

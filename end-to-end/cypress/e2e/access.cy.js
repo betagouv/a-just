@@ -28,12 +28,15 @@ describe("Test d'accés aux pages", () => {
   });
 
   afterEach(() => {
-    // Reset user access to default
-    const accessUrls = accessUrlList.map((access) => access.id);
-    const accessFonctions = accessFonctionsList.map((access) => access.id);
-    const accessIds = [...accessUrls, ...accessFonctions];
+    // Reset user access to full access (all pages reader+writer + all functions)
+    const pageAccessIds = [];
+    accessUrlList.forEach((access) => {
+      pageAccessIds.push(access.id + 0.1); // reader
+      pageAccessIds.push(access.id + 0.2); // writer
+    });
+    const functionAccessIds = accessFonctionsList.map((access) => access.id);
+    const accessIds = [...pageAccessIds, ...functionAccessIds];
 
-    // const accessIds = accessUrlList.map((access) => access.id);
     updateUserAccounatApi({
       userId,
       accessIds,
@@ -121,9 +124,11 @@ describe("Test d'accés aux pages", () => {
             otherAccess.url !== access.url
           ) {
             cy.log(`🚫 Testing blocked access: ${otherAccess.url}`);
-            cy.visit(`${otherAccess.url}`, { failOnStatusCode: false })
-              .location("pathname")
-              .should("not.contain", otherAccess.label);
+            cy.visit(otherAccess.url, { failOnStatusCode: false });
+            cy.wait(1000); // Wait for redirect
+            // Should be redirected to welcome page, not the requested page
+            cy.location("pathname").should("eq", "/bienvenue");
+            cy.log(`✅ Correctly blocked access to ${otherAccess.url}`);
           }
         });
         
