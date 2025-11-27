@@ -109,11 +109,6 @@ jobs:
           
           echo "=== Container Status ==="
           docker compose -p test-e2e -f docker-compose-e2e.test.yml ps
-          
-          echo ""
-          echo "=== API Container Logs (last 500 lines) ==="
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=500 api
-          echo "=== End of API Logs ==="
           echo ""
           
           docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm --no-deps \
@@ -133,6 +128,12 @@ jobs:
               npx cypress run --browser chrome --headless --spec "${SPEC:-cypress/e2e/**/*.cy.js}"
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             '
+          
+          echo ""
+          echo "=== API Container Logs (last 500 lines) ==="
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=500 api
+          echo "=== End of API Logs ==="
+          
           docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
         continue-on-error: true
 
