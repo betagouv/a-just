@@ -33,9 +33,6 @@ describe("Test d'accés aux pages", () => {
           accessIds,
           ventilations,
           token,
-        }).then(() => {
-          // Clear all cached sessions so cy.login() will create a fresh session with updated permissions
-          Cypress.session.clearAllSavedSessions();
         });
       });
     });
