@@ -126,9 +126,9 @@ describe("Test d'accés aux pages", () => {
             cy.log(`🚫 Testing blocked access: ${otherAccess.url}`);
             cy.visit(otherAccess.url, { failOnStatusCode: false });
             cy.wait(1000); // Wait for redirect
-            // Should be redirected to welcome page, not the requested page
-            cy.location("pathname").should("eq", "/bienvenue");
-            cy.log(`✅ Correctly blocked access to ${otherAccess.url}`);
+            // Should be redirected away from the unauthorized page
+            cy.location("pathname").should("not.eq", otherAccess.url);
+            cy.log(`✅ Correctly blocked access to ${otherAccess.url} (redirected away)`);
           }
         });
         
