@@ -67,10 +67,6 @@ describe("Test d'accés aux pages", () => {
   };
 
   it("User with access to specific pages should not have access to others", () => {
-    console.log("🔵 [TEST] Starting test - calling cy.login()");
-    cy.login();
-    console.log("🔵 [TEST] cy.login() completed, proceeding to access list");
-
     // Convert forEach to sequential cy.wrap chain to ensure proper Cypress queueing
     cy.wrap(accessUrlList).each((access) => {
       const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
@@ -79,7 +75,6 @@ describe("Test d'accés aux pages", () => {
       if (access.url !== undefined) {
         cy.log(`🔄 Starting: Testing access for ${access.url}`);
         console.log(`🔵 [TEST] ===== Starting iteration for ${access.url} =====`);
-        cy.wait(1000); // Small wait to see the log
         
         // Mettre à jour les droits d'accès pour l'utilisateur
         cy.wrap(null).then(() => {
@@ -95,20 +90,22 @@ describe("Test d'accés aux pages", () => {
           });
         });
         
-        cy.log(`✅ Permissions updated, logging out and back in...`);
-        console.log(`🔵 [TEST] Permissions updated, clearing session and re-logging in`);
+        cy.log(`✅ Permissions updated, logging out...`);
+        console.log(`🔵 [TEST] Permissions updated, clearing session (logout)`);
         cy.clearCookies();
         cy.clearLocalStorage();
-        console.log(`🔵 [TEST] Session cleared, re-logging in with new permissions`);
-        cy.login(); // Re-login to establish fresh session with updated permissions
-        console.log(`🔵 [TEST] Re-login complete, waiting before visiting ${access.url}...`);
-        cy.wait(2000); // Wait after login
         
-        cy.log(`🌐 Visiting allowed page: ${access.url}`);
-        console.log(`🔵 [TEST] NOW visiting ${access.url}`);
+        cy.log(`🌐 Directly visiting ${access.url} while logged out...`);
+        console.log(`🔵 [TEST] Visiting ${access.url} (should redirect to login, save redirectUrl, then redirect back)`);
+        cy.visit(access.url); // Will redirect to /login, save redirectUrl
+        
+        cy.log(`🔑 Filling login form...`);
+        console.log(`🔵 [TEST] At login page, filling form`);
+        cy.login(); // Fill login form, app should redirect back to access.url
+        
+        console.log(`🔵 [TEST] Login complete, checking we're on ${access.url}`);
         // Vérifier que l'utilisateur peut accéder à la page autorisée
-        cy.visit(`${access.url}`)
-          .location("pathname")
+        cy.location("pathname")
           .should("contain", access.url);
 
         cy.log(`✅ Access confirmed for ${access.url}`);
