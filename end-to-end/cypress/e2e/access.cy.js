@@ -69,7 +69,11 @@ describe("Test d'accés aux pages", () => {
   it("User with access to specific pages should not have access to others", () => {
     // Convert forEach to sequential cy.wrap chain to ensure proper Cypress queueing
     cy.wrap(accessUrlList).each((access) => {
-      const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
+      // Backend uses decimal IDs (1.1 = reader, 1.2 = writer)
+      // Also need function access (8, 9, 10) to view data
+      const pageAccessIds = [access.id + 0.1, access.id + 0.2]; // reader + writer
+      const functionAccessIds = [8, 9, 10]; // magistrat, greffier, contractuel
+      const accessIds = [...pageAccessIds, ...functionAccessIds];
       console.log(`🔵 [TEST] accessIds being set: ${JSON.stringify(accessIds)} for ${access.url}`);
 
       if (access.url !== undefined) {
