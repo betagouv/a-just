@@ -261,6 +261,12 @@ describe("Données d'activité", () => {
     const date = new Date();
     date.setMonth(date.getMonth() - 6);
 
+    // Ensure year is within calendar range (2001-2024)
+    // If calculated year exceeds range, use most recent available year
+    const targetYear = date.getFullYear() > 2024 ? 2024 : date.getFullYear();
+    const targetMonth = date.getMonth();
+    const targetDay = date.getDate();
+
     cy.get("aj-date-select")
       .should("be.visible")
       .click()
@@ -269,13 +275,13 @@ describe("Données d'activité", () => {
       .get('button[aria-label="Choose month and year"]')
       .click()
       .get(".mat-calendar-body-cell-content")
-      .contains(date.getFullYear())
+      .contains(targetYear)
       .click()
       .get(".mat-calendar-body-cell-content")
-      .contains(getShortMonthString(date).toUpperCase())
+      .contains(getShortMonthString(new Date(targetYear, targetMonth, targetDay)).toUpperCase())
       .click()
       .get(".mat-calendar-body-cell-content")
-      .contains(date.getDate())
+      .contains(targetDay)
       .click();
   });
 });
