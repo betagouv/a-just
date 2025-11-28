@@ -69,7 +69,7 @@ describe("Test d'accés aux pages", () => {
     cy.get(".menu-item .tools").should("exist").click();
   };
 
-  it.skip("User with access to specific pages should not have access to others", () => {
+  it("User with access to specific pages should not have access to others", () => {
     // Convert forEach to sequential cy.wrap chain to ensure proper Cypress queueing
     cy.wrap(accessUrlList).each((access) => {
       // Backend uses decimal IDs (1.1 = reader, 1.2 = writer)
