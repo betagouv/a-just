@@ -1,6 +1,9 @@
 import Route, { Access } from './Route'
 import { Types } from '../utils/types'
 import {
+  _buildOrderedFlatList,
+  _buildOrderedGroupedList,
+  _buildSumTab,
   autofitColumns,
   buildExcelRef,
   computeExtractor,
@@ -216,8 +219,9 @@ export default class RouteExtractor extends Route {
     })
   }
 
+ 
   /**
-   *
+   * Route pour filtrer et ordonner les activités selon les référentiels
    * @param {*} ctx
    */
   @Route.Post({
@@ -229,7 +233,7 @@ export default class RouteExtractor extends Route {
     accesses: [Access.canVewHR],
   })
   async filterListAct(ctx) {
-    let { backupId, dateStart, dateStop } = this.body(ctx)
+    const { backupId, dateStart, dateStop } = this.body(ctx)
 
     if (!Access.isAdmin(ctx)) {
       if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
@@ -239,53 +243,37 @@ export default class RouteExtractor extends Route {
     await this.models.Logs.addLog(EXECUTE_EXTRACTOR, ctx.state.user.id, { type: 'activité' })
 
     const isJirs = await this.models.ContentieuxReferentiels.isJirs(backupId)
-    const referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined, false, ctx.state.user.id)
-    const flatReferentielsList = await flatListOfContentieuxAndSousContentieux([...referentiels])
+    let referentiels = await this.models.ContentieuxReferentiels.getReferentiels(backupId, isJirs, undefined, undefined, false, ctx.state.user.id)
+    referentiels = orderBy(referentiels, 'rank', 'asc')
+
+    const flatReferentielsList = _buildOrderedFlatList([...referentiels])
 
     const list = await this.models.Activities.getByMonthNew(dateStart, backupId)
     const lastUpdate = await this.models.HistoriesActivitiesUpdate.getLastUpdate(list.map((i) => i.id))
 
     let activities = await this.models.Activities.getAllDetails(backupId)
     activities = activities.map((r) => ({ ...r, periode: today(r.periode) }))
-    activities = orderBy(activities, 'periode', ['asc'])
+    activities = activities
       .filter((act) => isDateGreaterOrEqual(act.periode, month(dateStart, 0)) && isDateGreaterOrEqual(month(dateStop, 0, 'lastday'), act.periode))
       .map((x) => ({ periode: today(x.periode).setDate(1), ...x }))
 
     activities = updateLabels(activities, referentiels)
 
-    let sum = cloneDeep(activities).map((x) => {
-      const ajustedIn = x.entrees === 0 ? x.entrees : x.entrees || x.originalEntrees
-      const ajustedOut = x.sorties === 0 ? x.sorties : x.sorties || x.originalSorties
-      const ajustedStock = x.stock === 0 ? x.stock : x.stock || x.originalStock
-      return { ajustedIn, ajustedOut, ajustedStock, ...x }
+    const sumTab = _buildSumTab(activities, flatReferentielsList)
+    activities.forEach((item) => {
+       // Mettre à "-" toutes les valeurs qui sont null
+       if (item.entrees == null) item.entrees = "-"
+       if (item.sorties == null) item.sorties = "-"
+       if (item.stock == null) item.stock = "-"
+       if (item.originalEntrees == null) item.originalEntrees = "-"
+       if (item.originalSorties == null) item.originalSorties = "-"
+       if (item.originalStock == null) item.originalStock = "-"
     })
+    const groupedList = groupBy(activities, 'periode')
 
-    sum = groupBy(sum, 'contentieux.id')
+    const orderedGroupedList = _buildOrderedGroupedList(groupedList, flatReferentielsList)
 
-    let sumTab = []
-    Object.keys(sum).map((key) => {
-      sumTab.push({
-        periode: replaceIfZero(last(sum[key]).periode),
-        entrees: sumBy(sum[key], 'ajustedIn'),
-        sorties: sumBy(sum[key], 'ajustedOut'),
-        stock: last(sum[key]).ajustedStock,
-        originalEntrees: sumBy(sum[key], 'originalEntrees'),
-        originalSorties: sumBy(sum[key], 'originalSorties'),
-        originalStock: last(sum[key]).originalStock,
-        idReferentiel: last(sum[key]).idReferentiel,
-        contentieux: {
-          code_import: last(sum[key]).contentieux.code_import,
-          label: last(sum[key]).contentieux.label,
-        },
-      })
-    })
-
-    sumTab = completePeriod(sumTab || [], flatReferentielsList || [], '', 0)
-
-    let GroupedList = groupBy(activities, 'periode')
-    GroupedList = fillMissingContentieux(GroupedList, flatReferentielsList)
-
-    this.sendOk(ctx, { list: GroupedList, sumTab, lastUpdate })
+    this.sendOk(ctx, { list: orderedGroupedList, sumTab, lastUpdate })
   }
 
   /**
@@ -466,3 +454,4 @@ export default class RouteExtractor extends Route {
     })
   }
 }
+

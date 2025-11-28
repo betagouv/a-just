@@ -273,6 +273,18 @@ export class ExtractorActivityComponent extends MainClass {
   }
 
   /**
+   * Supprime les propriétés temporaires sans trier (pour préserver l'ordre du back)
+   */
+  removeTemporaryProperties(sumTab: any) {
+    sumTab.forEach(function (v: any) {
+      delete v['codeUnit'];
+      delete v['codeCent'];
+      delete v['idReferentiel'];
+    });
+    return sumTab;
+  }
+
+  /**
    * Génère le nom du ficher téléchargé
    * @returns
    */
@@ -319,7 +331,6 @@ export class ExtractorActivityComponent extends MainClass {
         this.sumTab = data.data.sumTab;
         let monthTabName = '';
 
-        // FORMAT SUM TAB
         this.sumTab = this.sumTab
           .map((act: any) => {
             return this.generateFormatedDataMonth(
@@ -337,8 +348,8 @@ export class ExtractorActivityComponent extends MainClass {
                 -1 &&
               this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
           );
-        this.sumTab = this.sortByCodeImport(this.sumTab);
 
+        this.sumTab = this.removeTemporaryProperties(this.sumTab);
         const viewModel = { sumTab: this.sumTab, data: this.data };
 
         fetch('/assets/emptyTemplate_.xlsx')
@@ -426,7 +437,8 @@ export class ExtractorActivityComponent extends MainClass {
             this.referentielService.idsSoutien.indexOf(r.idReferentiel) === -1
         );
 
-      this.data[key] = this.sortByCodeImport(this.data[key]);
+
+      this.data[key] = this.removeTemporaryProperties(this.data[key]);
       report = this.populateTab(report, this.data[key], index);
     });
 
