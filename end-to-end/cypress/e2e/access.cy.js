@@ -138,11 +138,15 @@ describe("Test d'accés aux pages", () => {
               
               if (access.url === '/simulateur-sans-donnees') {
                 // User has "sans données" access, "avec données" should be disabled
-                cy.get('input[type="radio"]').first().should('be.disabled');
+                cy.contains('p.circle', 'avec les données d\'A-JUST')
+                  .parent()
+                  .should('have.class', 'disabled');
                 cy.log(`✅ "Avec données d'A-JUST" option is correctly disabled`);
               } else {
                 // User has "avec données" access, "sans données" should be disabled  
-                cy.get('input[type="radio"]').last().should('be.disabled');
+                cy.contains('p.circle', 'pour une autre activité')
+                  .parent()
+                  .should('have.class', 'disabled');
                 cy.log(`✅ "Pour une autre activité" option is correctly disabled`);
               }
             } else {
