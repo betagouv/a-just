@@ -21,8 +21,10 @@ describe("Panorama page", () => {
     cy.get("@menuLinks").should("contain.text", "Cockpit");
     cy.get("@menuLinks").should("contain.text", "Simulateur");
     cy.get("@menuLinks").should("contain.text", "Outils");
-    cy.get("@menuLinks").should("contain.text", "Aide");
     cy.get("@menuLinks").should("contain.text", "Nous contacter");
+
+    // Check help button at bottom right
+    cy.get(".help-button").should("be.visible").should("contain.text", "Besoin d'aide");
 
     cy.get(".tools").click();
     cy.get(".sub-tools").within(() => {
