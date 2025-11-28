@@ -14,15 +14,7 @@ module.exports = function (datas) {
      * Sauvegarde d'une valeur pour la CLE (au Siege)
      */
     it('Save CLE', async () => {
-      console.log('🔍 DEBUG: Checking userToken before Save CLE test')
-      console.log('   - datas object keys:', Object.keys(datas))
-      console.log('   - datas.userToken exists:', datas.userToken ? 'YES' : 'NO')
-      console.log('   - datas.userToken type:', typeof datas.userToken)
-      console.log('   - datas.userToken value:', datas.userToken ? `${datas.userToken.substring(0, 20)}...` : 'undefined')
-      console.log('   - datas.userId:', datas.userId)
-      console.log('   - datas.adminToken exists:', datas.adminToken ? 'YES' : 'NO')
-
-      const response = await onSaveCle(JURIDICTION_BACKUP_ID, MAGISTART_ID, siegeCle, datas.userToken) // On enregistre une CLE de valeur 10 pour la catégorie magistrat
+      const response = await onSaveCle(JURIDICTION_BACKUP_ID, MAGISTART_ID, siegeCle, datas.adminToken) // On enregistre une CLE de valeur 10 pour la catégorie magistrat
 
       assert.strictEqual(response.status, 200)
     })
@@ -31,7 +23,7 @@ module.exports = function (datas) {
      * Vérification que la valeur renseignée précédement est bien sauvegardé
      */
     it('Get CLE must be equal to saved CLE in test right before', async () => {
-      const response = await onGetAllCle(JURIDICTION_BACKUP_ID, datas.userToken)
+      const response = await onGetAllCle(JURIDICTION_BACKUP_ID, datas.adminToken)
       const element = response.data.data.find(elem => elem.category_id === MAGISTART_ID)
 
       assert.strictEqual(response.status, 200)
@@ -42,7 +34,7 @@ module.exports = function (datas) {
      * Sauvegarde d'une valeur de CLE pour la catégorie 'Greffe'
      */
     it('Save CLE to other category', async () => {
-      const response = await onSaveCle(JURIDICTION_BACKUP_ID, GREFFIER_ID, greffierCle, datas.userToken) // On enregistre une CLE de valeur 7 pour la catégorie greffier
+      const response = await onSaveCle(JURIDICTION_BACKUP_ID, GREFFIER_ID, greffierCle, datas.adminToken) // On enregistre une CLE de valeur 7 pour la catégorie greffier
 
       assert.strictEqual(response.status, 200)
     })
@@ -51,7 +43,7 @@ module.exports = function (datas) {
      * Vérification que la valeur renseigné au Siege n'a pas été modifié et que la nouvelle valeur renseignée pour le Greffe est bien sauvegardée
      */
     it('Check that value in Siege has not changed and that value for Greffier category is the one registered right before', async () => {
-      const response = await onGetAllCle(JURIDICTION_BACKUP_ID, datas.userToken)
+      const response = await onGetAllCle(JURIDICTION_BACKUP_ID, datas.adminToken)
       const elementSiege = response.data.data.find(elem => elem.category_id === MAGISTART_ID)
       const elementGreffier = response.data.data.find(elem => elem.category_id === GREFFIER_ID)
 
@@ -64,9 +56,9 @@ module.exports = function (datas) {
      * Vérification que l'on puisse écraser une valeur par une autre
      */
     it('Add new CLE value to same category and check that old value is replaced', async () => {
-      const response_addCLE = await onSaveCle(JURIDICTION_BACKUP_ID, MAGISTART_ID, 17, datas.userToken) // On enregistre une CLE de valeur 17 pour la catégorie magistrat
+      const response_addCLE = await onSaveCle(JURIDICTION_BACKUP_ID, MAGISTART_ID, 17, datas.adminToken) // On enregistre une CLE de valeur 17 pour la catégorie magistrat
       if (response_addCLE.status === 200) {
-        const response_getCle = await onGetAllCle(JURIDICTION_BACKUP_ID, datas.userToken)
+        const response_getCle = await onGetAllCle(JURIDICTION_BACKUP_ID, datas.adminToken)
         const element = response_getCle.data.data.find(elem => elem.category_id === MAGISTART_ID)
 
         assert.strictEqual(response_getCle.status, 200)
