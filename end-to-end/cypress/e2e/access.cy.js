@@ -271,7 +271,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on panorama", () => {
+  it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on panorama", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux greffiers")
@@ -319,7 +319,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on panorama", () => {
+  it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on panorama", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux contractuels")
@@ -367,7 +367,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Magistrat and check user does not have access to Greffier datas on cockpit", () => {
+  it("Give only access to Magistrat and check user does not have access to Greffier datas on cockpit", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux magistrats")
@@ -405,7 +405,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Greffier and check user does not have access to Magistrat datas on cockpit", () => {
+  it("Give only access to Greffier and check user does not have access to Magistrat datas on cockpit", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux greffiers")
@@ -443,7 +443,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on ventilateur", () => {
+  it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on ventilateur", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux magistrats")
@@ -481,7 +481,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on ventilateur", () => {
+  it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on ventilateur", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux greffiers")
@@ -519,7 +519,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on ventilateur", () => {
+  it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on ventilateur", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux contractuels")
@@ -557,7 +557,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on workforce extractor", () => {
+  it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on workforce extractor", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux magistrats")
@@ -599,7 +599,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on workforce extractor", () => {
+  it("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on workforce extractor", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux greffiers")
@@ -641,7 +641,7 @@ describe("Test d'accés aux pages", () => {
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on workforce extractor", () => {
+  it("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on workforce extractor", () => {
     const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux contractuels")
