@@ -5,6 +5,7 @@ import {
   loginApi,
   getUserDataApi,
   updateUserAccounatApi,
+  resetToDefaultPermissions,
 } from "../../support/api";
 
 describe("Test d'accés aux pages", () => {
@@ -28,21 +29,9 @@ describe("Test d'accés aux pages", () => {
   });
 
   afterEach(() => {
-    // Reset user access to full access (all pages reader+writer + all functions)
-    const pageAccessIds = [];
-    accessUrlList.forEach((access) => {
-      pageAccessIds.push(access.id + 0.1); // reader
-      pageAccessIds.push(access.id + 0.2); // writer
-    });
-    const functionAccessIds = accessFonctionsList.map((access) => access.id);
-    const accessIds = [...pageAccessIds, ...functionAccessIds];
-
-    updateUserAccounatApi({
-      userId,
-      accessIds,
-      ventilations,
-      token,
-    });
+    // "Bretelles": Always restore to full default permissions after each test
+    // This ensures test isolation even if a test fails or modifies permissions
+    resetToDefaultPermissions(userId, ventilations, token);
   });
 
   const checkToolsMenu = (toolToNotCheck = []) => {
