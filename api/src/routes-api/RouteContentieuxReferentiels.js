@@ -26,9 +26,16 @@ export default class RouteContentieuxReferentiels extends Route {
       backupId: Types.number(),
       isJirs: Types.boolean(),
     }),
-    accesses: [Access.isLogin],
   })
   async getReferentiels(ctx) {
+    if (!ctx.state.user) {
+      this.sendOk(ctx, {
+        referentiels: [],
+        referentielsComplete: [],
+        isComplete: false,
+      })
+    }
+
     const { backupId, isJirs } = this.body(ctx)
     const userPreview = await this.models.Users.userPreview(ctx.state.user.id)
     this.sendOk(ctx, {
