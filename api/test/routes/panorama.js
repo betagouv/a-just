@@ -11,7 +11,6 @@ export const onSaveCle =  async (backupId, categoryId, value, userToken) => {
     headers: {
       authorization: userToken,
     },
-    withCredentials: true,
   })
 }
 
@@ -22,6 +21,5 @@ export const onGetAllCle =  async (backupId, userToken) => {
     headers: {
       authorization: userToken,
     },
-    withCredentials: true,
   })
 }
