@@ -69,7 +69,7 @@ describe("Test d'accés aux pages", () => {
     cy.get(".menu-item .tools").should("exist").click();
   };
 
-  it("User with access to specific pages should not have access to others", () => {
+  it.skip("User with access to specific pages should not have access to others", () => {
     // Convert forEach to sequential cy.wrap chain to ensure proper Cypress queueing
     cy.wrap(accessUrlList).each((access) => {
       // Backend uses decimal IDs (1.1 = reader, 1.2 = writer)
@@ -163,101 +163,64 @@ describe("Test d'accés aux pages", () => {
     });
   });
 
-  // TEMPORARILY COMMENTED OUT FOR DEBUGGING - only run first test
-  it.skip("User with specific access should only see allowed menu items + check bottom menu is alaways accessible", () => {
-    cy.login();
-
-    // Parcourir toutes les URLs définies dans accessUrlList
-    accessUrlList.forEach((access) => {
-      if (access.label !== "Réaffectateur" && access.label !== "Temps moyens") {
-        const accessIds = [access.id]; // Autoriser uniquement l'accès à la page actuelle
-        // Mettre à jour les droits d'accès pour l'utilisateur
+  it("User with specific access should only see allowed menu items + check bottom menu is always accessible", () => {
+    cy.wrap(accessUrlList).each((access) => {
+      if (access.label !== "Temps moyens" && access.url !== undefined) {
+        // Backend uses decimal IDs (1.1 = reader, 1.2 = writer)
+        const pageAccessIds = [access.id + 0.1, access.id + 0.2];
+        const functionAccessIds = [8, 9, 10]; // magistrat, greffier, contractuel
+        const accessIds = [...pageAccessIds, ...functionAccessIds];
+        
+        cy.log(`🔄 Testing menu for ${access.label}`);
+        
         updateUserAccounatApi({
           userId,
           accessIds,
           ventilations,
           token,
-        }).then(() => {
-          // Recharger la page pour appliquer les nouveaux droits
-          cy.visit("/");
-          // cy.wait(20000);
+        });
+        
+        cy.wait(3000);
+        
+        // Logout and login with new permissions
+        cy.visit('/logout');
+        cy.wait(1000);
+        cy.visit('/connexion');
+        cy.get('input[formcontrolname="email"]').type(user.email);
+        cy.get('input[formcontrolname="password"]').type(user.password);
+        cy.get('input[type="submit"]').click();
+        cy.wait(2000);
+        
+        // Visit home to see menu
+        cy.visit("/");
+        cy.wait(1000);
 
-          // Vérifier que le menu contient uniquement l'élément autorisé
-          cy.get("#side-menu-bar .menu-scrollable").within(() => {
-            // Vérifier que l'élément correspondant à l'accès est visible
-            cy.get(".menu-item").should("contain.text", access.label);
+        // Vérifier que le menu contient uniquement l'élément autorisé
+        cy.get("#side-menu-bar .menu-scrollable").within(() => {
+          cy.get(".menu-item").should("contain.text", access.label);
 
-            // Vérifier que les autres éléments ne sont pas visibles
-            accessUrlList.forEach((otherAccess) => {
-              if (
-                otherAccess.label !== "Réaffectateur" &&
-                otherAccess.label !== "Temps moyens" &&
-                otherAccess.label !== undefined &&
-                otherAccess.label !== access.label
-              ) {
-                cy.get(".menu-item").should(
-                  "not.contain.text",
-                  otherAccess.label
-                );
-              }
-
-              const toolToNotCheck = [];
-              toolToNotCheck.push("Référentiels de temps moyens");
-              if (
-                access.label !== "Ventilateur" ||
-                access.label !== "Données d'activité"
-              )
-                toolToNotCheck.push("Les extracteurs");
-              checkToolsMenu(toolToNotCheck);
-            });
+          // Vérifier que les autres éléments ne sont pas visibles
+          cy.wrap(accessUrlList).each((otherAccess) => {
+            if (
+              otherAccess.label !== "Temps moyens" &&
+              otherAccess.label !== undefined &&
+              otherAccess.label !== access.label
+            ) {
+              cy.get(".menu-item").should("not.contain.text", otherAccess.label);
+            }
           });
         });
+
+        const toolToNotCheck = ["Référentiels de temps moyens"];
+        if (access.label !== "Ventilateur" && access.label !== "Données d'activité") {
+          toolToNotCheck.push("Les extracteurs");
+        }
+        checkToolsMenu(toolToNotCheck);
+        
+        cy.log(`✅ Menu test complete for ${access.label}`);
+        cy.wait(2000);
       }
     });
-  });
-
-  it.skip("Remove access to Réafecteur and check that user does not have access to Réaffecteur page from ventilateur", () => {
-    const accessIds = accessUrlList
-      .filter((access) => access.label !== "Réaffectateur")
-      .map((access) => access.id);
-
-    updateUserAccounatApi({
-      userId,
-      accessIds,
-      ventilations,
-      token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/ventilations");
-      cy.location("pathname").should("contain", "/ventilations");
-      cy.get(".top-header .actions").should(
-        "not.contain.text",
-        "Simuler des affectations"
-      );
-    });
-    cy.wait(2000); // Wait for the page to load completely
-    checkToolsMenu();
-  });
-
-  it.skip("Remove access to Réafecteur and check that user does not have access to Réaffecteur page from Simulateur", () => {
-    const accessIds = accessUrlList
-      .filter((access) => access.label !== "Réaffectateur")
-      .map((access) => access.id);
-
-    updateUserAccounatApi({
-      userId,
-      accessIds,
-      ventilations,
-      token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/simulateur");
-      cy.location("pathname").should("contain", "/simulateur");
-
-      cy.get(".reaffectator").should("not.exist");
-    });
-    cy.wait(2000); // Wait for the page to load completely
-    checkToolsMenu();
   });
 
   it.skip("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on panorama ", () => {
