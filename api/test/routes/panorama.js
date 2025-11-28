@@ -9,7 +9,7 @@ export const onSaveCle =  async (backupId, categoryId, value, userToken) => {
     value,
   }, {
     headers: {
-      Authorization: userToken,
+      authorization: userToken,
     },
     withCredentials: true,
   })
@@ -20,7 +20,7 @@ export const onGetAllCle =  async (backupId, userToken) => {
     juridictionId: backupId,
   }, {
     headers: {
-      Authorization: userToken,
+      authorization: userToken,
     },
     withCredentials: true,
   })
