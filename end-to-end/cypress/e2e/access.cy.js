@@ -28,9 +28,10 @@ describe("Test d'accés aux pages", () => {
     });
   });
 
-  afterEach(() => {
-    // "Bretelles": Always restore to full default permissions after each test
-    // This ensures test isolation even if a test fails or modifies permissions
+  after(() => {
+    // "Bretelles": Restore to full default permissions once after entire suite
+    // Changed from afterEach to avoid rate limiting (429 errors)
+    // Each test explicitly sets its own permissions, so no cleanup needed between tests
     resetToDefaultPermissions(userId, ventilations, token);
   });
 
