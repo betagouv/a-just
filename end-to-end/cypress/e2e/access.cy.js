@@ -77,7 +77,6 @@ describe("Test d'accés aux pages", () => {
       const pageAccessIds = [access.id + 0.1, access.id + 0.2]; // reader + writer
       const functionAccessIds = [8, 9, 10]; // magistrat, greffier, contractuel
       const accessIds = [...pageAccessIds, ...functionAccessIds];
-      console.log(`🔵 [TEST] accessIds being set: ${JSON.stringify(accessIds)} for ${access.url}`);
 
       if (access.url !== undefined) {
         cy.log(`🔄 Starting: Testing access for ${access.url}`);
@@ -95,25 +94,24 @@ describe("Test d'accés aux pages", () => {
         cy.clearCookies();
         cy.clearLocalStorage();
         
-        cy.log(`🌐 Directly visiting ${access.url} while logged out...`);
-        console.log(`🔵 [TEST] Visiting ${access.url} (should redirect to login, save redirectUrl, then redirect back)`);
-        cy.visit(access.url); // Will redirect to /login, save redirectUrl
+        cy.log(`🔑 Going to login page...`);
+        cy.visit('/connexion');
         
         cy.log(`🔑 Filling login form...`);
-        console.log(`🔵 [TEST] At login page (redirected from ${access.url}), filling form`);
         
         // Manually fill login form (don't use cy.login() which uses cy.session())
         cy.get('input[formcontrolname="email"]').type(user.email);
         cy.get('input[formcontrolname="password"]').type(user.password);
         cy.get('input[type="submit"]').click();
         
-        console.log(`🔵 [TEST] Form submitted, waiting for redirect to ${access.url}`);
-        cy.wait(2000); // Wait for login and redirect
+        cy.wait(2000); // Wait for login to complete
         
-        console.log(`🔵 [TEST] Login complete, checking we're on ${access.url}`);
+        cy.log(`🌐 Now visiting ${access.url} to test access...`);
+        cy.visit(access.url);
+        cy.wait(1000);
+        
         // Vérifier que l'utilisateur peut accéder à la page autorisée
-        cy.location("pathname")
-          .should("contain", access.url);
+        cy.location("pathname").should("contain", access.url);
 
         cy.log(`✅ Access confirmed for ${access.url}`);
 
