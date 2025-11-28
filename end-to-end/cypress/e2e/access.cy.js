@@ -124,11 +124,34 @@ describe("Test d'accés aux pages", () => {
             otherAccess.url !== access.url
           ) {
             cy.log(`🚫 Testing blocked access: ${otherAccess.url}`);
-            cy.visit(otherAccess.url, { failOnStatusCode: false });
-            cy.wait(1000); // Wait for redirect
-            // Should be redirected away from the unauthorized page
-            cy.location("pathname").should("not.eq", otherAccess.url);
-            cy.log(`✅ Correctly blocked access to ${otherAccess.url} (redirected away)`);
+            
+            // Special handling for simulators - they share a landing page
+            const isSimulatorCrossCheck = 
+              (access.url === '/simulateur' && otherAccess.url === '/simulateur-sans-donnees') ||
+              (access.url === '/simulateur-sans-donnees' && otherAccess.url === '/simulateur');
+            
+            if (isSimulatorCrossCheck) {
+              // Both simulators share /simulateur landing page
+              // Check that unauthorized mode option is disabled/missing
+              cy.visit('/simulateur', { failOnStatusCode: false });
+              cy.wait(1000);
+              
+              if (access.url === '/simulateur-sans-donnees') {
+                // User has "sans données" access, "avec données" should be disabled
+                cy.get('input[type="radio"]').first().should('be.disabled');
+                cy.log(`✅ "Avec données d'A-JUST" option is correctly disabled`);
+              } else {
+                // User has "avec données" access, "sans données" should be disabled  
+                cy.get('input[type="radio"]').last().should('be.disabled');
+                cy.log(`✅ "Pour une autre activité" option is correctly disabled`);
+              }
+            } else {
+              // Normal pages - should be redirected away
+              cy.visit(otherAccess.url, { failOnStatusCode: false });
+              cy.wait(1000);
+              cy.location("pathname").should("not.eq", otherAccess.url);
+              cy.log(`✅ Correctly blocked access to ${otherAccess.url} (redirected away)`);
+            }
           }
         });
         
