@@ -223,8 +223,8 @@ describe("Test d'accés aux pages", () => {
     });
   });
 
-  it.skip("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on panorama ", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+  it("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on panorama", () => {
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux magistrats")
       .map((access) => access.id);
@@ -235,23 +235,31 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/panorama");
-      cy.location("pathname").should("contain", "/panorama");
-      cy.get(".workforce-panel workforce-composition .cards .category")
-        .should("not.contain.text", "Greffe")
-        .should("not.contain.text", "Autour du magistrat");
-      cy.get(".workforce-panel .records-update .category")
-        .should("not.contain.text", "Greffe")
-        .should("not.contain.text", "Autour du magistrat");
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/panorama");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/panorama");
+    cy.get(".workforce-panel workforce-composition .cards .category")
+      .should("not.contain.text", "Greffe")
+      .should("not.contain.text", "Autour du magistrat");
+    cy.get(".workforce-panel .records-update .category")
+      .should("not.contain.text", "Greffe")
+      .should("not.contain.text", "Autour du magistrat");
     checkToolsMenu();
   });
 
   it.skip("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on panorama", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux greffiers")
       .map((access) => access.id);
@@ -262,23 +270,31 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/panorama");
-      cy.location("pathname").should("contain", "/panorama");
-      cy.get(".workforce-panel workforce-composition .cards .category")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Autour du magistrat");
-      cy.get(".workforce-panel .records-update .category")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Autour du magistrat");
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/panorama");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/panorama");
+    cy.get(".workforce-panel workforce-composition .cards .category")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Autour du magistrat");
+    cy.get(".workforce-panel .records-update .category")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Autour du magistrat");
     checkToolsMenu();
   });
 
   it.skip("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on panorama", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux contractuels")
       .map((access) => access.id);
@@ -289,23 +305,31 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/panorama");
-      cy.location("pathname").should("contain", "/panorama");
-      cy.get(".workforce-panel workforce-composition .cards .category")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Greffe");
-      cy.get(".workforce-panel .records-update .category")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Greffe");
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/panorama");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/panorama");
+    cy.get(".workforce-panel workforce-composition .cards .category")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Greffe");
+    cy.get(".workforce-panel .records-update .category")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Greffe");
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Magistrat and check user does not have access to Greffier datas on cockpit ", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+  it.skip("Give only access to Magistrat and check user does not have access to Greffier datas on cockpit", () => {
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux magistrats")
       .map((access) => access.id);
@@ -316,21 +340,28 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/cockpit");
-      cy.wait(2000);
-      cy.location("pathname").should("contain", "/cockpit");
-      cy.get(".sub-main-header .categories-switch")
-        .should("not.contain.text", "Greffe")
-        .should("not.contain.text", "Autour du magistrat");
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/cockpit");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/cockpit");
+    cy.get(".sub-main-header .categories-switch")
+      .should("not.contain.text", "Greffe")
+      .should("not.contain.text", "Autour du magistrat");
     checkToolsMenu();
   });
 
-  it.skip("Give only access to Greffier and check user does not have access to Magistrat datas on cockpit ", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+  it.skip("Give only access to Greffier and check user does not have access to Magistrat datas on cockpit", () => {
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux greffiers")
       .map((access) => access.id);
@@ -341,21 +372,28 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/cockpit");
-      cy.wait(2000); // Wait for the page to load completely
-      cy.location("pathname").should("contain", "/cockpit");
-      cy.get(".sub-main-header .categories-switch")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Autour du magistrat");
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/cockpit");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/cockpit");
+    cy.get(".sub-main-header .categories-switch")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Autour du magistrat");
     checkToolsMenu();
   });
 
   it.skip("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on ventilateur", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux magistrats")
       .map((access) => access.id);
@@ -366,20 +404,28 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/ventilations");
-      cy.location("pathname").should("contain", "/ventilations");
-      cy.get(".title .checkbox-button")
-        .should("not.contain.text", "Greffe")
-        .should("not.contain.text", "Autour du magistrat");
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/ventilations");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/ventilations");
+    cy.get(".title .checkbox-button")
+      .should("not.contain.text", "Greffe")
+      .should("not.contain.text", "Autour du magistrat");
     checkToolsMenu();
   });
 
   it.skip("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on ventilateur", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux greffiers")
       .map((access) => access.id);
@@ -390,20 +436,28 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/ventilations");
-      cy.location("pathname").should("contain", "/ventilations");
-      cy.get(".title .checkbox-button")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Autour du magistrat");
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/ventilations");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/ventilations");
+    cy.get(".title .checkbox-button")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Autour du magistrat");
     checkToolsMenu();
   });
 
   it.skip("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on ventilateur", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux contractuels")
       .map((access) => access.id);
@@ -414,20 +468,28 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/ventilations");
-      cy.location("pathname").should("contain", "/ventilations");
-      cy.get(".title .checkbox-button")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Greffe");
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/ventilations");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/ventilations");
+    cy.get(".title .checkbox-button")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Greffe");
     checkToolsMenu();
   });
 
   it.skip("Give only access to Magistrat and check user does not have access to Greffier and Contractuel datas on workforce extractor", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux magistrats")
       .map((access) => access.id);
@@ -438,24 +500,32 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/dashboard");
-      cy.location("pathname").should("contain", "/dashboard");
-      cy.get("aj-extractor-ventilation .exportateur-container .category-select")
-        .click()
-        .get(".cdk-overlay-pane")
-        .should("contain.text", "Siège")
-        .should("not.contain.text", "Greffe")
-        .should("not.contain.text", "Equipe Autour du magistrat");
-      cy.get("body").click(0, 0);
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/dashboard");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/dashboard");
+    cy.get("aj-extractor-ventilation .exportateur-container .category-select")
+      .click()
+      .get(".cdk-overlay-pane")
+      .should("contain.text", "Siège")
+      .should("not.contain.text", "Greffe")
+      .should("not.contain.text", "Equipe Autour du magistrat");
+    cy.get("body").click(0, 0);
     checkToolsMenu();
   });
 
   it.skip("Give only access to Greffier and check user does not have access to Magistrat and Contractuel datas on workforce extractor", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux greffiers")
       .map((access) => access.id);
@@ -466,24 +536,32 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/dashboard");
-      cy.location("pathname").should("contain", "/dashboard");
-      cy.get("aj-extractor-ventilation .exportateur-container .category-select")
-        .click()
-        .get(".cdk-overlay-pane")
-        .should("contain.text", "Greffe")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Equipe Autour du magistrat");
-      cy.get("body").click(0, 0);
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/dashboard");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/dashboard");
+    cy.get("aj-extractor-ventilation .exportateur-container .category-select")
+      .click()
+      .get(".cdk-overlay-pane")
+      .should("contain.text", "Greffe")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Equipe Autour du magistrat");
+    cy.get("body").click(0, 0);
     checkToolsMenu();
   });
 
   it.skip("Give only access to Contractuel and check user does not have access to Magistrat and Greffier datas on workforce extractor", () => {
-    const accessUrls = accessUrlList.map((access) => access.id);
+    const accessUrls = accessUrlList.flatMap((access) => [access.id + 0.1, access.id + 0.2]);
     const accessFonctions = accessFonctionsList
       .filter((access) => access.label === "Accès aux contractuels")
       .map((access) => access.id);
@@ -494,19 +572,27 @@ describe("Test d'accés aux pages", () => {
       accessIds,
       ventilations,
       token,
-    }).then(() => {
-      cy.login();
-      cy.visit("/dashboard");
-      cy.location("pathname").should("contain", "/dashboard");
-      cy.get("aj-extractor-ventilation .exportateur-container .category-select")
-        .click()
-        .get(".cdk-overlay-pane")
-        .should("contain.text", "Equipe autour du magistrat")
-        .should("not.contain.text", "Siège")
-        .should("not.contain.text", "Greffe");
-      cy.get("body").click(0, 0);
     });
-    cy.wait(2000); // Wait for the page to load completely
+    
+    cy.wait(3000);
+    cy.visit('/logout');
+    cy.wait(1000);
+    cy.visit('/connexion');
+    cy.get('input[formcontrolname="email"]').type(user.email);
+    cy.get('input[formcontrolname="password"]').type(user.password);
+    cy.get('input[type="submit"]').click();
+    cy.wait(2000);
+    
+    cy.visit("/dashboard");
+    cy.wait(2000);
+    cy.location("pathname").should("contain", "/dashboard");
+    cy.get("aj-extractor-ventilation .exportateur-container .category-select")
+      .click()
+      .get(".cdk-overlay-pane")
+      .should("contain.text", "Equipe autour du magistrat")
+      .should("not.contain.text", "Siège")
+      .should("not.contain.text", "Greffe");
+    cy.get("body").click(0, 0);
     checkToolsMenu();
   });
 });
