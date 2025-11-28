@@ -267,10 +267,10 @@ export function makeEmptyItemFromRef(ref, periode, fill = null) {
     id: undefined,
     entrees: fill,
     sorties: fill,
-    stock: null,
+    stock: fill,
     originalEntrees: fill,
     originalSorties: fill,
-    originalStock: null,
+    originalStock: fill,
     idReferentiel: ref.id,
     contentieux: {
       id: ref.id,
@@ -291,7 +291,7 @@ export function completePeriod(items, flatReferentielsList, periode, fill = null
 export function fillMissingContentieux(GroupedList, flatReferentielsList) {
   const out = {}
   for (const [periode, items] of Object.entries(GroupedList || {})) {
-    out[periode] = completePeriod(items || [], flatReferentielsList || [], periode)
+    out[periode] = completePeriod(items || [], flatReferentielsList || [], periode,'-')
   }
   return out
 }
