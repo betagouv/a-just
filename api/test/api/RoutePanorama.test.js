@@ -14,6 +14,14 @@ module.exports = function (datas) {
      * Sauvegarde d'une valeur pour la CLE (au Siege)
      */
     it('Save CLE', async () => {
+      console.log('🔍 DEBUG: Checking userToken before Save CLE test')
+      console.log('   - datas object keys:', Object.keys(datas))
+      console.log('   - datas.userToken exists:', datas.userToken ? 'YES' : 'NO')
+      console.log('   - datas.userToken type:', typeof datas.userToken)
+      console.log('   - datas.userToken value:', datas.userToken ? `${datas.userToken.substring(0, 20)}...` : 'undefined')
+      console.log('   - datas.userId:', datas.userId)
+      console.log('   - datas.adminToken exists:', datas.adminToken ? 'YES' : 'NO')
+
       const response = await onSaveCle(JURIDICTION_BACKUP_ID, MAGISTART_ID, siegeCle, datas.userToken) // On enregistre une CLE de valeur 10 pour la catégorie magistrat
 
       assert.strictEqual(response.status, 200)
