@@ -91,8 +91,10 @@ describe("Test d'accés aux pages", () => {
         
         cy.wait(3000); // Wait for permission update to complete
         cy.log(`✅ Permissions updated, logging out...`);
-        cy.clearCookies();
-        cy.clearLocalStorage();
+        
+        // Visit logout page to properly clear session on server side
+        cy.visit('/logout');
+        cy.wait(1000); // Wait for logout to complete
         
         cy.log(`🔑 Going to login page...`);
         cy.visit('/connexion');
