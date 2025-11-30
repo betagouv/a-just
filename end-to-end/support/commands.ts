@@ -48,7 +48,6 @@ Cypress.Commands.add("login", () => {
     
     cy.request({
       url: `${serverUrl}/auths/auto-login`,
-      retryOnStatusCodeFailure: true,
       timeout: 30000,
       failOnStatusCode: false,
     }).then(() => {
