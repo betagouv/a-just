@@ -75,6 +75,8 @@ jobs:
         run: |
           set -e
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE"
+          # Clean up any existing containers and volumes to ensure fresh database state
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml down -v || true
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
           docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
             -e CY_JSON_ONLY=1 \
@@ -204,6 +206,8 @@ jobs:
         run: |
           set -e
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/reference-code"
+          # Clean up any existing containers and volumes to ensure fresh database state
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml down -v || true
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
             -e CY_JSON_ONLY=1 \

@@ -1,9 +1,23 @@
 import { getShortMonthString } from "../../support/utils/dates";
 import { contentieuxStructure } from "../../support/utils/contentieux";
+import user from "../../fixtures/user.json";
+import { loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
 
 describe("Données d'activité", () => {
   before(() => {
-    cy.login();
+    // Ensure user has full permissions before UI login
+    loginApi(user.email, user.password).then((resp) => {
+      const userId = resp.body.user.id;
+      const token = resp.body.token;
+      
+      return getUserDataApi(token).then((resp) => {
+        const ventilations = resp.body.data.backups.map((v) => v.id);
+        return resetToDefaultPermissions(userId, ventilations, token);
+      });
+    }).then(() => {
+      // Now proceed with UI login
+      cy.login();
+    });
   });
 
   it("Check the activity data page load", () => {
