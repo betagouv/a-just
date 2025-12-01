@@ -103,6 +103,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
       - name: Run E2E tests (Cypress JSON-only, containerized)
         run: |
           set -e
@@ -402,6 +403,36 @@ jobs:
         with:
           name: mocha-report
           path: ./mocha-report
+
+      - name: Check if gh-pages branch exists
+        id: check_gh_pages
+        continue-on-error: true
+        run: |
+          if git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "gh-pages branch exists"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "gh-pages branch does not exist yet (first deployment)"
+          fi
+
+      - name: Checkout existing gh-pages branch
+        if: steps.check_gh_pages.outputs.exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-existing
+          
+      - name: Restore existing site content
+        if: steps.check_gh_pages.outputs.exists == 'true'
+        run: |
+          if [ -d "gh-pages-existing/site" ]; then
+            echo "Restoring existing site content from gh-pages"
+            cp -r gh-pages-existing/site ./site
+            echo "Existing reports preserved"
+          else
+            echo "No existing site directory found in gh-pages"
+          fi
 
       - name: Create site directory structure (per PR)
         env:
