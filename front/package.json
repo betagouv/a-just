@@ -33,7 +33,7 @@
     "@angular/platform-browser": "^20.1.2",
     "@angular/platform-browser-dynamic": "^20.1.2",
     "@angular/router": "^20.1.2",
-    "@compodoc/compodoc": "^1.1.26",
+    "@compodoc/compodoc": "^1.1.32",
     "@juggle/resize-observer": "^3.4.0",
     "@ngx-env/builder": "^19.0.4",
     "@sentry/browser": "^8.55.0",
@@ -86,5 +86,9 @@
     "prettier-plugin-organize-imports": "^3.2.0",
     "tailwindcss": "^4.1.11",
     "typescript": "~5.8.3"
+  },
+  "overrides": {
+    "chokidar": "^4.0.0",
+    "@babel/core": "^7.27.7"
   }
 }
