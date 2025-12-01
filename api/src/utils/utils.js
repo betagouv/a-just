@@ -62,14 +62,26 @@ export function validateEmail(email) {
   
   const emailLower = String(email).toLowerCase().trim()
   
-  // Check if email domain is whitelisted (bypass regex)
-  const domain = emailLower.split('@')[1]
-  if (domain && WHITELISTED_DOMAINS.includes(domain)) {
-    // Basic validation: has @ and domain part
-    return emailLower.includes('@') && domain.length > 0
+  // Basic structure check: must have @ and parts on both sides
+  if (!emailLower.includes('@')) {
+    return false
   }
   
-  // Otherwise, use regex validation
+  const [localPart, domain] = emailLower.split('@')
+  
+  // Validate local part (before @): only allow alphanumeric, dots, hyphens, underscores
+  // No special characters like #, ', ", etc.
+  const localPartRegex = /^[a-z0-9._-]+$/
+  if (!localPart || !localPartRegex.test(localPart)) {
+    return false
+  }
+  
+  // Check if email domain is whitelisted (bypass domain regex)
+  if (domain && WHITELISTED_DOMAINS.includes(domain)) {
+    return domain.length > 0
+  }
+  
+  // Otherwise, use full regex validation for non-whitelisted domains
   // eslint-disable-next-line max-len
   const re = /^((?!\.)[\w_.]*[^.])(@[\w-]+)(\.\w+(\.\w+)?[^.\W])$/gim
   return re.test(String(email).toLowerCase())
