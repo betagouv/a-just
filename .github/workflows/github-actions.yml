@@ -408,11 +408,31 @@ jobs:
           name: mocha-report
           path: ./mocha-report
 
+      - name: Fetch existing GitHub Pages content
+        continue-on-error: true
+        run: |
+          set -e
+          # Try to fetch existing gh-pages branch to preserve previous reports
+          git fetch origin gh-pages:gh-pages 2>/dev/null || echo "No existing gh-pages branch"
+          if git rev-parse --verify gh-pages >/dev/null 2>&1; then
+            echo "Checking out existing gh-pages content"
+            git checkout gh-pages -- . 2>/dev/null || true
+            # Move existing site content to preserve it
+            if [ -d "site" ]; then
+              mv site site-existing
+            fi
+          fi
+          git checkout ${{ github.sha }} || git checkout HEAD
+
       - name: Create site directory structure (per PR)
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
           set -e
+          # Restore existing site content if it exists
+          if [ -d "site-existing" ]; then
+            mv site-existing site
+          fi
           mkdir -p site/reports/pr-${PR_NUM}
           mkdir -p site/reports/pr-${PR_NUM}/cypress
           cp -r cypress-reports/cypress/reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
