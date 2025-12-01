@@ -4,6 +4,7 @@
   "engines": {
     "node": "22"
   },
+  "pre-commit": "npm run check:vulnerabilities",
   "scripts": {
     "db:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml build",
     "db:start": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
@@ -15,9 +16,13 @@
     "build:front-admin": "cd front-admin && npm ci --force --include=dev && npm run build && mv dist/browser ../api/dist/front-admin && cd ..",
     "build:front": "cd front && npm ci --force --include=dev && npm run build && mv dist/browser ../api/dist/front && cd ..",
     "build:package": "cp package.json ./api/dist/.",
-    "start:production": "cd api && npm run start:production"
+    "start:production": "cd api && npm run start:production",
+    "check:vulnerabilities": "npx @aikidosec/safe-chain setup && cd api && npx @aikidosec/safe-chain setup && cd ../front && npx @aikidosec/safe-chain setup && cd ../front-admin && npx @aikidosec/safe-chain setup && cd .."
   },
   "dependencies": {
     "axios": "^1.10.0"
+  },
+  "devDependencies": {
+    "@aikidosec/safe-chain": "^1.1.10"
   }
 }
