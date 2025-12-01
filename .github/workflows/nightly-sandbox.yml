@@ -419,26 +419,9 @@ jobs:
         env:
           REPORT_DATE: ${{ steps.report_date.outputs.date }}
         run: |
-          set -e
-          HTML="site/reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
-          VIDEOS_DIR="site/reports/sandbox/nightly/${REPORT_DATE}/videos"
-          if [ -f "$HTML" ]; then
-            chmod u+w "$HTML" || true
-            echo "Appending Cypress Videos section to $HTML"
-            {
-              printf '\n<hr/>\n'
-              echo "<h2 style=\"margin-top:24px\">Cypress Videos</h2>"
-              echo "<ul>"
-              for v in "$VIDEOS_DIR"/*.mp4; do
-                [ -e "$v" ] || continue
-                b=$(basename "$v")
-                echo "<li><a href=\"../videos/$b\" target=\"_blank\">$b</a></li>"
-              done
-              echo "</ul>"
-            } >> "$HTML"
-          else
-            echo "Combined HTML not found, skipping video section"
-          fi
+          node scripts/append-videos-to-report.js \
+            "site/reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html" \
+            "site/reports/sandbox/nightly/${REPORT_DATE}/videos"
 
       - name: Check combined HTML exists and test status
         id: test_status

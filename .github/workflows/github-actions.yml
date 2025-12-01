@@ -465,26 +465,9 @@ jobs:
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
-          set -e
-          HTML="site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html"
-          VIDEOS_DIR="site/reports/pr-${PR_NUM}/videos"
-          if [ -f "$HTML" ]; then
-            chmod u+w "$HTML" || true
-            echo "Appending Cypress Videos section to $HTML"
-            {
-              printf '\n<hr/>\n'
-              echo "<h2 style=\"margin-top:24px\">Cypress Videos</h2>"
-              echo "<ul>"
-              for v in "$VIDEOS_DIR"/*.mp4; do
-                [ -e "$v" ] || continue
-                b=$(basename "$v")
-                echo "<li><a href=\"../videos/$b\" target=\"_blank\">$b</a></li>"
-              done
-              echo "</ul>"
-            } >> "$HTML"
-          else
-            echo "Combined HTML not found, skipping video section"
-          fi
+          node scripts/append-videos-to-report.js \
+            "site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html" \
+            "site/reports/pr-${PR_NUM}/videos"
 
       - name: Check combined HTML exists
         id: combined_exists
