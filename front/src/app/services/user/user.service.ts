@@ -430,6 +430,7 @@ export class UserService implements OnInit {
         path: 'cockpit',
       })
     }
+
     if (
       user &&
       user.access &&

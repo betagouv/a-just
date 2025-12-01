@@ -71,8 +71,8 @@ export function validateEmail(email) {
   
   // Otherwise, use regex validation
   // eslint-disable-next-line max-len
-  const re = /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/
-  return re.test(emailLower)
+  const re = /^((?!\.)[\w_.]*[^.])(@[\w-]+)(\.\w+(\.\w+)?[^.\W])$/gim
+  return re.test(String(email).toLowerCase())
 }
 
 /**
