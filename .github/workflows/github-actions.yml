@@ -97,6 +97,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
       - name: Run E2E tests (Cypress JSON-only, containerized)
         run: |
           set -e
@@ -408,15 +409,27 @@ jobs:
           name: mocha-report
           path: ./mocha-report
 
-      - name: Checkout existing gh-pages branch
+      - name: Check if gh-pages branch exists
+        id: check_gh_pages
         continue-on-error: true
+        run: |
+          if git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "gh-pages branch exists"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "gh-pages branch does not exist yet (first deployment)"
+          fi
+
+      - name: Checkout existing gh-pages branch
+        if: steps.check_gh_pages.outputs.exists == 'true'
         uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages-existing
           
       - name: Restore existing site content
-        continue-on-error: true
+        if: steps.check_gh_pages.outputs.exists == 'true'
         run: |
           if [ -d "gh-pages-existing/site" ]; then
             echo "Restoring existing site content from gh-pages"
@@ -488,26 +501,9 @@ jobs:
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
-          set -e
-          HTML="site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html"
-          VIDEOS_DIR="site/reports/pr-${PR_NUM}/videos"
-          if [ -f "$HTML" ]; then
-            chmod u+w "$HTML" || true
-            echo "Appending Cypress Videos section to $HTML"
-            {
-              printf '\n<hr/>\n'
-              echo "<h2 style=\"margin-top:24px\">Cypress Videos</h2>"
-              echo "<ul>"
-              for v in "$VIDEOS_DIR"/*.mp4; do
-                [ -e "$v" ] || continue
-                b=$(basename "$v")
-                echo "<li><a href=\"../videos/$b\" target=\"_blank\">$b</a></li>"
-              done
-              echo "</ul>"
-            } >> "$HTML"
-          else
-            echo "Combined HTML not found, skipping video section"
-          fi
+          node scripts/append-videos-to-report.js \
+            "site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html" \
+            "site/reports/pr-${PR_NUM}/videos"
 
       - name: Check combined HTML exists
         id: combined_exists
