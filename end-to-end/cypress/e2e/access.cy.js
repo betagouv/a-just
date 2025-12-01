@@ -16,7 +16,6 @@ describe("Test d'accés aux pages", () => {
   before(() => {
     //Login to get the admin user token so we can retrieve user data
     return loginApi(user.email, user.password).then((resp) => {
-      cy.log("Login API response:", resp.body); // Debug log
       userId = resp.body.user.id;
       token = resp.body.token;
 
@@ -69,8 +68,6 @@ describe("Test d'accés aux pages", () => {
       const accessIds = [...pageAccessIds, ...functionAccessIds];
 
       if (access.url !== undefined) {
-        cy.log(`🔄 Starting: Testing access for ${access.url}`);
-        
         // Mettre à jour les droits d'accès pour l'utilisateur
         updateUserAccounatApi({
           userId,
@@ -80,16 +77,12 @@ describe("Test d'accés aux pages", () => {
         });
         
         cy.wait(3000); // Wait for permission update to complete
-        cy.log(`✅ Permissions updated, logging out...`);
         
         // Visit logout page to properly clear session on server side
         cy.visit('/logout');
         cy.wait(1000); // Wait for logout to complete
         
-        cy.log(`🔑 Going to login page...`);
         cy.visit('/connexion');
-        
-        cy.log(`🔑 Filling login form...`);
         
         // Manually fill login form (don't use cy.login() which uses cy.session())
         cy.get('input[formcontrolname="email"]').type(user.email);
@@ -98,14 +91,11 @@ describe("Test d'accés aux pages", () => {
         
         cy.wait(2000); // Wait for login to complete
         
-        cy.log(`🌐 Now visiting ${access.url} to test access...`);
         cy.visit(access.url);
         cy.wait(1000);
         
         // Vérifier que l'utilisateur peut accéder à la page autorisée
         cy.location("pathname").should("contain", access.url);
-
-        cy.log(`✅ Access confirmed for ${access.url}`);
 
         // Vérifier que l'utilisateur ne peut pas accéder aux autres pages
         cy.wrap(accessUrlList).each((otherAccess) => {
@@ -113,8 +103,6 @@ describe("Test d'accés aux pages", () => {
             otherAccess.url !== undefined &&
             otherAccess.url !== access.url
           ) {
-            cy.log(`🚫 Testing blocked access: ${otherAccess.url}`);
-            
             // Special handling for simulators - they share a landing page
             const isSimulatorCrossCheck = 
               (access.url === '/simulateur' && otherAccess.url === '/simulateur-sans-donnees') ||
@@ -130,24 +118,20 @@ describe("Test d'accés aux pages", () => {
                 // User has "sans données" access, "avec données" should be disabled
                 cy.contains('p', 'avec les données')
                   .should('have.class', 'circle-disable');
-                cy.log(`✅ "Avec données d'A-JUST" option is correctly disabled`);
               } else {
                 // User has "avec données" access, "sans données" should be disabled  
                 cy.contains('p', 'pour une autre')
                   .should('have.class', 'circle-disable');
-                cy.log(`✅ "Pour une autre activité" option is correctly disabled`);
               }
             } else {
               // Normal pages - should be redirected away
               cy.visit(otherAccess.url, { failOnStatusCode: false });
               cy.wait(1000);
               cy.location("pathname").should("not.eq", otherAccess.url);
-              cy.log(`✅ Correctly blocked access to ${otherAccess.url} (redirected away)`);
             }
           }
         });
         
-        cy.log(`✅ Completed testing for ${access.url}`);
         cy.wait(2000); // Wait between major iterations
       }
     });
@@ -207,7 +191,6 @@ describe("Test d'accés aux pages", () => {
         }
         checkToolsMenu(toolToNotCheck);
         
-        cy.log(`✅ Menu test complete for ${access.label}`);
         cy.wait(2000);
       }
     });

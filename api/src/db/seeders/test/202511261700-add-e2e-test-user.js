@@ -30,27 +30,21 @@ import { USER_ROLE_ADMIN } from '../../../constants/roles'
  */
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
-    console.log('🧪 [E2E SEEDER] Setting up test user: utilisateurtest@a-just.fr')
-
     // Check if user already exists
     let testUser = await models.Users.findOne({
       where: { email: 'utilisateurtest@a-just.fr' },
     })
 
     if (testUser) {
-      console.log(`ℹ️  [E2E SEEDER] Test user already exists (ID: ${testUser.id}), updating...`)
-      
       // Delete all existing access rights to ensure clean state
       await models.UsersAccess.destroy({
         where: { user_id: testUser.id },
       })
-      console.log('   🗑️  Deleted existing access rights')
       
       // Delete existing HR backup associations
       await models.UserVentilations.destroy({
         where: { user_id: testUser.id },
       })
-      console.log('   🗑️  Deleted existing HR backup associations')
       
       // Update user details
       const encryptedPassword = crypt.encryptPassword('@bUgGD25gX1b')
@@ -61,7 +55,6 @@ module.exports = {
         status: 1,
         role: USER_ROLE_ADMIN,
       })
-      console.log('   ✅ Updated user details')
     } else {
       // Create the test user
       testUser = await models.Users.create(
@@ -79,8 +72,6 @@ module.exports = {
       // Encrypt the password
       const encryptedPassword = crypt.encryptPassword('@bUgGD25gX1b')
       await testUser.update({ password: encryptedPassword })
-
-      console.log(`✅ [E2E SEEDER] Test user created with ID: ${testUser.id}`)
     }
 
     // Grant all access rights (reader + writer for all tools)
@@ -106,23 +97,19 @@ module.exports = {
       HAS_ACCESS_TO_CONTRACTUEL,
     ]
 
-    console.log('🔑 [E2E SEEDER] Granting access rights...')
     for (const accessId of allAccessRights) {
       await models.UsersAccess.create({
         user_id: testUser.id,
         access_id: accessId,
       })
-      console.log(`   ✓ ${accessToString(accessId)}`)
     }
 
     // Associate user with an HR backup (prefer test010, fallback to first available)
-    console.log('🔍 [E2E SEEDER] Looking for HR backup to associate with user...')
     let targetBackup = await models.HRBackups.findOne({
       where: { label: 'test010' },
     })
 
     if (!targetBackup) {
-      console.log('⚠️  [E2E SEEDER] test010 not found, using first available backup')
       targetBackup = await models.HRBackups.findOne({
         order: [['id', 'ASC']],
       })
@@ -133,37 +120,9 @@ module.exports = {
         user_id: testUser.id,
         hr_backup_id: targetBackup.id,
       })
-      console.log(`✅ [E2E SEEDER] User associated with HR backup:`)
-      console.log(`   - ID: ${targetBackup.id}`)
-      console.log(`   - Label: ${targetBackup.label}`)
-      console.log(`   - Type: ${targetBackup.type || 'N/A'}`)
-
-      // Check if this backup is visible via TJ.isVisible
-      console.log('🔍 [E2E SEEDER] Checking TJ visibility for this backup...')
-      const tjRecord = await models.TJ.findOne({
-        where: { label: targetBackup.label },
-        raw: true,
-      })
-      if (tjRecord) {
-        console.log(`   - TJ record found: ID=${tjRecord.id}, enabled=${tjRecord.enabled}`)
-        console.log(`   - Will be visible: ${!tjRecord || tjRecord.enabled ? 'YES' : 'NO'}`)
-      } else {
-        console.log(`   - No TJ record found (will default to visible: YES)`)
-      }
-
-      // Verify the association was created
-      const ventilationCheck = await models.UserVentilations.findOne({
-        where: {
-          user_id: testUser.id,
-          hr_backup_id: targetBackup.id,
-        },
-      })
-      console.log(`   - UserVentilations association created: ${ventilationCheck ? 'YES' : 'NO'}`)
-    } else {
-      console.warn('⚠️  [E2E SEEDER] No HR backup found - user will not have access to any jurisdiction')
     }
 
-    console.log('✅ [E2E SEEDER] Test user setup complete!')
+    console.log('✅ [E2E SEEDER] Test user setup complete')
   },
 
   down: async (queryInterface, Sequelize, models) => {
@@ -182,7 +141,6 @@ module.exports = {
         force: true,
       })
       await testUser.destroy({ force: true })
-      console.log('🧹 [E2E SEEDER] Test user removed')
     }
   },
 }
