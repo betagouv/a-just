@@ -109,6 +109,7 @@ export const routes: Routes = [
     component: ChangePassword,
   },
   {
+    // test de log
     path: 'referentiel-de-temps/:id',
     component: AverageEtpDisplayerPage,
     canActivate: [tempsMoyensGuard, typeGuard],
