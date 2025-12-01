@@ -1,0 +1,16 @@
+{
+  "name": "comparateur-extracteurs",
+  "version": "1.0.0",
+  "description": "CLI tool to compare Excel files (extracteur exports) with detailed diff output",
+  "main": "src/cli.ts",
+  "type": "module",
+  "bin": {
+    "comparateur-extracteurs": "./src/cli.ts"
+  },
+  "scripts": {
+    "start": "tsx src/cli.ts"
+  },
+  "keywords": ["excel", "diff", "comparison", "extracteur"],
+  "author": "A-JUST",
+  "license": "MIT"
+}
