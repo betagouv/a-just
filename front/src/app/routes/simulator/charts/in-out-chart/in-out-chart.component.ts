@@ -623,7 +623,7 @@ export class InOutChartComponent implements OnDestroy {
    * @returns Retourne l'arrondi d'un nombre
    */
   getRounded(value: number): number {
-    return fixDecimal(value)
+    return Math.round(value)
   }
   /**
    * Récupération du label MOIS
