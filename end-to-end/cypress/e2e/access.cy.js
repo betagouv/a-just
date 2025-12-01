@@ -22,7 +22,9 @@ describe("Test d'accés aux pages", () => {
       // Get user data to retrieve ventilations list
       return getUserDataApi(token).then((resp) => {
         ventilations = resp.body.data.backups.map((v) => v.id);
-        // Note: User already has full access from seeder, no need to update permissions here
+        // Explicitly reset permissions to ensure clean state (belt and suspenders)
+        // This protects against database state issues or incomplete seeder execution
+        return resetToDefaultPermissions(userId, ventilations, token);
       });
     });
   });
