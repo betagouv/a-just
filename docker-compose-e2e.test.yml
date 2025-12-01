@@ -55,6 +55,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile_e2e_api
+      args:
+        SKIP_FRONT_ADMIN: "1"
     networks:
       ajust_e2e_network:
         ipv4_address: 175.0.0.20
@@ -90,6 +92,8 @@ services:
     build:
       context: ${SANDBOX_CODE_DIR:-.}
       dockerfile: dockerfile_e2e_api
+      args:
+        SKIP_FRONT_ADMIN: "1"
     networks:
       ajust_e2e_network:
         ipv4_address: 175.0.0.21
@@ -158,9 +162,7 @@ services:
       retries: 5
 
   cypress:
-    build:
-      context: .
-      dockerfile: dockerfile_e2e_test
+    image: cypress/browsers:node-22.12.0-chrome-131.0.6778.108-1-ff-133.0-edge-131.0.2903.70-1
     networks:
       - ajust_e2e_network
     depends_on:
@@ -170,6 +172,7 @@ services:
       - front_sandbox
       - redis
       - redis_sandbox
+    shm_size: 2gb
     volumes:
       - ./end-to-end:/e2e
       - ./end-to-end/scripts:/scripts

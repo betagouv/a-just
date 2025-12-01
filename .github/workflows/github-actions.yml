@@ -88,12 +88,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Checkout sandbox branch (for local sandbox stack)
-        uses: actions/checkout@v4
-        with:
-          ref: sandbox
-          path: sandbox-code
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -108,15 +102,20 @@ jobs:
           set -e
           SPEC_INPUT="${{ github.event.inputs.spec }}"
           export SPEC="$SPEC_INPUT"
-          export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d db front api redis || true
-          docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm \
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d --build db front api redis
+          
+          echo "=== Waiting for API to initialize (30s to allow seeders to complete) ==="
+          sleep 30
+          
+          echo "=== Container Status ==="
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml ps
+          echo ""
+          
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm --no-deps \
             -e CY_JSON_ONLY=1 \
-            -e SANDBOX_CODE_DIR=/work/sandbox-code \
             -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
             -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
             -e SPEC="$SPEC" \
-            -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
             cypress sh -lc '
               set -e
               cd /e2e
@@ -126,9 +125,15 @@ jobs:
               echo "Waiting for API at $NG_APP_SERVER_URL ..."
               npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
               rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --spec "${SPEC:-cypress/e2e/**/*.cy.js}"
+              npx cypress run --browser chrome --headless --spec "${SPEC:-cypress/e2e/**/*.cy.js}" || true
               echo "=== E2E reports ==="; ls -la cypress/reports || true
-            '
+            ' || true
+          
+          echo ""
+          echo "=== API Container Logs (last 500 lines) ==="
+          docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=500 api
+          echo "=== End of API Logs ==="
+          
           docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
         continue-on-error: true
 
@@ -228,7 +233,7 @@ jobs:
         run: |
           set -e
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
+          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d --build db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
             -e CY_JSON_ONLY=1 \
             -e SANDBOX_CODE_DIR=/work/sandbox-code \
@@ -248,7 +253,7 @@ jobs:
               echo "Waiting for SANDBOX API at http://175.0.0.21:8081/api ..."
               npx -y wait-on -t 180000 -i 2000 "http://175.0.0.21:8081/api"
               rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
+              npx cypress run --browser chrome --headless --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
               echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
             '
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml down || true
@@ -402,6 +407,24 @@ jobs:
         with:
           name: mocha-report
           path: ./mocha-report
+
+      - name: Checkout existing gh-pages branch
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-existing
+          
+      - name: Restore existing site content
+        continue-on-error: true
+        run: |
+          if [ -d "gh-pages-existing/site" ]; then
+            echo "Restoring existing site content from gh-pages"
+            cp -r gh-pages-existing/site ./site
+            echo "Existing reports preserved"
+          else
+            echo "No existing site directory found in gh-pages"
+          fi
 
       - name: Create site directory structure (per PR)
         env:

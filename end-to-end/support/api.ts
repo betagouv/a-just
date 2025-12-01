@@ -9,8 +9,6 @@ export const loginApi = (email: string, password: string) => {
       email: email,
       password: password,
     },
-    // keep cookies-based session
-    withCredentials: true,
   });
 };
 
@@ -137,5 +135,37 @@ export const updateUserAccounatApi = ({
       access: accessIds,
       ventilations: ventilations,
     },
+  });
+};
+
+/**
+ * Reset user permissions to default state matching E2E seeder
+ * Use in before/after hooks to ensure test isolation ("ceinture et bretelles")
+ */
+export const resetToDefaultPermissions = (
+  userId: number,
+  ventilations: number[],
+  token: string
+) => {
+  // Full permissions matching api/src/db/seeders/test/202511261700-add-e2e-test-user.js
+  const allPermissions = [
+    1.1, 1.2,   // Dashboard (Panorama) - reader + writer
+    2.1, 2.2,   // Ventilations - reader + writer
+    3.1, 3.2,   // Activities - reader + writer
+    4.1, 4.2,   // Average time - reader + writer
+    5.1, 5.2,   // Calculator (Cockpit) - reader + writer
+    6.1, 6.2,   // Simulator - reader + writer
+    61.1, 61.2, // White simulator - reader + writer
+    7.1, 7.2,   // Reaffectator - reader + writer
+    8,          // HAS_ACCESS_TO_MAGISTRAT
+    9,          // HAS_ACCESS_TO_GREFFIER
+    10,         // HAS_ACCESS_TO_CONTRACTUEL
+  ];
+
+  return updateUserAccounatApi({
+    userId,
+    accessIds: allPermissions,
+    ventilations,
+    token,
   });
 };
