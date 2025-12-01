@@ -52,7 +52,7 @@ export function controlPassword(password) {
 
 export function validateEmail(email) {
   // eslint-disable-next-line max-len
-  const re = /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/
+  const re = /^((?!\.)[\w_.]*[^.])(@[\w-]+)(\.\w+(\.\w+)?[^.\W])$/gim
   return re.test(String(email).toLowerCase())
 }
 
