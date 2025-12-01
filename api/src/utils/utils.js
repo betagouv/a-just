@@ -51,8 +51,39 @@ export function controlPassword(password) {
 }
 
 export function validateEmail(email) {
+  // Whitelist of approved domains that bypass regex validation
+  // This allows domains with hyphens or other special chars that may not match the regex
+  const WHITELISTED_DOMAINS = [
+    'a-just.fr',
+    'a-just.incubateur.net',
+    'beta.gouv.fr',
+    'justice.gouv.fr',
+  ]
+  
+  const emailLower = String(email).toLowerCase().trim()
+  
+  // Basic structure check: must have @ and parts on both sides
+  if (!emailLower.includes('@')) {
+    return false
+  }
+  
+  const [localPart, domain] = emailLower.split('@')
+  
+  // Validate local part (before @): only allow alphanumeric, dots, hyphens, underscores
+  // No special characters like #, ', ", etc.
+  const localPartRegex = /^[a-z0-9._-]+$/
+  if (!localPart || !localPartRegex.test(localPart)) {
+    return false
+  }
+  
+  // Check if email domain is whitelisted (bypass domain regex)
+  if (domain && WHITELISTED_DOMAINS.includes(domain)) {
+    return domain.length > 0
+  }
+  
+  // Otherwise, use full regex validation for non-whitelisted domains
   // eslint-disable-next-line max-len
-  const re = /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/
+  const re = /^((?!\.)[\w_.]*[^.])(@[\w-]+)(\.\w+(\.\w+)?[^.\W])$/gim
   return re.test(String(email).toLowerCase())
 }
 

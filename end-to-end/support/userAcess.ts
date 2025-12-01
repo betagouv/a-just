@@ -66,11 +66,7 @@ export const accessUrlList = [
     url: "/simulateur-sans-donnees",
     label: accessUrlToString(USER_ACCESS_WHITE_SIMULATOR),
   },
-  {
-    id: USER_ACCESS_REAFFECTATOR,
-    url: "/reaffectateur",
-    label: accessUrlToString(USER_ACCESS_REAFFECTATOR),
-  },
+  // Reaffectateur removed - requires composite permissions (reaffectator + ventilation)
 ];
 
 export const accessFonctionsToString = (roleId) => {

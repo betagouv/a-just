@@ -12,6 +12,7 @@ import { BackupInterface } from '../../interfaces/backup';
 import { compare } from '../../utils/array';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
 import { ReferentielService } from '../../services/referentiel/referentiel.service';
+import { AppService } from '../../services/app/app.service';
 
 interface FormSelection {
   id: number;
@@ -26,6 +27,7 @@ interface FormSelection {
   styleUrls: ['./users.page.scss'],
 })
 export class UsersPage extends MainClass implements OnInit, OnDestroy {
+  appService = inject(AppService);
   referentielService = inject(ReferentielService);
   userService = inject(UserService);
   datas: UserInterface[] = [];
@@ -63,6 +65,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
   }
 
   async onLoad() {
+    this.appService.isLoading.next(true);
     await this.referentielService
       .getReferentiels(true)
       .then((r: ContentieuReferentielInterface[]) => {
@@ -72,43 +75,50 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
           selected: false,
         }));
       });
-    this.userService.getAll().then((l) => {
-      this.datas = l.list.map((u: UserInterface) => ({
-        ...u,
-        accessName: (u.accessName || '').replace(/, /g, ', <br/>'),
-        referentielName:
-          u.referentielIds === null
-            ? 'Tous'
-            : (u.referentielIds || [])
-                .map((id) => this.referentiels.find((r) => r.id === id)?.label)
-                .filter((label) => label !== 'Indisponibilité')
-                .join(', <br/>'),
-        ventilationsName: (u.ventilations || [])
-          .map((j) => j.label)
-          .join(', <br/>'),
-      }));
-      this.datasSource = this.datas.slice();
+    this.userService
+      .getAll()
+      .then((l) => {
+        this.datas = l.list.map((u: UserInterface) => ({
+          ...u,
+          accessName: (u.accessName || '').replace(/, /g, ', <br/>'),
+          referentielName:
+            u.referentielIds === null
+              ? 'Tous'
+              : (u.referentielIds || [])
+                  .map(
+                    (id) => this.referentiels.find((r) => r.id === id)?.label
+                  )
+                  .filter((label) => label !== 'Indisponibilité')
+                  .join(', <br/>'),
+          ventilationsName: (u.ventilations || [])
+            .map((j) => j.label)
+            .join(', <br/>'),
+        }));
+        this.datasSource = this.datas.slice();
 
-      this.access = l.access.map((u: PageAccessInterface) => ({
-        id: u.id,
-        label: u.label,
-        selected: false,
-      }));
-      this.ventilations = l.ventilations.map((u: BackupInterface) => ({
-        id: u.id,
-        label: u.label,
-        selected: false,
-      }));
+        this.access = l.access.map((u: PageAccessInterface) => ({
+          id: u.id,
+          label: u.label,
+          selected: false,
+        }));
+        this.ventilations = l.ventilations.map((u: BackupInterface) => ({
+          id: u.id,
+          label: u.label,
+          selected: false,
+        }));
 
-      this.sortData(
-        this.sort
-          ? this.sort
-          : {
-              active: 'id',
-              direction: 'desc',
-            }
-      );
-    });
+        this.sortData(
+          this.sort
+            ? this.sort
+            : {
+                active: 'id',
+                direction: 'desc',
+              }
+        );
+      })
+      .finally(() => {
+        this.appService.isLoading.next(false);
+      });
   }
 
   sortData(sort: Sort) {

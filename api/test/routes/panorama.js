@@ -9,23 +9,17 @@ export const onSaveCle =  async (backupId, categoryId, value, userToken) => {
     value,
   }, {
     headers: {
-      'Authorization': userToken,
+      authorization: userToken,
     },
-  },  
-  { 
-    withCredentials: true 
   })
 }
 
 export const onGetAllCle =  async (backupId, userToken) => {
   return await instanceAxios.post(`/juridictions-details/get-cle`, {
     juridictionId: backupId,
-  },  {
+  }, {
     headers: {
-      'Authorization': userToken,
+      authorization: userToken,
     },
-  },  
-  { 
-    withCredentials: true 
   })
 }

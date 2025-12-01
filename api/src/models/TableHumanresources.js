@@ -448,7 +448,8 @@ export default (sequelizeInstance, Model) => {
         }
 
         if (list[i].grade.startsWith('DSG')) {
-          code = 'DSGJ'
+          if(list[i].fonction === 'DG') code = 'DG'
+          else code = 'DSGJ'
         } else if (list[i].grade.startsWith('SA')) {
           code = 'SA'
         }

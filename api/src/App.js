@@ -383,6 +383,7 @@ export default class App extends AppBase {
 
     await db.migrations()
     await db.seeders()
+    
     if (process.env.NODE_ENV !== 'test') {
       startCrons(this)
       console.log('--- IS READY ---', config.port)

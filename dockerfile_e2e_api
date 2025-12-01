@@ -19,9 +19,9 @@ RUN npm run build
 
 WORKDIR /home/front-admin
 COPY ./front-admin/package*.json /home/front-admin/
-RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm ci --include=dev; fi
+RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin install (SKIP_FRONT_ADMIN=1)"; else npm ci --include=dev; fi
 # Ensure esbuild native binary matches the library version inside this image
-RUN npm rebuild esbuild || true
+RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin esbuild rebuild (SKIP_FRONT_ADMIN=1)"; else npm rebuild esbuild || true; fi
 COPY ./front-admin /home/front-admin
 RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin build (SKIP_FRONT_ADMIN=1)"; else npm run build; fi
 
@@ -33,7 +33,7 @@ RUN mkdir -p /home/api/dist/front /home/api/dist/front-admin && \
 
 FROM node:22 AS runtime
 WORKDIR /home/api
-ENV NODE_ENV=production
+# NODE_ENV is set by docker-compose (test for E2E, production for real deployments)
 # Copy built app and dependencies
 COPY --from=builder /home/api/dist /home/api/dist
 COPY --from=builder /home/api/node_modules /home/api/node_modules
