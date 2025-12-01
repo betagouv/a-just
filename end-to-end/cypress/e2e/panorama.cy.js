@@ -1,9 +1,40 @@
 import { normalizeDate, getShortMonthString } from "../../support/utils/dates";
-import { updateHumanResourcesApi } from "../../support/api";
+import { updateHumanResourcesApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
+import user from "../../fixtures/user.json";
 
 describe("Panorama page", () => {
+  let userId;
+  let token;
+  let ventilations = [];
+
   before(() => {
-    cy.login();
+    // "Ceinture": Explicitly set required permissions before tests
+    return loginApi(user.email, user.password).then((resp) => {
+      userId = resp.body.user.id;
+      token = resp.body.token;
+
+      return getUserDataApi(token).then((resp) => {
+        ventilations = resp.body.data.backups.map((v) => v.id);
+
+        // Ensure full default permissions (including reaffectator needed for workforce-composition)
+        return resetToDefaultPermissions(userId, ventilations, token).then(() => {
+          cy.login();
+        });
+      });
+    });
+  });
+
+  after(() => {
+    // "Bretelles": Always restore default permissions after tests
+    return loginApi(user.email, user.password).then((resp) => {
+      userId = resp.body.user.id;
+      token = resp.body.token;
+
+      return getUserDataApi(token).then((resp) => {
+        ventilations = resp.body.data.backups.map((v) => v.id);
+        return resetToDefaultPermissions(userId, ventilations, token);
+      });
+    });
   });
 
   it("Check panorama page load", () => {
@@ -21,8 +52,9 @@ describe("Panorama page", () => {
     cy.get("@menuLinks").should("contain.text", "Cockpit");
     cy.get("@menuLinks").should("contain.text", "Simulateur");
     cy.get("@menuLinks").should("contain.text", "Outils");
-    cy.get("@menuLinks").should("contain.text", "Aide");
-    cy.get("@menuLinks").should("contain.text", "Nous contacter");
+
+    // Check help button at bottom right (covers contact functionality)
+    cy.get(".help-button").should("be.visible").should("contain.text", "Besoin d'aide");
 
     cy.get(".tools").click();
     cy.get(".sub-tools").within(() => {
