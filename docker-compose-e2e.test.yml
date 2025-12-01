@@ -55,6 +55,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile_e2e_api
+      args:
+        SKIP_FRONT_ADMIN: "1"
     networks:
       ajust_e2e_network:
         ipv4_address: 175.0.0.20
@@ -90,6 +92,8 @@ services:
     build:
       context: ${SANDBOX_CODE_DIR:-.}
       dockerfile: dockerfile_e2e_api
+      args:
+        SKIP_FRONT_ADMIN: "1"
     networks:
       ajust_e2e_network:
         ipv4_address: 175.0.0.21
