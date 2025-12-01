@@ -19,9 +19,9 @@ RUN npm run build
 
 WORKDIR /home/front-admin
 COPY ./front-admin/package*.json /home/front-admin/
-RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm ci --include=dev; fi
+RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin install (SKIP_FRONT_ADMIN=1)"; else npm ci --include=dev; fi
 # Ensure esbuild native binary matches the library version inside this image
-RUN npm rebuild esbuild || true
+RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin esbuild rebuild (SKIP_FRONT_ADMIN=1)"; else npm rebuild esbuild || true; fi
 COPY ./front-admin /home/front-admin
 RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin build (SKIP_FRONT_ADMIN=1)"; else npm run build; fi
 
