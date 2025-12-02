@@ -39,3 +39,30 @@ td {
     border-right: none;
   }
 }
+
+.grid-double {
+  grid-gap: 16px 8px;
+}
+
+.access-items {
+  display: flex;
+  gap: 16px;
+}
+
+.access-item {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 2px;
+
+  label {
+    text-align: center;
+  }
+}
+
+.content-popup {
+  h4 {
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+}

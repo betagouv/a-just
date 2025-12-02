@@ -263,10 +263,8 @@
           </div>
         </div>
       </div>
-      @if (userService.canViewAverageTime()) {
+      @if (referentielService.referentielIsComplete()) {
       <div class="or"><label>OU</label></div>
-      }
-      @if (userService.canViewAverageTime()) {
       <div class="second-section" [ngClass]="{
               selected: compareOption === 2,
               greffe: compareOption === 2 && categorySelected === 'fonctionnaires',
@@ -353,7 +351,7 @@
         }
       </div>
       }
-      @if(userService.canEditCalculator()) {<label class="footer" (click)="
+      <label class="footer" (click)="
             onEdit = true;
             showPicker = false;
             filterBackupsByCategory();
@@ -363,7 +361,6 @@
           ">
         + Personnaliser
       </label>
-      }
     </div>
     }
   </button>
