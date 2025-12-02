@@ -413,7 +413,7 @@ jobs:
         id: check_gh_pages
         continue-on-error: true
         run: |
-          if git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
             echo "gh-pages branch exists"
           else
