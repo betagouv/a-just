@@ -2,6 +2,8 @@
  * Options d'un backup
  */
 
+import { Op } from 'sequelize'
+
 export default (sequelizeInstance, Model) => {
   /**
    * Mise à jour options d'un backup
@@ -62,13 +64,18 @@ export default (sequelizeInstance, Model) => {
    * @param {*} types
    * @returns
    */
-  Model.list = async (backupId, types) => {
+  Model.list = async (backupId, types, userId) => {
     const whereOptions = {}
     if (types) {
       whereOptions.type = types
     }
     if (backupId) {
       whereOptions.backup_id = backupId
+    }
+    if (userId && !(await Model.models.Users.canViewCompleteReferentiel(userId))) {
+      whereOptions.datas = {
+        [Op.notLike]: `%referentielId%`,
+      }
     }
 
     const findAll = await Model.findAll({

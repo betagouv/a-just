@@ -730,6 +730,7 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
                 this.appService.notification('Les données du cockpit ont été mis à jour !')
               }
               this.firstLoading = false
+              this.onLoadComparaisons()
             })
             .catch(() => {
               this.isLoading = false
@@ -738,7 +739,6 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
       },
       this.firstLoading ? 0 : 1500,
     )
-    this.onLoadComparaisons()
   }
 
   /**

@@ -13,7 +13,7 @@ export default class RouteHrBackupSettings extends Route {
    * Constructeur
    * @param {*} params
    */
-  constructor (params) {
+  constructor(params) {
     super(params)
 
     this.model = params.models.HRBackupsSettings
@@ -31,14 +31,14 @@ export default class RouteHrBackupSettings extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async list (ctx) {
+  async list(ctx) {
     const { backupId, types } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
-    this.sendOk(ctx, await this.model.list(backupId, types))
+    this.sendOk(ctx, await this.model.list(backupId, types, ctx.state.user.id))
   }
 
   /**
@@ -58,7 +58,7 @@ export default class RouteHrBackupSettings extends Route {
     }),
     accesses: [Access.isLogin],
   })
-  async addOrUpdate (ctx) {
+  async addOrUpdate(ctx) {
     const { backupId, id, label, type, datas } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
@@ -81,7 +81,7 @@ export default class RouteHrBackupSettings extends Route {
     path: 'remove-setting/:id',
     accesses: [Access.isLogin],
   })
-  async removeSetting (ctx) {
+  async removeSetting(ctx) {
     const { id } = ctx.params
 
     try {
