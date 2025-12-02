@@ -50,36 +50,54 @@
   <div class="items before-after" [ngClass]="{ hide: whiteSimulator === true, 'display-none': chooseScreen }">
     <div class="item blue-bg" [ngClass]="{ 'pink-bg': categorySelected === 'GREFFE' }">
       <p>Entrées moyennes mensuelles</p>
+      <aj-tooltips title="Entrées mensuelles moyennes" class="medium"
+        content="Moyenne des entrées mensuelles des 12 derniers mois (à l’exception de ceux où aucune donnée d’entrée n’est renseignée dans l’écran « Données d’activité »)."></aj-tooltips>
     </div>
     <div class="item">
       <p>Sorties mensuelles possibles</p>
+      <aj-tooltips title="Sorties mensuelles possibles" class="medium"
+        content="Nombre de dossiers mensuels que peut sortir l’effectif présent à la date choisie, sur la base du temps moyen par dossier des 12 derniers mois d’activité."></aj-tooltips>
     </div>
     <div class="item blue-bg" [ngClass]="{ 'pink-bg': categorySelected === 'GREFFE' }">
       <p>Stock</p>
+      <aj-tooltips title="Stock" class="medium"
+        content="Stock théorique à la date indiquée, projeté à partit du dernier stock connu, des entrées moyennes mensuelles affichées et des sorties possibles calculées."></aj-tooltips>
     </div>
     @if (canViewMagistrat) {
     <div class="item">
       <p>ETPT siège</p>
+      <aj-tooltips title="ETPT" class="medium"
+        content="ETPT à la date indiquée, sur la base des informations saisies dans le ventilateur."></aj-tooltips>
     </div>
     }
     @if (canViewGreffier) {
     <div class="item blue-bg" [ngClass]="{ 'pink-bg': categorySelected === 'GREFFE' }">
       <p>ETPT greffe</p>
+      <aj-tooltips title="ETPT" class="medium"
+        content="ETPT à la date indiquée, sur la base des informations saisies dans le ventilateur."></aj-tooltips>
     </div>
     }
     @if (canViewContractuel) {
     <div class="item">
       <p>ETPT EAM</p>
+      <aj-tooltips title="ETPT" class="medium"
+        content="ETPT à la date indiquée, sur la base des informations saisies dans le ventilateur."></aj-tooltips>
     </div>
     }
     <div class="item blue-bg" [ngClass]="{ 'pink-bg': categorySelected === 'GREFFE' }">
       <p>Taux de couverture en %</p>
+      <aj-tooltips title="Taux de couverture" class="medium"
+        content="Ratio sorties possibles / entrées mensuelles moyennes à la date indiquée, exprimé en pourcentage."></aj-tooltips>
     </div>
     <div class="item">
       <p>DTES en mois</p>
+      <aj-tooltips title="DTES en mois" class="medium left"
+        content="Délai théorique d’écoulement du stock projeté (stock affiché / sorties mensuelles possibles calculées) à la date indiqué, exprimé en mois."></aj-tooltips>
     </div>
     <div class="item blue-bg" [ngClass]="{ 'pink-bg': categorySelected === 'GREFFE' }">
       <p>Temps moyen / dossier en hh:mm</p>
+      <aj-tooltips title="Temps moyen par dossier" class="medium left"
+        content="Temps moyen consacré au traitement d’un dossier de ce contentieux sur les 12 derniers mois d’activité."></aj-tooltips>
     </div>
   </div>
 
