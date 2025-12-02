@@ -579,13 +579,30 @@ jobs:
           
           REPORT_URL="${PAGE_URL}reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
           
+          # Extract failure summary from the sectioned report
+          FAILURES_SUMMARY=""
+          SECTIONED_JSON="site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json"
+          if [ -f "$SECTIONED_JSON" ]; then
+            FAILURES_SUMMARY=$(node scripts/extract-failures.js "$SECTIONED_JSON" 2>/dev/null || echo "")
+          fi
+          
+          # Escape for JSON (replace newlines with \n and escape quotes)
+          FAILURES_ESCAPED=$(echo "$FAILURES_SUMMARY" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | awk '{printf "%s\\n", $0}' | sed 's/\\n$//')
+          
+          # Build notification text
+          if [ -n "$FAILURES_ESCAPED" ]; then
+            NOTIFICATION_TEXT="The nightly test run on sandbox has detected failures.\n\n${FAILURES_ESCAPED}\n\n[View Full Report](${REPORT_URL})"
+          else
+            NOTIFICATION_TEXT="The nightly test run on sandbox has detected failures.\n\n[View Full Report](${REPORT_URL})"
+          fi
+          
           PAYLOAD=$(cat <<EOF
           {
             "text": "🚨 **Nightly Tests Failed** - ${REPORT_DATE}",
             "attachments": [
               {
                 "color": "#FF0000",
-                "text": "The nightly test run on sandbox has detected failures.\n\n[View Full Report](${REPORT_URL})",
+                "text": "${NOTIFICATION_TEXT}",
                 "fields": [
                   {
                     "short": true,
