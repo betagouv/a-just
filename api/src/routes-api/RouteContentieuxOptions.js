@@ -29,9 +29,16 @@ export default class RouteContentieuxOptions extends Route {
       backupId: Types.number(),
       juridictionId: Types.number().required(),
     }),
-    accesses: [Access.canVewContentieuxOptions],
+    accesses: [Access.isLogin],
   })
   async getAll(ctx) {
+    if (!(await this.models.Users.canViewCompleteReferentiel(ctx.state.user.id))) {
+      this.sendOk(ctx, {
+        backups: [],
+        backupId: null,
+      })
+    }
+
     let { juridictionId, backupId } = this.body(ctx)
     const backups = await this.model.models.OptionsBackups.getBackup(ctx.state.user.id, juridictionId)
     backupId = backups.find((b) => b.id === backupId) ? backupId : backups.length ? backups[backups.length - 1].id : null
@@ -47,7 +54,7 @@ export default class RouteContentieuxOptions extends Route {
    */
   @Route.Delete({
     path: 'remove-backup/:backupId',
-    accesses: [Access.canEditContentieuxOptions],
+    accesses: [Access.isLogin],
   })
   async removeBackup(ctx) {
     const { backupId } = ctx.params
@@ -71,7 +78,7 @@ export default class RouteContentieuxOptions extends Route {
       backupStatus: Types.string().required(),
       type: Types.string().required(),
     }),
-    accesses: [Access.canEditContentieuxOptions],
+    accesses: [Access.isLogin],
   })
   async duplicateBackup(ctx) {
     const { backupId, backupName, backupStatus, type, juridictionId } = this.body(ctx)
@@ -99,7 +106,7 @@ export default class RouteContentieuxOptions extends Route {
       backupStatus: Types.string(),
       type: Types.string().required(),
     }),
-    accesses: [Access.canEditContentieuxOptions],
+    accesses: [Access.isLogin],
   })
   async saveBackup(ctx) {
     const { backupId, list, backupName, juridictionId, backupStatus, type } = this.body(ctx)
@@ -129,7 +136,7 @@ export default class RouteContentieuxOptions extends Route {
       backupName: Types.string().required(),
       juridictionId: Types.number().required(),
     }),
-    accesses: [Access.canEditContentieuxOptions],
+    accesses: [Access.isLogin],
   })
   async renameBackup(ctx) {
     const { backupId, backupName, juridictionId } = this.body(ctx)
@@ -188,7 +195,7 @@ export default class RouteContentieuxOptions extends Route {
    */
   @Route.Get({
     path: 'get-backup-details/:backupId',
-    accesses: [Access.canVewContentieuxOptions],
+    accesses: [Access.isLogin],
   })
   async getBackupDetails(ctx) {
     const { backupId } = ctx.params
@@ -210,7 +217,7 @@ export default class RouteContentieuxOptions extends Route {
       backupId: Types.number(),
       juridictionId: Types.number().required(),
     }),
-    accesses: [Access.canVewContentieuxOptions],
+    accesses: [Access.isLogin],
   })
   async getLastUpdate(ctx) {
     const { backupId, juridictionId } = this.body(ctx)

@@ -33,7 +33,12 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
   datas: UserInterface[] = [];
   datasSource: UserInterface[] = [];
   referentiels: FormSelection[] = [];
-  access: FormSelection[] = [];
+  access: {
+    name: string;
+    label: string;
+    orderRequired: boolean;
+    access: FormSelection[];
+  }[] = [];
   ventilations: FormSelection[] = [];
   userEdit: UserInterface | null = null;
   userDelete: UserInterface | null = null;
@@ -78,9 +83,11 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
     this.userService
       .getAll()
       .then((l) => {
+        this.access = l.access;
+
         this.datas = l.list.map((u: UserInterface) => ({
           ...u,
-          accessName: (u.accessName || '').replace(/, /g, ', <br/>'),
+          accessName: this.convertAccessToString(u.access || []),
           referentielName:
             u.referentielIds === null
               ? 'Tous'
@@ -96,11 +103,6 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
         }));
         this.datasSource = this.datas.slice();
 
-        this.access = l.access.map((u: PageAccessInterface) => ({
-          id: u.id,
-          label: u.label,
-          selected: false,
-        }));
         this.ventilations = l.ventilations.map((u: BackupInterface) => ({
           id: u.id,
           label: u.label,
@@ -119,6 +121,19 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
       .finally(() => {
         this.appService.isLoading.next(false);
       });
+  }
+
+  convertAccessToString(access: number[]) {
+    const list: string[] = [];
+    this.access.forEach((a) => {
+      a.access.map((b) => {
+        if (access.includes(b.id)) {
+          list.push(a.label + ' - ' + b.label);
+        }
+      });
+    });
+
+    return list.join(', <br/>');
   }
 
   sortData(sort: Sort) {
@@ -152,13 +167,6 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
 
     this.userEdit = user;
 
-    this.access = this.access.map((u) => {
-      return {
-        ...u,
-        selected: (user.access || []).indexOf(u.id) !== -1 ? true : false,
-      };
-    });
-
     this.ventilations = this.ventilations.map((u) => {
       return {
         ...u,
@@ -180,6 +188,40 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
     });
   }
 
+  onChangeAccess(id: number, selected: boolean) {
+    if (this.userEdit) {
+      let access = this.userEdit.access || [];
+      if (selected) {
+        if (access.indexOf(id) === -1) {
+          access.push(id);
+        }
+      } else {
+        access = access.filter((a) => a !== id);
+      }
+
+      this.userEdit.access = [...access];
+    }
+  }
+
+  onSelectAllAccess() {
+    if (this.userEdit) {
+      let access: number[] = [];
+      this.access.map((group) => {
+        (group.access || []).forEach((a) => access.push(a.id));
+      });
+      this.userEdit.access = [...access];
+    }
+  }
+
+  onSelectAllContentieux() {
+    if (this.userEdit) {
+      this.referentiels = this.referentiels.map((a) => ({
+        ...a,
+        selected: true,
+      }));
+    }
+  }
+
   onPopupDetailAction(action: any) {
     switch (action.id) {
       case 'save':
@@ -187,7 +229,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
           this.userService
             .updateUser({
               userId: this.userEdit && this.userEdit.id,
-              access: this.access.filter((a) => a.selected).map((a) => a.id),
+              access: this.userEdit && this.userEdit.access,
               ventilations: this.ventilations
                 .filter((a) => a.selected)
                 .map((a) => a.id),

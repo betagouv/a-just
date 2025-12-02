@@ -1,7 +1,6 @@
 <aj-wrapper title="Utilisateurs">
   <table (matSortChange)="sortData($event)" matSort>
     <tr>
-      <th mat-sort-header="id">Id</th>
       <th mat-sort-header="email">Email</th>
       <th mat-sort-header="firstName">Prénom</th>
       <th mat-sort-header="lastName">Nom</th>
@@ -15,7 +14,6 @@
 
     @for (element of datasSource; track element.id) {
     <tr>
-      <td>{{element.id}}</td>
       <td>{{element.email}}</td>
       <td>{{element.firstName}}</td>
       <td>{{element.lastName}}</td>
@@ -56,18 +54,34 @@
         <p>Email: {{ userEdit.email }}</p>
         <p>Prénom: {{ userEdit.firstName }}</p>
         <p>Nom: {{ userEdit.lastName }}</p>
-        <div class="item item-left">
-          <p><b>Liste des accès</b></p>
-          @for (ac of access; track ac.id) {
-          <p>
-            <input type="checkbox" #acDom [(ngModel)]="ac.selected" />
-            <label (click)="acDom.click()">{{ ac.label }}</label>
-          </p>
-          }
+        <div class="item-left">
+          <h4>Liste des accès</h4>
+          <button (click)="onSelectAllAccess()">Tout sélectionner</button>
+          <div class="grid-double">
+            @for (ac of access; track ac.name) {
+            <div>
+              <p class="text-bold">{{ ac.label }}</p>
+            </div>
+            <div class="access-items">
+              @for (acc of ac.access; track acc.id; let i = $index) {
+              @if(i === 0 || ac.orderRequired === false || (ac.orderRequired && (userEdit.access ||
+              []).indexOf(ac.access[i - 1].id)
+              !== -1)) {
+              <p class="access-item">
+                <label (click)="accDom.click()">{{ acc.label }}</label>
+                <input type="checkbox" #accDom [ngModel]="(userEdit.access || []).indexOf(acc.id) !== -1 ? true : false"
+                  (change)="onChangeAccess(acc.id, accDom.checked)" />
+              </p>
+              }
+              }
+            </div>
+            }
+          </div>
         </div>
         <hr />
         <div class="item">
-          <p><b>Liste des referentiels accessibles</b></p>
+          <h4>Liste des referentiels accessibles</h4>
+          <button (click)="onSelectAllContentieux()">Tout sélectionner</button>
           @for (ref of referentiels; track ref.id) {
           @if (ref.label !== 'Indisponibilité') {
           <p>
@@ -79,7 +93,7 @@
         </div>
       </div>
       <div class="item">
-        <p><b>Liste des ventilations accessibles</b></p>
+        <h4>Liste des ventilations accessibles</h4>
         @for (jur of ventilations; track jur.id) {
         <p>
           <input type="checkbox" #jurDom [(ngModel)]="jur.selected" />
