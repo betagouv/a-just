@@ -16,7 +16,7 @@ jobs:
     steps:
       - run: echo "NIGHTLY API TESTS"
       - name: Checkout sandbox branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: sandbox
 
@@ -57,7 +57,7 @@ jobs:
     steps:
       - run: echo "NIGHTLY E2E TESTS"
       - name: Checkout sandbox branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: sandbox
 
@@ -173,7 +173,7 @@ jobs:
       - run: echo "NIGHTLY E2E NON-REGRESSION TESTS"
       
       - name: Checkout current sandbox branch (candidate)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: sandbox
           path: candidate-code
@@ -199,7 +199,7 @@ jobs:
           echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
 
       - name: Checkout yesterday's sandbox commit (reference)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ steps.yesterday_commit.outputs.commit }}
           path: reference-code
@@ -310,7 +310,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout sandbox branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: sandbox
           fetch-depth: 0
@@ -388,7 +388,7 @@ jobs:
 
       - name: Checkout existing gh-pages branch
         if: steps.check_gh_pages.outputs.exists == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: gh-pages
           path: gh-pages-existing

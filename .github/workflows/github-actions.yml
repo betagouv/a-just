@@ -37,7 +37,7 @@ jobs:
     steps:
       - run: echo "API TESTS"
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -86,7 +86,7 @@ jobs:
     steps:
       - run: echo "E2E TESTS"
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -212,10 +212,10 @@ jobs:
     steps:
       - run: echo "E2E NON-REGRESSION TESTS"
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout sandbox branch (for local sandbox stack)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: sandbox
           path: sandbox-code
@@ -330,7 +330,7 @@ jobs:
       issues: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Find pull request for push event
         id: findpr
@@ -423,7 +423,7 @@ jobs:
 
       - name: Checkout existing gh-pages branch
         if: steps.check_gh_pages.outputs.exists == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: gh-pages
           path: gh-pages-existing
