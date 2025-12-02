@@ -45,6 +45,7 @@ import { ChooseSimulatorComponent } from './choose-simulator/choose-simulator.co
 import { REAFFECTATOR, SIMULATOR_DONNEES, SIMULATOR_OTHER_ACTIVITY } from '../../constants/simulator'
 import { isNaN } from 'lodash'
 import { IntroJSStep } from '../../services/tour/tour.service'
+import { TooltipsComponent } from '../../components/tooltips/tooltips.component'
 
 /**
  * Variable ETP magistrat field name
@@ -87,6 +88,7 @@ export const etpFonToDefine = '[un volume moyen de]'
     PopupComponent,
     TimeSelectorComponent,
     InputPercentageComponent,
+    TooltipsComponent,
     InputAdditionComponent,
     EditableSituationComponent,
     FormsModule,
