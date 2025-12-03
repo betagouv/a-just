@@ -25,11 +25,32 @@ module.exports = function (datas) {
         indisponibilities: [],
       }
 
+      // 🔍 Log what we're sending
+      console.log('\n=== CREATE HR REQUEST ===')
+      console.log('backupId:', datas.adminBackupId)
+      console.log('adminBackups:', datas.adminBackups)
+      console.log('adminToken exists:', !!datas.adminToken)
+      console.log('========================\n')
+
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
-        backupId: 11,
+        backupId: datas.adminBackupId,
       })
+
+      // 🔍 Temporary logging to debug the issue
+      console.log('\n=== CREATE HR DEBUG ===')
+      console.log('Response status:', response.status)
+      console.log('Response data:', JSON.stringify(response.data, null, 2))
+      console.log('Full response object keys:', Object.keys(response))
+      if (response.data) {
+        console.log('response.data keys:', Object.keys(response.data))
+        console.log('response.data.data:', response.data.data)
+        console.log('response.data.data type:', typeof response.data.data)
+        console.log('response.data.message:', response.data.message)
+        console.log('response.data.error:', response.data.error)
+      }
+      console.log('=====================\n')
 
       const tmp_firstName = response.data.data.firstName
       const tmp_lastName = response.data.data.lastName

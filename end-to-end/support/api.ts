@@ -115,11 +115,13 @@ export const updateUserAccounatApi = ({
   accessIds,
   ventilations,
   token,
+  referentielIds,
 }: {
   userId: number;
   accessIds: any;
   ventilations: any;
   token: string;
+  referentielIds?: number[] | null;
 }) => {
   const serverUrl =
     Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api";
@@ -134,6 +136,7 @@ export const updateUserAccounatApi = ({
       userId: userId,
       access: accessIds,
       ventilations: ventilations,
+      referentielIds: referentielIds,
     },
   });
 };
@@ -141,6 +144,10 @@ export const updateUserAccounatApi = ({
 /**
  * Reset user permissions to default state matching E2E seeder
  * Use in before/after hooks to ensure test isolation ("ceinture et bretelles")
+ * 
+ * IMPORTANT: Grants WRITER access for all tools - tests need to create/modify data
+ * Tests that specifically need to verify READ-ONLY behavior should explicitly
+ * restrict permissions in their setup, not rely on this default
  */
 export const resetToDefaultPermissions = (
   userId: number,
@@ -148,16 +155,17 @@ export const resetToDefaultPermissions = (
   token: string
 ) => {
   // Full permissions matching api/src/db/seeders/test/202511261700-add-e2e-test-user.js
+  // X.1 = READER, X.2 = WRITER (we grant both for maximum test capability)
   const allPermissions = [
-    1.1, 1.2,   // Dashboard (Panorama) - reader + writer
-    2.1, 2.2,   // Ventilations - reader + writer
-    3.1, 3.2,   // Activities - reader + writer
-    4.1, 4.2,   // Average time - reader + writer
-    5.1, 5.2,   // Calculator (Cockpit) - reader + writer
-    6.1, 6.2,   // Simulator - reader + writer
-    61.1, 61.2, // White simulator - reader + writer
-    7.1, 7.2,   // Reaffectator - reader + writer
-    8,          // HAS_ACCESS_TO_MAGISTRAT
+    1.1, 1.2,   // Dashboard (Panorama) - reader + WRITER
+    2.1, 2.2,   // Ventilations - reader + WRITER (required for HR creation/updates)
+    3.1, 3.2,   // Activities - reader + WRITER (required for activity data)
+    4.1, 4.2,   // Average time - reader + WRITER
+    5.1, 5.2,   // Calculator (Cockpit) - reader + WRITER
+    6.1, 6.2,   // Simulator - reader + WRITER
+    61.1, 61.2, // White simulator - reader + WRITER
+    7.1, 7.2,   // Reaffectator - reader + WRITER
+    8,          // HAS_ACCESS_TO_MAGISTRAT (category access)
     9,          // HAS_ACCESS_TO_GREFFIER
     10,         // HAS_ACCESS_TO_CONTRACTUEL
   ];
@@ -167,5 +175,6 @@ export const resetToDefaultPermissions = (
     accessIds: allPermissions,
     ventilations,
     token,
+    referentielIds: null, // null = access to all referentiels (no restrictions)
   });
 };

@@ -81,9 +81,12 @@ describe('Test server is ready', () => {
       userId: datas.adminId,
       accessIds: accessIds,
       ventilations: [],
+      referentielIds: null, // null = access to all referentiels
     })
     const response = await onGetUserDataApi({ userToken: datas.adminToken })
     datas.adminAccess = response.data.user.access
+    datas.adminBackups = response.data.data.backups || [] // Store backups for tests
+    datas.adminBackupId = datas.adminBackups.length > 0 ? datas.adminBackups[0].id : null
     assert.strictEqual(response.status, 200)
     assert.isNotEmpty(datas.adminAccess)
   })
