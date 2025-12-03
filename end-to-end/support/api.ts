@@ -115,11 +115,13 @@ export const updateUserAccounatApi = ({
   accessIds,
   ventilations,
   token,
+  referentielIds,
 }: {
   userId: number;
   accessIds: any;
   ventilations: any;
   token: string;
+  referentielIds?: number[] | null;
 }) => {
   const serverUrl =
     Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api";
@@ -134,6 +136,7 @@ export const updateUserAccounatApi = ({
       userId: userId,
       access: accessIds,
       ventilations: ventilations,
+      referentielIds: referentielIds,
     },
   });
 };
@@ -167,5 +170,6 @@ export const resetToDefaultPermissions = (
     accessIds: allPermissions,
     ventilations,
     token,
+    referentielIds: null, // null = access to all referentiels
   });
 };

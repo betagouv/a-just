@@ -81,6 +81,7 @@ describe('Test server is ready', () => {
       userId: datas.adminId,
       accessIds: accessIds,
       ventilations: [],
+      referentielIds: null, // null = access to all referentiels
     })
     const response = await onGetUserDataApi({ userToken: datas.adminToken })
     datas.adminAccess = response.data.user.access

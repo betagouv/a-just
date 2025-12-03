@@ -31,6 +31,17 @@ module.exports = function (datas) {
         backupId: 11,
       })
 
+      // 🔍 Temporary logging to debug the issue
+      console.log('\n=== CREATE HR DEBUG ===')
+      console.log('Response status:', response.status)
+      console.log('Response data:', JSON.stringify(response.data, null, 2))
+      console.log('response.data.data:', response.data.data)
+      console.log('response.data.data type:', typeof response.data.data)
+      if (response.data.data) {
+        console.log('response.data.data.firstName:', response.data.data.firstName)
+      }
+      console.log('=====================\n')
+
       const tmp_firstName = response.data.data.firstName
       const tmp_lastName = response.data.data.lastName
       const tmp_matricule = response.data.data.matricule
