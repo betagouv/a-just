@@ -118,15 +118,26 @@ export default class RouteHumanResources extends Route {
   async updateHr(ctx) {
     const { backupId, hr } = this.body(ctx)
 
-    // Étape 1 : Mise à jour en base de données
-    const updatedAgent = await this.model.updateHR(hr, backupId)
+    try {
+      // Étape 1 : Mise à jour en base de données
+      const updatedAgent = await this.model.updateHR(hr, backupId)
 
-    if (!updatedAgent?.id) {
-      console.error('❌ Impossible de récupérer un agent valide après updateHR', updatedAgent)
-      return this.sendError(ctx, "Erreur lors de la mise à jour de l'agent")
+      if (!updatedAgent?.id) {
+        console.error('❌ Impossible de récupérer un agent valide après updateHR', updatedAgent)
+        return this.sendError(ctx, "Erreur lors de la mise à jour de l'agent")
+      }
+
+      this.sendOk(ctx, updatedAgent)
+    } catch (error) {
+      console.error('❌ ERROR in updateHr route:', {
+        message: error.message,
+        stack: error.stack,
+        backupId,
+        hrId: hr?.id,
+        userId: ctx.state.user?.id,
+      })
+      return this.sendError(ctx, error.message || "Erreur lors de la mise à jour de l'agent")
     }
-
-    this.sendOk(ctx, updatedAgent)
   }
 
   /**
