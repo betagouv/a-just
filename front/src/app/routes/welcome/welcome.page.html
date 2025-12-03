@@ -1,13 +1,12 @@
 <aj-wrapper-no-connected
   [title]="'Un outil d\'aide à la décision et<br/>de prospective pour piloter<br/>votre juridiction'"
-  class="small-left-panel"
->
+  class="small-left-panel">
   <div class="logo">
     <img src="/assets/icons/bloc-marque/bloc-marque-white@2x.svg" alt="ministère de la justice" />
     <img src="/assets/icons/logos/white-192x192@1x.svg" alt="a-just" />
   </div>
   <div class="block">
-    <p class="back-link"><a routerLink="/">Retour</a></p>
+    <p class="back-link"><a (click)="onBackToLogin()" class="cursor-pointer">Retour</a></p>
     <h3>Merci de votre inscription</h3>
     <div class="block-info">
       <p>
