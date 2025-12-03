@@ -57,9 +57,10 @@ export default class RouteReaffectator extends Route {
     }
 
     console.time('Global reaffectator')
-    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupId, false, null, false, false, ctx.state.user.id)).filter(
+    let referentiel = copyArray(await this.models.ContentieuxReferentiels.getReferentiels(backupId, false, null, false, false)).filter(
       (r) => r.label !== 'Indisponibilité',
     )
+
     if (referentielList && referentielList.length == referentiel.length) {
       referentielList = null
     }
