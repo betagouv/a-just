@@ -90,35 +90,45 @@ export class UserService implements OnInit {
    */
   canViewTempsMoyens = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
+    //return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_READER) !== -1 ? true : false
+    return user && user.referentielIds === null
   })
   /**
    * User can edit simulator
    */
   canEditSimulator = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1 ? true : false
+    return user && user.access && (user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1)
+      ? true
+      : false
   })
   /**
    * User can edit white simulator
    */
   canEditWhiteSimulator = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1 ? true : false
+    return user &&
+      user.access &&
+      (user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1)
+      ? true
+      : false
   })
   /**
    * User can edit reaffectator
    */
   canEditReaffectator = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1 ? true : false
+    return user && user.access && (user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 || user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1)
+      ? true
+      : false
   })
   /**
    * User can edit average time
    */
   canEditTempsMoyens = computed(() => {
     const user = this.user.getValue()
-    return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1 ? true : false
+    //return user && user.access && user.access.indexOf(USER_ACCESS_AVERAGE_TIME_WRITER) !== -1 ? true : false
+    return user && user.referentielIds === null
   })
   /**
    * User can edit activities
@@ -331,6 +341,7 @@ export class UserService implements OnInit {
     return this.serverService.get('auths/logout').then(() => {
       this.user.next(null)
       this.serverService.removeToken()
+      window.location.href = '/'
     })
   }
 

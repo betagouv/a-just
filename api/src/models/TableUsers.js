@@ -19,7 +19,6 @@ import {
   USER_ACCESS_VENTILATIONS_WRITER,
   USER_ACCESS_WHITE_SIMULATOR_READER,
   USER_ACCESS_WHITE_SIMULATOR_WRITER,
-  accessList,
   accessToString,
 } from '../constants/access'
 import { snakeToCamelObject } from '../utils/utils'
@@ -194,8 +193,7 @@ export default (sequelizeInstance, Model) => {
         tj,
         fonction,
         status: 1,
-        // by default all referentiels are granted
-        referentiel_ids: await Model.models.ContentieuxReferentiels.getReferentiels(null, null).then((r) => r.map((a) => a.id)),
+        referentiel_ids: null,
       })
 
       // by default all access are granted
