@@ -54,6 +54,7 @@ module.exports = {
         password: encryptedPassword,
         status: 1,
         role: USER_ROLE_ADMIN,
+        referentiel_ids: null, // null = access to all referentiels
       })
     } else {
       // Create the test user
@@ -65,6 +66,7 @@ module.exports = {
           password: '@bUgGD25gX1b',
           status: 1,
           role: USER_ROLE_ADMIN, // Admin role required for access.cy.js tests
+          referentiel_ids: null, // null = access to all referentiels
         },
         true
       )
@@ -74,14 +76,17 @@ module.exports = {
       await testUser.update({ password: encryptedPassword })
     }
 
-    // Grant all access rights (reader + writer for all tools)
+    // Grant all access rights (reader + WRITER for all tools)
+    // WRITER access is critical - tests need to create/modify data
+    // Tests that specifically need to verify READ-ONLY behavior should
+    // explicitly restrict permissions in their setup
     const allAccessRights = [
       USER_ACCESS_DASHBOARD_READER,
       USER_ACCESS_DASHBOARD_WRITER,
       USER_ACCESS_VENTILATIONS_READER,
-      USER_ACCESS_VENTILATIONS_WRITER,
+      USER_ACCESS_VENTILATIONS_WRITER,      // Required for HR creation/updates
       USER_ACCESS_ACTIVITIES_READER,
-      USER_ACCESS_ACTIVITIES_WRITER,
+      USER_ACCESS_ACTIVITIES_WRITER,        // Required for activity data
       USER_ACCESS_AVERAGE_TIME_READER,
       USER_ACCESS_AVERAGE_TIME_WRITER,
       USER_ACCESS_CALCULATOR_READER,
@@ -92,7 +97,7 @@ module.exports = {
       USER_ACCESS_WHITE_SIMULATOR_WRITER,
       USER_ACCESS_REAFFECTATOR_READER,
       USER_ACCESS_REAFFECTATOR_WRITER,
-      HAS_ACCESS_TO_MAGISTRAT,
+      HAS_ACCESS_TO_MAGISTRAT,              // Category access
       HAS_ACCESS_TO_GREFFIER,
       HAS_ACCESS_TO_CONTRACTUEL,
     ]
