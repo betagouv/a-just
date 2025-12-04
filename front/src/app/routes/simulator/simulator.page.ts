@@ -1650,6 +1650,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       modifiedParams: this.paramsToAjust,
       toDisplay: this.toDisplay,
       toCalculate: this.toCalculate,
+      contentieuxIds:[this.contentieuId],
+      fonctionsIds: this.selectedFonctionsIds
     }
     const simulation: SimulationInterface = {
       totalIn: null,
@@ -1672,7 +1674,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
 
       this.logRunSimulator(params)
 
-      this.simulatorService.toSimulate(params, simulation)
+      this.simulatorService.toSimulate(params, simulation, false)
     } else {
       this.simulateButton = ''
       alert('Les données en base ne permettent pas de calculer une simulation pour ce contentieux')

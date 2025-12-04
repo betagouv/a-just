@@ -1490,6 +1490,8 @@ export class WhiteSimulatorPage extends MainClass implements OnInit, OnDestroy, 
       modifiedParams: this.paramsToAjust,
       toDisplay: this.toDisplay,
       toCalculate: this.toCalculate,
+      contentieuxIds:[this.contentieuId],
+      fonctionsIds: this.selectedFonctionsIds
     }
     const simulation: SimulationInterface = {
       totalIn: null,
