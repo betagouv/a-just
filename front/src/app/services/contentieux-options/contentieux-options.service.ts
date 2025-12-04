@@ -78,10 +78,6 @@ export class ContentieuxOptionsService extends MainClass {
    * Référentiel complet
    */
   referentiel: BehaviorSubject<ContentieuReferentielInterface[]> = new BehaviorSubject<ContentieuReferentielInterface[]>([])
-  /**
-   * last juridictionId
-   */
-  lastJuridictionId: number | null = null
 
   /**
    * Constructeur
@@ -109,15 +105,13 @@ export class ContentieuxOptionsService extends MainClass {
    * Récuparation des informations générales d'une juridiction
    * @returns
    */
-  loadBackupsAndId() {
+  async loadBackupsAndId() {
     const juridictionId = this.humanResourceService.backupId.getValue()
-    if (juridictionId !== null && juridictionId !== this.lastJuridictionId) {
-      this.lastJuridictionId = juridictionId
+    if (juridictionId !== null) {
       this.optionsIsModify.next(false)
-      this.getAllContentieuxOptions(juridictionId).then((result) => {
+      return this.getAllContentieuxOptions(juridictionId).then((result) => {
         this.nbOfBackups.next(result.backups.length)
         this.backups.next(result.backups)
-        //this.backupId.next(result.backupId)
       })
     }
   }
@@ -285,7 +279,7 @@ export class ContentieuxOptionsService extends MainClass {
    * API création d'une base vide
    * @returns
    */
-  createEmpy(first = false, name = '', status = 'Local', type = 'SIEGE') {
+  async createEmpy(first = false, name = '', status = 'Local', type = 'SIEGE') {
     let backupName = null
 
     if (first) backupName = 'Mon premier référentiel'
@@ -293,7 +287,7 @@ export class ContentieuxOptionsService extends MainClass {
     else backupName = prompt('Sous quel nom ?')
 
     if (backupName) {
-      return this.serverService
+      const res = await this.serverService
         .post(`contentieux-options/save-backup`, {
           list: [],
           backupName: backupName,
@@ -303,9 +297,10 @@ export class ContentieuxOptionsService extends MainClass {
         })
         .then((r) => {
           this.backupId.next(r.data)
-          this.loadBackupsAndId()
           return r.data
         })
+      await this.loadBackupsAndId()
+      return res
     }
 
     return Promise.resolve()
