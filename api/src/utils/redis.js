@@ -223,7 +223,8 @@ export const loadOrWarmHR = async (backupId, models, userId) => {
   // control if user has limited access to the contentieux
   if (userId) {
     const user = await models.Users.userPreview(userId)
-    if (user.referentielIds) {
+    // null = full access, array = restricted access
+    if (user.referentielIds && Array.isArray(user.referentielIds)) {
       // agent with activities who user can see
       const listWithActivities = hr.filter((el) =>
         el.situations.some((s) => (s.activities || []).some((a) => a.percent && a.contentieux && user.referentielIds.includes(a.contentieux.id))),
