@@ -375,33 +375,23 @@ jobs:
           name: mocha-report
           path: ./mocha-report
 
-      - name: Check if gh-pages branch exists
-        id: check_gh_pages
-        run: |
-          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "gh-pages branch exists"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "gh-pages branch does not exist yet (first deployment)"
-          fi
-
       - name: Checkout existing gh-pages branch
-        if: steps.check_gh_pages.outputs.exists == 'true'
+        id: checkout_gh_pages
+        continue-on-error: true
         uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages-existing
           
       - name: Restore existing site content
-        if: steps.check_gh_pages.outputs.exists == 'true'
         run: |
           if [ -d "gh-pages-existing/site" ]; then
             echo "Restoring existing site content from gh-pages"
             cp -r gh-pages-existing/site ./site
             echo "Existing reports preserved"
           else
-            echo "No existing site directory found in gh-pages"
+            echo "No existing site directory found in gh-pages (first deployment or empty)"
+            mkdir -p site
           fi
 
       - name: Create site directory structure (nightly)
@@ -436,7 +426,7 @@ jobs:
           set -e
           HOST_UID=$(id -u)
           HOST_GID=$(id -g)
-          docker run --rm --user "$HOST_UID:$HOST_GID" -e REPORT_DATE="$REPORT_DATE" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
+          docker run --rm --user "$HOST_UID:$HOST_GID" -e REPORT_DATE="$REPORT_DATE" -e GITHUB_RUN_ID="${{ github.run_id }}" -e GITHUB_REPO="${{ github.repository }}" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
             mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
             mkdir -p site/reports/sandbox/nightly/${REPORT_DATE}/combined
@@ -456,7 +446,8 @@ jobs:
             fi
             if [ -s site/reports/sandbox/nightly/${REPORT_DATE}/combined/merged.json ]; then
               node scripts/section-mochawesome.js site/reports/sandbox/nightly/${REPORT_DATE}/combined/merged.json site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json || cp site/reports/sandbox/nightly/${REPORT_DATE}/combined/merged.json site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json
-              node scripts/build-static-report.js site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json site/reports/sandbox/nightly/${REPORT_DATE}/videos site/reports/sandbox/nightly/${REPORT_DATE}/screenshots site/reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html || echo "Static report generation failed"
+              GITHUB_RUN_URL="https://github.com/${GITHUB_REPO}/actions/runs/${GITHUB_RUN_ID}"
+              node scripts/build-static-report.js site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json site/reports/sandbox/nightly/${REPORT_DATE}/videos site/reports/sandbox/nightly/${REPORT_DATE}/screenshots site/reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html "$GITHUB_RUN_URL" || echo "Static report generation failed"
             else
               echo "No JSONs to merge for combined report"
             fi
@@ -476,13 +467,23 @@ jobs:
           REPORT_DATE: ${{ steps.report_date.outputs.date }}
         run: |
           HTML="site/reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
+          SECTIONED_JSON="site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json"
+          
           if [ -s "$HTML" ]; then
             echo "report_exists=true" >> "$GITHUB_OUTPUT"
-            # Check if there are any failures in the report
-            if grep -q "fail" "$HTML" || grep -q "failed" "$HTML"; then
-              echo "has_failures=true" >> "$GITHUB_OUTPUT"
+            
+            # Use extract-failures.js to properly detect failures
+            if [ -f "$SECTIONED_JSON" ]; then
+              if node scripts/extract-failures.js "$SECTIONED_JSON" >/dev/null 2>&1; then
+                # Script exits 0 when failures found
+                echo "has_failures=true" >> "$GITHUB_OUTPUT"
+              else
+                # Script exits non-zero when no failures
+                echo "has_failures=false" >> "$GITHUB_OUTPUT"
+              fi
             else
-              echo "has_failures=false" >> "$GITHUB_OUTPUT"
+              # No JSON, assume failures
+              echo "has_failures=true" >> "$GITHUB_OUTPUT"
             fi
           else
             echo "report_exists=false" >> "$GITHUB_OUTPUT"
