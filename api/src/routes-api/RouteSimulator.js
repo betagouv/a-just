@@ -10,6 +10,7 @@ import {
 } from '../constants/log-codes'
 import { loadOrWarmHR } from '../utils/redis'
 import { generateHRIndexes } from '../utils/human-resource'
+import { month, today } from '../utils/date'
 
 /**
  * Route pour la page du simulateur
@@ -132,6 +133,25 @@ export default class RouteSimulator extends Route {
 
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)
 
+    let listDTES = []
+
+    do {
+      let endOfTheMonth = today(dateStart)
+      endOfTheMonth = month(endOfTheMonth, 0, 'lastday')
+      {
+        const datas = [] // mettre les ETPTS
+
+        console.log(datas)
+
+        listDTES.push({
+          //value: datas.list[0].realDTESInMonths,
+          date: today(dateStart),
+        })
+      }
+
+      dateStart = month(dateStart, 1)
+    } while (dateStart.getTime() <= dateStop.getTime())
+    console.log(listDTES)
     if (simulatedSituation === null) ctx.throw(400, 'Une erreur est survenue lors de votre simulation, veuillez réessayer !')
     else this.sendOk(ctx, simulatedSituation)
   }
