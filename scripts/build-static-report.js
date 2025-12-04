@@ -137,9 +137,9 @@ function suiteIdFromPath(groupId, pathTitles) {
 }
 
 function main() {
-  const [inJson, videosDir, screenshotsDir, outHtml] = process.argv.slice(2);
+  const [inJson, videosDir, screenshotsDir, outHtml, githubRunUrl] = process.argv.slice(2);
   if (!inJson || !videosDir || !screenshotsDir || !outHtml) {
-    console.error('Usage: node scripts/build-static-report.js <sectionedJson> <videosDir> <screenshotsDir> <outHtml>');
+    console.error('Usage: node scripts/build-static-report.js <sectionedJson> <videosDir> <screenshotsDir> <outHtml> [githubRunUrl]');
     process.exit(1);
   }
   const data = readJson(inJson);
@@ -412,6 +412,9 @@ function main() {
   .toc .skipped{color:#666}
   .toc .toc-suites{margin-left:10px}
   .toc .toc-subsuites{margin-left:14px}
+  .toc .toc-group{margin-top:16px;padding-top:12px;border-top:1px solid #f0f0f0}
+  .toc .toc-group:first-child{margin-top:0;padding-top:0;border-top:none}
+  .toc .toc-group > a{font-weight:600;font-size:14px;color:#0a3d7a}
  .content{margin-left:328px}
   h2, h3, h4, h5, .suite{scroll-margin-top:72px}
   @media (max-width: 900px){.toc{display:none}.content{margin-left:0}}
@@ -426,7 +429,10 @@ function main() {
  </head>
  <body>
  <header>
-   <h1>Global test report</h1>
+   <div>
+     <h1>Global test report</h1>
+     ${githubRunUrl ? `<div style="font-size:13px;color:#666;margin-top:4px"><a href="${esc(githubRunUrl)}" target="_blank" style="color:#0d47a1;text-decoration:none">🔗 View GitHub Actions run</a></div>` : ''}
+   </div>
   <div class="right">
     <div class="stats"><span class="total">Total: ${totals.total}</span> (${headerCounts})</div>
     <label class="filters"><input type="checkbox" onchange="toggleFailedOnly(this)"> Failed only</label>
