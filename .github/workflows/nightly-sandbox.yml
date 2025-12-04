@@ -10,6 +10,11 @@ on:
         required: false
         type: string
 
+# Prevent concurrent deployments to avoid race conditions
+concurrency:
+  group: github-pages-deploy
+  cancel-in-progress: false
+
 jobs:
   api-tests:
     runs-on: ubuntu-latest
@@ -375,48 +380,28 @@ jobs:
           name: mocha-report
           path: ./mocha-report
 
-      - name: Checkout existing gh-pages branch
-        id: checkout_gh_pages
-        continue-on-error: true
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages-existing
-          
-      - name: Restore existing site content
-        run: |
-          if [ -d "gh-pages-existing/site" ]; then
-            echo "Restoring existing site content from gh-pages"
-            cp -r gh-pages-existing/site ./site
-            echo "Existing reports preserved"
-          else
-            echo "No existing site directory found in gh-pages (first deployment or empty)"
-            mkdir -p site
-          fi
-
-      - name: Create site directory structure (nightly)
+      - name: Create nightly report directory structure
         env:
           REPORT_DATE: ${{ steps.report_date.outputs.date }}
         run: |
           set -e
-          mkdir -p site/reports/sandbox/nightly/${REPORT_DATE}
-          mkdir -p site/reports/sandbox/nightly/${REPORT_DATE}/cypress
-          cp -r cypress-reports/cypress/reports/.jsons site/reports/sandbox/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/cypress/reports/*.json site/reports/sandbox/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/.jsons site/reports/sandbox/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/*.json site/reports/sandbox/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
-          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/reports/sandbox/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/cypress/reports/*.json site/reports/sandbox/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/.jsons site/reports/sandbox/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/*.json site/reports/sandbox/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
-          mkdir -p site/reports/sandbox/nightly/${REPORT_DATE}/videos
-          cp -r cypress-videos/* site/reports/sandbox/nightly/${REPORT_DATE}/videos/ 2>/dev/null || echo "No videos to copy"
-          cp -r cypress-videos-nonreg/* site/reports/sandbox/nightly/${REPORT_DATE}/videos/ 2>/dev/null || true
-          mkdir -p site/reports/sandbox/nightly/${REPORT_DATE}/screenshots
-          cp -r cypress-screenshots/* site/reports/sandbox/nightly/${REPORT_DATE}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
-          cp -r cypress-screenshots-nonreg/* site/reports/sandbox/nightly/${REPORT_DATE}/screenshots/ 2>/dev/null || true
-          mkdir -p site/reports/sandbox/nightly/${REPORT_DATE}/mocha
-          cp -r mocha-report/* site/reports/sandbox/nightly/${REPORT_DATE}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
+          mkdir -p site/nightly/${REPORT_DATE}/cypress
+          cp -r cypress-reports/cypress/reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/cypress/reports/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
+          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/cypress/reports/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          mkdir -p site/nightly/${REPORT_DATE}/videos
+          cp -r cypress-videos/* site/nightly/${REPORT_DATE}/videos/ 2>/dev/null || echo "No videos to copy"
+          cp -r cypress-videos-nonreg/* site/nightly/${REPORT_DATE}/videos/ 2>/dev/null || true
+          mkdir -p site/nightly/${REPORT_DATE}/screenshots
+          cp -r cypress-screenshots/* site/nightly/${REPORT_DATE}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
+          cp -r cypress-screenshots-nonreg/* site/nightly/${REPORT_DATE}/screenshots/ 2>/dev/null || true
+          mkdir -p site/nightly/${REPORT_DATE}/mocha
+          cp -r mocha-report/* site/nightly/${REPORT_DATE}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
       - name: Build combined static HTML (merged JSON -> bespoke report)
         continue-on-error: true
@@ -429,7 +414,7 @@ jobs:
           docker run --rm --user "$HOST_UID:$HOST_GID" -e REPORT_DATE="$REPORT_DATE" -e GITHUB_RUN_ID="${{ github.run_id }}" -e GITHUB_REPO="${{ github.repository }}" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
             mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
-            mkdir -p site/reports/sandbox/nightly/${REPORT_DATE}/combined
+            mkdir -p site/nightly/${REPORT_DATE}/combined
             JSONS="$(
               { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
               { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
@@ -442,12 +427,12 @@ jobs:
               { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
-              npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/reports/sandbox/nightly/${REPORT_DATE}/combined/merged.json || true
+              npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/nightly/${REPORT_DATE}/combined/merged.json || true
             fi
-            if [ -s site/reports/sandbox/nightly/${REPORT_DATE}/combined/merged.json ]; then
-              node scripts/section-mochawesome.js site/reports/sandbox/nightly/${REPORT_DATE}/combined/merged.json site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json || cp site/reports/sandbox/nightly/${REPORT_DATE}/combined/merged.json site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json
+            if [ -s site/nightly/${REPORT_DATE}/combined/merged.json ]; then
+              node scripts/section-mochawesome.js site/nightly/${REPORT_DATE}/combined/merged.json site/nightly/${REPORT_DATE}/combined/sectioned.json || cp site/nightly/${REPORT_DATE}/combined/merged.json site/nightly/${REPORT_DATE}/combined/sectioned.json
               GITHUB_RUN_URL="https://github.com/${GITHUB_REPO}/actions/runs/${GITHUB_RUN_ID}"
-              node scripts/build-static-report.js site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json site/reports/sandbox/nightly/${REPORT_DATE}/videos site/reports/sandbox/nightly/${REPORT_DATE}/screenshots site/reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html "$GITHUB_RUN_URL" || echo "Static report generation failed"
+              node scripts/build-static-report.js site/nightly/${REPORT_DATE}/combined/sectioned.json site/nightly/${REPORT_DATE}/videos site/nightly/${REPORT_DATE}/screenshots site/nightly/${REPORT_DATE}/combined/a-just-tests-report.html "$GITHUB_RUN_URL" || echo "Static report generation failed"
             else
               echo "No JSONs to merge for combined report"
             fi
@@ -458,16 +443,16 @@ jobs:
           REPORT_DATE: ${{ steps.report_date.outputs.date }}
         run: |
           node scripts/append-videos-to-report.js \
-            "site/reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html" \
-            "site/reports/sandbox/nightly/${REPORT_DATE}/videos"
+            "site/nightly/${REPORT_DATE}/combined/a-just-tests-report.html" \
+            "site/nightly/${REPORT_DATE}/videos"
 
       - name: Check combined HTML exists and test status
         id: test_status
         env:
           REPORT_DATE: ${{ steps.report_date.outputs.date }}
         run: |
-          HTML="site/reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
-          SECTIONED_JSON="site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json"
+          HTML="site/nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
+          SECTIONED_JSON="site/nightly/${REPORT_DATE}/combined/sectioned.json"
           
           if [ -s "$HTML" ]; then
             echo "report_exists=true" >> "$GITHUB_OUTPUT"
@@ -494,8 +479,8 @@ jobs:
         env:
           REPORT_DATE: ${{ steps.report_date.outputs.date }}
         run: |
-          mkdir -p site/reports/sandbox/nightly/${REPORT_DATE}
-          cat > site/reports/sandbox/nightly/${REPORT_DATE}/index.html << EOF
+          mkdir -p site/nightly/${REPORT_DATE}
+          cat > site/nightly/${REPORT_DATE}/index.html << EOF
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -518,8 +503,8 @@ jobs:
 
       - name: Create nightly index with last 30 days
         run: |
-          mkdir -p site/reports/sandbox/nightly
-          cat > site/reports/sandbox/nightly/index.html << 'EOF'
+          mkdir -p site/nightly
+          cat > site/nightly/index.html << 'EOF'
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -546,7 +531,7 @@ jobs:
       - name: Cleanup old reports (keep last 30 days)
         run: |
           set -e
-          NIGHTLY_DIR="site/reports/sandbox/nightly"
+          NIGHTLY_DIR="site/nightly"
           if [ -d "$NIGHTLY_DIR" ]; then
             cd "$NIGHTLY_DIR"
             # List all date directories, sort, and remove all but the last 30
@@ -578,11 +563,11 @@ jobs:
             exit 0
           fi
           
-          REPORT_URL="${PAGE_URL}reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
+          REPORT_URL="${PAGE_URL}nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
           
           # Extract failure summary from the sectioned report
           FAILURES_SUMMARY=""
-          SECTIONED_JSON="site/reports/sandbox/nightly/${REPORT_DATE}/combined/sectioned.json"
+          SECTIONED_JSON="site/nightly/${REPORT_DATE}/combined/sectioned.json"
           if [ -f "$SECTIONED_JSON" ]; then
             FAILURES_SUMMARY=$(node scripts/extract-failures.js "$SECTIONED_JSON" 2>/dev/null || echo "")
           fi
