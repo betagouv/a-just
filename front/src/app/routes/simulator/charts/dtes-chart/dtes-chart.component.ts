@@ -127,6 +127,7 @@ export class DtesChartComponent {
           this.myChart._metasets[3]._dataset.data = this.data.simulatedDTES.values
           this.myChart.update()
         }
+        console.log('DATAS',this.data)
       }
     })
 
