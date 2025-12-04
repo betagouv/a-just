@@ -12,63 +12,10 @@
 import * as xlsx from 'xlsx';
 import * as fs from 'fs';
 
-export interface CellData {
-  v?: any;           // Value
-  f?: string;        // Formula
-  z?: string;        // Number format
-  t?: string;        // Cell type (n=number, s=string, b=boolean, e=error, d=date)
-  style?: CellStyle;
-  dv?: DataValidation;
-}
-
-export interface CellStyle {
-  font?: {
-    name?: string;
-    size?: number | string;
-    bold?: boolean;
-    italic?: boolean;
-    underline?: boolean;
-    color?: string;
-  };
-  fill?: {
-    fgColor?: string;
-    bgColor?: string;
-    patternType?: string;
-  };
-  border?: any;
-  alignment?: {
-    horizontal?: string;
-    vertical?: string;
-    wrapText?: boolean;
-  };
-}
-
-export interface DataValidation {
-  type?: string;
-  formula1?: string;
-  formula2?: string;
-  operator?: string;
-  allowBlank?: boolean;
-  showDropDown?: boolean;
-}
-
-export interface SheetDiff {
-  sheet: string;
-  cell: string;
-  reference: string;
-  new: string;
-}
-
-export interface ComparisonResult {
-  diffs: SheetDiff[];
-  summary: string;
-  identical: boolean;
-}
-
 /**
  * Read and normalize an Excel file to a comparable JSON structure
  */
-export function readAndNormalizeExcel(filePath: string): any {
+export function readAndNormalizeExcel(filePath) {
   const wb = xlsx.readFile(filePath, { 
     cellDates: false, 
     cellNF: true, 
@@ -76,13 +23,13 @@ export function readAndNormalizeExcel(filePath: string): any {
     cellStyles: true 
   });
   
-  const out: any = { sheets: {} };
+  const out = { sheets: {} };
   
-  const getCellAddress = (r: number, c: number): string => {
+  const getCellAddress = (r, c) => {
     return xlsx.utils.encode_cell({ r, c });
   };
   
-  const trimMatrix = (rows: any[][]): any[][] => {
+  const trimMatrix = (rows) => {
     let maxR = -1, maxC = -1;
     for (let r = 0; r < rows.length; r++) {
       const row = rows[r] || [];
@@ -105,12 +52,12 @@ export function readAndNormalizeExcel(filePath: string): any {
   for (const sheetName of wb.SheetNames) {
     const ws = wb.Sheets[sheetName];
     const range = xlsx.utils.decode_range(ws['!ref'] || 'A1');
-    const rows: any[][] = [];
+    const rows = [];
     
     // Extract data validation rules (dropdowns)
-    const dataValidations: any = {};
+    const dataValidations = {};
     if (ws['!dataValidation']) {
-      ws['!dataValidation'].forEach((dv: any) => {
+      ws['!dataValidation'].forEach((dv) => {
         if (dv.sqref) {
           const key = String(dv.sqref);
           dataValidations[key] = {
@@ -127,7 +74,7 @@ export function readAndNormalizeExcel(filePath: string): any {
     
     // Extract cell data with formulas, formats, styles, and validation
     for (let r = range.s.r; r <= range.e.r; r++) {
-      const row: any[] = [];
+      const row = [];
       for (let c = range.s.c; c <= range.e.c; c++) {
         const cellAddr = getCellAddress(r, c);
         const cell = ws[cellAddr];
@@ -138,7 +85,7 @@ export function readAndNormalizeExcel(filePath: string): any {
         }
         
         // Build comprehensive cell data
-        const cellData: any = {};
+        const cellData = {};
         
         // Value (displayed)
         if (cell.v !== undefined) {
@@ -166,7 +113,7 @@ export function readAndNormalizeExcel(filePath: string): any {
         
         // Cell style (font, fill, border, alignment)
         if (cell.s) {
-          const style: any = {};
+          const style = {};
           
           // Font properties
           if (cell.s.font) {
@@ -247,7 +194,7 @@ export function readAndNormalizeExcel(filePath: string): any {
 /**
  * Convert column index to Excel letter (0 -> A, 1 -> B, 25 -> Z, 26 -> AA, etc.)
  */
-function colToExcel(col: number): string {
+function colToExcel(col) {
   let result = '';
   let c = col;
   while (c >= 0) {
@@ -260,14 +207,14 @@ function colToExcel(col: number): string {
 /**
  * Convert row/col to Excel notation (e.g., row=0, col=1 -> "B1")
  */
-function cellToExcel(row: number, col: number): string {
+function cellToExcel(row, col) {
   return `${colToExcel(col)}${row + 1}`;
 }
 
 /**
  * Extract cell properties (handles both simple values and complex cell objects)
  */
-function getCellProps(cell: any): CellData {
+function getCellProps(cell) {
   if (cell === null || cell === undefined || cell === '') {
     return { v: '', f: undefined, z: undefined, t: undefined, style: undefined, dv: undefined };
   }
@@ -288,15 +235,15 @@ function getCellProps(cell: any): CellData {
 /**
  * Compare two normalized Excel structures with tolerance for numeric values
  */
-export function compareExcelFiles(reference: any, candidate: any, eps = 1e-6): ComparisonResult {
-  const allDiffs: SheetDiff[] = [];
+export function compareExcelFiles(reference, candidate, eps = 1e-6) {
+  const allDiffs = [];
   const sheetsRef = Object.keys((reference && reference.sheets) || {});
   const sheetsCand = Object.keys((candidate && candidate.sheets) || {});
   const allSheetNames = Array.from(new Set([...sheetsRef, ...sheetsCand]));
   
   allSheetNames.forEach((sheetName) => {
-    const refSheet: any[][] = (reference && reference.sheets && reference.sheets[sheetName]) || [];
-    const candSheet: any[][] = (candidate && candidate.sheets && candidate.sheets[sheetName]) || [];
+    const refSheet = (reference && reference.sheets && reference.sheets[sheetName]) || [];
+    const candSheet = (candidate && candidate.sheets && candidate.sheets[sheetName]) || [];
     const maxR = Math.max(refSheet.length, candSheet.length);
     
     for (let r = 0; r < maxR; r++) {
@@ -308,7 +255,7 @@ export function compareExcelFiles(reference: any, candidate: any, eps = 1e-6): C
         const refCell = getCellProps(refRow[c]);
         const candCell = getCellProps(candRow[c]);
         
-        const differences: string[] = [];
+        const differences = [];
         
         // Compare values
         const refIsNum = typeof refCell.v === 'number';
@@ -345,7 +292,7 @@ export function compareExcelFiles(reference: any, candidate: any, eps = 1e-6): C
         const refType = refCell.t || '';
         const candType = candCell.t || '';
         if (refType !== candType) {
-          const typeNames: any = { n: 'nombre', s: 'texte', b: 'booléen', e: 'erreur', d: 'date' };
+          const typeNames = { n: 'nombre', s: 'texte', b: 'booléen', e: 'erreur', d: 'date' };
           const refTypeName = typeNames[refType] || refType;
           const candTypeName = typeNames[candType] || candType;
           differences.push(`Type : ${refTypeName} → ${candTypeName}`);
@@ -359,13 +306,13 @@ export function compareExcelFiles(reference: any, candidate: any, eps = 1e-6): C
           const candStyleStr = JSON.stringify(candStyle || {});
           if (refStyleStr !== candStyleStr) {
             // Detailed style comparison
-            const styleDiffs: string[] = [];
+            const styleDiffs = [];
             
             // Font comparison
             if (refStyle?.font || candStyle?.font) {
               const refFont = refStyle?.font || {};
               const candFont = candStyle?.font || {};
-              const fontChanges: string[] = [];
+              const fontChanges = [];
               if (refFont.size !== candFont.size) fontChanges.push(`taille ${refFont.size || ''}→${candFont.size || ''}`);
               if (refFont.bold !== candFont.bold) fontChanges.push(candFont.bold ? 'gras ajouté' : 'gras retiré');
               if (refFont.italic !== candFont.italic) fontChanges.push(candFont.italic ? 'italique ajouté' : 'italique retiré');
@@ -381,7 +328,7 @@ export function compareExcelFiles(reference: any, candidate: any, eps = 1e-6): C
             if (refStyle?.fill || candStyle?.fill) {
               const refFill = refStyle?.fill || {};
               const candFill = candStyle?.fill || {};
-              const fillChanges: string[] = [];
+              const fillChanges = [];
               if (refFill.fgColor !== candFill.fgColor) fillChanges.push(`fond ${refFill.fgColor || 'aucun'}→${candFill.fgColor || 'aucun'}`);
               if (fillChanges.length > 0) {
                 styleDiffs.push(`Remplissage : ${fillChanges.join(', ')}`);
@@ -406,7 +353,7 @@ export function compareExcelFiles(reference: any, candidate: any, eps = 1e-6): C
             const candFormula = candDv?.formula1 || '';
             if (refFormula !== candFormula) {
               // Clean up formula display (remove quotes and escape characters)
-              const cleanFormula = (f: string) => f.replace(/^"|"$/g, '').replace(/\\"/g, '"');
+              const cleanFormula = (f) => f.replace(/^"|"$/g, '').replace(/\\"/g, '"');
               differences.push(`Menu déroulant : ${cleanFormula(refFormula)} → ${cleanFormula(candFormula)}`);
             } else {
               // Other validation changes
@@ -428,12 +375,12 @@ export function compareExcelFiles(reference: any, candidate: any, eps = 1e-6): C
   });
   
   // Build structured summary grouped by sheet
-  const diffsBySheet = new Map<string, SheetDiff[]>();
+  const diffsBySheet = new Map();
   allDiffs.forEach(diff => {
     if (!diffsBySheet.has(diff.sheet)) {
       diffsBySheet.set(diff.sheet, []);
     }
-    diffsBySheet.get(diff.sheet)!.push(diff);
+    diffsBySheet.get(diff.sheet).push(diff);
   });
   
   let summary = '';
