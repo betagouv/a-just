@@ -36,6 +36,11 @@ on:
         type: boolean
         default: false
 
+# Prevent concurrent deployments to avoid race conditions
+concurrency:
+  group: github-pages-deploy
+  cancel-in-progress: false
+
 jobs:
   api-tests:
     runs-on: ubuntu-latest
