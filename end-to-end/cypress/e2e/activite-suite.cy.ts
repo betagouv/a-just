@@ -554,7 +554,7 @@ function exportAndPersistActivite(baseUrl: string, startISO: string, stopISO: st
   });
 }
 
-describe('Activite Suite: PR and SANDBOX then compare', () => {
+describe('Non-regression des calculs de l\'extracteur (données d\'activités)', () => {
   it('PR: export activite', () => {
     if (!PR) throw new Error('CANDIDATE_FRONT_URL must be provided');
     if (!KEEP_ARTIFACTS) cy.task('wipeActiviteArtifacts');

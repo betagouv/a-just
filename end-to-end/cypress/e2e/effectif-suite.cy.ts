@@ -668,7 +668,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
   // No poll timeline writes
 }
 
-describe('Effectif Suite: PR and SANDBOX then compare', () => {
+describe('Non-regression des calculs de l\'extracteur (données d\'effectifs)', () => {
   it('PR: exports for all categories', () => {
     if (!PR) throw new Error('CANDIDATE_FRONT_URL must be provided');
     loginAndOpenDashboard(PR);
