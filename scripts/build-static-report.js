@@ -412,6 +412,9 @@ function main() {
   .toc .skipped{color:#666}
   .toc .toc-suites{margin-left:10px}
   .toc .toc-subsuites{margin-left:14px}
+  .toc .toc-group{margin-top:16px;padding-top:12px;border-top:1px solid #f0f0f0}
+  .toc .toc-group:first-child{margin-top:0;padding-top:0;border-top:none}
+  .toc .toc-group > a{font-weight:600;font-size:14px;color:#0a3d7a}
  .content{margin-left:328px}
   h2, h3, h4, h5, .suite{scroll-margin-top:72px}
   @media (max-width: 900px){.toc{display:none}.content{margin-left:0}}
