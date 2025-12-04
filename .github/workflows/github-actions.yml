@@ -421,49 +421,30 @@ jobs:
           name: mocha-report
           path: ./mocha-report
 
-      - name: Checkout existing gh-pages branch
-        id: checkout_gh_pages
-        continue-on-error: true
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages-existing
-          
-      - name: Restore existing site content
-        run: |
-          if [ -d "gh-pages-existing/site" ]; then
-            echo "Restoring existing site content from gh-pages"
-            cp -r gh-pages-existing/site ./site
-            echo "Existing reports preserved"
-          else
-            echo "No existing site directory found in gh-pages (first deployment or empty)"
-            mkdir -p site
-          fi
-
-      - name: Create site directory structure (per PR)
+      - name: Create PR report directory structure
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
           RUN_NUM: ${{ github.run_number }}
         run: |
           set -e
-          mkdir -p site/reports/pr-${PR_NUM}/run-${RUN_NUM}
-          mkdir -p site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress
-          cp -r cypress-reports/cypress/reports/.jsons site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/cypress/reports/*.json site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/.jsons site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
-          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/cypress/reports/*.json site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/.jsons site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/*.json site/reports/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          mkdir -p site/reports/pr-${PR_NUM}/run-${RUN_NUM}/videos
-          cp -r cypress-videos/* site/reports/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
-          cp -r cypress-videos-nonreg/* site/reports/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || true
-          mkdir -p site/reports/pr-${PR_NUM}/run-${RUN_NUM}/screenshots
-          cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/run-${RUN_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
-          cp -r cypress-screenshots-nonreg/* site/reports/pr-${PR_NUM}/run-${RUN_NUM}/screenshots/ 2>/dev/null || true
-          mkdir -p site/reports/pr-${PR_NUM}/run-${RUN_NUM}/mocha
-          cp -r mocha-report/* site/reports/pr-${PR_NUM}/run-${RUN_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/cypress
+          cp -r cypress-reports/cypress/reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/cypress/reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
+          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/cypress/reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports-nonreg/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/videos
+          cp -r cypress-videos/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
+          cp -r cypress-videos-nonreg/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || true
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/screenshots
+          cp -r cypress-screenshots/* site/pr-${PR_NUM}/run-${RUN_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
+          cp -r cypress-screenshots-nonreg/* site/pr-${PR_NUM}/run-${RUN_NUM}/screenshots/ 2>/dev/null || true
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/mocha
+          cp -r mocha-report/* site/pr-${PR_NUM}/run-${RUN_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
       - name: Build combined static HTML (merged JSON -> bespoke report)
         continue-on-error: true
@@ -477,7 +458,7 @@ jobs:
           docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -e RUN_NUM="$RUN_NUM" -e GITHUB_RUN_ID="${{ github.run_id }}" -e GITHUB_REPO="${{ github.repository }}" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
             mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
-            mkdir -p site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined
+            mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/combined
             JSONS="$(
               { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
               { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
@@ -490,12 +471,12 @@ jobs:
               { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
-              npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json || true
+              npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json || true
             fi
-            if [ -s site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json ]; then
-              node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json
+            if [ -s site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json ]; then
+              node scripts/section-mochawesome.js site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json site/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json || cp site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json site/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json
               GITHUB_RUN_URL="https://github.com/${GITHUB_REPO}/actions/runs/${GITHUB_RUN_ID}"
-              node scripts/build-static-report.js site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json site/reports/pr-${PR_NUM}/run-${RUN_NUM}/videos site/reports/pr-${PR_NUM}/run-${RUN_NUM}/screenshots site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html "$GITHUB_RUN_URL" || echo "Static report generation failed"
+              node scripts/build-static-report.js site/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json site/pr-${PR_NUM}/run-${RUN_NUM}/videos site/pr-${PR_NUM}/run-${RUN_NUM}/screenshots site/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html "$GITHUB_RUN_URL" || echo "Static report generation failed"
             else
               echo "No JSONs to merge for combined report"
             fi
@@ -507,8 +488,8 @@ jobs:
           RUN_NUM: ${{ github.run_number }}
         run: |
           node scripts/append-videos-to-report.js \
-            "site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html" \
-            "site/reports/pr-${PR_NUM}/run-${RUN_NUM}/videos"
+            "site/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html" \
+            "site/pr-${PR_NUM}/run-${RUN_NUM}/videos"
 
       - name: Check combined HTML exists
         id: combined_exists
@@ -516,7 +497,7 @@ jobs:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
           RUN_NUM: ${{ github.run_number }}
         run: |
-          if [ -s "site/reports/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html" ]; then
+          if [ -s "site/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html" ]; then
             echo "ok=true" >> "$GITHUB_OUTPUT"
           else
             echo "ok=false" >> "$GITHUB_OUTPUT"
@@ -526,8 +507,8 @@ jobs:
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
-          mkdir -p site/reports/pr-${PR_NUM}
-          cat > site/reports/pr-${PR_NUM}/index.html << 'EOF'
+          mkdir -p site/pr-${PR_NUM}
+          cat > site/pr-${PR_NUM}/index.html << 'EOF'
           <!DOCTYPE html>
           <html lang="en">
           <head>
