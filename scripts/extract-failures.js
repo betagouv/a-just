@@ -65,7 +65,7 @@ if (report.results && Array.isArray(report.results)) {
 // Output summary
 if (failures.length === 0) {
   console.log('No failures found')
-  process.exit(0)
+  process.exit(1) // Exit 1 when no failures (for workflow logic)
 }
 
 // Format for Mattermost (limit to first 10 to avoid message being too long)
@@ -80,3 +80,6 @@ displayFailures.forEach((f, i) => {
 if (failures.length > maxFailures) {
   console.log(`... and ${failures.length - maxFailures} more`)
 }
+
+// Exit 0 when failures found (for workflow logic)
+process.exit(0)
