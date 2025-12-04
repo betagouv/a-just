@@ -137,9 +137,9 @@ function suiteIdFromPath(groupId, pathTitles) {
 }
 
 function main() {
-  const [inJson, videosDir, screenshotsDir, outHtml] = process.argv.slice(2);
+  const [inJson, videosDir, screenshotsDir, outHtml, githubRunUrl] = process.argv.slice(2);
   if (!inJson || !videosDir || !screenshotsDir || !outHtml) {
-    console.error('Usage: node scripts/build-static-report.js <sectionedJson> <videosDir> <screenshotsDir> <outHtml>');
+    console.error('Usage: node scripts/build-static-report.js <sectionedJson> <videosDir> <screenshotsDir> <outHtml> [githubRunUrl]');
     process.exit(1);
   }
   const data = readJson(inJson);
@@ -426,7 +426,10 @@ function main() {
  </head>
  <body>
  <header>
-   <h1>Global test report</h1>
+   <div>
+     <h1>Global test report</h1>
+     ${githubRunUrl ? `<div style="font-size:13px;color:#666;margin-top:4px"><a href="${esc(githubRunUrl)}" target="_blank" style="color:#0d47a1;text-decoration:none">🔗 View GitHub Actions run</a></div>` : ''}
+   </div>
   <div class="right">
     <div class="stats"><span class="total">Total: ${totals.total}</span> (${headerCounts})</div>
     <label class="filters"><input type="checkbox" onchange="toggleFailedOnly(this)"> Failed only</label>
