@@ -73,9 +73,13 @@ describe('Test server is ready', () => {
 
   // On donne tous les accès à l'administrateur
   it('Give all accesses to Admin', async () => {
-    const accessIds = accessList.map((elem) => {
-      return elem.id
+    // Extract all access IDs from the nested structure
+    const accessIds = accessList.flatMap((elem) => {
+      return elem.access.map(a => a.id)
     })
+    // Add category access (Magistrat, Greffier, Contractuel)
+    accessIds.push(8, 9, 10)
+    
     await onUpdateAccountApi({
       userToken: datas.adminToken,
       userId: datas.adminId,
