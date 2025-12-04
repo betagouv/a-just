@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: "PR number to publish under reports/pr-<number>"
+        description: "PR number to publish under pr-<number>"
         required: true
         type: string
       spec:
@@ -551,7 +551,7 @@ jobs:
             const pageUrl = process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
             const pr = process.env.PR_NUM;
             const runNum = process.env.RUN_NUM;
-            const url = `${pageUrl}reports/pr-${pr}/run-${runNum}/combined/a-just-tests-report.html`;
+            const url = `${pageUrl}pr-${pr}/run-${runNum}/combined/a-just-tests-report.html`;
             const body = `✅ Combined test report available (run #${runNum}): ${url}`;
             await github.rest.issues.createComment({
               owner: context.repo.owner,

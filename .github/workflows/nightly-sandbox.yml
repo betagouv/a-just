@@ -623,7 +623,7 @@ jobs:
             exit 0
           fi
           
-          REPORT_URL="${PAGE_URL}reports/sandbox/nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
+          REPORT_URL="${PAGE_URL}nightly/${REPORT_DATE}/combined/a-just-tests-report.html"
           
           PAYLOAD=$(cat <<EOF
           {
