@@ -220,11 +220,16 @@ jobs:
         working-directory: candidate-code
         run: npm ci
 
-      - name: Clean up Docker to free disk space
+      - name: Free up disk space before tests
         run: |
           echo "=== Disk space before cleanup ==="
           df -h
-          echo "=== Cleaning Docker system ==="
+          echo "=== Removing unnecessary files ==="
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo apt-get clean
           docker system prune -af --volumes
           echo "=== Disk space after cleanup ==="
           df -h
