@@ -815,7 +815,7 @@ export const calculateETPForContentieux = (indexes, query, categories) => {
   const filteredPeriods = searchPeriodsWithIndexes(indexes, query.start, query.end, query.category, query.fonctions, query.contentieux)
 
   // Pré-calculer les jours ouvrés dans la période de requête
-  const nbOfWorkingDaysQuery = getWorkingDaysCount(query.start, query.end)
+  const nbOfWorkingDaysQuery = getWorkingDaysCount(query.start, query.end, true)
 
   // Calculer l'ETP pour chaque période et totaliser l'ETP par catégorie
   const etpByCategory = categories.reduce((acc, category) => {
@@ -836,7 +836,7 @@ export const calculateETPForContentieux = (indexes, query, categories) => {
     const periodEnd = Math.min(today(period.end), today(query.end))
 
     // Nombre de jours ouvrés dans la période ajustée
-    const workingDays = getWorkingDaysCount(periodStart, periodEnd)
+    const workingDays = getWorkingDaysCount(periodStart, periodEnd, true)
 
     // Mise à jour de l'ETP par catégorie
     if (period.categoryId && (!period.agentEnd || periodStart <= today(period.agentEnd).getTime())) {

@@ -1,6 +1,6 @@
 import { isFirstDayOfMonth } from 'date-fns'
 import { groupBy, map, meanBy, orderBy, sortBy, sumBy } from 'lodash'
-import { checkIfDateIsNotToday, getRangeOfMonthsAsObject, getShortMonthString, month, nbOfDays, today, workingDay } from './date'
+import { checkIfDateIsNotToday, getRangeOfMonthsAsObject, getShortMonthString, getWorkingDaysCount, month, nbOfDays, today, workingDay } from './date'
 import { fixDecimal } from './number'
 import config from 'config'
 import { calculateETPForContentieux, getEtpByDateAndPersonSimu } from './human-resource'
@@ -272,7 +272,7 @@ export async function getSituation(
       : await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date(), undefined, signal)
     ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
 
-    const countOfCalandarDays = nbOfDays(endDateCs, new Date())
+    const countOfCalandarDays = getWorkingDaysCount(endDateCs, new Date())
 
     // Compute stock projection until today
     lastStock = computeLastStock(
@@ -289,7 +289,7 @@ export async function getSituation(
     //console.log('To compare computeCoverage :', Coverage, totalOut, totalIn)
     DTES = computeDTES(lastStock, totalOut)
     if (checkIfDateIsNotToday(dateStart)) {
-      const nbDayCalendar = nbOfDays(new Date(), new Date(dateStart))
+      const nbDayCalendar = getWorkingDaysCount(new Date(), new Date(dateStart))
 
       // Compute etpAffected & etpMag at dateStart (specific date) to display
       etpAffectedAtStartDate = useNew
@@ -341,7 +341,7 @@ export async function getSituation(
       DTES = computeDTES(lastStock, totalOut)
     }
     if (dateStop) {
-      const nbDayCalendarProjected = nbOfDays(new Date(dateStart), new Date(dateStop))
+      const nbDayCalendarProjected = getWorkingDaysCount(new Date(dateStart), new Date(dateStop))
 
       // Compute projected etp at stop date (specific date) to display
       const projectedEtpAffected = useNew
