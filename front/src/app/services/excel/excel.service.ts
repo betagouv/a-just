@@ -13,6 +13,7 @@ import { HRFonctionInterface } from '../../interfaces/hr-fonction'
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel'
 import { setTimeToMidDay } from '../../utils/dates'
 import { exposeDownloadToCypress, getE2EExportMaxMs } from '../../utils/test-download'
+import { IMPORT_ETP_TEMPLATE } from '../../constants/documentation'
 
 /**
  * Excel file details
@@ -606,7 +607,7 @@ export class ExcelService extends MainClass {
     report = this.setRedGapConditionnalFormating(report, viewModel)
     report = this.setYellowMainDetailsConditionnalFormating(report, viewModel)
     report = this.setColWidth(report)
-    
+
     // Configurer l'autoFilter pour les en-têtes (ligne 2 par défaut)
     report = this.setAutoFilter(report, 'ETPT Format DDG', 2, viewModel.days1, 'A')
     report = this.setAutoFilter(report, 'ETPT A-JUST', 2, viewModel.days, 'A')
@@ -640,7 +641,7 @@ export class ExcelService extends MainClass {
     report = this.setAgregatAffichage(report, viewModel)
 
     const headerLength = Object.keys(viewModel.stats1).length
-    report = this.preserveCellProtection(report,  'ETPT Format DDG', ['D3:I'+ headerLength,'I3:D'+headerLength])
+    report = this.preserveCellProtection(report, 'ETPT Format DDG', ['D3:I' + headerLength, 'I3:D' + headerLength])
 
     viewModel = this.exceptionsJuridiction(viewModel)
 
@@ -651,7 +652,7 @@ export class ExcelService extends MainClass {
    * Génère un model de donnée de référentiel
    * @returns
    */
-  generateModel() {
+  generateModel(datas: any | null = null) {
     const referentiels = this.humanResourceService.contentieuxReferentielOnly.getValue()
 
     let referentiel = new Array()
@@ -659,18 +660,28 @@ export class ExcelService extends MainClass {
     let sumLists = new Array()
 
     referentiels.map((r) => {
+      let hasChild = false
       if (r.childrens && r.childrens.length > 0) {
         r.childrens?.map((c) => {
+          const value = datas?.activities?.find((a: any) => a.contentieux.id === c.id)?.percent || ''
+          if (value) {
+            hasChild = true
+          }
           counter++
           referentiel.push({
             code: c['code_import'],
             label: c.label,
             parent: this.userService.isCa() ? this.referentielCAMappingName(r.label) : this.referentielMappingName(r.label),
+            value,
             index: null,
             sum: null,
           })
           sumLists.push('E' + (counter + 8))
         })
+      }
+      const value = datas?.activities?.find((a: any) => a.contentieux.id === r.id)?.percent || ''
+      if (value && !hasChild) {
+        console.log('value', value, r)
       }
       counter++
       referentiel.push({
@@ -678,7 +689,7 @@ export class ExcelService extends MainClass {
         label: '',
         parent: 'TOTAL ' + r.label,
         index: 'E' + (counter + 8),
-        sum: sumLists,
+        sum: value && !hasChild ? value : sumLists,
       })
       sumLists = new Array()
     })
@@ -689,13 +700,13 @@ export class ExcelService extends MainClass {
   /**
    * Génération d'un template de fiche agent
    */
-  async generateAgentFile() {
-    let referentiel = this.generateModel()
+  async generateAgentFile(datas: any | null = null) {
+    let referentiel = this.generateModel(datas)
     const viewModel = {
       referentiel,
     }
 
-    fetch('/assets/Feuille_de_temps_Modèle.xlsx')
+    fetch(IMPORT_ETP_TEMPLATE)
       // 2. Get template as ArrayBuffer.
       .then((response) => response.arrayBuffer())
       // 3. Fill the template with data (generate a report).
@@ -705,6 +716,9 @@ export class ExcelService extends MainClass {
       // 4. Get a report as buffer.
       .then(async (report) => {
         report = await this.setStyleXls(report, viewModel)
+        if (datas) {
+          report = await this.setDatas(report, datas)
+        }
         return report.xlsx.writeBuffer()
       })
       // 5. Use `saveAs` to download on browser site.
@@ -775,11 +789,14 @@ export class ExcelService extends MainClass {
     // sum by parent
     viewModel.referentiel.map((r: any) => {
       if (r.sum !== null) {
-        if (r.sum.length > 0)
-          report.worksheets[0].getCell(r.index).value = {
-            formula: '=SUM(' + r.sum.join(',') + ')',
-            result: '0',
-          }
+        if ((Array.isArray(r.sum) && r.sum.length > 0) || typeof r.sum === 'number') {
+          report.worksheets[0].getCell(r.index).value = Array.isArray(r.sum)
+            ? {
+                formula: '=SUM(' + r.sum.join(',') + ')',
+                result: '0',
+              }
+            : r.sum
+        }
         globalSum.push(r.index)
       }
     })
@@ -818,6 +835,27 @@ export class ExcelService extends MainClass {
       type: 'list',
       formulae: ['"MAGISTRAT,FONCTIONNAIRE"'],
       error: 'Veuillez selectionner une valeur dans le menu déroulant',
+    }
+
+    return report
+  }
+
+  /**
+   * setDatas
+   * @param report
+   * @param datas
+   * @returns
+   */
+  async setDatas(report: any, datas: any) {
+    console.log('datas', datas)
+    report.worksheets[0].getCell('C3').value = datas.firstName + ' ' + datas.lastName
+    report.worksheets[0].getCell('C2').value = datas.category.toUpperCase()
+    report.worksheets[0].getCell('C4').value = datas.fonction.toUpperCase()
+    report.worksheets[0].getCell('E5').value = datas.etp
+    if (datas.etp === 1) {
+      report.worksheets[0].getCell('C5').value = 'Temps plein'
+    } else {
+      report.worksheets[0].getCell('C5').value = 'Temps partiel'
     }
 
     return report
@@ -1308,13 +1346,13 @@ export class ExcelService extends MainClass {
     }
 
     const worksheet = report.worksheets[worksheetIndex]
-    
+
     // Calculer la dernière colonne dynamiquement basée sur le nombre de colonnes dans days1
     const lastColumn = this.numberToExcelColumn(Object.keys(viewModel).length)
-    
+
     // Configurer l'autoFilter de la colonne de début jusqu'à la dernière colonne sur la ligne spécifiée
     worksheet.autoFilter = `${startColumn}${headerRow}:${lastColumn}${headerRow}`
-    
+
     return report
   }
 
@@ -1327,10 +1365,14 @@ export class ExcelService extends MainClass {
   setRedGapConditionnalFormating(report: any, viewModel: any) {
     const etptDDGIndex = this.findIndexByName(report.worksheets, 'ETPT Format DDG') || 0
 
-      report.worksheets[etptDDGIndex].conditionalFormattings[0].ref =
-      'A3:' + this.numberToExcelColumn(Object.keys(viewModel.days1).length) + (Object.keys(viewModel.stats1).length + 3) + 
-      ' A2:' + this.numberToExcelColumn(Object.keys(viewModel.days1).length) + '2 A1:G1 I1:EY1'
-    
+    report.worksheets[etptDDGIndex].conditionalFormattings[0].ref =
+      'A3:' +
+      this.numberToExcelColumn(Object.keys(viewModel.days1).length) +
+      (Object.keys(viewModel.stats1).length + 3) +
+      ' A2:' +
+      this.numberToExcelColumn(Object.keys(viewModel.days1).length) +
+      '2 A1:G1 I1:EY1'
+
     report.worksheets[etptDDGIndex].conditionalFormattings[0].rules.ref =
       'A3:' + this.numberToExcelColumn(Object.keys(viewModel.days1).length) + (Object.keys(viewModel.stats1).length + 3) + ' A2:EZ2 A1:G1 I1:EY1'
 
