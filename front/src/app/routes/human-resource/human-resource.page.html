@@ -1,8 +1,10 @@
 <aj-wrapper class="content-margin-null no-header" #wrapper>
-  <div class="wrapper-content" *ngIf="contentieuxReferentiel.length"
+  @if(contentieuxReferentiel.length) {
+  <div class="wrapper-content"
     [ngStyle]="{ 'margin-bottom': onEditIndex !== null && histories.length === 0 ? '80px' : '0px' }"
     [class.duringPrint]="duringPrint">
-    <cover-profil-details *ngIf="currentHR" [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
+    @if(currentHR) {
+    <cover-profil-details [backUrl]="!duringPrint ? '/ventilations' : ''" [currentHR]="currentHR"
       [backAnchor]="currentHR && currentHR.id && appService.previousUrl !== '/panorama' ? '' + currentHR.id : undefined"
       [onEditIndex]="onEditIndex" [etp]="currentETP" [indisponibilities]="
         indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].indisponibilities : []
@@ -14,18 +16,19 @@
       (onOpenHelpPanel)="openHelpPanel($event)" (ficheIsUpdated)="onLoad($event, false)"
       (alertSet)="onAlertsUpdated($event)" (focusNext)="focusNext($event)"
       [class.duringPrint]="duringPrint"></cover-profil-details>
-
-    <div id="first-panel" class="first-panel" *ngIf="histories.length !== 0">
+    }
+    @if(histories.length !== 0) {
+    <div id="first-panel" class="first-panel">
       <div id="top-scroll-anchor" class="anchor"></div>
       <indispo-profil [indisponibilities]="currentHR?.indisponibilities || []"
         [indisponibilityError]="indisponibilityError" (onOpenHelpPanel)="openHelpPanel($event)"
         (addIndispiniblity)="onAddIndispiniblity($event)"></indispo-profil>
       <comment-profil id="comment-profil" [currentHR]="currentHR"></comment-profil>
     </div>
-
-    <actual-panel-situation *ngIf="currentHR && histories.length && showActuelPanel" [currentHR]="currentHR"
-      [dateStart]="actualHistoryDateStart" [dateStop]="actualHistoryDateStop"
-      [canEdit]="!duringPrint && indexOfTheFuture !== null" [canRemoveSituation]="
+    }
+    @if(currentHR && histories.length && showActuelPanel) {
+    <actual-panel-situation [currentHR]="currentHR" [dateStart]="actualHistoryDateStart"
+      [dateStop]="actualHistoryDateStop" [canEdit]="!duringPrint && indexOfTheFuture !== null" [canRemoveSituation]="
         !duringPrint && indexOfTheFuture !== null && histories[indexOfTheFuture].id !== -1
           ? histories[indexOfTheFuture].situationForTheFirstTime
           : false
@@ -35,19 +38,17 @@
       (onRemove)="indexOfTheFuture !== null ? onRemoveSituation(histories[indexOfTheFuture].id) : true"
       [forceToShowContentieuxDetail]="duringPrint" [category]="
         indexOfTheFuture !== null && histories[indexOfTheFuture] ? histories[indexOfTheFuture].category : null
-      "></actual-panel-situation>
+      "></actual-panel-situation>}
+    @if(!duringPrint && currentHR && onEditIndex === null) {
+    <div class="new-action text-center">
+      @if(userService.canEditHR()){<button class="fill primary small" (click)="onSelectSituationToEdit()">
+        Renseigner une nouvelle situation
+      </button>}
 
-    <ng-template [ngIf]="!duringPrint">
-      <div class="new-action text-center" *ngIf="currentHR && onEditIndex === null">
-        @if(userService.canEditHR()){<button class="fill primary small" (click)="onSelectSituationToEdit()">
-          Renseigner une nouvelle situation
-        </button>}
-
-        <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
-          text="Qu'est-ce que c'est ?"></aj-help-button>
-      </div>
-    </ng-template>
-
+      <aj-help-button (click)="openHelpPanel('nouvelle-situation')" class="help-icon"
+        text="Qu'est-ce que c'est ?"></aj-help-button>
+    </div>
+    }
     <add-ventilation [ngClass]="{ 'existing-agent': histories.length !== 0 }" *ngIf="onEditIndex !== null"
       #addDomVentilation [human]="currentHR" [activities]="
         onEditIndex !== -1 ? histories[onEditIndex].activities : histories.length ? histories[0].activities : []
@@ -103,10 +104,12 @@
       <button class="small primary strict-border" (click)="onSave()">Enregistrer</button>
     </div>
   </div>
+  }
   <div id="wrapper-printed"></div>
 </aj-wrapper>
 
-@if(updateIndisponiblity){<aj-popup [actions]="[
+@if(updateIndisponiblity) {
+<aj-popup [actions]="[
     { id: 'close', content: 'Annuler' },
     { id: 'modify', content: 'Enregistrer', fill: true },
   ]" [actionsLeft]="[{ id: 'delete', content: 'Supprimer' }]" [closeIcon]="true"
@@ -137,4 +140,5 @@
     </div>
   </div>
 </aj-popup>}
-@if(histories.length && onEditIndex !== null){<div class="black-screen"></div>}
+@if(histories.length && onEditIndex !== null) {
+<div class="black-screen"></div>}
