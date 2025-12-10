@@ -546,9 +546,14 @@ jobs:
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
           RUN_NUM: ${{ github.run_number }}
+          DEPLOYMENT_PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         with:
           script: |
-            const pageUrl = process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
+            let pageUrl = process.env.DEPLOYMENT_PAGE_URL || 'https://betagouv.github.io/a-just/';
+            // Ensure trailing slash for proper path construction
+            if (!pageUrl.endsWith('/')) {
+              pageUrl += '/';
+            }
             const pr = process.env.PR_NUM;
             const runNum = process.env.RUN_NUM;
             const url = `${pageUrl}pr-${pr}/run-${runNum}/combined/a-just-tests-report.html`;
