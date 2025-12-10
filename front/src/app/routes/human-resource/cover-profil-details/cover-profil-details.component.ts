@@ -19,8 +19,6 @@ import { fixDecimal } from '../../../utils/numbers'
 import { isDateBiggerThan, today } from '../../../utils/dates'
 import { etpLabel } from '../../../utils/referentiel'
 import { MatIconModule } from '@angular/material/icon'
-import { Renderer } from 'xlsx-renderer'
-import { saveAs } from 'file-saver'
 import { ExcelService } from '../../../services/excel/excel.service'
 
 /**
@@ -197,8 +195,6 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Detection lors du changement d'une des entrées pour le changement complet du rendu
    */
   ngOnChanges() {
-    console.log('ngOnChanges', this.etp)
-
     this.indisponibility = fixDecimal(sumBy(this.indisponibilities, 'percent') / 100)
     if (this.indisponibility > 1) {
       this.indisponibility = 1
@@ -397,24 +393,5 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    */
   getInputs(): ElementRef[] {
     return this.inputs.toArray()
-  }
-
-  /**
-   * Permet d'exporter la situation
-   */
-  onExportSituation() {
-    const findSituation = this.humanResourceService.findSituation(this.currentHR, today())
-    // @ts-ignore
-    const activities = (findSituation && findSituation.activities) || []
-    console.log('activities', activities)
-
-    this.excelService.generateAgentFile({
-      firstName: this.basicHrInfo?.get('firstName')?.value,
-      lastName: this.basicHrInfo?.get('lastName')?.value,
-      category: this.category?.label || '',
-      fonction: this.fonction?.label || '',
-      etp: this.etp || 0,
-      activities,
-    })
   }
 }
