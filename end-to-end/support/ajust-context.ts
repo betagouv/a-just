@@ -42,17 +42,48 @@ export function buildAJustContextE2E(): any {
 
 /**
  * Attach A-JUST context to current Cypress test
- * Call this in beforeEach or at the start of critical tests
+ * This attaches context immediately to the test object, using static data
+ * The context will be serialized into Mochawesome JSON for the report
  */
 export function attachAJustContext() {
-  const ctx = buildAJustContextE2E();
-  
-  // Attach to Cypress test context for mochawesome-reporter
-  // The reporter will serialize this into the JSON output
-  cy.wrap(null, { log: false }).then(() => {
-    const currentTest = (Cypress as any).mocha?.getRunner()?.suite?.ctx?.currentTest;
-    if (currentTest) {
-      currentTest.ajustContext = JSON.stringify(ctx);
+  try {
+    // Get the current Mocha test object
+    const runner = (Cypress as any).mocha?.getRunner();
+    const currentTest = runner?.suite?.ctx?.currentTest || runner?.test;
+    
+    if (!currentTest) {
+      return;
     }
-  });
+    
+    // Build static context (we can't access localStorage in beforeEach before page visit)
+    const ctx = {
+      user: {
+        email: user.email || null,
+        id: null,
+      },
+      backup: {
+        id: null, // Will be null in beforeEach, but that's OK
+        label: null,
+      },
+      rights: {
+        tools: [
+          { name: "Panorama", canRead: true, canWrite: true },
+          { name: "Ventilations", canRead: true, canWrite: true },
+          { name: "Données d'activité", canRead: true, canWrite: true },
+          { name: "Temps moyens", canRead: true, canWrite: true },
+          { name: "Cockpit", canRead: true, canWrite: true },
+          { name: "Simulateur", canRead: true, canWrite: true },
+          { name: "Simulateur à blanc", canRead: true, canWrite: true },
+          { name: "Réaffectateur", canRead: true, canWrite: true },
+        ],
+        referentiels: "all",
+      },
+    };
+    
+    // Attach as JSON string to match API test format
+    currentTest.ajustContext = JSON.stringify(ctx);
+  } catch (error) {
+    // Silently fail if we can't attach context
+    console.warn('Failed to attach A-JUST context:', error);
+  }
 }
