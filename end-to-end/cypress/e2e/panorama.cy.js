@@ -41,6 +41,9 @@ describe("Panorama page", () => {
     cy.visit("/panorama");
     cy.wait(1000);
     cy.url().should("include", "/panorama");
+    
+    // TEMPORARY FAILURE: Testing A-JUST context rendering in CI reports
+    expect(false).to.equal(true, 'TEMPORARY TEST FAILURE: Verify A-JUST context (user, backup, rights) appears in CI report');
   });
 
   it("Should display main menu and submenu items", () => {

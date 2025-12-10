@@ -1,5 +1,5 @@
 import { default as server } from '../src/index'
-import { accessList } from '../src/constants/access'
+import { accessList, accessToString } from '../src/constants/access'
 import routeUser from './api/RouteUser.test.js'
 import routeChangeUserData from './api/RouteChangeUserData.test.js'
 import routeCalcultator from './api/RouteCalculator.test.js'
@@ -29,12 +29,69 @@ const datas = {
   userToken: null,
 }
 
+/**
+ * Build A-JUST context object for test reporting
+ * @returns {object} Context with user, backup, and rights info
+ */
+function buildAJustContext() {
+  const ctx = {
+    user: {
+      id: datas.adminId || null,
+      email: USER_ADMIN_EMAIL || null,
+      role: 'ADMIN',
+    },
+    backup: {
+      id: datas.adminBackupId || null,
+      label: datas.adminBackups && datas.adminBackups.length > 0 
+        ? datas.adminBackups.find(b => b.id === datas.adminBackupId)?.label || null
+        : null,
+    },
+    rights: {
+      tools: [],
+      referentiels: datas.adminReferentielIds || 'all',
+    },
+  }
+
+  // Build tools list from adminAccess
+  if (Array.isArray(datas.adminAccess)) {
+    const toolMap = new Map()
+    for (const acc of datas.adminAccess) {
+      const id = acc.id || acc
+      const label = accessToString(id)
+      if (!label) continue
+      
+      // Parse tool name and read/write from label (e.g. "Panorama - lecture")
+      const parts = label.split(' - ')
+      const toolName = parts[0] || label
+      const mode = parts[1] || ''
+      
+      if (!toolMap.has(toolName)) {
+        toolMap.set(toolName, { name: toolName, canRead: false, canWrite: false })
+      }
+      const tool = toolMap.get(toolName)
+      if (/lecture/i.test(mode)) tool.canRead = true
+      if (/écriture|write/i.test(mode)) tool.canWrite = true
+    }
+    ctx.rights.tools = Array.from(toolMap.values())
+  }
+
+  return ctx
+}
+
 before((done) => {
   console.log('BEFORE WAITING SERVER')
   server.isReady = function () {
     console.log('config', config)
 
     done()
+  }
+})
+
+beforeEach(function () {
+  // Attach A-JUST context to current test for Mochawesome reporting
+  if (datas.adminId && datas.adminToken) {
+    const ctx = buildAJustContext()
+    this.test.ajustContext = JSON.stringify(ctx)
   }
 })
 

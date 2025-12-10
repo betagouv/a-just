@@ -3,6 +3,7 @@
 import '../../support/commands';
 import addCustomCommand from 'cy-verify-downloads';
 import 'cypress-mochawesome-reporter/register';
+import { attachAJustContext } from '../../support/ajust-context';
 
 // Also register via require to match sandbox behavior
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -59,6 +60,11 @@ before(() => {
   try { cy.clearCookies(); } catch {}
   try { cy.clearLocalStorage(); } catch {}
   try { cy.reload(); } catch {}
+});
+
+// Attach A-JUST context (user, backup, rights) to every test for reporting
+beforeEach(() => {
+  attachAJustContext();
 });
 
 // Ignore ResizeObserver noise like in sandbox

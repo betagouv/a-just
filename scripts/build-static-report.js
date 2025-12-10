@@ -38,6 +38,83 @@ function esc(s) {
     .replace(/>/g, '&gt;');
 }
 
+function parseAJustContext(test) {
+  try {
+    // Try test.ajustContext first (API tests)
+    if (test.ajustContext) {
+      const parsed = typeof test.ajustContext === 'string' ? JSON.parse(test.ajustContext) : test.ajustContext;
+      if (parsed && typeof parsed === 'object') return parsed;
+    }
+    // Try test.context (Cypress tests may use this)
+    if (test.context) {
+      const ctx = typeof test.context === 'string' ? JSON.parse(test.context) : test.context;
+      if (ctx && ctx.ajustContext) {
+        return typeof ctx.ajustContext === 'string' ? JSON.parse(ctx.ajustContext) : ctx.ajustContext;
+      }
+      // Maybe context is the ajustContext itself
+      if (ctx && (ctx.user || ctx.backup || ctx.rights)) return ctx;
+    }
+  } catch {}
+  return null;
+}
+
+function renderAJustContext(ctx) {
+  if (!ctx || typeof ctx !== 'object') return '';
+  const lines = [];
+  
+  // User
+  if (ctx.user && typeof ctx.user === 'object') {
+    const u = ctx.user;
+    const parts = [];
+    if (u.email) parts.push(esc(u.email));
+    if (u.id) parts.push(`ID: ${esc(String(u.id))}`);
+    if (u.role) parts.push(`Rôle: ${esc(u.role)}`);
+    if (parts.length) lines.push(`<div class="ctx-user"><strong>Utilisateur:</strong> ${parts.join(' • ')}</div>`);
+  }
+  
+  // Backup
+  if (ctx.backup && typeof ctx.backup === 'object') {
+    const b = ctx.backup;
+    const parts = [];
+    if (b.label) parts.push(esc(b.label));
+    if (b.id) parts.push(`ID: ${esc(String(b.id))}`);
+    if (parts.length) lines.push(`<div class="ctx-backup"><strong>Backup:</strong> ${parts.join(' • ')}</div>`);
+  }
+  
+  // Rights
+  if (ctx.rights && typeof ctx.rights === 'object') {
+    const r = ctx.rights;
+    const rightsParts = [];
+    
+    // Tools
+    if (Array.isArray(r.tools) && r.tools.length) {
+      const toolLines = r.tools.map(t => {
+        const modes = [];
+        if (t.canRead) modes.push('lecture');
+        if (t.canWrite) modes.push('écriture');
+        return `${esc(t.name || '')}: ${modes.join(' + ') || 'aucun'}`;
+      });
+      rightsParts.push(`<div class="ctx-tools"><strong>Outils:</strong><ul>${toolLines.map(l => `<li>${l}</li>`).join('')}</ul></div>`);
+    }
+    
+    // Referentiels
+    if (r.referentiels) {
+      const refLabel = r.referentiels === 'all' || r.referentiels === null 
+        ? 'tous les référentiels' 
+        : Array.isArray(r.referentiels) 
+          ? r.referentiels.join(', ') 
+          : String(r.referentiels);
+      rightsParts.push(`<div class="ctx-ref"><strong>Référentiels:</strong> ${esc(refLabel)}</div>`);
+    }
+    
+    if (rightsParts.length) {
+      lines.push(`<div class="ctx-rights">${rightsParts.join('')}</div>`);
+    }
+  }
+  
+  return lines.length ? `<div class="ajust-context">${lines.join('')}</div>` : '';
+}
+
 function isCySpecBase(b) {
   return /\.cy\.(js|ts)$/i.test(String(b || ''));
 }
@@ -255,6 +332,8 @@ function main() {
         fullTitle: t.fullTitle || '',
         state: testStateOf(t),
         err: t.err || {},
+        ajustContext: t.ajustContext || null,
+        context: t.context || null,
       }));
     const tag = depth === 0 ? 'h3' : (depth === 1 ? 'h4' : 'h5');
     const title = s.title || (depth === 0 ? (specBase || '') : '');
@@ -275,10 +354,11 @@ function main() {
       const shotLinks = shots.map((abs, i) => `<a href="${toRelUrl(outDir, abs)}" target="_blank">Screenshot ${i+1}</a>`).join(' ');
       const msg = t.err && (t.err.message || t.err.code) ? (t.err.message || t.err.code) : '';
       const stk = t.err && t.err.stack ? String(t.err.stack) : '';
+      const ctxHtml = isFail ? renderAJustContext(parseAJustContext(t)) : '';
       return `
         <li class="test ${t.state}">
           <div class="row"><span class="mark ${t.state}">${t.state==='passed'?'✓':t.state==='failed'?'✗':''}</span> <span class="t">${esc(t.title || t.fullTitle)}</span></div>
-          ${isFail ? `<details><summary>Details</summary>${msg?`<pre class="msg">${esc(msg)}</pre>`:''}${stk?`<pre class="stk">${esc(stk)}</pre>`:''}${shotLinks?`<div class="shots">${shotLinks}</div>`:''}</details>`:''}
+          ${isFail ? `<details><summary>Details</summary>${msg?`<pre class="msg">${esc(msg)}</pre>`:''}${stk?`<pre class="stk">${esc(stk)}</pre>`:''}${shotLinks?`<div class="shots">${shotLinks}</div>`:''}${ctxHtml}</details>`:''}
         </li>`;
     }).join('\n');
     const kidsHtml = Array.isArray(s.suites) ? s.suites.map((sub) => renderSuiteRecursive(sub, depth+1, g, specBase, groupId, thisPath)).join('\n') : '';
@@ -420,6 +500,13 @@ function main() {
   @media (max-width: 900px){.toc{display:none}.content{margin-left:0}}
   .suite h3 .vid{font-size:13px;margin-left:8px;opacity:0.85;text-decoration:none}
   .suite h3 .vid:hover{text-decoration:underline;opacity:1}
+  .ajust-context{margin-top:12px;padding:10px;background:#f9f9f9;border-left:3px solid #0d47a1;font-size:13px;line-height:1.5}
+  .ajust-context strong{color:#0a3d7a}
+  .ajust-context .ctx-user,.ajust-context .ctx-backup{margin-bottom:6px}
+  .ajust-context .ctx-rights{margin-top:8px}
+  .ajust-context .ctx-tools ul{list-style:none;padding-left:16px;margin:4px 0}
+  .ajust-context .ctx-tools li{margin:2px 0}
+  .ajust-context .ctx-ref{margin-top:6px}
 </style>
 <script>
  function toggleFailedOnly(cb){
