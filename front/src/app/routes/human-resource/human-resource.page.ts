@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef, Signal, WritableSignal } from '@angular/core'
+import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef, WritableSignal } from '@angular/core'
 import { FormControl, FormGroup, FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import _, { maxBy, minBy, orderBy } from 'lodash'
@@ -368,7 +368,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * Génération des situations artificielle ou non
    */
 
-  formatHRHistory() {
+  formatHRHistory(prepopon = true) {
     this.allIndisponibilities = this.currentHR?.indisponibilities || []
 
     if (this.fonctions.length === 0 || !this.currentHR || this.onEditIndex !== null) {
@@ -567,7 +567,9 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
     console.log('this.showActuelPanel', this.histories)
 
-    this.preOpenSituation()
+    if (prepopon) {
+      this.preOpenSituation()
+    }
   }
 
   /**
@@ -642,7 +644,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       })
     }
 
-    this.formatHRHistory()
+    this.formatHRHistory(false)
 
     if (this.histories.length === 0) {
       this.onEditIndex = null
