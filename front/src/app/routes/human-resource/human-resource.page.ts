@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef, WritableSignal } from '@angular/core'
+import { Component, OnDestroy, OnInit, signal, ViewChild, ElementRef, WritableSignal, inject } from '@angular/core'
 import { FormControl, FormGroup, FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import _, { maxBy, minBy, orderBy } from 'lodash'
@@ -32,6 +32,8 @@ import { CommonModule } from '@angular/common'
 import { MatSelectModule } from '@angular/material/select'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
+import { ExcelService } from '../../services/excel/excel.service'
+import { findRealValue } from '../../utils/dates'
 
 /**
  * Interface d'une situation
@@ -78,6 +80,15 @@ export interface HistoryInterface extends HRSituationInterface {
   styleUrls: ['./human-resource.page.scss'],
 })
 export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
+  excelService = inject(ExcelService)
+  humanResourceService = inject(HumanResourceService)
+  route = inject(ActivatedRoute)
+  router = inject(Router)
+  hrFonctionService = inject(HRFonctionService)
+  hrCategoryService = inject(HRCategoryService)
+  appService = inject(AppService)
+  hrCommentService = inject(HRCommentService)
+  userService = inject(UserService)
   /**
    * Dom du wrapper
    */
@@ -208,16 +219,7 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
    * @param hrFonctionService
    * @param hrCategoryService
    */
-  constructor(
-    private humanResourceService: HumanResourceService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private hrFonctionService: HRFonctionService,
-    private hrCategoryService: HRCategoryService,
-    public appService: AppService,
-    private hrCommentService: HRCommentService,
-    public userService: UserService,
-  ) {
+  constructor() {
     super()
 
     this.basicHrInfo.valueChanges.pipe(debounceTime(500)).subscribe((v) => {
@@ -342,7 +344,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
 
       // control indisponibilities
       this.indisponibilityError = this.humanResourceService.controlIndisponibilities(this.currentHR, this.currentHR?.indisponibilities || [])
-      // console.log(findUser, { indisponibilityError: this.indisponibilityError })
 
       const currentSituation = this.humanResourceService.findSituation(this.currentHR)
       if (currentSituation && currentSituation.category) {
@@ -358,8 +359,6 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
       this.currentHR = null
       this.categoryName = ''
     }
-
-    console.log('this.currentHR', this.currentHR)
 
     this.formatHRHistory()
   }
@@ -1094,6 +1093,31 @@ export class HumanResourcePage extends MainClass implements OnInit, OnDestroy {
           }
         }
       }
+    }
+  }
+
+  /**
+   * Permet d'exporter la situation
+   */
+  onExportSituation(indexOfTheFuture: number | null = null, histories: HistoryInterface[] | null = null) {
+    if (indexOfTheFuture !== null) {
+      const history = histories ? histories[indexOfTheFuture] : this.histories[indexOfTheFuture]
+
+      this.excelService.generateAgentFile({
+        firstName: this.currentHR?.firstName || '',
+        lastName: this.currentHR?.lastName || '',
+        category: history.category?.label || '',
+        fonction: history.fonction?.label || '',
+        etp: history.etp || 0,
+        activities: history.activities,
+        filename:
+          'Feuille_de_temps_' +
+          (this.currentHR?.lastName || '') +
+          '_' +
+          (this.currentHR?.firstName || '') +
+          '_' +
+          findRealValue(history.dateStart || new Date()),
+      })
     }
   }
 }
