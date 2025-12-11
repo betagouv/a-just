@@ -90,12 +90,21 @@ function loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt) {
  * Get context for a test from the loaded contexts map
  * @param {object} test - Test object with fullTitle
  * @param {object} contextsMap - Map of test fullTitle to context
+ * @param {array} suitePath - Array of suite titles leading to this test (for Cypress)
  * @returns {object|null} Context object or null
  */
-function parseAJustContext(test, contextsMap) {
+function parseAJustContext(test, contextsMap, suitePath) {
   if (!test || !contextsMap) return null;
   
-  const fullTitle = test.fullTitle || test.title || '';
+  // For Mocha/API tests, fullTitle is populated directly
+  // For Cypress tests, we need to construct it from suitePath + test.title
+  let fullTitle = test.fullTitle;
+  if (!fullTitle && suitePath && suitePath.length > 0 && test.title) {
+    fullTitle = [...suitePath, test.title].join(' ');
+  }
+  if (!fullTitle) {
+    fullTitle = test.title || '';
+  }
   if (!fullTitle) return null;
   
   return contextsMap[fullTitle] || null;
@@ -408,7 +417,7 @@ function main() {
       const shotLinks = shots.map((abs, i) => `<a href="${toRelUrl(outDir, abs)}" target="_blank">Screenshot ${i+1}</a>`).join(' ');
       const msg = t.err && (t.err.message || t.err.code) ? (t.err.message || t.err.code) : '';
       const stk = t.err && t.err.stack ? String(t.err.stack) : '';
-      const ctxHtml = isFail ? renderAJustContext(parseAJustContext(t, testContexts)) : '';
+      const ctxHtml = isFail ? renderAJustContext(parseAJustContext(t, testContexts, thisPath)) : '';
       return `
         <li class="test ${t.state}">
           <div class="row"><span class="mark ${t.state}">${t.state==='passed'?'✓':t.state==='failed'?'✗':''}</span> <span class="t">${esc(t.title || t.fullTitle)}</span></div>
