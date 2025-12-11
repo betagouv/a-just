@@ -42,18 +42,17 @@ export function buildAJustContextE2E(): any {
 
 /**
  * Attach A-JUST context to current Cypress test
- * This attaches context immediately to the test object, using static data
- * The context will be serialized into Mochawesome JSON for the report
+ * Writes context to a separate JSON file for report generation
  */
 export function attachAJustContext() {
   try {
-    // Get the current Mocha test object
-    const runner = (Cypress as any).mocha?.getRunner();
-    const currentTest = runner?.suite?.ctx?.currentTest || runner?.test;
-    
+    // Get the current test title
+    const currentTest = (Cypress as any).mocha?.getRunner()?.suite?.ctx?.currentTest;
     if (!currentTest) {
       return;
     }
+    
+    const testFullTitle = currentTest.fullTitle();
     
     // Build static context (we can't access localStorage in beforeEach before page visit)
     const ctx = {
@@ -80,10 +79,17 @@ export function attachAJustContext() {
       },
     };
     
-    // Attach as JSON string to match API test format
-    currentTest.ajustContext = JSON.stringify(ctx);
+    // Write context to separate JSON file
+    const contextFilePath = 'cypress/reports/test-contexts.json';
+    
+    // Read existing contexts, add new one, write back
+    cy.task('readContextFile', contextFilePath, { log: false }).then((existing: any) => {
+      const contexts = existing || {};
+      contexts[testFullTitle] = ctx;
+      cy.writeFile(contextFilePath, contexts, { log: false });
+    });
   } catch (error) {
-    // Silently fail if we can't attach context
-    console.warn('Failed to attach A-JUST context:', error);
+    // Silently fail if we can't write context
+    console.warn('Failed to write A-JUST context:', error);
   }
 }

@@ -38,24 +38,51 @@ function esc(s) {
     .replace(/>/g, '&gt;');
 }
 
-function parseAJustContext(test) {
-  try {
-    // Try test.ajustContext first (API tests)
-    if (test.ajustContext) {
-      const parsed = typeof test.ajustContext === 'string' ? JSON.parse(test.ajustContext) : test.ajustContext;
-      if (parsed && typeof parsed === 'object') return parsed;
+/**
+ * Load test contexts from separate JSON files
+ * @param {string} apiContextPath - Path to API test contexts JSON
+ * @param {string} e2eContextPath - Path to E2E test contexts JSON
+ * @returns {object} Merged contexts keyed by test fullTitle
+ */
+function loadTestContexts(apiContextPath, e2eContextPath) {
+  const contexts = {};
+  
+  // Load API contexts
+  if (apiContextPath && fs.existsSync(apiContextPath)) {
+    try {
+      const apiContexts = JSON.parse(fs.readFileSync(apiContextPath, 'utf8'));
+      Object.assign(contexts, apiContexts);
+    } catch (err) {
+      console.warn('Failed to load API contexts:', err.message);
     }
-    // Try test.context (Cypress tests may use this)
-    if (test.context) {
-      const ctx = typeof test.context === 'string' ? JSON.parse(test.context) : test.context;
-      if (ctx && ctx.ajustContext) {
-        return typeof ctx.ajustContext === 'string' ? JSON.parse(ctx.ajustContext) : ctx.ajustContext;
-      }
-      // Maybe context is the ajustContext itself
-      if (ctx && (ctx.user || ctx.backup || ctx.rights)) return ctx;
+  }
+  
+  // Load E2E contexts
+  if (e2eContextPath && fs.existsSync(e2eContextPath)) {
+    try {
+      const e2eContexts = JSON.parse(fs.readFileSync(e2eContextPath, 'utf8'));
+      Object.assign(contexts, e2eContexts);
+    } catch (err) {
+      console.warn('Failed to load E2E contexts:', err.message);
     }
-  } catch {}
-  return null;
+  }
+  
+  return contexts;
+}
+
+/**
+ * Get context for a test from the loaded contexts map
+ * @param {object} test - Test object with fullTitle
+ * @param {object} contextsMap - Map of test fullTitle to context
+ * @returns {object|null} Context object or null
+ */
+function parseAJustContext(test, contextsMap) {
+  if (!test || !contextsMap) return null;
+  
+  const fullTitle = test.fullTitle || test.title || '';
+  if (!fullTitle) return null;
+  
+  return contextsMap[fullTitle] || null;
 }
 
 function renderAJustContext(ctx) {
@@ -223,6 +250,12 @@ function main() {
   const outDir = path.dirname(path.resolve(outHtml));
   const videosDirAbs = path.resolve(videosDir);
   const screenshotsDirAbs = path.resolve(screenshotsDir);
+  
+  // Load test contexts from separate JSON files
+  const apiContextPath = path.join(__dirname, '../api/test/reports/test-contexts.json');
+  const e2eContextPath = path.join(__dirname, '../end-to-end/cypress/reports/test-contexts.json');
+  const testContexts = loadTestContexts(apiContextPath, e2eContextPath);
+  console.log(`Loaded ${Object.keys(testContexts).length} test contexts`);
 
   // Build indices
   // Videos: map specBase (e.g., activity.cy.js) -> absolute .mp4 path (first match wins)
@@ -354,7 +387,7 @@ function main() {
       const shotLinks = shots.map((abs, i) => `<a href="${toRelUrl(outDir, abs)}" target="_blank">Screenshot ${i+1}</a>`).join(' ');
       const msg = t.err && (t.err.message || t.err.code) ? (t.err.message || t.err.code) : '';
       const stk = t.err && t.err.stack ? String(t.err.stack) : '';
-      const ctxHtml = isFail ? renderAJustContext(parseAJustContext(t)) : '';
+      const ctxHtml = isFail ? renderAJustContext(parseAJustContext(t, testContexts)) : '';
       return `
         <li class="test ${t.state}">
           <div class="row"><span class="mark ${t.state}">${t.state==='passed'?'✓':t.state==='failed'?'✗':''}</span> <span class="t">${esc(t.title || t.fullTitle)}</span></div>

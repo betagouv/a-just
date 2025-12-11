@@ -511,6 +511,19 @@ export default defineConfig({
         }
       }
       on("task", Object.assign({}, verifyDownloadTasks as any, {
+        readContextFile(filePath: string) {
+          try {
+            const fullPath = path.join(process.cwd(), filePath);
+            if (fs.existsSync(fullPath)) {
+              const content = fs.readFileSync(fullPath, 'utf8');
+              return JSON.parse(content);
+            }
+            return {};
+          } catch (e) {
+            console.warn('Failed to read context file:', e);
+            return {};
+          }
+        },
         saveLabels({ host, labels }: { host: string; labels: string[] }) {
           try {
             const debugDir = path.join(process.cwd(), "cypress", "debug");

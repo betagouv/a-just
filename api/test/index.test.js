@@ -10,6 +10,8 @@ import routeActivities from './api/RouteActivities.test.js'
 import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from './constants/user'
 import { assert } from 'chai'
 import axios from 'axios'
+import fs from 'fs'
+import path from 'path'
 
 console.warn = () => { }
 console.error = () => { }
@@ -78,8 +80,22 @@ function buildAJustContext() {
   return ctx
 }
 
+// Context storage for separate JSON file approach
+const testContexts = {}
+const contextFilePath = path.join(__dirname, 'reports', 'test-contexts.json')
+
 before((done) => {
   console.log('BEFORE WAITING SERVER')
+  
+  // Ensure reports directory exists
+  const reportsDir = path.join(__dirname, 'reports')
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir, { recursive: true })
+  }
+  
+  // Initialize empty context file
+  fs.writeFileSync(contextFilePath, JSON.stringify({}, null, 2))
+  
   server.isReady = function () {
     console.log('config', config)
 
@@ -88,10 +104,24 @@ before((done) => {
 })
 
 beforeEach(function () {
-  // Attach A-JUST context to current test for Mochawesome reporting
+  // Write A-JUST context to separate JSON file for report generation
   if (datas.adminId && datas.adminToken) {
     const ctx = buildAJustContext()
-    this.test.ajustContext = JSON.stringify(ctx)
+    const testFullTitle = this.currentTest.fullTitle()
+    
+    // Store in memory
+    testContexts[testFullTitle] = ctx
+    
+    // Write to file (append mode - read, update, write)
+    try {
+      const existing = fs.existsSync(contextFilePath) 
+        ? JSON.parse(fs.readFileSync(contextFilePath, 'utf8'))
+        : {}
+      existing[testFullTitle] = ctx
+      fs.writeFileSync(contextFilePath, JSON.stringify(existing, null, 2))
+    } catch (err) {
+      console.warn('Failed to write test context:', err.message)
+    }
   }
 })
 
