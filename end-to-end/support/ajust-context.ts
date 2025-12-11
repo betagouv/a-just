@@ -79,8 +79,9 @@ export function attachAJustContext() {
       },
     };
     
-    // Write context to separate JSON file
-    const contextFilePath = 'cypress/reports/test-contexts.json';
+    // Write context to separate JSON file in run-specific directory
+    const runId = Cypress.env('GITHUB_RUN_NUMBER') || Date.now().toString();
+    const contextFilePath = `cypress/reports/run-${runId}/test-contexts.json`;
     
     // Read existing contexts, add new one, write back
     cy.task('readContextFile', contextFilePath, { log: false }).then((existing: any) => {

@@ -60,6 +60,8 @@ jobs:
         run: npm ci
 
       - name: Run API tests (Mocha + Mochawesome)
+        env:
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
         run: |
           set -e
           API_GREP="${{ github.event.inputs.api_grep }}"
@@ -125,6 +127,7 @@ jobs:
           
           docker compose -p test-e2e -f docker-compose-e2e.test.yml run --rm --no-deps \
             -e CY_JSON_ONLY=1 \
+            -e GITHUB_RUN_NUMBER="${{ github.run_number }}" \
             -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
             -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
             -e SPEC="$SPEC" \
@@ -249,6 +252,7 @@ jobs:
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d --build db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
             -e CY_JSON_ONLY=1 \
+            -e GITHUB_RUN_NUMBER="${{ github.run_number }}" \
             -e SANDBOX_CODE_DIR=/work/sandbox-code \
             -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
             -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \

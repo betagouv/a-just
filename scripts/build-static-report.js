@@ -252,8 +252,13 @@ function main() {
   const screenshotsDirAbs = path.resolve(screenshotsDir);
   
   // Load test contexts from separate JSON files
-  const apiContextPath = path.join(__dirname, '../api/test/reports/test-contexts.json');
-  const e2eContextPath = path.join(__dirname, '../end-to-end/cypress/reports/test-contexts.json');
+  // In CI, these are in the artifact directories relative to the output HTML
+  // outHtml is typically site/pr-X/run-Y/combined/a-just-tests-report.html
+  // Context files are in run-specific subdirectories: mocha/run-Y/ and cypress/run-Y/
+  const runDir = path.dirname(outDir); // site/pr-X/run-Y
+  const runNum = path.basename(runDir).replace('run-', ''); // Extract Y from run-Y
+  const apiContextPath = path.join(runDir, 'mocha', `run-${runNum}`, 'test-contexts.json');
+  const e2eContextPath = path.join(runDir, 'cypress', `run-${runNum}`, 'test-contexts.json');
   const testContexts = loadTestContexts(apiContextPath, e2eContextPath);
   console.log(`Loaded ${Object.keys(testContexts).length} test contexts`);
 
