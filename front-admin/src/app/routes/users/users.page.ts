@@ -12,6 +12,7 @@ import { BackupInterface } from '../../interfaces/backup';
 import { compare } from '../../utils/array';
 import { ContentieuReferentielInterface } from '../../interfaces/contentieu-referentiel';
 import { ReferentielService } from '../../services/referentiel/referentiel.service';
+import { AppService } from '../../services/app/app.service';
 
 interface FormSelection {
   id: number;
@@ -26,12 +27,18 @@ interface FormSelection {
   styleUrls: ['./users.page.scss'],
 })
 export class UsersPage extends MainClass implements OnInit, OnDestroy {
+  appService = inject(AppService);
   referentielService = inject(ReferentielService);
   userService = inject(UserService);
   datas: UserInterface[] = [];
   datasSource: UserInterface[] = [];
   referentiels: FormSelection[] = [];
-  access: FormSelection[] = [];
+  access: {
+    name: string;
+    label: string;
+    orderRequired: boolean;
+    access: FormSelection[];
+  }[] = [];
   ventilations: FormSelection[] = [];
   userEdit: UserInterface | null = null;
   userDelete: UserInterface | null = null;
@@ -63,6 +70,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
   }
 
   async onLoad() {
+    this.appService.isLoading.next(true);
     await this.referentielService
       .getReferentiels(true)
       .then((r: ContentieuReferentielInterface[]) => {
@@ -72,43 +80,60 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
           selected: false,
         }));
       });
-    this.userService.getAll().then((l) => {
-      this.datas = l.list.map((u: UserInterface) => ({
-        ...u,
-        accessName: (u.accessName || '').replace(/, /g, ', <br/>'),
-        referentielName:
-          u.referentielIds === null
-            ? 'Tous'
-            : (u.referentielIds || [])
-                .map((id) => this.referentiels.find((r) => r.id === id)?.label)
-                .filter((label) => label !== 'Indisponibilité')
-                .join(', <br/>'),
-        ventilationsName: (u.ventilations || [])
-          .map((j) => j.label)
-          .join(', <br/>'),
-      }));
-      this.datasSource = this.datas.slice();
+    this.userService
+      .getAll()
+      .then((l) => {
+        this.access = l.access;
 
-      this.access = l.access.map((u: PageAccessInterface) => ({
-        id: u.id,
-        label: u.label,
-        selected: false,
-      }));
-      this.ventilations = l.ventilations.map((u: BackupInterface) => ({
-        id: u.id,
-        label: u.label,
-        selected: false,
-      }));
+        this.datas = l.list.map((u: UserInterface) => ({
+          ...u,
+          accessName: this.convertAccessToString(u.access || []),
+          referentielName:
+            u.referentielIds === null
+              ? 'Tous'
+              : (u.referentielIds || [])
+                  .map(
+                    (id) => this.referentiels.find((r) => r.id === id)?.label
+                  )
+                  .filter((label) => label !== 'Indisponibilité')
+                  .join(', <br/>'),
+          ventilationsName: (u.ventilations || [])
+            .map((j) => j.label)
+            .join(', <br/>'),
+        }));
+        this.datasSource = this.datas.slice();
 
-      this.sortData(
-        this.sort
-          ? this.sort
-          : {
-              active: 'id',
-              direction: 'desc',
-            }
-      );
+        this.ventilations = l.ventilations.map((u: BackupInterface) => ({
+          id: u.id,
+          label: u.label,
+          selected: false,
+        }));
+
+        this.sortData(
+          this.sort
+            ? this.sort
+            : {
+                active: 'id',
+                direction: 'desc',
+              }
+        );
+      })
+      .finally(() => {
+        this.appService.isLoading.next(false);
+      });
+  }
+
+  convertAccessToString(access: number[]) {
+    const list: string[] = [];
+    this.access.forEach((a) => {
+      a.access.map((b) => {
+        if (access.includes(b.id)) {
+          list.push(a.label + ' - ' + b.label);
+        }
+      });
     });
+
+    return list.join(', <br/>');
   }
 
   sortData(sort: Sort) {
@@ -142,13 +167,6 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
 
     this.userEdit = user;
 
-    this.access = this.access.map((u) => {
-      return {
-        ...u,
-        selected: (user.access || []).indexOf(u.id) !== -1 ? true : false,
-      };
-    });
-
     this.ventilations = this.ventilations.map((u) => {
       return {
         ...u,
@@ -170,6 +188,40 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
     });
   }
 
+  onChangeAccess(id: number, selected: boolean) {
+    if (this.userEdit) {
+      let access = this.userEdit.access || [];
+      if (selected) {
+        if (access.indexOf(id) === -1) {
+          access.push(id);
+        }
+      } else {
+        access = access.filter((a) => a !== id);
+      }
+
+      this.userEdit.access = [...access];
+    }
+  }
+
+  onSelectAllAccess() {
+    if (this.userEdit) {
+      let access: number[] = [];
+      this.access.map((group) => {
+        (group.access || []).forEach((a) => access.push(a.id));
+      });
+      this.userEdit.access = [...access];
+    }
+  }
+
+  onSelectAllContentieux() {
+    if (this.userEdit) {
+      this.referentiels = this.referentiels.map((a) => ({
+        ...a,
+        selected: true,
+      }));
+    }
+  }
+
   onPopupDetailAction(action: any) {
     switch (action.id) {
       case 'save':
@@ -177,7 +229,7 @@ export class UsersPage extends MainClass implements OnInit, OnDestroy {
           this.userService
             .updateUser({
               userId: this.userEdit && this.userEdit.id,
-              access: this.access.filter((a) => a.selected).map((a) => a.id),
+              access: this.userEdit && this.userEdit.access,
               ventilations: this.ventilations
                 .filter((a) => a.selected)
                 .map((a) => a.id),

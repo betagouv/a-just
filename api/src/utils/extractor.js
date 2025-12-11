@@ -1075,13 +1075,17 @@ export function _buildSumTab(activities, flatReferentielsList) {
 
   Object.keys(groupedByContentieux).forEach((key) => {
     const lastItem = last(groupedByContentieux[key])
+    const aIn = _sumWithNullCheck(groupedByContentieux[key], 'ajustedIn')
+    const aOut = _sumWithNullCheck(groupedByContentieux[key], 'ajustedOut')
+    const oIn = _sumWithNullCheck(groupedByContentieux[key], 'originalEntrees')
+    const oOut = _sumWithNullCheck(groupedByContentieux[key], 'originalSorties')
     sumTab.push({
       periode: replaceIfZero(lastItem.periode),
-      entrees: _sumWithNullCheck(groupedByContentieux[key], 'ajustedIn'),
-      sorties: _sumWithNullCheck(groupedByContentieux[key], 'ajustedOut'),
-      stock: lastItem.ajustedStock??'-',
-      originalEntrees: _sumWithNullCheck(groupedByContentieux[key], 'originalEntrees'),
-      originalSorties: _sumWithNullCheck(groupedByContentieux[key], 'originalSorties'),
+      entrees: aIn!==oIn? aIn:"-",
+      sorties: aOut!==oOut? aOut:"-",
+      stock: lastItem.originalStock!==lastItem.ajustedStock?lastItem.ajustedStock:'-',
+      originalEntrees: oIn,
+      originalSorties: oOut,
       originalStock: lastItem.originalStock??'-',
       idReferentiel: lastItem.idReferentiel ?? lastItem.contentieux?.id,
       contentieux: {

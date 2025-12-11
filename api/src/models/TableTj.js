@@ -53,6 +53,8 @@ export default (sequelizeInstance, Model) => {
       attributes: ['id', ['i_elst', 'iElst'], 'label', 'latitude', 'longitude', 'population', 'enabled'],
       where: {
         parent_id: null,
+        i_elst: { [Op.ne]: 0 },
+        enabled: true,
       },
       order: [['label', 'asc']],
       raw: true,

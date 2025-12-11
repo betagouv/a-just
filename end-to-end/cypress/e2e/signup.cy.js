@@ -1,8 +1,20 @@
 describe("Signup Page", () => {
   before(() => {
+    // Clear all session state to ensure clean test environment
+    cy.clearCookies();
     cy.clearAllLocalStorage();
+    
+    // Intercept API calls to ensure they complete before proceeding
+    cy.intercept('GET', '**/api/users/interface-type').as('interfaceType');
+    cy.intercept('GET', '**/api/users/me').as('userMe');
+    
     cy.visit(`/connexion`);
-    cy.get(".signup")
+    
+    // Wait for API calls to complete
+    cy.wait(['@interfaceType', '@userMe'], { timeout: 15000 });
+    
+    // Now find the signup element with increased timeout
+    cy.get(".signup", { timeout: 10000 })
       .should("contain.text", "Rejoindre A-JUST")
       .get("a > button")
       .should("contain.text", "Demander votre embarquement")

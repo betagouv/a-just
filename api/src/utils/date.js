@@ -416,7 +416,7 @@ export function getTime(date = new Date()) {
  * @param {*} endDate
  * @returns
  */
-export const getWorkingDaysCount = (startDate, endDate) => {
+export const getWorkingDaysCount = (startDate, endDate, minOneDay = false) => {
   let start = today(startDate)
   let end = today(endDate)
 
@@ -449,7 +449,9 @@ export const getWorkingDaysCount = (startDate, endDate) => {
   }
 
   if (comparerDatesJourMoisAnnee(start, end)) {
-    return isWeekday(start) ? 1 : 0
+    if (minOneDay) return 1 
+    else
+      return isWeekday(start) ? 1 : 0
   }
 
   return workingDays

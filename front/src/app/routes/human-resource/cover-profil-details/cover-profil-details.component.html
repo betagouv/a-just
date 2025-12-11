@@ -7,7 +7,7 @@
 
     <button class="primary light small no-print" (click)="onExport()">
       <mat-icon>save</mat-icon>
-      Exporter en PDF
+      Enregistrer en PDF
     </button>
   </div>
 
@@ -28,9 +28,10 @@
             (keydown)="preventSubmit($event)" (keyup)="!userService.canEditHR() ? null : onFocusNext($event)"
             (input)="adjustInputWidth($event, 'firstName')" />
         </div>
-        <aj-alert-small *ngIf="humanResourceService.alertList().includes('firstName')"
-          alertMessage="Vous devez saisir un prénom pour valider la création !"
+        @if(humanResourceService.alertList().includes('firstName')) {
+        <aj-alert-small alertMessage="Vous devez saisir un prénom pour valider la création !"
           (onClose)="removeAlertItem('firstName')"></aj-alert-small>
+        }
       </div>
       <div class="lastname">
         <div class="input-wrapper" [ngStyle]="{ width: inputsWidth['lastName'] + 'px' }"
@@ -40,9 +41,10 @@
             (keydown)="preventSubmit($event)" (keyup)="!userService.canEditHR() ? null : onFocusNext($event)"
             (input)="adjustInputWidth($event, 'lastName')" />
         </div>
-        <aj-alert-small *ngIf="humanResourceService.alertList().includes('lastName')"
-          alertMessage="Vous devez saisir un nom pour valider la création !"
+        @if(humanResourceService.alertList().includes('lastName')) {
+        <aj-alert-small alertMessage="Vous devez saisir un nom pour valider la création !"
           (onClose)="removeAlertItem('lastName')"></aj-alert-small>
+        }
       </div>
       <aj-help-button (click)="openHelpPanel(currentHR && currentHR.situations.length ? 'fix-fiche' : 'add-fiche')"
         class="no-print help-icon" text="Qu'est-ce que c'est ?"></aj-help-button>
@@ -55,14 +57,18 @@
           (keyup)="!userService.canEditHR() ? null : onFocusNext($event)" />
       </div>
       <div class="tags">
-        <p *ngIf="fonction" class="fonction"
-          [style.background-color]="category ? getCategoryColor(category && category.label) : null"
+        @if(fonction) {
+        <p class="fonction" [style.background-color]="category ? getCategoryColor(category && category.label) : null"
           [style.color]="category ? 'white' : null">
           {{ fonction.code }}
         </p>
-        <p *ngIf="timeWorked" class="time-worked">{{ timeWorked }}</p>
+        }
+        @if(timeWorked && timeWorked !== 'Parti') {
+        <p class="time-worked">{{ timeWorked }}</p>
+        }
       </div>
-      <p class="user-updated-at" *ngIf="currentHR && onEditIndex === null">
+      @if(currentHR && onEditIndex === null) {
+      <p class="user-updated-at">
         {{
         currentHR && currentHR.updatedAt
         ? 'Dernière mise à jour le ' +
@@ -74,13 +80,16 @@
         : ''
         }}
       </p>
+      }
     </div>
   </div>
 
   <div class="right-second-row">
     <div class="dates">
-      <aj-alert-small *ngIf="humanResourceService.alertList().includes('startDate')"
-        alertMessage="Vous devez saisir une date d'arrivée !" (onClose)="removeAlertItem('startDate')"></aj-alert-small>
+      @if(humanResourceService.alertList().includes('startDate')) {
+      <aj-alert-small alertMessage="Vous devez saisir une date d'arrivée !"
+        (onClose)="removeAlertItem('startDate')"></aj-alert-small>
+      }
       <aj-date-select title="Date d'arrivée" id="calendar" [value]="currentHR && currentHR.dateStart"
         (valueChange)="updateHuman('dateStart', $event)"
         [ngClass]="{ error: humanResourceService.alertList().includes('startDate') }"

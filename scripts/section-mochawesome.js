@@ -4,12 +4,13 @@
     node scripts/section-mochawesome.js <merged.json> <out.json>
 
   Takes a mochawesome-merge output (merged.json) and rewrites it so that
-  top-level suites are grouped into two sections:
+  top-level suites are grouped into three sections:
     - "Unit tests" for non-Cypress suites
-    - "End to end tests" for Cypress suites
+    - "End to end tests" for regular Cypress suites
+    - "Non-regression tests" for Cypress non-reg suites (effectif-suite, activite-suite)
 
   The resulting JSON can be passed to mochawesome-report-generator to render
-  a single HTML report with two clear sections.
+  a single HTML report with three clear sections.
 */
 
 const fs = require('fs')
@@ -42,6 +43,29 @@ function uuidv4() {
 
 function isCySpecBaseName(name) {
   return /\.cy\.(js|ts)$/i.test(String(name || ''))
+}
+
+function isNonRegSuite(s) {
+  if (!s || typeof s !== 'object') return false
+  const f = String(s.file || s.fullFile || '')
+  const basename = path.basename(f)
+  // Check if it's a non-regression suite file
+  if (basename === 'effectif-suite.cy.ts' || basename === 'activite-suite.cy.ts') return true
+  // Check tests within the suite
+  if (Array.isArray(s.tests)) {
+    for (const t of s.tests) {
+      const tf = String((t && t.file) || '')
+      const tbase = path.basename(tf)
+      if (tbase === 'effectif-suite.cy.ts' || tbase === 'activite-suite.cy.ts') return true
+    }
+  }
+  // Check nested suites
+  if (Array.isArray(s.suites)) {
+    for (const sub of s.suites) {
+      if (isNonRegSuite(sub)) return true
+    }
+  }
+  return false
 }
 
 function suiteLooksE2E(s) {
@@ -122,8 +146,18 @@ function buildSectioned(merged) {
   const e2eResults = allResults.filter(isE2E)
   const unitResults = allResults.filter((r) => !isE2E(r))
 
-  const e2eSuites = flattenTopSuites(e2eResults)
+  const allE2ESuites = flattenTopSuites(e2eResults)
   const unitSuites = flattenTopSuites(unitResults)
+
+  // Separate non-reg suites from regular E2E suites
+  const nonRegSuites = allE2ESuites.filter(isNonRegSuite)
+  const regularE2ESuites = allE2ESuites.filter((s) => !isNonRegSuite(s))
+
+  const suites = [
+    makeWrapperSuite('End to end tests', regularE2ESuites),
+    makeWrapperSuite('Non-regression tests', nonRegSuites),
+    makeWrapperSuite('Unit tests', unitSuites),
+  ]
 
   const masterResult = {
     uuid: uuidv4(),
@@ -132,10 +166,7 @@ function buildSectioned(merged) {
     file: 'combined',
     beforeHooks: [],
     afterHooks: [],
-    suites: [
-      makeWrapperSuite('End to end tests', e2eSuites),
-      makeWrapperSuite('Unit tests', unitSuites),
-    ],
+    suites,
     tests: [],
     pending: [],
     passes: [],

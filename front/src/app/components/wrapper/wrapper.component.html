@@ -79,7 +79,7 @@
           Modèle de feuille de temps
           <i class="ri-download-line"></i>
         </p>
-        @if (userService.canViewAverageTime()) {
+        @if (referentielService.referentielIsComplete()) {
         <a [routerLink]="['/' + 'temps-moyens']">Référentiels de temps moyens</a>
         }
       </div>

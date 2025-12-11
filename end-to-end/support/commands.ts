@@ -43,12 +43,22 @@ Cypress.Commands.add("login", () => {
   cy.clearCookies();
 
   cy.session("login", () => {
-    cy.visit("/connexion");
-    cy.get("input[type=email]").type(user.email);
-    cy.get("input[type=password]").type(user.password);
-    cy.get(".password-line").get("#printPassword").click();
-    cy.get("form").submit();
+    // Wait for backend to be available before attempting login
+    const serverUrl = Cypress.env("NG_APP_SERVER_URL") || "http://localhost:8081/api";
+    
+    cy.request({
+      url: `${serverUrl}/auths/auto-login`,
+      timeout: 30000,
+      failOnStatusCode: false,
+    }).then(() => {
+      // Backend is ready (returns 200 or 401, but not connection error), proceed with login
+      cy.visit("/connexion", { timeout: 15000 });
+      cy.get("input[type=email]", { timeout: 15000 }).type(user.email);
+      cy.get("input[type=password]").type(user.password);
+      cy.get(".password-line").get("#printPassword").click();
+      cy.get("form").submit();
 
-    cy.wait(20000);
+      cy.wait(20000);
+    });
   });
 });

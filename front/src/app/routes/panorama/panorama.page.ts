@@ -359,10 +359,10 @@ export class PanoramaPage extends MainClass implements OnInit, OnDestroy, AfterV
     })
 
     let fifteenDaysLater = today(this.dateSelected)
-    fifteenDaysLater.setDate(fifteenDaysLater.getDate() + 15)
+    fifteenDaysLater.setMonth(fifteenDaysLater.getMonth() + 3)
 
     let fifteenDaysBefore = today(this.dateSelected)
-    fifteenDaysBefore.setDate(fifteenDaysBefore.getDate() - 15)
+    fifteenDaysBefore.setMonth(fifteenDaysBefore.getMonth() - 3)
 
     this.listDepartures = []
     this.listArrivals = []

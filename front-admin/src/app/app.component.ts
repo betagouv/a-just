@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { AppService } from './services/app/app.service';
 
 import { RouterOutlet } from '@angular/router';
+import { BigLoaderComponent } from './components/big-loader/big-loader.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, BigLoaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
