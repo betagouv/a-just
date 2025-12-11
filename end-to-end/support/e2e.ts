@@ -17,6 +17,7 @@
 import "./commands";
 import addCustomCommand from "cy-verify-downloads";
 import "cypress-mochawesome-reporter/register";
+import { attachAJustContext } from "./ajust-context";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -28,6 +29,11 @@ before(() => {
   cy.task('wipeDownloads');
   cy.task('wipeEffectifArtifacts');
   cy.reload();
+});
+
+// Attach A-JUST context to every test for error reporting
+beforeEach(function () {
+  attachAJustContext(this.currentTest);
 });
 
 // Always dump DOM after each test for debugging
