@@ -41,10 +41,11 @@ function esc(s) {
 /**
  * Load test contexts from separate JSON files
  * @param {string} apiContextPath - Path to API test contexts JSON
- * @param {string} e2eContextPath - Path to E2E test contexts JSON
+ * @param {string} e2eContextPath - Path to E2E test contexts JSON (primary location)
+ * @param {string} e2eContextPathAlt - Alternative path for E2E contexts
  * @returns {object} Merged contexts keyed by test fullTitle
  */
-function loadTestContexts(apiContextPath, e2eContextPath) {
+function loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt) {
   const contexts = {};
   
   // Load API contexts
@@ -52,18 +53,33 @@ function loadTestContexts(apiContextPath, e2eContextPath) {
     try {
       const apiContexts = JSON.parse(fs.readFileSync(apiContextPath, 'utf8'));
       Object.assign(contexts, apiContexts);
+      console.log(`Loaded ${Object.keys(apiContexts).length} API test contexts`);
     } catch (err) {
       console.warn('Failed to load API contexts:', err.message);
     }
   }
   
-  // Load E2E contexts
+  // Load E2E contexts - try primary location first
+  let e2eLoaded = false;
   if (e2eContextPath && fs.existsSync(e2eContextPath)) {
     try {
       const e2eContexts = JSON.parse(fs.readFileSync(e2eContextPath, 'utf8'));
       Object.assign(contexts, e2eContexts);
+      console.log(`Loaded ${Object.keys(e2eContexts).length} E2E test contexts from ${e2eContextPath}`);
+      e2eLoaded = true;
     } catch (err) {
-      console.warn('Failed to load E2E contexts:', err.message);
+      console.warn('Failed to load E2E contexts from primary path:', err.message);
+    }
+  }
+  
+  // Try alternative location if primary didn't work
+  if (!e2eLoaded && e2eContextPathAlt && fs.existsSync(e2eContextPathAlt)) {
+    try {
+      const e2eContexts = JSON.parse(fs.readFileSync(e2eContextPathAlt, 'utf8'));
+      Object.assign(contexts, e2eContexts);
+      console.log(`Loaded ${Object.keys(e2eContexts).length} E2E test contexts from ${e2eContextPathAlt}`);
+    } catch (err) {
+      console.warn('Failed to load E2E contexts from alternative path:', err.message);
     }
   }
   
@@ -258,8 +274,9 @@ function main() {
   const runDir = path.dirname(outDir); // site/pr-X/run-Y
   const apiContextPath = path.join(runDir, 'mocha', 'test-contexts.json');
   const e2eContextPath = path.join(runDir, 'cypress', 'test-contexts.json');
-  const testContexts = loadTestContexts(apiContextPath, e2eContextPath);
-  console.log(`Loaded ${Object.keys(testContexts).length} test contexts`);
+  const e2eContextPathAlt = path.join(runDir, 'cypress', '.jsons', 'test-contexts.json');
+  const testContexts = loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt);
+  console.log(`Loaded ${Object.keys(testContexts).length} total test contexts`);
 
   // Build indices
   // Videos: map specBase (e.g., activity.cy.js) -> absolute .mp4 path (first match wins)
