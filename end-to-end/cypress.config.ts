@@ -524,6 +524,34 @@ export default defineConfig({
             return {};
           }
         },
+        writeContextFile({ filePath, testTitle, context }: { filePath: string; testTitle: string; context: any }) {
+          try {
+            const fullPath = path.join(process.cwd(), filePath);
+            const dir = path.dirname(fullPath);
+            fs.mkdirSync(dir, { recursive: true });
+            
+            // Read existing contexts
+            let contexts = {};
+            if (fs.existsSync(fullPath)) {
+              try {
+                const content = fs.readFileSync(fullPath, 'utf8');
+                contexts = JSON.parse(content);
+              } catch (e) {
+                console.warn('Failed to read existing contexts, starting fresh:', e);
+              }
+            }
+            
+            // Add new context
+            contexts[testTitle] = context;
+            
+            // Write back
+            fs.writeFileSync(fullPath, JSON.stringify(contexts, null, 2), 'utf8');
+            return null;
+          } catch (e) {
+            console.error('Failed to write context file:', e);
+            return null;
+          }
+        },
         saveLabels({ host, labels }: { host: string; labels: string[] }) {
           try {
             const debugDir = path.join(process.cwd(), "cypress", "debug");

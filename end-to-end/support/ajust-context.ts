@@ -79,15 +79,13 @@ export function attachAJustContext() {
       },
     };
     
-    // Write context to separate JSON file
+    // Write context to separate JSON file using Node.js task
     const contextFilePath = 'cypress/reports/test-contexts.json';
-    
-    // Read existing contexts, add new one, write back
-    cy.task('readContextFile', contextFilePath, { log: false }).then((existing: any) => {
-      const contexts = existing || {};
-      contexts[testFullTitle] = ctx;
-      cy.writeFile(contextFilePath, contexts, { log: false });
-    });
+    cy.task('writeContextFile', {
+      filePath: contextFilePath,
+      testTitle: testFullTitle,
+      context: ctx
+    }, { log: false });
   } catch (error) {
     // Silently fail if we can't write context
     console.warn('Failed to write A-JUST context:', error);
