@@ -133,6 +133,12 @@ export default class RouteSimulator extends Route {
 
     const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)
 
+
+    /**
+     *     console.log(simulatedSituation.realTimePerCase)
+
+    totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
+
     let listDTES = []
 
     do {
@@ -152,6 +158,8 @@ export default class RouteSimulator extends Route {
       dateStart = month(dateStart, 1)
     } while (dateStart.getTime() <= dateStop.getTime())
     console.log(listDTES)
+  */
+
     if (simulatedSituation === null) ctx.throw(400, 'Une erreur est survenue lors de votre simulation, veuillez réessayer !')
     else this.sendOk(ctx, simulatedSituation)
   }
