@@ -1,22 +1,23 @@
 import { AfterViewInit, Component, inject } from '@angular/core'
 import { WrapperNoConnectedComponent } from '../../components/wrapper-no-connected/wrapper-no-connected.component'
-import { RouterLink } from '@angular/router'
 import { MEETING_URL } from '../../constants/pages'
 import { SSOService } from '../../services/sso/sso.service'
 import { AppService } from '../../services/app/app.service'
+import { UserService } from '../../services/user/user.service'
 
 /**
  * Page pour onboarder des nouveaux utilisateurs
  */
 @Component({
   standalone: true,
-  imports: [WrapperNoConnectedComponent, RouterLink],
+  imports: [WrapperNoConnectedComponent],
   templateUrl: './welcome.page.html',
   styleUrls: ['./welcome.page.scss'],
 })
 export class WelcomePage implements AfterViewInit {
   ssoService = inject(SSOService)
   appService = inject(AppService)
+  userService = inject(UserService)
   MEETING_URL = MEETING_URL
 
   ngAfterViewInit() {
@@ -45,5 +46,9 @@ export class WelcomePage implements AfterViewInit {
         this.loadCalendly()
       }, 100)
     }
+  }
+
+  onBackToLogin() {
+    this.userService.logout()
   }
 }

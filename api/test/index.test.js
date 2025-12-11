@@ -23,83 +23,89 @@ import config from 'config'
 import { onLoginAdminApi, onUpdateAccountApi, onGetUserDataApi } from './routes/user'
 
 const datas = {
+  adminId: null,
   adminToken: null,
-  adminAccess: null,
   userId: null,
   userToken: null,
 }
 
-describe('Test server is ready', () => {
-  before((done) => {
-    console.log('BEFORE WAITING SERVER')
-    server.isReady = function () {
-      console.log('config', config)
+before((done) => {
+  console.log('BEFORE WAITING SERVER')
+  server.isReady = function () {
+    console.log('config', config)
 
-      done()
-    }
-  })
-
-  after(async function () {
-    // remove created user if exists
-    if (datas.userId && datas.adminToken) {
-      await axios.delete(`${config.serverUrl}/users/remove-account-test/${datas.userId}`, {
-        headers: {
-          authorization: datas.adminToken,
-        },
-      })
-    }
-    server.done()
-  })
-
-  /**
-   * Connect Admin
-   */
-  it('Login - Login admin', async () => {
-    const email = USER_ADMIN_EMAIL
-    const password = USER_ADMIN_PASSWORD
-    // Connexion de l'admin
-    const response = await onLoginAdminApi({
-      email: email,
-      password: password,
-    })
-    // Récupération du token associé et de l'id, pour identifier l'utilisateur
-    if (response.status === 201) {
-      datas.adminToken = response.data.token
-      datas.adminId = response.data.user.id
-    }
-
-    assert.strictEqual(response.status, 201)
-  })
-
-  // On donne tous les accès à l'administrateur
-  it('Give all accesses to Admin', async () => {
-    const accessIds = accessList.map((elem) => {
-      return elem.id
-    })
-    await onUpdateAccountApi({
-      userToken: datas.adminToken,
-      userId: datas.adminId,
-      accessIds: accessIds,
-      ventilations: [],
-    })
-    const response = await onGetUserDataApi({ userToken: datas.adminToken })
-    datas.adminAccess = response.data.user.access
-    assert.strictEqual(response.status, 200)
-    assert.isNotEmpty(datas.adminAccess)
-  })
-
-  routeUser(datas)
-  routeChangeUserData(datas)
-  routeCalcultator(datas)
-  
-  //routeSimulator(datas)
-  
-  routeVentilateur(datas)
-  routePanorama(datas)
-  routeActivities(datas)
-
-  /*routeImport()
-  routeHR()
-  routeActivities()
-  RouteContentieuxOptions()*/
+    done()
+  }
 })
+
+after(async function () {
+  // remove created user if exists
+  if (datas.userId && datas.adminToken) {
+    await axios.delete(`${config.serverUrl}/users/remove-account-test/${datas.userId}`, {
+      headers: {
+        authorization: datas.adminToken,
+      },
+    })
+  }
+  server.done()
+})
+
+/**
+ * Connect Admin
+ */
+it('Login - Login admin', async () => {
+  const email = USER_ADMIN_EMAIL
+  const password = USER_ADMIN_PASSWORD
+  // Connexion de l'admin
+  const response = await onLoginAdminApi({
+    email: email,
+    password: password,
+  })
+  // Récupération du token associé et de l'id, pour identifier l'utilisateur
+  if (response.status === 201) {
+    datas.adminToken = response.data.token
+    datas.adminId = response.data.user.id
+  }
+
+  assert.strictEqual(response.status, 201)
+})
+
+// On donne tous les accès à l'administrateur
+it('Give all accesses to Admin', async () => {
+  // Extract all access IDs from the nested structure
+  const accessIds = accessList.flatMap((elem) => {
+    return elem.access.map(a => a.id)
+  })
+  // Add category access (Magistrat, Greffier, Contractuel)
+  accessIds.push(8, 9, 10)
+  
+  await onUpdateAccountApi({
+    userToken: datas.adminToken,
+    userId: datas.adminId,
+    accessIds: accessIds,
+    ventilations: [],
+    referentielIds: null, // null = access to all referentiels
+  })
+  const response = await onGetUserDataApi({ userToken: datas.adminToken })
+  datas.adminAccess = response.data.user.access
+  datas.adminBackups = response.data.data.backups || []
+  datas.adminBackupId = datas.adminBackups.length > 0 ? datas.adminBackups[0].id : null
+  datas.adminReferentielIds = response.data.user.referentiel_ids
+  assert.strictEqual(response.status, 200)
+  assert.isNotEmpty(datas.adminAccess)
+})
+
+routeUser(datas)
+routeChangeUserData(datas)
+routeCalcultator(datas)
+
+//routeSimulator(datas)
+
+routeVentilateur(datas)
+routePanorama(datas)
+routeActivities(datas)
+
+/*routeImport()
+routeHR()
+routeActivities()
+RouteContentieuxOptions()*/

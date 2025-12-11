@@ -88,7 +88,7 @@ export default class Route extends RouteBase {
     this.assertUnauthorized(id)
 
     let user = await this.models.Users.findOne({
-      attributes: ['id', 'email', 'role', 'first_name', 'last_name'],
+      attributes: ['id', 'email', 'role', 'first_name', 'last_name', 'referentiel_ids'],
       where: {
         id,
         status: 1,
@@ -120,7 +120,7 @@ export default class Route extends RouteBase {
     }
 
     let user = await this.models.Users.findOne({
-      attributes: ['id', 'email', 'role', 'first_name', 'last_name'],
+      attributes: ['id', 'email', 'role', 'first_name', 'last_name', 'referentiel_ids'],
       where: {
         id,
         status: 1,
@@ -273,7 +273,11 @@ function canVewSimulation(ctx) {
  * @returns
  */
 function canEditSimulation(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1
+  return (
+    !!ctx.body.user &&
+    ctx.body.user.access &&
+    (ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_SIMULATOR_WRITER) !== -1)
+  )
 }
 
 /**
@@ -291,7 +295,11 @@ function canVewWhiteSimulation(ctx) {
  * @returns
  */
 function canEditWhiteSimulation(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1
+  return (
+    !!ctx.body.user &&
+    ctx.body.user.access &&
+    (ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_WHITE_SIMULATOR_WRITER) !== -1)
+  )
 }
 
 /**
@@ -309,7 +317,11 @@ function canVewReaffectator(ctx) {
  * @returns
  */
 function canEditReaffectator(ctx) {
-  return !!ctx.body.user && ctx.body.user.access && ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1
+  return (
+    !!ctx.body.user &&
+    ctx.body.user.access &&
+    (ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_READER) !== -1 || ctx.body.user.access.indexOf(USER_ACCESS_REAFFECTATOR_WRITER) !== -1)
+  )
 }
 
 /**

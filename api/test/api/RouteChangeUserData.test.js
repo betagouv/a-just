@@ -25,11 +25,40 @@ module.exports = function (datas) {
         indisponibilities: [],
       }
 
+      console.log('\n========================================')
+      console.log('🔍 CREATE NEW HR - DEBUG INFO')
+      console.log('========================================')
+      console.log('📤 REQUEST PAYLOAD:')
+      console.log('  - backupId:', datas.adminBackupId || 11)
+      console.log('  - hr:', JSON.stringify(hr, null, 2))
+      console.log('  - userToken exists:', !!datas.adminToken)
+      console.log('  - userToken (first 20 chars):', datas.adminToken?.substring(0, 20) + '...')
+      console.log('\n👤 USER CONTEXT:')
+      console.log('  - adminId:', datas.adminId)
+      console.log('  - adminReferentielIds:', datas.adminReferentielIds)
+      console.log('  - adminAccess (count):', datas.adminAccess?.length || 0)
+      console.log('  - adminAccess:', datas.adminAccess)
+      console.log('  - adminBackups:', datas.adminBackups)
+      console.log('  - adminBackupId:', datas.adminBackupId)
+      console.log('  - Has VENTILATIONS_WRITER (2.2):', datas.adminAccess?.includes(2.2))
+
       const response = await onUpdateHrApi({
         userToken: datas.adminToken,
         hr: hr,
-        backupId: 11,
+        backupId: datas.adminBackupId || 11,
       })
+
+      console.log('\n📥 RESPONSE:')
+      console.log('  - status:', response.status)
+      console.log('  - statusText:', response.statusText)
+      console.log('  - data:', JSON.stringify(response.data, null, 2))
+      console.log('  - response.data.data:', response.data.data)
+      console.log('  - typeof response.data.data:', typeof response.data.data)
+      if (response.data.data) {
+        console.log('  - response.data.data.firstName:', response.data.data.firstName)
+        console.log('  - response.data.data.id:', response.data.data.id)
+      }
+      console.log('========================================\n')
 
       const tmp_firstName = response.data.data.firstName
       const tmp_lastName = response.data.data.lastName

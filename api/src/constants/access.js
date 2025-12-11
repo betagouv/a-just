@@ -83,37 +83,37 @@ export const HAS_ACCESS_TO_CONTRACTUEL = 10
 export const accessToString = (roleId) => {
   switch (roleId) {
     case USER_ACCESS_DASHBOARD_READER:
-      return 'Panorama en mode lecture'
+      return 'Panorama - lecture'
     case USER_ACCESS_DASHBOARD_WRITER:
-      return 'Panorama en mode écriture'
+      return 'Panorama - écriture'
     case USER_ACCESS_VENTILATIONS_READER:
-      return 'Ventilations en mode lecture'
+      return 'Ventilations - lecture'
     case USER_ACCESS_VENTILATIONS_WRITER:
-      return 'Ventilations en mode écriture'
+      return 'Ventilations - écriture'
     case USER_ACCESS_ACTIVITIES_READER:
-      return "Données d'activité en mode lecture"
+      return "Données d'activité - lecture"
     case USER_ACCESS_ACTIVITIES_WRITER:
-      return "Données d'activité en mode écriture"
+      return "Données d'activité - écriture"
     case USER_ACCESS_AVERAGE_TIME_READER:
-      return 'Temps moyens en mode lecture'
+      return 'Temps moyens - lecture'
     case USER_ACCESS_AVERAGE_TIME_WRITER:
-      return 'Temps moyens en mode écriture'
+      return 'Temps moyens - écriture'
     case USER_ACCESS_CALCULATOR_READER:
-      return 'Cockpit en mode lecture'
+      return 'Cockpit - lecture'
     case USER_ACCESS_CALCULATOR_WRITER:
-      return 'Cockpit en mode écriture'
+      return 'Cockpit - écriture'
     case USER_ACCESS_SIMULATOR_READER:
-      return 'Simulateur en mode lecture'
+      return 'Simulateur - lecture'
     case USER_ACCESS_SIMULATOR_WRITER:
-      return 'Simulateur en mode écriture'
+      return 'Simulateur - écriture'
     case USER_ACCESS_WHITE_SIMULATOR_READER:
-      return 'Simulateur à blanc en mode lecture'
+      return 'Simulateur à blanc - lecture'
     case USER_ACCESS_WHITE_SIMULATOR_WRITER:
-      return 'Simulateur à blanc en mode écriture'
+      return 'Simulateur à blanc - écriture'
     case USER_ACCESS_REAFFECTATOR_READER:
-      return 'Réaffectateur en mode lecture'
+      return 'Réaffectateur - lecture'
     case USER_ACCESS_REAFFECTATOR_WRITER:
-      return 'Réaffectateur en mode écriture'
+      return 'Réaffectateur - écriture'
     case HAS_ACCESS_TO_MAGISTRAT:
       return 'Accès aux magistrats'
     case HAS_ACCESS_TO_GREFFIER:
@@ -128,79 +128,142 @@ export const accessToString = (roleId) => {
  */
 export const accessList = [
   {
-    id: USER_ACCESS_DASHBOARD_READER,
-    label: accessToString(USER_ACCESS_DASHBOARD_READER),
+    name: 'dashboard',
+    label: 'Panorama',
+    orderRequired: true,
+    access: [
+      {
+        id: USER_ACCESS_DASHBOARD_READER,
+        label: 'Lecture',
+      },
+      /*{
+        id: USER_ACCESS_DASHBOARD_WRITER,
+        label: 'Écriture',
+      },*/
+    ],
   },
   {
-    id: USER_ACCESS_DASHBOARD_WRITER,
-    label: accessToString(USER_ACCESS_DASHBOARD_WRITER),
+    name: 'ventilations',
+    label: 'Ventilations',
+    orderRequired: true,
+    access: [
+      {
+        id: USER_ACCESS_VENTILATIONS_READER,
+        label: 'Lecture',
+      },
+      {
+        id: USER_ACCESS_VENTILATIONS_WRITER,
+        label: 'Écriture',
+      },
+    ],
   },
   {
-    id: USER_ACCESS_VENTILATIONS_READER,
-    label: accessToString(USER_ACCESS_VENTILATIONS_READER),
-  },
-  {
-    id: USER_ACCESS_VENTILATIONS_WRITER,
-    label: accessToString(USER_ACCESS_VENTILATIONS_WRITER),
-  },
-  {
-    id: USER_ACCESS_ACTIVITIES_READER,
-    label: accessToString(USER_ACCESS_ACTIVITIES_READER),
-  },
-  {
-    id: USER_ACCESS_ACTIVITIES_WRITER,
-    label: accessToString(USER_ACCESS_ACTIVITIES_WRITER),
-  },
-  {
-    id: USER_ACCESS_AVERAGE_TIME_READER,
-    label: accessToString(USER_ACCESS_AVERAGE_TIME_READER),
-  },
-  {
-    id: USER_ACCESS_AVERAGE_TIME_WRITER,
-    label: accessToString(USER_ACCESS_AVERAGE_TIME_WRITER),
-  },
-  {
-    id: USER_ACCESS_CALCULATOR_READER,
-    label: accessToString(USER_ACCESS_CALCULATOR_READER),
-  },
-  {
-    id: USER_ACCESS_CALCULATOR_WRITER,
-    label: accessToString(USER_ACCESS_CALCULATOR_WRITER),
-  },
-  {
-    id: USER_ACCESS_SIMULATOR_READER,
-    label: accessToString(USER_ACCESS_SIMULATOR_READER),
-  },
-  /*{
-    id: USER_ACCESS_SIMULATOR_WRITER,
-    label: accessToString(USER_ACCESS_SIMULATOR_WRITER),
-  },*/
-  {
-    id: USER_ACCESS_WHITE_SIMULATOR_READER,
-    label: accessToString(USER_ACCESS_WHITE_SIMULATOR_READER),
+    name: 'activities',
+    label: 'Activités',
+    orderRequired: true,
+    access: [
+      {
+        id: USER_ACCESS_ACTIVITIES_READER,
+        label: 'Lecture',
+      },
+      {
+        id: USER_ACCESS_ACTIVITIES_WRITER,
+        label: 'Écriture',
+      },
+    ],
   },
   /*{
-    id: USER_ACCESS_WHITE_SIMULATOR_WRITER,
-    label: accessToString(USER_ACCESS_WHITE_SIMULATOR_WRITER),
+    name: 'average-time',
+    label: 'Temps moyens',
+    orderRequired: true,
+    access: [
+      {
+        id: USER_ACCESS_AVERAGE_TIME_READER,
+        label: 'Lecture',
+      },
+      {
+        id: USER_ACCESS_AVERAGE_TIME_WRITER,
+        label: 'Écriture',
+      },
+    ],
   },*/
   {
-    id: USER_ACCESS_REAFFECTATOR_READER,
-    label: accessToString(USER_ACCESS_REAFFECTATOR_READER),
+    name: 'calculator',
+    label: 'Cockpit',
+    orderRequired: true,
+    access: [
+      {
+        id: USER_ACCESS_CALCULATOR_READER,
+        label: 'Lecture',
+      },
+      /*{
+        id: USER_ACCESS_CALCULATOR_WRITER,
+        label: 'Écriture',
+      },*/
+    ],
   },
   {
-    id: USER_ACCESS_REAFFECTATOR_WRITER,
-    label: accessToString(USER_ACCESS_REAFFECTATOR_WRITER),
+    name: 'simulator',
+    label: 'Simulateur',
+    orderRequired: true,
+    access: [
+      {
+        id: USER_ACCESS_SIMULATOR_READER,
+        label: 'Lecture',
+      },
+      /*{
+        id: USER_ACCESS_SIMULATOR_WRITER,
+        label: 'Écriture',
+      },*/
+    ],
   },
   {
-    id: HAS_ACCESS_TO_MAGISTRAT,
-    label: accessToString(HAS_ACCESS_TO_MAGISTRAT),
+    name: 'white-simulator',
+    label: 'Simulateur à blanc',
+    orderRequired: true,
+    access: [
+      {
+        id: USER_ACCESS_WHITE_SIMULATOR_READER,
+        label: 'Lecture',
+      },
+      /*{
+        id: USER_ACCESS_WHITE_SIMULATOR_WRITER,
+        label: 'Écriture',
+      },*/
+    ],
   },
   {
-    id: HAS_ACCESS_TO_GREFFIER,
-    label: accessToString(HAS_ACCESS_TO_GREFFIER),
+    name: 'reaffectator',
+    label: 'Réaffectateur',
+    orderRequired: true,
+    access: [
+      {
+        id: USER_ACCESS_REAFFECTATOR_READER,
+        label: 'Lecture',
+      },
+      /*{
+        id: USER_ACCESS_REAFFECTATOR_WRITER,
+        label: 'Écriture',
+      },*/
+    ],
   },
   {
-    id: HAS_ACCESS_TO_CONTRACTUEL,
-    label: accessToString(HAS_ACCESS_TO_CONTRACTUEL),
+    name: 'groups',
+    label: "Typologie d'agents",
+    orderRequired: false,
+    access: [
+      {
+        id: HAS_ACCESS_TO_MAGISTRAT,
+        label: 'Accès aux magistrats',
+      },
+      {
+        id: HAS_ACCESS_TO_GREFFIER,
+        label: 'Accès aux greffiers',
+      },
+      {
+        id: HAS_ACCESS_TO_CONTRACTUEL,
+        label: 'Accès aux contractuels',
+      },
+    ],
   },
 ]

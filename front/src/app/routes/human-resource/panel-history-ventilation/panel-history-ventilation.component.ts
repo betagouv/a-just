@@ -91,6 +91,10 @@ export class PanelHistoryVentilationComponent extends MainClass implements OnCha
    */
   @Output() onRemove = new EventEmitter()
   /**
+   * Event lors du souhait d'exporter la situation
+   */
+  @Output() exportSituation = new EventEmitter()
+  /**
    * Somme des indispo
    */
   indisponibility: number = 0

@@ -286,7 +286,6 @@ export default class RouteUsers extends Route {
         const key = crypt.generateRandomNumber(6)
         await user.update({ new_password_token: key })
 
-        console.log('Template ID reset password', Number(config.juridictionType) === 1 ? TEMPLATE_FORGOT_PASSWORD_ID_CA : TEMPLATE_FORGOT_PASSWORD_ID)
         await sentEmail(
           {
             email,

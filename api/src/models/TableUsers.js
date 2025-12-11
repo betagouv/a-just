@@ -1,5 +1,26 @@
 import { roleToString } from '../constants/roles'
-import { accessToString } from '../constants/access'
+import {
+  HAS_ACCESS_TO_CONTRACTUEL,
+  HAS_ACCESS_TO_GREFFIER,
+  HAS_ACCESS_TO_MAGISTRAT,
+  USER_ACCESS_ACTIVITIES_READER,
+  USER_ACCESS_ACTIVITIES_WRITER,
+  USER_ACCESS_AVERAGE_TIME_READER,
+  USER_ACCESS_AVERAGE_TIME_WRITER,
+  USER_ACCESS_CALCULATOR_READER,
+  USER_ACCESS_CALCULATOR_WRITER,
+  USER_ACCESS_DASHBOARD_READER,
+  USER_ACCESS_DASHBOARD_WRITER,
+  USER_ACCESS_REAFFECTATOR_READER,
+  USER_ACCESS_REAFFECTATOR_WRITER,
+  USER_ACCESS_SIMULATOR_READER,
+  USER_ACCESS_SIMULATOR_WRITER,
+  USER_ACCESS_VENTILATIONS_READER,
+  USER_ACCESS_VENTILATIONS_WRITER,
+  USER_ACCESS_WHITE_SIMULATOR_READER,
+  USER_ACCESS_WHITE_SIMULATOR_WRITER,
+  accessToString,
+} from '../constants/access'
 import { snakeToCamelObject } from '../utils/utils'
 import { sentEmail, sentEmailSendinblueUserList } from '../utils/email'
 import {
@@ -157,14 +178,14 @@ export default (sequelizeInstance, Model) => {
    * @param {*} param0
    */
   Model.createAccount = async ({ email, password, firstName, lastName, tj, fonction }) => {
-    const user = await Model.findOne({ where: { email } })
+    let user = await Model.findOne({ where: { email } })
 
     if (!user) {
       if (password) {
         password = cryptPassword(password, email)
       }
 
-      return await Model.create({
+      user = await Model.create({
         email,
         password,
         first_name: firstName,
@@ -172,7 +193,34 @@ export default (sequelizeInstance, Model) => {
         tj,
         fonction,
         status: 1,
+        referentiel_ids: null,
       })
+
+      // by default all access are granted
+      const accessIds = [
+        USER_ACCESS_DASHBOARD_READER,
+        USER_ACCESS_DASHBOARD_WRITER,
+        USER_ACCESS_VENTILATIONS_READER,
+        USER_ACCESS_VENTILATIONS_WRITER,
+        USER_ACCESS_ACTIVITIES_READER,
+        USER_ACCESS_ACTIVITIES_WRITER,
+        USER_ACCESS_AVERAGE_TIME_READER,
+        USER_ACCESS_AVERAGE_TIME_WRITER,
+        USER_ACCESS_CALCULATOR_READER,
+        USER_ACCESS_CALCULATOR_WRITER,
+        USER_ACCESS_SIMULATOR_READER,
+        USER_ACCESS_SIMULATOR_WRITER,
+        USER_ACCESS_WHITE_SIMULATOR_READER,
+        USER_ACCESS_WHITE_SIMULATOR_WRITER,
+        USER_ACCESS_REAFFECTATOR_READER,
+        USER_ACCESS_REAFFECTATOR_WRITER,
+        HAS_ACCESS_TO_MAGISTRAT,
+        HAS_ACCESS_TO_GREFFIER,
+        HAS_ACCESS_TO_CONTRACTUEL,
+      ]
+      await Model.models.UsersAccess.updateAccess(user.id, accessIds)
+
+      return user
     } else {
       throw 'Un compte existe déjà avec cet e-mail. Si vous avez oublié votre mot de passe, allez dans la section “Se connecter” et cliquez sur “Mot de passe oublié".'
     }
@@ -374,6 +422,16 @@ export default (sequelizeInstance, Model) => {
         email: 'anonyme',
       })
     }
+  }
+
+  Model.canViewCompleteReferentiel = async (userId) => {
+    const user = await Model.findOne({
+      where: {
+        id: userId,
+      },
+    })
+
+    return user.referentiel_ids === null ? true : false
   }
 
   return Model
