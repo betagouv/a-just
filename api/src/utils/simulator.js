@@ -367,7 +367,7 @@ export async function getSituation(
       let etpAffectedStartToEndToCompute, monthlyReport
 
       if (simulatorUse === true) {
-        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds)
+        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, {realTimePerCase,totalIn,lastStock})
       }
 
       // Projection of etpAffected between start and stop date to compute stock
@@ -858,7 +858,7 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix, c
     }
   })
 
-  const nbDays = nbOfDays(today(dateStart), today(dateStop))
+  const nbDays = getWorkingDaysCount(today(dateStart), today(dateStop))
 
   if (params.lockedParams.param1.label !== '' && simulation[params.lockedParams.param1.label] !== undefined)
     //@ts-ignore
@@ -1090,7 +1090,7 @@ export function splitMonthKey(key) {
   throw new Error(`Mois invalide : ${key}`)
 }
 
-export async function monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, signal = null) {
+export async function monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, params = null) {
   const monthlyList = getRangeOfMonthsAsObject(dateStart, dateStop, true)
 
   // Initialisation des données
@@ -1108,6 +1108,7 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
   for (const monthKey of Object.keys(monthlyList)) {
     const [monthLabel, yearSuffix] = splitMonthKey(monthKey) // Ex: "Août25" => ["Août", "25"]
     const { start, end } = getStartAndEndDateOfMonth(monthLabel, yearSuffix) // à implémenter
+    const nbDays = getWorkingDaysCount(start, end)
     const etps = await calculateETPForContentieux(
       indexes,
       {
@@ -1136,31 +1137,56 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
       }
 
       monthlyList[monthKey][catId].etpt = parseFloat(totalEtp.toFixed(3))
+      monthlyList[monthKey][catId].nbOfDays = nbDays
     })
   }
 
-  const finalFormatted = formatMonthlyListToCategoryArray(monthlyList, categories)
+  const finalFormatted = formatMonthlyListToCategoryArray(monthlyList, categories, params)
 
   return finalFormatted
 }
-function formatMonthlyListToCategoryArray(monthlyList, categories) {
+function formatMonthlyListToCategoryArray(monthlyList, categories, params = null) {
   const formatted = categories.map((category) => ({
     name: category.label,
     values: {},
   }))
 
   const monthKeys = Object.keys(monthlyList)
+  // Suivi du stock par catégorie sans modifier le reste du format de sortie
+  const computedStockByCategory = categories.reduce((acc, category) => {
+    acc[category.id] = params?.lastStock ?? null
+    return acc
+  }, {})
 
   monthKeys.forEach((monthKey, index) => {
     const categoryValues = monthlyList[monthKey]
 
     categories.forEach((category) => {
       const categoryData = formatted.find((f) => f.name === category.label)
+      const sufix = 'By' + category.label
+      const rawEtpt = categoryValues[category.id]?.etpt || 0
+      const etptValue = parseFloat(rawEtpt.toFixed(3))
+      const nbDays =
+        categoryValues[category.id]?.nbOfDays && categoryValues[category.id].nbOfDays > 0
+          ? categoryValues[category.id].nbOfDays
+          : 21 // fallback si non renseigné
+      const previousStock = computedStockByCategory[category.id] ?? params?.lastStock ?? 0
+
+      const lastStockValue =
+        params?.realTimePerCase && nbDays
+          ? computeLastStock(previousStock, nbDays, etptValue, params.realTimePerCase, params.totalIn, sufix)
+          : previousStock
 
       categoryData.values[index.toString()] = {
         name: monthKey,
-        etpt: parseFloat((categoryValues[category.id]?.etpt || 0).toFixed(3)),
+        etpt: etptValue,
+        totalOut: params.tmd ? computeTotalOut(params.tmd, etptValue, sufix) : null,
+        totalIn: params.tmd ? params.totalIn : null,
+        lastStock: lastStockValue,
+        nbDays
       }
+
+      computedStockByCategory[category.id] = lastStockValue
     })
   })
 
