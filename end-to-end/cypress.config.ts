@@ -526,7 +526,7 @@ export default defineConfig({
         },
         writeContextFile({ filePath, testTitle, context }: { filePath: string; testTitle: string; context: any }) {
           try {
-            const fullPath = path.join(process.cwd(), filePath);
+            const fullPath = path.join(config.projectRoot, filePath);
             const dir = path.dirname(fullPath);
             fs.mkdirSync(dir, { recursive: true });
             
