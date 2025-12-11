@@ -82,17 +82,15 @@ function buildAJustContext() {
 
 // Context storage for separate JSON file approach
 const testContexts = {}
-// Use run-specific directory to avoid conflicts between concurrent runs
-const runId = process.env.GITHUB_RUN_NUMBER || Date.now().toString()
-const contextFilePath = path.join(__dirname, 'reports', `run-${runId}`, 'test-contexts.json')
+const contextFilePath = path.join(__dirname, 'reports', 'test-contexts.json')
 
 before((done) => {
   console.log('BEFORE WAITING SERVER')
   
-  // Ensure run-specific reports directory exists
-  const contextDir = path.dirname(contextFilePath)
-  if (!fs.existsSync(contextDir)) {
-    fs.mkdirSync(contextDir, { recursive: true })
+  // Ensure reports directory exists
+  const reportsDir = path.join(__dirname, 'reports')
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir, { recursive: true })
   }
   
   // Initialize empty context file

@@ -254,11 +254,10 @@ function main() {
   // Load test contexts from separate JSON files
   // In CI, these are in the artifact directories relative to the output HTML
   // outHtml is typically site/pr-X/run-Y/combined/a-just-tests-report.html
-  // Context files are in run-specific subdirectories: mocha/run-Y/ and cypress/run-Y/
+  // Context files are copied directly to mocha/ and cypress/ directories
   const runDir = path.dirname(outDir); // site/pr-X/run-Y
-  const runNum = path.basename(runDir).replace('run-', ''); // Extract Y from run-Y
-  const apiContextPath = path.join(runDir, 'mocha', `run-${runNum}`, 'test-contexts.json');
-  const e2eContextPath = path.join(runDir, 'cypress', `run-${runNum}`, 'test-contexts.json');
+  const apiContextPath = path.join(runDir, 'mocha', 'test-contexts.json');
+  const e2eContextPath = path.join(runDir, 'cypress', 'test-contexts.json');
   const testContexts = loadTestContexts(apiContextPath, e2eContextPath);
   console.log(`Loaded ${Object.keys(testContexts).length} test contexts`);
 
