@@ -107,7 +107,15 @@ function parseAJustContext(test, contextsMap, suitePath) {
   }
   if (!fullTitle) return null;
   
-  return contextsMap[fullTitle] || null;
+  const context = contextsMap[fullTitle];
+  console.log(`DEBUG: Looking up context for "${fullTitle}" - ${context ? 'FOUND' : 'NOT FOUND'}`);
+  if (!context) {
+    console.log(`  Test title: "${test.title}"`);
+    console.log(`  Suite path: ${JSON.stringify(suitePath)}`);
+    console.log(`  test.fullTitle: ${test.fullTitle || 'undefined'}`);
+  }
+  
+  return context || null;
 }
 
 function renderAJustContext(ctx) {
@@ -286,6 +294,7 @@ function main() {
   const e2eContextPathAlt = path.join(runDir, 'cypress', '.jsons', 'test-contexts.json');
   const testContexts = loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt);
   console.log(`Loaded ${Object.keys(testContexts).length} total test contexts`);
+  console.log('DEBUG: All context keys:', JSON.stringify(Object.keys(testContexts), null, 2));
 
   // Build indices
   // Videos: map specBase (e.g., activity.cy.js) -> absolute .mp4 path (first match wins)
