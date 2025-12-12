@@ -48,11 +48,20 @@ function esc(s) {
 function loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt) {
   const contexts = {};
   
+  // Helper to normalize keys to lowercase for case-insensitive lookup
+  const normalizeContextKeys = (rawContexts) => {
+    const normalized = {};
+    for (const [key, value] of Object.entries(rawContexts)) {
+      normalized[key.toLowerCase()] = value;
+    }
+    return normalized;
+  };
+  
   // Load API contexts
   if (apiContextPath && fs.existsSync(apiContextPath)) {
     try {
       const apiContexts = JSON.parse(fs.readFileSync(apiContextPath, 'utf8'));
-      Object.assign(contexts, apiContexts);
+      Object.assign(contexts, normalizeContextKeys(apiContexts));
       console.log(`Loaded ${Object.keys(apiContexts).length} API test contexts`);
     } catch (err) {
       console.warn('Failed to load API contexts:', err.message);
@@ -64,7 +73,7 @@ function loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt) {
   if (e2eContextPath && fs.existsSync(e2eContextPath)) {
     try {
       const e2eContexts = JSON.parse(fs.readFileSync(e2eContextPath, 'utf8'));
-      Object.assign(contexts, e2eContexts);
+      Object.assign(contexts, normalizeContextKeys(e2eContexts));
       console.log(`Loaded ${Object.keys(e2eContexts).length} E2E test contexts from ${e2eContextPath}`);
       e2eLoaded = true;
     } catch (err) {
@@ -76,7 +85,7 @@ function loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt) {
   if (!e2eLoaded && e2eContextPathAlt && fs.existsSync(e2eContextPathAlt)) {
     try {
       const e2eContexts = JSON.parse(fs.readFileSync(e2eContextPathAlt, 'utf8'));
-      Object.assign(contexts, e2eContexts);
+      Object.assign(contexts, normalizeContextKeys(e2eContexts));
       console.log(`Loaded ${Object.keys(e2eContexts).length} E2E test contexts from ${e2eContextPathAlt}`);
     } catch (err) {
       console.warn('Failed to load E2E contexts from alternative path:', err.message);
@@ -107,8 +116,10 @@ function parseAJustContext(test, contextsMap, suitePath) {
   }
   if (!fullTitle) return null;
   
-  const context = contextsMap[fullTitle];
-  console.log(`DEBUG: Looking up context for "${fullTitle}" - ${context ? 'FOUND' : 'NOT FOUND'}`);
+  // Normalize to lowercase for case-insensitive lookup
+  const normalizedKey = fullTitle.toLowerCase();
+  const context = contextsMap[normalizedKey];
+  console.log(`DEBUG: Looking up context for "${fullTitle}" (normalized: "${normalizedKey}") - ${context ? 'FOUND' : 'NOT FOUND'}`);
   if (!context) {
     console.log(`  Test title: "${test.title}"`);
     console.log(`  Suite path: ${JSON.stringify(suitePath)}`);

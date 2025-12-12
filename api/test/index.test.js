@@ -108,16 +108,18 @@ beforeEach(function () {
   if (datas.adminId && datas.adminToken) {
     const ctx = buildAJustContext()
     const testFullTitle = this.currentTest.fullTitle()
+    // Normalize to lowercase for case-insensitive lookup
+    const normalizedKey = testFullTitle.toLowerCase()
     
     // Store in memory
-    testContexts[testFullTitle] = ctx
+    testContexts[normalizedKey] = ctx
     
     // Write to file (append mode - read, update, write)
     try {
       const existing = fs.existsSync(contextFilePath) 
         ? JSON.parse(fs.readFileSync(contextFilePath, 'utf8'))
         : {}
-      existing[testFullTitle] = ctx
+      existing[normalizedKey] = ctx
       fs.writeFileSync(contextFilePath, JSON.stringify(existing, null, 2))
     } catch (err) {
       console.warn('Failed to write test context:', err.message)
