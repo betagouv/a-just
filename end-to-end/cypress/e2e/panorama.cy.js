@@ -1,5 +1,6 @@
 import { normalizeDate, getShortMonthString } from "../../support/utils/dates";
 import { updateHumanResourcesApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
+import { attachAJustContext } from "../../support/ajust-context";
 import user from "../../fixtures/user.json";
 
 describe("Panorama page", () => {
@@ -38,6 +39,9 @@ describe("Panorama page", () => {
   });
 
   it("Check panorama page load", () => {
+    // Attach A-JUST context for this test
+    attachAJustContext();
+    
     cy.visit("/panorama");
     cy.wait(1000);
     cy.url().should("include", "/panorama");
