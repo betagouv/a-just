@@ -46,13 +46,17 @@ export function buildAJustContextE2E(): any {
  */
 export function attachAJustContext() {
   try {
-    // Get the current test title
-    const currentTest = (Cypress as any).mocha?.getRunner()?.suite?.ctx?.currentTest;
+    // Get the current test title - try multiple methods
+    let currentTest = (Cypress as any).currentTest;
     if (!currentTest) {
+      currentTest = (Cypress as any).mocha?.getRunner()?.suite?.ctx?.currentTest;
+    }
+    if (!currentTest) {
+      console.warn('attachAJustContext: currentTest is undefined, skipping context save');
       return cy.wrap(null);
     }
     
-    const testFullTitle = currentTest.fullTitle();
+    const testFullTitle = currentTest.fullTitle ? currentTest.fullTitle() : currentTest.title;
     
     // Build static context (we can't access localStorage in beforeEach before page visit)
     const ctx = {
