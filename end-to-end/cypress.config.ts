@@ -552,9 +552,12 @@ export default defineConfig({
             console.log(`[CONTEXT] Writing context for test: "${testTitle}"`);
             console.log(`[CONTEXT] Context data:`, JSON.stringify(context, null, 2));
             
-            // Write back
-            fs.writeFileSync(fullPath, JSON.stringify(contexts, null, 2), 'utf8');
-            console.log(`[CONTEXT] Successfully wrote to ${fullPath}`);
+            // Write back with explicit fsync to ensure it's flushed to disk
+            const fd = fs.openSync(fullPath, 'w');
+            fs.writeSync(fd, JSON.stringify(contexts, null, 2), 0, 'utf8');
+            fs.fsyncSync(fd);  // Force sync to disk before container exits
+            fs.closeSync(fd);
+            console.log(`[CONTEXT] Successfully wrote and synced to ${fullPath}`);
             return null;
           } catch (e) {
             console.error('[CONTEXT] Failed to write context file:', e);

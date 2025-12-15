@@ -139,6 +139,19 @@ jobs:
               npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
               rm -rf cypress/reports && mkdir -p cypress/reports
               npx cypress run --browser chrome --headless --spec "${SPEC:-cypress/e2e/**/*.cy.js}" || true
+              
+              # Explicitly sync all files to disk before container exits
+              sync
+              
+              # Verify test-contexts.json was created and synced
+              if [ -f cypress/reports/test-contexts.json ]; then
+                echo "=== test-contexts.json found and synced ==="
+                echo "File size: $(wc -c < cypress/reports/test-contexts.json) bytes"
+                echo "Number of contexts: $(grep -o "\"[^\"]*\":" cypress/reports/test-contexts.json | wc -l)"
+              else
+                echo "=== WARNING: test-contexts.json NOT FOUND ==="
+              fi
+              
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             ' || true
           
