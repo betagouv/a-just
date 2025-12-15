@@ -46,10 +46,17 @@ describe("Panorama page", () => {
     // Attach A-JUST context AFTER page visit so localStorage is populated
     attachAJustContext();
     
-    // Ensure all previous Cypress commands (including writeContextFile task) complete
-    // before the test fails, so the context is actually saved
-    cy.then(() => {
-      // TEMPORARY FAILURE: Testing A-JUST context rendering in CI reports
+    // Force Cypress to wait for the context file to be written by reading it back
+    // This ensures the write completes before the test fails
+    cy.task('readContextFile', 'cypress/reports/test-contexts.json').then((contexts) => {
+      const testKey = 'panorama page check panorama page load';
+      cy.log(`Verifying context was saved for: "${testKey}"`);
+      cy.task('log', `All saved contexts: ${JSON.stringify(Object.keys(contexts || {}), null, 2)}`);
+      
+      // Verify the context exists
+      expect(contexts).to.have.property(testKey, 'Context was not saved!');
+      
+      // NOW fail the test - context is guaranteed to be saved
       expect(false).to.equal(true, 'TEMPORARY TEST FAILURE: Verify A-JUST context (user, backup, rights) appears in CI report');
     });
   });

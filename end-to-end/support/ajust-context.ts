@@ -82,9 +82,15 @@ export function attachAJustContext() {
     // Write context to separate JSON file using Node.js task
     // Normalize the key to lowercase for case-insensitive lookup
     const contextFilePath = 'cypress/reports/test-contexts.json';
+    const normalizedTitle = testFullTitle.toLowerCase();
+    
+    // Log what we're about to write
+    cy.log(`Writing context for test: "${normalizedTitle}"`);
+    cy.task('log', `Context to write: ${JSON.stringify({ title: normalizedTitle, context: ctx }, null, 2)}`);
+    
     cy.task('writeContextFile', {
       filePath: contextFilePath,
-      testTitle: testFullTitle.toLowerCase(),
+      testTitle: normalizedTitle,
       context: ctx
     }, { log: false });
   } catch (error) {

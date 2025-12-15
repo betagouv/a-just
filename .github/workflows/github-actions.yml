@@ -113,7 +113,8 @@ jobs:
         run: |
           set -e
           SPEC_INPUT="${{ github.event.inputs.spec }}"
-          export SPEC="$SPEC_INPUT"
+          # TEMPORARY: Restrict to panorama test only for faster iteration
+          export SPEC="${SPEC_INPUT:-cypress/e2e/panorama.cy.js}"
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d --build db front api redis
           
           echo "=== Waiting for API to initialize (30s to allow seeders to complete) ==="
