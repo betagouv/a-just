@@ -84,7 +84,8 @@ export function attachAJustContext() {
     const contextFilePath = 'cypress/reports/test-contexts.json';
     const normalizedTitle = testFullTitle.toLowerCase();
     
-    cy.task('writeContextFile', {
+    // Return the task so the caller can chain .then() if needed
+    return cy.task('writeContextFile', {
       filePath: contextFilePath,
       testTitle: normalizedTitle,
       context: ctx
@@ -92,5 +93,6 @@ export function attachAJustContext() {
   } catch (error) {
     // Silently fail if we can't write context
     console.warn('Failed to write A-JUST context:', error);
+    return cy.wrap(null);
   }
 }
