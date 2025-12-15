@@ -49,7 +49,7 @@ export function attachAJustContext() {
     // Get the current test title
     const currentTest = (Cypress as any).mocha?.getRunner()?.suite?.ctx?.currentTest;
     if (!currentTest) {
-      return cy.wrap(null);
+      return;
     }
     
     const testFullTitle = currentTest.fullTitle();
@@ -84,7 +84,6 @@ export function attachAJustContext() {
     const contextFilePath = 'cypress/reports/test-contexts.json';
     const normalizedTitle = testFullTitle.toLowerCase();
     
-    // Return the task so the caller can chain .then() if needed
     return cy.task('writeContextFile', {
       filePath: contextFilePath,
       testTitle: normalizedTitle,

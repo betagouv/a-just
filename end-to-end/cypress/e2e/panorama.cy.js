@@ -44,7 +44,7 @@ describe("Panorama page", () => {
     cy.url().should("include", "/panorama");
     
     // Attach A-JUST context AFTER page visit so localStorage is populated
-    // Chain .then() to ensure the write completes before verification
+    // Chain the call to ensure write completes before verification
     attachAJustContext().then(() => {
       // Force Cypress to wait for the context file to be written by reading it back
       // This ensures the write completes before the test fails
