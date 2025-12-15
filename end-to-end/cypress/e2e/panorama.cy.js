@@ -44,7 +44,11 @@ describe("Panorama page", () => {
     cy.url().should("include", "/panorama");
     
     // Attach A-JUST context AFTER page visit so localStorage is populated
+    // MUST be called BEFORE the intentional failure so it executes
     attachAJustContext();
+    
+    // Wait a bit to ensure context is written
+    cy.wait(100);
     
     // TEMPORARY FAILURE: Testing A-JUST context rendering in CI reports
     expect(false).to.equal(true, 'TEMPORARY TEST FAILURE: Verify A-JUST context (user, backup, rights) appears in CI report');
