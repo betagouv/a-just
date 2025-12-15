@@ -44,7 +44,7 @@ export function buildAJustContextE2E(): any {
  * Attach A-JUST context to current Cypress test
  * Writes context to a separate JSON file for report generation
  */
-export function attachAJustContext() {
+export function attachAJustContext(explicitFullTitle?: string) {
   try {
     // Get the current test title - try multiple methods
     let currentTest = (Cypress as any).currentTest;
@@ -56,10 +56,24 @@ export function attachAJustContext() {
       return cy.wrap(null);
     }
     
-    // Build full title including suite hierarchy
-    let testFullTitle: string;
+    // DEBUG: Log what we have access to
+    console.log('[AJUST-DEBUG] currentTest.title:', currentTest.title);
+    console.log('[AJUST-DEBUG] currentTest.fullTitle exists?', typeof currentTest.fullTitle);
     if (currentTest.fullTitle && typeof currentTest.fullTitle === 'function') {
+      console.log('[AJUST-DEBUG] currentTest.fullTitle():', currentTest.fullTitle());
+    }
+    console.log('[AJUST-DEBUG] currentTest.parent exists?', !!currentTest.parent);
+    console.log('[AJUST-DEBUG] currentTest.parent?.title:', currentTest.parent?.title);
+    console.log('[AJUST-DEBUG] explicitFullTitle:', explicitFullTitle);
+    
+    // Use explicit title if provided, otherwise try to detect
+    let testFullTitle: string;
+    if (explicitFullTitle) {
+      testFullTitle = explicitFullTitle;
+      console.log('[AJUST-DEBUG] Using explicit title:', testFullTitle);
+    } else if (currentTest.fullTitle && typeof currentTest.fullTitle === 'function') {
       testFullTitle = currentTest.fullTitle();
+      console.log('[AJUST-DEBUG] Using currentTest.fullTitle():', testFullTitle);
     } else {
       // Manually construct full title from suite hierarchy
       const titles: string[] = [];
@@ -72,6 +86,7 @@ export function attachAJustContext() {
       }
       titles.push(currentTest.title);
       testFullTitle = titles.join(' ');
+      console.log('[AJUST-DEBUG] Constructed from parent chain:', testFullTitle);
     }
     
     // Build static context (we can't access localStorage in beforeEach before page visit)

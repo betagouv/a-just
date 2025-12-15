@@ -44,8 +44,8 @@ describe("Panorama page", () => {
     cy.url().should("include", "/panorama");
     
     // Attach A-JUST context AFTER page visit so localStorage is populated
-    // Chain the call to ensure write completes before verification
-    attachAJustContext().then(() => {
+    // Pass explicit full title to ensure correct key (suite + test name)
+    attachAJustContext('Panorama page Check panorama page load').then(() => {
       // Force Cypress to wait for the context file to be written by reading it back
       // This ensures the write completes before the test fails
       cy.task('readContextFile', 'cypress/reports/test-contexts.json').then((contexts) => {
