@@ -50,11 +50,12 @@ describe("Panorama page", () => {
     // This ensures the write completes before the test fails
     cy.task('readContextFile', 'cypress/reports/test-contexts.json').then((contexts) => {
       const testKey = 'panorama page check panorama page load';
-      cy.log(`Verifying context was saved for: "${testKey}"`);
-      cy.task('log', `All saved contexts: ${JSON.stringify(Object.keys(contexts || {}), null, 2)}`);
       
-      // Verify the context exists
-      expect(contexts).to.have.property(testKey, 'Context was not saved!');
+      // Verify the context exists and has content
+      expect(contexts).to.have.property(testKey);
+      expect(contexts[testKey]).to.exist.and.not.be.empty;
+      
+      cy.log(`✅ Context successfully saved for: "${testKey}"`);
       
       // NOW fail the test - context is guaranteed to be saved
       expect(false).to.equal(true, 'TEMPORARY TEST FAILURE: Verify A-JUST context (user, backup, rights) appears in CI report');
