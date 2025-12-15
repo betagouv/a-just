@@ -31,11 +31,6 @@ before(() => {
   cy.reload();
 });
 
-// Attach A-JUST context to every test for error reporting
-beforeEach(function () {
-  attachAJustContext(this.currentTest);
-});
-
 // Always dump DOM after each test for debugging
 afterEach(function () {
   if (Cypress.env('DISABLE_SNAPSHOT_AFTER_EACH')) {
