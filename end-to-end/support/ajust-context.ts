@@ -56,7 +56,23 @@ export function attachAJustContext() {
       return cy.wrap(null);
     }
     
-    const testFullTitle = currentTest.fullTitle ? currentTest.fullTitle() : currentTest.title;
+    // Build full title including suite hierarchy
+    let testFullTitle: string;
+    if (currentTest.fullTitle && typeof currentTest.fullTitle === 'function') {
+      testFullTitle = currentTest.fullTitle();
+    } else {
+      // Manually construct full title from suite hierarchy
+      const titles: string[] = [];
+      let parent = currentTest.parent;
+      while (parent) {
+        if (parent.title) {
+          titles.unshift(parent.title);
+        }
+        parent = parent.parent;
+      }
+      titles.push(currentTest.title);
+      testFullTitle = titles.join(' ');
+    }
     
     // Build static context (we can't access localStorage in beforeEach before page visit)
     const ctx = {
