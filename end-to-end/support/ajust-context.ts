@@ -49,7 +49,7 @@ export function attachAJustContext() {
     // Get the current test title
     const currentTest = (Cypress as any).mocha?.getRunner()?.suite?.ctx?.currentTest;
     if (!currentTest) {
-      return;
+      return cy.wrap(null);
     }
     
     const testFullTitle = currentTest.fullTitle();
