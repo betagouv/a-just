@@ -45,88 +45,68 @@ export function buildAJustContextE2E(): any {
  * Writes context to a separate JSON file for report generation
  */
 export function attachAJustContext(explicitFullTitle?: string) {
-  try {
-    // Get the current test title - try multiple methods
-    let currentTest = (Cypress as any).currentTest;
-    if (!currentTest) {
-      currentTest = (Cypress as any).mocha?.getRunner()?.suite?.ctx?.currentTest;
-    }
-    if (!currentTest) {
-      console.warn('attachAJustContext: currentTest is undefined, skipping context save');
-      return cy.wrap(null);
-    }
-    
-    // DEBUG: Log what we have access to
-    console.log('[AJUST-DEBUG] currentTest.title:', currentTest.title);
-    console.log('[AJUST-DEBUG] currentTest.fullTitle exists?', typeof currentTest.fullTitle);
-    if (currentTest.fullTitle && typeof currentTest.fullTitle === 'function') {
-      console.log('[AJUST-DEBUG] currentTest.fullTitle():', currentTest.fullTitle());
-    }
-    console.log('[AJUST-DEBUG] currentTest.parent exists?', !!currentTest.parent);
-    console.log('[AJUST-DEBUG] currentTest.parent?.title:', currentTest.parent?.title);
-    console.log('[AJUST-DEBUG] explicitFullTitle:', explicitFullTitle);
-    
-    // Use explicit title if provided, otherwise try to detect
-    let testFullTitle: string;
-    if (explicitFullTitle) {
-      testFullTitle = explicitFullTitle;
-      console.log('[AJUST-DEBUG] Using explicit title:', testFullTitle);
-    } else if (currentTest.fullTitle && typeof currentTest.fullTitle === 'function') {
-      testFullTitle = currentTest.fullTitle();
-      console.log('[AJUST-DEBUG] Using currentTest.fullTitle():', testFullTitle);
-    } else {
-      // Manually construct full title from suite hierarchy
-      const titles: string[] = [];
-      let parent = currentTest.parent;
-      while (parent) {
-        if (parent.title) {
-          titles.unshift(parent.title);
-        }
-        parent = parent.parent;
-      }
-      titles.push(currentTest.title);
-      testFullTitle = titles.join(' ');
-      console.log('[AJUST-DEBUG] Constructed from parent chain:', testFullTitle);
-    }
-    
-    // Build static context (we can't access localStorage in beforeEach before page visit)
-    const ctx = {
-      user: {
-        email: user.email || null,
-        id: null,
-      },
-      backup: {
-        id: null, // Will be null in beforeEach, but that's OK
-        label: null,
-      },
-      rights: {
-        tools: [
-          { name: "Panorama", canRead: true, canWrite: true },
-          { name: "Ventilations", canRead: true, canWrite: true },
-          { name: "Données d'activité", canRead: true, canWrite: true },
-          { name: "Temps moyens", canRead: true, canWrite: true },
-          { name: "Cockpit", canRead: true, canWrite: true },
-          { name: "Simulateur", canRead: true, canWrite: true },
-          { name: "Simulateur à blanc", canRead: true, canWrite: true },
-          { name: "Réaffectateur", canRead: true, canWrite: true },
-        ],
-        referentiels: "all",
-      },
-    };
-    
-    // Write context to separate JSON file using Node.js task
-    // Normalize the key to lowercase for case-insensitive lookup
-    const contextFilePath = 'cypress/reports/test-contexts.json';
-    const normalizedTitle = testFullTitle.toLowerCase();
-    
-    return cy.task('writeContextFile', {
-      filePath: contextFilePath,
-      testTitle: normalizedTitle,
-      context: ctx
-    });
-  } catch (error) {
-    // Silently fail if we can't write context
-    console.warn('Failed to write A-JUST context:', error);
+  // Get the current test title - try multiple methods
+  let currentTest = (Cypress as any).currentTest;
+  if (!currentTest) {
+    currentTest = (Cypress as any).mocha?.getRunner()?.suite?.ctx?.currentTest;
+  }
+  if (!currentTest) {
     return cy.wrap(null);
   }
+  
+  // Determine test full title
+  let testFullTitle: string;
+  if (explicitFullTitle) {
+    testFullTitle = explicitFullTitle;
+  } else if (currentTest.fullTitle && typeof currentTest.fullTitle === 'function') {
+    testFullTitle = currentTest.fullTitle();
+  } else {
+    // Manually construct full title from suite hierarchy
+    const titles: string[] = [];
+    let parent = currentTest.parent;
+    while (parent) {
+      if (parent.title) {
+        titles.unshift(parent.title);
+      }
+      parent = parent.parent;
+    }
+    titles.push(currentTest.title);
+    testFullTitle = titles.join(' ');
+  }
+  
+  // Build static context (we can't access localStorage in beforeEach before page visit)
+  const ctx = {
+    user: {
+      email: user.email || null,
+      id: null,
+    },
+    backup: {
+      id: null, // Will be null in beforeEach, but that's OK
+      label: null,
+    },
+    rights: {
+      tools: [
+        { name: "Panorama", canRead: true, canWrite: true },
+        { name: "Ventilations", canRead: true, canWrite: true },
+        { name: "Données d'activité", canRead: true, canWrite: true },
+        { name: "Temps moyens", canRead: true, canWrite: true },
+        { name: "Cockpit", canRead: true, canWrite: true },
+        { name: "Simulateur", canRead: true, canWrite: true },
+        { name: "Simulateur à blanc", canRead: true, canWrite: true },
+        { name: "Réaffectateur", canRead: true, canWrite: true },
+      ],
+      referentiels: "all",
+    },
+  };
+  
+  // Write context to separate JSON file using Node.js task
+  // Normalize the key to lowercase for case-insensitive lookup
+  const contextFilePath = 'cypress/reports/test-contexts.json';
+  const normalizedTitle = testFullTitle.toLowerCase();
+  
+  return cy.task('writeContextFile', {
+    filePath: contextFilePath,
+    testTitle: normalizedTitle,
+    context: ctx
+  });
 }

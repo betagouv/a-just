@@ -443,14 +443,60 @@ jobs:
           set -e
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/cypress
-          cp -r cypress-reports/cypress/reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/cypress/reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
-          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/cypress/reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          
+          # Copy E2E reports (excluding test-contexts.json for now)
+          find cypress-reports -type f -name "*.json" ! -name "test-contexts.json" -exec cp {} site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ \; 2>/dev/null || echo "No E2E reports to copy"
+          
+          # Copy non-reg reports (excluding test-contexts.json for now)
+          find cypress-reports-nonreg -type f -name "*.json" ! -name "test-contexts.json" -exec cp {} site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ \; 2>/dev/null || true
+          
+          # Merge test-contexts.json files from both E2E and non-reg
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            let merged = {};
+            
+            // Read E2E contexts
+            const e2ePaths = [
+              'cypress-reports/test-contexts.json',
+              'cypress-reports/cypress/reports/test-contexts.json',
+              'cypress-reports/.jsons/test-contexts.json'
+            ];
+            for (const p of e2ePaths) {
+              if (fs.existsSync(p)) {
+                try {
+                  const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+                  Object.assign(merged, data);
+                  console.log(\`Merged \${Object.keys(data).length} contexts from \${p}\`);
+                } catch (e) {
+                  console.warn(\`Failed to read \${p}:\`, e.message);
+                }
+              }
+            }
+            
+            // Read non-reg contexts
+            const nonregPaths = [
+              'cypress-reports-nonreg/test-contexts.json',
+              'cypress-reports-nonreg/cypress/reports/test-contexts.json',
+              'cypress-reports-nonreg/.jsons/test-contexts.json'
+            ];
+            for (const p of nonregPaths) {
+              if (fs.existsSync(p)) {
+                try {
+                  const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+                  Object.assign(merged, data);
+                  console.log(\`Merged \${Object.keys(data).length} contexts from \${p}\`);
+                } catch (e) {
+                  console.warn(\`Failed to read \${p}:\`, e.message);
+                }
+              }
+            }
+            
+            // Write merged contexts
+            const outPath = 'site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/test-contexts.json';
+            fs.writeFileSync(outPath, JSON.stringify(merged, null, 2));
+            console.log(\`Wrote \${Object.keys(merged).length} total contexts to \${outPath}\`);
+          " || echo "Failed to merge test-contexts.json"
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/videos
           cp -r cypress-videos/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
           cp -r cypress-videos-nonreg/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || true
