@@ -73,6 +73,7 @@ function loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt) {
   if (e2eContextPath && fs.existsSync(e2eContextPath)) {
     try {
       const e2eContexts = JSON.parse(fs.readFileSync(e2eContextPath, 'utf8'));
+      console.log(`DEBUG: Raw E2E context keys from ${e2eContextPath}:`, Object.keys(e2eContexts));
       Object.assign(contexts, normalizeContextKeys(e2eContexts));
       console.log(`Loaded ${Object.keys(e2eContexts).length} E2E test contexts from ${e2eContextPath}`);
       e2eLoaded = true;
