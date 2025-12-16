@@ -16,8 +16,7 @@ module.exports = function (datas) {
     it('Save CLE', async () => {
       const response = await onSaveCle(JURIDICTION_BACKUP_ID, MAGISTART_ID, siegeCle, datas.adminToken) // On enregistre une CLE de valeur 10 pour la catégorie magistrat
 
-      // TEMPORARY FAILURE: Testing A-JUST context rendering in CI reports
-      assert.strictEqual(response.status, 999, 'TEMPORARY TEST FAILURE: Verify A-JUST context (user, backup, rights) appears in CI report')
+      assert.strictEqual(response.status, 200)
     })
 
     /**
