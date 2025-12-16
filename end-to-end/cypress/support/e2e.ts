@@ -63,8 +63,10 @@ before(() => {
 });
 
 // Attach A-JUST context (user, backup, rights) to every test for reporting
-beforeEach(() => {
-  attachAJustContext();
+beforeEach(function() {
+  // Use function() instead of arrow function to access 'this.currentTest'
+  const fullTitle = this.currentTest?.fullTitle();
+  attachAJustContext(fullTitle);
 });
 
 // Ignore ResizeObserver noise like in sandbox

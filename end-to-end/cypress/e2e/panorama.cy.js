@@ -1,6 +1,5 @@
 import { normalizeDate, getShortMonthString } from "../../support/utils/dates";
 import { updateHumanResourcesApi, loginApi, getUserDataApi, resetToDefaultPermissions } from "../../support/api";
-import { attachAJustContext } from "../../support/ajust-context";
 import user from "../../fixtures/user.json";
 
 describe("Panorama page", () => {
@@ -43,15 +42,8 @@ describe("Panorama page", () => {
     cy.wait(1000);
     cy.url().should("include", "/panorama");
     
-    // Attach A-JUST context AFTER page visit so localStorage is populated
-    // Pass explicit full title to ensure correct key (suite + test name)
-    attachAJustContext('Panorama page Check panorama page load').then(() => {
-      // Add a small delay to ensure file write completes
-      cy.wait(5000);
-      
-      // NOW fail the test - context should be saved
-      expect(false).to.equal(true, 'TEMPORARY TEST FAILURE: Verify A-JUST context (user, backup, rights) appears in CI report');
-    });
+    // TEMPORARY: Intentional failure to verify context appears in report
+    expect(false).to.equal(true, 'TEMPORARY TEST FAILURE: Verify A-JUST context appears via beforeEach');
   });
 
   it("Should display main menu and submenu items", () => {
