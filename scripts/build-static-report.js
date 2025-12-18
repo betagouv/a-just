@@ -169,14 +169,14 @@ function renderAJustContext(ctx) {
       rightsParts.push(`<div class="ctx-tools"><strong>Outils:</strong><ul>${toolLines.map(l => `<li>${l}</li>`).join('')}</ul></div>`);
     }
     
-    // Referentiels
+    // Contentieux (referentiels in code)
     if (r.referentiels) {
       const refLabel = r.referentiels === 'all' || r.referentiels === null 
-        ? 'tous les référentiels' 
+        ? 'tous les contentieux' 
         : Array.isArray(r.referentiels) 
           ? r.referentiels.join(', ') 
           : String(r.referentiels);
-      rightsParts.push(`<div class="ctx-ref"><strong>Référentiels:</strong> ${esc(refLabel)}</div>`);
+      rightsParts.push(`<div class="ctx-ref"><strong>Contentieux:</strong> ${esc(refLabel)}</div>`);
     }
     
     if (rightsParts.length) {
