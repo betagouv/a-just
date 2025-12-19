@@ -42,7 +42,7 @@ export default class RouteSimulator extends Route {
   @Route.Post({
     bodyType: Types.object().keys({
       backupId: Types.number().required(),
-      referentielId: Types.array().required(),
+      referentielId: Types.any().required(),
       dateStart: Types.date(),
       dateStop: Types.date(),
       functionIds: Types.array(),
