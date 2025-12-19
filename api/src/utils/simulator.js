@@ -184,9 +184,14 @@ export async function getSituation(
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
   })
-  // calcul des entrées/sorties sur les 12 derniers mois
-  let totalIn = meanBy(summedlastActivities, 'entrees') || 0
-  let totalOut = meanBy(summedlastActivities, 'sorties') || 0
+  if (referentielId.includes(49))
+    console.log(summedlastActivities)
+
+  const filteredIn = summedlastActivities.filter(a => a.entrees !== null && a.entrees !== undefined)
+  let totalIn = filteredIn.length ? meanBy(filteredIn, 'entrees') : null
+  //console.log(totalIn, filteredIn)
+  const filteredOut = summedlastActivities.filter(a => a.sorties !== null && a.sorties !== undefined)
+  let totalOut = filteredOut.length ? meanBy(filteredOut, 'sorties') : null
 
   // récupération du dernier stock
   let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
@@ -215,16 +220,16 @@ export async function getSituation(
   // Compute etpAffected & etpMag today (on specific date) to display & output
   etpAffectedToday = useNew
     ? calculateETPForContentieux(
-        indexes,
-        {
-          start: today(),
-          end: today(),
-          category: undefined,
-          fonctions: fonctionIds,
-          contentieux: referentielId,
-        },
-        categories,
-      )
+      indexes,
+      {
+        start: today(),
+        end: today(),
+        category: undefined,
+        fonctions: fonctionIds,
+        contentieux: referentielId,
+      },
+      categories,
+    )
     : await getHRPositions(hr, referentielId, categories, undefined, undefined, undefined, undefined, signal)
 
   let { etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedToday)
@@ -234,19 +239,19 @@ export async function getSituation(
     // Compute etpAffected of the 12 last months starting at the last month available in db to compute magRealTimePerCase
     let etpAffectedLast12MonthsToCompute = useNew
       ? calculateETPForContentieux(
-          indexes,
-          {
-            start: new Date(startDateCs),
-            end: new Date(endDateCs),
-            category: undefined,
-            fonctions: fonctionIds,
-            contentieux: referentielId,
-          },
-          categories,
-        )
+        indexes,
+        {
+          start: new Date(startDateCs),
+          end: new Date(endDateCs),
+          category: undefined,
+          fonctions: fonctionIds,
+          contentieux: referentielId,
+        },
+        categories,
+      )
       : await getHRPositions(hr, referentielId, categories, new Date(startDateCs), true, new Date(endDateCs), undefined, signal)
     checkAbort(signal)
-    ;({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
+      ; ({ etpMagToCompute, etpFonToCompute, etpConToCompute } = getEtpByCategory(etpAffectedLast12MonthsToCompute, 'ToCompute'))
 
     //console.log('Data to calculate TMD', totalOut, etpMagToCompute)
     // Compute magRealTimePerCase to display using the etpAffected 12 last months available
@@ -259,18 +264,18 @@ export async function getSituation(
     // Projection of etpAffected between the last month available and today to compute stock
     let etpAffectedDeltaToCompute = useNew
       ? calculateETPForContentieux(
-          indexes,
-          {
-            start: new Date(endDateCs),
-            end: new Date(),
-            category: undefined,
-            fonctions: fonctionIds,
-            contentieux: referentielId,
-          },
-          categories,
-        )
+        indexes,
+        {
+          start: new Date(endDateCs),
+          end: new Date(),
+          category: undefined,
+          fonctions: fonctionIds,
+          contentieux: referentielId,
+        },
+        categories,
+      )
       : await getHRPositions(hr, referentielId, categories, new Date(endDateCs), true, new Date(), undefined, signal)
-    ;({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
+      ; ({ etpMagFuturToCompute, etpFonFuturToCompute, etpConFuturToCompute } = getEtpByCategory(etpAffectedDeltaToCompute, 'FuturToCompute'))
 
     const countOfCalandarDays = getWorkingDaysCount(endDateCs, new Date())
 
@@ -294,18 +299,18 @@ export async function getSituation(
       // Compute etpAffected & etpMag at dateStart (specific date) to display
       etpAffectedAtStartDate = useNew
         ? calculateETPForContentieux(
-            indexes,
-            {
-              start: new Date(dateStart),
-              end: new Date(dateStart),
-              category: undefined,
-              fonctions: fonctionIds,
-              contentieux: referentielId,
-            },
-            categories,
-          )
+          indexes,
+          {
+            start: new Date(dateStart),
+            end: new Date(dateStart),
+            category: undefined,
+            fonctions: fonctionIds,
+            contentieux: referentielId,
+          },
+          categories,
+        )
         : await getHRPositions(hr, referentielId, categories, new Date(dateStart), undefined, undefined, undefined, signal)
-      ;({ etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedAtStartDate))
+        ; ({ etpMag, etpFon, etpCon } = getEtpByCategory(etpAffectedAtStartDate))
 
       // Compute totalOut with etp at dateStart (specific date) to display
       totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
@@ -313,18 +318,18 @@ export async function getSituation(
       // Projection of etpAffected between the last month available and dateStart to compute stock
       etpAffectedDeltaToCompute = useNew
         ? calculateETPForContentieux(
-            indexes,
-            {
-              start: new Date(),
-              end: new Date(dateStart),
-              category: undefined,
-              fonctions: fonctionIds,
-              contentieux: referentielId,
-            },
-            categories,
-          )
+          indexes,
+          {
+            start: new Date(),
+            end: new Date(dateStart),
+            category: undefined,
+            fonctions: fonctionIds,
+            contentieux: referentielId,
+          },
+          categories,
+        )
         : await getHRPositions(hr, referentielId, categories, new Date(), true, new Date(dateStart), undefined, signal)
-      ;({ etpMagUntilStartDate, etpFonUntilStartDate, etpConUntilStartDate } = getEtpByCategory(etpAffectedDeltaToCompute, 'UntilStartDate'))
+        ; ({ etpMagUntilStartDate, etpFonUntilStartDate, etpConUntilStartDate } = getEtpByCategory(etpAffectedDeltaToCompute, 'UntilStartDate'))
       checkAbort(signal)
 
       // Compute stock, coverage, dtes projection until dateStart
@@ -346,16 +351,16 @@ export async function getSituation(
       // Compute projected etp at stop date (specific date) to display
       const projectedEtpAffected = useNew
         ? calculateETPForContentieux(
-            indexes,
-            {
-              start: dateStop,
-              end: dateStop,
-              category: undefined,
-              fonctions: fonctionIds,
-              contentieux: referentielId,
-            },
-            categories,
-          )
+          indexes,
+          {
+            start: dateStop,
+            end: dateStop,
+            category: undefined,
+            fonctions: fonctionIds,
+            contentieux: referentielId,
+          },
+          categories,
+        )
         : await getHRPositions(hr, referentielId, categories, dateStop, undefined, undefined, undefined, signal)
       checkAbort(signal)
 
@@ -367,7 +372,7 @@ export async function getSituation(
       let etpAffectedStartToEndToCompute, monthlyReport
 
       if (simulatorUse === true) {
-        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, {realTimePerCase,totalIn,lastStock})
+        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, { realTimePerCase, totalIn, lastStock })
       }
 
       // Projection of etpAffected between start and stop date to compute stock
@@ -545,7 +550,7 @@ export async function getCSActivities(referentielId, allActivities) {
 
     const lastActivities = orderBy(
       filteredByContentieux.filter(
-        (a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime() && a.stock !== null,
+        (a) => month(a.periode).getTime() >= month(dateStart).getTime() && month(a.periode).getTime() <= month(dateStop).getTime(),
       ),
       (a) => {
         const p = new Date(a.periode)
@@ -653,7 +658,7 @@ export async function getHRPositions(
     const situations = hr[i].situations || []
 
     if (onPeriod === true && appearOneTimeAtLeast(situations, referentielId)) {
-      ;({ etptAll, monthlyList } = {
+      ; ({ etptAll, monthlyList } = {
         ...(await getHRVentilationOnPeriod(
           hr[i],
           referentielId,
