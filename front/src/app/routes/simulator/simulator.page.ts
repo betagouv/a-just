@@ -635,7 +635,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           this.stopRealValue = findRealValue(this.dateStop)
         }
 
-        if (d && d.length === 0) {
+        if (d && d.length === 0 || d.parent === null && d.child === null) {
           this.onResetUserAction()
           this.disabled = 'disabled'
           this.simulatorService.disabled.next(this.disabled)
@@ -777,11 +777,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
             (this.firstSituationData !== null &&
               !this.hasNoNullValue(this.firstSituationData) &&
               this.simulatorService.dateStop.getValue() &&
-              this.simulatorService.contentieuOrSubContentieuId.getValue() &&
-              this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0) ||
+              this.simulatorService.contentieuOrSubContentieuId.getValue() !== null) ||
             (isEqualToZero &&
-              this.simulatorService.contentieuOrSubContentieuId.getValue() &&
-              this.simulatorService.contentieuOrSubContentieuId.getValue()?.length !== 0 &&
+              this.simulatorService.contentieuOrSubContentieuId.getValue() !== null &&
               (this.firstSituationData as any).countOfCalandarDays === undefined)
           ) {
             alert(
@@ -831,7 +829,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       }),
     )
 
-    if (this.contentieuId) this.simulatorService.getSituation([this.contentieuId])
+    if (this.contentieuId) this.simulatorService.getSituation(null)
 
     this.loadFunctions()
   }
@@ -840,7 +838,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * Affichage de la situation de début
    */
   displayBeginSituation() {
-    return this.simulatorService.contentieuOrSubContentieuId.getValue()?.length && this.simulatorService.selectedFonctionsIds.getValue()?.length
+    const value = this.simulatorService.contentieuOrSubContentieuId.getValue()
+    return value !== null && (value?.parent?.length || value?.child?.length) && this.simulatorService.selectedFonctionsIds.getValue()?.length
   }
   /**
    * Formatage du référentiel
@@ -874,7 +873,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         const fnd = this.referentiel.find((o) => o.id === event[0])
         fnd?.childrens?.map((value) => this.subList.push(value.id))
         this.contentieuId = event[0]
-        this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
+        this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:null})
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       } else {
@@ -889,8 +888,8 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
       } else {
-        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
-        else this.simulatorService.contentieuOrSubContentieuId.next(this.subList)
+        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:null})
+        else this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:this.subList})
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       }
@@ -1811,7 +1810,6 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
       this.resetParams(true)
       this.contentieuId = null
       this.simulatorService.contentieuOrSubContentieuId.next(null)
-
       this.subList = []
       const findCategory =
         this.humanResourceService.categories.getValue().find((c: HRCategoryInterface) => c.label.toUpperCase() === this.categorySelected?.toUpperCase()) || null

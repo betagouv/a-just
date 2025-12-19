@@ -51,7 +51,8 @@ export class SituationDisplayerComponent extends MainClass {
    * @returns valeur à afficher
    */
   getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false): string {
-    if (this.simulatorService.situationActuelle.getValue() !== null && this.simulatorService.contentieuOrSubContentieuId.getValue()?.length) {
+    const value = this.simulatorService.contentieuOrSubContentieuId.getValue()
+    if (this.simulatorService.situationActuelle.getValue() !== null && value !== null && (value?.parent?.length || value?.child?.length)) {
       return this.simulatorService.getFieldValue(param, data, initialValue, toCompute)
     }
     return ''

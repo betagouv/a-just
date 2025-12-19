@@ -44,7 +44,7 @@ export class SimulatorService extends MainClass {
   /**
    * Liste de contentieux/sous contentieux selectionné(s) par l'utilisateur
    */
-  contentieuOrSubContentieuId: BehaviorSubject<Array<number> | null> = new BehaviorSubject<Array<number> | null>(null)
+  contentieuOrSubContentieuId: BehaviorSubject<any | null> = new BehaviorSubject<any | null>(null)
   /**
    * Date de début de simulation selectionnée par l'utilisateur (définie par défaut à aujourd'hui)
    */
@@ -95,32 +95,36 @@ export class SimulatorService extends MainClass {
 
     this.watch(
       this.contentieuOrSubContentieuId.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null && this.contentieuOrSubContentieuId.getValue()?.length) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue())
+        const value = this.contentieuOrSubContentieuId.getValue()
+        if (value !== null && (value?.parent?.length || value?.child?.length)) {
+          this.getSituation(value)
         }
       }),
     )
 
     this.watch(
       this.selectedFonctionsIds.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue(), this.dateStart.getValue(), this.dateStop.getValue())
+        const value = this.contentieuOrSubContentieuId.getValue()
+        if (value !== null) {
+          this.getSituation(value, this.dateStart.getValue(), this.dateStop.getValue())
         }
       }),
     )
 
     this.watch(
       this.dateStart.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue(), this.dateStart.getValue())
+        const value = this.contentieuOrSubContentieuId.getValue()
+        if (value !== null) {
+          this.getSituation(value, this.dateStart.getValue())
         }
       }),
     )
 
     this.watch(
       this.dateStop.subscribe(() => {
-        if (this.contentieuOrSubContentieuId.getValue() !== null) {
-          this.getSituation(this.contentieuOrSubContentieuId.getValue(), this.dateStart.getValue(), this.dateStop.getValue())
+        const value = this.contentieuOrSubContentieuId.getValue()
+        if (value !== null) {
+          this.getSituation(value, this.dateStart.getValue(), this.dateStop.getValue())
         }
       }),
     )
@@ -133,14 +137,16 @@ export class SimulatorService extends MainClass {
    * @param {Date} dateStop optional end date of the situation
    * @returns Situation data interface
    */
-  getSituation(referentielId: Array<number> | null, dateStart?: Date, dateStop?: Date) {
+  getSituation(referentielId: any | null, dateStart?: Date, dateStop?: Date) {
     if (this.selectedCategory.getValue()?.id !== null && this.selectedFonctionsIds.getValue() !== null) {
+      const value = this.contentieuOrSubContentieuId.getValue()
+      if (value ===null||value.lenght === 0 || (value?.parent === null && value?.child === null)) return
       this.isLoading.next(true)
 
       return this.serverService
         .post(`simulator/get-situation`, {
           backupId: this.humanResourceService.backupId.getValue(),
-          referentielId: referentielId,
+          referentielId: this.contentieuOrSubContentieuId.getValue(),
           dateStart: setTimeToMidDay(dateStart),
           dateStop: setTimeToMidDay(dateStop),
           functionIds: this.selectedFonctionsIds.getValue(),
