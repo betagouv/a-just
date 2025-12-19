@@ -176,7 +176,7 @@ export async function getSituation(
   fonctionIds = undefined,
 ) {
   checkAbort(signal)
-  if (Array.isArray(referentielId) === false) referentielId = [referentielId]
+  //if (Array.isArray(referentielId) === false) referentielId = [referentielId]
   const nbMonthHistory = 12
   const { lastActivities, startDateCs, endDateCs } = await getCSActivities(referentielId, allActivities)
   checkAbort(signal)
@@ -184,17 +184,75 @@ export async function getSituation(
   let summedlastActivities = map(groupBy(lastActivities, 'periode'), (val, idx) => {
     return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
   })
-  if (referentielId.includes(49))
-    console.log(summedlastActivities)
+  //if (referentielId.includes(49))
+  //console.log(summedlastActivities)
 
-  const filteredIn = summedlastActivities.filter(a => a.entrees !== null && a.entrees !== undefined)
-  let totalIn = filteredIn.length ? meanBy(filteredIn, 'entrees') : null
-  //console.log(totalIn, filteredIn)
-  const filteredOut = summedlastActivities.filter(a => a.sorties !== null && a.sorties !== undefined)
-  let totalOut = filteredOut.length ? meanBy(filteredOut, 'sorties') : null
+  // Calcul de totalIn et totalOut : somme des moyennes par child
+  let totalIn = null
+  let totalOut = null
+
+  if (referentielId.child && referentielId.child.length > 0) {
+    const childIds = referentielId.child
+    let sumOfMeansIn = 0
+    let sumOfMeansOut = 0
+    let countValidIn = 0
+    let countValidOut = 0
+
+    // Pour chaque child, calculer sa moyenne séparément
+    childIds.forEach(childId => {
+      // Filtrer les activités pour ce child uniquement
+      const childActivities = lastActivities.filter(a => a.contentieux.id === childId)
+
+      if (childActivities.length > 0) {
+        // Grouper par période pour ce child
+        const childSummedByPeriod = map(groupBy(childActivities, 'periode'), (val, idx) => {
+          return { id: idx, entrees: sumBy(val, 'entrees'), sorties: sumBy(val, 'sorties'), stock: sumBy(val, 'stock') }
+        })
+
+        // Calculer la moyenne des entrées pour ce child
+        const filteredInChild = childSummedByPeriod.filter(a => a.entrees !== null && a.entrees !== undefined)
+        if (filteredInChild.length > 0) {
+          const meanInChild = meanBy(filteredInChild, 'entrees')
+          if (meanInChild !== null && meanInChild !== undefined) {
+            sumOfMeansIn += meanInChild
+            countValidIn++
+          }
+        }
+
+        // Calculer la moyenne des sorties pour ce child
+        const filteredOutChild = childSummedByPeriod.filter(a => a.sorties !== null && a.sorties !== undefined)
+        if (filteredOutChild.length > 0) {
+          const meanOutChild = meanBy(filteredOutChild, 'sorties')
+          if (meanOutChild !== null && meanOutChild !== undefined) {
+            sumOfMeansOut += meanOutChild
+            countValidOut++
+          }
+        }
+      }
+    })
+
+    // totalIn = somme des moyennes (ou null si aucune moyenne valide)
+    totalIn = countValidIn > 0 ? sumOfMeansIn : null
+    totalOut = countValidOut > 0 ? sumOfMeansOut : null
+  } else {
+    // Fallback si pas de child : calcul global comme avant
+    const filteredIn = summedlastActivities.filter(a => a.entrees !== null && a.entrees !== undefined)
+    totalIn = filteredIn.length ? meanBy(filteredIn, 'entrees') : null
+
+    const filteredOut = summedlastActivities.filter(a => a.sorties !== null && a.sorties !== undefined)
+    totalOut = filteredOut.length ? meanBy(filteredOut, 'sorties') : null
+  }
 
   // récupération du dernier stock
   let lastStock = lastActivities.length ? summedlastActivities[0].stock || 0 : 0
+
+  if (referentielId.parent && referentielId.child) {
+    referentielId = referentielId.parent
+  } else if (referentielId.child) {
+    referentielId = referentielId.child
+  } else {
+    referentielId = referentielId.parent
+  }
 
   let realTimePerCase = undefined
   let DTES = undefined
@@ -541,7 +599,7 @@ export function getEtpByCategory(etpAffected, sufix = '') {
  */
 export async function getCSActivities(referentielId, allActivities) {
   if (allActivities.length !== 0) {
-    const filteredByContentieux = allActivities.filter((a) => referentielId.includes(a.contentieux.id))
+    let filteredByContentieux = allActivities.filter((a) => referentielId.child.includes(a.contentieux.id))
 
     const dateStop = filteredByContentieux.reduce((a, b) => {
       return a.periode > b.periode ? a.periode : b.periode
