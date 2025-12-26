@@ -429,10 +429,6 @@ export async function getSituation(
 
       let etpAffectedStartToEndToCompute, monthlyReport
 
-      if (simulatorUse === true) {
-        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, { realTimePerCase, totalIn, lastStock })
-      }
-
       // Projection of etpAffected between start and stop date to compute stock
       etpAffectedStartToEndToCompute = calculateETPForContentieux(
         indexes,
@@ -465,6 +461,9 @@ export async function getSituation(
       const projectedCoverage = computeCoverage(projectedTotalOut, totalIn)
       const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut)
 
+      if (simulatorUse === true) {
+        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, { realTimePerCase, totalIn, lastStock, begin: { lastStock, DTES }, end: { lastStock: projectedLastStock, DTES: projectedDTES } })
+      }
       endSituation = {
         totalIn,
         totalOut: projectedTotalOut,
@@ -912,7 +911,8 @@ export async function getHRVentilation(hr, referentielId, categories, date, sign
  * @param {*} sufix catégorie
  * @returns simulation calculée
  */
-export function execSimulation(params, simulation, dateStart, dateStop, sufix, ctx) {
+export async function execSimulation(params, simulation, dateStart, dateStop, sufix, ctx, monthlyParams = null) {
+  console.log('EXEC SIMULATION', params, simulation, dateStart, dateStop, sufix, monthlyParams)
   params.toDisplay.map((x) => {
     if (params.beginSituation !== null) {
       simulation[x] = params.beginSituation[x]
@@ -1044,6 +1044,17 @@ export function execSimulation(params, simulation, dateStart, dateStop, sufix, c
       simulation.realCoverage !== undefined
     )
   )
+
+  if (monthlyParams !== null) {
+    if (monthlyParams.referentielId.parent && monthlyParams.referentielId.child) {
+      monthlyParams.referentielId = monthlyParams.referentielId.parent
+    } else if (monthlyParams.referentielId.child) {
+      monthlyParams.referentielId = monthlyParams.referentielId.child
+    }
+
+    console.log('monthlyParams', monthlyParams.referentielId, monthlyParams.categories, monthlyParams.dateStart, monthlyParams.dateStop, monthlyParams.fonctionIds, { realTimePerCase: simulation.magRealTimePerCase, totalIn: simulation.totalIn, lastStock: simulation.lastStock, begin: { lastStock: params.beginSituation.lastStock, DTES: params.beginSituation.realDTESInMonths }, end: { lastStock: simulation.lastStock, DTES: simulation.realDTESInMonths } })
+    simulation.monthlyReport = await monthlyReportQuery(monthlyParams.indexes, monthlyParams.referentielId, monthlyParams.categories, monthlyParams.dateStart, monthlyParams.dateStop, monthlyParams.fonctionIds, { realTimePerCase: simulation.magRealTimePerCase, totalIn: simulation.totalIn, lastStock: simulation.lastStock, begin: { lastStock: params.beginSituation.lastStock, DTES: params.beginSituation.realDTESInMonths }, end: { lastStock: simulation.lastStock, DTES: simulation.realDTESInMonths }, totalOut: [...params.toDisplay, ...params.toCalculate].includes('totalOut') ? simulation.totalOut : null })
+  }
   return simulation
 }
 
@@ -1167,6 +1178,10 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
     })
   })
 
+  console.log('FCT IDS', {
+    fonctions: fonctionIds,
+    contentieux: referentielId
+  })
   // Traitement rapide par mois
   for (const monthKey of Object.keys(monthlyList)) {
     const [monthLabel, yearSuffix] = splitMonthKey(monthKey) // Ex: "Août25" => ["Août", "25"]
@@ -1179,7 +1194,7 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
         end,
         category: undefined,
         fonctions: fonctionIds,
-        contentieux: referentielId[0],
+        contentieux: referentielId,
       },
       categories,
     )
@@ -1215,41 +1230,69 @@ function formatMonthlyListToCategoryArray(monthlyList, categories, params = null
   }))
 
   const monthKeys = Object.keys(monthlyList)
-  // Suivi du stock par catégorie sans modifier le reste du format de sortie
+  const lastMonthIndex = monthKeys.length - 1
+
   const computedStockByCategory = categories.reduce((acc, category) => {
-    acc[category.id] = params?.lastStock ?? null
+    // Initialiser avec begin.lastStock si disponible pour le premier mois, sinon lastStock
+    acc[category.id] = params?.begin?.lastStock ?? params?.lastStock ?? null
     return acc
   }, {})
-
   monthKeys.forEach((monthKey, index) => {
     const categoryValues = monthlyList[monthKey]
+    const isFirstMonth = index === 0
+    const isLastMonth = index === lastMonthIndex
 
     categories.forEach((category) => {
       const categoryData = formatted.find((f) => f.name === category.label)
       const sufix = 'By' + category.label
       const rawEtpt = categoryValues[category.id]?.etpt || 0
-      const etptValue = parseFloat(rawEtpt.toFixed(3))
+      const etptValue = rawEtpt
       const nbDays =
         categoryValues[category.id]?.nbOfDays && categoryValues[category.id].nbOfDays > 0
           ? categoryValues[category.id].nbOfDays
           : 21 // fallback si non renseigné
-      const previousStock = computedStockByCategory[category.id] ?? params?.lastStock ?? 0
 
-      const lastStockValue =
-        params?.realTimePerCase && nbDays
-          ? computeLastStock(previousStock, nbDays, etptValue, params.realTimePerCase, params.totalIn, sufix)
-          : previousStock
+      let lastStockValue
+      let dtesValue = null
+
+      // Premier mois : utiliser les valeurs de begin
+      if (isFirstMonth && params?.begin) {
+        lastStockValue = params.begin.lastStock ?? computedStockByCategory[category.id] ?? params?.lastStock ?? 0
+        dtesValue = params.begin.DTES ?? null
+      }
+      // Dernier mois : utiliser les valeurs de end
+      else if (isLastMonth && params?.end) {
+        lastStockValue = params.end.lastStock ?? computedStockByCategory[category.id] ?? params?.lastStock ?? 0
+        dtesValue = params.end.DTES ?? null
+      }
+      // Mois intermédiaires : calcul normal
+      else {
+        const previousStock = computedStockByCategory[category.id] ?? params?.lastStock ?? 0
+        lastStockValue =
+          params?.realTimePerCase && nbDays
+            ? computeLastStock(previousStock, nbDays, etptValue, params.realTimePerCase, params.totalIn, sufix)
+            : previousStock
+      }
+
+      // Calcul du DTES si non fourni et si on a totalOut
+      const totalOut = params.totalOut !== null ? params.totalOut : computeTotalOut(params.realTimePerCase, etptValue, sufix)
+      dtesValue = computeDTES(lastStockValue, totalOut)
+      //console.log(index, monthKey, totalOut, params.realTimePerCase, etptValue, sufix, params.totalIn, computeTotalOut(params.realTimePerCase, etptValue, sufix))
 
       categoryData.values[index.toString()] = {
         name: monthKey,
         etpt: etptValue,
-        totalOut: params.tmd ? computeTotalOut(params.tmd, etptValue, sufix) : null,
-        totalIn: params.tmd ? params.totalIn : null,
+        totalOut: params.realTimePerCase ? computeTotalOut(params.realTimePerCase, etptValue, sufix) : null,
+        totalIn: params.realTimePerCase ? params.totalIn : null,
         lastStock: lastStockValue,
-        nbDays
+        nbDays,
+        ...(dtesValue !== null && { DTES: dtesValue })
       }
 
-      computedStockByCategory[category.id] = lastStockValue
+      // Mettre à jour le stock pour le mois suivant (sauf pour le dernier mois)
+      if (!isLastMonth) {
+        computedStockByCategory[category.id] = lastStockValue
+      }
     })
   })
 
