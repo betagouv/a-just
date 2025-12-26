@@ -115,50 +115,38 @@ export default class RouteSimulator extends Route {
       dateStart: Types.date().required(),
       dateStop: Types.date().required(),
       selectedCategoryId: Types.number().required(),
+      referentielId: Types.any(),
+      functionIds: Types.array(),
     }),
     accesses: [Access.canVewSimulation],
   })
   async toSimulate(ctx) {
-    let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId } = this.body(ctx)
+    let { backupId, params, simulation, dateStart, dateStop, selectedCategoryId, referentielId, functionIds } = this.body(ctx)
 
     if (!(await this.models.HRBackups.haveAccess(backupId, ctx.state.user.id))) {
       ctx.throw(401, "Vous n'avez pas accès à cette juridiction !")
     }
 
+    console.time('simulator-1')
+    let hr = await loadOrWarmHR(backupId, this.models, ctx.state.user.id)
+    console.timeEnd('simulator-1')
+
+    console.time('🧩 Pré-formatage / Indexation')
+    const indexes = await generateHRIndexes(hr)
+    console.timeEnd('🧩 Pré-formatage / Indexation')
+
+    console.time('simulator-2')
     const categories = await this.models.HRCategories.getAll()
+    //const fonctions = (await this.models.HRFonctions.getAll()).filter((v) => v.categoryId === selectedCategoryId).map((f) => f.id)
+    //const fctFilter = functionIds.length == fonctions.length ? undefined : functionIds
+    console.timeEnd('simulator-2')
+
 
     let sufix = 'By' + categories.find((element) => element.id === selectedCategoryId).label
 
     await this.models.Logs.addLog(EXECUTE_SIMULATOR_PARAM, ctx.state.user.id, params)
-
-    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)
-
-
-    /**
-     *     console.log(simulatedSituation.realTimePerCase)
-
-    totalOut = computeTotalOut(realTimePerCase, selectedCategoryId === 1 ? etpMag : etpFon, sufix)
-
-    let listDTES = []
-
-    do {
-      let endOfTheMonth = today(dateStart)
-      endOfTheMonth = month(endOfTheMonth, 0, 'lastday')
-      {
-        const datas = [] // mettre les ETPTS
-
-        console.log(datas)
-
-        listDTES.push({
-          //value: datas.list[0].realDTESInMonths,
-          date: today(dateStart),
-        })
-      }
-
-      dateStart = month(dateStart, 1)
-    } while (dateStart.getTime() <= dateStop.getTime())
-    console.log(listDTES)
-  */
+    console.log(params)
+    const simulatedSituation = await execSimulation(params, simulation, dateStart, dateStop, sufix, ctx, { indexes, referentielId, categories, dateStart, dateStop, fonctionIds: functionIds })
 
     if (simulatedSituation === null) ctx.throw(400, 'Une erreur est survenue lors de votre simulation, veuillez réessayer !')
     else this.sendOk(ctx, simulatedSituation)
@@ -197,7 +185,7 @@ export default class RouteSimulator extends Route {
 
     await this.models.Logs.addLog(EXECUTE_SIMULATOR_PARAM, ctx.state.user.id, params)
 
-    const simulatedSituation = execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)
+    const simulatedSituation = await execSimulation(params, simulation, dateStart, dateStop, sufix, ctx)
 
     if (simulatedSituation === null) ctx.throw(400, 'Une erreur est survenue lors de votre simulation, veuillez réessayer !')
     else this.sendOk(ctx, simulatedSituation)
