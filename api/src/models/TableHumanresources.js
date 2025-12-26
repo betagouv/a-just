@@ -433,6 +433,8 @@ export default (sequelizeInstance, Model) => {
         if (list[i].fonction === 'C CAB CC') {
           // pour CA
           code = 'CHCAB'
+        } else if ( ['C CAB PP','C CAB PG'].includes(list[i].fonction) && Number(config.juridictionType) === 1) {
+          code = 'CHCAB'
         } else if (list[i].fonction === 'DG') {
           code = 'DG'
         }
