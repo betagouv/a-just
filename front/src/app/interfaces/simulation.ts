@@ -38,4 +38,8 @@ export interface SimulationInterface {
    * Tremps de traitement moyen des dossiers
    */
   magRealTimePerCase: number | null
+  /**
+   * Data mensualisé DTES STOCK IN OUT
+   */
+  monthlyReport?: any[] | null
 }

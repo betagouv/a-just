@@ -168,6 +168,7 @@ export class SimulatorService extends MainClass {
    * @param simulation empty situation object to be filled
    */
   toSimulate(params: any, simulation: SimulationInterface, white = false) {
+    console.log('SIMULATION', simulation)
     this.isLoading.next(true)
     const latencyEvent = buildSimulatorLatencyEventLabel(params, white)
     console.log(params)
@@ -199,6 +200,8 @@ export class SimulatorService extends MainClass {
             dateStart: setTimeToMidDay(this.dateStart.getValue()),
             dateStop: setTimeToMidDay(this.dateStop.getValue()),
             selectedCategoryId: this.selectedCategory.getValue()?.id,
+            referentielId: this.contentieuOrSubContentieuId.getValue(),
+            functionIds: this.selectedFonctionsIds.getValue(),
           })
           .then((data) => {
             console.log('simu', data.data)

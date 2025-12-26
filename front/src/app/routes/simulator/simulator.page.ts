@@ -635,7 +635,7 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
           this.stopRealValue = findRealValue(this.dateStop)
         }
 
-        if (d && d.length === 0 || d.parent === null && d.child === null) {
+        if (!d || (d.parent === null && d.child === null)) {
           this.onResetUserAction()
           this.disabled = 'disabled'
           this.simulatorService.disabled.next(this.disabled)
