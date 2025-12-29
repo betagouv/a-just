@@ -10,7 +10,6 @@ module.exports = {
       const t = await queryInterface.sequelize.transaction()
       try {
         const backup = await models.HRBackups.findOne({ where: { label } })
-        console.log('@@@@@@@', backup)
         if (!backup) {
           console.warn(`Aucun HRBackup trouvé avec label='${label}'. On passe au suivant.`)
           await t.rollback()
@@ -20,7 +19,7 @@ module.exports = {
         const backupId = backup.id
 
         const countRes = await queryInterface.sequelize.query(
-          `SELECT count(*)::int AS cnt FROM "HumanResources" WHERE deleted_at IS NULL AND backup_id = :backupId AND matricule != ''`,
+          `SELECT count(*)::int AS cnt FROM "HumanResources" WHERE backup_id = :backupId AND matricule != ''`,
           { replacements: { backupId }, type: queryInterface.sequelize.QueryTypes.SELECT, transaction: t },
         )
         const count = Array.isArray(countRes) && countRes.length ? countRes[0].cnt : 0
@@ -32,7 +31,7 @@ module.exports = {
         }
 
         await queryInterface.sequelize.query(
-          `UPDATE "HumanResources" SET matricule = NULL WHERE deleted_at IS NULL AND backup_id = :backupId AND matricule != ''`,
+          `UPDATE "HumanResources" SET matricule = NULL WHERE backup_id = :backupId AND matricule != ''`,
           { replacements: { backupId }, transaction: t },
         )
 
