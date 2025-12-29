@@ -3,7 +3,7 @@ const { isTj } = require('../../../utils/ca')
 module.exports = {
   up: async (queryInterface, Sequelize, models) => {
     const labels = isTj()
-      ? ['TJ DE DEMO BIS', 'TEST15OCT', 'TJ DE DEMO', 'TJ RECETTE', 'TJ WEBINAIRE']
+      ? ['TJ DE DEMO BIS', 'TJ BASE TEST','TEST15OCT', 'TJ DE DEMO', 'TJ RECETTE', 'TJ WEBINAIRE']
       : ['CA BASE TEST', 'CA DE DEMO', 'CA de Lyon - 2025 recette', 'CA RECETTE', 'CA WEBINAIRE']
 
     for (const label of labels) {
