@@ -1,22 +1,22 @@
 @if (showPanel) {
-  <div class="main">
-    <span class="info-bubble">
-      <i class="material-icons">info</i>
-    </span>
-    <div class="description">
-      <p>Bienvenue dans A-JUST, l’outil de pilotage de votre Tribunal Judiciaire !</p>
-      <p>
-        Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace
-        de votre juridiction.
-      </p>
-      <p>
-        La justesse des restitutions du ventilateur et du cockpit dépend de l'exhaustivité et de la fraîcheur des
-        données d'effectifs et d'activité de la juridiction. Pensez à mettre à jour la situation de vos agents et à
-        vérifier régulièrement vos données d'activité !
-      </p>
-    </div>
-    <div class="close-icon cursor-pointer" (click)="showPanel = false">
-      <i class="material-icons">closes</i>
-    </div>
+<div class="main">
+  <span class="info-bubble">
+    <i class="material-icons">info</i>
+  </span>
+  <div class="description">
+    <p>Bienvenue dans A-JUST, l’outil de pilotage de votre {{getInterfaceType(true)}} !</p>
+    <p>
+      Cette page vous offre un aperçu en un coup d’œil de la mise à jour des informations enregistrées dans l’espace
+      de votre juridiction.
+    </p>
+    <p>
+      La justesse des restitutions du ventilateur et du cockpit dépend de l'exhaustivité et de la fraîcheur des
+      données d'effectifs et d'activité de la juridiction. Pensez à mettre à jour la situation de vos agents et à
+      vérifier régulièrement vos données d'activité !
+    </p>
   </div>
+  <div class="close-icon cursor-pointer" (click)="showPanel = false">
+    <i class="material-icons">closes</i>
+  </div>
+</div>
 }
