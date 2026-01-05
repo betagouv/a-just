@@ -85,7 +85,7 @@ export default class RouteActivities extends Route {
     bodyType: Types.object().keys({
       hrBackupId: Types.number(),
     }),
-    accesses: [Access.canVewActivities],
+    accesses: [Access.isLogin],
   })
   async getLastMonth(ctx) {
     const { hrBackupId } = this.body(ctx)
