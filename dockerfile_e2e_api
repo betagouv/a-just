@@ -1,42 +1,45 @@
 FROM node:22 AS builder
+
 ARG SKIP_FRONT_ADMIN=0
+COPY ./api /home/api
 WORKDIR /home/api
 # Install dependencies first to leverage Docker layer caching
-COPY ./api/package*.json /home/api/
+# COPY ./api/package*.json /home/api/
+
 RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm ci --include=dev; fi
 # Copy source and build
-COPY ./api /home/api
-RUN npm run build
+CMD npm run build && \
+    npm run start:production
 
-# Build front (Angular) and front-admin, and place their outputs where the API expects them at runtime
-WORKDIR /home/front
-COPY ./front/package*.json /home/front/
-RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm ci --include=dev; fi
-# Ensure esbuild native binary matches the library version inside this image
-RUN npm rebuild esbuild || true
-COPY ./front /home/front
-RUN npm run build
+# # Build front (Angular) and front-admin, and place their outputs where the API expects them at runtime
+# WORKDIR /home/front
+# COPY ./front/package*.json /home/front/
+# RUN if [ -f package-lock.json ]; then npm ci --include=dev; else npm ci --include=dev; fi
+# # Ensure esbuild native binary matches the library version inside this image
+# RUN npm rebuild esbuild || true
+# COPY ./front /home/front
+# RUN npm run build
 
-WORKDIR /home/front-admin
-COPY ./front-admin/package*.json /home/front-admin/
-RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin install (SKIP_FRONT_ADMIN=1)"; else npm ci --include=dev; fi
-# Ensure esbuild native binary matches the library version inside this image
-RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin esbuild rebuild (SKIP_FRONT_ADMIN=1)"; else npm rebuild esbuild || true; fi
-COPY ./front-admin /home/front-admin
-RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin build (SKIP_FRONT_ADMIN=1)"; else npm run build; fi
+# WORKDIR /home/front-admin
+# COPY ./front-admin/package*.json /home/front-admin/
+# RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin install (SKIP_FRONT_ADMIN=1)"; else npm ci --include=dev; fi
+# # Ensure esbuild native binary matches the library version inside this image
+# RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin esbuild rebuild (SKIP_FRONT_ADMIN=1)"; else npm rebuild esbuild || true; fi
+# COPY ./front-admin /home/front-admin
+# RUN if [ "$SKIP_FRONT_ADMIN" = "1" ]; then echo "[e2e] Skipping front-admin build (SKIP_FRONT_ADMIN=1)"; else npm run build; fi
 
-# Move built front apps into API dist paths expected by CSP/index serving
-WORKDIR /home
-RUN mkdir -p /home/api/dist/front /home/api/dist/front-admin && \
-    if [ -d /home/front/dist/browser ]; then cp -r /home/front/dist/browser/* /home/api/dist/front/; fi && \
-    if [ -d /home/front-admin/dist/browser ]; then cp -r /home/front-admin/dist/browser/* /home/api/dist/front-admin/; fi
+# # Move built front apps into API dist paths expected by CSP/index serving
+# WORKDIR /home
+# RUN mkdir -p /home/api/dist/front /home/api/dist/front-admin && \
+#     if [ -d /home/front/dist/browser ]; then cp -r /home/front/dist/browser/* /home/api/dist/front/; fi && \
+#     if [ -d /home/front-admin/dist/browser ]; then cp -r /home/front-admin/dist/browser/* /home/api/dist/front-admin/; fi
 
-FROM node:22 AS runtime
-WORKDIR /home/api
-# NODE_ENV is set by docker-compose (test for E2E, production for real deployments)
-# Copy built app and dependencies
-COPY --from=builder /home/api/dist /home/api/dist
-COPY --from=builder /home/api/node_modules /home/api/node_modules
-COPY ./api/package*.json /home/api/
-# Start fast: no install/build at runtime
-CMD echo "NODE_ENV = $NODE_ENV"; npm run start:production;
+# FROM node:22 AS runtime
+# WORKDIR /home/api
+# # NODE_ENV is set by docker-compose (test for E2E, production for real deployments)
+# # Copy built app and dependencies
+# COPY --from=builder /home/api/dist /home/api/dist
+# COPY --from=builder /home/api/node_modules /home/api/node_modules
+# COPY ./api/package*.json /home/api/
+# # Start fast: no install/build at runtime
+# CMD echo "NODE_ENV = $NODE_ENV"; npm run start:production;
