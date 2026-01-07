@@ -111,10 +111,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Build and Run db
-      - name: Build and start DB for E2E tests
-        run: npm run db:build && npm run db:start
-
       - name: Run E2E tests
         run: npm run test:e2e
 
