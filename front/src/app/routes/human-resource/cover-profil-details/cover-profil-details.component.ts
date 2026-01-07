@@ -14,6 +14,7 @@ import {
   inject,
   ElementRef,
   WritableSignal,
+  ViewChild,
 } from '@angular/core'
 import { FormGroup, FormsModule } from '@angular/forms'
 import { isNumber, sumBy } from 'lodash'
@@ -60,6 +61,8 @@ import { NOMENCLATURE_DOWNLOAD_URL, NOMENCLATURE_DOWNLOAD_URL_CA, NOMENCLATURE_D
 export class CoverProfilDetailsComponent extends MainClass implements OnChanges, OnInit {
   humanResourceService = inject(HumanResourceService)
 
+  @ViewChild('dateStartCalendar') dateStartCalendar: DateSelectComponent | null = null
+  @ViewChild('dateEndCalendar') dateEndCalendar: DateSelectComponent | null = null
   @ViewChildren('input')
   inputs: QueryList<ElementRef> = new QueryList<ElementRef>()
   @ViewChildren(DateSelectComponent) calendar!: QueryList<DateSelectComponent>
@@ -288,9 +291,22 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
         value.setHours(12)
       }
 
+      if (nodeName === 'dateStart' && value && this.currentHR && this.currentHR.dateEnd && isDateBiggerThan(today(value), today(this.currentHR.dateEnd))) {
+        alert("La date d'arrivée ne peut être postérieure ou égale à la date de départ dans la juridiction")
+        if (this.dateStartCalendar) {
+          this.dateStartCalendar.value = this.currentHR.dateStart
+        }
+
+        return
+      }
+
       if (nodeName === 'dateEnd' && value && this.currentHR.dateStart && !isDateBiggerThan(today(value), today(this.currentHR.dateStart), false)) {
         alert('La date de départ ne peut être antérieure à la date d’arrivée dans la juridiction')
-        value = this.currentHR.dateEnd || null
+        if (this.dateEndCalendar) {
+          this.dateEndCalendar.value = this.currentHR.dateEnd
+        }
+
+        return
       }
 
       this.currentHR = {
@@ -396,7 +412,7 @@ export class CoverProfilDetailsComponent extends MainClass implements OnChanges,
    * Permet de suppimer une alerte sur un des champs du formulaire
    */
   removeAlertItem(tag: string) {
-    this.alertSet.emit({ tag, remove: true})
+    this.alertSet.emit({ tag, remove: true })
   }
 
   /**

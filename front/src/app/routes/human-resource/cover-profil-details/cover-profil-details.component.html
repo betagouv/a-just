@@ -81,11 +81,11 @@
     <div class="dates">
       <aj-alert-small *ngIf="humanResourceService.alertList().includes('startDate')"
         alertMessage="Vous devez saisir une date d'arrivée !" (onClose)="removeAlertItem('startDate')"></aj-alert-small>
-      <aj-date-select title="Date d'arrivée" id="calendar" [value]="currentHR && currentHR.dateStart"
+      <aj-date-select #dateStartCalendar title="Date d'arrivée" id="calendar" [value]="currentHR && currentHR.dateStart"
         (valueChange)="updateHuman('dateStart', $event)"
         [ngClass]="{ error: humanResourceService.alertList().includes('startDate') }"
         [readonly]="!userService.canEditHR()"></aj-date-select>
-      <aj-date-select title="Date de départ" id="calendar" [value]="currentHR && currentHR.dateEnd"
+      <aj-date-select #dateEndCalendar title="Date de départ" id="calendar" [value]="currentHR && currentHR.dateEnd"
         (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true"
         [readonly]="!userService.canEditHR()"></aj-date-select>
     </div>
