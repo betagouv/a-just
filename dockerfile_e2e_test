@@ -4,13 +4,13 @@ COPY ./end-to-end /e2e
 COPY ./end-to-end/scripts /scripts
 WORKDIR /e2e
 
-CMD node -v && npm -v && yarn -v || true; \
+CMD node -v && npm -v || true; \
     echo "[cypress-test] Starting waits..."; \
     ./scripts/wait-for-it.sh api:8081 --timeout=300 && \
     ./scripts/wait-for-it.sh front:4200 --timeout=600 && \
     # ./scripts/wait-for-it.sh api_sandbox:8081 --timeout=300 && \
     # ./scripts/wait-for-it.sh front_sandbox:4200 --timeout=600 && \
-    yarn install && npx cypress install && \
-    if [ -n "$SPEC" ]; then yarn cy:run:report --spec "$SPEC"; else yarn cy:run:report; fi
+    npm ci && npx cypress install && \
+    if [ -n "$SPEC" ]; then npm run cy:run:report --spec "$SPEC"; else npm run cy:run:report; fi
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
 #sleep infinity;
