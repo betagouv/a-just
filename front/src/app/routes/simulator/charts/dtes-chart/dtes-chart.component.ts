@@ -129,6 +129,7 @@ export class DtesChartComponent {
         )
       }
       else {
+        console.log('monthlyReportProjected', simulatorService.situationProjected.getValue())
         const monthlyReportProjected = simulatorService.situationProjected.getValue()?.monthlyReport
         const monthlyReportSimulated = simulatorService.situationSimulated.getValue()?.monthlyReport
         const selectedCategoryLabel = simulatorService.selectedCategory.getValue()?.label
@@ -145,7 +146,10 @@ export class DtesChartComponent {
               })
               this.data.projectedDTES.values = monthKeys.map((key) => {
                 const monthData = categoryData.values[key]
-                return monthData.DTES !== null && monthData.DTES !== undefined ? monthData.DTES : null
+                if (monthData.DTES !== null && monthData.DTES !== undefined) {
+                  return monthData.DTES < 0 ? 0 : monthData.DTES
+                }
+                return null
               })
             }
           }
@@ -161,7 +165,10 @@ export class DtesChartComponent {
               })
               this.data.simulatedDTES.values = monthKeys.map((key) => {
                 const monthData = categoryDataSim.values[key]
-                return monthData.DTES !== null && monthData.DTES !== undefined ? monthData.DTES : null
+                if (monthData.DTES !== null && monthData.DTES !== undefined) {
+                  return monthData.DTES < 0 ? 0 : monthData.DTES
+                }
+                return null
               })
             }
           }

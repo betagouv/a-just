@@ -462,7 +462,8 @@ export async function getSituation(
       const projectedDTES = computeDTES(projectedLastStock, projectedTotalOut)
 
       if (simulatorUse === true) {
-        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, { realTimePerCase, totalIn, lastStock, begin: { lastStock, DTES }, end: { lastStock: projectedLastStock, DTES: projectedDTES } })
+        console.log('monthlyReportQuery', DTES, lastStock)
+        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, { realTimePerCase, totalIn, lastStock, begin: { lastStock, DTES }, end: { lastStock: projectedLastStock, DTES: projectedDTES }, totalOut: projectedTotalOut })
       }
       endSituation = {
         totalIn,
@@ -534,15 +535,20 @@ export function computeDTES(lastStock, totalOut) {
  * @param {*} magRealTimePerCase temps moyen par dossier
  * @param {*} totalIn entrées
  * @param {*} sufix catégorie
+ * @param {*} totalOut sorties (optionnel, si fourni sera utilisé au lieu de recalculer)
  * @returns stock calculé
  */
-function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix) {
+function computeLastStock(lastStock, countOfCalandarDays, futurEtp, magRealTimePerCase, totalIn, sufix, totalOut = null) {
   if (magRealTimePerCase === 0) return Math.floor(lastStock)
 
-  let stock =
-    lastStock -
-    (countOfCalandarDays / (365 / 12)) * environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase) +
-    (countOfCalandarDays / (365 / 12)) * totalIn
+  const periodeEnMois = countOfCalandarDays / (365 / 12)
+
+  // Si totalOut, l'utiliser comme paramètre bloqué
+  const sortiesMensuelles = totalOut !== null
+    ? totalOut
+    : environment['nbDaysPerMonth' + sufix] * ((futurEtp * environment['nbHoursPerDayAnd' + sufix]) / magRealTimePerCase)
+
+  let stock = lastStock - (periodeEnMois * sortiesMensuelles) + (periodeEnMois * totalIn)
 
   return stock
 }
@@ -1052,7 +1058,7 @@ export async function execSimulation(params, simulation, dateStart, dateStop, su
       monthlyParams.referentielId = monthlyParams.referentielId.child
     }
 
-    console.log('monthlyParams', monthlyParams.referentielId, monthlyParams.categories, monthlyParams.dateStart, monthlyParams.dateStop, monthlyParams.fonctionIds, { realTimePerCase: simulation.magRealTimePerCase, totalIn: simulation.totalIn, lastStock: simulation.lastStock, begin: { lastStock: params.beginSituation.lastStock, DTES: params.beginSituation.realDTESInMonths }, end: { lastStock: simulation.lastStock, DTES: simulation.realDTESInMonths } })
+    //console.log('monthlyParams', monthlyParams.referentielId, monthlyParams.categories, monthlyParams.dateStart, monthlyParams.dateStop, monthlyParams.fonctionIds, { realTimePerCase: simulation.magRealTimePerCase, totalIn: simulation.totalIn, lastStock: simulation.lastStock, begin: { lastStock: params.beginSituation.lastStock, DTES: params.beginSituation.realDTESInMonths }, end: { lastStock: simulation.lastStock, DTES: simulation.realDTESInMonths } })
     simulation.monthlyReport = await monthlyReportQuery(monthlyParams.indexes, monthlyParams.referentielId, monthlyParams.categories, monthlyParams.dateStart, monthlyParams.dateStop, monthlyParams.fonctionIds, { realTimePerCase: simulation.magRealTimePerCase, totalIn: simulation.totalIn, lastStock: simulation.lastStock, begin: { lastStock: params.beginSituation.lastStock, DTES: params.beginSituation.realDTESInMonths }, end: { lastStock: simulation.lastStock, DTES: simulation.realDTESInMonths }, totalOut: [...params.toDisplay, ...params.toCalculate].includes('totalOut') ? simulation.totalOut : null })
   }
   return simulation
@@ -1237,6 +1243,7 @@ function formatMonthlyListToCategoryArray(monthlyList, categories, params = null
     acc[category.id] = params?.begin?.lastStock ?? params?.lastStock ?? null
     return acc
   }, {})
+
   monthKeys.forEach((monthKey, index) => {
     const categoryValues = monthlyList[monthKey]
     const isFirstMonth = index === 0
@@ -1254,45 +1261,69 @@ function formatMonthlyListToCategoryArray(monthlyList, categories, params = null
 
       let lastStockValue
       let dtesValue = null
+      let totalOutToUse = null
 
-      // Premier mois : utiliser les valeurs de begin
+      // Déterminer le totalOut UNIQUE pour toute la projection (cohérence)
+      // Si bloqué, utiliser params.totalOut, sinon calculer avec realTimePerCase
+      if (params?.totalOut !== null && params?.totalOut !== undefined) {
+        totalOutToUse = params.totalOut
+      } else if (params?.realTimePerCase) {
+        totalOutToUse = computeTotalOut(params.realTimePerCase, etptValue, sufix)
+      }
+
+      // Premier mois : garder le stock de départ mais RECALCULER le DTES avec le totalOut de la projection
       if (isFirstMonth && params?.begin) {
         lastStockValue = params.begin.lastStock ?? computedStockByCategory[category.id] ?? params?.lastStock ?? 0
-        dtesValue = params.begin.DTES ?? null
+        // Recalculer le DTES avec le totalOut unique pour avoir une courbe cohérente
+        dtesValue = totalOutToUse !== null && lastStockValue !== null ? computeDTES(lastStockValue, totalOutToUse) : params.begin.DTES ?? null
       }
-      // Dernier mois : utiliser les valeurs de end
+      // Dernier mois : garder le stock de fin mais RECALCULER le DTES avec le totalOut de la projection
       else if (isLastMonth && params?.end) {
         lastStockValue = params.end.lastStock ?? computedStockByCategory[category.id] ?? params?.lastStock ?? 0
-        dtesValue = params.end.DTES ?? null
+        // Recalculer le DTES avec le totalOut unique pour avoir une courbe cohérente
+        dtesValue = totalOutToUse !== null && lastStockValue !== null ? computeDTES(lastStockValue, totalOutToUse) : params.end.DTES ?? null
       }
-      // Mois intermédiaires : calcul normal
+      // Mois intermédiaires : calcul progressif
       else {
         const previousStock = computedStockByCategory[category.id] ?? params?.lastStock ?? 0
-        lastStockValue =
-          params?.realTimePerCase && nbDays
-            ? computeLastStock(previousStock, nbDays, etptValue, params.realTimePerCase, params.totalIn, sufix)
-            : previousStock
+        const totalInMonth = params?.totalIn ?? null
+
+        // Calcul du stock : stock = stock_précédent + (périodeEnMois × totalIn) - (périodeEnMois × totalOut)
+        if (totalOutToUse !== null && nbDays && totalInMonth !== null) {
+          const periodeEnMois = nbDays / (365 / 12)
+          lastStockValue = previousStock + (periodeEnMois * totalInMonth) - (periodeEnMois * totalOutToUse)
+        } else {
+          lastStockValue = previousStock
+        }
+
+        // Calculer le DTES : DTES = stock / totalOut
+        dtesValue = totalOutToUse !== null && lastStockValue !== null ? computeDTES(lastStockValue, totalOutToUse) : null
       }
 
-      // Calcul du DTES si non fourni et si on a totalOut
-      const totalOut = params.totalOut !== null ? params.totalOut : computeTotalOut(params.realTimePerCase, etptValue, sufix)
-      dtesValue = computeDTES(lastStockValue, totalOut)
-      //console.log(index, monthKey, totalOut, params.realTimePerCase, etptValue, sufix, params.totalIn, computeTotalOut(params.realTimePerCase, etptValue, sufix))
+      console.log(`Mois ${index} (${monthKey}) - Cat ${category.id}:`, {
+        isFirstMonth,
+        isLastMonth,
+        etpt: etptValue,
+        totalOutToUse,
+        totalInMonth: params?.totalIn,
+        previousStock: computedStockByCategory[category.id],
+        lastStockValue,
+        dtesValue,
+        paramsHasTotalOut: params?.totalOut !== null && params?.totalOut !== undefined
+      })
 
       categoryData.values[index.toString()] = {
         name: monthKey,
         etpt: etptValue,
-        totalOut: params.realTimePerCase ? computeTotalOut(params.realTimePerCase, etptValue, sufix) : null,
-        totalIn: params.realTimePerCase ? params.totalIn : null,
+        totalOut: totalOutToUse,
+        totalIn: params?.totalIn ?? null,
         lastStock: lastStockValue,
         nbDays,
         ...(dtesValue !== null && { DTES: dtesValue })
       }
 
-      // Mettre à jour le stock pour le mois suivant (sauf pour le dernier mois)
-      if (!isLastMonth) {
-        computedStockByCategory[category.id] = lastStockValue
-      }
+      // Mettre à jour le stock pour le mois suivant
+      computedStockByCategory[category.id] = lastStockValue
     })
   })
 
