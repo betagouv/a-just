@@ -112,7 +112,16 @@ jobs:
         run: npm ci
 
       - name: Run E2E tests
-        run: npm run test:e2e
+        run: |
+          npm run test:e2e
+          #  Verify test-contexts.json was created and synced
+          if [ -f cypress/reports/test-contexts.json ]; then
+            echo "=== test-contexts.json found and synced ==="
+            echo "File size: $(wc -c < cypress/reports/test-contexts.json) bytes"
+            echo "Number of contexts: $(grep -o "\"[^\"]*\":" cypress/reports/test-contexts.json | wc -l)"
+          else
+            echo "=== WARNING: test-contexts.json NOT FOUND ==="
+          fi
 
         # - name: Run E2E tests (Cypress JSON-only, containerized)
         #   run: |
@@ -147,22 +156,22 @@ jobs:
         #         # Explicitly sync all files to disk before container exits
         #         sync
 
-       # Verify test-contexts.json was created and synced
-        if [ -f cypress/reports/test-contexts.json ]; then
-          echo "=== test-contexts.json found and synced ==="
-          echo "File size: $(wc -c < cypress/reports/test-contexts.json) bytes"
-          echo "Number of contexts: $(grep -o "\"[^\"]*\":" cypress/reports/test-contexts.json | wc -l)"
-        else
-          echo "=== WARNING: test-contexts.json NOT FOUND ==="
-        fi
+        # Verify test-contexts.json was created and synced
+        # if [ -f cypress/reports/test-contexts.json ]; then
+        #   echo "=== test-contexts.json found and synced ==="
+        #   echo "File size: $(wc -c < cypress/reports/test-contexts.json) bytes"
+        #   echo "Number of contexts: $(grep -o "\"[^\"]*\":" cypress/reports/test-contexts.json | wc -l)"
+        # else
+        #   echo "=== WARNING: test-contexts.json NOT FOUND ==="
+        # fi
 
         #         echo "=== E2E reports ==="; ls -la cypress/reports || true
         #       ' || true
 
-      #     echo ""
-      #     echo "=== API Container Logs (last 500 lines) ==="
-      #     docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=500 api
-      #     echo "=== End of API Logs ==="
+        #     echo ""
+        #     echo "=== API Container Logs (last 500 lines) ==="
+        #     docker compose -p test-e2e -f docker-compose-e2e.test.yml logs --tail=500 api
+        #     echo "=== End of API Logs ==="
 
         #     docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
         continue-on-error: true
