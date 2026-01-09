@@ -1080,4 +1080,15 @@ export class PopinEditActivitiesComponent extends MainClass implements OnChanges
     }
     return '0px'
   }
+
+  onClickInformationElement(htmlElement: string) {
+    const element = document.querySelector(htmlElement)
+    if (element && element.parentElement) {
+      console.log('element', element.parentElement)
+      const icon = element.parentElement.querySelector('i')
+      if (icon) {
+        icon.click()
+      }
+    }
+  }
 }
