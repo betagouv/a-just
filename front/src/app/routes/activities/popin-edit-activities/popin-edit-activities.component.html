@@ -280,7 +280,8 @@
     </div>
     }
     @if (!items.childrens) {
-    <div class="item-template-new">
+    <div class="item-template-new"
+      (click)="!userService.canEditActivities() ? onClickInformationElement('#contentieux-' + items.id + '-' + type) : null">
       <ng-container *ngTemplateOutlet="
             tooltip;
             context: {
