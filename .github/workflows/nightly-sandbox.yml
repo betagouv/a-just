@@ -2,7 +2,7 @@ name: Nightly Sandbox Tests
 on:
   schedule:
     # Run every night at 02:30 UTC
-    - cron: "00 21 * * *"
+    - cron: "45 21 * * *"
   workflow_dispatch:
     inputs:
       date_override:
