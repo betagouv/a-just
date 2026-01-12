@@ -71,7 +71,7 @@ jobs:
           else
             npm run test:api
           fi
-        continue-on-error: true
+        # continue-on-error: true
 
       - name: Debug - List API generated files
         if: always()
@@ -298,7 +298,7 @@ jobs:
               echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
             '
           docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml down || true
-        continue-on-error: true
+        # continue-on-error: true
 
       - name: Fix permissions for end-to-end artifacts
         if: always()
