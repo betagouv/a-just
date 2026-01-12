@@ -174,7 +174,7 @@ jobs:
         #     echo "=== End of API Logs ==="
 
         #     docker compose -p test-e2e -f docker-compose-e2e.test.yml down || true
-        continue-on-error: true
+        # continue-on-error: true
 
       - name: Fix permissions for end-to-end artifacts
         if: always()
@@ -244,6 +244,7 @@ jobs:
             ./end-to-end/cypress/downloads/*.xlsx
             ./end-to-end/cypress/downloads/*.xls
           if-no-files-found: warn
+
   # Non-regression calculation end-to-end tests (requires SANDBOX stack)
   e2e-nonreg-vs-sandbox-tests:
     if: ${{ github.event.inputs.skip_e2e != 'true' }}
