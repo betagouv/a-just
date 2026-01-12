@@ -463,7 +463,7 @@ export async function getSituation(
 
       if (simulatorUse === true) {
         console.log('monthlyReportQuery', DTES, lastStock)
-        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, { realTimePerCase, totalIn, lastStock, begin: { lastStock, DTES }, end: { lastStock: projectedLastStock, DTES: projectedDTES }, totalOut: projectedTotalOut })
+        monthlyReport = await monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, { realTimePerCase, totalIn, lastStock, begin: { lastStock, DTES }, end: { lastStock: projectedLastStock, DTES: projectedDTES }, totalOut: projectedTotalOut }, true)
       }
       endSituation = {
         totalIn,
@@ -1170,7 +1170,7 @@ export function splitMonthKey(key) {
   throw new Error(`Mois invalide : ${key}`)
 }
 
-export async function monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, params = null) {
+export async function monthlyReportQuery(indexes, referentielId, categories, dateStart, dateStop, fonctionIds, params = null, projected = false) {
   const monthlyList = getRangeOfMonthsAsObject(dateStart, dateStop, true)
 
   // Initialisation des données
@@ -1184,14 +1184,10 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
     })
   })
 
-  console.log('FCT IDS', {
-    fonctions: fonctionIds,
-    contentieux: referentielId
-  })
   // Traitement rapide par mois
   for (const monthKey of Object.keys(monthlyList)) {
     const [monthLabel, yearSuffix] = splitMonthKey(monthKey) // Ex: "Août25" => ["Août", "25"]
-    const { start, end } = getStartAndEndDateOfMonth(monthLabel, yearSuffix) // à implémenter
+    const { start, end } = getStartAndEndDateOfMonth(monthLabel, yearSuffix)
     const nbDays = getWorkingDaysCount(start, end)
     const etps = await calculateETPForContentieux(
       indexes,
@@ -1225,11 +1221,11 @@ export async function monthlyReportQuery(indexes, referentielId, categories, dat
     })
   }
 
-  const finalFormatted = formatMonthlyListToCategoryArray(monthlyList, categories, params)
+  const finalFormatted = formatMonthlyListToCategoryArray(monthlyList, categories, params, projected)
 
   return finalFormatted
 }
-function formatMonthlyListToCategoryArray(monthlyList, categories, params = null) {
+function formatMonthlyListToCategoryArray(monthlyList, categories, params = null, projected = false) {
   const formatted = categories.map((category) => ({
     name: category.label,
     values: {},
@@ -1271,6 +1267,10 @@ function formatMonthlyListToCategoryArray(monthlyList, categories, params = null
         totalOutToUse = computeTotalOut(params.realTimePerCase, etptValue, sufix)
       }
 
+      if (projected) {
+        totalOutToUse = computeTotalOut(params.realTimePerCase, etptValue, sufix)
+      }
+
       // Premier mois : garder le stock de départ mais RECALCULER le DTES avec le totalOut de la projection
       if (isFirstMonth && params?.begin) {
         lastStockValue = params.begin.lastStock ?? computedStockByCategory[category.id] ?? params?.lastStock ?? 0
@@ -1299,18 +1299,15 @@ function formatMonthlyListToCategoryArray(monthlyList, categories, params = null
         // Calculer le DTES : DTES = stock / totalOut
         dtesValue = totalOutToUse !== null && lastStockValue !== null ? computeDTES(lastStockValue, totalOutToUse) : null
       }
-
-      console.log(`Mois ${index} (${monthKey}) - Cat ${category.id}:`, {
-        isFirstMonth,
-        isLastMonth,
-        etpt: etptValue,
-        totalOutToUse,
-        totalInMonth: params?.totalIn,
-        previousStock: computedStockByCategory[category.id],
-        lastStockValue,
-        dtesValue,
-        paramsHasTotalOut: params?.totalOut !== null && params?.totalOut !== undefined
-      })
+      if (category.id === 1)
+        console.log(`Mois ${index} (${monthKey}) - Cat ${category.id}:`, {
+          etpt: etptValue,
+          totalOutToUse,
+          previousStock: computedStockByCategory[category.id],
+          lastStockValue,
+          dtesValue,
+          paramsHasTotalOut: params?.totalOut !== null && params?.totalOut !== undefined
+        })
 
       categoryData.values[index.toString()] = {
         name: monthKey,
