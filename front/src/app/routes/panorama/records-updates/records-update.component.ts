@@ -127,8 +127,14 @@ export class RecordsUpdateComponent extends MainClass implements OnChanges, OnDe
     const lastUpdatedGreffe = greff.length ? new Date(Math.max(...greff.map((hr) => today(hr.updatedAt).getTime()))) : undefined
     const lastUpdatedEAM = eam.length ? new Date(Math.max(...eam.map((hr) => today(hr.updatedAt).getTime()))) : undefined
 
-    if (this.listFormatedFiltered[0]) this.listFormatedFiltered[0].lastUpdated = lastUpdatedMag
-    if (this.listFormatedFiltered[1]) this.listFormatedFiltered[1].lastUpdated = lastUpdatedGreffe
-    if (this.listFormatedFiltered[2]) this.listFormatedFiltered[2].lastUpdated = lastUpdatedEAM
+    this.listFormatedFiltered.forEach((category) => {
+      if (category.categoryId === 1) {
+        category.lastUpdated = lastUpdatedMag
+      } else if (category.categoryId === 2) {
+        category.lastUpdated = lastUpdatedGreffe
+      } else if (category.categoryId === 3) {
+        category.lastUpdated = lastUpdatedEAM
+      }
+    })
   }
 }
