@@ -31,7 +31,7 @@ export default defineConfig({
           inlineAssets: true,
           saveAllAttempts: false,
           reportDir: "cypress/mochawesome-report",
-          reportFilename: "eport",
+          reportFilename: "report",
           overwrite: false,
           html: false,
           json: true,
@@ -837,6 +837,8 @@ export default defineConfig({
     video: true,
     videosFolder: "cypress/videos",
     downloadsFolder: "cypress/downloads",
+    screenshotOnRunFailure: true,
+    screenshotsFolder: "cypress/screenshots",
     defaultCommandTimeout: 10000,
     env: {
       NG_APP_SERVER_URL:
