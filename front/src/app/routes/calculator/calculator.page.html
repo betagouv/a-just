@@ -114,24 +114,6 @@
                   }"></i>
           <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
         </div>
-        <div class="item" (click)="onSortBy('totalIn')" [ngClass]="{ selected: sortBy.type === 'totalIn' }">
-          <div class="flex-1"></div>
-          <p>Entrées</p>
-          <i [ngClass]="{
-                    'ri-sort-asc': sortBy.up === true,
-                    'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'totalIn'),
-                  }"></i>
-          <aj-tooltips title="Entrées" content="Entrées moyennes mensuelles sur la période choisie"></aj-tooltips>
-        </div>
-        <div class="item" (click)="onSortBy('totalOut')" [ngClass]="{ selected: sortBy.type === 'totalOut' }">
-          <div class="flex-1"></div>
-          <p>Sorties</p>
-          <i [ngClass]="{
-                    'ri-sort-asc': sortBy.up === true,
-                    'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'totalOut'),
-                  }"></i>
-          <aj-tooltips title="Sorties" content="Sorties moyennes mensuelles sur la période choisie"></aj-tooltips>
-        </div>
         @if (canViewMagistrat) {
         <div class="tooltip medium item" (click)="onSortBy('etpMag')"
           [ngClass]="{ selected: sortBy.type === 'etpMag', 'bg-magistrats': categorySelected === MAGISTRATS }">
@@ -185,22 +167,6 @@
             content="Moyenne des ETPT travaillés sur la période par l'équipe autour du magistrat affectés au contentieux"></aj-tooltips>
         </div>
         }
-        <div class="tooltip large item tmd" (click)="onSortBy('magRealTimePerCase')"
-          [ngClass]="{ selected: sortBy.type === 'magRealTimePerCase' }">
-          <div class="flex-1"></div>
-          <p>
-            Temps moyen {{ categorySelected === 'magistrats' ? 'siège' : 'greffe' }}
-            <br />
-            / dossier observé
-          </p>
-          <i [ngClass]="{
-                    'ri-sort-asc': sortBy.up === true,
-                    'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'magRealTimePerCase'),
-                  }"></i>
-          <aj-tooltips title="Temps moyen par dossier observé" class="large left"
-            content="Temps moyen consacré au traitement d’un dossier par les ETPT affectés au contentieux sur les 12 mois précédents."
-            footer="Mode de calcul :<br/><b>NOMBRE_HEURES_TRAVAILLEES_PAR_MOIS_PAR_ETPT x ETPT MAG. /SORTIES</b>"></aj-tooltips>
-        </div>
       </div>
     </div>
     <div class="content-list">
