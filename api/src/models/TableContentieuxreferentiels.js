@@ -18,8 +18,9 @@ export default (sequelizeInstance, Model) => {
    */
   Model.getReferentiels = async (backupId = null, isJirs = false, filterReferentielsId = null, displayAll = false, extractorMode = false, userId = null) => {
     let refIds = null
+    let userPreview = null
     if (userId) {
-      const userPreview = await Model.models.Users.userPreview(userId)
+      userPreview = await Model.models.Users.userPreview(userId)
       refIds = userPreview.referentielIds
     }
 
@@ -111,6 +112,10 @@ export default (sequelizeInstance, Model) => {
         }
       }
     })
+
+    if (userPreview && userPreview.referentielIds && userPreview.referentielIds.length) {
+      list = list.filter((r) => userPreview.referentielIds.indexOf(r.id) !== -1)
+    }
 
     // force to order list
     list = orderBy(
