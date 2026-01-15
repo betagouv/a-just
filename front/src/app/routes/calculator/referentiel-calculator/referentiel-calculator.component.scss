@@ -87,29 +87,50 @@
 
       &.stock {
         border-left: solid 1px #f6f6f6 !important;
+
+        .ref-nr {
+          border: none !important;
+          justify-content: center !important;
+          padding: 0;
+        }
+
+        >div {
+          gap: 12px;
+          flex-direction: row;
+          align-items: center;
+          justify-content: flex-start;
+        }
       }
 
       &.coverage {
         min-width: 85px;
+
+        .ref-nr {
+          border: none !important;
+          justify-content: center !important;
+          padding: 0;
+        }
       }
 
       &.dtes {
         border-left: solid 1px #f6f6f6 !important;
-
         min-width: 85px;
 
         div {
           .ref-nr {
-            justify-content: flex-end !important;
+            border: none !important;
+            justify-content: center !important;
             padding: 0;
           }
         }
 
         >div {
-          justify-content: flex-end !important;
+          justify-content: flex-start !important;
+          align-items: center;
+          gap: 12px;
 
           p {
-            padding: 0 24px;
+            padding: 0;
           }
         }
       }
@@ -285,4 +306,9 @@ p {
 
 aj-speedometer {
   width: 70px;
+}
+
+.cockpit-down,
+.cockpit-up {
+  transform: rotate(180deg);
 }
