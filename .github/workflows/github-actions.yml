@@ -132,20 +132,28 @@ jobs:
         if: always()
         run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
 
+      - name: Ensure E2E artifact directories exist
+        if: always()
+        run: |
+          mkdir -p ./end-to-end/cypress/screenshots
+          mkdir -p ./end-to-end/cypress/videos
+          mkdir -p ./end-to-end/cypress/reports
+          mkdir -p ./end-to-end/cypress/downloads
+
       - name: Debug - List E2E generated files
         if: always()
         run: |
           echo "=== END-TO-END TESTS DEBUG ==="
           echo "Listing end-to-end directory structure:"
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" 2>/dev/null | head -20
           echo "Reports directory content:"
-          ls -la ./end-to-end/cypress/reports/ || echo "Reports directory not found"
+          ls -la ./end-to-end/cypress/reports/ 2>/dev/null || echo "Reports directory not found"
           echo "Fallback mochawesome-report directory content:"
-          ls -la ./end-to-end/cypress/mochawesome-report/ || echo "Fallback mochawesome-report directory not found"
+          ls -la ./end-to-end/cypress/mochawesome-report/ 2>/dev/null || echo "Fallback mochawesome-report directory not found"
           echo "Videos directory content:"
-          ls -la ./end-to-end/cypress/videos/ || echo "Videos directory not found"
+          ls -la ./end-to-end/cypress/videos/ 2>/dev/null || echo "Videos directory not found"
           echo "Screenshots directory content:"
-          ls -la ./end-to-end/cypress/screenshots/ || echo "Screenshots directory not found"
+          ls -la ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
 
       - name: Collect Cypress JSON reports (normalize)
         if: always()
@@ -256,13 +264,20 @@ jobs:
         if: always()
         run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
 
+      - name: Ensure E2E artifact directories exist (nonreg)
+        if: always()
+        run: |
+          mkdir -p ./end-to-end/cypress/screenshots
+          mkdir -p ./end-to-end/cypress/videos
+          mkdir -p ./end-to-end/cypress/reports
+
       - name: Debug - List E2E generated files (nonreg)
         if: always()
         run: |
           echo "=== END-TO-END NONREG DEBUG ==="
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" | head -20
-          ls -la ./end-to-end/cypress/reports/ || true
-          ls -la ./end-to-end/cypress/mochawesome-report/ || true
+          find ./end-to-end -type f -name "*.json" -o -name "*.html" 2>/dev/null | head -20
+          ls -la ./end-to-end/cypress/reports/ 2>/dev/null || true
+          ls -la ./end-to-end/cypress/mochawesome-report/ 2>/dev/null || true
 
       - name: Collect Cypress JSON reports (normalize, nonreg)
         if: always()
