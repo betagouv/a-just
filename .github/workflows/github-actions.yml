@@ -79,7 +79,6 @@ jobs:
           fi
         # continue-on-error: true
 
-      ##
       - name: Debug - List API generated files
         if: always()
         run: |
@@ -128,6 +127,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      ### Ensure E2E artifact directories exist by creating them
       - name: Ensure E2E artifact directories exist
         if: always()
         run: |
@@ -136,18 +136,10 @@ jobs:
           mkdir -p ./end-to-end/cypress/reports
           mkdir -p ./end-to-end/cypress/downloads
 
+      ### Execute E2E test
       - name: Run E2E tests
         run: |
           npm run test:e2e
-          #  Verify test-contexts.json was created and synced
-          if [ -f cypress/reports/test-contexts.json ]; then
-            echo "=== test-contexts.json found and synced ==="
-            echo "File size: $(wc -c < cypress/reports/test-contexts.json) bytes"
-            echo "Number of contexts: $(grep -o "\"[^\"]*\":" cypress/reports/test-contexts.json | wc -l)"
-          else
-            echo "=== WARNING: test-contexts.json NOT FOUND ==="
-          fi
-
         # continue-on-error: true
 
       - name: Fix permissions for end-to-end artifacts
@@ -157,15 +149,30 @@ jobs:
       - name: Debug - List E2E generated files
         if: always()
         run: |
-          echo "=== END-TO-END TESTS DEBUG ==="
-          echo "Listing end-to-end directory structure:"
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" 2>/dev/null | head -20
-          echo "Reports directory content:"
-          ls -la ./end-to-end/cypress/reports/ 2>/dev/null || echo "Reports directory not found"
+          # echo "=== END-TO-END TESTS DEBUG ==="
+          # echo "Listing end-to-end directory structure:"
+          # find ./end-to-end -type f -name "*.json" -o -name "*.html" 2>/dev/null | head -20
+
+          echo "Files in end-to-end/:"
+          find ./end-to-end/ -type f -exec ls -la {} \; 2>/dev/null || echo "ERROR: No e2E test directory found"
+
+          echo ""
+
+          echo "E2E test reports:"
+          ls -la ./end-to-end/cypress/reports 2>/dev/null || echo "Reports directory not found"
+
+          echo ""
+
           echo "Fallback mochawesome-report directory content:"
-          ls -la ./end-to-end/cypress/mochawesome-report/ 2>/dev/null || echo "Fallback mochawesome-report directory not found"
+          ls -la ./end-to-end/cypress/mochawesome-report 2>/dev/null || echo "Fallback mochawesome-report directory not found"
+
+          echo ""
+
           echo "Videos directory content:"
           ls -la ./end-to-end/cypress/videos/ 2>/dev/null || echo "Videos directory not found"
+
+          echo "" 
+
           echo "Screenshots directory content:"
           ls -la ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
 
@@ -178,7 +185,7 @@ jobs:
           find ./end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
           find ./end-to-end/cypress/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
           echo "Final JSONs to upload:"
-          ls -la ./end-to-end/cypress/reports/.jsons || true
+          ls -la ./end-to-end/cypress/reports/.jsons 2>/dev/null || true
 
       - name: Upload Cypress video
         if: always()
