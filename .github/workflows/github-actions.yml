@@ -89,11 +89,15 @@ jobs:
           echo "Files in api/test/:"
           find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "ERROR: No API test directory found"
 
+          echo ""
+
           echo "API test reports:"
           ls -la ./api/test/reports || echo "ERROR: API test report directory not found"
 
+          echo ""
+
           echo "Mochawesome specific files:"
-          find ./api/ -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
+          find ./api/ -name "*.json" -o -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
 
       - name: Upload Mocha test reports (.json and .html)
         if: always()
@@ -103,6 +107,9 @@ jobs:
           path: ./api/test/reports
           if-no-files-found: warn
 
+  ###########################
+  ######## E2E TESTS #######
+  ###########################
   e2e-tests:
     if: ${{ github.event.inputs.skip_e2e != 'true' }}
     runs-on: ubuntu-latest
@@ -212,7 +219,10 @@ jobs:
             ./end-to-end/cypress/downloads/*.xls
           if-no-files-found: warn
 
-  # Non-regression calculation end-to-end tests (requires SANDBOX stack)
+  ##########################################################################
+  ## Non-regression calculation end-to-end tests (requires SANDBOX stack) ##
+  ##########################################################################
+
   e2e-nonreg-vs-sandbox-tests:
     if: ${{ github.event.inputs.skip_e2e != 'true' }}
     runs-on: ubuntu-latest
@@ -324,6 +334,9 @@ jobs:
           include-hidden-files: true
           if-no-files-found: warn
 
+  ###########################
+  ####### DEPLOY ###########
+  ###########################
   deploy:
     needs: [api-tests, e2e-tests, e2e-nonreg-vs-sandbox-tests]
     runs-on: ubuntu-latest
