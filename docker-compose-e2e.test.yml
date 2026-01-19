@@ -214,6 +214,28 @@ services:
       timeout: 10s
       retries: 5
 
+  # Dedicated Redis for PR stack
+  redis:
+    image: redis:7
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.40
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+
+  # Dedicated Redis for Sandbox stack
+  redis_sandbox:
+    image: redis:7
+    networks:
+      ajust_e2e_network:
+        ipv4_address: 175.0.0.41
+    ports:
+      - "6380:6379"
+    expose:
+      - "6379"
+
   # cypress:
   #   image: cypress/browsers:node-22.12.0-chrome-131.0.6778.108-1-ff-133.0-edge-131.0.2903.70-1
   #   networks:
@@ -269,28 +291,6 @@ services:
       - NG_APP_SERVER_URL=http://175.0.0.20:8081/api
       # - CYPRESS_SANDBOX_FRONT_URL=${SANDBOX_FRONT_URL:-http://175.0.0.31:4200}
       # - CYPRESS_CANDIDATE_FRONT_URL=${CANDIDATE_FRONT_URL:-http://175.0.0.30:4200}
-
-  # Dedicated Redis for PR stack
-  redis:
-    image: redis:7
-    networks:
-      ajust_e2e_network:
-        ipv4_address: 175.0.0.40
-    ports:
-      - "6379:6379"
-    expose:
-      - "6379"
-
-  # Dedicated Redis for Sandbox stack
-  redis_sandbox:
-    image: redis:7
-    networks:
-      ajust_e2e_network:
-        ipv4_address: 175.0.0.41
-    ports:
-      - "6380:6379"
-    expose:
-      - "6379"
 
 networks:
   ajust_e2e_network:
