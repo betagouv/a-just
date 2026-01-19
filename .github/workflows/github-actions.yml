@@ -28,24 +28,27 @@ on:
         description: "E2E spec globs (comma-separated), e.g. cypress/e2e/login.cy.js,cypress/e2e/activite-suite.cy.ts"
         required: false
         type: string
-      # Permet de filtrer les tests API lors de tests manuels
+      # Permet de filtrer les tests API lors de tests exécutés manuellement
       api_grep:
         description: "Mocha --grep filter for API tests (optional)"
         required: false
         type: string
-      # Permet de sauter les tests E2E lors de tests manuels
+      # Permet de sauter les tests E2E lors de tests exécutés manuellement
       skip_e2e:
         description: "Skip E2E tests (run only API tests)"
         required: false
         type: boolean
         default: false
 
-# Empêche  Prevent concurrent deployments to avoid race conditions
+# Allow concurrent deployments to github-pages
 concurrency:
   group: github-pages-deploy
   cancel-in-progress: false
 
 jobs:
+  ###########################
+  ####### API TESTS ########
+  ###########################
   api-tests:
     runs-on: ubuntu-latest
     steps:
@@ -63,6 +66,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      ### Execute API test with optional --grep
       - name: Run API tests (Mocha + Mochawesome)
         run: |
           set -e
@@ -75,19 +79,23 @@ jobs:
           fi
         # continue-on-error: true
 
+      ##
       - name: Debug - List API generated files
         if: always()
         run: |
-          echo "API test directory structure:"
-          find ./api -type f -name "*.json" -o -name "*.html" | head -20
-          echo "API test reports:"
-          ls -la ./api/test/ || echo "API test directory not found"
-          echo "Files in api/test/:"
-          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "No API test reports found"
-          echo "Mochawesome specific files:"
-          find ./api -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
+          # echo "API test directory structure:"
+          # find ./api -type f -name "*.json" -o -name "*.html"
 
-      - name: Upload Mocha test report
+          echo "Files in api/test/:"
+          find ./api/test/ -type f -exec ls -la {} \; 2>/dev/null || echo "ERROR: No API test directory found"
+
+          echo "API test reports:"
+          ls -la ./api/test/reports || echo "ERROR: API test report directory not found"
+
+          echo "Mochawesome specific files:"
+          find ./api/ -name "*.html" -o -name "mochawesome*" 2>/dev/null || echo "No mochawesome files found"
+
+      - name: Upload Mocha test reports (.json and .html)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -113,10 +121,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Ensure E2E artifact directories exist
+        if: always()
+        run: |
+          mkdir -p ./end-to-end/cypress/screenshots
+          mkdir -p ./end-to-end/cypress/videos
+          mkdir -p ./end-to-end/cypress/reports
+          mkdir -p ./end-to-end/cypress/downloads
+
       - name: Run E2E tests
         run: |
           npm run test:e2e
-
           #  Verify test-contexts.json was created and synced
           if [ -f cypress/reports/test-contexts.json ]; then
             echo "=== test-contexts.json found and synced ==="
@@ -131,14 +146,6 @@ jobs:
       - name: Fix permissions for end-to-end artifacts
         if: always()
         run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
-
-      - name: Ensure E2E artifact directories exist
-        if: always()
-        run: |
-          mkdir -p ./end-to-end/cypress/screenshots
-          mkdir -p ./end-to-end/cypress/videos
-          mkdir -p ./end-to-end/cypress/reports
-          mkdir -p ./end-to-end/cypress/downloads
 
       - name: Debug - List E2E generated files
         if: always()
@@ -230,6 +237,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Ensure E2E artifact directories exist (nonreg)
+        if: always()
+        run: |
+          mkdir -p ./end-to-end/cypress/screenshots
+          mkdir -p ./end-to-end/cypress/videos
+          mkdir -p ./end-to-end/cypress/reports
+
       - name: Run Non-Regression E2E tests (Cypress JSON-only, containerized)
         run: |
           set -e
@@ -263,13 +277,6 @@ jobs:
       - name: Fix permissions for end-to-end artifacts
         if: always()
         run: sudo chown -R "$(id -u)":"$(id -g)" ./end-to-end || true
-
-      - name: Ensure E2E artifact directories exist (nonreg)
-        if: always()
-        run: |
-          mkdir -p ./end-to-end/cypress/screenshots
-          mkdir -p ./end-to-end/cypress/videos
-          mkdir -p ./end-to-end/cypress/reports
 
       - name: Debug - List E2E generated files (nonreg)
         if: always()
