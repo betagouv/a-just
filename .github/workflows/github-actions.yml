@@ -113,7 +113,7 @@ jobs:
         run: |
           set -e
           SPEC_INPUT="${{ github.event.inputs.spec }}"
-          export SPEC="$SPEC_INPUT"
+          export SPEC="${SPEC_INPUT:-}"
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d --build db front api redis
           
           echo "=== Waiting for API to initialize (30s to allow seeders to complete) ==="
@@ -138,6 +138,19 @@ jobs:
               npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
               rm -rf cypress/reports && mkdir -p cypress/reports
               npx cypress run --browser chrome --headless --spec "${SPEC:-cypress/e2e/**/*.cy.js}" || true
+              
+              # Explicitly sync all files to disk before container exits
+              sync
+              
+              # Verify test-contexts.json was created and synced
+              if [ -f cypress/reports/test-contexts.json ]; then
+                echo "=== test-contexts.json found and synced ==="
+                echo "File size: $(wc -c < cypress/reports/test-contexts.json) bytes"
+                echo "Number of contexts: $(grep -o "\"[^\"]*\":" cypress/reports/test-contexts.json | wc -l)"
+              else
+                echo "=== WARNING: test-contexts.json NOT FOUND ==="
+              fi
+              
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             ' || true
           
@@ -429,14 +442,60 @@ jobs:
           set -e
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/cypress
-          cp -r cypress-reports/cypress/reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/cypress/reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
-          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/cypress/reports/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/.jsons site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/*.json site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ 2>/dev/null || true
+          
+          # Copy E2E reports (excluding test-contexts.json for now)
+          find cypress-reports -type f -name "*.json" ! -name "test-contexts.json" -exec cp {} site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ \; 2>/dev/null || echo "No E2E reports to copy"
+          
+          # Copy non-reg reports (excluding test-contexts.json for now)
+          find cypress-reports-nonreg -type f -name "*.json" ! -name "test-contexts.json" -exec cp {} site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ \; 2>/dev/null || true
+          
+          # Merge test-contexts.json files from both E2E and non-reg
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            let merged = {};
+            
+            // Read E2E contexts
+            const e2ePaths = [
+              'cypress-reports/test-contexts.json',
+              'cypress-reports/cypress/reports/test-contexts.json',
+              'cypress-reports/.jsons/test-contexts.json'
+            ];
+            for (const p of e2ePaths) {
+              if (fs.existsSync(p)) {
+                try {
+                  const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+                  Object.assign(merged, data);
+                  console.log(\`Merged \${Object.keys(data).length} contexts from \${p}\`);
+                } catch (e) {
+                  console.warn(\`Failed to read \${p}:\`, e.message);
+                }
+              }
+            }
+            
+            // Read non-reg contexts
+            const nonregPaths = [
+              'cypress-reports-nonreg/test-contexts.json',
+              'cypress-reports-nonreg/cypress/reports/test-contexts.json',
+              'cypress-reports-nonreg/.jsons/test-contexts.json'
+            ];
+            for (const p of nonregPaths) {
+              if (fs.existsSync(p)) {
+                try {
+                  const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+                  Object.assign(merged, data);
+                  console.log(\`Merged \${Object.keys(data).length} contexts from \${p}\`);
+                } catch (e) {
+                  console.warn(\`Failed to read \${p}:\`, e.message);
+                }
+              }
+            }
+            
+            // Write merged contexts
+            const outPath = 'site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/test-contexts.json';
+            fs.writeFileSync(outPath, JSON.stringify(merged, null, 2));
+            console.log(\`Wrote \${Object.keys(merged).length} total contexts to \${outPath}\`);
+          " || echo "Failed to merge test-contexts.json"
           mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/videos
           cp -r cypress-videos/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
           cp -r cypress-videos-nonreg/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || true
@@ -460,15 +519,15 @@ jobs:
             mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
             mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/combined
             JSONS="$(
-              { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find mocha-report -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
               npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json || true
@@ -546,9 +605,14 @@ jobs:
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
           RUN_NUM: ${{ github.run_number }}
+          DEPLOYMENT_PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         with:
           script: |
-            const pageUrl = process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
+            let pageUrl = process.env.DEPLOYMENT_PAGE_URL || 'https://betagouv.github.io/a-just/';
+            // Ensure trailing slash for proper path construction
+            if (!pageUrl.endsWith('/')) {
+              pageUrl += '/';
+            }
             const pr = process.env.PR_NUM;
             const runNum = process.env.RUN_NUM;
             const url = `${pageUrl}pr-${pr}/run-${runNum}/combined/a-just-tests-report.html`;

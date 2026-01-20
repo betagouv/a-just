@@ -425,15 +425,15 @@ jobs:
             mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
             mkdir -p site/nightly/${REPORT_DATE}/combined
             JSONS="$(
-              { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find mocha-report -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
               npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/nightly/${REPORT_DATE}/combined/merged.json || true
