@@ -511,6 +511,59 @@ export default defineConfig({
         }
       }
       on("task", Object.assign({}, verifyDownloadTasks as any, {
+        readContextFile(filePath: string) {
+          try {
+            const fullPath = path.join(process.cwd(), filePath);
+            if (fs.existsSync(fullPath)) {
+              const content = fs.readFileSync(fullPath, 'utf8');
+              const contexts = JSON.parse(content);
+              console.log(`[CONTEXT] Read ${Object.keys(contexts).length} context(s) from ${fullPath}`);
+              console.log(`[CONTEXT] Available keys:`, Object.keys(contexts));
+              return contexts;
+            }
+            console.log(`[CONTEXT] File not found: ${fullPath}, returning empty object`);
+            return {};
+          } catch (e) {
+            console.warn('[CONTEXT] Failed to read context file:', e);
+            return {};
+          }
+        },
+        writeContextFile({ filePath, testTitle, context }: { filePath: string; testTitle: string; context: any }) {
+          try {
+            const fullPath = path.join(config.projectRoot, filePath);
+            const dir = path.dirname(fullPath);
+            fs.mkdirSync(dir, { recursive: true });
+            
+            // Read existing contexts
+            let contexts = {};
+            if (fs.existsSync(fullPath)) {
+              try {
+                const content = fs.readFileSync(fullPath, 'utf8');
+                contexts = JSON.parse(content);
+              } catch (e) {
+                console.warn('Failed to read existing contexts, starting fresh:', e);
+              }
+            }
+            
+            // Add new context
+            contexts[testTitle] = context;
+            
+            // Log what we're writing
+            console.log(`[CONTEXT] Writing context for test: "${testTitle}"`);
+            console.log(`[CONTEXT] Context data:`, JSON.stringify(context, null, 2));
+            
+            // Write back with explicit fsync to ensure it's flushed to disk
+            const fd = fs.openSync(fullPath, 'w');
+            fs.writeSync(fd, JSON.stringify(contexts, null, 2), 0, 'utf8');
+            fs.fsyncSync(fd);  // Force sync to disk before container exits
+            fs.closeSync(fd);
+            console.log(`[CONTEXT] Successfully wrote and synced to ${fullPath}`);
+            return null;
+          } catch (e) {
+            console.error('[CONTEXT] Failed to write context file:', e);
+            return null;
+          }
+        },
         saveLabels({ host, labels }: { host: string; labels: string[] }) {
           try {
             const debugDir = path.join(process.cwd(), "cypress", "debug");

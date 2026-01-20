@@ -4,6 +4,7 @@ import {
   allSimulatorGuard,
   authGuard,
   cockpitGuard,
+  completeReferentielGuard,
   dashboardGuard,
   reaffectatorGuard,
   tempsMoyensGuard,
@@ -64,7 +65,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardPage,
-    canActivate: [authGuard],
+    canActivate: [completeReferentielGuard],
   },
   {
     path: 'ventilations',
