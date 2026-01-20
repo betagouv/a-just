@@ -255,6 +255,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Free up disk space before tests
+        run: |
+          echo "=== Disk space before cleanup ==="
+          df -h
+          echo "=== Removing unnecessary files ==="
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          sudo apt-get clean
+          docker system prune -af --volumes
+          echo "=== Disk space after cleanup ==="
+          df -h
+
       - name: Run Non-Regression E2E tests (Cypress JSON-only, containerized)
         run: |
           set -e
