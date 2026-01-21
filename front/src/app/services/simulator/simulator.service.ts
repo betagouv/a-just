@@ -258,7 +258,7 @@ export class SimulatorService extends MainClass {
    * @param toCompute specified if the value returned is used afterwards to compute something, then let the value in decimal without unit
    * @returns label value as string or float
    */
-  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false): any {
+  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false, decimal = false): any {
     switch (param) {
       case 'etpMag':
         if (data?.etpMag === null) {
@@ -275,6 +275,9 @@ export class SimulatorService extends MainClass {
           return 'N/R'
         }
         if (data?.totalOut && data?.totalOut >= 0) {
+          if(decimal) {
+            return toCompute ? data?.totalOut : fixDecimal(data?.totalOut)
+          }
           return toCompute ? data?.totalOut : Math.round(data?.totalOut)
         } else return '0'
       }
@@ -283,6 +286,9 @@ export class SimulatorService extends MainClass {
           return 'N/R'
         }
         if (data?.totalIn && data?.totalIn >= 0) {
+          if(decimal) {
+            return toCompute ? data?.totalOut : fixDecimal(data?.totalIn)
+          }
           return toCompute ? data?.totalIn : Math.round(data?.totalIn)
         } else return '0'
       }
@@ -292,6 +298,9 @@ export class SimulatorService extends MainClass {
         }
         if (data?.lastStock) {
           //&& data?.lastStock >= 0) {
+          if(decimal) {
+            return toCompute ? data?.totalOut : fixDecimal(data?.lastStock)
+          }
           return toCompute ? data?.lastStock : Math.round(data?.lastStock)
         } else return '0'
       }
