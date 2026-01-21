@@ -961,8 +961,8 @@
             [matTooltipClass]="{ 'tooltip-gray': true }" [@fadeInOut]>
             {{
             ratioStr(
-            getFieldValue('totalIn', simulatedSationData),
-            getFieldValue('totalIn', firstSituationData)
+            getFieldValue('totalIn', simulatedSationData,false,false,true),
+            getFieldValue('totalIn', firstSituationData,false,false,true)
             )
             }}
             <div class="triangle simulated blue"></div>
@@ -991,8 +991,8 @@
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
             ratioStr(
-            getFieldValue('totalOut', simulatedSationData),
-            getFieldValue('totalOut', firstSituationData)
+            getFieldValue('totalOut', simulatedSationData,false,false,true),
+            getFieldValue('totalOut', firstSituationData,false,false,true)
             )
             }}
             <div class="triangle simulated blue"></div>
@@ -1021,8 +1021,8 @@
             matTooltipHideDelay="0" [@fadeInOut]>
             {{
             ratioStr(
-            getFieldValue('lastStock', simulatedSationData),
-            getFieldValue('lastStock', firstSituationData)
+            getFieldValue('lastStock', simulatedSationData,false,false,true),
+            getFieldValue('lastStock', firstSituationData,false,false,true)
             )
             }}
             <div class="triangle simulated blue"></div>

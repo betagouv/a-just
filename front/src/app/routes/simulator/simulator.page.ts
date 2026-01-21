@@ -966,9 +966,9 @@ export class SimulatorPage extends MainClass implements OnInit, OnDestroy {
    * @param toCompute valeur calculé ou non
    * @returns valeur à afficher
    */
-  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false): string {
+  getFieldValue(param: string, data: SimulatorInterface | SimulationInterface | null, initialValue = false, toCompute = false, decimal = false): string {
     if ((this.simulatorService.situationActuelle.getValue() !== null && this.subList.length) || !this.getElementById(this.contentieuId)?.childrens?.length) {
-      return this.simulatorService.getFieldValue(param, data, initialValue, toCompute)
+      return this.simulatorService.getFieldValue(param, data, initialValue, toCompute, decimal)
     }
     return ''
   }
