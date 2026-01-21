@@ -1,5 +1,5 @@
 import { default as server } from '../src/index'
-import { accessList } from '../src/constants/access'
+import { accessList, accessToString } from '../src/constants/access'
 import routeUser from './api/RouteUser.test.js'
 import routeChangeUserData from './api/RouteChangeUserData.test.js'
 import routeCalcultator from './api/RouteCalculator.test.js'
@@ -10,6 +10,8 @@ import routeActivities from './api/RouteActivities.test.js'
 import { USER_ADMIN_EMAIL, USER_ADMIN_PASSWORD } from './constants/user'
 import { assert } from 'chai'
 import axios from 'axios'
+import fs from 'fs'
+import path from 'path'
 
 console.warn = () => { }
 console.error = () => { }
@@ -23,83 +25,176 @@ import config from 'config'
 import { onLoginAdminApi, onUpdateAccountApi, onGetUserDataApi } from './routes/user'
 
 const datas = {
+  adminId: null,
   adminToken: null,
-  adminAccess: null,
   userId: null,
   userToken: null,
 }
 
-describe('Test server is ready', () => {
-  before((done) => {
-    console.log('BEFORE WAITING SERVER')
-    server.isReady = function () {
-      console.log('config', config)
+/**
+ * Build A-JUST context object for test reporting
+ * @returns {object} Context with user, backup, and rights info
+ */
+function buildAJustContext() {
+  const ctx = {
+    user: {
+      id: datas.adminId || null,
+      email: USER_ADMIN_EMAIL || null,
+      role: 'ADMIN',
+    },
+    backup: {
+      id: datas.adminBackupId || null,
+      label: datas.adminBackups && datas.adminBackups.length > 0 
+        ? datas.adminBackups.find(b => b.id === datas.adminBackupId)?.label || null
+        : null,
+    },
+    rights: {
+      tools: [],
+      referentiels: datas.adminReferentielIds || 'all',
+    },
+  }
 
-      done()
+  // Build tools list from adminAccess
+  if (Array.isArray(datas.adminAccess)) {
+    const toolMap = new Map()
+    for (const acc of datas.adminAccess) {
+      const id = acc.id || acc
+      const label = accessToString(id)
+      if (!label) continue
+      
+      // Parse tool name and read/write from label (e.g. "Panorama - lecture")
+      const parts = label.split(' - ')
+      const toolName = parts[0] || label
+      const mode = parts[1] || ''
+      
+      if (!toolMap.has(toolName)) {
+        toolMap.set(toolName, { name: toolName, canRead: false, canWrite: false })
+      }
+      const tool = toolMap.get(toolName)
+      if (/lecture/i.test(mode)) tool.canRead = true
+      if (/écriture|write/i.test(mode)) tool.canWrite = true
     }
-  })
+    ctx.rights.tools = Array.from(toolMap.values())
+  }
 
-  after(async function () {
-    // remove created user if exists
-    if (datas.userId && datas.adminToken) {
-      await axios.delete(`${config.serverUrl}/users/remove-account-test/${datas.userId}`, {
-        headers: {
-          authorization: datas.adminToken,
-        },
-      })
-    }
-    server.done()
-  })
+  return ctx
+}
 
-  /**
-   * Connect Admin
-   */
-  it('Login - Login admin', async () => {
-    const email = USER_ADMIN_EMAIL
-    const password = USER_ADMIN_PASSWORD
-    // Connexion de l'admin
-    const response = await onLoginAdminApi({
-      email: email,
-      password: password,
-    })
-    // Récupération du token associé et de l'id, pour identifier l'utilisateur
-    if (response.status === 201) {
-      datas.adminToken = response.data.token
-      datas.adminId = response.data.user.id
-    }
+// Context storage for separate JSON file approach
+const testContexts = {}
+const contextFilePath = path.join(__dirname, 'reports', 'test-contexts.json')
 
-    assert.strictEqual(response.status, 201)
-  })
-
-  // On donne tous les accès à l'administrateur
-  it('Give all accesses to Admin', async () => {
-    const accessIds = accessList.map((elem) => {
-      return elem.id
-    })
-    await onUpdateAccountApi({
-      userToken: datas.adminToken,
-      userId: datas.adminId,
-      accessIds: accessIds,
-      ventilations: [],
-    })
-    const response = await onGetUserDataApi({ userToken: datas.adminToken })
-    datas.adminAccess = response.data.user.access
-    assert.strictEqual(response.status, 200)
-    assert.isNotEmpty(datas.adminAccess)
-  })
-
-  routeUser(datas)
-  routeChangeUserData(datas)
-  routeCalcultator(datas)
+before((done) => {
+  console.log('BEFORE WAITING SERVER')
   
-  //routeSimulator(datas)
+  // Ensure reports directory exists
+  const reportsDir = path.join(__dirname, 'reports')
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir, { recursive: true })
+  }
   
-  routeVentilateur(datas)
-  routePanorama(datas)
-  routeActivities(datas)
+  // Initialize empty context file
+  fs.writeFileSync(contextFilePath, JSON.stringify({}, null, 2))
+  
+  server.isReady = function () {
+    console.log('config', config)
 
-  /*routeImport()
-  routeHR()
-  routeActivities()
-  RouteContentieuxOptions()*/
+    done()
+  }
 })
+
+beforeEach(function () {
+  // Write A-JUST context to separate JSON file for report generation
+  if (datas.adminId && datas.adminToken) {
+    const ctx = buildAJustContext()
+    const testFullTitle = this.currentTest.fullTitle()
+    // Normalize to lowercase for case-insensitive lookup
+    const normalizedKey = testFullTitle.toLowerCase()
+    
+    // Store in memory
+    testContexts[normalizedKey] = ctx
+    
+    // Write to file (append mode - read, update, write)
+    try {
+      const existing = fs.existsSync(contextFilePath) 
+        ? JSON.parse(fs.readFileSync(contextFilePath, 'utf8'))
+        : {}
+      existing[normalizedKey] = ctx
+      fs.writeFileSync(contextFilePath, JSON.stringify(existing, null, 2))
+    } catch (err) {
+      console.warn('Failed to write test context:', err.message)
+    }
+  }
+})
+
+after(async function () {
+  // remove created user if exists
+  if (datas.userId && datas.adminToken) {
+    await axios.delete(`${config.serverUrl}/users/remove-account-test/${datas.userId}`, {
+      headers: {
+        authorization: datas.adminToken,
+      },
+    })
+  }
+  server.done()
+})
+
+/**
+ * Connect Admin
+ */
+it('Login - Login admin', async () => {
+  const email = USER_ADMIN_EMAIL
+  const password = USER_ADMIN_PASSWORD
+  // Connexion de l'admin
+  const response = await onLoginAdminApi({
+    email: email,
+    password: password,
+  })
+  // Récupération du token associé et de l'id, pour identifier l'utilisateur
+  if (response.status === 201) {
+    datas.adminToken = response.data.token
+    datas.adminId = response.data.user.id
+  }
+
+  assert.strictEqual(response.status, 201)
+})
+
+// On donne tous les accès à l'administrateur
+it('Give all accesses to Admin', async () => {
+  // Extract all access IDs from the nested structure
+  const accessIds = accessList.flatMap((elem) => {
+    return elem.access.map(a => a.id)
+  })
+  // Add category access (Magistrat, Greffier, Contractuel)
+  accessIds.push(8, 9, 10)
+  
+  await onUpdateAccountApi({
+    userToken: datas.adminToken,
+    userId: datas.adminId,
+    accessIds: accessIds,
+    ventilations: [],
+    referentielIds: null, // null = access to all referentiels
+  })
+  const response = await onGetUserDataApi({ userToken: datas.adminToken })
+  datas.adminAccess = response.data.user.access
+  datas.adminBackups = response.data.data.backups || []
+  datas.adminBackupId = datas.adminBackups.length > 0 ? datas.adminBackups[0].id : null
+  datas.adminReferentielIds = response.data.user.referentiel_ids
+  assert.strictEqual(response.status, 200)
+  assert.isNotEmpty(datas.adminAccess)
+})
+
+routeUser(datas)
+routeChangeUserData(datas)
+routeCalcultator(datas)
+
+//routeSimulator(datas)
+
+routeVentilateur(datas)
+routePanorama(datas)
+routeActivities(datas)
+
+/*routeImport()
+routeHR()
+routeActivities()
+RouteContentieuxOptions()*/

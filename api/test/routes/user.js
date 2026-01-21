@@ -148,7 +148,7 @@ export const onRemoveAccountApi = async ({ userId, userToken }) => {
     })
 }
 
-export const onUpdateAccountApi = async ({ userToken, userId, accessIds, ventilations }) => {
+export const onUpdateAccountApi = async ({ userToken, userId, accessIds, ventilations, referentielIds }) => {
   return await instanceAxios
     .post(
       '/users/update-account',
@@ -156,6 +156,7 @@ export const onUpdateAccountApi = async ({ userToken, userId, accessIds, ventila
         userId: userId,
         access: accessIds,
         ventilations: ventilations,
+        referentielIds: referentielIds,
       },
       {
         headers: {

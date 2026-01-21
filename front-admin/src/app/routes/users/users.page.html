@@ -20,8 +20,16 @@
       <td>{{element.tj}}</td>
       <td>{{element.fonction}}</td>
       <td [innerHTML]="element.referentielName"></td>
-      <td [innerHTML]="element.accessName"></td>
-      <td [innerHTML]="element.ventilationsName"></td>
+      <td>
+        <div class="scrollable-wrapper">
+          <div class="scrollable-cell" [innerHTML]="element.accessName"></div>
+        </div>
+      </td>
+      <td>
+        <div class="scrollable-wrapper">
+          <div class="scrollable-cell" [innerHTML]="element.ventilationsName"></div>
+        </div>
+      </td>
       <td>
         @if (!(element && element.role && element.role === USER_ROLE_SUPER_ADMIN && userConnected && userConnected.role
         !== USER_ROLE_SUPER_ADMIN)) {
