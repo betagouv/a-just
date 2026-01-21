@@ -38,6 +38,155 @@ function esc(s) {
     .replace(/>/g, '&gt;');
 }
 
+/**
+ * Load test contexts from separate JSON files
+ * @param {string} apiContextPath - Path to API test contexts JSON
+ * @param {string} e2eContextPath - Path to E2E test contexts JSON (primary location)
+ * @param {string} e2eContextPathAlt - Alternative path for E2E contexts
+ * @returns {object} Merged contexts keyed by test fullTitle
+ */
+function loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt) {
+  const contexts = {};
+  
+  // Helper to normalize keys to lowercase for case-insensitive lookup
+  const normalizeContextKeys = (rawContexts) => {
+    const normalized = {};
+    for (const [key, value] of Object.entries(rawContexts)) {
+      normalized[key.toLowerCase()] = value;
+    }
+    return normalized;
+  };
+  
+  // Load API contexts
+  if (apiContextPath && fs.existsSync(apiContextPath)) {
+    try {
+      const apiContexts = JSON.parse(fs.readFileSync(apiContextPath, 'utf8'));
+      Object.assign(contexts, normalizeContextKeys(apiContexts));
+      console.log(`Loaded ${Object.keys(apiContexts).length} API test contexts`);
+    } catch (err) {
+      console.warn('Failed to load API contexts:', err.message);
+    }
+  }
+  
+  // Load E2E contexts - try primary location first
+  let e2eLoaded = false;
+  if (e2eContextPath && fs.existsSync(e2eContextPath)) {
+    try {
+      const e2eContexts = JSON.parse(fs.readFileSync(e2eContextPath, 'utf8'));
+      console.log(`DEBUG: Raw E2E context keys from ${e2eContextPath}:`, Object.keys(e2eContexts));
+      Object.assign(contexts, normalizeContextKeys(e2eContexts));
+      console.log(`Loaded ${Object.keys(e2eContexts).length} E2E test contexts from ${e2eContextPath}`);
+      e2eLoaded = true;
+    } catch (err) {
+      console.warn('Failed to load E2E contexts from primary path:', err.message);
+    }
+  }
+  
+  // Try alternative location if primary didn't work
+  if (!e2eLoaded && e2eContextPathAlt && fs.existsSync(e2eContextPathAlt)) {
+    try {
+      const e2eContexts = JSON.parse(fs.readFileSync(e2eContextPathAlt, 'utf8'));
+      Object.assign(contexts, normalizeContextKeys(e2eContexts));
+      console.log(`Loaded ${Object.keys(e2eContexts).length} E2E test contexts from ${e2eContextPathAlt}`);
+    } catch (err) {
+      console.warn('Failed to load E2E contexts from alternative path:', err.message);
+    }
+  }
+  
+  return contexts;
+}
+
+/**
+ * Get context for a test from the loaded contexts map
+ * @param {object} test - Test object with fullTitle
+ * @param {object} contextsMap - Map of test fullTitle to context
+ * @param {array} suitePath - Array of suite titles leading to this test (for Cypress)
+ * @returns {object|null} Context object or null
+ */
+function parseAJustContext(test, contextsMap, suitePath) {
+  if (!test || !contextsMap) return null;
+  
+  // For Mocha/API tests, fullTitle is populated directly
+  // For Cypress tests, we need to construct it from suitePath + test.title
+  let fullTitle = test.fullTitle;
+  if (!fullTitle && suitePath && suitePath.length > 0 && test.title) {
+    fullTitle = [...suitePath, test.title].join(' ');
+  }
+  if (!fullTitle) {
+    fullTitle = test.title || '';
+  }
+  if (!fullTitle) return null;
+  
+  // Normalize to lowercase for case-insensitive lookup
+  const normalizedKey = fullTitle.toLowerCase();
+  const context = contextsMap[normalizedKey];
+  console.log(`DEBUG: Looking up context for "${fullTitle}" (normalized: "${normalizedKey}") - ${context ? 'FOUND' : 'NOT FOUND'}`);
+  if (!context) {
+    console.log(`  Test title: "${test.title}"`);
+    console.log(`  Suite path: ${JSON.stringify(suitePath)}`);
+    console.log(`  test.fullTitle: ${test.fullTitle || 'undefined'}`);
+  }
+  
+  return context || null;
+}
+
+function renderAJustContext(ctx) {
+  if (!ctx || typeof ctx !== 'object') return '';
+  const lines = [];
+  
+  // User
+  if (ctx.user && typeof ctx.user === 'object') {
+    const u = ctx.user;
+    const parts = [];
+    if (u.email) parts.push(esc(u.email));
+    if (u.id) parts.push(`ID: ${esc(String(u.id))}`);
+    if (u.role) parts.push(`Rôle: ${esc(u.role)}`);
+    if (parts.length) lines.push(`<div class="ctx-user"><strong>Utilisateur:</strong> ${parts.join(' • ')}</div>`);
+  }
+  
+  // Backup
+  if (ctx.backup && typeof ctx.backup === 'object') {
+    const b = ctx.backup;
+    const parts = [];
+    if (b.label) parts.push(esc(b.label));
+    if (b.id) parts.push(`ID: ${esc(String(b.id))}`);
+    if (parts.length) lines.push(`<div class="ctx-backup"><strong>Backup:</strong> ${parts.join(' • ')}</div>`);
+  }
+  
+  // Rights
+  if (ctx.rights && typeof ctx.rights === 'object') {
+    const r = ctx.rights;
+    const rightsParts = [];
+    
+    // Tools
+    if (Array.isArray(r.tools) && r.tools.length) {
+      const toolLines = r.tools.map(t => {
+        const modes = [];
+        if (t.canRead) modes.push('lecture');
+        if (t.canWrite) modes.push('écriture');
+        return `${esc(t.name || '')}: ${modes.join(' + ') || 'aucun'}`;
+      });
+      rightsParts.push(`<div class="ctx-tools"><strong>Outils:</strong><ul>${toolLines.map(l => `<li>${l}</li>`).join('')}</ul></div>`);
+    }
+    
+    // Contentieux (referentiels in code)
+    if (r.referentiels) {
+      const refLabel = r.referentiels === 'all' || r.referentiels === null 
+        ? 'tous les contentieux' 
+        : Array.isArray(r.referentiels) 
+          ? r.referentiels.join(', ') 
+          : String(r.referentiels);
+      rightsParts.push(`<div class="ctx-ref"><strong>Contentieux:</strong> ${esc(refLabel)}</div>`);
+    }
+    
+    if (rightsParts.length) {
+      lines.push(`<div class="ctx-rights">${rightsParts.join('')}</div>`);
+    }
+  }
+  
+  return lines.length ? `<div class="ajust-context">${lines.join('')}</div>` : '';
+}
+
 function isCySpecBase(b) {
   return /\.cy\.(js|ts)$/i.test(String(b || ''));
 }
@@ -137,15 +286,27 @@ function suiteIdFromPath(groupId, pathTitles) {
 }
 
 function main() {
-  const [inJson, videosDir, screenshotsDir, outHtml] = process.argv.slice(2);
+  const [inJson, videosDir, screenshotsDir, outHtml, githubRunUrl] = process.argv.slice(2);
   if (!inJson || !videosDir || !screenshotsDir || !outHtml) {
-    console.error('Usage: node scripts/build-static-report.js <sectionedJson> <videosDir> <screenshotsDir> <outHtml>');
+    console.error('Usage: node scripts/build-static-report.js <sectionedJson> <videosDir> <screenshotsDir> <outHtml> [githubRunUrl]');
     process.exit(1);
   }
   const data = readJson(inJson);
   const outDir = path.dirname(path.resolve(outHtml));
   const videosDirAbs = path.resolve(videosDir);
   const screenshotsDirAbs = path.resolve(screenshotsDir);
+  
+  // Load test contexts from separate JSON files
+  // In CI, these are in the artifact directories relative to the output HTML
+  // outHtml is typically site/pr-X/run-Y/combined/a-just-tests-report.html
+  // Context files are copied directly to mocha/ and cypress/ directories
+  const runDir = path.dirname(outDir); // site/pr-X/run-Y
+  const apiContextPath = path.join(runDir, 'mocha', 'test-contexts.json');
+  const e2eContextPath = path.join(runDir, 'cypress', 'test-contexts.json');
+  const e2eContextPathAlt = path.join(runDir, 'cypress', '.jsons', 'test-contexts.json');
+  const testContexts = loadTestContexts(apiContextPath, e2eContextPath, e2eContextPathAlt);
+  console.log(`Loaded ${Object.keys(testContexts).length} total test contexts`);
+  console.log('DEBUG: All context keys:', JSON.stringify(Object.keys(testContexts), null, 2));
 
   // Build indices
   // Videos: map specBase (e.g., activity.cy.js) -> absolute .mp4 path (first match wins)
@@ -255,6 +416,8 @@ function main() {
         fullTitle: t.fullTitle || '',
         state: testStateOf(t),
         err: t.err || {},
+        ajustContext: t.ajustContext || null,
+        context: t.context || null,
       }));
     const tag = depth === 0 ? 'h3' : (depth === 1 ? 'h4' : 'h5');
     const title = s.title || (depth === 0 ? (specBase || '') : '');
@@ -275,10 +438,11 @@ function main() {
       const shotLinks = shots.map((abs, i) => `<a href="${toRelUrl(outDir, abs)}" target="_blank">Screenshot ${i+1}</a>`).join(' ');
       const msg = t.err && (t.err.message || t.err.code) ? (t.err.message || t.err.code) : '';
       const stk = t.err && t.err.stack ? String(t.err.stack) : '';
+      const ctxHtml = isFail ? renderAJustContext(parseAJustContext(t, testContexts, thisPath)) : '';
       return `
         <li class="test ${t.state}">
           <div class="row"><span class="mark ${t.state}">${t.state==='passed'?'✓':t.state==='failed'?'✗':''}</span> <span class="t">${esc(t.title || t.fullTitle)}</span></div>
-          ${isFail ? `<details><summary>Details</summary>${msg?`<pre class="msg">${esc(msg)}</pre>`:''}${stk?`<pre class="stk">${esc(stk)}</pre>`:''}${shotLinks?`<div class="shots">${shotLinks}</div>`:''}</details>`:''}
+          ${isFail ? `<details><summary>Details</summary>${msg?`<pre class="msg">${esc(msg)}</pre>`:''}${stk?`<pre class="stk">${esc(stk)}</pre>`:''}${shotLinks?`<div class="shots">${shotLinks}</div>`:''}${ctxHtml}</details>`:''}
         </li>`;
     }).join('\n');
     const kidsHtml = Array.isArray(s.suites) ? s.suites.map((sub) => renderSuiteRecursive(sub, depth+1, g, specBase, groupId, thisPath)).join('\n') : '';
@@ -412,11 +576,21 @@ function main() {
   .toc .skipped{color:#666}
   .toc .toc-suites{margin-left:10px}
   .toc .toc-subsuites{margin-left:14px}
+  .toc .toc-group{margin-top:16px;padding-top:12px;border-top:1px solid #f0f0f0}
+  .toc .toc-group:first-child{margin-top:0;padding-top:0;border-top:none}
+  .toc .toc-group > a{font-weight:600;font-size:14px;color:#0a3d7a}
  .content{margin-left:328px}
   h2, h3, h4, h5, .suite{scroll-margin-top:72px}
   @media (max-width: 900px){.toc{display:none}.content{margin-left:0}}
   .suite h3 .vid{font-size:13px;margin-left:8px;opacity:0.85;text-decoration:none}
   .suite h3 .vid:hover{text-decoration:underline;opacity:1}
+  .ajust-context{margin-top:12px;padding:10px;background:#f9f9f9;border-left:3px solid #0d47a1;font-size:13px;line-height:1.5}
+  .ajust-context strong{color:#0a3d7a}
+  .ajust-context .ctx-user,.ajust-context .ctx-backup{margin-bottom:6px}
+  .ajust-context .ctx-rights{margin-top:8px}
+  .ajust-context .ctx-tools ul{list-style:none;padding-left:16px;margin:4px 0}
+  .ajust-context .ctx-tools li{margin:2px 0}
+  .ajust-context .ctx-ref{margin-top:6px}
 </style>
 <script>
  function toggleFailedOnly(cb){
@@ -426,7 +600,10 @@ function main() {
  </head>
  <body>
  <header>
-   <h1>Global test report</h1>
+   <div>
+     <h1>Global test report</h1>
+     ${githubRunUrl ? `<div style="font-size:13px;color:#666;margin-top:4px"><a href="${esc(githubRunUrl)}" target="_blank" style="color:#0d47a1;text-decoration:none">🔗 View GitHub Actions run</a></div>` : ''}
+   </div>
   <div class="right">
     <div class="stats"><span class="total">Total: ${totals.total}</span> (${headerCounts})</div>
     <label class="filters"><input type="checkbox" onchange="toggleFailedOnly(this)"> Failed only</label>

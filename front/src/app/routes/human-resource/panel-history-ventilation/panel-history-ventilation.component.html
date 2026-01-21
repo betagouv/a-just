@@ -45,6 +45,10 @@
   </div>
   @if(userService.canEditHR()){<div class="actions-panel">
     @if (canEditSituation) {
+    <button class="primary light small outline no-print class-export-situation" (click)="exportSituation.emit()">
+      <i class="ri-file-excel-2-line"></i>
+      Exporter la situation
+    </button>
     <button (click)="onEditSituation()" class="outline small primary">Corriger cette situation</button>
     }
     @if (canRemoveSituation) {

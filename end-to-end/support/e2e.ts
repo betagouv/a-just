@@ -17,6 +17,7 @@
 import "./commands";
 import addCustomCommand from "cy-verify-downloads";
 import "cypress-mochawesome-reporter/register";
+import { attachAJustContext } from "./ajust-context";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
