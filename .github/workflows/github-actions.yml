@@ -275,6 +275,7 @@ jobs:
 
       - name: Run Non-Regression E2E tests
         run: |
+          chmod +x ./scripts/run-non-regression-tests.sh
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
           ./scripts/run-non-regression-tests.sh
         # continue-on-error: true
