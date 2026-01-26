@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, inject } from '@angular/core'
-import { listFormatedInterface } from '../../workforce/workforce.page'
+import { HumanResourceSelectedInterface, listFormatedInterface } from '../../workforce/workforce.page'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { MainClass } from '../../../libs/main-class'
@@ -62,6 +62,14 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
    */
   @Input() backupId: number | null = null
   /**
+   * Liste formatée des RH (passée par le parent)
+   */
+  @Input() listFormated: listFormatedInterface[] = []
+  /**
+   * Liste de toutes les personnes (passée par le parent)
+   */
+  @Input() allPersons: HumanResourceSelectedInterface[] = []
+  /**
    * Liste filtré pour l'affichage
    */
   listFormatedFiltered: listFormatedWithDatasInterface[] = []
@@ -90,73 +98,79 @@ export class WorkforceCompositionComponent extends MainClass implements OnChange
   ngOnChanges() {
     if (this.backupId) {
       this.getAllCle()
-      this.humanResourceService
-        .onFilterList(this.humanResourceService.backupId.getValue() || 0, today(), null, null, [1, 2, 3])
-        .then(({ list, allPersons }) => {
-          const listReturn: listFormatedInterface[] = list
-          this.listFormatedFiltered = listReturn
-            .filter(
-              (category: any) => this.categoriesFiltered === null || (this.categoriesFiltered && this.categoriesFiltered.indexOf(category.categoryId) !== -1),
-            )
-            .map((category: any) => {
-              const listAgent = category.hr || []
-              let etpt = 0
-              listAgent.map((a: any) => {
-                const etp = a.etp
-                const indispo = a.hasIndisponibility
-
-                let etptAgent = etp - indispo
-                if (etptAgent < 0) {
-                  etptAgent = 0
-                }
-
-                etpt += etptAgent
-              })
-
-              // Ajout des personnes qui n'ont pas de ventilation
-              allPersons
-                .filter(
-                  (person: any) =>
-                    !person.isIn &&
-                    person.dateStart &&
-                    sortDates(today(person.dateStart), today(), false) <= 0 &&
-                    person.situations &&
-                    person.situations.length &&
-                    person.situations[person.situations.length - 1].dateStart &&
-                    sortDates(today(person.situations[person.situations.length - 1].dateStart), today(), false) > 0 &&
-                    person.category,
-                )
-                .map((person: any) => {
-                  if (category.categoryId === person.category?.id && !listAgent.find((h: any) => h.id === person.id)) {
-                    console.log('agent add by force', person)
-                    listAgent.push(person)
-                  }
-                })
-
-              const poste: { label: string; etpt: number; total: number }[] = []
-              if (category.categoryId <= 2) {
-                let subTotalEtp: {
-                  [key: string]: { etpt: number; total: number }
-                } = this.humanResourceService.calculateSubCategories(category?.hr || [])
-                Object.entries(subTotalEtp).map((key) => {
-                  poste.push({
-                    label: ucFirst(key[1].total > 1 ? key[0] + 's' : key[0]),
-                    etpt: key[1].etpt,
-                    total: key[1].total,
-                  })
-                })
-              }
-
-              return {
-                ...category,
-                headerLabel: category.label && category.label.includes('Magistrat') ? 'Siège' : category.label,
-                nbPerson: listAgent.length,
-                etpt: fixDecimal(etpt),
-                poste,
-              }
-            })
-        })
     }
+
+    if (this.listFormated && this.listFormated.length > 0) {
+      this.formatList()
+    }
+  }
+
+  /**
+   * Formate la liste pour l'affichage
+   */
+  formatList() {
+    const listReturn: listFormatedInterface[] = this.listFormated
+    this.listFormatedFiltered = listReturn
+      .filter(
+        (category: any) => this.categoriesFiltered === null || (this.categoriesFiltered && this.categoriesFiltered.indexOf(category.categoryId) !== -1),
+      )
+      .map((category: any) => {
+        const listAgent = category.hr || []
+        let etpt = 0
+        listAgent.map((a: any) => {
+          const etp = a.etp
+          const indispo = a.hasIndisponibility
+
+          let etptAgent = etp - indispo
+          if (etptAgent < 0) {
+            etptAgent = 0
+          }
+
+          etpt += etptAgent
+        })
+
+        // Ajout des personnes qui n'ont pas de ventilation
+        this.allPersons
+          .filter(
+            (person: any) =>
+              !person.isIn &&
+              person.dateStart &&
+              sortDates(today(person.dateStart), today(), false) <= 0 &&
+              person.situations &&
+              person.situations.length &&
+              person.situations[person.situations.length - 1].dateStart &&
+              sortDates(today(person.situations[person.situations.length - 1].dateStart), today(), false) > 0 &&
+              person.category,
+          )
+          .map((person: any) => {
+            if (category.categoryId === person.category?.id && !listAgent.find((h: any) => h.id === person.id)) {
+              console.log('agent add by force', person)
+              listAgent.push(person)
+            }
+          })
+
+        const poste: { label: string; etpt: number; total: number }[] = []
+        if (category.categoryId <= 2) {
+          let subTotalEtp: {
+            [key: string]: { etpt: number; total: number }
+          } = this.humanResourceService.calculateSubCategories(category?.hr || [])
+          Object.entries(subTotalEtp).map((key) => {
+            poste.push({
+              label: ucFirst(key[1].total > 1 ? key[0] + 's' : key[0]),
+              etpt: key[1].etpt,
+              total: key[1].total,
+            })
+          })
+        }
+
+        return {
+          ...category,
+          headerLabel: category.label && category.label.includes('Magistrat') ? 'Siège' : category.label,
+          nbPerson: listAgent.length,
+          etpt: fixDecimal(etpt),
+          poste,
+        }
+      })
   }
 
   saveCLE(value: EventTarget | null, category: listFormatedWithDatasInterface, index: number) {

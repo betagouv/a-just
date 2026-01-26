@@ -748,12 +748,12 @@ export function generateOnglets({
             const ddgIndisponibilite = indisponibilite * alpha
 
             if (indispo.contentieux.label !== DELEGATION_TJ) {
-              logAccIndip += indisponibilite
-              tmpAjustFlatMapReferentiel.set(indispoL3, (tmpAjustFlatMapReferentiel.get(indispoL3) ?? 0) + indisponibilite)
+              logAccIndip += indisponibilite * alpha
+              tmpAjustFlatMapReferentiel.set(indispoL3, (tmpAjustFlatMapReferentiel.get(indispoL3) ?? 0) + indisponibilite * alpha)
             }
             if (indispo.contentieux.label !== INDISPO_L3) {
               log.indisponibilites.push({ ctx: indispo.contentieux.label, value: ddgIndisponibilite })
-              tmpAjustFlatMapReferentiel.set(indispo.contentieux.id, (tmpAjustFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + indisponibilite)
+              tmpAjustFlatMapReferentiel.set(indispo.contentieux.id, (tmpAjustFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + indisponibilite * alpha)
               tmpDdgFlatMapReferentiel.set(indispo.contentieux.id, (tmpDdgFlatMapReferentiel.get(indispo.contentieux.id) ?? 0) + ddgIndisponibilite)
             }
             if (![INDISPO_L3, DELEGATION_TJ, ...absLabels].includes(indispo.contentieux.label)) {
