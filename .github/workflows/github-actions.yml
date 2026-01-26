@@ -152,7 +152,7 @@ jobs:
           echo "=== END-TO-END TESTS DEBUG ==="
 
           echo "Files in end-to-end/:"
-          find ./end-to-end/ -type f -not -path "*/node_modules/*" -not -path "*/.*"  \( -name "*.json" -o -name "*.html" -o -name "*.mp4 -o -name "*.cy.ts" -o -name "*.png" \) 2>/dev/null || echo "ERROR: No e2E test directory found"
+          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.html" -o -name "*.mp4" -o -name "*.cy.ts" -o -name "*.png" \) 2>/dev/null
 
           echo -e "\n######################################\n"
 
