@@ -8,8 +8,8 @@ CMD node -v && npm -v || true; \
     echo "[cypress-test] Starting waits..."; \
     ./scripts/wait-for-it.sh api:8081 --timeout=300 && \
     ./scripts/wait-for-it.sh front:4200 --timeout=600 && \
-    # ./scripts/wait-for-it.sh api_sandbox:8081 --timeout=300 && \
-    # ./scripts/wait-for-it.sh front_sandbox:4200 --timeout=600 && \
+    ./scripts/wait-for-it.sh api_sandbox:8081 --timeout=300 && \
+    ./scripts/wait-for-it.sh front_sandbox:4200 --timeout=600 && \
     npm ci && npx cypress install && \
     if [ -n "$SPEC" ]; then npm run cy:run:report --spec "$SPEC"; else npm run cy:run:report; fi
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
