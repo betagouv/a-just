@@ -149,12 +149,12 @@ jobs:
       - name: Debug - List E2E generated files
         if: always()
         run: |
-          # echo "=== END-TO-END TESTS DEBUG ==="
+          echo "=== END-TO-END TESTS DEBUG ==="
           # echo "Listing end-to-end directory structure:"
           # find ./end-to-end -type f -name "*.json" -o -name "*.html" 2>/dev/null | head -20
 
           echo "Files in end-to-end/:"
-          find ./end-to-end/ -type f -not -path "*/node_modules/*" -not -path "*/.*"  -exec ls -la {} \; 2>/dev/null || echo "ERROR: No e2E test directory found"
+          find ./end-to-end/ -type f -not -path "*/node_modules/*" -not -path "*/.*"  \( -name "*.json" -o -name "*.html" -o -name "*.mp4" \) 2>/dev/null || echo "ERROR: No e2E test directory found"
 
           echo -e "\n######################################\n"
 
@@ -246,6 +246,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "E2E NON-REGRESSION TESTS"
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -272,34 +273,10 @@ jobs:
           mkdir -p ./end-to-end/cypress/videos
           mkdir -p ./end-to-end/cypress/reports
 
-      - name: Run Non-Regression E2E tests (Cypress JSON-only, containerized)
+      - name: Run Non-Regression E2E tests
         run: |
-          set -e
           export SANDBOX_CODE_DIR="$GITHUB_WORKSPACE/sandbox-code"
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml up -d --build db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox || true
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml run --rm \
-            -e CY_JSON_ONLY=1 \
-            -e SANDBOX_CODE_DIR=/work/sandbox-code \
-            -e CYPRESS_BASE_URL=http://175.0.0.30:4200 \
-            -e NG_APP_SERVER_URL=http://175.0.0.20:8081/api \
-            -v "$GITHUB_WORKSPACE/sandbox-code:/work/sandbox-code:ro" \
-            cypress sh -lc '
-              set -e
-              cd /e2e
-              npm ci
-              echo "Waiting for PR front at http://175.0.0.30:4200 ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.30:4200"
-              echo "Waiting for PR API at http://175.0.0.20:8081/api ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.20:8081/api"
-              echo "Waiting for SANDBOX front at http://175.0.0.31:4200 ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.31:4200"
-              echo "Waiting for SANDBOX API at http://175.0.0.21:8081/api ..."
-              npx -y wait-on -t 180000 -i 2000 "http://175.0.0.21:8081/api"
-              rm -rf cypress/reports && mkdir -p cypress/reports
-              npx cypress run --browser chrome --headless --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
-              echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
-            '
-          docker compose -p test-e2e-nr -f docker-compose-e2e.test.yml down || true
+          ./scripts/run-non-regression-tests.sh
         # continue-on-error: true
 
       - name: Fix permissions for end-to-end artifacts
@@ -310,9 +287,35 @@ jobs:
         if: always()
         run: |
           echo "=== END-TO-END NONREG DEBUG ==="
-          find ./end-to-end -type f -name "*.json" -o -name "*.html" 2>/dev/null | head -20
+
+          echo "Files in end-to-end/:"
+          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.html" -o -name "*.mp4" \) 2>/dev/null || echo "ERROR: No e2E test files found"
+
+          echo -e "\n######################################\n"
+
+          echo "E2E test reports:"
+          echo "directory: ./end-to-end/cypress/reports"
           ls -la ./end-to-end/cypress/reports/ 2>/dev/null || true
-          ls -la ./end-to-end/cypress/mochawesome-report/ 2>/dev/null || true
+
+          echo -e "\n######################################\n"
+
+          echo "Fallback mochawesome-report directory content:"
+          echo "directory: ./end-to-end/cypress/mochawesome-report"
+          ls -la ./end-to-end/cypress/mochawesome-report 2>/dev/null || echo "Fallback mochawesome-report directory not found"
+
+          echo -e "\n######################################\n"
+
+          echo "Videos directory content:"
+          echo "directory: ./end-to-end/cypress/videos"
+            
+          ls -la ./end-to-end/cypress/videos/ 2>/dev/null || echo "Videos directory not found"
+
+          echo -e "\n######################################\n" 
+
+          echo "Screenshots directory content:"
+          echo "directory: ./end-to-end/cypress/screenshots"
+
+          ls -la ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
 
       - name: Collect Cypress JSON reports (normalize, nonreg)
         if: always()
