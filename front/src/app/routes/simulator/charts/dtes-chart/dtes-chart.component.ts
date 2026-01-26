@@ -95,7 +95,6 @@ export class DtesChartComponent {
     simulatorService.situationSimulated.subscribe((value) => {
       if (this.labels !== null) {
 
-        // Extraction des valeurs stock et DTES projetés depuis monthlyReport
         this.data.projectedStock.values = []
         this.data.projectedDTES.values = []
 
@@ -108,12 +107,23 @@ export class DtesChartComponent {
             this.labels.length,
             true,
           )
-  
+
           this.data.simulatedDTES.values = simulatorService.generateLinearData(
             simulatorService.situationActuelle.getValue()!.realDTESInMonths as number,
             value?.realDTESInMonths as number,
             this.labels.length,
           )
+
+          const simulatedZeroIndex = this.data.simulatedStock.values.findIndex(v => v < 0)
+          if (simulatedZeroIndex !== -1) {
+            const startDTES = this.data.simulatedDTES.values[0]
+            for (let i = 0; i < simulatedZeroIndex; i++) {
+              this.data.simulatedDTES.values[i] = startDTES - (startDTES * i / simulatedZeroIndex)
+            }
+            for (let i = simulatedZeroIndex; i < this.data.simulatedDTES.values.length; i++) {
+              this.data.simulatedDTES.values[i] = 0
+            }
+          }
 
           this.data.projectedStock.values = simulatorService.generateLinearData(
             simulatorService.getFieldValue('lastStock', simulatorService.situationActuelle.getValue()),
@@ -127,9 +137,20 @@ export class DtesChartComponent {
           simulatorService.situationProjected.getValue()!.realDTESInMonths as number,
           this.labels.length,
         )
+
+        const projectedZeroIndex = this.data.projectedStock.values.findIndex(v => v < 0)
+        if (projectedZeroIndex !== -1) {
+          const startDTESProjected = this.data.projectedDTES.values[0]
+          for (let i = 0; i < projectedZeroIndex; i++) {
+            this.data.projectedDTES.values[i] = startDTESProjected - (startDTESProjected * i / projectedZeroIndex)
+          }
+          for (let i = projectedZeroIndex; i < this.data.projectedDTES.values.length; i++) {
+            this.data.projectedDTES.values[i] = 0
+          }
+        }
       }
       else {
-        console.log('monthlyReportProjected', simulatorService.situationProjected.getValue())
+        //console.log('monthlyReportProjected', simulatorService.situationProjected.getValue())
         const monthlyReportProjected = simulatorService.situationProjected.getValue()?.monthlyReport
         const monthlyReportSimulated = simulatorService.situationSimulated.getValue()?.monthlyReport
         const selectedCategoryLabel = simulatorService.selectedCategory.getValue()?.label
