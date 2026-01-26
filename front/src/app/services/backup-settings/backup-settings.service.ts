@@ -30,9 +30,14 @@ export class BackupSettingsService extends MainClass {
    * @returns
    */
   list(types: string[]): Promise<BackupSettingInterface[]> {
+    const backupId = this.humanResourceService.backupId.getValue();
+    if (backupId === null) {
+      return Promise.resolve([]);
+    }
+
     return this.serverService
       .post(`hr-backup-settings/list`, {
-        backupId: this.humanResourceService.backupId.getValue(),
+        backupId,
         types,
       })
       .then((data) => data.data || []);
@@ -46,9 +51,14 @@ export class BackupSettingsService extends MainClass {
    * @returns
    */
   addOrUpdate(label: string, type: string, datas: any, id?: number) {
+    const backupId = this.humanResourceService.backupId.getValue();
+    if (backupId === null) {
+      return Promise.resolve(null);
+    }
+
     return this.serverService
       .post(`hr-backup-settings/add-or-update`, {
-        backupId: this.humanResourceService.backupId.getValue(),
+        backupId,
         label,
         type,
         datas,
