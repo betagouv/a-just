@@ -15,7 +15,7 @@ SANDBOX_CODE_DIR="${SANDBOX_CODE_DIR:-./sandbox-code}"
 docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" build
 
 # 2) Start all services in background
-docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" up -d db front api redis db_sandbox front_sandbox api_sandbox redis_sandbox
+docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" up -d db db_sandbox api api_sandbox redis redis_sandbox front front_sandbox  
 
 # 3) Run Cypress with custom config
 set +e
