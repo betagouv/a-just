@@ -164,7 +164,7 @@ jobs:
 
           echo "Fallback mochawesome-report directory content:"
           echo "directory: ./end-to-end/cypress/mochawesome-report"
-          ls -la ./end-to-end/cypress/mochawesome-report 2>/dev/null || echo "Fallback mochawesome-report directory not found"
+          ls -laR ./end-to-end/cypress/mochawesome-report 2>/dev/null || echo "Fallback mochawesome-report directory not found"
 
           echo -e "\n######################################\n"
 
@@ -178,7 +178,7 @@ jobs:
           echo "Screenshots directory content:"
           echo "directory: ./end-to-end/cypress/screenshots"
 
-          ls -la ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
+          ls -laR ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
 
       - name: Collect Cypress JSON reports (normalize)
         if: always()
@@ -294,13 +294,13 @@ jobs:
 
           echo "E2E test reports:"
           echo "directory: ./end-to-end/cypress/reports"
-          ls -la ./end-to-end/cypress/reports/ 2>/dev/null || true
+          ls -la ./end-to-end/cypress/reports 2>/dev/null || echo "Reports directory not found"
 
           echo -e "\n######################################\n"
 
           echo "Fallback mochawesome-report directory content:"
           echo "directory: ./end-to-end/cypress/mochawesome-report"
-          ls -la ./end-to-end/cypress/mochawesome-report 2>/dev/null || echo "Fallback mochawesome-report directory not found"
+          ls -laR ./end-to-end/cypress/mochawesome-report 2>/dev/null || echo "Fallback mochawesome-report directory not found"
 
           echo -e "\n######################################\n"
 
@@ -314,7 +314,7 @@ jobs:
           echo "Screenshots directory content:"
           echo "directory: ./end-to-end/cypress/screenshots"
 
-          ls -la ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
+          ls -laR ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
 
       - name: Collect Cypress JSON reports (normalize, nonreg)
         if: always()
