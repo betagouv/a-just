@@ -7,8 +7,8 @@ WORKDIR /home/api
 RUN mkdir -p test/reports coverage
 
 CMD echo "NODE_ENV = $NODE_ENV"; \
-    yarn install --frozen-lockfile && \
-    yarn run build:test && \ 
-    yarn run test;
+    npm ci && \
+    npm run build:test && \ 
+    npm run test;
 # Utile pour debugguer et rentrer dans le conteneur si celui-ci n'est plus OK
 #sleep infinity;

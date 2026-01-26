@@ -25,7 +25,7 @@ docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" build
 
 # 2) Run Cypress via compose up so GA streams logs and we propagate Cypress exit code
 set +e
-docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" up --build --abort-on-container-exit --exit-code-from cypress cypress
+docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" up --abort-on-container-exit --exit-code-from cypress cypress
 exitcode=$?
 set -e
 
