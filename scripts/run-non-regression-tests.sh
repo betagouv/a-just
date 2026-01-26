@@ -38,7 +38,7 @@ docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" run --rm \
     echo "Waiting for SANDBOX API at http://175.0.0.21:8081/api ..."
     npx -y wait-on -t 180000 -i 2000 "http://175.0.0.21:8081/api"
     rm -rf cypress/reports && mkdir -p cypress/reports
-    npx cypress run --browser chrome --headless --spec "cypress/e2e/effectif-suite.cy.ts, cypress/e2e/activite-suite.cy.ts"
+    npx cypress run --browser chrome --headless --spec "cypress/e2e/effectif-suite.cy.ts,cypress/e2e/activite-suite.cy.ts"
     echo "=== E2E Non-Regression reports ==="; ls -la cypress/reports || true
   '
 exitcode=$?
