@@ -152,7 +152,7 @@ jobs:
           echo "=== END-TO-END TESTS DEBUG ==="
 
           echo "Files in end-to-end/:"
-          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.html" -o -name "*.mp4" -o -name "*.cy.ts" -o -name "*.png" \) 2>/dev/null
+          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.mp4" -o -name "*.cy.ts" -o -name "*.png" \) 2>/dev/null
 
           echo -e "\n######################################\n"
 
@@ -215,13 +215,12 @@ jobs:
         with:
           name: cypress-reports
           path: |
-            # ./end-to-end/cypress/reports/results.jsons
             ./end-to-end/cypress/reports/*.json
             ./end-to-end/cypress/reports/**/*.json
             ./end-to-end/cypress/mochawesome-report/*.json
             ./end-to-end/cypress/mochawesome-report/**/*.json
-            ./end-to-end/cypress/mochawesome-report/*.html
-            ./end-to-end/cypress/mochawesome-report/**/*.html
+            # ./end-to-end/cypress/mochawesome-report/*.html
+            # ./end-to-end/cypress/mochawesome-report/**/*.html
           include-hidden-files: true
           if-no-files-found: warn
 
@@ -288,7 +287,7 @@ jobs:
           echo "=== END-TO-END NONREG DEBUG ==="
 
           echo "Files in end-to-end/:"
-          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.html" -o -name "*.mp4" -o -name "*.cy.ts" -o -name "*.png" \) 2>/dev/null || echo "ERROR: No e2E test files found"
+          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.mp4" -o -name "*.cy.ts" -o -name "*.png" \) 2>/dev/null || echo "ERROR: No e2E test files found"
 
           echo -e "\n######################################\n"
 
@@ -356,14 +355,15 @@ jobs:
             ./end-to-end/cypress/reports/**/*.json
             ./end-to-end/cypress/mochawesome-report/*.json
             ./end-to-end/cypress/mochawesome-report/**/*.json
-            ./end-to-end/cypress/mochawesome-report/*.html
-            ./end-to-end/cypress/mochawesome-report/**/*.html
+            # ./end-to-end/cypress/mochawesome-report/*.html
+            # ./end-to-end/cypress/mochawesome-report/**/*.html
           include-hidden-files: true
           if-no-files-found: warn
 
   ###########################
   ####### DEPLOY ###########
   ###########################
+
   deploy:
     needs: [api-tests, e2e-tests, e2e-nonreg-vs-sandbox-tests]
     runs-on: ubuntu-latest
