@@ -211,7 +211,7 @@ jobs:
           path: ./end-to-end/cypress/screenshots
           if-no-files-found: warn
 
-      - name: Upload Cypress test reports
+      - name: Upload Cypress test reports and Mochawesome reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -222,6 +222,8 @@ jobs:
             ./end-to-end/cypress/reports/**/*.json
             ./end-to-end/cypress/mochawesome-report/*.json
             ./end-to-end/cypress/mochawesome-report/**/*.json
+            ./end-to-end/cypress/mochawesome-report/*.html
+            ./end-to-end/cypress/mochawesome-report/**/*.html
           include-hidden-files: true
           if-no-files-found: warn
 
