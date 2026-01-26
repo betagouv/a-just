@@ -33,11 +33,11 @@ export default defineConfig({
           reportDir: "cypress/mochawesome-report",
           reportFilename: "report",
           overwrite: false,
-          html: false,
+          html: true,
           json: true,
           keepJson: true,
           timestamp: "mmddyyyy_HHMMss",
-          generateReport: false,
+          generateReport: true,
           quiet: false,
         },
   component: {
@@ -55,12 +55,12 @@ export default defineConfig({
       const downloadsDir = path.join(
         config.projectRoot,
         "cypress",
-        "downloads"
+        "downloads",
       );
       const artifactsDir = path.join(
         config.projectRoot,
         "cypress",
-        "artifacts"
+        "artifacts",
       );
       function wipeDownloads() {
         try {
@@ -88,11 +88,11 @@ export default defineConfig({
           fs.mkdirSync(downloadsDir, { recursive: true });
           const safeName = (fileName || `activite_${Date.now()}.xlsx`).replace(
             /[^a-zA-Z0-9._-]+/g,
-            "_"
+            "_",
           );
           const outPath = path.join(
             downloadsDir,
-            safeName.endsWith(".xlsx") ? safeName : `${safeName}.xlsx`
+            safeName.endsWith(".xlsx") ? safeName : `${safeName}.xlsx`,
           );
           const buf = Buffer.from(base64, "base64");
           fs.writeFileSync(outPath, buf);
@@ -321,7 +321,7 @@ export default defineConfig({
                     } catch {
                       return false;
                     }
-                  }
+                  },
                 );
                 if (validationKey) {
                   cellData.dv = dataValidations[validationKey];
@@ -366,7 +366,7 @@ export default defineConfig({
               const files = fs
                 .readdirSync(downloadsDir)
                 .filter(
-                  (n) => n.endsWith(".xlsx") && !n.endsWith(".crdownload")
+                  (n) => n.endsWith(".xlsx") && !n.endsWith(".crdownload"),
                 );
               if (files.length) {
                 clearInterval(timer);
@@ -406,7 +406,7 @@ export default defineConfig({
           const outXlsx = path.join(
             artifactsDir,
             "effectif",
-            `${safeBase}.xlsx`
+            `${safeBase}.xlsx`,
           );
           fs.copyFileSync(srcPath, outXlsx);
           // Normalize to comparable JSON with formulas, formats, styles, and validation
@@ -603,7 +603,7 @@ export default defineConfig({
                     } catch {
                       return false;
                     }
-                  }
+                  },
                 );
                 if (validationKey) {
                   cellData.dv = dataValidations[validationKey];
@@ -630,7 +630,7 @@ export default defineConfig({
           const outJson = path.join(
             artifactsDir,
             "effectif",
-            `${safeBase}.json`
+            `${safeBase}.json`,
           );
           fs.writeFileSync(outJson, JSON.stringify(out, null, 2));
           return { outXlsx, outJson };
@@ -689,13 +689,13 @@ export default defineConfig({
                 console.log(
                   `[CONTEXT] Read ${
                     Object.keys(contexts).length
-                  } context(s) from ${fullPath}`
+                  } context(s) from ${fullPath}`,
                 );
                 console.log(`[CONTEXT] Available keys:`, Object.keys(contexts));
                 return contexts;
               }
               console.log(
-                `[CONTEXT] File not found: ${fullPath}, returning empty object`
+                `[CONTEXT] File not found: ${fullPath}, returning empty object`,
               );
               return {};
             } catch (e) {
@@ -726,7 +726,7 @@ export default defineConfig({
                 } catch (e) {
                   console.warn(
                     "Failed to read existing contexts, starting fresh:",
-                    e
+                    e,
                   );
                 }
               }
@@ -738,7 +738,7 @@ export default defineConfig({
               console.log(`[CONTEXT] Writing context for test: "${testTitle}"`);
               console.log(
                 `[CONTEXT] Context data:`,
-                JSON.stringify(context, null, 2)
+                JSON.stringify(context, null, 2),
               );
 
               // Write back with explicit fsync to ensure it's flushed to disk
@@ -747,7 +747,7 @@ export default defineConfig({
               fs.fsyncSync(fd); // Force sync to disk before container exits
               fs.closeSync(fd);
               console.log(
-                `[CONTEXT] Successfully wrote and synced to ${fullPath}`
+                `[CONTEXT] Successfully wrote and synced to ${fullPath}`,
               );
               return null;
             } catch (e) {
@@ -792,7 +792,7 @@ export default defineConfig({
           wipeEffectifArtifacts,
           wipeActiviteArtifacts,
           writeBufferToDownloads,
-        })
+        }),
       );
       // Pre/post-run wipes to avoid stale artifacts regardless of support hooks
       const shouldWipe =
