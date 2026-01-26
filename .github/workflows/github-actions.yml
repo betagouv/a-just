@@ -150,11 +150,9 @@ jobs:
         if: always()
         run: |
           echo "=== END-TO-END TESTS DEBUG ==="
-          # echo "Listing end-to-end directory structure:"
-          # find ./end-to-end -type f -name "*.json" -o -name "*.html" 2>/dev/null | head -20
 
           echo "Files in end-to-end/:"
-          find ./end-to-end/ -type f -not -path "*/node_modules/*" -not -path "*/.*"  \( -name "*.json" -o -name "*.html" -o -name "*.mp4" \) 2>/dev/null || echo "ERROR: No e2E test directory found"
+          find ./end-to-end/ -type f -not -path "*/node_modules/*" -not -path "*/.*"  \( -name "*.json" -o -name "*.html" -o -name "*.mp4 -o -name "*.cy.ts"" \) 2>/dev/null || echo "ERROR: No e2E test directory found"
 
           echo -e "\n######################################\n"
 
@@ -290,7 +288,7 @@ jobs:
           echo "=== END-TO-END NONREG DEBUG ==="
 
           echo "Files in end-to-end/:"
-          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.html" -o -name "*.mp4" \) 2>/dev/null || echo "ERROR: No e2E test files found"
+          find ./end-to-end -type f -not -path "*/node_modules/*" -not -path "*/.*" \( -name "*.json" -o -name "*.html" -o -name "*.mp4" -o -name "*.cy.ts" \) 2>/dev/null || echo "ERROR: No e2E test files found"
 
           echo -e "\n######################################\n"
 
@@ -329,6 +327,7 @@ jobs:
           find ./end-to-end/cypress/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./end-to-end/cypress/reports/results.jsons/ \; 2>/dev/null || true
 
           echo -e "\n######################################\n"
+
           echo "Final JSONs to upload (nonreg):"
           ls -la ./end-to-end/cypress/reports/results.jsons || true
 
@@ -353,7 +352,6 @@ jobs:
         with:
           name: cypress-reports-nonreg
           path: |
-            ./end-to-end/cypress/reports/results.jsons/*.json
             ./end-to-end/cypress/reports/*.json
             ./end-to-end/cypress/reports/**/*.json
             ./end-to-end/cypress/mochawesome-report/*.json
