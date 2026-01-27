@@ -49,6 +49,14 @@ export class ReferentielCalculatorComponent extends MainClass implements AfterVi
    */
   @Input() maxDateSelectionDate: Date | null = null
   /**
+   * Catégorie filtrée
+   */
+  @Input() categoryFiltered: {label: string, value: string, categoryId: number, accessId: number}[] = []
+  /**
+   * Catégorie sélectionnée
+   */
+  @Input() categoryIdSelected: number | null = null
+  /**
    * Connexion au css pour forcer l'affichage des enfants
    */
   @HostBinding('class.show-children') showChildren: boolean = (this.calculator && this.calculator.childIsVisible) || false

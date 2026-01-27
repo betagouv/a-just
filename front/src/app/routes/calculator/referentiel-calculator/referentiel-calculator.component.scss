@@ -3,10 +3,6 @@
 :host {
   display: block;
 
-  .left-border {
-    border-left: solid 1px #f6f6f6 !important;
-  }
-
   &.show-children>.main-referentiel {
 
 
@@ -27,38 +23,85 @@
       position: relative;
       border-top: solid 1px #f6f6f6;
 
+      >div {
+        &:first-child {
+          cursor: inherit;
 
-      >.contentieux p {
-        text-align: right;
-        padding-right: 16px;
+          p {
+            text-align: right;
+          }
+
+          .help {
+            display: none;
+          }
+        }
       }
 
+      .anticipate svg {
+        display: none;
+      }
     }
   }
 
   >.main-referentiel {
-    display: flex;
-    height: 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     border-top: solid 1px #f6f6f6;
 
-    >.actual {
-      border-left: solid 1px #f6f6f6;
-    }
-
-    >.item.activity {
-      border-left: solid 1px #f6f6f6;
-
-    }
-
-    >.item.calculate {
-      border-left: solid 1px #f6f6f6;
-
-    }
-
-    >.contentieux {
+    >div {
       display: flex;
+      flex-direction: row;
       align-items: center;
-      cursor: pointer;
+      justify-content: center;
+
+      &:not(:first-child) {
+        border-left: 3px solid white;
+      }
+
+      &:first-child {
+        justify-content: flex-start;
+        cursor: pointer;
+
+        p {
+          font-weight: bold;
+          text-align: left;
+          width: 100%;
+          margin-right: 16px;
+        }
+
+        mat-icon {
+          margin-right: 8px;
+        }
+
+        .help {
+          width: 24px;
+          min-width: 24px;
+          height: 24px;
+          border-radius: 24px;
+          background-color: #000091;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          margin-right: 8px;
+
+          span {
+            font-size: 12px;
+            line-height: 12px;
+          }
+        }
+      }
+
+      &.dtes {
+        padding-left: 20%;
+        justify-content: flex-start;
+      }
+
+      &.stock {
+        padding-left: 30%;
+        justify-content: flex-start;
+      }
 
       mat-icon {
         margin-left: 8px;
@@ -66,193 +109,34 @@
       }
 
       p {
-        bottom: 1px;
         position: relative;
         font-size: 14px;
-        font-weight: bold;
         color: #3a3a3a;
-        padding-right: 8px;
-
-        text-align: left;
-        margin: 4px 0 4px 8px;
-        flex: 1;
-      }
-    }
-
-    >.item {
-      flex: 1;
-      display: flex;
-      align-items: stretch;
-
-
-      &.stock {
-        border-left: solid 1px #f6f6f6 !important;
-
-        .ref-nr {
-          border: none !important;
-          justify-content: center !important;
-          padding: 0;
-        }
-
-        >div {
-          gap: 12px;
-          flex-direction: row;
-          align-items: center;
-          justify-content: flex-start;
-        }
       }
 
-      &.coverage {
-        min-width: 85px;
-
-        .ref-nr {
-          border: none !important;
-          justify-content: center !important;
-          padding: 0;
-        }
-      }
-
-      &.dtes {
-        border-left: solid 1px #f6f6f6 !important;
-        min-width: 85px;
-
-        div {
-          .ref-nr {
-            border: none !important;
-            justify-content: center !important;
-            padding: 0;
-          }
-        }
-
-        >div {
-          justify-content: flex-start !important;
-          align-items: center;
-          gap: 12px;
-
-          p {
-            padding: 0;
-          }
-        }
-      }
-
-      &.tmd {
-        min-width: 135px !important;
-        flex: none !important;
-        border-left: solid 1px #f6f6f6 !important;
-
-        div {
-          &.selected {
-            background-color: initial;
-          }
-
-          .ref-nr {
-            justify-content: flex-end !important;
-            padding: 0;
-          }
-        }
-
-        >div {
-          justify-content: flex-end !important;
-
-          p {
-            padding: 0 24px;
-          }
-        }
-
-        div>div {
-          padding: 0 24px;
-
-          div>p {
-            padding-right: 0 !important;
-
-          }
-        }
-
-        div>div>div>p {
-          font-weight: bold !important;
-          font-size: 12px !important;
-          color: #f99090 !important;
-          padding-right: 24px;
-
-        }
-      }
-
-      &.actual {
-        cursor: pointer;
-
-        >div {
-          align-self: stretch;
-          width: calc(100% - 4px);
-        }
-
-        .ref-nr {
-          margin: 0 2px;
-          height: 40px;
-        }
-      }
-
-      &.activity,
-      &.calculate {
-        padding: 4px 2px;
-
-        >div {
-          border-radius: 4px;
-          align-items: stretch;
-
-
-
-          >div {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            &:last-child {
-              border-top-right-radius: 4px;
-              border-bottom-right-radius: 4px;
-            }
-
-            >div {
-              justify-content: flex-end !important;
-              padding-right: 24px;
-            }
-
-            >p {
-              color: utils.$colors-cblack;
-              font-weight: 500;
-              font-size: 14px;
-              text-align: end;
-
-              &.unity {
-                color: utils.$colors-cgray;
-                font-size: 16px;
-                font-weight: normal;
-              }
-            }
-
-
-            .ref-nr {
-              height: 40px;
-              align-items: center !important;
-
-            }
-          }
-        }
-      }
-
-      >div {
-        flex: 1;
+      >.block {
         display: flex;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
+        gap: 12px;
+      }
 
-        &.selected {
-          background-color: utils.$colors-bgHeaderSelected;
-        }
+      >.etpt-selected {
+        display: flex;
+        align-self: stretch;
+        width: 100%;
 
-        p {
-          text-align: center;
+        >span {
+          flex: 1;
+          border-left: 3px solid white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:first-child {
+            border-left: none;
+          }
         }
       }
     }
@@ -276,18 +160,36 @@ p {
 }
 
 .ref-nr {
-  border: 2px solid utils.$colors-redNRColor;
-  border-radius: 4px;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: bold;
 
   p {
-    font-size: 12px;
-    color: utils.$colors-redNRColor;
+    color: #CE0500 !important;
+    font-weight: 300 !important;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+.anticipate {
+  border: 1px solid #0063CB;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border-radius: 62px;
+  color: #0063CB;
+  height: 38px;
+  cursor: pointer;
+  margin: 12px;
+
+  p {
+    position: relative;
+    top: -1px;
+    white-space: nowrap;
   }
 }
 
@@ -297,11 +199,6 @@ p {
 
 .bg-fonctionnaires {
   background-color: utils.$colors-cpinkmiddle;
-}
-
-.width-contentieux {
-  min-width: 160px;
-  flex: 3;
 }
 
 aj-speedometer {
