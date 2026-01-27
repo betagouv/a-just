@@ -15,7 +15,7 @@
     "cy-verify-downloads": "^0.2.6",
     "dotenv": "^16.4.7",
     "install": "^0.13.0",
-    "npm": "^11.0.0"
+    "npm": "^11.8.0"
   },
   "devDependencies": {
     "cypress": "^13.17.0",
