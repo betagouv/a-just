@@ -647,71 +647,71 @@
 }
 
 .contentieux-header-calculator {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   font-weight: bold;
   min-height: 80px;
 
-  .width-contentieux {
+  >div {
     display: flex;
-    align-items: flex-end;
-
-    p {
-      margin-left: 16px;
-      margin-bottom: 40px;
-    }
-  }
-
-  p {
-    line-height: 1.33;
-    text-align: center;
-    color: #161616;
-
-    font-size: 12px;
-    margin-top: 12px;
-  }
-
-  .item {
-    flex: 1;
-    display: flex;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     position: relative;
-    flex-direction: column;
-    align-items: center;
 
-    &.dtes,
-    &.coverage {
-      min-width: 85px;
-    }
-
-    &.tmd {
-      min-width: 135px !important;
-      flex: none !important;
-    }
-
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-
-    &.selected {
-      i {
-        color: utils.$colors-sortIconHeaderSelected;
-      }
-    }
-
-    i {
-      margin-top: 8px;
-      margin-bottom: 8px;
-      color: utils.$colors-headerColor;
-
-      &.selected {
-        color: utils.$colors-bgSelectSelected;
-      }
+    &:not(:first-child) {
+      border-left: solid 3px white;
     }
 
     p {
       text-align: center;
+    }
+
+    .etpt {
+      margin-left: 2px;
+      cursor: pointer;
+    }
+
+    .etpt-selected {
+      cursor: pointer;
+      width: 100%;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+
+      >div {
+        flex: 1;
+
+        &:first-child {
+          display: flex;
+          align-items: flex-end;
+          padding-left: 24px;
+
+          svg {
+            transform: rotate(90deg);
+            position: relative;
+            top: 3px;
+            margin-left: 8px;
+          }
+        }
+
+        &:last-child {
+          display: flex;
+
+          span {
+            flex: 1;
+            border-left: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:first-child {
+              border-left: none;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -750,7 +750,6 @@ aj-referentiel-calculator:nth-child(even) {
   }
 }
 
-.categories-switch,
 .switch-tab {
   display: flex;
   align-items: stretch;
@@ -851,9 +850,4 @@ aj-referentiel-calculator:nth-child(even) {
       }
     }
   }
-}
-
-.width-contentieux {
-  min-width: 160px;
-  flex: 3;
 }

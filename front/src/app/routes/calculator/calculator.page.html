@@ -4,21 +4,6 @@
   @if (categorySelected) {
   <div class="container">
     <div class="sub-main-header">
-      <div class="categories-switch">
-        @if (canViewMagistrat) {
-        <div class="magistrats" [ngClass]="{ selected: categorySelected === MAGISTRATS, alone: !canViewGreffier }"
-          (click)="$event.stopPropagation(); changeCategorySelected(MAGISTRATS); unselectTemplate()">
-          <p>Siège</p>
-        </div>
-        }
-        @if (canViewGreffier) {
-        <div class="fonctionnaires"
-          [ngClass]="{ selected: categorySelected === FONCTIONNAIRES, alone: !canViewMagistrat }" class="fonctionnaires"
-          (click)="$event.stopPropagation(); changeCategorySelected(FONCTIONNAIRES); unselectTemplate()">
-          <p>Greffe</p>
-        </div>
-        }
-      </div>
       <aj-select class="large new-fonction" [subTitleTemplate]="subTitleTemplate" title="Choix des fonctions"
         [defaultAllValue]="'Toutes'" [value]="selectedFonctionsIds" [datas]="fonctions"
         (valueChange)="onChangeFonctionsSelected($event)"></aj-select>
@@ -71,108 +56,72 @@
     @if (tabSelected === 0) {
     <div class="header-calculator">
       <div class="contentieux-header-calculator window-scrool-width-margin" title="">
-        <div class="width-contentieux">
+        <div>
           <p>Contentieux</p>
         </div>
-        <div class="item dtes" (click)="onSortBy('realDTESInMonths')"
-          [ngClass]="{ selected: sortBy.type === 'realDTESInMonths' }">
-          <div class="flex-1"></div>
+        <div>
           <p>
             DTES
             <br />
             instantané
           </p>
-          <i [ngClass]="{
-                    'ri-sort-asc': sortBy.up === true,
-                    'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realDTESInMonths'),
-                  }"></i>
           <aj-tooltips title="DTES À LA FIN DE PÉRIODE" class="medium"
             content="Délai théorique d’écoulement du stock = temps moyen nécessaire au traitement de l’intégralité des affaires en stock compte tenu des sorties mensuelles moyennes des 12 mois précédents."
             footer="Mode de calcul :<br/><b>STOCK/SORTIES</b>"></aj-tooltips>
         </div>
-        <div class="item coverage" (click)="onSortBy('realCoverage')"
-          [ngClass]="{ selected: sortBy.type === 'realCoverage' }">
-          <div class="flex-1"></div>
+        <div>
           <p>
             Taux de
             <br />
             couverture
           </p>
-          <i [ngClass]="{
-                    'ri-sort-asc': sortBy.up === true,
-                    'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'realCoverage'),
-                  }"></i>
           <aj-tooltips title="TAUX DE COUVERTURE MOYEN SUR LA PÉRIODE"
             content="SORTIES /ENTREES de la période en %"></aj-tooltips>
         </div>
-        <div class="item" (click)="onSortBy('lastStock')" [ngClass]="{ selected: sortBy.type === 'lastStock' }">
-          <div class="flex-1"></div>
+        <div>
           <p>Stock</p>
-          <i [ngClass]="{
-                    'ri-sort-asc': sortBy.up === true,
-                    'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'lastStock'),
-                  }"></i>
           <aj-tooltips title="Stock" content="Dossiers en stock à la fin de la période choisie"></aj-tooltips>
         </div>
-        @if (canViewMagistrat) {
-        <div class="tooltip medium item" (click)="onSortBy('etpMag')"
-          [ngClass]="{ selected: sortBy.type === 'etpMag', 'bg-magistrats': categorySelected === MAGISTRATS }">
-          <div class="flex-1"></div>
-          <p>
-            ETPT
-            <br />
-            Siège
-          </p>
-          <i [ngClass]="{
-                      'ri-sort-asc': sortBy.up === true,
-                      'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'etpMag'),
-                    }"></i>
-          <aj-tooltips class="medium" title="ETPT siège"
-            content="Moyenne des ETPT travaillés sur la période par les agents du siège affectés au contentieux"></aj-tooltips>
+        <div
+          (click)="categoryIdSelected ? categoryIdSelected = null : categoryIdSelected = categoryFiltered[0].categoryId">
+          @if(!categoryIdSelected) {<div class="etpt">
+            <p>ETPT</p>
+            @if (categoryFiltered.length) {
+            <p>{{categoryFiltered[0].label}}</p>
+            }
+          </div>
+          @if(categoryFiltered.length > 1) {
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M14.2302 12.9633L8.88281 7.61595L10.4103 6.08845L17.2852 12.9633L10.4103 19.8382L8.88281 18.3106L14.2302 12.9633Z"
+              fill="#000091" />
+          </svg>
+          }
+          } @else {
+          <div class="etpt-selected">
+            <div>ETPT <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M14.2302 12.9633L8.88281 7.61595L10.4103 6.08845L17.2852 12.9633L10.4103 19.8382L8.88281 18.3106L14.2302 12.9633Z"
+                  fill="#000091" />
+              </svg></div>
+            <div>
+              @for(category of categoryFiltered; track category.categoryId) {
+              <span>{{ category.label === "Autres activités" ? "EAM" : category.label }}</span>
+              }
+            </div>
+          </div>
+          }
         </div>
-        }
-        @if (canViewGreffier) {
-        <div class="tooltip medium item" (click)="onSortBy('etpFon')" [ngClass]="{
-                    selected: sortBy.type === 'etpFon',
-                    'bg-fonctionnaires': categorySelected === FONCTIONNAIRES,
-                  }">
-          <div class="flex-1"></div>
-          <p>
-            ETPT
-            <br />
-            Greffe
-          </p>
-          <i [ngClass]="{
-                      'ri-sort-asc': sortBy.up === true,
-                      'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'etpFon'),
-                    }"></i>
-          <aj-tooltips class="medium" title="ETPT greffe"
-            content="Moyenne des ETPT travaillés sur la période par les agents du greffe affectés au contentieux"></aj-tooltips>
+        <div>
+          <p>Anticiper</p>
         </div>
-        }
-        @if (canViewContractuel) {
-        <div class="tooltip medium item" (click)="onSortBy('etpCont')"
-          [ngClass]="{ selected: sortBy.type === 'etpCont' }">
-          <div class="flex-1"></div>
-          <p>
-            ETPT
-            <br />
-            EAM
-          </p>
-          <i [ngClass]="{
-                      'ri-sort-asc': sortBy.up === true,
-                      'ri-sort-desc': !(sortBy.up === true && sortBy.type === 'etpCont'),
-                    }"></i>
-          <aj-tooltips class="medium right" title="ETPT EAM"
-            content="Moyenne des ETPT travaillés sur la période par l'équipe autour du magistrat affectés au contentieux"></aj-tooltips>
-        </div>
-        }
       </div>
     </div>
     <div class="content-list">
       @for (r of datasFilted; track r.contentieux.id) {
       <aj-referentiel-calculator [calculator]="r" [sortBy]="sortBy.type" [categorySelected]="categorySelected"
-        [maxDateSelectionDate]="maxDateSelectionDate"></aj-referentiel-calculator>
+        [maxDateSelectionDate]="maxDateSelectionDate" [categoryFiltered]="categoryFiltered"
+        [categoryIdSelected]="categoryIdSelected"></aj-referentiel-calculator>
       }
     </div>
     }
