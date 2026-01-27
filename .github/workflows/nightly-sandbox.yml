@@ -164,6 +164,13 @@ jobs:
           echo "Final JSONs to upload:"
           ls -la ./end-to-end/cypress/reports/results.jsons 2>/dev/null || true
 
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-docker-logs
+          path: ./end-to-end/logs
+
       - name: Upload Cypress video
         if: always()
         uses: actions/upload-artifact@v4
@@ -331,6 +338,13 @@ jobs:
 
           echo "Final JSONs to upload (normalize, nonreg):"
           ls -la ./candidate-code/end-to-end/cypress/reports/results.jsons || true
+
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-docker-logs
+          path: ./end-to-end/logs
 
       - name: Upload Cypress video (nonreg)
         if: always()
