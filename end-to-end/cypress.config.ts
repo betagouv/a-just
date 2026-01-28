@@ -7,6 +7,10 @@ import * as xlsx from "xlsx";
 const jsonOnly = process.env.CY_JSON_ONLY === "1";
 
 export default defineConfig({
+  // Optimize memory usage for CI environments
+  numTestsKeptInMemory: 0,
+  experimentalMemoryManagement: true,
+  
   // Reporter must be top-level in Cypress >=10
   reporter: "cypress-mochawesome-reporter",
   reporterOptions:

@@ -251,6 +251,7 @@ services:
       - redis
       - redis_sandbox
     shm_size: 2gb
+    mem_limit: 2G
     volumes:
       - ./end-to-end:/e2e
       - ./end-to-end/scripts:/scripts
