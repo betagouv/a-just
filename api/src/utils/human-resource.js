@@ -843,7 +843,7 @@ export const calculateETPForContentieux = (indexes, query, categories) => {
       etpByCategory[period.categoryId] += (effectiveETP * workingDays) / nbOfWorkingDaysQuery
     }
   })
-
+  
   // Retourner les résultats triés par rang de la catégorie
   return categories
     .map((category) => ({

@@ -25,6 +25,10 @@ export default (sequelizeInstance) => {
         type: Sequelize.BOOLEAN,
         allowNull: true,
       },
+      group: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -49,7 +53,7 @@ export default (sequelizeInstance) => {
           fields: ['label'],
         },
       ],
-    }
+    },
   )
 
   Model.associate = function (models) {
