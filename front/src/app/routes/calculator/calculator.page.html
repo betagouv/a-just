@@ -119,9 +119,11 @@
     </div>
     <div class="content-list">
       @for (r of datasFilted; track r.contentieux.id) {
-      <aj-referentiel-calculator [calculator]="r" [sortBy]="sortBy.type" [categorySelected]="categorySelected"
-        [maxDateSelectionDate]="maxDateSelectionDate" [categoryFiltered]="categoryFiltered"
-        [categoryIdSelected]="categoryIdSelected"></aj-referentiel-calculator>
+      <aj-referentiel-calculator [datas]="datasFilted" [calculator]="r" [sortBy]="sortBy.type"
+        [categorySelected]="categorySelected" [maxDateSelectionDate]="maxDateSelectionDate"
+        [categoryFiltered]="categoryFiltered" [categoryIdSelected]="categoryIdSelected"
+        [currentProjectionType]="currentProjectionType"
+        (currentProjectionTypeChange)="currentProjectionType = $event"></aj-referentiel-calculator>
       }
     </div>
     }

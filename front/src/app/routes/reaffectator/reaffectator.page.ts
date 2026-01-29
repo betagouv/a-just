@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { startLatencyScope, type LatencyTxn } from '../../utils/sentry-latency'
 import { cloneDeep, isNaN, orderBy, sortBy, sumBy } from 'lodash'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { HumanResourceInterface } from '../../interfaces/human-resource-interface'
 import { RHActivityInterface } from '../../interfaces/rh-activity'
 import { HRCategoryInterface } from '../../interfaces/hr-category'
@@ -219,6 +219,7 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
   rs = inject(ReaffectatorService)
   userService = inject(UserService)
   router = inject(Router)
+  route = inject(ActivatedRoute)
   kpiService = inject(KPIService)
   appService = inject(AppService)
   /**
@@ -414,6 +415,19 @@ export class ReaffectatorPage extends MainClass implements OnInit, OnDestroy {
               ? [this.formFilterSelect[0].id]
               : [],
         )
+      }),
+    )
+
+    // Récupérer dstart depuis les queryParams
+    this.watch(
+      this.route.queryParams.subscribe((params) => {
+        if (params['dstart']) {
+          const dstartTimestamp = +params['dstart']
+          if (!isNaN(dstartTimestamp)) {
+            this.dateSelected = new Date(dstartTimestamp)
+            this.workforceService.dateSelected.next(this.dateSelected)
+          }
+        }
       }),
     )
   }

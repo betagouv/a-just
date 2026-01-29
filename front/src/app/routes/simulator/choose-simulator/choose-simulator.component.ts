@@ -1,20 +1,10 @@
-import {
-  Component,
-  EventEmitter,
-  HostListener,
-  inject,
-  Output,
-} from '@angular/core';
-import { MainClass } from '../../../libs/main-class';
-
-import { UserService } from '../../../services/user/user.service';
-import {
-  REAFFECTATOR,
-  SIMULATOR_DONNEES,
-  SIMULATOR_OTHER_ACTIVITY,
-} from '../../../constants/simulator';
-import { MENU_HEIGHT, MENU_WIDTH } from '../../../constants/menu';
-import { AppService } from '../../../services/app/app.service';
+import { Component, EventEmitter, HostListener, inject, Output } from '@angular/core'
+import { MainClass } from '../../../libs/main-class'
+import { UserService } from '../../../services/user/user.service'
+import { REAFFECTATOR, SIMULATOR_DONNEES, SIMULATOR_OTHER_ACTIVITY } from '../../../constants/simulator'
+import { MENU_HEIGHT, MENU_WIDTH } from '../../../constants/menu'
+import { AppService } from '../../../services/app/app.service'
+import { ActivatedRoute } from '@angular/router'
 
 /**
  * Composant de choix du simulateur
@@ -27,44 +17,54 @@ import { AppService } from '../../../services/app/app.service';
   styleUrls: ['./choose-simulator.component.scss'],
 })
 export class ChooseSimulatorComponent extends MainClass {
-  userService = inject(UserService);
-  appService = inject(AppService);
-  @Output() selectedSimulatorType: EventEmitter<string> = new EventEmitter();
+  route = inject(ActivatedRoute)
+  userService = inject(UserService)
+  appService = inject(AppService)
+  @Output() selectedSimulatorType: EventEmitter<string> = new EventEmitter()
   /**
    * Simulateur sélectionné
    */
-  selectedSimulator: string = '';
-  SIMULATOR_DONNEES = SIMULATOR_DONNEES;
-  SIMULATOR_OTHER_ACTIVITY = SIMULATOR_OTHER_ACTIVITY;
-  REAFFECTATOR = REAFFECTATOR;
-  MENU_WIDTH = MENU_WIDTH;
-  MENU_HEIGHT = MENU_HEIGHT;
+  selectedSimulator: string = ''
+  SIMULATOR_DONNEES = SIMULATOR_DONNEES
+  SIMULATOR_OTHER_ACTIVITY = SIMULATOR_OTHER_ACTIVITY
+  REAFFECTATOR = REAFFECTATOR
+  MENU_WIDTH = MENU_WIDTH
+  MENU_HEIGHT = MENU_HEIGHT
   /**
    * Mouse x
    */
-  mouseX: number = 0;
+  mouseX: number = 0
   /**
    * Mouse y
    */
-  mouseY: number = 0;
+  mouseY: number = 0
 
-  @HostListener('window:mousemove', ['$event']) mouseMove = (
-    e: MouseEvent
-  ): any => {
-    this.mouseX = e.clientX;
-    this.mouseY = e.clientY;
-  };
+  @HostListener('window:mousemove', ['$event']) mouseMove = (e: MouseEvent): any => {
+    this.mouseX = e.clientX
+    this.mouseY = e.clientY
+  }
 
   /**
    * Constructeur
    */
   constructor() {
-    super();
+    super()
+  }
+
+  ngOnInit() {
+    this.watch(
+      this.route.queryParams.subscribe((params) => {
+        if (params['ts']) {
+          this.selectedSimulator = params['ts']
+          this.onSelect()
+        }
+      }),
+    )
   }
 
   onSelect() {
     if (this.selectedSimulator) {
-      this.selectedSimulatorType.emit(this.selectedSimulator);
+      this.selectedSimulatorType.emit(this.selectedSimulator)
     }
   }
 }
