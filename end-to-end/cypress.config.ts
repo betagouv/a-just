@@ -92,37 +92,176 @@ export default defineConfig({
             .replace(/[^a-zA-Z0-9_-]+/g, '_').replace(/^_+|_+$/g, '');
           const outXlsx = path.join(targetDir, `${safeBase}.xlsx`);
           fs.copyFileSync(srcPath, outXlsx);
-          const wb = xlsx.readFile(outXlsx, { cellDates: false, cellNF: false, cellText: false });
+          // Normalize to comparable JSON with formulas, formats, styles, and validation
+          const wb = xlsx.readFile(outXlsx, { cellDates: false, cellNF: true, cellFormula: true, cellStyles: true });
           const out: any = { sheets: {} };
+          
+          // Helper to get cell address from row/col (0-indexed)
+          const getCellAddress = (r: number, c: number): string => {
+            return xlsx.utils.encode_cell({ r, c });
+          };
+          
           const trimMatrix = (rows: any[][]) => {
             let maxR = -1, maxC = -1;
             for (let r = 0; r < rows.length; r++) {
               const row = rows[r] || [];
               for (let c = 0; c < row.length; c++) {
                 const v = row[c];
-                if (v !== null && v !== undefined && String(v).trim() !== '') {
-                  if (r > maxR) maxR = r;
-                  if (c > maxC) maxC = c;
+                if (v !== null && v !== undefined && v !== '') {
+                  const hasContent = (typeof v === 'object' && (v.v !== undefined || v.f !== undefined)) || 
+                                    (typeof v !== 'object' && String(v).trim() !== '');
+                  if (hasContent) {
+                    if (r > maxR) maxR = r;
+                    if (c > maxC) maxC = c;
+                  }
                 }
               }
             }
             if (maxR === -1 || maxC === -1) return [] as any[];
             return rows.slice(0, maxR + 1).map((row) => (row || []).slice(0, maxC + 1));
           };
+          
           for (const sheetName of wb.SheetNames) {
             const ws = wb.Sheets[sheetName];
-            const rows: any[][] = xlsx.utils.sheet_to_json(ws, { header: 1, raw: true });
-            const norm = trimMatrix(rows).map((row) => row.map((cell) => {
-              if (typeof cell === 'number') return Number(cell);
-              if (cell === null || cell === undefined) return '';
-              const s = String(cell).trim();
-              const n = Number(s.replace(/\s+/g, '').replace(',', '.'));
-              return Number.isFinite(n) && s.match(/^[-+]?\d*[\.,]?\d+(e[-+]?\d+)?$/i) ? n : s;
-            }));
-            out.sheets[sheetName] = norm;
+            const range = xlsx.utils.decode_range(ws['!ref'] || 'A1');
+            const rows: any[][] = [];
+            
+            // Extract data validation rules (dropdowns)
+            const dataValidations: any = {};
+            if (ws['!dataValidation']) {
+              ws['!dataValidation'].forEach((dv: any) => {
+                if (dv.sqref) {
+                  const key = String(dv.sqref);
+                  dataValidations[key] = {
+                    type: dv.type || '',
+                    formula1: dv.formula1 || '',
+                    formula2: dv.formula2 || '',
+                    operator: dv.operator || '',
+                    allowBlank: dv.allowBlank,
+                    showDropDown: dv.showDropDown
+                  };
+                }
+              });
+            }
+            
+            // Extract cell data with formulas, formats, styles, and validation
+            for (let r = range.s.r; r <= range.e.r; r++) {
+              const row: any[] = [];
+              for (let c = range.s.c; c <= range.e.c; c++) {
+                const cellAddr = getCellAddress(r, c);
+                const cell = ws[cellAddr];
+                
+                if (!cell) {
+                  row.push('');
+                  continue;
+                }
+                
+                // Build comprehensive cell data
+                const cellData: any = {};
+                
+                // Value (displayed)
+                if (cell.v !== undefined) {
+                  if (typeof cell.v === 'number') {
+                    cellData.v = Number(cell.v);
+                  } else {
+                    cellData.v = String(cell.v).trim();
+                  }
+                }
+                
+                // Formula
+                if (cell.f) {
+                  cellData.f = String(cell.f);
+                }
+                
+                // Number format
+                if (cell.z) {
+                  cellData.z = String(cell.z);
+                }
+                
+                // Cell type (n=number, s=string, b=boolean, e=error, d=date)
+                if (cell.t) {
+                  cellData.t = String(cell.t);
+                }
+                
+                // Cell style (font, fill, border, alignment)
+                if (cell.s) {
+                  const style: any = {};
+                  
+                  // Font properties
+                  if (cell.s.font) {
+                    style.font = {
+                      name: cell.s.font.name || '',
+                      size: cell.s.font.sz || cell.s.font.size || '',
+                      bold: cell.s.font.bold || false,
+                      italic: cell.s.font.italic || false,
+                      underline: cell.s.font.underline || false,
+                      color: cell.s.font.color ? (cell.s.font.color.rgb || cell.s.font.color.theme || '') : ''
+                    };
+                  }
+                  
+                  // Fill/background color
+                  if (cell.s.fill) {
+                    style.fill = {
+                      fgColor: cell.s.fill.fgColor ? (cell.s.fill.fgColor.rgb || cell.s.fill.fgColor.theme || '') : '',
+                      bgColor: cell.s.fill.bgColor ? (cell.s.fill.bgColor.rgb || cell.s.fill.bgColor.theme || '') : '',
+                      patternType: cell.s.fill.patternType || ''
+                    };
+                  }
+                  
+                  // Border
+                  if (cell.s.border) {
+                    style.border = {
+                      top: cell.s.border.top ? { style: cell.s.border.top.style || '', color: cell.s.border.top.color || '' } : null,
+                      bottom: cell.s.border.bottom ? { style: cell.s.border.bottom.style || '', color: cell.s.border.bottom.color || '' } : null,
+                      left: cell.s.border.left ? { style: cell.s.border.left.style || '', color: cell.s.border.left.color || '' } : null,
+                      right: cell.s.border.right ? { style: cell.s.border.right.style || '', color: cell.s.border.right.color || '' } : null
+                    };
+                  }
+                  
+                  // Alignment
+                  if (cell.s.alignment) {
+                    style.alignment = {
+                      horizontal: cell.s.alignment.horizontal || '',
+                      vertical: cell.s.alignment.vertical || '',
+                      wrapText: cell.s.alignment.wrapText || false
+                    };
+                  }
+                  
+                  if (Object.keys(style).length > 0) {
+                    cellData.style = style;
+                  }
+                }
+                
+                // Data validation (dropdown)
+                const validationKey = Object.keys(dataValidations).find(key => {
+                  try {
+                    const decoded = xlsx.utils.decode_range(key);
+                    return r >= decoded.s.r && r <= decoded.e.r && c >= decoded.s.c && c <= decoded.e.c;
+                  } catch {
+                    return false;
+                  }
+                });
+                if (validationKey) {
+                  cellData.dv = dataValidations[validationKey];
+                }
+                
+                // If only value exists and it's simple, store it directly for backward compatibility
+                if (Object.keys(cellData).length === 1 && cellData.v !== undefined) {
+                  row.push(cellData.v);
+                } else if (Object.keys(cellData).length === 0) {
+                  row.push('');
+                } else {
+                  row.push(cellData);
+                }
+              }
+              rows.push(row);
+            }
+            
+            out.sheets[sheetName] = trimMatrix(rows);
           }
+          
           const outJson = path.join(targetDir, `${safeBase}.json`);
-          fs.writeFileSync(outJson, JSON.stringify(out));
+          fs.writeFileSync(outJson, JSON.stringify(out, null, 2));
           return { outXlsx, outJson };
         } catch (e) {
           console.error("Failed to move/normalize xlsx:", e);
@@ -161,38 +300,176 @@ export default defineConfig({
             .replace(/[^a-zA-Z0-9_-]+/g, '_').replace(/^_+|_+$/g, '');
           const outXlsx = path.join(artifactsDir, 'effectif', `${safeBase}.xlsx`);
           fs.copyFileSync(srcPath, outXlsx);
-          // Normalize to comparable JSON
-          const wb = xlsx.readFile(outXlsx, { cellDates: false, cellNF: false, cellText: false });
+          // Normalize to comparable JSON with formulas, formats, styles, and validation
+          const wb = xlsx.readFile(outXlsx, { cellDates: false, cellNF: true, cellFormula: true, cellStyles: true });
           const out: any = { sheets: {} };
+          
+          // Helper to get cell address from row/col (0-indexed)
+          const getCellAddress = (r: number, c: number): string => {
+            return xlsx.utils.encode_cell({ r, c });
+          };
+          
           const trimMatrix = (rows: any[][]) => {
             let maxR = -1, maxC = -1;
             for (let r = 0; r < rows.length; r++) {
               const row = rows[r] || [];
               for (let c = 0; c < row.length; c++) {
                 const v = row[c];
-                if (v !== null && v !== undefined && String(v).trim() !== '') {
-                  if (r > maxR) maxR = r;
-                  if (c > maxC) maxC = c;
+                if (v !== null && v !== undefined && v !== '') {
+                  const hasContent = (typeof v === 'object' && (v.v !== undefined || v.f !== undefined)) || 
+                                    (typeof v !== 'object' && String(v).trim() !== '');
+                  if (hasContent) {
+                    if (r > maxR) maxR = r;
+                    if (c > maxC) maxC = c;
+                  }
                 }
               }
             }
             if (maxR === -1 || maxC === -1) return [] as any[];
             return rows.slice(0, maxR + 1).map((row) => (row || []).slice(0, maxC + 1));
           };
+          
           for (const sheetName of wb.SheetNames) {
             const ws = wb.Sheets[sheetName];
-            const rows: any[][] = xlsx.utils.sheet_to_json(ws, { header: 1, raw: true });
-            const norm = trimMatrix(rows).map((row) => row.map((cell) => {
-              if (typeof cell === 'number') return Number(cell);
-              if (cell === null || cell === undefined) return '';
-              const s = String(cell).trim();
-              const n = Number(s.replace(/\s+/g, '').replace(',', '.'));
-              return Number.isFinite(n) && s.match(/^[-+]?\d*[\.,]?\d+(e[-+]?\d+)?$/i) ? n : s;
-            }));
-            out.sheets[sheetName] = norm;
+            const range = xlsx.utils.decode_range(ws['!ref'] || 'A1');
+            const rows: any[][] = [];
+            
+            // Extract data validation rules (dropdowns)
+            const dataValidations: any = {};
+            if (ws['!dataValidation']) {
+              ws['!dataValidation'].forEach((dv: any) => {
+                if (dv.sqref) {
+                  const key = String(dv.sqref);
+                  dataValidations[key] = {
+                    type: dv.type || '',
+                    formula1: dv.formula1 || '',
+                    formula2: dv.formula2 || '',
+                    operator: dv.operator || '',
+                    allowBlank: dv.allowBlank,
+                    showDropDown: dv.showDropDown
+                  };
+                }
+              });
+            }
+            
+            // Extract cell data with formulas, formats, styles, and validation
+            for (let r = range.s.r; r <= range.e.r; r++) {
+              const row: any[] = [];
+              for (let c = range.s.c; c <= range.e.c; c++) {
+                const cellAddr = getCellAddress(r, c);
+                const cell = ws[cellAddr];
+                
+                if (!cell) {
+                  row.push('');
+                  continue;
+                }
+                
+                // Build comprehensive cell data
+                const cellData: any = {};
+                
+                // Value (displayed)
+                if (cell.v !== undefined) {
+                  if (typeof cell.v === 'number') {
+                    cellData.v = Number(cell.v);
+                  } else {
+                    cellData.v = String(cell.v).trim();
+                  }
+                }
+                
+                // Formula
+                if (cell.f) {
+                  cellData.f = String(cell.f);
+                }
+                
+                // Number format
+                if (cell.z) {
+                  cellData.z = String(cell.z);
+                }
+                
+                // Cell type (n=number, s=string, b=boolean, e=error, d=date)
+                if (cell.t) {
+                  cellData.t = String(cell.t);
+                }
+                
+                // Cell style (font, fill, border, alignment)
+                if (cell.s) {
+                  const style: any = {};
+                  
+                  // Font properties
+                  if (cell.s.font) {
+                    style.font = {
+                      name: cell.s.font.name || '',
+                      size: cell.s.font.sz || cell.s.font.size || '',
+                      bold: cell.s.font.bold || false,
+                      italic: cell.s.font.italic || false,
+                      underline: cell.s.font.underline || false,
+                      color: cell.s.font.color ? (cell.s.font.color.rgb || cell.s.font.color.theme || '') : ''
+                    };
+                  }
+                  
+                  // Fill/background color
+                  if (cell.s.fill) {
+                    style.fill = {
+                      fgColor: cell.s.fill.fgColor ? (cell.s.fill.fgColor.rgb || cell.s.fill.fgColor.theme || '') : '',
+                      bgColor: cell.s.fill.bgColor ? (cell.s.fill.bgColor.rgb || cell.s.fill.bgColor.theme || '') : '',
+                      patternType: cell.s.fill.patternType || ''
+                    };
+                  }
+                  
+                  // Border
+                  if (cell.s.border) {
+                    style.border = {
+                      top: cell.s.border.top ? { style: cell.s.border.top.style || '', color: cell.s.border.top.color || '' } : null,
+                      bottom: cell.s.border.bottom ? { style: cell.s.border.bottom.style || '', color: cell.s.border.bottom.color || '' } : null,
+                      left: cell.s.border.left ? { style: cell.s.border.left.style || '', color: cell.s.border.left.color || '' } : null,
+                      right: cell.s.border.right ? { style: cell.s.border.right.style || '', color: cell.s.border.right.color || '' } : null
+                    };
+                  }
+                  
+                  // Alignment
+                  if (cell.s.alignment) {
+                    style.alignment = {
+                      horizontal: cell.s.alignment.horizontal || '',
+                      vertical: cell.s.alignment.vertical || '',
+                      wrapText: cell.s.alignment.wrapText || false
+                    };
+                  }
+                  
+                  if (Object.keys(style).length > 0) {
+                    cellData.style = style;
+                  }
+                }
+                
+                // Data validation (dropdown)
+                const validationKey = Object.keys(dataValidations).find(key => {
+                  try {
+                    const decoded = xlsx.utils.decode_range(key);
+                    return r >= decoded.s.r && r <= decoded.e.r && c >= decoded.s.c && c <= decoded.e.c;
+                  } catch {
+                    return false;
+                  }
+                });
+                if (validationKey) {
+                  cellData.dv = dataValidations[validationKey];
+                }
+                
+                // If only value exists and it's simple, store it directly for backward compatibility
+                if (Object.keys(cellData).length === 1 && cellData.v !== undefined) {
+                  row.push(cellData.v);
+                } else if (Object.keys(cellData).length === 0) {
+                  row.push('');
+                } else {
+                  row.push(cellData);
+                }
+              }
+              rows.push(row);
+            }
+            
+            out.sheets[sheetName] = trimMatrix(rows);
           }
+          
           const outJson = path.join(artifactsDir, 'effectif', `${safeBase}.json`);
-          fs.writeFileSync(outJson, JSON.stringify(out));
+          fs.writeFileSync(outJson, JSON.stringify(out, null, 2));
           return { outXlsx, outJson };
         } catch (e) {
           console.error("Failed to move/normalize xlsx:", e);
@@ -234,6 +511,59 @@ export default defineConfig({
         }
       }
       on("task", Object.assign({}, verifyDownloadTasks as any, {
+        readContextFile(filePath: string) {
+          try {
+            const fullPath = path.join(process.cwd(), filePath);
+            if (fs.existsSync(fullPath)) {
+              const content = fs.readFileSync(fullPath, 'utf8');
+              const contexts = JSON.parse(content);
+              console.log(`[CONTEXT] Read ${Object.keys(contexts).length} context(s) from ${fullPath}`);
+              console.log(`[CONTEXT] Available keys:`, Object.keys(contexts));
+              return contexts;
+            }
+            console.log(`[CONTEXT] File not found: ${fullPath}, returning empty object`);
+            return {};
+          } catch (e) {
+            console.warn('[CONTEXT] Failed to read context file:', e);
+            return {};
+          }
+        },
+        writeContextFile({ filePath, testTitle, context }: { filePath: string; testTitle: string; context: any }) {
+          try {
+            const fullPath = path.join(config.projectRoot, filePath);
+            const dir = path.dirname(fullPath);
+            fs.mkdirSync(dir, { recursive: true });
+            
+            // Read existing contexts
+            let contexts = {};
+            if (fs.existsSync(fullPath)) {
+              try {
+                const content = fs.readFileSync(fullPath, 'utf8');
+                contexts = JSON.parse(content);
+              } catch (e) {
+                console.warn('Failed to read existing contexts, starting fresh:', e);
+              }
+            }
+            
+            // Add new context
+            contexts[testTitle] = context;
+            
+            // Log what we're writing
+            console.log(`[CONTEXT] Writing context for test: "${testTitle}"`);
+            console.log(`[CONTEXT] Context data:`, JSON.stringify(context, null, 2));
+            
+            // Write back with explicit fsync to ensure it's flushed to disk
+            const fd = fs.openSync(fullPath, 'w');
+            fs.writeSync(fd, JSON.stringify(contexts, null, 2), 0, 'utf8');
+            fs.fsyncSync(fd);  // Force sync to disk before container exits
+            fs.closeSync(fd);
+            console.log(`[CONTEXT] Successfully wrote and synced to ${fullPath}`);
+            return null;
+          } catch (e) {
+            console.error('[CONTEXT] Failed to write context file:', e);
+            return null;
+          }
+        },
         saveLabels({ host, labels }: { host: string; labels: string[] }) {
           try {
             const debugDir = path.join(process.cwd(), "cypress", "debug");

@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: "PR number to publish under reports/pr-<number>"
+        description: "PR number to publish under pr-<number>"
         required: true
         type: string
       spec:
@@ -30,6 +30,16 @@ on:
         description: "Mocha --grep filter for API tests (optional)"
         required: false
         type: string
+      skip_e2e:
+        description: "Skip E2E tests (run only API tests)"
+        required: false
+        type: boolean
+        default: false
+
+# Prevent concurrent deployments to avoid race conditions
+concurrency:
+  group: github-pages-deploy
+  cancel-in-progress: false
 
 jobs:
   api-tests:
@@ -82,6 +92,7 @@ jobs:
           if-no-files-found: warn
 
   e2e-tests:
+    if: ${{ github.event.inputs.skip_e2e != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "E2E TESTS"
@@ -102,7 +113,7 @@ jobs:
         run: |
           set -e
           SPEC_INPUT="${{ github.event.inputs.spec }}"
-          export SPEC="$SPEC_INPUT"
+          export SPEC="${SPEC_INPUT:-}"
           docker compose -p test-e2e -f docker-compose-e2e.test.yml up -d --build db front api redis
           
           echo "=== Waiting for API to initialize (30s to allow seeders to complete) ==="
@@ -127,6 +138,19 @@ jobs:
               npx -y wait-on -t 180000 -i 2000 "$NG_APP_SERVER_URL"
               rm -rf cypress/reports && mkdir -p cypress/reports
               npx cypress run --browser chrome --headless --spec "${SPEC:-cypress/e2e/**/*.cy.js}" || true
+              
+              # Explicitly sync all files to disk before container exits
+              sync
+              
+              # Verify test-contexts.json was created and synced
+              if [ -f cypress/reports/test-contexts.json ]; then
+                echo "=== test-contexts.json found and synced ==="
+                echo "File size: $(wc -c < cypress/reports/test-contexts.json) bytes"
+                echo "Number of contexts: $(grep -o "\"[^\"]*\":" cypress/reports/test-contexts.json | wc -l)"
+              else
+                echo "=== WARNING: test-contexts.json NOT FOUND ==="
+              fi
+              
               echo "=== E2E reports ==="; ls -la cypress/reports || true
             ' || true
           
@@ -208,6 +232,7 @@ jobs:
           if-no-files-found: warn
   # Non-regression calculation end-to-end tests (requires SANDBOX stack)
   e2e-nonreg-vs-sandbox-tests:
+    if: ${{ github.event.inputs.skip_e2e != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "E2E NON-REGRESSION TESTS"
@@ -409,89 +434,108 @@ jobs:
           name: mocha-report
           path: ./mocha-report
 
-      - name: Check if gh-pages branch exists
-        id: check_gh_pages
-        continue-on-error: true
-        run: |
-          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "gh-pages branch exists"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "gh-pages branch does not exist yet (first deployment)"
-          fi
-
-      - name: Checkout existing gh-pages branch
-        if: steps.check_gh_pages.outputs.exists == 'true'
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages-existing
-          
-      - name: Restore existing site content
-        if: steps.check_gh_pages.outputs.exists == 'true'
-        run: |
-          if [ -d "gh-pages-existing/site" ]; then
-            echo "Restoring existing site content from gh-pages"
-            cp -r gh-pages-existing/site ./site
-            echo "Existing reports preserved"
-          else
-            echo "No existing site directory found in gh-pages"
-          fi
-
-      - name: Create site directory structure (per PR)
+      - name: Create PR report directory structure
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
+          RUN_NUM: ${{ github.run_number }}
         run: |
           set -e
-          mkdir -p site/reports/pr-${PR_NUM}
-          mkdir -p site/reports/pr-${PR_NUM}/cypress
-          cp -r cypress-reports/cypress/reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/cypress/reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
-          cp -r cypress-reports-nonreg/cypress/reports/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/cypress/reports/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/.jsons site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports-nonreg/*.json site/reports/pr-${PR_NUM}/cypress/ 2>/dev/null || true
-          mkdir -p site/reports/pr-${PR_NUM}/videos
-          cp -r cypress-videos/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
-          cp -r cypress-videos-nonreg/* site/reports/pr-${PR_NUM}/videos/ 2>/dev/null || true
-          mkdir -p site/reports/pr-${PR_NUM}/screenshots
-          cp -r cypress-screenshots/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
-          cp -r cypress-screenshots-nonreg/* site/reports/pr-${PR_NUM}/screenshots/ 2>/dev/null || true
-          mkdir -p site/reports/pr-${PR_NUM}/mocha
-          cp -r mocha-report/* site/reports/pr-${PR_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/cypress
+          
+          # Copy E2E reports (excluding test-contexts.json for now)
+          find cypress-reports -type f -name "*.json" ! -name "test-contexts.json" -exec cp {} site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ \; 2>/dev/null || echo "No E2E reports to copy"
+          
+          # Copy non-reg reports (excluding test-contexts.json for now)
+          find cypress-reports-nonreg -type f -name "*.json" ! -name "test-contexts.json" -exec cp {} site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/ \; 2>/dev/null || true
+          
+          # Merge test-contexts.json files from both E2E and non-reg
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            let merged = {};
+            
+            // Read E2E contexts
+            const e2ePaths = [
+              'cypress-reports/test-contexts.json',
+              'cypress-reports/cypress/reports/test-contexts.json',
+              'cypress-reports/.jsons/test-contexts.json'
+            ];
+            for (const p of e2ePaths) {
+              if (fs.existsSync(p)) {
+                try {
+                  const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+                  Object.assign(merged, data);
+                  console.log(\`Merged \${Object.keys(data).length} contexts from \${p}\`);
+                } catch (e) {
+                  console.warn(\`Failed to read \${p}:\`, e.message);
+                }
+              }
+            }
+            
+            // Read non-reg contexts
+            const nonregPaths = [
+              'cypress-reports-nonreg/test-contexts.json',
+              'cypress-reports-nonreg/cypress/reports/test-contexts.json',
+              'cypress-reports-nonreg/.jsons/test-contexts.json'
+            ];
+            for (const p of nonregPaths) {
+              if (fs.existsSync(p)) {
+                try {
+                  const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+                  Object.assign(merged, data);
+                  console.log(\`Merged \${Object.keys(data).length} contexts from \${p}\`);
+                } catch (e) {
+                  console.warn(\`Failed to read \${p}:\`, e.message);
+                }
+              }
+            }
+            
+            // Write merged contexts
+            const outPath = 'site/pr-${PR_NUM}/run-${RUN_NUM}/cypress/test-contexts.json';
+            fs.writeFileSync(outPath, JSON.stringify(merged, null, 2));
+            console.log(\`Wrote \${Object.keys(merged).length} total contexts to \${outPath}\`);
+          " || echo "Failed to merge test-contexts.json"
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/videos
+          cp -r cypress-videos/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || echo "No videos to copy"
+          cp -r cypress-videos-nonreg/* site/pr-${PR_NUM}/run-${RUN_NUM}/videos/ 2>/dev/null || true
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/screenshots
+          cp -r cypress-screenshots/* site/pr-${PR_NUM}/run-${RUN_NUM}/screenshots/ 2>/dev/null || echo "No screenshots to copy"
+          cp -r cypress-screenshots-nonreg/* site/pr-${PR_NUM}/run-${RUN_NUM}/screenshots/ 2>/dev/null || true
+          mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/mocha
+          cp -r mocha-report/* site/pr-${PR_NUM}/run-${RUN_NUM}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
 
       - name: Build combined static HTML (merged JSON -> bespoke report)
         continue-on-error: true
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
+          RUN_NUM: ${{ github.run_number }}
         run: |
           set -e
           HOST_UID=$(id -u)
           HOST_GID=$(id -g)
-          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
+          docker run --rm --user "$HOST_UID:$HOST_GID" -e PR_NUM="$PR_NUM" -e RUN_NUM="$RUN_NUM" -e GITHUB_RUN_ID="${{ github.run_id }}" -e GITHUB_REPO="${{ github.repository }}" -e HOME=/tmp -e NPM_CONFIG_CACHE=/tmp/.npm -v "$GITHUB_WORKSPACE:/work" -w /work node:22-alpine sh -lc '
             set -e
             mkdir -p "$HOME" "$NPM_CONFIG_CACHE"
-            mkdir -p site/reports/pr-${PR_NUM}/combined
+            mkdir -p site/pr-${PR_NUM}/run-${RUN_NUM}/combined
             JSONS="$(
-              { find mocha-report -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
-              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" 2>/dev/null || true; }
+              { find mocha-report -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/cypress/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/cypress/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
             )"
             if [ -n "$JSONS" ]; then
-              npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/reports/pr-${PR_NUM}/combined/merged.json || true
+              npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json || true
             fi
-            if [ -s site/reports/pr-${PR_NUM}/combined/merged.json ]; then
-              node scripts/section-mochawesome.js site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json || cp site/reports/pr-${PR_NUM}/combined/merged.json site/reports/pr-${PR_NUM}/combined/sectioned.json
-              node scripts/build-static-report.js site/reports/pr-${PR_NUM}/combined/sectioned.json site/reports/pr-${PR_NUM}/videos site/reports/pr-${PR_NUM}/screenshots site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html || echo "Static report generation failed"
+            if [ -s site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json ]; then
+              node scripts/section-mochawesome.js site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json site/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json || cp site/pr-${PR_NUM}/run-${RUN_NUM}/combined/merged.json site/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json
+              GITHUB_RUN_URL="https://github.com/${GITHUB_REPO}/actions/runs/${GITHUB_RUN_ID}"
+              node scripts/build-static-report.js site/pr-${PR_NUM}/run-${RUN_NUM}/combined/sectioned.json site/pr-${PR_NUM}/run-${RUN_NUM}/videos site/pr-${PR_NUM}/run-${RUN_NUM}/screenshots site/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html "$GITHUB_RUN_URL" || echo "Static report generation failed"
             else
               echo "No JSONs to merge for combined report"
             fi
@@ -500,17 +544,19 @@ jobs:
       - name: Append Cypress Videos section to combined HTML
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
+          RUN_NUM: ${{ github.run_number }}
         run: |
           node scripts/append-videos-to-report.js \
-            "site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html" \
-            "site/reports/pr-${PR_NUM}/videos"
+            "site/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html" \
+            "site/pr-${PR_NUM}/run-${RUN_NUM}/videos"
 
       - name: Check combined HTML exists
         id: combined_exists
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
+          RUN_NUM: ${{ github.run_number }}
         run: |
-          if [ -s "site/reports/pr-${PR_NUM}/combined/a-just-tests-report.html" ]; then
+          if [ -s "site/pr-${PR_NUM}/run-${RUN_NUM}/combined/a-just-tests-report.html" ]; then
             echo "ok=true" >> "$GITHUB_OUTPUT"
           else
             echo "ok=false" >> "$GITHUB_OUTPUT"
@@ -520,8 +566,8 @@ jobs:
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
         run: |
-          mkdir -p site/reports/pr-${PR_NUM}
-          cat > site/reports/pr-${PR_NUM}/index.html << 'EOF'
+          mkdir -p site/pr-${PR_NUM}
+          cat > site/pr-${PR_NUM}/index.html << 'EOF'
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -558,12 +604,19 @@ jobs:
         uses: actions/github-script@v7
         env:
           PR_NUM: ${{ steps.prnum.outputs.pr }}
+          RUN_NUM: ${{ github.run_number }}
+          DEPLOYMENT_PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         with:
           script: |
-            const pageUrl = process.env.DEPLOYMENT_PAGE_URL || '${{ steps.deployment.outputs.page_url }}';
+            let pageUrl = process.env.DEPLOYMENT_PAGE_URL || 'https://betagouv.github.io/a-just/';
+            // Ensure trailing slash for proper path construction
+            if (!pageUrl.endsWith('/')) {
+              pageUrl += '/';
+            }
             const pr = process.env.PR_NUM;
-            const url = `${pageUrl}reports/pr-${pr}/combined/a-just-tests-report.html`;
-            const body = `✅ Combined test report available: ${url}`;
+            const runNum = process.env.RUN_NUM;
+            const url = `${pageUrl}pr-${pr}/run-${runNum}/combined/a-just-tests-report.html`;
+            const body = `✅ Combined test report available (run #${runNum}): ${url}`;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

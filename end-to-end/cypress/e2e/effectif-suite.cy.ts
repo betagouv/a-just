@@ -62,41 +62,215 @@ function categoryPattern(lbl: string): RegExp {
   return new RegExp(`^${esc}$`, 'i');
 }
 
-function diffSheetsWithTolerance(a: any, b: any, eps = 1e-6): string[] {
-  const diffs: string[] = [];
-  const sheetsA = Object.keys((a && a.sheets) || {});
-  const sheetsB = Object.keys((b && b.sheets) || {});
-  const names = Array.from(new Set([...sheetsA, ...sheetsB]));
-  names.forEach((name) => {
-    const sa: any[][] = (a && a.sheets && a.sheets[name]) || [];
-    const sb: any[][] = (b && b.sheets && b.sheets[name]) || [];
-    const maxR = Math.max(sa.length, sb.length);
+// Convert column index to Excel letter (0 -> A, 1 -> B, 25 -> Z, 26 -> AA, etc.)
+function colToExcel(col: number): string {
+  let result = '';
+  let c = col;
+  while (c >= 0) {
+    result = String.fromCharCode(65 + (c % 26)) + result;
+    c = Math.floor(c / 26) - 1;
+  }
+  return result;
+}
+
+// Convert row/col to Excel notation (e.g., row=0, col=1 -> "B1")
+function cellToExcel(row: number, col: number): string {
+  return `${colToExcel(col)}${row + 1}`;
+}
+
+interface SheetDiff {
+  sheet: string;
+  cell: string;
+  reference: string;
+  new: string;
+}
+
+function diffSheetsWithTolerance(reference: any, candidate: any, eps = 1e-6): { diffs: SheetDiff[]; summary: string } {
+  const allDiffs: SheetDiff[] = [];
+  const sheetsRef = Object.keys((reference && reference.sheets) || {});
+  const sheetsCand = Object.keys((candidate && candidate.sheets) || {});
+  const allSheetNames = Array.from(new Set([...sheetsRef, ...sheetsCand]));
+  
+  // Helper to extract cell properties (handles both simple values and complex cell objects)
+  const getCellProps = (cell: any) => {
+    if (cell === null || cell === undefined || cell === '') {
+      return { v: '', f: undefined, z: undefined, t: undefined, style: undefined, dv: undefined };
+    }
+    if (typeof cell === 'object' && !Array.isArray(cell)) {
+      return {
+        v: cell.v ?? '',
+        f: cell.f,
+        z: cell.z,
+        t: cell.t,
+        style: cell.style,
+        dv: cell.dv
+      };
+    }
+    // Simple value (backward compatibility)
+    return { v: cell, f: undefined, z: undefined, t: undefined, style: undefined, dv: undefined };
+  };
+  
+  allSheetNames.forEach((sheetName) => {
+    const refSheet: any[][] = (reference && reference.sheets && reference.sheets[sheetName]) || [];
+    const candSheet: any[][] = (candidate && candidate.sheets && candidate.sheets[sheetName]) || [];
+    const maxR = Math.max(refSheet.length, candSheet.length);
+    
     for (let r = 0; r < maxR; r++) {
-      const ra = sa[r] || [];
-      const rb = sb[r] || [];
-      const maxC = Math.max(ra.length, rb.length);
+      const refRow = refSheet[r] || [];
+      const candRow = candSheet[r] || [];
+      const maxC = Math.max(refRow.length, candRow.length);
+      
       for (let c = 0; c < maxC; c++) {
-        const va = ra[c];
-        const vb = rb[c];
-        const aNum = typeof va === 'number';
-        const bNum = typeof vb === 'number';
-        if (aNum || bNum) {
-          const na = Number(va);
-          const nb = Number(vb);
-          if (!(Number.isFinite(na) && Number.isFinite(nb) && Math.abs(na - nb) <= eps)) {
-            diffs.push(`${name}[${r},${c}]: ${String(va)} !== ${String(vb)}`);
+        const refCell = getCellProps(refRow[c]);
+        const candCell = getCellProps(candRow[c]);
+        
+        const differences: string[] = [];
+        
+        // Compare values
+        const refIsNum = typeof refCell.v === 'number';
+        const candIsNum = typeof candCell.v === 'number';
+        if (refIsNum || candIsNum) {
+          const nRef = Number(refCell.v);
+          const nCand = Number(candCell.v);
+          if (!(Number.isFinite(nRef) && Number.isFinite(nCand) && Math.abs(nRef - nCand) <= eps)) {
+            differences.push(`Valeur : ${refCell.v} → ${candCell.v}`);
           }
         } else {
-          const saStr = (va ?? '').toString().trim();
-          const sbStr = (vb ?? '').toString().trim();
-          if (saStr !== sbStr) {
-            diffs.push(`${name}[${r},${c}]: '${saStr}' !== '${sbStr}'`);
+          const refStr = String(refCell.v ?? '').trim();
+          const candStr = String(candCell.v ?? '').trim();
+          if (refStr !== candStr) {
+            differences.push(`Valeur : "${refStr}" → "${candStr}"`);
           }
+        }
+        
+        // Compare formulas
+        const refFormula = refCell.f || '';
+        const candFormula = candCell.f || '';
+        if (refFormula !== candFormula) {
+          differences.push(`Formule : "${refFormula}" → "${candFormula}"`);
+        }
+        
+        // Compare number formats
+        const refFormat = refCell.z || '';
+        const candFormat = candCell.z || '';
+        if (refFormat !== candFormat) {
+          differences.push(`Format : "${refFormat}" → "${candFormat}"`);
+        }
+        
+        // Compare cell types
+        const refType = refCell.t || '';
+        const candType = candCell.t || '';
+        if (refType !== candType) {
+          const typeNames: any = { n: 'nombre', s: 'texte', b: 'booléen', e: 'erreur', d: 'date' };
+          const refTypeName = typeNames[refType] || refType;
+          const candTypeName = typeNames[candType] || candType;
+          differences.push(`Type : ${refTypeName} → ${candTypeName}`);
+        }
+        
+        // Compare styles (font, fill, border, alignment)
+        const refStyle = refCell.style;
+        const candStyle = candCell.style;
+        if (refStyle || candStyle) {
+          const refStyleStr = JSON.stringify(refStyle || {});
+          const candStyleStr = JSON.stringify(candStyle || {});
+          if (refStyleStr !== candStyleStr) {
+            // Detailed style comparison
+            const styleDiffs: string[] = [];
+            
+            // Font comparison
+            if (refStyle?.font || candStyle?.font) {
+              const refFont = refStyle?.font || {};
+              const candFont = candStyle?.font || {};
+              const fontChanges: string[] = [];
+              if (refFont.size !== candFont.size) fontChanges.push(`taille ${refFont.size || ''}→${candFont.size || ''}`);
+              if (refFont.bold !== candFont.bold) fontChanges.push(candFont.bold ? 'gras ajouté' : 'gras retiré');
+              if (refFont.italic !== candFont.italic) fontChanges.push(candFont.italic ? 'italique ajouté' : 'italique retiré');
+              if (refFont.underline !== candFont.underline) fontChanges.push(candFont.underline ? 'souligné ajouté' : 'souligné retiré');
+              if (refFont.color !== candFont.color) fontChanges.push(`couleur ${refFont.color || 'aucune'}→${candFont.color || 'aucune'}`);
+              if (refFont.name !== candFont.name) fontChanges.push(`police ${refFont.name || ''}→${candFont.name || ''}`);
+              if (fontChanges.length > 0) {
+                styleDiffs.push(`Police : ${fontChanges.join(', ')}`);
+              }
+            }
+            
+            // Fill comparison
+            if (refStyle?.fill || candStyle?.fill) {
+              const refFill = refStyle?.fill || {};
+              const candFill = candStyle?.fill || {};
+              const fillChanges: string[] = [];
+              if (refFill.fgColor !== candFill.fgColor) fillChanges.push(`fond ${refFill.fgColor || 'aucun'}→${candFill.fgColor || 'aucun'}`);
+              if (fillChanges.length > 0) {
+                styleDiffs.push(`Remplissage : ${fillChanges.join(', ')}`);
+              }
+            }
+            
+            if (styleDiffs.length > 0) {
+              differences.push(...styleDiffs);
+            }
+          }
+        }
+        
+        // Compare data validation (dropdowns)
+        const refDv = refCell.dv;
+        const candDv = candCell.dv;
+        if (refDv || candDv) {
+          const refDvStr = JSON.stringify(refDv || {});
+          const candDvStr = JSON.stringify(candDv || {});
+          if (refDvStr !== candDvStr) {
+            // Extract dropdown options for readable comparison
+            const refFormula = refDv?.formula1 || '';
+            const candFormula = candDv?.formula1 || '';
+            if (refFormula !== candFormula) {
+              // Clean up formula display (remove quotes and escape characters)
+              const cleanFormula = (f: string) => f.replace(/^"|"$/g, '').replace(/\\"/g, '"');
+              differences.push(`Menu déroulant : ${cleanFormula(refFormula)} → ${cleanFormula(candFormula)}`);
+            } else {
+              // Other validation changes
+              differences.push(`Menu déroulant : configuration modifiée`);
+            }
+          }
+        }
+        
+        if (differences.length > 0) {
+          allDiffs.push({
+            sheet: sheetName,
+            cell: cellToExcel(r, c),
+            reference: differences.map(d => d.split(' → ')[0].split(': ')[1]).join(', '),
+            new: differences.join('; ')
+          });
         }
       }
     }
   });
-  return diffs;
+  
+  // Build structured summary grouped by sheet
+  const diffsBySheet = new Map<string, SheetDiff[]>();
+  allDiffs.forEach(diff => {
+    if (!diffsBySheet.has(diff.sheet)) {
+      diffsBySheet.set(diff.sheet, []);
+    }
+    diffsBySheet.get(diff.sheet)!.push(diff);
+  });
+  
+  let summary = '';
+  if (allDiffs.length > 0) {
+    summary = `Trouvé ${allDiffs.length} différence(s) dans ${diffsBySheet.size} feuille(s) :\n\n`;
+    
+    diffsBySheet.forEach((diffs, sheetName) => {
+      summary += `Feuille : "${sheetName}" (${diffs.length} différence(s))\n`;
+      summary += '='.repeat(60) + '\n';
+      
+      diffs.forEach(diff => {
+        summary += `  Cellule ${diff.cell} :\n`;
+        summary += `    ${diff.new}\n`;
+        summary += '\n';
+      });
+      
+      summary += '\n';
+    });
+  }
+  
+  return { diffs: allDiffs, summary };
 }
 
 // Poll window.__lastDownloadBase64 and persist when available (CI safety for flaky native downloads)
@@ -494,7 +668,7 @@ function exportAndPersist(baseUrl: string, startISO: string, stopISO: string, ca
   // No poll timeline writes
 }
 
-describe('Effectif Suite: PR and SANDBOX then compare', () => {
+describe('Non-regression des calculs de l\'extracteur (données d\'effectifs)', () => {
   it('PR: exports for all categories', () => {
     if (!PR) throw new Error('CANDIDATE_FRONT_URL must be provided');
     loginAndOpenDashboard(PR);
@@ -535,7 +709,7 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
     const hostSB = new URL(SANDBOX).host.replace(/[:.]/g, '-');
     const hostPR = new URL(PR).host.replace(/[:.]/g, '-');
 
-    const results: Array<{ label: string; diffs: string[] }> = [];
+    const results: Array<{ label: string; diffCount: number; summary: string }> = [];
 
     CATEGORIES.forEach((cat) => {
       const slug = slugifyLabel(cat);
@@ -543,20 +717,58 @@ describe('Effectif Suite: PR and SANDBOX then compare', () => {
       const prJson = `cypress/artifacts/effectif/effectif_${hostPR}_${START}_${STOP}_${slug}.json`;
       cy.readFile(sbJson, { timeout: 60000 }).then((sb) => {
         cy.readFile(prJson, { timeout: 60000 }).then((pr) => {
-          const diffs = diffSheetsWithTolerance(sb, pr, 1e-6);
-          if (diffs.length) {
-            cy.writeFile(`cypress/artifacts/effectif/diff_${slug}.txt`, diffs.join('\n'));
+          const { diffs, summary } = diffSheetsWithTolerance(sb, pr, 1e-6);
+          if (diffs.length > 0) {
+            // Write detailed diff report
+            const report = `Category: ${cat}\n` +
+                          `Reference: SANDBOX (${hostSB})\n` +
+                          `Candidate: PR (${hostPR})\n` +
+                          `Date Range: ${START} to ${STOP}\n\n` +
+                          summary;
+            cy.writeFile(`cypress/artifacts/effectif/diff_${slug}.txt`, report);
+            cy.log(`❌ ${cat}: ${diffs.length} differences found`);
+          } else {
+            cy.log(`✅ ${cat}: No differences`);
           }
-          results.push({ label: cat, diffs });
+          results.push({ label: cat, diffCount: diffs.length, summary });
         });
       });
     });
 
     cy.then(() => {
-      const failing = results.filter(r => r.diffs.length > 0);
+      const failing = results.filter(r => r.diffCount > 0);
       if (failing.length) {
-        const summary = failing.map(r => `${r.label}: ${r.diffs.length} mismatches`).join('\n');
-        throw new Error(`Effectif comparison mismatches:\n${summary}\nSee cypress/artifacts/effectif/diff_*.txt for details`);
+        let errorMsg = `\n${'='.repeat(80)}\n`;
+        errorMsg += `ÉCHEC DES TESTS DE NON-RÉGRESSION EFFECTIF\n`;
+        errorMsg += `${'='.repeat(80)}\n\n`;
+        
+        // Count total sheets with differences across all categories
+        let totalSheets = 0;
+        failing.forEach(r => {
+          const sheetMatches = r.summary.match(/Feuille :/g);
+          totalSheets += sheetMatches ? sheetMatches.length : 0;
+        });
+        
+        if (failing.length === 1 && failing[0].label === 'Tous') {
+          // Single "Tous" category - just show sheet-level summary
+          errorMsg += failing[0].summary;
+        } else {
+          // Multiple categories - show category grouping
+          errorMsg += `Trouvé des différences dans ${failing.length} catégorie(s) :\n\n`;
+          failing.forEach(r => {
+            errorMsg += `Catégorie : ${r.label}\n`;
+            errorMsg += `-`.repeat(80) + '\n';
+            errorMsg += r.summary;
+          });
+        }
+        
+        errorMsg += `\n${'='.repeat(80)}\n`;
+        errorMsg += `Rapports détaillés sauvegardés dans : cypress/artifacts/effectif/diff_*.txt\n`;
+        errorMsg += `${'='.repeat(80)}\n`;
+        
+        throw new Error(errorMsg);
+      } else {
+        cy.log(`✅ Toutes les catégories correspondent entre PR et SANDBOX`);
       }
     });
   });

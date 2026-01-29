@@ -39,6 +39,10 @@
   @if(userService.canEditHR()){
   <div class="right-panel">
     @if (canEdit) {
+    <button class="primary light small outline no-print class-export-situation" (click)="exportSituation.emit()">
+      <i class="ri-file-excel-2-line"></i>
+      Exporter
+    </button>
     <button class="primary light small outline no-print" (click)="editVentilation.emit(true)">Corriger</button>
     @if (canRemoveSituation) {
     <button (click)="onRemove.emit()" class="light small outline red no-print">Supprimer</button>
