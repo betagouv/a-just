@@ -649,8 +649,8 @@
 .contentieux-header-calculator {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  font-weight: bold;
   min-height: 80px;
+  font-weight: 500;
 
   >div {
     display: flex;

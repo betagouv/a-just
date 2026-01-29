@@ -89,7 +89,7 @@
     }
   </div>
   <div>
-    <div class="anticipate" [ngStyle]="{ borderColor: userService.referentielMappingColorActivityByInterface(
+    <div class="anticipate" (click)="this.currentProjection = calculator; initProjectionFooterGrid()" [ngStyle]="{ borderColor: userService.referentielMappingColorActivityByInterface(
             userService.referentielMappingNameByInterface(
               calculator.contentieux.label === 'Autres activités' ? 'other' : calculator.contentieux.label
             )
@@ -113,8 +113,99 @@
 @if ((showChildren || forceToShowChildren) && calculator && calculator.childrens && calculator.childrens.length) {
 <div class="childrens">
   @for (r of calculator.childrens; track r.contentieux.id) {
-  <aj-referentiel-calculator [calculator]="r" [sortBy]="sortBy" class="is-child" [categorySelected]="categorySelected"
-    [categoryFiltered]="categoryFiltered" [categoryIdSelected]="categoryIdSelected"></aj-referentiel-calculator>
+  <aj-referentiel-calculator [datas]="calculator.childrens" [calculator]="r" [sortBy]="sortBy" class="is-child"
+    [categorySelected]="categorySelected" [categoryFiltered]="categoryFiltered"
+    [categoryIdSelected]="categoryIdSelected" [parentCalculator]="calculator"
+    [currentProjectionType]="currentProjectionType"
+    (currentProjectionTypeChange)="onCurrentProjectionTypeChange($event)"></aj-referentiel-calculator>
   }
+</div>
+}
+
+@if(currentProjection !== null) {
+<div class="popin-projection">
+  <div class="popin-projection-content" (click)="$event.stopPropagation()">
+    <div class="popin-projection-content-header" [ngStyle]="{ backgroundColor: userService.referentielMappingColorActivityByInterface(
+            userService.referentielMappingNameByInterface(
+            (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+            )
+          , OPACITY_20) }">
+      <div class="switch-bt">
+        @for (type of projectionTypes; track type.value) {
+        <div (click)="onCurrentProjectionTypeChange(type.value)"
+          [ngClass]="{'active': currentProjectionType === type.value}">
+          <mat-icon>{{ type.icon }}</mat-icon>
+          <p>{{ type.label }}</p>
+        </div>
+        }
+      </div>
+      <div class="header-title">
+        <div>
+          @if(canViewPreviousProjection) {
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none"
+            (click)="onPreviousProjection()">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M10.8857 12.0574L15.8594 7.08373L14.4386 5.66296L8.04413 12.0574L14.4386 18.4519L15.8594 17.0311L10.8857 12.0574Z"
+              fill="#3A3A3A" />
+          </svg>
+          }
+        </div>
+        <p>{{ userService.referentielMappingNameByInterface(currentProjection.contentieux.label) }}</p>
+        <div>
+          @if(canViewNextProjection) {
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none"
+            (click)="onNextProjection()">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M13.2315 12.0574L8.25781 7.08373L9.67858 5.66296L16.0731 12.0574L9.67858 18.4519L8.25781 17.0311L13.2315 12.0574Z"
+              fill="#3A3A3A" />
+          </svg>
+          }
+        </div>
+      </div>
+      <div (click)="currentProjection = null" class="close-bt">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <g clip-path="url(#clip0_1068_20173)">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M11 20.625C5.68425 20.625 1.375 16.3144 1.375 11C1.375 5.68563 5.68425 1.375 11 1.375C16.3158 1.375 20.625 5.68563 20.625 11C20.625 16.3144 16.3158 20.625 11 20.625ZM11 0C4.92456 0 0 4.9225 0 11C0 17.0775 4.92456 22 11 22C17.0754 22 22 17.0775 22 11C22 4.9225 17.0754 0 11 0ZM14.9304 7.06752C14.6595 6.7994 14.2216 6.7994 13.9507 7.06752L10.9959 10.0237L8.08362 7.10873C7.81481 6.8406 7.37893 6.8406 7.1115 7.10873C6.84268 7.37685 6.84268 7.81688 7.1115 8.08501L10.0238 10.9931L7.09089 13.9288C6.82071 14.1969 6.82071 14.6368 7.09089 14.9118C7.36177 15.18 7.80037 15.18 8.07124 14.9118L11.0041 11.9763L13.9164 14.8913C14.1852 15.1594 14.6211 15.1594 14.8892 14.8913C15.158 14.6231 15.158 14.1831 14.8892 13.915L11.9762 11.0069L14.9304 8.0506C15.2006 7.7756 15.2006 7.34252 14.9304 7.06752Z"
+              fill="#3A3A3A" />
+          </g>
+          <defs>
+            <clipPath id="clip0_1068_20173">
+              <rect width="22" height="22" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <div class="popin-projection-content-body">
+    </div>
+    @if(projectionFooterGrid.length) {
+    <div class="popin-projection-content-footer"
+      [ngStyle]="{ gridTemplateColumns: 'repeat('+  projectionFooterGrid.length +', 1fr)' }">
+      @for (item of projectionFooterGrid; track item.label) {
+      <div [ngStyle]="{ backgroundColor: userService.referentielMappingColorActivityByInterface(
+        userService.referentielMappingNameByInterface(
+        (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+        )
+      , OPACITY_20) }">
+        <p [ngStyle]="{ color: userService.referentielMappingColorActivityByInterface(
+          userService.referentielMappingNameByInterface(
+          (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+          )
+        ) }">{{ item.label }}</p>
+        <a [routerLink]="item.link" [queryParams]="item.queryParams" [ngStyle]="{ color: userService.referentielMappingColorActivityByInterface(
+          userService.referentielMappingNameByInterface(
+          (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+          )
+        ), borderColor: userService.referentielMappingColorActivityByInterface(
+          userService.referentielMappingNameByInterface(
+          (parentCalculator || currentProjection).contentieux.label === 'Autres activités' ? 'other' : (parentCalculator || currentProjection).contentieux.label
+          )
+        ) }">{{ item.button }}</a>
+      </div>
+      }
+    </div>
+    }
+  </div>
 </div>
 }

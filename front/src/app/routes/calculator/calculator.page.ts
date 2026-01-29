@@ -421,26 +421,30 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
    * Nombre d'heures travaillé par jour par fonctionnaire
    */
   nbHoursPerDayAndFonctionnaire: number = NB_HOURS_PER_DAY_AND_FONCTIONNAIRE
-  /** 
+  /**
    * Date max cockpit
    */
   limitDate = this.addMonthsToDate(new Date(), 11)
   /**
    * Liste des catégories disponibles
    */
-  categoriesAvailable: {label: string, value: string, categoryId: number, accessId: number}[] = [
-    {label: 'Siège', value: 'magistrats', categoryId: 1, accessId: HAS_ACCESS_TO_MAGISTRAT},
-    {label: 'Greffe', value: 'fonctionnaires', categoryId: 2, accessId: HAS_ACCESS_TO_GREFFIER},
-    {label: 'Autres activités', value: 'other', categoryId: 3, accessId: HAS_ACCESS_TO_CONTRACTUEL},
+  categoriesAvailable: { label: string; value: string; categoryId: number; accessId: number }[] = [
+    { label: 'Siège', value: 'magistrats', categoryId: 1, accessId: HAS_ACCESS_TO_MAGISTRAT },
+    { label: 'Greffe', value: 'fonctionnaires', categoryId: 2, accessId: HAS_ACCESS_TO_GREFFIER },
+    { label: 'Autres activités', value: 'other', categoryId: 3, accessId: HAS_ACCESS_TO_CONTRACTUEL },
   ]
   /**
    * Catégorie filtrée
    */
-  categoryFiltered: {label: string, value: string, categoryId: number, accessId: number}[] = []
+  categoryFiltered: { label: string; value: string; categoryId: number; accessId: number }[] = []
   /**
    * Catégorie sélectionnée
    */
   categoryIdSelected: number | null = null
+  /**
+   * Type de projection actuelle
+   */
+  currentProjectionType: 'stock' | 'dtes' | 'etpt' = 'stock'
 
   /**
    * Constructeur
@@ -456,12 +460,12 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
 
     this.minDateSelectable = this.userService.isCa() ? new Date(2022, 0, 1) : new Date(2021, 0, 1)
 
-    this.watch(this.userService.user.subscribe((u) => {
-      this.categoryFiltered = this.categoriesAvailable.filter((c) => 
-        u && u.access && u.access.indexOf(c.accessId) !== -1
-      )
-      console.log(this.categoryFiltered)
-    }))
+    this.watch(
+      this.userService.user.subscribe((u) => {
+        this.categoryFiltered = this.categoriesAvailable.filter((c) => u && u.access && u.access.indexOf(c.accessId) !== -1)
+        console.log(this.categoryFiltered)
+      }),
+    )
   }
 
   /**
