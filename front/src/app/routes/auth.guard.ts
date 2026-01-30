@@ -238,6 +238,30 @@ export const ventilationsGuard: CanActivateFn = (route, state) => {
 @Injectable({
   providedIn: 'root',
 })
+class CompleteReferentielPermissionsService {
+  router = inject(Router)
+  authService = inject(AuthService)
+
+  async canViewCompleteReferentiel() {
+    const user = await this.authService.userConnected()
+    const canView = user && user.referentielIds === null ? true : false
+
+    if (!canView) {
+      this.authService.redirectUrl = window.location.pathname + window.location.search + window.location.hash
+      this.router.navigate(['/login'])
+      return false
+    }
+    return true
+  }
+}
+
+export const completeReferentielGuard: CanActivateFn = (route, state) => {
+  return inject(CompleteReferentielPermissionsService).canViewCompleteReferentiel()
+}
+
+@Injectable({
+  providedIn: 'root',
+})
 class ActivitiesPermissionsService {
   authService = inject(AuthService)
 

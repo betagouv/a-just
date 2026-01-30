@@ -248,7 +248,9 @@
           <i class="ri-user-received-line" [ngStyle]="{
                     color: getLocalCategoryColor(person),
                   }"></i>
-          <p>Arrivée prévue</p>
+          <p [ngStyle]="{
+            color: getLocalCategoryColor(person),
+          }">Arrivée prévue</p>
         </div>
         }
         @if (person.dateEnd && hasLeft(person.dateEnd)) {

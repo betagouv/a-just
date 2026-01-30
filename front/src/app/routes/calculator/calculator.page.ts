@@ -430,8 +430,10 @@ export class CalculatorPage extends MainClass implements OnDestroy, OnInit, Afte
     super()
 
     this.watch(
-      this.humanResourceService.backupId.subscribe(() => {
-        this.onLoad()
+      this.humanResourceService.backupId.subscribe((backupId) => {
+        if (backupId !== null) {
+          this.onLoad()
+        }
       }),
     )
 

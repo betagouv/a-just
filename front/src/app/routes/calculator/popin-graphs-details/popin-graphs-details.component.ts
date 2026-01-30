@@ -440,7 +440,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
                 this.calculatorService.showGraphDetailTypeLineTitle === 'Entrées' ||
                 this.calculatorService.showGraphDetailTypeLineTitle === 'Sorties'
               ) {
-                return fixDecimal(value, 1)
+                return fixDecimal(value, 10)
               }
 
               if (
@@ -460,7 +460,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
               }
 
               if (this.calculatorService.showGraphDetailTypeLineTitle === 'Stock' && fixDecimal(value, 1) !== 1 && fixDecimal(value, 1) !== 0) {
-                return fixDecimal(value, 1)
+                return fixDecimal(value, 10)
               }
 
               return value
@@ -481,7 +481,7 @@ export class PopinGraphsDetailsComponent extends MainClass implements AfterViewI
     const labels = []
 
     const defaultDataset = {
-      cubicInterpolationMode: 'monotone',
+      cubicInterpolationMode: 'default',
       tension: 0.4,
       fill: false,
       pointStyle: 'circle',

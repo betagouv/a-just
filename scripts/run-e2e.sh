@@ -25,7 +25,7 @@ docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" build
 
 # 2) Run Cypress via compose up so GA streams logs and we propagate Cypress exit code
 set +e
-docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" up --build --abort-on-container-exit --exit-code-from cypress cypress
+docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" up --abort-on-container-exit --exit-code-from cypress cypress
 exitcode=$?
 set -e
 
@@ -35,22 +35,22 @@ if [ $exitcode -ne 0 ]; then
   docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" ps || true
 
   echo '=== logs: cypress ==='
-  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color cypress || true
+  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color cypress >> "./end-to-end/logs" || true
 
   echo '=== logs: api_sandbox ==='
-  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color api_sandbox || true
+  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color api_sandbox >> "./end-to-end/logs" || true
 
   echo '=== logs: api ==='
-  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color api || true
+  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color api >> "./end-to-end/logs" || true
 
   echo '=== logs: front_sandbox ==='
-  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color front_sandbox || true
+  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color front_sandbox >> "./end-to-end/logs" || true
 
   echo '=== logs: front ==='
-  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color front || true
+  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color front >> "./end-to-end/logs" || true
 
   echo '=== logs: db ==='
-  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color db || true
+  docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE" logs --no-color db >> "./end-to-end/logs" || true
 fi
 
 # 4) Cleanup: tear down the stack
