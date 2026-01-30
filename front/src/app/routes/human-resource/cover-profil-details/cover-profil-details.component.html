@@ -94,7 +94,7 @@
         (valueChange)="updateHuman('dateStart', $event)"
         [ngClass]="{ error: humanResourceService.alertList().includes('startDate') }"
         [readonly]="!userService.canEditHR()"></aj-date-select>
-      <aj-date-select title="Date de départ" id="calendar" [value]="currentHR && currentHR.dateEnd"
+      <aj-date-select #dateEndCalendar title="Date de départ" id="calendar" [value]="currentHR && currentHR.dateEnd"
         (valueChange)="updateHuman('dateEnd', $event)" [clearable]="true"
         [readonly]="!userService.canEditHR()"></aj-date-select>
     </div>

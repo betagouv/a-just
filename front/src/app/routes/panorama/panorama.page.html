@@ -29,8 +29,8 @@
       <div class="effectifs-panels">
         <div class="effectif-title" id="effectif">Effectifs</div>
         <div class="workforce-panel">
-          @if(userService.canViewReaffectator()) {<workforce-composition [backupId]="backupId"
-            [categoriesFiltered]="categoriesFiltered" class="wordforce-composition"></workforce-composition>}
+          @if(userService.canViewVentilation()) {<workforce-composition [backupId]="backupId"
+            [categoriesFiltered]="categoriesFiltered" [listFormated]="listFormated" [allPersons]="allPersons" class="wordforce-composition"></workforce-composition>}
           <records-update [listFormated]="listFormated" [allPersons]="allPersons"
             [categoriesFiltered]="categoriesFiltered" class="records-update"></records-update>
         </div>

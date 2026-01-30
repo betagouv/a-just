@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "scripts": {
     "start": "npm run cy:open",
-    "cy:run": "cypress run",
+    "cy:run": "cypress run --browser chrome",
     "cy:open": "cypress open",
-    "cy:run:report": "cypress run --reporter cypress-mochawesome-reporter",
+    "cy:run:report": "cypress run --browser chrome --reporter cypress-mochawesome-reporter",
     "clean:reports": "rm -rf cypress/reports"
   },
   "private": true,

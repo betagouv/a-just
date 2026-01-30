@@ -25,7 +25,7 @@ export default class RouteJuridictionsDetails extends Route {
     bodyType: Types.object().keys({
       juridictionId: Types.number().required(),
     }),
-    accesses: [Access.canVewReaffectator],
+    accesses: [Access.isLogin],
   })
   async getCle(ctx) {
     let { juridictionId } = this.body(ctx)
