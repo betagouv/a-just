@@ -1,8 +1,16 @@
 name: Nightly Sandbox Tests
 on:
-  schedule:
-    # Run every night at 02:30 UTC
-    - cron: "30 2 * * *"
+  # schedule:
+  #   # Run every night at 02:30 UTC
+  #   - cron: "30 2 * * *"
+  push:
+    branches:
+      - sandbox
+      - dev
+      - e2e-test
+    paths-ignore:
+      - "site/**"
+      - "**/*.md"
   workflow_dispatch:
     inputs:
       date_override:
@@ -149,6 +157,13 @@ jobs:
           echo "directory: ./end-to-end/cypress/screenshots"
 
           ls -laR ./end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
+
+          echo -e "\n######################################\n" 
+
+          echo "Containers logs:"
+          echo "directory: ./end-to-end/logs"
+
+          ls -laR ./end-to-end/logs/ 2>/dev/null || echo "Logs directory not found"
 
       - name: Collect Cypress JSON reports (normalize)
         if: always()
@@ -314,15 +329,6 @@ jobs:
           echo "directory: ./candidate-code/end-to-end/cypress/screenshots"
 
           ls -laR ./candidate-code/end-to-end/cypress/screenshots/ 2>/dev/null || echo "Screenshots directory not found"
-
-      # - name: Collect Cypress JSON reports (normalize, nonreg)
-      #   if: always()
-      #   run: |
-      #     set -e
-      #     mkdir -p ./candidate-code/end-to-end/cypress/reports/.jsons
-      #     find ./candidate-code/end-to-end/cypress/reports -type f -name "*.json" -print -exec cp -n {} ./candidate-code/end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-      #     find ./candidate-code/end-to-end/mochawesome-report -type f -name "*.json" -print -exec cp -n {} ./candidate-code/end-to-end/cypress/reports/.jsons/ \; 2>/dev/null || true
-      #     ls -la ./candidate-code/end-to-end/cypress/reports/.jsons || true
 
       - name: Collect Cypress JSON reports (normalize, nonreg)
         if: always()
