@@ -276,6 +276,7 @@ jobs:
           mkdir -p ./end-to-end/cypress/screenshots
           mkdir -p ./end-to-end/cypress/videos
           mkdir -p ./end-to-end/cypress/reports
+          mkdir -p ./end-to-end/cypress/downloads
 
       - name: Run Non-Regression E2E tests
         run: |
