@@ -194,7 +194,7 @@ jobs:
           echo "Final JSONs to upload:"
           ls -la ./end-to-end/cypress/reports/results.jsons 2>/dev/null || true
 
-      - name: Upload Logs
+      - name: Upload Logs if tests failed
         if: always()
         uses: actions/upload-artifact@v4
         with:
