@@ -347,7 +347,7 @@ jobs:
           echo "Final JSONs to upload (normalize, nonreg):"
           ls -la ./candidate-code/end-to-end/cypress/reports/results.jsons || true
 
-      - name: Upload Logs
+      - name: Upload Logs if tests failed (nonreg)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -404,6 +404,9 @@ jobs:
         with:
           ref: sandbox
           fetch-depth: 0
+
+      - name: List files in workspace
+        run: ls -laR $GITHUB_WORKSPACE
 
       - name: Determine report date
         id: report_date
