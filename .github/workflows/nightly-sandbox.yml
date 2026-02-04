@@ -467,6 +467,11 @@ jobs:
           name: mocha-report
           path: ./mocha-report
 
+      - name: List current directory structure
+        run: |
+          echo "Current directory structure:"
+          ls -laR . || echo "No files found"
+
       - name: Create nightly report directory structure
         env:
           REPORT_DATE: ${{ steps.report_date.outputs.date }}
