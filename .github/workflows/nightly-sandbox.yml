@@ -405,9 +405,6 @@ jobs:
           ref: sandbox
           fetch-depth: 0
 
-      - name: List files in workspace
-        run: ls -laR $GITHUB_WORKSPACE
-
       - name: Determine report date
         id: report_date
         run: |
@@ -447,6 +444,7 @@ jobs:
           name: cypress-video-nonreg
           path: ./cypress-videos-nonreg
 
+      ## The won't be any files here if tests all passed
       - name: Download Cypress screenshots artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -454,6 +452,7 @@ jobs:
           name: cypress-screenshots
           path: ./cypress-screenshots
 
+      ## The won't be any files here if tests all passed
       - name: Download Cypress screenshots artifacts (nonreg)
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -490,6 +489,13 @@ jobs:
           cp -r cypress-screenshots-nonreg/* site/nightly/${REPORT_DATE}/screenshots/ 2>/dev/null || true
           mkdir -p site/nightly/${REPORT_DATE}/mocha
           cp -r mocha-report/* site/nightly/${REPORT_DATE}/mocha/ 2>/dev/null || echo "No mocha test reports to copy"
+
+      - name: List nightly report directory structure
+        env:
+          REPORT_DATE: ${{ steps.report_date.outputs.date }}
+        run: |
+          echo "Listing site/nightly/${REPORT_DATE} contents:"
+          ls -laR site/nightly/${REPORT_DATE} || echo "No nightly report directory found"
 
       - name: Build combined static HTML (merged JSON -> bespoke report)
         continue-on-error: true
