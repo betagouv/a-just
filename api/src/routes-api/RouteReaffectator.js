@@ -102,7 +102,7 @@ export default class RouteReaffectator extends Route {
     for (let i = 0; i < referentiel.length; i++) {
       referentiel[i] = {
         ...referentiel[i],
-        ...(await getSituation(referentiel[i].id, hrfiltered, activities, categories, date, null, categoryId, null, indexes, true, true)),
+        ...(await getSituation({ parent: [referentiel[i].id], child: referentiel[i].childrens.map((c) => c.id) }, hrfiltered, activities, categories, date, null, categoryId, null, indexes, true, true)),
       }
     }
     console.timeEnd('🧮 Calculation')

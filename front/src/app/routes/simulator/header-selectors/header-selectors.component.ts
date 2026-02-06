@@ -161,7 +161,7 @@ export class HeaderSelectorsComponent extends MainClass {
         const fnd = this.referentiel.find((o) => o.id === event[0])
         fnd?.childrens?.map((value) => this.subList.push(value.id))
         this.contentieuId = event[0]
-        this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
+        this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:this.subList})
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       } else {
@@ -173,10 +173,10 @@ export class HeaderSelectorsComponent extends MainClass {
       if (!event.length) {
         this.disabled = 'disabled'
         this.simulatorService.disabled.next(this.disabled)
-        this.simulatorService.contentieuOrSubContentieuId.next([])
+        this.simulatorService.contentieuOrSubContentieuId.next({parent:null,child:null})
       } else {
-        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next([this.contentieuId as number])
-        else this.simulatorService.contentieuOrSubContentieuId.next(this.subList)
+        if (event.length === tmpRefLength?.childrens?.length) this.simulatorService.contentieuOrSubContentieuId.next({parent:[this.contentieuId as number],child:this.subList})
+        else this.simulatorService.contentieuOrSubContentieuId.next({parent:null,child:this.subList})
         this.disabled = ''
         this.simulatorService.disabled.next(this.disabled)
       }
