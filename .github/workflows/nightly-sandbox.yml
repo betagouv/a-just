@@ -527,6 +527,13 @@ jobs:
               { find cypress-reports-nonreg/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports-nonreg -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
             )"
+
+            echo "Found JSON files to merge:"
+            echo "$JSONS"
+
+            echo "Folder structure for combined report:"
+            ls -laR site/nightly/${REPORT_DATE}/combined || echo "No combined report directory found"
+
             if [ -n "$JSONS" ]; then
               npx -y -p mochawesome-merge mochawesome-merge $JSONS > site/nightly/${REPORT_DATE}/combined/merged.json || true
             fi
