@@ -17,6 +17,8 @@ export const emptyCalulatorValues = (referentiels) => {
     totalOut: null,
     lastStock: null,
     etpMag: null,
+    lastVentilationUpdatedAt: null,
+    lastActivityUpdatedAt: null,
     magRealTimePerCase: null,
     magCalculateTimePerCase: null,
     magCalculateOut: null,
@@ -62,7 +64,8 @@ export const emptyCalulatorValues = (referentiels) => {
  * @param {*} optionsBackups
  * @returns
  */
-export const syncCalculatorDatas = (
+export const syncCalculatorDatas = async (
+  models,
   indexes,
   list,
   nbMonth,
@@ -77,19 +80,35 @@ export const syncCalculatorDatas = (
 ) => {
   const prefilters = groupBy(activities, 'contentieux.id')
 
-  const compute = (item, isParent) => {
+  const compute = async (item, isParent) => {
     const id = item.contentieux.id
-    const values = getActivityValues(indexes, dateStart, dateStop, prefilters[id] || [], id, nbMonth, hr, categories, optionsBackups, selectedFonctionsIds)
+    const values = await getActivityValues(
+      models,
+      indexes,
+      dateStart,
+      dateStop,
+      prefilters[id] || [],
+      id,
+      nbMonth,
+      hr,
+      categories,
+      optionsBackups,
+      selectedFonctionsIds,
+      false,
+      isParent,
+    )
     return { ...item, ...values, nbMonth }
   }
 
-  return list.map((parent) => {
-    checkAbort(signal)
-    return {
-      ...compute(parent, true),
-      childrens: (parent.childrens || []).map((child) => compute(child, false)),
-    }
-  })
+  return await Promise.all(
+    list.map(async (parent) => {
+      checkAbort(signal)
+      return {
+        ...(await compute(parent, true)),
+        childrens: await Promise.all((parent.childrens || []).map((child) => compute(child, false))),
+      }
+    }),
+  )
 }
 
 /**
@@ -104,7 +123,8 @@ export const syncCalculatorDatas = (
  * @param {*} optionsBackups
  * @returns
  */
-const getActivityValues = (
+const getActivityValues = async (
+  models,
   indexes,
   dateStart,
   dateStop,
@@ -116,6 +136,7 @@ const getActivityValues = (
   optionsBackups,
   selectedFonctionsIds,
   old = false,
+  isParent = false,
 ) => {
   let { meanOutCs, etpMagCs, etpFonCs, meanOutBf, lastStockBf, totalInBf, totalOutBf, lastStockAf, totalInAf, totalOutAf } = getLastTwelveMonths(
     indexes,
@@ -221,10 +242,44 @@ const getActivityValues = (
   etpFonAf = etpAffectedAf.length > 1 ? fixDecimal(etpAffectedAf[1].totalEtp, 1000) : 0
   etpContAf = etpAffectedAf.length > 2 ? fixDecimal(etpAffectedAf[2].totalEtp, 1000) : 0
 
+  let lastVentilationUpdatedAt = null
+  if (isParent) {
+    // search last agent updated at for this contentieux
+    const agents = hr.filter((h) => h.situations.filter((s) => s.activities.filter((a) => a.contentieux.id === referentielId)))
+    for (const agent of agents) {
+      for (const situation of agent.situations || []) {
+        for (const activity of situation.activities || []) {
+          if (
+            activity.contentieux.id === referentielId &&
+            activity.percent &&
+            (lastVentilationUpdatedAt === null || lastVentilationUpdatedAt < activity.updatedAt)
+          ) {
+            lastVentilationUpdatedAt = activity.updatedAt
+          }
+        }
+      }
+    }
+  }
+
+  let lastActivityUpdatedAt = null
+  if (isParent && hr.length) {
+    const activitiesByContentieux = await models.Activities.findAll({
+      where: {
+        contentieux_id: referentielId,
+        hr_backup_id: hr[0].backupId,
+      },
+      order: [['periode', 'DESC']],
+      limit: 1,
+      raw: true,
+    })
+    if (activitiesByContentieux.length) {
+      lastActivityUpdatedAt = activitiesByContentieux[0].periode
+    }
+  }
+
   // Temps moyens par dossier observé = (nb heures travaillées par mois) / (sorties moyennes par mois / etpt sur la periode)
   const magRealTimePerCase = fixDecimal(((config.nbDaysByMagistrat / 12) * config.nbHoursPerDayAndMagistrat) / (meanOutCs / etpMagCs), 1000)
   const fonRealTimePerCase = fixDecimal(((config.nbDaysByFonctionnaire / 12) * config.nbHoursPerDayAndFonctionnaire) / (meanOutCs / etpFonCs), 1000)
-  if (referentielId === 471) console.log(fonRealTimePerCase, meanOutCs, etpFonCs)
   return {
     ...calculateActivities(referentielId, totalIn, lastStock, etpMag, etpFon, optionsBackups),
     // entrée sorties et taux de couverture moyen sur la période avec stock de fin
@@ -263,6 +318,8 @@ const getActivityValues = (
     etpContAf,
     oneMonthBeforeEnd,
     oneMonthAfterStart,
+    lastVentilationUpdatedAt,
+    lastActivityUpdatedAt,
   }
 }
 
