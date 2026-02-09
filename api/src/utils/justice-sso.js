@@ -64,7 +64,25 @@ export const postAssertSSO = (requestBody) => {
       console.log('saml_response', JSON.stringify(saml_response))
       /**
        * Exemple de retour
-       * {"response_header":{"version":"2.0","destination":"https://a-just.incubateur.net/api/saml/assert-return","in_response_to":"_4096398212cc124d92684962d856aeddab1165ed5a","id":"_EBCBE3560C5AA612F647DA351B07301B"},"type":"authn_response","user":{"name_id":"_C65A794EDBDB5D494116B510D8607B7C","session_index":"QRKbkPL6ucP1gf3vj4p3fsBpZ60NoMaX9g5lH/nXo5yui9gPbJeeoob+r8NM3etGI8umGO2vJ7cT7mb/ESU/KA==","session_not_on_or_after":"2024-02-28T07:44:46Z","attributes":{"roles":["A_JUST_DEV:USER"],"nom":["MONTIGNY"],"affectationOp3":[],"logonId":["francois-xavier.mont"],"affectationOp4":[],"siteDescription":[],"prenom":["François-Xavier"],"igcid":["L0340347"],"affectationOp2":[],"bureauIGC":[],"mail":["francois-xavier.montigny@justice.gouv.fr"]}}}
+       * {"response_header":{"version":"2.0","destination":"https://a-just.incubateur.net/api/saml/assert-return",
+       * "in_response_to":"_4096398212cc124d92684962d856aeddab1165ed5a",
+       * "id":"_EBCBE3560C5AA612F647DA351B07301B"},
+       * "type":"authn_response",
+       * "user":{"name_id":"_C65A794EDBDB5D494116B510D8607B7C",
+       * "session_index":"QRKbkPL6ucP1gf3vj4p3fsBpZ60NoMaX9g5lH/nXo5yui9gPbJeeoob+r8NM3etGI8umGO2vJ7cT7mb/ESU/KA==",
+       * "session_not_on_or_after":"2024-02-28T07:44:46Z",
+       * "attributes":{"roles":["A_JUST_DEV:USER"],
+       * "nom":["MONTIGNY"],
+       * "affectationOp3":[],
+       * "logonId":["francois-xavier.mont"],
+       * "affectationOp4":[],
+       * "siteDescription":[],
+       * "prenom":["François-Xavier"],
+       * "igcid":["L0340347"],
+       * "affectationOp2":[],
+       * "bureauIGC":[],
+       * "mail":["francois-xavier.montigny@justice.gouv.fr"]
+       * }}}
        */
       if (err != null) {
         reject(err)
