@@ -480,7 +480,8 @@ jobs:
           mkdir -p site/nightly/${REPORT_DATE}/cypress
           cp -r cypress-reports/reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/reports/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
-          cp -r cypress-reports/mochawesome-report/* site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/mochawesome-report/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
+          cp -r cypress-reports/mochawesome-report/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
           cp -r cypress-reports/*.json site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || echo "No cypress reports to copy"
           cp -r cypress-reports-nonreg/reports/.jsons site/nightly/${REPORT_DATE}/cypress/ 2>/dev/null || true
@@ -519,6 +520,7 @@ jobs:
               { find mocha-report -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports/reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports/reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
+              { find cypress-reports/mochawesome-report/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports/mochawesome-report -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports/.jsons -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
               { find cypress-reports -maxdepth 1 -type f -name "*.json" ! -name "test-contexts.json" 2>/dev/null || true; }
