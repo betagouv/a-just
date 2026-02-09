@@ -211,8 +211,8 @@ jobs:
             ./end-to-end/cypress/reports/**/*.json
             ./end-to-end/cypress/mochawesome-report/*.json
             ./end-to-end/cypress/mochawesome-report/**/*.json
-            # ./end-to-end/cypress/mochawesome-report/*.html
-            # ./end-to-end/cypress/mochawesome-report/**/*.html
+            ./end-to-end/cypress/mochawesome-report/*.html
+            ./end-to-end/cypress/mochawesome-report/**/*.html
           include-hidden-files: true
           if-no-files-found: warn
 
